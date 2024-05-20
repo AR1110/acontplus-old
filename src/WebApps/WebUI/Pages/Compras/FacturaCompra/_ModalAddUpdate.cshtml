@@ -36,36 +36,16 @@
             </div>
 
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-                <div class="form-group">
-                    <label for="categoria">Categoria: <span class="text-danger">*</span> </label>
-                    <div class="input-group">
-                        <select class="form-control border-select" ng-model="data.idCategoriaCompra">
-                            <option ng-value="item.idCategoriaCompra" ng-repeat="item in categoriasCompra">
-                                {{item.descripcion}}
-                            </option>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="subcategoryId">Subcategoría:</label>
+                        <select id="subcategoryId" name="subcategoryId" class="form-control" ng-model="data.subcategoryId">
+                            <option ng-value="item.id" ng-repeat="item in subcategories">{{item.name}}</option>
                         </select>
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" btn-categoria-compra
-                                    result-modal="resultModalCategoria(result)">
-                                <i class="fa fa-plus fa-xs"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="row" ng-show="showHeader">
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="subcategoryId">Subcategoría:</label>
-                    <select id="subcategoryId" name="subcategoryId" class="form-control" ng-model="data.subcategoryId">
-                        <option ng-value="item.id" ng-repeat="item in subcategories">{{item.name}}</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
         <div class="row" ng-show="showHeader">
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                 <label for="proveedorFiltro">Proveedor:</label>

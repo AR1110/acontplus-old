@@ -122,7 +122,7 @@ BEGIN
 
             IF @codDoc IS NOT NULL
                 BEGIN
-                    SET @sql = @sql + 'AND codDoc = @codDoc '
+                    SET @sql = @sql + 'AND dr.codDoc = @codDoc '
                 END 
 
             IF @rucProveedor IS NOT NULL

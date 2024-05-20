@@ -220,6 +220,13 @@ BEGIN
 
         SELECT TOP 1 @identificacion = numeroIdentificacion ,@CustomerId = ISNULL(CustomerId,0) FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
 
+        IF (@CustomerId = 0)
+            BEGIN
+                SELECT [Common].[ufnSpResponse]('0','Debe validar el proveedor',DEFAULT)
+				RETURN 
+            END
+        
+
 		SELECT TOP 1 @uniqueId =  uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @id 
 
 		--> Validacion de la informacion

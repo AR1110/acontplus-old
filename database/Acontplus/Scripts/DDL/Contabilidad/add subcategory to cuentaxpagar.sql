@@ -13,4 +13,5 @@ GO
 ALTER TABLE Recepcion.DocumentoRecibido ADD CONSTRAINT fk_contabilidad_dr_subcategory FOREIGN KEY (subcategoryId) REFERENCES Contabilidad.Subcategory(Id)
 GO
 
-
+ALTER TABLE dbo.FacturaCompra ALTER COLUMN idCategoriaCompra INT NULL
+GO

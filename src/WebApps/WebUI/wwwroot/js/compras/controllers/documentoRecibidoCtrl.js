@@ -456,7 +456,7 @@
                 allowOutsideClick: false,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    docRecibidoSvc.deleteDoc(idDocumento).then((response) => {
+                    docRecibidoSvc.deleteDoc(item.idDocumento).then((response) => {
                         if (response.code == 0) {
                             tS.toastr("warning", response.message);
                             return;

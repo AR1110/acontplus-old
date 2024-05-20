@@ -1320,10 +1320,10 @@
                 return;
             }
 
-            if (!fS.isValidField($scope.data.idCategoriaCompra)) {
-                tS.toastr("warning", "Seleccione la Categoria!");
-                return;
-            }
+            //if (!fS.isValidField($scope.data.idCategoriaCompra)) {
+            //    tS.toastr("warning", "Seleccione la Categoria!");
+            //    return;
+            //}
 
 
 
