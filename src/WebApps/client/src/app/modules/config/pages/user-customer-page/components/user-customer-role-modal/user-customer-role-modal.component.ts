@@ -7,6 +7,7 @@ import {
   UserCustomerRoleAccessComponent
 } from "@modules/config/pages/user-customer-page/components/user-customer-role-modal/components/user-customer-role-access/user-customer-role-access.component";
 import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/user-customer-role-state.service";
+import {IsAdminDirective} from "@shared/directives/permission/is-admin.directive";
 
 
 @Component({
@@ -17,7 +18,8 @@ import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/
     NgbNavModule,
     UserCustomerRoleEstabComponent,
     UserCustomerRolePermissionComponent,
-    UserCustomerRoleAccessComponent
+    UserCustomerRoleAccessComponent,
+    IsAdminDirective
   ],
   templateUrl: './user-customer-role-modal.component.html',
   providers: [

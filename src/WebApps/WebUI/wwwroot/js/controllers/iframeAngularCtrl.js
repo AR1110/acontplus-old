@@ -36,12 +36,12 @@
         async function getSrc() {
             if (!frontend) { return; }
             let params = localStorage.getItem('userData')
-            let { token } = JSON.parse(params);
+            let { token, codeRole } = JSON.parse(params);
             if (!token) { return; }
 
             let permissions = userCustomerPermissionSvc.userPermissionAdapter();
             let userRoleData = {
-                codeRole: params.codeRole
+                codeRole 
             }
             // Create a new iframe element
             var iframe = document.createElement('iframe');
@@ -51,7 +51,9 @@
             iframe.style.border = 'none';
             iframe.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-popups-to-escape-sandbox'
             // Set the src attribute of the iframe
-            let urlClient = `${frontend}?token=${token}&route=${route}&permission=${JSON.stringify({ ...permissions, acciones: $scope.accion || {} })}&userRoleData=${userRoleData}`
+      
+            let urlClient = `${frontend}?token=${token}&route=${route}&permission=${JSON.stringify({ ...permissions, acciones: $scope.accion || {} })}&userRoleData=${JSON.stringify(userRoleData)}`
+            
             //// Ajuste horizontal
             //let x = parseInt((screen.width - 1200) / 2);
             //// Ajustae vertical

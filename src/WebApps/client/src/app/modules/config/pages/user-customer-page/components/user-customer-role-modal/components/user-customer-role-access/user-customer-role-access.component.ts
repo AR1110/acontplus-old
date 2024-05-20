@@ -22,7 +22,8 @@ interface MenuNode {
   children?: MenuNode[];
   checked?: boolean;
   subMenuId?: number
-  actions?: any[] | null
+  actions?: any[] | null,
+  enabled?: boolean
 }
 
 interface MenuFlatNode {
@@ -32,7 +33,8 @@ interface MenuFlatNode {
   checked?: boolean;
 
   subMenuId?: number
-  actions?:any[] | null
+  actions?:any[] | null,
+  enabled?: boolean
 }
 
 
@@ -73,7 +75,8 @@ export class UserCustomerRoleAccessComponent {
       level: level,
       checked: node.checked,
       actions: node.actions,
-      subMenuId: node.subMenuId
+      subMenuId: node.subMenuId,
+      enabled:node.enabled
     };
   };
 
@@ -116,9 +119,11 @@ export class UserCustomerRoleAccessComponent {
        this.expandFirstLevelNodes();
 
        for(let node of this.treeControl.dataNodes){
-         if(!node.actions) continue;
+         console.log(node)
+         if(!node.enabled) continue;
 
-         if(node.actions.length>0){
+
+         if(node.enabled){
            this.todoItemSelectionToggle(node)
          }
 

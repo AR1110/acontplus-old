@@ -28,7 +28,7 @@ export class UserCustomerRoleService {
     })
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response: any)=>{
-        let menus = [...response.licenciaSubMenu, ...response.submenus]
+        let menus = [...response.submenus,...response.licenciaSubMenu, ]
 
         let menusResults = menus.reduce((acc:any, curr:any) => {
           // Buscar si ya existe un objeto con el id del menú actual
@@ -45,7 +45,8 @@ export class UserCustomerRoleService {
                 menuId: curr.menuId,
                 name: curr.name,
                 code: curr.code,
-                actions: curr.actions && JSON.parse(curr.actions) || []
+                actions: curr.actions && JSON.parse(curr.actions) || [],
+                enabled: curr.enabled
               }]
             });
           } else {
@@ -55,7 +56,8 @@ export class UserCustomerRoleService {
               menuId: curr.menuId,
               name: curr.name,
               code: curr.code,
-              actions: curr.actions && JSON.parse(curr.actions) || []
+              actions: curr.actions && JSON.parse(curr.actions) || [],
+              enabled: curr.enabled
             });
           }
 

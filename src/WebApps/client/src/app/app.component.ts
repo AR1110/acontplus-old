@@ -38,9 +38,10 @@ export class AppComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       let { token, route, permission: dataPermission, userRoleData } = params;
 
+
       if (dataPermission) {
         localStorage.setItem("permisos", dataPermission);
-        localStorage.setItem("userRoleData", JSON.stringify(userRoleData));
+        localStorage.setItem("userRoleData", userRoleData);
         let getPermission = localStorage.getItem("permisos");
         let getUserRoleData = localStorage.getItem("userRoleData");
         if (getPermission && getUserRoleData) {
