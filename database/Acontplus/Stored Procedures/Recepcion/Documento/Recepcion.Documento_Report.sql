@@ -90,7 +90,7 @@ BEGIN
 	                                  ,dr.serieComprobante
 	                                  ,dr.claveAcceso
 	                                  ,dr.fechaEmision
-                                      ,Format(dr.fechaAutorizacion,''dd/MM/yyyy HH:mm'') as fechaAutorizacion
+                                      ,Format(CONVERT(DATETIME, dr.fechaAutorizacion), ''dd/MM/yyyy HH:mm'') as fechaAutorizacion
 	                                  ,dr.rucEmisor
 	                                  ,dr.razonSocialEmisior as razonSocialEmisor
                                       ,''FE'' as tipoDoc
