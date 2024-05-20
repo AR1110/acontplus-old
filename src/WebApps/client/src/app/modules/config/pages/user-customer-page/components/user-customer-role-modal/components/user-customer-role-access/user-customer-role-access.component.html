@@ -1,7 +1,13 @@
 
-<button class="btn btn-success" (click)="onSave()">
-  <i class="mdi mdi-account-key"></i> Guardar
-</button>
+<div class="d-flex flex-row gap-1">
+  <button class="btn btn-success" (click)="onSave()">
+    <fa-icon [icon]="'save'"></fa-icon> Guardar
+  </button>
+  <button class="btn btn-danger" (click)="onDelete()">
+    <fa-icon [icon]="'trash-can'"></fa-icon> Eliminar acceso
+  </button>
+</div>
+
 <hr>
 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
   <!-- This is the tree node template for leaf nodes -->

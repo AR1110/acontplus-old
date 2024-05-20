@@ -4,31 +4,28 @@ import {MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule} from '@angular/m
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 
-import {AccesoMenu, LicenciaMenu} from "@modules/config/models/menu.model";
+import {AccesoMenu} from "@modules/config/models/menu.model";
 import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/user-customer-role-state.service";
 import {UserCustomerRoleService} from "@modules/config/services/user-customer/user-customer-role.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {MatCheckboxModule} from "@angular/material/checkbox";
-import {FormControl, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import {CommonModule} from "@angular/common";
 import {ToasterService} from "@core/services/toaster.service";
 import Swal from "sweetalert2";
 import {isApiResponse} from "@core/models/api-response";
+import { FormsModule } from '@angular/forms';
 
-interface FoodNode {
+interface MenuNode {
   name: string;
-  children?: FoodNode[];
+  children?: MenuNode[];
   checked?: boolean;
   subMenuId?: number
   actions?: any[] | null
 }
 
-interface ExampleFlatNode {
+interface MenuFlatNode {
   expandable: boolean;
   name: string;
   level: number;
@@ -65,16 +62,11 @@ export class UserCustomerRoleAccessComponent {
 
   userCustomerRoleSvc = inject(UserCustomerRoleService)
 
-  licenciaMenus:LicenciaMenu[]=[];
   accesoMenus:AccesoMenu[]=[]
-
-  mainNodes: FoodNode[] =[];
-
-
 
   cloneActions: any[]=[]
   actions:any[]=[]
-  private transformer = (node: FoodNode, level: number) => {
+  private transformer = (node: MenuNode, level: number) => {
     return {
       expandable: !!node.children && node.children.length > 0,
       name: node.name,
@@ -85,12 +77,12 @@ export class UserCustomerRoleAccessComponent {
     };
   };
 
-  treeControl = new FlatTreeControl<ExampleFlatNode>(
+  treeControl = new FlatTreeControl<MenuFlatNode>(
     node => node.level,
     node => node.expandable,
   );
 
-  treeFlattener = new MatTreeFlattener<FoodNode, ExampleFlatNode>(
+  treeFlattener = new MatTreeFlattener<MenuNode, MenuFlatNode>(
     this.transformer,
     node => node.level,
     node => node.expandable,
@@ -98,45 +90,54 @@ export class UserCustomerRoleAccessComponent {
   );
 
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-  checklistSelection = new SelectionModel<ExampleFlatNode>(true /* multiple */);
+  checklistSelection = new SelectionModel<MenuFlatNode>(true /* multiple */);
 
   getAccesses(){
     this.userCustomerRoleSvc.getAccesses(this.userRoleId()).subscribe(response=>{
-      this.licenciaMenus = response.licenciaMenus;
-      this.accesoMenus = response.accesoMenus;
+
+      this.accesoMenus = response.menus;
 
       this.actions = structuredClone(response.actions)
       this.cloneActions = structuredClone(this.actions)
-      this.mainNodes = [{
-        name: 'Todos',
-        children: this.licenciaMenus.map(m=>{
+      let makeMenusNode = [{
+         name: 'Todos',
+         children: this.accesoMenus.map(m=>{
           let {subMenus, ...rest} = m;
-          return {
-            ...rest,
-            children: subMenus
-          }
-        })
+           return {
+             ...rest,
+             children: subMenus
+           }
+         })
       }]
 
       this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-      this.checklistSelection = new SelectionModel<ExampleFlatNode>(true /* multiple */);
-      this.dataSource.data = this.mainNodes;
-      this.expandFirstLevelNodes();
+       this.checklistSelection = new SelectionModel<MenuFlatNode>(true /* multiple */);
+       this.dataSource.data = makeMenusNode;
+       this.expandFirstLevelNodes();
+
+       for(let node of this.treeControl.dataNodes){
+         if(!node.actions) continue;
+
+         if(node.actions.length>0){
+           this.todoItemSelectionToggle(node)
+         }
+
+       }
     })
   }
   ngOnInit(){
     this.getAccesses()
   }
 
-  hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
+  hasChild = (_: number, node: MenuFlatNode) => node.expandable;
 
-  todoItemSelectionToggle(node: ExampleFlatNode): void {
+  todoItemSelectionToggle(node: MenuFlatNode): void {
     this.checklistSelection.toggle(node);
     this.toggleDescendantsSelection(node);
     this.checkAllParentsSelection(node);
   }
 
-  toggleDescendantsSelection(node: ExampleFlatNode): void {
+  toggleDescendantsSelection(node: MenuFlatNode): void {
     const descendants = this.treeControl?.getDescendants(node);
     descendants.forEach(child => {
       this.checklistSelection.isSelected(node)
@@ -146,15 +147,15 @@ export class UserCustomerRoleAccessComponent {
     });
   }
 
-  checkAllParentsSelection(node: ExampleFlatNode): void {
-    let parent: ExampleFlatNode | null = this.getParentNode(node);
+  checkAllParentsSelection(node: MenuFlatNode): void {
+    let parent: MenuFlatNode | null = this.getParentNode(node);
     while (parent) {
       this.checkRootNodeSelection(parent);
       parent = this.getParentNode(parent);
     }
   }
 
-  checkRootNodeSelection(node: ExampleFlatNode): void {
+  checkRootNodeSelection(node: MenuFlatNode): void {
     const nodeSelected = this.checklistSelection.isSelected(node);
     const descendants = this.treeControl.getDescendants(node);
     const descAllSelected = descendants.every(child =>
@@ -167,7 +168,7 @@ export class UserCustomerRoleAccessComponent {
     }
   }
 
-  getParentNode(node: ExampleFlatNode): ExampleFlatNode | null {
+  getParentNode(node: MenuFlatNode): MenuFlatNode | null {
     const currentLevel = this.getLevel(node);
 
     if (currentLevel < 1) {
@@ -186,11 +187,11 @@ export class UserCustomerRoleAccessComponent {
     return null;
   }
 
-  getLevel = (node: ExampleFlatNode) => node.level;
+  getLevel = (node: MenuFlatNode) => node.level;
 
 
 
-  isNodeIndeterminate(node: ExampleFlatNode): boolean {
+  isNodeIndeterminate(node: MenuFlatNode): boolean {
 
 
     const descendants = this.treeControl?.getDescendants(node);
@@ -213,8 +214,8 @@ export class UserCustomerRoleAccessComponent {
   }
 
   dataSubNode: any = {};
-  onClickActions(node: ExampleFlatNode){
-   console.log(this.treeControl.dataNodes)
+  onClickActions(node: MenuFlatNode){
+
     this.dataSubNode = node;
     for(let item of this.actions){
       item.checked = this.dataSubNode.actions.some((m:any)=>m.code===item.code)
@@ -247,9 +248,28 @@ export class UserCustomerRoleAccessComponent {
 
 
 
+  successResponse = (response:any)=>{
+    if (isApiResponse(response)) {
+      if (response.code === "0") {
+        this.tS.toastr({
+          type: 'warning',
+          message: response.message
+        })
+      }
+      if (response.code === "1") {
+        this.tS.toastr({
+          type: 'success',
+          message: response.message
+        })
+        this.getAccesses()
+      }
+    }
+  }
+
   onSave(){
     const checklistSelection = this.checklistSelection.selected;
 
+    console.log(checklistSelection)
     if(checklistSelection.length===0){
       this.tS.toastr({
         type: 'warning',
@@ -257,6 +277,8 @@ export class UserCustomerRoleAccessComponent {
       })
       return
     }
+
+
 
     if (checklistSelection.some((s:any) => (s.actions?.length === 0))) {
       this.tS.toastr({
@@ -268,7 +290,7 @@ export class UserCustomerRoleAccessComponent {
 
     Swal.fire({
       icon: 'warning',
-      text: 'Esta seguro de actualizar los accesos de manera personalizada al usuario seleccionado?',
+      text: '¿Está seguro de actualizar los accesos de manera personalizada para el usuario seleccionado?',
       showCancelButton: true,
       showConfirmButton : true,
       cancelButtonText: 'No!',
@@ -277,12 +299,6 @@ export class UserCustomerRoleAccessComponent {
 
         if(result.isConfirmed) {
 
-          let accesoMenus = this.accesoMenus.flatMap(am => am.subMenus).map(sm => {
-            return {
-              subMenuId: sm.subMenuId,
-              actions: sm.actions
-            }
-          })
 
           let accesoCustom = checklistSelection.map(sm => {
             return {
@@ -291,32 +307,39 @@ export class UserCustomerRoleAccessComponent {
             }
           })
 
-          let results = [...accesoMenus, accesoCustom]
 
-          let data = {
-            accesses: results
+
+          let data =   {
+            accesses: JSON.stringify(accesoCustom)
           }
-          this.userCustomerRoleSvc.updateAcceses(this.userRoleId(), data).subscribe(response => {
-            if (isApiResponse(response)) {
-              if (response.code === "0") {
-                this.tS.toastr({
-                  type: 'warning',
-                  message: response.message
-                })
-              }
-              if (response.code === "1") {
-                this.tS.toastr({
-                  type: 'success',
-                  message: response.message
-                })
-              }
-            }
-          })
+
+
+          this.userCustomerRoleSvc.updateAcceses(this.userRoleId(), data).subscribe(this.successResponse)
         }
 
 
 
     })
+
+  }
+
+
+  async onDelete(){
+    let {isConfirmed} = await  Swal.fire({
+      icon: 'warning',
+      html: '¿Está seguro de quitar los accesos personalizados? Esto restablecerá los permisos predeterminados.',
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonText: 'No!',
+      confirmButtonText: 'Si!'
+    })
+
+    if(!isConfirmed) return
+
+    let data =   {
+      accesses: null
+    }
+    this.userCustomerRoleSvc.updateAcceses(this.userRoleId(), data).subscribe(this.successResponse)
 
   }
 

@@ -40,6 +40,9 @@
             if (!token) { return; }
 
             let permissions = userCustomerPermissionSvc.userPermissionAdapter();
+            let userRoleData = {
+                codeRole: params.codeRole
+            }
             // Create a new iframe element
             var iframe = document.createElement('iframe');
 
@@ -48,7 +51,7 @@
             iframe.style.border = 'none';
             iframe.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-popups-to-escape-sandbox'
             // Set the src attribute of the iframe
-            let urlClient = `${frontend}?token=${token}&route=${route}&permission=${JSON.stringify({ ...permissions, acciones: $scope.accion || {} })}`
+            let urlClient = `${frontend}?token=${token}&route=${route}&permission=${JSON.stringify({ ...permissions, acciones: $scope.accion || {} })}&userRoleData=${userRoleData}`
             //// Ajuste horizontal
             //let x = parseInt((screen.width - 1200) / 2);
             //// Ajustae vertical

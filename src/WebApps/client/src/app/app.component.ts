@@ -8,7 +8,7 @@ import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '@modules/auth/services/auth.service';
-import { Permission, PermissionStateService } from '@shared/store/permission-state.service';
+import {UserPermission, UserRoleStateService} from "@shared/store/user-role-state.service";
 
 @Component({
   selector: 'app-root',
@@ -20,7 +20,7 @@ import { Permission, PermissionStateService } from '@shared/store/permission-sta
 export class AppComponent implements OnInit {
   title = 'client';
 
-  permissionState = inject(PermissionStateService)
+  userRoleState = inject(UserRoleStateService)
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -36,23 +36,27 @@ export class AppComponent implements OnInit {
     });
 
     this.route.queryParams.subscribe(params => {
-      let { token, route, permission: dataPermission } = params;
+      let { token, route, permission: dataPermission, userRoleData } = params;
 
       if (dataPermission) {
         localStorage.setItem("permisos", dataPermission);
+        localStorage.setItem("userRoleData", JSON.stringify(userRoleData));
         let getPermission = localStorage.getItem("permisos");
-        if (getPermission) {
+        let getUserRoleData = localStorage.getItem("userRoleData");
+        if (getPermission && getUserRoleData) {
           let { acciones } = JSON.parse(getPermission);
+          let permission = JSON.parse(dataPermission);
+          let userRoleData = JSON.parse(getUserRoleData)
 
-          let permission = JSON.parse(dataPermission)
-          let instancePermission = new Permission();
-          this.permissionState.setState({
+          let instancePermission = new UserPermission();
+          this.userRoleState.setState({
             permission: {
               ...instancePermission,
               ...permission
             },
             accion: acciones,
-            acciones: []
+            acciones: [],
+            codeRole:userRoleData.codeRole
           })
 
         }

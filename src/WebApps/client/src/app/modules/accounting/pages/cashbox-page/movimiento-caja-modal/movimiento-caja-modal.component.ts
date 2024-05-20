@@ -6,13 +6,13 @@ import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateMoment } from '@core/utils/format-date-moment';
-import { getPermisosLocal, isValidField } from '@core/utils/utils';
+import { isValidField } from '@core/utils/utils';
 import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ControlCaja } from '@modules/accounting/models/cashbox.model';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { PermissionCashAccounting, PermissionStateService } from '@shared/store/permission-state.service';
+import { PermissionCashAccounting, UserRoleStateService } from '@shared/store/user-role-state.service';
 import { AppModule } from 'src/app/app.module';
 import Swal from 'sweetalert2';
 
@@ -39,7 +39,7 @@ export class MovimientoCajaModalComponent {
   private userPermissionSvc = inject(UserPermissionService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
-  private pS = inject(PermissionStateService)
+  private pS = inject(UserRoleStateService)
 
   dataPermisosCaja: PermissionCashAccounting = {
     cerrarCaja: false,
