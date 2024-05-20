@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Renderer2 } from '@angular/core';
-import { PermissionStateService } from '@shared/store/permission-state.service';
+import { UserRoleStateService } from '@shared/store/user-role-state.service';
 
 @Directive({
   selector: '[appActionDelete]',
@@ -7,7 +7,7 @@ import { PermissionStateService } from '@shared/store/permission-state.service';
 })
 export class ActionDeleteDirective {
 
-  constructor(private el: ElementRef, private renderer: Renderer2, private pS: PermissionStateService) { }
+  constructor(private el: ElementRef, private renderer: Renderer2, private pS: UserRoleStateService) { }
 
   ngOnInit() {
 

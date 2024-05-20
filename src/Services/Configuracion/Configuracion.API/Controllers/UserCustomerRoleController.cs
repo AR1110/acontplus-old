@@ -45,7 +45,7 @@ namespace Configuracion.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+        public async Task<IActionResult> Put(int id, ApiRequest request)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace Configuracion.API.Controllers
                 {
                     {"userRoleId", User.GetUserRoleId() },
                     {"id", id },
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
                 };
                 var response = await _service.UpdateAsync(parameters); 
                 return Ok(response);

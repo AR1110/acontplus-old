@@ -610,14 +610,14 @@
                                 </option>
                             </select>
                         </div>
-                    </div>
+                    </div> 
 
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="">Bodega: <span class="text-danger">*</span> </label>
                             <select class="form-control" ng-model="dataUbicacion.idBodega">
                                 <option ng-value="item.idBodega" ng-repeat="item in bodegas">
-                                    {{item.bodega}}
+                                    {{item.descripcion}}
                                 </option>
                             </select>
                         </div>
@@ -657,7 +657,7 @@
                                     <label for="">Bodega: <span class="text-danger">*</span> </label>
                                     <select class="form-control" ng-model="dataUbicacion.idBodega">
                                         <option ng-value="item.idBodega" ng-repeat="item in bodegas">
-                                            {{item.bodega}}
+                                            {{item.descripcion}}
                                         </option>
                                     </select>
                                 </div>

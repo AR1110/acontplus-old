@@ -180,3 +180,8 @@ export enum IDENTIFICATION_CODE {
 export enum SEPARATOR_KEY_CODE  {
   SLASH = '|'
 }
+
+
+export  enum CODE_ROLE {
+  ADM = 'ADM'
+}

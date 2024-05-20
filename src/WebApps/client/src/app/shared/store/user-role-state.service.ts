@@ -1,5 +1,7 @@
+
 import { Injectable } from '@angular/core';
 import { GenericStoreBehaviorSubjectService } from '@shared/services/generic-store-behaviorSubject.service';
+import {CODE_ROLE} from "@core/constants/global.constants";
 
 type ActionState = {
   crear: boolean
@@ -18,7 +20,7 @@ export class PermissionCashAccounting  {
   reporteTransaccionPendiente: boolean = false;
   reporteDetalleControlCaja: boolean = false;
 }
-export class Permission  {
+export class UserPermission  {
   // "sales": {
   //   "comprobante": {
   //     "fechaEmision": true,
@@ -56,15 +58,17 @@ export class Permission  {
     reporteDetalleControlCaja: false
   }
 }
-interface PermissionState {
-  permission: Permission
+
+interface UserRoleState {
+  permission: UserPermission
   accion: ActionState;
-  acciones: any[]
+  acciones: any[],
+  codeRole: CODE_ROLE.ADM
 }
 @Injectable({
   providedIn: 'root'
 })
-export class PermissionStateService extends GenericStoreBehaviorSubjectService<PermissionState> {
+export class UserRoleStateService extends GenericStoreBehaviorSubjectService<UserRoleState> {
   constructor() {
     super();
   }

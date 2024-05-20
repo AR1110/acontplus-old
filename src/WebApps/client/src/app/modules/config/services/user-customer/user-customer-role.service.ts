@@ -28,10 +28,9 @@ export class UserCustomerRoleService {
     })
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response: any)=>{
-        let licenciaSubMenu = response.licenciaSubMenu;
-        let accesoSubMenus = response.submenus;
+        let menus = [...response.submenus,...response.licenciaSubMenu, ]
 
-        let licenciaMenusResult = licenciaSubMenu.reduce((acc:any, curr:any) => {
+        let menusResults = menus.reduce((acc:any, curr:any) => {
           // Buscar si ya existe un objeto con el id del menú actual
           let dataExist = acc.find((m:any) => m.id === curr.menuId);
 
@@ -46,7 +45,8 @@ export class UserCustomerRoleService {
                 menuId: curr.menuId,
                 name: curr.name,
                 code: curr.code,
-                actions: []
+                actions: curr.actions && JSON.parse(curr.actions) || [],
+                enabled: curr.enabled
               }]
             });
           } else {
@@ -56,39 +56,8 @@ export class UserCustomerRoleService {
               menuId: curr.menuId,
               name: curr.name,
               code: curr.code,
-              actions: []
-            });
-          }
-
-          return acc; // No olvidar retornar el acumulador en cada iteración
-        }, []);
-
-        let accesoMenusResult = accesoSubMenus.reduce((acc:any, curr:any) => {
-          // Buscar si ya existe un objeto con el id del menú actual
-          let dataExist = acc.find((m:any) => m.id === curr.menuId);
-
-          if (!dataExist) {
-            // Si no existe, crear un nuevo objeto y agregarlo al acumulador
-            acc.push({
-              id: curr.menuId, // Usar curr.menuId aquí para mantener la estructura correcta
-              name: curr.menu,
-              code: curr.codeMenu,
-              subMenus: [{
-                subMenuId: curr.id,
-                menuId: curr.menuId,
-                name: curr.name,
-                code: curr.code,
-                actions: curr.actions
-              }]
-            });
-          } else {
-            // Si existe, agregar el submenú al array subMenus
-            dataExist.subMenus.push({
-              subMenuId: curr.id,
-              menuId: curr.menuId,
-              name: curr.name,
-              code: curr.code,
-              actions: curr.actions
+              actions: curr.actions && JSON.parse(curr.actions) || [],
+              enabled: curr.enabled
             });
           }
 
@@ -96,9 +65,7 @@ export class UserCustomerRoleService {
         }, []);
 
         return {
-          licenciaMenus: licenciaMenusResult,
-          accesoMenus: accesoMenusResult,
-
+          menus:menusResults,
           actions: response.actions
         }
       })
