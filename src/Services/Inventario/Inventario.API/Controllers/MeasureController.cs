@@ -85,5 +85,25 @@ namespace Inventario.API.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"id", id},
+                };
+                var response = await _service.DeleteAsync(parameters);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en Delete Measure " + ex.Message);
+                return BadRequest("Error en Delete Measure " + ex.Message);
+            }
+        }
+
     }
 }
