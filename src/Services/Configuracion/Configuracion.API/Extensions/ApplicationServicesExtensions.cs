@@ -34,6 +34,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IPtoEmisionService, PtoEmisionService>();
 
         services.AddScoped<ICustomLogger, CustomLogger>();
+        services.AddScoped<ITurnoService, TurnoService>();
 
         services.AddAutoMapper(typeof(MappingProfiles));
         return services;

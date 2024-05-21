@@ -1,34 +1,43 @@
 ﻿namespace Configuracion.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class TurnoController : ControllerBase
+public class TurnoController(ITurnoService turnoSvc) : BaseApiController
 {
-    private readonly ICustomLogger _log;
-    private readonly ITurnoService _turnoSvc;
-
-    public TurnoController(ITurnoService turnoSvc, ICustomLogger log)
-    {
-        _turnoSvc = turnoSvc;
-        _log = log;
-    }
-
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", json } };
-            var response = await _turnoSvc.GetAsync(parameters);
-            if (response == null) { return NoContent(); }
+        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", json } };
+        var response = await turnoSvc.GetAsync(parameters);
+        if (response == null) { return BadRequest("No Data"); }
+        return Ok(response);
+    }
+    [HttpPost("Post")]
+    public async Task<IActionResult> Post([FromBody] Turno data)
+    {
+        int idRol = User.GetUserRoleId();
+        var res = await turnoSvc.CreateTurnoAsync(idRol, data);
+        return Ok(res);
+    }
+    [HttpGet("Get")]
+    public async Task<IActionResult> Get(int pageIndex, int pageSize)
+    {
+        int idRol = User.GetUserRoleId();
+        var res = await turnoSvc.ReadTurnoAsync(idRol, pageIndex, pageSize);
+        return Ok(res);
+    }
 
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error in Get: \n" + ex);
-            return BadRequest();
-        }
+    [HttpPost("Put")]
+    public async Task<IActionResult> Put([FromBody] Turno data)
+    {
+        int idRol = User.GetUserRoleId();
+        var res = await turnoSvc.UpdateTurnoAsync(idRol, data);
+        return Ok(res);
+    }
+    [HttpPost("Delete")]
+    public async Task<IActionResult> Delete(int idTurno)
+    {
+        int idRol = User.GetUserRoleId();
+        var res = await turnoSvc.DeleteTurnoAsync(idRol, idTurno);
+        return Ok(res);
     }
 }
