@@ -333,6 +333,7 @@
 
         $scope.getById = (item) => {
             try {
+                $scope.selected = [];
                 $scope.selected.push(item);
                 docRecibidoSvc
                     .getId(item.idDocumento)
@@ -427,6 +428,7 @@
         }
 
         $scope.putXml = (item) => {
+            $scope.selected = [];
             $scope.selected.push(item);
             docRecibidoSvc
                 .putXml($scope.selected[0].idDocumento)
@@ -442,6 +444,7 @@
                 });
         }
         $scope.askToDelete = (item) => {
+            $scope.selected = [];
             $scope.selected.push(item);
             $scope.itemToDelete = $scope.selected[0];
             Swal.fire({
@@ -471,6 +474,7 @@
         }
 
         $scope.downloadXml = (item) => {
+            $scope.selected = [];
             $scope.selected.push(item);
             let id = $scope.selected[0].idDocumento;
             return docRecibidoSvc.downloadXml(id).then((response) => {
@@ -493,6 +497,7 @@
         }
         $scope.getMergedDocs = (item) => {
             try {
+                $scope.selected = [];
                 $scope.selected.push(item);
                 modalSvc.openModalCustom({
                     controller: [
@@ -1734,31 +1739,6 @@
                     );
                     return;
                 }
-                // let data = {
-                //     idDocumento: $scope.selected[0].idDocumento,
-                //     secuencial: $scope.infoTributaria.secuencial,
-                //     estab: $scope.infoTributaria.estab,
-                //     ptoEmi: $scope.infoTributaria.ptoEmi,
-                //     claveAcceso: $scope.selected[0].claveAcceso,
-                //     fechaEmision: $scope.infoComprobante.fechaEmision,
-                //     codDoc: $scope.infoTributaria.codDoc,
-                //     idSustentoTributario: Number($scope.comprobanteForm.idSustentoTributario),
-                //     idProveedor: Number($scope.idProveedor),
-                //     idCategoriaCompra: Number($scope.comprobanteForm.idCategoria),
-                //     idBodega: Number($scope.comprobanteForm.idBodega),
-                //     idTiempoCredito: Number($scope.comprobanteForm.idTiempoCredito),
-                //     totalSinImpuestos: parseFloat($scope.infoComprobante.totalSinImpuestos),
-                //     totalDescuento: 0.00,// parseFloat($scope.infoComprobante.totalDescuento),
-                //     propina: $scope.infoComprobante.propina,
-                //     importeTotal: parseFloat($scope.infoComprobante.importeTotal),
-                //     observacion: $scope.comprobanteForm.observacion,
-                //     payments: JSON.stringify($scope.payments)
-
-                // }
-                let url = "";
-                url =
-                    "Compra/DocumentoDetalle/" + $scope.selected[0].idDocumento + "/" + 0;
-                //url = _urlService + 'Factura?json=' + JSON.stringify(data)
 
                 docRecibidoSvc
                     .saveDocumentoDetalle($scope.selected[0].idDocumento)
