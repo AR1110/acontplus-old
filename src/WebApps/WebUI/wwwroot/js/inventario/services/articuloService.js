@@ -791,11 +791,15 @@
                 idArticulo: id,
                 tipo: 10,
              })
-            return mS.getData('get', url + 'Get?json=' + json, null,true).then(response=>{
+            return mS.getData('get', url + 'Get?json=' + json, null,true,null,true).then(response=>{
                 let estabsStock = [];
                 if(response.code==="1"){
-                    let [estabs] = JSON.parse(response.payload);
-                    console.log(estabs)
+                    let [estabs] = JSON.parse(response.payload); 
+
+                    estabsStock = estabs.map(val => {
+                        val.warehouses = JSON.parse(val.warehouses);
+                        return val;
+                    });
                     
                 }
                 return estabsStock;
