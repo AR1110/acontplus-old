@@ -1,58 +1,55 @@
-﻿using Configuracion.API.Data;
-using Configuracion.API.Entities;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-using Services.Common.Logs;
+﻿namespace Configuracion.API.Controllers;
 
-namespace Configuracion.API.Controllers
+public class PrinterDocumentController : BaseApiController
 {
-    public class PrinterDocumentController : BaseApiController
+    private readonly ConfigContext _context;
+    private readonly ICustomLogger _log;
+
+    public PrinterDocumentController(ConfigContext context, ICustomLogger log)
     {
-        private readonly ConfigContext _context;
-        private readonly ICustomLogger _log;
-        public PrinterDocumentController(ConfigContext context, ICustomLogger log)
+        _context = context;
+        _log = log;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] PrinterDocument data)
+    {
+        try
         {
-            _context = context;
-            _log = log;
+            data.UserId = User.GetUserId();
+            await _context.PrinterDocuments.AddAsync(data);
+            await _context.SaveChangesAsync();
+            return Ok(new { code = "1", message = "Registrado exitosamente" });
         }
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] PrinterDocument data)
+        catch (Exception ex)
         {
-            try
-            {
-                data.UserId = User.GetUserId();
-                await _context.PrinterDocuments.AddAsync(data);
-                await _context.SaveChangesAsync();
-                return Ok(new { code = "1", message = "Registrado exitosamente" });
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Post: \n" + ex.ToString());
-                return BadRequest(ex.Message);
-            }
+            _log.LogActivity("Error on Post: \n" + ex);
+            return BadRequest(ex.Message);
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] PrinterDocument data)
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] PrinterDocument data)
+    {
+        try
         {
-            try
+            if (id != data.Id)
             {
-                if (id != data.Id)
-                {
-                    return BadRequest("Id Incorrecto");
-                }
-                var document = await _context.PrinterDocuments.FindAsync(id);
-                document.UserId = User.GetUserId();
-                document.Enabled = data.Enabled;
-                document.Copies = data.Copies;
-                _context.Update(document);
-                await _context.SaveChangesAsync();
-                return Ok(new { code = "1", message = "Actualizado exitosamente" });
+                return BadRequest("Id Incorrecto");
             }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Put: \n" + ex.ToString());
-                return BadRequest(ex.Message);
-            }
+
+            var document = await _context.PrinterDocuments.FindAsync(id);
+            document.UserId = User.GetUserId();
+            document.Enabled = data.Enabled;
+            document.Copies = data.Copies;
+            _context.Update(document);
+            await _context.SaveChangesAsync();
+            return Ok(new { code = "1", message = "Actualizado exitosamente" });
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error on Put: \n" + ex);
+            return BadRequest(ex.Message);
         }
     }
 }

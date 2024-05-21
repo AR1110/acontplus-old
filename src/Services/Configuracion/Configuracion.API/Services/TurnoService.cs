@@ -1,29 +1,22 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Utils;
-using Configuracion.API.Interfaces;
+﻿namespace Configuracion.API.Services;
 
-namespace Configuracion.API.Services
+public class TurnoService : ITurnoService
 {
-    public class TurnoService : ITurnoService
+    private readonly IADORepository _repository;
+
+    public TurnoService(IADORepository respository)
     {
-        private IADORepository _repository;
-        public TurnoService(IADORepository respository)
+        _repository = respository;
+    }
+
+    public async Task<string> GetAsync(Dictionary<string, object> parameters)
+    {
+        var dt = await _repository.GetDataTableAsync("Config.Turno_Get", parameters);
+        if (!DataValidation.DataTableIsNull(dt))
         {
-            _repository = respository;
+            return DataConverters.DataTableToJSON(dt);
         }
 
-        public async Task<string> GetAsync(Dictionary<string, object> parameters)
-        {
-            var dt = await _repository.GetDataTableAsync("Config.Turno_Get", parameters);
-            if (!DataValidation.DataTableIsNull(dt))
-            {
-                return DataConverters.DataTableToJSON(dt);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
+        return null;
     }
 }

@@ -1,34 +1,33 @@
-﻿using Common.Core.Utils;
-using Configuracion.API.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-using Services.Common.Logs;
+﻿namespace Configuracion.API.Controllers;
 
-namespace Configuracion.API.Controllers
+public class PrintController : BaseApiController
 {
-    public class PrintController : BaseApiController
+    private readonly ICustomLogger _log;
+    private readonly IPrintService _print;
+
+    public PrintController(ICustomLogger log, IPrintService print)
     {
-        private readonly IPrintService _print;
-        private readonly ICustomLogger _log;
-        public PrintController(ICustomLogger log, IPrintService print)
+        _print = print;
+        _log = log;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        try
         {
-            _print = print;
-            _log = log;
+            var response = await _print.GetAsync(new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            });
+            if (response == null || string.IsNullOrEmpty(response)) { return BadRequest(); }
+
+            return Ok(response);
         }
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+        catch (Exception ex)
         {
-            try
-            {
-                var response = await _print.GetAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest(); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Get: " + json + "\n" + ex.ToString());
-                return BadRequest(ex.Message);
-            }
+            _log.LogActivity("Error on Get: " + json + "\n" + ex);
+            return BadRequest(ex.Message);
         }
     }
 }

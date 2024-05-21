@@ -1,41 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Configuracion.API.Interfaces;
+﻿namespace Configuracion.API.Services;
 
-namespace Configuracion.API.Services
+public class UserCustomerRoleService : IUserCustomerRoleService
 {
-    public class UserCustomerRoleService: IUserCustomerRoleService
+    private readonly IADORepository _repository;
+    private readonly string nameSchema = "Config.UserCustomerRole_";
+
+    public UserCustomerRoleService(IADORepository repository)
     {
-        private readonly IADORepository _repository;
-        private readonly string nameSchema = "Config.UserCustomerRole_";
+        _repository = repository;
+    }
 
-        public UserCustomerRoleService(IADORepository repository)
+    public async Task<object> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters);
+        if (ds.Tables.Count == 0)
         {
-            _repository = repository;
+            return null;
         }
 
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters);
-            if (ds.Tables.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJSON(ds);
-            }
-        }
+        return DataConverters.DataSetToJSON(ds);
+    }
 
-        public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteAsync(nameSchema + "Update", parameters);
-        }
-
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SPExecuteAsync(nameSchema + "Update", parameters);
     }
 }
