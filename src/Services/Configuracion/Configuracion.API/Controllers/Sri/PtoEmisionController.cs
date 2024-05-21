@@ -1,74 +1,60 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Configuracion.API.Interfaces.Sri;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions; 
+﻿namespace Configuracion.API.Controllers.Sri;
 
-namespace Configuracion.API.Controllers.Sri
+[Route("api/[controller]")]
+[ApiController]
+public class PtoEmisionController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PtoEmisionController : ControllerBase
+    private readonly IPtoEmisionService _service;
+
+    public PtoEmisionController(IPtoEmisionService service)
     {
-        private readonly IPtoEmisionService _service; 
+        _service = service;
+    }
 
-        public PtoEmisionController(IPtoEmisionService service)
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            _service = service; 
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await _service.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+        ;
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post(ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        var response = await _service.AddAsync(parameters);
+        return Ok(response);
+    }
 
-            var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-            var response = await _service.GetAsync(parameters);
-            if (response == null) { return NoContent(); };
-            return Ok(response);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Post(ApiRequest data)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        var response = await _service.UpdateAsync(parameters);
+        return Ok(response);
+    }
 
-            var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-            var response = await _service.AddAsync(parameters);
-            return Ok(response);
-
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, ApiRequest data)
-        {
-
-            var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"id", id},
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-            var response = await _service.UpdateAsync(parameters);
-            return Ok(response);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var parameters = new Dictionary<string, object>
-            {
-                {"userRoleId", User.GetUserRoleId()},
-                {"id", id},
-            };
-            var response = await _service.DeleteAsync(parameters);
-            return Ok(response);
-        }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var response = await _service.DeleteAsync(parameters);
+        return Ok(response);
     }
 }

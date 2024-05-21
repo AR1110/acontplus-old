@@ -98,7 +98,7 @@
                 </div>
                 <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
-                        <spna>Stock</spna>
+                        <span>Stock</span>
                         <select class="form-control border-select" ng-model="dataSearch.byStock"
                                 ng-change="searchArticulo()">
                             <option value="">Todos</option>
@@ -189,17 +189,17 @@
                         <tr md-row ng-repeat-start="a in articulos">
                             <td md-cell ng-click="expandDetalle(a)">
                                 <span ng-if="a.expanded">
-                                    <icon class="fas fa-caret-square-down"></icon>
+                                    <i class="fas fa-caret-square-down"></i>
                                 </span>
                                 <span ng-if="!a.expanded">
-                                    <icon class="fas fa-caret-square-right"></icon>
+                                    <i class="fas fa-caret-square-right"></i>
                                 </span>
                             </td>
                             <td md-cell>
                                 <md-menu>
                                     <md-button aria-label="Open demo menu" class="md-icon-button"
                                                ng-click="$mdMenu.open($event)">
-                                        <icon class="mdi mdi-menu"></icon>
+                                        <i class="mdi mdi-menu"></i>
                                     </md-button>
                                     <md-menu-content class="md-dense">
                                         <md-menu-item ng-if="accion.editar">
@@ -225,7 +225,7 @@
                                         <md-menu-item>
                                             <md-button ng-click="updateStockArticle(a)">
                                                 <span md-menu-align-target>
-                                                    <icon class="fas  fas fa-boxes"></icon> Actualizar Stock
+                                                    <i class="fas  fas fa-boxes"></i> Actualizar Stock
                                                 </span>
                                             </md-button>
                                         </md-menu-item>
@@ -233,7 +233,7 @@
                                         <md-menu-item ng-if="accion.kardex">
                                             <md-button view-kardex-btn params="a">
                                                 <span md-menu-align-target>
-                                                    <icon class="fas fa-clipboard-list"></icon> Kardex
+                                                    <i class="fas fa-clipboard-list"></i> Kardex
                                                 </span>
                                             </md-button>
                                         </md-menu-item>
@@ -241,7 +241,7 @@
                                         <md-menu-item ng-if="accion.imagen">
                                             <md-button ng-click="openModalArticuloImagen(a)">
                                                 <span md-menu-align-target>
-                                                    <icon class="ti-image"></icon> Imagenes
+                                                    <i class="ti-image"></i> Imagenes
                                                 </span>
                                             </md-button>
                                         </md-menu-item>
@@ -251,7 +251,7 @@
                                         <md-menu-item>
                                             <md-button btn-articulo-historial-compra params="a" title="Historial Compras">
                                                 <span md-menu-align-target>
-                                                    <icon class="mdi mdi-history"></icon> Hist. Compras
+                                                    <i class="mdi mdi-history"></i> Hist. Compras
                                                 </span>
                                             </md-button>
                                         </md-menu-item>
@@ -276,8 +276,8 @@
                             <td md-cell>{{a.medida}}</td>
                             <td md-cell>{{a.subFamilia}}</td>
                             <td md-cell>
-                                <h6>
-                                    <span ng-class="a.style" estab-stock article="a">
+                                <h6 estab-stock article="a">
+                                    <span ng-class="a.style" >
                                         {{a.stock}}
                                     </span>
                                 </h6>
