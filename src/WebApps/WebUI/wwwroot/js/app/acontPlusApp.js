@@ -266,6 +266,7 @@ function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
         data = null,
         forApi = false,
         externalApi = false,
+        noLoader = false
     ) {
         if (externalApi) {
             return fetch(url, {
@@ -283,6 +284,7 @@ function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
             method: method,
             url: forApi ? _token.urlGateway + "/gateway/" + url : url,
             data: data,
+            noLoader,
         }).then((response) => {
             return response.data;
         });
