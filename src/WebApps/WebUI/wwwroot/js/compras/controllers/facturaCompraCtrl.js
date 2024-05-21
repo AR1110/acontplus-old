@@ -1320,11 +1320,10 @@
                 return;
             }
 
-            //if (!fS.isValidField($scope.data.idCategoriaCompra)) {
-            //    tS.toastr("warning", "Seleccione la Categoria!");
-            //    return;
-            //}
-
+            if (!fS.isValidField($scope.data.subcategoryId)) {
+                tS.toastr("warning", "Seleccione la subcategoría!");
+                return;
+            }
 
 
             if (!fS.isValidField($scope.proveedor.idProveedor)) {
