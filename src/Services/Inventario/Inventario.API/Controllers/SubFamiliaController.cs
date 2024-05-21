@@ -1,8 +1,10 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Inventario.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Services.Common.Extensions;
 using Services.Common.Logs;
 
@@ -146,5 +148,31 @@ namespace Inventario.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        //[HttpGet("ListForSelect")]
+        //public async Task<IActionResult> ListForSelect(string json)
+        //{
+        //    ApiResponse _response = new ApiResponse();
+        //    DbAccess _db = new DbAccess(_configuration);
+        //    try
+        //    {
+        //        await _db.SPExecute("Almacen.SubFamilia_For_Select");
+        //        _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+        //        _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+        //        _response = _db.GetDataTableAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        _log.LogActivity("Error al listar SubFamilias para Select: \n" + ex.ToString());
+        //        _response.Create(code: "0", message: "Error al listar SubFamilias para Select");
+        //    }
+        //    finally
+        //    {
+        //        _db.Close();
+        //    }
+        //    return Ok(_response);
+        //}
     }
 }
