@@ -1,33 +1,12 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-
-namespace WebUI.Controllers.Importacion
+﻿namespace Configuracion.API.Controllers
 {
-    public class ImportacionController : Controller
+    public class ImportacionController : BaseApiController
     {
-        // GET: Articulo
         private readonly IConfiguration _configuration;
-        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-
-
-        ApiResponse _gr = new();
 
         public ImportacionController(IConfiguration configuration)
         {
             _configuration = configuration;
-
-
-
-
-        }
-
-
-        public IActionResult Index()
-        {
-            return View();
         }
 
         [HttpGet]
