@@ -21,7 +21,7 @@ public class UsuarioController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("App.Usuario_Get");
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
@@ -71,7 +71,7 @@ public class UsuarioController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("App.Usuario_Insert");
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
@@ -95,7 +95,7 @@ public class UsuarioController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("App.Usuario_Update");
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));

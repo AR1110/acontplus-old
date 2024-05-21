@@ -21,7 +21,7 @@ public class ReporteController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Config.Reporte_Get");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -46,7 +46,7 @@ public class ReporteController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Config.Reporte_Insert");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("codigo", data.codigo);
@@ -75,7 +75,7 @@ public class ReporteController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Config.Reporte_Update");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);
@@ -106,7 +106,7 @@ public class ReporteController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Config.Reporte_Delete");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);

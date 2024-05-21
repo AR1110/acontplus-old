@@ -21,7 +21,7 @@ public class EstablecimientoController : BaseApiController
         {
             await _db.SPExecute("Sri.Establecimiento_Get");
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
         }
@@ -97,7 +97,7 @@ public class EstablecimientoController : BaseApiController
         {
             await _db.SPExecute("Sri.Establecimiento_Insert");
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
         }
@@ -124,7 +124,7 @@ public class EstablecimientoController : BaseApiController
         {
             await _db.SPExecute("Sri.Establecimiento_Update");
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
@@ -178,7 +178,7 @@ public class EstablecimientoController : BaseApiController
         {
             await _db.SPExecute("Sri.Establecimiento_Delete");
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDataTableAsync();
         }

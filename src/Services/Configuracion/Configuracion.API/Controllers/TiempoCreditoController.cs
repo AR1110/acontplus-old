@@ -22,7 +22,7 @@ public class TiempoCreditoController : ControllerBase
         {
             await _db.SPExecute("Config.TiempoCredito_Get");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", json);
             _response = _db.GetDataTableAsync();
         }
@@ -48,7 +48,7 @@ public class TiempoCreditoController : ControllerBase
         {
             await _db.SPExecute("Config.TiempoCredito_Insert");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", json);
             _response = _db.GetDefault();
         }
@@ -74,7 +74,7 @@ public class TiempoCreditoController : ControllerBase
         {
             await _db.SPExecute("Config.TiempoCredito_Update");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", json);
 
@@ -102,7 +102,7 @@ public class TiempoCreditoController : ControllerBase
         {
             await _db.SPExecute("Config.TiempoCredito_Delete");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
 
             _response = _db.GetDefault();

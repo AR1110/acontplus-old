@@ -22,7 +22,7 @@ public class FirmaElectronicaController : ControllerBase
         {
             await _db.SPExecute("Config.FirmaElectronica_Get");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
         }
@@ -46,7 +46,7 @@ public class FirmaElectronicaController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = User.GetUserRoleId();
             if (file.ContentType != "application/x-pkcs12")
             {
                 _response.Create("0", "Formato de archivo no soportado");
@@ -65,7 +65,7 @@ public class FirmaElectronicaController : ControllerBase
                 var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
                 await _db.SPExecute("Config.FirmaElectronica_Insert");
                 _db.AddDynamicParam("idUsuarioRol",
-                    Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                    User.GetUserRoleId());
                 _db.AddDynamicParam("contrasenia", data.contrasenia);
                 _db.AddDynamicParam("fileName", signFile.FileName);
                 _db.AddDynamicParam("firma", signFile.Content);
@@ -99,7 +99,7 @@ public class FirmaElectronicaController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = User.GetUserRoleId();
             if (file.ContentType != "application/x-pkcs12")
             {
                 _response.Create("0", "Formato de archivo no soportado");
@@ -117,7 +117,7 @@ public class FirmaElectronicaController : ControllerBase
             {
                 await _db.SPExecute("Config.FirmaElectronica_Update_Signature");
                 _db.AddDynamicParam("idUsuarioRol",
-                    Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                    User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("fileName", signFile.FileName);
                 _db.AddDynamicParam("firma", signFile.Content);
@@ -150,12 +150,12 @@ public class FirmaElectronicaController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = User.GetUserRoleId();
 
             var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
             await _db.SPExecute("Config.FirmaElectronica_Update");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("idFirmaElectronica", data.idFirmaElectronica);
             _db.AddDynamicParam("contrasenia", data.contrasenia);
             _db.AddDynamicParam("fechaCaducidad", data.fechaCaducidad);

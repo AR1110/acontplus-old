@@ -20,7 +20,7 @@ public class WhatsappMessageController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Config.WhatsAppMessage_Insert");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
@@ -47,7 +47,7 @@ public class WhatsappMessageController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Config.WhatsAppMessage_Insert_v2");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));

@@ -21,7 +21,7 @@ public class EntidadController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("App.aspEntidad_Get");
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
@@ -45,7 +45,7 @@ public class EntidadController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("App.aspEntidad_Insert");
             _db.AddDynamicParam("ruc", data.ruc);
             _db.AddDynamicParam("razonSocial", data.razonSocial);
@@ -74,7 +74,7 @@ public class EntidadController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("App.aspEntidad_Update");
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("ruc", data.ruc);
@@ -105,7 +105,7 @@ public class EntidadController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("App.aspEntidad_Delete");
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
