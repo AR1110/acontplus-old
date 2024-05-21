@@ -179,7 +179,7 @@ export class EstablishmentPageComponent {
     this.estabSvc.getId(id).subscribe(response => {
       this.puntosEmision = response.puntosEmision;
       this.data = response.data;
-     
+
     })
 
 
