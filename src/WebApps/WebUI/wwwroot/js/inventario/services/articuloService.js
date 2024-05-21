@@ -786,6 +786,22 @@
 
 
 
+        service.getDataStock = function(id){
+             let json = JSON.stringify({
+                idArticulo: id,
+                tipo: 10,
+             })
+            return mS.getData('get', url + 'Get?json=' + json, null, true).then(response=>{
+                let estabsStock = [];
+                if(response.code==="1"){
+                    let [estabs] = JSON.parse(response.payload);
+                    console.log(estabs)
+                    
+                }
+            })
+        }
+
+
         return service;
 
     }])

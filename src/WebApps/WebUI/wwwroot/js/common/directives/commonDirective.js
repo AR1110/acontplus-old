@@ -353,13 +353,14 @@
                                             </div>   
                                              `;
 
-                        articuloSvc.getId(scope.article.idArticulo).then(response => {
-                            const results = JSON.parse(response.payload) || [];
+                        articuloSvc.getDataStock(scope.article.idArticulo).then(response => {
+                            console.log(response)
+                            // const results = JSON.parse(response.payload) || [];
 
-                            scope.branchs = results[4].map(val => {
-                                val.warehouses = JSON.parse(val.warehouses)
-                                return val;
-                            })
+                            // scope.branchs = results[4].map(val => {
+                            //     val.warehouses = JSON.parse(val.warehouses)
+                            //     return val;
+                            // })
 
                         })
 
@@ -380,12 +381,12 @@
                 $(element).popover(popoverOptions);
 
            
-                element.on('mouseover', function () {
+                element.on('mouseenter', function () {
                     $(element).popover('show');
                 });
 
              
-                $(document).on('mouseover', function (event) {
+                $(document).on('mouseleave', function (event) {
                     if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
                         $(element).popover('hide');
                     }
