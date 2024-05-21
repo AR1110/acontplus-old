@@ -212,7 +212,7 @@ class AlmacenImportacionCtrl{
                     }
                 })
     
-                this._mS.getData('post', '/Importacion/Post?codImportacion=' + this.dataModulo.codigo, data).then(
+                this._mS.getData('post', 'Config/Importacion/Post?codImportacion=' + this.dataModulo.codigo, data).then(
                     response=>{
                         if(response.code==="0"){                        
                             Swal.fire({
