@@ -17,7 +17,7 @@ app.constant('nombreModalCommon', {
             ME: 'SendMailCtrl'
         },
         templates: {
-            ME: 'Shared/Common/_ModalSendMail.cshtml',
+            ME: '~/Pages/Common/Shared/_ModalSendMail.cshtml',
         },
     },
     KEY_REQUEST_MODAL: {
@@ -119,7 +119,7 @@ app.constant('nombreModalFactElect', {
     DATO_ADICIONAL_ARTICULO: {
         fileCtrl: '/js/factElect/modals/modalDatoAdicionalArticuloCtrl.min.js' + CHANGE_VERSION(),
         controller: 'ModalDatoAdicionalArticuloCtrl',
-        template: '~/Views/Shared/_ModalDatoAdicionalArticulo.cshtml'
+        template: '~/Pages/Compras/Shared/_ModalDatoAdicionalArticulo.cshtml'
     },
     FACTURA: {
         fileCtrl: '/js/modal/ventas/modalFacturaCtrl.min.js' + CHANGE_VERSION(),
@@ -352,10 +352,10 @@ app.constant('nombreModal', {
         MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML: '_ModalInfoAdicionalTipoDoc.cshtml',
 
         MODAL_MODULO_IMPORTACION_CTRL: 'common/modalModuloImportacionCtrl.js' + CHANGE_VERSION(),
-        MODAL_MODULO_IMPORTACION_CSHTML: 'Common/_ModalModuloImportacion.cshtml',
+        MODAL_MODULO_IMPORTACION_CSHTML: '~/Pages/Common/Shared/_ModalModuloImportacion.cshtml',
 
         MODAL_COMPROBANTE_ERROR_CTRL: 'common/modalComprobanteErrorCtrl.js' + CHANGE_VERSION(),
-        MODAL_COMPROBANTE_ERROR_CSHTML: 'Common/_ModalComprobanteError.cshtml',
+        MODAL_COMPROBANTE_ERROR_CSHTML: '~/Pages/Common/Shared/_ModalComprobanteError.cshtml',
 
         MODAL_SEND_MAIL_CTRL: '/js/common/modals/modalMailCtrl.js' + CHANGE_VERSION(),
         MODAL_STATUS_MAIL_CSHTML: '~/Pages/FactElect/DocumentoElectronico/Shared/_ModalStatusEmail.cshtml',
@@ -365,7 +365,7 @@ app.constant('nombreModal', {
 
         MODAL_INFO_ADICIONAL_DOC: {
             controller: 'InfoAdicionalTipoDocCtrl',
-            template: 'Shared/Common/_ModalInfoAdicionalTipoDoc.cshtml'
+            template: '~/Pages/Common/Shared/_ModalInfoAdicionalTipoDoc.cshtml'
         }
     },  
     financiera: {
@@ -428,7 +428,7 @@ app.constant('nombreModal', {
         MODAL_DATO_ADICIONAL_ARTICULO: {
             fileCtrl: '/js/compras/modals/modalDatoAdicionalArticulo.js' + CHANGE_VERSION(),
             controller: 'ModalDatoAdicionalArticuloCtrl',
-            template: '~/Areas/Compra/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml'
+            template: '~/Pages/Compras/Shared/_ModalDatoAdicionalArticulo.cshtml'
         }
     },
     compra_no_habitual: {
