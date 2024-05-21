@@ -180,17 +180,6 @@ export class CommonService {
         })
     }
 
-    //En uso en Aprob. Documento 
-    getDataFormEstabAsig(json = {}) {
-        return this.mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response => {
-
-            if (response.code === '0') {
-                throw response
-            }
-            return JSON.parse(response.payload)
-        })
-    }
-
     removeAccents(str) {
         str = str || '';
         //return str.replace(/[^a-z0-9]/gi, '');
