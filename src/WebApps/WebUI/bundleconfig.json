@@ -712,5 +712,17 @@
     "inputFiles": [
       "wwwroot/js/compras/controllers/compraNoHabitualCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/admin/turnoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/admin/turnoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/common/modalModuloImportacionCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/common/modalModuloImportacionCtrl.js"
+    ]
   }
 ]

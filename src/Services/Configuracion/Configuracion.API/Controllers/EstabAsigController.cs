@@ -1,99 +1,79 @@
-﻿using Common.Core.Models;
-using Configuracion.API.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-using Services.Common.Logs;
+﻿namespace Configuracion.API.Controllers;
 
-namespace Configuracion.API.Controllers
+public class EstabAsigController : BaseApiController
 {
-    public class EstabAsigController : BaseApiController
+    private readonly IEstablecimientoAsignacionService _estab;
+    private readonly ICustomLogger _log;
+
+    public EstabAsigController(IEstablecimientoAsignacionService service, ICustomLogger log)
     {
-        private readonly IEstablecimientoAsignacionService _estab;
-        private readonly ICustomLogger _log;
-        public EstabAsigController(IEstablecimientoAsignacionService service, ICustomLogger log)
+        _estab = service;
+        _log = log;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        try
         {
-            _estab = service;
-            _log = log;
-        }
+            var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", json } };
+            var response = await _estab.GetAsync(parameters);
+            if (response == null) { return NoContent(); }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+            return Ok(response);
+        }
+        catch (Exception ex)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"idRol", User.GetUserRoleId() },
-                    {"json", json }
-                };
-                var response = await _estab.GetAsync(parameters);
-                if (response == null) { return NoContent(); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error in Get: \n" + ex.ToString());
-                return BadRequest();
-            }
+            _log.LogActivity("Error in Get: \n" + ex);
+            return BadRequest();
         }
+    }
 
-        [HttpGet("GetDataForm")]
-        public async Task<IActionResult> GetDataForm(string json)
+    [HttpGet("GetDataForm")]
+    public async Task<IActionResult> GetDataForm(string json)
+    {
+        try
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"idRol", User.GetUserRoleId() },
-                    {"json", json }
-                };
-                var response = await _estab.GetDataFormAsync(parameters);
-                if (response == null) { return NoContent(); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
+            var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", json } };
+            var response = await _estab.GetDataFormAsync(parameters);
+            if (response == null) { return NoContent(); }
 
-                _log.LogActivity("Error in Get Data Form: \n" + ex.ToString());
-                return BadRequest();
-            }
+            return Ok(response);
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Insert([FromBody] ApiRequest request)
+        catch (Exception ex)
         {
-            request.UserRoleId = User.GetUserRoleId();
-            try
-            {
-                var response = await _estab.AddAsync(request);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-
-                return BadRequest(ex.Message);
-            }
+            _log.LogActivity("Error in Get Data Form: \n" + ex);
+            return BadRequest();
         }
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id)
+    [HttpPost]
+    public async Task<IActionResult> Insert([FromBody] ApiRequest request)
+    {
+        request.UserRoleId = User.GetUserRoleId();
+        try
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                    {"userRoleId",  User.GetUserRoleId()},
-                    {"id", id}
-                };
-                var response = await _estab.UpdateAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-
-                return BadRequest(ex.Message);
-            }
+            var response = await _estab.AddAsync(request);
+            return Ok(response);
         }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id)
+    {
+        try
+        {
+            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+            var response = await _estab.UpdateAsync(parameters);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }

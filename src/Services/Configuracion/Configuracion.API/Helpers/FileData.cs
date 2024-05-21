@@ -1,39 +1,43 @@
-﻿namespace Configuracion.API.Helpers
+﻿namespace Configuracion.API.Helpers;
+
+public static class FileData
 {
-    public static class FileData
+    public static byte[] GetFileByte(IFormFile file)
     {
-        public static byte[] GetFileByte(IFormFile file)
+        byte[] fileBytes = null;
+        using (var ms = new MemoryStream())
         {
-            byte[] fileBytes = null;
-            using (var ms = new MemoryStream())
-            {
-                file.CopyTo(ms);
-                fileBytes = ms.ToArray();
-            }
-            return fileBytes;
+            file.CopyTo(ms);
+            fileBytes = ms.ToArray();
         }
-        public static bool SaveFile(string path, IFormFile file)
+
+        return fileBytes;
+    }
+
+    public static bool SaveFile(string path, IFormFile file)
+    {
+        bool result;
+        try
         {
-            bool result;
-            try
+            if (!Directory.Exists(path))
             {
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-                var filePath = Path.Combine(path, file.FileName);
-                using (var stream = File.Create(filePath))
-                {
-                    file.CopyTo(stream);
-                }
-                result = true;
+                Directory.CreateDirectory(path);
             }
-            catch (Exception ex)
+
+            var filePath = Path.Combine(path, file.FileName);
+            using (var stream = File.Create(filePath))
             {
-                _ = ex.Message;
-                result = false;
+                file.CopyTo(stream);
             }
-            return result;
+
+            result = true;
         }
+        catch (Exception ex)
+        {
+            _ = ex.Message;
+            result = false;
+        }
+
+        return result;
     }
 }

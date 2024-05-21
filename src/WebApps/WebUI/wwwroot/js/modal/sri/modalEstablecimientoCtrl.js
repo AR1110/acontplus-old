@@ -457,7 +457,7 @@ class ModalEstablecimientoConfigCtrl extends ModalBaseCtrl {
             allowOutsideClick: false
         }).then((result) => {
             if (result.isConfirmed) {
-                this._mS.getData('delete', '/PtoEmision/Delete?id=' + item.idPuntoEmision).then(response => {
+                this._mS.getData('delete', '/PtoEmision/' + item.idPuntoEmision).then(response => {
                     if (response.code == "0") {
                         this._tS.toastr('warning', response.message, response.titleSms);;
                     }
@@ -535,10 +535,10 @@ class ModalPtoEmisionCtrl extends ModalBaseCtrl {
             }
 
 
-            let url = this.tipoRegistro === 'N' ? '/PtoEmision/Insert' : '/PtoEmision/Update?id=' + this.data.idPuntoEmision;
+            let url = this.tipoRegistro === 'N' ? '/PtoEmision/' : '/PtoEmision/' + this.data.idPuntoEmision;
             let method = this.tipoRegistro === 'N' ? 'post' : 'put';
             showLoader();
-            this._mS.getData(method, url, this.data).then(response => {
+            this._mS.getData(method, url, this.data, null, true).then(response => {
                 if (response.code == "0") {
                     hideLoader();
                     this._tS.toastr('warning', response.message, response.titleSms);

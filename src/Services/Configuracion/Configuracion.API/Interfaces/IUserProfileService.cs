@@ -1,10 +1,7 @@
-﻿using Common.Core.Models;
+﻿namespace Configuracion.API.Interfaces;
 
-namespace Configuracion.API.Interfaces
+public interface IUserProfileService
 {
-    public interface IUserProfileService
-    {
-        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-        Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
-    }
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
 }

@@ -1,43 +1,43 @@
-﻿using Configuracion.API.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-using Services.Common.Logs;
+﻿namespace Configuracion.API.Controllers;
 
-namespace Configuracion.API.Controllers
+public class TurnoController(ITurnoService turnoSvc) : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TurnoController : ControllerBase
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly ITurnoService _turnoSvc;
-        private readonly ICustomLogger _log;
-        public TurnoController(ITurnoService turnoSvc, ICustomLogger log)
-        {
-            _turnoSvc = turnoSvc;
-            _log = log;
-        }
+        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", json } };
+        var response = await turnoSvc.GetAsync(parameters);
+        if (response == null) { return BadRequest("No Data"); }
+        return Ok(response);
+    }
+    [HttpPost("Post")]
+    public async Task<IActionResult> Post([FromBody] Turno data)
+    {
+        int idRol = User.GetUserRoleId();
+        var res = await turnoSvc.CreateTurnoAsync(idRol, data);
+        return Ok(res);
+    }
+    [HttpGet("Get")]
+    public async Task<IActionResult> Get(int pageIndex, int pageSize)
+    {
+        int idRol = User.GetUserRoleId();
+        var res = await turnoSvc.ReadTurnoAsync(idRol, pageIndex, pageSize);
+        return Ok(res);
+    }
 
-
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"idRol", User.GetUserRoleId() },
-                    {"json", json }
-                };
-                var response = await _turnoSvc.GetAsync(parameters);
-                if (response == null) { return NoContent(); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error in Get: \n" + ex.ToString());
-                return BadRequest();
-            }
-        }
+    [HttpPost("Put")]
+    public async Task<IActionResult> Put([FromBody] Turno data)
+    {
+        int idRol = User.GetUserRoleId();
+        var res = await turnoSvc.UpdateTurnoAsync(idRol, data);
+        return Ok(res);
+    }
+    [HttpPost("Delete")]
+    public async Task<IActionResult> Delete(int idTurno)
+    {
+        int idRol = User.GetUserRoleId();
+        var res = await turnoSvc.DeleteTurnoAsync(idRol, idTurno);
+        return Ok(res);
     }
 }

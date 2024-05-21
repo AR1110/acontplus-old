@@ -1,9 +1,6 @@
-﻿using Common.Core.Models;
+﻿namespace Configuracion.API.Interfaces;
 
-namespace Configuracion.API.Interfaces
+public interface IEstadoDocumentoService
 {
-    public interface IEstadoDocumentoService
-    {
-        Task<ApiResponse> GetAsync(string json);
-    }
+    Task<ApiResponse> GetAsync(string json);
 }

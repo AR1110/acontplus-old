@@ -1,4 +1,10 @@
-﻿
+﻿@page
+@model WebUI.Pages.Config.Turno.IndexModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
 <div ng-controller="turnoCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
@@ -45,23 +51,23 @@
                     <md-table-container>
                         <table md-table>
                             <thead md-head md-order="query.order" md-on-reorder="turnos">
-                                <tr md-row>                                    
+                                <tr md-row>
                                     <th md-column>N°</th>
                                     <th md-column md-order-by="turno.descripcion"><span>Descripción</span></th>
-                                    <th md-column>Estado</th>                                    
+                                    <th md-column>Estado</th>
                                     <th md-column>Op.</th>
                                 </tr>
                             </thead>
                             <tbody md-body>
-                                <tr md-row ng-repeat="t in turnos|filter:buscar  | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">                                   
+                                <tr md-row ng-repeat="t in turnos|filter:buscar  | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
                                     <td md-cell>{{$index+1}}</td>
                                     <td md-cell>{{t.turno.descripcion}}</td>
-                                    <td md-cell ng-bind-html="t.turno.estado | estadoPrimario"></td>  
+                                    <td md-cell ng-bind-html="t.turno.estado | estadoPrimario"></td>
                                     <td md-cell>
                                         <button class="btn btn-info btn-xs" ng-click="editarTurno(t)"><i class="ti-pencil"></i></button>
-                                        <button class="btn btn-danger btn-xs"  ng-click="askToDelete(t)"><i class="ti-trash"></i></button>                                        
+                                        <button class="btn btn-danger btn-xs" ng-click="askToDelete(t)"><i class="ti-trash"></i></button>
                                         <button class="btn btn-secondary btn-xs" uib-popover-template="'viewPopoverTurno.html'" popover-trigger="'mouseenter'" popover-placement="top" href="javascript:void(0)" ng-mouseover="viewHorarioPoper(t)"><i class="ti-menu"></i></button>
-                                    </td>                                  
+                                    </td>
                                 </tr>
                                 <tr md-row ng-show="turnos.length==0">
                                     <td md-cell colspan="6" class="text-center">No hay registros disponibles en esta tabla.</td>
@@ -74,14 +80,9 @@
         </div>
     </div>
 
+    <partial name="_ModalAddUpdateTurno" />
 
 
-
-    
-
-    <partial name="_ModalAddUpdateTurno"/>
-
-    
 </div>
 
 @section Scripts{

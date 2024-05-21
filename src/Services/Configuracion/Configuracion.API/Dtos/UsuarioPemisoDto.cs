@@ -1,7 +1,6 @@
-﻿namespace Configuracion.API.Dtos
+﻿namespace Configuracion.API.Dtos;
+
+public class UsuarioPemisoDto
 {
-    public class UsuarioPemisoDto
-    {
-        public string jsonPermission { get; set; }
-    }
+    public string jsonPermission { get; set; }
 }

@@ -29,7 +29,7 @@
 
         //Read Turno
         $scope.getTurnos = function() {
-            mS.getData('get', '/Turno/Get?pageIndex=' + $scope.pageIndex + '&pageSize=' + $scope.pageSize).then(response => {
+            mS.getData('get', 'Config/Turno/Get?pageIndex=' + $scope.pageIndex + '&pageSize=' + $scope.pageSize, null, true).then(response => {
                 if (response.id == 0) {
                     toast.toastr('warning', response.message, response.titleSms);
                     return;
@@ -52,7 +52,7 @@
     
 
         $scope.getDayAll = function() {
-            mS.getData('get', '/Horario/ListDia').then(response => {
+            mS.getData('get', 'Config/Horario/GetDays', null, true).then(response => {
                 if (response.id == "0") {
                     toast.toastr('warning', response.message, response.titleSms);
                     return
@@ -159,9 +159,9 @@
             });
 
             $scope.data.horario = formatTimes;
-            let url = tipoRegistro == 1 ? '/Turno/Post' : '/Turno/Put';
+            let url = tipoRegistro == 1 ? 'Config/Turno/Post' : 'Config/Turno/Put';
 
-            mS.getData('post', url, $scope.data).then(response => {
+            mS.getData('post', url, $scope.data, true).then(response => {
                 if (response.id == "0") {
                     toast.toastr('warning', response.message, response.titleSms);
                     return
@@ -176,7 +176,7 @@
 
 
         $scope.editarTurno = function(data){           
-            mS.getData('get', '/Horario/GetByIdTurno?idTurno=' + data.turno.idTurno).then(response => {
+            mS.getData('get', 'Config/Horario/GetByTurno/' + data.turno.idTurno, null, true).then(response => {
                 if (response.id == "0") {
                     toast.toastr('warning', response.message, response.titleSms);
                     return
@@ -191,7 +191,7 @@
         };
 
         $scope.viewHorarioPoper = function(data) {
-            mS.getData('get', '/Horario/GetByIdTurno?idTurno=' + data.turno.idTurno).then(response => {
+            mS.getData('get', 'Config/Horario/GetByTurno/' + data.turno.idTurno, null, true).then(response => {
                 if (response.id == "0") {
                     toast.toastr('warning', response.message, response.titleSms);
                     return
@@ -219,7 +219,7 @@
 
         //Delete Turno 
         $scope.delete = function(item) {
-            mS.getData('post', '/Turno/Delete?idTurno=' + item.turno.idTurno).then(response => {
+            mS.getData('post', 'Config/Turno/Delete/' + item.turno.idTurno, null, true).then(response => {
                 if (response.id == "0") {
                     toast.toastr('warning', response.message, response.titleSms);
                     return

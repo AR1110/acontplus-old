@@ -12,16 +12,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Services\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Services\Common\Services.Common\Services.Common.csproj" />
-  </ItemGroup>
-
-
   <!--<ItemGroup>
     <Content Update="wwwroot\**\*.css" CopyToPublishDirectory="never" />
     <Content Update="wwwroot\**\*.min.css" CopyToPublishDirectory="always" />
