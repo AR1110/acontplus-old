@@ -1,9 +1,4 @@
-﻿using Autofac;
-using Common.Core.Interfaces;
-using Common.Infrastructure.Data;
-using Common.Infrastructure.Repository;
-
-namespace Common.API.Extensions;
+﻿namespace Common.API.Extensions;
 
 public class AutoFacModule : Module
 {

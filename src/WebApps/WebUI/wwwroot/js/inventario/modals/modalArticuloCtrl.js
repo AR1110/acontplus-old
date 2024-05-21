@@ -350,6 +350,7 @@ function modalArticuloCtrl(
                     let dataEstab = $scope.establecimientos.find(
                         (estab) => estab.defaultEstab === true
                     );
+                    console.log($scope.establecimientos)
                     $scope.bodegas = dataEstab.bodegas;
                     $scope.dataUbicacion.idEstablecimiento = dataEstab.idEstablecimiento;
                     if ($scope.bodegas.length > 0) {

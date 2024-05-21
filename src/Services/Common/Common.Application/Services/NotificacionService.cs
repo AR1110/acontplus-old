@@ -1,17 +1,13 @@
 ﻿using Common.Core.Interfaces;
+using Common.Core.Models;
 
 namespace Common.Application.Services
 {
-    public class NotificacionService : INotificacionService
+    public class NotificacionService(IADORepository repository) : INotificacionService
     {
-        private readonly IADORepository _repository;
-        public NotificacionService(IADORepository repository)
+        public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
-            _repository = repository;
-        }
-        public async Task<string> AddAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteDeprecatedAsync("App.Notificacion_Serv_Insert", parameters);
+            return await repository.SPExecuteAsync("App.Notificacion_Serv_Insert", parameters);
         }
     }
 }

@@ -362,6 +362,7 @@
         $scope.puntosEmision = [];
         $scope.bodegas = [];
         $scope.tiemposCredito = [];
+        $scope.subcategories = [];
 
         $scope.data = {
             idBodega: 0,
@@ -444,7 +445,8 @@
                     estabs,
                     decimal,
                     tarifasImpuesto,
-                    tiemposCredito
+                    tiemposCredito,
+                    subcategories,
                 } = mainDataForm;
 
                 $scope.establecimientos = estabs;
@@ -453,6 +455,7 @@
                 $scope.decimal = decimal;
                 $scope.tarifasImpuesto = tarifasImpuesto;
                 $scope.tiemposCredito = tiemposCredito;
+                $scope.subcategories = subcategories;
 
 
                 if (!("comprobante" in params && params.comprobante.idLiquidacionCompra > 0)) {

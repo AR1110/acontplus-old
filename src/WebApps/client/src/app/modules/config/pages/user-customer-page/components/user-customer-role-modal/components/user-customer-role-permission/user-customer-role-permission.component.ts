@@ -5,10 +5,10 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { isApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
-import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerRole } from "@modules/config/models/user-customer/user-customer-role.model";
 import { UserCustomerPermissionService } from "@modules/config/services/user-customer/user-customer-permission.service";
+import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/user-customer-role-state.service";
 
 
 @Component({
@@ -27,9 +27,11 @@ import { UserCustomerPermissionService } from "@modules/config/services/user-cus
 })
 export class UserCustomerRolePermissionComponent {
 
+  state = inject(UserCustomerRoleStateService)
+  userRoleId = this.state.select("userRoleId");
+
   private readonly userCustomerPermissionSvc = inject(UserCustomerPermissionService);
   private readonly tS = inject(ToasterService);
-  idUsuarioRol = 0;
 
   usersCustomerAdmin: UserCustomerRole[] = [];
   userCustomerAdminSelected = new FormControl([]);
@@ -57,25 +59,16 @@ export class UserCustomerRolePermissionComponent {
   permissionSaleDetailKey:string[] =[];
   permissionSaleAdditionalKey: string[] = [];
 
-  getUserPermissions(idUsuarioRol: number){
-    this.idUsuarioRol = idUsuarioRol;
+  getUserPermissions(){
     let params = {
-      idUsuarioRol
+      idUsuarioRol: this.userRoleId()
     }
-    showLoader();
-    this.userCustomerPermissionSvc.getAll(params).subscribe({
-      next:(response:any)=> {
-        hideLoader();
+    this.userCustomerPermissionSvc.getAll(params).subscribe((response:any)=> {
         this.usersCustomerAdmin = response.usersCustomerAdmin;
         this.mainPermission = response;
         this.setDataPermissionSale();
         this.setDataPermissionArticulo();
         this.setDataPermissionCashBox()
-      },
-      error(err) {
-          hideLoader();
-          console.log(err)
-      },
     })
   }
 
@@ -106,8 +99,7 @@ export class UserCustomerRolePermissionComponent {
   }
 
   ngOnInit(){
-    // this.updateAllCompleteSaleComprobante();
-    // this.updateAllCompleteSaleDetail();
+    this.getUserPermissions()
   }
 
 
@@ -256,11 +248,7 @@ export class UserCustomerRolePermissionComponent {
         dataPermissions
       }
 
-
-      showLoader();
-      this.userCustomerPermissionSvc.put(data).subscribe({
-        next: (response)=> {
-          hideLoader();
+      this.userCustomerPermissionSvc.put(data).subscribe( (response)=> {
             if(isApiResponse(response)){
               if(response.code==='0'){
                 this.tS.toastr({
@@ -273,14 +261,9 @@ export class UserCustomerRolePermissionComponent {
                   type: 'success',
                   message: response.message
                 })
-                this.getUserPermissions(this.idUsuarioRol)
+                this.getUserPermissions()
               }
             }
-        },
-        error(err) {
-            hideLoader();
-            console.log(err)
-        },
       })
     } catch (error) {
       console.log(error)

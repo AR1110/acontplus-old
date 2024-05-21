@@ -34,8 +34,7 @@ namespace Configuracion.API.Controllers
                     {"userRoleId", User.GetUserRoleId()},
                     {"json", SqlStringParam.Sanitize(json)}
                 };
-                var response = await _service.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
+                var response = await _service.GetAsync(parameters); 
                 return Ok(response);
             }
             catch (Exception ex)
@@ -46,17 +45,17 @@ namespace Configuracion.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+        public async Task<IActionResult> Put(int id, ApiRequest request)
         {
             try
             {
                 var parameters = new Dictionary<string, object>
                 {
+                    {"userRoleId", User.GetUserRoleId() },
                     {"id", id },
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
                 };
-                var response = await User.UpdateAsync(parameters);
-                if (response == null) { return NoContent(); };
+                var response = await _service.UpdateAsync(parameters); 
                 return Ok(response);
             }
             catch (Exception ex)

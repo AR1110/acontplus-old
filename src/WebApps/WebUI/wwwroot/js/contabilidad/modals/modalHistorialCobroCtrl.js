@@ -1,9 +1,9 @@
 export {
     ModalCobroDetalleCtrl
 }
-ModalCobroDetalleCtrl.$inject = ['$scope', '$uibModalInstance', 'comprobanteIngresoService', 'toastService', 'params']
+ModalCobroDetalleCtrl.$inject = ['$scope', '$rootScope', '$uibModalInstance', 'comprobanteIngresoService', 'toastService', 'params']
 
-function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc, tS, params) {
+function ModalCobroDetalleCtrl($scope, $rootScope, $uibModalInstance, comprobanteIngresoSvc, tS, params) {
     $scope.showDetalleCompIngreso = false;
     $scope.showDetalleCompIngresoByDoc = false;
 
@@ -11,9 +11,10 @@ function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc,
     $scope.cobros = [];
     $scope.cobroDetalles = [];
 
-    let isRefreshPage = false;
+    let isRefreshPage = false;  
 
-
+ 
+    $scope.accion = $rootScope.accion;
     initialLoad();
     function initialLoad() {
         try {
@@ -51,6 +52,8 @@ function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc,
                     console.log(error)
                 }).finally(() => hideLoader())
             }
+
+            
 
         } catch (error) {
             hideLoader();
@@ -192,6 +195,7 @@ function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc,
                 }
                 if (response.code == "1") {
                     tS.toastr('success', response.message, response.titleSms);
+                    initialLoad()
                     isRefreshPage = true;
                     // $uibModalInstance.close(response)
                 }

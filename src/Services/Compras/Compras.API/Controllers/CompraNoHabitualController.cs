@@ -53,25 +53,6 @@ public class CompraNoHabitualController : ControllerBase
         }
     }
 
-    //[HttpGet("GetId/{id}")]
-    //public async Task<IActionResult> GetId(int id)
-    //{
-    //    try
-    //    {
-    //        var response = await _compraNoHabSvc.GetByIdAsync(new Dictionary<string, object> {
-    //            { "userRoleId", User.GetUserRoleId() },
-    //            { "id", id }
-    //        });
-    //        if (response == null) { return NoContent(); };
-    //        return Ok(new { code = "1", payload = response });
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _log.LogActivity("Error al obtener datos de Compra No Habitual: \n" + ex.ToString());
-    //        return BadRequest("Error on get by id: " + ex.Message);
-    //    }
-    //}
-
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {

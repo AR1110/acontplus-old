@@ -1,8 +1,10 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Inventario.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Services.Common.Extensions;
 using Services.Common.Logs;
 
@@ -23,7 +25,7 @@ namespace Inventario.API.Controllers
             _log = log;
         }
 
-        [HttpGet("Get")]
+        [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             try
@@ -43,11 +45,12 @@ namespace Inventario.API.Controllers
             }
         }
 
-        [HttpPost("Post")]
+        [HttpPost]
         public async Task<IActionResult> Post(string json, IFormFile file)
         {
             try
             {
+
                 if (file != null)
                 {
                     await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/subfamilias/", file);
@@ -81,7 +84,30 @@ namespace Inventario.API.Controllers
             }
         }
 
-        [HttpPut("Put/{id}")]
+        [HttpPost("Post")]
+        public async Task<IActionResult> PostApp(string json)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "json", SqlStringParam.Sanitize(json) },
+                    { "s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "" },
+                    { "s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "" },
+                };
+
+                var response = await _service.AddAsync(parameters);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en post " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, string json)
         {
             try
@@ -118,9 +144,35 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error en put " + ex.Message);
+                _log.LogActivity("Error en delete " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
+
+
+        //[HttpGet("ListForSelect")]
+        //public async Task<IActionResult> ListForSelect(string json)
+        //{
+        //    ApiResponse _response = new ApiResponse();
+        //    DbAccess _db = new DbAccess(_configuration);
+        //    try
+        //    {
+        //        await _db.SPExecute("Almacen.SubFamilia_For_Select");
+        //        _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+        //        _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+        //        _response = _db.GetDataTableAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        _log.LogActivity("Error al listar SubFamilias para Select: \n" + ex.ToString());
+        //        _response.Create(code: "0", message: "Error al listar SubFamilias para Select");
+        //    }
+        //    finally
+        //    {
+        //        _db.Close();
+        //    }
+        //    return Ok(_response);
+        //}
     }
 }

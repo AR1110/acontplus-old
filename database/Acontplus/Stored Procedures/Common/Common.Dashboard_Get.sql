@@ -11,7 +11,7 @@ GO
 -- Create date: 2021-09-10
 -- Description:	SP para contar la cantidad de datos por empresa
 -- =============================================
-CREATE OR ALTER PROCEDURE Dashboard.Estadisticas_Get @idUsuarioRol INT
+CREATE OR ALTER PROCEDURE Common.Dashboard_Get @userRoleId INT
 ,@json VARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -23,7 +23,7 @@ BEGIN
 		   ,@cantidadCliente INT 
 		   ,@cantidadProveedor INT 
 		   ,@cantidadUsuario INT 
-		   ,@idEntidad INT = (SELECT idEntidad FROM App.UsuarioRol WHERE idUSuarioRol = @idUsuarioRol)
+		   ,@idEntidad INT = (SELECT idEntidad FROM App.UsuarioRol WHERE idUSuarioRol = @userRoleId)
 		   ,@facturaVenta int 
 		   ,@notaEntrega int 
 		   ,@proforma int 
@@ -47,7 +47,7 @@ BEGIN
                                                             AND (s.Paid IS NULL OR s.Paid = 0)
                                                             AND s.[Enabled] = 1 
                                                             AND s.Deleted IS NULL 
-                                                        WHERE ur.idUsuarioRol = @idUsuarioRol
+                                                        WHERE ur.idUsuarioRol = @userRoleId
                                                         AND dbo.ufnGetDateEcuador() <=  s.MaxPaymentDate                                  
                                                         AND ur.estado = 1) = 0
                               AND (SELECT COUNT(*) FROM App.UsuarioRol ur WITH (NOLOCK)
@@ -57,7 +57,7 @@ BEGIN
                                                             AND (s.Paid IS NULL OR s.Paid = 0)
                                                             AND s.[Enabled] = 1
                                                             AND s.Deleted IS NULL 
-                                                        WHERE ur.idUsuarioRol = @idUsuarioRol                                              
+                                                        WHERE ur.idUsuarioRol = @userRoleId                                              
                                                         AND ur.estado = 1) > 0
         BEGIN 
             SET @expired = 1
@@ -70,7 +70,7 @@ BEGIN
                                                             AND (s.Paid IS NULL OR s.Paid = 0)
                                                             AND s.[Enabled] = 1
                                                             AND s.Deleted IS NULL
-                                                        WHERE ur.idUsuarioRol = @idUsuarioRol
+                                                        WHERE ur.idUsuarioRol = @userRoleId
                                                         AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate                                           
                                                         AND ur.estado = 1) > 0
         BEGIN
@@ -79,10 +79,11 @@ BEGIN
                                         REPLACE(
                                                 REPLACE(s.warningMessage, '$Costo', CONVERT(VARCHAR, CAST( s.total  as numeric(18,2)))), '$FechaMaximaPago', CONVERT(VARCHAR, FORMAT(s.maxPaymentDate, 'dd/MM/yyyy'), 106)
                                             ), '$Tipo', lt.[Name]) warningMessage
-                                    , lt.[Name] licenseType
-                                    , l.code licenseCode
-                                    , s.total
-                                    , st.[Name] susbscriptionType 
+                                    ,lt.[Name] + ' - ' + a.[Name] licenseType
+                                    ,l.code licenseCode
+                                    ,sd.total
+                                    ,st.[Name] susbscriptionType
+                                    ,s.total totalGlobal
                              FROM App.UsuarioRol ur WITH (NOLOCK)
                              INNER JOIN Entidad e WITH(NOLOCK) ON ur.idEntidad = e.idEntidad
                              INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
@@ -95,19 +96,23 @@ BEGIN
                              INNER JOIN AcontplusAdmin.Config.Licencia l WITH (NOLOCK) ON ld.LicenciaId = l.Id
                              INNER JOIN AcontplusAdmin.Config.LicenseType lt ON l.LicenseTypeId = lt.Id
                              INNER JOIN AcontplusAdmin.Config.SubscriptionType st WITH (NOLOCK) ON s.SubscriptionTypeId = st.Id
-                             WHERE ur.idUsuarioRol = @idUsuarioRol
+                             INNER JOIN AcontplusAdmin.Config.Aplicacion a ON ld.AplicacionId = a.Id
+                             WHERE ur.idUsuarioRol = @userRoleId
                                 AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate                                                       
                                 AND ur.estado = 1 FOR JSON PATH)
         END
 
-	SELECT (SELECT @cantidadUsuario   as cantidadUsuario,
+	SELECT '1' as code, payload = (
+        SELECT
+        (SELECT @cantidadUsuario   as cantidadUsuario,
 		@cantidadArticulo  as cantidadArticulo,
 		@cantidadCliente   as cantidadCliente,
 		@cantidadProveedor as cantidadProveedor,
 		@facturaVenta	   as cantidadFacturaV,
 		@facturaCompra	   as cantidadFacturaC,
 		@proforma		   as cantidadProforma,
-		@notaEntrega	   as cantidadNotaEntrega FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as 'statistics', '[]' licenses FOR JSON PATH
+		@notaEntrega	   as cantidadNotaEntrega FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as 'statistics',
+        ISNULL(@licenses, '[]') licenses FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
 
 END
 

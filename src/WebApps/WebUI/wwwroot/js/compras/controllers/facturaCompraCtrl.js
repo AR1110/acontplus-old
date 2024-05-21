@@ -221,6 +221,7 @@
                 showLoader();
                 facturaCompraSvc.getId(item.id).then(
                     response => {
+                        console.log(response)
                         modalSvc.openModalCustom({
                             controller: 'modalFacturaCompraCtrl',
                             template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
@@ -345,6 +346,7 @@
         $scope.tiemposCredito = [];
         $scope.categoriasCompra = [];
         $scope.sustentosTributario = [];
+        $scope.subcategories = []
 
         $scope.data = {
             idBodega: 0,
@@ -438,7 +440,8 @@
                     tarifasImpuesto,
                     tiemposCredito,
                     categoriasCompra,
-                    sustentosTributario
+                    sustentosTributario,
+                    subcategories,
                 } =
                     mainDataForm;
 
@@ -450,6 +453,7 @@
                 $scope.tiemposCredito = tiemposCredito;
                 $scope.categoriasCompra = categoriasCompra;
                 $scope.sustentosTributario = sustentosTributario;
+                $scope.subcategories = subcategories
 
                 if (
                     !(
@@ -1316,11 +1320,10 @@
                 return;
             }
 
-            if (!fS.isValidField($scope.data.idCategoriaCompra)) {
-                tS.toastr("warning", "Seleccione la Categoria!");
+            if (!fS.isValidField($scope.data.subcategoryId)) {
+                tS.toastr("warning", "Seleccione la subcategoría!");
                 return;
             }
-
 
 
             if (!fS.isValidField($scope.proveedor.idProveedor)) {

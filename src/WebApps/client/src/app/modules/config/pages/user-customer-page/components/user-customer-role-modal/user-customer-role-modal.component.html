@@ -5,10 +5,10 @@
 <div class="modal-body">
   <h5>Usuario: {{params.nombreCompleto}}</h5>
   <br>
-  <div ngbAccordion [closeOthers]="true">
+  <div ngbAccordion [closeOthers]="true" [destroyOnHide]="true">
     @for (item of userCustomerRoles; track item) {
-    <div ngbAccordionItem  (shown)="showAcordeon(item)">
-        <button ngbAccordionButton class="d-flex flex-row">
+    <div ngbAccordionItem  >
+        <button ngbAccordionButton class="d-flex flex-row" (click)="onClickAcordeon(item)">
           <div class="p-2 bd-highlight">
             <b>{{item.ruc}}</b> - {{ item.razonSocial }}
           </div>
@@ -19,21 +19,51 @@
       <div ngbAccordionCollapse>
         <div ngbAccordionBody>
           <ng-template>
-            <ul ngbNav #nav="ngbNav" [(activeId)]="activeNav" class="nav-tabs" (navChange)="onNavChange(item)" >
+            <ul ngbNav #nav="ngbNav" [(activeId)]="activeNav" class="nav-tabs" [destroyOnHide]="true"  >
               <li [ngbNavItem]="1">
                 <button ngbNavLink  >Establecimientos</button>
                 <ng-template ngbNavContent>
-                   <div class="card">
-                    <div class="card-body shadow">
-                      <app-user-customer-role-estab   />
+                  @defer (on immediate){
+                    <div class="card">
+                      <div class="card-body shadow">
+                        <app-user-customer-role-estab   />
+                      </div>
                     </div>
-                   </div>
+                  } @placeholder (minimum 2){
+                    <span>Cargando...</span>
+                  }
+
                 </ng-template>
               </li>
               <li [ngbNavItem]="2">
                 <button ngbNavLink>Permisos</button>
                 <ng-template ngbNavContent>
+                  @defer (on immediate){
                     <app-user-customer-role-permission/>
+
+                  } @placeholder (minimum 2){
+                    <span>Cargando...</span>
+                  }
+
+
+                </ng-template>
+              </li>
+
+              <li [ngbNavItem]="3" appIsAdmin>
+                <button ngbNavLink>Accesos</button>
+                <ng-template ngbNavContent>
+                  @defer (on immediate){
+                    <div class="card">
+                      <div class="card-body">
+                        <app-user-customer-role-access/>
+                      </div>
+                    </div>
+
+                  } @placeholder (minimum 2){
+                    <span>Cargando...</span>
+                  }
+
+
                 </ng-template>
               </li>
             </ul>
@@ -46,4 +76,8 @@
     }
   </div>
 </div>
-<div class="modal-footer"></div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-dark" (click)="modal.close()">
+    &times; Cerrar
+  </button>
+</div>

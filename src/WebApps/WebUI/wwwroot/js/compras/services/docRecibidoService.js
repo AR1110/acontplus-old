@@ -3,7 +3,7 @@
 
     'use strict';
 
-    app.factory('docRecibidoService', function ($injector) {
+    app.factory('docRecibidoService', ['$injector',function ($injector) {
 
 
         const URL = 'Compra/DocumentoRecibido/'
@@ -274,7 +274,7 @@
         }
 
         function downloadXml(id) {
-            return mS.getFile(`${URL}DownloadXml/${id}`, null, true);
+            return mS.getFile('get', `${URL}DownloadXml/${id}`, null, true);
         }
 
         function updateSubcategory(data) {
@@ -282,5 +282,5 @@
         }
 
 
-    })
+    }])
 })(window.angular)

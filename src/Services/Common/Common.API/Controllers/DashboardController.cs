@@ -1,40 +1,15 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-using Services.Common.Logs;
+﻿namespace Common.API.Controllers;
 
-namespace Common.API.Controllers;
-
-public class DashboardController : BaseApiController
+public class DashboardController(IDashboardService dashboard) : BaseApiController
 {
-    private readonly IDashboardService _dashboard;
-    private readonly ICustomLogger _log;
-
-    public DashboardController(IDashboardService dashboard, ICustomLogger log)
-    {
-        _dashboard = dashboard;
-        _log = log;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        try
+        var response = await dashboard.GetAsync(new Dictionary<string, object>
         {
-            var response = await _dashboard.GetAsync(new Dictionary<string, object>
-            {
-                { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json ?? "") }
-            });
-            if (response == null || string.IsNullOrEmpty(response)) { return BadRequest(); }
-
-            return Ok(new ApiResponse { code = "1", payload = response });
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error on Get Statistis: \n" + ex);
-            return BadRequest("Error on get Statistis");
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(json ?? "") }
+        });
+        return Ok(response);
     }
 }

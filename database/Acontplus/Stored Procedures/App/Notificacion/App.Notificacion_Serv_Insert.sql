@@ -1,14 +1,11 @@
 USE [AcontPlus]
-
-IF OBJECT_ID('App.Notificacion_Serv_Insert') IS NOT NULL
-	DROP PROCEDURE App.Notificacion_Serv_Insert
-GO 
+GO
 --UPDATE App.Notificacion SET estado ='NE' WHERE idNotificacion = 2
 --select * from aPP.Notificacion
 --DELETE FROM App.Notificacion WHERE idNotificacion = 3
 -- exec App.Notificacion_Serv_Insert '{"subject":"Documento Nota Entrega - Acontplus N°: 002-003-000000042","params":{"hasFile":true,"isReport":"SI","reportParams":{"hasParams":true,"codEstab":"ESTAB-000000002","codigo":"RNE","format":"pdf"},"spParams":{"id":69577}},"idUsuarioRol":25,"receptor":"sengua2017@gmail.com;emilio.senguana@itsae.edu.ec"}'
 
-CREATE PROCEDURE App.Notificacion_Serv_Insert @userRoleId INT,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE App.Notificacion_Serv_Insert @userRoleId INT,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -53,16 +50,19 @@ BEGIN
     DECLARE @port INT 
     DECLARE @cc VARCHAR(100)
 
-    SELECT TOP 1
+    DECLARE @code VARCHAR(1),
+        @message VARCHAR(300),
+        @rowsAffected INT
+
+	BEGIN TRY
+
+        SELECT TOP 1
            @enableSsl = [enableSsl]
           ,@from      = [from]
           ,@host      = [host]
           ,@password  = [password]
           ,@port      = [port]
-  FROM [Config].[Email_Config] WITH (NOLOCK)
-
-
-	BEGIN TRY
+        FROM [Config].[Email_Config] WITH (NOLOCK)
 		
 		SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 		
@@ -112,7 +112,7 @@ BEGIN
 			BEGIN 
 				IF @id IS NULL
 					BEGIN	
-						SELECT Common.ufnSpResponse('0', 'Id No Valido', DEFAULT)
+						SELECT '0' code, 'Id No Valido' as 'message'
 						RETURN
 					END 
 
@@ -142,7 +142,7 @@ BEGIN
 				BEGIN
 					IF @id IS NULL
 					BEGIN	
-						SELECT Common.ufnSpResponse('0', 'Id No Valido', DEFAULT)
+						SELECT '0' code, 'Id No Valido' as 'message'
 						RETURN
 					END 
 
@@ -215,16 +215,30 @@ BEGIN
 			--return
 			INSERT INTO App.Notificacion(params, emailData, receptor, estado, idUsuario)
             VALUES(@params, @emailData, REPLACE(@receptor,';',','), 'NE', @idUsuario)
-			SELECT Common.ufnSpResponse('1', 'Reenviado el Correo Correctamente', DEFAULT)
-		
+            
+            SET @rowsAffected = @@ROWCOUNT
+
+            IF (@rowsAffected > 0)
+                BEGIN
+                    SET @code = '1'
+                    SET @message = 'Reenviado el Correo Correctamente'
+                END
+            ELSE
+                BEGIN
+                    SET @code = '0'
+                    SET @message = 'No se pudo enviar el correo' 
+                END
 		COMMIT TRAN 
+        SELECT @codDoc code, @message as 'message'
 	END TRY
 
 	BEGIN CATCH 
-		SELECT Common.ufnSpResponse('0','Info: Error en el procedimiento de Reenvío por Correo ' + ERROR_MESSAGE(), DEFAULT)
+		SELECT '0' code,'Info: Error en el procedimiento de Reenvío por Correo' as 'message'
 		IF @@TRANCOUNT > 0 
 		BEGIN
 			ROLLBACK TRAN; 
 		END
+        INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
+		VALUES (NEWID(), 'Notificacion/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	END CATCH
 END 
