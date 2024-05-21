@@ -1,150 +1,142 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
+﻿namespace Configuracion.API.Controllers;
 
-namespace Configuracion.API.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class SolicitudController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SolicitudController : ControllerBase
+    private readonly IConfiguration _configuration;
+    private readonly DbAccess _db;
+    private readonly ICustomLogger _log;
+
+    public SolicitudController(IConfiguration configuration, ICustomLogger log)
     {
-        private readonly IConfiguration _configuration;
-        private readonly DbAccess _db;
-        private readonly ICustomLogger _log;
-        public SolicitudController(IConfiguration configuration, ICustomLogger log)
+        _configuration = configuration;
+        _db = new DbAccess(_configuration);
+        _log = log;
+    }
+
+    [HttpGet("Get/{json}")]
+    public async Task<IActionResult> Get(string json)
+    {
+        var _response = new ApiResponse();
+        try
         {
-            _configuration = configuration;
-            _db = new DbAccess(_configuration);
-            _log = log;
+            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            await _db.SPExecute("Config.Solicitud_Get");
+            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDataTableAsync();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al obtener datos de solicitud: \n" + ex);
+            _response.Create("0", "Error al obtener datos de solicitud");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet("Get/{json}")]
-        public async Task<IActionResult> Get(string json)
-        {
+        return Ok(_response);
+    }
 
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Config.Solicitud_Get");
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al obtener datos de solicitud: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener datos de solicitud");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPost("Post/{json}")]
+    public async Task<IActionResult> Post(string json)
+    {
+        var _response = new ApiResponse();
+        try
+        {
+            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            await _db.SPExecute("Config.Solicitud_Insert");
+            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al insertar datos de solicitud: \n" + ex);
+            _response.Create("0", "Error al insertar datos de solicitud");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPost("Post/{json}")]
-        public async Task<IActionResult> Post(string json)
-        {
+        return Ok(_response);
+    }
 
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Config.Solicitud_Insert");
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al insertar datos de solicitud: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar datos de solicitud");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPut("Put/{json}")]
+    public async Task<IActionResult> Put(string json)
+    {
+        var _response = new ApiResponse();
+        try
+        {
+            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            await _db.SPExecute("Config.Solicitud_Update");
+            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al actualizar datos de solicitud: \n" + ex);
+            _response.Create("0", "Error al actualizar datos de solicitud");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPut("Put/{json}")]
-        public async Task<IActionResult> Put(string json)
-        {
+        return Ok(_response);
+    }
 
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Config.Solicitud_Update");
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al actualizar datos de solicitud: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar datos de solicitud");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpDelete("Delete/{json}")]
+    public async Task<IActionResult> Delete(string json)
+    {
+        var _response = new ApiResponse();
+        try
+        {
+            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            await _db.SPExecute("Config.Solicitud_Update");
+            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al eliminar datos de solicitud: \n" + ex);
+            _response.Create("0", "Error al verificar datos de solicitud");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpDelete("Delete/{json}")]
-        public async Task<IActionResult> Delete(string json)
-        {
+        return Ok(_response);
+    }
 
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Config.Solicitud_Update");
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al eliminar datos de solicitud: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al verificar datos de solicitud");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpGet("Check/{json}")]
+    public async Task<IActionResult> Check(string json)
+    {
+        var _response = new ApiResponse();
+        try
+        {
+            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            await _db.SPExecute("Config.Solicitud_Get");
+            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al verificar datos de solicitud: \n" + ex);
+            _response.Create("0", "Error al verificar datos de solicitud");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet("Check/{json}")]
-        public async Task<IActionResult> Check(string json)
-        {
-
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Config.Solicitud_Get");
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al verificar datos de solicitud: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al verificar datos de solicitud");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-
-
+        return Ok(_response);
     }
 }

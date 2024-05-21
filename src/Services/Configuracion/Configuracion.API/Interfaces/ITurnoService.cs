@@ -1,7 +1,6 @@
-﻿namespace Configuracion.API.Interfaces
+﻿namespace Configuracion.API.Interfaces;
+
+public interface ITurnoService
 {
-    public interface ITurnoService
-    {
-        Task<string> GetAsync(Dictionary<string, object> parameters);
-    }
+    Task<string> GetAsync(Dictionary<string, object> parameters);
 }

@@ -1,14 +1,9 @@
-﻿using AutoMapper;
-using Common.Core.Models;
-using Configuracion.API.Entities;
+﻿namespace Configuracion.API.Extensions;
 
-namespace Configuracion.API.Extensions
+public class MappingProfiles : Profile
 {
-    public class MappingProfiles : Profile
+    public MappingProfiles()
     {
-        public MappingProfiles()
-        {
-            CreateMap<FileModel, EstablecimientoLogo>();
-        }
+        CreateMap<FileModel, EstablecimientoLogo>();
     }
 }
