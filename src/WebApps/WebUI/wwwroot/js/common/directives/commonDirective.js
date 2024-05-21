@@ -327,9 +327,11 @@
                 placement: "@"
             },
             link: function (scope, element) {
+                let isPopoverInitialized = false;
                 var popoverOptions = {
                     title: '<i class="mdi mdi-information-outline"></i> Bodega-Stock',
                     content: function () {
+                        isPopoverInitialized = true;
                         var popoverContent = ` <div class="table-responsive">
                                                 <table class="table table-sm">
                                                     <thead>
@@ -353,13 +355,10 @@
                                             </div>   
                                              `;
 
-                        articuloSvc.getId(scope.article.idArticulo).then(response => {
-                            const results = JSON.parse(response.payload) || [];
+                        articuloSvc.getDataStock(scope.article.idArticulo).then(response => {
+                            
 
-                            scope.branchs = results[4].map(val => {
-                                val.warehouses = JSON.parse(val.warehouses)
-                                return val;
-                            })
+                            scope.branchs = response;
 
                         })
 
@@ -381,11 +380,14 @@
 
            
                 element.on('mouseover', function () {
-                    $(element).popover('show');
+                    if (!isPopoverInitialized){
+                        $(element).popover('show');
+                    }
                 });
 
              
                 $(document).on('mouseover', function (event) {
+                    isPopoverInitialized = false;
                     if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
                         $(element).popover('hide');
                     }
