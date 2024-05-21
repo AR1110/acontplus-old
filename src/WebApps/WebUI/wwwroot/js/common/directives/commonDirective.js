@@ -319,10 +319,7 @@
         }
     }])
 
- 
-
-
-    app.directive('estabStock', ['$compile', 'articuloService', function ($compile, articuloSvc) {
+    app.directive('estabStock', ['$compile','articuloService', function ( $compile, articuloSvc) {
         return {
             restrict: 'A',
             scope: {
@@ -330,84 +327,74 @@
                 placement: "@"
             },
             link: function (scope, element) {
+                let isPopoverInitialized = false;
                 var popoverOptions = {
                     title: '<i class="mdi mdi-information-outline"></i> Bodega-Stock',
                     content: function () {
-                        return '<div id="popover-content">Loading...</div>'; // Placeholder content
-                    },
-                    placement: scope.placement || 'bottom',
-                    trigger: 'manual',  // Manually handle the popover triggering
-                    html: true,
-                    customClass: 'zindex'
-                };
-
-                $(element).popover(popoverOptions);
-
-                element.on('mouseenter', function () {
-                    if (!scope.branchs) {
-                        articuloSvc.getDataStock(scope.article.idArticulo).then(response => {
-                            // const results = JSON.parse(response.payload) || [];
-                             scope.branchs = response;
-
-                            var popoverContent = `<div class="table-responsive">
+                        isPopoverInitialized = true;
+                        var popoverContent = ` <div class="table-responsive">
                                                 <table class="table table-sm">
                                                     <thead>
                                                         <tr>
                                                             <th>Estab.</th>
                                                             <th>Bodega</th>
                                                             <th>Stock</th>
-                                                            <th>Ub.</th>
+                                                            <th>Ub.                                                       
+                                                            </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody ng-repeat="s in branchs" class="small">
                                                         <tr ng-repeat="ub in s.warehouses">
-                                                            <td ng-if="$first" rowspan="{{s.warehouses.length}}">{{s.branchOffice}}</td>
+                                                            <td ng-if="$first" rowspan="2">{{s.branchOffice}}</td>
                                                             <td>{{ub.bodega}}</td>
                                                             <td>{{ub.stock}}</td>
                                                             <td>{{ub.ubicacion}}</td>
-                                                        </tr>
+                                                        <tr>
                                                     </tbody>
                                                 </table>
-                                            </div>`;
+                                            </div>   
+                                             `;
 
-                            // Compile the popover content with the scope
-                            let compiledContent = $compile(popoverContent)(scope);
-                            $(element).data('bs.popover').options.content = compiledContent;
-                            scope.$apply();
+                        articuloSvc.getDataStock(scope.article.idArticulo).then(response => {
+                            
 
-                            // Show the popover after updating the content
-                            $(element).popover('show');
+                            scope.branchs = response;
 
-                            // Add event listeners to the popover content
-                            $('.popover').on('mouseenter', function () {
-                                $(element).popover('show');
-                            }).on('mouseleave', function () {
-                                $(element).popover('hide');
-                            });
-                        });
-                    } else {
+                        })
+
+                        // Compile the popover content with the scope
+                        let compiledContent = $compile(popoverContent)(scope);
+                        scope.$apply();
+                        return compiledContent;
+
+                    },
+                    placement: scope.placement || 'bottom',
+                    trigger: 'outsideClick',
+                    html: true,
+                    customClass: 'zindex'
+                    // container: 'body'
+                };
+
+ 
+                $(element).popover(popoverOptions);
+
+           
+                element.on('mouseover', function () {
+                    if (!isPopoverInitialized){
                         $(element).popover('show');
                     }
                 });
 
-                element.on('mouseleave', function () {
-                    setTimeout(function () {
-                        if (!$('.popover:hover').length) {
-                            $(element).popover('hide');
-                        }
-                    }, 100);
-                });
-
-                // Close popover when clicking outside
-                $(document).on('click', function (event) {
+             
+                $(document).on('mouseover', function (event) {
+                    isPopoverInitialized = false;
                     if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
                         $(element).popover('hide');
                     }
-                });
+                }); 
             }
         };
-    }]);
-
+    }])
 
 
 
