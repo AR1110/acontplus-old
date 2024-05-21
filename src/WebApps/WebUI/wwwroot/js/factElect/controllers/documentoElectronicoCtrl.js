@@ -456,7 +456,7 @@
 
         //------------------SEND WHATSAPP
         $scope.typeSend = 'SRI';
-        $scope.hasPermissions = decodeToken.role == 'RT' ? true : false
+        $scope.hasPermissions = decodeToken.codeRole == 'SU' ? true : false
 
         $scope.paramsToWhatsapp = {
             loginOnly: true
