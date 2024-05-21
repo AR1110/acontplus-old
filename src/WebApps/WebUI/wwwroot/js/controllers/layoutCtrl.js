@@ -129,7 +129,7 @@
                         $rootScope.accion = structuredClone(namesObject)
                         $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
                     } else {
-                         location.href = "/Home/Index";
+                       //  location.href = "/Home/Index";
                     }
                 }
             }
