@@ -27,6 +27,7 @@ BEGIN
 	DECLARE @idSubFamilia INT ,@idMedida  INT ,@idMarca INT ,@idModelo INT
 	       ,@checkBoxFraccionado BIT ,@idTipoIva INT ,@estado BIT ,@byStock INT ,@checkBoxInventario  BIT 
 	       ,@idArticulo INT ,@idBodega INT ,@bySearch NVARCHAR(300) ,@byColumn VARCHAR(10)
+           ,@ruc VARCHAR(20)
 
     --> Inventario 
 	DECLARE @ventaStockMinimo BIT ,@stockCantidad BIT ,@ventaStockCero BIT ,@stock NUMERIC(18,5) ,@stockMinimo NUMERIC(18,5) ,@cantidad NUMERIC(18,5)
@@ -606,6 +607,32 @@ BEGIN
 
             RETURN 
         END
+    
+    --> Get de StockBodega 
+    IF @tipo = 10
+        BEGIN
+            SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
+            
+            SELECT es.nombreComercial as branchOffice
+                  ,ISNULL
+                  ((
+                    
+                    SELECT bo.descripcion as bodega
+		                  ,ISNULL((SELECT ubicacion FROM dbo.ArticuloUbicacion au WITH (NOLOCK) WHERE au.idBodega = bo.idBodega AND au.idArticulo = @idArticulo),'SN') as ubicacion
+		                  ,st.cantidad as stock
+	                FROM Inventario.Stock st WITH (NOLOCK)
+	                INNER JOIN dbo.Bodega bo WITH (NOLOCK) ON bo.idBodega = st.idBodega 
+	                WHERE st.idArticulo = @idArticulo 
+                      AND bo.codEstab = es.codEstab
+                      AND bo.estado = 1
+                    FOR JSON PATH
+
+                  ),'[]') as warehouses
+	        FROM Sri.Establecimiento es WITH (NOLOCK) 
+	        WHERE es.ruc = @ruc
+
+            RETURN 
+        END 
 
     --> Filters
     IF @tipo = 11

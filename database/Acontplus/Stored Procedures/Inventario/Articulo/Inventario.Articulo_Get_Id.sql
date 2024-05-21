@@ -18,39 +18,10 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
 	DECLARE @idEntidad INT 
-	DECLARE @ruc VARCHAR(15) 
-	DECLARE @tableStock TABLE(
-        id INT IDENTITY(1,1)
-        ,idBodega INT
-        ,codEstab VARCHAR(25)
-        ,bodega VARCHAR(200)
-        ,ubicacion VARCHAR(200)
-        ,stock DECIMAL(15,5)
-    )
-	
-	SELECT TOP 1 @idEntidad = idEntidad FROM dbo.Articulo WITH (NOLOCK) 
-    WHERE idArticulo = @id
 
-	SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) 
-    WHERE idEntidad = @idEntidad
+	SELECT TOP 1 @idEntidad = idEntidad FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @id
 
-	INSERT INTO @tableStock(idBodega,codEstab,bodega,ubicacion,stock)
-	SELECT 
-		 bo.idBodega
-		,bo.codEstab
-		,bo.descripcion
-		,ISNULL((SELECT ubicacion FROM dbo.ArticuloUbicacion au WITH (NOLOCK) WHERE au.idBodega = bo.idBodega AND au.idArticulo = @id),'SN')
-		,st.cantidad
-	FROM Inventario.Stock st WITH (NOLOCK)
-	INNER JOIN dbo.Bodega bo WITH (NOLOCK) ON bo.idBodega = st.idBodega 
-	WHERE st.idArticulo = @id and bo.estado = 1
-             
-	IF NOT EXISTS(SELECT 1 FROM Articulo WITH (NOLOCK) WHERE idArticulo = @id)
-		BEGIN
-			SELECT '0','El id: '+ CAST(@id as nvarchar)+' no existe',''
-			RETURN
-		END
-        
+
 	SELECT
 		 idArticulo                 = a.idArticulo
 		,idSubFamilia               = ISNULL(a.idSubFamilia,0) 
@@ -132,16 +103,11 @@ BEGIN
 	FROM ArticuloUbicacion au WITH (NOLOCK)
 	INNER JOIN Bodega       b WITH (NOLOCK) ON b.idBodega = au.idBodega
 	WHERE au.idArticulo = @id
-			
-	SELECT branchOffice  = s.nombreComercial 
-		  ,warehouses    = ISNULL((SELECT bodega,stock,ubicacion FROM @tableStock ts WHERE ts.codEstab = s.codEstab FOR JSON PATH),'[]')
-	FROM Sri.Establecimiento s WITH (NOLOCK) 
-	WHERE s.ruc = @ruc
 
 	SELECT me.idMedida
-            , me.descripcion
-            , a.precioCosto
-            , a.idMedida 
+          ,me.descripcion
+          ,a.precioCosto
+          ,a.idMedida 
     FROM Articulo a WITH (NOLOCK) 
     INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = a.idMedida 
     WHERE a.idEntidad = @idEntidad AND a.idArticulo = @id
