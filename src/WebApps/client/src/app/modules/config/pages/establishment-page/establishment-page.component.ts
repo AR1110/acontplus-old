@@ -13,6 +13,9 @@ import { PrimaryStatusPipe } from '@shared/pipe/primary-status.pipe';
 import Swal from 'sweetalert2';
 
 import { EstabAddEditModalComponent } from './components/estab-add-edit-modal/estab-add-edit-modal.component';
+import {PuntoEmisionService} from "@modules/config/services/sri/punto-emision.service";
+import {FormsModule} from "@angular/forms";
+import {EstablishmentLogoService} from "@modules/config/services/sri/establishment-logo.service";
 
 @Component({
   selector: 'app-establishment-page',
@@ -22,7 +25,8 @@ import { EstabAddEditModalComponent } from './components/estab-add-edit-modal/es
     NgbAccordionModule,
     NgbTooltipModule,
     BreadcrumbComponent,
-    PrimaryStatusPipe
+    PrimaryStatusPipe,
+    FormsModule
   ],
   templateUrl: './establishment-page.component.html',
   styleUrl: './establishment-page.component.scss'
@@ -30,6 +34,8 @@ import { EstabAddEditModalComponent } from './components/estab-add-edit-modal/es
 export class EstablishmentPageComponent {
 
   private estabSvc = inject(EstablishmentService);
+  private ptoEmisionSvc = inject(PuntoEmisionService)
+  private estabLogoSvc = inject(EstablishmentLogoService)
   private modalSvc = inject(ModalService)
   private tS = inject(ToasterService)
   establishments: EstablishmentRead[] = [];
@@ -40,6 +46,59 @@ export class EstablishmentPageComponent {
     pageSize: 25,
 
   }
+
+  imageUrl: string | ArrayBuffer | null = null;
+  selectedFile: File | null = null;
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.selectedFile = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target) {
+          this.imageUrl = e.target.result;
+        }
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
+  }
+
+  successResponseLogo = (response:any)=>{
+    if(isApiResponse(response)){
+      if (response.code == "0") {
+        this.tS.toastr({
+          type: 'warning',
+          message: response.message
+        })
+      }
+      if (response.code == "1") {
+        this.tS.toastr({
+          type: 'success',
+          message: response.message
+        })
+
+        this.dataLogo = {};
+        this.imageUrl = null;
+        this.selectedFile = null;
+        this.getDataLogo(this.data.idEstablecimiento)
+      }
+    }
+  }
+
+
+  uploadImage(): void {
+    if (this.selectedFile) {
+
+      if(this.dataLogo.id>0){
+        this.estabLogoSvc.put(this.dataLogo.id, this.selectedFile).subscribe(this.successResponseLogo);
+      }else{
+        this.estabLogoSvc.post(this.data.idEstablecimiento, this.selectedFile).subscribe(this.successResponseLogo);
+      }
+
+    }
+  }
+
 
   getEstabs() {
     let params = {
@@ -112,15 +171,41 @@ export class EstablishmentPageComponent {
   }
 
 
+  data:any = {}
+  dataLogo:any = {}
   onEstabShow(id: number) {
     this.puntosEmision = [];
+
     this.estabSvc.getId(id).subscribe(response => {
       this.puntosEmision = response.puntosEmision;
+      this.data = response.data;
+
+    })
+
+
+    this.getDataLogo(id)
+
+
+  }
+
+  getDataLogo(id:number){
+    this.estabLogoSvc.getDataLogo(id).subscribe(response=>{
+
+      this.dataLogo = response
+      if (!this.dataLogo.isCompressed) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Por favor actualize nuevamente el logo del establecimiento, gracias!',
+          title: 'Aviso!'
+        });
+      }
+      this.imageUrl = `data:${this.dataLogo.contentType};base64,${this.dataLogo.content}`
     })
   }
 
   onEstabHide() {
     this.puntosEmision = [];
+    this.data = {}
   }
 
 
@@ -144,5 +229,122 @@ export class EstablishmentPageComponent {
     })
 
 
+  }
+
+
+
+  async clearImage(){
+
+    if (!(this.dataLogo.id>0)) {
+      this.imageUrl = null;
+      this.selectedFile = null;
+      return
+    }
+
+    const swal = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger ml-2'
+      },
+      buttonsStyling: false
+    })
+
+    let { isConfirmed } = await swal.fire({
+      title: '<small>Eliminar Logo</small>',
+      html: "<small>Esta seguro de eliminar logo?</small>",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Si, eliminar!',
+      cancelButtonText: 'No, cancelar!',
+      reverseButtons: false,
+      allowOutsideClick: false
+    })
+
+    if (isConfirmed) {
+      this.estabLogoSvc.removeImage(this.dataLogo.id).subscribe(response=>{
+        if(isApiResponse(response)){
+          if (response.code == "0") {
+            this.tS.toastr({
+              type: 'warning',
+              message: response.message
+            })
+          }
+          if (response.code == "1") {
+            this.tS.toastr({
+              type: 'success',
+              message: 'Eliminado Correctamente'
+            })
+            this.dataLogo = {};
+            this.imageUrl = null;
+            this.selectedFile = null;
+            this.getDataLogo(this.data.idEstablecimiento)
+          }
+        }
+      })
+
+    }
+  }
+
+
+  async askToDeletePtoEmision(id:number){
+    const swal = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger m-l-5'
+      },
+      buttonsStyling: false
+    })
+
+    const { isConfirmed } = await swal.fire({
+      title: 'Anular Punto de Emisión',
+      html: "<small>¿Esta seguro de anular?</small>",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, anular!',
+      cancelButtonText: 'No, cancelar!',
+      allowOutsideClick: false,
+      reverseButtons: false
+    })
+
+    if (isConfirmed) {
+      this.ptoEmisionSvc.annul(id).subscribe(response => {
+        if (isApiResponse(response)) {
+          if (response.code == "0") {
+            this.tS.toastr({
+              type: 'warning',
+              message: response.message
+            })
+          }
+          if (response.code == "1") {
+            this.tS.toastr({
+              type: 'success',
+              message: response.message
+            })
+            this.getEstabs()
+          }
+        }
+      })
+    }
+  }
+
+
+  configSaveFactElect(){
+    this.estabSvc.putSriAuth(this.data.idEstablecimiento, this.data.autoSriAuth).subscribe(response=>{
+      if (isApiResponse(response)) {
+        if (response.code == "0") {
+          this.tS.toastr({
+            type: 'warning',
+            message: response.message
+          })
+        }
+        if (response.code == "1") {
+          this.tS.toastr({
+            type: 'success',
+            message: response.message
+          })
+          this.getEstabs()
+        }
+      }
+    })
   }
 }

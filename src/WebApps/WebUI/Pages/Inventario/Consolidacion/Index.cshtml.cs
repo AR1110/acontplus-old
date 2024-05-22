@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Areas.ReporteCompra.Pages
+namespace WebUI.Pages.Inventario.Consolidacion
 {
     public class IndexModel : PageModel
     {

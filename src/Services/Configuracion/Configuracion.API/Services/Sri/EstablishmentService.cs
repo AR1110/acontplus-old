@@ -31,6 +31,19 @@ public class EstablishmentService : IEstablishmentService
         return await _repository.SPExecuteAsync(nameSchema + "Update", parameters);
     }
 
+    public async Task<ApiResponse> PutSriAuth(Dictionary<string, object> parameters)
+    {
+        var query = @"UPDATE Sri.Establecimiento SET autoSriAuth = @autoSriAuth WHERE idEstablecimiento = @id";
+        var affectedRows = await _repository.OnlyExecuteAsync(query, parameters, false);
+        if (affectedRows > 0)
+        {
+            return new ApiResponse { code = "1", message = "Actualizado Exitosamente!" };
+        }
+        
+            return new ApiResponse { code = "0", message = "No se pudo actualizar!" };
+        
+    }
+
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
         return await _repository.SPExecuteAsync(nameSchema + "Delete", parameters);
