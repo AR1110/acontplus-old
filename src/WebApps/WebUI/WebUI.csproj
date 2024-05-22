@@ -12,10 +12,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\Home\Shared\" />
-  </ItemGroup>
-
   <!--<ItemGroup>
     <Content Update="wwwroot\**\*.css" CopyToPublishDirectory="never" />
     <Content Update="wwwroot\**\*.min.css" CopyToPublishDirectory="always" />
