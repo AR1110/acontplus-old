@@ -7,7 +7,7 @@ function marcaCtrl($filter, $scope, _commonSvc, marcaSvc, tS) {
     'use strict'
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if (accion === null) {
-    //     location.href = "/Home/Index";
+    //     location.href = "/Index";
     // } else {
     //     $scope.accion = accion[0];
     // }

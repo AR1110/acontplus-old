@@ -109,7 +109,7 @@
 
         if (pathname) {
             if (pathname === "/") {
-                location.href = "/Home/Index";
+                location.href = "/Index";
             }
             if (pathname.indexOf("/Home") == -1) {
                 let lengthPath = pathname.split("/").splice(1).length;
@@ -129,7 +129,7 @@
                         $rootScope.accion = structuredClone(namesObject)
                         $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
                     } else {
-                       //  location.href = "/Home/Index";
+                       //  location.href = "/Index";
                     }
                 }
             }
