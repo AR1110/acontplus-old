@@ -1481,7 +1481,7 @@
                     consolidacionesFecha
                 } = $scope.dataArticulo;
 
-                let index = 0, entity = {}, tarifaImpuesto = {}; 
+                let index = 0, entity = {}, tarifaImpuesto = {}, cantidad = 0; 
 
                 //verificar si hay un articulo que lleva inventario mas de uno 
                 let itemsDuplicated = $scope.gridOptions.data.filter(item => (
@@ -1800,6 +1800,11 @@
             }
             if (!($scope.data.idPuntoEmision > 0)) {
                 tS.toastr('warning', 'Seleccione el Punto de Emisión');
+                return
+            }
+
+            if(!($scope.data.idUsuario>0)){
+                tS.toastr('warning', 'Seleccione el Usuario');
                 return
             }
 
