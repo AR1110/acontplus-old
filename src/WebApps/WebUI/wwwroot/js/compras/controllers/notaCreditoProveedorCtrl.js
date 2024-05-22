@@ -18,7 +18,7 @@ function notaCreditoProvCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalCon
 
     // let accion = JSON.parse(localStorage.getItem("accion"));  
     // if(accion===null){
-    //     location.href ="/Home/Index";
+    //     location.href ="/Index";
     //     return
     // }else{
     //     $scope.accion = accion[0];

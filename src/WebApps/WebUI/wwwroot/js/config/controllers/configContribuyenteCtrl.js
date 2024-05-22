@@ -16,7 +16,7 @@
     function configContribuyenteCtrl($scope, $interval, mS, toast, form) {
         // let accion = JSON.parse(localStorage.getItem("accion"));
         // if(accion===null){
-        //     location.href = "/Home/Index";
+        //     location.href = "/Index";
         // }else{
         //     $scope.accion = accion[0];
         // }

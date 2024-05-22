@@ -1,15 +1,8 @@
 ﻿using WebUI.Hubs;
 
-var builder = WebApplication.CreateBuilder(args); 
+var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddRazorPages().AddRazorPagesOptions(options =>
-{
-    //options.RootDirectory = "/Pages";
-    options.Conventions.AddPageRoute("/Home/Index", "");
-    //options.Conventions.AddAreaPageRoute("Manage", "/Admin/AdminIndex", "login");
-}
-).AddRazorRuntimeCompilation();
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 builder.Services.AddSignalR();
 
