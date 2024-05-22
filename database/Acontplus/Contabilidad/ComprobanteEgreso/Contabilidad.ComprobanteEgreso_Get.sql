@@ -39,16 +39,17 @@ BEGIN
             SET @tableNames = 'comprobantesEgreso'
 
             SET @sql = 'SELECT ce.idComprobanteEgreso
-							   ,ce.total
-                               ,FORMAT(ce.fechaRegistro, ''dd/MM/yyyy HH:mm'')                   as fechaRegistro
-                               ,Common.ufnGetSerieDocument(td.codigo,es.estab,ce.nroDocumento,0) as nroDoc
-							   ,UPPER(ce.nombreFiscal)                                           as persona
-							   ,ce.nroIdentificacion 
-							   ,''Ninguna''                                                      as caja
-							   ,CASE WHEN ce.estado = 0 THEN ''table-danger'' ELSE '''' END      as color
-							   ,CASE WHEN ce.estado = 0 THEN ''Anulado'' ELSE ''Activo'' END     as estado
-							   ,us.nombreUsuario                                                 as usuario
-                               ,COUNT(*) OVER()                                                  as totalRecords
+							  ,ce.total
+                              ,es.codEstab
+                              ,FORMAT(ce.fechaRegistro, ''dd/MM/yyyy HH:mm'')                   as fechaRegistro
+                              ,Common.ufnGetSerieDocument(td.codigo,es.estab,ce.nroDocumento,0) as nroDoc
+							  ,UPPER(ce.nombreFiscal)                                           as persona
+							  ,ce.nroIdentificacion 
+							  ,''Ninguna''                                                      as caja
+							  ,CASE WHEN ce.estado = 0 THEN ''table-danger'' ELSE '''' END      as color
+							  ,CASE WHEN ce.estado = 0 THEN ''Anulado'' ELSE ''Activo'' END     as estado
+							  ,us.nombreUsuario                                                 as usuario
+                              ,COUNT(*) OVER()                                                  as totalRecords
 						FROM dbo.ComprobanteEgreso     ce WITH (NOLOCK) 
 						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab        = ce.codEstab
 						INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento = ce.idTipoDocumento 
