@@ -108,4 +108,8 @@ export class EstablishmentService {
     return this.#http.delete(`${this.#url}${id}`)
   }
 
+  putSriAuth(id:number, autoSriAuth:boolean){
+    return this.#http.put(`${this.#url}PutSriAuth/${id}/${autoSriAuth}`, null)
+  }
+
 }

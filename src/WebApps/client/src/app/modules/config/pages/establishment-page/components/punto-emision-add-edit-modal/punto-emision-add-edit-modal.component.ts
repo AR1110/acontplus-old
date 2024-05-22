@@ -90,7 +90,16 @@ export class PuntoEmisionAddEditModalComponent {
       if (isValidField(this.data.ptoEmi) && this.data.ptoEmi?.length !== 3) {
         this.tS.toastr({
           type: 'warning',
-          message: 'El punto de emisión tiene que tener tres dígitos'
+          message: 'El punto de emisión es requerido'
+        })
+        return
+      }
+
+      const regex = /^\d{3}$/;
+      if(!regex.test(this.data.ptoEmi)){
+        this.tS.toastr({
+          type: 'warning',
+          message: 'El punto de emisión tiene que ser de tres dígitos'
         })
         return
       }
