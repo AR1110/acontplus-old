@@ -1,69 +1,143 @@
-import { LiveAnnouncer } from "@angular/cdk/a11y";
-import { COMMA, ENTER } from "@angular/cdk/keycodes";
-import { Component, inject } from "@angular/core";
-import { MatChipEditedEvent, MatChipInputEvent } from "@angular/material/chips";
-import { MaterialModule } from "@core/material/material.module";
-import { isValidEmail, isValidField } from "@core/utils/utils";
-import { AppModule } from "src/app/app.module";
-import Swal from "sweetalert2";
+
+import {Component, inject, Input, input} from "@angular/core";
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import {FormsModule} from "@angular/forms";
+import {CommonModule} from "@angular/common";
+import {ToasterService} from "@core/services/toaster.service";
+import {isValidEmail} from "@core/utils/utils";
+import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
+import {SendMailParams} from "@shared/models/send-mail.model";
+import {NotificacionService} from "@shared/services/notificacion.service";
+import {SEPARATOR_KEY_CODE} from "@core/constants/global.constants";
+import {isApiResponse} from "@core/models/api-response";
+import {NotificacionTributariaService} from "@billing/services/notificacion-tributaria.service";
 
 
 @Component({
   selector: 'app-send-mail-modal',
-  imports: [AppModule, MaterialModule],
+  imports: [
+    CommonModule,
+    FontAwesomeModule,
+    FormsModule
+  ],
   standalone: true,
   templateUrl: './send-mail-modal.component.html'
 })
 
-export class SendMailModalComponent {
-  announcer = inject(LiveAnnouncer);
+export class SendMailModalComponent  {
+  @Input({required: true}) params: SendMailParams = {
+    notificationSri: false,
+    notificationAcontPlus: false,
+    data: {},
+    noModifyParam: false
+  }
+  public  modal = inject(NgbActiveModal)
+  private  tS = inject((ToasterService))
+  private notificacionSvc = inject(NotificacionService)
+  private notificacionTribSvc = inject(NotificacionTributariaService)
 
-  addOnBlur = true;
-  readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  emails: Array<string> = [];
 
+  public emails:string[] = [''];
+  public  lastIndex = this.emails.length -1;
 
-  add(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-
-    if (value) {
-      if (isValidEmail(value)) {
-        this.emails.push(value);
-      } else {
-        Swal.fire({
-          icon: 'warning',
-          html: 'Verifique que la dirección de correo del destinatario esté ingresada correctamente.'
+  successResponse = (response:object)=>{
+    if(isApiResponse(response)){
+      if(response.code==="0"){
+        this.tS.toastr({
+          type: 'warning',
+          message: response.message
         })
       }
-    }
-    // Clear the input value
-    //event.chipInput!.clear();
-  }
-
-  remove(email: string): void {
-    const index = this.emails.indexOf(email);
-
-    if (index >= 0) {
-      this.emails.splice(index, 1);
-
-      this.announcer.announce(`Removed ${email}`);
+      if(response.code==="1"){
+        this.tS.toastr({
+          type: 'success',
+          message: response.message
+        })
+        this.modal.close(response)
+      }
     }
   }
-
-  edit(fruit: any, event: MatChipEditedEvent) {
-    const value = event.value.trim();
-
-    // Remove fruit if it no longer has a name
-    if (!value) {
-      this.remove(fruit);
-      return;
+  ngOnInit(){
+    if (("receptor") in this.params.data && this.params.data.receptor && typeof  this.params.data.receptor=='string') {
+      this.emails = this.params.data.receptor.split(/[\|;]/)
     }
+    this.setLastIndex()
+  }
+  addEmail(){
+    this.emails.push('');
+    this.setLastIndex()
+  }
 
-    // Edit existing fruit
-    const index = this.emails.indexOf(fruit);
-    if (index >= 0) {
-      this.emails[index] = value;
-    }
+  removeEmail(index:number){
+    this.emails.splice(index,1)
+    this.setLastIndex()
+  }
+
+  setLastIndex(){
+    this.lastIndex = this.emails.length -1;
+  }
+
+  send(){
+
+      try {
+
+        if (this.emails.length === 0) {
+          this.tS.toastr({
+            type:'warning',
+            message: 'Ingrese al menos un correo del destinatorio'
+          })
+          return
+        }
+
+
+
+        if (!this.emails.every(item => isValidEmail(item))) {
+          this.tS.toastr({
+            type: 'warning',
+            message:'Verifique que los correos del destinatario esten ingresado correctamente'
+          })
+          return
+        }
+
+        let {
+          codDoc,
+          serieComprobante,
+          subject,
+          codEstado,
+          idDocumento,
+          idDocumentoElectronico
+
+        } = this.params.data;
+        let receptor = this.emails.join(SEPARATOR_KEY_CODE.PUNTO_COMA)
+        if(this.params.notificationAcontPlus){
+          let  params = {
+            codDoc,
+            serieComprobante,
+            subject,
+            params: this.params.data.json,
+            receptor
+          }
+          if(this.params.noModifyParam){
+            params = this.params.data
+            params.receptor = receptor;
+          }
+          this.notificacionSvc.post(params).subscribe(this.successResponse)
+        }
+
+        if(this.params.notificationSri){
+          let params = {
+            codDoc,
+            codEstado,
+            idDocumento,
+            idDocumentoElectronico,
+            receptor
+          }
+
+          this.notificacionTribSvc.post(params).subscribe(this.successResponse)
+        }
+      }catch (error){
+        console.log(error)
+      }
   }
 
 }

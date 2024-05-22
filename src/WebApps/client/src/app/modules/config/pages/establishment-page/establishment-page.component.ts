@@ -116,7 +116,7 @@ export class EstablishmentPageComponent {
 
   openModalAddEdit(id?: number) {
     const modalRef = this.modalSvc.openModalCustom(EstabAddEditModalComponent, {
-      size: 'md'
+      size: 'lg'
     })
     modalRef.componentInstance.params = {
       id: id

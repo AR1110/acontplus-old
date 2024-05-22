@@ -22,7 +22,9 @@ export const enum PATHS {
   APP_NOTIFICATION = 'Notificacion/',
   PRINT = 'Print',
   USER = 'Usuario/',
-  ESTAB_ASIGN = 'EstabAsig/'
+  ESTAB_ASIGN = 'EstabAsig/',
+  NOTIFICACION = 'Notificacion/',
+
 }
 
 export const enum DOC_TYPE {
@@ -178,10 +180,14 @@ export enum IDENTIFICATION_CODE {
 
 
 export enum SEPARATOR_KEY_CODE  {
-  SLASH = '|'
+  SLASH = '|',
+  PUNTO_COMA =';'
 }
 
 
 export  enum CODE_ROLE {
   ADM = 'ADM'
 }
+
+
+

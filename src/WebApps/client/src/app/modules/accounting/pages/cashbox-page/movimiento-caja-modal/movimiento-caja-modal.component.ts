@@ -11,7 +11,7 @@ import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ControlCaja } from '@modules/accounting/models/cashbox.model';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import {NgbActiveModal, NgbDropdownModule, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import { PermissionCashAccounting, UserRoleStateService } from '@shared/store/user-role-state.service';
 import { AppModule } from 'src/app/app.module';
 import Swal from 'sweetalert2';
@@ -19,11 +19,21 @@ import Swal from 'sweetalert2';
 import { CashboxCloseModalComponent } from '../cashbox-close-modal/cashbox-close-modal.component';
 import { FiltroControlCajaReportModal } from './components/filtro-control-caja-report-modal/filtro-control-caja-report-modal.component';
 import { FiltroDetalleCajaReportModal } from './components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal.component';
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import {FormsModule} from "@angular/forms";
+import {SendMailModalDirective} from "@shared/directives/send-mail-modal.directive";
 
 @Component({
   selector: 'app-movimiento-caja-modal',
   standalone: true,
-  imports: [AppModule, AccountingModule, DateRangeSelectionComponent],
+  imports: [
+    FormsModule,
+    FontAwesomeModule,
+    NgbPagination,
+    NgbDropdownModule,
+    DateRangeSelectionComponent,
+    SendMailModalDirective
+  ],
   templateUrl: './movimiento-caja-modal.component.html',
   encapsulation: ViewEncapsulation.None,
 })
@@ -169,6 +179,27 @@ export class MovimientoCajaModalComponent {
     }
     return this.dataPermisosCaja.reporteMovimiento
 
+  }
+
+  getDataSendMail(item: any){
+    return {
+      subject: 'Reporte Control Caja',
+        receptor: item.receptor,
+      params: {
+      hasFile: true,
+        isReport: "SI",
+        reportParams: {
+        hasParams: true,
+          codEstab: item.codEstab,
+          codigo: CODE_REPORT.RCC,
+          format: "pdf"
+      },
+      spParams: {
+        tipo: 1,
+          id: item.id
+      }
+    }
+    }
   }
 
 

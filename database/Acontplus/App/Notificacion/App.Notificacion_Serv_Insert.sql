@@ -229,7 +229,7 @@ BEGIN
                     SET @message = 'No se pudo enviar el correo' 
                 END
 		COMMIT TRAN 
-        SELECT @codDoc code, @message as 'message'
+        SELECT @code code, @message as 'message'
 	END TRY
 
 	BEGIN CATCH 

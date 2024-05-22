@@ -22,6 +22,7 @@ export class ControlCajaService {
   getAll<T>(params: T) {
     let paramsStr = JSON.stringify({ ...params, tipo: 1 })
     return this.http.get(`${this.url}?json=${paramsStr}`)
+
   }
 
   getDataForm() {
