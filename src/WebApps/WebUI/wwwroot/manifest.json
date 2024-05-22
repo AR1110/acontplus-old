@@ -4,7 +4,7 @@
   "description": "SISTEMA DE FACTURACIÓN ELECTRÓNICA",
   "theme_color": "#D61672",
   "background_color": "#D61672",
-  "start_url": "/Home/Index",
+  "start_url": "/Index",
   "display": "standalone",
   "scope": "/",
   "orientation": "portrait",

@@ -466,7 +466,7 @@ function modalService($uibModal, $mdDialog) {
         }) {
             let templateUrl = "";
             if (isRenderRazorPartial) {
-                templateUrl = `/Index?name=${template}`;
+                templateUrl = `/Home/Index?name=${template}`;
             }
 
             if (!isRenderRazorPartial) {
