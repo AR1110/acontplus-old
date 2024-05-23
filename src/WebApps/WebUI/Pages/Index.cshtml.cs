@@ -5,12 +5,9 @@ namespace WebUI.Pages
 {
     public class IndexModel : PageModel
     {
-        public PartialViewResult OnGet(string name)
+        public void OnGet()
         {
-            return new PartialViewResult
-            {
-                ViewName = name,
-            };
+
         }
     }
 }

@@ -51,7 +51,7 @@ public class AccountController : BaseApiController
 
             if (authRequest.ReturnUrl == "/") { authRequest.ReturnUrl = null; }
 
-            userData.ForEach(x => x.ReturnUrl = authRequest.ReturnUrl ?? "/Home/Index");
+            userData.ForEach(x => x.ReturnUrl = authRequest.ReturnUrl ?? "/Index");
 
             if (userData.Count == 1 && !userData[0].NeedAuthorization)
             {

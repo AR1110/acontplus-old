@@ -6,7 +6,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
     'use strict';
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if (accion === null) {
-    //     location.href = "/Home/Index";
+    //     location.href = "/Index";
     //     return
     // } else {
     //     $scope.accion = accion[0];
