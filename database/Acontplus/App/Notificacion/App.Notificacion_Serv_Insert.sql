@@ -214,7 +214,7 @@ BEGIN
          
 			--return
 			INSERT INTO App.Notificacion(params, emailData, receptor, estado, idUsuario)
-            VALUES(@params, @emailData, REPLACE(@receptor,';',','), 'NE', @idUsuario)
+            VALUES(@params, @emailData, REPLACE(@receptor,'|',','), 'NE', @idUsuario)
             
             SET @rowsAffected = @@ROWCOUNT
 

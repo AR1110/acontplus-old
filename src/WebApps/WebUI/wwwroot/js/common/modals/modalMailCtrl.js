@@ -70,7 +70,7 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
                     subject: $scope.data.subject,
                     params: $scope.data.json,
                     idUsuarioRol,
-                    receptor: $scope.correos.join(',')
+                    receptor: $scope.correos.join('|')
                 }
 
                 mS.getData('post', url + JSON.stringify(data), null, true).then($scope.successResponse).catch(error => {
