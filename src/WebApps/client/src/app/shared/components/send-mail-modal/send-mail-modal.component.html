@@ -15,7 +15,7 @@
     </label>
     @for (item of emails;track $index){
       <div class="input-group mb-3">
-        <input type="email" class="form-control" autocomplete="off" [(ngModel)]="emails[$index]" placeholder="Ingrese un email">
+        <input type="email" [id]="'email'+$index" [name]="'email'+$index" class="form-control" autocomplete="off" [(ngModel)]="emails[$index]" placeholder="Ingrese un email">
 
         @if(emails.length!==1){
           <button class="btn btn-danger btn-sm" type="button" (click)="removeEmail($index)" >
