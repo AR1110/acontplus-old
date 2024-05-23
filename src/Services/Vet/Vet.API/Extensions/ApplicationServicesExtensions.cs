@@ -20,7 +20,8 @@ public static class ApplicationServicesExtensions
             );
 
         services.AddSwaggerDocumentation();
-
+        
+        services.AddScoped<IBreedService, BreedService>();
         services.AddScoped<ICustomLogger, CustomLogger>();
         services.AddScoped<IMedicalHistory, MedicalHistoryService>();
         services.AddScoped<IPetService, PetService>();
