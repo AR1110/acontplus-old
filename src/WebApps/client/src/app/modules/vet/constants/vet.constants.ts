@@ -1,5 +1,5 @@
 export const API_ENDPOINTS = {
-  BRED: 'Bred/',
+  BREED: 'Bred/',
   PET: 'Pet/',
   MEDICAL_HISTORY: 'MedicalHistory/',
 };

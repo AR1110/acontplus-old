@@ -9,7 +9,7 @@ import { map } from 'rxjs';
 })
 export class BreedService {
   private http = inject(HttpClient);
-  private url = `${PATHS_API.VET}${API_ENDPOINTS.BRED}`;
+  private url = `${PATHS_API.VET}${API_ENDPOINTS.BREED}`;
 
   delete(id: number) {
     return this.http
