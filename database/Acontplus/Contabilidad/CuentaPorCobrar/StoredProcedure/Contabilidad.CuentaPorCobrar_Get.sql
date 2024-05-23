@@ -38,7 +38,7 @@ BEGIN
 
     -->Filters
     DECLARE @idCliente INT ,@codEstab VARCHAR(50) ,@idCuentaPorCobrar INT ,@ckFecha BIT ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@codDoc VARCHAR(10) ,@codEstado VARCHAR(5)
-	       ,@numeroIdentificacion VARCHAR(15) ,@identificacionReceptor VARCHAR(50) ,@ckCxcVencida BIT
+	       ,@numeroIdentificacion VARCHAR(15) ,@identificacionReceptor VARCHAR(50) ,@ckCxcVencida BIT ,@convertToDoc BIT
 
 	-- ==== PARAMETER CONFIG ==========
 	DECLARE @configInteres AS BIT
@@ -97,6 +97,7 @@ BEGIN
                   ,@pageSize     = pageSize
 				  ,@pageIndex    = pageIndex
                   ,@ckCxcVencida = ckCxcVencida
+                  ,@convertToDoc = convertToDoc
             FROM OPENJSON(@json) WITH 
             (
                 idCliente    INT         
@@ -109,17 +110,19 @@ BEGIN
                ,pageSize     INT
                ,pageIndex    INT
                ,ckCxcVencida BIT
+               ,convertToDoc BIT
             )
 
-            SET @params = '@idCliente   INT
-                          ,@idEntidad   INT
-                          ,@codEstab    VARCHAR(25)
-                          ,@fechaInicio DATETIME
-                          ,@fechaFin    DATETIME
-                          ,@codEstado   VARCHAR(15)
-                          ,@codDoc      VARCHAR(10)
-                          ,@pageIndex   INT
-                          ,@pageSize    INT'
+            SET @params = '@idCliente    INT
+                          ,@idEntidad    INT
+                          ,@codEstab     VARCHAR(25)
+                          ,@fechaInicio  DATETIME2
+                          ,@fechaFin     DATETIME2
+                          ,@codEstado    VARCHAR(15)
+                          ,@codDoc       VARCHAR(10)
+                          ,@pageIndex    INT
+                          ,@pageSize     INT
+                          ,@convertToDoc BIT'
 
             SET @sql = 'SELECT cc.idCuentaPorCobrar
                               ,cc.idCliente
@@ -177,6 +180,11 @@ BEGIN
                         END 
                 END 
 
+            IF @convertToDoc IN (1,0)
+                BEGIN
+                    SET @sql = @sql + 'AND cc.convertToDoc = @convertToDoc '
+                END
+
             IF @ckCxcVencida = 1
                 BEGIN
                     SET @sql = @sql + 'AND cc.idCuentaPorCobrar IN (
@@ -193,15 +201,16 @@ BEGIN
 
             EXEC sp_executesql @sql
 						      ,@params 
-                              ,@codEstab    = @codEstab
-                              ,@idCliente   = @idCliente
-                              ,@idEntidad   = @idEntidad
-                              ,@fechaInicio = @fechaInicio
-                              ,@fechaFin    = @fechaFin
-                              ,@codEstado   = @codEstado
-                              ,@codDoc      = @codDoc
-                              ,@pageIndex   = @pageIndex
-                              ,@pageSize    = @pageSize
+                              ,@codEstab     = @codEstab
+                              ,@idCliente    = @idCliente
+                              ,@idEntidad    = @idEntidad
+                              ,@fechaInicio  = @fechaInicio
+                              ,@fechaFin     = @fechaFin
+                              ,@codEstado    = @codEstado
+                              ,@codDoc       = @codDoc
+                              ,@pageIndex    = @pageIndex
+                              ,@pageSize     = @pageSize
+                              ,@convertToDoc = @convertToDoc
 
             RETURN 
         END 
