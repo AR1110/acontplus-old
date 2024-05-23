@@ -29,7 +29,7 @@
             }
         }
 
-        [HttpPost]
+        [HttpGet("GetValidation")]
         public async Task<IActionResult> GetValidation(string codImportacion, [FromBody] ImportacionParams data)
         {
             var response = new ApiResponse();
