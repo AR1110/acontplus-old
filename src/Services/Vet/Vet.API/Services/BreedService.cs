@@ -1,0 +1,65 @@
+﻿namespace Vet.API.Services;
+
+public class BreedService(VetContext context) : IBreedService
+{
+    public async Task<ApiResponse> AddAsync(Breed breed)
+    {
+        context.Breeds.Add(breed);
+        await context.SaveChangesAsync();
+        return new ApiResponse { code = "1", message = "Registrado exitosamente", payload = breed };
+    }
+
+    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    {
+        var breed = await context.Breeds.FindAsync(id);
+        if (breed == null)
+        {
+            return new ApiResponse { code = "0", message = "No se encontro raza para eliminar" };
+        }
+
+        breed.Deleted = true;
+        breed.Enabled = false;
+        context.Entry(breed).State = EntityState.Modified;
+        await context.SaveChangesAsync();
+        return new ApiResponse { code = "1", message = "Eliminada exitosamente" };
+    }
+
+    public async Task<ApiResponse> GetAsync()
+    {
+        var response = await context.Breeds.Include(t => t.PetType).Where(x => x.Deleted == null).ToListAsync();
+        if (response.Count > 0)
+        {
+            return new ApiResponse { code = "1", payload = response };
+        }
+
+        return new ApiResponse { code = "0", message = "No data!" };
+    }
+
+    public async Task<ApiResponse> GetByIdAsync(int id)
+    {
+        var breedFound = await context.Breeds.FindAsync(id);
+        if (breedFound == null)
+        {
+            return new ApiResponse { code = "0", message = "No se encontro raza para actualizar" };
+        }
+        return new ApiResponse { code = "1", payload = breedFound };
+    }
+
+    public async Task<ApiResponse> UpdateAsync(int id, Breed breed)
+    {
+        var breedFound = await context.Breeds.FindAsync(id);
+        if (breedFound == null)
+        {
+            return new ApiResponse { code = "0", message = "No se encontro raza para actualizar" };
+        }
+
+        breedFound.PetTypeId = breed.PetTypeId;
+        breedFound.Code = breed.Code;
+        breedFound.Name = breed.Name;
+        breedFound.Description = breed.Description;
+        breedFound.UpdatedAt = DateTime.Now;
+        context.Update(breedFound);
+        await context.SaveChangesAsync();
+        return new ApiResponse { code = "1", message = "Actualizado exitosamente", payload = breed };
+    }
+}
