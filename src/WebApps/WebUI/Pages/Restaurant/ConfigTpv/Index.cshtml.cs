@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Pages.ConfigTpv
+namespace WebUI.Pages.Restaurant.ConfigTpv
 {
     public class IndexModel : PageModel
     {
