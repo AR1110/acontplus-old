@@ -24,7 +24,7 @@ export const routes: Routes = [
         title: 'App - Soporte Técnico',
         loadChildren: () =>
           import('@modules/technical-support/technical-support.routes').then(
-            (r) => r.routes
+            (r) => r.routes,
           ),
         data: {
           breadcrumb: 'Soporte Técnico',
@@ -68,8 +68,15 @@ export const routes: Routes = [
       {
         path: 'customer',
         title: 'App - Customer',
-        loadChildren: () => import('@customer/customer.routes').then(r => r.routes)
-      }
+        loadChildren: () =>
+          import('@customer/customer.routes').then((r) => r.routes),
+      },
+      {
+        path: 'vet',
+        title: 'App - Vet',
+        loadChildren: () =>
+          import('@modules/vet/vet.routes').then((r) => r.routes),
+      },
     ],
   },
 ];

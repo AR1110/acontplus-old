@@ -29,4 +29,7 @@ export enum GlobalRoutes {
   TechnicalSupportDevice = 'technical-support/device-page',
   TechnicalSupportModelo = 'technical-support/modelo-page',
   VentasReportRentabilidad = 'sale/reports/rentabilidad-page',
+  VetBreed = 'vet/pages/breed-page',
+  VetPet = 'vet/pages/breed-page',
+  VetMedicalHistory = 'vet/pages/medical-history-page',
 }
