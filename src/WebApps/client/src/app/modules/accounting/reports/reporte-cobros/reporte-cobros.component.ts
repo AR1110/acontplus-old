@@ -1,5 +1,4 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { AccountingModule } from "../../accounting.module";
 import { HttpClient } from '@angular/common/http';
 import { ToasterService } from '@core/services/toaster.service';
 import { CODE_REPORT, DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
@@ -10,17 +9,25 @@ import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { formatDateMoment } from '@core/utils/format-date-moment';
-import { AppModule } from 'src/app/app.module';
 import { isValidField, removeSpacesInValue } from '@core/utils/utils';
 import { BancoSelectOnly, SubEntidadFinancieraSelectHtmlOnly } from '@modules/accounting/models/subentidad-financiera.model';
 import { SharedService } from '@core/services/shared.service';
+import {FormsModule} from "@angular/forms";
+import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
+import {
+  CompanyCustomerSearchComponent
+} from "@company-customer/components/company-customer-search/company-customer-search.component";
 
 @Component({
     selector: 'app-reporte-cobros',
     standalone: true,
     templateUrl: './reporte-cobros.component.html',
     styles: ``,
-    imports: [AccountingModule, AppModule]
+    imports: [
+      FormsModule,
+      DateRangeSelectionComponent,
+      CompanyCustomerSearchComponent
+    ]
 })
 export class ReporteCobrosComponent implements OnInit {
     http = inject(HttpClient);

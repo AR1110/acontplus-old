@@ -9,7 +9,6 @@ import { DOC_TYPE, DOC_TYPE_SRI } from '@core/constants/global.constants';
 import { GroupedEstab } from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateMoment } from '@core/utils/format-date-moment';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CuentaPorCobrarService } from '@modules/accounting/services/cuenta-por-cobrar.service';
@@ -86,7 +85,7 @@ export class CuentaPorCobrarPageComponent {
 
   getCuentasPorCobrar() {
     try {
-      showLoader();
+
       let params = {
         codEstab: this.dataSearch.codEstab,
         pageIndex: this.pagination.pageIndex,
@@ -101,27 +100,20 @@ export class CuentaPorCobrarPageComponent {
       }
 
       this.selection = new SelectionModel<any>(true, []);
-      this.cuentaPorCobrarSvc.getAll(params).subscribe({
-        next: (response) => {
-          hideLoader()
+      this.cuentaPorCobrarSvc.getAll(params).subscribe( (response) => {
+
           let { cuentasPorCobrar } = response;
           this.dataSource = new MatTableDataSource(cuentasPorCobrar);
-        },
-        error(err) {
-          console.log(err)
-          hideLoader()
-        },
+
       })
     } catch (error) {
       console.log(error)
-      hideLoader()
     }
   }
 
   getDataFilter() {
     try {
-      this.cuentaPorCobrarSvc.getDataFilter().subscribe({
-        next: (response) => {
+      this.cuentaPorCobrarSvc.getDataFilter().subscribe(  (response) => {
           this.establecimientos = response.estabs;
           this.estadosDoc = response.estadosDoc;
           this.tiposDoc = response.tiposDoc;
@@ -136,7 +128,6 @@ export class CuentaPorCobrarPageComponent {
             this.dataSearch.codEstab = dataEstab?.codEstab ?? null;
             this.getCuentasPorCobrar();
           }
-        },
       })
     } catch (error) {
       console.log(error)
@@ -211,17 +202,12 @@ export class CuentaPorCobrarPageComponent {
     const promises = selectedDocumentos.map(cxc => this.cuentaPorCobrarSvc.getCuotasById(cxc.idCuentaPorCobrar));
 
     // Utilizar Promise.all para ejecutar las promesas concurrentemente
-    showLoader();
-    forkJoin(promises).subscribe({
-      next: (results) => {
-        hideLoader()
+
+    forkJoin(promises).subscribe( (results) => {
+
         let mergeWithCuotas = this.mergeCuotas(selectedDocumentos, results);
         this.openModalCobroLote(mergeWithCuotas);
-      },
-      error(err) {
-        console.log(err)
-        hideLoader();
-      },
+
     })
 
   }

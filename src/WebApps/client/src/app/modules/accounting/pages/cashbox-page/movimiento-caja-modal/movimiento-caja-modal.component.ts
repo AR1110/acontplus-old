@@ -7,13 +7,11 @@ import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { isValidField } from '@core/utils/utils';
-import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ControlCaja } from '@modules/accounting/models/cashbox.model';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
 import {NgbActiveModal, NgbDropdownModule, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import { PermissionCashAccounting, UserRoleStateService } from '@shared/store/user-role-state.service';
-import { AppModule } from 'src/app/app.module';
 import Swal from 'sweetalert2';
 
 import { CashboxCloseModalComponent } from '../cashbox-close-modal/cashbox-close-modal.component';

@@ -1,20 +1,30 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { AccountingModule } from '@modules/accounting/accounting.module';
+import { Component, inject } from '@angular/core';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppModule } from 'src/app/app.module';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { AnticipoService } from '@modules/accounting/services/anticipo.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
 import { SubEntidadFinanciera } from '@modules/accounting/models/subentidad-financiera.model';
 import { ToasterService } from '@core/services/toaster.service';
 import { isApiResponse } from '@core/models/api-response';
+import {
+  CompanyCustomerSearchComponent
+} from "@company-customer/components/company-customer-search/company-customer-search.component";
 
 @Component({
   selector: 'app-anticipo-modal',
   standalone: true,
-  imports: [AppModule, AccountingModule],
+  imports: [
+    ReactiveFormsModule,
+    CompanyCustomerSearchComponent
+  ],
   templateUrl: './anticipo-modal.component.html',
   styles: ``
 })
@@ -51,10 +61,7 @@ export class AnticipoModalComponent {
   }
 
   ngOnInit() {
-    showLoader();
-    this.anticipoSvc.getDataForm().subscribe({
-      next: (response) => {
-        hideLoader();
+    this.anticipoSvc.getDataForm().subscribe( (response) => {
         let { establecimientos, entidadesFinanciera, subEntidadesFinanciera } = response;
 
         this.establecimientos = establecimientos;
@@ -64,11 +71,6 @@ export class AnticipoModalComponent {
         }
         this.entidadesFinanciera = entidadesFinanciera;
         this.tempSubEntidadesFinanciera = subEntidadesFinanciera;
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
   }
   onCustomerSelected<T extends { data: any }>(result: T) {
@@ -108,10 +110,8 @@ export class AnticipoModalComponent {
       }
 
 
-      showLoader();
-      this.anticipoSvc.post(params).subscribe({
-        next: (response) => {
-          hideLoader();
+      this.anticipoSvc.post(params).subscribe( (response) => {
+
           if (isApiResponse(response)) {
             if (response.code === "0") {
               this.tS.toastr({
@@ -127,14 +127,8 @@ export class AnticipoModalComponent {
               this.activeModal.close(response)
             }
           }
-        },
-        error(err) {
-          hideLoader();
-          console.log(err)
-        },
       })
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
   }

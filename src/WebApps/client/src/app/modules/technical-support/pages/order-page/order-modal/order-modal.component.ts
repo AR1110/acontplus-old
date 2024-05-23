@@ -1,5 +1,5 @@
-import { Component, inject, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {Component, inject,  ViewChild, ViewEncapsulation} from '@angular/core';
+import {FormControl, FormGroup,  ReactiveFormsModule, Validators} from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@modules/customer/company-customer/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
@@ -10,7 +10,6 @@ import {
 import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
 import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
 import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
@@ -18,12 +17,10 @@ import { DeviceSearchComponent } from '@modules/technical-support/components/dev
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppModule } from 'src/app/app.module';
 import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
 import { OrderDetailService } from '@modules/technical-support/services/order-detail.service';
 import {
-  faEdit,
   faSave,
   faTrashAlt,
 } from '@fortawesome/free-regular-svg-icons';
@@ -34,13 +31,16 @@ import {
   dateIsAfterCurrentDate,
   formatDate,
 } from '@core/utils/date.util';
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe} from '@angular/common';
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: 'app-order-modal',
   standalone: true,
   imports: [
-    AppModule,
+    CommonModule,
+    ReactiveFormsModule,
+    FontAwesomeModule,
     CompanyCustomerSearchComponent,
     DeviceSearchComponent,
     NgbAccordionModule,
@@ -202,7 +202,7 @@ export class OrderModalComponent {
     deviceToAdd.deviceSerie = !device.deviceSerie ? 0 : device.deviceSerie;
     deviceToAdd.deviceWarranty = !device.deviceWarranty
       ? ''
-      : device.deviceWarranty; 
+      : device.deviceWarranty;
     this.orderDetails.push(deviceToAdd);
     console.log(this.orderDetails);
   }
@@ -216,9 +216,7 @@ export class OrderModalComponent {
       cancelButtonText: 'No',
     }).then((response) => {
       if (response.isConfirmed) {
-        showLoader();
-        this.oDS.delete(detail.id).subscribe({
-          next: (response) => {
+        this.oDS.delete(detail.id).subscribe( (response) => {
             if (isApiResponse(response)) {
               this.tS.toastr({
                 type: response.code == '1' ? 'success' : 'warning',
@@ -230,14 +228,6 @@ export class OrderModalComponent {
                 );
               }
             }
-          },
-          error(err) {
-            hideLoader();
-            console.log(err);
-          },
-          complete() {
-            hideLoader();
-          },
         });
       }
     });
@@ -248,35 +238,25 @@ export class OrderModalComponent {
   }
 
   editDetail(detail: any) {
-    showLoader();
-    this.oDS.put(detail.id, detail).subscribe({
-      next: (response) => {
+
+    this.oDS.put(detail.id, detail).subscribe(  (response) => {
         if (isApiResponse(response)) {
           this.tS.toastr({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });
         }
-      },
-      error(err) {
-        hideLoader();
-        console.error(err);
-      },
-      complete() {
-        hideLoader();
-      },
     });
   }
 
   get() {
-    showLoader();
+
     let parameters = { tipo: 1, id: this.data.id };
     if (this.data.id > 0) {
       this.modalTitle = 'Editar Orden';
       this.modalIcon = 'edit';
     }
-    this.orderService.get(parameters).subscribe({
-      next: (response) => {
+    this.orderService.get(parameters).subscribe( (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {
             let parsedResponse = JSON.parse(response.payload as string);
@@ -313,14 +293,6 @@ export class OrderModalComponent {
             }
           }
         }
-      },
-      error(error) {
-        console.log(error);
-        hideLoader();
-      },
-      complete() {
-        hideLoader();
-      },
     });
   }
 
@@ -440,33 +412,20 @@ export class OrderModalComponent {
       fechaEmision: formatDateMoment(ajusteFechaEmision),
     };
     if (this.data.id > 0) {
-      showLoader();
+
       this.orderService.put(this.data.id, dataToSave).subscribe({
         next: this.successResponse,
-        error(err) {
-          console.log(err);
-          hideLoader();
-        },
-        complete() {
-          hideLoader();
-        },
+
       });
     } else {
-      showLoader();
+
       this.orderService.post(dataToSave).subscribe({
         next: this.successResponse,
-        error(err) {
-          console.log(err);
-          hideLoader();
-        },
-        complete() {
-          hideLoader();
-        },
       });
     }
   }
   successResponse = (response: object) => {
-    hideLoader();
+
     if (isApiResponse(response)) {
       this.tS.toastr({
         type: response.code == '1' ? 'success' : 'warning',

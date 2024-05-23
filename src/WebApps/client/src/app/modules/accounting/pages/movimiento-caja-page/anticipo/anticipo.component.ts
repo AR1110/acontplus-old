@@ -1,11 +1,8 @@
-import { formatDateMoment } from './../../../../../core/utils/format-date-moment';
+
 import { Component, inject } from '@angular/core';
-import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ModalService } from '@core/services/modal.service';
-import { AppModule } from 'src/app/app.module';
 import { AnticipoModalComponent } from './anticipo-modal/anticipo-modal.component';
 import { AnticipoService } from '@modules/accounting/services/anticipo.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { AnticipoRead } from '@modules/accounting/models/anticipo.model';
 import { SharedService } from '@core/services/shared.service';
 import { CODE_REPORT } from '@core/constants/global.constants';
@@ -15,11 +12,24 @@ import { ToasterService } from '@core/services/toaster.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { isValidField } from '@core/utils/utils';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import {FormsModule} from "@angular/forms";
+import {formatDateMoment} from "@core/utils/format-date-moment";
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import {
+  CompanyCustomerSearchComponent
+} from "@company-customer/components/company-customer-search/company-customer-search.component";
+import {NgbPagination} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-anticipo',
   standalone: true,
-  imports: [AppModule, AccountingModule, DateRangeSelectionComponent],
+  imports: [
+    FormsModule,
+    FontAwesomeModule,
+    CompanyCustomerSearchComponent,
+    NgbPagination,
+    DateRangeSelectionComponent
+  ],
   templateUrl: './anticipo.component.html',
 })
 export class AnticipoComponent {
@@ -54,27 +64,20 @@ export class AnticipoComponent {
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate
     }
-    showLoader();
+
     this.anticipos = [];
-    this.anticipoSvc.getAll(params).subscribe({
-      next: (response) => {
-        hideLoader();
+    this.anticipoSvc.getAll(params).subscribe( (response) => {
+
         this.anticipos = response;
         this.totalRecords = this.anticipos.length > 0 ? this.anticipos[0].totalRecords : 0
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
+
     })
   }
 
   ngOnInit() {
-    showLoader()
-    this.anticipoSvc.getDataFilter().subscribe({
-      next: (response) => {
+    this.anticipoSvc.getDataFilter().subscribe( (response) => {
 
-        hideLoader()
+
         this.establecimientos = response.establecimientos;
         if (this.establecimientos.length > 0) {
           let dataEstab = this.establecimientos.find(item => (item.predeterminado))
@@ -83,11 +86,6 @@ export class AnticipoComponent {
             this.getAnticipos()
           }
         }
-      },
-      error(err) {
-        console.log(err)
-        hideLoader()
-      },
     })
   }
 
@@ -169,10 +167,8 @@ export class AnticipoComponent {
         allowOutsideClick: false
       }).then(result => {
         if (result.isConfirmed) {
-          showLoader();
-          this.anticipoSvc.delete(data.idAnticipo).subscribe({
-            next: (response) => {
-              hideLoader();
+          this.anticipoSvc.delete(data.idAnticipo).subscribe( (response) => {
+
               if (isApiResponse(response)) {
                 if (response.code === "0") {
                   this.tS.toastr({
@@ -188,15 +184,10 @@ export class AnticipoComponent {
                   this.getAnticipos();
                 }
               }
-            }, error(err) {
-              hideLoader();
-              console.log(err)
-            },
           })
         }
       })
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
 

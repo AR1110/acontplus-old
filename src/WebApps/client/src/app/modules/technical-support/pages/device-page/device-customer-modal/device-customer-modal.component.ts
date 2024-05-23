@@ -3,12 +3,13 @@ import { isApiResponse } from '@core/models/api-response';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { DeviceCustomerService } from '@modules/technical-support/services/device.customer.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppModule } from 'src/app/app.module';
 
 @Component({
   selector: 'app-device-customer-modal',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+
+  ],
   templateUrl: './device-customer-modal.component.html',
   styles: ``,
 })
@@ -17,7 +18,7 @@ export class DeviceCustomerModalComponent implements OnInit {
   private modalRef = inject(NgbActiveModal);
   private deviceCustomerService = inject(DeviceCustomerService);
 
-  @Input() params = {    
+  @Input() params = {
     deviceId: 0,
   };
 
@@ -27,7 +28,7 @@ export class DeviceCustomerModalComponent implements OnInit {
 
   get() {
     showLoader();
-    this.deviceCustomerService.get(JSON.stringify({ 
+    this.deviceCustomerService.get(JSON.stringify({
       tipo: 1,
       deviceId: this.params.deviceId
     })).subscribe({

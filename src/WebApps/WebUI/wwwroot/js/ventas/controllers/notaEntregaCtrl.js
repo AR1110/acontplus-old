@@ -19,10 +19,9 @@
         '$scope',
         '$filter',
         '$injector',
-        'decodeToken'
     ];
 
-    function notaEntregaCtrl($scope, $filter, $injector, decodeToken) {
+    function notaEntregaCtrl($scope, $filter, $injector) {
         notaEntregaSvc = $injector.get('notaEntregaService');
         commonSvc = $injector.get('commonService');
         tS = $injector.get('toastService');
@@ -32,6 +31,9 @@
         nombreModalVenta = $injector.get('nombreModalVenta');
         let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
 
+        $scope.dataUserSearch = {
+            name: ''
+        }
 
         const CODE_REPORT = $injector.get('CODE_REPORT');
 
@@ -55,6 +57,7 @@
             checkBoxFecha: true,
             busqueda: "",
             byStock: 0,
+            convertToDoc: false
         };
 
         $scope.typeSend = 'GenericFile';
@@ -66,9 +69,7 @@
 
 
         $scope.cliente = {}
-        $scope.notaEntregas = [];
-
-        let idUsuarioRol = Number(decodeToken.idUsuarioRol)
+        $scope.notaEntregas = []; 
 
         // removed focus new NE
         let btnNewDocument = document.getElementById("btnNewDocument");
@@ -97,34 +98,17 @@
             $scope.dataSearch.checkBoxFecha = true;
             $scope.getNotaEntregas();
         }
-
-        $scope.usuarioSearch = function (textSearch) {
-            try {
-                let query = {
-                    idRol: idUsuarioRol,
-                    busqueda: textSearch
-                }
-
-                if (query.busqueda.length > 2) {
-                    return commonSvc.usuarioSearch(query)
-                        .catch(error => {
-                            console.log(error);
-                            throw error;
-                        })
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
-
+ 
+    
         $scope.onKeyupUsuarioSearch = function () {
-            if (!$scope.modelNombreCompleto) {
+            if (!$scope.dataUserSearch.name) {
                 $scope.dataSearch.byUsuario = 0;
             }
         }
 
-        $scope.selectedUsuarioSearch = function (item) {
+        $scope.selectedUsuarioSearch = function (item) { 
             $scope.dataSearch.byUsuario = item.idUsuario;
+            $scope.getNotaEntregas()
         }
 
         $scope.onClickBtnMore = function () {
@@ -180,7 +164,8 @@
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
-                    infoAdicional: $scope.dataSearch.infoAdicional ? $scope.dataSearch.infoAdicional : null
+                    infoAdicional: $scope.dataSearch.infoAdicional ? $scope.dataSearch.infoAdicional : null,
+                    convertToDoc: $scope.dataSearch.convertToDoc
                 }
 
                 showLoader();
@@ -193,13 +178,9 @@
                     let { notaEntregas, dataTotals } = response;
                     $scope.notaEntregas = notaEntregas;
                     $scope.cloneNotaEntregas = JSON.parse(JSON.stringify($scope.notaEntregas));
-
-                    //Totals 
+ 
                     $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                    $scope.getTotales();
-                    // $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
-                    // $scope.totalAbono = fS.roundNumber(dataTotals.totalAbono, 5);
-                    // $scope.totalSaldo = fS.roundNumber(dataTotals.totalSaldo, 5);
+                    $scope.getTotales(); 
 
                 }).catch(error => {
                     $scope.dataSearch.totalRecords = 0;
@@ -220,10 +201,10 @@
 
         $scope.initiload = async function () {
             showLoader();
-            notaEntregaSvc.get({ tipo: 3 }).then(response => {
+            notaEntregaSvc.getDataFilter().then(response => {
                 hideLoader();
                 $scope.establecimientos = response.estabs;
-                $scope.estadoDocumentos = response.estadosDoc;
+                $scope.estadoDocumentos = response.estadosDoc; 
 
                 if ($scope.establecimientos.length > 0) {
                     let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
@@ -238,10 +219,12 @@
                 hideLoader();
             })
 
+            showLoader()
+
             notaEntregaSvc.getDataForm().then(response => {
                 mainDataForm = structuredClone(response);
                 $scope.permisoEditarDoc = response.permisoEditarDoc;
-            })
+            }).finally(()=>hideLoader())
 
         }
         $scope.initiload();
