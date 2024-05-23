@@ -2,12 +2,17 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { EmployeeSearchDto } from '@modules/sale/models/employee.model';
 import { EmployeeService } from '@modules/sale/services/employee.service';
 import { Observable, OperatorFunction, catchError, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
-import { AppModule } from 'src/app/app.module';
+import {FormsModule} from "@angular/forms";
+import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
+
 
 @Component({
   selector: 'app-employee-search',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+    FormsModule,
+    NgbTypeaheadModule
+  ],
   templateUrl: './employee-search.component.html',
   styles: ``
 })

@@ -1,13 +1,14 @@
 import { Component, inject } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { NgxFileDropEntry } from "ngx-file-drop";
-import { AppModule } from "src/app/app.module";
 
 
 @Component({
   selector: 'app-sub-category-modal',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+
+  ],
   templateUrl: './sub-category-modal.component.html',
 
 })

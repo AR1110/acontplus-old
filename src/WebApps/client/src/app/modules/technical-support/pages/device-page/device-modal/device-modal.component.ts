@@ -2,14 +2,13 @@ import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
-  FormGroup,
+  FormGroup, FormsModule, ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { IForm } from '@core/models/form-types';
 import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Brand } from '@modules/technical-support/models/brand';
 import {
@@ -22,17 +21,22 @@ import { BrandService } from '@modules/technical-support/services/brand.service'
 import { DeviceSpecsService } from '@modules/technical-support/services/device-spec.service';
 import { DeviceService } from '@modules/technical-support/services/device.service';
 import { ModeloService } from '@modules/technical-support/services/modelo.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppModule } from 'src/app/app.module';
+import {NgbAccordionModule, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
 import { BrandModalComponent } from '../../brand-page/brand-modal/brand-modal.component';
 import { ModeloModalComponent } from '../../modelo-page/modelo-modal/modelo-modal.component';
 import { CategoryModalComponent } from '../../category-page/category-modal/category-modal.component';
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: 'app-device-modal',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    FontAwesomeModule,
+    NgbAccordionModule
+  ],
   templateUrl: './device-modal.component.html',
   styles: ``,
 })
@@ -168,10 +172,9 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onBrandGet(categoryId: number) {
-    showLoader();
+
     this.brands = [];
-    this.brandService.get({ tipo: 2, categoryId }).subscribe({
-      next: (response) => {
+    this.brandService.get({ tipo: 2, categoryId }).subscribe(  (response) => {
         if (isApiResponse(response) && response.code == '1') {
           this.brands = JSON.parse(response.payload as string);
           if (this.brands.length > 0) {
@@ -180,14 +183,6 @@ export class DeviceModalComponent implements OnInit {
             // this.onModeloGet(this.brands[0].id);
           }
         }
-      },
-      error(err) {
-        hideLoader();
-        console.error(err);
-      },
-      complete() {
-        hideLoader();
-      },
     });
   }
   onCategoryChange($event: any) {
@@ -200,24 +195,15 @@ export class DeviceModalComponent implements OnInit {
   }
   onModeloChange($event: any) {}
   onModeloGet(brandId: number) {
-    showLoader();
+
     this.modelos = [];
-    this.modeloService.get({ tipo: 2, brandId }).subscribe({
-      next: (response) => {
+    this.modeloService.get({ tipo: 2, brandId }).subscribe( (response) => {
         if (isApiResponse(response) && response.code == '1') {
           this.modelos = JSON.parse(response.payload as string);
           if (this.modelos.length > 0) {
             // this.deviceForm.get('modeloId')?.setValue(this.modelos[0].id);
           }
         }
-      },
-      error(err) {
-        hideLoader();
-        console.error(err);
-      },
-      complete() {
-        hideLoader();
-      },
     });
   }
   setDataFormModal() {
@@ -259,21 +245,13 @@ export class DeviceModalComponent implements OnInit {
   }
 
   getDataForm() {
-    showLoader();
-    this.deviceService.get({ tipo: 1 }).subscribe({
-      next: (response) => {
+
+    this.deviceService.get({ tipo: 1 }).subscribe( (response) => {
         if (isApiResponse(response)) {
           const tempArray = JSON.parse(response.payload as string);
           this.categories = tempArray.categorias;
         }
-      },
-      complete() {
-        hideLoader();
-      },
-      error(error) {
-        console.log(error);
-        hideLoader();
-      },
+
     });
   }
 
@@ -288,9 +266,8 @@ export class DeviceModalComponent implements OnInit {
     const deviceInsert = Object.assign(this.data, this.deviceForm.value);
     if (!this.onValidate(deviceInsert)) return;
 
-    showLoader();
-    this.deviceService.post(deviceInsert).subscribe({
-      next: (response) => {
+
+    this.deviceService.post(deviceInsert).subscribe(  (response) => {
         if (isApiResponse(response)) {
           if (response.code == '0') {
             this.tS.toastr({
@@ -305,14 +282,6 @@ export class DeviceModalComponent implements OnInit {
           });
           this.modalRef.close(response.payload);
         }
-      },
-      complete() {
-        hideLoader();
-      },
-      error(error) {
-        console.log(error);
-        hideLoader();
-      },
     });
   }
 
@@ -327,9 +296,8 @@ export class DeviceModalComponent implements OnInit {
     if (!this.onValidate(deviceUpdate)) return;
     this.onUpdateSpecs();
 
-    showLoader();
-    this.deviceService.put(this.data.id, deviceUpdate).subscribe({
-      next: (response) => {
+
+    this.deviceService.put(this.data.id, deviceUpdate).subscribe(  (response) => {
         if (isApiResponse(response)) {
           if (response.code == '0') {
             this.tS.toastr({
@@ -344,14 +312,6 @@ export class DeviceModalComponent implements OnInit {
           });
           this.modalRef.close(response);
         }
-      },
-      complete() {
-        hideLoader();
-      },
-      error(error) {
-        console.log(error);
-        hideLoader();
-      },
     });
   }
 

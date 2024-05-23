@@ -1,9 +1,8 @@
-import { Component, inject, input, Input, signal } from '@angular/core';
+import { Component, inject,  Input,   } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { NgbActiveModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { AppModule } from 'src/app/app.module';
+import {NgbActiveModal, NgbNavModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 import { MaterialModule } from '@core/material/material.module';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -13,11 +12,18 @@ import { ToasterService } from '@core/services/toaster.service';
 import { SriCustomerService } from '@modules/customer/sri-customer/services/sri-customer.service';
 import { forkJoin, Observable } from 'rxjs';
 import { SRI_IDENTIFICATION_CODE } from '@core/constants/global.constants';
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: 'app-add-edit-modal',
   standalone: true,
-  imports: [AppModule, MaterialModule, NgbTooltipModule],
+  imports: [
+    ReactiveFormsModule,
+    NgbNavModule,
+    FontAwesomeModule,
+    MaterialModule,
+    NgbTooltipModule
+  ],
   templateUrl: './add-edit-modal.component.html',
   styles: ``,
 })

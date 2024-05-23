@@ -5,7 +5,7 @@
   </div>
   <div class="modal-body">
     <div class="form-group">
-      <label for="exstablecimiento"
+      <label for="establecimiento"
         >Establecimiento: <span class="text-danger">*</span></label
       >
       <select
@@ -23,7 +23,7 @@
     </div>
 
     <div class="form-group">
-      <label for="company-customer-search"
+      <label
         >Cliente: <span class="text-danger">*</span></label
       >
       <app-company-customer-search
@@ -38,6 +38,7 @@
       >
       <select
         name="idEntidadFinanciera"
+        id="entidadFinanciera"
         class="form-select form-control-border"
         (change)="onChangeEntidadFinanciera()"
         formControlName="idEntidadFinanciera"
@@ -53,11 +54,12 @@
     </div>
 
     <div class="form-group">
-      <label for="">Sub Entidad Financiera</label>
+      <label for="idSubEntidadFinanciera">Sub Entidad Financiera</label>
       <select
         class="form-select form-control-border"
         formControlName="idSubEntidadFinanciera"
         name="idSubEntidadFinanciera"
+        id="idSubEntidadFinanciera"
         required
       >
         @for (item of subEntidadesFinanciera; track $index) {
@@ -69,9 +71,10 @@
     </div>
 
     <div class="form-group">
-      <label for="">Valor <span class="text-danger">*</span></label>
+      <label for="valor">Valor <span class="text-danger">*</span></label>
       <input
         type="number"
+        id="valor"
         class="form-control form-control-border"
         placeholder="0.00"
         formControlName="valor"
@@ -84,6 +87,7 @@
       <label for="observaciones">Observación </label>
       <textarea
         name="observaciones"
+        id="observaciones"
         class="form-control form-control-border"
         formControlName="observaciones"
         touppercase

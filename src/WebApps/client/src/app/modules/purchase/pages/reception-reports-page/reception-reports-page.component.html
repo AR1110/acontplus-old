@@ -66,7 +66,7 @@
       </div>
       <div class="col-xl-4 col-lg-4 col-md-12 col-12">
         <div class="form-group">
-          <label for="dateRangeSelect">Rango Fechas</label>
+          <label  >Rango Fechas</label>
           <app-date-range-selection
             (onChangeDateRange)="onDateRangeSelection($event)"
           />
@@ -77,6 +77,7 @@
           <div class="form-group">
             <label for="retencion">Retencion</label>
             <select
+                id="retencion"
               class="form-select"
               [(ngModel)]="dataSearch.ckRetencion"
             >
@@ -96,7 +97,7 @@
       @if (dataSearch.supplierChecked) {
       <div class="col-xl-4 col-lg-4 col-md-12 col-12">
         <div class="form-group">
-          <label for="supplierSearch">Proveedor</label>
+          <label  >Proveedor</label>
           <app-supplier-search
             [isSearchSimple]="isSearchSupplierSimple"
             (onSupplierSelected)="onSupplierSelected($event)"
@@ -108,7 +109,7 @@
       } @if(dataSearch.userChecked){
       <div class="col-xl-4 col-lg-4 col-md-12 col-12">
         <div class="form-group">
-          <label for="userSearch">Usuario: </label>
+          <label  >Usuario: </label>
           <app-user-search
             (onUserSelected)="onUserSelected($event)"
             [textSearch]="dataSearch.userName"

@@ -1,8 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { AppModule } from 'src/app/app.module';
-import { PurchaseModule } from '@modules/purchase/purchase.module';
 import { HttpClient } from '@angular/common/http';
-import { CODE_REPORT, DOC_TYPE, DOC_TYPE_SRI, PATHS_API } from '@core/constants/global.constants';
+import { CODE_REPORT, DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@modules/accounting/enums/accounting.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
@@ -11,13 +9,21 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { formatDateMoment } from '@core/utils/format-date-moment';
+import {FormsModule} from "@angular/forms";
+import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
+import {SupplierSearchComponent} from "@purchase/components/supplier-search/supplier-search.component";
+import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
 
 @Component({
   selector: 'app-reports-page',
   standalone: true,
-  imports: [AppModule, PurchaseModule],
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    SupplierSearchComponent,
+    DateRangeSelectionComponent
+  ],
   templateUrl: './reports-page.component.html',
   styleUrl: './reports-page.component.scss'
 })
@@ -48,14 +54,13 @@ export class ReportsPageComponent {
 
   private initialed() {
 
-    showLoader();
+
     this.http.get(this.url, {
       params: {
         json: JSON.stringify({ tipo: 6 })
       }
-    }).subscribe({
-      next: (response) => {
-        hideLoader();
+    }).subscribe(  (response) => {
+
         if (isApiResponse(response)) {
           if (response.code === "0") {
             console.log(response)
@@ -82,11 +87,6 @@ export class ReportsPageComponent {
             this.estadosDoc = estadosDoc;
           }
         }
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
   }
 

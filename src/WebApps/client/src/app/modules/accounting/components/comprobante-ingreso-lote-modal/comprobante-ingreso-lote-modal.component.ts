@@ -1,10 +1,8 @@
 import { MatIconModule } from '@angular/material/icon';
 import { Component, inject, Input } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { CuentaPorCobrarService } from '@modules/accounting/services/cuenta-por-cobrar.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Tabulator } from 'tabulator-tables';
 
 import { FormaCobroModalComponent } from '../form-cobro-modal/forma-cobro-modal.component';
 import { MatTableModule } from '@angular/material/table';
@@ -106,7 +104,6 @@ export class ComprobanteIngresoLoteModalComponent {
   loadInitialData() {
     try {
       const { data, selectedDocumentos } = this.params;
-      showLoader();
       let idCuentaPorCobrar = null, idCliente = 0;
       if (Object.prototype.toString.call(data) === '[object Object]') {
         idCuentaPorCobrar = data.idCuentaPorCobrar;
@@ -115,9 +112,8 @@ export class ComprobanteIngresoLoteModalComponent {
       if (selectedDocumentos !== null && Array.isArray(selectedDocumentos)) {
         idCliente = selectedDocumentos[0].idCliente;
       }
-      this.cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar, idCliente).subscribe({
-        next: (response) => {
-          hideLoader()
+      this.cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar, idCliente).subscribe(  (response) => {
+
           this.dataFormaCobro = response;
 
           if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
@@ -133,17 +129,11 @@ export class ComprobanteIngresoLoteModalComponent {
             }
           }
           this.getTotalesCuota()
-        },
-        error(err) {
-          hideLoader();
-          console.log(err)
-        },
       })
 
 
     } catch (error) {
       console.log(error)
-      hideLoader()
     }
   }
   ngOnInit() {
@@ -457,10 +447,9 @@ export class ComprobanteIngresoLoteModalComponent {
 
           let params = comprobanteIngresoAdapter.to(data);
 
-          showLoader();
-          this.comprobanteIngresoSvc.post(params).subscribe({
-            next: (response) => {
-              hideLoader()
+
+          this.comprobanteIngresoSvc.post(params).subscribe( (response) => {
+
               if (isApiResponse(response)) {
                 if (response.code === "0") {
                   this.tS.toastr({
@@ -476,16 +465,10 @@ export class ComprobanteIngresoLoteModalComponent {
                   this.modal.close(response)
                 }
               }
-            },
-            error(error) {
-              hideLoader()
-              console.log(error)
-            }
           })
         }
       })
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
   }

@@ -5,18 +5,16 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateMoment } from '@core/utils/format-date-moment';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
-import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ComprobanteIngreso } from '@modules/accounting/models/comp-ingreso.model';
 import { ComprobanteIngresoService } from '@modules/accounting/services/comprobante-ingreso.service';
 import { EmployeeSearchComponent } from '@modules/sale/components/employee-search/employee-search.component';
-import { AppModule } from 'src/app/app.module';
+
 
 @Component({
   selector: 'app-cobro-page',
   standalone: true,
-  imports: [AppModule, AccountingModule, DateRangeSelectionComponent, EmployeeSearchComponent],
+  imports: [ DateRangeSelectionComponent, EmployeeSearchComponent],
   templateUrl: './cobro-page.component.html',
   styles: ``
 })
@@ -71,36 +69,23 @@ export class CobroPageComponent {
       nroIdentificacion: isValidField(this.dataSearch.identificacionComprador),
     }
     this.comprobantesIngreso = []
-    showLoader()
-    this.compIngresoSvc.getAll(params).subscribe({
-      next: (response) => {
-        hideLoader()
+
+    this.compIngresoSvc.getAll(params).subscribe( (response) => {
+
         this.comprobantesIngreso = response;
-        console.log(response)
-      },
-      error(err) {
-        hideLoader()
-        console.log(err)
-      },
     })
   }
 
   ngOnInit() {
-    showLoader()
-    this.sharedSvc.getEstabAsign().subscribe({
-      next: (establecimientos) => {
-        hideLoader()
+
+    this.sharedSvc.getEstabAsign().subscribe(  (establecimientos) => {
+
         this.establecimientos = establecimientos as Array<EstablecimientoSelectHtmlOnly>
         if (this.establecimientos.length > 0) {
           let dataEstab = this.establecimientos.find(estab => estab.predeterminado)
           this.dataSearch.codEstab = dataEstab?.codEstab || '';
           this.getComprobantesIngreso()
         }
-      },
-      error(err) {
-        hideLoader()
-        console.log(err)
-      },
     })
   }
 

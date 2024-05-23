@@ -1,17 +1,15 @@
 import { Component } from '@angular/core';
-import { AccountingModule } from '@modules/accounting/accounting.module';
-import { AppModule } from 'src/app/app.module';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { EgresoIngresoCajaComponent } from './egreso-ingreso-caja/egreso-ingreso-caja.component';
 import { AnticipoComponent } from './anticipo/anticipo.component';
+import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 
 @Component({
   selector: 'app-movimiento-caja-page',
   standalone: true,
   imports: [
-    AppModule, 
-    AccountingModule, 
-    NgbNavModule, 
+    BreadcrumbComponent,
+    NgbNavModule,
     EgresoIngresoCajaComponent,
     AnticipoComponent
   ],
