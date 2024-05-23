@@ -1,8 +1,17 @@
-import { Component, inject,  Input,   } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import {NgbActiveModal, NgbNavModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbActiveModal,
+  NgbNavModule,
+  NgbTooltipModule,
+} from '@ng-bootstrap/ng-bootstrap';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 import { MaterialModule } from '@core/material/material.module';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -12,25 +21,27 @@ import { ToasterService } from '@core/services/toaster.service';
 import { SriCustomerService } from '@modules/customer/sri-customer/services/sri-customer.service';
 import { forkJoin, Observable } from 'rxjs';
 import { SRI_IDENTIFICATION_CODE } from '@core/constants/global.constants';
-import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-edit-modal',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     NgbNavModule,
     FontAwesomeModule,
     MaterialModule,
-    NgbTooltipModule
+    NgbTooltipModule,
   ],
   templateUrl: './add-edit-modal.component.html',
   styles: ``,
 })
 export class AddEditModalComponent {
   @Input() params = {
-    id: 0
-  }
+    id: 0,
+  };
 
   // data = signal({
   //   direccion:null,
@@ -49,14 +60,7 @@ export class AddEditModalComponent {
   //   estado: false,
   //   validationSri: false,
   // })
-
-  private announcer = inject(LiveAnnouncer);
-  private companyCustomerSvc = inject(CompanyCustomerService);
-  private sriCustomerService = inject(SriCustomerService);
-  private modalRef = inject(NgbActiveModal);
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  private tS = inject(ToasterService);
-
   activeTab = 1;
   addOnBlur = true;
   cargos: any = [];
@@ -74,7 +78,6 @@ export class AddEditModalComponent {
   tipoContribuyentes: any[] = [];
   tiposCliente: any[] = [];
   tiposIdentificacion: any[] = [];
-
   barcodeCard = '';
   customerForm = new FormGroup({
     direccion: new FormControl('', Validators.required),
@@ -93,6 +96,11 @@ export class AddEditModalComponent {
     estado: new FormControl(false),
     validationSri: new FormControl(false),
   });
+  private announcer = inject(LiveAnnouncer);
+  private companyCustomerSvc = inject(CompanyCustomerService);
+  private sriCustomerService = inject(SriCustomerService);
+  private modalRef = inject(NgbActiveModal);
+  private tS = inject(ToasterService);
 
   addEmail(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
@@ -110,7 +118,7 @@ export class AddEditModalComponent {
     event.chipInput!.clear();
   }
 
-  copyTradeName() { }
+  copyTradeName() {}
 
   editEmail(fruit: string, event: MatChipEditedEvent) {
     const value = event.value.trim();
@@ -123,6 +131,7 @@ export class AddEditModalComponent {
       this.emails[index] = value;
     }
   }
+
   editTelephone(fruit: string, event: MatChipEditedEvent) {
     const value = event.value.trim();
     if (!value) {
@@ -135,13 +144,12 @@ export class AddEditModalComponent {
     }
   }
 
-
   async getCustomer(codigo: string, id: string) {
     let exists = false;
     //check if exists for company
     (
       await //check if exists for company
-        this.companyCustomerSvc.checkExistence({ textSearch: id })
+      this.companyCustomerSvc.checkExistence({ textSearch: id })
     ).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -154,41 +162,36 @@ export class AddEditModalComponent {
             exists = true;
           }
         }
-      }
+      },
     });
 
     if (!exists) {
       //search in global customers or in sri
       (
         await //search in global customers or in sri
-          this.sriCustomerService.get(codigo, id)
+        this.sriCustomerService.get(codigo, id)
       ).subscribe({
         next: (response: any) => {
-
           if (response.error) {
             this.tS.toastr({
               type: 'info',
-              message: response.error
-            })
-            return
+              message: response.error,
+            });
+            return;
           }
-
 
           if (response.telefono) {
             if (response.telefono.includes(';')) {
-              this.telephones = response.telefono.split(';')
-
+              this.telephones = response.telefono.split(';');
             } else {
-              this.telephones = response.telefono.split('|')
-
+              this.telephones = response.telefono.split('|');
             }
           }
           if (response.email) {
-            if (response.email.includes("|")) {
+            if (response.email.includes('|')) {
               this.emails = response.email.split('|') || [];
             } else {
               this.emails = response.email.split(';') || [];
-
             }
           }
 
@@ -199,7 +202,7 @@ export class AddEditModalComponent {
                 nombreFiscal: response.razonSocial,
                 validationSri: true,
                 direccion: response.direccion,
-                nombreComercial: response.razonSocial
+                nombreComercial: response.razonSocial,
               });
             }
           } else {
@@ -213,9 +216,7 @@ export class AddEditModalComponent {
               });
             }
           }
-
-
-        }
+        },
       });
     }
   }
@@ -224,7 +225,7 @@ export class AddEditModalComponent {
     if (this.params.id > 0) {
       return forkJoin([
         this.companyCustomerSvc.getDataForm(),
-        this.companyCustomerSvc.getId(this.params.id)
+        this.companyCustomerSvc.getId(this.params.id),
       ]);
     } else {
     }
@@ -233,13 +234,12 @@ export class AddEditModalComponent {
 
   ngOnInit(): void {
     try {
-
-      this.getLoadData().subscribe(response => {
+      this.getLoadData().subscribe((response) => {
         let mainDataForm = {} as any;
-        let dataCompanyCustomer = {} as any
+        let dataCompanyCustomer = {} as any;
         if (Array.isArray(response)) {
           mainDataForm = response[0];
-          dataCompanyCustomer = response[1]
+          dataCompanyCustomer = response[1];
         } else {
           mainDataForm = response;
         }
@@ -248,7 +248,9 @@ export class AddEditModalComponent {
         this.tiemposCredito = mainDataForm.tiempoCreditos;
 
         if (!(this.params.id > 0)) {
-          let dataIdentificacion = this.tiposIdentificacion.find((ti: any) => ti.codigoSri === SRI_IDENTIFICATION_CODE.RUC)
+          let dataIdentificacion = this.tiposIdentificacion.find(
+            (ti: any) => ti.codigoSri === SRI_IDENTIFICATION_CODE.RUC,
+          );
 
           if (dataIdentificacion) {
             this.customerForm.patchValue({
@@ -257,9 +259,11 @@ export class AddEditModalComponent {
           }
 
           this.customerForm.patchValue({
-            idTiempoCredito: this.tiemposCredito.length > 0 ? this.tiemposCredito[0].idTiempoCredito : 0
-          })
-
+            idTiempoCredito:
+              this.tiemposCredito.length > 0
+                ? this.tiemposCredito[0].idTiempoCredito
+                : 0,
+          });
         } else {
           this.modalIcon = 'edit';
           this.modalTitle = 'Editar Cliente';
@@ -267,11 +271,10 @@ export class AddEditModalComponent {
           this.telephones = dataCompanyCustomer.telefonos;
           this.customerForm.patchValue(response[1]);
         }
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-
   }
 
   onModalClose() {
@@ -287,10 +290,16 @@ export class AddEditModalComponent {
       ...this.customerForm.value,
     };
     let codigoSri = this.tiposIdentificacion.find(
-      (x: any) => x.idTipoIdentificacion == dataForm.idTipoIdentificacion
+      (x: any) => x.idTipoIdentificacion == dataForm.idTipoIdentificacion,
     ).codigoSri;
-    if (codigoSri == SRI_IDENTIFICATION_CODE.RUC || codigoSri == SRI_IDENTIFICATION_CODE.CEDULA) {
-      if (codigoSri === SRI_IDENTIFICATION_CODE.RUC && dataForm.numeroIdentificacion) {
+    if (
+      codigoSri == SRI_IDENTIFICATION_CODE.RUC ||
+      codigoSri == SRI_IDENTIFICATION_CODE.CEDULA
+    ) {
+      if (
+        codigoSri === SRI_IDENTIFICATION_CODE.RUC &&
+        dataForm.numeroIdentificacion
+      ) {
         if (dataForm.numeroIdentificacion?.length != 13) {
           this.tS.toastr({
             type: 'warning',
@@ -299,7 +308,10 @@ export class AddEditModalComponent {
         }
         this.getCustomer(codigoSri, dataForm.numeroIdentificacion);
       }
-      if (codigoSri === SRI_IDENTIFICATION_CODE.CEDULA && dataForm.numeroIdentificacion) {
+      if (
+        codigoSri === SRI_IDENTIFICATION_CODE.CEDULA &&
+        dataForm.numeroIdentificacion
+      ) {
         if (dataForm.numeroIdentificacion?.length != 10) {
           this.tS.toastr({
             type: 'warning',
@@ -312,37 +324,36 @@ export class AddEditModalComponent {
   }
 
   onSave() {
-    console.log(this.telephones)
+    console.log(this.telephones);
 
-      this.customerForm.patchValue({
-        telefono: this.telephones.length > 0 ? this.telephones.join('|') : null
-      });
+    this.customerForm.patchValue({
+      telefono: this.telephones.length > 0 ? this.telephones.join('|') : null,
+    });
 
-
-      this.customerForm.patchValue({
-        correo: this.emails.length > 0 ? this.emails.join('|') : null
-      })
+    this.customerForm.patchValue({
+      correo: this.emails.length > 0 ? this.emails.join('|') : null,
+    });
     const dataForm = {
       ...this.customerForm.value,
     };
-    console.log(dataForm)
+    console.log(dataForm);
     if (this.params.id > 0) {
-      this.companyCustomerSvc.put(this.params.id, dataForm).subscribe(response => {
-        if (isApiResponse(response)) {
-          this.tS.toastr({
-            type: response.code == '1' ? 'success' : 'warning',
-            message: response.message,
-          });
-          if (response.code == '1') {
-            this.modalRef.close({
-              id: this.params.id
+      this.companyCustomerSvc
+        .put(this.params.id, dataForm)
+        .subscribe((response) => {
+          if (isApiResponse(response)) {
+            this.tS.toastr({
+              type: response.code == '1' ? 'success' : 'warning',
+              message: response.message,
             });
+            if (response.code == '1') {
+              this.modalRef.close({
+                id: this.params.id,
+              });
+            }
           }
-        }
-      });
-    }
-
-    else if (!(this.params.id > 0)) {
+        });
+    } else if (!(this.params.id > 0)) {
       this.companyCustomerSvc.post(dataForm).subscribe((response) => {
         if (isApiResponse(response)) {
           this.tS.toastr({
@@ -351,8 +362,8 @@ export class AddEditModalComponent {
           });
           if (response.code == '1') {
             let data = {
-              id: (response.payload as any).id
-            }
+              id: (response.payload as any).id,
+            };
             this.modalRef.close(data);
           }
         }
@@ -360,7 +371,7 @@ export class AddEditModalComponent {
     }
   }
 
-  refreshTiempoCredito() { }
+  refreshTiempoCredito() {}
 
   removeEmail(email: string): void {
     const index = this.emails.indexOf(email);
@@ -369,6 +380,7 @@ export class AddEditModalComponent {
       this.announcer.announce(`Removed ${email}`);
     }
   }
+
   removeTelephone(telephone: string): void {
     const index = this.telephones.indexOf(telephone);
     if (index >= 0) {
