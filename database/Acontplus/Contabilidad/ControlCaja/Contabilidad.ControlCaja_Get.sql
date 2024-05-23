@@ -39,7 +39,7 @@ BEGIN
             
             SET @tableNames = 'movimientos'
 
-            SELECT @verOtrasCajas = ISNULL(JSON_VALUE(jsonPermission, '$.verOtrasCajas.view'), 0) FROM Config.UserPermission WHERE idUsuarioRol = @userRoleId AND codModule='C' 
+            SELECT @verOtrasCajas = (SELECT TOP 1 verOtrasCajas FROM Config.v_User_Permission_CashAccounting WHERE idUsuarioRol = @userRoleId)
 
             SELECT @idCaja         = idCaja 
 	              ,@dateStart      = dateStart
@@ -59,16 +59,19 @@ BEGIN
                 ,pageIndex      INT
 	        )
 
-            SET @sql  = 'SELECT idControlCaja                               as id
-					           ,FORMAT(fechaApertura, ''dd/MM/yyyy HH:mm'') as fechaApertura
-					           ,FORMAT(fechaCierre, ''dd/MM/yyyy HH:mm'')   as fechaCierre
-                               ,ISNULL(faltante, 0)                         as faltante 
-					           ,ISNULL(sobrante,0)                          as sobrante
- 					           ,ISNULL(totalArqueo,0)                       as totalArqueo
-					           ,estado
+            SET @sql  = 'SELECT cc.idControlCaja                               as id
+					           ,FORMAT(cc.fechaApertura, ''dd/MM/yyyy HH:mm'') as fechaApertura
+					           ,FORMAT(cc.fechaCierre, ''dd/MM/yyyy HH:mm'')   as fechaCierre
+                               ,ISNULL(cc.faltante, 0)                         as faltante 
+					           ,ISNULL(cc.sobrante,0)                          as sobrante
+ 					           ,ISNULL(cc.totalArqueo,0)                       as totalArqueo
+					           ,cc.estado
+                               ,ISNULL(e.email, null)                          as receptor
                                ,COUNT(*) OVER()                             as totalRecords
-				         FROM ControlCaja WITH (NOLOCK)  
-				         WHERE idCaja = @idCaja '
+				         FROM ControlCaja cc WITH (NOLOCK)  
+                         INNER JOIN dbo.Caja c WITH (NOLOCK)       ON c.idCaja = cc.idCaja
+                         INNER JOIN dbo.Entidad e WITH (NOLOCK) ON e.idEntidad = c.idEntidad 
+				         WHERE cc.idCaja = @idCaja '
 
 	        SET @params  = '@idCaja         INT
 				           ,@statusMovement BIT

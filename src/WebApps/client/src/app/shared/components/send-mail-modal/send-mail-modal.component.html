@@ -4,52 +4,40 @@
     type="button"
     class="btn-close"
     aria-label="Close"
-    ng-click="closeModal()"
+    (click)="modal.close()"
   >
-    <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <div class="modal-body">
   <div class="form-group">
-    <label
-      >Email:
-      <span
-        tooltip-placement="top"
-        ngbTooltip="Haz doble 'Click' sobre el correo para editar"
-      >
-        <fa-icon [icon]="'info-circle'"></fa-icon>
-      </span>
+    <label>
+      Ingrese el o los correos destinatarios
     </label>
-    <mat-chip-grid #chipGrid aria-label="Enter emails">
-      @for (email of emails; track $index) {
-      <mat-chip-row
-        (removed)="remove(email)"
-        [editable]="true"
-        (edited)="edit(email, $event)"
-        [aria-description]="'press enter to edit ' + email"
-      >
-        {{ email }}
-        <button matChipRemove [attr.aria-label]="'remove ' + email">
-          <mat-icon>cancel</mat-icon>
+    @for (item of emails;track $index){
+      <div class="input-group mb-3">
+        <input type="email" class="form-control" autocomplete="off" [(ngModel)]="emails[$index]" placeholder="Ingrese un email">
+
+        @if(emails.length!==1){
+          <button class="btn btn-danger btn-sm" type="button" (click)="removeEmail($index)" >
+            <fa-icon [icon]="['fas', 'trash-alt']" ></fa-icon>
+          </button>
+        }
+
+        @if(lastIndex===$index){
+        <button class="btn btn-primary btn-sm" type="button" (click)="addEmail()">
+          <fa-icon [icon]="['fas', 'plus']" ></fa-icon>
         </button>
-      </mat-chip-row>
-      }
-      <input
-        placeholder="example@example.com,info@example.com"
-        [matChipInputFor]="chipGrid"
-        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-        [matChipInputAddOnBlur]="addOnBlur"
-        (matChipInputTokenEnd)="add($event)"
-        class="form-control"
-      />
-    </mat-chip-grid>
+        }
+      </div>
+    }
   </div>
+
 </div>
 <div class="modal-footer">
-  <button class="btn btn-success" type="button" ng-click="saveResendEmail()">
-    <i class="mdi mdi-send"></i> Sí, reenviar
+  <button class="btn btn-success" type="button" (click)="send()">
+    <i class="mdi mdi-send"></i> Enviar
   </button>
-  <button class="btn btn-dark" type="button" ng-click="closeModal()">
-    No, cancelar
+  <button class="btn btn-dark" type="button" (click)="modal.close()">
+    Cerrar
   </button>
 </div>

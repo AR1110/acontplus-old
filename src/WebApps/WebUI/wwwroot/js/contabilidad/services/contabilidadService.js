@@ -350,6 +350,7 @@
                     const items = response.comprobantesEgreso;
                     comprobantesEgreso = items.map(item => {
                         return {
+                            codEstab: item.codEstab,
                             idComprobanteEgreso: item.idComprobanteEgreso,
                             total: item.total,
                             fechaRegistro: item.fechaRegistro,
