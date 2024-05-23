@@ -13,6 +13,8 @@
         const DOC_TYPE = $injector.get('DOC_TYPE');
         const commonSvc = $injector.get('commonService');
 
+        $scope.isSelectedNotaEntrega = false;
+
         $scope.dataSearch = {
             codEstab: '',
             idPuntoEmision: 0,
@@ -23,6 +25,7 @@
             ckCuotas: false,
             ckCxcVencida: false,
             idEmpresa: 0,
+            convertToDoc: false
         }
         $scope.cliente = {};
         initial();
@@ -83,6 +86,10 @@
 
         }
 
+        $scope.onChangeTipoDoc = function(){ 
+            $scope.isSelectedNotaEntrega = $scope.dataSearch.codDoc===DOC_TYPE.NE
+        }
+
         const getTipoDoc = () => {
             if ($scope.dataSearch.codDoc === DOC_TYPE.FV) {
                 return DOC_TYPE.FV_SRI;
@@ -110,11 +117,10 @@
                 ckCxcVencida: $scope.dataSearch.ckCxcVencida,
                 ckCuotas: $scope.dataSearch.ckCuotas,
                 codDoc: fS.isValidField(getTipoDoc()),
-                idEmpresa: $scope.dataSearch.idEmpresa,
+                idEmpresa: $scope.dataSearch.idEmpresa > 0 ? $scope.dataSearch.idEmpresa: null,
+                convertToDoc: $scope.dataSearch.convertToDoc
             };
 
-            console.log("$scope.dataParams");
-            console.log(dataParams);
 
             const parameters = {
                 hasIdUsuarioRol: true,
