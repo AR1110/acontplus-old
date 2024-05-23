@@ -58,6 +58,10 @@
           <DataField>byEgreso</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="observacion">
+          <DataField>observacion</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>ComprobantesFinancieros</rd:DataSetName>
@@ -1551,7 +1555,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>comprobanteDetalleDs</DataSetName>
-            <Top>4.7095cm</Top>
+            <Top>5.45034cm</Top>
             <Left>0.11229cm</Left>
             <Height>1.2cm</Height>
             <Width>25.59491cm</Width>
@@ -1769,11 +1773,78 @@
                   <PaddingBottom>2pt</PaddingBottom>
                 </Style>
               </Textbox>
+              <Textbox Name="Textbox123">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Observación: </Value>
+                        <Style>
+                          <FontSize>8pt</FontSize>
+                          <FontWeight>Bold</FontWeight>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox121</rd:DefaultName>
+                <Top>0.92213cm</Top>
+                <Left>0.24694cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.31184cm</Width>
+                <ZIndex>6</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox93">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!observacion.Value, "comprobanteEgresoDs")</Value>
+                        <Style>
+                          <FontSize>8pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox90</rd:DefaultName>
+                <Top>0.92213cm</Top>
+                <Left>2.59406cm</Left>
+                <Height>0.6cm</Height>
+                <Width>22.72336cm</Width>
+                <ZIndex>7</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>3.55835cm</Top>
             <Left>0.11229cm</Left>
-            <Height>0.97476cm</Height>
+            <Height>1.7156cm</Height>
             <Width>25.59491cm</Width>
             <ZIndex>3</ZIndex>
             <Style>
@@ -1799,7 +1870,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>7.39172cm</Top>
+            <Top>8.34422cm</Top>
             <Left>0.11229cm</Left>
             <Height>0.6cm</Height>
             <Width>2.15604cm</Width>
@@ -1833,8 +1904,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox7</rd:DefaultName>
-            <Top>7.48274cm</Top>
-            <Left>8.44184cm</Left>
+            <Top>8.43524cm</Top>
+            <Left>6.85434cm</Left>
             <Height>0.6cm</Height>
             <Width>8.40021cm</Width>
             <ZIndex>5</ZIndex>
@@ -2266,7 +2337,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>comprobanteDetalleDs</DataSetName>
-            <Top>6.01534cm</Top>
+            <Top>6.96784cm</Top>
             <Left>0.11229cm</Left>
             <Height>1.2cm</Height>
             <Width>12.5cm</Width>
@@ -2300,8 +2371,60 @@
               </RightBorder>
             </Style>
           </Tablix>
+          <Textbox Name="Textbox17">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Página </Value>
+                    <Style>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Globals!PageNumber</Value>
+                    <Style>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value> de </Value>
+                    <Style>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Globals!TotalPages</Value>
+                    <Style>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox14</rd:DefaultName>
+            <Top>8.43524cm</Top>
+            <Left>18.39144cm</Left>
+            <Height>0.6cm</Height>
+            <Width>7.15214cm</Width>
+            <ZIndex>7</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
-        <Height>3.23958in</Height>
+        <Height>3.64583in</Height>
         <Style />
       </Body>
       <Width>10.12095in</Width>

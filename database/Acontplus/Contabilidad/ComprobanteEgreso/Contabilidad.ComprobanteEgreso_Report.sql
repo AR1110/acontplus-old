@@ -43,7 +43,8 @@ BEGIN
 		  ,en.nombreComercial
 		  ,en.ruc               
 		  ,en.telefono          
-		  ,en.direccion         
+		  ,en.direccion   
+          ,ce.observacion
 	FROM dbo.ComprobanteEgreso   ce WITH (NOLOCK) 
 	INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = ce.idTipoDocumento
 	INNER JOIN dbo.Entidad       en WITH (NOLOCK) ON en.idEntidad       = ce.idEntidad
@@ -64,16 +65,15 @@ BEGIN
 			INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.codEstab			      = ma.codEstab
             WHERE ce.idComprobanteEgreso = @idComprobanteEgreso 
 		END 
-
     ELSE 
         BEGIN
-	        SELECT cuenta_pp.idCuentaPorPagar                          as 'unique'
-		          ,cuenta_pp.codDoc                                    as tipoDoc
-		          ,cuenta_pp.serieComprobante                          as nroDoc
-		          ,FORMAT(cuenta_pp.fechaEmision, 'dd/MM/yyyy hh:mm')  as fechaEmision
-		          ,CAST(cuenta_pp.importeTotal AS decimal(18,2))       as total
-		          ,ISNULL(se.descripcion,ef.descripcion)               as formaPago
-		          ,IIF(p.posfechado = 1,'SI','NO')                     as posfechado
+	        SELECT cuenta_pp.idCuentaPorPagar                                       as 'unique'
+		          ,cuenta_pp.codDoc                                                 as tipoDoc
+		          ,cuenta_pp.serieComprobante                                       as nroDoc
+		          ,FORMAT(cuenta_pp.fechaEmision, 'dd/MM/yyyy hh:mm')               as fechaEmision
+		          ,CAST(cuenta_pp.importeTotal AS decimal(18,2))                    as total
+		          ,ISNULL(se.descripcion,ef.descripcion)                            as formaPago
+		          ,IIF(p.posfechado = 1,'SI','NO')                                  as posfechado
 		          ,CASE WHEN ef.codigo = 'CHE' THEN b.descripcion 
 				        WHEN ef.codigo = 'DOC' THEN tdc.codigo
 		           END                                                              as entidadFinanciera
@@ -83,7 +83,7 @@ BEGIN
 		          ,CAST(cuota_pp.cuota AS decimal(16, 2))                           as valorCuota
 		          ,CAST(pde.abono as decimal(16, 2))                                as abono
 		          ,CAST(pde.saldo - IIF(p.cobro = 1,pde.abono,0) as decimal(16, 2)) as saldo
-	        FROM dbo.ComprobanteEgreso                    ce 		
+	        FROM dbo.ComprobanteEgreso                    ce WITH (NOLOCK) 		
 	        INNER JOIN dbo.TipoDocumento                  td WITH (NOLOCK) ON td.idTipoDocumento         = ce.idTipoDocumento		
 	        INNER JOIN dbo.Pago                            p WITH (NOLOCK) ON p.idComprobanteEgreso      = ce.idComprobanteEgreso
 	        INNER JOIN dbo.EntidadFinanciera              ef WITH (NOLOCK) ON ef.idEntidadFinanciera     = p.idEntidadFinanciera

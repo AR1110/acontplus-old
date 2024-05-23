@@ -18,32 +18,25 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	DECLARE @comprobante NVARCHAR(MAX)
-	DECLARE @cobros NVARCHAR(MAX)
-	DECLARE @cobroDetalle NVARCHAR(MAX)
-	DECLARE @historial NVARCHAR(MAX)
+    --> GLOBAL
+	DECLARE @idUsuario INT,@idEntidad INT,@idFactura INT ,@payload VARCHAR(MAX) ,@idTipoDocumento INT
 
-	DECLARE @idComprobanteIngreso AS INT 
-	DECLARE @codEstab AS VARCHAR(50)
-	DECLARE @idEntidad INT
-	DECLARE @idUsuario INT
-	DECLARE @idTipoDocumento INT
-	DECLARE @secuencial AS INT 
-	DECLARE @idCaja INT
-	DECLARE @idControlCaja INT 
-	DECLARE @payload VARCHAR(MAX)
-	DECLARE @idCuotaPorCobrar INT 
-	DECLARE @idCuentaPorCobrar AS INT
+    --> Data Json
+	DECLARE @comprobante NVARCHAR(MAX) ,@cobros NVARCHAR(MAX) ,@cobroDetalle NVARCHAR(MAX) ,@historial NVARCHAR(MAX)
+
+    --> Comprobante
+	DECLARE @idComprobanteIngreso INT ,@codEstab VARCHAR(50) ,@secuencial INT ,@idCaja INT ,@idControlCaja INT ,@idCuotaPorCobrar INT ,@idCuentaPorCobrar INT
+           ,@idTipoPersona INT
 
 	DECLARE @documento AS TABLE(
-		 idTipoPersona INT NOT NULL
-		,idCliente INT NOT NULL
+		 idCliente INT NOT NULL
 		,total NUMERIC(18,5) NOT NULL
 		,abono NUMERIC(18,5) NOT NULL
 		,codEstab VARCHAR(20) NOT NULL
 		,codTipoPersona VARCHAR(5) DEFAULT 'CL' 
 		,nroIdentificacion VARCHAR(20) NOT NULL
 		,nombreFiscal VARCHAR(180) NOT NULL
+        ,observacion VARCHAR(300) NULL
 	)
 
 	DECLARE @payment AS TABLE (
@@ -82,58 +75,58 @@ BEGIN
 	)
 
 	BEGIN TRY 
-        
-  	    --====================================obtener Datos de los Json============================================
+         --> Variables Globales
+        SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+
+  	    --> obtener Datos de los Json
 		SELECT @comprobante  = comprobante
               ,@cobros       = cobros
               ,@cobroDetalle = cobroDetalle
               ,@historial    = historial 
         FROM OPENJSON(@json) WITH 
         (
-            comprobante  NVARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS '$.comprobante'   AS JSON
-		   ,cobros       NVARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS '$.cobros'        AS JSON
-		   ,cobroDetalle NVARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS '$.cobroDetalle'  AS JSON
-		   ,historial    NVARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS '$.historial'     AS JSON
+            comprobante  NVARCHAR(MAX) AS JSON
+		   ,cobros       NVARCHAR(MAX) AS JSON
+		   ,cobroDetalle NVARCHAR(MAX) AS JSON
+		   ,historial    NVARCHAR(MAX) AS JSON
 
 		) as dt 
 
 
         INSERT INTO @documento
-              (idTipoPersona
-              ,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal)
-		SELECT idTipoPersona = (SELECT TOP 1 idTipoPersona FROM TipoPersona tp WITH (NOLOCK) WHERE tp.codigo = 'CL')
-		      ,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal
-		FROM OPENJSON(@comprobante)
-		WITH (idCliente                 INT '$.idCliente'
-			 ,total           NUMERIC(18,5) '$.total'
-			 ,abono           NUMERIC(18,5) '$.abono'
-			 ,codEstab          VARCHAR(20) '$.codEstab'
-			 ,nroIdentificacion VARCHAR(20) '$.numeroIdentificacion'
-			 ,nombreFiscal     VARCHAR(200) '$.nombreFiscal'
-			 )
-		AS dt 
+              (idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal,observacion)
+		SELECT idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal,observacion
+		FROM OPENJSON(@comprobante) WITH 
+        (
+             idCliente         INT          
+		    ,total             NUMERIC(18,5) 
+		    ,abono             NUMERIC(18,5) 
+		    ,codEstab          VARCHAR(20) 
+		    ,nroIdentificacion VARCHAR(20) 
+		    ,nombreFiscal      VARCHAR(200)
+            ,observacion       VARCHAR(300)
+		)
 		
 		INSERT INTO @payment
-			  (idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial
-            ,cobro
-            ,infoCobro,abono,controlCaja)
-		SELECT idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial 
-			,CASE WHEN posfechado = 1 THEN  0 ELSE 1 END 
-			,infoCobro,abono,controlCaja
-		FROM OPENJSON(@cobros)	
-		WITH (idSubEntidadFinanciera INT '$.idSubEntidadFinanciera'
-			 ,idEntidadFinanciera    INT '$.idEntidadFinanciera'
-			 ,idBanco                INT '$.idBanco'
-			 ,idCuentaBancaria       INT '$.idCuentaBancaria'
-			 ,idTipoDocumento        INT '$.idTipoDocumento'
-			 ,idComprobante          INT '$.idComprobante'
-			 ,fechaEmision     DATETIME2 '$.fechaEmision'
-			 ,valor        NUMERIC(15,5) '$.valor' 
-			 ,posfechado             BIT '$.posfechado'
-			 ,secuencial             INT '$.secuencial'
-			 ,infoCobro    NVARCHAR(MAX) '$.infoCobro'
-			 ,abono        NUMERIC(15,5) '$.abono'
-			 ,controlCaja            BIT '$.controlCaja')
+			  (idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial,cobro,infoCobro,abono,controlCaja)
+		SELECT idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial,cobro,infoCobro,abono,controlCaja
+		FROM OPENJSON(@cobros)WITH 
+        (     
+             idSubEntidadFinanciera INT 
+		    ,idEntidadFinanciera    INT 
+		    ,idBanco                INT 
+		    ,idCuentaBancaria       INT 
+		    ,idTipoDocumento        INT 
+		    ,idComprobante          INT 
+		    ,fechaEmision           DATETIME2 
+		    ,valor                  NUMERIC(15,5)
+		    ,posfechado             BIT 
+            ,cobro                  BIT
+		    ,secuencial             INT 
+		    ,infoCobro              NVARCHAR(MAX)
+		    ,abono                  NUMERIC(15,5) 
+		    ,controlCaja            BIT 
+        )
 		AS dt
 
 		INSERT INTO @paymentDetail
@@ -170,9 +163,9 @@ BEGIN
 
 		SELECT @codEstab = codEstab FROM @documento 
 
-		SELECT @secuencial = COUNT(*)+1 FROM dbo.ComprobanteIngreso WITH(NOLOCK) WHERE codEstab = @codEstab
+        SELECT TOP 1 @idTipoPersona =  idTipoPersona FROM TipoPersona WITH (NOLOCK) WHERE codigo = 'CL'
 
-		SELECT TOP 1 @idEntidad = idEntidad,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+		SELECT @secuencial = COUNT(*)+1 FROM dbo.ComprobanteIngreso WITH(NOLOCK) WHERE codEstab = @codEstab
 
 		SELECT TOP 1 @idTipoDocumento = td.idTipoDocumento FROM TipoDocumento td WITH (NOLOCK) WHERE td.codigo = 'CI'
 
@@ -232,8 +225,8 @@ BEGIN
 
 		BEGIN TRAN 
 			INSERT INTO dbo.ComprobanteIngreso WITH(ROWLOCK)
-				   (idTipoDocumento,idPersona,idTipoPersona,total,abono,nroDocumento,idUsuario,idEntidad,codEstab,fechaRegistro,idControlCaja,codTipoPersona,nroIdentificacion,nombreFiscal)
-		    SELECT @idTipoDocumento,idCliente,idTipoPersona,total,abono,@secuencial,@idUsuario,@idEntidad,codEstab,dbo.ufnGetDateEcuador(),@idControlCaja,codTipoPersona,nroIdentificacion,nombreFiscal
+				   (idTipoDocumento,idPersona,idTipoPersona,total,abono,nroDocumento,idUsuario,idEntidad,codEstab,fechaRegistro,idControlCaja,codTipoPersona,nroIdentificacion,nombreFiscal,observacion)
+		    SELECT @idTipoDocumento,idCliente,@idTipoPersona,total,abono,@secuencial,@idUsuario,@idEntidad,codEstab,dbo.ufnGetDateEcuador(),@idControlCaja,codTipoPersona,nroIdentificacion,nombreFiscal,observacion
 			FROM @documento
 
 			SET @idComprobanteIngreso = @@IDENTITY 
@@ -294,9 +287,9 @@ BEGIN
 
 	BEGIN CATCH 
 		IF @@TRANCOUNT > 0 
-		BEGIN
-			ROLLBACK TRAN; 
-		END
+		    BEGIN
+			    ROLLBACK TRAN; 
+		    END
 
         INSERT INTO ErroresSistema
 		       (token,method,errorNumber,errorSeverity ,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
