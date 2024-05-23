@@ -909,12 +909,14 @@
                     codEstab: $scope.dataSearch.codEstab,
                     byCliente: $scope.dataSearch.byCliente,
                     checkBoxFecha: true,
-                    codEstado: "PAPR",
+                    //codEstado: "PAPR",
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
                     idPuntoEmision: ["", null, undefined, 0].includes($scope.dataSearch.idPuntoEmision) ? null : $scope.dataSearch.idPuntoEmision,
+                    convertToDoc: false
+
                 }
 
                 showLoader();
