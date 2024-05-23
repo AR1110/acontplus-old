@@ -1,9 +1,6 @@
 
 import { Component, inject } from '@angular/core';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { AccountingModule } from '@modules/accounting/accounting.module';
 import { DocumentReceivedService } from '@modules/purchase/services/document-received.service';
-import { AppModule } from 'src/app/app.module';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { CODE_REPORT, DOC_TYPE_SRI, FORMAT_REPORT } from '@core/constants/global.constants';
@@ -14,16 +11,18 @@ import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { formatDateMoment } from '@core/utils/format-date-moment';
+import {FormsModule} from "@angular/forms";
+import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 
 @Component({
   selector: 'app-reception-reports-page',
   standalone: true,
   imports: [
-    AppModule,
-    AccountingModule,
+    FormsModule,
     SupplierSearchComponent,
     DateRangeSelectionComponent,
-    UserSearchComponent
+    UserSearchComponent,
+    BreadcrumbComponent
   ],
   templateUrl: './reception-reports-page.component.html',
   styles: ``
@@ -69,10 +68,8 @@ export class ReceptionReportsPageComponent {
 
 
   ngOnInit() {
-    showLoader()
-    this.docReceivedSvc.getDataFilter().subscribe({
-      next: (response) => {
-        hideLoader()
+    this.docReceivedSvc.getDataFilter().subscribe( (response) => {
+
         const { establecimientos, tiposComprobante } = response;
         this.establecimientos = establecimientos;
         this.tiposComprobante = tiposComprobante;
@@ -83,11 +80,6 @@ export class ReceptionReportsPageComponent {
         if (this.tiposComprobante.length > 0) {
           this.dataSearch.codDoc = this.tiposComprobante.find(tipoDoc => tipoDoc.codigoSri === DOC_TYPE_SRI.F)?.codigoSri || ''
         }
-      },
-      error(err) {
-        console.log(err)
-        hideLoader()
-      },
     })
   }
 
@@ -176,7 +168,7 @@ export class ReceptionReportsPageComponent {
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo, 
+        codigo,
         format,
         aditionalParams: []
       }),

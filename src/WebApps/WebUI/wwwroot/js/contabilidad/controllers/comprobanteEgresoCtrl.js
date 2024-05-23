@@ -188,6 +188,7 @@
 
 
         $scope.getReport = async (item) => {
+ 
             const formatType = 'pdf';
             let dataParams = JSON.stringify({
                 codEstab: item.codEstab,
@@ -195,8 +196,9 @@
             })
 
             const parameters = {
-                hasService: true,
+              
                 reportParams: JSON.stringify({
+                    hasParams: true,
                     codEstab: item.codEstab,
                     codigo: "RCEGR",
                     format: formatType,
@@ -207,7 +209,8 @@
 
             commonSvc.getReport({
                 parameters,
-                formatType
+                formatType,
+                v2: true
             })
         }
 

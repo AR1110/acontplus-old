@@ -1,19 +1,22 @@
 import { Component, Input, inject } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { User } from '@core/models/user.model';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Turno } from '@modules/accounting/models/turno.model';
 import { CashboxService } from '@modules/accounting/services/cashbox.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppModule } from 'src/app/app.module';
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+
 
 @Component({
   selector: 'app-cashbox-modal',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+    ReactiveFormsModule,
+    FontAwesomeModule
+  ],
   templateUrl: './cashbox-modal.component.html',
   styleUrl: './cashbox-modal.component.scss'
 })
@@ -51,10 +54,8 @@ export class CashboxModalComponent {
 
 
   ngOnInit() {
-    showLoader();
-    this.cashboxSvc.getDataForm().subscribe({
-      next: (response) => {
-        hideLoader();
+    this.cashboxSvc.getDataForm().subscribe( (response) => {
+
         let { turnos, usuarios } = response as { turnos: any, usuarios: any };
 
         this.usuarios = usuarios;
@@ -85,15 +86,7 @@ export class CashboxModalComponent {
               this.activeModal.close()
             },
           })
-
-
         }
-
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
 
   }
@@ -119,9 +112,8 @@ export class CashboxModalComponent {
       }
 
       if (data.idCaja && data.idCaja > 0) {
-        showLoader();
-        this.cashboxSvc.update(data.idCaja, paramsToApi).subscribe({
-          next: (response) => {
+
+        this.cashboxSvc.update(data.idCaja, paramsToApi).subscribe(  (response) => {
             if (isApiResponse(response)) {
               if (response.code === "0") {
                 this.tS.toastr({
@@ -137,18 +129,10 @@ export class CashboxModalComponent {
                 this.activeModal.close(response)
               }
             }
-          }, error(err) {
-            hideLoader()
-            console.log(err)
-          },
-          complete() {
-            hideLoader();
-          },
         })
       } else if (!(data.idCaja && data.idCaja > 0)) {
-        showLoader();
-        this.cashboxSvc.save(paramsToApi).subscribe({
-          next: (response) => {
+
+        this.cashboxSvc.save(paramsToApi).subscribe( (response) => {
             if (isApiResponse(response)) {
               if (response.code === "0") {
                 this.tS.toastr({
@@ -164,18 +148,10 @@ export class CashboxModalComponent {
                 this.activeModal.close(response)
               }
             }
-          }, error(err) {
-            hideLoader()
-            console.log(err)
-          },
-          complete() {
-            hideLoader();
-          },
         })
       }
     } catch (error) {
       console.log(error);
-      hideLoader();
     }
 
   }

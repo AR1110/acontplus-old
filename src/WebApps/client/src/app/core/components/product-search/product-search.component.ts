@@ -10,12 +10,16 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { AppModule } from 'src/app/app.module';
+import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
+import {FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-product-search',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+    NgbTypeaheadModule,
+    FormsModule
+  ],
   templateUrl: './product-search.component.html',
   styles: ``,
 })

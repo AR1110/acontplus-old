@@ -1,20 +1,18 @@
 import { Component, Input, inject } from "@angular/core";
 import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
-import { CODE_REPORT, FORMAT_REPORT, FORMAT_TYPE } from "@core/constants/global.constants";
+import { CODE_REPORT, FORMAT_REPORT } from "@core/constants/global.constants";
 import { isApiResponse } from "@core/models/api-response";
 import { SharedService } from "@core/services/shared.service";
-import { ToasterService } from "@core/services/toaster.service";
-import { AccountingModule } from "@modules/accounting/accounting.module";
-import { ControlCajaService } from "@modules/accounting/services/control-caja.service";
 import { UserPermissionService } from "@modules/config/services/user-customer/user-permission.service";
 import { NgbActiveModal, NgbTimepickerModule } from "@ng-bootstrap/ng-bootstrap";
-import { AppModule } from "src/app/app.module";
 import Swal from "sweetalert2";
+import {FormsModule} from "@angular/forms";
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: 'app-filtro-control-caja-report-modal',
   standalone: true,
-  imports: [AppModule, AccountingModule, NgbTimepickerModule, DateRangeSelectionComponent],
+  imports: [FormsModule,FontAwesomeModule, NgbTimepickerModule, DateRangeSelectionComponent],
   templateUrl: './filtro-control-caja-report-modal.component.html'
 })
 export class FiltroControlCajaReportModal {

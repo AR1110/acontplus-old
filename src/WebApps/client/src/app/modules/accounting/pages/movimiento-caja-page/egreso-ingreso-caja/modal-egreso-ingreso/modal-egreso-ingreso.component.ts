@@ -1,15 +1,20 @@
 
 import { Component, inject } from '@angular/core';
-import { AppModule } from 'src/app/app.module';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { CashboxSelectHtmlOnly } from '@modules/accounting/models/cashbox.model';
 import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
 import { SubEntidadFinanciera } from '@modules/accounting/models/subentidad-financiera.model';
 import { MovimientoCajaService } from '@modules/accounting/services/movimiento-caja.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import {NgbActiveModal, NgbTypeaheadModule} from '@ng-bootstrap/ng-bootstrap';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import { Observable, OperatorFunction, catchError, debounceTime, switchMap } from 'rxjs';
 import { EmployeeSearchDto } from '@modules/sale/models/employee.model';
 import { EmployeeService } from '@modules/sale/services/employee.service';
@@ -19,7 +24,11 @@ import { isApiResponse } from '@core/models/api-response';
 @Component({
   selector: 'app-modal-egreso-ingreso',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+
+    ReactiveFormsModule,
+    NgbTypeaheadModule
+  ],
   templateUrl: './modal-egreso-ingreso.component.html',
 })
 export class ModalEgresoIngresoComponent {
@@ -60,10 +69,8 @@ export class ModalEgresoIngresoComponent {
 
   ngOnInit() {
 
-    showLoader();
-    this.movimientoCajaSvc.getDataForm().subscribe({
-      next: (response) => {
-        hideLoader();
+    this.movimientoCajaSvc.getDataForm().subscribe( (response) => {
+
         let { establecimientos, cajas, entidadesFinanciera, subEntidadesFinanciera, tiposDocumento } = response;
 
         this.establecimientos = establecimientos;
@@ -75,11 +82,6 @@ export class ModalEgresoIngresoComponent {
         this.entidadesFinanciera = entidadesFinanciera;
         this.tempSubEntidadesFinanciera = subEntidadesFinanciera;
         this.tiposDocumento = tiposDocumento;
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
   }
 
@@ -136,10 +138,9 @@ export class ModalEgresoIngresoComponent {
       }
 
 
-      showLoader();
-      this.movimientoCajaSvc.post(params).subscribe({
-        next: (response) => {
-          hideLoader();
+
+      this.movimientoCajaSvc.post(params).subscribe(  (response) => {
+
           if (isApiResponse(response)) {
             if (response.code === "0") {
               this.tS.toastr({
@@ -155,14 +156,8 @@ export class ModalEgresoIngresoComponent {
               this.activeModal.close(response)
             }
           }
-        },
-        error(err) {
-          hideLoader();
-          console.log(err)
-        },
       })
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
   }

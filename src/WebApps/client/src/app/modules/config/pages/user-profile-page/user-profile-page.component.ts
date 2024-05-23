@@ -1,14 +1,11 @@
 import { Component, inject } from '@angular/core';
-import { PurchaseModule } from "../../../purchase/purchase.module";
 import { UserProfileService } from '@modules/config/services/user-profile.service';
-import { ModalService } from '@core/services/modal.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
-import { S } from '@angular/cdk/keycodes';
 import Swal from 'sweetalert2';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 
 @Component({
     selector: 'app-user-profile-page',
@@ -16,10 +13,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     templateUrl: './user-profile-page.component.html',
     styles: ``,
     imports: [
-        PurchaseModule,
+
         MatTabsModule,
         ReactiveFormsModule,
         MatCheckboxModule,
+      BreadcrumbComponent
     ]
 })
 export class UserProfilePageComponent {
@@ -41,20 +39,12 @@ export class UserProfilePageComponent {
     }
 
     getAll() {
-        showLoader();
-        this.userProfileService.getAll({ tipo: 1 }).subscribe({
-            next: (response: any) => {
-                hideLoader();
+
+        this.userProfileService.getAll({ tipo: 1 }).subscribe( (response: any) => {
+
                 const { user, roles } = JSON.parse(response.payload);
                 this.user = user[0];
                 this.roles = roles;
-            },
-            error(err) {
-                console.log(err)
-            },
-            complete() {
-                hideLoader();
-            },
         })
     }
 
@@ -99,8 +89,6 @@ export class UserProfilePageComponent {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                showLoader();
-
                 // clean spaces
 
                 let password = {
@@ -108,9 +96,8 @@ export class UserProfilePageComponent {
                     confirmarContrasenia: this.passwordForm.value.confirmPassword?.trim(),
                 }
 
-                this.userProfileService.put(this.user.idUsuario, { perfil: password }).subscribe({
-                    next: (response: any) => {
-                        hideLoader();
+                this.userProfileService.put(this.user.idUsuario, { perfil: password }).subscribe( (response: any) => {
+
 
                         if (response.code === "0") {
                             this.tS.toastr({ type: 'error', message: response.message });
@@ -119,13 +106,6 @@ export class UserProfilePageComponent {
 
                         this.tS.toastr({ type: 'success', message: response.message });
                         this.resetPasswordForm();
-                    },
-                    error(err) {
-                        console.log(err)
-                    },
-                    complete() {
-                        hideLoader();
-                    },
                 })
             }
         })

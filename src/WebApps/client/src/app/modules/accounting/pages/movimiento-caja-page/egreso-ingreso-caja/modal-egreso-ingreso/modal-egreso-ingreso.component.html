@@ -12,12 +12,12 @@
     <div class="row justify-content-between">
       <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
         <div class="form-group">
-          <label for="exstablecimiento"
+          <label for="establecimiento"
             >Establecimiento: <span class="text-danger">*</span></label
           >
           <select
             name="establecimiento"
-            id="onChangeEntidadFinanciera"
+            id="establecimiento"
             class="form-select form-control-border"
             formControlName="codEstab"
             required
@@ -37,6 +37,7 @@
             class="form-select form-control-border"
             formControlName="idCaja"
             name="idCaja"
+            id="caja"
             required          >
             @for (item of cajas; track $index) {
             <option [ngValue]="item.idCaja">{{ item.descripcion }}</option>
@@ -75,6 +76,7 @@
           >
           <select
           name="idEntidadFinanciera"
+          id="entidadFinanciera"
             class="form-select form-control-border"
             (change)="onChangeEntidadFinanciera()"
             formControlName="idEntidadFinanciera"
@@ -92,11 +94,12 @@
 
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label for="">Sub Entidad Financiera</label>
+          <label for="idSubEntidadFinanciera">Sub Entidad Financiera</label>
           <select
             class="form-select form-control-border"
             formControlName="idSubEntidadFinanciera"
             name="idSubEntidadFinanciera"
+            id="idSubEntidadFinanciera"
             required
           >
             @for (item of subEntidadesFinanciera; track $index) {
@@ -117,7 +120,7 @@
           >
           <div class="input-group">
             <input
-              id="typeahead-supplier"
+              id="employee"
               type="text"
               formControlName="employeeName"
               class="form-control form-control-border"
@@ -138,8 +141,9 @@
       </div>
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label for="">Valor <span class="text-danger">*</span></label>
+          <label for="valor">Valor <span class="text-danger">*</span></label>
           <input
+            id="valor"
             type="number"
             class="form-control form-control-border"
             placeholder="0.00"
@@ -154,8 +158,9 @@
     <div class="row">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm 12 col-12">
         <div class="form-group">
-          <label for="">Observación <span class="text-danger">*</span></label>
+          <label for="observaciones">Observación <span class="text-danger">*</span></label>
           <textarea
+            id="observaciones"
             name="observaciones"
             class="form-control form-control-border"
             formControlName="observaciones"

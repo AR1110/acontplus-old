@@ -201,8 +201,8 @@ public class DocumentoRecibidoController : ControllerBase
             {
                 var parameters = new Dictionary<string, object>();
                 await _db.SPExecute("Recepcion.Documento_Get_Id");
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("idDocumento", id);
+                _db.AddDynamicParam("userRoleId", idUsuarioRol);
+                _db.AddDynamicParam("id", id);
                 var dt = _db.GetDataTable();
                 if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
                 {

@@ -1,19 +1,21 @@
 import { Component, Input, inject } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import {FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppModule } from 'src/app/app.module';
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: 'app-apertura-caja-modal',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    FontAwesomeModule
+  ],
   templateUrl: './apertura-caja-modal.component.html',
-  styleUrl: './apertura-caja-modal.component.scss'
 })
 export class AperturaCajaModalComponent {
   private activeModal = inject(NgbActiveModal);
@@ -37,24 +39,17 @@ export class AperturaCajaModalComponent {
     this.dataForm.get('idCaja')?.setValue(this.params.idCaja)
 
 
-    showLoader();
-    this.controlCajaSvc.getDataForm().subscribe({
-      next: (response) => {
-        hideLoader();
+    this.controlCajaSvc.getDataForm().subscribe(  (response) => {
+
         let { formaPagos } = response as { formaPagos: any }
         this.entidadesFinanciera = formaPagos;
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
   }
 
   save() {
     try {
       let data = this.dataForm.value;
-      
+
        if (this.dataForm.invalid) {
         this.tS.toastr({
           type: 'warning',
@@ -62,11 +57,16 @@ export class AperturaCajaModalComponent {
         })
         return
       }
+       if(!(typeof data.idEntidadFinanciera=='number' && data.idEntidadFinanciera>0)){
+         this.tS.toastr({
+           type: 'warning',
+           message: 'Ingrese todos los campos requeridos!'
+         })
+         return
+       }
 
       if (data.idCaja && data.idCaja > 0) {
-        showLoader();
-        this.controlCajaSvc.post(data).subscribe({
-          next: (response) => {
+        this.controlCajaSvc.post(data).subscribe( (response) => {
             if (isApiResponse(response)) {
               if (response.code === "0") {
                 this.tS.toastr({
@@ -82,18 +82,10 @@ export class AperturaCajaModalComponent {
                 this.activeModal.close(response)
               }
             }
-          }, error(err) {
-            hideLoader()
-            console.log(err)
-          },
-          complete() {
-            hideLoader();
-          },
         })
       }
     } catch (error) {
       console.log(error);
-      hideLoader();
     }
   }
 

@@ -13,7 +13,8 @@ export const enum PATHS_API {
   INVENTORY = 'Inventario/',
   RESTAURANT = 'Restaurant/',
   BILLING = 'FactElect/',
-  MECHANICAL = 'Mechanical/'
+  MECHANICAL = 'Mechanical/',
+  VET = 'Vet',
 }
 
 export const enum PATHS {
@@ -22,7 +23,8 @@ export const enum PATHS {
   APP_NOTIFICATION = 'Notificacion/',
   PRINT = 'Print',
   USER = 'Usuario/',
-  ESTAB_ASIGN = 'EstabAsig/'
+  ESTAB_ASIGN = 'EstabAsig/',
+  NOTIFICACION = 'Notificacion/',
 }
 
 export const enum DOC_TYPE {
@@ -35,7 +37,7 @@ export const enum DOC_TYPE {
   FE = 'FE', //Factura Electrónica
   FF = 'FF', // Factura Fisica
   IV = 'IV', //Ingresos Varios (Compras No Habituales)
-  NE = 'NE' //Nota Entrega
+  NE = 'NE', //Nota Entrega
 }
 
 export const enum DOC_TYPE_SRI {
@@ -80,38 +82,35 @@ export enum CODE_REPORT {
   CDCC = 'CDCC', //Contabilidad Detalle Control Caja
   RTS = 'RTS', // Technical Support Report
   RCXC = 'RCXC', // Contabilidad Cobros por Cuotas.
-  RCXD = 'RCXD' // Contabilidad Cobros por Documentos
+  RCXD = 'RCXD', // Contabilidad Cobros por Documentos
 }
 
 export enum CODE_ESTADO {
   NCBR = 'NCBR',
 }
 
-
 export enum TAX_RATE_CODE {
-  ZERO_PERCENT = "0",
-  TWELVE_PERCENT = "2",
-  FOURTEEN_PERCENT = "3",
-  FIFTEEN_PERCENT='4',
-  FIVE_PERCENT='5',
-  NOT_SUBJECT_TO_TAX = "6",
-  TAX_EXEMPT = "7",
-  DIFFERENTIATED_TAX = "8",
+  ZERO_PERCENT = '0',
+  TWELVE_PERCENT = '2',
+  FOURTEEN_PERCENT = '3',
+  FIFTEEN_PERCENT = '4',
+  FIVE_PERCENT = '5',
+  NOT_SUBJECT_TO_TAX = '6',
+  TAX_EXEMPT = '7',
+  DIFFERENTIATED_TAX = '8',
 }
 
 export enum TAX_CODE {
   IVA = '2',
   ICE = '3',
-  IRBPNR = '5'
+  IRBPNR = '5',
 }
-
 
 export enum MODAL_SIZE {
-  XL='xl',
-  LG='lg',
-  SM ='sm'
+  XL = 'xl',
+  LG = 'lg',
+  SM = 'sm',
 }
-
 
 export enum FORMA_PAGO_SRI_CODE {
   /**
@@ -160,28 +159,26 @@ export enum FORMA_PAGO_SRI_CODE {
    * ENDOSO DE TÍTULOS
    * @type {string}
    */
-  ET = '21'
+  ET = '21',
 }
 
-
 export enum SRI_IDENTIFICATION_CODE {
-  RUC = "04",
-  CEDULA = "05",
-  PASSPORT = "06"
+  RUC = '04',
+  CEDULA = '05',
+  PASSPORT = '06',
 }
 
 export enum IDENTIFICATION_CODE {
-  RUC = "R",
-  CEDULA = "C",
-  PASSPORT = "P"
+  RUC = 'R',
+  CEDULA = 'C',
+  PASSPORT = 'P',
 }
 
-
-export enum SEPARATOR_KEY_CODE  {
-  SLASH = '|'
+export enum SEPARATOR_KEY_CODE {
+  SLASH = '|',
+  PUNTO_COMA = ';',
 }
 
-
-export  enum CODE_ROLE {
-  ADM = 'ADM'
+export enum CODE_ROLE {
+  ADM = 'ADM',
 }

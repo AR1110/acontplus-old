@@ -2,11 +2,16 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { UserSearch } from '@core/models/user.model';
 import { UserService } from '@core/services/user.service';
 import { Observable, OperatorFunction, catchError, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
-import { AppModule } from 'src/app/app.module';
+import {FormsModule} from "@angular/forms";
+import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
+
 @Component({
   selector: 'app-user-search',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+    FormsModule,
+    NgbTypeaheadModule
+  ],
   templateUrl: './user-search.component.html',
   styles: ``
 })
@@ -28,7 +33,7 @@ export class UserSearchComponent {
       tap(() => (this.searching = true)),
       switchMap((term) => {
         if (!term || term.length < 2) {
-          
+
           return of([]);
         }
         return this.userSvc.search({ textSearch: term }).pipe(

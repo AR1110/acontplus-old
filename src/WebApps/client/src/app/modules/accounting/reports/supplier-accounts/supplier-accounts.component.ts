@@ -8,16 +8,22 @@ import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
-import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ACCOUNTING_PATHS } from '@modules/accounting/enums/accounting.constants';
-import { AppModule } from 'src/app/app.module';
+import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
+import {FormsModule} from "@angular/forms";
+import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
+import {SupplierSearchComponent} from "@purchase/components/supplier-search/supplier-search.component";
 
 @Component({
   selector: 'app-supplier-accounts',
   standalone: true,
-  imports: [AppModule, AccountingModule],
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    DateRangeSelectionComponent,
+    SupplierSearchComponent
+  ],
   templateUrl: './supplier-accounts.component.html',
   styles: ``
 })
@@ -51,14 +57,12 @@ export class SupplierAccountsComponent {
 
   private initialed() {
 
-    showLoader();
     this.http.get(this.url, {
       params: {
         json: JSON.stringify({ tipo: 6 })
       }
-    }).subscribe({
-      next: (response) => {
-        hideLoader();
+    }).subscribe((response) => {
+
         if (isApiResponse(response)) {
           if (response.code === "0") {
             console.log(response)
@@ -85,11 +89,6 @@ export class SupplierAccountsComponent {
             this.estadosDoc = estadosDoc;
           }
         }
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
   }
 

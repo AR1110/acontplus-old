@@ -12,12 +12,18 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { AppModule } from 'src/app/app.module';
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import {FormsModule} from "@angular/forms";
+import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-device-search',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+    FontAwesomeModule,
+    FormsModule,
+    NgbTypeaheadModule
+  ],
   templateUrl: './device-search.component.html',
   styles: ``,
 })
