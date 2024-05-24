@@ -19,6 +19,7 @@ public class PetTypeService(VetContext context) : IPetTypeService
 
         petType.Deleted = true;
         petType.Enabled = false;
+        petType.UserId = userId;
         context.Update(petType);
         await context.SaveChangesAsync();
         return new ApiResponse { code = "1", message = "Eliminada exitosamente" };
@@ -57,7 +58,7 @@ public class PetTypeService(VetContext context) : IPetTypeService
         petTypeFound.Code = petType.Code;
         petTypeFound.Name = petType.Name;
         petTypeFound.Description = petType.Description;
-        petTypeFound.UpdatedAt = DateTime.Now;
+        petTypeFound.UserId = petType.UserId;
         context.Update(petTypeFound);
         await context.SaveChangesAsync();
         return new ApiResponse { code = "1", message = "Actualizado exitosamente", payload = petType };

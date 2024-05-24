@@ -17,6 +17,7 @@ public class BreedService(VetContext context) : IBreedService
             return new ApiResponse { code = "0", message = "No se encontro raza para eliminar" };
         }
 
+        breed.UserId = userId;
         breed.Deleted = true;
         breed.Enabled = false;
         context.Update(breed);
@@ -57,7 +58,8 @@ public class BreedService(VetContext context) : IBreedService
         breedFound.Code = breed.Code;
         breedFound.Name = breed.Name;
         breedFound.Description = breed.Description;
-        breedFound.Enabled = breed.Enabled; 
+        breedFound.Enabled = breed.Enabled;
+        breedFound.UserId = breed.UserId;
         context.Update(breedFound);
         await context.SaveChangesAsync();
         return new ApiResponse { code = "1", message = "Actualizado exitosamente", payload = breed };

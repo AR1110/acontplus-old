@@ -25,7 +25,7 @@ import { PetTypeService } from '@modules/vet/services/pet-type.service';
 export class BreedModalComponent {
   data = {} as Breed;
   modalIcon: IconProp = 'plus';
-  modalTitle = 'Registrar Mascota';
+  modalTitle = 'Registrar Raza';
   petTypes: PetType[] = [];
   breedForm = new FormGroup({
     id: new FormControl(0),

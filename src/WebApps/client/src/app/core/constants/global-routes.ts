@@ -30,6 +30,6 @@ export enum GlobalRoutes {
   TechnicalSupportModelo = 'technical-support/modelo-page',
   VentasReportRentabilidad = 'sale/reports/rentabilidad-page',
   VetBreed = 'vet/breed-page',
-  VetPet = 'vet/breed-page',
+  VetPet = 'vet/pet-page',
   VetMedicalHistory = 'vet/medical-history-page',
 }
