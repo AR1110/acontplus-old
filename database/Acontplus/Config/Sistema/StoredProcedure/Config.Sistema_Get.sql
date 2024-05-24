@@ -11,37 +11,35 @@ GO
 -- Description:	GET para traer la configuracion del sistema
 -- =============================================
 
-CREATE OR ALTER PROCEDURE Config.Sistema_Get @userRoleId INT, @json VARCHAR(MAX), @tableNames VARCHAR(MAX) OUTPUT
+CREATE OR ALTER PROCEDURE Config.Sistema_Get 
+    @userRoleId INT
+   ,@json VARCHAR(MAX)
+   ,@tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @idEntidad AS INT
-	DECLARE @codConfig AS VARCHAR(5)
-	DECLARE @jsonConfig AS VARCHAR(MAX)
-	DECLARE @idSistema AS INT
+    SET LANGUAGE SPANISH;
+
+	DECLARE @idEntidad INT, @codConfig VARCHAR(5)
 
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 	
-	SELECT @codConfig = codConfig FROM OPENJSON(@json) WITH (codConfig VARCHAR(5) '$.codConfig')
+	SELECT @codConfig = codConfig FROM OPENJSON(@json) WITH (codConfig VARCHAR(5))
 
-	SELECT TOP 1 @jsonConfig = jsonConfig, @idSistema = idSistema FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = @codConfig
-
+    --> Config. Venta
 	IF @codConfig = 'cv'
 		BEGIN
 
-              SET @tableNames = 'data,formasPagoSri'
-			SELECT idSistema = @idSistema
-				  ,customerDefault  = IIF(dt.idCliente IS NULL ,CAST(0 AS BIT),CAST(1 AS BIT))
-				  ,cl.idCliente 
-				  ,cl.nombreFiscal
-				  ,cl.numeroIdentificacion
-				  ,articleDefault   = IIF(dt.idArticulo IS NULL,CAST(0 AS BIT),CAST(1 AS BIT))
-				  ,ar.descripcion
-				  ,ar.codigo
-				  ,dt.searchCode                  
-				  ,dt.printerAutomatic           
+            SET @tableNames = 'data,formasPagoSri'
+
+            SELECT dt.idSistema
+                  ,IIF(dt.idCliente IS NULL ,CAST(0 AS BIT),CAST(1 AS BIT)) as customerDefault
+                  ,IIF(dt.idArticulo IS NULL,CAST(0 AS BIT),CAST(1 AS BIT)) as articleDefault
+                  ,IIF(dt.cc IS NULL,CAST(0 AS BIT),CAST(1 AS BIT))         as configCc
+                  ,dt.cc
+                  ,dt.printerAutomatic           
 				  ,dt.payAutomatic
 				  ,dt.multipleVendedor
                   ,dt.detailDuplicate
@@ -50,71 +48,64 @@ BEGIN
 				  ,dt.interes
                   ,dt.idFormaPagoSri
                   ,dt.idArticulo
-			FROM OPENJSON(@jsonConfig)
-			WITH (idCliente        INT '$.idCliente'
-			    ,idArticulo        INT '$.idArticulo'
-				,searchCode        BIT '$.searchCode'
-				,printerAutomatic  BIT '$.printerAutomatic'
-				,payAutomatic      BIT '$.payAutomatic'
-				,multipleVendedor  BIT '$.multipleVendedor'
-				,detailDuplicate   BIT '$.detailDuplicate'
-				,configDeuda       BIT '$.configInteres'
-				,tipoConfig VARCHAR(5) '$.infoInteres.tipoConfig'
-				,interes NUMERIC(18,5) '$.infoInteres.interes'
-                ,idFormaPagoSri INT
-				) as dt
-			LEFT JOIN dbo.Cliente  cl WITH (NOLOCK) ON cl.idCliente  = dt.idCliente
-			LEFT JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo
+                  ,dt.idCliente 
+				  ,cl.nombreFiscal
+				  ,cl.numeroIdentificacion
+                  ,ar.descripcion
+				  ,ar.codigo
+            FROM Config.v_Sistema_Ventas dt WITH (NOLOCK)  
+            LEFT JOIN dbo.Cliente        cl WITH (NOLOCK) ON cl.idCliente  = dt.idCliente
+			LEFT JOIN dbo.Articulo       ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo
+            WHERE dt.idEntidad = @idEntidad
 
-              SELECT idFormaPagoSri, descripcion, codigo FROM dbo.FormaPagoSri WHERE estado = 1
+            SELECT idFormaPagoSri, descripcion, codigo FROM dbo.FormaPagoSri WHERE estado = 1
+
+            RETURN 
 		END 
 
+    --> Config. Inventario
 	IF @codConfig = 'CI'
 		BEGIN
 
-             SET @tableNames = 'data,metodosValoracion'
-			SELECT dt.idMetodoValoracion
-			      ,idSistema = @idSistema
-				  ,codMetodoValoracion = dt.codMetodoValoracion
-			      ,llevaInventario = IIF(dt.llevaInventario = 'SI',CAST(1 AS BIT),CAST(0 AS BIT))
-			FROM OPENJSON(@jsonConfig)
-			WITH (idMetodoValoracion INT        '$.idMetodoValoracion'
-				,llevaInventario     VARCHAR(5) '$.llevaInventario'
-				,codMetodoValoracion VARCHAR(5) '$.codMetodoValoracion') as dt
+            SET @tableNames = 'data,metodosValoracion'
 
-			SELECT idMetodoValoracion , descripcion, codMetodoValoracion = codigo FROM Inventario.MetodoValoracion WHERE estado = 1
+			SELECT dt.idMetodoValoracion
+			      ,dt.idSistema                                             
+				  ,dt.codMetodoValoracion                                 as codMetodoValoracion
+			      ,IIF(dt.inventory = 'SI',CAST(1 AS BIT),CAST(0 AS BIT)) as llevaInventario
+			FROM Config.v_Sistema_Inventario dt WITH (NOLOCK)
+            WHERE dt.idEntidad = @idEntidad
+
+			SELECT idMetodoValoracion , descripcion, codMetodoValoracion = codigo FROM Inventario.MetodoValoracion WITH (NOLOCK) WHERE estado = 1
 			
+            RETURN 
 		END 
 
 	IF @codConfig = 'CD'
 		BEGIN
-             SET @tableNames = 'data'
-			SELECT dt.*,idSistema = @idSistema
-			FROM OPENJSON(@jsonConfig)
-			WITH (codTransaccion      VARCHAR(5) '$.codTransaccion'
-			     ,nroPrecio                  INT '$.nroPrecio'
-				 ,nroCantidad                INT '$.nroCantidad'
-				 ,nroIva                     INT '$.nroIva'
-				 ,nroDescuentoDetalle        INT '$.nroDescuentoDetalle'
-				 ,nroTotalDetalle            INT '$.nroTotalDetalle'
-				 ,nroTotalSubTotal           INT '$.nroTotalSubTotal'
-				 ,nroDescuento               INT '$.nroDescuento'
-				 ,importeTotal               INT '$.importeTotal'
-				 ,nroIce                     INT '$.nroIce') as dt
-                 RETURN 
+            SET @tableNames = 'data'
+
+			SELECT dt.*
+			FROM Config.v_Sistema_Decimal dt
+            WHERE dt.idEntidad = @idEntidad
+
+            RETURN 
 		END 
 
 	IF @codConfig = 'CS'
 		BEGIN
-          SET @tableNames = 'notificaciones'
+            
+            SET @tableNames = 'notificaciones'
+
             SELECT vs.estado
                   ,ns.descripcion as notificacion
-                  ,@idSistema     as idSistema
+                  ,vs.idSistema
                   ,ns.codigo 
                   ,vs.idNotificacionSistema
             FROM Config.v_Sistema_Notificacion    vs WITH (NOLOCK)
             INNER JOIN Config.NotificacionSistema ns WITH (NOLOCK) ON ns.idNotificacionSistema = vs.idNotificacionSistema
             WHERE idEntidad = @idEntidad
+
             RETURN 
 		END 
 END

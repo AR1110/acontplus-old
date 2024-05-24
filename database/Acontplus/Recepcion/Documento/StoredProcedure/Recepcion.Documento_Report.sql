@@ -40,7 +40,7 @@ BEGIN
 
     -->Filter
     DECLARE @codEstab VARCHAR(100) ,@ckFecha BIT ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@ckRetencion BIT ,@identificacion VARCHAR(20) ,@idUsuario INT
-           ,@identificacionReceptor VARCHAR(20)
+           ,@identificacionReceptor VARCHAR(20) ,@subcategoryId INT
 
     --> Recuperar Datos
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
@@ -60,6 +60,7 @@ BEGIN
                   ,@ckRetencion    = ckRetencion
                   ,@identificacion = identificacion
                   ,@idUsuario      = idUsuario
+                  ,@subcategoryId  = subcategoryId
             FROM OPENJSON(@json) WITH 
             (
                 codEstab       VARCHAR(100)
@@ -69,6 +70,7 @@ BEGIN
                ,ckRetencion    BIT
                ,identificacion VARCHAR(20)
                ,idUsuario      INT
+               ,subcategoryId  INT
             )
 
             SET @params = '@idEntidad              INT
@@ -77,7 +79,8 @@ BEGIN
                           ,@fechaInicio            DATETIME2
                           ,@fechaFin               DATETIME2
                           ,@identificacion         VARCHAR(20)
-                          ,@idUsuario              INT'
+                          ,@idUsuario              INT
+                          ,@subcategoryId          IN'
 
             SET @sql = 'SELECT * FROM 
                         (
@@ -219,6 +222,7 @@ BEGIN
 		                                ),0) as retIva
                                         ,us.nombreUsuario as usuario
                                         ,dr.identificacionReceptor
+                                        ,,(SELECT TOP 1 cp.subcategoryId FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK) WHERE cp.codDoc = ''01'' AND cp.idDocumento = dr.idDocumento ) as subcategoryId
                                 FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
                                 INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab  = dr.codEstab
                                 INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = dr.idUsuario
@@ -378,6 +382,7 @@ BEGIN
 		                                ),0) as retIva
                                         ,us.nombreUsuario as usuario
                                         ,@identificacionReceptor 
+                                        ,(SELECT TOP 1 cp.subcategoryId FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK) WHERE cp.codDoc = ''FC'' AND cp.idDocumento = fc.idFacturaCompra ) as subcategoryId
                                 FROM dbo.FacturaCompra         fc WITH (NOLOCK) 
                                 INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab    = fc.codEstab
                                 INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor = fc.idProveedor
@@ -417,6 +422,11 @@ BEGIN
                     SET @sql = @sql + 'AND dt.nroRetencion IS NULL '
                 END
 
+             IF @subcategoryId > 0
+                BEGIN
+                    SET @sql = @sql + 'AND dt.subcategoryId = @subcategoryId '
+                END
+
             SET @sql = @sql + 'ORDER BY dt.fechaEmision ASC '
 
             SELECT entidad as razonSocial 
@@ -437,6 +447,7 @@ BEGIN
                               ,@fechaFin               = @fechaFin
                               ,@identificacion         = @identificacion
                               ,@idUsuario              = @idUsuario
+                              ,@subcategoryId          = @subcategoryId
 
             RETURN 
         END 

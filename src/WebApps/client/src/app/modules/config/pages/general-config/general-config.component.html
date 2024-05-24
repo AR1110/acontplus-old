@@ -139,6 +139,25 @@
                         }
                       </td>
                     </tr>
+
+                    <tr>
+                      <td>
+                        <div class="icheck-primary">
+                          <input type="checkbox" name="configCc" id="configCc" [(ngModel)]="configVenta.configCc">
+                          <label for="configCc">Envio de copia de comprobates</label>
+                        </div>
+                      </td>
+                      <td>
+                        @if (configVenta.configCc) {
+                          <div class="form-group">
+                            <label for="dias">Correo</label>
+                            <input type="email" name="cc" id="cc" class="form-control border-select" placeholder="example.199@gmail.com"
+                              [(ngModel)]="configVenta.cc">
+                          </div>
+                        }
+                      </td>
+                    </tr>
+
                     <!--Configuracion Forma Pago-->
                     <tr>
                       <td [width]="500">
