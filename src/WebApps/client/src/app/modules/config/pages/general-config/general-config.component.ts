@@ -75,6 +75,8 @@ export class GeneralConfigComponent {
     idCliente: 0,
     idArticulo: 0,
     configDeuda: false,
+    configCc : false,
+    cc : undefined as  any,
     tipoConfig: "" as any,
     interes: 0 as any,
     idSistema: 0,
@@ -240,6 +242,7 @@ export class GeneralConfigComponent {
       jsonConfig.printerAutomatic = this.configVenta.printerAutomatic;
       jsonConfig.payAutomatic = this.configVenta.payAutomatic;
       jsonConfig.configInteres = this.configVenta.configDeuda;
+      jsonConfig.cc            = this.configVenta.cc;
       jsonConfig.multipleVendedor = this.configVenta.multipleVendedor;
       jsonConfig.detailDuplicate = this.configVenta.detailDuplicate;
       jsonConfig.idFormaPagoSri = this.configVenta.idFormaPagoSri > 0 ? this.configVenta.idFormaPagoSri : undefined

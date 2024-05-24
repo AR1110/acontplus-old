@@ -92,7 +92,6 @@ BEGIN
 
 		) as dt 
 
-
         INSERT INTO @documento
               (idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal,observacion)
 		SELECT idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal,observacion
@@ -102,7 +101,7 @@ BEGIN
 		    ,total             NUMERIC(18,5) 
 		    ,abono             NUMERIC(18,5) 
 		    ,codEstab          VARCHAR(20) 
-		    ,nroIdentificacion VARCHAR(20) 
+		    ,nroIdentificacion VARCHAR(20)  '$.numeroIdentificacion'
 		    ,nombreFiscal      VARCHAR(200)
             ,observacion       VARCHAR(300)
 		)
