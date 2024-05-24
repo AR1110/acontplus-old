@@ -460,18 +460,11 @@ function modalService($uibModal, $mdDialog) {
             windowTopClass,
             openedClass,
             scope,
-            props = {},
-            isRenderRazorPartial = false,
-            isRenderHtmlNormal = false,
+            props = {}, 
         }) {
-            let templateUrl = "";
-            if (isRenderRazorPartial) {
-                templateUrl = `/Home/Index?name=${template}`;
-            }
-
-            if (!isRenderRazorPartial) {
-                templateUrl = `/Index?name=~/Views/${template}`;
-            }
+            let templateUrl = ""; 
+            
+            templateUrl = `/Home/Index?name=${template}`; 
 
             return $uibModal.open({
                 animation,

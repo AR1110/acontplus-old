@@ -22,6 +22,25 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="icheck-primary">
+                        <input type="checkbox" id="checkBoxCustomer" ng-model="dataSearch.checkBoxCustomer"
+                            name="checkBoxCustomerName" />
+                        <label for="checkBoxCustomer">Clente</label>
+                    </div>        
+                </div>            
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="icheck-primary">
+                        <input type="checkbox" id="checkBoxUser" ng-model="dataSearch.checkBoxUser"
+                            name="checkBoxUserName" />
+                        <label for="checkBoxUser">Usuario</label>
+                    </div>
+                </div>            
+            </div>
+            
+            <hr>
+
+            <div class="row">
                 <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Tipo Documento: </span>
@@ -84,16 +103,9 @@
                         result-range-date="resultRangeFilter(result)"></date-range-filter>
 
                 </div>
-                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-                    <span for="date-range-filter">Cliente: </span>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="icheck-primary">
-                                <input type="checkbox" id="checkBoxCustomer" ng-model="dataSearch.checkBoxCustomer"
-                                    name="checkBoxCustomerName" />
-                                <label for="checkBoxCustomer"></label>
-                            </div>
-                        </div>
+                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <span >Cliente: </span>
+                    <div class="form-group"> 
 
                         <input type="text" id="customerInputSearch" class="form-control border-select"
                             ng-model="cliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
@@ -101,23 +113,15 @@
                             onclick="select();">
 
                         <script type="text/ng-template" id="autocompleteClienteTemplate.html">
-                        <div class="autocomplete-suggestion-uib-typeahead">
-                            <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
-                        </div>
-                    </script>
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                            </div>
+                        </script>
                     </div>
                 </div>
-                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-                    <span for="date-range-filter">Usuario: </span>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="icheck-primary">
-                                <input type="checkbox" id="checkBoxUser" ng-model="dataSearch.checkBoxUser"
-                                    name="checkBoxUserName" />
-                                <label for="checkBoxUser"></label>
-                            </div>
-                        </div>
-
+                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <span  >Usuario: </span>
+                    <div class="form-group-group"> 
                         <input type="text" id="userInputSearch" class="form-control border-select"
                             ng-model="user.nombreUser" user-search-drtv on-select="onSelectUser(result)"
                             on-keyup="onKeyupUser()" placeholder="..." onclick="select();">
@@ -128,6 +132,13 @@
                         </div>
                     </script>
                     </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12  d-flex align-items-center">
+                    <div class="icheck-primary icheck-inline" ng-if="isSelectedNotaEntrega">
+                        <input type="checkbox" id="docTransferidas" ng-model="dataSearch.convertToDoc" />
+                        <label for="docTransferidas">Docs. Transferidas</label>
+                    </div> 
                 </div>
 
             </div>

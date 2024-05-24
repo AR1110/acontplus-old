@@ -326,10 +326,10 @@
             let format = 'pdf';
 
             let dataParms = {
+                tipo: 3,
                 id: item.idComprobanteIngreso,
             }
-            const parameters = {
-                hasService: true,
+            const parameters = { 
                 reportParams: JSON.stringify({
                     hasParams: true,
                     codigo: 'RCINGR',
@@ -343,7 +343,8 @@
 
             _commonSvc.getReport({
                 parameters,
-                formatType: format
+                formatType: format,
+                v2: true
             })
         }
 

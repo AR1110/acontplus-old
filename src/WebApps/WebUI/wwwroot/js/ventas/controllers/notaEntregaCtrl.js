@@ -160,7 +160,7 @@
                     byCliente: $scope.dataSearch.idCliente,
                     checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                     byUsuario: $scope.dataSearch.byUsuario,
-                    codEstado: ["", null, undefined].includes($scope.dataSearch.codEstado) ? null : $scope.dataSearch.codEstado,
+                    idEstadoPago: $scope.dataSearch.idEstadoPago>0 ?  $scope.dataSearch.idEstadoPago: null,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),

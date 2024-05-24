@@ -701,8 +701,13 @@ export class CommonService {
             let parameters = params.parameters;
             let formatType = params.formatType || "pdf";
             let downloadOnly = params.downloadOnly || false;
+            let returnFile = params.returnFile;
             showLoader();
+            if(returnFile){
+                return this.mS.getFile(method, url, parameters, true);
+            }
             await this.mS.getFile(method, url, parameters, true).then(response => {
+ 
 
                 if (formatType === "pdf") {
                     let fileName = '';

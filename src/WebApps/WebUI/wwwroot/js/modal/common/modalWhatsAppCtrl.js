@@ -8,11 +8,12 @@ ModalWhatsAppCtrl.$inject = [
     '$uibModalInstance',
     'toastService',
     'mainService',
+    'commonService',
     'params',
     'decodeToken'
 ]
 
-function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
+function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _token) {
     $scope.client = {}
     $scope.whatsapp = {}
     $scope.connected_devices = []
@@ -68,7 +69,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
             phoneNumbers = params.telefono.split(";")
         } else if (params.telefono.includes("|")) {
             phoneNumbers = params.telefono.split("|")
-        }else{
+        } else {
             phoneNumbers = params.telefono.split(" ")
         }
     } else {
@@ -283,33 +284,68 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         'CI': 'RCINGR'
     })
 
+    function generateFileAndSend(response) {
+        let fileName = response
+            .headers()["content-disposition"].split(";")[1]
+            .split("=")[1];
+        const file = new File([response.data], fileName, { type: response.headers()["content-type"], })
+
+        $scope.sendMedia(fileName, file, true)
+    }
+
     $scope.generateFile = () => {
         let format = 'pdf'
-        let dataParms = {
+        let dataParms = { 
             hasParams: true,
-            id: params.idDocumento,
-            codEstab: params.codEstab,
-            codigo: REPORT_CODES[params.codDoc],
-            format,
+            id: params.idDocumento,  
             versionComp: params.versionComp
         }
-
-        let parameters = {
-            hasService: true,
-            dataParams: JSON.stringify(dataParms),
-            reportParams: JSON.stringify(dataParms)
+        let reportParams = {
+            hasParams: true,
+            codigo: REPORT_CODES[params.codDoc],
+            format,
+            codEstab: params.codEstab,
+            aditionalParams: [],
+            versionComp: params.versionComp
         }
-        mS.getFile('post', "Reports/Reporte/Download", JSON.stringify(parameters), true).then(response => {
-            let fileName = response
-                .headers()["content-disposition"].split(";")[1]
-                .split("=")[1];
-            const file = new File([response.data], fileName, { type: response.headers()["content-type"], })
+       
+        
 
-            $scope.sendMedia(fileName, file, true)
+        if (params.codDoc==='CI') { 
+            dataParms.tipo = 3;
+            dataParms.hasParams = true;
+            let parameters = { 
+                dataParams: JSON.stringify(dataParms),
+                reportParams: JSON.stringify(reportParams)
+            }
+            commonSvc.getReport({
+                parameters,
+                formatType: format,
+                v2: true,
+                returnFile: true
+            }).then(generateFileAndSend)
+                .catch(error => {
+                    console.log(error)
+                })
+        } else {
 
-        }).catch(error => {
-            console.log(error)
-        })
+            let parameters = {
+                hasService: true,
+                dataParams: JSON.stringify(dataParms),
+                reportParams: JSON.stringify(reportParams)
+            }
+            commonSvc.getReport({
+                parameters,
+                formatType: format, 
+                returnFile: true
+            }).then(generateFileAndSend)
+                .catch(error => {
+                    console.log(error)
+                }) 
+        }
+
+
+
     }
 
     const phoneNumberFormatter = (number) => {

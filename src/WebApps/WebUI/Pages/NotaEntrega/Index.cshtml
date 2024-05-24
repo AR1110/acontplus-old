@@ -98,72 +98,80 @@
             </div>
 
             <div class="row justify-content-between" ng-if="moreSearchOptions">
+                <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
+                            <div class="form-gorup">
+                                <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
+                                <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
+                                        class="form-control  border-select" ng-change="getNotaEntregas()">
+                                    <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                        {{item.ptoEmi}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span for="usuario">Usuario</span>
+                                <input 
+                                    type="text" 
+                                    class="form-control border-select" 
+                                    ng-model ="dataUserSearch.name"
+                                    
+                                    user-search-drtv
+                                    on-keyup="onKeyupUsuarioSearch()"
+                                    on-select="selectedUsuarioSearch(result)"
+                                    placeholder="Ej: Jorge"
+                                    >
 
-                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
-                    <div class="form-gorup">
-                        <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
-                        <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
-                                class="form-control  border-select" ng-change="getNotaEntregas()">
-                            <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
-                                {{item.ptoEmi}}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span for="usuario">Usuario</span>
-                        <input 
-                            type="text" 
-                            class="form-control border-select" 
-                            ng-model ="dataUserSearch.name"
+                                    <script type="text/ng-template" id="autocompleteUserTemplate.html">
+                                        <div class="autocomplete-suggestion-uib-typeahead">
+                                            <span class="item-title">
+                                                {{match.model.nombreCompleto}}
+                                            </span>
+                                        </div>
+                                    </script> 
+
                             
-                            user-search-drtv
-                            on-keyup="onKeyupUsuarioSearch()"
-                            on-select="selectedUsuarioSearch(result)"
-                            placeholder="Ej: Jorge"
-                            >
-
-                            <script type="text/ng-template" id="autocompleteUserTemplate.html">
-                                <div class="autocomplete-suggestion-uib-typeahead">
-                                    <span class="item-title">
-                                        {{match.model.nombreCompleto}}
-                                    </span>
-                                </div>
-                            </script> 
-
-                       
+                            </div>
+                        </div>
                     </div>
+                   
                 </div>
+                <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span>Buscar por Nro. Doc.:</span>
+                                <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                                    placeholder="Ej: 123 o 1-30" />
+                            </div>
+                        </div>    
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span>Dato Adicional:</span>
+                                <input type="text" class="form-control border-select" ng-model="dataSearch.infoAdicional"
+                                    placeholder="Ej: SERIE" />
+                            </div>                        
+                        </div>   
 
-                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span>Buscar por Nro. Doc.:</span>
-                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
-                               placeholder="Ej: 123 o 1-30" />
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span>Estado:</span>
+                                <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.idEstadoPago"
+                                        ng-change="getNotaEntregas()">
+                                    <option value="">Todos</option>
+                                    <option ng-value="item.idEstadoPago" ng-repeat="item in estadoDocumentos">
+                                        {{item.descripcion}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>                     
+                    
                     </div>
-                </div>
 
-                 <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
-                     <div class="form-group">
-                        <span>Dato Adicional:</span>
-                        <input type="text" class="form-control border-select" ng-model="dataSearch.infoAdicional"
-                            placeholder="Ej: SERIE" />
-                    </div>
-                </div>
-
-                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span>Estado:</span>
-                        <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.codEstado"
-                                ng-change="getNotaEntregas()">
-                            <option value="">Todos</option>
-                            <option ng-value="item.codigo" ng-repeat="item in estadoDocumentos">
-                                {{item.descripcion}}
-                            </option>
-                        </select>
-                    </div>
-                </div>               
+                </div>      
             </div>
 
             <div class="row">
@@ -175,7 +183,11 @@
                     </span>
                 </div>
 
-                <div class="col-6 d-flex justify-content-end">
+                <div class="col-6 d-flex justify-content-end align-items-center">
+                    <div class="icheck-primary mr-2">
+                        <input type="checkbox" id="docTransferida" ng-model="dataSearch.convertToDoc"  ng-change="getNotaEntregas()"/>
+                        <label for="docTransferida">Doc. Transferida</label>
+                    </div>
                     <div class="form-group">
                         <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
                             ng-model="dataSearch.bySearch" placeholder="...">
@@ -211,13 +223,13 @@
                             </tr>
                         </thead>
                         <tbody md-body>
-                            <tr md-row ng-repeat="ne in notaEntregas | orderBy: dataSearch.order" ng-class="{'table-success': ne.convertToDoc, 'table-danger': ne.esAnulado}">
+                            <tr md-row ng-repeat="ne in notaEntregas | orderBy: dataSearch.order" ng-class="{'table-warning': ne.convertToDoc, 'table-danger': ne.esAnulado}">
                                 <td md-cell>
                                     <div class="d-flex">
                                         <md-menu>
                                             <md-button aria-label="Open demo menu" class="md-icon-button"
                                                     ng-click="$mdMenu.open($event)">
-                                                <icon class="mdi mdi-menu"></icon>
+                                                <i class="mdi mdi-menu"></i>
                                             </md-button>
                                             <md-menu-content class="md-dense">
                                                 <md-menu-item>
@@ -246,7 +258,7 @@
                                                     </md-button>
                                                 </md-menu-item>
 
-                                                <md-menu-item>
+                                                <md-menu-item ng-if="accion.crear">
                                                     <md-button ng-click="openModalDuplicate(ne)">
                                                         <span md-menu-align-target>
                                                             <i class="ti-files"></i>
@@ -314,7 +326,7 @@
                                                     </md-button>
                                                 </md-menu-item>
 
-                                                <md-menu-item ng-if="ne.enabledConvertToDoc"  >
+                                                <md-menu-item ng-if="accion.crear && ne.enabledConvertToDoc"  >
                                                     <md-button 
                                                     btn-convert-to-doc 
                                                     cod-doc="codDoc" 

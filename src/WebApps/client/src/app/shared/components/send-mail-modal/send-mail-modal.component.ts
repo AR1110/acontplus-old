@@ -108,7 +108,7 @@ export class SendMailModalComponent  {
           idDocumentoElectronico
 
         } = this.params.data;
-        let receptor = this.emails.join(SEPARATOR_KEY_CODE.PUNTO_COMA)
+        let receptor = this.emails.join(SEPARATOR_KEY_CODE.SLASH)
         if(this.params.notificationAcontPlus){
           let  params = {
             codDoc,
@@ -121,6 +121,8 @@ export class SendMailModalComponent  {
             params = this.params.data
             params.receptor = receptor;
           }
+
+
           this.notificacionSvc.post(params).subscribe(this.successResponse)
         }
 
