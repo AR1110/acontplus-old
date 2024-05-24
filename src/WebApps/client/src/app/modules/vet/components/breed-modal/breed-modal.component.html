@@ -1,68 +1,81 @@
 <form (ngSubmit)="onSave()">
-  <div class="row">
-    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-4">
-      <div class="form-group">
-        <label for="petTypeId">Especie:</label>
-        <select
-          [(ngModel)]="breed.petTypeId"
-          class="form-control"
-          id="petTypeId"
-          name="petTypeId"
-          required
-        >
-          <option disabled selected>Seleccione la especie</option>
-          <option *ngFor="let item of petTypes" [value]="item.id">{{ item.name }}</option>
-        </select>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <fa-icon [icon]="modalIcon"></fa-icon>
+      {{ modalTitle }}
+    </h5>
+    <button (click)="onModalClose()" class="btn-close" type="button"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="petTypeId">Especie:</label>
+          <select
+            [(ngModel)]="breed.petTypeId"
+            class="form-control"
+            id="petTypeId"
+            name="petTypeId"
+            required
+          >
+            <option disabled selected>Seleccione la especie</option>
+            <!--            <option *ngFor="let item of petTypes" [value]="item.id">{{ item.name }}</option>-->
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="code">Código</label>
+          <input
+            [(ngModel)]="breed.code"
+            class="form-control"
+            id="code"
+            name="code"
+            required
+            type="text"
+          />
+        </div>
       </div>
     </div>
-    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-4">
-      <div class="form-group">
-        <label for="code">Código</label>
-        <input
-          [(ngModel)]="breed.code"
-          class="form-control"
-          id="code"
-          name="code"
-          required
-          type="text"
-        />
+    <div class="row">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="breed-name">Nombre</label>
+          <input
+            [(ngModel)]="breed.name"
+            class="form-control"
+            id="breed-name"
+            name="breed-name"
+            required
+            type="text"
+          />
+        </div>
       </div>
     </div>
-    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
-      <div class="form-group">
-        <label for="breed-name">Nombre</label>
-        <input
-          [(ngModel)]="breed.name"
-          class="form-control"
-          id="breed-name"
-          name="breed-name"
-          required
-          type="text"
-        />
+    <div class="row">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="description">Descripción</label>
+          <input
+            [(ngModel)]="breed.description"
+            class="form-control"
+            id="description"
+            name="description"
+            type="text"
+          />
+        </div>
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
-      <div class="form-group">
-        <label for="description">Descripción</label>
-        <input
-          [(ngModel)]="breed.description"
-          class="form-control"
-          id="description"
-          name="description"
-          type="text"
-        />
-      </div>
-    </div>
+  <div class="modal-footer">
+    <button class="btn btn-success btn-sm" type="submit">
+      <i class="ti-save"></i> Guardar
+    </button>
+    <button (click)="onModalClose()"
+            class="btn btn-dark btn-sm"
+            type="button"
+    >
+      <i class="ti-close"></i> Cancelar
+    </button>
   </div>
-  <button class="btn btn-success" type="submit">
-    <i class="ti-save"></i> 'Guardar'
-  </button>
-  <button
-    class="btn btn-warning"
-    type="button"
-  >
-    <i class="ti-close"></i> Cancelar
-  </button>
 </form>
