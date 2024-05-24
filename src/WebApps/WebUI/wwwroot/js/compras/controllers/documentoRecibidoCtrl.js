@@ -545,9 +545,14 @@
         }
 
         const COD_REPORTS = {
-            "07": "RCR",
-            "01": "RFC",
+            "07": "RRRA",
+            "01": "RRFA",
         };
+        $scope.getRide = (item) => {
+            $scope.selected = []
+            $scope.selected.push(item);
+            getReport();
+        }
         function getReport() {
             try {
                 let format = "pdf";
@@ -571,13 +576,13 @@
                         codEstab,
                         format,
                         aditionalParams: [],
-                    }),
-                    hasService: true,
+                    }), 
                 };
 
                 commonSvc.getReport({
                     parameters,
                     formatType: format,
+                    v2: true,
                 });
             } catch (error) {
                 console.log(error);
