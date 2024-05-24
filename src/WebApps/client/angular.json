@@ -38,7 +38,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser-esbuild",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "allowedCommonJsDependencies": [
               "sweetalert2",
@@ -46,9 +46,11 @@
               "moment",
               "moment-timezone"
             ],
-            "outputPath": "dist",
+            "outputPath": {
+              "base": "dist",
+              "browser": ""
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -69,7 +71,8 @@
               "src/assets/lib/vanilla-daterange/moment.min.js",
               "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.js",
               "src/assets/lib/luxon/luxon.js"
-            ]
+            ],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -97,9 +100,7 @@
               "sourceMap": false,
               "namedChunks": false,
               "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true
+              "extractLicenses": true
             },
             "development": {
               "optimization": false,
