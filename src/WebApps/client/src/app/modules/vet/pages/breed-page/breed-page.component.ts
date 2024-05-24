@@ -8,11 +8,18 @@ import { ModalService } from '@core/services/modal.service';
 import { BreedModalComponent } from '@modules/vet/components/breed-modal/breed-modal.component';
 import swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
+import { SecondaryStatusPipe } from '@shared/pipe/secondary-status.pipe';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-breed-page',
   standalone: true,
-  imports: [BreadcrumbComponent, FontAwesomeModule],
+  imports: [
+    BreadcrumbComponent,
+    FontAwesomeModule,
+    SecondaryStatusPipe,
+    NgbDropdownModule,
+  ],
   templateUrl: './breed-page.component.html',
   styles: ``,
 })

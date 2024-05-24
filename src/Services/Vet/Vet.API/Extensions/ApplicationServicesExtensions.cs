@@ -25,6 +25,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ICustomLogger, CustomLogger>();
         services.AddScoped<IMedicalHistory, MedicalHistoryService>();
         services.AddScoped<IPetService, PetService>();
+        services.AddScoped<IPetTypeService, PetTypeService>();
         return services;
     }
 }

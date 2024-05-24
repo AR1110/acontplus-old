@@ -1,0 +1,65 @@
+﻿namespace Vet.API.Services;
+
+public class PetTypeService(VetContext context) : IPetTypeService
+{
+    public async Task<ApiResponse> AddAsync(PetType petType)
+    {
+        context.PetTypes.Add(petType);
+        await context.SaveChangesAsync();
+        return new ApiResponse { code = "1", message = "Registrado exitosamente", payload = petType };
+    }
+
+    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    {
+        var petType = await context.PetTypes.FindAsync(id);
+        if (petType == null)
+        {
+            return new ApiResponse { code = "0", message = "No se encontro raza para eliminar" };
+        }
+
+        petType.Deleted = true;
+        petType.Enabled = false;
+        context.Update(petType);
+        await context.SaveChangesAsync();
+        return new ApiResponse { code = "1", message = "Eliminada exitosamente" };
+    }
+
+    public async Task<ApiResponse> GetAsync()
+    {
+        var response = await context.PetTypes.Where(x => x.Deleted == null).ToListAsync();
+        if (response.Count > 0)
+        {
+            return new ApiResponse { code = "1", payload = response };
+        }
+
+        return new ApiResponse { code = "0", message = "No data!" };
+    }
+
+    public async Task<ApiResponse> GetByIdAsync(int id)
+    {
+        var petType = await context.PetTypes.FindAsync(id);
+        if (petType == null)
+        {
+            return new ApiResponse { code = "0", message = "No se encontro raza para actualizar" };
+        }
+
+        return new ApiResponse { code = "1", payload = petType };
+    }
+
+    public async Task<ApiResponse> UpdateAsync(int id, PetType petType)
+    {
+        var petTypeFound = await context.PetTypes.FindAsync(id);
+        if (petTypeFound == null)
+        {
+            return new ApiResponse { code = "0", message = "No se encontro raza para actualizar" };
+        }
+
+        petTypeFound.Code = petType.Code;
+        petTypeFound.Name = petType.Name;
+        petTypeFound.Description = petType.Description;
+        petTypeFound.UpdatedAt = DateTime.Now;
+        context.Update(petTypeFound);
+        await context.SaveChangesAsync();
+        return new ApiResponse { code = "1", message = "Actualizado exitosamente", payload = petType };
+    }
+}

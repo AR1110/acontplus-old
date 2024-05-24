@@ -7,4 +7,5 @@ export interface Breed {
   name: string;
   description?: string;
   petType?: PetType;
+  enabled: boolean;
 }

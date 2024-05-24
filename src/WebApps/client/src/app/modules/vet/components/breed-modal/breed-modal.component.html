@@ -1,4 +1,4 @@
-<form (ngSubmit)="onSave()">
+<form (ngSubmit)="onSave()" [formGroup]="breedForm">
   <div class="modal-header">
     <h5 class="modal-title">
       <fa-icon [icon]="modalIcon"></fa-icon>
@@ -12,14 +12,15 @@
         <div class="form-group">
           <label for="petTypeId">Especie:</label>
           <select
-            [(ngModel)]="breed.petTypeId"
-            class="form-control"
+            class="form-select"
+            formControlName="petTypeId"
             id="petTypeId"
-            name="petTypeId"
             required
           >
             <option disabled selected>Seleccione la especie</option>
-            <!--            <option *ngFor="let item of petTypes" [value]="item.id">{{ item.name }}</option>-->
+            @for (item of petTypes; track $index) {
+              <option [value]="item.id">{{ item.name }}</option>
+            }
           </select>
         </div>
       </div>
@@ -27,10 +28,10 @@
         <div class="form-group">
           <label for="code">Código</label>
           <input
-            [(ngModel)]="breed.code"
             class="form-control"
+            formControlName="code"
             id="code"
-            name="code"
+            maxlength="5"
             required
             type="text"
           />
@@ -40,12 +41,11 @@
     <div class="row">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="form-group">
-          <label for="breed-name">Nombre</label>
+          <label for="name">Nombre</label>
           <input
-            [(ngModel)]="breed.name"
             class="form-control"
-            id="breed-name"
-            name="breed-name"
+            formControlName="name"
+            id="name"
             required
             type="text"
           />
@@ -57,12 +57,19 @@
         <div class="form-group">
           <label for="description">Descripción</label>
           <input
-            [(ngModel)]="breed.description"
             class="form-control"
+            formControlName="description"
             id="description"
-            name="description"
             type="text"
           />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+        <div class="form-group">
+          <label for="enabled">Estado:</label>
+          <input class="form-check" formControlName="enabled" id="enabled" type="checkbox"/>
         </div>
       </div>
     </div>

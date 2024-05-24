@@ -15,17 +15,18 @@ public class BreedController(IBreedService breedService) : BaseApiController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, Breed breed)
+    public async Task<IActionResult> Put(int id, [FromBody] Breed breed)
     {
         if (id != breed.Id)
         {
             return BadRequest();
         }
+
         return Ok(await breedService.UpdateAsync(id, breed));
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(Breed breed)
+    public async Task<IActionResult> Post([FromBody] Breed breed)
     {
         return Ok(await breedService.AddAsync(breed));
     }
