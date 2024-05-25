@@ -80,7 +80,7 @@ BEGIN
             where oi.OrderId = @id AND oi.TaxPercentId = ti.idTarifaImpuesto
           ),0) as [value]
     FROM Sri.TarifaImpuesto ti WITH (NOLOCK) 
-    WHERE ti.porcentaje > 0 
+    WHERE ti.codImpuesto='2' AND ti.porcentaje > 0 
 
 END
 GO
