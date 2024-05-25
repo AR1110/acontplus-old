@@ -159,28 +159,8 @@
                                 <fa-icon [icon]="'info-circle'"></fa-icon>
                               </span>
                             </label>
-                            <mat-chip-grid #chipGridEmail aria-label="Enter emails">
-                              <mat-chip-row
-                                *ngFor="let email of emails"
-                                (removed)="removeEmail(email)"
-                                [editable]="true"
-                                (edited)="editEmail(email, $event)"
-                                [aria-description]="'press enter to edit ' + email"
-                              >
-                                {{ email }}
-                                <button matChipRemove [attr.aria-label]="'remove ' + email">
-                                  <mat-icon>cancel</mat-icon>
-                                </button>
-                              </mat-chip-row>
-                              <input
-                                placeholder="example@example.com,info@example.com"
-                                class="form-control"
-                                [matChipInputFor]="chipGridEmail"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                                [matChipInputAddOnBlur]="addOnBlur"
-                                (matChipInputTokenEnd)="addEmail($event)"
-                              />
-                            </mat-chip-grid>
+                            <app-input-chip [chips]="emails"/>
+
                           </div>
                         }
                       </td>

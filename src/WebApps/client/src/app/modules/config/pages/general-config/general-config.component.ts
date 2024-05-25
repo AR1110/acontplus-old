@@ -1,22 +1,18 @@
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
+
 import { Component, inject } from "@angular/core";
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
-import { NgbAccordionModule } from "@ng-bootstrap/ng-bootstrap";
+import {NgbAccordionModule, NgbTooltipModule} from "@ng-bootstrap/ng-bootstrap";
 import { DecimalSelectComponent } from "./components/decimal-select/decimal-select.component";
 import { GeneralConfigService } from "@modules/config/services/general-config.service";
-import { hideLoader, showLoader } from "@core/utils/loader";
 import { FormsModule } from "@angular/forms";
 import { ToasterService } from "@core/services/toaster.service";
 import { isApiResponse } from "@core/models/api-response";
 import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
 import { CompanyCustomerSearchComponent } from "@modules/customer/company-customer/components/company-customer-search/company-customer-search.component";
-import { isValidField } from "@core/utils/utils";
+import {isValidEmail, isValidField} from "@core/utils/utils";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MatChipEditedEvent,MatChipInputEvent } from '@angular/material/chips';
-import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+import {InputChipComponent} from "@shared/components/input-chip/input-chip.component";
+import {SEPARATOR_KEY_CODE} from "@core/constants/global.constants";
 
 @Component({
   selector: 'app-general-config',
@@ -24,14 +20,13 @@ import { MatInputModule } from '@angular/material/input';
   imports: [
     FormsModule,
     NgbAccordionModule,
+    NgbTooltipModule,
     BreadcrumbComponent,
     DecimalSelectComponent,
     FontAwesomeModule,
     ProductSearchComponent,
     CompanyCustomerSearchComponent,
-    MatChipsModule,
-    MatIconModule,
-    MatInputModule
+    InputChipComponent,
   ],
   templateUrl: './general-config.component.html'
 })
@@ -40,7 +35,6 @@ export class GeneralConfigComponent {
 
   private generalConfigSvc = inject(GeneralConfigService);
   private tS = inject(ToasterService)
-  private announcer = inject(LiveAnnouncer);
 
   formasPagoSri: Array<any> = [];
   CODE_TABS = {
@@ -53,10 +47,6 @@ export class GeneralConfigComponent {
   mainDataForm = {
     codeTab: this.CODE_TABS.CV
   }
-
-  readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  addOnBlur = true;
-  emails: string[] = [];
 
   private readonly decimal = {
     nroPrecio: 5,
@@ -99,6 +89,7 @@ export class GeneralConfigComponent {
     razonSocialComprador: '',
     nombreArticulo: ''
   }
+  emails: string[] = []
 
   //Inventario
   configInventario = {
@@ -114,44 +105,16 @@ export class GeneralConfigComponent {
 
   //Notificaciones
   notificaciones: Array<any> = [];
- 
-  addEmail(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      this.emails.push(value);
-    }
-    event.chipInput!.clear();
-  }
-
-  editEmail(fruit: string, event: MatChipEditedEvent) {
-    const value = event.value.trim();
-    if (!value) {
-      this.removeEmail(fruit);
-      return;
-    }
-    const index = this.emails.indexOf(fruit);
-    if (index >= 0) {
-      this.emails[index] = value;
-    }
-  }
-
-  removeEmail(email: string): void {
-    const index = this.emails.indexOf(email);
-    if (index >= 0) {
-      this.emails.splice(index, 1);
-      this.announcer.announce(`Removed ${email}`);
-    }
-  }
 
   getDataTabs() {
-    showLoader();
-    this.generalConfigSvc.getData(this.mainDataForm.codeTab).subscribe({
-      next: (response) => {
-        hideLoader();
+    this.emails = []
+    this.generalConfigSvc.getData(this.mainDataForm.codeTab).subscribe( (response) => {
+
         switch (this.mainDataForm.codeTab) {
           case this.CODE_TABS.CV:
             this.configVenta = response.configVenta;
             this.formasPagoSri = response.formasPagoSri;
+            this.emails = this.configVenta.cc;
             break;
 
           case this.CODE_TABS.CI:
@@ -171,11 +134,6 @@ export class GeneralConfigComponent {
           default:
             break;
         }
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
   }
 
@@ -278,13 +236,29 @@ export class GeneralConfigComponent {
         this.configVenta.interes = undefined;
       }
 
+      if(this.configVenta.configCc){
+        if(this.emails.length===0){
+          this.tS.toastr({
+            type: 'warning',
+            message: 'Ingrese al menos un correo!'
+          })
+          return
+        }
+        if(!this.emails.every(e=>isValidEmail(e))){
+          this.tS.toastr({
+            type: 'warning',
+            message: 'Verifique que los correos esten en formato correcto'
+          })
+          return
+        }
+      }
 
 
       jsonConfig.searchCode = this.configVenta.searchCode;
       jsonConfig.printerAutomatic = this.configVenta.printerAutomatic;
       jsonConfig.payAutomatic = this.configVenta.payAutomatic;
       jsonConfig.configInteres = this.configVenta.configDeuda;
-      jsonConfig.cc            = this.configVenta.cc;
+      jsonConfig.cc            = this.configVenta.configCc? this.emails.join(SEPARATOR_KEY_CODE.SLASH) : null;
       jsonConfig.multipleVendedor = this.configVenta.multipleVendedor;
       jsonConfig.detailDuplicate = this.configVenta.detailDuplicate;
       jsonConfig.idFormaPagoSri = this.configVenta.idFormaPagoSri > 0 ? this.configVenta.idFormaPagoSri : undefined
@@ -351,10 +325,7 @@ export class GeneralConfigComponent {
 
 
 
-    showLoader();
-    this.generalConfigSvc.put(data).subscribe({
-      next: (response) => {
-        hideLoader();
+    this.generalConfigSvc.put(data).subscribe( (response) => {
         if (isApiResponse(response)) {
           if (response.code === "0") {
             this.tS.toastr({
@@ -367,15 +338,13 @@ export class GeneralConfigComponent {
               type: 'success',
               message: response.message
             })
+
             this.getDataTabs();
           }
         }
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
+
+
 
 
   }

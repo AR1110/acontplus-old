@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { PATHS_API } from "@core/constants/global.constants";
+import {PATHS_API, SEPARATOR_KEY_CODE} from "@core/constants/global.constants";
 import { CONFIG_PATHS } from "../enums/config.enums";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
@@ -28,21 +28,20 @@ export class GeneralConfigService {
         if (response !== null && typeof response === 'object') {
           const { data, formasPagoSri, metodosValoracion, notificaciones } = response;
 
-          console.log(notificaciones)
           switch (code) {
             case 'CV':
-              let { nombreFiscal, numeroIdentificacion, descripcion, ...restData } = data[0];
+              let { nombreFiscal, numeroIdentificacion, descripcion,cc, ...restData } = data[0];
               mainDataForm.configVenta = {
                 ...restData,
                 razonSocialComprador: nombreFiscal,
                 numeroIdentificacionComprador: numeroIdentificacion,
-                nombreArticulo: descripcion
+                nombreArticulo: descripcion,
+                cc:  cc ?  cc.split(SEPARATOR_KEY_CODE.SLASH) : []
               }
               mainDataForm.formasPagoSri = formasPagoSri;
               break
 
             case 'CI':
-              console.log(data)
               mainDataForm.configInventario = data[0];
               mainDataForm.metodosValoracion = metodosValoracion;
               break;
