@@ -150,9 +150,37 @@
                       <td>
                         @if (configVenta.configCc) {
                           <div class="form-group">
-                            <label for="dias">Correo</label>
-                            <input type="email" name="cc" id="cc" class="form-control border-select" placeholder="example.199@gmail.com"
-                              [(ngModel)]="configVenta.cc">
+                            <label
+                              >Email:
+                              <span
+                                tooltip-placement="top"
+                                ngbTooltip="Haz doble 'Click' sobre el correo para editar"
+                              >
+                                <fa-icon [icon]="'info-circle'"></fa-icon>
+                              </span>
+                            </label>
+                            <mat-chip-grid #chipGridEmail aria-label="Enter emails">
+                              <mat-chip-row
+                                *ngFor="let email of emails"
+                                (removed)="removeEmail(email)"
+                                [editable]="true"
+                                (edited)="editEmail(email, $event)"
+                                [aria-description]="'press enter to edit ' + email"
+                              >
+                                {{ email }}
+                                <button matChipRemove [attr.aria-label]="'remove ' + email">
+                                  <mat-icon>cancel</mat-icon>
+                                </button>
+                              </mat-chip-row>
+                              <input
+                                placeholder="example@example.com,info@example.com"
+                                class="form-control"
+                                [matChipInputFor]="chipGridEmail"
+                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                [matChipInputAddOnBlur]="addOnBlur"
+                                (matChipInputTokenEnd)="addEmail($event)"
+                              />
+                            </mat-chip-grid>
                           </div>
                         }
                       </td>
