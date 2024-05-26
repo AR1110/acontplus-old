@@ -44,8 +44,6 @@ public class VetContext : BaseContext
                          .Where(
                              p => p.ClrType == typeof(string) // Entity is a string
                                   && p.GetColumnType() == null // No column type is set
-                             // Next line only required if using ASP.Net Identity:
-                             //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
                          ))
             {
                 property.SetIsUnicode(false);
@@ -130,11 +128,6 @@ public class VetContext : BaseContext
             {
                 ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
             }
-
-            //if (entityEntry.State == EntityState.Added)
-            //{
-            //    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.Now;
-            //}
         }
 
         return base.SaveChanges();
@@ -154,10 +147,6 @@ public class VetContext : BaseContext
             {
                 ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
             }
-            //if (entityEntry.State == EntityState.Added)
-            //{
-            //    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.Now;
-            //}
         }
 
         var result = await base.SaveChangesAsync(cancellationToken);

@@ -42,16 +42,6 @@ public class MedicalHistoriesController : BaseApiController
         mh.CodEstab = medicalHistory.CodEstab;
         mh.UserId = User.GetUserId();
 
-        var pet = await _context.Pets.FindAsync(mh.PetId);
-        if (pet != null)
-        {
-            pet.Age = medicalHistory.Age;
-            pet.Weight = medicalHistory.Weight;
-        }
-
-        _context.Update(pet);
-        await _context.SaveChangesAsync();
-
         _context.Update(mh);
         await _context.SaveChangesAsync();
 
@@ -65,16 +55,6 @@ public class MedicalHistoriesController : BaseApiController
         {
             medicalHistory.UserId = User.GetUserId();
             _context.MedicalHistories.Add(medicalHistory);
-            await _context.SaveChangesAsync();
-
-            var pet = await _context.Pets.FindAsync(medicalHistory.PetId);
-            if (pet != null)
-            {
-                pet.Age = medicalHistory.Age;
-                pet.Weight = medicalHistory.Weight;
-            }
-
-            _context.Update(pet);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetMedicalHistory", new { id = medicalHistory.Id }, medicalHistory);

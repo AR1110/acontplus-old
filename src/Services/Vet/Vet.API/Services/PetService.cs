@@ -53,12 +53,10 @@ public class PetService(VetContext context, IADORepository repository) : IPetSer
 
         petFound.UserId = pet.UserId;
         petFound.Name = pet.Name;
-        petFound.PetTypeId = pet.PetTypeId;
         petFound.BreedId = pet.BreedId;
         petFound.GenderId = pet.GenderId;
         petFound.Color = pet.Color;
         petFound.Enabled = pet.Enabled;
-        petFound.Weight = pet.Weight;
         context.Pets.Update(petFound);
         await context.SaveChangesAsync();
         return new ApiResponse { code = "1", message = "Actualizada exitosamente", payload = pet };

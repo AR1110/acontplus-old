@@ -7,9 +7,8 @@
   breedId: number;
   breed: string;
   genderId: number;
-  age?: number;
   color: string;
-  birthdate?: Date;
+  birthdate?: string;
   enabled: boolean;
   petType: string;
 }
