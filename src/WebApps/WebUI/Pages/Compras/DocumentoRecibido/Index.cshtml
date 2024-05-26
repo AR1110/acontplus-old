@@ -3,7 +3,7 @@
 
 @{
     ViewData["Title"] = "Index";
-    
+
 }
 
 <div ng-controller="documentoRecibidoCtrl">
@@ -21,11 +21,11 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                     <div class="form-group">
-                        <span for="establecimiento">
-                            Estab: <span class="text-danger">*</span>
-                        </span>
+                        <label for="establecimiento">
+                            Estab:  
+                        </label>
                         <select class="form-control border-select" ng-model="dataSearch.codEstab"
                                 ng-change="onChangeEstab()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
@@ -34,8 +34,8 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                    <span for="date-range-filter">Rango Fechas: </span>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                    <label for="date-range-filter">Rango Fechas: </label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
@@ -54,39 +54,35 @@
 
                 </div>
 
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                     <div class="form-group">
-                        <span for="tipoComprobante">
-                            Tipo Comprobante
-                        </span>
-                        <select class="form-control border-select" ng-model="dataSearch.codDoc"
-                                ng-change="getComprobantes()">
-                            <option ng-value="">Todos</option>
-                            <option ng-value="item.codDoc" ng-repeat="item in tipoComprobantes">
-                                {{item.descripcion}}
-                            </option>
-                        </select>
+                        <label for="tipoComprobante"> Tipo Comprobante</label>
+                        <div class="input-group">
+                            <select class="form-control border-select" ng-model="dataSearch.codDoc"
+                                    ng-change="getComprobantes()">
+                                <option ng-value="">Todos</option>
+                                <option ng-value="item.codDoc" ng-repeat="item in tipoComprobantes">
+                                    {{item.descripcion}}
+                                </option>
+                            </select>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
+                                    <i class="{{extraOptionsIcon}}" uib-tooltip="{{extraOptionsTooltip}}"></i>
+                                </button>
+                                <button type="button" class="btn btn-success" uib-tooltip="Recargar"
+                                        ng-click="getComprobantes()">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                        </div> 
                     </div>
-                </div>
-
-                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-                    <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
-                            <i class="{{extraOptionsIcon}}" uib-tooltip="{{extraOptionsTooltip}}"></i>
-                        </button>
-                        <button type="button" class="btn btn-success" uib-tooltip="Recargar"
-                                ng-click="getComprobantes()">
-                            <i class="fas fa-redo"></i>
-                        </button>
-                    </div>
-                </div>
-
+                </div> 
             </div>
 
             <div class="row" ng-if="moreOptionsFilter">
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="form-group">
-                        <span for="proveedorFiltro">Proveedor:</span>
+                        <label for="proveedorFiltro">Proveedor:</label>
                         <input type="text" id="providerInputSearch" class="form-control border-select"
                                ng-model="proveedor.nombreProveedor" provider-search-drtv
                                on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
@@ -101,18 +97,30 @@
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="form-group">
-                        <span for="claveAcceso">Clave Acceso:</span>
+                        <label for="claveAcceso">Clave Acceso:</label>
                         <input type="text" class="form-control border-select" ng-change="onChangeClaveAcceso()" id="claveAcceso"
                                valid-number ng-model="dataSearch.claveAcceso" />
                         <span class="text-info" ng-if="claveAccesoLongitud">{{claveAccesoLongitud}} dígitos</span>
                     </div>
                 </div>
-                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
                     <div class="form-group">
-                        <span for="serieComprobante">Nro. Documento:</span>
+                        <label for="serieComprobante">Nro. Documento:</label>
                         <input type="text" class="form-control border-select" id="serieComprobante"
                                ng-change="onChangeSerieComprobante()" valid-number
                                ng-model="dataSearch.serieComprobante" />
+                    </div>
+                </div> 
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="subcategoryId">Subcategoría:</label>
+                        <select class="form-control border-select" id="" ng-model="dataSearch.subcategoryId"
+                                ng-change="getComprobantes()">
+                            <option ng-value="">Todos</option>
+                            <option ng-value="item.id" ng-repeat="item in subcategories">
+                                {{item.name}}
+                            </option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -126,7 +134,7 @@
                     </button>
                     <button class="btn btn-success" ng-click="openModalMigrate()">
                         <i class="fa-solid fa-file-export"></i> Migrar Comprobantes
-                    </button> 
+                    </button>
                     <button class="btn btn-warning" ng-if="selected.length > 0" ng-click="editSubcategory()">
                         <i class="fa fa-pencil"></i> Modificar Subcategoria
                     </button>
@@ -159,16 +167,16 @@
                         <tr md-row>
                             <th md-column>Op.</th>
                             <th md-column>Subcategoría</th>
-                            <th md-column>No. Aut.</th>
+                            <th md-column md-order-by="fechaEmision">Fecha Emisión</th>
                             <th md-column>Doc.</th>
                             <th md-column md-order-by="serieComprobante">Serie</th>
+                            <th md-column md-order-by="importeTotal">Total</th>
                             <th md-column>Ruc Emisor</th>
                             <th md-column md-order-by="razonSocialEmisor">
                                 <span>Razón Social Emisor</span>
                             </th>
-                            <th md-column md-order-by="fechaEmision">Fecha Emisión</th>
+                            <th md-column>No. Aut.</th>
                             <th md-column>F. Aut.</th>
-                            <th md-column md-order-by="importeTotal">Total</th>
                         </tr>
                     </thead>
                     <tbody md-body>
@@ -217,21 +225,22 @@
                                 </md-menu>
                             </td>
                             <td md-cell style="{{item.colorCol}}">{{item.subcategoryName}}</td>
-                            <td class="text-left" style="{{item.colorCol}}" md-cell>
-                                {{item.numeroAutorizacion}}
-                            </td>
+                            <td md-cell style="{{item.colorCol}}">{{item.fechaEmision}}</td>
                             <td md-cell style="{{item.colorCol}}">{{item.comprobante}}</td>
                             <td md-cell style="{{item.colorCol}}">{{item.serieComprobante}}</td>
+                            <td md-cell class="text-right" style="{{item.colorCol}}">
+                                {{item.importeTotal |
+     currency }}
+                            </td>
                             <td md-cell style="{{item.colorCol}}">{{item.rucEmisor}}</td>
                             <td class="text-left" style="{{item.colorCol}}" md-cell>
                                 {{item.razonSocialEmisor}}
                             </td>
-                            <td md-cell style="{{item.colorCol}}">{{item.fechaEmision}}</td>
-                            <td md-cell style="{{item.colorCol}}">{{item.fechaAutorizacion}}</td>
-                            <td md-cell class="text-right" style="{{item.colorCol}}">
-                                {{item.importeTotal |
-                                currency }}
+                            <td class="text-left" style="{{item.colorCol}}" md-cell>
+                                {{item.numeroAutorizacion}}
                             </td>
+                            <td md-cell style="{{item.colorCol}}">{{item.fechaAutorizacion}}</td>
+
                         </tr>
                     </tbody>
                     <tfoot ng-if="comprobantes.length == 0">
