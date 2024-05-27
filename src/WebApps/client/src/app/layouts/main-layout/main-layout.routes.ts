@@ -76,6 +76,9 @@ export const routes: Routes = [
         title: 'App - Vet',
         loadChildren: () =>
           import('@modules/vet/vet.routes').then((r) => r.routes),
+        data: {
+          breadcrumb: 'Vet',
+        },
       },
     ],
   },

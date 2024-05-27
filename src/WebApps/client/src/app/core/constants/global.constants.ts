@@ -14,7 +14,7 @@ export const enum PATHS_API {
   RESTAURANT = 'Restaurant/',
   BILLING = 'FactElect/',
   MECHANICAL = 'Mechanical/',
-  VET = 'Vet',
+  VET = 'Vet/',
 }
 
 export const enum PATHS {

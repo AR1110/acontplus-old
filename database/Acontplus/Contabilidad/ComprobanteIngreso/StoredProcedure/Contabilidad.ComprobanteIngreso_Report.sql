@@ -22,37 +22,40 @@ GO
 -- =============================================
 -- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":2,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":null,"idSubEntidadFinanciera":0,"idCustomer":null,"fechaInicio":"2024-03-01 00:00:00 AM","fechaFin":"2024-03-25 23:59:59 PM","dateChecked":true}', ''
 CREATE OR ALTER PROC Contabilidad.ComprobanteIngreso_Report
-	@userRoleId			INT
-	, @json				VARCHAR(MAX)
-    , @tableNames       VARCHAR(MAX) OUTPUT
+	 @userRoleId INT
+	,@json	     VARCHAR(MAX)
+    ,@tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	--> Global
-    DECLARE @tipo               INT
-    , @idEntidad                INT
-    , @usuario                  VARCHAR(150)
-    , @idUsuario                INT
-    , @codDoc                   VARCHAR(5)
-    , @idSubEntidadFinanciera   INT
-    , @fechaInicio              DATETIME2
-    , @fechaFin                 DATETIME2
-    , @codEstab                 VARCHAR(20)
-    , @dateChecked              BIT
-    , @idCustomer               INT
-    , @idPuntoEmision           INT
-    , @idBanco                  INT
-    , @nroDocChecked            BIT
-    , @nroDocument              VARCHAR(30)
-    , @referenceChecked         BIT
-    , @reference                VARCHAR(30)
-    , @loteChecked              BIT
-    , @lote                     VARCHAR(30)
+    --> Global 
+    DECLARE @tipo INT ,@idEntidad INT
 
     --> Sql
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
+
+    --> Filters
+    DECLARE @usuario                VARCHAR(150)
+           ,@idUsuario              INT
+           ,@codDoc                 VARCHAR(5)
+           ,@idSubEntidadFinanciera INT
+           ,@fechaInicio            DATETIME2
+           ,@fechaFin               DATETIME2
+           ,@codEstab               VARCHAR(20)
+           ,@dateChecked            BIT
+           ,@idCustomer             INT
+           ,@idPuntoEmision         INT
+           ,@idBanco                INT
+           ,@nroDocChecked          BIT
+           ,@nroDocument            VARCHAR(30)
+           ,@referenceChecked       BIT
+           ,@reference              VARCHAR(30)
+           ,@loteChecked            BIT
+           ,@lote                   VARCHAR(30)
+           ,@id                     INT
+		   ,@byIngreso              BIT
 	
 	--> Variables
     SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -250,6 +253,7 @@ BEGIN
 			RETURN
 		END
 	
+    --> Por Cuotas
     IF @tipo = 2
         BEGIN
             SET @tableNames = 'header,details'
@@ -442,5 +446,151 @@ BEGIN
                               ,@lote                        = @lote
             RETURN
         END
+
+    --> Reporte por Documento
+    IF @tipo = 3
+        BEGIN
+            
+            SET @tableNames = 'comprobanteIngresoDs,cobroDs,documentoDs,cuotaDs'
+
+            SELECT @id = id FROM OPENJSON(@json) WITH(id INT )
+
+            IF EXISTS(SELECT 1 FROM CobroDocumento cd WITH (NOLOCK) INNER JOIN TipoDocumento td WITH (NOLOCK)  ON td.idTipoDocumento = cd.idTipoDocumento WHERE cd.idComprobanteIngreso = @id AND td.codigo IN ('A','IC') )
+		        BEGIN
+			        SET @byIngreso = 1
+		        END
+
+            SELECT 'Nro.:' + 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento) as nroComprobante
+			      ,@byIngreso                                                                        as byIngreso
+			      ,ci.nombreFiscal                                                                   as cliente
+			      ,ci.nroIdentificacion                                                              as nroIdentificacion
+			      ,FORMAT(ci.fechaRegistro, 'dd/MM/yyyy hh:mm')                                      as fechaEmision
+			      ,CAST(ci.abono as numeric(18,2))                                                   as total
+			      ,en.nombreComercial
+			      ,en.ruc
+			      ,en.telefono
+			      ,en.direccion
+                  ,ci.observacion
+		    FROM dbo.ComprobanteIngreso    ci WITH (NOLOCK) 
+		    INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento = ci.idTipoDocumento
+		    INNER JOIN dbo.Entidad         en WITH (NOLOCK) ON en.idEntidad       = ci.idEntidad
+		    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab        = ci.codEstab
+		    WHERE ci.idComprobanteIngreso = @id
+
+		    SELECT ISNULL(sf.descripcion,ef.descripcion)                 as formaCobro
+			      ,FORMAT(co.fechaEmision,'dd/MM/yyyy hh:mm')            as fechaEmision
+			      ,ISNULL(ba.descripcion,'')                             as banco
+			      ,JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro') as nro
+			      ,CAST(co.valor AS NUMERIC(18,2))                       as total
+			      ,CAST(co.abono AS NUMERIC(18,2))                       as abono
+			      ,CAST(co.vuelto AS NUMERIC(18,2))                      as cambio
+			      ,IIF(co.posfechado = 1,'SI','NO')                      as posfechado
+		    FROM dbo.ComprobanteIngreso         ci WITH (NOLOCK)
+		    INNER JOIN dbo.Cobro                co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
+		    INNER JOIN dbo.EntidadFinanciera    ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera
+		     LEFT JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
+		     LEFT JOIN dbo.Banco                ba WITH (NOLOCK) ON ba.idBanco                = co.idBanco
+		    WHERE ci.idComprobanteIngreso = @id
+
+            IF @byIngreso = 1
+			    BEGIN
+				    SELECT td.codigo as tipoDoc
+					      ,CASE td.codigo WHEN 'A'  THEN (
+														    SELECT 'A' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(an.nroDoc)
+														    FROM dbo.Anticipo an WITH (NOLOCK) 
+														    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = an.codEstab
+														    WHERE an.idAnticipo = cd.idComprobante
+														 )  
+										 WHEN 'IC' THEN  (
+														    SELECT 'IC' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(mc.nroDoc)
+														    FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
+														    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = mc.codEstab
+														    WHERE mc.idMovimientoCaja = cd.idComprobante
+														 ) 
+                            END as nroDoc
+
+                           ,CASE td.codigo WHEN 'A'  THEN (
+														    SELECT an.fechaEmision FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
+														  )  
+										   WHEN 'IC' THEN (
+														    SELECT mc.fechaEmision FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
+														  )
+						    END as fechaEmision
+					       
+                           ,CASE td.codigo WHEN 'A'  THEN (
+														    SELECT CAST(an.valor as numeric(18,2)) FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
+														  )  
+										   WHEN 'IC' THEN (
+														    SELECT CAST(mc.valor as numeric(18,2)) FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
+														  )
+                           END as total
+
+					      ,CASE td.codigo WHEN 'A'  THEN (
+														    SELECT sf.descripcion
+														    FROM dbo.Anticipo an WITH (NOLOCK) 
+														    INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = an.idSubEntidadFinanciera
+														    WHERE an.idAnticipo = cd.idComprobante
+														 )  
+										  WHEN 'IC' THEN (
+														    SELECT sf.descripcion
+														    FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
+														    INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
+														    WHERE mc.idMovimientoCaja = cd.idComprobante
+														 )                              
+                           END as formaCobro
+				    FROM CobroDocumento               cd WITH (NOLOCK)
+				    INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = cd.idComprobanteIngreso
+				    INNER JOIN dbo.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento      = cd.idTipoDocumento
+				    WHERE ci.idComprobanteIngreso = @id 
+                      AND td.codigo IN ('A','IC')
+			    END 
+            ELSE
+                BEGIN
+                    SELECT IIF(cc.codDoc = '01','FV','NE')                                as tipoDoc
+			              ,cc.serieComprobante
+			              ,FORMAT(cc.fechaEmision, 'dd/MM/yyyy hh:mm')                    as fechaEmision 
+			              ,CAST(cc.importeTotal as numeric(18,2))                         as total
+			              ,hc.diasMora                                                    as diasMora
+			              ,CAST(hc.mora as numeric(18,2))                                 as mora
+			              ,CAST(hc.abono as numeric(18,2))                                as abono
+			              ,CAST((cc.importeTotal + hc.mora ) - hc.abono as numeric(18,2)) as saldo
+		            FROM Contabilidad.Historial_Cobro					 hc WITH(NOLOCK)
+		            INNER JOIN dbo.ComprobanteIngreso                    ci WITH(NOLOCK) ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
+		            INNER JOIN Contabilidad.CuentaPorCobrar              cc WITH(NOLOCK) ON cc.idCuentaPorCobrar    = hc.idCuentaPorCobrar 
+		            WHERE ci.idComprobanteIngreso = @id
+                END
+		    
+
+		    SELECT cn.idCuentaPorCobrar
+                  ,ci.idComprobanteIngreso
+                  ,cc.idCuotaPorCobrar
+                  ,cd.idCobroDetalle
+                  ,FORMAT(cn.fechaEmision, 'dd/MM/yyyy hh:mm')                                                                                                                                             as fechaEmisionDoc
+                  ,FORMAT(cn.fechaVencimiento, 'dd/MM/yyyy')                                                                                                                                               as fechaVcto
+                  ,IIF(cn.codDoc = '01','FV','NE')                                                                                                                                                         as tipoDoc
+		          ,cn.serieComprobante
+			      ,cc.nroCuota
+			      ,CAST(cc.cuota as numeric(18,2))                                                                                                                                                         as cuota
+			      ,CAST(cn.importeTotal as numeric(18,2))                                                                                                                                                  as importeTotal
+			      ,CAST(cn.abono as numeric(18,2))                                                                                                                                                         as abonoDoc
+			      ,CAST(cn.saldo as numeric(18,2))                                                                                                                                                         as saldoDoc
+			      ,CAST(cd.interes as numeric(18,2))                                                                                                                                                       as interes
+			      ,cd.diasMora
+			      ,CAST(cd.mora as numeric(18,2))                                                                                                                                                          as mora
+			      ,CAST(cd.abono as numeric(18,2))                                                                                                                                                         as abono
+			      ,CASE WHEN cd.abono > cc.cuota THEN  CAST(cc.cuota - cd.abono as numeric(18,2)) ELSE 0 END  as abonoMora
+			      ,CAST((cc.cuota + cd.mora) - SUM(CASE WHEN co.cobro = 1 THEN cd.abono ELSE 0 END) OVER (PARTITION BY cc.idCuotaPorCobrar ORDER BY co.idCobro ROWS UNBOUNDED PRECEDING) as numeric(18,2)) as saldo
+			      ,ISNULL(sf.descripcion,ef.descripcion) + '-' + ISNULL(JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro'),'')                                                                          as ingreso
+		    FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
+		    INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
+		    INNER JOIN dbo.CobroDetalle             cd WITH (NOLOCK) ON cd.idCobro                = co.idCobro
+		    INNER JOIN Contabilidad.CuotaPorCobrar  cc WITH (NOLOCK) ON cc.idCuotaPorCobrar       = cd.idCuotaPorCobrar
+		    INNER JOIN Contabilidad.CuentaPorCobrar cn WITH (NOLOCK) ON cn.idCuentaPorCobrar      = cc.idCuentaPorCobrar
+		    INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera 
+		     LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
+		    WHERE ci.idComprobanteIngreso = @id 
+
+            RETURN 
+        END 
 END
 GO

@@ -1,1 +1,122 @@
-<p>pet-modal works!</p>
+<form (ngSubmit)="onSave()" [formGroup]="breedForm">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <fa-icon [icon]="modalIcon"></fa-icon>
+      {{ modalTitle }}
+    </h5>
+    <button (click)="onModalClose()" class="btn-close" type="button"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Datos del Cliente</h5>
+        <div class="row">
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+            <div class="form-group">
+              <label for="businessName">Razón Social</label>
+              <input [disabled]="true" [value]="customerSelected.businessName" class="form-control" id="businessName"
+                     type="text"/>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+            <div class="form-group">
+              <label for="idCard">Ruc</label>
+              <input [disabled]="true" [value]="customerSelected.idCard" class="form-control" id="idCard" type="text"/>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input [disabled]="true" [value]="customerSelected.email" class="form-control" id="email" type="text"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+            <div class="form-group">
+              <label for="pet-name">Nombre</label>
+              <input class="form-control" id="pet-name" placeholder="Nombre" required
+                     type="text"/>
+            </div>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+            <div class="form-group">
+              <label for="petTypeId">Especie:</label>
+              <select (change)="onPetTypeChange($event)"
+                      class="form-select"
+                      formControlName="petTypeId"
+                      id="petTypeId"
+                      required
+              >
+                <option disabled selected>Seleccione la especie</option>
+                @for (item of petTypes; track $index) {
+                  <option [value]="item.id">{{ item.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          <!--          <div *ngIf="breedsFiltered.length > 0" class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">-->
+          <!--            <div class="form-group">-->
+          <!--              <label for="breed">Raza:</label>-->
+          <!--              <select [(ngModel)]="pet.breedId" class="form-control" id="breed" name="breed" required>-->
+          <!--                <option disabled selected>Seleccione la raza</option>-->
+          <!--                <option *ngFor="let item of breedsFiltered" [value]="item.id">{{ item.name }}</option>-->
+          <!--              </select>-->
+          <!--            </div>-->
+          <!--          </div>-->
+        </div>
+
+        <div class="row">
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+            <div class="form-group">
+              <label for="gender">Sexo:</label>
+              <select class="form-control" id="gender" name="gender">
+                <option disabled selected>Seleccione el sexo</option>
+                <!--                <option *ngFor="let item of genders" [value]="item.id">{{ item.name }}</option>-->
+              </select>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+            <div class="form-group">
+              <label for="pet-age">Edad</label>
+              <input [disabled]="true" class="form-control" id="pet-age" step="any"
+                     type="number"/>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+            <div class="form-group">
+              <label for="pet-color">Color</label>
+              <input class="form-control" id="pet-color" placeholder="blanco" required
+                     type="text"/>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+            <div class="form-group">
+              <label for="pet-weight">Peso (kg)</label>
+              <input [disabled]="true" class="form-control" id="pet-weight" placeholder="5.5"
+                     step="any"
+                     type="number"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success btn-sm" type="submit">
+      <i class="ti-save"></i> Guardar
+    </button>
+    <button (click)="onModalClose()"
+            class="btn btn-dark btn-sm"
+            type="button"
+    >
+      &times; Cancelar
+    </button>
+  </div>
+</form>

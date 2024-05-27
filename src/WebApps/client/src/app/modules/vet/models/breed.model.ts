@@ -1,8 +1,11 @@
+import { PetType } from '@modules/vet/models/pet-type.model';
+
 export interface Breed {
-  id?: number;
+  id: number;
   petTypeId: number;
   code: string;
   name: string;
   description?: string;
-  petType?: string;
+  petType?: PetType;
+  enabled: boolean;
 }

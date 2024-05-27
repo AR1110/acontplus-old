@@ -1,61 +1,64 @@
-<!-- src/app/components/breed/breed.component.html -->
-<div class="row page-titles">
-  <div class="col-md-5 align-self-center">
-    <h5 class="text-themecolor">Razas de Mascotas</h5>
-  </div>
-  <div class="col-md-7 align-self-center text-right">
-    <div class="d-flex justify-content-end align-items-center">
-      <button
-        class="btn btn-info d-block d-lg-inline-block m-l-15"
-        type="button"
-      >
-        <i class="fa fa-plus-circle"></i> Nueva
-      </button>
-    </div>
-  </div>
-</div>
-
-
-<div *ngIf="breeds.length > 0">
+<app-breadcrumb>
+  <button
+    (click)="onModalOpen()"
+    class="btn btn-info d-block d-lg-inline-block m-l-15"
+    type="button"
+  >
+    <fa-icon [icon]="'plus-circle'"></fa-icon>
+    Nueva
+  </button>
+</app-breadcrumb>
+@if (breeds.length > 0) {
   <div class="card">
     <div class="card-body">
       <div class="table-responsive">
         <table class="table table-bordered">
           <thead>
           <tr>
+            <th class="text-center">Opciones</th>
+            <th class="text-center">#</th>
             <th>Especie</th>
             <th>Código</th>
             <th>Nombre</th>
             <th>Descripción</th>
-            <th>Opciones</th>
+            <th>Estado</th>
           </tr>
           </thead>
           <tbody>
-          <ng-container>
-            <tr *ngFor="let item of breeds">
-              <td>{{ item.petType }}</td>
-              <td>{{ item.code }}</td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.description }}</td>
-              <td>
-                <button
-                  class="btn btn-outline-warning btn-sm"
-                  type="button"
-                ><i class="ti-pencil"></i></button>
-                <button
-                  class="btn btn-outline-danger btn-sm"
-                  type="button"
-                ><i class="ti-trash"></i></button>
-              </td>
-            </tr>
-          </ng-container>
+            @for (item of breeds; track $index) {
+              <tr>
+                <td class="text-center">
+                  <div ngbDropdown class="d-inline-block">
+                    <button type="button" class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
+                      <fa-icon [icon]="'bars'"></fa-icon>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                      <button ngbDropdownItem (click)="onEdit(item)">
+                        <fa-icon [icon]="'edit'"></fa-icon>
+                        Editar
+                      </button>
+                      <button ngbDropdownItem (click)="onDelete(item)">
+                        <fa-icon [icon]="'trash'"></fa-icon>
+                        Editar
+                      </button>
+                    </div>
+                  </div>
+                </td>
+                <td class="text-center">{{ $index + 1 }}</td>
+                <td>{{ item.petType?.name }}</td>
+                <td>{{ item.code }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.description }}</td>
+                <td>
+                  <div [innerHTML]="item.enabled | secondaryStatus"></div>
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
     </div>
   </div>
-</div>
-
-<div *ngIf="breeds.length === 0">
-  <h5 class="text-info">No se encontraron registros de razas</h5>
-</div>
+} @else {
+  <h5>No se encontraron registros de razas</h5>
+}

@@ -702,7 +702,8 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
                             abono: fS.roundNumber($scope.pagos.reduce((acc, curr) => acc + curr.abonoCuota, 0), 5),
                             codEstab: $scope.data.codEstab,
                             identificacionComprador: $scope.proveedor.identificacionComprador,
-                            razonSocialComprador: $scope.proveedor.razonSocialComprador
+                            razonSocialComprador: $scope.proveedor.razonSocialComprador,
+                            observacion: $scope.data.observacion
                         }
 
                         let pagos = $scope.pagos.map(item => {
@@ -732,6 +733,7 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
                                 posfechado: item.posFechado,
                                 cobro: item.cobro,
                                 infoCobro: item.codEntidadFinanciera === 'EFE' ? undefined : JSON.stringify(infoCobro),
+                                observacion: item.observacion
                             }
                             return obj;
                         })

@@ -383,7 +383,8 @@
                 abono: comprobante.abono,
                 codEstab: comprobante.codEstab,
                 nroIdentificacion: comprobante.identificacionComprador,
-                nombreFiscal: comprobante.razonSocialComprador
+                nombreFiscal: comprobante.razonSocialComprador,
+                observacion: fS.isValidField(comprobante.observacion) 
             }
 
             let pagosMappeado = pagos.map(item => {
@@ -406,6 +407,7 @@
                     referencia: item.referencia,
                     abono: item.abono,
                     controlCaja: item.controlCaja,
+                    observacion: fS.isValidField(item.observacion) 
                 }
             })
 
@@ -516,7 +518,8 @@
                 abono: comprobante.abono,
                 codEstab: comprobante.codEstab,
                 numeroIdentificacion: comprobante.numeroIdentificacion,
-                nombreFiscal: comprobante.nombreFiscal
+                nombreFiscal: comprobante.nombreFiscal,
+                observacion: fS.isValidField(comprobante.observacion) 
             }
 
             let comprosMappeado = cobros.map(cobro => {
@@ -528,12 +531,14 @@
                     fechaEmision: cobro.fechaEmision,
                     valor: cobro.valor,
                     posfechado: cobro.posfechado,
+                    cobro: cobro.cobro,
                     secuencial: cobro.secuencial,
                     infoCobro: cobro.infoCobro,
                     abono: cobro.abono,
                     controlCaja: cobro.controlCaja,
                     idComprobante: fS.isValidField(cobro.idComprobante),
-                    idTipoDocumento: fS.isValidField(cobro.idTipoDocumento)
+                    idTipoDocumento: fS.isValidField(cobro.idTipoDocumento),
+                    observacion: fS.isValidField(cobro.observacion) 
                 }
             })
 
@@ -912,10 +917,15 @@
         }
 
         function getEstadisticas(params) {
-            return mS.getData('get', `/EstadisticaVenta/Get?json=${JSON.stringify(params)}`).then(response => {
+            return mS.getData('get', `Venta/Estadistica/Get?json=${JSON.stringify(params)}`).then(response => {
                 if (response.code === "0") return []
-                return response;
+                return JSON.parse(response.payload);
             });
+
+            // return mS.getData('get', `/EstadisticaVenta/Get?json=${JSON.stringify(params)}`).then(response => {
+            //     if (response.code === "0") return []
+            //     return response;
+            // });
         }
     }])
 

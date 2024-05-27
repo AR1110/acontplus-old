@@ -622,7 +622,8 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                             abono: $scope.cobro.abono,
                             codEstab: $scope.comprobante.codEstab,
                             numeroIdentificacion: $scope.comprobante.identificacionComprador,
-                            nombreFiscal: $scope.comprobante.razonSocialComprador
+                            nombreFiscal: $scope.comprobante.razonSocialComprador,
+                            observacion: $scope.cobro.observacion
                         }
 
                         let infoCobro = [{
@@ -639,10 +640,12 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                             fechaEmision: fS.formatDateTimeZone($scope.cobro.fechaEmision),
                             valor: $scope.cobro.valorAbono,
                             posfechado: $scope.cobro.posFechado,
+                            cobro: !$scope.cobro.posFechado,
                             secuencial: 0,
                             infoCobro: $scope.entidadFinanciera.codigo === 'EFE' ? undefined : JSON.stringify(infoCobro),
                             abono: $scope.cobro.abono,
                             controlCaja: $scope.subEntidadesFinancieras.find(item => item.idSubEntidadFinanciera === $scope.cobro.idSubEntidadFinanciera).controlCaja,
+                            observacion: $scope.cobro.observacion
                         }]
 
                         cobroSvc.valorAbono = $scope.cobro.valorAbono;
@@ -1279,6 +1282,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                         codEstab: $scope.comprobante.codEstab,
                         numeroIdentificacion: $scope.comprobante.identificacionComprador,
                         nombreFiscal: $scope.comprobante.razonSocialComprador,
+                        observacion: $scope.comprobante.observacion
                     }
 
                     let cobros = $scope.datosCobro.map(item => {
@@ -1296,12 +1300,14 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                             fechaEmision: item.fechaEmision,
                             valor: item.valorAbono,
                             posfechado: item.posFechado,
+                            cobro: item.cobro,
                             secuencial: item.secuencial,
                             infoCobro: item.codEntidadFinanciera === 'EFE' ? undefined : JSON.stringify(infoCobro),
                             abono: item.abonoCuota,
                             controlCaja: item.controlCaja,
                             idComprobante: item.idComprobante,
-                            idTipoDocumento: item.idTipoDocumento
+                            idTipoDocumento: item.idTipoDocumento,
+                            observacion: item.observacion
                         }
                         return obj;
                     })
@@ -1485,6 +1491,7 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
                 idCiudad: $scope.data.idCiudad,
                 fechaEmision: formattedDateTime,
                 posFechado: $scope.data.posFechado,
+                cobro: !$scope.data.posFechado,
                 referencia: $scope.data.referencia,
                 aprobacion: $scope.data.aprobacion,
                 lote: $scope.data.lote,
@@ -1495,7 +1502,7 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
                 idComprobante: item.idDocumento,
                 tipoDocumento: item.tipoDocumento || item.codDoc,
                 valorAbono: item.saldo || $scope.data.valorAbono,
-                controlCaja: subEntidadFinanciera.controlCaja
+                observacion: $scope.data.observacion
             }
         } catch (error) {
             console.log(error);

@@ -208,6 +208,11 @@
                                                 <span md-menu-align-target><i class="fa fa-trash"></i> Eliminar</span>
                                             </md-button>
                                         </md-menu-item>
+                                        <md-menu-item ng-if="(item.codDoc == '01')">
+                                            <md-button ng-click="getRide(item)">
+                                                <span md-menu-align-target><i class="fa fa-file-pdf"></i> Ride</span>
+                                            </md-button>
+                                        </md-menu-item>
                                     </md-menu-content>
                                 </md-menu>
                             </td>

@@ -1,0 +1,54 @@
+﻿namespace Vet.API.Controllers;
+
+public class PetController(IPetService petService) : BaseApiController
+{
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
+        {
+            { "companyId", User.GetCompanyId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await petService.GetAsync(parameters));
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Pet>> GetById(int id)
+    {
+        return Ok(await petService.GetByIdAsync(id));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] Pet pet)
+    {
+        pet.UserId = User.GetUserId();
+        pet.CompanyId = User.GetCompanyId();
+        return Ok(await petService.AddAsync(pet));
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] Pet pet)
+    {
+        if (id != pet.Id)
+        {
+            return BadRequest();
+        }
+
+        pet.UserId = User.GetUserId();
+        return Ok(await petService.UpdateAsync(id, pet));
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        return Ok(await petService.DeleteAsync(User.GetUserId(), id));
+    }
+
+
+    [HttpGet("search")]
+    public async Task<ActionResult<ApiResponse>> Search(string json)
+    {
+        var parameters = new Dictionary<string, object> { { "companyId", User.GetCompanyId() }, { "json", json } };
+        return await petService.SearchAsync(parameters);
+    }
+}

@@ -18,6 +18,8 @@
         const CODE_REPORT = $injector.get('CODE_REPORT');
         const CONSOLIDADO_VENTA = 'CV'
 
+        $scope.isSelectedNotaEntrega = false; 
+
         let format = 'pdf'
 
         // Obtén el año actual
@@ -33,7 +35,8 @@
         $scope.dataSearch = {
             idEstablecimiento: 0,
             idPuntoEmision: 0,
-            idEstadoDocumento: 0
+            idEstadoDocumento: 0,
+            convertToDoc: false 
         };
         $scope.establecimientos = [];
         $scope.puntosEmision = [];
@@ -105,8 +108,9 @@
         }
 
         $scope.onChangeTipoDoc = function () {
-            let dataEstado = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigo === $scope.dataSearch.codigoTipoDoc);
+            //let dataEstado = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigo === $scope.dataSearch.codigoTipoDoc);
 
+            $scope.isSelectedNotaEntrega = $scope.dataSearch.codigoTipoDoc===DOC_TYPE.NE 
             
         }
 
@@ -196,6 +200,7 @@
                     identificacion: $scope.dataSearch.checkBoxCustomer ? fS.isValidField($scope.dataSearch.identificacion) : null,
                     idUsuario: $scope.dataSearch.checkBoxUser ? fS.isValidField($scope.dataSearch.idUsuario) : null,
                     idCliente: $scope.dataSearch.checkBoxCustomer ? fS.isValidField($scope.dataSearch.idCliente) : null,
+                    convertToDoc: $scope.dataSearch.convertToDoc
                 }
                 const parameters = {
                     hasIdUsuarioRol: true,
@@ -233,6 +238,7 @@
                 fechaFin: $scope.dataSearchEstadistica.fechaFin
             }
             cuentaPorCobrarSvc.getEstadisticas(params).then(response => {
+              
                 $scope.estadisticas = response;
                 if ($scope.estadisticas.length > 0) {
                     drawChartAnual();

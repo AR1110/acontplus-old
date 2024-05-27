@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {PATHS_API} from "@core/constants/global.constants";
 import {BILLING_PATHS} from "@billing/enums/billing.enum.ts";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'

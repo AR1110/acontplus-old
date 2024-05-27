@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {PATHS, PATHS_API} from "@core/constants/global.constants";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
