@@ -80,7 +80,7 @@ BEGIN
                           ,@fechaFin               DATETIME2
                           ,@identificacion         VARCHAR(20)
                           ,@idUsuario              INT
-                          ,@subcategoryId          IN'
+                          ,@subcategoryId          INT'
 
             SET @sql = 'SELECT * FROM 
                         (
@@ -222,7 +222,7 @@ BEGIN
 		                                ),0) as retIva
                                         ,us.nombreUsuario as usuario
                                         ,dr.identificacionReceptor
-                                        ,,(SELECT TOP 1 cp.subcategoryId FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK) WHERE cp.codDoc = ''01'' AND cp.idDocumento = dr.idDocumento ) as subcategoryId
+                                        ,(SELECT TOP 1 cp.subcategoryId FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK) WHERE cp.codDoc = ''01'' AND cp.idDocumento = dr.idDocumento ) as subcategoryId
                                 FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
                                 INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab  = dr.codEstab
                                 INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = dr.idUsuario
