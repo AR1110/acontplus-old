@@ -85,6 +85,7 @@
                     endDate: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     codDoc: fS.isValidField($scope.dataSearch.codDoc),
                     serieComprobante: $scope.dataSearch.serieComprobante,
+                    subcategoryId: $scope.dataSearch.subcategoryId,
                 };
                 $scope.comprobantes = [];
 
@@ -108,28 +109,21 @@
 
         initialLoad();
         function initialLoad() {
-            try {
-                docRecibidoSvc
-                    .getDataFilter()
-                    .then((response) => {
-                        const { establecimientos, tipoComprobantes } = response;
-                        $scope.establecimientos = establecimientos;
-                        $scope.tipoComprobantes = tipoComprobantes;
-                        if ($scope.establecimientos.length > 0) {
-                            dataEstab = $scope.establecimientos[0];
-                            if (dataEstab) {
-                                $scope.dataSearch.codEstab = dataEstab.codEstab;
-                            }
+            docRecibidoSvc
+                .getDataFilter()
+                .then((response) => {
+                    const { establecimientos, tipoComprobantes, subcategories } = response;
+                    $scope.establecimientos = establecimientos;
+                    $scope.tipoComprobantes = tipoComprobantes;
+                    $scope.subcategories = subcategories;
+                    if ($scope.establecimientos.length > 0) {
+                        dataEstab = $scope.establecimientos[0];
+                        if (dataEstab) {
+                            $scope.dataSearch.codEstab = dataEstab.codEstab;
                         }
-                        $scope.getComprobantes();
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    })
-                    .finally(() => { });
-            } catch (error) {
-                console.log(error);
-            }
+                    }
+                    $scope.getComprobantes();
+                })
         }
 
         $scope.onChangeEstab = function () {
@@ -242,7 +236,7 @@
         $scope.openModalImportacionManual = async function () {
             try {
                 if (!(await alertEstabSelected())) return;
-                subcategories = await subcategoryService.get({ params: { tipo: 1 } });
+                subcategories = $scope.subcategories;
 
                 if (subcategories.length == 0) {
                     return tS.toastr(
@@ -304,8 +298,8 @@
         };
 
         $scope.editSubcategory = async () => {
-            subcategories = await subcategoryService.get({ params: { tipo: 1 } });
-
+            //subcategories = await subcategoryService.get({ params: { tipo: 1 } });
+            subcategories = $scope.subcategories;
             if (subcategories.length == 0) {
                 return tS.toastr(
                     "warning",
@@ -325,6 +319,7 @@
                     isRenderRazorPartial: true,
                 })
                 .result.then((result) => {
+                    $scope.selected = [];
                     if (typeof result === "object") {
                         initialLoad();
                     }
@@ -576,7 +571,7 @@
                         codEstab,
                         format,
                         aditionalParams: [],
-                    }), 
+                    }),
                 };
 
                 commonSvc.getReport({
@@ -2020,6 +2015,8 @@
             }
         }
         $scope.onModalClose = function () {
+            $scope.selectedDocs = [];
+            $scope.selected = [];
             $uibModalInstance.close();
         };
     }

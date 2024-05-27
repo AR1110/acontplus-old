@@ -39,7 +39,7 @@
 
         function getDataFilter() {
             let data = { tipo: 2 }
-            return mS.getData('get', `${URL}?json=${JSON.stringify(data)}`, null, true).then(
+            return mS.getData('get', `${URL}?json=${JSON.stringify(data)}`).then(
                 response => {
                     if (response.code === "0") {
                         throw response;
@@ -48,7 +48,8 @@
                         let mainData = JSON.parse(response.payload);
                         return {
                             establecimientos: mainData.establecimientos,
-                            tipoComprobantes: mainData.tipoComprobantes
+                            tipoComprobantes: mainData.tipoComprobantes,
+                            subcategories: mainData.subcategories
                         }
 
                     }

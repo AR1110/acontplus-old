@@ -47,7 +47,7 @@ BEGIN
 		INNER JOIN Pet.Pet p WITH(NOLOCK) ON mh.PetId = p.Id
 		INNER JOIN Pet.Breed b WITH(NOLOCK) ON p.BreedId = b.Id
 		INNER JOIN Pet.Gender g WITH(NOLOCK) ON p.GenderId = g.Id
-		INNER JOIN Pet.PetType pt WITH(NOLOCK) ON p.PetTypeId = pt.Id
+		INNER JOIN Pet.PetType pt WITH(NOLOCK) ON b.PetTypeId = pt.Id
 		LEFT JOIN Customer.Customer c WITH(NOLOCK) ON p.CustomerId = c.Id 
 	WHERE mh.Id = @id
 

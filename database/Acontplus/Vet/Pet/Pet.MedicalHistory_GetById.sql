@@ -30,7 +30,7 @@ BEGIN
 		INNER JOIN Pet.Breed b ON p.BreedId = b.Id
 		INNER JOIN Pet.Gender g ON p.GenderId = g.Id
 		INNER JOIN Customer.Customer cc ON p.CustomerId = cc.Id
-		INNER JOIN Pet.PetType pt ON p.PetTypeId = pt.Id
+		INNER JOIN Pet.PetType pt ON b.PetTypeId = pt.Id
 		LEFT JOIN Cliente c WITH(NOLOCK) ON cc.Id = c.CustomerId AND p.CompanyId = c.idEntidad
 	WHERE mh.id = @id
 	AND mh.Deleted IS NULL

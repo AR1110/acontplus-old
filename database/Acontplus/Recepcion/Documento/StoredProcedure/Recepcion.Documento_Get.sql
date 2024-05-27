@@ -33,7 +33,8 @@ BEGIN
         @serieComprobante VARCHAR(20),
         @rucProveedor VARCHAR(25),
         @id INT,
-        @ckBoxFecha BIT
+        @ckBoxFecha BIT,
+        @subcategoryId INT
 	
 	--> Sql
 	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
@@ -57,7 +58,8 @@ BEGIN
                           ,@claveAcceso  VARCHAR(49)
                           ,@pageIndex    INT
                           ,@pageSize     INT
-                          ,@serieComprobante VARCHAR(20)'
+                          ,@serieComprobante VARCHAR(20)
+                          ,@subcategoryId INT'
 
             SET @sql = 'SELECT dr.[idDocumento]
 		                      ,dr.[codEstab]
@@ -101,6 +103,7 @@ BEGIN
                   ,@pageSize     = pageSize
 				  ,@pageIndex    = pageIndex
                   ,@serieComprobante = serieComprobante
+                  ,@subcategoryId = subcategoryId
 	        FROM OPENJSON(@JSON) WITH 
             (
 			     codDoc       VARCHAR(2) 
@@ -113,9 +116,10 @@ BEGIN
                 ,pageSize     INT
                 ,pageIndex    INT
                 ,serieComprobante VARCHAR(20)
+                ,subcategoryId INT
 			)
 
-            IF @ckBoxFecha = 1
+            IF @ckBoxFecha = 1 AND @serieComprobante IS NULL
                 BEGIN
                     SET @sql = @sql + 'AND CAST(dr.fechaEmision AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
                 END 
@@ -140,6 +144,10 @@ BEGIN
                     SET @sql = @sql + ' AND dr.serieComprobante LIKE ''%' + @serieComprobante + '%'' ' 
                 END
 
+            IF (@subcategoryId > 0)
+                BEGIN
+                     SET @sql = @sql + ' AND dr.subcategoryId = @subcategoryId ' 
+                END
 
 
             SET @sql = @sql + ' ORDER BY idDocumento DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
@@ -155,6 +163,7 @@ BEGIN
                               ,@pageIndex    = @pageIndex
                               ,@pageSize     = @pageSize
                               ,@serieComprobante = @serieComprobante
+                              ,@subcategoryId = @subcategoryId
 
             RETURN 
         END 
@@ -163,11 +172,13 @@ BEGIN
     IF @tipo = 2
         BEGIN
             
-            SET @tableNames = 'establecimientos,tipoComprobantes'
+            SET @tableNames = 'establecimientos,tipoComprobantes,subcategories'
 
             SELECT idEstablecimiento,codEstab,nombreComercial FROM dbo.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
 
             SELECT descripcion,codigoSri as codDoc FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','04','07') ORDER BY codigoSri
+
+            SELECT * FROM Contabilidad.subcategory  WITH (NOLOCK) WHERE companyId = @idEntidad AND Enabled = 1
 
             RETURN 
         END 

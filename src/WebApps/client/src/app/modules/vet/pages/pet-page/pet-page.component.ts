@@ -35,6 +35,9 @@ import { MatIconButton } from '@angular/material/button';
 import { MatInput } from '@angular/material/input';
 import { Pet } from '@modules/vet/models/pet.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-pet-page',
@@ -69,7 +72,6 @@ export class PetPageComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   colorToggle: ThemePalette = 'accent';
-
   data = {} as Pet;
   displayedColumns: string[] = [
     'op',
@@ -87,7 +89,12 @@ export class PetPageComponent {
   dataSearch = {};
   pagination = new Pagination();
   searching: boolean = false;
-
+  totalPetTypes = [];
+  totalBreeds = [];
+  totalGenders = [];
+  public chartPetType: any;
+  public chartPetBreed: any;
+  public chartPetSex: any;
   private readonly petService = inject(PetService);
   private readonly modalService = inject(ModalService);
   private readonly tS = inject(ToasterService);
@@ -146,7 +153,9 @@ export class PetPageComponent {
     let clonedParams = Object.assign(params, this.dataSearch);
     this.petService.get(clonedParams).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
-        const { pets } = JSON.parse(response.payload as string);
+        const { pets, totalPetTypes, totalBreeds, totalGenders } = JSON.parse(
+          response.payload as string,
+        );
         const petsModified =
           pets &&
           pets.map((pet: any, index: number) => ({
@@ -161,6 +170,12 @@ export class PetPageComponent {
           this.paginator.length =
             petsModified.length > 0 ? petsModified[0].totalRecords : 0;
         });
+        this.totalPetTypes = totalPetTypes;
+        this.totalBreeds = totalBreeds;
+        this.totalGenders = totalGenders;
+        this.drawChartPetType();
+        this.drawChartPetBreed();
+        this.drawChartPetSex();
       }
     });
   }
@@ -228,4 +243,145 @@ export class PetPageComponent {
     this.dataSearch = { textSearch, tipo: 2 };
     this.loadPets();
   }
+
+  drawChartPetType = () => {
+    if (this.chartPetType != null) {
+      this.chartPetType.destroy();
+    }
+    let groupedPets = this.totalPetTypes.reduce((groups: any, item: any) => {
+      const group = groups[item.name] || [];
+      group.push(item);
+      groups[item.name] = group;
+      return groups;
+    }, {});
+    let labels = Object.keys(groupedPets);
+    let lengths = labels.map((key) => groupedPets[key][0]['total']);
+
+    this.chartPetType = new Chart('chartPetType', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Cantidad',
+            data: lengths,
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            ticks: {},
+          },
+          x: {
+            ticks: {
+              autoSkip: false,
+            },
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Distribución por especie',
+            padding: {
+              top: 10,
+              bottom: 30,
+            },
+          },
+        },
+      },
+    });
+  };
+
+  drawChartPetBreed = () => {
+    if (this.chartPetBreed != null) {
+      this.chartPetBreed.destroy();
+    }
+    let groupedPets = this.totalBreeds.reduce((groups: any, item: any) => {
+      const group = groups[item.name] || [];
+      group.push(item);
+      groups[item.name] = group;
+      return groups;
+    }, {});
+    let labels = Object.keys(groupedPets);
+    let lengths = labels.map((key) => groupedPets[key][0]['total']);
+
+    this.chartPetBreed = new Chart('chartPetBreed', {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Cantidad',
+            data: lengths,
+            fill: false,
+            borderWidth: 1,
+            tension: 0.1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            ticks: {
+              callback: function (value: any, index, values) {
+                // Only return even numbers
+                return value % 2 === 0 ? value : null;
+              },
+            },
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Distribución por Raza',
+            padding: {
+              top: 10,
+              bottom: 30,
+            },
+          },
+        },
+      },
+    });
+  };
+  drawChartPetSex = () => {
+    if (this.chartPetSex != null) {
+      this.chartPetSex.destroy();
+    }
+    let groupedPets = this.totalGenders.reduce((groups: any, item: any) => {
+      const group = groups[item.name] || [];
+      group.push(item);
+      groups[item.name] = group;
+      return groups;
+    }, {});
+    let labels = Object.keys(groupedPets);
+    let lengths = labels.map((key) => groupedPets[key][0]['total']);
+
+    this.chartPetSex = new Chart('chartPetSex', {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Cantidad',
+            data: lengths,
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Distribución por Sexo',
+            padding: {
+              top: 10,
+              bottom: 30,
+            },
+          },
+        },
+      },
+    });
+  };
 }
