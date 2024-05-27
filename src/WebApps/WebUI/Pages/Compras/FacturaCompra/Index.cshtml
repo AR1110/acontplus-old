@@ -120,13 +120,18 @@
                         </select>
                     </div>
                 </div>
-                @* <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
                     <div class="form-group">
-                    <span>Nro. Documento</span>
-                    <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
-                    placeholder="Ej: 23">
+                        <label for="subcategoryId">Subcategoría:</label>
+                        <select class="form-control border-select" id="" ng-model="dataSearch.subcategoryId"
+                                ng-change="getFacturas()">
+                            <option ng-value="">Todos</option>
+                            <option ng-value="item.id" ng-repeat="item in subcategories">
+                                {{item.name}}
+                            </option>
+                        </select>
                     </div>
-                    </div> *@
+                </div>
             </div>
         </div>
     </div>

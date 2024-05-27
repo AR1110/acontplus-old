@@ -1,4 +1,4 @@
-<app-breadcrumb />
+<app-breadcrumb/>
 
 <div class="card">
   <div class="card-body">
@@ -6,10 +6,10 @@
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="icheck-primary">
           <input
-            type="checkbox"
-            id="supplierChecked"
             [(ngModel)]="dataSearch.supplierChecked"
+            id="supplierChecked"
             name="supplierChecked"
+            type="checkbox"
           />
           <label for="supplierChecked">Proveedor</label>
         </div>
@@ -18,20 +18,20 @@
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
     </div>
-    <hr />
+    <hr/>
     <div class="row">
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="tipoDoc">Tipo Doc.:</label>
           <select
-            name="tipoDoc"
-            id="tipoDoc"
-            class="form-select form-control-border"
             [(ngModel)]="dataSearch.codDoc"
+            class="form-select form-control-border"
+            id="tipoDoc"
+            name="tipoDoc"
           >
-          <option value="">Todos</option>
+            <option value="">Todos</option>
             @for (item of tiposDoc; track $index) {
-            <option [ngValue]="item.codDoc">{{ item.descripcion }}</option>
+              <option [ngValue]="item.codDoc">{{ item.descripcion }}</option>
             }
           </select>
         </div>
@@ -41,15 +41,15 @@
         <div class="form-group">
           <label>Establecimiento: </label>
           <select
-            class="form-select form-control-border"
-            [(ngModel)]="dataSearch.codEstab"
             (change)="onChangeEstab()"
+            [(ngModel)]="dataSearch.codEstab"
+            class="form-select form-control-border"
           >
             <option value="">Todos</option>
-            @for(estab of establecimientos; track $index ){
-            <option [ngValue]="estab.codEstab">
-              {{ estab.nombreComercial }}
-            </option>
+            @for (estab of establecimientos; track $index) {
+              <option [ngValue]="estab.codEstab">
+                {{ estab.nombreComercial }}
+              </option>
             }
           </select>
         </div>
@@ -58,14 +58,14 @@
         <div class="form-group">
           <label for="estado">Estado.:</label>
           <select
-            name="estado"
-            id="estado"
-            class="form-select form-control-border"
             [(ngModel)]="dataSearch.codEstado"
+            class="form-select form-control-border"
+            id="estado"
+            name="estado"
           >
             <option value="">Todos</option>
             @for (item of estadosDoc; track $index) {
-            <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
+              <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
             }
           </select>
         </div>
@@ -77,51 +77,64 @@
         <div class="form-group">
           <label>Punto emisión: </label>
           <select
-            class="form-select form-control-border"
             [(ngModel)]="dataSearch.idPuntoEmision"
+            class="form-select form-control-border"
           >
             <option [ngValue]="0">Todos</option>
-            @for(ptoEmi of puntosEmision; track $index ){
-            <option [ngValue]="ptoEmi.idPuntoEmision">
-              {{ ptoEmi.ptoEmi }}
-            </option>
+            @for (ptoEmi of puntosEmision; track $index) {
+              <option [ngValue]="ptoEmi.idPuntoEmision">
+                {{ ptoEmi.ptoEmi }}
+              </option>
             }
           </select>
         </div>
       </div>
       @if (dataSearch.supplierChecked) {
-      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
-        <div class="form-group">
-          <label  >Proveedor</label>
-          <app-supplier-search
-            [isSearchSimple]="isSearchSupplierSimple"
-            (onSupplierSelected)="onSupplierSelected($event)"
-            [textSearch]="dataSearch.supplierName"
-            (emptyInput)="supplierResultEmptyInput($event)"
-          ></app-supplier-search>
+        <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+          <div class="form-group">
+            <label>Proveedor</label>
+            <app-supplier-search
+              [isSearchSimple]="isSearchSupplierSimple"
+              (onSupplierSelected)="onSupplierSelected($event)"
+              [textSearch]="dataSearch.supplierName"
+              (emptyInput)="supplierResultEmptyInput($event)"
+            ></app-supplier-search>
+          </div>
         </div>
-      </div>
       }
       <div class="col-xl-3 col-lg-3 col-md-4 col-sm-12 col-12">
         <div class="form-group">
-          <label  >Rango Fechas</label>
+          <label>Rango Fechas</label>
 
           <app-date-range-selection
             (onChangeDateRange)="onDateRangeSelection($event)"
           />
         </div>
       </div>
+      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="subcategoryId">Subcategoría:</label>
+          <select [(ngModel)]="dataSearch.subcategoryId" class="form-select border-select" id="subcategoryId">
+            <option [ngValue]="0">Todas</option>
+            @for (item of subcategories; track $index) {
+              <option [ngValue]="item.id">
+                {{ item.name }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
     </div>
   </div>
   <div class="card-body">
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-      <button class="btn btn-danger" type="button" (click)="getReport('pdf')">
+      <button (click)="getReport('pdf')" class="btn btn-danger" type="button">
         PDF
       </button>
       <button
+        (click)="getReport('excel')"
         class="btn btn-success"
         type="button"
-        (click)="getReport('excel')"
       >
         EXCEL
       </button>

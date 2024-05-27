@@ -44,6 +44,7 @@
 
         $scope.establecimientos = [];
         $scope.estadosDoc = [];
+        $scope.subcategories = [];
         $scope.recordsQuantity = [25, 50, 100]
         $scope.dataSearch = {
             pageIndex: 1,
@@ -84,8 +85,7 @@
                     idUsuario: fS.isValidField($scope.dataSearch.idUsuario),
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
-                    //  isSearchNroDoc: $scope.dataSearch.nroSecuencial ? true : false,
-                    //  nroSecuencial: $scope.dataSearch.nroSecuencial,
+                    subcategoryId: $scope.dataSearch.subcategoryId,
                 }
                 $scope.cloneFacturas = [];
                 $scope.facturas = [];
@@ -112,9 +112,10 @@
         $scope.initiload = () => {
             showLoader();
             facturaCompraSvc.getDataFilter().then(response => {
-                let { estabs, estadosDoc } = response;
+                let { estabs, estadosDoc, subcategories } = response;
                 $scope.estadosDoc = estadosDoc;
                 $scope.establecimientos = estabs;
+                $scope.subcategories = subcategories;
                 if ($scope.establecimientos.length > 0) {
                     let dataEstab = $scope.establecimientos.find(estab => estab.defaultEstab);
                     if (dataEstab) {
