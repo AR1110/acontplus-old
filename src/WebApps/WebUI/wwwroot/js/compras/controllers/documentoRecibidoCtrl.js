@@ -41,7 +41,7 @@
             checkBoxFecha: true,
         };
         $scope.moreOptionsFilter = false;
-        $scope.extraOptionsIcon = "fa fa-filter";
+        $scope.extraOptionsIcon = "fa fa-eye";
         $scope.extraOptionsTooltip = "Ver más filtros";
         $scope.recordsQuantity = [25, 50, 100];
 

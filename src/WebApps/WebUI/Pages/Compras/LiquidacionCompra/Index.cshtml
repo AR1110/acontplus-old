@@ -136,6 +136,20 @@
                     </div>
                 </div>
             </div>
+            <div class="row" ng-if="moreSearchOptions">
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="subcategoryId">Subcategoría:</label>
+                        <select class="form-control border-select" id="" ng-model="dataSearch.subcategoryId"
+                                ng-change="getLiquidacionesCompra()">
+                            <option ng-value="">Todos</option>
+                            <option ng-value="item.id" ng-repeat="item in subcategories">
+                                {{item.name}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="card">

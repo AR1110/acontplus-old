@@ -270,7 +270,7 @@
                 }
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload) || [];
-                    const { ptoEmision, estadoDocumento } = results;
+                    const { ptoEmision, estadoDocumento, subcategories } = results;
 
                     let dataToGroup = {
                         estabs: ptoEmision, //Establecimientos con puntos de emision 
@@ -279,7 +279,8 @@
 
                     return {
                         estabs,
-                        estadosDoc: estadoDocumento
+                        estadosDoc: estadoDocumento,
+                        subcategories,
                     }
 
                 }
@@ -653,7 +654,7 @@
                     }
                     if (response.code === "1") {
                         let mainData = JSON.parse(response.payload);
-                        const { ptoEmision, estadoDocumento } = mainData;
+                        const { ptoEmision, estadoDocumento, subcategories } = mainData;
 
 
                         let dataToGroup = {
@@ -667,7 +668,8 @@
                                 idEstado: estado.idEstadoPago,
                                 descripcion: estado.descripcion,
                                 codigo: estado.codigo
-                            }))
+                            })),
+                            subcategories,
                         }
                     }
                 }
@@ -1154,7 +1156,7 @@
                 }
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload) || [];
-                    const { ptoEmision, estadoDocumento } = results;
+                    const { ptoEmision, estadoDocumento, subcategories } = results;
 
                     let dataToGroup = {
                         estabs: ptoEmision, //Establecimientos con puntos de emision 
@@ -1163,7 +1165,8 @@
 
                     return {
                         estabs,
-                        estadosDoc: estadoDocumento
+                        estadosDoc: estadoDocumento,
+                        subcategories,
                     }
 
                 }

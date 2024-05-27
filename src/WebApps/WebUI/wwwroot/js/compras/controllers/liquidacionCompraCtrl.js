@@ -45,6 +45,7 @@
             maxSize: 5,
             checkBoxFecha: true
         }
+        $scope.subcategories = [];
 
         //primero tu me fallaste cuando hiciste esa cosa, de ahi juu ya no baje a shimpim
         $scope.sumTotalColumna = function () {
@@ -88,7 +89,8 @@
                     secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
                     idUsuario: fS.isValidField($scope.dataSearch.idUsuario),
                     pageIndex: $scope.dataSearch.pageIndex,
-                    pageSize: $scope.dataSearch.pageSize
+                    pageSize: $scope.dataSearch.pageSize,
+                    subcategoryId: $scope.dataSearch.subcategoryId,
                 }
                 showLoader();
                 liquidacionCompraSvc.getAll(dataSearch).then(response => {
@@ -112,10 +114,10 @@
         $scope.initiload = () => {
             showLoader();
             liquidacionCompraSvc.getDataFilter().then(response => {
-                let { estabs, estadosDoc } = response;
+                let { estabs, estadosDoc, subcategories } = response;
                 $scope.establecimientos = estabs;
                 $scope.estadosDoc = estadosDoc;
-
+                $scope.subcategories = subcategories;
                 if ($scope.establecimientos.length > 0) {
                     let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
                     $scope.puntosEmision = dataEstab.puntosEmision;

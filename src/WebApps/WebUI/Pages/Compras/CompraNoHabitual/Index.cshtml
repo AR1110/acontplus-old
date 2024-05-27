@@ -95,7 +95,7 @@
                     <div class="form-gorup">
                         <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
                         <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
-                            class="form-control  border-select" ng-change="getComprasNoHabitual()">
+                                class="form-control  border-select" ng-change="getComprasNoHabitual()">
                             <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                 {{item.ptoEmi}}
                             </option>
@@ -103,20 +103,20 @@
                     </div>
                 </div>
                 @* <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                <div class="form-group">
-                <span for="usuarioFiltro">Usuario</span>
-                <input type="text" id="customerInputSearchUser" class="form-control border-select"
-                ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
-                on-keyup="onKeyupUser()" placeholder="..."
-                onclick="select();" >
+        <div class="form-group">
+        <span for="usuarioFiltro">Usuario</span>
+        <input type="text" id="customerInputSearchUser" class="form-control border-select"
+        ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
+        on-keyup="onKeyupUser()" placeholder="..."
+        onclick="select();" >
 
-                <script type="text/ng-template" id="autocompleteUserTemplate.html">
-                <div class="autocomplete-suggestion-uib-typeahead">
-                <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
-                </div>
-                </script>
-                </div>
-                </div> *@
+        <script type="text/ng-template" id="autocompleteUserTemplate.html">
+        <div class="autocomplete-suggestion-uib-typeahead">
+        <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
+        </div>
+        </script>
+        </div>
+        </div> *@
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Estado:</span>
@@ -132,7 +132,19 @@
                     <div class="form-group">
                         <span>Nro. Documento</span>
                         <input type="text" class="form-control border-select" ng-model="dataSearch.secuencial"
-                            placeholder="Ej: 23">
+                               placeholder="Ej: 23">
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="subcategoryId">Subcategoría:</label>
+                        <select class="form-control border-select" id="" ng-model="dataSearch.subcategoryId"
+                                ng-change="getComprasNoHabitual()">
+                            <option ng-value="">Todos</option>
+                            <option ng-value="item.id" ng-repeat="item in subcategories">
+                                {{item.name}}
+                            </option>
+                        </select>
                     </div>
                 </div>
             </div>

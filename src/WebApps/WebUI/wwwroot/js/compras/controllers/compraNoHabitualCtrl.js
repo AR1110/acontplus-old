@@ -55,7 +55,7 @@
             // fechaInicio: new Date(),
             // fechaFin: new Date()
         };
-
+        $scope.subcategories = [];
         $scope.estadoDocs = [{
             estado: 'AC',
             descripcion: 'Activo'
@@ -208,6 +208,7 @@
                     ckFecha: $scope.dataSearch.checkBoxFecha,
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
+                    subcategoryId: $scope.subcategoryId,
                 }
                 $scope.documentoIngreso = [];
                 sumImporteTotal();
@@ -232,10 +233,10 @@
             try {
                 compraNoHabSvc.getDataFilter().then(
                     response => {
-                        const { estabs, estadosDoc } = response;
+                        const { estabs, estadosDoc, subcategories } = response;
                         $scope.establecimientos = estabs;
                         $scope.estadosDoc = estadosDoc;
-
+                        $scope.subcategories = subcategories;
                         if ($scope.establecimientos.length > 0) {
                             let dataEstab = $scope.establecimientos.find(estab => estab.defaultEstab);
                             if (dataEstab) {
