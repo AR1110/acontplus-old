@@ -38,7 +38,9 @@ BEGIN
 
     --> Filter
     DECLARE @codEstab VARCHAR(20) ,@idProveedor INT ,@codEstado VARCHAR(10) ,@dateStart DATETIME2 ,@dateEnd DATETIME2  ,@ckFecha BIT ,@secuencial VARCHAR(100)
-	
+	       ,@subcategoryId INT
+
+    --> Variables
 	SELECT @typeList = typeList FROM OPENJSON(@json) WITH(typeList INT)
 
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -68,6 +70,7 @@ BEGIN
 			SET @params = '@idEntidad      INT
 						  ,@codEstab       VARCHAR(100)
                           ,@idPuntoEmision INT
+                          ,@subcategoryId  INT
 						  ,@dateStart      DATETIME2
 						  ,@dateEnd        DATETIME2
 						  ,@idProveedor    INT
@@ -79,6 +82,7 @@ BEGIN
 			SELECT @codEstab       = codEstab
                   ,@idPuntoEmision = idPuntoEmision
 				  ,@idProveedor    = idProveedor
+                  ,@subcategoryId  = subcategoryId
 				  ,@dateStart      = dateStart
 				  ,@dateEnd        = dateEnd
 				  ,@codEstado      = codEstado
@@ -89,7 +93,8 @@ BEGIN
 			FROM OPENJSON(@json) WITH 
             (
                  codEstab       VARCHAR(20) 
-			    ,idProveedor    INT 
+			    ,idProveedor    INT
+                ,subcategoryId  INT
 			    ,dateStart      DATETIME2 
 			    ,dateEnd        DATETIME2 
 			    ,codEstado	    VARCHAR(5)
@@ -127,6 +132,11 @@ BEGIN
 					SET @sql = @sql + 'AND idProveedor = @idProveedor  '
 				END 
 
+            IF @subcategoryId > 0
+                BEGIN
+                    SET @sql = @sql + 'AND subcategoryId = @subcategoryId '
+                END 
+
 			IF @codEstado IS NOT NULL
 				BEGIN
 					SET @sql = @sql + 'AND codEstado = @codEstado '
@@ -139,6 +149,7 @@ BEGIN
 			                  ,@idEntidad      = @idEntidad
 				              ,@codEstab       = @codEstab
                               ,@idPuntoEmision = @idPuntoEmision
+                              ,@subcategoryId  = @subcategoryId
 				              ,@dateStart      = @dateStart
 				              ,@dateEnd        = @dateEnd
 				              ,@idProveedor    = @idProveedor
@@ -238,8 +249,8 @@ BEGIN
 				  ,di.descuento 
 				  ,total = di.importeTotal
                   ,di.observacion
-                  ,ISNULL(cpp.subcategoryId, 0) subcategoryId
-                  ,ISNULL(cpp.subcategoryName,  '') subcategoryName
+                  ,ISNULL(cpp.subcategoryId, 0)            as subcategoryId
+                  ,ISNULL(cpp.subcategoryName,  '')        as subcategoryName
 			FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
 			INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = di.idPuntoEmision
 			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
@@ -344,7 +355,7 @@ BEGIN
     IF @typeList = 5
         BEGIN
             
-            SET @tableNames = 'ptoEmision,estadoDocumento'
+            SET @tableNames = 'ptoEmision,estadoDocumento,subcategories'
 
             SELECT idEstablecimiento
                     ,nombreComercial
@@ -356,6 +367,8 @@ BEGIN
             FROM v_PtoEmi_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 
             SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('PFC','PA','NPA','A')
+
+            SELECT * FROM Contabilidad.subcategory  WITH (NOLOCK) WHERE companyId = @idEntidad AND [Enabled] = 1
 
             RETURN
         END 
