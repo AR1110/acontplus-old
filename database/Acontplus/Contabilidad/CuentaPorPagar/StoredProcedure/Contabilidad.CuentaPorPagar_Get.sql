@@ -381,6 +381,12 @@ BEGIN
             FROM Inventario.TipoDocumento WITH (NOLOCK) 
             WHERE codigo IN ('FF','FE','IV','LC')
             
+            SELECT Id         as id 
+                  ,CategoryId as categoryId
+                  ,[Name]     as [name]
+                  ,Code       as code
+            FROM Contabilidad.subcategory  WITH (NOLOCK) WHERE companyId = @idEntidad AND Enabled = 1
+
             RETURN 
         END 
     

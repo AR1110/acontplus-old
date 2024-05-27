@@ -38,7 +38,7 @@ BEGIN
 
      --> Filters
     DECLARE @idProveedor INT ,@codEstab VARCHAR(25) ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@ckFecha BIT ,@codEstado VARCHAR(15) ,@codDoc VARCHAR(10) 
-           ,@idPuntoEmision INT ,@ckCxcVencida BIT ,@ckCuotas BIT
+           ,@idPuntoEmision INT ,@ckCxcVencida BIT ,@ckCuotas BIT ,@subcategoryId INT
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
@@ -50,31 +50,34 @@ BEGIN
 
             SET @tableNames = 'dataEntidad,compras'
 
-            SELECT @idProveedor  = idProveedor  
-                  ,@ckFecha      = ckFecha
-                  ,@fechaInicio  = fechaInicio
-                  ,@fechaFin     = fechaFin
-                  ,@codEstab     = codEstab
-                  ,@codEstado    = codEstado
-                  ,@codDoc       = codDoc
+            SELECT @idProveedor   = idProveedor
+                  ,@subcategoryId = subcategoryId
+                  ,@ckFecha       = ckFecha
+                  ,@fechaInicio   = fechaInicio
+                  ,@fechaFin      = fechaFin
+                  ,@codEstab      = codEstab
+                  ,@codEstado     = codEstado
+                  ,@codDoc        = codDoc
             FROM OPENJSON(@json) WITH 
             (
-                idProveedor  INT         
-               ,ckFecha      BIT         
-               ,fechaInicio  DATETIME2   
-               ,fechaFin     DATETIME2   
-               ,codEstab     VARCHAR(25) 
-               ,codEstado    VARCHAR(15) 
-               ,codDoc       VARCHAR(10) 
+                idProveedor   INT
+               ,subcategoryId INT
+               ,ckFecha       BIT         
+               ,fechaInicio   DATETIME2   
+               ,fechaFin      DATETIME2   
+               ,codEstab      VARCHAR(25) 
+               ,codEstado     VARCHAR(15) 
+               ,codDoc        VARCHAR(10) 
             )
 
-            SET @params = '@idProveedor INT
-                          ,@idEntidad   INT
-                          ,@codEstab    VARCHAR(50)
-                          ,@fechaInicio DATETIME2
-                          ,@fechaFin    DATETIME2
-                          ,@codEstado   VARCHAR(15)
-                          ,@codDoc      VARCHAR(10)'
+            SET @params = '@idProveedor   INT
+                          ,@subcategoryId INT
+                          ,@idEntidad     INT
+                          ,@codEstab      VARCHAR(50)
+                          ,@fechaInicio   DATETIME2
+                          ,@fechaFin      DATETIME2
+                          ,@codEstado     VARCHAR(15)
+                          ,@codDoc        VARCHAR(10)'
 
             SET @sql = 'SELECT idEstablecimiento
                               ,nombreComercial 
@@ -120,6 +123,11 @@ BEGIN
                     SET @sql = @sql + 'AND cp.idProveedor = @idProveedor '
                 END 
 
+            IF @subcategoryId > 0
+                BEGIN
+                    SET @sql = @sql + 'AND cp.subcategoryId = @subcategoryId '
+                END 
+
             IF @codEstado IS NOT NULL
                 BEGIN
                     IF @codEstado = 'NPA'
@@ -147,13 +155,14 @@ BEGIN
 
             EXEC sp_executesql @sql
 						      ,@params 
-                              ,@codEstab    = @codEstab
-                              ,@idProveedor = @idProveedor
-                              ,@idEntidad   = @idEntidad
-                              ,@fechaInicio = @fechaInicio
-                              ,@fechaFin    = @fechaFin
-                              ,@codEstado   = @codEstado
-                              ,@codDoc      = @codDoc
+                              ,@codEstab      = @codEstab
+                              ,@idProveedor   = @idProveedor
+                              ,@subcategoryId = @subcategoryId
+                              ,@idEntidad     = @idEntidad
+                              ,@fechaInicio   = @fechaInicio
+                              ,@fechaFin      = @fechaFin
+                              ,@codEstado     = @codEstado
+                              ,@codDoc        = @codDoc
 
             RETURN 
         END 
