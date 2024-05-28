@@ -21,48 +21,51 @@ import { InspectionModalComponent } from './components/inspection-modal/inspecti
     NgbPagination,
     FontAwesomeModule,
     NgbDropdownModule,
-    MatTableModule
+    MatTableModule,
   ],
   templateUrl: './inspection-page.component.html',
 })
 export class InspectionPageComponent {
-  private inspectionSvc = inject(InspectionService);
-  private modalSvc = inject(ModalService)
-  sharedSvc = inject(SharedService)
-
-
-  displayedColumns = ['position', 'op', 'cliente-conductor', 'placa', 'marca', 'tipo', 'kilometraje', 'combustible'];
-
+  sharedSvc = inject(SharedService);
+  displayedColumns = [
+    'position',
+    'op',
+    'cliente-conductor',
+    'placa',
+    'marca',
+    'tipo',
+    'kilometraje',
+    'combustible',
+  ];
   pagination = new Pagination();
   dataSource: any[] = [];
-
-  dataSearch = {
-
-  }
+  dataSearch = {};
+  private inspectionSvc = inject(InspectionService);
+  private modalSvc = inject(ModalService);
 
   openModal(id: number, supportId: number) {
     let modalRef = this.modalSvc.open(InspectionModalComponent, {
-      size: 'xl'
-    })
+      size: 'xl',
+    });
     modalRef.componentInstance.params = {
       inspectionId: id,
-      supportId
-    }
+      supportId,
+    };
   }
 
   getInspections() {
     let params = {
       pageIndex: this.pagination.pageIndex,
       pageSize: this.pagination.pageSize,
-      status: 1
-    }
+      status: 1,
+    };
 
     this.inspectionSvc.getAll(params).subscribe((response) => {
       this.dataSource = response;
       if (this.dataSource.length > 0) {
         this.pagination.totalRecords = this.dataSource[0].totalRecords;
       }
-    })
+    });
   }
 
   ngOnInit(): void {
@@ -78,9 +81,7 @@ export class InspectionPageComponent {
     this.getInspections();
   }
 
-
   getReport(item: any) {
-
     let format = 'pdf';
     let dataParams = { inspectionId: item.id, tipo: 1 };
     const params = {
@@ -91,13 +92,11 @@ export class InspectionPageComponent {
         codigo: MECHANICAL_CODE_REPORT.MI,
         codEstab: item.codEstab,
         format,
-        additionalParams: []
+        additionalParams: [],
       }),
-      dataParams: JSON.stringify(dataParams)
+      dataParams: JSON.stringify(dataParams),
     };
 
-    this.sharedSvc.getReport(params, 'pdf')
-
+    this.sharedSvc.getReport({ data: params, format: 'pdf' });
   }
-
 }

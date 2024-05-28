@@ -38,17 +38,15 @@ import { OrderDeliveryModalComponent } from '../order-delivery-modal/order-deliv
     PrimaryStatusPipe,
   ],
   templateUrl: './order-list.component.html',
-  styles: `.row {
-    display: flex;
-    align-items: center;
-  }`,
+  styles: `
+    .row {
+      display: flex;
+      align-items: center;
+    }
+  `,
 })
 export class OrderListComponent implements OnInit {
   @Input() orderStatusCode: any = '';
-  private modalService = inject(ModalService);
-  private orderService = inject(OrderService);
-  private sharedService = inject(SharedService);
-  private tS = inject(ToasterService);
   dataSearch = {
     assignedUserId: 0,
     customer: '',
@@ -72,6 +70,10 @@ export class OrderListComponent implements OnInit {
   pagination = new Pagination();
   startDate: string = '';
   users: any = [];
+  private modalService = inject(ModalService);
+  private orderService = inject(OrderService);
+  private sharedService = inject(SharedService);
+  private tS = inject(ToasterService);
 
   async askToCancel(item: any) {
     const result = await swal.fire({
@@ -145,21 +147,24 @@ export class OrderListComponent implements OnInit {
       }),
       dataParams: JSON.stringify(item),
     };
-    this.sharedService.getReport(parameters, 'pdf');
+    this.sharedService.getReport({ data: parameters, format: 'pdf' });
   }
 
   ngOnInit(): void {
     this.get();
   }
+
   onChangePageSize() {
     this.pagination.pageIndex = 1;
     this.get();
   }
+
   onDateRangeSelection(range: { from: string; to: string }) {
     this.dataSearch.endDate = range.to;
     this.dataSearch.startDate = range.from;
     this.get();
   }
+
   onEdit(item: any) {
     const modalRef = this.modalService.openModalCustom(OrderModalComponent, {
       size: 'xl',
@@ -172,6 +177,7 @@ export class OrderListComponent implements OnInit {
       }
     });
   }
+
   onModalOpen() {
     const modalResp = this.modalService.openModalCustom(OrderModalComponent, {
       centered: true,
@@ -183,6 +189,7 @@ export class OrderListComponent implements OnInit {
       }
     });
   }
+
   onOpenDocument(item: any) {
     const modalRef = this.modalService.openModalCustom(OrderDocumentComponent, {
       size: 'xl',
@@ -196,7 +203,7 @@ export class OrderListComponent implements OnInit {
       OrderDeliveryModalComponent,
       {
         centered: true,
-      }
+      },
     );
     modalRef.componentInstance.data = item;
 
@@ -210,6 +217,7 @@ export class OrderListComponent implements OnInit {
   onPageChanged() {
     this.get();
   }
+
   openModalMaintenance(item: any) {
     if (!(item.assignedUserId > 0)) {
       return this.tS.toastr({
@@ -220,7 +228,7 @@ export class OrderListComponent implements OnInit {
     }
     const modalRef = this.modalService.openModalCustom(
       OrderMaintenanceModalComponent,
-      { size: 'xl' }
+      { size: 'xl' },
     );
     modalRef.componentInstance.params = { id: item.id };
 

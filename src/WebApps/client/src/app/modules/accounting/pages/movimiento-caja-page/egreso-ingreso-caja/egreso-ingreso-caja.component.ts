@@ -21,17 +21,18 @@ import { ModalEgresoIngresoComponent } from './modal-egreso-ingreso/modal-egreso
 @Component({
   selector: 'app-egreso-ingreso-caja',
   standalone: true,
-  imports: [FormsModule, FontAwesomeModule,NgbDropdownModule,NgbPagination, DateRangeSelectionComponent, EmployeeSearchComponent],
+  imports: [
+    FormsModule,
+    FontAwesomeModule,
+    NgbDropdownModule,
+    NgbPagination,
+    DateRangeSelectionComponent,
+    EmployeeSearchComponent,
+  ],
   templateUrl: './egreso-ingreso-caja.component.html',
 })
 export class EgresoIngresoCajaComponent {
-
-  private modalSvc = inject(ModalService);
-  private movCajaSvc = inject(MovimientoCajaService);
-  private sharedSvc = inject(SharedService)
-  private tS = inject(ToasterService)
   totalRecords = 0;
-
   dataSearch = {
     pageIndex: 1,
     pageSize: 25,
@@ -40,18 +41,19 @@ export class EgresoIngresoCajaComponent {
     fromDate: formatDateMoment(new Date()),
     toDate: formatDateMoment(new Date()),
     employeeId: 0,
-    codEstado: ''
-  }
+    codEstado: '',
+  };
   page = 1;
   recordsQuantity = [25, 50, 100];
-
-
-  establecimientos: Array<EstablecimientoSelectHtmlOnly> = []
+  establecimientos: Array<EstablecimientoSelectHtmlOnly> = [];
   movimientosCaja: Array<MovimientoCajaRead> = [];
-
   isSearchEmployeeSimple = true;
-  getMovimientosCaja() {
+  private modalSvc = inject(ModalService);
+  private movCajaSvc = inject(MovimientoCajaService);
+  private sharedSvc = inject(SharedService);
+  private tS = inject(ToasterService);
 
+  getMovimientosCaja() {
     let params = {
       codEstab: this.dataSearch.codEstab,
       pageIndex: this.dataSearch.pageIndex,
@@ -60,68 +62,73 @@ export class EgresoIngresoCajaComponent {
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       idEmpleado: isValidField(this.dataSearch.employeeId),
-      codEstado: isValidField(this.dataSearch.codEstado)
-    }
+      codEstado: isValidField(this.dataSearch.codEstado),
+    };
     this.movimientosCaja = [];
     this.movCajaSvc.getAll(params).subscribe({
       next: (response) => {
-
         this.movimientosCaja = response || [];
-        this.totalRecords = this.movimientosCaja.length > 0 ? this.movimientosCaja[0].totalRecords : 0;
+        this.totalRecords =
+          this.movimientosCaja.length > 0
+            ? this.movimientosCaja[0].totalRecords
+            : 0;
       },
       error(err) {
-
-        console.log(err)
+        console.log(err);
       },
-    })
+    });
   }
-  ngOnInit() {
 
+  ngOnInit() {
     this.movCajaSvc.getDataFilter().subscribe({
       next: (response) => {
-
         this.establecimientos = response.establecimientos;
         if (this.establecimientos.length > 0) {
-          let dataEstab = this.establecimientos.find(item => (item.predeterminado))
+          let dataEstab = this.establecimientos.find(
+            (item) => item.predeterminado,
+          );
           if (dataEstab) {
             this.dataSearch.codEstab = dataEstab.codEstab;
-            this.getMovimientosCaja()
+            this.getMovimientosCaja();
           }
         }
       },
       error(err) {
-        console.log(err)
-
+        console.log(err);
       },
-    })
+    });
   }
 
-  onDateRangeSelection(range: { from: string, to: string }) {
+  onDateRangeSelection(range: { from: string; to: string }) {
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
-    this.getMovimientosCaja()
+    this.getMovimientosCaja();
   }
 
   refresh() {
-    this.getMovimientosCaja()
+    this.getMovimientosCaja();
   }
 
   onEmployeeSelected<T extends { data: any }>($event: T) {
     const { data } = $event;
     this.dataSearch.employeeId = data.idEmpleado;
   }
+
   employeeResultEmptyInput($event: any) {
     this.dataSearch.employeeId = 0;
   }
 
   openModal(params?: any) {
-    const modalRef = this.modalSvc.openModalCustom(ModalEgresoIngresoComponent, { size: 'lg', backdrop: "static" });
+    const modalRef = this.modalSvc.openModalCustom(
+      ModalEgresoIngresoComponent,
+      { size: 'lg', backdrop: 'static' },
+    );
     modalRef.componentInstance.params = params || {};
-    modalRef.result.then(result => {
+    modalRef.result.then((result) => {
       if (typeof result === 'object') {
         this.getMovimientosCaja();
       }
-    })
+    });
   }
 
   getPrint(item: MovimientoCajaRead) {
@@ -130,13 +137,12 @@ export class EgresoIngresoCajaComponent {
       idTipoDocumento: item.idTipoDocumento,
       codEstab: item.codEstab,
       codDoc: item.codDoc,
-      nroIdentificacion: item.nroIdentificacion
-    }
+      nroIdentificacion: item.nroIdentificacion,
+    };
 
     this.sharedSvc.askToPrint({
-      parameters: JSON.stringify(parameters)
-    })
-
+      parameters: JSON.stringify(parameters),
+    });
   }
 
   getReport(item: MovimientoCajaRead) {
@@ -144,9 +150,7 @@ export class EgresoIngresoCajaComponent {
       let format = 'pdf';
       let dataParms = {
         id: item.idMovimientoCaja,
-      }
-
-
+      };
 
       const parameters = {
         hasService: true,
@@ -155,14 +159,18 @@ export class EgresoIngresoCajaComponent {
           codigo: CODE_REPORT.RMIE,
           format,
           codEstab: item.codEstab,
-          aditionalParams: []
+          aditionalParams: [],
         }),
-        dataParams: JSON.stringify(dataParms)
-      }
+        dataParams: JSON.stringify(dataParms),
+      };
 
-      this.sharedSvc.getReport(parameters, "pdf", true)
+      this.sharedSvc.getReport({
+        data: parameters,
+        format: 'pdf',
+        isOldVersion: true,
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -175,42 +183,37 @@ export class EgresoIngresoCajaComponent {
         confirmButtonText: 'Si, eliminar',
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
-        allowOutsideClick: false
-      }).then(result => {
+        allowOutsideClick: false,
+      }).then((result) => {
         if (result.isConfirmed) {
-
           this.movCajaSvc.delete(item.idMovimientoCaja).subscribe({
             next: (response) => {
-
               if (isApiResponse(response)) {
-                if (response.code === "0") {
+                if (response.code === '0') {
                   this.tS.toastr({
                     type: 'warning',
-                    message: response.message
-                  })
+                    message: response.message,
+                  });
                 }
-                if (response.code === "1") {
+                if (response.code === '1') {
                   this.tS.toastr({
                     type: 'success',
-                    message: response.message
-                  })
+                    message: response.message,
+                  });
                   this.getMovimientosCaja();
                 }
               }
-            }, error(err) {
-
-              console.log(err)
             },
-          })
+            error(err) {
+              console.log(err);
+            },
+          });
         }
-      })
+      });
     } catch (error) {
-
-      console.log(error)
+      console.log(error);
     }
   }
-
-
 
   pageChanged(): void {
     this.getMovimientosCaja();
@@ -220,6 +223,4 @@ export class EgresoIngresoCajaComponent {
     this.dataSearch.pageIndex = 1;
     this.getMovimientosCaja();
   }
-
-
 }

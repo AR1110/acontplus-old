@@ -208,7 +208,7 @@
                     ckFecha: $scope.dataSearch.checkBoxFecha,
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
-                    subcategoryId: $scope.subcategoryId,
+                    subcategoryId: $scope.dataSearch.subcategoryId,
                 }
                 $scope.documentoIngreso = [];
                 sumImporteTotal();

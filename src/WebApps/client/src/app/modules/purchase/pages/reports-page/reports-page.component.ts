@@ -135,6 +135,7 @@ export class ReportsPageComponent {
       codEstado: isValidField(this.dataSearch.codEstado),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
+      subcategoryId: this.dataSearch.subcategoryId,
     };
 
     const parameters = {
@@ -147,7 +148,7 @@ export class ReportsPageComponent {
       dataParams: JSON.stringify(dataParms),
     };
 
-    this.sharedSvc.getReport(parameters, format);
+    this.sharedSvc.getReport({ data: parameters, format: format });
   }
 
   // getCodDoc() {

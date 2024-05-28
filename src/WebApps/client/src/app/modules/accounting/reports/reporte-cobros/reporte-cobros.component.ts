@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ToasterService } from '@core/services/toaster.service';
 import {
@@ -41,12 +41,6 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 })
 export class ReporteCobrosComponent implements OnInit {
   http = inject(HttpClient);
-
-  // Services
-  private tS = inject(ToasterService);
-  private sharedSvc = inject(SharedService);
-  private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.COMPROBANTE_INGRESO}`;
-
   // VARIABLES Y CONSTANTES
   establecimientos: Array<GroupedEstab> = [];
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];
@@ -54,7 +48,6 @@ export class ReporteCobrosComponent implements OnInit {
   subEntidadFinanciera: Array<SubEntidadFinancieraSelectHtmlOnly> = [];
   bancos: Array<BancoSelectOnly> = [];
   isCustomerSearchSimple = true;
-
   dataSearch = {
     codEstab: '',
     idPuntoEmision: 0,
@@ -74,6 +67,10 @@ export class ReporteCobrosComponent implements OnInit {
     loteChecked: false,
     lote: '',
   };
+  // Services
+  private tS = inject(ToasterService);
+  private sharedSvc = inject(SharedService);
+  private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.COMPROBANTE_INGRESO}`;
 
   ngOnInit(): void {
     this.getInitialLoad();
@@ -225,7 +222,7 @@ export class ReporteCobrosComponent implements OnInit {
         }),
         dataParams: JSON.stringify(dataParms),
       };
-      this.sharedSvc.getReport(parameters, format);
+      this.sharedSvc.getReport({ data: parameters, format: format });
     } catch (error: any) {
       if (error.status === 400) {
         this.tS.toastr({
