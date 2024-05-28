@@ -235,7 +235,7 @@ export class PetPageComponent {
 
   pageChanged(event: PageEvent) {
     this.pagination.pageSize = event.pageSize;
-    this.pagination.pageIndex = event.pageIndex;
+    this.pagination.pageIndex = event.pageIndex == 0 ? 1 : event.pageIndex;
     this.loadPets();
   }
 

@@ -1,7 +1,7 @@
-import { HttpClient, HttpContext } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS, PATHS_API } from '@core/constants/global.constants';
-import{ customUrl } from '@core/interceptors/inject-session.interceptor';
+import { customUrl } from '@core/interceptors/inject-session.interceptor';
 import { isApiResponse } from '@core/models/api-response';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { SendMailModalComponent } from '@shared/components/send-mail-modal/send-mail-modal.component';
@@ -18,10 +18,9 @@ import { ToasterService } from './toaster.service';
 export class SharedService {
   private http = inject(HttpClient);
   private tS = inject(ToasterService);
-  private modalSvc = inject(ModalService)
+  private modalSvc = inject(ModalService);
 
-
-  saveFile(response: any, format?: string) {
+  saveFile(response: any, format?: string, downloadOnly: boolean = false) {
     let contentDisposition = response.headers.get('content-disposition');
     let fileName = contentDisposition
       ?.split(';')[1]
@@ -34,9 +33,8 @@ export class SharedService {
       const ieEDGE = navigator.userAgent.match(/Edge/g);
       const ie = navigator.userAgent.match(/.NET/g); // IE 11+
       const oldIE = navigator.userAgent.match(/MSIE/g);
-      // const blob = response.body;
       if (response.body) {
-        if (ie || oldIE || ieEDGE) {
+        if (ie || oldIE || ieEDGE || downloadOnly) {
           FileSaver.saveAs(response.body, fileName);
         } else {
           const fileURL = URL.createObjectURL(response.body);
@@ -44,9 +42,7 @@ export class SharedService {
         }
       }
     } else {
-      console.log('excel');
       if (response.body) {
-        console.log(response);
         let serverData = new Blob([response.body], {
           type: response.body.type,
         });
@@ -63,25 +59,18 @@ export class SharedService {
    */
   getReport<T>(
     data: T,
-    format: string,
-    isOldVersion: boolean = false
+    format: string = 'pdf',
+    isOldVersion: boolean = false,
+    downloadOnly: boolean = false,
   ) {
     const path = isOldVersion ? PATHS.DOWNLOAD_V1 : PATHS.DOWNLOAD;
-    showLoader();
     this.http
       .post(`${PATHS_API.REPORT}${path}`, data, {
         observe: 'response',
         responseType: 'blob',
       })
-      .subscribe({
-        next: (response) => {
-          hideLoader();
-          this.saveFile(response, format)
-        },
-        error(err) {
-          hideLoader();
-          console.log(err);
-        },
+      .subscribe((response) => {
+        this.saveFile(response, format, downloadOnly);
       });
   }
 
@@ -103,7 +92,7 @@ export class SharedService {
     });
     if (isConfirmed) {
       let url = `${PATHS_API.PRINT_SERVER}${PATHS.PRINT}`;
-      console.log(parameters)
+      console.log(parameters);
       showLoader();
       this.http
         .post(url, JSON.parse(parameters), {
@@ -171,12 +160,14 @@ export class SharedService {
       rdlcProps: string;
       dataSources: string;
       rdlcParams: string;
-    }
+    },
   >(params: T[]) {
     try {
-      let urlPrinter = `${params[0].urlPrinter}?rdlcProps=${params[0].rdlcProps
-        }&dataSources=${encodeURIComponent(params[0].dataSources)}&rdlcParams=${params[0].rdlcParams
-        }`;
+      let urlPrinter = `${params[0].urlPrinter}?rdlcProps=${
+        params[0].rdlcProps
+      }&dataSources=${encodeURIComponent(params[0].dataSources)}&rdlcParams=${
+        params[0].rdlcParams
+      }`;
 
       showLoader();
       this.http.post(urlPrinter, null).subscribe({
@@ -221,14 +212,12 @@ export class SharedService {
             };
           });
           return results;
-        })
+        }),
       );
   }
-
 
   async openModalSendMail<T>(params: T) {
     const modalRef = this.modalSvc.openModalCustom(SendMailModalComponent);
     modalRef.componentInstance.params = params || {};
   }
-
 }
