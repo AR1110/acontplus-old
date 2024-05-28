@@ -18,7 +18,7 @@
                 <i class="fa fa-plus-circle"></i> Factura TPV
                 </button> *@
                 @* ng-if="accion.leer && accion.crear" *@
-                <button type="button" class="btn btn-info m-l-15"  id="btnNewInvoice"
+                <button type="button" class="btn btn-info m-l-15" ng-show="accion.crear" id="btnNewInvoice"
                     ng-click="openModalInvoiceNew()">
                     <i class="fa fa-plus-circle"></i> Nuevo
                 </button>
@@ -215,7 +215,7 @@
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
                                             ng-click="$mdMenu.open($event)">
-                                            <icon class="mdi mdi-menu"></icon>
+                                            <i class="mdi mdi-menu"></i>
                                         </md-button>
                                         <md-menu-content class="md-dense">
                                             <md-menu-item>
@@ -237,7 +237,7 @@
                                                 </md-button>
                                             </md-menu-item>
 
-                                            <md-menu-item>
+                                            <md-menu-item ng-if="accion.crear">
                                                 <md-button ng-click="openModalInvoiceDuplicate(item)">
                                                     <span md-menu-align-target>
                                                         <i class="ti-files"></i>
