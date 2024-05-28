@@ -182,7 +182,7 @@ BEGIN
 
 	IF (@tipo = '3')
 		BEGIN
-			SET @sql = @sql +  ' AND codEstado NOT IN (4,6) '
+			SET @sql = @sql +  ' AND codEstado NOT IN (4,6) AND de.estadoDocElect IS NULL '
 		END
 	ELSE 
 		BEGIN
