@@ -18,7 +18,7 @@
         const CODE_REPORT = $injector.get('CODE_REPORT');
         const CONSOLIDADO_VENTA = 'CV'
 
-        $scope.isSelectedNotaEntrega = false; 
+        $scope.isSelectedNotaEntrega = true; 
 
         let format = 'pdf'
 
@@ -110,7 +110,7 @@
         $scope.onChangeTipoDoc = function () {
             //let dataEstado = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigo === $scope.dataSearch.codigoTipoDoc);
 
-            $scope.isSelectedNotaEntrega = $scope.dataSearch.codigoTipoDoc===DOC_TYPE.NE 
+            $scope.isSelectedNotaEntrega = $scope.dataSearch.codigoTipoDoc!==DOC_TYPE.FV_SRI 
             
         }
 
