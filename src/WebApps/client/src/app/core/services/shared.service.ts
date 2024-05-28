@@ -57,12 +57,17 @@ export class SharedService {
    * @param format pdf | excel
    * @param isOldVersion
    */
-  getReport<T>(
-    data: T,
-    format: string = 'pdf',
-    isOldVersion: boolean = false,
-    downloadOnly: boolean = false,
-  ) {
+  getReport<T>({
+    data,
+    format = 'pdf',
+    isOldVersion = false,
+    downloadOnly = false,
+  }: {
+    data: T;
+    format?: string;
+    isOldVersion?: boolean;
+    downloadOnly?: boolean;
+  }) {
     const path = isOldVersion ? PATHS.DOWNLOAD_V1 : PATHS.DOWNLOAD;
     this.http
       .post(`${PATHS_API.REPORT}${path}`, data, {

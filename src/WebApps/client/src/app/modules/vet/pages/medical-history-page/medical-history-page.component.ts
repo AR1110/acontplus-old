@@ -231,6 +231,8 @@ export class MedicalHistoryPageComponent {
       }),
     };
 
-    this.sharedService.getReport(parameters, 'pdf', false, true);
+    this.sharedService.getReport({
+      data: parameters,
+    });
   }
 }
