@@ -135,6 +135,7 @@ export class ReportsPageComponent {
       codEstado: isValidField(this.dataSearch.codEstado),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
+      subcategoryId: this.dataSearch.subcategoryId,
     };
 
     const parameters = {
