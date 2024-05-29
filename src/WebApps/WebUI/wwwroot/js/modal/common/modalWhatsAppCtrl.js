@@ -19,7 +19,8 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _
     $scope.connected_devices = []
     $scope.current_device = {}
 
-    $scope.hasPermissions = _token.role == 'RT' ? true : false
+  
+    $scope.hasPermissions = _token.userRoleId== '26' 
 
     let parser = new UAParser(navigator.userAgent)
     let parserResults = parser.getResult()

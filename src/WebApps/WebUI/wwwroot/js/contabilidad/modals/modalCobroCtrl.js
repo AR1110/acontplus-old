@@ -1480,7 +1480,7 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
                 entidadFinanciera: entidadFinanciera.descripcion,
                 subEntidadFinanciera: subEntidadFinanciera.descripcion,
 
-                ciudad: ciudad && ciudad.descripcion,
+                ciudad: ciudad && ciudad.descripcion, 
                 banco: banco && banco.descripcion,
 
                 //Data
@@ -1502,6 +1502,7 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
                 idComprobante: item.idDocumento,
                 tipoDocumento: item.tipoDocumento || item.codDoc,
                 valorAbono: item.saldo || $scope.data.valorAbono,
+                controlCaja: subEntidadFinanciera.controlCaja,
                 observacion: $scope.data.observacion
             }
         } catch (error) {

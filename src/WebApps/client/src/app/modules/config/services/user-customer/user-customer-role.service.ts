@@ -64,9 +64,17 @@ export class UserCustomerRoleService {
           return acc; // No olvidar retornar el acumulador en cada iteración
         }, []);
 
+        let actions = response.actions.map((item:any)=>{
+          let {code, ...restItem} = item;
+          return {
+            ...restItem,
+            codeAction: code,
+          }
+        })
+
         return {
           menus:menusResults,
-          actions: response.actions
+          actions: actions
         }
       })
     )

@@ -6,9 +6,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useCheckoutContext } from '../context';
+import { useCheckoutContext } from '../../context';
 import { formatDateShort } from '@/core/utilities';
-import { DeleteIcon } from '../../IconsMaterial';
+import { DeleteIcon } from '../../../IconsMaterial.tsx';
 import { IconButton } from '@mui/material';
 
 

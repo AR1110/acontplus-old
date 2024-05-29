@@ -1,7 +1,7 @@
 import React from 'react'
-import { useCheckoutContext } from '../context';
+import { useCheckoutContext } from '../../context';
 import { InputAdornment, TextField } from '@mui/material';
-import { PaymentsIcon } from '../../IconsMaterial';
+import { PaymentsIcon } from '../../../IconsMaterial.tsx';
 
 const InputReceivedAmount = () => {
     const { checkout, onChangeReceivedAmount } = useCheckoutContext();

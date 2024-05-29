@@ -1,7 +1,7 @@
 
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete'; 
-import { useCheckoutContext } from '../context';
+import { useCheckoutContext } from '../../context';
 
 export default function Bank() {
     const {checkout, setChangeFieldFormPayment,} = useCheckoutContext(); 
