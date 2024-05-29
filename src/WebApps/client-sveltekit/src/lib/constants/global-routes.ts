@@ -1,5 +1,4 @@
 export enum GlobalRoutes {
-    VetMedicalHistory = '/vet/medical-history',
     ConfigEmail = '/config/email',
     MotivoDiscrepancia = '/inventario/motivo-discrepancia', 
     VentasReport = '/sales/report',

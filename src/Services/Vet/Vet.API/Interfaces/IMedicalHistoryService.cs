@@ -1,6 +1,6 @@
 ﻿namespace Vet.API.Interfaces;
 
-public interface IMedicalHistory
+public interface IMedicalHistoryService
 {
     Task<ApiResponse> AddAsync(MedicalHistory medicalHistory);
     Task<ApiResponse> DeleteAsync(int userId, int id);

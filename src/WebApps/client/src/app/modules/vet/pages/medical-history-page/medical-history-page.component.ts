@@ -97,7 +97,7 @@ export class MedicalHistoryPageComponent {
     this.searching = true;
     const filterValue = (event.target as HTMLInputElement).value;
     if (filterValue && filterValue.length >= 3) {
-      //this.search(filterValue);
+      this.search(filterValue);
     }
     if (filterValue.length == 0) {
       this.loadHistories();
@@ -160,6 +160,7 @@ export class MedicalHistoryPageComponent {
         (estab) =>
           estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
       );
+      this.loadHistories();
     }
   }
 
@@ -199,8 +200,15 @@ export class MedicalHistoryPageComponent {
       MedicalHistoryModalComponent,
       { size: 'xl', centered: true },
     );
+    if (this.data.id > 0) {
+      modalRef.componentInstance.data = this.data;
+    }
     modalRef.result.then((response) => {
       if (response !== null && typeof response === 'object') {
+        this.loadHistories();
+      }
+      if (this.data.id > 0) {
+        this.data = {} as MedicalHistory;
       }
     });
   }
