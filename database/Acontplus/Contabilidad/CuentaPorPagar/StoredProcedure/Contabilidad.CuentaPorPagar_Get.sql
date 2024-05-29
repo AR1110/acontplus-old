@@ -54,6 +54,7 @@ BEGIN
 			DECLARE @checkboxProveedor BIT 
 			DECLARE @dateStart DATETIME2 
 			DECLARE @dateEnd DATETIME2
+            DECLARE @secuencial INT 
 
 
 			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP 50
@@ -94,7 +95,8 @@ BEGIN
 												@codEstado VARCHAR(10),
 												@idProveedor INT,
 												@dateStart DATETIME2,
-												@dateEnd DATETIME2'
+												@dateEnd DATETIME2,
+                                                @secuencial INT'
 
 			SELECT 
 				@checkboxFecha = checkboxFecha,
@@ -107,7 +109,8 @@ BEGIN
 				@checkboxProveedor = checkboxProveedor,
 				@idProveedor       = idProveedor,
 				@dateStart         = dateStart,
-				@dateEnd           = dateEnd
+				@dateEnd           = dateEnd,
+                @secuencial        = secuencial
 			FROM OPENJSON(@json)
 			WITH (
 				checkboxFecha BIT '$.checkboxFecha',
@@ -120,7 +123,8 @@ BEGIN
 				checkboxProveedor BIT '$.checkboxProveedor',
 				idProveedor INT '$.idProveedor',
 				dateStart DATETIME2 '$.dateStart',
-				dateEnd DATETIME2 '$.dateEnd'
+				dateEnd DATETIME2 '$.dateEnd',
+                secuencial INT
 			)
 
 			IF @checkboxFecha = 1
@@ -148,7 +152,10 @@ BEGIN
 					SET @sql = @sql + ' AND pp.idProveedor= @idProveedor'
 				END 
 
-			SET @sql = @sql+' ORDER BY pp.idCuentaPorPagar DESC '
+            IF @secuencial IS NOT NULL
+                SET @sql = @sql + ' AND  TRY_CAST(REVERSE(SUBSTRING(REVERSE(pp.serieComprobante),1, CHARINDEX(''-'', REVERSE(pp.serieComprobante))-1)) AS INT) = @secuencial '
+
+			SET @sql = @sql + ' ORDER BY pp.idCuentaPorPagar DESC '
 			
 			EXEC sp_executesql 
 			      @sql
@@ -160,6 +167,7 @@ BEGIN
 				 ,@idProveedor  = @idProveedor
 				 ,@dateStart    = @dateStart
 				 ,@dateEnd      = @dateEnd
+                 ,@secuencial   = @secuencial 
 
             RETURN 
 		END 

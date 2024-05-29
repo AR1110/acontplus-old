@@ -48,7 +48,8 @@
             checkBoxFecha: true,
             pageIndex: 1,
             pageSize: 25,
-            maxSize: 5
+            maxSize: 5,
+            secuencial: null
         }
 
         $scope.tipoDocumentos = [
@@ -70,17 +71,23 @@
         $scope.getCuentasPorPagar = () => {
             try {
 
+                let checkboxFecha = $scope.dataSearch.checkBoxFecha;
+                if (fS.isValidField($scope.dataSearch.secuencial)){
+                    checkboxFecha = false;
+                    tS.toastr('info', 'Buscando por Nro. Secuencial')
+                }
  
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
-                    checkboxFecha: $scope.dataSearch.checkBoxFecha,
+                    checkboxFecha,
                     codEstado: fS.isValidField($scope.dataSearch.codEstado),
                     codDoc: fS.isValidField($scope.dataSearch.codDoc),
                     idProveedor: fS.isValidField($scope.dataSearch.idProveedor),
                     dateStart: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     pageIndex: $scope.dataSearch.pageIndex,
-                    pageSize: $scope.dataSearch.pageSize
+                    pageSize: $scope.dataSearch.pageSize,
+                    secuencial: fS.isValidField($scope.dataSearch.secuencial)
                 }
 
                 $scope.cuentasPorPagar = [];
