@@ -55,7 +55,7 @@ export class PetModalComponent {
   private readonly tS = inject(ToasterService);
 
   get() {
-    this.petService.get({ tipo: 4 }).subscribe((response) => {
+    this.petService.get({ tipo: 3 }).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const { petTypes, breeds, genders } = JSON.parse(
           response.payload as string,
@@ -71,7 +71,7 @@ export class PetModalComponent {
     this.get();
     if (this.data.id > 0) {
       this.modalIcon = 'edit';
-      this.modalTitle = 'Editar Raza';
+      this.modalTitle = 'Editar Mascota';
       if (this.data?.customer != null) {
         this.customerBusinessName = this.data?.customer;
       }

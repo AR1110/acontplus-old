@@ -28,6 +28,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IMedicalHistoryService, MedicalHistoryService>();
         services.AddScoped<IPetService, PetService>();
         services.AddScoped<IPetTypeService, PetTypeService>();
+        services.AddScoped<IStatsService, StatsService>();
+
         return services;
     }
 }

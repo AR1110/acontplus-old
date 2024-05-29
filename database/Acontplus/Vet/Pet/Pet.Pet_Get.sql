@@ -19,7 +19,7 @@ GO
 -- Create date: 2022-07-07
 -- Description:	sp for search pets
 -- =============================================
-CREATE OR ALTER PROCEDURE Pet.Pet_Get @companyId INT
+CREATE OR ALTER PROCEDURE Pet.Pet_Get @userRoleId INT
 ,@json VARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
 AS
@@ -31,8 +31,10 @@ BEGIN
 			@sqlQuery NVARCHAR(MAX),
 			@params NVARCHAR(MAX), 
             @pageIndex INT,
-            @pageSize INT 
+            @pageSize INT,
+            @companyId INT
 
+    SET @companyId = (SELECT idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 	
 	SET @params = N'@companyId INT,
 				   @textSearch VARCHAR(100), @pageIndex INT, @pageSize INT '
@@ -46,7 +48,7 @@ BEGIN
 		textSearch VARCHAR(100) '$.textSearch'
 	)
 
-    IF (@tipo = 4)
+    IF (@tipo = 3)
         BEGIN
             SET @tableNames = 'petTypes,breeds,genders'
             SELECT * FROM Pet.PetType WITH (NOLOCK) WHERE Deleted IS NULL AND Enabled = 1
@@ -54,37 +56,9 @@ BEGIN
             SELECT * FROM Pet.Gender WITH (NOLOCK) WHERE Deleted IS NULL  AND Enabled = 1
             RETURN
         END
+     
+     SET @tableNames = 'pets'
 
-
-  
-            SET @tableNames = 'totalPetTypes,totalBreeds,totalGenders,'
-
-            SELECT  pt.[Name], COUNT(*) total
-            FROM Pet.Pet p WITH(NOLOCK)
-            INNER JOIN Pet.Breed b ON p.BreedId = b.Id
-            INNER JOIN Pet.PetType pt  WITH(NOLOCK) ON b.PetTypeId = pt.Id
-            WHERE p.[Enabled] = 1 
-                AND p.Deleted IS NULL
-                AND p.CompanyId = @companyId
-            GROUP BY pt.[Name]
-            ORDER BY pt.[Name] ASC
-
-            SELECT  b.[Name], COUNT(*) total
-            FROM Pet.Pet p  WITH(NOLOCK)
-            INNER JOIN Pet.Breed b  WITH(NOLOCK) ON p.BreedId = b.Id
-            WHERE p.[Enabled] = 1 
-                AND p.Deleted IS NULL
-                AND p.CompanyId = @companyId
-            GROUP BY b.[Name]
-            ORDER BY b.[Name] ASC
-
-            SELECT  g.[Name], COUNT(*) total
-            FROM Pet.Pet p  WITH(NOLOCK)
-            INNER JOIN Pet.Gender g  WITH(NOLOCK) ON p.GenderId = g.Id
-            WHERE p.[Enabled] = 1 
-                AND p.Deleted IS NULL
-                AND p.CompanyId = @companyId
-            GROUP BY g.[Name] 
 
 	SET @sqlQuery = N'SELECT p.Id
 				,p.[Name]
@@ -116,7 +90,6 @@ BEGIN
 			AND p.Deleted IS NULL '
 
 
-    SET @tableNames = @tableNames + 'pets'
 	IF (@tipo = 2)
 		BEGIN
 			SET @sqlQuery = @sqlQuery + 'AND (

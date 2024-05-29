@@ -5,4 +5,5 @@ export const API_ENDPOINTS = {
   MEDICAL_HISTORY: 'MedicalHistory/',
   PET: 'Pet/',
   PET_TYPE: 'PetType/',
+  STATS: 'Stats/',
 };
