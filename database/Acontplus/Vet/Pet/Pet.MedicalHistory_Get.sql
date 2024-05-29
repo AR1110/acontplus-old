@@ -65,6 +65,24 @@ BEGIN
             RETURN
         END
 
+    IF (@tipo = 2)
+        BEGIN
+            SET @tableNames = 'behaviors,behaviorsStatuses,diseases,diseasesStatuses,estabs'
+            SELECT * FROM Pet.Behavior WITH (NOLOCK) WHERE [Enabled] = 1
+            SELECT * FROM Pet.BehaviorStatus WITH (NOLOCK) WHERE [Enabled] = 1
+            SELECT * FROM Pet.Disease WITH (NOLOCK) WHERE [Enabled] = 1
+            SELECT * FROM Pet.DiseaseStatus WITH (NOLOCK) WHERE [Enabled] = 1
+            SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,ptoEmi + '-' + estab as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+            RETURN
+        END
+
     SET @tableNames = 'medicalHistories'
 
     SET @params = N'@companyId INT, @idEstablecimiento INT, @pageIndex INT, @pageSize INT, @textSearch VARCHAR(20)'

@@ -1,25 +1,25 @@
 ﻿namespace Vet.API.Controllers;
 
-public class MedicalHistoryController(IMedicalHistory history) : BaseApiController
+public class MedicalHistoryController(IMedicalHistoryService historyService) : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> GetMedicalHistories(string json)
+    public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
-        return Ok(await history.GetAsync(parameters));
+        return Ok(await historyService.GetAsync(parameters));
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        return Ok(await history.GetByIdAsync(id));
+        return Ok(await historyService.GetByIdAsync(id));
     }
 
     [HttpPost]
-    public async Task<ActionResult<MedicalHistory>> Post([FromBody] MedicalHistory medicalHistory)
+    public async Task<IActionResult> Post([FromBody] MedicalHistory medicalHistory)
     {
         medicalHistory.UserId = User.GetUserId();
-        return Ok(await history.AddAsync(medicalHistory));
+        return Ok(await historyService.AddAsync(medicalHistory));
     }
 
     [HttpPut("{id}")]
@@ -31,13 +31,13 @@ public class MedicalHistoryController(IMedicalHistory history) : BaseApiControll
         }
 
         medicalHistory.UserId = User.GetUserId();
-        return Ok(await history.UpdateAsync(id, medicalHistory));
+        return Ok(await historyService.UpdateAsync(id, medicalHistory));
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        return Ok(await history.DeleteAsync(User.GetUserId(), id));
+        return Ok(await historyService.DeleteAsync(User.GetUserId(), id));
     }
 }
