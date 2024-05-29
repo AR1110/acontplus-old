@@ -51,6 +51,7 @@ BEGIN
            ,@subFamiliasChecked VARCHAR(150) 
            ,@idTarifa           INT
            ,@idEmpresa          INT
+           ,@convertToDoc       BIT
 
     --> Variables
     SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
@@ -224,6 +225,7 @@ BEGIN
                   ,@ckFecha        = ckFecha
                   ,@fechaInicio    = fechaInicio
                   ,@fechaFin       = fechaFin
+                  ,@convertToDoc   = convertToDoc
             FROM OPENJSON(@json) WITH 
             ( 
                 codDoc         VARCHAR(10)
@@ -235,6 +237,7 @@ BEGIN
                ,ckFecha        BIT
                ,fechaInicio    DATETIME2
                ,fechaFin       DATETIME2
+               ,convertToDoc   BIT
             )
             
             SET @params = '@idEntidad      INT
@@ -245,7 +248,8 @@ BEGIN
                           ,@codEstado      VARCHAR(10)
                           ,@fechaInicio    DATETIME2
                           ,@fechaFin       DATETIME2
-                          ,@codDoc         VARCHAR(10)'
+                          ,@codDoc         VARCHAR(10)
+                          ,@convertToDoc   BIT'
 
             SET @sql = 'SELECT idEstablecimiento
                               ,nombreComercial
@@ -287,6 +291,11 @@ BEGIN
                     SET @sql = @sql + 'AND CAST(fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
                 END 
 
+            IF @convertToDoc IN (1,0)
+                BEGIN
+                    SET @sql = @sql + 'AND convertToDoc = @convertToDoc '
+                END
+
             IF @idUsuario > 0 
                 BEGIN
                     SET @sql = @sql + 'AND idUsuario = @idUsuario '
@@ -326,6 +335,7 @@ BEGIN
                                    ,@fechaFin       = @fechaFin
                                    ,@codEstado      = @codEstado
                                    ,@idUsuario      = @idUsuario
+                                   ,@convertToDoc   = @convertToDoc
 
             RETURN 
         END 

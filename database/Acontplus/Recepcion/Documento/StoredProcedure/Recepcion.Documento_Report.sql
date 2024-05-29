@@ -490,7 +490,7 @@ BEGIN
 	                            ,dr.serieComprobante
 	                            ,dr.claveAcceso
 	                            ,dr.fechaEmision
-                                ,Format(dr.fechaAutorizacion,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion
+                                ,format(CONVERT(DATETIME2, dr.fechaAutorizacion), ''dd/MM/yyyy HH:mm'') as fechaAutorizacion
 	                            ,dr.rucEmisor
 	                            ,dr.razonSocialEmisior as razonSocialEmisor
 	                            ,ISNULL
@@ -676,7 +676,7 @@ BEGIN
                               ,es.nombreComercial
 	                          ,dr.serieComprobante
 	                          ,dr.fechaEmision
-                              ,Format(dr.fechaAutorizacion,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion
+                              ,format(CONVERT(DATETIME2, dr.fechaAutorizacion), ''dd/MM/yyyy HH:mm'') as fechaAutorizacion
 	                          ,dr.claveAcceso
 	                          ,dr.rucEmisor
 	                          ,dr.razonSocialEmisior as razonSocialEmisor
