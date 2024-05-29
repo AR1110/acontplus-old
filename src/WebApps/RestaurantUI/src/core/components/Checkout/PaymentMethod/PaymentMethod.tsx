@@ -3,19 +3,22 @@ import {
     Button,
     Card,
     CardContent,
-    Divider,
+    Divider, FormControlLabel,
     Grid,
     MenuItem,
+    Switch,
     TextField,
     Typography
 } from '@mui/material'
 import { SaveIcon } from '../../IconsMaterial'
 import { PaymentTypeCode } from '@/core/constants';
-import City from './City';
-import Bank from './Bank';
-import PaymentSubType from './PaymentSubType';
+import City from './components/City.tsx';
+import Bank from './components/Bank.tsx';
+import PaymentSubType from './components/PaymentSubType.tsx';
 import { useCheckoutContext } from '../context';
-import { DatosCobro, InputReceivedAmount } from '.';
+import InputReceivedAmount from "@/core/components/Checkout/PaymentMethod/components/InputReceivedAmount.tsx";
+import DatosCobro from "@/core/components/Checkout/PaymentMethod/components/DatosCobro.tsx";
+import {InputObservacion} from "@/core/components/Checkout/PaymentMethod/components/InputObservacion.tsx";
 
 const PaymentMethod = () => {
     const { checkout, setChangePaymentType, addPaymentType, setChangeFieldFormPayment, save } = useCheckoutContext();
@@ -247,15 +250,16 @@ const PaymentMethod = () => {
                             {
                                 paymentData.paymentTypeCode === PaymentTypeCode.CHE && (
                                     <>
-                                        <Grid item xs={12} sm={6}>
-                                            <Bank />
-                                        </Grid>
-
-                                        <Grid item xs={12} sm={6}>
+                                        <Grid item xs={12} sm={4}>
                                             <City />
                                         </Grid>
 
-                                        <Grid item xs={12} sm={6}>
+                                        <Grid item xs={12} sm={4}>
+                                            <Bank />
+                                        </Grid>
+
+
+                                        <Grid item xs={12} sm={4}>
                                             <TextField
                                                 fullWidth
                                                 required
@@ -283,14 +287,24 @@ const PaymentMethod = () => {
                                             />
                                         </Grid>
 
-                                        {/* <Grid item xs={12} sm={6}>
+                                        <Grid item xs={12} sm={6}>
+
                                             <FormControlLabel label="Posfechado" control={
-                                                <Switch aria-label='Posfechado' value={paymentData.posfechado} defaultChecked={false} />
+                                                <Switch aria-label='Posfechado' checked={paymentData.posfechado}
+                                                        onChange={e=>{
+                                                            setChangeFieldFormPayment("posfechado", e.target.checked)
+                                                        }}
+                                                />
                                             } />
-                                        </Grid> */}
+                                        </Grid>
                                     </>
                                 )
                             }
+
+                            <Grid item xs={12} sm={12}>
+                                <InputObservacion/>
+                            </Grid>
+
                             <Grid item xs={12} md={12}>
                                 <Button
                                     variant='contained'

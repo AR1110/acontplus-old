@@ -2,7 +2,7 @@
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { darken, lighten, styled } from '@mui/material'; 
-import { useCheckoutContext } from '../context';
+import { useCheckoutContext } from '../../context';
 
 const GroupHeader = styled('div')(({ theme }) => ({
     position: 'sticky',

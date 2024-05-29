@@ -1,10 +1,10 @@
 import {TextField} from "@mui/material";
-import {usePaymentStore} from "@/store/payment/paymentStore..ts";
+import {useCheckoutContext} from "@/core/components/Checkout/context";
 
 
 export const InputObservacion = ()=>{
-    const { observacion, setObservacion } = usePaymentStore(state => state);
-   return (
+    const {observacion, setObservacion} = useCheckoutContext();
+    return (
        <TextField
            fullWidth
 
