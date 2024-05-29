@@ -23,6 +23,10 @@ export class MedicalHistoryService {
       .pipe(map((response) => response));
   }
 
+  getById(id: number) {
+    return this.http.get(`${this.url} ${id}`).pipe(map((response) => response));
+  }
+
   post(data: any) {
     return this.http
       .post(`${this.url}`, data)

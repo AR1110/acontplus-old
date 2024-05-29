@@ -14,7 +14,19 @@ BEGIN
 
     SET @tableNames = 'medicalHistory,healthChecks,behaviors'
 
-	SELECT mh.*
+	SELECT  mh.[Id]
+        ,CONVERT(VARCHAR, FORMAT(mh.[Date], 'yyyy-MM-dd') , 103)as 'Date'
+        ,mh.[PetId]
+        ,mh.[Observations]
+        ,mh.[CreatedAt]
+        ,mh.[UpdatedAt]
+        ,mh.[Enabled]
+        ,mh.[Deleted]
+        ,mh.[CodEstab]
+        ,mh.[UserId]
+        ,mh.[Age]
+        ,mh.[Weight]
+        ,mh.[EstablecimientoId]
 		,p.Id petId
 		,p.[Name]
 		,p.Color

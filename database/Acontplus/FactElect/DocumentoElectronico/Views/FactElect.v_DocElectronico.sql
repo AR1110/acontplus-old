@@ -70,6 +70,7 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
          ,us.nombreUsuario as usuario
          ,de.isAutomatic
          ,se.idEstablecimiento
+         ,de.estado estadoDocElect
     FROM dbo.DocumentoElectronico  de WITH (NOLOCK)
     INNER JOIN dbo.Entidad          e WITH (NOLOCK) ON de.idEntidad      = e.idEntidad
     INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = de.idPuntoEmision

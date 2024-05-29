@@ -29,54 +29,52 @@ import { INVENTORY_CODE_REPORT } from '@modules/inventory/enums/inventory.enum';
     MatChipsModule,
     ProductSearchComponent,
     DateRangeSelectionComponent,
-    TabulatorComponent
+    TabulatorComponent,
   ],
   templateUrl: './product-kardex-modal.component.html',
-  styles: ``
+  styles: ``,
 })
 export class ProductKardexModalComponent {
   @Input() params = {
-    id: 0
-  }
+    id: 0,
+  };
   modal = inject(NgbActiveModal);
 
-  transactionSvc = inject(TransactionService)
+  transactionSvc = inject(TransactionService);
   tS = inject(ToasterService);
   sharedSvc = inject(SharedService);
-
 
   @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
   tabulatorOptions = {
-    columnHeaderVertAlign: "bottom",
-  }
+    columnHeaderVertAlign: 'bottom',
+  };
 
   establecimientos: GroupedEstab[] = [];
   bodegas: GroupedEstabBodega[] = [];
 
-  tiposTransaccion: any[] = []
+  tiposTransaccion: any[] = [];
 
-  startOfMonth: any = moment(moment()).startOf('month')
-  endOfMonth: any = moment(moment()).endOf('month')
+  startOfMonth: any = moment(moment()).startOf('month');
+  endOfMonth: any = moment(moment()).endOf('month');
 
   dataSearch = {
     codEstab: '',
     idBodega: 0,
     option: 1,
     estado: false,
-    tipoTransaccion: "",
+    tipoTransaccion: '',
     idArticulo: 0,
     checkBoxFecha: true,
     fechaInicio: formatDateMoment(this.startOfMonth),
-    fechaFin: formatDateMoment(this.endOfMonth)
-
-  }
+    fechaFin: formatDateMoment(this.endOfMonth),
+  };
 
   dataArticulo = {
     codigo: '',
     stock: 0,
     medida: 0,
-    descripcion: ''
+    descripcion: '',
   };
 
   data = {
@@ -85,254 +83,255 @@ export class ProductKardexModalComponent {
     totalSalida: 0,
     totalEntrada: 0,
     stock: 0,
-    totalGenetal: 0
-  }
+    totalGenetal: 0,
+  };
 
   transacciones: any[] = [];
 
   sumCantidadEntrada = () => {
-    return this.data.cantTotalEntrada || 0
-  }
+    return this.data.cantTotalEntrada || 0;
+  };
 
   sumCantidadSalida = () => {
-    return this.data.cantTotalSalida || 0
-  }
+    return this.data.cantTotalSalida || 0;
+  };
 
   sumTotalSalida = () => {
-    return this.data.totalSalida || 0
-  }
-
-  onDateRangeSelection(range: { from: string, to: string }) {
-    this.dataSearch.fechaInicio = range.from;
-    this.dataSearch.fechaFin = range.to;
-  }
+    return this.data.totalSalida || 0;
+  };
 
   columns = [
     {
       //create column group ---frozen:true,
-      title: "Descripcion",
-      headerHozAlign: "center",
+      title: 'Descripcion',
+      headerHozAlign: 'center',
       widthGrow: 2,
       frozen: true,
-      columns: [{
-        title: "F. Emision",
-        field: "fechaEmision",
-        headerHozAlign: "center",
-        headerSort: false,
-        sorter: "date",
-        width: 120
-      },
-      {
-        title: "T. Doc",
-        field: "tipoDoc",
-        hozAlign: "center",
-        headerHozAlign: "center",
-        headerSort: false,
-        width: 60
-      },
-      {
-        title: "Nro. Doc",
-        field: "nroDocumento",
-        hozAlign: "center",
-        headerHozAlign: "center",
-        headerSort: false,
-        width: 130
-      },
-      {
-        title: "Cliente/Proveedor",
-        field: "clienteProveedor",
-        headerSort: false,
-        headerHozAlign: "center",
-        hozAlign: "center",
-        width: 150,
-        tooltip: true
-      },
-      {
-        title: "Usuario",
-        field: "usuario",
-        hozAlign: "center",
-        headerSort: false,
-        headerHozAlign: "center",
-        width: 150
-      },
-      {
-        title: "Estado",
-        field: "estado",
-        hozAlign: "center",
-        headerHozAlign: "center",
-        headerSort: false,
-        width: 100
-      },
-      {
-        title: "Medida",
-        field: "medida",
-        hozAlign: "center",
-        headerHozAlign: "center",
-        headerSort: false,
-        width: 100
-      },
-
-      ],
-    },
-    { //create column group
-      title: "Entradas",
-      headerHozAlign: "center",
       columns: [
         {
-          title: "Cant.",
-          field: "cantidadEntrada",
+          title: 'F. Emision',
+          field: 'fechaEmision',
+          headerHozAlign: 'center',
+          headerSort: false,
+          sorter: 'date',
+          width: 120,
+        },
+        {
+          title: 'T. Doc',
+          field: 'tipoDoc',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
+          headerSort: false,
+          width: 60,
+        },
+        {
+          title: 'Nro. Doc',
+          field: 'nroDocumento',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
+          headerSort: false,
+          width: 130,
+        },
+        {
+          title: 'Cliente/Proveedor',
+          field: 'clienteProveedor',
+          headerSort: false,
+          headerHozAlign: 'center',
+          hozAlign: 'center',
+          width: 150,
+          tooltip: true,
+        },
+        {
+          title: 'Usuario',
+          field: 'usuario',
+          hozAlign: 'center',
+          headerSort: false,
+          headerHozAlign: 'center',
+          width: 150,
+        },
+        {
+          title: 'Estado',
+          field: 'estado',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
+          headerSort: false,
+          width: 100,
+        },
+        {
+          title: 'Medida',
+          field: 'medida',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
+          headerSort: false,
+          width: 100,
+        },
+      ],
+    },
+    {
+      //create column group
+      title: 'Entradas',
+      headerHozAlign: 'center',
+      columns: [
+        {
+          title: 'Cant.',
+          field: 'cantidadEntrada',
           width: 60,
           headerSort: false,
-          hozAlign: "center",
-          headerHozAlign: "center",
-          cssClass: "table-entradas",
+          hozAlign: 'center',
+          headerHozAlign: 'center',
+          cssClass: 'table-entradas',
           bottomCalc: this.sumCantidadEntrada,
         },
         {
-          title: "Costo U.",
-          field: "costo",
-          hozAlign: "center",
-          headerHozAlign: "center",
+          title: 'Costo U.',
+          field: 'costo',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
           headerSort: false,
-          sorter: "date",
+          sorter: 'date',
           width: 75,
-          cssClass: "table-entradas",
+          cssClass: 'table-entradas',
         },
         {
-          title: "Total",
-          field: "totalEntrada",
-          hozAlign: "center",
-          headerHozAlign: "center",
+          title: 'Total',
+          field: 'totalEntrada',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
           headerSort: false,
-          sorter: "date",
+          sorter: 'date',
           width: 75,
-          cssClass: "table-entradas",
+          cssClass: 'table-entradas',
         },
       ],
     },
-    { //create column group
-      title: "Salidas",
-      headerHozAlign: "center",
+    {
+      //create column group
+      title: 'Salidas',
+      headerHozAlign: 'center',
       columns: [
         {
-          title: "Cant.",
-          field: "cantidadSalida",
+          title: 'Cant.',
+          field: 'cantidadSalida',
           width: 60,
           headerSort: false,
-          hozAlign: "center",
-          headerHozAlign: "center",
-          cssClass: "table-salidas",
+          hozAlign: 'center',
+          headerHozAlign: 'center',
+          cssClass: 'table-salidas',
           bottomCalc: this.sumCantidadSalida,
         },
         {
-          title: "Costo U.",
-          field: "venta",
-          hozAlign: "center",
-          headerHozAlign: "center",
+          title: 'Costo U.',
+          field: 'venta',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
           headerSort: false,
-          sorter: "date",
+          sorter: 'date',
           width: 75,
-          cssClass: "table-salidas",
+          cssClass: 'table-salidas',
         },
         {
-          title: "Total",
-          field: "totalSalida",
-          hozAlign: "center",
-          headerHozAlign: "center",
+          title: 'Total',
+          field: 'totalSalida',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
           headerSort: false,
           width: 75,
-          cssClass: "table-salidas",
+          cssClass: 'table-salidas',
           bottomCalc: this.sumTotalSalida,
         },
       ],
     },
-    { //create column group
-      title: "Saldos",
-      headerHozAlign: "center",
+    {
+      //create column group
+      title: 'Saldos',
+      headerHozAlign: 'center',
       columns: [
         {
-          title: "Cant. ",
-          field: "cantidadTransaccion",
-          hozAlign: "center",
-          headerHozAlign: "center",
+          title: 'Cant. ',
+          field: 'cantidadTransaccion',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
           width: 60,
           headerSort: false,
-          cssClass: "table-saldos",
+          cssClass: 'table-saldos',
         },
         {
-          title: "Stock. ",
-          hozAlign: "center",
-          headerHozAlign: "center",
-          field: "saldo",
+          title: 'Stock. ',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
+          field: 'saldo',
           width: 60,
           headerSort: false,
-          cssClass: "table-saldos",
+          cssClass: 'table-saldos',
         },
         {
-          title: "Costo U.",
-          hozAlign: "center",
-          headerHozAlign: "center",
-          field: "precioCosto",
+          title: 'Costo U.',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
+          field: 'precioCosto',
           width: 70,
           headerSort: false,
-          sorter: "number",
-          cssClass: "table-saldos",
+          sorter: 'number',
+          cssClass: 'table-saldos',
         },
         {
-          title: "Total",
-          field: "totalGeneral",
-          hozAlign: "center",
-          headerHozAlign: "center",
+          title: 'Total',
+          field: 'totalGeneral',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
           width: 60,
           headerSort: false,
-          sorter: "number",
-          cssClass: "table-saldos",
+          sorter: 'number',
+          cssClass: 'table-saldos',
         },
       ],
     },
-  ]
+  ];
+
+  onDateRangeSelection(range: { from: string; to: string }) {
+    this.dataSearch.fechaInicio = range.from;
+    this.dataSearch.fechaFin = range.to;
+  }
 
   ngOnInit() {
-    showLoader()
+    showLoader();
     this.transactionSvc.getDataFilter().subscribe({
       next: (response) => {
-        hideLoader()
+        hideLoader();
         this.establecimientos = response.estabs;
         this.tiposTransaccion = response.tiposTransaccion;
-        let dataEstab = this.establecimientos.find(e => e.defaultEstab);
+        let dataEstab = this.establecimientos.find((e) => e.defaultEstab);
 
         if (dataEstab) {
           this.bodegas = dataEstab.bodegas;
           this.dataSearch.codEstab = dataEstab.codEstab;
-          let dataBodega = this.bodegas.find(b => b.defaultBodega);
+          let dataBodega = this.bodegas.find((b) => b.defaultBodega);
           if (dataBodega) {
             this.dataSearch.idBodega = dataBodega.idBodega;
           }
         }
 
-
         //set params
         this.dataSearch.idArticulo = this.params.id;
         this.getDataKardex();
-
       },
       error(err) {
-        console.log(err)
-        hideLoader()
+        console.log(err);
+        hideLoader();
       },
-    })
+    });
   }
 
-
   getBodegas() {
-    let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataSearch.codEstab);
+    let dataEstab = this.establecimientos.find(
+      (item) => item.codEstab === this.dataSearch.codEstab,
+    );
     if (dataEstab) {
       this.bodegas = dataEstab.bodegas;
-      let dataBodega = this.bodegas.find(estab => (estab.defaultBodega));
+      let dataBodega = this.bodegas.find((estab) => estab.defaultBodega);
 
-      this.dataSearch.idBodega = dataBodega?.idBodega ?? 0
+      this.dataSearch.idBodega = dataBodega?.idBodega ?? 0;
       this.getDataKardex();
-
     }
   }
 
@@ -340,14 +339,14 @@ export class ProductKardexModalComponent {
     let { data } = $event;
     this.dataArticulo = data;
     this.dataSearch.idArticulo = data.idArticulo;
-    this.getDataKardex()
+    this.getDataKardex();
   }
 
-
   calculoTotales(prop: string) {
-
-    let total = this.transacciones.map(item => (item[prop] || 0)).reduce((obj, cur) => Number(obj) + Number(cur), 0);
-    return roundNumber(total, 3)
+    let total = this.transacciones
+      .map((item) => item[prop] || 0)
+      .reduce((obj, cur) => Number(obj) + Number(cur), 0);
+    return roundNumber(total, 3);
   }
 
   getDataKardex() {
@@ -363,7 +362,7 @@ export class ProductKardexModalComponent {
         fechaInicio: this.dataSearch.fechaInicio,
         fechaFin: this.dataSearch.fechaFin,
         estado: this.dataSearch.estado,
-      }
+      };
       this.transactionSvc.getDataKardex(params).subscribe({
         next: (response) => {
           hideLoader();
@@ -372,96 +371,81 @@ export class ProductKardexModalComponent {
           if (this.transacciones.length === 0) {
             this.tS.toastr({
               type: 'warning',
-              message: 'No se encontraron los resultados'
-            })
+              message: 'No se encontraron los resultados',
+            });
           }
 
+          this.data.cantTotalEntrada = this.calculoTotales('cantidadEntrada');
+          this.data.totalEntrada = this.calculoTotales('totalEntrada');
 
+          this.data.cantTotalSalida = this.calculoTotales('cantidadSalida');
 
+          this.data.totalSalida = this.calculoTotales('totalSalida');
 
-
-
-          this.data.cantTotalEntrada = this.calculoTotales("cantidadEntrada");
-          this.data.totalEntrada = this.calculoTotales("totalEntrada");
-
-          this.data.cantTotalSalida = this.calculoTotales("cantidadSalida");
-
-          this.data.totalSalida = this.calculoTotales("totalSalida");
-
-          this.data.stock = this.calculoTotales("saldo");
-          this.data.totalGenetal = this.calculoTotales("totalGeneral");
-
+          this.data.stock = this.calculoTotales('saldo');
+          this.data.totalGenetal = this.calculoTotales('totalGeneral');
 
           for (let value of this.transacciones) {
-            value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2)
+            value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2);
           }
           this.tabulatorComponent.refTabulator.setData(this.transacciones);
-
-
-
         },
-      })
+      });
     } catch (error) {
-      console.log(error)
-      hideLoader()
+      console.log(error);
+      hideLoader();
     }
-
   }
-
 
   //Search Kardex
   searchKardex() {
     if (!(this.dataSearch.idArticulo > 0)) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Seleccione el Articulo'
-      })
-      return
+        message: 'Seleccione el Articulo',
+      });
+      return;
     }
-
 
     if (this.dataSearch.checkBoxFecha) {
       if (!isValidField(this.dataSearch.fechaInicio)) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Ingrese la Fecha de Inicio'
-        })
-        return
+          message: 'Ingrese la Fecha de Inicio',
+        });
+        return;
       }
       if (!isValidField(this.dataSearch.fechaFin)) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Ingrese la Fecha Fin'
-        })
-        return
+          message: 'Ingrese la Fecha Fin',
+        });
+        return;
       }
     }
-    this.getDataKardex()
+    this.getDataKardex();
   }
-
 
   async getReport() {
     if (this.transacciones.length === 0) {
       this.tS.toastr({
         type: 'warning',
-        message: 'No hay registros para el reporte'
-      })
-      return
+        message: 'No hay registros para el reporte',
+      });
+      return;
     }
 
-    const {
-      value: formatType
-    } = await Swal.fire({
+    const { value: formatType } = await Swal.fire({
       icon: 'warning',
       title: 'Tipo Formato',
       input: 'radio',
       inputOptions: {
         pdf: 'PDF',
-        excel: 'EXCEL'
+        excel: 'EXCEL',
       },
       inputValidator: (value) => {
         if (!value) {
-          return 'Seleccione el Tipo de Formato!'
+          return 'Seleccione el Tipo de Formato!';
         }
         return null;
       },
@@ -470,12 +454,12 @@ export class ProductKardexModalComponent {
       denyButtonText: 'No, cancelar',
       allowOutsideClick: false,
       showLoaderOnDeny: true,
-      allowEscapeKey: false
-    })
+      allowEscapeKey: false,
+    });
 
-    if (!formatType) return
+    if (!formatType) return;
 
-    let dataParams =  {
+    let dataParams = {
       tipo: 1,
       checkBoxFecha: this.dataSearch.option === 1,
       checkBoxUltimaConsolidacion: this.dataSearch.option === 3,
@@ -486,7 +470,7 @@ export class ProductKardexModalComponent {
       fechaInicio: this.dataSearch.fechaInicio,
       fechaFin: this.dataSearch.fechaFin,
       estado: this.dataSearch.estado,
-    }
+    };
     let parameters = {
       hasIdUsuarioRol: true,
       reportParams: JSON.stringify({
@@ -494,14 +478,12 @@ export class ProductKardexModalComponent {
         format: formatType,
         codEstab: this.dataSearch.codEstab,
         hasParams: true,
-        aditionalParams: []
+        aditionalParams: [],
       }),
 
-      dataParams: JSON.stringify(dataParams)
-    }
+      dataParams: JSON.stringify(dataParams),
+    };
 
-    this.sharedSvc.getReport(parameters, formatType)
+    this.sharedSvc.getReport({ data: parameters, format: formatType });
   }
-
-
 }

@@ -12,9 +12,16 @@ import { ToasterService } from '@core/services/toaster.service';
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MECHANICAL_CODE_REPORT, MECHANICAL_STATUS } from '@modules/mechanical/enums/mechanical.enum';
+import {
+  MECHANICAL_CODE_REPORT,
+  MECHANICAL_STATUS,
+} from '@modules/mechanical/enums/mechanical.enum';
 import { SupportService } from '@modules/mechanical/services/support.service';
-import { NgbDropdownModule, NgbPagination, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDropdownModule,
+  NgbPagination,
+  NgbPopoverModule,
+} from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 
@@ -36,25 +43,23 @@ import { SupportMaintenanceModalComponent } from './components/support-maintenan
     MatCheckboxModule,
     NgbPopoverModule,
     DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent
+    CompanyCustomerSearchComponent,
   ],
   templateUrl: './support-page.component.html',
 })
 export class SupportPageComponent {
   @Input() valueStatus: MECHANICAL_STATUS | null = null;
-  @Input() supportStatus: any[] = []
+  @Input() supportStatus: any[] = [];
 
   modalSvc = inject(ModalService);
-  supportSvc = inject(SupportService)
-  tS = inject(ToasterService)
-  sharedSvc = inject(SharedService)
+  supportSvc = inject(SupportService);
+  tS = inject(ToasterService);
+  sharedSvc = inject(SharedService);
 
-  displayedColumns:string[] = [];
-  pagination = new Pagination()
+  displayedColumns: string[] = [];
+  pagination = new Pagination();
 
   dataSource: any = [];
-
-
 
   statusDoc = [
     { status: null, description: 'Todos' },
@@ -62,24 +67,9 @@ export class SupportPageComponent {
     { status: 1, description: 'Entregado' },
     { status: 2, description: 'Aprobado' },
     { status: 3, description: 'Anulado' },
-  ]
+  ];
 
-  statusTab = MECHANICAL_STATUS
-
-  openModal(id?: number) {
-    const modalRef = this.modalSvc.open(SupportAddEditModalComponent, {
-      size: 'lg'
-    })
-    modalRef.componentInstance.params = {
-      id: id
-    }
-    modalRef.result.then(result => {
-      if (result !== null && typeof result === 'object') {
-        this.getSupports()
-      }
-    })
-  }
-
+  statusTab = MECHANICAL_STATUS;
   dataSearch = {
     ckDate: true,
     fromDate: formatDateMoment(new Date()),
@@ -87,7 +77,21 @@ export class SupportPageComponent {
     customerId: null as number | null,
     licensePlate: null as string | null,
     assigned: false,
-    supportStatusId: null as number | null
+    supportStatusId: null as number | null,
+  };
+
+  openModal(id?: number) {
+    const modalRef = this.modalSvc.open(SupportAddEditModalComponent, {
+      size: 'lg',
+    });
+    modalRef.componentInstance.params = {
+      id: id,
+    };
+    modalRef.result.then((result) => {
+      if (result !== null && typeof result === 'object') {
+        this.getSupports();
+      }
+    });
   }
 
   onChangeRequiredDate(value: boolean) {
@@ -95,7 +99,7 @@ export class SupportPageComponent {
     this.getSupports();
   }
 
-  onDateRangeSelection(range: { from: string, to: string }) {
+  onDateRangeSelection(range: { from: string; to: string }) {
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
     this.getSupports();
@@ -118,7 +122,6 @@ export class SupportPageComponent {
        * si status es 0 la pagina support-page carga en dasboard
        */
 
-
       let params = {
         ckDate: this.dataSearch.ckDate,
         pageIndex: this.pagination.pageIndex,
@@ -127,48 +130,73 @@ export class SupportPageComponent {
         fromDate: this.dataSearch.fromDate,
         toDate: this.dataSearch.toDate,
         customerId: this.dataSearch.customerId,
-        licensePlate: isValidField(this.dataSearch.licensePlate)
-      }
+        licensePlate: isValidField(this.dataSearch.licensePlate),
+      };
       this.dataSource = [];
       this.supportSvc.getAll(params).subscribe({
         next: (response) => {
-
           this.dataSource = response;
           if (this.dataSource.length > 0) {
             this.pagination.totalRecords = this.dataSource[0].totalRecords;
           }
         },
         error(err) {
-          console.log(err)
+          console.log(err);
         },
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
   ngOnInit(): void {
-    let dataStatus = this.supportStatus.find(s => this.valueStatus === s.code);
+    let dataStatus = this.supportStatus.find(
+      (s) => this.valueStatus === s.code,
+    );
 
     if (dataStatus) {
       this.dataSearch.supportStatusId = dataStatus.id;
-    }else{
+    } else {
       this.supportStatus.unshift({
         id: null,
-        name: 'TODOS'
-      })
-      let dataStatus = this.supportStatus.find(s => s.code===MECHANICAL_STATUS.PENDIENTE);
-      this.dataSearch.supportStatusId = dataStatus?.id
+        name: 'TODOS',
+      });
+      let dataStatus = this.supportStatus.find(
+        (s) => s.code === MECHANICAL_STATUS.PENDIENTE,
+      );
+      this.dataSearch.supportStatusId = dataStatus?.id;
     }
 
+    // this.dataSearch.supportStatusId = this.supportStatusId;
 
-
-   // this.dataSearch.supportStatusId = this.supportStatusId;
-
-    if(this.valueStatus===MECHANICAL_STATUS.DASHBOARD){
-      this.displayedColumns = ['position', 'op', 'estado', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'obs',  'entregar']
-    }else{
-      this.displayedColumns =   ['position', 'op', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'obs', 'estado', 'entregar']
+    if (this.valueStatus === MECHANICAL_STATUS.DASHBOARD) {
+      this.displayedColumns = [
+        'position',
+        'op',
+        'estado',
+        'secuencia',
+        'fechaEmision',
+        'placa',
+        'identificacion',
+        'cliente-conductor',
+        'encargado',
+        'obs',
+        'entregar',
+      ];
+    } else {
+      this.displayedColumns = [
+        'position',
+        'op',
+        'secuencia',
+        'fechaEmision',
+        'placa',
+        'identificacion',
+        'cliente-conductor',
+        'encargado',
+        'obs',
+        'estado',
+        'entregar',
+      ];
     }
 
     this.getSupports();
@@ -183,95 +211,87 @@ export class SupportPageComponent {
     this.getSupports();
   }
 
-
   askToDelete(id: number) {
     try {
       Swal.fire({
         // title: "Are you sure?",
-        text: "¿Estás seguro de anular este documento?",
-        icon: "warning",
+        text: '¿Estás seguro de anular este documento?',
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí!",
-        cancelButtonText: 'No!'
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí!',
+        cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
           this.supportSvc.remove(id).subscribe({
             next: (response) => {
-
               if (isApiResponse(response)) {
-                if (response.code === "0") {
+                if (response.code === '0') {
                   this.tS.toastr({
                     type: 'warning',
-                    message: response.message
-                  })
+                    message: response.message,
+                  });
                 }
-                if (response.code === "1") {
+                if (response.code === '1') {
                   this.tS.toastr({
                     type: 'success',
-                    message: response.message
-                  })
+                    message: response.message,
+                  });
                   this.getSupports();
                 }
               }
             },
             error(err) {
-
-              console.log(err)
+              console.log(err);
             },
-          })
+          });
         }
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-
 
   openMaintenance(id: number) {
     let modalRef = this.modalSvc.open(SupportMaintenanceModalComponent, {
       size: 'xl',
       backdrop: 'static',
-      keyboard: false
-    })
+      keyboard: false,
+    });
     modalRef.componentInstance.params = {
-      id
-    }
-    modalRef.result.then(result => {
+      id,
+    };
+    modalRef.result.then((result) => {
       if (result !== null && typeof result === 'object') {
         this.getSupports();
       }
-    })
+    });
   }
-
 
   openModalInspection(id: number) {
     let modalRef = this.modalSvc.open(InspectionModalComponent, {
       size: 'xl',
-    })
+    });
     modalRef.componentInstance.params = {
-      supportId: id
-    }
+      supportId: id,
+    };
   }
 
   askToConvertToDoc(id: number) {
     this.supportSvc.getConvertToAprobDoc(id).subscribe({
       next: (response) => {
-
-        let modalRef = this.modalSvc.open(ConvertDocModalComponent)
+        let modalRef = this.modalSvc.open(ConvertDocModalComponent);
         modalRef.componentInstance.params = response;
 
-        modalRef.result.then(result => {
+        modalRef.result.then((result) => {
           if (result !== null && typeof result === 'object') {
             this.getSupports();
           }
-        })
-      }
-    })
-
+        });
+      },
+    });
   }
-
 
   // For report
   getReport(item: any) {
@@ -283,76 +303,76 @@ export class SupportPageComponent {
         codigo: MECHANICAL_CODE_REPORT.MS,
         codEstab: item.codEstab,
         format,
-        additionalParams: []
+        additionalParams: [],
       }),
       hasService: false,
       hasIdUsuarioRol: true,
-      dataParams: JSON.stringify(dataParams)
+      dataParams: JSON.stringify(dataParams),
     };
 
-    this.sharedSvc.getReport(params, 'pdf');
+    this.sharedSvc.getReport({ data: params, format: 'pdf' });
   }
 
   //Status Support
   putState(id: number) {
-    let supportStatusId = this.supportStatus.find(st=>st.code===MECHANICAL_STATUS.POR_ENTREGAR)?.id;
-    if(!(supportStatusId>0)){
+    let supportStatusId = this.supportStatus.find(
+      (st) => st.code === MECHANICAL_STATUS.POR_ENTREGAR,
+    )?.id;
+    if (!(supportStatusId > 0)) {
       this.tS.toastr({
         type: 'warning',
-        message: `No se encontró el estado ${supportStatusId}`
-      })
-      return
+        message: `No se encontró el estado ${supportStatusId}`,
+      });
+      return;
     }
     try {
       Swal.fire({
         // title: "Are you sure?",
-        text: "¿Estás seguro de Entregar este documento?",
-        icon: "warning",
+        text: '¿Estás seguro de Entregar este documento?',
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí!",
-        cancelButtonText: 'No!'
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí!',
+        cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
           this.supportSvc.putState(id, supportStatusId).subscribe({
             next: (response) => {
-
               if (isApiResponse(response)) {
-                if (response.code === "0") {
+                if (response.code === '0') {
                   this.tS.toastr({
                     type: 'warning',
-                    message: response.message
-                  })
+                    message: response.message,
+                  });
                 }
-                if (response.code === "1") {
+                if (response.code === '1') {
                   this.tS.toastr({
                     type: 'success',
-                    message: response.message
-                  })
+                    message: response.message,
+                  });
                   this.getSupports();
                 }
               }
             },
             error(err) {
-
-              console.log(err)
+              console.log(err);
             },
-          })
+          });
         } else {
-          this.getSupports()
+          this.getSupports();
         }
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
-  getDocView(id:number){
+  getDocView(id: number) {
     try {
-      this.supportSvc.getDocView(id).subscribe(response=>{
+      this.supportSvc.getDocView(id).subscribe((response) => {
         Swal.fire({
-          icon:'info',
+          icon: 'info',
           html: `<div class="d-flex flex-column bd-highlight mb-3">
                   <div class="p-2 bd-highlight">
                     <strong>Tipo Doc:</strong> ${response.tipoDocumento}
@@ -360,23 +380,11 @@ export class SupportPageComponent {
                   <div class="p-2 bd-highlight">
                     <strong>Serie Comprobante:</strong> ${response.serieComprobante}
                   </div>
-                </div>`
-        })
-      })
+                </div>`,
+        });
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-
-
-
-
-
-
-
-
-
-
-
 }
-
