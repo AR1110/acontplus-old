@@ -1,0 +1,15 @@
+﻿namespace Vet.API.Controllers
+{
+    public class StatsController(IStatsService statsService) : BaseApiController
+    {
+        [HttpGet]
+        public async Task<IActionResult> Get(string json)
+        {
+            var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+            return Ok(await statsService.GetAsync(parameters));
+        }
+    }
+}

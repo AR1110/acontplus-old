@@ -7,7 +7,7 @@ public class PetController(IPetService petService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "companyId", User.GetCompanyId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await petService.GetAsync(parameters));
     }

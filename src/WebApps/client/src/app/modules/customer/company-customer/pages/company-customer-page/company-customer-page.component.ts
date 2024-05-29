@@ -27,72 +27,79 @@ import Swal from 'sweetalert2';
     MatPaginatorModule,
     BreadcrumbComponent,
     CompanyCustomerAddEditDirective,
-    PrimaryStatusPipe
+    PrimaryStatusPipe,
   ],
   templateUrl: './company-customer-page.component.html',
 })
 export class CompanyCustomerPageComponent {
-
   companyCustomerSvc = inject(CompanyCustomerService);
-  tS = inject(ToasterService)
-  sharedSvc = inject(SharedService)
+  tS = inject(ToasterService);
+  sharedSvc = inject(SharedService);
 
-  displayedColumns: string[] = ['op', 'position', 'ruc', 'razonSocial', 'direccion', 'telefono', 'estado'];
+  displayedColumns: string[] = [
+    'op',
+    'position',
+    'ruc',
+    'razonSocial',
+    'direccion',
+    'telefono',
+    'estado',
+  ];
 
   pagination = new Pagination();
 
   dataSearch = {
-    textSearch: null as string | null
-  }
+    textSearch: null as string | null,
+  };
+  dataSource: any[] = [];
 
   onResultModal() {
-    this.getCompanyCustomers()
+    this.getCompanyCustomers();
   }
 
   search(value: string) {
     this.dataSearch.textSearch = value;
     this.getCompanyCustomers();
-
   }
+
   getCompanyCustomers() {
     try {
       let params = {
         pageIndex: this.pagination.pageIndex + 1,
         pageSize: this.pagination.pageSize,
-        checkTextSearch: isValidField(this.dataSearch.textSearch) ? true : false,
-        textSearch: isValidField(this.dataSearch.textSearch)
-      }
-      this.companyCustomerSvc.getAll(params).subscribe(response => {
+        checkTextSearch: isValidField(this.dataSearch.textSearch)
+          ? true
+          : false,
+        textSearch: isValidField(this.dataSearch.textSearch),
+      };
+      this.companyCustomerSvc.getAll(params).subscribe((response) => {
         this.dataSource = response;
 
         if (this.dataSource.length > 0) {
           let dataResult = this.dataSource[0];
           this.pagination.totalRecords = dataResult.totalRecords;
         }
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
-  dataSource: any[] = []
   ngOnInit(): void {
     this.pagination.pageIndex = 0;
-    this.getCompanyCustomers()
+    this.getCompanyCustomers();
   }
 
-  refresh () {
+  refresh() {
     this.dataSearch.textSearch = null;
-    this.getCompanyCustomers()
+    this.getCompanyCustomers();
   }
-
 
   onPageEvent(event: PageEvent) {
     this.pagination.pageSize = event.pageSize;
     this.pagination.pageIndex = event.pageIndex;
-    this.getCompanyCustomers()
+    this.getCompanyCustomers();
   }
-
 
   async askToDelete(item: any) {
     try {
@@ -104,38 +111,38 @@ export class CompanyCustomerPageComponent {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar!',
         allowOutsideClick: false,
-      })
-
+      });
 
       if (isConfirmed) {
-        this.companyCustomerSvc.updateState(item.idCliente).subscribe(response => {
-          if (isApiResponse(response)) {
-            if (response.code === "0") {
-              this.tS.toastr({
-                type: 'warning',
-                message: response.message
-              })
+        this.companyCustomerSvc
+          .updateState(item.idCliente)
+          .subscribe((response) => {
+            if (isApiResponse(response)) {
+              if (response.code === '0') {
+                this.tS.toastr({
+                  type: 'warning',
+                  message: response.message,
+                });
+              }
+              if (response.code === '1') {
+                this.tS.toastr({
+                  type: 'success',
+                  message: response.message,
+                });
+                this.getCompanyCustomers();
+              }
             }
-            if (response.code === "1") {
-              this.tS.toastr({
-                type: 'success',
-                message: response.message
-              })
-              this.getCompanyCustomers()
-            }
-          }
-        })
+          });
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   }
 
-
   getReport(format: string) {
     let dataParms = {
-      tipo: 4
-    }
+      tipo: 4,
+    };
 
     const parameters = {
       hasService: false,
@@ -143,15 +150,15 @@ export class CompanyCustomerPageComponent {
         hasParams: false,
         codigo: 'RCL',
         format,
-        aditionalParams: [
-
-        ]
+        aditionalParams: [],
       }),
-      dataParams: JSON.stringify(dataParms)
-    }
+      dataParams: JSON.stringify(dataParms),
+    };
 
-    this.sharedSvc.getReport(parameters, format, true)
+    this.sharedSvc.getReport({
+      data: parameters,
+      format: format,
+      isOldVersion: true,
+    });
   }
-
-
 }

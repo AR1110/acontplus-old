@@ -189,6 +189,6 @@ export class ReceptionReportsPageComponent {
       dataParams: JSON.stringify(dataParms),
     };
 
-    this.sharedSvc.getReport(parameters, format);
+    this.sharedSvc.getReport({ data: parameters, format: format });
   }
 }

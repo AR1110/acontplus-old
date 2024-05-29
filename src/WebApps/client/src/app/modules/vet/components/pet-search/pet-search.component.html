@@ -1,0 +1,21 @@
+<div class="input-group">
+  <input
+    (keyup)="onKeyupSearch()"
+    (selectItem)="onPetSelect($event)"
+    [(ngModel)]="textSearch"
+    [class.is-invalid]="searchFailed"
+    [ngbTypeahead]="search"
+    [resultTemplate]="rt"
+    class="form-control"
+    id="typeahead-pet-customer"
+    onclick="select();"
+    placeholder="Buscar cliente o mascota"
+    type="text"
+  />
+</div>
+<ng-template #rt let-r="result" let-t="term">
+  <ngb-highlight
+    [result]="r.name + ' - ' + r.customer"
+    [term]="t"
+  />
+</ng-template>

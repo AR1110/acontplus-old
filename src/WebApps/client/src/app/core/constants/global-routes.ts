@@ -32,4 +32,5 @@ export enum GlobalRoutes {
   VetBreed = 'vet/breed-page',
   VetPet = 'vet/pet-page',
   VetMedicalHistory = 'vet/medical-history-page',
+  VetStats = 'vet/stats-page',
 }

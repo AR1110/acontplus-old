@@ -21,11 +21,15 @@ public static class ApplicationServicesExtensions
 
         services.AddSwaggerDocumentation();
         
+        services.AddScoped<IBehaviorTestService, BehaviorTestService>();
         services.AddScoped<IBreedService, BreedService>();
         services.AddScoped<ICustomLogger, CustomLogger>();
-        services.AddScoped<IMedicalHistory, MedicalHistoryService>();
+        services.AddScoped<IHealthCheckService, HealthCheckService>();
+        services.AddScoped<IMedicalHistoryService, MedicalHistoryService>();
         services.AddScoped<IPetService, PetService>();
         services.AddScoped<IPetTypeService, PetTypeService>();
+        services.AddScoped<IStatsService, StatsService>();
+
         return services;
     }
 }
