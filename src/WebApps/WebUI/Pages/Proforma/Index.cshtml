@@ -195,7 +195,7 @@
                                 </md-button>
                             </md-menu-item>
 
-                            <md-menu-item>
+                            <md-menu-item ng-if="accion.crear">
                                 <md-button ng-click="openModalDuplicate(p)">
                                     <span md-menu-align-target><i class="ti-files"></i> Duplicar</span>
                                 </md-button>
@@ -226,7 +226,7 @@
                                     </span>
                                 </md-button>
                             </md-menu-item>
-                            <md-menu-item ng-if="!p.isApplied">
+                            <md-menu-item   ng-if="accion.crear && !p.isApplied">
                                 <md-button
                                     btn-convert-to-doc
                                     cod-doc="codDoc"

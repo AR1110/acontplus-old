@@ -22,8 +22,8 @@ interface MenuNode {
   children?: MenuNode[];
   checked?: boolean;
   subMenuId?: number
-  actions?: any[] | null,
   enabled?: boolean
+  codeAction?:string
 }
 
 interface MenuFlatNode {
@@ -33,8 +33,8 @@ interface MenuFlatNode {
   checked?: boolean;
 
   subMenuId?: number
-  actions?:any[] | null,
   enabled?: boolean
+  codeAction?:string
 }
 
 
@@ -69,12 +69,13 @@ export class UserCustomerRoleAccessComponent {
   cloneActions: any[]=[]
   actions:any[]=[]
   private transformer = (node: MenuNode, level: number) => {
+
     return {
       expandable: !!node.children && node.children.length > 0,
       name: node.name,
       level: level,
       checked: node.checked,
-      actions: node.actions,
+      codeAction: node.codeAction,
       subMenuId: node.subMenuId,
       enabled:node.enabled
     };
@@ -101,14 +102,36 @@ export class UserCustomerRoleAccessComponent {
       this.accesoMenus = response.menus;
 
       this.actions = structuredClone(response.actions)
+
       this.cloneActions = structuredClone(this.actions)
       let makeMenusNode = [{
          name: 'Todos',
          children: this.accesoMenus.map(m=>{
           let {subMenus, ...rest} = m;
+
+          let nodeSubMenus = subMenus.map((item:any)=>{
+            const {enabled, ...restSm} = item;
+
+
+            let childrenActions = this.actions.map(a=>{
+              let enabled = item.enabled && item.actions.some((aRaw:any)=>aRaw.code===a.codeAction) || false
+
+              return {
+                ...a,
+                subMenuId: item.subMenuId,
+                enabled
+              }
+            })
+
+            return {
+              ...restSm,
+              children: structuredClone(childrenActions)
+            }
+          })
+
            return {
              ...rest,
-             children: subMenus
+             children: nodeSubMenus
            }
          })
       }]
@@ -118,16 +141,17 @@ export class UserCustomerRoleAccessComponent {
        this.dataSource.data = makeMenusNode;
        this.expandFirstLevelNodes();
 
-       for(let node of this.treeControl.dataNodes){
-         console.log(node)
-         if(!node.enabled) continue;
+      for (let node of this.treeControl.dataNodes) {
+        // nivel 3 son las acciones
 
 
-         if(node.enabled){
-           this.todoItemSelectionToggle(node)
-         }
+        if (!node.enabled) {
+          continue;
+        }
 
-       }
+        this.todoItemSelectionToggle(node);
+      }
+
     })
   }
   ngOnInit(){
@@ -218,17 +242,17 @@ export class UserCustomerRoleAccessComponent {
     });
   }
 
-  dataSubNode: any = {};
+/**  dataSubNode: any = {};
   onClickActions(node: MenuFlatNode){
 
     this.dataSubNode = node;
     for(let item of this.actions){
       item.checked = this.dataSubNode.actions.some((m:any)=>m.code===item.code)
     }
-  }
+  }**/
 
 
-  toggleAction(action:any){
+ /** toggleAction(action:any){
     for(let item of this.treeControl.dataNodes){
       if(!item.subMenuId ||  !item.actions) continue;
 
@@ -244,12 +268,12 @@ export class UserCustomerRoleAccessComponent {
       }
 
     }
-  }
+  }**/
 
-  actionHidden(){
+  /**actionHidden(){
     this.dataSubNode = {};
     this.actions = structuredClone(this.cloneActions)
-  }
+  }**/
 
 
 
@@ -273,8 +297,30 @@ export class UserCustomerRoleAccessComponent {
 
   onSave(){
     const checklistSelection = this.checklistSelection.selected;
+    const filteredCheckedsLevel3 = checklistSelection.filter(ck=>ck.level===3).reduce((acc:any, curr:any)=>{
+      let existingNode  = acc.find((m:any)=>m.subMenuId===curr.subMenuId);
+      let action = this.actions.find(a=>a.codeAction===curr.codeAction)
+      let {codeAction, ...restAction} =action;
 
-    console.log(checklistSelection)
+      if(!existingNode ){
+
+        acc.push({
+          subMenuId: curr.subMenuId,
+          actions: [{...restAction, code: codeAction}]
+        })
+      }else{
+        if(action){
+          existingNode.actions.push({...restAction, code: codeAction})
+        }
+      }
+
+      return acc;
+
+    }, []).map((acc:any)=>({
+      subMenuId: acc.subMenuId,
+      actions: JSON.stringify(acc.actions)
+    }))
+
     if(checklistSelection.length===0){
       this.tS.toastr({
         type: 'warning',
@@ -285,7 +331,7 @@ export class UserCustomerRoleAccessComponent {
 
 
 
-    if (checklistSelection.some((s:any) => (s.actions?.length === 0))) {
+    if (filteredCheckedsLevel3.some((s:any) => (s.actions?.length === 0))) {
       this.tS.toastr({
         type: 'warning',
         message: '¡Agregue al menos una acción de todos los submenús seleccionados!'
@@ -305,17 +351,8 @@ export class UserCustomerRoleAccessComponent {
         if(result.isConfirmed) {
 
 
-          let accesoCustom = checklistSelection.map(sm => {
-            return {
-              subMenuId: sm.subMenuId,
-              actions: JSON.stringify(sm.actions)
-            }
-          })
-
-
-
           let data =   {
-            accesses: JSON.stringify(accesoCustom)
+            accesses: JSON.stringify(filteredCheckedsLevel3)
           }
 
 
