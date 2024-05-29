@@ -40,43 +40,7 @@ BEGIN
     DECLARE @idCliente INT ,@codEstab VARCHAR(50) ,@idCuentaPorCobrar INT ,@ckFecha BIT ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@codDoc VARCHAR(10) ,@codEstado VARCHAR(5)
 	       ,@numeroIdentificacion VARCHAR(15) ,@identificacionReceptor VARCHAR(50) ,@ckCxcVencida BIT ,@convertToDoc BIT
 
-	-- ==== PARAMETER CONFIG ==========
-	DECLARE @configInteres AS BIT
-	DECLARE @tipoConfig AS VARCHAR(5)
-	DECLARE @interes AS NUMERIC(18,5)
-		
-	DECLARE @tbCuotasInteres AS TABLE
-	(
-		 idCuotaPorCobrar INT UNIQUE NOT NULL
-		,nroCuota INT NOT NULL
-		,cuota NUMERIC(15,5) NOT NULL
-		,abono NUMERIC(15,5) NOT NULL
-		,interes NUMERIC(15,5) NOT NULL
-		,mora NUMERIC(15,5) NOT NULL
-		,fechaVencimiento DATE NOT NULL
-		,diasMora INT NOT NULL
-		,estado VARCHAR(150) NOT NULL
-		,codEstado VARCHAR(5) NOT NULL
-	)
-
-	DECLARE @cobroDocuments AS TABLE
-	(
-		 idComprobante INT 
-		,codDoc VARCHAR(5)
-		,codMov VARCHAR(5)
-	)
-
-	DECLARE @documents AS TABLE
-	(
-		idDocumento BIGINT
-		,idTipoDocumento BIGINT
-		,serieComprobante VARCHAR(25)
-		,saldo DECIMAL(15,5)
-		,codDoc VARCHAR(100)
-		,nroDoc VARCHAR(20)
-		,fechaEmision DATETIME 
-	)
-
+    --> Variables
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT )
@@ -231,9 +195,9 @@ BEGIN
 						,importeTotal     = cc.importeTotal
 						,cc.idTiempoCredito
 						,codEstado        = ep.codigo 
-						,config           = ISNULL(@configInteres,0)
-						,tipoConfig       = ISNULL(@tipoConfig,'NA')
-						,interes          = ISNULL(@interes,0)
+						,config           = 0
+						,tipoConfig       = 'NA'
+						,interes          = 0
 			FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
 			INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente      = cc.idCliente 
 			INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision = cc.idPuntoEmision
@@ -257,8 +221,10 @@ BEGIN
 				  ,codEstado = ep.codigo
 			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
 			INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
-			WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1
+			WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar 
+              AND cx.estado = 1
 			ORDER BY cx.nroCuota ASC
+
             RETURN 
 		END
 	
@@ -267,6 +233,24 @@ BEGIN
 		BEGIN
             
             SET @tableNames = 'entidadFinanciera,subEntidadFinanciera,banco,provincia,documentos,cuentaPorCobrar'
+
+            DECLARE @cobroDocuments AS TABLE
+	        (
+		         idComprobante INT 
+		        ,codDoc VARCHAR(5)
+		        ,codMov VARCHAR(5)
+	        )
+
+	        DECLARE @documents AS TABLE
+	        (
+		        idDocumento BIGINT
+		        ,idTipoDocumento BIGINT
+		        ,serieComprobante VARCHAR(25)
+		        ,saldo DECIMAL(15,5)
+		        ,codDoc VARCHAR(100)
+		        ,nroDoc VARCHAR(20)
+		        ,fechaEmision DATETIME 
+	        )
 
             SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT)
 
@@ -399,12 +383,12 @@ BEGIN
             
             SET @tableNames = 'deuda'
 
-            SELECT @idCliente = idCliente FROM OPENJSON(@json) WITH (idCliente INT '$.idCliente')
+            SELECT @idCliente = idCliente FROM OPENJSON(@json) WITH (idCliente INT)
 
             SELECT CAST(count(*) AS varchar) + '  '  + IIF(codDoc = '01','Facturas','Notas de Entrega') as documento 
-                  ,SUM(importeTotal) as importeTotal
-                  ,SUM(abono) as abono
-                  ,SUM(saldo) as saldo
+                  ,SUM(importeTotal)                                                                    as importeTotal
+                  ,SUM(abono)                                                                           as abono
+                  ,SUM(saldo)                                                                           as saldo
             FROM v_CuentaPorCobrar WITH (NOLOCK) 
             WHERE idCliente = @idCliente
               AND codEstado IN ('PP','PE')
@@ -459,20 +443,20 @@ BEGIN
 			            SELECT COUNT(*)  
                         FROM v_CuentaPorCobrar cc WITH (NOLOCK) 
                         WHERE cc.idEntidad = @idEntidad
-                           AND cc.codEstado NOT IN ('TRA','A') 
-			               AND cc.codDoc = IIF(td.codigo = 'FV','01','NE')
-                           AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
-                           AND DATEPART(DAY,cc.fechaEmision) = DATEPART(DAY,GETDATE())
+                          AND cc.codEstado NOT IN ('TRA','A') 
+			              AND cc.codDoc = IIF(td.codigo = 'FV','01','NE')
+                          AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
+                          AND DATEPART(DAY,cc.fechaEmision) = DATEPART(DAY,GETDATE())
               
 	               ) as totalDoc
                   ,ISNULL((
 			            SELECT SUM(cc.importeTotal)  
                         FROM v_CuentaPorCobrar cc WITH (NOLOCK) 
                         WHERE cc.idEntidad = @idEntidad
-                           AND cc.codEstado NOT IN ('TRA','A') 
-			               AND cc.codDoc = IIF(td.codigo = 'FV','01','NE')
-			               AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
-                           AND DATEPART(DAY,cc.fechaEmision) = DATEPART(DAY,GETDATE()) 
+                          AND cc.codEstado NOT IN ('TRA','A') 
+			              AND cc.codDoc = IIF(td.codigo = 'FV','01','NE')
+			              AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
+                          AND DATEPART(DAY,cc.fechaEmision) = DATEPART(DAY,GETDATE()) 
               
 	               ),0) as total
             FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigo IN ('NE','FV')
@@ -483,20 +467,20 @@ BEGIN
 			            SELECT COUNT(*)  
                         FROM v_CuentaPorCobrar cc WITH (NOLOCK) 
                         WHERE cc.idEntidad = @idEntidad
-                           AND cc.codEstado NOT IN ('TRA','A') 
-                           AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
-                           AND DATEPART(WEEK,fechaEmision) = DATEPART(WEEK,GETDATE()) 
-			               AND DATEPART(WEEKDAY,cc.fechaEmision) = dd.diaSemana
+                          AND cc.codEstado NOT IN ('TRA','A') 
+                          AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
+                          AND DATEPART(WEEK,fechaEmision) = DATEPART(WEEK,GETDATE()) 
+			              AND DATEPART(WEEKDAY,cc.fechaEmision) = dd.diaSemana
               
 	               ) as totalDoc
                   ,ISNULL((
 			            SELECT SUM(cc.importeTotal)  
                         FROM v_CuentaPorCobrar cc WITH (NOLOCK) 
                         WHERE cc.idEntidad = @idEntidad
-                           AND cc.codEstado NOT IN ('TRA','A') 
-			               AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
-			               AND DATEPART(WEEK,fechaEmision) = DATEPART(WEEK,GETDATE()) 
-			               AND DATEPART(WEEKDAY,cc.fechaEmision) = dd.diaSemana
+                          AND cc.codEstado NOT IN ('TRA','A') 
+			              AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
+			              AND DATEPART(WEEK,fechaEmision) = DATEPART(WEEK,GETDATE()) 
+			              AND DATEPART(WEEKDAY,cc.fechaEmision) = dd.diaSemana
               
 	               ),0) as total
             FROM dbo.Dia dd WITH (NOLOCK)
@@ -545,7 +529,7 @@ BEGIN
 				  ,cx.abono
 				  ,cx.cuota - cx.abono as saldoCta
 				  ,cx.saldo
-				  ,ep.descripcion as estado
+				  ,ep.descripcion      as estado
 			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
 			INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
 			WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar

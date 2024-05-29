@@ -38,7 +38,7 @@ BEGIN
 
      --> Filters
     DECLARE @idProveedor INT ,@codEstab VARCHAR(25) ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@ckFecha BIT ,@codEstado VARCHAR(15) ,@codDoc VARCHAR(10) 
-           ,@idPuntoEmision INT ,@ckCxcVencida BIT ,@ckCuotas BIT ,@subcategoryId INT
+           ,@idPuntoEmision INT ,@ckCxcVencida BIT ,@ckCuotas BIT ,@subcategoryId INT ,@subcategory VARCHAR(300)
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
@@ -125,6 +125,9 @@ BEGIN
 
             IF @subcategoryId > 0
                 BEGIN
+                    
+                    SELECT TOP 1 @subcategory = ' - ' + [Name] FROM Contabilidad.Subcategory WITH (NOLOCK) WHERE Id = @subcategoryId
+
                     SET @sql = @sql + 'AND cp.subcategoryId = @subcategoryId '
                 END 
 
@@ -149,7 +152,7 @@ BEGIN
                   ,telefono
                   ,nombreUsuario                                                                 as usuario 
                   ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
-                  ,'Reporte de Compras'                                                          as nombreReporte
+                  ,'Reporte de Compras' + ISNULL(@subcategory,'')                                as nombreReporte
             FROM v_usuario WITH (NOLOCK)
             WHERE idUsuarioRol = @userRoleId
 
