@@ -99,7 +99,7 @@ app.constant('nombreModalInventario', {
             D: 'modalConsolidacionDetalleCtrl',
         },
         templates: {
-            D: '~/Areas/Consolidacion/Pages/Shared/_ModalDetalle.cshtml',
+            D: '~/Pages/Consolidacion/Shared/_ModalDetalle.cshtml',
         }
     },
     TRANSFERENCIA_BODEGA: {
