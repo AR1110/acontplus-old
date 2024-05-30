@@ -879,7 +879,7 @@ export class CommonService {
     async print(url, parameters) {
         try {
             this.mS
-                .getData("POST", `${url}/Print`, parameters)
+                .print("POST", `${url}/Print`, parameters)
                 .then((response) => {
                     if (response.code === "0") {
                         toastr.warning(response.message, "", {
