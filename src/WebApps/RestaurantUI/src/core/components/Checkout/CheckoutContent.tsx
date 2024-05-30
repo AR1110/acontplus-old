@@ -3,9 +3,10 @@ import { useMobileDetect } from '@/hooks';
 import { Alert, Box, Button, Grid, Modal, Skeleton } from '@mui/material'
 import { CheckoutCalculator } from './CheckoutCalculator';
 import { CheckoutInfo } from './CheckoutInfo';
-import { PaymentMethod } from './PaymentMethod';
+
 import FullScreenDialog from '../FullScreenDialog';
 import { useCheckoutContext } from './context';
+import PaymentMethod from "@/core/components/Checkout/PaymentMethod/PaymentMethod.tsx";
 
 type CheckoutContentProps = {
     params: any

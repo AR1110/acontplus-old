@@ -128,6 +128,7 @@ export interface CheckoutState {
     checkoutLoading: boolean
     checkoutError: boolean
     checkout: Checkout
+    observacion: string | null
     closeDialog(data?:any): void
 }
 
@@ -149,6 +150,7 @@ export type CheckoutActions = ActionCalculator & {
     onChangeReceivedAmount(event: React.ChangeEvent<HTMLInputElement>): void
     handleChangeSetReceivedAmount(value: number | string): void
     removePaymentType(index:number):void
+    setObservacion(value:string | null):void
     save(): void
 }
 
@@ -169,7 +171,7 @@ export const paymentDataInitialState: Payment = {
     lote: "",
     cityId: 0,
     idBanco: 0,
-    posfechado: false
+    posfechado: false,
 }
 
 

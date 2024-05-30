@@ -87,18 +87,26 @@
         }
 
         function getCuentasPorCobrar() {
+            let ckFecha = $scope.dataSearch.checkBoxFecha;
+            let secuencial = fS.isValidField($scope.dataSearch.secuencial);
+            if (secuencial){
+                ckFecha = false;
+                tS.toastr('info', 'Buscando por Nro. Secuencial')
+            }
+
             let params = {
                 codEstab: $scope.dataSearch.codEstab,
                 pageIndex: $scope.dataSearch.pageIndex,
                 pageSize: $scope.dataSearch.pageSize,
-                ckFecha: $scope.dataSearch.checkBoxFecha,
+                ckFecha,
                 fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                 fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                 codEstado: fS.isValidField($scope.dataSearch.codEstado),
                 idCliente: fS.isValidField($scope.dataSearch.idCliente),
                 codDoc: fS.isValidField(getCodigoTipoDoc()),
                 ckCxcVencida: fS.isValidField($scope.dataSearch.ckCxcVencida),
-                convertToDoc: $scope.dataSearch.convertToDoc
+                convertToDoc: $scope.dataSearch.convertToDoc,
+                secuencial
             }
             $scope.selectedDocumentos = [];
             $scope.cuentasPorCobrar = [];
