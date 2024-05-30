@@ -75,7 +75,6 @@ export class PetModalComponent {
       if (this.data?.customer != null) {
         this.customerBusinessName = this.data?.customer;
       }
-      console.log(this.data);
       this.petForm.patchValue(this.data);
     }
   }

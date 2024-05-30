@@ -213,9 +213,9 @@ export class PetPageComponent {
     modalRef.result.then((result) => {
       if (result !== null && typeof result === 'object') {
         this.loadPets();
-        if (this.data.id > 0) {
-          this.data = {} as Pet;
-        }
+      }
+      if (this.data.id > 0) {
+        this.data = {} as Pet;
       }
     });
   }
