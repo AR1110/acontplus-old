@@ -346,11 +346,22 @@ function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
         }
     };
 
+    function _print(method, url, data = null) {
+        return $http({
+            method: method,
+            url: url,
+            data: data
+        }).then((response) => {
+            return response.data;
+        });
+    }
+
     service.getData = _getData;
     service.getDataFile = _getDataFile;
     service.uploadFile = _uploadFile;
     service.getFile = _getFile;
     service.detectDevice = _detectDevice;
+    service.print = _print;
     return service;
 }
 
