@@ -2,7 +2,7 @@
 (function () {
     'use strict'
 
-    const URL_TEMPLATE = '~/Areas/Consolidacion/Pages/Shared/'
+    const URL_TEMPLATE = '~/Pages/Inventario/Consolidacion/Shared/'
 
     let modalSvc = {};
     let commonSvc = {};
@@ -648,7 +648,7 @@
                     //windowClass: 'uibModalFullScreen'
                 }).result.then((result) => {
                 
-                    if (result !== null && Array.isArray(result.articlesSelected)) {
+                    if (result && Array.isArray(result.articlesSelected)) {
                         const {
                             articlesSelected,
                             opcion
