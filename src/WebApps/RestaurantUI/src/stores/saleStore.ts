@@ -536,7 +536,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         );
     },
     payment: {
-        isOpen: true,
+        isOpen: false,
         params: {},
         openDialogCustom(params) {
             set(
