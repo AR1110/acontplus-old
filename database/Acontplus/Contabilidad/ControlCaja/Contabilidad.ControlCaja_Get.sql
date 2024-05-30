@@ -82,20 +82,20 @@ BEGIN
 
 		    IF @checkBoxDate = 1
 			    BEGIN
-				    SET @sql = @sql + 'AND CAST(fechaApertura AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
+				    SET @sql = @sql + 'AND CAST(cc.fechaApertura AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
 			    END 
 
             IF @checkBoxDate = 0 
                 BEGIN
-                    SET @sql = @sql + 'AND idControlCaja IN (SELECT MAX(idControlCaja) FROM dbo.ControlCaja mc WITH (NOLOCK) WHERE estado = 1 AND idCaja = @idCaja) '
+                    SET @sql = @sql + 'AND cc.idControlCaja IN (SELECT MAX(cc.idControlCaja) FROM dbo.ControlCaja mc WITH (NOLOCK) WHERE cc.estado = 1 AND cc.idCaja = @idCaja) '
                 END 
 
 		    IF @statusMovement IN (0,1)
 			    BEGIN
-				    SET @sql = @sql + 'AND estado = @statusMovement '
+				    SET @sql = @sql + 'AND cc.estado = @statusMovement '
 			    END 
 
-		    SET @sql = @sql + 'ORDER BY idControlCaja DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
+		    SET @sql = @sql + 'ORDER BY cc.idControlCaja DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
 		    EXEC SP_EXECUTESQL @sql, @params
 								    ,@idCaja         = @idCaja
