@@ -4,9 +4,9 @@ using Reports.Core.Interfaces;
 
 namespace Reports.Application.Services
 {
-    public class ReportService(IADOSqlServer repository) : IReportService
+    public class ReportService(IAdoSqlServer repository) : IReportService
     {
-        private readonly IADOSqlServer _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        private readonly IAdoSqlServer _repository = repository ?? throw new ArgumentNullException(nameof(repository));
 
         public async Task<DataSet> GetParamsAsync(Dictionary<string, object> parameters)
         {
