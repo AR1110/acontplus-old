@@ -99,7 +99,7 @@ app.constant('nombreModalInventario', {
             D: 'modalConsolidacionDetalleCtrl',
         },
         templates: {
-            D: '~/Areas/Consolidacion/Pages/Shared/_ModalDetalle.cshtml',
+            D: '~/Pages/Consolidacion/Shared/_ModalDetalle.cshtml',
         }
     },
     TRANSFERENCIA_BODEGA: {
@@ -119,7 +119,7 @@ app.constant('nombreModalFactElect', {
     DATO_ADICIONAL_ARTICULO: {
         fileCtrl: '/js/factElect/modals/modalDatoAdicionalArticuloCtrl.min.js' + CHANGE_VERSION(),
         controller: 'ModalDatoAdicionalArticuloCtrl',
-        template: '~/Pages/Compras/Shared/_ModalDatoAdicionalArticulo.cshtml'
+        template: '~/Pages/Common/_ModalDatoAdicionalVenta.cshtml'
     },
     FACTURA: {
         fileCtrl: '/js/modal/ventas/modalFacturaCtrl.min.js' + CHANGE_VERSION(),

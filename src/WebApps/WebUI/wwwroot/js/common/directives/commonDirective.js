@@ -1275,11 +1275,12 @@
                         isView: scope.isView,
                         infoAdicionalDocumento: scope.datosAdicionales
                     }
+             
                     let modalRef = modalService.openModalCustom({
                         controller: InfoAdicionalTipoDocCtrl,
-                        template: 'Shared/Common/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML,
+                        template: '~/Pages/Common/Shared/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML,
                         size: 'md',
-                        params
+                        params,
                     })
 
                     modalRef.result.then(function (result) {
