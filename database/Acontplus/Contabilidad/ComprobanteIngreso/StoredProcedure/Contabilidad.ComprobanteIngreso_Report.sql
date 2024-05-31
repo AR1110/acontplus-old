@@ -138,7 +138,7 @@ BEGIN
                                             , co.secuencial                                                                             AS secuencial
                                             , co.fechaEmision                                            
                                             , co.idBanco
-                                            , co.observacion
+                                            , ci.observacion
                                             , (
 	                                            CASE ef.codigo WHEN ''EFE'' THEN  ''''
 								                                            ELSE  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), ''$.nro'')
@@ -330,7 +330,7 @@ BEGIN
                                         , co.secuencial                                                                                     AS secuencial
                                         , co.fechaEmision                                        
                                         , co.idBanco
-                                        , co.observacion
+                                        , ci.observacion
                                         , (
 	                                        CASE ef.codigo WHEN ''EFE'' THEN  ''''
 								                                        ELSE  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), ''$.nro'')
