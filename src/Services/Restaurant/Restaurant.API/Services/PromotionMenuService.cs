@@ -6,9 +6,9 @@ namespace Restaurant.API.Services
 {
     public class PromotionMenuService : IPromotionMenuService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
 
-        public PromotionMenuService(IADORepository repository)
+        public PromotionMenuService(IAdoRepository repository)
         {
             _repository = repository;
         }

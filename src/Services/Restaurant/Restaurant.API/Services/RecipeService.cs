@@ -9,10 +9,10 @@ namespace Restaurant.API.Services
 {
     public class RecipeService : IRecipe
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly RestaurantContext _context;
 
-        public RecipeService(IADORepository repository, RestaurantContext context)
+        public RecipeService(IAdoRepository repository, RestaurantContext context)
         {
             _context = context;
             _repository = repository;

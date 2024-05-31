@@ -1,6 +1,6 @@
 ﻿namespace Vet.API.Services;
 
-public class MedicalHistoryService(IADORepository genericRepository, VetContext context) : IMedicalHistoryService
+public class MedicalHistoryService(IAdoRepository genericRepository, VetContext context) : IMedicalHistoryService
 {
     public async Task<ApiResponse> AddAsync(MedicalHistory medicalHistory)
     {

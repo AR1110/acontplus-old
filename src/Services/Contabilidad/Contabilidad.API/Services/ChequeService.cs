@@ -2,9 +2,9 @@
 
 public class ChequeService : IChequeService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public ChequeService(IADORepository repository)
+    public ChequeService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -23,16 +23,16 @@ public class ChequeService : IChequeService
 
     public async Task<string> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Caja_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.Caja_Insert", parameters);
     }
 
     public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Caja_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.Caja_Update", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Caja_Delete", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.Caja_Delete", parameters);
     }
 }

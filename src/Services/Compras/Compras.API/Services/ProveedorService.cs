@@ -2,9 +2,9 @@
 
 public class ProveedorService : IProveedorService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public ProveedorService(IADORepository repository)
+    public ProveedorService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -23,7 +23,7 @@ public class ProveedorService : IProveedorService
         {
             { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Proveedor_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Proveedor_Insert", parameters);
     }
 
     public async Task<string> UpdateAsync(int id, ApiRequest request)
@@ -34,11 +34,11 @@ public class ProveedorService : IProveedorService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Proveedor_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Proveedor_Update", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Proveedor_Delete", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Proveedor_Delete", parameters);
     }
 }

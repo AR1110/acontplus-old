@@ -8,10 +8,10 @@ namespace Mechanical.API.Services
 {
     public class SupportDetailService : ISupportDetailService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly MechanicalContext _context;
 
-        public SupportDetailService(MechanicalContext context, IADORepository repository)
+        public SupportDetailService(MechanicalContext context, IAdoRepository repository)
         {
             _context = context;
             _repository = repository;
@@ -36,11 +36,11 @@ namespace Mechanical.API.Services
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.SupportDetail_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.SupportDetail_Insert", parameters);
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.SupportDetail_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.SupportDetail_Update", parameters);
         }
     }
 }

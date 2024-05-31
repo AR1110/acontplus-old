@@ -9,11 +9,11 @@ namespace Mechanical.API.Services
 {
     public class SupportService : ISupportService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly MechanicalContext _context;
 
 
-        public SupportService(MechanicalContext context, IADORepository repository)
+        public SupportService(MechanicalContext context, IAdoRepository repository)
         {
             _context = context;
             _repository = repository;
@@ -37,15 +37,15 @@ namespace Mechanical.API.Services
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.Support_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.Support_Insert", parameters);
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.Support_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.Support_Update", parameters);
         }
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.Support_Delete", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.Support_Delete", parameters);
         }
 
         public async Task<ApiResponse> UpdateStateAsync(int id, int SupportStatusId)

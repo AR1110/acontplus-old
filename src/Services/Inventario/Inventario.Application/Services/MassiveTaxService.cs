@@ -11,9 +11,9 @@ namespace Inventario.Application.Services
 {
     public class MassiveTaxService: IMassiveTaxService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly string nameSchema = "Inventario.ImpuestoMasivo";
-        public MassiveTaxService(IADORepository repository)
+        public MassiveTaxService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -33,7 +33,7 @@ namespace Inventario.Application.Services
 
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Update", parameters, false);
+            return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Update", parameters, false);
         }
 
     }

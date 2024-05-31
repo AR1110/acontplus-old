@@ -3,11 +3,11 @@ using Common.Core.Models;
 
 namespace Common.Application.Services
 {
-    public class NotificacionService(IADORepository repository) : INotificacionService
+    public class NotificacionService(IAdoRepository repository) : INotificacionService
     {
         public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
-            return await repository.SPExecuteAsync("App.Notificacion_Serv_Insert", parameters);
+            return await repository.SpExecuteAsync("App.Notificacion_Serv_Insert", parameters);
         }
     }
 }

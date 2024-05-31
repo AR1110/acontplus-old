@@ -4,9 +4,9 @@ public class OrderService : IOrderService
 {
     private readonly TechnicalSupportContext _context;
     private readonly string _module = "TechnicalSupport.Order_";
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public OrderService(TechnicalSupportContext context, IADORepository repository)
+    public OrderService(TechnicalSupportContext context, IAdoRepository repository)
     {
         _context = context;
         _repository = repository;
@@ -44,16 +44,16 @@ public class OrderService : IOrderService
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteAsync($"{_module}Insert", parameters);
+        return await _repository.SpExecuteAsync($"{_module}Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteAsync($"{_module}Update", parameters);
+        return await _repository.SpExecuteAsync($"{_module}Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteAsync($"{_module}Delete", parameters);
+        return await _repository.SpExecuteAsync($"{_module}Delete", parameters);
     }
 }

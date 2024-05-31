@@ -3,9 +3,9 @@
 public class BrandService : IBrandService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public BrandService(TechnicalSupportContext context, IADORepository repository)
+    public BrandService(TechnicalSupportContext context, IAdoRepository repository)
     {
         _context = context;
         _repository = repository;

@@ -2,10 +2,10 @@
 
 public class GeneralConfigService : IGeneralConfigService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
     private readonly string nameSchema = "Config.Sistema";
 
-    public GeneralConfigService(IADORepository repository)
+    public GeneralConfigService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -24,6 +24,6 @@ public class GeneralConfigService : IGeneralConfigService
 
     public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
     }
 }

@@ -8,9 +8,9 @@ namespace Restaurant.API.Services
 {
     public class IngredientService : IIngredientService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly RestaurantContext _context;
-        public IngredientService(IADORepository repository, RestaurantContext context)
+        public IngredientService(IAdoRepository repository, RestaurantContext context)
         {
             _repository = repository;
             _context = context;
@@ -48,7 +48,7 @@ namespace Restaurant.API.Services
                     {"userRoleId", data.UserRoleId},
                     {"json", DataConverters.SerializeDictionary(data.Data)}
                 };
-            var response = await _repository.SPExecuteDeprecatedAsync("Restaurant.Ingredient_Insert", parameters);
+            var response = await _repository.SpExecuteDeprecatedAsync("Restaurant.Ingredient_Insert", parameters);
             return response;
         }
         public async Task<string> UpdateAsync(int id, ApiRequest data)
@@ -58,7 +58,7 @@ namespace Restaurant.API.Services
                 {"id", id},
                 {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
             };
-            var response = await _repository.SPExecuteDeprecatedAsync("Restaurant.Ingredient_Update", parameters);
+            var response = await _repository.SpExecuteDeprecatedAsync("Restaurant.Ingredient_Update", parameters);
             return response;
         }
 

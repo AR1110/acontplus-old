@@ -1,8 +1,8 @@
 ﻿public class DeviceCustomerService : IDeviceCustomerService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public DeviceCustomerService(IADORepository repository)
+    public DeviceCustomerService(IAdoRepository repository)
     {
         _repository = repository;
     }

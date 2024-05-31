@@ -6,8 +6,8 @@ namespace FactElect.Application.Services
 {
     public class GuiaRemisionService : IGuiaRemisionService
     {
-        private readonly IADORepository _repository;
-        public GuiaRemisionService(IADORepository repository)
+        private readonly IAdoRepository _repository;
+        public GuiaRemisionService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -31,15 +31,15 @@ namespace FactElect.Application.Services
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Logistica.GuiaRemision_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Logistica.GuiaRemision_Insert", parameters);
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Logistica.GuiaRemision_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Logistica.GuiaRemision_Update", parameters);
         }
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Logistica.GuiaRemision_Delete", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Logistica.GuiaRemision_Delete", parameters);
         }
     }
 }

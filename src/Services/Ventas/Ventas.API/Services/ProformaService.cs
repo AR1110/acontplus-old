@@ -11,10 +11,10 @@ namespace Ventas.API.Services
 {
     public class ProformaService: IProformaService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly string nameSchema = "Ventas.Proforma_";
 
-        public ProformaService(IADORepository repository)
+        public ProformaService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -35,7 +35,7 @@ namespace Ventas.API.Services
 
         public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "Insert", parameters);
+            return await _repository.SpExecuteAsync(nameSchema + "Insert", parameters);
         }
 
         public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
@@ -47,17 +47,17 @@ namespace Ventas.API.Services
 
         public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "Update", parameters);
+            return await _repository.SpExecuteAsync(nameSchema + "Update", parameters);
         }
 
         public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "Delete", parameters);
+            return await _repository.SpExecuteAsync(nameSchema + "Delete", parameters);
         }
 
         public async Task<ApiResponse> ConvertToDoc(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "Convert_To_Doc", parameters);
+            return await _repository.SpExecuteAsync(nameSchema + "Convert_To_Doc", parameters);
         }
     }
 }

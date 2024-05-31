@@ -1,6 +1,6 @@
 ﻿namespace Compras.API.Services;
 
-public class DocumentoTempService (IADORepository repository) : IDocumentoTempService
+public class DocumentoTempService (IAdoRepository repository) : IDocumentoTempService
 {
     public Task<int> AddAsync(Dictionary<string, object> parameters)
     {

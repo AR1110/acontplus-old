@@ -2,9 +2,9 @@
 
 public class UserService : IUserService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public UserService(IADORepository repository)
+    public UserService(IAdoRepository repository)
     {
         _repository = repository;
     }

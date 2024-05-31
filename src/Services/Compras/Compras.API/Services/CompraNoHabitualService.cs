@@ -2,9 +2,9 @@
 
 public class CompraNoHabitualService : ICompraNoHabitualService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public CompraNoHabitualService(IADORepository repository)
+    public CompraNoHabitualService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -23,7 +23,7 @@ public class CompraNoHabitualService : ICompraNoHabitualService
         {
             { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Documento_Ingreso_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Documento_Ingreso_Insert", parameters);
     }
 
     //public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
@@ -41,11 +41,11 @@ public class CompraNoHabitualService : ICompraNoHabitualService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Documento_Ingreso_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Documento_Ingreso_Update", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Documento_Ingreso_Delete", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Documento_Ingreso_Delete", parameters);
     }
 }

@@ -1,9 +1,9 @@
 ﻿public class SerieService : ISerieService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public SerieService(TechnicalSupportContext context, IADORepository repository)
+    public SerieService(TechnicalSupportContext context, IAdoRepository repository)
     {
         _context = context;
         _repository = repository;

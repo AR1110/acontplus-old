@@ -7,9 +7,9 @@ namespace Inventario.Application.Services
 {
     public class TransferenciaBodegaService: ITransferenciaBodegaService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly string nameSchema = "Inventario.TransferenciaBodega";
-        public TransferenciaBodegaService(IADORepository repository)
+        public TransferenciaBodegaService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -42,17 +42,17 @@ namespace Inventario.Application.Services
 
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
         }
 
          public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
         }
 
          public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Delete", parameters);
+            return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Delete", parameters);
         }
     }
 }

@@ -2,10 +2,10 @@
 
 public class EstablishmentService : IEstablishmentService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
     private readonly string nameSchema = "Sri.Establishment_";
 
-    public EstablishmentService(IADORepository repository)
+    public EstablishmentService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -23,12 +23,12 @@ public class EstablishmentService : IEstablishmentService
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteAsync(nameSchema + "Insert", parameters);
+        return await _repository.SpExecuteAsync(nameSchema + "Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteAsync(nameSchema + "Update", parameters);
+        return await _repository.SpExecuteAsync(nameSchema + "Update", parameters);
     }
 
     public async Task<ApiResponse> PutSriAuth(Dictionary<string, object> parameters)
@@ -46,6 +46,6 @@ public class EstablishmentService : IEstablishmentService
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteAsync(nameSchema + "Delete", parameters);
+        return await _repository.SpExecuteAsync(nameSchema + "Delete", parameters);
     }
 }

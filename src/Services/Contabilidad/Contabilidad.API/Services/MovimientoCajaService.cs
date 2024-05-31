@@ -3,10 +3,10 @@
 public class MovimientoCajaService : IMovimientoCajaService
 {
     private readonly ContabilidadContext _context;
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
     private readonly ApiResponse _response;
 
-    public MovimientoCajaService(IADORepository repository, ContabilidadContext context)
+    public MovimientoCajaService(IAdoRepository repository, ContabilidadContext context)
     {
         _repository = repository;
         _context = context;
@@ -27,11 +27,11 @@ public class MovimientoCajaService : IMovimientoCajaService
 
     public async Task<string> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.MovimientoCaja_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.MovimientoCaja_Insert", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.MovimientoCaja_Delete", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.MovimientoCaja_Delete", parameters);
     }
 }

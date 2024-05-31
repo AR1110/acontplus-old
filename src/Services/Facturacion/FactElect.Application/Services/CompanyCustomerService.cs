@@ -7,8 +7,8 @@ namespace FactElect.Application.Services
 {
     public class CompanyCustomerService : ICompanyCustomerService
     {
-        private readonly IADORepository _repository;
-        public CompanyCustomerService(IADORepository repository)
+        private readonly IAdoRepository _repository;
+        public CompanyCustomerService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -16,7 +16,7 @@ namespace FactElect.Application.Services
         {
             try
             {
-                return await _repository.SPExecuteDeprecatedAsync("Ventas.Cliente_Insert", data);
+                return await _repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Insert", data);
             }
             catch (Exception)
             {
@@ -29,7 +29,7 @@ namespace FactElect.Application.Services
         {
             try
             {
-                return await _repository.SPExecuteDeprecatedAsync("Ventas.Cliente_Delete", data);
+                return await _repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Delete", data);
             }
             catch (Exception)
             {
@@ -93,7 +93,7 @@ namespace FactElect.Application.Services
         {
             try
             {
-                return await _repository.SPExecuteDeprecatedAsync("Ventas.Cliente_Update", data);
+                return await _repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Update", data);
             }
             catch (Exception)
             {

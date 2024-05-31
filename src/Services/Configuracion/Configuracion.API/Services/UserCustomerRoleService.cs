@@ -2,10 +2,10 @@
 
 public class UserCustomerRoleService : IUserCustomerRoleService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
     private readonly string nameSchema = "Config.UserCustomerRole_";
 
-    public UserCustomerRoleService(IADORepository repository)
+    public UserCustomerRoleService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -23,6 +23,6 @@ public class UserCustomerRoleService : IUserCustomerRoleService
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteAsync(nameSchema + "Update", parameters);
+        return await _repository.SpExecuteAsync(nameSchema + "Update", parameters);
     }
 }

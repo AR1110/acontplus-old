@@ -3,10 +3,10 @@
 public class CuentaPorCobrarService : ICuentaPorCobrarService
 {
     private readonly ContabilidadContext _context;
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
     private readonly ApiResponse _response;
 
-    public CuentaPorCobrarService(IADORepository repository, ContabilidadContext context)
+    public CuentaPorCobrarService(IAdoRepository repository, ContabilidadContext context)
     {
         _repository = repository;
         _context = context;
@@ -27,16 +27,16 @@ public class CuentaPorCobrarService : ICuentaPorCobrarService
 
     public async Task<string> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.CuotaPorCobrar_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.CuotaPorCobrar_Insert", parameters);
     }
 
     public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.CuotaPorCobrar_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.CuotaPorCobrar_Update", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Caja_Delete", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.Caja_Delete", parameters);
     }
 }

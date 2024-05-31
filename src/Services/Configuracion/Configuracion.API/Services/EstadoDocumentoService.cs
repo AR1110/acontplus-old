@@ -2,9 +2,9 @@
 
 public class EstadoDocumentoService : IEstadoDocumentoService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public EstadoDocumentoService(IADORepository repository)
+    public EstadoDocumentoService(IAdoRepository repository)
     {
         _repository = repository;
     }
