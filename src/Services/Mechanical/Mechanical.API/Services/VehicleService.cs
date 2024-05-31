@@ -9,10 +9,10 @@ namespace Mechanical.API.Services
 {
     public class VehicleService : IVehicleService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly MechanicalContext _context;
 
-        public VehicleService(MechanicalContext context, IADORepository repository)
+        public VehicleService(MechanicalContext context, IAdoRepository repository)
         {
             _context = context;
             _repository = repository;
@@ -37,11 +37,11 @@ namespace Mechanical.API.Services
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.VehicleCompany_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.VehicleCompany_Insert", parameters);
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.VehicleCompany_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.VehicleCompany_Update", parameters);
         }
         public async Task<ApiResponse> DeleteAsync(int id)
         {

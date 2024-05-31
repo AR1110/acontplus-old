@@ -6,9 +6,9 @@ namespace Restaurant.API.Services
 {
     public class MenuItemService : IMenuItemService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
 
-        public MenuItemService(IADORepository repository)
+        public MenuItemService(IAdoRepository repository)
         {
             _repository = repository;
         }

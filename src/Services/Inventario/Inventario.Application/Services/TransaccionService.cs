@@ -6,9 +6,9 @@ namespace Inventario.Application.Services
 {
     public class TransaccionService : ITransaccionService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly string nameSchema = "Inventario.Transaccion";
-        public TransaccionService(IADORepository repository)
+        public TransaccionService(IAdoRepository repository)
         {
             _repository = repository;
         }

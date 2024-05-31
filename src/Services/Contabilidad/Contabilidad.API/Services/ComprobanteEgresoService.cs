@@ -3,10 +3,10 @@
 public class ComprobanteEgresoService : IComprobanteEgresoService
 {
     private readonly ContabilidadContext _context;
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
     private readonly ApiResponse _response;
 
-    public ComprobanteEgresoService(IADORepository repository, ContabilidadContext context)
+    public ComprobanteEgresoService(IAdoRepository repository, ContabilidadContext context)
     {
         _repository = repository;
         _context = context;
@@ -27,17 +27,17 @@ public class ComprobanteEgresoService : IComprobanteEgresoService
 
     public async Task<string> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.ComprobanteEgreso_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.ComprobanteEgreso_Insert", parameters);
     }
 
     public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.ComprobanteEgreso_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.ComprobanteEgreso_Update", parameters);
     }
 
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.ComprobanteEgreso_Update_Cancel", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.ComprobanteEgreso_Update_Cancel", parameters);
     }
 }

@@ -12,9 +12,9 @@ namespace Inventario.Application.Services
 {
     public class ProductService: IProductService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly string nameSchema = "Inventario.Product_";
-        public ProductService(IADORepository repository)
+        public ProductService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -33,11 +33,11 @@ namespace Inventario.Application.Services
 
         public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "_Insert", parameters);
+            return await _repository.SpExecuteAsync(nameSchema + "_Insert", parameters);
         }
         public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "_Update", parameters);
+            return await _repository.SpExecuteAsync(nameSchema + "_Update", parameters);
         }
     }
 }

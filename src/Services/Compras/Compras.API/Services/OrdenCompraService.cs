@@ -2,9 +2,9 @@
 
 public class OrdenCompraService : IOrdenCompraService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public OrdenCompraService(IADORepository repository)
+    public OrdenCompraService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -23,7 +23,7 @@ public class OrdenCompraService : IOrdenCompraService
         {
             { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Orden_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Orden_Insert", parameters);
     }
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
@@ -42,11 +42,11 @@ public class OrdenCompraService : IOrdenCompraService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Orden_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Orden_Update", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Orden_Delete", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Orden_Delete", parameters);
     }
 }

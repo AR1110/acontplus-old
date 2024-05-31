@@ -1,9 +1,9 @@
 ﻿public class OrderMaintenanceService : IOrderMaintenanceService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public OrderMaintenanceService(TechnicalSupportContext context, IADORepository repository)
+    public OrderMaintenanceService(TechnicalSupportContext context, IAdoRepository repository)
     {
         _context = context;
         _repository = repository;
@@ -24,13 +24,13 @@
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
         // Assuming _repository.SPExecuteAsync throws specific exceptions related to stored procedure execution
-        return await _repository.SPExecuteAsync("TechnicalSupport.OrderMantenaince_Insert", parameters);
+        return await _repository.SpExecuteAsync("TechnicalSupport.OrderMantenaince_Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
         // Assuming _repository.SPExecuteAsync throws specific exceptions related to stored procedure execution
-        return await _repository.SPExecuteAsync("TechnicalSupport.OrderMantenaince_Update", parameters);
+        return await _repository.SpExecuteAsync("TechnicalSupport.OrderMantenaince_Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(int id)

@@ -2,9 +2,9 @@
 
 public class LiquidacionCompraService : ILiquidacionCompraService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public LiquidacionCompraService(IADORepository repository)
+    public LiquidacionCompraService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -23,7 +23,7 @@ public class LiquidacionCompraService : ILiquidacionCompraService
         {
             { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Liquidacion_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Liquidacion_Insert", parameters);
     }
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
@@ -42,11 +42,11 @@ public class LiquidacionCompraService : ILiquidacionCompraService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Liquidacion_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Liquidacion_Update", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Liquidacion_Delete", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Liquidacion_Delete", parameters);
     }
 }

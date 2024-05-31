@@ -13,6 +13,6 @@ public class AutoFacModule : Module
             };
             return new DbContextFactory(allContext);
         });
-        builder.RegisterType<ADORepository>().As<IADORepository>();
+        builder.RegisterType<AdoRepository>().As<IAdoRepository>();
     }
 }

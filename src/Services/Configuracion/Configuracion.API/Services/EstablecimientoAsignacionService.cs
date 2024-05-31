@@ -2,9 +2,9 @@
 
 public class EstablecimientoAsignacionService : IEstablecimientoAsignacionService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public EstablecimientoAsignacionService(IADORepository repository)
+    public EstablecimientoAsignacionService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -34,11 +34,11 @@ public class EstablecimientoAsignacionService : IEstablecimientoAsignacionServic
         {
             { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Config.Estab_Asig_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Config.Estab_Asig_Insert", parameters);
     }
 
     public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Config.Estab_Asig_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Config.Estab_Asig_Update", parameters);
     }
 }

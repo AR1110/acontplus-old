@@ -2,9 +2,9 @@
 
 public class NotaCreditoService : INotaCreditoService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public NotaCreditoService(IADORepository repository)
+    public NotaCreditoService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -23,7 +23,7 @@ public class NotaCreditoService : INotaCreditoService
         {
             { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Compra.NotaCredito_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.NotaCredito_Insert", parameters);
     }
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
@@ -42,11 +42,11 @@ public class NotaCreditoService : INotaCreditoService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Compra.NotaCredito_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.NotaCredito_Update", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Compra.NotaCredito_Delete", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.NotaCredito_Delete", parameters);
     }
 }

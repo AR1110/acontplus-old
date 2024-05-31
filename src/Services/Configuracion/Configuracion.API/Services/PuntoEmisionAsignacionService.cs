@@ -2,9 +2,9 @@
 
 public class PuntoEmisionAsignacionService : IPuntoEmisionAsignacionService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public PuntoEmisionAsignacionService(IADORepository repository)
+    public PuntoEmisionAsignacionService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -23,16 +23,16 @@ public class PuntoEmisionAsignacionService : IPuntoEmisionAsignacionService
 
     public async Task<string> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Config.PtoEmi_Asig_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Config.PtoEmi_Asig_Insert", parameters);
     }
 
     public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Config.PtoEmi_Asig_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Config.PtoEmi_Asig_Update", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Caja_Delete", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.Caja_Delete", parameters);
     }
 }

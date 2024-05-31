@@ -10,8 +10,8 @@ namespace Inventario.Application.Services
     public class ProductPhotoService : IProductPhotoService
     {
         private readonly InventarioContext _context;
-        private readonly IADORepository _repository;
-        public ProductPhotoService(InventarioContext context, IADORepository repository)
+        private readonly IAdoRepository _repository;
+        public ProductPhotoService(InventarioContext context, IAdoRepository repository)
         {
             _context = context;
             _repository = repository;
