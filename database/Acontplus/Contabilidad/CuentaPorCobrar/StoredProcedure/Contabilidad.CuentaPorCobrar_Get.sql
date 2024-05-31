@@ -63,6 +63,7 @@ BEGIN
 				  ,@pageIndex    = pageIndex
                   ,@ckCxcVencida = ckCxcVencida
                   ,@convertToDoc = convertToDoc
+                  ,@secuencial        = secuencial
             FROM OPENJSON(@json) WITH 
             (
                 idCliente    INT         
@@ -76,6 +77,7 @@ BEGIN
                ,pageIndex    INT
                ,ckCxcVencida BIT
                ,convertToDoc BIT
+               ,secuencial INT
             )
 
             SET @params = '@idCliente    INT
@@ -87,7 +89,8 @@ BEGIN
                           ,@codDoc       VARCHAR(10)
                           ,@pageIndex    INT
                           ,@pageSize     INT
-                          ,@convertToDoc BIT'
+                          ,@convertToDoc BIT
+                          ,@secuencial INT'
 
             SET @sql = 'SELECT cc.idCuentaPorCobrar
                               ,cc.idCliente
@@ -162,6 +165,9 @@ BEGIN
                                                                    ) '
                 END 
 
+             IF @secuencial IS NOT NULL
+                SET @sql = @sql + ' AND  TRY_CAST(REVERSE(SUBSTRING(REVERSE(cc.serieComprobante),1, CHARINDEX(''-'', REVERSE(cc.serieComprobante))-1)) AS INT) = @secuencial '
+
             SET @sql = @sql + 'ORDER BY cc.idCuentaPorCobrar DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
             EXEC sp_executesql @sql
@@ -176,6 +182,7 @@ BEGIN
                               ,@pageIndex    = @pageIndex
                               ,@pageSize     = @pageSize
                               ,@convertToDoc = @convertToDoc
+                              ,@secuencial   = @secuencial 
 
             RETURN 
         END 

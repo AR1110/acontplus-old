@@ -92,10 +92,10 @@ BEGIN
 
 		    IF @statusMovement IN (0,1)
 			    BEGIN
-				    SET @sql = @sql + 'AND estado = @statusMovement '
+				    SET @sql = @sql + 'AND cc.estado = @statusMovement '
 			    END 
 
-		    SET @sql = @sql + 'ORDER BY idControlCaja DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
+		    SET @sql = @sql + 'ORDER BY cc.idControlCaja DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
 		    EXEC SP_EXECUTESQL @sql, @params
 								    ,@idCaja         = @idCaja

@@ -64,7 +64,7 @@
               "node_modules/sweetalert2/src/sweetalert2.scss",
               "node_modules/icheck-bootstrap/icheck-bootstrap.css",
               "src/styles.scss",
-              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.css"
             ],
             "scripts": [
@@ -153,7 +153,7 @@
               "src/assets"
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"
             ],
             "scripts": []

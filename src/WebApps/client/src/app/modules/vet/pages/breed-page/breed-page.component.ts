@@ -85,9 +85,9 @@ export class BreedPageComponent {
     modalRef.result.then((result) => {
       if (result !== null && typeof result === 'object') {
         this.loadBreeds();
-        if (this.data.id > 0) {
-          this.data = {} as Breed;
-        }
+      }
+      if (this.data.id > 0) {
+        this.data = {} as Breed;
       }
     });
   }

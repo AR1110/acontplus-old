@@ -11,19 +11,20 @@ import {
 } from "@/core/models";
 import {
     GET_CHECKOUT_BEGIN,
-    GET_CHECKOUT_SUCCESS,
     GET_CHECKOUT_ERROR,
+    GET_CHECKOUT_SUCCESS,
     SET_ADD_PAYMENT_DATA,
-    SET_RECEIVE_AMOUNT,
-    SET_CHANGE_RETURN,
-    SET_OPTION_RECEIVED_AMOUNT,
-    SET_REPLACE_RECEIVED_AMOUNT,
     SET_CHANGE_PAYMENT_TYPE_DATA,
+    SET_CHANGE_RETURN,
+    SET_OBSERVACION,
+    SET_OPTION_RECEIVED_AMOUNT,
+    SET_RECEIVE_AMOUNT,
     SET_REMOVE_PAYMENT_TYPE,
+    SET_REPLACE_RECEIVED_AMOUNT,
 } from '.'
-import { PaymentTypeCode } from "@/core/constants";
-import { RoundNumber } from "@/core/utilities";
-import CheckoutUtility, { getCheckoutSubTotales, getTotalesCuota } from "@/core/utilities/checkout.utility";
+import {PaymentTypeCode} from "@/core/constants";
+import {RoundNumber} from "@/core/utilities";
+import CheckoutUtility, {getCheckoutSubTotales, getTotalesCuota} from "@/core/utilities/checkout.utility";
 
 type CheckoutAction =
     | { type: typeof GET_CHECKOUT_BEGIN }
@@ -56,6 +57,7 @@ type CheckoutAction =
     | { type: typeof SET_CHANGE_RETURN }
     | { type: typeof SET_OPTION_RECEIVED_AMOUNT, payload: boolean }
     | { type: typeof SET_REPLACE_RECEIVED_AMOUNT, payload: boolean }
+    | { type: typeof SET_OBSERVACION, payload: string | null}
 
 export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): CheckoutState => {
 
@@ -261,6 +263,11 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
                 isReplaceReceivedAmount: action.payload
             }
 
+        case SET_OBSERVACION:
+            return {
+                ...state,
+                observacion: action.payload
+            }
         default:
             return state;
     }

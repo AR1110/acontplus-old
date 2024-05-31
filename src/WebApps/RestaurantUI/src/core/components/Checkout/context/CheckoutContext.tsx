@@ -11,13 +11,14 @@ import {
     SET_RECEIVE_AMOUNT,
     SET_REMOVE_PAYMENT_TYPE,
     SET_REPLACE_RECEIVED_AMOUNT,
-    checkoutReducer
+    checkoutReducer, SET_OBSERVACION
 } from ".";
 import { SharedService, accountReceivableService as accountReceivableSvc } from "@/core/services";
 import { CheckoutUtility, RoundNumber, SnackbarUtility, isValidField } from "@/core/utilities";
 import { PaymentTypeCode } from "@/core/constants";
 import Swal from "sweetalert2";
 import { showLoader, hideLoader } from "@/spinner";
+import checkout from "@/core/components/Checkout/Checkout.tsx";
 const initialCheckoutParams: CheckoutParams = {
     orderId: 0,
     idDocumento: 0,
@@ -38,7 +39,8 @@ const initialState: CheckoutState = {
     checkoutLoading: false,
     checkoutError: false,
     checkout: structuredClone(initialCheckoutState),
-    closeDialog: () => []
+    closeDialog: () => [],
+    observacion: null
 }
 const initialActions: CheckoutActions = {
     fetchCheckout: () => [],
@@ -50,7 +52,8 @@ const initialActions: CheckoutActions = {
     handleChangeSetReceivedAmount: () => [],
     handleClickOptionReceivedAmount: () => [],
     checkoutClearButton: () => [],
-    save: () => []
+    save: () => [],
+    setObservacion:()=>[]
 }
 
 export const CheckoutContext = createContext<CheckoutState & CheckoutActions>({
@@ -242,6 +245,9 @@ export const CheckoutProvider = ({ children }: Props) => {
         dispatch({ type: SET_RECEIVE_AMOUNT, payload });
     }
 
+    const setObservacion = (value:string|null)=>{
+        dispatch({type: SET_OBSERVACION, payload: value})
+    }
     // const setChangeReturn = () => {
     //     dispatch({ type: SET_CHANGE_RETURN });
     // }
@@ -447,7 +453,16 @@ export const CheckoutProvider = ({ children }: Props) => {
     // }
 
     const save = async () => {
-        const { voucher, multiplesPaymentType, paymentDetails, historialCuentas } = state.checkout;
+        const {
+             checkout,
+            observacion
+
+        } = state;
+        const {
+            voucher,
+            multiplesPaymentType,
+            paymentDetails,
+            historialCuentas} = checkout;
         try {
             if (!(voucher.customerCompanyId > 0)) {
                 Swal.fire({
@@ -493,6 +508,7 @@ export const CheckoutProvider = ({ children }: Props) => {
                 codEstab: voucher.codEstab,
                 numeroIdentificacion: voucher.customerIdentification,
                 nombreFiscal: voucher.customerName,
+                observacion: isValidField(observacion)
             }
 
             const cobros = multiplesPaymentType.map(item => {
@@ -504,6 +520,7 @@ export const CheckoutProvider = ({ children }: Props) => {
                     idCuentaBancaria: 0,
                     fechaEmision: item.creationDate,
                     valor: item.receivedAmount,
+                    cobro: !item.posfechado,
                     posfechado: item.posfechado,
                     secuencial: item.sequential,
                     infoCobro: item.infoCobro,
@@ -602,7 +619,8 @@ export const CheckoutProvider = ({ children }: Props) => {
             handleChangeSetReceivedAmount,
             handleClickOptionReceivedAmount,
             checkoutClearButton,
-            save
+            save,
+            setObservacion
         }}>
             {children}
         </CheckoutContext.Provider>
