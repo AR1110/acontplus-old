@@ -1,17 +1,9 @@
-﻿namespace Common.Infrastructure.Data
+﻿namespace Common.Infrastructure.Data;
+
+public class DbContextFactory(IDictionary<string, BaseContext> context)
 {
-    public class DbContextFactory
+    public BaseContext GetContext(string contextName)
     {
-        private readonly IDictionary<string, BaseContext> _context;
-
-        public DbContextFactory(IDictionary<string, BaseContext> context)
-        {
-            _context = context;
-        }
-
-        public BaseContext GetContext(string contextName)
-        {
-            return _context[contextName];
-        }
+        return context[contextName];
     }
 }
