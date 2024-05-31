@@ -39,6 +39,7 @@ BEGIN
     -->Filters
     DECLARE @idCliente INT ,@codEstab VARCHAR(50) ,@idCuentaPorCobrar INT ,@ckFecha BIT ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@codDoc VARCHAR(10) ,@codEstado VARCHAR(5)
 	       ,@numeroIdentificacion VARCHAR(15) ,@identificacionReceptor VARCHAR(50) ,@ckCxcVencida BIT ,@convertToDoc BIT
+           ,@tipoConfig VARCHAR(20), @interes NUMERIC(18,5) ,@configDeuda BIT
 
     --> Variables
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -519,23 +520,96 @@ BEGIN
 
             SELECT @idCuentaPorCobrar = idCuentaPorCobrar  FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT )
 
-            SELECT cx.idCuotaPorCobrar
-				  ,cx.idCuentaPorCobrar
-				  ,cx.nroCuota
-				  ,cx.cuota
-				  ,cx.mora
-				  ,cx.interes
-				  ,cx.diasMora
-				  ,cx.abono
-				  ,cx.cuota - cx.abono as saldoCta
-				  ,cx.saldo
-				  ,ep.descripcion      as estado
-			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
-			INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
-			WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar
-			  AND cx.estado = 1 
-			  AND ep.codigo IN ('PE','PP')
-			ORDER BY cx.nroCuota ASC
+            IF EXISTS (SELECT 1 FROM Config.v_Sistema_Ventas WITH (NOLOCK) WHERE idEntidad = @idEntidad AND configDeuda = 1)
+                BEGIN
+                    
+                    SELECT TOP 1 @tipoConfig = tipoConfig, @interes = interes FROM Config.v_Sistema_Ventas WITH (NOLOCK) WHERE idEntidad = @idEntidad 
+
+                    IF EXISTS (SELECT 1 FROM contabilidad.CuentaPorCobrar cc WITH (NOLOCK) 
+                                        INNER JOIN dbo.TiempoCredito      tc WITH (NOLOCK) ON tc.idTiempoCredito = cc.idTiempoCredito
+                               WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar
+                                 AND tc.gestion = 1 
+                                 AND tc.tipo = 0 )
+                        BEGIN
+                            IF EXISTS (SELECT 1 FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
+			                                    INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
+			                                    WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar
+			                                      AND cx.estado = 1 
+			                                      AND DATEDIFF(DAY,cx.fechaVencimiento,GETDATE()) > 0
+                                                  AND ep.codigo IN ('PE','PP') 
+                                      )
+                                BEGIN
+                                    SELECT @configDeuda = 1
+                                END 
+                        END
+
+                END 
+
+            --> Configuracion de mora Valor Fijo (PF) o Porcentaje de Interes (PI)
+            IF @configDeuda = 1
+                BEGIN
+                    SELECT dt.idCuotaPorCobrar
+                          ,dt.idCuentaPorCobrar
+                          ,dt.fechaVencimiento
+                          ,dt.nroCuota
+                          ,dt.cuota
+                          ,IIF(dt.diasMora > 0 ,dt.diasMora,0)                         as diasMora
+                          ,IIF(dt.diasMora > 0 ,dt.interes,0)                          as interes
+                          ,IIF(dt.diasMora > 0 ,dt.interes * dt.diasMora,0)            as mora
+                          ,dt.abono
+                          ,dt.cuota - dt.abono                                         as saldoCta
+                          ,dt.saldo + IIF(dt.diasMora > 0 ,dt.interes * dt.diasMora,0) as saldo
+                          ,dt.estado
+                    FROM 
+                    (
+                    
+                            SELECT cx.idCuotaPorCobrar
+				                  ,cx.idCuentaPorCobrar
+				                  ,cx.fechaVencimiento
+                                  ,cx.nroCuota
+				                  ,cx.cuota
+				                  ,cx.mora
+				                  ,CASE @tipoConfig WHEN 'PI' THEN CAST((cx.saldo * (@interes / 100))/100 as numeric(18,5))
+                                                              ELSE 0
+                                   END                 as interes
+                                  ,CASE @tipoConfig WHEN 'PI' THEN DATEDIFF(DAY,cx.fechaVencimiento,GETDATE())
+                                                              ELSE 0
+                                   END                 as diasMora
+				                  ,cx.abono
+				                  ,cx.cuota - cx.abono as saldoCta
+				                  ,cx.saldo
+				                  ,ep.descripcion      as estado
+			                FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
+			                INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
+			                WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar
+			                  AND cx.estado = 1 
+			                  AND ep.codigo IN ('PE','PP')
+
+                    ) as dt
+                    ORDER BY dt.nroCuota ASC
+                END 
+
+            --> Cobros Comunes
+            ELSE 
+                BEGIN
+                    SELECT cx.idCuotaPorCobrar
+						  ,cx.idCuentaPorCobrar
+						  ,cx.nroCuota
+						  ,cx.cuota
+						  ,cx.interes
+						  ,cx.mora
+						  ,cx.diasMora
+						  ,cx.abono
+						  ,cx.cuota - cx.abono as saldoCta
+						  ,cx.saldo
+						  ,ep.descripcion      as estado
+					FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
+					INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
+					WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar 
+					  AND cx.estado = 1 
+					  AND ep.codigo IN ('PE','PP')
+					ORDER BY cx.nroCuota ASC
+                END 
 
             RETURN 
         END 
