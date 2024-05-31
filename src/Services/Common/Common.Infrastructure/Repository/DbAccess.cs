@@ -54,10 +54,10 @@ public class DbAccess : IDisposable
         {
             if (!string.IsNullOrEmpty(paramName) && paramValue != null && _command != null)
             {
-                var sqlParam = new SqlParameter();
-                sqlParam.ParameterName = paramName;
-                sqlParam.SqlDbType = SqlTypes.GetDbType(paramValue);
-                sqlParam.Value = paramValue ?? DBNull.Value;
+                var sqlParam = new SqlParameter
+                {
+                    ParameterName = paramName, SqlDbType = SqlTypes.GetDbType(paramValue), Value = paramValue ?? DBNull.Value
+                };
                 _command.Parameters.Add(sqlParam);
             }
         }
