@@ -93,3 +93,4 @@ bin-release/
 /src/.idea/.idea.AcontPlus/.idea
 /src/WebApps/client-sveltekit/.idea
 /src/WebApps/WebUI/.vscode
+/src/AcontPlus.sln.DotSettings
