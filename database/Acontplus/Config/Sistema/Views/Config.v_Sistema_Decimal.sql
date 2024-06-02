@@ -4,7 +4,8 @@ CREATE OR ALTER VIEW Config.v_Sistema_Decimal WITH SCHEMABINDING AS (
    SELECT cs.idSistema
 		 ,cs.idEntidad
 		 ,codTrasaccion       = JSON_VALUE(dt.[value],'$.codTransaccion')
-	     ,nroPrecio           = CAST(ISNULL(JSON_VALUE(dt.[value],'$.nroPrecio'),2) AS INT )
+	     ,codTransaccion      = JSON_VALUE(dt.[value],'$.codTransaccion')
+         ,nroPrecio           = CAST(ISNULL(JSON_VALUE(dt.[value],'$.nroPrecio'),2) AS INT )
          ,nroCantidad         = CAST(ISNULL(JSON_VALUE(dt.[value],'$.nroCantidad'),2) AS INT )
          ,nroIva              = CAST(ISNULL(JSON_VALUE(dt.[value],'$.nroIva'),2) AS INT )
          ,nroDescuentoDetalle = CAST(ISNULL(JSON_VALUE(dt.[value],'$.nroDescuentoDetalle'),2) AS INT )

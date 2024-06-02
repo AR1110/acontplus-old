@@ -35,9 +35,9 @@ BEGIN
             SET @tableNames = 'data,formasPagoSri'
 
             SELECT dt.idSistema
-                  ,IIF(dt.idCliente IS NULL ,CAST(0 AS BIT),CAST(1 AS BIT)) as customerDefault
+                  ,IIF(dt.idCliente  IS NULL,CAST(0 AS BIT),CAST(1 AS BIT)) as customerDefault
                   ,IIF(dt.idArticulo IS NULL,CAST(0 AS BIT),CAST(1 AS BIT)) as articleDefault
-                  ,IIF(dt.cc IS NULL,CAST(0 AS BIT),CAST(1 AS BIT))         as configCc
+                  ,IIF(dt.cc         IS NULL,CAST(0 AS BIT),CAST(1 AS BIT)) as configCc
                   ,dt.cc
                   ,dt.printerAutomatic           
 				  ,dt.payAutomatic
@@ -80,7 +80,8 @@ BEGIN
 			
             RETURN 
 		END 
-
+    
+    --> Config. Decimales
 	IF @codConfig = 'CD'
 		BEGIN
             SET @tableNames = 'data'
@@ -91,7 +92,8 @@ BEGIN
 
             RETURN 
 		END 
-
+    
+    --> Config. Notificaciones
 	IF @codConfig = 'CS'
 		BEGIN
             
