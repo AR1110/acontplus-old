@@ -29,7 +29,7 @@
             }
         }
 
-        [HttpGet("GetValidation")]
+        [HttpPost("GetValidation/{codImportacion}")]
         public async Task<IActionResult> GetValidation(string codImportacion, [FromBody] ImportacionParams data)
         {
             var response = new ApiResponse();
@@ -51,7 +51,7 @@
             }
         }
 
-        [HttpPost]
+        [HttpPost("{codImportacion}")]
         public async Task<IActionResult> Post(string codImportacion, [FromBody] ImportacionParams data)
         {
             var response = new ApiResponse();

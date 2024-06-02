@@ -41,7 +41,7 @@ class AlmacenImportacionCtrl{
             const {ModalModuloImportacionCrtl} = await import('./../../modal/' + MODAL_MODULO_IMPORTACION_CTRL);
             const _modalRef = this._modalSvc.openModalCustom({
                 controller: ModalModuloImportacionCrtl,
-                template: 'Shared/' + MODAL_MODULO_IMPORTACION_CSHTML,
+                template: MODAL_MODULO_IMPORTACION_CSHTML,
                 size:'md',
 
             })
@@ -212,7 +212,7 @@ class AlmacenImportacionCtrl{
                     }
                 })
     
-                this._mS.getData('post', 'Config/Importacion/Post?codImportacion=' + this.dataModulo.codigo, data).then(
+                this._mS.getData('post', 'Config/Importacion/' + this.dataModulo.codigo, data).then(
                     response=>{
                         if(response.code==="0"){                        
                             Swal.fire({
