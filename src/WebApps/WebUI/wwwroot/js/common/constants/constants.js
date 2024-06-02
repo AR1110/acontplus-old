@@ -119,7 +119,7 @@ app.constant('nombreModalFactElect', {
     DATO_ADICIONAL_ARTICULO: {
         fileCtrl: '/js/factElect/modals/modalDatoAdicionalArticuloCtrl.min.js' + CHANGE_VERSION(),
         controller: 'ModalDatoAdicionalArticuloCtrl',
-        template: '~/Pages/Compras/Shared/_ModalDatoAdicionalArticulo.cshtml'
+        template: '~/Pages/Common/_ModalDatoAdicionalVenta.cshtml'
     },
     FACTURA: {
         fileCtrl: '/js/modal/ventas/modalFacturaCtrl.min.js' + CHANGE_VERSION(),
