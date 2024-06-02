@@ -176,11 +176,11 @@ BEGIN
                 BEGIN
                     IF @codEstado = 'NCBR'
                         BEGIN 
-                            SET @sql = @sql + 'AND cc.codEstado IN (''PE'',''PP'') '
+                            SET @sql = @sql + 'AND cc.codEstado IN (''PE'',''PP'') AND cc.convertToDoc = 0  '
                         END 
                     ELSE
                         BEGIN
-                            SET @sql = @sql + 'AND cc.codEstado = @codEstado '
+                            SET @sql = @sql + 'AND cc.codEstado = @codEstado AND cc.convertToDoc = 0 '
                         END 
                 END 
 

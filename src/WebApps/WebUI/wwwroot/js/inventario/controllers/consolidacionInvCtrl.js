@@ -182,7 +182,7 @@
             try { 
                 let fileCtrl = nombreModalInventario.CONSOLIDACION.fileCtrl;
                 let ctrl = nombreModalInventario.CONSOLIDACION.controllers['D'];
-                let template = nombreModalInventario.CONSOLIDACION.templates['D'];
+                let template = URL_TEMPLATE + '_ModalDetalle.cshtml';
        
                 let controller = (await import(fileCtrl))[ctrl];
                 modalSvc.openModalCustom({
