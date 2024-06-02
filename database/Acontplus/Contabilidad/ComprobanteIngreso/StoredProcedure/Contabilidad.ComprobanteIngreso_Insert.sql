@@ -108,7 +108,8 @@ BEGIN
 		
 		INSERT INTO @payment
 			  (idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial,cobro,infoCobro,abono,controlCaja)
-		SELECT idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial,cobro,infoCobro,abono,controlCaja
+		SELECT idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial
+              ,IIF(posfechado = 1,0,1),infoCobro,abono,controlCaja
 		FROM OPENJSON(@cobros)WITH 
         (     
              idSubEntidadFinanciera INT 
@@ -130,6 +131,7 @@ BEGIN
 
 		INSERT INTO @paymentDetail
               (idCuotaPorCobrar,saldo,abono,interes,diasMora,mora,secuencial)
+
 	    SELECT idCuotaPorCobrar,saldo,abono,interes,diasMora,mora,secuencial 
         FROM OPENJSON(@cobroDetalle) WITH 
         (                          
