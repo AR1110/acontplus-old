@@ -7,9 +7,9 @@ namespace Restaurant.API.Services
 {
     public class ConfigurationService : IConfigurationService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
 
-        public ConfigurationService(IADORepository repository)
+        public ConfigurationService(IAdoRepository repository)
         {
             _repository = repository;
         }

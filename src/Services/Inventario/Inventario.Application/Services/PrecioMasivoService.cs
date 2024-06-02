@@ -12,8 +12,8 @@ namespace Inventario.Application.Services
 {
     public class PrecioMasivoService: IPrecioMasivoService
     {
-        private readonly IADORepository _repository;
-        public PrecioMasivoService(IADORepository repository)
+        private readonly IAdoRepository _repository;
+        public PrecioMasivoService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -35,7 +35,7 @@ namespace Inventario.Application.Services
 
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Inventario.PrecioMasivo_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Inventario.PrecioMasivo_Update", parameters);
         }
 
 

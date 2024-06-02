@@ -3,9 +3,9 @@
 public class PrinterService : IPrinterService
 {
     private readonly ConfigContext _context;
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public PrinterService(ConfigContext context, IADORepository repository)
+    public PrinterService(ConfigContext context, IAdoRepository repository)
     {
         _context = context;
         _repository = repository;

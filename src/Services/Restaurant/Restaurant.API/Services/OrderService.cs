@@ -8,9 +8,9 @@ namespace Restaurant.API.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly RestaurantContext _context;
-        public OrderService(IADORepository repository,
+        public OrderService(IAdoRepository repository,
             RestaurantContext context)
         {
             _repository = repository;
@@ -35,7 +35,7 @@ namespace Restaurant.API.Services
                 { "userRoleId", data.UserRoleId },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Order_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Order_Insert", parameters);
         }
         public async Task<string> PutAsync(int id, ApiRequest data)
         {
@@ -44,7 +44,7 @@ namespace Restaurant.API.Services
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Order_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Order_Update", parameters);
         }
         public async Task<bool> DeleteAsync(int id)
         {
@@ -57,7 +57,7 @@ namespace Restaurant.API.Services
         }
         public async Task<string> PrintAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Order_Print", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Order_Print", parameters);
         }
     }
 }

@@ -9,30 +9,30 @@ namespace Common.Core.Utils
         {
             _gr = new ApiResponse();
         }
-        internal ApiResponse VerificarDatos(HelpersResponse data)
+        internal ApiResponse VerificarDatos(string numeroIdentificacion, string tipoValidacion)
         {
             _ = new char[13];
             int provincia;
             int digito;
             try
             {
-                switch (data.tipoValidacion)
+                switch (tipoValidacion)
                 {
                     case "IDENTI":
 
-                        if (data.numeroIdentificacion.Length >= 10)
+                        if (numeroIdentificacion.Length >= 10)
                         {
-                            var _valced = data.numeroIdentificacion.Trim().ToCharArray();
+                            var _valced = numeroIdentificacion.Trim().ToCharArray();
                             provincia = int.Parse(_valced[0].ToString() + _valced[1].ToString());
 
                             if (provincia > 0 && provincia < 25)
                             {
-                                if (int.Parse(_valced[2].ToString()) < 6 && data.numeroIdentificacion.Length <= 10)
+                                if (int.Parse(_valced[2].ToString()) < 6 && numeroIdentificacion.Length <= 10)
                                 {
                                     VerificarCedula(_valced);
                                 }
 
-                                if (data.numeroIdentificacion.Length == 13)
+                                if (numeroIdentificacion.Length == 13)
                                 {
                                     digito = int.Parse(_valced[10].ToString()) + int.Parse(_valced[11].ToString()) + int.Parse(_valced[12].ToString());
 

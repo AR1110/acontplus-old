@@ -7,10 +7,10 @@ namespace Mechanical.API.Services
 {
     public class InspectionService : IInspectionService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
 
 
-        public InspectionService(IADORepository repository)
+        public InspectionService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -33,11 +33,11 @@ namespace Mechanical.API.Services
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.Inspection_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.Inspection_Insert", parameters);
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.Inspection_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.Inspection_Update", parameters);
         }
     }
 }

@@ -11,9 +11,9 @@ namespace Inventario.Application.Services
 {
     public class MeasureService: IMeasureService
     {
-         private readonly IADORepository _repository;
+         private readonly IAdoRepository _repository;
         private readonly string nameSchema = "Inventario.Medida";
-        public MeasureService(IADORepository repository)
+        public MeasureService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -32,17 +32,17 @@ namespace Inventario.Application.Services
 
         public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "_Insert", parameters);
+            return await _repository.SpExecuteAsync(nameSchema + "_Insert", parameters);
         }
 
         public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "_Update", parameters);
+            return await _repository.SpExecuteAsync(nameSchema + "_Update", parameters);
         }
 
         public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "_Delete", parameters);
+            return await _repository.SpExecuteAsync(nameSchema + "_Delete", parameters);
         }
     }
 }

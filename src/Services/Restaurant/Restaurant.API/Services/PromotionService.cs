@@ -6,9 +6,9 @@ namespace Restaurant.API.Services
 {
     public class PromotionService : IPromotionService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
 
-        public PromotionService(IADORepository repository)
+        public PromotionService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -29,12 +29,12 @@ namespace Restaurant.API.Services
 
         public async Task<string> PostAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Promotion_Post", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Promotion_Post", parameters);
         }
 
         public async Task<string> PutAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Promotion_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Promotion_Update", parameters);
         }
     }
 }

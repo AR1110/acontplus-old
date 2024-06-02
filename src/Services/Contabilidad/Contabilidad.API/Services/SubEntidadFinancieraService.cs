@@ -2,10 +2,10 @@
 
 public class SubEntidadFinancieraService : ISubEntidadFinancieraService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
     private readonly string nameSchema = "Contabilidad.SubEntidadFinanciera";
 
-    public SubEntidadFinancieraService(IADORepository repository)
+    public SubEntidadFinancieraService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -24,16 +24,16 @@ public class SubEntidadFinancieraService : ISubEntidadFinancieraService
 
     public async Task<string> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
     }
 
     public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Delete", parameters);
+        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Delete", parameters);
     }
 }

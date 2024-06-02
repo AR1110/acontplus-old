@@ -3,10 +3,10 @@
 public class AnticipoService : IAnticipoService
 {
     private readonly ContabilidadContext _context;
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
     private readonly ApiResponse _response;
 
-    public AnticipoService(IADORepository repository, ContabilidadContext context)
+    public AnticipoService(IAdoRepository repository, ContabilidadContext context)
     {
         _repository = repository;
         _context = context;
@@ -27,16 +27,16 @@ public class AnticipoService : IAnticipoService
 
     public async Task<string> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Anticipo_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.Anticipo_Insert", parameters);
     }
 
     public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Anticipo_Delete", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.Anticipo_Delete", parameters);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Compras.API.Services;
 
-public class DocumentoRecibidoService(IADORepository repository) : IDocumentoRecibidoService
+public class DocumentoRecibidoService(IAdoRepository repository) : IDocumentoRecibidoService
 {
     public async Task<ApiResponse> AddAsync(ApiRequest request)
     {
@@ -11,7 +11,7 @@ public class DocumentoRecibidoService(IADORepository repository) : IDocumentoRec
             { "userRoleId", request.UserRoleId },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
-        return await repository.SPExecuteAsync("Recepcion.Documento_Insert", parameters);
+        return await repository.SpExecuteAsync("Recepcion.Documento_Insert", parameters);
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
@@ -50,17 +50,17 @@ public class DocumentoRecibidoService(IADORepository repository) : IDocumentoRec
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await repository.SPExecuteAsync("Recepcion.Documento_Update", parameters);
+        return await repository.SpExecuteAsync("Recepcion.Documento_Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SPExecuteAsync("Recepcion.Documento_Delete", parameters);
+        return await repository.SpExecuteAsync("Recepcion.Documento_Delete", parameters);
     }
 
     public async Task<ApiResponse> UploadXmlAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SPExecuteAsync("Recepcion.Documento_Upload_Xml", parameters);
+        return await repository.SpExecuteAsync("Recepcion.Documento_Upload_Xml", parameters);
     }
 
     public async Task<byte[]> DownloadAsync(Dictionary<string, object> parameters)
@@ -84,6 +84,6 @@ public class DocumentoRecibidoService(IADORepository repository) : IDocumentoRec
             { "userRoleId", request.UserRoleId },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await repository.SPExecuteAsync("Recepcion.Documento_Update_Subcategory", parameters);
+        return await repository.SpExecuteAsync("Recepcion.Documento_Update_Subcategory", parameters);
     }
 }

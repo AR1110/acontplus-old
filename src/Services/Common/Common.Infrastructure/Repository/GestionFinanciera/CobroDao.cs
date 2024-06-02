@@ -1,172 +1,163 @@
-﻿using System.Data;
-using Common.Core.Models;
-using Common.Core.Models.Tesoreria;
+﻿using Common.Core.Models.Tesoreria;
 using Common.Core.ViewModels.GestionFinanciera;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 
-namespace Common.Infrastructure.Repository.GestionFinanciera
+namespace Common.Infrastructure.Repository.GestionFinanciera;
+
+public class CobroDao
 {
-    public class CobroDao
+    private readonly IConfiguration _config;
+    private readonly string _connectionStrings = string.Empty;
+    private readonly ApiResponse _gr;
+
+    public CobroDao(IConfiguration config)
     {
-        private ApiResponse _gr;
+        _config = config;
+        _connectionStrings = _config.GetConnectionString("DefaultConnection");
+        _gr = new ApiResponse();
+    }
 
-        private readonly IConfiguration _config;
-        private readonly string _connectionStrings = string.Empty;
-        public CobroDao(IConfiguration config)
+    public async Task<ApiResponse> GetByDocumentAsync(int idRol, int idComprobanteIngreso, int idTipoDocumento,
+        int idComprobante)
+    {
+        var cobros = new List<CobroViewModel>();
+        try
         {
-            _config = config;
-            _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new ApiResponse();
-        }
-        public async Task<ApiResponse> GetByDocumentAsync(int idRol, int idComprobanteIngreso, int idTipoDocumento, int idComprobante)
-        {
-            var cobros = new List<CobroViewModel>();
-            try
+            using (var con = new SqlConnection(_connectionStrings))
             {
-                using (var con = new SqlConnection(_connectionStrings))
+                var cmd = new SqlCommand("ASPCobroByDocument", con);
+                cmd.Parameters.AddWithValue("idRol", idRol);
+                cmd.Parameters.AddWithValue("idComprobanteIngreso", idComprobanteIngreso);
+                cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
+                cmd.Parameters.AddWithValue("idComprobante", idComprobante);
+                cmd.CommandType = CommandType.StoredProcedure;
+                await con.OpenAsync();
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    var cmd = new SqlCommand("ASPCobroByDocument", con);
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.Parameters.AddWithValue("idComprobanteIngreso", idComprobanteIngreso);
-                    cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
-                    cmd.Parameters.AddWithValue("idComprobante", idComprobante);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    var reader = cmd.ExecuteReader();
-                    while (reader.Read())
+                    _gr.id = reader.GetString(0);
+                    _gr.message = reader.GetString(1);
+                    _gr.titleSms = reader.GetString(2);
+                    if (_gr.id == "1")
                     {
-                        _gr.id = reader.GetString(0);
-                        _gr.message = reader.GetString(1);
-                        _gr.titleSms = reader.GetString(2);
-                        if (_gr.id == "1")
+                        var item = new CobroViewModel
                         {
-                            var item = new CobroViewModel()
+                            cobro = new Cobro
                             {
-                                cobro = new Cobro
-                                {
-                                    idCobro = reader.GetInt64(3),
-                                    valor = reader.GetDecimal(4),
-                                    fechaEmision = reader.GetString(5),
-                                    abono = reader.GetDecimal(6),
-
-                                },
-                                subEntiadaFinanciera = reader.GetString(7),
-                                posfechado = reader.GetString(8),
-                                cobroEstado = reader.GetString(9),
-                                nroTransaccion = reader.GetString(10),
-                                banco = reader.GetString(11),
-                                cuentaBancaria = reader.GetString(12),
-                                tipoDocumento = reader.GetString(13),
-                                comprobante = reader.GetString(14),
-                            };
-                            cobros.Add(item);
-                        }
+                                idCobro = reader.GetInt64(3),
+                                valor = reader.GetDecimal(4),
+                                fechaEmision = reader.GetString(5),
+                                abono = reader.GetDecimal(6)
+                            },
+                            subEntiadaFinanciera = reader.GetString(7),
+                            posfechado = reader.GetString(8),
+                            cobroEstado = reader.GetString(9),
+                            nroTransaccion = reader.GetString(10),
+                            banco = reader.GetString(11),
+                            cuentaBancaria = reader.GetString(12),
+                            tipoDocumento = reader.GetString(13),
+                            comprobante = reader.GetString(14)
+                        };
+                        cobros.Add(item);
                     }
                 }
-                _gr.data = cobros;
             }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-                _gr.titleSms = "GetBy Document";
-            }
-            finally
-            {
 
-            }
-            return _gr;
+            _gr.data = cobros;
         }
-        public async Task<ApiResponse> GetByComprobanteAsync(int idRol, int idComprobanteIngreso)
+        catch (Exception ex)
         {
-            var cobros = new List<CobroViewModel>();
-            try
+            _gr.id = "0";
+            _gr.message = ex.Message;
+            _gr.titleSms = "GetBy Document";
+        }
+
+        return _gr;
+    }
+
+    public async Task<ApiResponse> GetByComprobanteAsync(int idRol, int idComprobanteIngreso)
+    {
+        var cobros = new List<CobroViewModel>();
+        try
+        {
+            using (var con = new SqlConnection(_connectionStrings))
             {
-                using (var con = new SqlConnection(_connectionStrings))
+                var cmd = new SqlCommand("ASPCobroByComprobante", con);
+                cmd.Parameters.AddWithValue("idRol", idRol);
+                cmd.Parameters.AddWithValue("idComprobanteIngreso", idComprobanteIngreso);
+                cmd.CommandType = CommandType.StoredProcedure;
+                await con.OpenAsync();
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    var cmd = new SqlCommand("ASPCobroByComprobante", con);
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.Parameters.AddWithValue("idComprobanteIngreso", idComprobanteIngreso);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    var reader = cmd.ExecuteReader();
-                    while (reader.Read())
+                    _gr.id = reader.GetString(0);
+                    _gr.message = reader.GetString(1);
+                    _gr.titleSms = reader.GetString(2);
+                    if (_gr.id == "1")
                     {
-                        _gr.id = reader.GetString(0);
-                        _gr.message = reader.GetString(1);
-                        _gr.titleSms = reader.GetString(2);
-                        if (_gr.id == "1")
+                        var item = new CobroViewModel
                         {
-                            var item = new CobroViewModel()
+                            cobro = new Cobro
                             {
-                                cobro = new Cobro
-                                {
-                                    idCobro = reader.GetInt64(3),
-                                    valor = reader.GetDecimal(4),
-                                    fechaEmision = reader.GetString(5),
-                                },
-                                subEntiadaFinanciera = reader.GetString(6),
-                                posfechado = reader.GetString(7),
-                                cobroEstado = reader.GetString(8),
-                                nroTransaccion = reader.GetString(9),
-                                banco = reader.GetString(10),
-                                cuentaBancaria = reader.GetString(11),
-                                tipoDocumento = reader.GetString(12),
-                                comprobante = reader.GetString(13),
-                            };
-                            cobros.Add(item);
-                        }
+                                idCobro = reader.GetInt64(3),
+                                valor = reader.GetDecimal(4),
+                                fechaEmision = reader.GetString(5)
+                            },
+                            subEntiadaFinanciera = reader.GetString(6),
+                            posfechado = reader.GetString(7),
+                            cobroEstado = reader.GetString(8),
+                            nroTransaccion = reader.GetString(9),
+                            banco = reader.GetString(10),
+                            cuentaBancaria = reader.GetString(11),
+                            tipoDocumento = reader.GetString(12),
+                            comprobante = reader.GetString(13)
+                        };
+                        cobros.Add(item);
                     }
                 }
-                _gr.data = cobros;
             }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-                _gr.titleSms = "GetBy Comprobante de Ingreso";
-            }
-            finally
-            {
 
-            }
-            return _gr;
+            _gr.data = cobros;
         }
-        public async Task<ApiResponse> UpdateAsync(int idRol, int idCobro, string observacion, bool cobro, bool anular)
+        catch (Exception ex)
         {
-            try
+            _gr.id = "0";
+            _gr.message = ex.Message;
+            _gr.titleSms = "GetBy Comprobante de Ingreso";
+        }
+
+        return _gr;
+    }
+
+    public async Task<ApiResponse> UpdateAsync(int idRol, int idCobro, string observacion, bool cobro, bool anular)
+    {
+        try
+        {
+            using (var con = new SqlConnection(_connectionStrings))
             {
-                using (var con = new SqlConnection(_connectionStrings))
+                var cmd = new SqlCommand("ASPCobroUpdate", con);
+                cmd.Parameters.AddWithValue("idRol", idRol);
+                cmd.Parameters.AddWithValue("idCobro", idCobro);
+                cmd.Parameters.AddWithValue("observacion", observacion);
+                cmd.Parameters.AddWithValue("cobro", cobro);
+                cmd.Parameters.AddWithValue("anular", anular);
+                cmd.CommandType = CommandType.StoredProcedure;
+                await con.OpenAsync();
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    var cmd = new SqlCommand("ASPCobroUpdate", con);
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.Parameters.AddWithValue("idCobro", idCobro);
-                    cmd.Parameters.AddWithValue("observacion", observacion);
-                    cmd.Parameters.AddWithValue("cobro", cobro);
-                    cmd.Parameters.AddWithValue("anular", anular);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    var reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        _gr.id = reader.GetString(0);
-                        _gr.message = reader.GetString(1);
-                        _gr.titleSms = reader.GetString(2);
-                    }
+                    _gr.id = reader.GetString(0);
+                    _gr.message = reader.GetString(1);
+                    _gr.titleSms = reader.GetString(2);
                 }
             }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-                _gr.titleSms = "Actulizar Cobro";
-            }
-            finally
-            {
-
-            }
-            return _gr;
         }
+        catch (Exception ex)
+        {
+            _gr.id = "0";
+            _gr.message = ex.Message;
+            _gr.titleSms = "Actulizar Cobro";
+        }
+
+        return _gr;
     }
 }

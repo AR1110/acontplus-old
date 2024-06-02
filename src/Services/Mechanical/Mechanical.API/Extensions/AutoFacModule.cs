@@ -20,7 +20,7 @@ namespace Mechanical.API.Extensions
                 return new DbContextFactory(allContext);
 
             });
-            builder.RegisterType<ADORepository>().As<IADORepository>();
+            builder.RegisterType<AdoRepository>().As<IAdoRepository>();
 
         }
     }

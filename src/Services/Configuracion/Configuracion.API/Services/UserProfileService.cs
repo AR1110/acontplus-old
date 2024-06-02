@@ -2,17 +2,17 @@
 
 public class UserProfileService : IUserProfileService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
     private readonly string nameSchema = "Config.UserProfile";
 
-    public UserProfileService(IADORepository repository)
+    public UserProfileService(IAdoRepository repository)
     {
         _repository = repository;
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteAsync(nameSchema + "_Update", parameters);
+        return await _repository.SpExecuteAsync(nameSchema + "_Update", parameters);
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)

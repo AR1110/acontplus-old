@@ -2,10 +2,10 @@
 
 public class DocConfigService : IDocConfigService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
     private readonly string nameSchema = "Config.DocConfig";
 
-    public DocConfigService(IADORepository repository)
+    public DocConfigService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -24,6 +24,6 @@ public class DocConfigService : IDocConfigService
 
     public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
     }
 }

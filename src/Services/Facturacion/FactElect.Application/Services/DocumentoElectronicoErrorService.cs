@@ -5,16 +5,16 @@ namespace FactElect.Application.Services
 {
     public class DocumentoElectronicoErrorService : IDocumentoElectronicoErrorService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
 
-        public DocumentoElectronicoErrorService(IADORepository repository)
+        public DocumentoElectronicoErrorService(IAdoRepository repository)
         {
             _repository = repository;
         }
 
         public async Task<string> GetAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("FactElect.Doc_Elect_Error_Get_Id", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("FactElect.Doc_Elect_Error_Get_Id", parameters);
         }
     }
 }

@@ -2,9 +2,9 @@
 
 public class FacturaCompraService : IFacturaCompraService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public FacturaCompraService(IADORepository repository)
+    public FacturaCompraService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -23,7 +23,7 @@ public class FacturaCompraService : IFacturaCompraService
         {
             { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Factura_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Factura_Insert", parameters);
     }
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
@@ -42,11 +42,11 @@ public class FacturaCompraService : IFacturaCompraService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Factura_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Factura_Update", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Compra.Factura_Delete", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Compra.Factura_Delete", parameters);
     }
 }

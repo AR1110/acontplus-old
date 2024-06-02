@@ -8,9 +8,9 @@ namespace Restaurant.API.Services
 {
     public class ItemService : IItemService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
 
-        public ItemService(IADORepository repository)
+        public ItemService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -56,7 +56,7 @@ namespace Restaurant.API.Services
                 {"id", id},
                 {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
             };
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Item_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Item_Update", parameters);
         }
 
         public async Task<string> DeleteAsync(int id, ApiRequest request)
@@ -65,7 +65,7 @@ namespace Restaurant.API.Services
                 {"userRoleId", request.UserRoleId},
                 {"id", id}
             };
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Item_Update_Cancel", request.Data);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Item_Update_Cancel", request.Data);
         }
     }
 }

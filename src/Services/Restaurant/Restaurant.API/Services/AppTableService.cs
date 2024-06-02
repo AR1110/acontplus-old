@@ -8,9 +8,9 @@ namespace Restaurant.API.Services
 {
     public class AppTableService : IAppTableService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
 
-        public AppTableService(IADORepository repository)
+        public AppTableService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -39,7 +39,7 @@ namespace Restaurant.API.Services
                 {"userRoleId", request.UserRoleId},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Table_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Table_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
@@ -49,7 +49,7 @@ namespace Restaurant.API.Services
                 {"id", id},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Table_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Table_Update", parameters);
         }
 
         public async Task<string> DeleteAsync(int id, ApiRequest request)
@@ -58,7 +58,7 @@ namespace Restaurant.API.Services
                 {"userRoleId", request.UserRoleId},
                 {"id", id}
             };
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Table_Delete", request.Data);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Table_Delete", request.Data);
         }
     }
 }

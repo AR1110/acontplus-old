@@ -10,6 +10,6 @@ public class AutoFacModule : Module
             var allContext = new Dictionary<string, BaseContext> { { "CommonContext", ctx.Resolve<CommonContext>() } };
             return new DbContextFactory(allContext);
         });
-        builder.RegisterType<ADORepository>().As<IADORepository>();
+        builder.RegisterType<AdoRepository>().As<IAdoRepository>();
     }
 }

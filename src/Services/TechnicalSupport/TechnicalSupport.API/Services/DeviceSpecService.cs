@@ -3,9 +3,9 @@
 public class DeviceSpecService : IDeviceSpecService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public DeviceSpecService(IADORepository repository, TechnicalSupportContext context)
+    public DeviceSpecService(IAdoRepository repository, TechnicalSupportContext context)
     {
         _repository = repository;
         _context = context;

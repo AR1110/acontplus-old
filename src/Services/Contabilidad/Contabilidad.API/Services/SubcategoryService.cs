@@ -1,6 +1,6 @@
 ﻿namespace Contabilidad.API.Services;
 
-public class SubcategoryService(ContabilidadContext context, IADORepository repository) : ISubcategoryService
+public class SubcategoryService(ContabilidadContext context, IAdoRepository repository) : ISubcategoryService
 {
     public async Task<ApiResponse> AddAsync(Subcategory subcategory)
     {

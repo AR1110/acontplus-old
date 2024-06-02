@@ -6,12 +6,12 @@ namespace Configuracion.API.Services;
 
 public class TurnoService : ITurnoService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
     private readonly IConfiguration _configuration;
     private ApiResponse _gr = new ApiResponse();
     private readonly string _connectionStrings = string.Empty;
 
-    public TurnoService(IADORepository respository, IConfiguration configuration)
+    public TurnoService(IAdoRepository respository, IConfiguration configuration)
     {
         _repository = respository;
         _configuration = configuration;

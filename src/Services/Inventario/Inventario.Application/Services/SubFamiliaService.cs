@@ -7,9 +7,9 @@ namespace Inventario.Application.Services
 {
     public class SubFamiliaService : ISubFamiliaService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
 
-        public SubFamiliaService(IADORepository repository)
+        public SubFamiliaService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -34,17 +34,17 @@ namespace Inventario.Application.Services
 
         public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Inventario.Subfamilia_Insert", parameters);
+            return await _repository.SpExecuteAsync("Inventario.Subfamilia_Insert", parameters);
         }
 
         public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Almacen.SubFamilia_Update_Cancel", parameters);
+            return await _repository.SpExecuteAsync("Almacen.SubFamilia_Update_Cancel", parameters);
         }
 
         public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Inventario.Subfamilia_Update", parameters);
+            return await _repository.SpExecuteAsync("Inventario.Subfamilia_Update", parameters);
         }
     }
 }

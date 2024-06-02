@@ -8,9 +8,9 @@ namespace Inventario.Application.Services
 {
     public class StockFisicoService : IStockFisicoService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly ApiResponse _response;
-        public StockFisicoService(IADORepository repository)
+        public StockFisicoService(IAdoRepository repository)
         {
             _repository = repository;
             _response = new ApiResponse();
@@ -38,7 +38,7 @@ namespace Inventario.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteDeprecatedAsync("Inventario.StockFisico_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Inventario.StockFisico_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
@@ -50,7 +50,7 @@ namespace Inventario.Application.Services
                 {"id", id},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteDeprecatedAsync("Inventario.StockFisico_Update", request.Data);
+            return await _repository.SpExecuteDeprecatedAsync("Inventario.StockFisico_Update", request.Data);
         }
         public async Task<ApiResponse> DeleteAsync(int id)
         {

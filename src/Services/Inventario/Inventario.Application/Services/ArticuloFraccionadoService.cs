@@ -8,8 +8,8 @@ namespace Inventario.Application.Services
 {
     public class ArticuloFraccionadoService : IArticuloFraccionadoService
     {
-        private readonly IADORepository _repository;
-        public ArticuloFraccionadoService(IADORepository repository)
+        private readonly IAdoRepository _repository;
+        public ArticuloFraccionadoService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -37,7 +37,7 @@ namespace Inventario.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteDeprecatedAsync("Inventario.Fraccionado_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Inventario.Fraccionado_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
@@ -47,12 +47,12 @@ namespace Inventario.Application.Services
                 {"id", id},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteDeprecatedAsync("Inventario.Fraccionado_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Inventario.Fraccionado_Update", parameters);
         }
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Inventario.Fraccionado_Delete", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Inventario.Fraccionado_Delete", parameters);
         }
 
     }

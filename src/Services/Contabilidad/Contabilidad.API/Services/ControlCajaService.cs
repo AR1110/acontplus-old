@@ -2,9 +2,9 @@
 
 public class ControlCajaService : IControlCajaService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public ControlCajaService(IADORepository repository)
+    public ControlCajaService(IAdoRepository repository)
     {
         _repository = repository;
     }
@@ -22,16 +22,16 @@ public class ControlCajaService : IControlCajaService
 
     public async Task<string> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.ControlCaja_Insert", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.ControlCaja_Insert", parameters);
     }
 
     public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.ControlCaja_Update", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.ControlCaja_Update", parameters);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("", parameters);
     }
 }

@@ -2,15 +2,15 @@
 
 public class PrintService : IPrintService
 {
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public PrintService(IADORepository repository)
+    public PrintService(IAdoRepository repository)
     {
         _repository = repository;
     }
 
     public async Task<string> GetAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SPExecuteDeprecatedAsync("Config.Print_Get", parameters);
+        return await _repository.SpExecuteDeprecatedAsync("Config.Print_Get", parameters);
     }
 }

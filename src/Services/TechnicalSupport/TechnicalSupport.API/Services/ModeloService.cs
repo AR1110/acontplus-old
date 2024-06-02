@@ -1,9 +1,9 @@
 ﻿public class ModeloService : IModeloService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IADORepository _repository;
+    private readonly IAdoRepository _repository;
 
-    public ModeloService(TechnicalSupportContext context, IADORepository repository)
+    public ModeloService(TechnicalSupportContext context, IAdoRepository repository)
     {
         _context = context;
         _repository = repository;

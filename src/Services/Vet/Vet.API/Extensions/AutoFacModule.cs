@@ -10,6 +10,6 @@ public class AutoFacModule : Module
             var allContext = new Dictionary<string, BaseContext> { { "VetContext", ctx.Resolve<VetContext>() } };
             return new DbContextFactory(allContext);
         });
-        builder.RegisterType<ADORepository>().As<IADORepository>();
+        builder.RegisterType<AdoRepository>().As<IAdoRepository>();
     }
 }
