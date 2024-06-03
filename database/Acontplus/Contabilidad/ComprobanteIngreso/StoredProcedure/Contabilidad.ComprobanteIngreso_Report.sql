@@ -20,7 +20,7 @@ GO
 -- Create date: 2024/05/15
 -- Description:	REPORT FOR COBROS
 -- =============================================
--- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":2,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":null,"idSubEntidadFinanciera":0,"idCustomer":null,"fechaInicio":"2024-03-01 00:00:00 AM","fechaFin":"2024-03-25 23:59:59 PM","dateChecked":true}', ''
+-- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":2,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":"FV","idSubEntidadFinanciera":0,"idCustomer":194578,"idPuntoEmision":225,"fechaInicio":"2024-06-03 10:58:14 AM","fechaFin":"2024-06-03 10:58:14 AM","dateChecked":false,"idBanco":0,"nroDocChecked":false,"nroDocument":"","referenceChecked":false,"reference":"","loteChecked":false,"lote":""}', ''
 CREATE OR ALTER PROC Contabilidad.ComprobanteIngreso_Report
 	 @userRoleId INT
 	,@json	     VARCHAR(MAX)
@@ -129,9 +129,9 @@ BEGIN
                                             , cc.serieComprobante
                                             , (	CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END )						        AS codDoc
                                             , ef.descripcion
-                                            , CAST(hc.saldo  AS NUMERIC(18,2))															AS totalDoc
-                                            , CAST(hc.abono  AS NUMERIC(18,2))															AS abonoDoc
-                                            , CAST(hc.saldo - hc.abono AS NUMERIC(18,2))												AS saldoDoc
+                                            , CAST(co.valor  AS NUMERIC(18,2))															AS totalDoc
+                                            , CAST(co.abono  AS NUMERIC(18,2))															AS abonoDoc
+                                            , CAST(co.valor - co.abono AS NUMERIC(18,2))												AS saldoDoc
                                             , ISNULL(bc.descripcion, '''')																AS banco
                                             , ISNULL(cd.descripcion, '''')																AS ciudad
                                             , co.idSubEntidadFinanciera         														AS idSubEntidadFinanciera
@@ -221,7 +221,7 @@ BEGIN
                     SET @sql = @sql + 'AND CAST(dt.fechaRegistro AS DATE) BETWEEN CAST(@fechaInicio AS DATE) AND CAST(@fechaFin AS DATE) '
                 END
 
-            SET @sql = @sql + 'ORDER BY dt.fechaRegistro DESC '
+            SET @sql = @sql + 'ORDER BY dt.fechaEmision ASC '
             
             ---> Header
             SELECT TOP 1 
@@ -321,9 +321,9 @@ BEGIN
                                         , (CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END)								        AS codDoc
                                         , cx.nroCuota
                                         , ef.descripcion
-                                        , CAST(hc.saldo  AS NUMERIC(18,2))															        AS totalDoc
-                                        , CAST(hc.abono  AS NUMERIC(18,2))															        AS abonoDoc
-                                        , CAST(hc.saldo - hc.abono AS NUMERIC(18,2))												        AS saldoDoc
+                                        , CAST(co.valor  AS NUMERIC(18,2))															        AS totalDoc
+                                        , CAST(co.abono  AS NUMERIC(18,2))															        AS abonoDoc
+                                        , CAST(co.valor - co.abono AS NUMERIC(18,2))												        AS saldoDoc
                                         , ISNULL(bc.descripcion, '''')																        AS banco
                                         , ISNULL(cd.descripcion, '''')																        AS ciudad
                                         , ISNULL(co.idSubEntidadFinanciera, 0)														        AS idSubEntidadFinanciera
@@ -413,10 +413,8 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND CAST(dt.fechaRegistro AS DATE) BETWEEN CAST(@fechaInicio AS DATE) AND CAST(@fechaFin AS DATE) '
                 END
-
-            
-
-            SET @sql = @sql + 'ORDER BY dt.fechaRegistro DESC '
+                
+            SET @sql = @sql + 'ORDER BY dt.fechaEmision ASC '
 
             ---> Header
             SELECT TOP 1 ve.nombreComercial
