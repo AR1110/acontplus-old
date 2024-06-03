@@ -118,8 +118,6 @@ export class SupportMaintenanceModalComponent {
   }
 
   feeds: Tarifa[] = [];
-
-
   validatorNumber = ["required", "number"]
 
   comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
@@ -233,9 +231,10 @@ export class SupportMaintenanceModalComponent {
   }
 
   columns = [
-
     {
-      formatter: "rownum", headerSort: false, hozAlign: "center",
+      formatter: "rownum",
+      headerSort: false,
+      hozAlign: "center",
     },
     {
       title: 'Op.',
@@ -250,7 +249,7 @@ export class SupportMaintenanceModalComponent {
         editBtn.classList.add("btn", "btn-success", "btn-xs");
         editBtn.addEventListener("click", () => {
           let rowData = cell.getRow().getData();
-          //this.openModalProductEdit(rowData)
+          // this.openModalProductEdit(rowData)
         });
 
         //create delete button
@@ -274,13 +273,12 @@ export class SupportMaintenanceModalComponent {
         });
 
         let buttonHolder = document.createElement("span");
-        // buttonHolder.appendChild(delBtn);
-        // buttonHolder.appendChild(editBtn);
+        buttonHolder.appendChild(delBtn);
+        //buttonHolder.appendChild(editBtn);
 
         if (rowDataMain.llevaInventario) {
           buttonHolder.appendChild(kardexBtn)
         }
-
         return buttonHolder;
       },
       width: 100,
@@ -295,7 +293,6 @@ export class SupportMaintenanceModalComponent {
       hozAlign: "center",
       headerHozAlign: "center",
       width: "7px",
-
     },
     {
       title: 'Producto / Servicio',
@@ -422,10 +419,12 @@ export class SupportMaintenanceModalComponent {
       headerHozAlign: "center",
       width: "9px",
       validator: ["required"],
-      editor: "number", editorParams: {
+      editor: "number",
+      editorParams: {
         selectContents: true,
         verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
       },
+      formatterParams:{precision: false}
     },
     {
       title: 'Precio Iva.',
@@ -439,6 +438,7 @@ export class SupportMaintenanceModalComponent {
         selectContents: true,
         verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
       },
+      formatterParams:{ stars:6 }
     },
     {
       title: '%',
@@ -520,12 +520,10 @@ export class SupportMaintenanceModalComponent {
 
   ];
 
-
   tabulatorOptions = {
     // movableRows: true,
     height: "100%",
   }
-
 
   ngOnInit(): void {
     this.supportDetailSvc.getId(this.params.id).subscribe({
@@ -534,10 +532,15 @@ export class SupportMaintenanceModalComponent {
           ...this.data,
           ...response.data
         };
+
+        console.log("response")
+        console.log(response)
+
         this.estabs = response.estabs;
         this.taxPercents = response.tarifasImpuesto;
         this.feeds = response.feeds;
         this.vehicle = response.vehicle
+        this.decimal = response.decimal
 
         this.details = response.details;
         let dataEstab = this.estabs.find(e => e.idEstablecimiento === this.data.establecimientoId);
@@ -560,9 +563,7 @@ export class SupportMaintenanceModalComponent {
       error(err) {
         console.log(err)
       },
-    })
-
-
+    });
   }
 
   getDataRowEmpty() {
@@ -712,7 +713,6 @@ export class SupportMaintenanceModalComponent {
 
     }
   }
-
 
   async onChangeBodega() {
     try {
@@ -871,6 +871,8 @@ export class SupportMaintenanceModalComponent {
         tarifasImpuesto: this.taxPercents,
       })
 
+      console.log(this.decimal)
+
       this.data.subTotalSinImpuesto = subTotalSinImpuesto;
       this.data.total = importeTotal;
       this.data.discount = discount;
@@ -884,12 +886,14 @@ export class SupportMaintenanceModalComponent {
   }
 
   cellEdited(cell: any) {
+
     let row = cell.getRow();
     let column: ColSupportMaintenanceDetail = cell.getColumn().getField();
     let oldValue = parseFloat(cell.getOldValue());
     let value = parseFloat(cell.getValue());
 
     let data = cell.getData();
+
     let quantity = parseFloat(data.quantity);
     let medidaId = parseInt(data.medidaId);
     let taxId = parseInt(data.taxId);
@@ -947,7 +951,6 @@ export class SupportMaintenanceModalComponent {
       percentageDiscount,
       discount,
     }
-
     this.setCalculoTotales(column, cloneData, oldValue);
   }
 
