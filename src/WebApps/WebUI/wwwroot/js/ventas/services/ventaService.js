@@ -403,7 +403,7 @@
                             enabledHistorialCobro: item.codEstado === 'CBR' || item.codEstado === 'PP', 
                             convertToDoc: item.convertToDoc,
                             esAnulado: item.codEstado === 'A',
-                            enabledPayment: !(item.convertToDoc || item.codEstado === 'A') && (item.codEstado === 'PP' || item.codEstado === 'PE')
+                            enabledPayment: item.codEstado === 'PP' || item.codEstado === 'PE'
                             
                         }
                     })                    
