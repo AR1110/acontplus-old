@@ -127,6 +127,11 @@ BEGIN
 				    SET @sql = @sql + 'AND ad.codEstado = @codEstado '
 				END
 
+            ELSE 
+                BEGIN
+                    SET @sql = @sql + 'AND ad.codEstado NOT IN (''A'') '
+                END 
+
 			IF @byUsuario > 0
 				BEGIN
 					SET @sql = @sql + 'AND ad.idUsuario = @idUsuario '
@@ -238,7 +243,7 @@ BEGIN
                   ,defaultPtoEmi 
             FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
 
-            SELECT idEstadoPago, descripcion, codigo as codEstado FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('')
+            SELECT idEstadoPago, descripcion, codigo as codEstado FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('PE','APR','A')
 
             RETURN 
         END 
