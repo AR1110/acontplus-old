@@ -68,9 +68,6 @@
 
         service.getByStatus = (params) => {
             return mS.getData('get', `${URL}GetByStatus/?json=${JSON.stringify(params)}`, null, true).then(response => {
-                if (response.code === "0") {
-                    throw response;
-                }
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload)[0]
                     return mainData;
