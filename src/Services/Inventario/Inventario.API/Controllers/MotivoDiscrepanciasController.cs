@@ -1,8 +1,6 @@
 ﻿namespace Inventario.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class MotivoDiscrepanciasController : ControllerBase
+public class MotivoDiscrepanciasController : BaseApiController
 {
     private readonly InventarioContext _context;
 

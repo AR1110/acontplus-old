@@ -1,38 +1,28 @@
 ﻿namespace Inventario.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class PrecioMasivoController : ControllerBase
+public class PrecioMasivoController : BaseApiController
 {
-    private readonly ICustomLogger _log;
+
     private readonly IPrecioMasivoService _service;
 
-    public PrecioMasivoController(IPrecioMasivoService service, ICustomLogger log)
+    public PrecioMasivoController(IPrecioMasivoService service)
     {
         _service = service;
-        _log = log;
+
     }
 
     [HttpGet]
     public async Task<ActionResult<ApiResponse>> Get(string json)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             };
-            var response = await _service.GetAsync(parameters);
-            if (response == null) { return NoContent(); }
+        var response = await _service.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
 
             ;
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en get Precio Masivo" + ex.Message + '\n' + json);
-            return BadRequest("Error en get Precio Masivo " + ex.Message);
-        }
+        return Ok(response);
     }
 
     //[HttpPost]
@@ -43,7 +33,7 @@ public class PrecioMasivoController : ControllerBase
     //    try
     //    {
     //        await _db.SPExecute("Inventario.PrecioMasivo_Insert");
-    //        _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+    //        _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
     //        _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
     //        _response = _db.GetDefault();
     //    }
@@ -62,23 +52,15 @@ public class PrecioMasivoController : ControllerBase
     [HttpPut]
     public async Task<ActionResult> Put(ApiRequest request)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
             };
-            var response = await _service.UpdateAsync(parameters);
-            if (response == null) { return NoContent(); }
+        var response = await _service.UpdateAsync(parameters);
+        if (response == null) { return NoContent(); }
 
             ;
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en Put Precio Masivo" + ex.Message + "\n");
-            return BadRequest("Error en Actualizar Precio Masivo " + ex.Message);
-        }
+        return Ok(response);
     }
 }

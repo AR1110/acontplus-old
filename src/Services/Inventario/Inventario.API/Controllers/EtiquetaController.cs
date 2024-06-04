@@ -1,18 +1,16 @@
 ﻿namespace Inventario.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class EtiquetaController : ControllerBase
+public class EtiquetaController : BaseApiController
 {
     public readonly IConfiguration _configuration;
     public readonly DbAccess _db;
-    private readonly ICustomLogger _log;
+    
 
-    public EtiquetaController(IConfiguration configuration, ICustomLogger log)
+    public EtiquetaController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(configuration);
-        _log = log;
+        
     }
 
     [HttpGet("Get/{json}")]
@@ -23,14 +21,9 @@ public class EtiquetaController : ControllerBase
         {
             await _db.SPExecute("Inventario.Etiqueta_Get");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", json);
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al listar etiquetas: \n" + ex);
-            _response.Create("0", "Error al listar etiquetas");
         }
         finally
         {
@@ -48,14 +41,9 @@ public class EtiquetaController : ControllerBase
         {
             await _db.SPExecute("Inventario.Etiqueta_Insert");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", json);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al crear etiquetas: \n" + ex);
-            _response.Create("0", "Error al crear etiquetas");
         }
         finally
         {
@@ -73,16 +61,11 @@ public class EtiquetaController : ControllerBase
         {
             await _db.SPExecute("Inventario.Etiqueta_Update");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", json);
 
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al actualizar etiquetas: \n" + ex);
-            _response.Create("0", "Error al actualizar etiquetas");
         }
         finally
         {
@@ -100,15 +83,10 @@ public class EtiquetaController : ControllerBase
         {
             await _db.SPExecute("Inventario.Etiqueta_Delete");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
 
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar etiquetas: \n" + ex);
-            _response.Create("0", "Error al eliminar etiquetas");
         }
         finally
         {

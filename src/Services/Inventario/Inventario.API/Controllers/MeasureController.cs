@@ -1,94 +1,62 @@
 ﻿namespace Inventario.API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class MeasureController : ControllerBase
+public class MeasureController : BaseApiController
 {
-    private readonly ICustomLogger _log;
+
     private readonly IMeasureService _service;
 
-    public MeasureController(IMeasureService service, ICustomLogger log)
+    public MeasureController(IMeasureService service)
     {
         _service = service;
-        _log = log;
+
     }
 
     [HttpGet]
     public async Task<ActionResult<ApiResponse>> Get(string json)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             };
-            var response = await _service.GetAsync(parameters);
-            if (response == null) { return NoContent(); }
+        var response = await _service.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
 
             ;
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en get Measure" + ex.Message + '\n' + json);
-            return BadRequest("Error en get Medida " + ex.Message);
-        }
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(ApiRequest data)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+
+        var parameters = new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-            var response = await _service.AddAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en Post Measure" + ex.Message);
-            return BadRequest("Error en Post Measure" + ex.Message);
-        }
+        var response = await _service.AddAsync(parameters);
+        return Ok(response);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, ApiRequest data)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+
+        var parameters = new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() },
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-            var response = await _service.UpdateAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en Update Measure " + ex.Message);
-            return BadRequest("Error en Update Measure " + ex.Message);
-        }
+        var response = await _service.UpdateAsync(parameters);
+        return Ok(response);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-            var response = await _service.DeleteAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en Delete Measure " + ex.Message);
-            return BadRequest("Error en Delete Measure " + ex.Message);
-        }
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var response = await _service.DeleteAsync(parameters);
+        return Ok(response);
     }
 }

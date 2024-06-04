@@ -1,16 +1,14 @@
 ﻿namespace Inventario.API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class FamiliaController : ControllerBase
+public class FamiliaController : BaseApiController
 {
     private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
+    
 
-    public FamiliaController(IConfiguration configuration, ICustomLogger log)
+    public FamiliaController(IConfiguration configuration)
     {
         _configuration = configuration;
-        _log = log;
+        
     }
 
     [HttpGet("Get")]
@@ -22,14 +20,9 @@ public class FamiliaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Familia_Get");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al listar Familias: \n" + ex);
-            _response.Create("0", "Error al listar Familias");
         }
         finally
         {
@@ -46,16 +39,11 @@ public class FamiliaController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var userRoleId = User.GetUserRoleId();
             await _db.SPExecute("Almacen.Familia_Insert");
             _db.AddDynamicParam("userRoleId", userRoleId);
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al insertar familia: \n" + ex);
-            _response.Create("0", "Error al insertar familia");
         }
         finally
         {
@@ -72,17 +60,12 @@ public class FamiliaController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var userRoleId = User.GetUserRoleId();
             await _db.SPExecute("Almacen.Familia_Update");
             _db.AddDynamicParam("userRoleId", userRoleId);
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al actualizar familiar: \n" + ex);
-            _response.Create("0", "Error al actualizar familia");
         }
         finally
         {
@@ -101,14 +84,9 @@ public class FamiliaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Familia_Update_Cancel");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar familiar: \n" + ex);
-            _response.Create("0", "Error al eliminar familia");
         }
         finally
         {
@@ -127,13 +105,8 @@ public class FamiliaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Familia_For_Select");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al listar Familias para Select: \n" + ex);
-            _response.Create("0", "Error al listar para Select");
         }
         finally
         {

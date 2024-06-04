@@ -1,8 +1,6 @@
 ﻿namespace Inventario.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ArticuloFraccionadoController : ControllerBase
+public class ArticuloFraccionadoController : BaseApiController
 {
     private readonly IArticuloFraccionadoService _artSvc;
 

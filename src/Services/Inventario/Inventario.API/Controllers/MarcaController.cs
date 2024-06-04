@@ -2,17 +2,15 @@
 
 namespace Inventario.API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class MarcaController : ControllerBase
+public class MarcaController : BaseApiController
 {
     private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
+    
 
-    public MarcaController(IConfiguration configuration, ICustomLogger log)
+    public MarcaController(IConfiguration configuration)
     {
         _configuration = configuration;
-        _log = log;
+        
     }
 
     [HttpGet("Get")]
@@ -24,14 +22,9 @@ public class MarcaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Marca_Get");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al listar Marcas: \n" + ex);
-            _response.Create("0", "Error al listar Marcas");
         }
         finally
         {
@@ -50,14 +43,9 @@ public class MarcaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Marca_Insert");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("descripcion", data.descripcion);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al insertar marca: \n" + ex);
-            _response.Create("0", "Error al insertar marca");
         }
         finally
         {
@@ -76,16 +64,11 @@ public class MarcaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Marca_Update");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("descripcion", data.descripcion);
             _db.AddDynamicParam("estado", data.estado);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al actualizar marca: \n" + ex);
-            _response.Create("0", "Error al actualizar marca");
         }
         finally
         {
@@ -104,14 +87,9 @@ public class MarcaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Marca_Delete");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar marca: \n" + ex);
-            _response.Create("0", "Error al eliminar marca");
         }
         finally
         {
@@ -130,14 +108,9 @@ public class MarcaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Marca_For_Select");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al listar marcas para Select: \n" + ex);
-            _response.Create("0", "Error al listar marcas para Select");
         }
         finally
         {

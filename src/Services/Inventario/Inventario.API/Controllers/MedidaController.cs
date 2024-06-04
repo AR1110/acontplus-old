@@ -2,17 +2,15 @@
 
 namespace Inventario.API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class MedidaController : ControllerBase
+public class MedidaController : BaseApiController
 {
     private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
 
-    public MedidaController(IConfiguration configuration, ICustomLogger log)
+
+    public MedidaController(IConfiguration configuration)
     {
         _configuration = configuration;
-        _log = log;
+
     }
 
     [HttpGet("Get")]
@@ -24,14 +22,9 @@ public class MedidaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Medida_Get");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al listar medidas: \n" + ex);
-            _response.Create("0", "Error al listar medidas");
         }
         finally
         {
@@ -50,14 +43,9 @@ public class MedidaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Medida_Insert");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("descripcion", data.descripcion);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al insertar medida: \n" + ex);
-            _response.Create("0", "Error al insertar medida");
         }
         finally
         {
@@ -76,16 +64,11 @@ public class MedidaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Medida_Update");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("descripcion", data.descripcion);
             _db.AddDynamicParam("estado", data.estado);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al actualizar medida: \n" + ex);
-            _response.Create("0", "Error al actualizar medida");
         }
         finally
         {
@@ -104,14 +87,9 @@ public class MedidaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Medida_Delete");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar medida: \n" + ex);
-            _response.Create("0", "Error al eliminar medida");
         }
         finally
         {
@@ -130,13 +108,8 @@ public class MedidaController : ControllerBase
         {
             await _db.SPExecute("Almacen.Medida_For_Select");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al listar medidas para Select: \n" + ex);
-            _response.Create("0", "Error al listar medidas para Select");
         }
         finally
         {

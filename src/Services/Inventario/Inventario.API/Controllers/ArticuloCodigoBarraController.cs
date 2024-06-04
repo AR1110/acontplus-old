@@ -1,102 +1,68 @@
 ﻿namespace Inventario.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ArticuloCodigoBarraController : ControllerBase
+public class ArticuloCodigoBarraController : BaseApiController
 {
-    private readonly ICustomLogger _log;
+
     private readonly IArticuloCodigoBarraService _service;
 
-    public ArticuloCodigoBarraController(IArticuloCodigoBarraService service, ICustomLogger log)
+    public ArticuloCodigoBarraController(IArticuloCodigoBarraService service)
     {
         _service = service;
-        _log = log;
+
     }
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             };
-            var response = await _service.GetAsync(parameters);
-            if (response == null) { return NoContent(); }
+        var response = await _service.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
 
             ;
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en get " + ex.Message);
-            return BadRequest("Error en get " + ex.Message);
-        }
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-            var response = await _service.AddAsync(parameters);
-            if (response == null) { return NoContent(); }
+        var response = await _service.AddAsync(parameters);
+        if (response == null) { return NoContent(); }
 
             ;
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en Post " + ex.Message);
-            return BadRequest("Error en Post " + ex.Message);
-        }
+        return Ok(response);
     }
 
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() },
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-            var response = await _service.UpdateAsync(parameters);
-            if (response == null) { return NoContent(); }
+        var response = await _service.UpdateAsync(parameters);
+        if (response == null) { return NoContent(); }
 
             ;
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en Put " + ex.Message);
-            return BadRequest("Error en Actualizar " + ex.Message);
-        }
+        return Ok(response);
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-            var response = await _service.DeleteAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al anular caja: " + ex);
-            return BadRequest(ex.Message);
-        }
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var response = await _service.DeleteAsync(parameters);
+        return Ok(response);
     }
 }

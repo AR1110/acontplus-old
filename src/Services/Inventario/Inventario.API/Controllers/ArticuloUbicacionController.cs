@@ -1,18 +1,16 @@
 ﻿namespace Inventario.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ArticuloUbicacionController : ControllerBase
+public class ArticuloUbicacionController : BaseApiController
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
 
-    public ArticuloUbicacionController(IConfiguration configuration, ICustomLogger log)
+
+    public ArticuloUbicacionController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        _log = log;
+
     }
 
 
@@ -22,16 +20,11 @@ public class ArticuloUbicacionController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Inventario.ArticuloUbicacion_Insert", true);
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al crear articulo ubicacion: \n" + ex);
-            _response.Create("0", "Error al crear articulo ubicacion");
         }
         finally
         {
@@ -49,15 +42,10 @@ public class ArticuloUbicacionController : ControllerBase
         {
             await _db.SPExecute("Inventario.ArticuloUbicacion_Update", true);
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error in Update articulo ubicación: \n" + ex);
-            _response.Create("0", "Error al actualizar articulo ubicacion");
         }
         finally
         {
@@ -76,14 +64,9 @@ public class ArticuloUbicacionController : ControllerBase
         {
             await _db.SPExecute("Inventario.ArticuloUbicacion_Delete", true);
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar articulo ubicacion: \n" + ex);
-            _response.Create("0", "Error al eliminar articulo ubicacion");
         }
         finally
         {

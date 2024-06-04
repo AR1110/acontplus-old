@@ -1,8 +1,6 @@
 ﻿namespace Inventario.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class StockFisicoDetallesController : ControllerBase
+public class StockFisicoDetallesController : BaseApiController
 {
     private readonly InventarioContext _context;
 

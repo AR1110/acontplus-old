@@ -1,17 +1,15 @@
 ﻿namespace Inventario.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class BodegaController : ControllerBase
+public class BodegaController : BaseApiController
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
 
-    public BodegaController(IConfiguration configuration, ICustomLogger log)
+
+    public BodegaController(IConfiguration configuration)
     {
         _configuration = configuration;
-        _log = log;
+
         _db = new DbAccess(_configuration);
     }
 
@@ -23,14 +21,9 @@ public class BodegaController : ControllerBase
         {
             await _db.SPExecute("Inventario.Bodega_Get");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error on Get: \n" + ex);
-            _response.Create("0", "Error al obtener las bodegas");
         }
         finally
         {
@@ -48,14 +41,9 @@ public class BodegaController : ControllerBase
         {
             await _db.SPExecute("Inventario.Bodega_Insert");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error on Post: \n" + ex);
-            _response.Create("0", "Error al guardar la bodega");
         }
         finally
         {
@@ -73,15 +61,10 @@ public class BodegaController : ControllerBase
         {
             await _db.SPExecute("Inventario.Bodega_Update");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error on Put: \n" + ex);
-            _response.Create("0", "Error al actualizar la bodega");
         }
         finally
         {
@@ -99,14 +82,9 @@ public class BodegaController : ControllerBase
         {
             await _db.SPExecute("Inventario.Bodega_Delete");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error on Delete: \n" + ex);
-            _response.Create("0", "Error al elimianr la bodega");
         }
         finally
         {

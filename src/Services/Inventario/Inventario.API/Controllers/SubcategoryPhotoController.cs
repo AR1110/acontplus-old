@@ -2,7 +2,7 @@
 
 public class SubcategoryPhotoController : BaseApiController
 {
-    private readonly ICustomLogger _log;
+
     private readonly S3ObjectCustom _s3ObjectCustom;
     private readonly IS3StorageService _storageService;
     private readonly ISubcategoryPhotoService _subcategoryPhoto;
@@ -15,27 +15,20 @@ public class SubcategoryPhotoController : BaseApiController
         _subcategoryPhoto = subcategoryPhoto;
         _storageService = storageService;
         _s3ObjectCustom = s3ObjectCustom;
-        _log = log;
+
     }
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        try
-        {
-            var response = await _subcategoryPhoto.GetAsync(new Dictionary<string, object>
+
+        var response = await _subcategoryPhoto.GetAsync(new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             });
-            if (response == null) { return BadRequest($"Cant get data: {json}"); }
+        if (response == null) { return BadRequest($"Cant get data: {json}"); }
 
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity($"Error on Get: {json} \n {ex}");
-            return BadRequest(ex.Message);
-        }
+        return Ok(response);
     }
 
     [HttpPost("{subcategoryId}")]
@@ -68,8 +61,6 @@ public class SubcategoryPhotoController : BaseApiController
             {
                 _s3ObjectCustom.Dispose();
             }
-
-            _log.LogActivity($"Error on Post: {subcategoryId} \n {ex}");
             return BadRequest(ex.Message);
         }
     }
@@ -103,8 +94,6 @@ public class SubcategoryPhotoController : BaseApiController
             {
                 _s3ObjectCustom.Dispose();
             }
-
-            _log.LogActivity($"Error on Put: {json} \n {ex}");
             return BadRequest(ex.Message);
         }
     }
@@ -112,15 +101,7 @@ public class SubcategoryPhotoController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var response = await _subcategoryPhoto.DeleteAsync(id, User.GetUserId());
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity($"Error on Delete: {id} \n {ex}");
-            return BadRequest(ex.Message);
-        }
+        var response = await _subcategoryPhoto.DeleteAsync(id, User.GetUserId());
+        return Ok(response);
     }
 }

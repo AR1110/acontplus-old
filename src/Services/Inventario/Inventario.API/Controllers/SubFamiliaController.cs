@@ -2,50 +2,40 @@
 
 public class SubFamiliaController : BaseApiController
 {
-    private readonly ICustomLogger _log;
+
     private readonly S3ObjectCustom _s3ObjectCustom;
     private readonly ISubFamiliaService _service;
     private readonly IS3StorageService _storageService;
 
     public SubFamiliaController(S3ObjectCustom s3ObjectCustom, IS3StorageService storageService,
-        ISubFamiliaService service, ICustomLogger log)
+        ISubFamiliaService service)
     {
         _s3ObjectCustom = s3ObjectCustom;
         _storageService = storageService;
         _service = service;
-        _log = log;
+
     }
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
             {
                 { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             };
-            var response = await _service.GetAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en get " + ex.Message);
-            return BadRequest(ex.Message);
-        }
+        var response = await _service.GetAsync(parameters);
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
-        try
+        if (file != null)
         {
-            if (file != null)
-            {
-                await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/subfamilias/", file);
-            }
+            await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/subfamilias/", file);
+        }
 
-            var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() },
                 { "json", SqlStringParam.Sanitize(json) },
@@ -53,34 +43,27 @@ public class SubFamiliaController : BaseApiController
                 { "s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "" }
             };
 
-            var response = await _service.AddAsync(parameters);
+        var response = await _service.AddAsync(parameters);
 
-            if (response.code == "1" && file != null)
-            {
-                await _storageService.UploadAsync(_s3ObjectCustom);
-            }
+        if (response.code == "1" && file != null)
+        {
+            await _storageService.UploadAsync(_s3ObjectCustom);
+        }
 
-            if (file != null)
-            {
-                _s3ObjectCustom.Dispose();
-            }
+        if (file != null)
+        {
+            _s3ObjectCustom.Dispose();
+        }
 
             ;
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en post " + ex.Message);
-            return BadRequest(ex.Message);
-        }
+        return Ok(response);
     }
 
     [HttpPost("Post")]
     public async Task<IActionResult> PostApp(string json)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+
+        var parameters = new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() },
                 { "json", SqlStringParam.Sanitize(json) },
@@ -88,51 +71,29 @@ public class SubFamiliaController : BaseApiController
                 { "s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "" }
             };
 
-            var response = await _service.AddAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en post " + ex.Message);
-            return BadRequest(ex.Message);
-        }
+        var response = await _service.AddAsync(parameters);
+        return Ok(response);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
             };
 
-            var response = await _service.UpdateAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en put " + ex.Message);
-            return BadRequest(ex.Message);
-        }
+        var response = await _service.UpdateAsync(parameters);
+        return Ok(response);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
 
-            var response = await _service.DeleteAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en delete " + ex.Message);
-            return BadRequest(ex.Message);
-        }
+        var response = await _service.DeleteAsync(parameters);
+        return Ok(response);
     }
 
 
@@ -144,7 +105,7 @@ public class SubFamiliaController : BaseApiController
     //    try
     //    {
     //        await _db.SPExecute("Almacen.SubFamilia_For_Select");
-    //        _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+    //        _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
     //        _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
     //        _response = _db.GetDataTableAsync();
     //    }

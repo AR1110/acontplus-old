@@ -6,12 +6,12 @@
 public class ArticlePhotoController : ControllerBase
 {
     private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
+    
 
-    public ArticlePhotoController(IConfiguration configuration, ICustomLogger log)
+    public ArticlePhotoController(IConfiguration configuration)
     {
         _configuration = configuration;
-        _log = log;
+        
     }
 
     [HttpGet("{id}")]
@@ -25,11 +25,6 @@ public class ArticlePhotoController : ControllerBase
             await _db.SPExecute("Inventario.Articulo_Get_Id");
             _db.AddDynamicParam("id", id);
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error in articulo getId: \n" + ex.Message);
-            _response.Create("0", "Error al Obtener los datos del articulo " + ex.Message);
         }
         finally
         {

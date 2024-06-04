@@ -6,18 +6,18 @@
 public class ArticuloController : ControllerBase
 {
     private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
+    
     private readonly S3ObjectCustom _s3ObjectCustom;
     private readonly IS3StorageService _storageService;
 
     public ArticuloController(IConfiguration configuration,
         S3ObjectCustom s3ObjectCustom,
-        IS3StorageService storageService, ICustomLogger log)
+        IS3StorageService storageService)
     {
         _configuration = configuration;
         _s3ObjectCustom = s3ObjectCustom;
         _storageService = storageService;
-        _log = log;
+        
     }
 
     [HttpGet]
@@ -34,14 +34,9 @@ public class ArticuloController : ControllerBase
 
             await _db.SPExecute("Inventario.Articulo_Get");
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity($"Error al listar articulos: {json} \n" + ex);
-            _response.Create("0", "Error al listar articulos");
         }
         finally
         {
@@ -59,14 +54,9 @@ public class ArticuloController : ControllerBase
         try
         {
             await _db.SPExecute("Inventario.Articulo_Get_Id");
-            //_db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            //_db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al obtener datos del articulo: \n" + ex);
-            _response.Create("0", "Error al obtener datos del articulo");
         }
         finally
         {
@@ -101,11 +91,6 @@ public class ArticuloController : ControllerBase
                 var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
             }
         }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al insertar articulo: \n" + ex);
-            _response.Create("0", "Error al insertar articulo");
-        }
         finally
         {
             _db.Close();
@@ -133,11 +118,6 @@ public class ArticuloController : ControllerBase
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
             _response = _db.GetDefault();
         }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al actualizar articulo: \n" + ex);
-            _response.Create("0", "Error al actualizar articulo");
-        }
         finally
         {
             _db.Close();
@@ -155,14 +135,9 @@ public class ArticuloController : ControllerBase
         {
             await _db.SPExecute("Inventario.Articulo_Delete");
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar articulo: \n" + ex);
-            _response.Create("0", "Error al eliminar articulo");
         }
         finally
         {
@@ -186,14 +161,9 @@ public class ArticuloController : ControllerBase
 
             await _db.SPExecute("Inventario.Articulo_Get_Search");
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error on Get Search: \n" + ex);
-            _response.Create("0", "Error al obtener las bodegas");
         }
         finally
         {
@@ -212,14 +182,9 @@ public class ArticuloController : ControllerBase
         {
             await _db.SPExecute("Almacen.Articulo_Get_Id_By_Purchase");
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error on Get For purchase: \n" + ex);
-            _response.Create("0", "Error al obtener datos de articulo para compra");
         }
         finally
         {
@@ -237,15 +202,9 @@ public class ArticuloController : ControllerBase
         try
         {
             await _db.SPExecute("Almacen.Articulo_Get_Id_By_Sale");
-            _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error on Get For Sales: \n" + ex);
-            _response.Create("0", "Error al obtener datos de articulo para venta");
         }
         finally
         {
@@ -264,14 +223,9 @@ public class ArticuloController : ControllerBase
         {
             await _db.SPExecute("Sistema.Almacen_Get_Data_Form");
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al obtener datos del form-articulo: \n" + ex);
-            _response.Create("0", "Error al obtener datos del form-articulo");
         }
         finally
         {
