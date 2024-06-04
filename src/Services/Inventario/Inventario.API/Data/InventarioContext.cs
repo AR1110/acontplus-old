@@ -1,9 +1,4 @@
-﻿using Common.Core.Entities;
-using Common.Infrastructure.Data;
-using Inventario.API.Entities;
-using Microsoft.EntityFrameworkCore;
-
-namespace Inventario.API.Data;
+﻿namespace Inventario.API.Data;
 
 public class InventarioContext : BaseContext
 {

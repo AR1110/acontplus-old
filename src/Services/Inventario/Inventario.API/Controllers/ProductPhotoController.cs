@@ -1,13 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Inventario.API.Entities;
-using Inventario.API.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Services.Common.Extensions;
-using Services.Common.Logs;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class ProductPhotoController : BaseApiController
 {

@@ -1,11 +1,4 @@
-﻿using Autofac;
-using Common.Core.Interfaces;
-using Common.Infrastructure.Data;
-using Common.Infrastructure.Repository;
-using Inventario.API.Data;
-using Inventario.Infrastructure.Data;
-
-namespace Inventario.API.Extensions;
+﻿namespace Inventario.API.Extensions;
 
 public class AutoFacModule : Module
 {

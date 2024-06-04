@@ -1,7 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Inventario.API.Interfaces;
-
-namespace Inventario.API.Services;
+﻿namespace Inventario.API.Services;
 
 public class StockService : IStockService
 {

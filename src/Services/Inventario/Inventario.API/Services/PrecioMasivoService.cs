@@ -1,8 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Utils;
-using Inventario.API.Interfaces;
-
-namespace Inventario.API.Services;
+﻿namespace Inventario.API.Services;
 
 public class PrecioMasivoService : IPrecioMasivoService
 {

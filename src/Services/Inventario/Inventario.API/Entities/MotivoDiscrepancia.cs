@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
-
-namespace Inventario.API.Entities;
+﻿namespace Inventario.API.Entities;
 
 [Table("MotivoDiscrepancia", Schema = "Inventario")]
 public class MotivoDiscrepancia : BaseEntity

@@ -1,11 +1,6 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Common.Core.Utils;
+﻿using Autofac.Extensions.DependencyInjection;
 using Inventario.API.Extensions;
-using Services.Common.Extensions;
 using Services.Common.Middleware;
-
-
 
 var builder = WebApplication.CreateBuilder(args);
 

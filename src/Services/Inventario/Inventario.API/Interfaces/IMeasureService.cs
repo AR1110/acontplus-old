@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-
-namespace Inventario.API.Interfaces;
+﻿namespace Inventario.API.Interfaces;
 
 public interface IMeasureService
 {

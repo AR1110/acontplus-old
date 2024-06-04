@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
-
-namespace Inventario.API.Entities;
+﻿namespace Inventario.API.Entities;
 
 [Table("StockFisico", Schema = "Inventario")]
 public class StockFisico : BaseEntity

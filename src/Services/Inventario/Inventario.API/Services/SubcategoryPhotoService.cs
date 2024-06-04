@@ -1,11 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Inventario.API.Data;
-using Inventario.API.Entities;
-using Inventario.API.Interfaces;
-
-namespace Inventario.API.Services;
+﻿namespace Inventario.API.Services;
 
 public class SubcategoryPhotoService : ISubcategoryPhotoService
 {

@@ -1,13 +1,4 @@
-﻿using Common.Core.Models;
-using Inventario.API.Data;
-using Inventario.API.Entities;
-using Inventario.API.Interfaces;
-using Inventario.Infrastructure.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Services.Common.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

@@ -1,11 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Inventario.API.Data;
-using Inventario.API.Entities;
-using Inventario.API.Interfaces;
-using Microsoft.EntityFrameworkCore;
-
-namespace Inventario.API.Services;
+﻿namespace Inventario.API.Services;
 
 public class ProductPhotoService : IProductPhotoService
 {

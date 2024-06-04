@@ -1,10 +1,4 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

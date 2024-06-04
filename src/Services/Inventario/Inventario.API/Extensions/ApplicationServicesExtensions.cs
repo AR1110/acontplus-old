@@ -1,23 +1,10 @@
-﻿using Common.Application.Services;
-using Common.Core.Interfaces;
-using Common.Core.Models;
-using Inventario.API.Data;
-using Inventario.API.Interfaces;
-using Inventario.API.Services;
-using Inventario.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
-using Services.Common.Logs;
-
-namespace Inventario.API.Extensions;
+﻿namespace Inventario.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {

@@ -1,7 +1,4 @@
-﻿using Common.Core.Models;
-using Inventario.API.Entities;
-
-namespace Inventario.API.Interfaces;
+﻿namespace Inventario.API.Interfaces;
 
 public interface IProductPhotoService
 {
