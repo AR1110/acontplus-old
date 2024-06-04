@@ -5,7 +5,6 @@ global using Common.Core.Utils;
 global using Services.Common.Extensions;
 global using Microsoft.AspNetCore.Mvc;
 global using Common.Core.Interfaces;
-global using Common.Core.Models;
 global using Services.Common.Logs;
 global using Common.Application.Services;
 global using Common.Infrastructure.Data;

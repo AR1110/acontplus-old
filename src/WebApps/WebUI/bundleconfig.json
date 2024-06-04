@@ -724,5 +724,11 @@
     "inputFiles": [
       "wwwroot/js/modal/common/modalModuloImportacionCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/services/factElectService.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/services/factElectService.js"
+    ]
   }
 ]

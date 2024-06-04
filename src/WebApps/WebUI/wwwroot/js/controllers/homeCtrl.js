@@ -11,6 +11,7 @@
         let warningMessage = '';
         $scope.expired = false;
         $scope.alertIsOpened = false;
+        $scope.releases = []
 
         $scope.openAlert = () => {
             $scope.alertIsOpened = true
@@ -137,7 +138,7 @@
             }, 1000)
         };
         function getDashboard() {
-            return mS.getData('get', `Common/Dashboard/?json=${JSON.stringify({ tipo: 1 })}`, null, true);
+            return mS.getData('get', `Common/Dashboard/?json=${JSON.stringify({ tipo: 1 })}`);
         }
 
         function getDocs() {
@@ -149,9 +150,74 @@
             const documentsPromises = getDocs().catch(error => { console.log(error) });
             $q.all([dashboardPromises, documentsPromises]).then(response => {
                 if (response[0]) {
-                    let { statistics, licenses } = JSON.parse(response[0].payload)
+                    const { statistics, licenses, releases } = JSON.parse(response[0].payload)
                     $scope.cantidad = angular.fromJson(statistics)
                     $scope.licenses = angular.fromJson(licenses) || []
+                    $scope.releases = angular.fromJson(releases) || []
+                    if ($scope.releases.length > 0) {
+                        let release = `<table class="table table-bordered">
+                                        <thead>
+                                            <tr class="small">
+                                                <th>Version</th>
+                                                <th>Detalles</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>`;
+
+                        const groupedReleases = $scope.releases.reduce((acc, rel) => {
+                            const date = rel.releaseDate.split('T')[0]; // Assuming releaseDate is in ISO format
+                            if (!acc[date]) {
+                                acc[date] = [];
+                            }
+                            acc[date].push(rel);
+                            return acc;
+                        }, {});
+
+                        for (const [date, releases] of Object.entries(groupedReleases)) {
+                            release += `<tr class="small">
+                                            <td colspan="2">${date}</td>
+                                        </tr>`;
+                            for (const rel of releases) {
+                                release += `<tr class="small">
+                                                <td style="vertical-align: middle;">${rel.version}</td>
+                                                <td>${rel.description}</td>
+                                            </tr>`;
+                            }
+                        }
+
+                        release += `</tbody></table>`;
+
+
+                        swal.fire({
+                            icon: 'info',
+                            title: `Nuevas Actualizaciones Disponibles</b>`,
+                            html: release,
+                            width: '800px',
+                            showConfirmButton: true,
+                            confirmButtonText: 'Confirmar Lectura'
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                const dataToSave = {
+                                    releases: JSON.stringify($scope.releases.map(release => ({ id: release.id })))
+                                };
+                                mS.getData('post', 'Common/UserReleaseRead', { data: dataToSave }).then(response => {
+                                    if (response.code == '1') {
+                                        swal.fire({
+                                            icon: 'info',
+                                            text: response.message, 
+                                            allowOutsideClick: false
+                                        })
+
+                                        const hasLogoutRequired = $scope.releases.some(release => release.logoutRequired === true);
+
+                                        if (hasLogoutRequired) {
+                                            $scope.logout();
+                                        };
+                                    }
+                                })
+                            }
+                        })
+                    }
 
                     if ($scope.licenses.length > 0) {
                         let expired = $scope.licenses[0].expired || false
