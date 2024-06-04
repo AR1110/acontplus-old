@@ -10,13 +10,13 @@ public class DocSustImpuestoController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
+    
 
-    public DocSustImpuestoController(IConfiguration configuration, ICustomLogger log)
+    public DocSustImpuestoController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        _log = log;
+        
     }
 
     // GET: api/<DocImpuestoController>
@@ -40,17 +40,12 @@ public class DocSustImpuestoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetAts_Doc_Sust_Imp_Insert");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("idDocSust", idDocSust);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al guardar el impuesto: " + ex);
-            _response.Create("0", "Error al guardar el impuesto");
         }
         finally
         {
@@ -67,17 +62,12 @@ public class DocSustImpuestoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetAts_Doc_Sust_Imp_Update");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al actualizar el impuesto: " + ex);
-            _response.Create("0", "Error al actualizar el impuesto");
         }
         finally
         {
@@ -94,16 +84,11 @@ public class DocSustImpuestoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetAts_Doc_Sust_Imp_Delete");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar el impuesto: " + ex);
-            _response.Create("0", "Error al eliminar el impuesto");
         }
         finally
         {

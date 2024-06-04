@@ -2,17 +2,15 @@
 
 namespace FactElect.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class VehiculoController : ControllerBase
+public class VehiculoController : BaseApiController
 {
     private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
 
-    public VehiculoController(IConfiguration configuration, ICustomLogger log)
+
+    public VehiculoController(IConfiguration configuration)
     {
         _configuration = configuration;
-        _log = log;
+
     }
 
     /*
@@ -29,16 +27,11 @@ public class VehiculoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Logistica.Vehiculo_Get");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al listar vehiculos: " + ex);
-            _response.Create("0", "Error al listar vehiculos");
         }
         finally
         {
@@ -55,7 +48,7 @@ public class VehiculoController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Logistica.Vehiculo_Insert");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("placa", data.placa);
@@ -63,11 +56,6 @@ public class VehiculoController : ControllerBase
             _db.AddDynamicParam("modelo", data.modelo);
             _db.AddDynamicParam("observacion", data.observacion);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error while creating vehicle: \n " + ex);
-            _response.Create("0", "Error al crear el vehiculo");
         }
         finally
         {
@@ -84,7 +72,7 @@ public class VehiculoController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Logistica.Vehiculo_Update");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);
@@ -93,11 +81,6 @@ public class VehiculoController : ControllerBase
             _db.AddDynamicParam("modelo", data.modelo);
             _db.AddDynamicParam("observacion", data.observacion);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error while updating vehicle: \n " + ex);
-            _response.Create("0", "Error al actualizar el vehiculo");
         }
         finally
         {
@@ -114,16 +97,11 @@ public class VehiculoController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Logistica.Vehiculo_Delete");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error while deleting vehicle: \n " + ex);
-            _response.Create("0", "Error al eliminar el vehiculo");
         }
         finally
         {
@@ -141,16 +119,11 @@ public class VehiculoController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Logistica.Vehiculo_Search");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error while search vehicle: \n " + ex);
-            _response.Create("0", "Error al buscar el vehiculo");
         }
         finally
         {

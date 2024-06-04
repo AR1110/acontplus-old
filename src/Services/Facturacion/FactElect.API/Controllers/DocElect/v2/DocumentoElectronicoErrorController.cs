@@ -6,34 +6,26 @@
 public class DocumentoElectronicoErrorController : ControllerBase
 {
     private readonly IDocumentoElectronicoErrorService _factElect;
-    private readonly ICustomLogger _log;
 
-    public DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService factElect, ICustomLogger log)
+
+    public DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService factElect)
     {
         _factElect = factElect;
-        _log = log;
+
     }
 
 
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "id", id } };
-            var orders = await _factElect.GetAsync(parameters);
+        var parameters = new Dictionary<string, object> { { "id", id } };
+        var orders = await _factElect.GetAsync(parameters);
 
-            if ((orders == null) | string.IsNullOrEmpty(orders))
-            {
-                return NotFound();
-            }
-
-            return Ok(orders);
-        }
-        catch (Exception ex)
+        if ((orders == null) | string.IsNullOrEmpty(orders))
         {
-            _log.LogActivity("Error on Get: \n" + ex);
-            return BadRequest(ex.Message);
+            return NotFound();
         }
+
+        return Ok(orders);
     }
 }

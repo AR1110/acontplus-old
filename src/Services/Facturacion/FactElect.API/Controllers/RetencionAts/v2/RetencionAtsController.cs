@@ -7,13 +7,13 @@ public class RetencionAtsController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
+    
 
-    public RetencionAtsController(IConfiguration configuration, ICustomLogger log)
+    public RetencionAtsController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        _log = log;
+        
     }
 
     [HttpPut("Cancel/{id}")]
@@ -22,16 +22,11 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetencionAts_Cancel");
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al anular la retención: " + ex);
-            _response.Create("0", "Error al anular la retención");
         }
         finally
         {

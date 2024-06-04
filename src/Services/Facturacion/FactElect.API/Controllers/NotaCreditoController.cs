@@ -1,18 +1,16 @@
 ﻿namespace FactElect.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class NotaCreditoController : ControllerBase
+public class NotaCreditoController : BaseApiController
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
 
-    public NotaCreditoController(IConfiguration configuration, ICustomLogger log)
+
+    public NotaCreditoController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        _log = log;
+
     }
 
     [HttpGet]
@@ -21,16 +19,11 @@ public class NotaCreditoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Ventas.NotaCredito_Get", true);
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al obtener datos de nota credito: \n" + ex);
-            _response.Create("0", "Error al obtener datos de nota credito");
         }
         finally
         {
@@ -46,16 +39,11 @@ public class NotaCreditoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Ventas.NotaCredito_Insert", true);
             _db.AddDynamicParam("userRoleId", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al crear el Doc. Nota Credito: \n" + ex);
-            _response.Create("0", "Error al crear el Doc. Nota Credito");
         }
         finally
         {
@@ -73,16 +61,11 @@ public class NotaCreditoController : ControllerBase
         {
             await _db.SPExecute("Ventas.NotaCredito_Update", true);
             _db.AddDynamicParam("userRoleId",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
 
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error in Update nota credito: \n" + ex);
-            _response.Create("0", "Error al actualizar nota credito");
         }
         finally
         {
@@ -101,14 +84,9 @@ public class NotaCreditoController : ControllerBase
         {
             await _db.SPExecute("Ventas.NotaCredito_Delete", true);
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar nota credito: \n" + ex);
-            _response.Create("0", "Error al eliminar nota credito");
         }
         finally
         {

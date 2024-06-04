@@ -7,13 +7,13 @@ public class FacturaController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
 
-    public FacturaController(IConfiguration configuration, ICustomLogger log)
+
+    public FacturaController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        _log = log;
+
     }
 
     [HttpGet]
@@ -22,16 +22,11 @@ public class FacturaController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Ventas.Factura_Get", true);
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al obtener datos de factura: \n" + ex);
-            _response.Create("0", "Error al obtener datos de factura");
         }
         finally
         {
@@ -47,16 +42,11 @@ public class FacturaController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Ventas.Factura_Insert", true);
             _db.AddDynamicParam("userRoleId", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al crear la factura: \n" + ex);
-            _response.Create("0", "Error al crear la factura");
         }
         finally
         {
@@ -74,15 +64,10 @@ public class FacturaController : ControllerBase
         {
             await _db.SPExecute("Ventas.Factura_Update", true);
             _db.AddDynamicParam("userRoleId",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error in Update Invoice: \n" + ex);
-            _response.Create("0", "Error al actualizar la factura");
         }
         finally
         {
@@ -100,14 +85,9 @@ public class FacturaController : ControllerBase
         {
             await _db.SPExecute("Ventas.Factura_Get_Id", true);
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error in GetId: \n" + ex);
-            _response.Create("0", "Error al Obtener los datos");
         }
         finally
         {
@@ -126,14 +106,9 @@ public class FacturaController : ControllerBase
         {
             await _db.SPExecute("Ventas.Factura_Delete", true);
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar la factura: \n" + ex);
-            _response.Create("0", "Error al eliminar la fcatura");
         }
         finally
         {

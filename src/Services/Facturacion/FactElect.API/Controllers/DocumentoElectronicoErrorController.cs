@@ -1,37 +1,27 @@
 ﻿namespace FactElect.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class DocumentoElectronicoErrorController : ControllerBase
+public class DocumentoElectronicoErrorController : BaseApiController
 {
     private readonly IDocumentoElectronicoErrorService _docElect;
-    private readonly ICustomLogger _log;
 
-    public DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService docElect, ICustomLogger log)
+
+    public DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService docElect)
     {
         _docElect = docElect;
-        _log = log;
+
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "id", id } };
-            var orders = await _docElect.GetAsync(parameters);
+        var parameters = new Dictionary<string, object> { { "id", id } };
+        var orders = await _docElect.GetAsync(parameters);
 
-            if ((orders == null) | string.IsNullOrEmpty(orders))
-            {
-                return NotFound();
-            }
-
-            return Ok(orders);
-        }
-        catch (Exception ex)
+        if ((orders == null) | string.IsNullOrEmpty(orders))
         {
-            _log.LogActivity("Error on Get: \n" + ex);
-            return BadRequest(ex.Message);
+            return NotFound();
         }
+
+        return Ok(orders);
     }
 }

@@ -2,17 +2,15 @@
 
 namespace FactElect.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class TransportistaController : ControllerBase
+public class TransportistaController : BaseApiController
 {
     private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
 
-    public TransportistaController(IConfiguration configuration, ICustomLogger log)
+
+    public TransportistaController(IConfiguration configuration)
     {
         _configuration = configuration;
-        _log = log;
+
     }
 
     /*
@@ -29,16 +27,11 @@ public class TransportistaController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Logistica.Transportista_Get");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al listar transportistas: " + ex);
-            _response.Create("0", "Error al listar transportistas");
         }
         finally
         {
@@ -55,18 +48,13 @@ public class TransportistaController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Logistica.Transportista_Insert");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("idTipoIdentificacion", data.idTipoIdentificacion);
             _db.AddDynamicParam("nroIdentificacion", data.nroIdentificacion);
             _db.AddDynamicParam("nombre", data.nombre);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error while creating transport: \n " + ex);
-            _response.Create("0", "Error al crear el transportista");
         }
         finally
         {
@@ -83,18 +71,13 @@ public class TransportistaController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Logistica.Transportista_Update");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("nroIdentificacion", data.nroIdentificacion);
             _db.AddDynamicParam("nombre", data.nombre);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error while updating transport: \n " + ex);
-            _response.Create("0", "Error al actualizar el transportista");
         }
         finally
         {
@@ -111,16 +94,11 @@ public class TransportistaController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Logistica.Transportista_Delete");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error while deleting transport: \n " + ex);
-            _response.Create("0", "Error al eliminar el transportisa");
         }
         finally
         {

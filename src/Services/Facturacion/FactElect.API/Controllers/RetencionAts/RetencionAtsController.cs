@@ -8,13 +8,13 @@ public class RetencionAtsController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
+    
 
-    public RetencionAtsController(IConfiguration configuration, ICustomLogger log)
+    public RetencionAtsController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        _log = log;
+        
     }
 
     [HttpGet("{json}")]
@@ -23,16 +23,11 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetencionAts_Get");
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al obtener la solicitud: " + ex);
-            _response.Create("0", "Error al obtener la solicitud");
         }
         finally
         {
@@ -48,7 +43,7 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetencionAts_Insert");
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("infoCompRet", SqlStringParam.Sanitize(data.infoCompRet));
@@ -68,11 +63,6 @@ public class RetencionAtsController : ControllerBase
 
             _response = _db.GetDefault();
         }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al guardar la retención: " + ex);
-            _response.Create("0", "Error al guardar la retención");
-        }
         finally
         {
             _db.Close();
@@ -87,17 +77,12 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetencionAts_Update");
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("infoCompRet", SqlStringParam.Sanitize(data.infoCompRet));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al actualizar la retención: " + ex);
-            _response.Create("0", "Error al actualizar la retención");
         }
         finally
         {
@@ -113,17 +98,12 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetencionAts_Cancel");
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _response = _db.GetDefault();
             ;
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al anular la retención: " + ex);
-            _response.Create("0", "Error al anular la retención");
         }
         finally
         {
@@ -139,16 +119,11 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetencionAts_Delete");
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar la retención: " + ex);
-            _response.Create("0", "Error al eliminar la retención");
         }
         finally
         {

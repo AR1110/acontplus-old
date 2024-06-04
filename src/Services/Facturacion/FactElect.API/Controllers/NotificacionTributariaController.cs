@@ -1,16 +1,14 @@
 ﻿namespace FactElect.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class NotificacionTributariaController : ControllerBase
+public class NotificacionTributariaController : BaseApiController
 {
     private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
+    
 
-    public NotificacionTributariaController(IConfiguration configuration, ICustomLogger log)
+    public NotificacionTributariaController(IConfiguration configuration)
     {
         _configuration = configuration;
-        _log = log;
+        
     }
 
     [HttpGet("{id}")]
@@ -23,12 +21,6 @@ public class NotificacionTributariaController : ControllerBase
             await _db.SPExecute("FactElect.Notificacion_Tributaria_Get");
             _db.AddDynamicParam("id", id);
             _response = _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _response.Create("0", "Error al obtener las notificaciones");
-
-            _log.LogActivity("Error on get NotificacionTrib: \n" + ex);
         }
         finally
         {
@@ -47,15 +39,9 @@ public class NotificacionTributariaController : ControllerBase
         {
             await _db.SPExecute("FactElect.Notificacion_Tributaria_Insert");
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _response.Create("0", "Error al guardar las notificacion");
-
-            _log.LogActivity("Error on post NotificacionTrib: \n" + ex);
         }
         finally
         {

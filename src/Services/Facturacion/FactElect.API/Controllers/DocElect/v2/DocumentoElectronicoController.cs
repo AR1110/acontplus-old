@@ -9,13 +9,13 @@ public class DocumentoElectronicoController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
+    
 
-    public DocumentoElectronicoController(IConfiguration configuration, ICustomLogger log)
+    public DocumentoElectronicoController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        _log = log;
+        
     }
 
     [HttpGet]
@@ -24,16 +24,11 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.Doc_Elect_Get", true);
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al obtener la solicitud: " + ex);
-            _response.Create("0", "Error al obtener la solicitud");
         }
         finally
         {
@@ -49,16 +44,11 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.Doc_Elect_GetByStatus", true);
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al obtener la solicitud: " + ex);
-            _response.Create("0", "Error al obtener la solicitud");
         }
         finally
         {
@@ -74,16 +64,11 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
 
             await _db.SPExecute("FactElect.Doc_Elect_Get_Data_Form");
             _db.AddDynamicParam("idUsuarioRol ", idUsuarioRol);
             _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error while getting data form: " + ex);
-            _response.Create("0", "Error while getting data form");
         }
         finally { _db.Close(); }
 
@@ -96,7 +81,7 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new FileModel();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
 
             await _db.SPExecute("FactElect.Doc_Elect_Get_Xml");
             _db.AddDynamicParam("idUsuarioRol ", idUsuarioRol);
@@ -115,10 +100,9 @@ public class DocumentoElectronicoController : ControllerBase
 
             return BadRequest("No se encontro xml");
         }
-        catch (Exception ex)
+        finally
         {
-            _log.LogActivity("Error while getting data form: " + ex);
-            return BadRequest("Error al obtener el xml");
+            _db.Close();
         }
     }
 
@@ -128,16 +112,11 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.Doc_Elect_Update");
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error while updating doc: \n " + ex);
-            _response.Create("0", "Error al actualizar el documento");
         }
         finally
         {

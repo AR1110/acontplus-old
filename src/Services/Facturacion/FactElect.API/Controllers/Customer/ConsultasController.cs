@@ -6,20 +6,19 @@ public class ConsultasController : BaseApiController
     private readonly CedulaService _cedulasSri;
     private readonly IConfiguration _configuration;
     private readonly FactElectContext _customerContext;
-    private readonly ICustomLogger _log;
+    
 
     public ConsultasController(RucService cConsultaSri,
         CedulaService cedulasSri,
         IConfiguration configuration,
-        FactElectContext customerContext,
-        ICustomLogger log
+        FactElectContext customerContext
     )
     {
         _cConsultaSri = cConsultaSri;
         _cedulasSri = cedulasSri;
         _configuration = configuration;
         _customerContext = customerContext;
-        _log = log;
+        
     }
 
     [AllowAnonymous]
@@ -95,7 +94,6 @@ public class ConsultasController : BaseApiController
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error GetRucSRI: " + ex);
             _response.Error = ex.Message;
             _response.NetworkError = true;
         }
@@ -169,7 +167,6 @@ public class ConsultasController : BaseApiController
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error GetCedulaSri: " + ex);
             _response.Error = ex.Message;
             _response.NetworkError = true;
         }

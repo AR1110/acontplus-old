@@ -6,12 +6,12 @@
 public class NotificacionTributariaController : ControllerBase
 {
     private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
+    
 
-    public NotificacionTributariaController(IConfiguration configuration, ICustomLogger log)
+    public NotificacionTributariaController(IConfiguration configuration)
     {
         _configuration = configuration;
-        _log = log;
+        
     }
 
     [HttpPost]
@@ -23,15 +23,9 @@ public class NotificacionTributariaController : ControllerBase
         {
             await _db.SPExecute("FactElect.Notificacion_Tributaria_Insert");
             _db.AddDynamicParam("idRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _response.Create("0", "Error al guardar las notificacion");
-
-            _log.LogActivity("Error on post NotificacionTrib: \n" + ex);
         }
         finally
         {

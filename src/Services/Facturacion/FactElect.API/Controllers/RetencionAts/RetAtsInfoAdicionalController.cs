@@ -10,13 +10,13 @@ public class RetAtsInfoAdicionalController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
+    
 
-    public RetAtsInfoAdicionalController(IConfiguration configuration, ICustomLogger log)
+    public RetAtsInfoAdicionalController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        _log = log;
+        
     }
 
     // GET: api/<RetAtsInfoAdicionalController>
@@ -40,7 +40,7 @@ public class RetAtsInfoAdicionalController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetAts_InfoAdicional_Insert");
 
             var parameters = new Dictionary<string, object>
@@ -48,11 +48,6 @@ public class RetAtsInfoAdicionalController : ControllerBase
                 { "idUsuarioRol", idUsuarioRol }, { "json", SqlStringParam.Sanitize(json) }
             };
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al guardar la InfoAdicional: " + ex);
-            _response.Create("0", "Error al guardar la InfoAdicional");
         }
         finally
         {
@@ -69,17 +64,12 @@ public class RetAtsInfoAdicionalController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetAts_InfoAdicional_Update");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al actualizar la InfoAdicional: " + ex);
-            _response.Create("0", "Error al actualizar la InfoAdicional");
         }
         finally
         {
@@ -96,16 +86,11 @@ public class RetAtsInfoAdicionalController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetAts_InfoAdicional_Delete");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar la InfoAdicional: " + ex);
-            _response.Create("0", "Error al eliminar la InfoAdicional");
         }
         finally
         {

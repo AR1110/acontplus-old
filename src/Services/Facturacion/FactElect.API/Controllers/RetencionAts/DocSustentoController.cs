@@ -10,13 +10,13 @@ public class DocSustentoController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
+    
 
-    public DocSustentoController(IConfiguration configuration, ICustomLogger log)
+    public DocSustentoController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        _log = log;
+        
     }
 
     // GET: api/<DocSustentoController>
@@ -40,17 +40,12 @@ public class DocSustentoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetAts_Doc_Sust_Insert");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("idRetencionAts", idRetencionAts);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al guardar el documento de sustento: " + ex);
-            _response.Create("0", "Error al guardar el documento de sustento");
         }
         finally
         {
@@ -67,17 +62,12 @@ public class DocSustentoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetAts_Doc_Sust_Update");
             _db.AddDynamicParam("idUsuarioRol ", idUsuarioRol);
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al actualizar el documento de sustento: " + ex);
-            _response.Create("0", "Error al actualizar el documento de sustento");
         }
         finally
         {
@@ -94,16 +84,11 @@ public class DocSustentoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("FactElect.RetAts_Doc_Sust_Delete");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar el documento de sustento: " + ex);
-            _response.Create("0", "Error al eliminar el documento de sustento");
         }
         finally
         {

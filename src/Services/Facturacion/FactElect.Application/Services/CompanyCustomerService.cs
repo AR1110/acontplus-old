@@ -27,7 +27,7 @@ public class CompanyCustomerService : ICompanyCustomerService
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync("Ventas.Cliente_Get", parameters, true);
-        if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+        if (DataValidation.DataSetIsNull(ds, true))
         {
             return new ApiResponse { code = "0", message = "No se encontraron clientes" };
         }
@@ -38,7 +38,7 @@ public class CompanyCustomerService : ICompanyCustomerService
     public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
     {
         var dt = await _repository.GetDataTableAsync("Ventas.Cliente_Get_Search", parameters);
-        if (dt.Rows.Count == 0 || dt == null)
+        if (DataValidation.DataTableIsNull(dt))
         {
             return new ApiResponse { code = "0", message = "No se encontraron clientes con estos datos" };
         }
@@ -49,7 +49,7 @@ public class CompanyCustomerService : ICompanyCustomerService
     public async Task<ApiResponse> GetIdAsync(Dictionary<string, object> parameters)
     {
         var dt = await _repository.GetDataTableAsync("Ventas.Cliente_Get_Id", parameters);
-        if (dt.Rows.Count == 0 || dt == null)
+        if (DataValidation.DataTableIsNull(dt))
         {
             return new ApiResponse { code = "0", message = "No se encontró datos del cliente" };
         }

@@ -5,13 +5,13 @@
 public class AtsController : ControllerBase
 {
     private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
+
     private readonly AtsXml _atsXml = new();
 
-    public AtsController(IConfiguration configuration, ICustomLogger log)
+    public AtsController(IConfiguration configuration)
     {
         _configuration = configuration;
-        _log = log;
+
     }
 
     [HttpGet("Get")]
@@ -47,51 +47,26 @@ public class AtsController : ControllerBase
     [HttpGet("Download")]
     public async Task<IActionResult> Download(string json)
     {
-        var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-        var _db = new DbAccess(_configuration);
+        var idRol = User.GetUserRoleId();
+        using var _db = new DbAccess(_configuration);
         var _response = new ApiResponse();
-        try
+        await _db.SPExecute("ASPAtsGetData", true);
+        _db.AddDynamicParam("idRol", idRol);
+        _db.AddDynamicParam("json", json);
+        var ds = _db.GetDataSet();
+        if (!ds.Tables[0].Columns.Contains("code"))
         {
-            await _db.SPExecute("ASPAtsGetData", true);
-            _db.AddDynamicParam("idRol", idRol);
-            _db.AddDynamicParam("json", json);
-            var ds = _db.GetDataSet();
-            if (!ds.Tables[0].Columns.Contains("code"))
+            byte[] xmlAts = null;
+            if (_atsXml.Create(ref ds, ref xmlAts))
             {
-                byte[] xmlAts = null;
-                if (_atsXml.Create(ref ds, ref xmlAts))
-                {
-                    var fileName = "ATS_" + ds.Tables[0].Rows[0]["IdInformante"]
-                                          + "_" + ds.Tables[0].Rows[0]["numEstabRuc"]
-                                          + "_" + ds.Tables[0].Rows[0]["anio"] + "_"
-                                          + ds.Tables[0].Rows[0]["mes"];
-                    return File(xmlAts, "text/xml", fileName + ".xml");
-                }
-
-                _response.Create("0", "No se pudo generar el ats");
+                var fileName = "ATS_" + ds.Tables[0].Rows[0]["IdInformante"]
+                                      + "_" + ds.Tables[0].Rows[0]["numEstabRuc"]
+                                      + "_" + ds.Tables[0].Rows[0]["anio"] + "_"
+                                      + ds.Tables[0].Rows[0]["mes"];
+                return File(xmlAts, "text/xml", fileName + ".xml");
             }
-            else
-            {
-                _response.Create("0", ds.Tables[0].Rows[0].Field<string>("message"));
-            }
+            return BadRequest("No se pudo generar el ats");
         }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error while download ats: \n" + ex);
-            _response.Create("0", ex.Message);
-        }
-
-        var stream = new MemoryStream();
-        using StreamWriter file = new(stream, Encoding.UTF8);
-        await file.WriteLineAsync(_response.message);
-        file.Flush();
-        var txtError = stream.ToArray();
-        file.Close();
-        if (stream != null)
-        {
-            stream.Dispose();
-        }
-
-        return File(txtError, "text/plain", "Error.txt");
+        return BadRequest(ds.Tables[0].Rows[0].Field<string>("message"));
     }
 }
