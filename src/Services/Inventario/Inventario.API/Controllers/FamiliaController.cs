@@ -4,145 +4,148 @@ using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace Inventario.API.Controllers
+namespace Inventario.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class FamiliaController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class FamiliaController : ControllerBase
+    private readonly IConfiguration _configuration;
+    private readonly ICustomLogger _log;
+
+    public FamiliaController(IConfiguration configuration, ICustomLogger log)
     {
-        private readonly IConfiguration _configuration;
-        private readonly ICustomLogger _log;
-        public FamiliaController(IConfiguration configuration, ICustomLogger log)
+        _configuration = configuration;
+        _log = log;
+    }
+
+    [HttpGet("Get")]
+    public async Task<IActionResult> Get(string json)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
         {
-            _configuration = configuration;
-            _log = log;
+            await _db.SPExecute("Almacen.Familia_Get");
+            _db.AddDynamicParam("idUsuarioRol",
+                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDataTableAsync();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al listar Familias: \n" + ex);
+            _response.Create("0", "Error al listar Familias");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet("Get")]
-        public async Task<IActionResult> Get(string json)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Almacen.Familia_Get");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
-            }
-            catch (Exception ex)
-            {
+        return Ok(_response);
+    }
 
-                _log.LogActivity("Error al listar Familias: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar Familias");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPost("Insert")]
+    public async Task<IActionResult> Insert(ApiRequest request)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
+        {
+            var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            await _db.SPExecute("Almacen.Familia_Insert");
+            _db.AddDynamicParam("userRoleId", userRoleId);
+            _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al insertar familia: \n" + ex);
+            _response.Create("0", "Error al insertar familia");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPost("Insert")]
-        public async Task<IActionResult> Insert(ApiRequest request)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Almacen.Familia_Insert");
-                _db.AddDynamicParam("userRoleId", userRoleId);
-                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
+        return Ok(_response);
+    }
 
-                _log.LogActivity("Error al insertar familia: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar familia");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPut("Update/{id}")]
+    public async Task<IActionResult> Update(int id, ApiRequest request)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
+        {
+            var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            await _db.SPExecute("Almacen.Familia_Update");
+            _db.AddDynamicParam("userRoleId", userRoleId);
+            _db.AddDynamicParam("id", id);
+            _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al actualizar familiar: \n" + ex);
+            _response.Create("0", "Error al actualizar familia");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, ApiRequest request)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Almacen.Familia_Update");
-                _db.AddDynamicParam("userRoleId", userRoleId);
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
+        return Ok(_response);
+    }
 
-                _log.LogActivity("Error al actualizar familiar: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar familia");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpDelete("Delete/{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
+        {
+            await _db.SPExecute("Almacen.Familia_Update_Cancel");
+            _db.AddDynamicParam("idUsuarioRol",
+                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            _db.AddDynamicParam("id", id);
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al eliminar familiar: \n" + ex);
+            _response.Create("0", "Error al eliminar familia");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Almacen.Familia_Update_Cancel");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
+        return Ok(_response);
+    }
 
-                _log.LogActivity("Error al eliminar familiar: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar familia");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpGet("ListForSelect")]
+    public async Task<IActionResult> ListForSelect(string json)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
+        {
+            await _db.SPExecute("Almacen.Familia_For_Select");
+            _db.AddDynamicParam("idUsuarioRol",
+                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            _response = _db.GetDataTableAsync();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al listar Familias para Select: \n" + ex);
+            _response.Create("0", "Error al listar para Select");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet("ListForSelect")]
-        public async Task<IActionResult> ListForSelect(string json)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Almacen.Familia_For_Select");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _response = _db.GetDataTableAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al listar Familias para Select: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar para Select");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+        return Ok(_response);
     }
 }

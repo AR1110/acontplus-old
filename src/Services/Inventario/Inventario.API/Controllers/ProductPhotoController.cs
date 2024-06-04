@@ -1,133 +1,145 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
-using Inventario.Core.Entities;
-using Inventario.Core.Interfaces;
+using Inventario.API.Entities;
+using Inventario.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Extensions;
 using Services.Common.Logs;
 
-namespace Inventario.API.Controllers
+namespace Inventario.API.Controllers;
+
+public class ProductPhotoController : BaseApiController
 {
-    public class ProductPhotoController : BaseApiController
+    private readonly ICustomLogger _log;
+    private readonly IProductPhotoService _productPhoto;
+    private readonly S3ObjectCustom _s3ObjectCustom;
+    private readonly IS3StorageService _storageService;
+
+    public ProductPhotoController(IProductPhotoService productPhoto,
+        IS3StorageService storageService,
+        S3ObjectCustom s3ObjectCustom,
+        ICustomLogger log)
     {
-        private readonly IProductPhotoService _productPhoto;
-        private readonly IS3StorageService _storageService;
-        private readonly S3ObjectCustom _s3ObjectCustom;
-        private readonly ICustomLogger _log;
-        public ProductPhotoController(IProductPhotoService productPhoto,
-            IS3StorageService storageService,
-            S3ObjectCustom s3ObjectCustom,
-            ICustomLogger log)
+        _productPhoto = productPhoto;
+        _storageService = storageService;
+        _s3ObjectCustom = s3ObjectCustom;
+        _log = log;
+    }
+
+    [HttpGet("{productId}")]
+    public async Task<IActionResult> Get(int productId)
+    {
+        try
         {
-            _productPhoto = productPhoto;
-            _storageService = storageService;
-            _s3ObjectCustom = s3ObjectCustom;
-            _log = log;
+            var response = await _productPhoto.GetAsync(productId);
+            if (response == null) { return BadRequest($"Cant get data: {productId}"); }
+
+            return Ok(response);
         }
-        [HttpGet("{productId}")]
-        public async Task<IActionResult> Get(int productId)
+        catch (Exception ex)
         {
-            try
-            {
-                var response = await _productPhoto.GetAsync(productId);
-                if (response == null) { return BadRequest($"Cant get data: {productId}"); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on Get: {productId} \n {ex}");
-                return BadRequest(ex.Message);
-            }
+            _log.LogActivity($"Error on Get: {productId} \n {ex}");
+            return BadRequest(ex.Message);
         }
-        [HttpPost("{productId}")]
-        public async Task<IActionResult> Post(int productId, IFormFile file)
+    }
+
+    [HttpPost("{productId}")]
+    public async Task<IActionResult> Post(int productId, IFormFile file)
+    {
+        try
         {
-            try
+            var data = new ProductPhoto();
+            data.UserId = User.GetUserId();
+            if (file != null)
             {
-                var data = new ProductPhoto();
-                data.UserId = User.GetUserId();
-                if (file != null)
-                {
-                    await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
-                }
-                data.ProductId = productId;
-                data.S3ObjectKey = _s3ObjectCustom.S3ObjectKey;
-                data.S3ObjectUrl = _s3ObjectCustom.S3ObjectUrl;
-                var response = await _productPhoto.AddAsync(data);
-                if (response.code == "1" && file != null)
-                {
-                    var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
-                    _s3ObjectCustom.Dispose();
-                }
-                return Ok(response);
+                await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
             }
-            catch (Exception ex)
+
+            data.ProductId = productId;
+            data.S3ObjectKey = _s3ObjectCustom.S3ObjectKey;
+            data.S3ObjectUrl = _s3ObjectCustom.S3ObjectUrl;
+            var response = await _productPhoto.AddAsync(data);
+            if (response.code == "1" && file != null)
             {
-                _log.LogActivity($"Error on Post: {productId} \n {ex}");
+                var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
                 _s3ObjectCustom.Dispose();
-                return BadRequest(ex.Message);
             }
+
+            return Ok(response);
         }
-        [HttpPost("Put/{id}")]
-        public async Task<IActionResult> Put(int id, string json, IFormFile file)
+        catch (Exception ex)
         {
-            try
-            {
-                var data = new ProductPhoto();
-                data = JsonConvert.DeserializeObject<ProductPhoto>(json);
-                data.UserId = User.GetUserId();
-                if (file != null)
-                {
-                    await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file, data.S3ObjectKey, data.S3ObjectUrl);
-                }
-                var response = await _productPhoto.UpdateAsync(id, data);
-                if (response.code == "1" && file != null)
-                {
-                    var s3Response = await _storageService.UpdateAsync(_s3ObjectCustom);
-                    _s3ObjectCustom.Dispose();
-                }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on Put: {json} \n {ex}");
-                return BadRequest(ex.Message);
-            }
+            _log.LogActivity($"Error on Post: {productId} \n {ex}");
+            _s3ObjectCustom.Dispose();
+            return BadRequest(ex.Message);
         }
-        [HttpPut("SetDefault/{id}/{isDefault}")]
-        public async Task<IActionResult> Put(int id, bool isDefault)
+    }
+
+    [HttpPost("Put/{id}")]
+    public async Task<IActionResult> Put(int id, string json, IFormFile file)
+    {
+        try
         {
-            try
+            var data = new ProductPhoto();
+            data = JsonConvert.DeserializeObject<ProductPhoto>(json);
+            data.UserId = User.GetUserId();
+            if (file != null)
             {
-                var response = await _productPhoto.SetDefaultAsync(id, isDefault, User.GetUserId());
-                return Ok(response);
+                await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file, data.S3ObjectKey,
+                    data.S3ObjectUrl);
             }
-            catch (Exception ex)
+
+            var response = await _productPhoto.UpdateAsync(id, data);
+            if (response.code == "1" && file != null)
             {
-                _log.LogActivity($"Error on Put: {id} \n {ex}");
-                return BadRequest(ex.Message);
+                var s3Response = await _storageService.UpdateAsync(_s3ObjectCustom);
+                _s3ObjectCustom.Dispose();
             }
+
+            return Ok(response);
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        catch (Exception ex)
         {
-            try
+            _log.LogActivity($"Error on Put: {json} \n {ex}");
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut("SetDefault/{id}/{isDefault}")]
+    public async Task<IActionResult> Put(int id, bool isDefault)
+    {
+        try
+        {
+            var response = await _productPhoto.SetDefaultAsync(id, isDefault, User.GetUserId());
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity($"Error on Put: {id} \n {ex}");
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            var response = await _productPhoto.DeleteAsync(id, User.GetUserId());
+            if (response.code == "1")
             {
-                ApiResponse response = await _productPhoto.DeleteAsync(id, User.GetUserId());
-                if (response.code == "1")
-                {
-                    _s3ObjectCustom.Add(response.payload);
-                    var s3Response = await _storageService.DeleteAsync(_s3ObjectCustom);
-                    _s3ObjectCustom.Dispose();
-                }
-                return Ok(response);
+                _s3ObjectCustom.Add(response.payload);
+                var s3Response = await _storageService.DeleteAsync(_s3ObjectCustom);
+                _s3ObjectCustom.Dispose();
             }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on Delete: {id} \n {ex}");
-                return BadRequest(ex.Message);
-            }
+
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity($"Error on Delete: {id} \n {ex}");
+            return BadRequest(ex.Message);
         }
     }
 }

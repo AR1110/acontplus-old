@@ -3,127 +3,123 @@ using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace Inventario.API.Controllers
+namespace Inventario.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class EtiquetaController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class EtiquetaController : ControllerBase
+    public readonly IConfiguration _configuration;
+    public readonly DbAccess _db;
+    private readonly ICustomLogger _log;
+
+    public EtiquetaController(IConfiguration configuration, ICustomLogger log)
     {
-        public readonly IConfiguration _configuration;
-        public readonly DbAccess _db;
-        private readonly ICustomLogger _log;
-        public EtiquetaController(IConfiguration configuration, ICustomLogger log)
+        _configuration = configuration;
+        _db = new DbAccess(configuration);
+        _log = log;
+    }
+
+    [HttpGet("Get/{json}")]
+    public async Task<IActionResult> Get(string json)
+    {
+        var _response = new ApiResponse();
+        try
         {
-            _configuration = configuration;
-            _db = new DbAccess(configuration);
-            _log = log;
+            await _db.SPExecute("Inventario.Etiqueta_Get");
+            _db.AddDynamicParam("idUsuarioRol",
+                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            _db.AddDynamicParam("json", json);
+            _response = _db.GetDataTableAsync();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al listar etiquetas: \n" + ex);
+            _response.Create("0", "Error al listar etiquetas");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet("Get/{json}")]
-        public async Task<IActionResult> Get(string json)
+        return Ok(_response);
+    }
+
+    [HttpPost("Insert")]
+    public async Task<IActionResult> Insert(string json)
+    {
+        var _response = new ApiResponse();
+        try
         {
-
-            ApiResponse _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Inventario.Etiqueta_Get");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", json);
-                _response = _db.GetDataTableAsync();
-
-
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al listar etiquetas: \n" + ex.ToString());
-                _response.Create("0", "Error al listar etiquetas");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+            await _db.SPExecute("Inventario.Etiqueta_Insert");
+            _db.AddDynamicParam("idUsuarioRol",
+                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            _db.AddDynamicParam("json", json);
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al crear etiquetas: \n" + ex);
+            _response.Create("0", "Error al crear etiquetas");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPost("Insert")]
-        public async Task<IActionResult> Insert(string json)
+        return Ok(_response);
+    }
+
+    [HttpPut("Update/{id}")]
+    public async Task<IActionResult> Update(int id, string json)
+    {
+        var _response = new ApiResponse();
+        try
         {
+            await _db.SPExecute("Inventario.Etiqueta_Update");
+            _db.AddDynamicParam("idUsuarioRol",
+                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            _db.AddDynamicParam("id", id);
+            _db.AddDynamicParam("json", json);
 
-            ApiResponse _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Inventario.Etiqueta_Insert");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", json);
-                _response = _db.GetDefault();
-
-
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al crear etiquetas: \n" + ex.ToString());
-                _response.Create("0", "Error al crear etiquetas");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al actualizar etiquetas: \n" + ex);
+            _response.Create("0", "Error al actualizar etiquetas");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, string json)
+        return Ok(_response);
+    }
+
+    [HttpDelete("Delete/{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var _response = new ApiResponse();
+        try
         {
+            await _db.SPExecute("Inventario.Etiqueta_Delete");
+            _db.AddDynamicParam("idUsuarioRol",
+                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            _db.AddDynamicParam("id", id);
 
-            ApiResponse _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Inventario.Etiqueta_Update");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", json);
-
-                _response = _db.GetDefault();
-
-
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al actualizar etiquetas: \n" + ex.ToString());
-                _response.Create("0", "Error al actualizar etiquetas");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al eliminar etiquetas: \n" + ex);
+            _response.Create("0", "Error al eliminar etiquetas");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-
-            ApiResponse _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Inventario.Etiqueta_Delete");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-
-                _response = _db.GetDefault();
-
-
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al eliminar etiquetas: \n" + ex.ToString());
-                _response.Create("0", "Error al eliminar etiquetas");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+        return Ok(_response);
     }
 }

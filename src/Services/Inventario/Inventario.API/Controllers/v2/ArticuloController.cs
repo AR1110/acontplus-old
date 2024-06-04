@@ -6,178 +6,186 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Common.Extensions;
 using Services.Common.Logs;
 
-namespace Inventario.API.Controllers.v2
+namespace Inventario.API.Controllers.v2;
+
+[Route("api/v{version:apiVersion}/[controller]")]
+[ApiController]
+[ApiVersion("2.0")]
+public class ArticuloController : ControllerBase
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
-    [ApiController]
-    [ApiVersion("2.0")]
-    public class ArticuloController : ControllerBase
+    private readonly IConfiguration _configuration;
+    private readonly ICustomLogger _log;
+
+    public ArticuloController(IConfiguration configuration, ICustomLogger log)
     {
-        private readonly IConfiguration _configuration;
-        private readonly ICustomLogger _log;
-        public ArticuloController(IConfiguration configuration, ICustomLogger log)
+        _configuration = configuration;
+        _log = log;
+    }
+
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
         {
-            _configuration = configuration;
-            _log = log;
+            if (!DataValidation.IsValidJson(json))
+            {
+                return BadRequest("Caracteres de busqueda invalidos");
+            }
+
+            await _db.SPExecute("Inventario.Articulo_Get");
+            _db.AddDynamicParam("idRol",
+                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDataSetAsync();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al listar articulos: \n" + ex);
+            _response.Create("0", "Error al listar articulos");
+        }
+        finally
+        {
+            _db.Close();
         }
 
+        return Ok(_response);
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+    [HttpGet("Search")]
+    public async Task<IActionResult> Search(string json)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
         {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
+            if (!DataValidation.IsValidJson(json))
             {
-                if (!DataValidation.IsValidJson(json))
-                {
-                    return BadRequest("Caracteres de busqueda invalidos");
-                }
-                await _db.SPExecute("Inventario.Articulo_Get");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
+                return BadRequest("Caracteres de busqueda invalidos");
             }
-            catch (Exception ex)
-            {
 
-                _log.LogActivity("Error al listar articulos: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar articulos");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+            await _db.SPExecute("Inventario.Articulo_Get_Search");
+            _db.AddDynamicParam("idRol",
+                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDataSetAsync();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error on Get Search: \n" + ex);
+            _response.Create("0", "Error al obtener las bodegas");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet("Search")]
+        return Ok(_response);
+    }
 
-        public async Task<IActionResult> Search(string json)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetId(int id)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+
+        try
         {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                if (!DataValidation.IsValidJson(json))
-                {
-                    return BadRequest("Caracteres de busqueda invalidos");
-                }
-                await _db.SPExecute("Inventario.Articulo_Get_Search");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Get Search: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener las bodegas");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+            await _db.SPExecute("Inventario.Articulo_Get_Id");
+            _db.AddDynamicParam("id", id);
+            _response = _db.GetDataSetAsync();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error in articulo getId: \n" + ex.Message);
+            _response.Create("0", "Error al Obtener los datos del articulo " + ex.Message);
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetId(int id)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
+        return Ok(_response);
+    }
 
-            try
-            {
-                await _db.SPExecute("Inventario.Articulo_Get_Id");
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error in articulo getId: \n" + ex.Message);
-                _response.Create(code: "0", message: "Error al Obtener los datos del articulo " + ex.Message);
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+
+        try
+        {
+            await _db.SPExecute("Inventario.Articulo_Insert");
+            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
+            _db.AddDynamicParam("s3ObjectKey", "");
+            _db.AddDynamicParam("s3ObjectUrl", "");
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al insertar articulo: \n" + ex);
+            _response.Create("0", "Error al insertar articulo");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
+        return Ok(_response);
+    }
 
-            try
-            {
-                await _db.SPExecute("Inventario.Articulo_Insert");
-                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _db.AddDynamicParam("s3ObjectKey", "");
-                _db.AddDynamicParam("s3ObjectUrl", "");
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al insertar articulo: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar articulo");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, ApiRequest parameters)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
+        {
+            await _db.SPExecute("Inventario.Articulo_Update");
+            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
+            _db.AddDynamicParam("id", id);
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al actualizar articulo: \n" + ex);
+            _response.Create("0", "Error al actualizar articulo");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, ApiRequest parameters)
+        return Ok(_response);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
         {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Inventario.Articulo_Update");
-                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al actualizar articulo: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar articulo");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+            await _db.SPExecute("Inventario.Articulo_Delete");
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
+            _db.AddDynamicParam("id", id);
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al eliminar articulo: \n" + ex);
+            _response.Create("0", "Error al eliminar articulo");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Inventario.Articulo_Delete");
-                _db.AddDynamicParam("idRol", User.GetUserRoleId());
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al eliminar articulo: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar articulo");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+        return Ok(_response);
     }
 }
