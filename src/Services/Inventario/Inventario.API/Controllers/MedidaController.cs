@@ -1,149 +1,121 @@
-﻿using Common.Core.Models;
-using Common.Core.Models.Almacen;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
+﻿using Common.Core.Models.Almacen;
 
-namespace Inventario.API.Controllers
+namespace Inventario.API.Controllers;
+
+public class MedidaController : BaseApiController
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class MedidaController : ControllerBase
+    private readonly IConfiguration _configuration;
+
+
+    public MedidaController(IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
-        private readonly ICustomLogger _log;
-        public MedidaController(IConfiguration configuration, ICustomLogger log)
+        _configuration = configuration;
+
+    }
+
+    [HttpGet("Get")]
+    public async Task<IActionResult> Get(string json)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
         {
-            _configuration = configuration;
-            _log = log;
+            await _db.SPExecute("Almacen.Medida_Get");
+            _db.AddDynamicParam("idUsuarioRol",
+                User.GetUserRoleId());
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDataTableAsync();
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet("Get")]
-        public async Task<IActionResult> Get(string json)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Almacen.Medida_Get");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
-            }
-            catch (Exception ex)
-            {
+        return Ok(_response);
+    }
 
-                _log.LogActivity("Error al listar medidas: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar medidas");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPost("Insert")]
+    public async Task<IActionResult> Insert([FromBody] Medida data)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
+        {
+            await _db.SPExecute("Almacen.Medida_Insert");
+            _db.AddDynamicParam("idUsuarioRol",
+                User.GetUserRoleId());
+            _db.AddDynamicParam("descripcion", data.descripcion);
+            _response = _db.GetDefault();
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] Medida data)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Almacen.Medida_Insert");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("descripcion", data.descripcion);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
+        return Ok(_response);
+    }
 
-                _log.LogActivity("Error al insertar medida: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar medida");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPut("Update/{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] Medida data)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
+        {
+            await _db.SPExecute("Almacen.Medida_Update");
+            _db.AddDynamicParam("idUsuarioRol",
+                User.GetUserRoleId());
+            _db.AddDynamicParam("id", id);
+            _db.AddDynamicParam("descripcion", data.descripcion);
+            _db.AddDynamicParam("estado", data.estado);
+            _response = _db.GetDefault();
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Medida data)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Almacen.Medida_Update");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("estado", data.estado);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
+        return Ok(_response);
+    }
 
-                _log.LogActivity("Error al actualizar medida: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar medida");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpDelete("Delete/{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
+        {
+            await _db.SPExecute("Almacen.Medida_Delete");
+            _db.AddDynamicParam("idUsuarioRol",
+                User.GetUserRoleId());
+            _db.AddDynamicParam("id", id);
+            _response = _db.GetDefault();
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Almacen.Medida_Delete");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
+        return Ok(_response);
+    }
 
-                _log.LogActivity("Error al eliminar medida: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar medida");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpGet("ListForSelect")]
+    public async Task<IActionResult> ListForSelect(string json)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
+        {
+            await _db.SPExecute("Almacen.Medida_For_Select");
+            _db.AddDynamicParam("idUsuarioRol",
+                User.GetUserRoleId());
+            _response = _db.GetDataTableAsync();
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet("ListForSelect")]
-        public async Task<IActionResult> ListForSelect(string json)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Almacen.Medida_For_Select");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _response = _db.GetDataTableAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al listar medidas para Select: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar medidas para Select");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-
+        return Ok(_response);
     }
 }

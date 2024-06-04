@@ -19,6 +19,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<INotificacionService, NotificacionService>();
         services.AddScoped<ICustomLogger, CustomLogger>();
+        services.AddScoped<IUserReleaseReadService, UserReleaseReadService>();
         return services;
     }
 }

@@ -1,92 +1,77 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Inventario.Core.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
+﻿namespace Inventario.API.Controllers;
 
-namespace Inventario.API.Controllers
+public class ArticuloFraccionadoController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ArticuloFraccionadoController : ControllerBase
+    private readonly IArticuloFraccionadoService _artSvc;
+
+    public ArticuloFraccionadoController(IArticuloFraccionadoService artSvc)
     {
-        private readonly IArticuloFraccionadoService _artSvc;
-        public ArticuloFraccionadoController(IArticuloFraccionadoService artSvc)
+        _artSvc = artSvc;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        try
         {
-            _artSvc = artSvc;
-        }
+            var parameters = new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            };
+            var response = await _artSvc.GetAsync(parameters);
+            if (response == null) { return NoContent(); }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+            return Ok(response);
+        }
+        catch (Exception)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId() },
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _artSvc.GetAsync(parameters);
-                if (response == null) { return NoContent(); }
-                return Ok(response);
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
+            return BadRequest();
         }
+    }
 
 
-        [HttpPost]
-        public async Task<IActionResult> Post(ApiRequest request)
+    [HttpPost]
+    public async Task<IActionResult> Post(ApiRequest request)
+    {
+        request.UserRoleId = User.GetUserRoleId();
+        try
+        {
+            var response = await _artSvc.AddAsync(request);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, ApiRequest request)
+    {
+        try
         {
             request.UserRoleId = User.GetUserRoleId();
-            try
-            {
-                var response = await _artSvc.AddAsync(request);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-
-                return BadRequest(ex.Message);
-            }
+            var response = await _artSvc.UpdateAsync(id, request);
+            return Ok(response);
         }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, ApiRequest request)
+        catch (Exception ex)
         {
-            try
-            {
-                request.UserRoleId = User.GetUserRoleId();
-                var response = await _artSvc.UpdateAsync(id, request);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-
-                return BadRequest(ex.Message);
-            }
+            return BadRequest(ex.Message);
         }
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId() },
-                    {"id", id}
-                };
-                var response = await _artSvc.DeleteAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+            var response = await _artSvc.DeleteAsync(parameters);
+            return Ok(response);
         }
-
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
