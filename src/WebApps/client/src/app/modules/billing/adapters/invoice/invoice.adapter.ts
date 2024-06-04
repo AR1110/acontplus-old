@@ -17,7 +17,12 @@ class InvoiceAdapter {
 
     const details = this.detailAdapt(input.details);
     const impuestos = impuestoDetailAdapter.to(input.details);
-
+    let infoAdicionalDoc = input.infoAdicionalDoc.map(item=>{
+      return{
+        nombre : item.name,
+        valor : item.value
+      }
+    })
 
     return {
       infoFactura: comprobante,
@@ -26,7 +31,7 @@ class InvoiceAdapter {
       infoAdicionalArticulo: [],
       formaPago: input.formaPago,
       cuotas: input.cuotas,
-      infoAdicional: input.infoAdicionalDoc
+      infoAdicional: infoAdicionalDoc
     }
 
   }

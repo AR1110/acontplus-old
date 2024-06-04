@@ -242,16 +242,7 @@ export class SupportMaintenanceModalComponent {
         //let cellEl = cell.getElement();
         let rowDataMain = cell.getRow().getData();
 
-        //create edit button
-        let editBtn = document.createElement("button");
-        editBtn.type = "button";
-        editBtn.innerHTML = `${icon(faEdit).html.join('')}`
-        editBtn.classList.add("btn", "btn-success", "btn-xs");
-        editBtn.addEventListener("click", () => {
-          let rowData = cell.getRow().getData();
-          // this.openModalProductEdit(rowData)
-        });
-
+        
         //create delete button
         let delBtn = document.createElement("button");
         delBtn.type = "button";
@@ -262,23 +253,9 @@ export class SupportMaintenanceModalComponent {
            this.askToDelete(rowData)
         });
 
-        //create kardex button
-        let kardexBtn = document.createElement("button");
-        kardexBtn.type = "button";
-        kardexBtn.innerHTML = `${icon(faListAlt).html.join('')}`;
-        kardexBtn.classList.add("btn", "btn-info", "btn-xs");
-        kardexBtn.addEventListener("click", () => {
-          let rowData = cell.getRow().getData();
-          //this.openModalProductKardex(rowData)
-        });
-
         let buttonHolder = document.createElement("span");
         buttonHolder.appendChild(delBtn);
-        //buttonHolder.appendChild(editBtn);
-
-        if (rowDataMain.llevaInventario) {
-          buttonHolder.appendChild(kardexBtn)
-        }
+        
         return buttonHolder;
       },
       width: 100,
