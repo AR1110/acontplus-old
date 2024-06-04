@@ -1,122 +1,120 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
+﻿namespace FactElect.API.Controllers;
 
-namespace FactElect.API.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class NotaCreditoController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class NotaCreditoController : ControllerBase
+    private readonly IConfiguration _configuration;
+    private readonly DbAccess _db;
+    private readonly ICustomLogger _log;
+
+    public NotaCreditoController(IConfiguration configuration, ICustomLogger log)
     {
-        private readonly IConfiguration _configuration;
-        private readonly DbAccess _db;
-        private readonly ICustomLogger _log;
-        public NotaCreditoController(IConfiguration configuration, ICustomLogger log)
+        _configuration = configuration;
+        _db = new DbAccess(_configuration);
+        _log = log;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var _response = new ApiResponse();
+        try
         {
-            _configuration = configuration;
-            _db = new DbAccess(_configuration);
-            _log = log;
+            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            await _db.SPExecute("Ventas.NotaCredito_Get", true);
+            _db.AddDynamicParam("idRol", idUsuarioRol);
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDataSetAsync();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al obtener datos de nota credito: \n" + ex);
+            _response.Create("0", "Error al obtener datos de nota credito");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
+        return Ok(_response);
+    }
 
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.NotaCredito_Get", true);
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al obtener datos de nota credito: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener datos de nota credito");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPost]
+    public async Task<IActionResult> Post(ApiRequest data)
+    {
+        var _response = new ApiResponse();
+        try
+        {
+            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            await _db.SPExecute("Ventas.NotaCredito_Insert", true);
+            _db.AddDynamicParam("userRoleId", idUsuarioRol);
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al crear el Doc. Nota Credito: \n" + ex);
+            _response.Create("0", "Error al crear el Doc. Nota Credito");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post(ApiRequest data)
-        {
+        return Ok(_response);
+    }
 
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.NotaCredito_Insert", true);
-                _db.AddDynamicParam("userRoleId", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al crear el Doc. Nota Credito: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al crear el Doc. Nota Credito");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, ApiRequest parameters)
+    {
+        var _response = new ApiResponse();
+        try
+        {
+            await _db.SPExecute("Ventas.NotaCredito_Update", true);
+            _db.AddDynamicParam("userRoleId",
+                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            _db.AddDynamicParam("id", id);
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
+
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error in Update nota credito: \n" + ex);
+            _response.Create("0", "Error al actualizar nota credito");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, ApiRequest parameters)
-        {
-            var _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Ventas.NotaCredito_Update", true);
-                _db.AddDynamicParam("userRoleId", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
+        return Ok(_response);
+    }
 
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error in Update nota credito: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar nota credito");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var _response = new ApiResponse();
+        try
+        {
+            await _db.SPExecute("Ventas.NotaCredito_Delete", true);
+            _db.AddDynamicParam("idUsuarioRol",
+                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            _db.AddDynamicParam("id", id);
+            _response = _db.GetDefault();
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error al eliminar nota credito: \n" + ex);
+            _response.Create("0", "Error al eliminar nota credito");
+        }
+        finally
+        {
+            _db.Close();
         }
 
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Ventas.NotaCredito_Delete", true);
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al eliminar nota credito: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar nota credito");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+        return Ok(_response);
     }
 }
