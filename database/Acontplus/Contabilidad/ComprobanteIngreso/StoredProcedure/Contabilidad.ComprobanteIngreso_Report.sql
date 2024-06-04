@@ -129,9 +129,9 @@ BEGIN
                                             , cc.serieComprobante
                                             , (	CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END )						        AS codDoc
                                             , ef.descripcion
-                                            , CAST(co.valor  AS NUMERIC(18,2))															AS totalDoc
+                                            , CAST(cc.importeTotal  AS NUMERIC(18,2))															AS totalDoc
                                             , CAST(co.abono  AS NUMERIC(18,2))															AS abonoDoc
-                                            , CAST(co.valor - co.abono AS NUMERIC(18,2))												AS saldoDoc
+                                            , CAST(cc.saldo AS NUMERIC(18,2))	            											AS saldoDoc
                                             , ISNULL(bc.descripcion, '''')																AS banco
                                             , ISNULL(cd.descripcion, '''')																AS ciudad
                                             , co.idSubEntidadFinanciera         														AS idSubEntidadFinanciera
@@ -313,7 +313,7 @@ BEGIN
                                         , ci.fechaRegistro                              											        AS fechaRegistro
                                         , ci.nroIdentificacion
                                         , ci.nombreFiscal
-                                        , CAST(ci.abono  AS NUMERIC(18,2))															        AS abono
+                                        , CAST(ci.importeTotal  AS NUMERIC(18,2))															        AS abono
                                         , CAST(ci.total  AS NUMERIC(18,2))															        AS total
                                         , ci.nroDocumento
                                         , cc.idPuntoEmision
@@ -323,7 +323,7 @@ BEGIN
                                         , ef.descripcion
                                         , CAST(co.valor  AS NUMERIC(18,2))															        AS totalDoc
                                         , CAST(co.abono  AS NUMERIC(18,2))															        AS abonoDoc
-                                        , CAST(co.valor - co.abono AS NUMERIC(18,2))												        AS saldoDoc
+                                        , CAST(cc.saldo  AS NUMERIC(18,2))												                    AS saldoDoc
                                         , ISNULL(bc.descripcion, '''')																        AS banco
                                         , ISNULL(cd.descripcion, '''')																        AS ciudad
                                         , ISNULL(co.idSubEntidadFinanciera, 0)														        AS idSubEntidadFinanciera
