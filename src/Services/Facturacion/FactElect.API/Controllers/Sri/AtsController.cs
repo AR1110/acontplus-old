@@ -47,11 +47,10 @@ public class AtsController : ControllerBase
     [HttpGet("Download")]
     public async Task<IActionResult> Download(string json)
     {
-        var idRol = User.GetUserRoleId();
         using var _db = new DbAccess(_configuration);
         var _response = new ApiResponse();
         await _db.SPExecute("ASPAtsGetData", true);
-        _db.AddDynamicParam("idRol", idRol);
+        _db.AddDynamicParam("idRol", User.GetUserRoleId());
         _db.AddDynamicParam("json", json);
         var ds = _db.GetDataSet();
         if (!ds.Tables[0].Columns.Contains("code"))

@@ -23,9 +23,9 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.RetencionAts_Get");
-            _db.AddDynamicParam("idRol", idUsuarioRol);
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
         }
@@ -43,9 +43,9 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.RetencionAts_Insert");
-            _db.AddDynamicParam("idRol", idUsuarioRol);
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("infoCompRet", SqlStringParam.Sanitize(data.infoCompRet));
             _db.AddDynamicParam("docsSust", SqlStringParam.Sanitize(data.docsSust));
             _db.AddDynamicParam("impuestos", SqlStringParam.Sanitize(data.impuestos));
@@ -77,9 +77,9 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.RetencionAts_Update");
-            _db.AddDynamicParam("idRol", idUsuarioRol);
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("infoCompRet", SqlStringParam.Sanitize(data.infoCompRet));
             _response = _db.GetDefault();
@@ -98,10 +98,10 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.RetencionAts_Cancel");
             _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("idRol", idUsuarioRol);
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _response = _db.GetDefault();
             ;
         }
@@ -119,10 +119,10 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.RetencionAts_Delete");
             _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("idRol", idUsuarioRol);
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _response = _db.GetDefault();
         }
         finally

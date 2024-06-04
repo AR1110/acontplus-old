@@ -24,9 +24,9 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.Doc_Elect_Get", true);
-            _db.AddDynamicParam("idRol", idUsuarioRol);
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
         }
@@ -44,9 +44,9 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.Doc_Elect_GetByStatus", true);
-            _db.AddDynamicParam("idRol", idUsuarioRol);
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
         }
@@ -64,10 +64,10 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
 
             await _db.SPExecute("FactElect.Doc_Elect_Get_Data_Form");
-            _db.AddDynamicParam("idUsuarioRol ", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol ", User.GetUserRoleId());
             _response = _db.GetDataSetAsync();
         }
         finally { _db.Close(); }
@@ -81,10 +81,10 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new FileModel();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
 
             await _db.SPExecute("FactElect.Doc_Elect_Get_Xml");
-            _db.AddDynamicParam("idUsuarioRol ", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol ", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             var dt = _db.GetDataTable();
             if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlSri"))
@@ -112,9 +112,9 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.Doc_Elect_Update");
-            _db.AddDynamicParam("idRol", idUsuarioRol);
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
         }

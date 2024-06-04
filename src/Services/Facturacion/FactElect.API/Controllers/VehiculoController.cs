@@ -27,9 +27,9 @@ public class VehiculoController : BaseApiController
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("Logistica.Vehiculo_Get");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
         }
@@ -48,9 +48,9 @@ public class VehiculoController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("Logistica.Vehiculo_Insert");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("placa", data.placa);
             _db.AddDynamicParam("marca", data.marca);
             _db.AddDynamicParam("modelo", data.modelo);
@@ -72,9 +72,9 @@ public class VehiculoController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("Logistica.Vehiculo_Update");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("placa", data.placa);
             _db.AddDynamicParam("marca", data.marca);
@@ -97,9 +97,9 @@ public class VehiculoController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("Logistica.Vehiculo_Delete");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
         }
@@ -119,9 +119,9 @@ public class VehiculoController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("Logistica.Vehiculo_Search");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
         }

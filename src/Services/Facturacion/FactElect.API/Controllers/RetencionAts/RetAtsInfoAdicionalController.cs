@@ -40,12 +40,12 @@ public class RetAtsInfoAdicionalController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.RetAts_InfoAdicional_Insert");
 
             var parameters = new Dictionary<string, object>
             {
-                { "idUsuarioRol", idUsuarioRol }, { "json", SqlStringParam.Sanitize(json) }
+                { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             };
             _response = _db.GetDefault();
         }
@@ -64,9 +64,9 @@ public class RetAtsInfoAdicionalController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.RetAts_InfoAdicional_Update");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
@@ -86,9 +86,9 @@ public class RetAtsInfoAdicionalController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.RetAts_InfoAdicional_Delete");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
         }

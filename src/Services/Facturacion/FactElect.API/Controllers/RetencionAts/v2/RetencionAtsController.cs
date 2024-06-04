@@ -22,10 +22,10 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.RetencionAts_Cancel");
             _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("idRol", idUsuarioRol);
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _response = _db.GetDefault();
         }
         finally

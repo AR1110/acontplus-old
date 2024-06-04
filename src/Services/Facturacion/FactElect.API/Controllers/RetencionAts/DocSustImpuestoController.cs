@@ -40,9 +40,9 @@ public class DocSustImpuestoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.RetAts_Doc_Sust_Imp_Insert");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("idDocSust", idDocSust);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
@@ -62,9 +62,9 @@ public class DocSustImpuestoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.RetAts_Doc_Sust_Imp_Update");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
@@ -84,9 +84,9 @@ public class DocSustImpuestoController : ControllerBase
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("FactElect.RetAts_Doc_Sust_Imp_Delete");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
         }

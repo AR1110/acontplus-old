@@ -19,9 +19,9 @@ public class NotaCreditoController : BaseApiController
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("Ventas.NotaCredito_Get", true);
-            _db.AddDynamicParam("idRol", idUsuarioRol);
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataSetAsync();
         }
@@ -39,9 +39,9 @@ public class NotaCreditoController : BaseApiController
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("Ventas.NotaCredito_Insert", true);
-            _db.AddDynamicParam("userRoleId", idUsuarioRol);
+            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
             _response = _db.GetDefault();
         }

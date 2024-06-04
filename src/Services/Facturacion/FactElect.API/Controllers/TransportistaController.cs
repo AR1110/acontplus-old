@@ -27,9 +27,9 @@ public class TransportistaController : BaseApiController
         var _response = new ApiResponse();
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("Logistica.Transportista_Get");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
         }
@@ -48,9 +48,9 @@ public class TransportistaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("Logistica.Transportista_Insert");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("idTipoIdentificacion", data.idTipoIdentificacion);
             _db.AddDynamicParam("nroIdentificacion", data.nroIdentificacion);
             _db.AddDynamicParam("nombre", data.nombre);
@@ -71,9 +71,9 @@ public class TransportistaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("Logistica.Transportista_Update");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("nroIdentificacion", data.nroIdentificacion);
             _db.AddDynamicParam("nombre", data.nombre);
@@ -94,9 +94,9 @@ public class TransportistaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            var idUsuarioRol = User.GetUserRoleId();
+            
             await _db.SPExecute("Logistica.Transportista_Delete");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
         }
