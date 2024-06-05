@@ -576,8 +576,13 @@
                         const medidas = fS.processAndSortMeasures(principal, fraccionado);
 
                         const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
-                        restItem.conversion = dataMedida.conversion;
-                        restItem.medidas = medidas;
+                        let precioCostoFraccionado = 0, conversion = 1;
+                        if(dataMedida){
+                            restItem.conversion = dataMedida.conversion;
+                            restItem.medidas = medidas;
+                            precioCostoFraccionado = dataMedida.precioCostoFraccionado
+                            conversion = dataMedida.conversion;
+                        }
                         return {
                             idConsolidacionInventarioDetalle: restItem.idConsolidacionInventarioDetalle,
                             idBodega: restItem.idBodega,
@@ -587,11 +592,11 @@
                             cantidad: restItem.cantidad,
                             precioCosto: restItem.precioCosto,
                             precioUnitario: restItem.precioUnitario,
-                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
+                            precioCostoFraccionado,
                             codigo: restItem.codigo,
                             stock: restItem.stock,
                             estado: restItem.estado,
-                            conversion: dataMedida.conversion,
+                            conversion,
                             medidas,
                             total: fS.roundNumber(restItem.cantidad * restItem.precioUnitario, 5),
                             estado: true
