@@ -95,7 +95,7 @@ BEGIN
         ,p.[Name] petName
         ,p.Color
 		,c.businessName customer
-		,[mh].[Date]
+		,CONVERT(VARCHAR, FORMAT([mh].[Date], ''dd-MM-yyyy''), 106) AS ''Date''
         ,mh.EstablecimientoId
         ,totalRecords = COUNT(*) over()
 	FROM Pet.MedicalHistory mh WITH(NOLOCK)
