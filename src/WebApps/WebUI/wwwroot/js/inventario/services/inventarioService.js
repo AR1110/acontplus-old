@@ -471,8 +471,11 @@
                             codigoBarra: restItem.codigoBarra,
                             descripcion: restItem.descripcion,
                             stock: restItem.stock,
-                            precioCosto: dataMedida.precioCosto,
-                            precioUnitario: dataMedida.precioUnitario,
+                            precioCosto: restItem.precioCosto,
+                           // precioUnitario: restItem.precioUnitario,
+
+                           // precioCosto: dataMedida.precioCosto,
+                           precioUnitario: dataMedida.precioUnitario,
                             precioActual: dataMedida.precioActual,
                             precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             estado: restItem.estado,
