@@ -87,13 +87,14 @@ BEGIN
         ,mh.[Weight]
         ,p.[Name] petName
         ,p.Color
-		,c.businessName customer
+		,cc.businessName customer
 		,CONVERT(VARCHAR, FORMAT([mh].[Date], ''dd-MM-yyyy''), 106) AS ''Date''
         ,mh.EstablecimientoId
         ,totalRecords = COUNT(*) over()
 	FROM Vet.MedicalHistory mh WITH(NOLOCK)
 		INNER JOIN Vet.Pet p WITH(NOLOCK) ON mh.PetId = p.Id
-		INNER JOIN Customer.Customer c WITH(NOLOCK) ON p.CustomerId = c.Id
+		INNER JOIN dbo.Cliente c WITH(NOLOCK) ON p.CustomerCompanyId = c.idCliente
+        LEFT JOIN Customer.Customer cc WITH(NOLOCK) ON c.CustomerId = cc.Id
 	WHERE p.CompanyId = @companyId
 	    AND mh.establecimientoId = @idEstablecimiento
 	    AND mh.Deleted is null '
