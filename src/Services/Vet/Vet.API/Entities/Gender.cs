@@ -1,6 +1,6 @@
 ﻿namespace Vet.API.Entities;
 
-[Table("Gender", Schema = "Pet")]
+[Table("Gender", Schema = "Vet")]
 public class Gender : BaseEntity
 {
     [Required] [MaxLength(2)] public string Code { get; set; }

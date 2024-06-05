@@ -1,5 +1,3 @@
--- ================================================
--- Template generated from Template Explorer using:
 USE Acontplus
 GO
 SET ANSI_NULLS ON
@@ -11,7 +9,9 @@ GO
 -- Create date: 2023-07-02
 -- Description:	sp for get report 
 -- =============================================
-CREATE OR ALTER PROCEDURE Pet.MedicalHistory_Report @userRoleId INT
+DROP PROC IF EXISTS Vet.MedicalHistory_Report
+GO
+CREATE OR ALTER PROCEDURE Vet.MedicalHistory_Report @userRoleId INT
 	,@json VARCHAR(MAX)
 	,@tableNames VARCHAR(500) OUTPUT
 AS
@@ -38,18 +38,19 @@ BEGIN
 		,[b].[Name] petBreed
 		,[g].[Name] petGender
 		,[mh].[Date]
-		,c.businessName responsable
-		,c.email
-		,c.IDCard numeroIdentificacion
-		,c.Telephone telefono
-		,c.[address] direccion
-	FROM Pet.MedicalHistory mh WITH(NOLOCK)
-		INNER JOIN Pet.Pet p WITH(NOLOCK) ON mh.PetId = p.Id
-		INNER JOIN Pet.Breed b WITH(NOLOCK) ON p.BreedId = b.Id
-		INNER JOIN Pet.Gender g WITH(NOLOCK) ON p.GenderId = g.Id
-		INNER JOIN Pet.PetType pt WITH(NOLOCK) ON b.PetTypeId = pt.Id
-		LEFT JOIN Customer.Customer c WITH(NOLOCK) ON p.CustomerId = c.Id 
-	WHERE mh.Id = @id
+		,cc.businessName responsable
+		,c.correo email
+		,cc.IDCard numeroIdentificacion
+		,c.telefono
+		,c.direccion
+	FROM Vet.MedicalHistory mh WITH(NOLOCK)
+		INNER JOIN Vet.Pet p WITH(NOLOCK) ON mh.PetId = p.Id
+		INNER JOIN Vet.Breed b WITH(NOLOCK) ON p.BreedId = b.Id
+		INNER JOIN Vet.Gender g WITH(NOLOCK) ON p.GenderId = g.Id
+		INNER JOIN Vet.PetType pt WITH(NOLOCK) ON b.PetTypeId = pt.Id
+		LEFT JOIN dbo.Cliente c WITH(NOLOCK) ON p.CustomerCompanyId = c.idCliente
+        LEFT JOIN Customer.Customer cc On c.customerId = cc.Id
+        WHERE mh.Id = @id
 
         --Behavior
 
@@ -57,9 +58,9 @@ BEGIN
 		,[b].[Name] behavior
 		,bs.[Order]
 		,CASE WHEN bt.BehaviorStatusId= bs.Id AND bt.BehaviorId = b.Id THEN 'x' ELSE '' END behaviorSelected
-	FROM Pet.BehaviorTest bt WITH(NOLOCK)
-		INNER JOIN Pet.Behavior b WITH(NOLOCK) ON bt.BehaviorId = b.Id
-		CROSS JOIN Pet.BehaviorStatus bs
+	FROM Vet.BehaviorTest bt WITH(NOLOCK)
+		INNER JOIN Vet.Behavior b WITH(NOLOCK) ON bt.BehaviorId = b.Id
+		CROSS JOIN Vet.BehaviorStatus bs
 	WHERE bt.MedicalHistoryId = @id
 
 	--Diseases
@@ -68,9 +69,9 @@ BEGIN
 		,[ds].[Name] diseaseStatus
 		,ds.[Order]
 		,CASE WHEN hc.DiseaseStatusId = ds.Id AND hc.DiseaseId = d.Id THEN 'x' ELSE '' END diseaseSelected
-	FROM Pet.HealthCheck hc WITH(NOLOCK)
-		INNER JOIN Pet.Disease d WITH(NOLOCK) ON hc.DiseaseId = d.Id
-		CROSS JOIN Pet.DiseaseStatus ds
+	FROM Vet.HealthCheck hc WITH(NOLOCK)
+		INNER JOIN Vet.Disease d WITH(NOLOCK) ON hc.DiseaseId = d.Id
+		CROSS JOIN Vet.DiseaseStatus ds
 	WHERE hc.MedicalHistoryId = @id
 END
 GO

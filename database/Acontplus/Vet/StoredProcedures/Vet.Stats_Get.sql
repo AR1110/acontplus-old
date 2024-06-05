@@ -10,7 +10,9 @@ GO
 -- Create date: 2024-05-28
 -- Description:	sp for stats
 -- =============================================
-CREATE OR ALTER PROCEDURE Pet.Stats_Get @userRoleId INT
+DROP PROC IF EXISTS Pet.Stats_Get
+GO
+CREATE OR ALTER PROCEDURE Vet.Stats_Get @userRoleId INT
 ,@json VARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
 AS
@@ -31,9 +33,9 @@ BEGIN
     SET @tableNames = 'totalPetTypes,totalBreeds,totalGenders,'
     
     SELECT  pt.[Name], COUNT(*) total
-    FROM Pet.Pet p WITH(NOLOCK)
-    INNER JOIN Pet.Breed b ON p.BreedId = b.Id
-    INNER JOIN Pet.PetType pt  WITH(NOLOCK) ON b.PetTypeId = pt.Id
+    FROM Vet.Pet p WITH(NOLOCK)
+    INNER JOIN Vet.Breed b ON p.BreedId = b.Id
+    INNER JOIN Vet.PetType pt  WITH(NOLOCK) ON b.PetTypeId = pt.Id
     WHERE p.[Enabled] = 1 
         AND p.Deleted IS NULL
         AND p.CompanyId = @companyId
@@ -41,8 +43,8 @@ BEGIN
     ORDER BY pt.[Name] ASC
     
     SELECT  b.[Name], COUNT(*) total
-    FROM Pet.Pet p  WITH(NOLOCK)
-    INNER JOIN Pet.Breed b  WITH(NOLOCK) ON p.BreedId = b.Id
+    FROM Vet.Pet p  WITH(NOLOCK)
+    INNER JOIN Vet.Breed b  WITH(NOLOCK) ON p.BreedId = b.Id
     WHERE p.[Enabled] = 1 
         AND p.Deleted IS NULL
         AND p.CompanyId = @companyId
@@ -50,8 +52,8 @@ BEGIN
     ORDER BY b.[Name] ASC
     
     SELECT  g.[Name], COUNT(*) total
-    FROM Pet.Pet p  WITH(NOLOCK)
-    INNER JOIN Pet.Gender g  WITH(NOLOCK) ON p.GenderId = g.Id
+    FROM Vet.Pet p  WITH(NOLOCK)
+    INNER JOIN Vet.Gender g  WITH(NOLOCK) ON p.GenderId = g.Id
     WHERE p.[Enabled] = 1 
         AND p.Deleted IS NULL
         AND p.CompanyId = @companyId

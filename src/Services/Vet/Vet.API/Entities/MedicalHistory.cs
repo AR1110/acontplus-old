@@ -1,6 +1,6 @@
 ﻿namespace Vet.API.Entities;
 
-[Table("MedicalHistory", Schema = "Pet")]
+[Table("MedicalHistory", Schema = "Vet")]
 public class MedicalHistory : BaseEntity
 {
     [Required] public DateTime Date { get; set; }

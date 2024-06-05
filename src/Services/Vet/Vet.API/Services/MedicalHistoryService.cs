@@ -43,7 +43,7 @@ public class MedicalHistoryService(IAdoRepository genericRepository, VetContext 
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await genericRepository.GetDataSetAsync("Pet.MedicalHistory_Get", parameters);
+        var ds = await genericRepository.GetDataSetAsync("Vet.MedicalHistory_Get", parameters);
         return DataValidation.DataSetIsNull(ds, true)
             ? new ApiResponse { code = "0", message = "La transacción no devolvio respuesta" }
             : new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
@@ -52,7 +52,7 @@ public class MedicalHistoryService(IAdoRepository genericRepository, VetContext 
     public async Task<ApiResponse> GetByIdAsync(int id)
     {
         var parameters = new Dictionary<string, object> { { "id", id } };
-        var ds = await genericRepository.GetDataSetAsync("Pet.MedicalHistory_GetById", parameters);
+        var ds = await genericRepository.GetDataSetAsync("Vet.MedicalHistory_GetById", parameters);
 
         return DataValidation.DataSetIsNull(ds, true)
             ? new ApiResponse { code = "0", message = "La transacción no devolvio respuesta" }

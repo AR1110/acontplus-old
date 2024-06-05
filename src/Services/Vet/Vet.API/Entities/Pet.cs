@@ -1,6 +1,6 @@
 ﻿namespace Vet.API.Entities;
 
-[Table("Pet", Schema = "Pet")]
+[Table("Pet", Schema = "Vet")]
 public class Pet : BaseEntity
 {
     public int? CustomerId { get; set; }
