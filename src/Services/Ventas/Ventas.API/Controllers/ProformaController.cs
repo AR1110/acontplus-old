@@ -1,178 +1,142 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-using Services.Common.Logs;
+﻿namespace Ventas.API.Controllers;
 
-namespace Ventas.API.Controllers
+public class ProformaController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProformaController : ControllerBase
+    private readonly IConfiguration _configuration;
+
+
+    public ProformaController(IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
-        private readonly ICustomLogger _log;
-        public ProformaController(IConfiguration configuration, ICustomLogger log)
+        _configuration = configuration;
+
+    }
+
+    [HttpGet("Get")]
+    public async Task<IActionResult> Get(string json)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
         {
-            _configuration = configuration;
-            _log = log;
+            await _db.SPExecute("Ventas.Proforma_Get", true);
+            _db.AddDynamicParam("idUsuarioRol",
+                User.GetUserRoleId());
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDataSetAsync();
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet("Get")]
-        public async Task<IActionResult> Get(string json)
-        {
-            var _response = new ApiResponse();
-            var _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Ventas.Proforma_Get", true);
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
+        return Ok(_response);
+    }
 
-                _log.LogActivity("Error al listar proformas: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar proformas");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPost("Insert")]
+    public async Task<IActionResult> Insert(ApiRequest parameters)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
+        {
+
+            await _db.SPExecute("Ventas.Proforma_Insert", true);
+            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
+            _response = _db.GetDefault();
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPost("Insert")]
-        public async Task<IActionResult> Insert(ApiRequest parameters)
-        {
-            var _response = new ApiResponse();
-            var _db = new DbAccess(_configuration);
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Proforma_Insert", true);
-                _db.AddDynamicParam("userRoleId", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
+        return Ok(_response);
+    }
 
-                _log.LogActivity("Error al insertar proforma: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar proforma");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPut("Update/{id}")]
+    public async Task<IActionResult> Update(int id, ApiRequest parameters)
+    {
+        var _db = new DbAccess(_configuration);
+
+        var _response = new ApiResponse();
+        try
+        {
+
+            await _db.SPExecute("Ventas.Proforma_Update");
+            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
+            _db.AddDynamicParam("id", id);
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
+            _response = _db.GetDefault();
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, ApiRequest parameters)
-        {
-            var _db = new DbAccess(_configuration);
+        return Ok(_response);
+    }
 
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Proforma_Update");
-                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al actualizar nota entrega: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar la nota de entrega");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+
+    [HttpDelete("Delete/{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var _db = new DbAccess(_configuration);
+        var _response = new ApiResponse();
+        try
+        {
+            await _db.SPExecute("Ventas.Proforma_Delete", true);
+            _db.AddDynamicParam("idRol",
+                User.GetUserRoleId());
+            _db.AddDynamicParam("id", id);
+            _response = _db.GetDefault();
+        }
+        finally
+        {
+            _db.Close();
         }
 
+        return Ok(_response);
+    }
 
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
+    [HttpGet("GetId/{id}")]
+    public async Task<IActionResult> GetId(int id)
+    {
+        var _db = new DbAccess(_configuration);
+        var _response = new ApiResponse();
+        try
         {
-            var _db = new DbAccess(_configuration);
-            var _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Ventas.Proforma_Delete", true);
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al eliminar proforma: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar proforma");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+            await _db.SPExecute("Ventas.Proforma_GetId");
+            _db.AddDynamicParam("idRol",
+                User.GetUserRoleId());
+            _db.AddDynamicParam("id", id);
+            _response = _db.GetDataSetAsync();
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet("GetId/{id}")]
-        public async Task<IActionResult> GetId(int id)
-        {
-            var _db = new DbAccess(_configuration);
-            var _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Ventas.Proforma_GetId");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
+        return Ok(_response);
+    }
 
-                _log.LogActivity("Error al obtener datos del doc. proforma: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener datos del doc. proforma");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+    [HttpPost("ConvertToDoc")]
+    public async Task<IActionResult> ConvertToDoc(ApiRequest parameters)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
+        {
+
+            await _db.SPExecute("Ventas.Proforma_Convert_To_Doc", true);
+            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
+            _response = _db.GetDefault();
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpPost("ConvertToDoc")]
-        public async Task<IActionResult> ConvertToDoc(ApiRequest parameters)
-        {
-            var _response = new ApiResponse();
-            var _db = new DbAccess(_configuration);
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Proforma_Convert_To_Doc", true);
-                _db.AddDynamicParam("userRoleId", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al convertir proforma: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error la convertir proforma");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-
+        return Ok(_response);
     }
 }

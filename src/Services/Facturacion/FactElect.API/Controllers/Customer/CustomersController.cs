@@ -1,126 +1,122 @@
-﻿using FactElect.Core.Entities;
-using FactElect.Infrastructure.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿namespace FactElect.API.Controllers.Customer;
 
-namespace FactElect.API.Controllers.Customer
+public class CustomersController : BaseApiController
 {
-    public class CustomersController : BaseApiController
+    private readonly FactElectContext _context;
+
+    public CustomersController(FactElectContext context)
     {
-        private readonly FactElectContext _context;
+        _context = context;
+    }
 
-        public CustomersController(FactElectContext context)
+    // GET: api/Customers
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<AppCustomer>>> GetCustomers()
+    {
+        if (_context.Customers == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        // GET: api/Customers
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<AppCustomer>>> GetCustomers()
+        // Get the current page number
+        var pageNumber = 1;
+
+        // Get the number of products per page
+        var pageSize = 50;
+
+        // Get the products for the current page
+
+        return await _context.Customers.Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize).ToListAsync();
+    }
+
+    // GET: api/Customers/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<AppCustomer>> GetAppCustomer(int id)
+    {
+        if (_context.Customers == null)
         {
-            if (_context.Customers == null)
-            {
-                return NotFound();
-            }
-            // Get the current page number
-            var pageNumber = 1;
-
-            // Get the number of products per page
-            var pageSize = 50;
-
-            // Get the products for the current page
-
-            return await _context.Customers.Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize).ToListAsync();
+            return NotFound();
         }
 
-        // GET: api/Customers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppCustomer>> GetAppCustomer(int id)
+        var appCustomer = await _context.Customers.FindAsync(id);
+
+        if (appCustomer == null)
         {
-            if (_context.Customers == null)
-            {
-                return NotFound();
-            }
-            var appCustomer = await _context.Customers.FindAsync(id);
-
-            if (appCustomer == null)
-            {
-                return NotFound();
-            }
-
-            return appCustomer;
+            return NotFound();
         }
 
-        // PUT: api/Customers/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAppCustomer(int id, AppCustomer appCustomer)
+        return appCustomer;
+    }
+
+    // PUT: api/Customers/5
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutAppCustomer(int id, AppCustomer appCustomer)
+    {
+        if (id != appCustomer.Id)
         {
-            if (id != appCustomer.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(appCustomer).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AppCustomerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return BadRequest();
         }
 
-        // POST: api/Customers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<AppCustomer>> PostAppCustomer(AppCustomer appCustomer)
+        _context.Entry(appCustomer).State = EntityState.Modified;
+
+        try
         {
-            if (_context.Customers == null)
-            {
-                return Problem("Entity set 'FactElectContext.Customers'  is null.");
-            }
-            _context.Customers.Add(appCustomer);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAppCustomer", new { id = appCustomer.Id }, appCustomer);
         }
-
-        // DELETE: api/Customers/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAppCustomer(int id)
+        catch (DbUpdateConcurrencyException)
         {
-            if (_context.Customers == null)
-            {
-                return NotFound();
-            }
-            var appCustomer = await _context.Customers.FindAsync(id);
-            if (appCustomer == null)
+            if (!AppCustomerExists(id))
             {
                 return NotFound();
             }
 
-            _context.Customers.Remove(appCustomer);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            throw;
         }
 
-        private bool AppCustomerExists(int id)
+        return NoContent();
+    }
+
+    // POST: api/Customers
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPost]
+    public async Task<ActionResult<AppCustomer>> PostAppCustomer(AppCustomer appCustomer)
+    {
+        if (_context.Customers == null)
         {
-            return (_context.Customers?.Any(e => e.Id == id)).GetValueOrDefault();
+            return Problem("Entity set 'FactElectContext.Customers'  is null.");
         }
+
+        _context.Customers.Add(appCustomer);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction("GetAppCustomer", new { id = appCustomer.Id }, appCustomer);
+    }
+
+    // DELETE: api/Customers/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAppCustomer(int id)
+    {
+        if (_context.Customers == null)
+        {
+            return NotFound();
+        }
+
+        var appCustomer = await _context.Customers.FindAsync(id);
+        if (appCustomer == null)
+        {
+            return NotFound();
+        }
+
+        _context.Customers.Remove(appCustomer);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    private bool AppCustomerExists(int id)
+    {
+        return (_context.Customers?.Any(e => e.Id == id)).GetValueOrDefault();
     }
 }

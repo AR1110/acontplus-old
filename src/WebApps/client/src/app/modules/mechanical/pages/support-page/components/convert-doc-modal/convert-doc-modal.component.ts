@@ -1,6 +1,8 @@
-
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { icon } from '@fortawesome/fontawesome-svg-core';
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { Component, inject, Input, ViewChild } from '@angular/core';
 import { FORMA_PAGO_SRI_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
@@ -18,16 +20,21 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormaPagoSri } from '@shared/models/forma-pago-sri';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
+
 import Swal from 'sweetalert2';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-convert-doc-modal',
   standalone: true,
   imports: [
     CommonModule,
+    TabulatorComponent,
   ],
   templateUrl: './convert-doc-modal.component.html',
 })
+
+
 export class ConvertDocModalComponent {
   @Input() params = {
     comprobante: {} as any,
@@ -35,6 +42,8 @@ export class ConvertDocModalComponent {
     companyCustomer: {} as any,
     formasPagoSri: [] as FormaPagoSri[],
     tiemposCredito: [] as CreditTime[],
+    vehicle: [] as any,
+    inspection: [] as any,
     config: {
       idFormaPagoSri: 0
     },
@@ -47,6 +56,7 @@ export class ConvertDocModalComponent {
   private invoiceSvc = inject(InvoiceService);
   private tS = inject(ToasterService);
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
+  @ViewChild(TabulatorComponent,{static: false}) tabulatorComponent!: TabulatorComponent;
 
   companyCustomer = {
     idCliente: 0,
@@ -81,6 +91,72 @@ export class ConvertDocModalComponent {
 
   infoAdicionalDoc:any[]= []
 
+  columns = [
+    {
+      headerSort:false, 
+      resizable: false,
+      frozen:true, 
+      headerHozAlign:"center",
+      hozAlign:"center", formatter:"rowSelection", 
+      titleFormatter:"rowSelection",
+      cellClick:function(e :any, cell : any)
+      {      
+        cell.getRow().toggleSelect();
+      }
+    },
+    {
+      title: 'Nombre',
+      field: 'name',
+      headerSort: false,
+      hozAlign: "center",
+      headerHozAlign: "center",
+      width: "40px",
+    },
+    {
+      title: 'Valor',
+      field: 'value',
+      headerSort: false,
+      hozAlign: "center",
+      headerHozAlign: "center",
+      width: "40px",
+      editor:"input"
+    }
+
+  ];
+
+  askToDelete(data : any) {
+    try {
+      Swal.fire({
+        html: `Esta seguro de eliminar esta información`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si!',
+        cancelButtonText: 'No!',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let index = this.infoAdicionalDoc.indexOf(
+            data
+          );
+          this.infoAdicionalDoc.splice(index, 1);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  tabulatorOptions = {
+    // movableRows: true,
+    height: "100%",
+    layout: "fitDataStretch",
+    dataTreeSelectPropagate: false,
+  }
+
+
+
+  
   successResponse = (response: any) => {
     if (isApiResponse(response)) {
       if (response.code === "0") {
@@ -99,9 +175,29 @@ export class ConvertDocModalComponent {
     }
   }
 
+  protected convertToKeyName(data : any){
+    let adicionales = []
+    for(let item of data){
+       for(let arr of Object.entries(item)){
+         const [name, value] = arr;
+   
+         adicionales.push({
+           name,
+           value
+         })
+       } 
+    }
+    return adicionales;
+  }
+  
+  ngAfterViewInit(): void { 
+    setTimeout(() => {
+      const allRows = this.tabulatorComponent.refTabulator.getRows();    
+      this.tabulatorComponent.refTabulator.selectRow(allRows);
+    });
+  }
+
   ngOnInit(): void {
-
-
     this.data = {
       ...this.data,
       ...this.params.comprobante
@@ -134,12 +230,17 @@ export class ConvertDocModalComponent {
     this.dataFormaPago.idTiempoCredito = this.data.idTiempoCredito;
     this.dataFormaPago.total = this.data.total;
 
-    this.infoAdicionalDoc = [{
-      nombre:'Placa',
-      valor: this.data.licensePlate
-    }]
+    // InfoAdicional
+    let vehicle = this.params.vehicle;
+    let inspection = this.params.inspection;
 
+    let adicionalVehicle = this.convertToKeyName(vehicle)
+    let adicionalInspection = this.convertToKeyName(inspection)
+    this.infoAdicionalDoc = [...adicionalVehicle,...adicionalInspection]
+    
+    
   }
+
 
   protected generateSubTotals() {
     try {
@@ -386,12 +487,15 @@ export class ConvertDocModalComponent {
         razonSocialComprador: this.companyCustomer.razonSocialComprador,
         supportId: this.data.supportId
       }
+
+      const selectedData = this.tabulatorComponent.refTabulator.getSelectedData();
+      
       let params = {
         comprobante,
         details,
         cuotas: cuotas,
         formaPago: [this.dataFormaPago],
-        infoAdicionalDoc: this.infoAdicionalDoc
+        infoAdicionalDoc: selectedData
       }
 
       let senData = invoiceAdapter.mainAdapt(params)
@@ -455,11 +559,14 @@ export class ConvertDocModalComponent {
         razonSocialComprador: this.companyCustomer.razonSocialComprador,
         supportId: this.data.supportId
       }
+
+      const selectedData = this.tabulatorComponent.refTabulator.getSelectedData();
+
       let params = {
         comprobante,
         details,
         cuotas: cuotas,
-        infoAdicionalDoc: this.infoAdicionalDoc
+        infoAdicionalDoc: selectedData
       }
 
       let senData = notaEntregaAdapter.mainAdapt(params)

@@ -1,47 +1,36 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
+﻿namespace Ventas.API.Controllers.v1;
 
-namespace Ventas.API.Controllers.v1
+[ApiController]
+[Route("api/[controller]")]
+public class EstadisticaController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class EstadisticaController : ControllerBase
+    private readonly IConfiguration _configuration;
+    
+
+    public EstadisticaController(IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
-        private readonly ICustomLogger _log;
-        public EstadisticaController(IConfiguration configuration, ICustomLogger log)
+        _configuration = configuration;
+        
+    }
+
+    [HttpGet("Get")]
+    public async Task<IActionResult> Get(string json)
+    {
+        var _db = new DbAccess(_configuration);
+        var _response = new ApiResponse();
+        try
         {
-            _configuration = configuration;
-            _log = log;
+           
+            await _db.SPExecute("Ventas.Estadisticas_Dashboard_Get");
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDataTableAsync();
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet("Get")]
-        public async Task<IActionResult> Get(string json)
-        {
-            var _db = new DbAccess(_configuration);
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Estadisticas_Dashboard_Get");
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al listar datos para dashboard: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar datos para dashboard");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+        return Ok(_response);
     }
 }

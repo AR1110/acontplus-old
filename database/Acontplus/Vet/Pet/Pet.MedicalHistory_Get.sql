@@ -108,8 +108,8 @@ BEGIN
 
      IF LEN(LTRIM(RTRIM(@textSearch))) >= 3
                 BEGIN
-                    SET @sql = @sql + ' AND p.[Name] LIKE ''%''+@textSearch+''%'' 
-                                        OR c.[BusinessName] LIKE ''%''+@textSearch+''%'' '
+                    SET @sql = @sql + ' AND (p.[Name] LIKE ''%''+@textSearch+''%'' 
+                                        OR c.[BusinessName] LIKE ''%''+@textSearch+''%'') '
                 END
                 
 	        SET @sql = @sql + ' ORDER BY mh.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'

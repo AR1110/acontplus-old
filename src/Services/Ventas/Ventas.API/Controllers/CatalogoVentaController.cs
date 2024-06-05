@@ -1,46 +1,34 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
+﻿namespace Ventas.API.Controllers;
 
-namespace Ventas.API.Controllers
+public class CatalogoVentaController : BaseApiController
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class CatalogoVentaController : ControllerBase
+    private readonly IConfiguration _configuration;
+    
+
+    public CatalogoVentaController(IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
-        private readonly ICustomLogger _log;
-        public CatalogoVentaController(IConfiguration configuration, ICustomLogger log)
+        _configuration = configuration;
+        
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var _response = new ApiResponse();
+        var _db = new DbAccess(_configuration);
+        try
         {
-            _configuration = configuration;
-            _log = log;
+            await _db.SPExecute("Ventas.Catalogo_Get");
+            _db.AddDynamicParam("idUsuarioRol",
+                User.GetUserRoleId());
+            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+            _response = _db.GetDataSetAsync();
+        }
+        finally
+        {
+            _db.Close();
         }
 
-        [HttpGet()]
-        public async Task<IActionResult> Get(string json)
-        {
-            var _response = new ApiResponse();
-            var _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Ventas.Catalogo_Get");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al obtener catalogo venta: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener catalogo venta");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+        return Ok(_response);
     }
 }

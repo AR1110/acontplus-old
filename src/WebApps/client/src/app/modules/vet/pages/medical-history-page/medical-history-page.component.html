@@ -33,11 +33,8 @@
               (keyup)="applyFilter($event)"
               class="form-control"
               matInput
-              placeholder="Buscar mascota"
+              placeholder="Buscar mascota o cliente"
             />
-            <button class="btn btn-outline-primary" type="button">
-              <fa-icon [icon]="'search'"></fa-icon>
-            </button>
           </div>
 
         </div>
@@ -50,33 +47,25 @@
           <ng-container matColumnDef="op">
             <th *matHeaderCellDef mat-header-cell>Op.</th>
             <td *matCellDef="let element" mat-cell>
-              <button
-                (click)="onEdit(element)"
-                aria-label="Edit"
-                color="primary"
-                mat-icon-button
-                title="Editar"
-              >
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button
-                (click)="onDelete(element)"
-                aria-label="Delete"
-                color="accent"
-                mat-icon-button
-                title="Eliminar"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-              <button
-                (click)="onReport(element)"
-                aria-label="Reporte"
-                color="accent"
-                mat-icon-button
-                title="Obtener reporte"
-              >
-                <mat-icon>picture_as_pdf</mat-icon>
-              </button>
+              <div container="body" ngbDropdown>
+                <button class="btn btn-outline-primary btn-sm" ngbDropdownToggle type="button">
+                  <fa-icon [icon]="'list'"></fa-icon>
+                </button>
+                <div ngbDropdownMenu>
+                  <button (click)="onEdit(element)" ngbDropdownItem>
+                    <fa-icon [icon]="'pencil'"></fa-icon>
+                    Editar
+                  </button>
+                  <button (click)="onDelete(element)" ngbDropdownItem>
+                    <fa-icon [icon]="'trash'"></fa-icon>
+                    Eliminar
+                  </button>
+                  <button (click)="onReport(element)" ngbDropdownItem>
+                    <fa-icon [icon]="'file-pdf'"></fa-icon>
+                    Reporte
+                  </button>
+                </div>
+              </div>
             </td>
           </ng-container>
 

@@ -1,7 +1,6 @@
-﻿namespace FactElect.Core.Interfaces
+﻿namespace FactElect.Core.Interfaces;
+
+public interface IDocumentoElectronicoErrorService
 {
-    public interface IDocumentoElectronicoErrorService
-    {
-        Task<string> GetAsync(Dictionary<string, object> parameters);
-    }
+    Task<string> GetAsync(Dictionary<string, object> parameters);
 }

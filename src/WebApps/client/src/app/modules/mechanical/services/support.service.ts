@@ -162,7 +162,7 @@ export class SupportService {
     })
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
       map((response: any) => {
-        const { cliente, config, detalle, formapago, tiempoCredito, impuestos } = response;
+        const { cliente, config, detalle, formapago, tiempoCredito, impuestos ,vehicle ,inspection} = response;
 
         let details = detalle.map((item: any) => {
 
@@ -244,7 +244,9 @@ export class SupportService {
           formasPagoSri,
           tiemposCredito: tiempoCredito,
           config: config[0],
-          taxPercents: impuestos
+          taxPercents: impuestos,
+          inspection : inspection,
+          vehicle : vehicle
         }
       }))
   }

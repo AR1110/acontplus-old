@@ -1,131 +1,79 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using FactElect.Core.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-using Services.Common.Logs;
+﻿namespace FactElect.API.Controllers;
 
-namespace FactElect.API.Controllers
+public class GuiaRemisionController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class GuiaRemisionController : BaseApiController
+    private readonly IConfiguration _configuration;
+
+    private readonly IGuiaRemisionService _svc;
+
+    public GuiaRemisionController(IConfiguration configuration, IGuiaRemisionService service)
     {
-        private readonly IConfiguration _configuration;
-        private readonly IGuiaRemisionService _svc;
-        private readonly ICustomLogger _log;
-        public GuiaRemisionController(IConfiguration configuration, IGuiaRemisionService service, ICustomLogger log)
-        {
-            _configuration = configuration;
-            _svc = service;
-            _log = log;
-        }
+        _configuration = configuration;
+        _svc = service;
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _svc.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en get Guia Remision" + ex.Message);
-                return BadRequest("Error en get Guia Remision" + ex.Message);
-            }
-        }
+    }
 
-        [HttpGet("GetId/{id}")]
-        public async Task<IActionResult> GetId(int id)
-        {
-            try
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
             {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"id", id}
-                };
-                var response = await _svc.GetByIdAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(new { code = "1", payload = response });
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al obtener datos de Guia Remision: \n" + ex.ToString());
-                return BadRequest("Error on get by id Guia Remision: " + ex.Message);
-            }
-        }
+                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            };
+        var response = await _svc.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
 
-        [HttpPost]
-        public async Task<IActionResult> Post(ApiRequest data)
-        {
-            try
+            ;
+        return Ok(response);
+    }
+
+    [HttpGet("GetId/{id}")]
+    public async Task<IActionResult> GetId(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var response = await _svc.GetByIdAsync(parameters);
+        if (response == null) { return NoContent(); }
+
+            ;
+        return Ok(new { code = "1", payload = response });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post(ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
             {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _svc.AddAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Post Guia Remision" + ex.Message);
-                return BadRequest("Error en Post Guia Remision" + ex.Message);
-            }
-        }
+                { "userRoleId", User.GetUserRoleId() },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            };
+        var response = await _svc.AddAsync(parameters);
+        if (response == null) { return NoContent(); };
+        return Ok(response);
+    }
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, ApiRequest data)
-        {
-            try
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
             {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                     { "id", id },
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _svc.UpdateAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Put Guia Remision" + ex.Message);
-                return BadRequest("Error en Actualizar Guia Remision " + ex.Message);
-            }
-        }
+                { "userRoleId", User.GetUserRoleId() },
+                { "id", id },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            };
+        var response = await _svc.UpdateAsync(parameters);
+        if (response == null) { return NoContent(); }
+
+            ;
+        return Ok(response);
+    }
 
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"id", id}
-                };
-                var response = await _svc.DeleteAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al anular Guia Remision: " + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
-
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var response = await _svc.DeleteAsync(parameters);
+        return Ok(response);
     }
 }
