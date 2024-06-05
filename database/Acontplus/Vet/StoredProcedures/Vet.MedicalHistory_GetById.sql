@@ -44,9 +44,9 @@ BEGIN
 		INNER JOIN Vet.Pet p WITH(NOLOCK) ON mh.PetId = p.Id
 		INNER JOIN Vet.Breed b ON p.BreedId = b.Id
 		INNER JOIN Vet.Gender g ON p.GenderId = g.Id
-		INNER JOIN Customer.Customer cc ON p.CustomerId = cc.Id
+		INNER JOIN dbo.Cliente c WITH(NOLOCK) ON p.CustomerCompanyId = c.idCliente
+        LEFT JOIN Customer.Customer cc WITH(NOLOCK) ON c.CustomerId = cc.Id
 		INNER JOIN Vet.PetType pt ON b.PetTypeId = pt.Id
-		LEFT JOIN Cliente c WITH(NOLOCK) ON cc.Id = c.CustomerId AND p.CompanyId = c.idEntidad
 	WHERE mh.id = @id
 	AND mh.Deleted IS NULL
 
