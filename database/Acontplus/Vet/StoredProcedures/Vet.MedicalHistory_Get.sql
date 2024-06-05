@@ -1,14 +1,5 @@
 use AcontPlus
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
+GO
 -- ================================================
 SET ANSI_NULLS ON
 GO
@@ -19,7 +10,9 @@ GO
 -- Create date: 2022-07-06
 -- Description:	sp for get medical histories
 -- =============================================
-CREATE OR ALTER PROCEDURE Pet.MedicalHistory_Get @userRoleId INT
+DROP PROC IF EXISTS Pet.MedicalHistory_Get
+GO
+CREATE OR ALTER PROCEDURE Vet.MedicalHistory_Get @userRoleId INT
 ,@json VARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
 AS
@@ -68,10 +61,10 @@ BEGIN
     IF (@tipo = 2)
         BEGIN
             SET @tableNames = 'behaviors,behaviorsStatuses,diseases,diseasesStatuses,estabs'
-            SELECT * FROM Pet.Behavior WITH (NOLOCK) WHERE [Enabled] = 1
-            SELECT * FROM Pet.BehaviorStatus WITH (NOLOCK) WHERE [Enabled] = 1
-            SELECT * FROM Pet.Disease WITH (NOLOCK) WHERE [Enabled] = 1
-            SELECT * FROM Pet.DiseaseStatus WITH (NOLOCK) WHERE [Enabled] = 1
+            SELECT * FROM Vet.Behavior WITH (NOLOCK) WHERE [Enabled] = 1
+            SELECT * FROM Vet.BehaviorStatus WITH (NOLOCK) WHERE [Enabled] = 1
+            SELECT * FROM Vet.Disease WITH (NOLOCK) WHERE [Enabled] = 1
+            SELECT * FROM Vet.DiseaseStatus WITH (NOLOCK) WHERE [Enabled] = 1
             SELECT idEstablecimiento
                   ,nombreComercial
                   ,codEstab
@@ -94,13 +87,14 @@ BEGIN
         ,mh.[Weight]
         ,p.[Name] petName
         ,p.Color
-		,c.businessName customer
-		,[mh].[Date]
+		,cc.businessName customer
+		,CONVERT(VARCHAR, FORMAT([mh].[Date], ''dd-MM-yyyy''), 106) AS ''Date''
         ,mh.EstablecimientoId
         ,totalRecords = COUNT(*) over()
-	FROM Pet.MedicalHistory mh WITH(NOLOCK)
-		INNER JOIN Pet.Pet p WITH(NOLOCK) ON mh.PetId = p.Id
-		INNER JOIN Customer.Customer c WITH(NOLOCK) ON p.CustomerId = c.Id
+	FROM Vet.MedicalHistory mh WITH(NOLOCK)
+		INNER JOIN Vet.Pet p WITH(NOLOCK) ON mh.PetId = p.Id
+		INNER JOIN dbo.Cliente c WITH(NOLOCK) ON p.CustomerCompanyId = c.idCliente
+        LEFT JOIN Customer.Customer cc WITH(NOLOCK) ON c.CustomerId = cc.Id
 	WHERE p.CompanyId = @companyId
 	    AND mh.establecimientoId = @idEstablecimiento
 	    AND mh.Deleted is null '

@@ -1,6 +1,6 @@
 ﻿namespace Vet.API.Entities;
 
-[Table("Disease", Schema = "Pet")]
+[Table("Disease", Schema = "Vet")]
 public class Disease : BaseEntity
 {
     public DiseaseType DiseaseType { get; set; }
