@@ -14,12 +14,12 @@ BEGIN
     DECLARE @code CHAR(1)
     DECLARE @data NVARCHAR(MAX)
       
-	SET @data = (SELECT ISNULL(estado, '')                  estado
-                        , mensaje
-                        , ISNULL(informacionAdicional, '')  informacionAdicional
-                        , tipo
-                        , fechaRegistro 
-                 FROM DocumentoElectronicoError WITH (NOLOCK) 
+	SET @data = (SELECT ISNULL(dee.estado, '')                  estado
+                        ,dee.mensaje
+                        ,ISNULL(dee.informacionAdicional, '')  informacionAdicional
+                        ,tipo
+                        ,fechaRegistro  
+                 FROM dbo.DocumentoElectronicoError dee WITH (NOLOCK) 
                  WHERE idDocumentoElectronico = @id FOR JSON PATH)
     
     IF @data IS NULL

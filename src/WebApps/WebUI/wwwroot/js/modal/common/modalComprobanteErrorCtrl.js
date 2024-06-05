@@ -24,6 +24,10 @@ export class ComprobanteErrorCtrl {
 
 
     showInfoAdicional(item) {
+        if (!item.informacionAdicional) {
+            this._ts.toastr('warning', "No existe info adicional", "Aviso!")
+            return;
+        }
         Swal.fire({
             icon: 'info',
             html: `<small>${item.informacionAdicional}</small>`,
