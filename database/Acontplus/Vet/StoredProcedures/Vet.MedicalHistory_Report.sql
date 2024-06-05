@@ -9,7 +9,7 @@ GO
 -- Create date: 2023-07-02
 -- Description:	sp for get report 
 -- =============================================
-DROP PROC IF EXISTS Vet.MedicalHistory_Report
+DROP PROC IF EXISTS Pet.MedicalHistory_Report
 GO
 CREATE OR ALTER PROCEDURE Vet.MedicalHistory_Report @userRoleId INT
 	,@json VARCHAR(MAX)

@@ -7,7 +7,7 @@ GO
 --Autor: Ivan Paz
 --Date: 2023-07-14
 --Description: SP FOR GET BY
-DROP PROC IF EXISTS Vet.MedicalHistory_GetById
+DROP PROC IF EXISTS Pet.MedicalHistory_GetById
 GO
 CREATE OR ALTER PROCEDURE Vet.MedicalHistory_GetById @id INT
 ,@tableNames VARCHAR(500) OUT
