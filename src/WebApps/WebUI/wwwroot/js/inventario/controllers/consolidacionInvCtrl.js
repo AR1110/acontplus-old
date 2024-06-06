@@ -235,6 +235,40 @@
         }
 
 
+        $scope.openModalDuplicar = async (item) => {
+            try {
+
+                showLoader();
+                consolidacionInvSvc.getId(item.idConsolidacionInventario).then(response => {
+                    if (Object.keys(response.comprobante).length > 0 && response.detalles.length > 0) {
+                        modalSvc.openModalCustom({
+                            controller: modalConsolidacionAddEditCtrl,
+                            template: URL_TEMPLATE + '_ModalNuevo.cshtml',
+                            size: 'xl',
+                            params: {
+                                data: response,
+                                tipoRegistro: 3
+                            },
+                            isRenderRazorPartial: true,
+                            windowClass: 'uibModalFullScreen'
+                        }).result.then(result => {
+
+                            if (result !== null && typeof result === 'object') {
+                                $scope.getConsolidaciones()
+                            }
+                        })
+
+                    }
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader());
+            } catch (error) {
+                hideLoader();
+                console.log(error)
+            }
+        }
+
+
 
         $scope.askToDelete = async (item) => {
 
@@ -437,6 +471,30 @@
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     $scope.bodegas = dataEstab.bodegas;
 
+                    $scope.data = structuredClone(comprobante);
+                    $scope.data.codEstab = dataPuntoEmision.codEstab;
+                    $scope.dataClone.codEstab = $scope.data.codEstab;
+
+                    const dataBodega = $scope.bodegas.find(b => b.defaultBodega);
+                    if (dataBodega) {
+                        $scope.data.idBodega = dataBodega.idBodega;
+                        $scope.dataClone.idBodega = $scope.data.idBodega;
+                    }
+                    $scope.gridOptions.data = detalles;
+                    setCountIndex();
+                }
+
+                if(params.tipoRegistro===3){
+                    const { comprobante, detalles } = params.data;
+                    let dataPuntoEmision = $scope.establecimientos.flatMap(e => e.puntosEmision).find(p => p.idPuntoEmision === comprobante.idPuntoEmision);
+                    let dataEstab = $scope.establecimientos.find(e => e.codEstab === dataPuntoEmision.codEstab);
+
+                    $scope.puntosEmision = dataEstab.puntosEmision;
+                    $scope.bodegas = dataEstab.bodegas;
+
+                    comprobante.idConsolidacionInventario = 0;
+                    comprobante.fechaEmisionDocCreado= null;
+                    comprobante.fechaEmision = new Date()
                     $scope.data = structuredClone(comprobante);
                     $scope.data.codEstab = dataPuntoEmision.codEstab;
                     $scope.dataClone.codEstab = $scope.data.codEstab;

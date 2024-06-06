@@ -67,6 +67,9 @@ BEGIN
 	      ,@tipoDoc          = tipoDoc
 	      ,@fechaInicio      = CONVERT(datetime,fechaInicio,121)
 		  ,@fechaFin         = CONVERT(datetime,fechaFin,121)
+          ,@idEmpleado       = idEmpleado 
+          ,@idCliente        = idCliente
+          ,@idUsuario        = idUsuario
 	FROM OPENJSON(@json) 
 	WITH (tipoDoc      VARCHAR(10) '$.tipoDoc'
 	     ,checkBoxCliente      BIT '$.checkBoxCliente'
