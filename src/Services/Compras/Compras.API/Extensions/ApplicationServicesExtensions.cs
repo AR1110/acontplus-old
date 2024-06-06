@@ -25,7 +25,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<INotaCreditoService, NotaCreditoService>();
         services.AddScoped<ICompraNoHabitualService, CompraNoHabitualService>();
         services.AddScoped<IDocumentoRecibidoService, DocumentoRecibidoService>();
-
+        services.AddScoped<IWebServiceSri, WebServiceSri>();
         return services;
     }
 }
