@@ -1565,6 +1565,8 @@
 
         $scope.askToSaveDoc = async function () {
             try {
+                if (!isValidTotals()) return; 
+
                 if (!$scope.data.codEstab) {
                     tS.taostr('warning', 'Seleccione el establecimiento')
                     return
@@ -1696,6 +1698,38 @@
             } catch (error) {
                 console.log(error);
             }
+        }
+
+        function isValidTotals() {
+            const getTotals = gridOptionsSvc.getImpuestoTotales({
+                items: $scope.gridOptionsDetalle.data,
+                decimal: $scope.decimal,
+                tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+            });
+            let {
+                subTotalSinImpuestos, 
+                importeTotal,
+                totalDescuento, 
+            } = getTotals;
+
+
+
+            if ($scope.data.subTotalSinImpuestos !== subTotalSinImpuestos) {
+                tS.toastr('warning', `El valor del Subtotal sin impuestos: ${$scope.data.subTotalSinImpuestos} difiere del valor del Subtotal sin impuestos en el detalle: ${subTotalSinImpuestos}`);
+                return;
+            }
+
+            if ($scope.data.totalDescuento !== totalDescuento) {
+                tS.toastr('warning', `El valor total del descuento: ${$scope.data.totalDescuento} no coincide con el descuento total calculado en el detalle: ${totalDescuento}`);
+                return;
+            }
+
+            if ($scope.data.total !== importeTotal) {
+                tS.toastr('warning', `El valor del importe total: ${$scope.data.total} difiere del importe total calculado en el detalle: ${importeTotal}`);
+                return;
+            }
+
+            return true;
         }
 
 
@@ -2462,9 +2496,42 @@
         }
 
 
+        function isValidTotals() {
+            const getTotals = gridOptionsSvc.getImpuestoTotales({
+                items: $scope.gridOptionsDetalle.data,
+                decimal: $scope.decimal,
+                tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+            });
+            let {
+                subTotalSinImpuestos, 
+                importeTotal,
+                totalDescuento, 
+            } = getTotals;
+
+
+
+            if ($scope.data.subTotalSinImpuestos !== subTotalSinImpuestos) {
+                tS.toastr('warning', `El valor del Subtotal sin impuestos: ${$scope.data.subTotalSinImpuestos} difiere del valor del Subtotal sin impuestos en el detalle: ${subTotalSinImpuestos}`);
+                return;
+            }
+
+            if ($scope.data.totalDescuento !== totalDescuento) {
+                tS.toastr('warning', `El valor total del descuento: ${$scope.data.totalDescuento} no coincide con el descuento total calculado en el detalle: ${totalDescuento}`);
+                return;
+            }
+
+            if ($scope.data.total !== importeTotal) {
+                tS.toastr('warning', `El valor del importe total: ${$scope.data.total} difiere del importe total calculado en el detalle: ${importeTotal}`);
+                return;
+            }
+
+            return true;
+        }
+
 
         $scope.askToSave = async function () {
             try {
+                if (!isValidTotals()) return 
 
                 if (!$scope.data.codEstab) {
                     tS.toastr('warning', 'Seleccione el Establecimiento')
@@ -2763,37 +2830,7 @@
         }
 
 
-        function drawImpuestoTotales() {
-            try {
-                const getTotals = gridOptionsSvc.getImpuestoTotales({
-                    items: $scope.gridOptionsDetalle.data,
-                    decimal: $scope.decimal,
-                    tarifasImpuesto: $scope.tarifasImpuesto.slice(),
-                });
-                let {
-                    subTotalSinImpuestos,
-                    irbpnr,
-                    importeTotal,
-                    totalDescuento,
-                    porcentajeDescuento,
-                    propina,
-                } = getTotals;
-
-                drawElementHTMLTotals(getTotals)
-
-                $scope.data.subTotalSinImpuestos = subTotalSinImpuestos;
-                $scope.data.total = importeTotal;
-                $scope.data.totalDescuento = totalDescuento;
-                $scope.data.porcentajeDescuento = porcentajeDescuento;
-                $scope.data.irbpnr = irbpnr
-                $scope.data.propina = propina;
-
-                //Formas pago 
-                $scope.dataFormaPago.total = importeTotal;
-            } catch (error) {
-                console.log(error);
-            }
-        }
+       
 
         function calculateTotalItems(items) {
             return items.map(item => {
@@ -3517,6 +3554,37 @@
             setDataFormaPagoSri();
         }
 
+        function drawImpuestoTotales() {
+            try {
+                const getTotals = gridOptionsSvc.getImpuestoTotales({
+                    items: $scope.gridOptionsDetalle.data,
+                    decimal: $scope.decimal,
+                    tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+                });
+                let {
+                    subTotalSinImpuestos,
+                    irbpnr,
+                    importeTotal,
+                    totalDescuento,
+                    porcentajeDescuento,
+                    propina,
+                } = getTotals;
+
+                drawElementHTMLTotals(getTotals)
+
+                $scope.data.subTotalSinImpuestos = subTotalSinImpuestos;
+                $scope.data.total = importeTotal;
+                $scope.data.totalDescuento = totalDescuento;
+                $scope.data.porcentajeDescuento = porcentajeDescuento;
+                $scope.data.irbpnr = irbpnr
+                $scope.data.propina = propina;
+
+                //Formas pago 
+                $scope.dataFormaPago.total = importeTotal;
+            } catch (error) {
+                console.log(error);
+            }
+        }
 
         function isValidForm() {
             if (!$scope.data.codEstab) {
@@ -3633,11 +3701,45 @@
             return cuotas;
         }
 
+        function isValidTotals() {
+            const getTotals = gridOptionsSvc.getImpuestoTotales({
+                items: $scope.gridOptionsDetalle.data,
+                decimal: $scope.decimal,
+                tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+            });
+            let {
+                subTotalSinImpuestos, 
+                importeTotal,
+                totalDescuento, 
+            } = getTotals;
+
+
+
+            if ($scope.data.subTotalSinImpuestos !== subTotalSinImpuestos) {
+                tS.toastr('warning', `El valor del Subtotal sin impuestos: ${$scope.data.subTotalSinImpuestos} difiere del valor del Subtotal sin impuestos en el detalle: ${subTotalSinImpuestos}`);
+                return;
+            }
+
+            if ($scope.data.totalDescuento !== totalDescuento) {
+                tS.toastr('warning', `El valor total del descuento: ${$scope.data.totalDescuento} no coincide con el descuento total calculado en el detalle: ${totalDescuento}`);
+                return;
+            }
+
+            if ($scope.data.total !== importeTotal) {
+                tS.toastr('warning', `El valor del importe total: ${$scope.data.total} difiere del importe total calculado en el detalle: ${importeTotal}`);
+                return;
+            }
+
+            return true;
+        }
+
+
 
         $scope.askToSaveDocDestino = async function () {
             try {
 
-                if (!isValidForm()) return
+                if (!isValidForm()) return; 
+                if (!isValidTotals()) return;
 
                 let cuotas = validateCuota();
 
