@@ -1,0 +1,14 @@
+﻿global using Asp.Versioning;
+global using Common.Core.Interfaces;
+global using Common.Core.Models;
+global using Common.Core.Utils;
+global using Common.Infrastructure.Data;
+global using Common.Infrastructure.Repository;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using Newtonsoft.Json;
+global using Services.Common.Extensions;
+global using Services.Common.Logs;
+global using Ventas.API.Data;
+global using Ventas.API.Interfaces;
+global using Ventas.API.Services;

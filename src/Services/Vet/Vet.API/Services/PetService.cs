@@ -27,7 +27,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync("Pet.Pet_Get", parameters);
+        var ds = await repository.GetDataSetAsync("Vet.Pet_Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
         {
             return new ApiResponse { code = "0", message = "La transacción no devolvio respuesta" };
@@ -66,7 +66,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
 
     public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync("Pet.Pet_Get", parameters);
+        var ds = await repository.GetDataSetAsync("Vet.Pet_Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
         {
             return new ApiResponse { code = "0", message = "La transacción no devolvio respuesta" };

@@ -35,6 +35,7 @@ import { Pet } from '@modules/vet/models/pet.model';
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { SharedService } from '@core/services/shared.service';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-medical-history-page',
@@ -60,6 +61,7 @@ import { SharedService } from '@core/services/shared.service';
     MatPaginator,
     MatRow,
     MatInput,
+    NgbDropdownModule,
   ],
   templateUrl: './medical-history-page.component.html',
   styles: ``,
@@ -100,6 +102,7 @@ export class MedicalHistoryPageComponent {
       this.search(filterValue);
     }
     if (filterValue.length == 0) {
+      this.dataSearch.textSearch = '';
       this.loadHistories();
     }
   }
@@ -125,28 +128,28 @@ export class MedicalHistoryPageComponent {
       pageIndex: this.pagination.pageIndex,
       pageSize: this.pagination.pageSize,
     };
+
+    let historiesModified: any[] = [];
     let clonedParams = Object.assign(params, this.dataSearch);
     this.medicalHistoryService.get(clonedParams).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const { medicalHistories } = JSON.parse(response.payload as string);
         this.medicalHistories = medicalHistories;
-        const historiesModified =
+        historiesModified =
           medicalHistories &&
           medicalHistories.map((pet: any, index: number) => ({
             ...pet,
             position: index + 1,
           }));
-        this.dataSource = new MatTableDataSource(historiesModified);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        setTimeout(() => {
-          this.paginator.pageIndex = this.pagination.pageIndex;
-          this.paginator.length =
-            historiesModified.length > 0
-              ? historiesModified[0].totalRecords
-              : 0;
-        });
       }
+      this.dataSource = new MatTableDataSource(historiesModified);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+      setTimeout(() => {
+        this.paginator.pageIndex = this.pagination.pageIndex;
+        this.paginator.length =
+          historiesModified.length > 0 ? historiesModified[0].totalRecords : 0;
+      });
     });
   }
 
@@ -220,6 +223,7 @@ export class MedicalHistoryPageComponent {
   }
 
   search(textSearch: string) {
+    this.dataSearch.textSearch = textSearch;
     this.loadHistories();
   }
 

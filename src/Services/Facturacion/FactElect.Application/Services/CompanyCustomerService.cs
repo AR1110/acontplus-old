@@ -3,103 +3,62 @@ using Common.Core.Models;
 using Common.Core.Utils;
 using FactElect.Core.Interfaces;
 
-namespace FactElect.Application.Services
+namespace FactElect.Application.Services;
+
+public class CompanyCustomerService : ICompanyCustomerService
 {
-    public class CompanyCustomerService : ICompanyCustomerService
+    private readonly IAdoRepository _repository;
+
+    public CompanyCustomerService(IAdoRepository repository)
     {
-        private readonly IAdoRepository _repository;
-        public CompanyCustomerService(IAdoRepository repository)
-        {
-            _repository = repository;
-        }
-        public async Task<string> AddAsync(Dictionary<string, object> data)
-        {
-            try
-            {
-                return await _repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Insert", data);
-            }
-            catch (Exception)
-            {
+        _repository = repository;
+    }
 
-                throw;
-            }
-        }
+    public async Task<string> AddAsync(Dictionary<string, object> data)
+    {
+        return await _repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Insert", data);
+    }
 
-        public async Task<string> DeleteAsync(Dictionary<string, object> data)
+    public async Task<string> DeleteAsync(Dictionary<string, object> data)
+    {
+        return await _repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Delete", data);
+    }
+
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await _repository.GetDataSetAsync("Ventas.Cliente_Get", parameters, true);
+        if (DataValidation.DataSetIsNull(ds, true))
         {
-            try
-            {
-                return await _repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Delete", data);
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            return new ApiResponse { code = "0", message = "No se encontraron clientes" };
         }
 
-        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds, true) };
+    }
+
+    public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
+    {
+        var dt = await _repository.GetDataTableAsync("Ventas.Cliente_Get_Search", parameters);
+        if (DataValidation.DataTableIsNull(dt))
         {
-            try
-            {
-                var ds = await _repository.GetDataSetAsync("Ventas.Cliente_Get", parameters, true);
-                if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-                {
-                    return new ApiResponse { code = "0", message = "No se encontraron clientes" };
-                }
-                return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds, true) };
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return new ApiResponse { code = "0", message = "No se encontraron clientes con estos datos" };
         }
 
-        public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
+        return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
+    }
+
+    public async Task<ApiResponse> GetIdAsync(Dictionary<string, object> parameters)
+    {
+        var dt = await _repository.GetDataTableAsync("Ventas.Cliente_Get_Id", parameters);
+        if (DataValidation.DataTableIsNull(dt))
         {
-            try
-            {
-                var dt = await _repository.GetDataTableAsync("Ventas.Cliente_Get_Search", parameters);
-                if (dt.Rows.Count == 0 || dt == null)
-                {
-                    return new ApiResponse { code = "0", message = "No se encontraron clientes con estos datos" };
-                }
-                return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return new ApiResponse { code = "0", message = "No se encontró datos del cliente" };
         }
 
-        public async Task<ApiResponse> GetIdAsync(Dictionary<string, object> parameters)
-        {
-            try
-            {
-                var dt = await _repository.GetDataTableAsync("Ventas.Cliente_Get_Id", parameters);
-                if (dt.Rows.Count == 0 || dt == null)
-                {
-                    return new ApiResponse { code = "0", message = "No se encontró datos del cliente" };
-                }
-                return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
+        return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
+    }
 
-        public async Task<string> UpdateAsync(Dictionary<string, object> data)
-        {
-            try
-            {
-                return await _repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Update", data);
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
+    public async Task<string> UpdateAsync(Dictionary<string, object> data)
+    {
+        return await _repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Update", data);
     }
 }

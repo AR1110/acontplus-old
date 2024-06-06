@@ -1,15 +1,5 @@
 ﻿use AcontPlus
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19,7 +9,9 @@ GO
 -- Create date: 2022-07-07
 -- Description:	sp for search pets
 -- =============================================
-CREATE OR ALTER PROCEDURE Pet.Pet_Get @userRoleId INT
+DROP PROC IF EXISTS Pet.Pet_Get
+GO
+CREATE OR ALTER PROCEDURE Vet.Pet_Get @userRoleId INT
 ,@json VARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
 AS
@@ -51,9 +43,9 @@ BEGIN
     IF (@tipo = 3)
         BEGIN
             SET @tableNames = 'petTypes,breeds,genders'
-            SELECT * FROM Pet.PetType WITH (NOLOCK) WHERE Deleted IS NULL AND Enabled = 1
-            SELECT * FROM Pet.Breed WITH (NOLOCK) WHERE Deleted IS NULL  AND Enabled = 1
-            SELECT * FROM Pet.Gender WITH (NOLOCK) WHERE Deleted IS NULL  AND Enabled = 1
+            SELECT * FROM Vet.PetType WITH (NOLOCK) WHERE Deleted IS NULL AND Enabled = 1
+            SELECT * FROM Vet.Breed WITH (NOLOCK) WHERE Deleted IS NULL  AND Enabled = 1
+            SELECT * FROM Vet.Gender WITH (NOLOCK) WHERE Deleted IS NULL  AND Enabled = 1
             RETURN
         END
      
@@ -62,7 +54,7 @@ BEGIN
 
 	SET @sqlQuery = N'SELECT p.Id
 				,p.[Name]
-				,Age = ISNULL((SELECT TOP 1 Age FROM Pet.MedicalHistory mh  WITH(NOLOCK) WHERE mh.PetId = p.Id AND Enabled = 1 ORDER by mh.Id desc), 0)
+				,Age = ISNULL((SELECT TOP 1 Age FROM Vet.MedicalHistory mh  WITH(NOLOCK) WHERE mh.PetId = p.Id AND Enabled = 1 ORDER by mh.Id desc), 0)
 				,p.Color
 				,p.[Enabled]
 				,p.CompanyId
@@ -70,7 +62,7 @@ BEGIN
 				,p.BreedId
 				,p.GenderId
 				,p.CustomerCompanyId
-				,ISNULL((SELECT TOP 1 mh.[Weight] FROM Pet.MedicalHistory mh WITH(NOLOCK) WHERE mh.PetId = p.Id AND Enabled = 1 ORDER by mh.Id desc), 0)  as ''Weight''
+				,ISNULL((SELECT TOP 1 mh.[Weight] FROM Vet.MedicalHistory mh WITH(NOLOCK) WHERE mh.PetId = p.Id AND Enabled = 1 ORDER by mh.Id desc), 0)  as ''Weight''
 				,g.[Name] gender
 				,pt.[Name] petType
 				,b.[Name] breed
@@ -80,12 +72,12 @@ BEGIN
 				,cc.correo email
                 ,ISNULL(CONVERT(VARCHAR, FORMAT(p.Birthdate, ''yyyy-MM-dd''), 106), '''') Birthdate
                 ,totalRecords = COUNT(*) over()
-			FROM Pet.Pet p  WITH(NOLOCK)
+			FROM Vet.Pet p  WITH(NOLOCK)
 				INNER JOIN Cliente cc WITH(NOLOCK) ON p.CustomerCompanyId = cc.idcliente
 				INNER JOIN Customer.Customer c  WITH(NOLOCK) ON cc.CustomerId = c.Id 
-				INNER JOIN Pet.Breed b ON p.BreedId = b.Id
-				LEFT JOIN Pet.Gender g  WITH(NOLOCK) ON p.genderId = g.Id
-				LEFT JOIN Pet.PetType pt  WITH(NOLOCK) ON b.petTypeId = pt.Id
+				INNER JOIN Vet.Breed b ON p.BreedId = b.Id
+				LEFT JOIN Vet.Gender g  WITH(NOLOCK) ON p.genderId = g.Id
+				LEFT JOIN Vet.PetType pt  WITH(NOLOCK) ON b.petTypeId = pt.Id
 			WHERE p.CompanyId = @companyId
 			AND p.Deleted IS NULL '
 

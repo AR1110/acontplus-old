@@ -1,6 +1,6 @@
 ﻿namespace Vet.API.Entities;
 
-[Table("Behavior", Schema = "Pet")]
+[Table("Behavior", Schema = "Vet")]
 public class Behavior : BaseEntity
 {
     [Required] [MaxLength(5)] public string Code { get; set; }

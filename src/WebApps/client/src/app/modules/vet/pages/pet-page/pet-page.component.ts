@@ -36,6 +36,7 @@ import { MatInput } from '@angular/material/input';
 import { Pet } from '@modules/vet/models/pet.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { Chart, registerables } from 'chart.js';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 Chart.register(...registerables);
 
@@ -64,6 +65,7 @@ Chart.register(...registerables);
     MatInput,
     MatSort,
     FaIconComponent,
+    NgbDropdownModule,
   ],
   templateUrl: './pet-page.component.html',
   styles: ``,
@@ -101,6 +103,7 @@ export class PetPageComponent {
       this.search(filterValue);
     }
     if (filterValue.length == 0) {
+      this.dataSearch = {};
       this.loadPets();
     }
   }
@@ -141,6 +144,7 @@ export class PetPageComponent {
   // }
 
   loadPets() {
+    let petsModified: any[] = [];
     let params = {
       pageIndex: this.pagination.pageIndex,
       pageSize: this.pagination.pageSize,
@@ -149,21 +153,21 @@ export class PetPageComponent {
     this.petService.get(clonedParams).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const { pets } = JSON.parse(response.payload as string);
-        const petsModified =
+        petsModified =
           pets &&
           pets.map((pet: any, index: number) => ({
             ...pet,
             position: index + 1,
           }));
-        this.dataSource = new MatTableDataSource(petsModified);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        setTimeout(() => {
-          this.paginator.pageIndex = this.pagination.pageIndex;
-          this.paginator.length =
-            petsModified.length > 0 ? petsModified[0].totalRecords : 0;
-        });
       }
+      this.dataSource = new MatTableDataSource(petsModified);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+      setTimeout(() => {
+        this.paginator.pageIndex = this.pagination.pageIndex;
+        this.paginator.length =
+          petsModified.length > 0 ? petsModified[0].totalRecords : 0;
+      });
     });
   }
 
