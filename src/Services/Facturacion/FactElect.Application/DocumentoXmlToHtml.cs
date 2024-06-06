@@ -2,21 +2,23 @@
 using Common.Core.Utils;
 using FactElect.Core.Models;
 
-namespace FactElect.Application
+namespace FactElect.Application;
+
+public static class DocumentoXmlToHtml
 {
-    public static class DocumentoXmlToHtml
+    public static string CreateHtml(ComprobanteElectronico data)
     {
-        public static string CreateHtml(ComprobanteElectronico data)
-        {
-            SriDocument dt = ((SriDocument)Convert.ToInt32(data.codDoc));
-            string documentName = EnumExtensions.DisplayName(dt);
-            string doc = @"
+        var dt = (SriDocument)Convert.ToInt32(data.codDoc);
+        var documentName = dt.DisplayName();
+        var doc = @"
                     <div class=""row"">
                         <div class=""col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6"">
                             <div class=""card border border-dark rounded"">
                                 <div class=""card-body"">
 <div class=""text-center"">
-                                    <img src=" + $"data:image/png;base64,{Convert.ToBase64String(File.ReadAllBytes("C:\\AcontPlus\\Images\\Logos\\NoLogo.png"))}" + @" alt=""NO LOGO"" class=""img-fluid"" align=""center"" width=""100"">
+                                    <img src=" +
+                  $"data:image/png;base64,{Convert.ToBase64String(File.ReadAllBytes("C:\\AcontPlus\\Images\\Logos\\NoLogo.png"))}" +
+                  @" alt=""NO LOGO"" class=""img-fluid"" align=""center"" width=""100"">
 </div>
                                     <h6>" + data.infoTributaria.razonSocial + @"</h6>
                                     
@@ -32,11 +34,12 @@ namespace FactElect.Application
                             <div class=""card border border-dark rounded"">
                                 <div class=""card-body"">
                                     <h5><label>RUC: </label> "
-                                        + data.infoTributaria.ruc + @"</h5>
+                  + data.infoTributaria.ruc + @"</h5>
                                     <h4>" + documentName + @"</h4>
                                     <h5>
                                         <label>No.</label>
-                                        " + data.infoTributaria.estab + @"-" + data.infoTributaria.ptoEmi + @"-" + data.infoTributaria.secuencial + @"
+                                        " + data.infoTributaria.estab + @"-" + data.infoTributaria.ptoEmi + @"-" +
+                  data.infoTributaria.secuencial + @"
                                     </h5>
                                     <label>NÚMERO DE AUTORIZACIÓN</label><br>
                                     <small>
@@ -56,7 +59,9 @@ namespace FactElect.Application
                                     </h5>
                                     <label>CLAVE DE ACCESSO</label><br />
 <div class=""text-center"">
-                                    <img id=""barcodeImg"" src=" + $"data:image/png;base64,{Convert.ToBase64String(BarcodeGen.Create(data.infoTributaria.claveAcceso), 0, BarcodeGen.Create(data.infoTributaria.claveAcceso).Length)}" + @" alt="""" align=""center"" class=""img-fluid"" height=""60"" width=""500"">
+                                    <img id=""barcodeImg"" src=" +
+                  $"data:image/png;base64,{Convert.ToBase64String(BarcodeGen.Create(data.infoTributaria.claveAcceso), 0, BarcodeGen.Create(data.infoTributaria.claveAcceso).Length)}" +
+                  @" alt="""" align=""center"" class=""img-fluid"" height=""60"" width=""500"">
                                     <br><small> " + data.infoTributaria.claveAcceso + @"</small></div>
                                 </div>
 
@@ -78,15 +83,16 @@ namespace FactElect.Application
                             </div>
                         </div>
                     </div>";
-            return doc;
-        }
-        public static string GetInfoTrib(ComprobanteElectronico data)
+        return doc;
+    }
+
+    public static string GetInfoTrib(ComprobanteElectronico data)
+    {
+        var infoTrib = string.Empty;
+        switch (data.codDoc)
         {
-            string infoTrib = string.Empty;
-            switch (data.codDoc)
-            {
-                case "01":
-                    infoTrib = @"<h6>
+            case "01":
+                infoTrib = @"<h6>
                                         <label>Dirección Sucursal: </label>
                                         " + data.infoFactura.dirEstablecimiento + @"
                                     </h6>
@@ -102,9 +108,9 @@ namespace FactElect.Application
                                         <label>OBLIGADO A LLEVAR CONTABILIDAD </label>
                                         " + data.infoFactura.obligadoContabilidad + @"
                                     </h6>";
-                    break;
-                case "04":
-                    infoTrib = @"<h5>
+                break;
+            case "04":
+                infoTrib = @"<h5>
                                         <label>Dirección Sucursal: </label>
                                         " + data.infoNotaCredito.dirEstablecimiento + @"
                                     </h5>
@@ -120,9 +126,9 @@ namespace FactElect.Application
                                         <label>OBLIGADO A LLEVAR CONTABILIDAD </label>
                                         " + data.infoNotaCredito.obligadoContabilidad + @"
                                     </h5>";
-                    break;
-                case "07":
-                    infoTrib = @"<h5>
+                break;
+            case "07":
+                infoTrib = @"<h5>
                                         <label>Dirección Sucursal: </label>
                                         " + data.infoCompRetencion.dirEstablecimiento + @"
                                     </h5>
@@ -138,20 +144,19 @@ namespace FactElect.Application
                                         <label>OBLIGADO A LLEVAR CONTABILIDAD </label>
                                         " + data.infoCompRetencion.obligadoContabilidad + @"
                                     </h5>";
-                    break;
-                default:
-                    break;
-            }
-
-            return infoTrib;
+                break;
         }
-        public static string GetInfoComprobante(ComprobanteElectronico data)
+
+        return infoTrib;
+    }
+
+    public static string GetInfoComprobante(ComprobanteElectronico data)
+    {
+        var infoComp = string.Empty;
+        switch (data.codDoc)
         {
-            string infoComp = string.Empty;
-            switch (data.codDoc)
-            {
-                case "01":
-                    infoComp = @" <div class=""row"">
+            case "01":
+                infoComp = @" <div class=""row"">
                         <div class=""col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"">
                             <div class=""card border border-dark rounded"">
                                 <div class=""card-body"">
@@ -212,10 +217,10 @@ namespace FactElect.Application
                                             <tbody>" + GetDetails(data) + @"</tbody>
                                         </table>
                                     </div>";
-                    ;
-                    break;
-                case "04":
-                    infoComp = @" <div class=""row"">
+                ;
+                break;
+            case "04":
+                infoComp = @" <div class=""row"">
                         <div class=""col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"">
                             <div class=""card border border-dark rounded"">
                                 <div class=""card-body"">
@@ -299,29 +304,28 @@ namespace FactElect.Application
                                             </thead>
                                             <tbody>" + GetDetails(data);
 
-                    infoComp += @"</tbody>
+                infoComp += @"</tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <br>";
-                    break;
-                default:
-                    break;
-            }
+                break;
+        }
 
-            return infoComp;
-        }
-        public static string GetDetails(ComprobanteElectronico data)
+        return infoComp;
+    }
+
+    public static string GetDetails(ComprobanteElectronico data)
+    {
+        var details = string.Empty;
+        switch (data.codDoc)
         {
-            string details = string.Empty;
-            switch (data.codDoc)
-            {
-                case "01":
-                    foreach (var item in data.detalles)
-                    {
-                        details += @"<tr class=""small"">
+            case "01":
+                foreach (var item in data.detalles)
+                {
+                    details += @"<tr class=""small"">
                                                     <td> " + item.codigoPrincipal + @" </td >
                                                     <td> " + item.codigoAuxiliar + @" </td >
                                                     <td> " + item.cantidad + @" </td>
@@ -333,12 +337,13 @@ namespace FactElect.Application
                                                     <td class=""text-right"">" + item.descuento + @"</td>
                                                     <td class=""text-right"">" + item.precioTotalSinImpuesto + @"</td>
                                                 </tr>";
-                    }
-                    break;
-                case "04":
-                    foreach (var item in data.detalles)
-                    {
-                        details += @"<tr class=""small"">
+                }
+
+                break;
+            case "04":
+                foreach (var item in data.detalles)
+                {
+                    details += @"<tr class=""small"">
                                                     <td> " + item.codigoPrincipal + @" </td >
                                                     <td> " + item.codigoAuxiliar + @" </td >
                                                     <td> " + item.cantidad + @" </td>
@@ -350,20 +355,23 @@ namespace FactElect.Application
                                                     <td class=""text-right"">" + item.descuento + @"</td>
                                                     <td class=""text-right"">" + item.precioTotalSinImpuesto + @"</td>
                                                 </tr>";
-                    }
-                    break;
-                default:
-                    break;
-            }
-            return details;
+                }
+
+                break;
         }
-        public static string GetInfoAdicional(ComprobanteElectronico data)
+
+        return details;
+    }
+
+    public static string GetInfoAdicional(ComprobanteElectronico data)
+    {
+        if (data.infoAdicional == null)
         {
-            if (data.infoAdicional == null)
-            {
-                return string.Empty;
-            }
-            string info = @"<div class=""col-xl-7 col-lg-7 col-md-7 col-sm-7 col-7""><div class=""card border border-dark rounded"" ng-show=""infoAdicional.length > 0"">
+            return string.Empty;
+        }
+
+        var info =
+            @"<div class=""col-xl-7 col-lg-7 col-md-7 col-sm-7 col-7""><div class=""card border border-dark rounded"" ng-show=""infoAdicional.length > 0"">
                                 <div class=""card-body"">
 
                                                 <table class=""table table-borderless"">
@@ -374,113 +382,127 @@ namespace FactElect.Application
                                             </tr>
                                         </thead>
                                         <tbody>";
-            foreach (var item in data.infoAdicional)
-            {
-                info += @"<tr><td>" + item.nombre + @"</td>
-                <td>" + item.valor + @"</td ></tr>";
-            }
-
-            info += @"</tbody></table></div></div>
-                        </div>";
-            return info;
-        }
-        public static string GetTotals(ComprobanteElectronico data)
+        foreach (var item in data.infoAdicional)
         {
-            string totals = string.Empty;
-            double subtotalIva0 = 0;
-            double subtotal12 = 0;
-            double subtotalNoObjetoIva = 0.00;
-            double subtotalExcentoIva = 0.00;
-            double ice = 0.00;
-            double iva12 = 0.00;
-            double IRBPNR = 0.00;
+            info += @"<tr><td>" + item.nombre + @"</td>
+                <td>" + item.valor + @"</td ></tr>";
+        }
 
-            totals = @"<div class=""col-xl-5 col-lg-5 col-md-5 col-sm-5 col-5"">
+        info += @"</tbody></table></div></div>
+                        </div>";
+        return info;
+    }
+
+    public static string GetTotals(ComprobanteElectronico data)
+    {
+        var totals = string.Empty;
+        double subtotalIva0 = 0;
+        double subtotal12 = 0;
+        var subtotalNoObjetoIva = 0.00;
+        var subtotalExcentoIva = 0.00;
+        var ice = 0.00;
+        var iva12 = 0.00;
+        var IRBPNR = 0.00;
+
+        totals = @"<div class=""col-xl-5 col-lg-5 col-md-5 col-sm-5 col-5"">
                             <div class=""table-responsive"">
                                 <h5><strong></strong></h5>
                                 <table class=""table table-bordered"">
                                     <tbody>";
 
-            switch (data.codDoc)
-            {
-                case "01":
-                    foreach (var item in data.infoFactura.totalImpuestos)
+        switch (data.codDoc)
+        {
+            case "01":
+                foreach (var item in data.infoFactura.totalImpuestos)
+                {
+                    if (item.codigo == "2" && item.codigoPorcentaje == "2")
                     {
-                        if (item.codigo == "2" && item.codigoPorcentaje == "2")
-                        {
-                            totals += @"<tr>
-                                            <td class=""text-right""><strong>SubTotal Iva 12%</strong></td>
-                                            <td class=""text-right"">" + Convert.ToString(subtotal12 += Convert.ToDouble(item.baseImponible)) + @"</td>
-                                        </tr>";
-                        }
-
-                        if (item.codigo == "2" && item.codigoPorcentaje == "0")
-                        {
-                            totals += @"<tr>
-                                            <td class=""text-right""><strong>SubTotal Iva 0%</strong></td>
-                                            <td class=""text-right"">" + Convert.ToString(subtotalIva0 += Convert.ToDouble(item.baseImponible)) + @"</td>
-                                        </tr>";
-                        }
-                        if (item.codigo == "2" && item.codigoPorcentaje == "6")
-                        {
-                            totals += @"<tr>
-                                            <td class=""text-right""><strong>SubTotal No Objeto Iva</strong></td>
-                                            <td class=""text-right"">" + Convert.ToString(subtotalNoObjetoIva += Convert.ToDouble(item.baseImponible)) + @"</td>
-                                        </tr>";
-                        }
-                        if (item.codigo == "2" && item.codigoPorcentaje == "7")
-                        {
-                            totals += @"<tr>
-                                            <td class=""text-right""><strong>SubTotal Excento Iva</strong></td>
-                                            <td class=""text-right"">" + Convert.ToString(subtotalExcentoIva += Convert.ToDouble(item.baseImponible)) + @"</td>
-                                        </tr>";
-                        }
                         totals += @"<tr>
+                                            <td class=""text-right""><strong>SubTotal Iva 12%</strong></td>
+                                            <td class=""text-right"">" +
+                                  Convert.ToString(subtotal12 += Convert.ToDouble(item.baseImponible)) + @"</td>
+                                        </tr>";
+                    }
+
+                    if (item.codigo == "2" && item.codigoPorcentaje == "0")
+                    {
+                        totals += @"<tr>
+                                            <td class=""text-right""><strong>SubTotal Iva 0%</strong></td>
+                                            <td class=""text-right"">" +
+                                  Convert.ToString(subtotalIva0 += Convert.ToDouble(item.baseImponible)) + @"</td>
+                                        </tr>";
+                    }
+
+                    if (item.codigo == "2" && item.codigoPorcentaje == "6")
+                    {
+                        totals += @"<tr>
+                                            <td class=""text-right""><strong>SubTotal No Objeto Iva</strong></td>
+                                            <td class=""text-right"">" +
+                                  Convert.ToString(subtotalNoObjetoIva += Convert.ToDouble(item.baseImponible)) +
+                                  @"</td>
+                                        </tr>";
+                    }
+
+                    if (item.codigo == "2" && item.codigoPorcentaje == "7")
+                    {
+                        totals += @"<tr>
+                                            <td class=""text-right""><strong>SubTotal Excento Iva</strong></td>
+                                            <td class=""text-right"">" +
+                                  Convert.ToString(subtotalExcentoIva += Convert.ToDouble(item.baseImponible)) + @"</td>
+                                        </tr>";
+                    }
+
+                    totals += @"<tr>
                                             <td class=""text-right""><strong>Total Sin Impuestos</strong></td>
                                             <td class=""text-right"">" + data.infoFactura.totalSinImpuestos + @"</td>
                                         </tr>";
-                        if (item.codigo == "3")
-                        {
-                            totals += @"<tr>
+                    if (item.codigo == "3")
+                    {
+                        totals += @"<tr>
                                             <td class=""text-right""><strong>ICE</strong></td>
-                                            <td class=""text-right"">" + Convert.ToString(ice += Convert.ToDouble(item.valor)) + @"</td>
+                                            <td class=""text-right"">" +
+                                  Convert.ToString(ice += Convert.ToDouble(item.valor)) + @"</td>
                                         </tr>";
-                        }
-                        if (item.codigo == "2" && item.codigoPorcentaje == "2")
-                        {
-                            totals += @"<tr>
-                                            <td class=""text-right""><strong>IVA 12%</strong></td>
-                                            <td class=""text-right"">" + Convert.ToString(iva12 += Convert.ToDouble(item.valor)) + @"</td>
-                                        </tr>";
-                        }
-                        if (item.codigo == "5")
-                        {
-                            totals += @"<tr>
-                                            <td class=""text-right""><strong>IRBPNR</strong></td>
-                                            <td class=""text-right"">" + Convert.ToString(IRBPNR += Convert.ToDouble(item.valor)) + @"</td>
-                                        </tr>";
-                        }
                     }
-                    totals += @" <tr><td class=""text-right""><strong>Propina</strong></td>
+
+                    if (item.codigo == "2" && item.codigoPorcentaje == "2")
+                    {
+                        totals += @"<tr>
+                                            <td class=""text-right""><strong>IVA 12%</strong></td>
+                                            <td class=""text-right"">" +
+                                  Convert.ToString(iva12 += Convert.ToDouble(item.valor)) + @"</td>
+                                        </tr>";
+                    }
+
+                    if (item.codigo == "5")
+                    {
+                        totals += @"<tr>
+                                            <td class=""text-right""><strong>IRBPNR</strong></td>
+                                            <td class=""text-right"">" +
+                                  Convert.ToString(IRBPNR += Convert.ToDouble(item.valor)) + @"</td>
+                                        </tr>";
+                    }
+                }
+
+                totals += @" <tr><td class=""text-right""><strong>Propina</strong></td>
                                             <td class=""text-right"">" + data.infoFactura.propina + @"</td>
                                         </tr>";
-                    totals += @" <tr><td class=""text-right""><strong>Valor Total</strong></td>
+                totals += @" <tr><td class=""text-right""><strong>Valor Total</strong></td>
                                             <td class=""text-right"">" + data.infoFactura.importeTotal + @"</td>
                                         </tr>";
-                    break;
-                case "04":
+                break;
+            case "04":
 
-                    break;
-                default:
-                    break;
-            };
-            totals += @"</tbody>
+                break;
+        }
+
+        ;
+        totals += @"</tbody>
                                 </table>
                             </div>
                             <h4 class=""float-right""><strong></strong></h4><br>
                             <h4 class=""float-right""><strong></strong></h4>
                         </div>";
-            return totals;
-        }
+        return totals;
     }
 }

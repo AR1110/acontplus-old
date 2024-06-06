@@ -410,7 +410,7 @@
 
                 modalSvc.openModalCustom({
                     controller: ComprobanteErrorCtrl,
-                    template: 'Shared/' + MODAL_COMPROBANTE_ERROR_CSHTML,
+                    template: MODAL_COMPROBANTE_ERROR_CSHTML,
                     params,
                     size: 'lg',
                     keyboard: true
@@ -550,7 +550,7 @@
 
 
         $scope.refresh = () => {
-            location.href = '/DocumentoElectronico/Index';
+            location.href = '/FactElect/DocumentoElectronico/Index';
         }
     }
 })(window.angular)

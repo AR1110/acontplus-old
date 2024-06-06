@@ -83,8 +83,8 @@
                             <span class="input-group-text" id="inputGroup-sizing-sm">Empleado.:</span>
                         </div>
                         <input type="text" id="customerInputSearch" class="form-control border-select"
-                               ng-model="cliente.nombreCliente" empleado-search-drtv on-select="onSelectCliente(result)"
-                               on-keyup="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
+                               ng-model="dataSearchEmpleado.nombreCompleto" empleado-search-drtv on-select="onSelectEmpleado(result)"
+                               on-keyup="onKeyupEmpleado()" placeholder="Ingrese C.I o Nombre Comercial"
                                onclick="select();">
 
                         <script type="text/ng-template" id="autocompleteEmpleadoTemplate.html">

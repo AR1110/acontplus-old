@@ -33,6 +33,9 @@
       "@modules/*": [
         "src/app/modules/*"
       ],
+      "@accounting/*": [
+        "src/app/modules/accounting/*",
+      ],
       "@technical-support/*": [
         "src/app/modules/technical-support/*",
       ],

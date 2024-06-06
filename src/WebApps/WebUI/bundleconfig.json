@@ -730,5 +730,11 @@
     "inputFiles": [
       "wwwroot/js/factElect/services/factElectService.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/common/modalComprobanteErrorCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/common/modalComprobanteErrorCtrl.js"
+    ]
   }
 ]

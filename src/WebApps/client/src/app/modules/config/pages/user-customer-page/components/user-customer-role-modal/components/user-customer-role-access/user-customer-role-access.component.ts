@@ -125,7 +125,7 @@ export class UserCustomerRoleAccessComponent {
 
             return {
               ...restSm,
-              children: structuredClone(childrenActions)
+             // children: structuredClone(childrenActions)
             }
           })
 

@@ -89,7 +89,7 @@
                                         <md-menu>
                                             <md-button aria-label="Open demo menu" class="md-icon-button"
                                                 ng-click="$mdMenu.open($event)">
-                                                <icon class="mdi mdi-menu"></icon>
+                                                <i class="mdi mdi-menu"></i>
                                             </md-button>
                                             <md-menu-content class="md-dense">
                                                 <md-menu-item>
@@ -104,6 +104,14 @@
                                                         ng-disabled="item.anulada">
                                                         <span md-menu-align-target><i class="ti-pencil"></i>
                                                             Editar</span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+                                                 <md-menu-item ng-if="accion.crear" >
+                                                    <md-button ng-click="openModalDuplicar(item)"
+                                                        ng-disabled="item.anulada">
+                                                        <span md-menu-align-target><i class="ti-file"></i>
+                                                            Duplicar</span>
                                                     </md-button>
                                                 </md-menu-item>
 

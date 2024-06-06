@@ -8,6 +8,9 @@ import { CuentaPorCobrarPageComponent } from './pages/cuenta-por-cobrar-page/cue
 import { ReporteCobrosComponent } from './reports/reporte-cobros/reporte-cobros.component';
 import { CategoryPageComponent } from '@modules/accounting/pages/category-page/category-page.component';
 import { SubcategoryPageComponent } from '@modules/accounting/pages/subcategory-page/subcategory-page.component';
+import {
+  MovimientoCajaReportPageComponent
+} from "@accounting/reports/movimiento-caja-report-page/movimiento-caja-report-page.component";
 
 export const routes: Routes = [
   {
@@ -82,6 +85,14 @@ export const routes: Routes = [
     component: SubcategoryPageComponent,
     data: {
       breadcrumb: 'Subcategorías',
+    },
+  },
+  {
+    path: 'movimiento-caja-report',
+    title: 'Movimiento Caja Reporte',
+    component: MovimientoCajaReportPageComponent,
+    data: {
+      breadcrumb: 'Movimiento Caja Reporte',
     },
   },
 ];

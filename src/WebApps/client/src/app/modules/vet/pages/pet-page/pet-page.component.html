@@ -29,22 +29,22 @@
           <ng-container matColumnDef="op">
             <th *matHeaderCellDef mat-header-cell>Op.</th>
             <td *matCellDef="let element" mat-cell>
-              <button
-                (click)="onEdit(element)"
-                aria-label="Update"
-                color="primary"
-                mat-icon-button
-              >
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button
-                (click)="onDelete(element)"
-                aria-label="Delete"
-                color="accent"
-                mat-icon-button
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
+              <div container="body" ngbDropdown>
+                <button class="btn btn-outline-primary btn-sm" ngbDropdownToggle type="button">
+                  <fa-icon [icon]="'list'"></fa-icon>
+                </button>
+                <div ngbDropdownMenu>
+                  <button (click)="onEdit(element)" ngbDropdownItem>
+                    <fa-icon [icon]="'pencil'"></fa-icon>
+                    Editar
+                  </button>
+                  <button (click)="onDelete(element)" ngbDropdownItem>
+                    <fa-icon [icon]="'trash'"></fa-icon>
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+
             </td>
           </ng-container>
 

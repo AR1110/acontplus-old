@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace FactElect.API.Controllers;
 
-namespace FactElect.API.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class FacturaExportacionController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class FacturaExportacionController : ControllerBase
-    {
-    }
 }

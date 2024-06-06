@@ -98,7 +98,7 @@ function alertEndSession() {
             clearInterval(timerInterval);
         },
     }).then((result) => {
-        if (result.dismiss === Swal.DismissReason.timer) {
+        if ((result.dismiss === Swal.DismissReason.timer) || (result.isConfirmed)) {
             Object.keys(localStorage).forEach(function (key) {
                 localStorage.removeItem(key);
             });
@@ -169,7 +169,7 @@ app.factory("loaderInterceptor", function ($q) {
     return {
         request: function (config) {
             // Skip loader for requests marked with `noLoader` config
-            if (config.noLoader) {
+            if (config && config.noLoader) {
                 return config;
             }
             showLoader();

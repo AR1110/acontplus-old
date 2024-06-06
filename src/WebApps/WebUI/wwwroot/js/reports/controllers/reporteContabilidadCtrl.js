@@ -18,6 +18,10 @@
             nombreCompleto: ''
         }
 
+        $scope.dataSearchEmpleado = {
+
+        }
+
         $scope.tiposDoc = [
             {codDoc: 'MC', descripcion: 'Movimiento Caja'},
             {codDoc: 'A', descripcion: 'Anticipo'},
@@ -91,6 +95,17 @@
 
         $scope.onSelectUser = function(item){
             $scope.dataSearch.idUsuario = item.idUsuario;
+        }
+
+
+        $scope.onKeyupEmpleado= function(){
+            if(!$scope.dataSearchEmpleado.nombreCompleto){
+                $scope.dataSearch.idEmpleado = null;
+            }
+        }
+
+        $scope.onSelectEmpleado= function($event){
+            $scope.dataSearch.idEmpleado = $event.idEmpleado;
         }
 
         $scope.getReport = function(){

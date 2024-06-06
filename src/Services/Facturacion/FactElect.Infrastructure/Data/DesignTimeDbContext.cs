@@ -2,26 +2,25 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace FactElect.Infrastructure.Data
+namespace FactElect.Infrastructure.Data;
+
+public class DesignTimeDbContext : IDesignTimeDbContextFactory<FactElectContext>
 {
-    public class DesignTimeDbContext : IDesignTimeDbContextFactory<FactElectContext>
+    private const string _databaseName = "DefaultConnection";
+    private const string _migrationAssembly = "FactElect.Infrastructure";
+
+    public FactElectContext CreateDbContext(string[] args)
     {
-        private const string _databaseName = "DefaultConnection";
-        private const string _migrationAssembly = "FactElect.Infrastructure";
+        IConfiguration configuration = new ConfigurationBuilder()
+            .SetBasePath(Path.Combine("C:\\Acontplus\\", "Shared")) //old ../Restaurant.API
+            .AddJsonFile("sharedsettings.Development.json", true, true)
+            .Build();
 
-        public FactElectContext CreateDbContext(string[] args)
-        {
-            IConfiguration configuration = new ConfigurationBuilder()
-                                .SetBasePath(Path.Combine("C:\\Acontplus\\", "Shared")) //old ../Restaurant.API
-                .AddJsonFile($"sharedsettings.Development.json", optional: true, reloadOnChange: true)
-                .Build();
+        var connectionString = configuration.GetConnectionString(_databaseName);
 
-            var connectionString = configuration.GetConnectionString(_databaseName);
+        var dbContextOptionsBuilder = new DbContextOptionsBuilder<FactElectContext>()
+            .UseSqlServer(connectionString, x => x.MigrationsAssembly(_migrationAssembly));
 
-            var dbContextOptionsBuilder = new DbContextOptionsBuilder<FactElectContext>()
-                .UseSqlServer(connectionString, x => x.MigrationsAssembly(_migrationAssembly));
-
-            return new FactElectContext(dbContextOptionsBuilder.Options);
-        }
+        return new FactElectContext(dbContextOptionsBuilder.Options);
     }
 }

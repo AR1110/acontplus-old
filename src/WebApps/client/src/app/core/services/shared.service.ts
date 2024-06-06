@@ -211,6 +211,7 @@ export class SharedService {
           let estabs = (response as []) || [];
           let results = estabs.map((estab: any) => {
             return {
+              idEstablecimiento: estab.idEstablecimiento,
               codEstab: estab.codEstab,
               nombreComercial: estab.nombreComercial,
               predeterminado: estab.predeterminado,

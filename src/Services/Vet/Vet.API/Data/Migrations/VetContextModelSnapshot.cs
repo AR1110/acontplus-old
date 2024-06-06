@@ -17,7 +17,7 @@ namespace Vet.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.5")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -70,9 +70,9 @@ namespace Vet.API.Data.Migrations
 
                     b.HasIndex("Code")
                         .IsUnique()
-                        .HasDatabaseName("UI_Behavior");
+                        .HasDatabaseName("UQ_Behavior_Code");
 
-                    b.ToTable("Behavior", "Pet");
+                    b.ToTable("Behavior", "Vet");
                 });
 
             modelBuilder.Entity("Vet.API.Entities.BehaviorStatus", b =>
@@ -126,9 +126,9 @@ namespace Vet.API.Data.Migrations
 
                     b.HasIndex("Code")
                         .IsUnique()
-                        .HasDatabaseName("UI_BehaviorStatus");
+                        .HasDatabaseName("UQ_BehaviorStatus_Code");
 
-                    b.ToTable("BehaviorStatus", "Pet");
+                    b.ToTable("BehaviorStatus", "Vet");
                 });
 
             modelBuilder.Entity("Vet.API.Entities.BehaviorTest", b =>
@@ -175,7 +175,7 @@ namespace Vet.API.Data.Migrations
 
                     b.HasIndex("MedicalHistoryId");
 
-                    b.ToTable("BehaviorTest", "Pet");
+                    b.ToTable("BehaviorTest", "Vet");
                 });
 
             modelBuilder.Entity("Vet.API.Entities.Breed", b =>
@@ -229,11 +229,11 @@ namespace Vet.API.Data.Migrations
 
                     b.HasIndex("Code")
                         .IsUnique()
-                        .HasDatabaseName("UI_Breed");
+                        .HasDatabaseName("UQ_Breed_Code");
 
                     b.HasIndex("PetTypeId");
 
-                    b.ToTable("Breed", "Pet");
+                    b.ToTable("Breed", "Vet");
                 });
 
             modelBuilder.Entity("Vet.API.Entities.Disease", b =>
@@ -287,11 +287,11 @@ namespace Vet.API.Data.Migrations
 
                     b.HasIndex("Code")
                         .IsUnique()
-                        .HasDatabaseName("UI_Disease");
+                        .HasDatabaseName("UQ_Disease_Code");
 
                     b.HasIndex("DiseaseTypeId");
 
-                    b.ToTable("Disease", "Pet");
+                    b.ToTable("Disease", "Vet");
                 });
 
             modelBuilder.Entity("Vet.API.Entities.DiseaseStatus", b =>
@@ -345,9 +345,9 @@ namespace Vet.API.Data.Migrations
 
                     b.HasIndex("Code")
                         .IsUnique()
-                        .HasDatabaseName("UI_DiseaseStatus");
+                        .HasDatabaseName("UQ_DiseaseStatus_Code");
 
-                    b.ToTable("DiseaseStatus", "Pet");
+                    b.ToTable("DiseaseStatus", "Vet");
                 });
 
             modelBuilder.Entity("Vet.API.Entities.DiseaseType", b =>
@@ -398,9 +398,9 @@ namespace Vet.API.Data.Migrations
 
                     b.HasIndex("Code")
                         .IsUnique()
-                        .HasDatabaseName("UI_DiseaseType");
+                        .HasDatabaseName("UQ_DiseaseType_Code");
 
-                    b.ToTable("DiseaseType", "Pet");
+                    b.ToTable("DiseaseType", "Vet");
                 });
 
             modelBuilder.Entity("Vet.API.Entities.Gender", b =>
@@ -451,9 +451,9 @@ namespace Vet.API.Data.Migrations
 
                     b.HasIndex("Code")
                         .IsUnique()
-                        .HasDatabaseName("UI_Gender");
+                        .HasDatabaseName("UQ_Gender_Code");
 
-                    b.ToTable("Gender", "Pet");
+                    b.ToTable("Gender", "Vet");
                 });
 
             modelBuilder.Entity("Vet.API.Entities.HealthCheck", b =>
@@ -500,7 +500,7 @@ namespace Vet.API.Data.Migrations
 
                     b.HasIndex("MedicalHistoryId");
 
-                    b.ToTable("HealthCheck", "Pet");
+                    b.ToTable("HealthCheck", "Vet");
                 });
 
             modelBuilder.Entity("Vet.API.Entities.MedicalHistory", b =>
@@ -559,7 +559,7 @@ namespace Vet.API.Data.Migrations
 
                     b.HasIndex("PetId");
 
-                    b.ToTable("MedicalHistory", "Pet");
+                    b.ToTable("MedicalHistory", "Vet");
                 });
 
             modelBuilder.Entity("Vet.API.Entities.Pet", b =>
@@ -625,7 +625,7 @@ namespace Vet.API.Data.Migrations
 
                     b.HasIndex("GenderId");
 
-                    b.ToTable("Pet", "Pet");
+                    b.ToTable("Pet", "Vet");
                 });
 
             modelBuilder.Entity("Vet.API.Entities.PetType", b =>
@@ -676,9 +676,9 @@ namespace Vet.API.Data.Migrations
 
                     b.HasIndex("Code")
                         .IsUnique()
-                        .HasDatabaseName("UI_PetType");
+                        .HasDatabaseName("UQ_PetType_Code");
 
-                    b.ToTable("PetType", "Pet");
+                    b.ToTable("PetType", "Vet");
                 });
 
             modelBuilder.Entity("Vet.API.Entities.BehaviorTest", b =>
