@@ -57,7 +57,7 @@ BEGIN
 				,Age = ISNULL((SELECT TOP 1 Age FROM Vet.MedicalHistory mh  WITH(NOLOCK) WHERE mh.PetId = p.Id AND Enabled = 1 ORDER by mh.Id desc), 0)
 				,p.Color
 				,p.[Enabled]
-				,p.CompanyId
+				,cc.idEntidad CompanyId
 				,b.PetTypeId
 				,p.BreedId
 				,p.GenderId
@@ -78,7 +78,7 @@ BEGIN
 				INNER JOIN Vet.Breed b ON p.BreedId = b.Id
 				LEFT JOIN Vet.Gender g  WITH(NOLOCK) ON p.genderId = g.Id
 				LEFT JOIN Vet.PetType pt  WITH(NOLOCK) ON b.petTypeId = pt.Id
-			WHERE p.CompanyId = @companyId
+			WHERE cc.idEntidad = @companyId
 			AND p.Deleted IS NULL '
 
 

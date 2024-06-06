@@ -514,11 +514,6 @@ namespace Vet.API.Data.Migrations
                     b.Property<decimal?>("Age")
                         .HasColumnType("numeric(4,2), null");
 
-                    b.Property<string>("CodEstab")
-                        .HasMaxLength(15)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(15)");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -582,18 +577,12 @@ namespace Vet.API.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int?>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<int>("CustomerCompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<bool?>("Deleted")

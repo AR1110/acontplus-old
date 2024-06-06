@@ -1818,7 +1818,7 @@
                                 <TablixMember>
                                   <Group Name="codDoc1">
                                     <GroupExpressions>
-                                      <GroupExpression>=Fields!codDoc.Value</GroupExpression>
+                                      <GroupExpression>=Fields!totalDoc.Value</GroupExpression>
                                     </GroupExpressions>
                                   </Group>
                                   <SortExpressions>
@@ -1985,7 +1985,7 @@
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>TOTALES</Value>
+                                <Value>TOTALES FINALES</Value>
                                 <Style>
                                   <FontFamily>Arial</FontFamily>
                                   <FontSize>7pt</FontSize>
@@ -2025,7 +2025,7 @@
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>=Sum(Fields!totalDoc.Value)</Value>
+                                    <Value>=Sum(Filter(Fields!totalDoc.Value, Fields!serieComprobante.Value = First(Fields!serieComprobante.Value)), "totalDoc")</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
                                       <FontSize>7pt</FontSize>
@@ -2071,7 +2071,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>86.9514mm</Height>
+        <Height>91.437mm</Height>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2200,6 +2200,23 @@
       </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
+  <Code>Imports System.Collections.Generic
+
+Dim comprobantes As New Dictionary(Of String, Decimal)
+
+Function getUniqueValue(totalDoc As Decimal, serieComprobante As String) As Decimal
+    Dim result As Decimal
+
+    If comprobantes.ContainsKey(serieComprobante) AndAlso comprobantes(serieComprobante) = totalDoc Then
+        result = 0.0
+    Else
+        result = totalDoc
+    End If
+
+    comprobantes(serieComprobante) = totalDoc
+
+    Return result
+End Function</Code>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>7cbd1876-0811-4b3e-ac1f-7f9ba677bc61</rd:ReportID>
 </Report>

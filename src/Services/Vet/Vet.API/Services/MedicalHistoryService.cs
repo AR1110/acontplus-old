@@ -71,7 +71,7 @@ public class MedicalHistoryService(IAdoRepository genericRepository, VetContext 
         medicalHistoryFound.Observations = medicalHistory.Observations;
         medicalHistoryFound.Age = medicalHistory.Age;
         medicalHistoryFound.Weight = medicalHistory.Weight;
-        medicalHistoryFound.CodEstab = medicalHistory.CodEstab;
+        medicalHistoryFound.EstablecimientoId = medicalHistory.EstablecimientoId;
         medicalHistoryFound.UserId = medicalHistory.UserId;
         context.Update(medicalHistoryFound);
         await context.SaveChangesAsync();

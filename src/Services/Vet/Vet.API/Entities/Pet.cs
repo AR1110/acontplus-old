@@ -3,8 +3,6 @@
 [Table("Pet", Schema = "Vet")]
 public class Pet : BaseEntity
 {
-    public int? CustomerId { get; set; }
-    public int? CompanyId { get; set; }
     public int CustomerCompanyId { get; set; }
     [Required][MaxLength(150)] public string Name { get; set; }
     public Breed Breed { get; set; }

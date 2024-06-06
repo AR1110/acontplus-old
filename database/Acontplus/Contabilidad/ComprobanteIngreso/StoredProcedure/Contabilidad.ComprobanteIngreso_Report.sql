@@ -20,7 +20,7 @@ GO
 -- Create date: 2024/05/15
 -- Description:	REPORT FOR COBROS
 -- =============================================
--- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":2,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":"FV","idSubEntidadFinanciera":0,"idCustomer":194578,"idPuntoEmision":225,"fechaInicio":"2024-06-03 10:58:14 AM","fechaFin":"2024-06-03 10:58:14 AM","dateChecked":false,"idBanco":0,"nroDocChecked":false,"nroDocument":"","referenceChecked":false,"reference":"","loteChecked":false,"lote":""}', ''
+-- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":1,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":"FV","idSubEntidadFinanciera":0,"idCustomer":194578,"idPuntoEmision":225,"fechaInicio":"2024-06-05 11:18:44 AM","fechaFin":"2024-06-05 11:18:44 AM","dateChecked":false,"idBanco":0,"nroDocChecked":false,"nroDocument":"","referenceChecked":false,"reference":"","loteChecked":false,"lote":""}', ''
 CREATE OR ALTER PROC Contabilidad.ComprobanteIngreso_Report
 	 @userRoleId INT
 	,@json	     VARCHAR(MAX)
@@ -129,9 +129,9 @@ BEGIN
                                             , cc.serieComprobante
                                             , (	CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END )						        AS codDoc
                                             , ef.descripcion
-                                            , CAST(cc.importeTotal  AS NUMERIC(18,2))															AS totalDoc
-                                            , CAST(co.abono  AS NUMERIC(18,2))															AS abonoDoc
-                                            , CAST(cc.saldo AS NUMERIC(18,2))	            											AS saldoDoc
+                                            , CAST(cc.importeTotal  AS NUMERIC(18,2))												    AS totalDoc
+                                            , CAST(hc.abono AS NUMERIC(18,2))															AS abonoDoc
+                                            , CAST(hc.saldo - hc.abono AS NUMERIC(18,2))    	            							AS saldoDoc
                                             , ISNULL(bc.descripcion, '''')																AS banco
                                             , ISNULL(cd.descripcion, '''')																AS ciudad
                                             , co.idSubEntidadFinanciera         														AS idSubEntidadFinanciera
@@ -313,7 +313,7 @@ BEGIN
                                         , ci.fechaRegistro                              											        AS fechaRegistro
                                         , ci.nroIdentificacion
                                         , ci.nombreFiscal
-                                        , CAST(ci.importeTotal  AS NUMERIC(18,2))															        AS abono
+                                        , CAST(ci.abono  AS NUMERIC(18,2))      															AS abono
                                         , CAST(ci.total  AS NUMERIC(18,2))															        AS total
                                         , ci.nroDocumento
                                         , cc.idPuntoEmision
@@ -321,8 +321,8 @@ BEGIN
                                         , (CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END)								        AS codDoc
                                         , cx.nroCuota
                                         , ef.descripcion
-                                        , CAST(co.valor  AS NUMERIC(18,2))															        AS totalDoc
-                                        , CAST(co.abono  AS NUMERIC(18,2))															        AS abonoDoc
+                                        , CAST(cc.importeTotal  AS NUMERIC(18,2))															        AS totalDoc
+                                        , CAST(cc.abono  AS NUMERIC(18,2))															        AS abonoDoc
                                         , CAST(cc.saldo  AS NUMERIC(18,2))												                    AS saldoDoc
                                         , ISNULL(bc.descripcion, '''')																        AS banco
                                         , ISNULL(cd.descripcion, '''')																        AS ciudad
@@ -351,6 +351,7 @@ BEGIN
 								                                        ELSE  ''''
 	                                        END
 	                                      )																					                AS lote
+                                        ,ci.estado
                                         FROM dbo.ComprobanteIngreso                 ci	    WITH(NOLOCK)
                                         INNER JOIN Sri.Establecimiento				se		WITH(NOLOCK) ON se.codEstab					= ci.codEstab
                                         INNER JOIN dbo.Cobro						co		WITH(NOLOCK) ON co.idComprobanteIngreso		= ci.idComprobanteIngreso

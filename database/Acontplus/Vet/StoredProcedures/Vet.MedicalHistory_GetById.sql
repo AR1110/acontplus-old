@@ -25,7 +25,6 @@ BEGIN
         ,mh.[UpdatedAt]
         ,mh.[Enabled]
         ,mh.[Deleted]
-        ,mh.[CodEstab]
         ,mh.[UserId]
         ,mh.[Age]
         ,mh.[Weight]
