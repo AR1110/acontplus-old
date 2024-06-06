@@ -95,7 +95,7 @@ BEGIN
 		INNER JOIN Vet.Pet p WITH(NOLOCK) ON mh.PetId = p.Id
 		INNER JOIN dbo.Cliente c WITH(NOLOCK) ON p.CustomerCompanyId = c.idCliente
         LEFT JOIN Customer.Customer cc WITH(NOLOCK) ON c.CustomerId = cc.Id
-	WHERE p.CompanyId = @companyId
+	WHERE c.idEntidad = @companyId
 	    AND mh.establecimientoId = @idEstablecimiento
 	    AND mh.Deleted is null '
 
@@ -103,7 +103,7 @@ BEGIN
      IF LEN(LTRIM(RTRIM(@textSearch))) >= 3
                 BEGIN
                     SET @sql = @sql + ' AND (p.[Name] LIKE ''%''+@textSearch+''%'' 
-                                        OR c.[BusinessName] LIKE ''%''+@textSearch+''%'') '
+                                        OR cc.[BusinessName] LIKE ''%''+@textSearch+''%'') '
                 END
                 
 	        SET @sql = @sql + ' ORDER BY mh.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
