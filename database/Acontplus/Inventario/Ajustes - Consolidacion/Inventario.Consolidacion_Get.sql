@@ -203,27 +203,35 @@ BEGIN
 				              ,ISNULL(a.medida, ''SIN MEDIDA'') medida
 				              ,ISNULL(tipoIva, ''SIN IVA'') AS nombreTipoIva
 				              ,ISNULL
-                               ((SELECT me.idMedida 
-			                           ,me.descripcion 
-			                           ,orden = IIF(af.gestionVenta = 1,1,3)
-                                       ,af.conversion
-			                     FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
-			                     INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida = af.idMedida
-			                     WHERE af.idArticulo = a.idArticulo
-                                   AND af.estado = 1
-                                   FOR JSON PATH),''[]''
-                               ) as fraccionado
-                              ,(
-                                 SELECT me.idMedida
-			                           ,me.descripcion 
-			                           ,orden = 2
-                                       ,1 as conversion
-			                     FROM dbo.Articulo     ar WITH (NOLOCK)
-			                     INNER JOIN dbo.Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida
-			                     WHERE ar.idArticulo = a.idArticulo 
-                                  FOR JSON PATH
-                                ) as principal
+                               ((
+                                    SELECT me.idMedida
+                                          ,me.descripcion as medida
+                                          ,ar.precioCosto
+                                          ,af.precioCostoFraccionado as precioUnitario
+                                          ,af.precioCostoFraccionado as precioCostoFraccionado
+                                          ,af.conversion
+                                    FROM ArticuloFraccionado af WITH (NOLOCK) 
+                                    INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+                                    INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
+                                    WHERE af.idArticulo = a.idArticulo 
+                                    FOR JSON PATH
 
+                                ),''[]'') as fraccionado 
+
+                               ,ISNULL
+                                ((
+                                    SELECT me.idMedida 
+                                          ,me.descripcion as medida
+                                          ,ar.precioCosto 
+                                          ,ar.precioCosto  as precioUnitario
+                                          ,ar.precioCosto  as precioCostoFraccionado
+                                          ,1 as conversion
+                                    FROM Articulo     ar WITH (NOLOCK) 
+                                    INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida 
+                                    WHERE ar.idArticulo = a.idArticulo 
+                                    FOR JSON PATH
+
+                                ),''[]'') as principal
 				         FROM Inventario.v_Articulo a 
 				         WHERE a.estado = 1 
 				           AND a.idEntidad = @idEntidad

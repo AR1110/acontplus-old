@@ -41,6 +41,7 @@ BEGIN
                   ,dt.cc
                   ,dt.printerAutomatic           
 				  ,dt.payAutomatic
+                  ,dt.searchCode
 				  ,dt.multipleVendedor
                   ,dt.detailDuplicate
 				  ,dt.configDeuda     
