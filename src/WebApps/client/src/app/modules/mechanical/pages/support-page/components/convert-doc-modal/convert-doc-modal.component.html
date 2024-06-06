@@ -17,6 +17,16 @@
     </div>
   </div>
 
+  <div class="row">
+    <div class="col-12">
+      <app-tabulator
+        [columnNames]="columns"
+        [tableData]="infoAdicionalDoc"
+        [options]="tabulatorOptions">
+      </app-tabulator>
+    </div>
+  </div>
+
 </div>
 <div class="modal-footer">
   <button class="btn btn-primary " (click)="saveInvoice()">FACTURA</button>

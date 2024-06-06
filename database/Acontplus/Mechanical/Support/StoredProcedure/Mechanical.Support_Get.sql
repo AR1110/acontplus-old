@@ -273,7 +273,7 @@ BEGIN
     IF @tipo = 5
         BEGIN
             
-            SET @tableNames = 'comprobante,cliente,detalle,tiempoCredito,config,formapago,impuestos'
+            SET @tableNames = 'comprobante,cliente,detalle,tiempoCredito,config,formapago,impuestos,vehicle,inspection'
 
             SELECT @Id = id FROM OPENJSON(@json) WITH (id INT)
 
@@ -282,11 +282,8 @@ BEGIN
                   ,st.UserId          as idUsuario
                   ,pe.codEstab
                   ,st.Total
-                  ,ve.LicensePlate
             FROM Mechanical.Support              st WITH (NOLOCK)
             INNER JOIN dbo.PuntoEmision          pe WITH (NOLOCK) ON pe.idPuntoEmision = st.PuntoEmisionId
-            INNER JOIN Mechanical.VehicleCompany vc WITH (NOLOCK) ON vc.Id             = st.VehicleCompanyId
-            INNER JOIN Mechanical.Vehicle        ve WITH (NOLOCK) ON ve.Id             = vc.VehicleId
             WHERE st.Id = @Id
 
             SELECT cl.idCliente
@@ -428,6 +425,26 @@ BEGIN
             INNER JOIN Sri.Impuesto  i WITH (NOLOCK)  ON i.codigo = ti.codImpuesto 
             WHERE i.codigo = '2'
               AND ti.estado = 1 
+
+            SELECT ve.LicensePlate  as placa
+                  ,ve.Brand         as marca
+                  ,ve.Chassis       as chasis
+                  ,ve.Color         as color
+                  ,ve.Cylindraje    as cilindraje
+                  ,ve.Engine        as motor
+                  ,co.[Description] as pais
+            FROM Mechanical.Support              st WITH (NOLOCK)
+            INNER JOIN dbo.PuntoEmision          pe WITH (NOLOCK) ON pe.idPuntoEmision = st.PuntoEmisionId
+            INNER JOIN Mechanical.VehicleCompany vc WITH (NOLOCK) ON vc.Id             = st.VehicleCompanyId
+            INNER JOIN Mechanical.Vehicle        ve WITH (NOLOCK) ON ve.Id             = vc.VehicleId
+            INNER JOIN Common.Country            co WITH (NOLOCK) ON co.Id             = ve.CountryId
+            WHERE st.Id = @Id
+
+            SELECT mi.Mileage   as kilometraje
+                  ,mi.FuelLevel as nivelCombustible
+            FROM Mechanical.Inspection mi WITH (NOLOCK)
+            WHERE mi.SupportId = @Id
+
 
             RETURN 
         END 
