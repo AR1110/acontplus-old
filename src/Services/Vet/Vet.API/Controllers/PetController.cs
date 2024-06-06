@@ -22,7 +22,6 @@ public class PetController(IPetService petService) : BaseApiController
     public async Task<IActionResult> Post([FromBody] Pet pet)
     {
         pet.UserId = User.GetUserId();
-        pet.CompanyId = User.GetCompanyId();
         return Ok(await petService.AddAsync(pet));
     }
 
