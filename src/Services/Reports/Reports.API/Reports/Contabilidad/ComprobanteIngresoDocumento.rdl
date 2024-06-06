@@ -2025,7 +2025,7 @@
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>=Sum(Filter(Fields!totalDoc.Value, Fields!serieComprobante.Value = First(Fields!serieComprobante.Value)), "totalDoc")</Value>
+                                    <Value>=Sum(Code.getUniqueValue(Fields!totalDoc.Value, Fields!serieComprobante.Value))</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
                                       <FontSize>7pt</FontSize>
@@ -2131,12 +2131,18 @@
                         <FontSize>9pt</FontSize>
                       </Style>
                     </TextRun>
+                    <TextRun>
+                      <Value xml:space="preserve"> </Value>
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                      </Style>
+                    </TextRun>
                   </TextRuns>
                   <Style />
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>usuario</rd:DefaultName>
-              <Top>0.07027cm</Top>
+              <Top>0.03852cm</Top>
               <Height>0.6cm</Height>
               <Width>4.38383cm</Width>
               <ZIndex>1</ZIndex>
@@ -2200,22 +2206,19 @@
       </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
-  <Code>Imports System.Collections.Generic
-
-Dim comprobantes As New Dictionary(Of String, Decimal)
+  <Code>Dim serieComprobanteLocal As String = ""
+Dim totalDocLocal As Decimal = 0.0
 
 Function getUniqueValue(totalDoc As Decimal, serieComprobante As String) As Decimal
-    Dim result As Decimal
-
-    If comprobantes.ContainsKey(serieComprobante) AndAlso comprobantes(serieComprobante) = totalDoc Then
-        result = 0.0
+    
+    IF serieComprobanteLocal = serieComprobante  And totalDocLocal = totalDoc Then
+      Return 0.0
     Else
-        result = totalDoc
-    End If
-
-    comprobantes(serieComprobante) = totalDoc
-
-    Return result
+      Return totalDocLocal
+    End IF
+    
+    serieComprobanteLocal = serieComprobante 
+    totalDocLocal = totalDoc 
 End Function</Code>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>7cbd1876-0811-4b3e-ac1f-7f9ba677bc61</rd:ReportID>
