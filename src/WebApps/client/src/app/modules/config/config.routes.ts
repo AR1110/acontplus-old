@@ -6,6 +6,7 @@ import { UserCustomerRequestPageComponent } from "./pages/user-customer-request-
 import { UserProfilePageComponent } from "./pages/user-profile-page/user-profile-page.component";
 import { EstablishmentPageComponent } from "./pages/establishment-page/establishment-page.component";
 import {CompanyPageComponent} from "@modules/config/pages/company-page/company-page.component";
+import {PrinterPageComponent} from "@modules/config/pages/printer-page/printer-page.component";
 export const routes: Routes = [
   {
     path: 'general-config-page',
@@ -61,6 +62,14 @@ export const routes: Routes = [
     component: CompanyPageComponent,
     data: {
       breadcrumb: 'Entidad'
+    }
+  },
+  {
+    path: 'printer',
+    title: 'Configuración Impresora',
+    component: PrinterPageComponent,
+    data: {
+      breadcrumb: 'Configuración Impresora'
     }
   }
 ]

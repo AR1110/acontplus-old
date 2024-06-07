@@ -35,5 +35,6 @@ export enum GlobalRoutes {
   VetStats = 'vet/stats-page',
   ContabilidadMovimientoCajaReport="accounting/movimiento-caja-report",
   ConfigCompany = 'config/company',
+  ConfigPrinter = 'config/printer',
 
 }

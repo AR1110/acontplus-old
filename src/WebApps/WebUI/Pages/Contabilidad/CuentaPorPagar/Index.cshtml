@@ -85,7 +85,7 @@
                         <span  >Tipo Documento</span>
                         <select name="tipoDoc" id="tipoDoc" class="form-control  border-select" ng-model="dataSearch.codDoc" ng-change="getCuentasPorPagar()">
                             <option value="">Todos</option>
-                            <option ng-value="item.codigo" ng-repeat="item in tipoDocumentos">
+                            <option ng-value="item.codDoc" ng-repeat="item in tipoDocumentos">
                                 {{item.descripcion}}
                             </option>
                         </select>
