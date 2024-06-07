@@ -5,9 +5,15 @@
   <div class="card-body">
     <div class="row">
       <div class="col-6">
-        <button class="btn btn-info" id="buttonNew" (click)="openModalNewOrEdit()"><i class="ti-plus"></i>
-          Agregar
-          Impresora</button>
+        <div class="d-flex flex-row gap-1">
+          <button class="btn btn-info" id="buttonNew" (click)="openModalNewOrEdit()">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            Agregar Impresora
+          </button>
+          <button class="btn btn-secondary"  (click)="getPrinters()">
+            <fa-icon [icon]="'redo'"></fa-icon>
+          </button>
+        </div>
       </div>
     </div>
     <hr>
@@ -52,6 +58,10 @@
               </mat-slide-toggle>
             </td>
           </tr>
+          } @empty {
+            <tr class="text-center">
+              <td colspan="10">Sin registro</td>
+            </tr>
           }
         </tbody>
       </table>
