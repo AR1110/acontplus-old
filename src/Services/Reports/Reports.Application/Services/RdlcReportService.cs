@@ -7,6 +7,7 @@ using Microsoft.Reporting.NETCore;
 using Reports.Core.Enums;
 using Reports.Core.Interfaces;
 using Reports.Core.Models;
+using static System.Enum;
 
 namespace Reports.Application.Services
 {
@@ -17,11 +18,12 @@ namespace Reports.Application.Services
             var response = new ReportResponse();
             var reportProps = DataTableMapper.BindData<ReportProps>(parameters.Tables["ReportProps"]);
 
-
             using var lr = new LocalReport();
             if (offline)
             {
-                var reportPath = Path.Combine(configuration.GetSection("dirReports").Value ?? throw new InvalidOperationException(), parameters.Tables[0].Rows[0]["reportPath"].ToString() ?? string.Empty);
+                var reportPath =
+                    Path.Combine(configuration.GetSection("dirReports").Value ?? throw new InvalidOperationException(),
+                        parameters.Tables[0].Rows[0]["reportPath"].ToString() ?? string.Empty);
                 lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(reportPath));
             }
             else
@@ -36,10 +38,12 @@ namespace Reports.Application.Services
                         lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0])));
                         break;
                     case 2:
-                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0], paths[1])));
+                        lr.LoadReportDefinition(
+                            RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0], paths[1])));
                         break;
                     default:
-                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, reportProps.ReportPath)));
+                        lr.LoadReportDefinition(
+                            RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, reportProps.ReportPath)));
                         break;
                 }
             }
@@ -83,7 +87,9 @@ namespace Reports.Application.Services
                     string paramValue = "";
                     if (Convert.ToBoolean(item["isPicture"]))
                     {
-                        paramValue = item.Field<bool>("isCompressed") ? FileExtensions.GetBase64FromByte(CompressionHelper.Decompress((byte[])item["paramValue"])) : FileExtensions.GetBase64FromByte((byte[])item["paramValue"]);
+                        paramValue = item.Field<bool>("isCompressed")
+                            ? FileExtensions.GetBase64FromByte(CompressionHelper.Decompress((byte[])item["paramValue"]))
+                            : FileExtensions.GetBase64FromByte((byte[])item["paramValue"]);
                         lr.SetParameters(new ReportParameter(item["paramName"].ToString(), paramValue));
                     }
                     else
@@ -95,8 +101,8 @@ namespace Reports.Application.Services
             }
 
             byte[] fileReport = lr.Render(reportProps.ReportFormat, null, out _, out _, out _, out _, out _);
-            Enum.TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileContentType fc);
-            Enum.TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileExtension fe);
+            TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileContentType fc);
+            TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileExtension fe);
             response.FileContents = fileReport;
             response.ContentType = fc.DisplayName();
             response.FileDownloadName = HttpUtility.UrlEncode(reportProps.ReportName + fe.DisplayName(), Encoding.UTF8);
@@ -107,7 +113,10 @@ namespace Reports.Application.Services
         {
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "NotFound.pdf");
             var fileContents = await File.ReadAllBytesAsync(filePath);
-            return new ReportResponse { FileContents = fileContents, ContentType = "application/pdf", FileDownloadName = "Not Found.pdf" };
+            return new ReportResponse
+            {
+                FileContents = fileContents, ContentType = "application/pdf", FileDownloadName = "Not Found.pdf"
+            };
         }
     }
 }

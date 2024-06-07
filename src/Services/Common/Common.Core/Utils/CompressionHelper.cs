@@ -7,40 +7,21 @@ namespace Common.Core.Utils
         public static byte[] Compress(byte[] data)
         {
             byte[] compressArray = null;
-            try
-            {
-                using (var memoryStream = new MemoryStream())
-                {
-                    using (var deflateStream = new DeflateStream(memoryStream, CompressionMode.Compress))
-                    {
-                        deflateStream.Write(data, 0, data.Length);
-                    }
-                    compressArray = memoryStream.ToArray();
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            using var memoryStream = new MemoryStream();
+            using var deflateStream = new DeflateStream(memoryStream, CompressionMode.Compress);
+            deflateStream.Write(data, 0, data.Length);
+            compressArray = memoryStream.ToArray();
             return compressArray;
         }
         public static byte[] Decompress(byte[] data)
         {
-            byte[] decompressedArray = null;
-            try
+            var decompressedStream = new MemoryStream();
+            using (var compressStream = new MemoryStream(data))
             {
-                var decompressedStream = new MemoryStream();
-                using (var compressStream = new MemoryStream(data))
-                {
-                    var deflateStream = new DeflateStream(compressStream, CompressionMode.Decompress);
-                    deflateStream.CopyTo(decompressedStream);
-                }
-                decompressedArray = decompressedStream.ToArray();
+                var deflateStream = new DeflateStream(compressStream, CompressionMode.Decompress);
+                deflateStream.CopyTo(decompressedStream);
             }
-            catch (Exception)
-            {
-                throw;
-            }
+            var decompressedArray = decompressedStream.ToArray();
 
             return decompressedArray;
         }
