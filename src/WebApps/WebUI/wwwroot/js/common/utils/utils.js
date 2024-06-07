@@ -277,6 +277,8 @@
         }
 
         formSvc.getFechaEscrita = function (fecha) {
+            if (!formSvc.isDateValid(fecha)) return '';
+
             let mes = this.meses();
             let diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
 
