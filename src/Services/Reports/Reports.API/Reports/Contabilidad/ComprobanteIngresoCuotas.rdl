@@ -2134,7 +2134,7 @@
                                                   <Paragraph>
                                                     <TextRuns>
                                                       <TextRun>
-                                                        <Value>=Fields!totalDoc.Value</Value>
+                                                        <Value>=Code.AddGroupTotal(Fields!totalDoc.Value)</Value>
                                                         <Style>
                                                           <FontFamily>Arial</FontFamily>
                                                           <FontSize>7pt</FontSize>
@@ -2159,7 +2159,6 @@
                                                   <PaddingBottom>2pt</PaddingBottom>
                                                 </Style>
                                               </Textbox>
-                                              <rd:Selected>true</rd:Selected>
                                             </CellContents>
                                           </TablixHeader>
                                           <TablixMembers>
@@ -2231,7 +2230,7 @@
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>=Sum(Fields!totalDoc.Value)</Value>
+                                    <Value>=Code.GetOverallTotal()</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
                                       <FontSize>7pt</FontSize>
@@ -2407,6 +2406,20 @@
       </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
+  <Code>Dim GroupTotals As New System.Collections.Generic.List(Of Decimal)
+
+Public Function AddGroupTotal(ByVal GroupTotal As Decimal) As Decimal
+    GroupTotals.Add(GroupTotal)
+    Return GroupTotal
+End Function
+
+Public Function GetOverallTotal() As Decimal
+    Dim TotalSum As Decimal = 0
+    For Each total As Decimal In GroupTotals
+        TotalSum += total
+    Next
+    Return TotalSum
+End Function</Code>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>7cbd1876-0811-4b3e-ac1f-7f9ba677bc61</rd:ReportID>
 </Report>
