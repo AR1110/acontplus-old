@@ -259,12 +259,12 @@ export class PrinterAddEditModalComponent {
     }
 
     if(this.params.data.id>0){
-      this.printerSvc.post(params).subscribe(this.successResponse)
+      this.printerSvc.put(this.params.data.id, params).subscribe(this.successResponse)
+
     }
 
     if(!(this.params.data.id>0)){
-      this.printerSvc.put(this.params.data.id, params).subscribe(this.successResponse)
-
+      this.printerSvc.post(params).subscribe(this.successResponse)
     }
 
   }
