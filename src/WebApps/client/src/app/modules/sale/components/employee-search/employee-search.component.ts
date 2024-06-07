@@ -18,6 +18,8 @@ import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
 })
 export class EmployeeSearchComponent {
   @Output() onSupplierSelected = new EventEmitter<{ data: any }>();
+  @Output() onEmployeeSelected = new EventEmitter<{ data: any }>();
+
   @Output() emptyInput = new EventEmitter();
   @Input() isSearchSimple = false;
   @Input() textSearch = ''
@@ -56,6 +58,7 @@ export class EmployeeSearchComponent {
   onSelect($event: any) {
     let employee: EmployeeSearchDto = $event.item;
     this.onSupplierSelected.emit({ data: employee });
+    this.onEmployeeSelected.emit({data:employee})
     setTimeout(() => {
       this.textSearch = employee.nombreCompleto;
     });

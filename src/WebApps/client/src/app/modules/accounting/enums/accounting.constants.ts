@@ -18,3 +18,7 @@ export const enum PaymentTypeCode {
   CHE = 'CHE',
   DOC = 'DOC',
 }
+
+export const enum ACCOUNTING_CODE_REPORT {
+  RMC='RMC' //REPORTE MOVIMIENTO CAJA (MOVIMIENTO CAJA/ANTICIPO)
+}

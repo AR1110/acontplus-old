@@ -32,6 +32,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IUserProfileService, UserProfileService>();
         services.AddScoped<IEstablishmentService, EstablishmentService>();
         services.AddScoped<IPtoEmisionService, PtoEmisionService>();
+        services.AddScoped<ICompanyService, CompanyService>();
 
         services.AddScoped<ICustomLogger, CustomLogger>();
         services.AddScoped<ITurnoService, TurnoService>();

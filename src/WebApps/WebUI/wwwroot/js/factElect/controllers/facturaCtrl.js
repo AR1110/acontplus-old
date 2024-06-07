@@ -2432,6 +2432,37 @@
             return cuotas;
         }
 
+        function isValidTotals(){
+            let {
+                subTotalSinImpuestos, 
+                importeTotal,
+                totalDescuento, 
+            } = gridOptionsSvc.getImpuestoTotales({
+                items: $scope.gridOptions.data,
+                decimal: $scope.decimal,
+                tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+                TAX_RATE_CODE
+            })
+
+            if ($scope.data.subTotalSinImpuestos !== subTotalSinImpuestos) {
+                tS.toastr('warning', `El valor del Subtotal sin impuestos: ${$scope.data.subTotalSinImpuestos} difiere del valor del Subtotal sin impuestos en el detalle: ${subTotalSinImpuestos}`);
+                return;
+            }
+
+            if ($scope.data.totalDescuento !== totalDescuento) {
+                tS.toastr('warning', `El valor total del descuento: ${$scope.data.totalDescuento} no coincide con el descuento total calculado en el detalle: ${totalDescuento}`);
+                return;
+            }
+
+            if ($scope.data.total !== importeTotal) {
+                tS.toastr('warning', `El valor del importe total: ${$scope.data.total} difiere del importe total calculado en el detalle: ${importeTotal}`);
+                return;
+            }
+ 
+            return true; 
+        }
+
+
         $scope.onSave = async function () {
             try {
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
@@ -2439,6 +2470,8 @@
                 if (!validateForm) {
                     throw "Invalid form!";
                 }
+
+                if (!isValidTotals()) return 
 
                 let cuotas = validateCuota();
 

@@ -12,5 +12,6 @@ export const enum CONFIG_PATHS {
   USER_PROFILE = 'UserProfile/',
   ESTABLISHMENT ='Establishment/',
   PUNTO_EMISION = 'PtoEmision/',
-  ESTABLISHMENT_LOGO='EstablecimientoLogo/'
+  ESTABLISHMENT_LOGO='EstablecimientoLogo/',
+  COMPANY = 'Company/'
 }
