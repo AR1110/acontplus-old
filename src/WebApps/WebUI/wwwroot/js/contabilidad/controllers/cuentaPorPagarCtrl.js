@@ -53,9 +53,9 @@
         }
 
         $scope.tipoDocumentos = [
-            { codigo: '03', descripcion: 'LIQUIDACION COMPRA' },
-            { codigo: 'FC', descripcion: 'FACTURA' },
-            { codigo: 'DH', descripcion: 'DOCUMENTO NO HABITUAL' },
+            // { codigo: '03', descripcion: 'LIQUIDACION COMPRA' },
+            // { codigo: 'FC', descripcion: 'FACTURA' },
+            // { codigo: 'DH', descripcion: 'DOCUMENTO NO HABITUAL' },
         ];
 
         $scope.cuentasPorPagar = [];
@@ -113,10 +113,14 @@
             try {
                 showLoader();
                 cuentaPorPagarSvc.getDataFilter().then(response => {
-                    const { estabs,
-                        estadosDoc } = response;
+                    const { 
+                        estabs,
+                        estadosDoc ,
+                        tiposDoc
+                    } = response;
                     $scope.establecimientos = estabs;
                     $scope.estadosDoc = estadosDoc;
+                    $scope.tipoDocumentos = tiposDoc || []
 
                     if ($scope.establecimientos.length > 0) {
                         let dataEstab = $scope.establecimientos.find(item => item.defaultEstab);

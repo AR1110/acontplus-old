@@ -13,5 +13,7 @@ export const enum CONFIG_PATHS {
   ESTABLISHMENT ='Establishment/',
   PUNTO_EMISION = 'PtoEmision/',
   ESTABLISHMENT_LOGO='EstablecimientoLogo/',
-  COMPANY = 'Company/'
+  COMPANY = 'Company/',
+  PRINTER='Printer/',
+  PRINTER_DOC = 'PrinterDocument'
 }
