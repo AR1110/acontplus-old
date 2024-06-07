@@ -163,7 +163,7 @@ BEGIN
                 END 
             
 
-            SET @sql = @sql + 'ORDER BY cc.idCuentaPorCobrar DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
+            SET @sql = @sql + 'ORDER BY cc.fechaEmision ASC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
             EXEC sp_executesql @sql
 						      ,@params 
@@ -543,7 +543,6 @@ BEGIN
                                     SELECT @configDeuda = 1
                                 END 
                         END
-
                 END 
 
             --> Configuracion de mora Valor Fijo (PF) o Porcentaje de Interes (PI)
