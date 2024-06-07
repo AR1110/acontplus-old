@@ -36,13 +36,13 @@ export class CompanyAddEditModalComponent {
   }
 
 
-  ngOnit(){
+  ngOnInit(){
     this.data = structuredClone(this.params)
   }
 
   save(){
 
-    if(isValidField(this.data.ruc)){
+    if(!isValidField(this.data.ruc)){
       this.tS.toastr({
         type: 'warning',
         message: 'Ingrese número de ruc'
@@ -84,8 +84,20 @@ export class CompanyAddEditModalComponent {
       }
     }
 
+    let params = {
 
-    this.companySvc.put(this.params.id, this.data).subscribe(response=>{
+      razonSocial: this.data.razonSocial,
+      ruc: this.data.ruc,
+      nombreComercial: this.data.nombreComercial,
+      telefono: isValidField(this.data.telefono),
+      //estado: true,
+      email: isValidField(this.data.email),
+      direccion: isValidField(this.data.direccion),
+    //  idCiudad: 111
+    }
+
+
+    this.companySvc.put(this.params.idEntidad, params).subscribe(response=>{
       if(isApiResponse(response)){
         if(response.code==="0"){
           this.tS.toastr({

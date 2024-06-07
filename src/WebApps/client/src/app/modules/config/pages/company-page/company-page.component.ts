@@ -28,7 +28,6 @@ export class CompanyPageComponent {
 
   getCompanies(){
     this.companySvc.getAll().subscribe(response=>{
-      console.log(response)
       this.companies = response.companies;
     })
   }
@@ -41,7 +40,7 @@ export class CompanyPageComponent {
     let modalRef = this.modalSvc.open(CompanyAddEditModalComponent ,{
       backdrop: 'static'
     })
-    modalRef.componentInstance.params = {}
+    modalRef.componentInstance.params = item;
 
     modalRef.result.then(result=>{
       if(result && typeof  result==='object'){
