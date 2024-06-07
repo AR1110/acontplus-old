@@ -5,6 +5,7 @@ import { UserCustomerPageComponent } from "./pages/user-customer-page/user-custo
 import { UserCustomerRequestPageComponent } from "./pages/user-customer-request-page/user-customer-request-page.component";
 import { UserProfilePageComponent } from "./pages/user-profile-page/user-profile-page.component";
 import { EstablishmentPageComponent } from "./pages/establishment-page/establishment-page.component";
+import {CompanyPageComponent} from "@modules/config/pages/company-page/company-page.component";
 export const routes: Routes = [
   {
     path: 'general-config-page',
@@ -52,6 +53,14 @@ export const routes: Routes = [
     component: EstablishmentPageComponent,
     data: {
       breadcrumb: 'Establecimiento'
+    }
+  },
+  {
+    path: 'company',
+    title: 'Entidad',
+    component: CompanyPageComponent,
+    data: {
+      breadcrumb: 'Entidad'
     }
   }
 ]

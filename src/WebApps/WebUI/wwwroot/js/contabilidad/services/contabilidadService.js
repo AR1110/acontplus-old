@@ -377,6 +377,8 @@
                 historialCuentas,
             } = obj;
 
+           
+
             let comprobanteMappeado = {
                 idProveedor: comprobante.idProveedor,
                 total: comprobante.total,
@@ -412,20 +414,24 @@
             })
 
             const pagosDetalleMappeado = pagosDetalle.map(item => {
+                let contarDecimales = fS.contarDecimales(item.saldo)
                 return {
                     idCuotaPorPagar: item.idCuotaPorPagar,
                     saldo: fS.roundNumber(item.saldoOriginal, 5),
-                    abono: fS.roundNumber(item.abono, 5),
+                    abono: fS.roundNumber(item.abono, contarDecimales),
                     secuencial: item.secuencial
                 }
             })
+        
 
             const historialCuentasMappeado = historialCuentas.map(item => {
+                let saldo = fS.roundNumber(item.saldo, 5)
+                let contarDecimales = fS.contarDecimales(saldo)
                 return {
 
                     idCuentaPorPagar: item.idCuentaPorPagar,
-                    saldo: fS.roundNumber(item.saldo, 5),
-                    abono: fS.roundNumber(item.abono, 5),
+                    saldo,
+                    abono: fS.roundNumber(item.abono, contarDecimales),
                     secuencial: item.secuencial
                 }
             })

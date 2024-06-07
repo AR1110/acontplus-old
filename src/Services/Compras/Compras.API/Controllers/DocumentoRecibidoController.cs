@@ -12,9 +12,10 @@ public class DocumentoRecibidoController : ControllerBase
     private readonly IDocumentoRecibidoService _docRecibidoSvc;
     private readonly ICustomLogger _log;
     private readonly IDocumentoTempService _documentoTemp;
+    private readonly IWebServiceSri _webServiceSri;
 
     public DocumentoRecibidoController(IConfiguration configuration, IDocumentoRecibidoService docRecibidoSvc,
-        FileTxt txtComp, ICustomLogger log, IDocumentoTempService documentoTemp)
+        FileTxt txtComp, ICustomLogger log, IDocumentoTempService documentoTemp, IWebServiceSri webServiceSri)
     {
         _configuration = configuration;
         _docRecibidoSvc = docRecibidoSvc;
@@ -22,6 +23,7 @@ public class DocumentoRecibidoController : ControllerBase
         _log = log;
         _documentoTemp = documentoTemp;
         _db = new DbAccess(_configuration);
+        _webServiceSri = webServiceSri;
     }
 
     [HttpGet]
@@ -138,8 +140,7 @@ public class DocumentoRecibidoController : ControllerBase
     [HttpPost("CheckExistenceXml")]
     public async Task<IActionResult> CheckExistenceXml(string claveAcceso)
     {
-        var _sri = new WebServiceSri(_configuration);
-        var response = await _sri.CheckExistence(claveAcceso,
+        var response = await _webServiceSri.CheckExistenceAsync(claveAcceso,
             "https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl");
         return Ok(response);
     }

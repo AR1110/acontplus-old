@@ -1184,80 +1184,7 @@
             });
         }
 
-        // * Add by Ignacio Manchu.
-        function drawInfoGeneralNotaEntrega() {
-            try {
-                let {
-                    subTotalSinImpuestos,
-                    htmlImpuestoTotal,
-                    htmlIvaTotal,
-                    irbpnr,
-                    totalIce,
-                    importeTotal,
-                    totalDescuento,
-                    porcentajeDescuento,
-                    propina,
-                } = gridOptionsSvc.getImpuestoTotales({
-                    items: $scope.gridOptions.data,
-                    decimal: $scope.decimal,
-                    tarifasImpuesto: $scope.tarifasImpuesto.slice(),
-                });
-
-                const template = `<table class="table table-clear table-sm">
-                                    <tbody>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Subtotal sin Impuestos</strong>
-                                            </td>
-                                            <td class="right">$${subTotalSinImpuestos}</td>
-                                        </tr>
-                                        ${htmlImpuestoTotal}
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Total descuento</strong>
-                                            </td>
-                                            <td class="right">$${totalDescuento}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Valor ICE</strong>
-                                            </td>
-                                            <td class="right">$${totalIce}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Valor irbpnr</strong>
-                                            </td>
-                                            <td class="right">$${irbpnr}</td>
-                                        </tr>
-                                        ${htmlIvaTotal}
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="font-weight-bold">Valor Total</strong>
-                                            </td>
-                                            <td class="right font-weight-bold">$${importeTotal}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>`;
-
-                const element = document.getElementById('draw-dynamic-subtotal');
-                element.innerHTML = template;
-
-                $scope.data.subTotalSinImpuestos = subTotalSinImpuestos;
-                $scope.data.total = importeTotal;
-                $scope.data.totalDescuento = totalDescuento;
-                $scope.data.porcentajeDescuento = porcentajeDescuento;
-                $scope.data.irbpnr = irbpnr
-                $scope.data.propina = propina;
-
-                //Forma Pago
-                $scope.dataFormaPago.total = importeTotal;
-
-            } catch (error) {
-                console.log(error);
-            }
-        }
-
+       
 
         function getFechaVencimiento() {
             if ($scope.data.fechaEmision && $scope.tiemposCredito.length > 0) {
@@ -2166,6 +2093,80 @@
             }
         }
 
+        // * Add by Ignacio Manchu.
+        function drawInfoGeneralNotaEntrega() {
+            try {
+                let {
+                    subTotalSinImpuestos,
+                    htmlImpuestoTotal,
+                    htmlIvaTotal,
+                    irbpnr,
+                    totalIce,
+                    importeTotal,
+                    totalDescuento,
+                    porcentajeDescuento,
+                    propina,
+                } = gridOptionsSvc.getImpuestoTotales({
+                    items: $scope.gridOptions.data,
+                    decimal: $scope.decimal,
+                    tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+                });
+
+                const template = `<table class="table table-clear table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <td class="left">
+                                                <strong class="text-dark">Subtotal sin Impuestos</strong>
+                                            </td>
+                                            <td class="right">$${subTotalSinImpuestos}</td>
+                                        </tr>
+                                        ${htmlImpuestoTotal}
+                                        <tr>
+                                            <td class="left">
+                                                <strong class="text-dark">Total descuento</strong>
+                                            </td>
+                                            <td class="right">$${totalDescuento}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="left">
+                                                <strong class="text-dark">Valor ICE</strong>
+                                            </td>
+                                            <td class="right">$${totalIce}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="left">
+                                                <strong class="text-dark">Valor irbpnr</strong>
+                                            </td>
+                                            <td class="right">$${irbpnr}</td>
+                                        </tr>
+                                        ${htmlIvaTotal}
+                                        <tr>
+                                            <td class="left">
+                                                <strong class="font-weight-bold">Valor Total</strong>
+                                            </td>
+                                            <td class="right font-weight-bold">$${importeTotal}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>`;
+
+                const element = document.getElementById('draw-dynamic-subtotal');
+                element.innerHTML = template;
+
+                $scope.data.subTotalSinImpuestos = subTotalSinImpuestos;
+                $scope.data.total = importeTotal;
+                $scope.data.totalDescuento = totalDescuento;
+                $scope.data.porcentajeDescuento = porcentajeDescuento;
+                $scope.data.irbpnr = irbpnr
+                $scope.data.propina = propina;
+
+                //Forma Pago
+                $scope.dataFormaPago.total = importeTotal;
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
 
         $scope.getImporteTotal = function () {
             if (!$scope.decimal) return
@@ -2303,6 +2304,36 @@
             return cuotas;
         }
 
+
+        function isValidTotals() {
+            let {
+                subTotalSinImpuestos, 
+                importeTotal,
+                totalDescuento, 
+            } = gridOptionsSvc.getImpuestoTotales({
+                items: $scope.gridOptions.data,
+                decimal: $scope.decimal,
+                tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+            });
+
+            if ($scope.data.subTotalSinImpuestos !== subTotalSinImpuestos) {
+                tS.toastr('warning', `El valor del Subtotal sin impuestos: ${$scope.data.subTotalSinImpuestos} difiere del valor del Subtotal sin impuestos en el detalle: ${subTotalSinImpuestos}`);
+                return;
+            }
+
+            if ($scope.data.totalDescuento !== totalDescuento) {
+                tS.toastr('warning', `El valor total del descuento: ${$scope.data.totalDescuento} no coincide con el descuento total calculado en el detalle: ${totalDescuento}`);
+                return;
+            }
+
+            if ($scope.data.total !== importeTotal) {
+                tS.toastr('warning', `El valor del importe total: ${$scope.data.total} difiere del importe total calculado en el detalle: ${importeTotal}`);
+                return;
+            }
+
+            return true;
+        }
+
         $scope.onSave = async function () {
             try {
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
@@ -2311,6 +2342,8 @@
                 if (!validateForm) {
                     throw "Invalid form!";
                 }
+
+                if (!isValidTotals()) return 
 
                 let cuotas = validateCuota();
 

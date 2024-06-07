@@ -33,5 +33,7 @@ export enum GlobalRoutes {
   VetPet = 'vet/pet-page',
   VetMedicalHistory = 'vet/medical-history-page',
   VetStats = 'vet/stats-page',
-  ContabilidadMovimientoCajaReport="accounting/movimiento-caja-report"
+  ContabilidadMovimientoCajaReport="accounting/movimiento-caja-report",
+  ConfigCompany = 'config/company',
+
 }

@@ -6,7 +6,7 @@ IF EXISTS (SELECT name FROM sys.indexes
             WHERE name = N'IX_DocumentoElectronico')   
     DROP INDEX IX_DocumentoElectronico ON dbo.DocumentoElectronico;  
 GO 
-	CREATE NONCLUSTERED INDEX IX_DocumentoElectronico ON dbo.DocumentoElectronico(codDoc, idDocumento, nroDocumento, numEstab, ptoEmision, idPuntoEmision, claveAcceso, fechaAutorizacion, codEstado);
+	CREATE NONCLUSTERED INDEX IX_DocumentoElectronico ON dbo.DocumentoElectronico(codDoc, idDocumento, nroDocumento, idPuntoEmision, claveAcceso, fechaAutorizacion, idEstadoServicio, customerId);
 GO
 IF EXISTS (SELECT name from sys.indexes  
            WHERE name = N'UX_DocumentoElectronico_ClaveAcceso'
@@ -22,6 +22,6 @@ IF EXISTS (SELECT name from sys.indexes
            AND object_id = OBJECT_ID(N'dbo.DocumentoElectronico', N'U'))   
    DROP INDEX UX_DocumentoElectronico_CodigoAutorizacion ON dbo.DocumentoElectronico;   
 GO  
-CREATE UNIQUE INDEX UX_DocumentoElectronico_CodigoAutorizacion  
-   ON dbo.DocumentoElectronico(codigoAutorizacion);  
+--CREATE UNIQUE INDEX UX_DocumentoElectronico_CodigoAutorizacion  
+--   ON dbo.DocumentoElectronico(codigoAutorizacion);  
 GO

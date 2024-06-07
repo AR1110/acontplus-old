@@ -18,11 +18,9 @@ namespace Common.Core.Utils
         public static byte[] GetBytes(IFormFile file)
         {
             byte[] fileBytes = null;
-            using (var ms = new MemoryStream())
-            {
-                file.CopyTo(ms);
-                fileBytes = ms.ToArray();
-            }
+            using var ms = new MemoryStream();
+            file.CopyTo(ms);
+            fileBytes = ms.ToArray();
             return fileBytes;
         }
     }
