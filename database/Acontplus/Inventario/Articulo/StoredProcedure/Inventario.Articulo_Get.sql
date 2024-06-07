@@ -341,6 +341,7 @@ BEGIN
 			FROM dbo.SubFamilia sf  WITH (NOLOCK)
 			 LEFT JOIN Familia   f  WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
 			WHERE sf.idEntidad = @idEntidad AND sf.estado = 1
+            ORDER BY sf.descripcion ASC
 
 			SELECT idFamilia, descripcion      
             FROM dbo.Familia WITH (NOLOCK) 
@@ -577,6 +578,7 @@ BEGIN
 
             SELECT ar.idMedida 
                   ,1              as conversion
+                  ,1              as orden
                   ,ar.precioCosto as precioUnitario
                   ,ar.precioCosto as precioCosto
                   ,ar.precioCosto as precioCostoFraccionado
@@ -587,6 +589,7 @@ BEGIN
 
             SELECT af.idMedida
                   ,af.conversion
+                  ,2                         as orden
                   ,af.precioCostoFraccionado as precioUnitario
                   ,ar.precioCosto            as precioCosto
                   ,af.precioCostoFraccionado as precioCostoFraccionado

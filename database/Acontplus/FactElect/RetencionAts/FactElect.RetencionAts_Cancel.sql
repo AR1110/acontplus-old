@@ -9,17 +9,19 @@ GO
 -- Create date: 2023-03-02
 -- Description: sp for cancel in sri retencion ats
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetencionAts_Cancel', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetencionAts_Cancel 
-GO
-CREATE PROCEDURE FactElect.RetencionAts_Cancel @idRol INT,@id INT 
+CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Cancel @idRol INT,@id INT 
 AS
 BEGIN
 	SET NOCOUNT ON; 
 	DECLARE @idUsuario INT
-	,@idRetencionAts INT
+	       ,@idRetencionAts INT
+           ,@idEstadoServicio INT
+
 	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
 	SET @idRetencionAts = (select idDocumento from DocumentoElectronico with (nolock) where idDocumentoElectronico = @id)
+
+    SELECT @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 6
+
 	BEGIN TRY
 		BEGIN TRAN 
 			
@@ -43,7 +45,7 @@ BEGIN
 				END
 
 			--ANULA EN DOCUMENTO ELECTRONICO
-			UPDATE DocumentoElectronico SET codEstado = 6 WHERE idDocumentoElectronico = @id
+			UPDATE DocumentoElectronico SET idEstadoServicio = @idEstadoServicio WHERE idDocumentoElectronico = @id
 
 			SELECT '1' code, 'Retencion anulada en el SRI con exito'  as 'message'
 		COMMIT TRAN

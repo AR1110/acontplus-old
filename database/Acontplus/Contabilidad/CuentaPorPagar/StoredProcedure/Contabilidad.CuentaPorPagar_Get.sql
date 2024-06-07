@@ -134,7 +134,7 @@ BEGIN
 
 			IF  @codEstab IS NOT NULL
 				BEGIN
-					SET @sql = @sql + ' AND es.codEstab = @codEstab'
+					SET @sql = @sql + ' AND es.codEstab = @codEstab '
 				END 
 
 			IF @codDoc is not null
@@ -144,7 +144,14 @@ BEGIN
 
 			IF @codEstado is not null
 				BEGIN
-					SET @sql = @sql + ' AND ep.codigo= @codEstado'
+                    IF @codEstado = 'NPA'  
+						BEGIN
+							SET @sql = @sql + 'AND ep.codigo IN (''PE'',''PP'') '
+						END
+					ELSE 
+						BEGIN
+							SET @sql = @sql + 'AND ep.codigo = @codEstado '
+						END
 				END 
 
 			IF @idProveedor IS NOT NULL
@@ -155,7 +162,7 @@ BEGIN
             IF @secuencial IS NOT NULL
                 SET @sql = @sql + ' AND  TRY_CAST(REVERSE(SUBSTRING(REVERSE(pp.serieComprobante),1, CHARINDEX(''-'', REVERSE(pp.serieComprobante))-1)) AS INT) = @secuencial '
 
-			SET @sql = @sql + ' ORDER BY pp.idCuentaPorPagar DESC '
+			SET @sql = @sql + ' ORDER BY pp.fechaEmision ASC '
 			
 			EXEC sp_executesql 
 			      @sql
@@ -376,7 +383,7 @@ BEGIN
                   ,defaultPtoEmi 
             FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
 
-            SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NPA','PA')
+            SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NPA','PA','PFC')
 
             SELECT idTipoDocumento
                   ,descripcion

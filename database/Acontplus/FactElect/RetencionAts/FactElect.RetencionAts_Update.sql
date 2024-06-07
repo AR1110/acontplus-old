@@ -9,10 +9,7 @@ GO
 -- Create date: 2022-02-21
 -- Description: sp for update retencion ats
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetencionAts_Update', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetencionAts_Update 
-GO
-CREATE PROCEDURE FactElect.RetencionAts_Update @idRol INT
+CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Update @idRol INT
 ,@id INT
 ,@infoCompRet VARCHAR(MAX) 
 AS
@@ -30,6 +27,8 @@ BEGIN
 			,@claveAcceso VARCHAR(49)
 			,@idUsuario INT
 			,@idProveedor INT
+            ,@CustomerId INT 
+            ,@idEstadoServicio INT
 			
 	DECLARE @tblInfoCompRet AS TABLE(fechaEmision DATETIME NOT NULL
 		,codEstab VARCHAR(25) NOT NULL
@@ -122,6 +121,9 @@ BEGIN
 
 			SELECT @fechaEmision = fechaEmision FROM @tblInfoCompRet
 			
+            SELECT TOP 1 @CustomerId = ISNULL(CustomerId,0) FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
+
+            SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1
  
 			SET @secuencial = (SELECT secuencial FROM FactElect.RetencionAts WHERE idRetencionAts = @id)
  
@@ -182,17 +184,11 @@ BEGIN
 														AND versionComp = '2.0.0')
 
 			UPDATE DocumentoElectronico SET  idPuntoEmision = @idPuntoEmision
-			,numEstab = (SELECT estab FROM @tblInfoCompRet)
-			,ptoEmision = (SELECT ptoEmi FROM @tblInfoCompRet)
-			,claveAcceso = @claveAcceso
-			,isAutomatic = @isAutomatic
-			,fechaEmision = @fechaEmision
-			,codigoAutorizacion = @claveAcceso
-			,idUsuario = @idUsuario
-			,idEntidad = @idEntidad
-			,codEstado = 1
-			,idContribuyente = @idProveedor
-			,nroDocumento = CONVERT(BIGINT, @secuencial)
+			,claveAcceso      = @claveAcceso
+			,isAutomatic      = @isAutomatic
+			,fechaEmision     = @fechaEmision
+			,idEstadoServicio = @idEstadoServicio
+			,CustomerId       = @CustomerId
 			WHERE idDocumento = @id 
               AND codDoc = '07' 
               AND versionComp = '2.0.0'

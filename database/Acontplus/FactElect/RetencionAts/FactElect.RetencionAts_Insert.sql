@@ -9,10 +9,7 @@ GO
 -- Create date: 2022-12-15
 -- Description: sp for insert retencion ats
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetencionAts_Insert', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetencionAts_Insert 
-GO
-CREATE PROCEDURE FactElect.RetencionAts_Insert @idRol INT
+CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Insert @idRol INT
 ,@infoCompRet VARCHAR(MAX)
 ,@docsSust VARCHAR(MAX)
 ,@impuestos VARCHAR(MAX)
@@ -25,13 +22,15 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @tblInfoCompRet AS TABLE(
-		fechaEmision DATETIME NOT NULL
+		 fechaEmision DATETIME NOT NULL
 		,codEstab VARCHAR(25) NOT NULL
 		,estab VARCHAR(5) NOT NULL
 		,ptoEmi VARCHAR(5) NOT NULL
 		,contribuyentEspecial VARCHAR(13) NULL
 		,obligadoContabilidad VARCHAR(2) NULL
-		,tipoIdentificacionSujetoRetenido VARCHAR(2) NULL
+		,codDoc VARCHAR(10) NOT NULL DEFAULT '07' 
+        ,versionComp VARCHAR(10) NOT NULL DEFAULT '2.0.0'
+        ,tipoIdentificacionSujetoRetenido VARCHAR(2) NULL
 		,tipoSujetoRetenido VARCHAR(2) NULL
 		,parteRel VARCHAR(2) NOT NULL
 		,idCliente INT NULL
@@ -238,7 +237,9 @@ BEGIN
 			,@claveAcceso VARCHAR(49)
 			,@idUsuario INT
 			,@idProveedor INT
-			
+			,@CustomerId INT 
+            ,@idEstadoServicio INT
+
 			SET @ambiente = 1
 			SET @tipoEmision = 1
 
@@ -256,12 +257,16 @@ BEGIN
 
 
 			SET @idProveedor = ISNULL((SELECT idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = (SELECT LTRIM(RTRIM(identificacionSujetoRetenido))  FROM @tblInfoCompRet)),0)
-		
+		    
 			IF (@idProveedor IS NULL OR @idProveedor = 0)
 				BEGIN
 					SELECT '0' code, 'No se encontro proveedor' as 'message'
 					RETURN
 				END
+
+            SELECT TOP 1 @CustomerId = ISNULL(CustomerId,0) FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
+
+            SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1
  
 			SELECT TOP 1 @secuencial = ultimaSecuencia
 			FROM ConfiguracionDocumento cd
@@ -384,8 +389,10 @@ BEGIN
 			DECLARE @isAutomatic INT = 0
 			set @isAutomatic = (SELECT TOP 1 autoSriAuth FROM  Config.v_ConfigDocumento WHERE codEstab = (SELECT TOP 1 codEstab FROM @tblInfoCompRet))
 
-			INSERT INTO dbo.DocumentoElectronico(ambiente,codDoc, idDocumento,nroDocumento,idPuntoEmision,numEstab,ptoEmision,claveAcceso,versionComp,isAutomatic,fechaEmision,codigoAutorizacion,idUsuario,idEntidad, codEstado, idContribuyente)
-			SELECT @ambiente,'07',@idRetencionAts,CONVERT(bigint,@secuencial), @idPuntoEmision,estab,ptoEmi,@claveAcceso,'2.0.0',@isAutomatic,@fechaEmision,@claveAcceso,@idUsuario,@idEntidad, 1, @idProveedor FROM @tblInfoCompRet
+			INSERT INTO dbo.DocumentoElectronico
+                  (codDoc,versionComp,fechaEmision,idDocumento,nroDocumento,idPuntoEmision,claveAcceso,isAutomatic,idUsuario,idEntidad,CustomerId,idEstadoServicio)
+			SELECT codDoc,versionComp,fechaEmision,@idRetencionAts,@secuencial,@idPuntoEmision,@claveAcceso,@isAutomatic,@idUsuario,@idEntidad,@CustomerId,@idEstadoServicio
+            FROM @tblInfoCompRet
 			
 			--secuencia
 			UPDATE cd SET 
