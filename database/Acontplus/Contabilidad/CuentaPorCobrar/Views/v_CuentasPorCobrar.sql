@@ -36,8 +36,15 @@ CREATE VIEW v_CuentaPorCobrar AS (
 		  ,usuario                 = us.nombreUsuario
 		  ,tiempoCredito           = tc.tipo
           ,tc.descripcion          AS tipoTiempoCredito
-		  ,estadoSri               = CASE WHEN cc.codDoc = '01' THEN (SELECT de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = cc.idDocumento AND de.codDoc = '01') 
-		                                                         ELSE 0 END     
+		  ,estadoSri               = CASE WHEN cc.codDoc = '01' THEN (
+                                                                          SELECT es.codigo 
+                                                                          FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
+                                                                          INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio = de.idEstadoServicio
+                                                                          WHERE de.idDocumento = cc.idDocumento 
+                                                                            AND de.codDoc = '01'
+                                                                      ) 
+		                                                        ELSE 0 
+                                     END     
           ,cc.mora
           ,us.nombreUsuario
           ,CASE WHEN cc.codDoc  = 'NE' THEN (SELECT TOP 1 ne.convertToDoc FROM dbo.NotaEntrega ne WITH (NOLOCK) WHERE ne.idNotaEntrega = cc.idDocumento)
@@ -45,9 +52,9 @@ CREATE VIEW v_CuentaPorCobrar AS (
            END as convertToDoc
 	FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
 	INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision  = cc.idPuntoEmision
-	INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab        = pt.codEstab
 	INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente       = cc.idCliente
 	INNER JOIN dbo.EstadoPago         ep WITH (NOLOCK) ON ep.idEstadoPago    = cc.idEstadoPago
 	INNER JOIN dbo.Usuario            us WITH (NOLOCK) ON us.idUsuario       = cc.idUsuario
 	INNER JOIN dbo.TiempoCredito      tc WITH (NOLOCK) ON tc.idTiempoCredito = cc.idTiempoCredito
+    INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab        = pt.codEstab
 )
