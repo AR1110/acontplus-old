@@ -7,71 +7,74 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	DECLARE @idEntidad INT
-	DECLARE @isViewOtherDocs BIT
+    --> Global
+    DECLARE @tipo INT ,@idEntidad INT
+
+    --> Sql
+	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
+
+    --Filters
 	DECLARE @idUsuario INT
-	DECLARE @codDoc VARCHAR(10)
-	DECLARE @codEstado INT
-	DECLARE @checkBoxDate BIT
-	DECLARE @dateStart DATETIME
-	DECLARE @dateEnd DATETIME
-	DECLARE @tipo VARCHAR(2)
-	DECLARE @codEstab VARCHAR(20)
-    DECLARE @secuencial VARCHAR(50)
-	DECLARE @idPuntoEmision INT
-	DECLARE @identificacionReceptor VARCHAR(20)
-	DECLARE @pageSize INT
-	DECLARE @pageIndex INT 
-	
-	DECLARE @params NVARCHAR(MAX) = '@idEntidad                      INT
-									,@codEstab               VARCHAR(20)
-	                                ,@codDoc                 VARCHAR(10)
-									,@identificacionReceptor VARCHAR(20)
-									,@codEstado               VARCHAR(5)
-									,@dateStart                 DATETIME
-									,@dateEnd                   DATETIME
-									,@idUsuario                      INT
-                                    ,@pageSize                       INT
-						            ,@pageIndex                      INT
-                                    ,@idPuntoEmision                 INT'
+	       ,@codDoc VARCHAR(10)
+	       ,@codEstado INT
+	       ,@checkBoxDate BIT
+	       ,@dateStart DATETIME2
+	       ,@dateEnd DATETIME2
+	       ,@codEstab VARCHAR(20)
+           ,@secuencial VARCHAR(50)
+	       ,@idPuntoEmision INT
+	       ,@identificacionReceptor VARCHAR(20)
 
-	DECLARE @sql NVARCHAR(MAX) = 'SELECT de.idDocumentoElectronico
-										,de.idDocumento
-										,de.codDoc
-										,comprobante = de.comprobante + '' - '' + de.versionComp
-										,de.serieComprobante
-										,de.rucReceptor 
-										,de.razonSocial
-										,de.correo
-										,fechaEmision =   FORMAT(de.fechaEmision, ''dd/MM/yyyy'') 
-										,claveAcceso
-										,de.fechaAutorizacion
-										,de.estado
-										,de.codEstado
-										,style = CASE de.codEstado WHEN 4 THEN ''table-success'' 
-										                           WHEN 5 THEN ''table-warning''
-																   WHEN 6 THEN ''table-danger''
-																   WHEN 0 THEN ''table-warning''
-												 END
-										,de.versionComp
-										,de.ambiente
-										,usuario = u.nombreUsuario
-										,ISNULL(de.codEstab, '''') codEstab
-										,ISNULL(telefono, '''') telefono
-										,de.telefonoEstablecimiento
-										,de.entidad
-										,de.nombreComercial
-                                        ,totalRecords  = count(*) over()
-									 FROM FactElect.v_DocElectronico de WITH (NOLOCK)
-									 INNER JOIN Usuario     u WITH (NOLOCK) ON u.idUsuario = de.idUsuario
-									 WHERE de.idEntidad = @idEntidad  '
-
-    SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
+    -->Variables
+    SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
 	SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 	
     IF @tipo = 1
         BEGIN 
+            
+            SET @params = '@idEntidad              INT
+						  ,@codEstab               VARCHAR(20)
+	                      ,@codDoc                 VARCHAR(10)
+						  ,@identificacionReceptor VARCHAR(20)
+						  ,@codEstado              VARCHAR(5)
+						  ,@dateStart              DATETIME2
+						  ,@dateEnd                DATETIME2
+						  ,@idUsuario              INT
+                          ,@pageSize               INT
+						  ,@pageIndex              INT
+                          ,@idPuntoEmision         INT'
+
+            SET @sql = 'SELECT de.idDocumentoElectronico
+							  ,de.idDocumento
+							  ,de.codDoc
+							  ,de.comprobante + '' - '' + de.versionComp as comprobante
+							  ,de.serieComprobante
+							  ,de.rucReceptor 
+							  ,de.razonSocial
+							  ,de.correo
+							  ,FORMAT(de.fechaEmision, ''dd/MM/yyyy'')   as fechaEmision
+							  ,claveAcceso
+							  ,de.fechaAutorizacion
+							  ,de.estado
+							  ,de.codEstado
+							  ,CASE de.codEstado WHEN 4 THEN ''table-success'' 
+										         WHEN 5 THEN ''table-warning''
+											     WHEN 6 THEN ''table-danger''
+											     WHEN 0 THEN ''table-warning''
+							   END as style
+							  ,de.versionComp
+							  ,de.ambiente
+							  ,de.usuario
+							  ,ISNULL(de.codEstab, '''') as codEstab
+							  ,ISNULL(telefono, '''')    as telefono
+							  ,de.telefonoEstablecimiento
+							  ,de.entidad
+							  ,de.nombreComercial
+                              ,count(*) over()           as totalRecords
+						FROM FactElect.v_DocElectronico de WITH (NOLOCK)
+						WHERE de.idEntidad = @idEntidad  '
+
 	        SELECT @codDoc                   = codDoc
 	              ,@codEstado                = codEstado
 	              ,@checkBoxDate             = checkBoxDate
@@ -85,28 +88,27 @@ BEGIN
 		          ,@pageSize                 = pageSize
 		          ,@pageIndex                = pageIndex
                   ,@secuencial               = LTRIM(RTRIM(nroSecuencial))
-	        FROM OPENJSON(@json)
-	        WITH (codDoc                 VARCHAR(10) '$.codDoc'
-		         ,codEstado                      INT '$.codEstado'
-		         ,checkBoxDate                   BIT '$.checkBoxDate'
-		         ,dateStart                 DATETIME '$.dateStart'
-		         ,dateEnd                   DATETIME '$.dateEnd'
-		         ,tipo                    VARCHAR(2) '$.tipo'
-		         ,codEstab               VARCHAR(20) '$.codEstab'
-		         ,idPuntoEmision                 INT '$.idPuntoEmision'
-		         ,identificacionReceptor VARCHAR(20) '$.identificacionReceptor'
-		         ,idUsuarioSearch                INT '$.idUsuario'
-		         ,nroSecuencial          VARCHAR(50) '$.nroSecuencial'
-                 ,pageIndex                      INT '$.pageIndex'
-		         ,pageSize                       INT '$.pageSize'
-		        )
+	        FROM OPENJSON(@json) WITH 
+            (
+                 codDoc                 VARCHAR(10) 
+		        ,codEstado              INT 
+		        ,checkBoxDate           BIT 
+		        ,dateStart              DATETIME2 
+		        ,dateEnd                DATETIME2 
+		        ,tipo                   VARCHAR(2) 
+		        ,codEstab               VARCHAR(20) 
+		        ,idPuntoEmision         INT 
+		        ,identificacionReceptor VARCHAR(20) 
+		        ,idUsuarioSearch        INT 
+		        ,nroSecuencial          VARCHAR(50) 
+                ,pageIndex              INT 
+		        ,pageSize               INT 
+		     )
 
-            SELECT @isViewOtherDocs =  JSON_VALUE(jsonPermission, '$.additional.viewOthersDocs.view') FROM Config.UserPermission WHERE codModule = 'V' AND idUsuarioRol = @idRol
-				
-            IF @isViewOtherDocs = 0
+            IF EXISTS (SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @idRol AND viewOthersDocs = 0) 
 				BEGIN
                     SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @idRol
-				END 
+				END
 
 	        IF @codEstab IS NOT NULL
 		        BEGIN 
@@ -166,14 +168,14 @@ BEGIN
 	 
 	        EXEC sp_executesql @sql,@params
 				                   ,@idEntidad              = @idEntidad
-						           ,@codEstab               = @codEstab
-                                   ,@idPuntoEmision         = @idPuntoEmision
+						           ,@idPuntoEmision         = @idPuntoEmision
+                                   ,@idUsuario              = @idUsuario
+                                   ,@codEstado              = @codEstado
+                                   ,@codEstab               = @codEstab
 						           ,@codDoc                 = @codDoc 
 						           ,@identificacionReceptor = @identificacionReceptor
-						           ,@codEstado              = @codEstado
 						           ,@dateStart              = @dateStart
 						           ,@dateEnd                = @dateEnd
-						           ,@idUsuario              = @idUsuario
                                    ,@pageSize               = @pageSize
                                    ,@pageIndex              = @pageIndex
             RETURN 
