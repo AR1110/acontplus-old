@@ -2,7 +2,8 @@ USE Acontplus
 GO 
 CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
     SELECT de.idDocumentoElectronico
-          ,e.idEntidad
+          ,de.idEntidad
+          ,de.idUsuario
           ,e.razonSocial entidad
           ,e.ruc
           ,pe.ambiente as codAmbiente
@@ -87,7 +88,6 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
          ,es.codigo AS codEstado
          ,es.descripcion estado
          ,de.fechaRegistro
-         ,de.idUsuario
          ,de.idPuntoEmision
          ,ISNULL(se.telefono, '') as telefonoEstablecimiento
          ,se.nombreComercial
@@ -97,9 +97,9 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
     FROM dbo.DocumentoElectronico de WITH (NOLOCK)
     INNER JOIN dbo.Entidad e WITH (NOLOCK) ON de.idEntidad = e.idEntidad
     INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON pe.idPuntoEmision = de.idPuntoEmision
-    INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON de.idEstadoServicio = es.idEstadoServicio
-    INNER JOIN Customer.Customer c WITH (NOLOCK) ON de.customerId = c.Id
-    INNER JOIN Sri.Establecimiento se WITH (NOLOCK) ON pe.codEstab = se.codEstab
     LEFT JOIN dbo.Usuario us WITH (NOLOCK) ON us.idUsuario = de.idUsuario
+    LEFT JOIN Sri.Establecimiento se WITH (NOLOCK) ON pe.codEstab = se.codEstab
+    LEFT JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON de.idEstadoServicio = es.idEstadoServicio
+    LEFT JOIN Customer.Customer c WITH (NOLOCK) ON de.customerId = c.Id
 )
 GO
