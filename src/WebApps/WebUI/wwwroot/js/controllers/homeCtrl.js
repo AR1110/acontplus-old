@@ -25,48 +25,6 @@
             });
         }
 
-
-        $scope.openAlertMultiple = () => {
-            let message
-            message = `<h5>Licencias Pendientes a Pagar</h5><br>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr class="small">
-                                    <th>Licencia</th>
-                                    <th>Suscripcion</th>
-                                    <th>F. Max Pago</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>`
-            for (const art of $scope.licenses) {
-                message += `<tr class="small">
-                                <td>${art.licenseCode} - ${art.licenseType}</td>
-                                <td>${art.susbscriptionType}</td>
-                                <td>${art.maxPaymentDate}</td>
-                                <td class="text-right">$ ${art.total.toFixed(2)}</td>
-                            </tr>`
-            }
-            message += `</tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="3" class="text-right"><b>Total: </b></td>
-                                    <td class="text-right">$ ${$scope.licenses[0].totalGlobal.toFixed(2)}</td>
-                                </tr>
-                            </tfoot>
-                         </table>`
-
-            swal.fire({
-                icon: 'warning',
-                title: 'Alerta',
-                html: message,
-                width: '800px',
-                showConfirmButton: true,
-            }).then((result) => {
-                $scope.stopTimer();
-            });
-        }
-
         $scope.openAlertExpired = () => {
             $scope.expired = true
             let timerInterval
@@ -234,40 +192,39 @@
                             $scope.openAlertExpired()
                             return
                         }
-                    }
-                    let maxPaymentDate = $scope.licenses[0].maxPaymentDate;
-                    let date1 = new Date();
-                    let date2 = new Date(maxPaymentDate);
+                        let maxPaymentDate = $scope.licenses[0].maxPaymentDate;
+                        let date1 = new Date();
+                        let date2 = new Date(maxPaymentDate);
 
-                    // To calculate the time difference of two dates 
-                    let differenceInTime = date2.getTime() - date1.getTime();
+                        // To calculate the time difference of two dates 
+                        let differenceInTime = date2.getTime() - date1.getTime();
 
-                    // To calculate the no. of days between two dates 
-                    let differenceInDays = differenceInTime / (1000 * 3600 * 24);
+                        // To calculate the no. of days between two dates 
+                        let differenceInDays = differenceInTime / (1000 * 3600 * 24);
 
-                    if ($scope.licenses.length == 1) {
-                        warningMessage = $scope.licenses[0].warningMessage;
-                        $scope.countDownDate = new Date(maxPaymentDate).setMinutes(new Date().getMinutes() + 5);
-
+                        if ($scope.licenses.length == 1) {
+                            warningMessage = $scope.licenses[0].warningMessage;
+                            $scope.countDownDate = new Date(maxPaymentDate).setMinutes(new Date().getMinutes() + 5);
 
 
 
-                        if (differenceInDays <= 30) {
-                            $scope.startTimer();
+
+                            if (differenceInDays <= 30) {
+                                $scope.startTimer();
+                            }
                         }
-                    }
-                    if ($scope.licenses.length > 1 && differenceInDays <= 30) {
-                        modalService.openModalCustom({
-                            controller: ["$uibModalInstance", "$scope", ($uibModalInstance, $scope) => {
-                                $scope.onClose = () => {
-                                    $uibModalInstance.close();
-                                }
-                            }],
-                            scope: $scope,
-                            size: 'xl',
-                            template: '~/Pages/Shared/_LicensesModal.cshtml'
-                        })
-                        //$scope.openAlertMultiple();
+                        if ($scope.licenses.length > 1 && differenceInDays <= 30) {
+                            modalService.openModalCustom({
+                                controller: ["$uibModalInstance", "$scope", ($uibModalInstance, $scope) => {
+                                    $scope.onClose = () => {
+                                        $uibModalInstance.close();
+                                    }
+                                }],
+                                scope: $scope,
+                                size: 'xl',
+                                template: '~/Pages/Shared/_LicensesModal.cshtml'
+                            })
+                        }
                     }
                 }
                 if (response[1]) {
