@@ -1,14 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Route, Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { GlobalRoutes } from '@core/constants/global-routes';
-import { getEnumValueByKey } from '@core/utils/constant-value'
+import { getEnumValueByKey } from '@core/utils/constant-value';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '@modules/auth/services/auth.service';
-import {UserPermission, UserRoleStateService} from "@shared/store/user-role-state.service";
+import {
+  UserPermission,
+  UserRoleStateService,
+} from '@shared/store/user-role-state.service';
 
 @Component({
   selector: 'app-root',
@@ -20,12 +23,14 @@ import {UserPermission, UserRoleStateService} from "@shared/store/user-role-stat
 export class AppComponent implements OnInit {
   title = 'client';
 
-  userRoleState = inject(UserRoleStateService)
+  userRoleState = inject(UserRoleStateService);
 
-  constructor(private route: ActivatedRoute,
+  constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
-    library: FaIconLibrary) {
+    library: FaIconLibrary,
+  ) {
     library.addIconPacks(fab, fas, far);
   }
 
@@ -35,39 +40,36 @@ export class AppComponent implements OnInit {
       sessionStorage.removeItem(key);
     });
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       let { token, route, permission: dataPermission, userRoleData } = params;
 
-
-      console.log(route)
-
+      console.log(route);
 
       if (dataPermission) {
-        localStorage.setItem("permisos", dataPermission);
-        localStorage.setItem("userRoleData", userRoleData);
-        let getPermission = localStorage.getItem("permisos");
-        let getUserRoleData = localStorage.getItem("userRoleData");
+        localStorage.setItem('permisos', dataPermission);
+        localStorage.setItem('userRoleData', userRoleData);
+        let getPermission = localStorage.getItem('permisos');
+        let getUserRoleData = localStorage.getItem('userRoleData');
         if (getPermission && getUserRoleData) {
           let { acciones } = JSON.parse(getPermission);
           let permission = JSON.parse(dataPermission);
-          let userRoleData = JSON.parse(getUserRoleData)
+          let userRoleData = JSON.parse(getUserRoleData);
 
           let instancePermission = new UserPermission();
           this.userRoleState.setState({
             permission: {
               ...instancePermission,
-              ...permission
+              ...permission,
             },
             accion: acciones,
             acciones: [],
-            codeRole:userRoleData.codeRole
-          })
-
+            codeRole: userRoleData.codeRole,
+          });
         }
       }
 
       if (token) {
-        if (this.authService.isLoggedIn == true) {
+        if (!this.authService.isAuthenticated()) {
           localStorage.removeItem('access_token');
         }
         let route_page = getEnumValueByKey(GlobalRoutes, route);
