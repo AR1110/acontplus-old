@@ -555,7 +555,7 @@
                         total: comprobante.total,
                         observacion: comprobante.observacion,
                         irbpnr: comprobante.irbpnr,
-                        fechaEmisionEscrita: fS.getFechaEscrita(fechaEmision),
+                        fechaEmisionEscrita:  fS.getFechaEscrita(fechaEmision),
                         fechaVencimientoEscrita: fS.getFechaEscrita(fechaVencimiento),
                     }
 

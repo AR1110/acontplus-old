@@ -374,7 +374,7 @@
                 }
             })
 
-            gridApi.edit.on.afterCellEdit($scope, (rowEntity, colDef, newValue, oldValue) => {
+            gridApi.edit && gridApi.edit.on.afterCellEdit($scope, (rowEntity, colDef, newValue, oldValue) => {
 
                 if ([undefined, null, ""].includes(rowEntity[colDef.field])) {
                     rowEntity[colDef.field] = oldValue;

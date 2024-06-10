@@ -221,8 +221,7 @@
             try {
                 showLoader();
                 facturaCompraSvc.getId(item.id).then(
-                    response => {
-                        console.log(response)
+                    response => { 
                         modalSvc.openModalCustom({
                             controller: 'modalFacturaCompraCtrl',
                             template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
