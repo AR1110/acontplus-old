@@ -4,6 +4,7 @@ import { PATHS, PATHS_API } from "@core/constants/global.constants";
 import { isApiResponse } from "@core/models/api-response";
 import { UserSearch } from "@core/models/user.model";
 import { Observable, map } from "rxjs";
+import {getNoLoader} from "@core/interceptors/loader.interceptor";
 
 @Injectable({
   providedIn: 'root'
@@ -17,11 +18,13 @@ export class UserService {
     let query = {
       busqueda: data.textSearch,
     }
-    return this.http.get(`${this.url}Search?json=${JSON.stringify(query)}`)
+    return this.http.get(`${this.url}Search?json=${JSON.stringify(query)}`, {
+      context: getNoLoader()
+    })
       .pipe(
         map(response => {
           if (isApiResponse(response)) {
-            let users = response.payload && JSON.parse(response.payload as string) || []; 
+            let users = response.payload && JSON.parse(response.payload as string) || [];
 
             return users.map((user: any) => {
               return {
