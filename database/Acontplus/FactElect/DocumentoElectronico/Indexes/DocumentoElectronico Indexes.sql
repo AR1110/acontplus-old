@@ -26,6 +26,7 @@ GO
 --   ON dbo.DocumentoElectronico(codigoAutorizacion);  
 GO
 
+ --UPDATE STATISTICS dbo.DocumentoElectronico WITH FULLSCAN;
 
 ALTER INDEX ALL ON dbo.DocumentoElectronico REBUILD;
 

@@ -1,6 +1,25 @@
 USE Acontplus
 GO
 
+DROP VIEW IF EXISTS FACTELECT.v_DocElectronico
+GO
+DROP VIEW IF EXISTS Compra.v_Liquidacion
+GO
+DROP VIEW IF EXISTS Ventas.v_Factura
+GO
+DROP VIEW IF EXISTS Ventas.v_NotaCredito
+GO
+
+DROP VIEW IF EXISTS Logistica.v_GuiaRemision
+GO
+
+DROP VIEW IF EXISTS dbo.v_CuentaPorPagar
+GO
+
+
+
+
+
 IF EXISTS (
     SELECT 1 
     FROM sys.columns 
@@ -214,7 +233,6 @@ BEGIN
 END
 GO
 
-
 IF NOT EXISTS (SELECT * FROM sys.columns 
                WHERE name = 'idEstadoServicio' 
                AND object_id = OBJECT_ID('dbo.DocumentoElectronico'))
@@ -243,24 +261,25 @@ BEGIN
 END
 GO
 
-
-update c set c.identidad = cpc.identidad from dbo.cliente c
-INNER JOIN Contabilidad.cuentaporcobrar cpc On c.idcliente = cpc.idcliente
-where c.identidad not in (select identidad from entidad)
-
-
-delete from dbo.cliente where identidad not in (select identidad from entidad)
-
 IF NOT EXISTS (SELECT * 
                FROM sys.foreign_keys 
-               WHERE name = 'fk_cc_entidad' 
-               AND parent_object_id = OBJECT_ID('dbo.Cliente'))
+               WHERE name = 'fk_customer_cp' 
+               AND parent_object_id = OBJECT_ID('dbo.Proveedor'))
 BEGIN
-    ALTER TABLE dbo.Cliente
-    ADD CONSTRAINT fk_cc_entidad FOREIGN KEY (idEntidad) REFERENCES dbo.Entidad(idEntidad);
+    ALTER TABLE dbo.Proveedor
+    ADD CONSTRAINT fk_customer_cp FOREIGN KEY (customerId) REFERENCES Customer.Customer(Id);
 END
 GO
 
+IF EXISTS (SELECT * 
+               FROM sys.default_constraints 
+               WHERE name = 'DF__Documento__codEs__09B7BDC0' 
+               AND parent_object_id = OBJECT_ID('dbo.DocumentoElectronico'))
+BEGIN
+    ALTER TABLE dbo.DocumentoElectronico
+    DROP CONSTRAINT DF__Documento__codEs__09B7BDC0
+END
+GO
 
 IF EXISTS (SELECT * 
                FROM sys.foreign_keys 
@@ -270,21 +289,6 @@ BEGIN
     ALTER TABLE dbo.PuntoEmision
     DROP CONSTRAINT FK__PuntoEmis__ambie__7CD787F8
 END
-GO
-
-UPDATE de  SET idEstadoServicio = es.idEstadoServicio
-FROM dbo.DocumentoElectronico de WITH (NOLOCK)
-INNER JOIN FactElect.EstadoServicio es ON de.codEstado = es.codigo
-GO
-ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN idEstadoServicio INT NOT NULL
-GO
-ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN codEstado INT NULL
-
-GO 
-UPDATE DocumentoElectronico SET isAutomatic = 0 WHERE isAutomatic IS NULL
-GO
-
-ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN isAutomatic INT NOT NULL
 GO
 
 IF EXISTS (SELECT * 
@@ -297,25 +301,31 @@ BEGIN
 END
 GO
 
---IF EXISTS (SELECT * 
---               FROM sys.default_constraints 
---               WHERE name = 'DF__Documento__codEs__09B7BDC0' 
---               AND parent_object_id = OBJECT_ID('dbo.DocumentoElectronico'))
---BEGIN
---    ALTER TABLE dbo.DocumentoElectronico
---    DROP CONSTRAINT DF__Documento__codEs__09B7BDC0
---END
---GO
+UPDATE DocumentoElectronico SET isAutomatic = 0 WHERE isAutomatic IS NULL
+GO
 
- --UPDATE STATISTICS dbo.DocumentoElectronico WITH FULLSCAN;
+ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN isAutomatic INT NOT NULL
+GO
 
---ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN isAutomatic INT NOT NULL
+UPDATE de  SET idEstadoServicio = es.idEstadoServicio
+FROM dbo.DocumentoElectronico de WITH (NOLOCK)
+INNER JOIN FactElect.EstadoServicio es ON de.codEstado = es.codigo
+GO
+
+ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN idEstadoServicio INT NOT NULL
+GO
+
+ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN codEstado INT NULL
+GO 
+
+
+
 
 -- select top 100 dc.* from dbo.DocumentoElectronico  dc
 -- 	INNER JOIN FactElect.EstadoServicio es WITH(NOLOCK) ON dc.idEstadoServicio = es.idEstadoServicio
 -- where es.codigo = 2 
 --and xmlAcontPlus is not  null
---AND
---dc.isAutomatic = 1
- --order by iddocumentoelectronico desc
+----AND
+----dc.isAutomatic = 1
+-- order by iddocumentoelectronico desc
 
