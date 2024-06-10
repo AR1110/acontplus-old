@@ -28,7 +28,14 @@ CREATE OR ALTER VIEW Ventas.v_NotaCredito WITH SCHEMABINDING AS (
         ,es.estab
         ,cl.nombreFiscal as razonSocialComprador
         ,cl.numeroIdentificacion as  identificacionComprador
-        ,(SELECT de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.codDoc = '04' AND de.idDocumento = nc.idNotaCredito ) as codEstado
+        ,(
+            SELECT TOP 1 es.codigo 
+            FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
+            INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio = de.idEstadoServicio
+            WHERE de.codDoc = '04' 
+              AND de.idDocumento = nc.idNotaCredito 
+
+         ) as codEstado
 	FROM dbo.NotaCredito           nc WITH (NOLOCK)
     INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = nc.idPuntoEmision
     INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
