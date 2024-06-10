@@ -261,6 +261,17 @@ BEGIN
 END
 GO
 
+
+IF EXISTS (SELECT * 
+               FROM sys.foreign_keys 
+               WHERE name = 'FK__PuntoEmis__ambie__7CD787F8' 
+               AND parent_object_id = OBJECT_ID('dbo.PuntoEmision'))
+BEGIN
+    ALTER TABLE dbo.PuntoEmision
+    DROP CONSTRAINT FK__PuntoEmis__ambie__7CD787F8
+END
+GO
+
 UPDATE de  SET idEstadoServicio = es.idEstadoServicio
 FROM dbo.DocumentoElectronico de WITH (NOLOCK)
 INNER JOIN FactElect.EstadoServicio es ON de.codEstado = es.codigo
@@ -269,5 +280,42 @@ ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN idEstadoServicio INT NOT NULL
 GO
 ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN codEstado INT NULL
 
+GO 
+UPDATE DocumentoElectronico SET isAutomatic = 0 WHERE isAutomatic IS NULL
+GO
 
---select top 100 * from dbo.DocumentoElectronico order by iddocumentoelectronico desc
+ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN isAutomatic INT NOT NULL
+GO
+
+IF EXISTS (SELECT * 
+               FROM sys.default_constraints 
+               WHERE name = 'DF__Documento__isAut__0AABE1F9' 
+               AND parent_object_id = OBJECT_ID('dbo.DocumentoElectronico'))
+BEGIN
+    ALTER TABLE dbo.DocumentoElectronico
+    DROP CONSTRAINT DF__Documento__isAut__0AABE1F9
+END
+GO
+
+--IF EXISTS (SELECT * 
+--               FROM sys.default_constraints 
+--               WHERE name = 'DF__Documento__codEs__09B7BDC0' 
+--               AND parent_object_id = OBJECT_ID('dbo.DocumentoElectronico'))
+--BEGIN
+--    ALTER TABLE dbo.DocumentoElectronico
+--    DROP CONSTRAINT DF__Documento__codEs__09B7BDC0
+--END
+--GO
+
+ --UPDATE STATISTICS dbo.DocumentoElectronico WITH FULLSCAN;
+
+--ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN isAutomatic INT NOT NULL
+
+-- select top 100 dc.* from dbo.DocumentoElectronico  dc
+-- 	INNER JOIN FactElect.EstadoServicio es WITH(NOLOCK) ON dc.idEstadoServicio = es.idEstadoServicio
+-- where es.codigo = 2 
+--and xmlAcontPlus is not  null
+--AND
+--dc.isAutomatic = 1
+ --order by iddocumentoelectronico desc
+

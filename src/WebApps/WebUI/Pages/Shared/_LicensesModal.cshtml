@@ -1,0 +1,33 @@
+﻿
+<div class="modal-header">
+    <h5 class="modal-title"><i class="fa fa-warning text-danger"></i> Licencias Pendientes a Pagar</h5>
+    <button type="button" class="close" ng-click="onClose()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr class="small">
+                    <th>Licencia</th>
+                    <th>Suscripcion</th>
+                    <th>F. Max Pago</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in licenses" class="small">
+                    <td>{{item.licenseCode}} - {{item.licenseType}}</td>
+                    <td>
+                        {{item.susbscriptionType}}
+                    </td>
+                    <td>{{item.maxPaymentDate}}</td>
+                    <td class="text-right">$ {{item.total}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark btn-sm" ng-click="onClose()">&times; Cerrar</button>
+</div>
+
