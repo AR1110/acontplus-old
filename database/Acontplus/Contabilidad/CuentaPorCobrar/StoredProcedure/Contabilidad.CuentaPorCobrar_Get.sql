@@ -33,13 +33,26 @@ BEGIN
     --> Global
     DECLARE @idEntidad INT ,@tipo INT 
 
-     --> Sql
+    --> Sql
 	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
 
     -->Filters
-    DECLARE @idCliente INT ,@codEstab VARCHAR(50) ,@idCuentaPorCobrar INT ,@ckFecha BIT ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@codDoc VARCHAR(10) ,@codEstado VARCHAR(5)
-	       ,@numeroIdentificacion VARCHAR(15) ,@identificacionReceptor VARCHAR(50) ,@ckCxcVencida BIT ,@convertToDoc BIT
-           ,@tipoConfig VARCHAR(20), @interes NUMERIC(18,5) ,@configDeuda BIT
+    DECLARE @idCliente INT 
+           ,@CustomerId INT 
+           ,@codEstab VARCHAR(50) 
+           ,@idCuentaPorCobrar INT 
+           ,@ckFecha BIT 
+           ,@fechaInicio DATETIME2 
+           ,@fechaFin DATETIME2 
+           ,@codDoc VARCHAR(10) 
+           ,@codEstado VARCHAR(5)
+	       ,@numeroIdentificacion VARCHAR(15) 
+           ,@identificacionReceptor VARCHAR(50)
+           ,@ckCxcVencida BIT 
+           ,@convertToDoc BIT
+           ,@tipoConfig VARCHAR(20)
+           ,@interes NUMERIC(18,5) 
+           ,@configDeuda BIT
 
     --> Variables
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -258,7 +271,7 @@ BEGIN
 
             SELECT TOP 1 @identificacionReceptor = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-            SELECT TOP 1 @idCliente = idCliente, @numeroIdentificacion = identificacionComprador FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+            SELECT TOP 1 @CustomerId = CustomerId ,@idCliente = idCliente ,@numeroIdentificacion = identificacionComprador FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
 			
 			INSERT INTO @cobroDocuments (idComprobante,codDoc,codMov)
 			SELECT co.idComprobante,td.codigoSri,td.codigo 
@@ -294,17 +307,17 @@ BEGIN
 			SELECT 
 			     de.idDocumentoElectronico
 				,idTipoDocumento  = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '04')
-				,serieComprobante = de.numEstab+'-'+de.ptoEmision+'-'+Helper.F_Auto_Sequential(de.nroDocumento)
+				,serieComprobante
 				,saldo            = (SELECT TOP 1 nc.total FROM dbo.NotaCredito nc WITH (NOLOCK) WHERE nc.idNotaCredito = de.idDocumento)
 				,codDoc           = 'Nota de Crédito Version: '+de.versionComp
 				,nroDoc           = ''
 				,de.fechaEmision
-			FROM dbo.DocumentoElectronico de WITH (NOLOCK)
+			FROM FactElect.v_DocElectronico de WITH (NOLOCK)
 			WHERE de.codDoc = '04'
-				AND de.codEstado = 4
-				AND de.idEntidad = @idEntidad
-				AND de.idContribuyente = @idCliente
-				AND de.idDocumentoElectronico NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '04')
+		      AND de.codEstado = 4
+		      AND de.idEntidad = @idEntidad
+		      AND de.CustomerId = @CustomerId
+		      AND de.idDocumentoElectronico NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '04')
 
 			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc, fechaEmision)
 			SELECT 

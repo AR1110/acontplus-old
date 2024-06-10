@@ -31,7 +31,14 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
         ,pt.ambiente
         ,cl.nombreFiscal         as razonSocialDestinatario
         ,cl.numeroIdentificacion as identificacionDestinatario
-        ,(SELECT TOP 1 de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.codDoc = '06' AND de.idDocumento = gr.idGuiaRemision ) as codEstado
+        ,(
+            SELECT TOP 1 es.codigo 
+            FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
+            INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio = de.idEstadoServicio 
+            WHERE de.codDoc = '06' 
+              AND de.idDocumento = gr.idGuiaRemision 
+
+         ) as codEstado
         ,ef.estab      as estabFac
         ,pf.ptoEmi     as ptoFac
         ,fa.nroFactura as secFac

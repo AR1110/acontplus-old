@@ -4,6 +4,7 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
     SELECT de.idDocumentoElectronico
           ,de.idEntidad
           ,de.idUsuario
+          ,de.CustomerId
           ,en.razonSocial entidad
           ,en.ruc
           ,pe.ambiente as codAmbiente
