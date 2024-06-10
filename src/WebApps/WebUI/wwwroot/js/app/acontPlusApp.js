@@ -423,37 +423,6 @@ modalService.$inject = ["$uibModal", "$mdDialog"];
 
 function modalService($uibModal, $mdDialog) {
     return {
-        openModal: function (
-            controller,
-            template,
-            size,
-            params,
-            animation = true,
-            windowClass = null,
-            props = {},
-        ) {
-            return $uibModal.open({
-                animation,
-                templateUrl: `/Home/RenderView?name=~/Views/${template}`,
-                controller: controller,
-                size,
-                windowClass,
-                backdrop: "static",
-                keyboard: false,
-                scrollable: true,
-                width: props.width,
-                height: props.height,
-                maxWidth: props.maxWidth,
-                maxHeight: props.maxHeight,
-                minWidth: props.minWidth,
-                minHeight: props.minHeight,
-                resolve: {
-                    params: function () {
-                        return params;
-                    },
-                },
-            });
-        },
 
         /**
          *
@@ -500,63 +469,6 @@ function modalService($uibModal, $mdDialog) {
                     params: function () {
                         return params;
                     },
-                },
-            });
-        },
-        openModalSecond: function (
-            controller,
-            template,
-            size,
-            params,
-            animation = true,
-            windowClass = null,
-            $scope,
-            props = {},
-        ) {
-            return $uibModal.open({
-                animation,
-                templateUrl: `/Index?name=~/Views/${template}`,
-                controller,
-                controllerAs: "$ctrl",
-                scope: $scope,
-                size,
-                windowClass,
-                backdrop: "static",
-                scrollable: true,
-                keyboard: false,
-                width: props.width,
-                height: props.height,
-                maxWidth: props.maxWidth,
-                maxHeight: props.maxHeight,
-                minWidth: props.minWidth,
-                minHeight: props.minHeight,
-                resolve: {
-                    params: function () {
-                        return params;
-                    },
-                },
-            });
-        },
-
-        openMdDialog: function ({
-            controller,
-            templateUrl,
-            targetEvent,
-            clickOutsideToClose = false,
-            fullscreen = true,
-            params,
-        }) {
-            return $mdDialog.show({
-                controller,
-                templateUrl: `/Index?name=${templateUrl}`,
-                // Appending dialog to document.body to cover sidenav in docs app
-                // Modal dialogs should fully cover application to prevent interaction outside of dialog
-                parent: angular.element(document.body),
-                targetEvent,
-                clickOutsideToClose,
-                fullscreen,
-                locals: {
-                    params,
                 },
             });
         },
