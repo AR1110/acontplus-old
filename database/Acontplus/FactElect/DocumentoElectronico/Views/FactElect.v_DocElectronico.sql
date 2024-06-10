@@ -57,8 +57,8 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
                                                     INNER JOIN Customer.Customer cc WITH (NOLOCK) ON p.CustomerId = cc.Id  
                                                     WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad)
                       END
-         ,c.BusinessName razonSocial 
-         ,c.IDCard rucReceptor
+         ,cs.BusinessName razonSocial 
+         ,cs.IDCard rucReceptor
          ,correo = CASE 
                       WHEN de.codDoc = '01' THEN (SELECT TOP 1 c.correo 
                                                   FROM dbo.Cliente c WITH(NOLOCK)
