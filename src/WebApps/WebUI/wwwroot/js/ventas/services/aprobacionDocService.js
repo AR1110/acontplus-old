@@ -49,7 +49,7 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    const mainData = JSON.parse(response.payload);
+                    const mainData = JSON.parse(response.payload); 
 
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
@@ -59,7 +59,7 @@
                     let tempEstabsAndPtosEmision = mainData[4];
                     let tempBodegas = mainData[5];
                     let vendedores = mainData[6]; 
-                    let config = mainData[6][0];
+                    let config = mainData[7][0];
                     let { sales: permisoVenta } = userCustomerPermissionSvc.userPermissionAdapter();
 
                     let dataToGroup = {
@@ -422,6 +422,7 @@
 
         service.addRow = function () {
             return {
+                rowguid: fS.generateUuidv4(),
                 idAprob_Document_Detailt: 0,
                 idFacturaDetalle: 0,
                 n: 1,

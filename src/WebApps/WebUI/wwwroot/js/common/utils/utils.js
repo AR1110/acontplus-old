@@ -106,9 +106,9 @@
     angular.module('acontPlusApp')
         .factory('formulario', formulario);
 
-    formulario.$inject = ['pricingUtils'];
+    formulario.$inject = ['pricingUtils','uuid2'];
 
-    function formulario(pricingUtils) {
+    function formulario(pricingUtils, uuid2) {
         let formSvc = {};
 
         formSvc.dataDocumento = {};
@@ -277,6 +277,8 @@
         }
 
         formSvc.getFechaEscrita = function (fecha) {
+            if (!formSvc.isDateValid(fecha)) return '';
+
             let mes = this.meses();
             let diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
 
@@ -994,6 +996,7 @@
              
         }
 
+        formSvc.generateUuidv4 = () => uuid2.newguid()
 
 
 

@@ -11,6 +11,7 @@ import {
 import {isApiResponse} from "@core/models/api-response";
 import {ToasterService} from "@core/services/toaster.service";
 import Swal from "sweetalert2";
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: 'app-printer-page',
@@ -18,7 +19,8 @@ import Swal from "sweetalert2";
   imports: [
     FormsModule,
     MatSlideToggleModule,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    FontAwesomeModule
   ],
   templateUrl: './printer-page.component.html',
   styles: ``
@@ -53,6 +55,7 @@ export class PrinterPageComponent {
   }
 
   getPrinters(){
+    this.printers = []
     this.printerSvc.getPrinters().subscribe(response=>{
       this.printers = response.printers;
     })

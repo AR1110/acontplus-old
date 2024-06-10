@@ -225,6 +225,7 @@ BEGIN
 
              SELECT    
 	              CAST(multipleVendedor AS BIT) as multipleVendedor 
+	              ,CAST(detailDuplicate AS BIT) as detailDuplicate                  
 	        FROM Config.v_Sistema_Ventas gs
             WHERE gs.idEntidad = @idEntidad
 
