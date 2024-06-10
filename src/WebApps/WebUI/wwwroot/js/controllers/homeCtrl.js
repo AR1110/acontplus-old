@@ -3,9 +3,9 @@
 
     app.controller('homeCtrl', homeCtrl);
 
-    homeCtrl.$inject = ['$scope', 'mainService', 'docElectService', '$interval', '$q'];
+    homeCtrl.$inject = ['$scope', 'mainService', 'docElectService', '$interval', '$q', 'modalService'];
 
-    function homeCtrl($scope, mS, docElectSvc, $interval, $q) {
+    function homeCtrl($scope, mS, docElectSvc, $interval, $q, modalService) {
         $scope.docs = []
         $scope.countDownDate = 0;
         let warningMessage = '';
@@ -100,6 +100,73 @@
             });
         }
 
+        $scope.openReleases = () => {
+            let release = `<table class="table table-bordered">
+                                        <thead>
+                                            <tr class="small">
+                                                <th>Version</th>
+                                                <th>Detalles</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>`;
+
+            const groupedReleases = $scope.releases.reduce((acc, rel) => {
+                const date = rel.releaseDate.split('T')[0]; // Assuming releaseDate is in ISO format
+                if (!acc[date]) {
+                    acc[date] = [];
+                }
+                acc[date].push(rel);
+                return acc;
+            }, {});
+
+            for (const [date, releases] of Object.entries(groupedReleases)) {
+                release += `<tr class="small">
+                                            <td colspan="2">${date}</td>
+                                        </tr>`;
+                for (const rel of releases) {
+                    release += `<tr class="small">
+                                                <td style="vertical-align: middle;">${rel.version}</td>
+                                                <td>${rel.description}</td>
+                                            </tr>`;
+                }
+            }
+
+            release += `</tbody></table>`;
+
+
+            swal.fire({
+                icon: 'info',
+                title: `Nuevas Actualizaciones Disponibles</b>`,
+                html: release,
+                width: '800px',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: true,
+                confirmButtonText: 'Confirmar Lectura'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const dataToSave = {
+                        releases: JSON.stringify($scope.releases.map(release => ({ id: release.id })))
+                    };
+                    mS.getData('post', 'Common/UserReleaseRead', { data: dataToSave }).then(response => {
+                        if (response.code == '1') {
+                            swal.fire({
+                                icon: 'info',
+                                text: response.message,
+                                allowOutsideClick: false
+                            })
+
+                            const hasLogoutRequired = $scope.releases.some(release => release.logoutRequired === true);
+
+                            if (hasLogoutRequired) {
+                                $scope.logout();
+                            };
+                        }
+                    })
+                }
+            })
+        }
+
         $scope.timer = null;
         $scope.stopTimer = function () {
 
@@ -155,68 +222,8 @@
                     $scope.licenses = angular.fromJson(licenses) || []
                     $scope.releases = angular.fromJson(releases) || []
                     if ($scope.releases.length > 0) {
-                        let release = `<table class="table table-bordered">
-                                        <thead>
-                                            <tr class="small">
-                                                <th>Version</th>
-                                                <th>Detalles</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>`;
 
-                        const groupedReleases = $scope.releases.reduce((acc, rel) => {
-                            const date = rel.releaseDate.split('T')[0]; // Assuming releaseDate is in ISO format
-                            if (!acc[date]) {
-                                acc[date] = [];
-                            }
-                            acc[date].push(rel);
-                            return acc;
-                        }, {});
-
-                        for (const [date, releases] of Object.entries(groupedReleases)) {
-                            release += `<tr class="small">
-                                            <td colspan="2">${date}</td>
-                                        </tr>`;
-                            for (const rel of releases) {
-                                release += `<tr class="small">
-                                                <td style="vertical-align: middle;">${rel.version}</td>
-                                                <td>${rel.description}</td>
-                                            </tr>`;
-                            }
-                        }
-
-                        release += `</tbody></table>`;
-
-
-                        swal.fire({
-                            icon: 'info',
-                            title: `Nuevas Actualizaciones Disponibles</b>`,
-                            html: release,
-                            width: '800px',
-                            showConfirmButton: true,
-                            confirmButtonText: 'Confirmar Lectura'
-                        }).then(result => {
-                            if (result.isConfirmed) {
-                                const dataToSave = {
-                                    releases: JSON.stringify($scope.releases.map(release => ({ id: release.id })))
-                                };
-                                mS.getData('post', 'Common/UserReleaseRead', { data: dataToSave }).then(response => {
-                                    if (response.code == '1') {
-                                        swal.fire({
-                                            icon: 'info',
-                                            text: response.message, 
-                                            allowOutsideClick: false
-                                        })
-
-                                        const hasLogoutRequired = $scope.releases.some(release => release.logoutRequired === true);
-
-                                        if (hasLogoutRequired) {
-                                            $scope.logout();
-                                        };
-                                    }
-                                })
-                            }
-                        })
+                        $scope.openReleases();
                     }
 
                     if ($scope.licenses.length > 0) {
@@ -250,12 +257,31 @@
                         }
                     }
                     if ($scope.licenses.length > 1 && differenceInDays <= 30) {
-                        $scope.openAlertMultiple();
+                        modalService.openModalCustom({
+                            controller: ["$uibModalInstance", "$scope", ($uibModalInstance, $scope) => {
+                                $scope.onClose = () => {
+                                    $uibModalInstance.close();
+                                }
+                            }],
+                            scope: $scope,
+                            size: 'xl',
+                            template: '~/Pages/Shared/_LicensesModal.cshtml'
+                        })
+                        //$scope.openAlertMultiple();
                     }
                 }
                 if (response[1]) {
                     $scope.docs = response[1]
-                    $('#comprobantesErroneosModal').modal('show');
+                    modalService.openModalCustom({
+                        controller: ["$uibModalInstance", "$scope", ($uibModalInstance, $scope) => {
+                            $scope.onClose = () => {
+                                $uibModalInstance.close();
+                            }
+                        }],
+                        scope: $scope,
+                        size: 'xl',
+                        template: '~/Pages/Shared/_ComprobantesErroneos.cshtml'
+                    })
                 }
 
             });
