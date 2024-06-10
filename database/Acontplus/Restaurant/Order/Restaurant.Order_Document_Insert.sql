@@ -544,8 +544,10 @@ BEGIN
     --- FACTURA DE VENTA
     IF @codDoc = 'FV'
         BEGIN
-            DECLARE @claveAcceso VARCHAR(49)
-           
+            DECLARE @claveAcceso VARCHAR(49),@idEstadoServicio INT
+            
+            SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1
+
             SET @claveAcceso = (SELECT dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab), '01', @ambiente, 1, dbo.AFTConvertDate(@fechaEmision), @ruc, @estab + @ptoEmi, Helper.F_Auto_Sequential(@nroDocumento)))
 
             INSERT INTO Factura 
@@ -580,25 +582,22 @@ BEGIN
 			--forma de pago
 
 
-            INSERT INTO dbo.DocumentoElectronico(ambiente,codDoc,idDocumento,idContribuyente,nroDocumento,idPuntoEmision,numEstab
-                                                ,ptoEmision,claveAcceso,versionComp,isAutomatic,fechaEmision,codigoAutorizacion
-                                                ,idUsuario,idEntidad)
+            INSERT INTO dbo.DocumentoElectronico(codDoc,idDocumento,CustomerId,nroDocumento,idPuntoEmision
+                                                ,claveAcceso,versionComp,isAutomatic,fechaEmision
+                                                ,idUsuario,idEntidad,idEstadoServicio)
 
-            SELECT @ambiente
-                , '01'
+            SELECT  '01'
                 , @documentoId
-                , @customerCompanyId
+                , @customerId
                 , @nroDocumento
                 , @puntoEmisionId
-                , @estab
-                , @ptoEmi
                 , @claveAcceso
                 , '1.1.0'
                 , @autoSriAuth
                 , @fechaEmision
-                , @claveAcceso
                 , @userId
                 , @companyId
+                , @idEstadoServicio
         END
 
     ---- INSERT OrderDocument -----

@@ -19,6 +19,7 @@ CREATE OR ALTER VIEW v_CuentaPorPagar WITH SCHEMABINDING AS (
 		  ,cp.uniqueId
 		  ,razonSocialProveedor = pr.nombreFiscal
 		  ,identificacionProveedor = pr.numeroIdentificacion
+          ,pr.CustomerId
 		  ,cp.serieComprobante
 		  ,secuencial = REPLACE(LTRIM(REPLACE(SUBSTRING(cp.serieComprobante,9,9),'0',' ')),' ','0')
 		  ,cp.fechaEmision
@@ -28,8 +29,14 @@ CREATE OR ALTER VIEW v_CuentaPorPagar WITH SCHEMABINDING AS (
 		  ,cp.saldo
 		  ,estado                  = ep.descripcion
 		  ,codEstado               = ep.codigo
-		  ,estadoSri               = CASE WHEN cp.codDoc = '03' THEN (SELECT de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = cp.idDocumento AND de.codDoc = '03') 
-		                                                         ELSE 0 END 
+		  ,estadoSri               = CASE WHEN cp.codDoc = '03' THEN (
+                                                                          SELECT TOP 1 es.codigo 
+                                                                          FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
+                                                                          INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio = de.idEstadoServicio 
+                                                                          WHERE de.idDocumento = cp.idDocumento 
+                                                                            AND de.codDoc = '03'
+                                                                     ) 
+		                                                        ELSE 0 END 
 		  ,usuario = us.nombreUsuario
           ,tc.descripcion as tiempoCredito
           ,cp.subcategoryId

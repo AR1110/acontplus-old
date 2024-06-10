@@ -27,6 +27,7 @@ CREATE VIEW v_CuentaPorCobrar AS (
 		  ,razonSocialComprador    = cl.nombreFiscal
 		  ,correo                  = cl.correo
 		  ,telefono                = cl.telefono
+          ,cl.CustomerId
 		  ,estado                  = ep.descripcion
 		  ,codEstado               = ep.codigo
 		  ,cc.importeTotal
