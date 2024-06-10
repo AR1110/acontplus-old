@@ -4,6 +4,10 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
     SELECT de.idDocumentoElectronico
           ,de.idEntidad
           ,de.idUsuario
+<<<<<<<<< Temporary merge branch 1
+          ,e.razonSocial entidad
+          ,e.ruc
+=========
           ,de.CustomerId
           ,en.razonSocial entidad
           ,en.ruc
@@ -95,7 +99,11 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
          ,us.nombreUsuario as usuario
          ,de.isAutomatic
          ,se.idEstablecimiento
-
+    FROM dbo.DocumentoElectronico de WITH (NOLOCK)
+    INNER JOIN dbo.Entidad e WITH (NOLOCK) ON de.idEntidad = e.idEntidad
+    INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON pe.idPuntoEmision = de.idPuntoEmision
+    LEFT JOIN dbo.Usuario us WITH (NOLOCK) ON us.idUsuario = de.idUsuario
+<<<<<<<<< Temporary merge branch 1
     FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
     INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad        = de.idEntidad  
     INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision   = de.idPuntoEmision
@@ -103,5 +111,10 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
      LEFT JOIN Sri.Establecimiento      se WITH (NOLOCK) ON pe.codEstab         = se.codEstab
      LEFT JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON de.idEstadoServicio = es.idEstadoServicio
      LEFT JOIN Customer.Customer        cs WITH (NOLOCK) ON cs.Id               = de.customerId 
+=========
+    LEFT JOIN Sri.Establecimiento se WITH (NOLOCK) ON pe.codEstab = se.codEstab
+    LEFT JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON de.idEstadoServicio = es.idEstadoServicio
+    LEFT JOIN Customer.Customer c WITH (NOLOCK) ON de.customerId = c.Id
+>>>>>>>>> Temporary merge branch 2
 )
 GO
