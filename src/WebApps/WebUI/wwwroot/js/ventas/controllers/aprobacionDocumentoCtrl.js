@@ -14,8 +14,7 @@
     let notaEntregaSvc = {};
     let proformaSvc = {};
     let facturaSvc = {};
-    let gridOptionsSvc = {};
-    let idUsuarioRol = 0;
+    let gridOptionsSvc = {}; 
 
     let mainDataForm = {};
     let DOC_TYPE = {}
@@ -23,9 +22,9 @@
 
     app.controller('aprobacionDocumentoCtrl', aprobacionDocumentoCtrl);
 
-    aprobacionDocumentoCtrl.$inject = ['$scope', '$filter', '$injector', 'modalService', 'decodeToken'];
+    aprobacionDocumentoCtrl.$inject = ['$scope', '$filter', '$injector', 'modalService'];
 
-    function aprobacionDocumentoCtrl($scope, $filter, $injector, modalSvc, decodeToken) {
+    function aprobacionDocumentoCtrl($scope, $filter, $injector, modalSvc) {
 
         //Injection Services 
         commonSvc = $injector.get('commonService');
@@ -39,9 +38,7 @@
         gridOptionsSvc = $injector.get('gridOptionsService');
         DOC_TYPE = $injector.get('DOC_TYPE');
         SRI_IDENTIFITION_CODE = $injector.get('SRI_IDENTIFITION_CODE');
-        const CODE_REPORT = $injector.get('CODE_REPORT');
-
-        idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
+        const CODE_REPORT = $injector.get('CODE_REPORT'); 
 
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.moreSearchOptions = false;
@@ -57,6 +54,9 @@
         $scope.cliente = {
 
         }
+
+ 
+        $scope.dataUserSearch = {}
 
         let OPTION_APROBACION = Object.freeze({
             0: Object.freeze({
@@ -168,34 +168,16 @@
             $scope.dataSearch.byCliente = item.idCliente;
             $scope.getAprobComprobantes();
         }
-
-        $scope.usuarioSearch = function (textSearch) {
-            try {
-                let query = {
-                    idRol: idUsuarioRol,
-                    busqueda: textSearch
-                }
-
-                if (query.busqueda.length > 2) {
-                    return commonSvc.usuarioSearch(query)
-                        .catch(error => {
-                            console.log(error);
-                            throw error;
-                        })
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
-
+ 
         $scope.onKeyupUsuarioSearch = function () {
-            if (!$scope.modelNombreCompleto) {
+            if (!$scope.dataUserSearch.name) {
                 $scope.dataSearch.byUsuario = 0;
             }
         }
 
         $scope.selectedUsuarioSearch = function (item) {
             $scope.dataSearch.byUsuario = item.idUsuario;
+            $scope.getAprobComprobantes()
         }
 
         $scope.onClickBtnMore = function () {
@@ -274,11 +256,12 @@
                     })
                     .finally(() => hideLoader())
 
-                aprobacionDocSvc.getDataForm().then(response => {
+                    showLoader()
+                aprobacionDocSvc.getDataForm().then(response => { 
                     mainDataForm = response;
                 }).catch(error => {
                     console.log(error)
-                })
+                }).finally(()=>hideLoader())
 
             } catch (error) {
                 hideLoader();
@@ -341,7 +324,9 @@
                 showLoader();
                 aprobacionDocSvc.findById(item.idAprob_Document).then(response => {
                     let modalRef = modalSvc.openModalCustom({
+                        
                         controller: 'ModalAprobDocEditarCtrl',
+                     
                         template: URL_TEMPLATE + '_ModalEditar.cshtml',
                         size: 'xl',
                         windowClass: 'uibModalFullScreen',
@@ -1738,7 +1723,7 @@
         }
     }
 
-
+ 
 
 
     /**
@@ -2314,31 +2299,44 @@
                 const { articulo, medidas, datosAdicionalesArticulo } = dataArticulo;
 
 
-                let index = 0, entity = {};
+                let index = 0, entity = {}, cantidad=0;
+
 
                 //verificar si hay un articulo que lleva inventario mas de uno 
                 let itemsDuplicated = $scope.gridOptionsDetalle.data.filter(item => (
                     item.llevaInventario && item.idArticulo === articulo.idArticulo
                 ))
-                if (itemsDuplicated.length > 1) {
-                    fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
-                    return
-                }
 
-                let findIndexById = $scope.gridOptionsDetalle.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
-                if (findIndexById === -1) {
+                let findIndexById = $scope.gridOptionsDetalle.data.findIndex(
+                    item => item.llevaInventario && item.idArticulo === articulo.idArticulo
+                );
+
+                if ($scope.config.detailDuplicate) {
                     $scope.gridOptionsDetalle.data.push(aprobacionDocSvc.addRow());
-                    $scope.indexRowDetalle = $scope.gridOptionsDetalle.data.length - 1;
                     index = $scope.gridOptionsDetalle.data.length - 1;
                     entity = $scope.gridOptionsDetalle.data[index];
+                    entity.cantidad = 1;
                 } else {
-                    index = findIndexById;
-                    entity = $scope.gridOptionsDetalle.data[index];
-                    entity.cantidad = entity.cantidad + 1;
+
+                    if (itemsDuplicated.length > 1) {
+                        fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+                        return
+                    }
+
+                    if (findIndexById === -1) {
+                        $scope.gridOptionsDetalle.data.push(aprobacionDocSvc.addRow());
+                        index = $scope.gridOptionsDetalle.data.length - 1;
+                        entity = $scope.gridOptionsDetalle.data[index];
+                        entity.cantidad = 1;
+                    } else {
+                        index = findIndexById;
+                        entity = $scope.gridOptionsDetalle.data[index];
+                        cantidad = entity.cantidad;
+                        entity.cantidad = cantidad + 1;
+                    }
                 }
-
-
+  
                 let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
                 entity.idArticulo = articulo.idArticulo;
@@ -3330,27 +3328,41 @@
             try {
                 const { articulo, medidas, datosAdicionalesArticulo, consolidacionesFecha } = dataArticulo;
 
-                let index = 0, entity = {};
+                let index = 0, entity = {}, cantidad = 0;
 
                 //verificar si hay un articulo que lleva inventario mas de uno 
                 let itemsDuplicated = $scope.gridOptionsDetalle.data.filter(item => (
                     item.llevaInventario && item.idArticulo === articulo.idArticulo
                 ))
-                if (itemsDuplicated.length > 1) {
-                    fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
-                    return
-                }
 
-                let findIndexById = $scope.gridOptionsDetalle.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
-                if (findIndexById === -1) {
+                let findIndexById = $scope.gridOptionsDetalle.data.findIndex(
+                    item => item.llevaInventario && item.idArticulo === articulo.idArticulo
+                );
+
+                if ($scope.config.detailDuplicate) {
                     $scope.gridOptionsDetalle.data.push(aprobacionDocSvc.addRow());
                     index = $scope.gridOptionsDetalle.data.length - 1;
                     entity = $scope.gridOptionsDetalle.data[index];
+                    entity.cantidad = 1;
                 } else {
-                    index = findIndexById;
-                    entity = $scope.gridOptionsDetalle.data[index];
-                    entity.cantidad = entity.cantidad + 1;
+
+                    if (itemsDuplicated.length > 1) {
+                        fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+                        return
+                    }
+
+                    if (findIndexById === -1) {
+                        $scope.gridOptionsDetalle.data.push(aprobacionDocSvc.addRow());
+                        index = $scope.gridOptionsDetalle.data.length - 1;
+                        entity = $scope.gridOptionsDetalle.data[index];
+                        entity.cantidad = 1;
+                    } else {
+                        index = findIndexById;
+                        entity = $scope.gridOptionsDetalle.data[index];
+                        cantidad = entity.cantidad;
+                        entity.cantidad = cantidad + 1;
+                    }
                 }
 
 

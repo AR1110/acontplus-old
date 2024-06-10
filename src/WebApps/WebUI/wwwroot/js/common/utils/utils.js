@@ -106,9 +106,9 @@
     angular.module('acontPlusApp')
         .factory('formulario', formulario);
 
-    formulario.$inject = ['pricingUtils'];
+    formulario.$inject = ['pricingUtils','uuid2'];
 
-    function formulario(pricingUtils) {
+    function formulario(pricingUtils, uuid2) {
         let formSvc = {};
 
         formSvc.dataDocumento = {};
@@ -996,6 +996,7 @@
              
         }
 
+        formSvc.generateUuidv4 = () => uuid2.newguid()
 
 
 
