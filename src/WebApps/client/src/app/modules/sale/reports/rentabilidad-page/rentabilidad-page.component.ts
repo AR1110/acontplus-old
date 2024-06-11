@@ -272,7 +272,6 @@ export class RentabilidadPageComponent {
     this.sharedSvc.getReport({
       data: parameters,
       format: format,
-      isOldVersion: true,
     });
   }
 

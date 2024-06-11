@@ -38,6 +38,7 @@ export const enum DOC_TYPE {
   FF = 'FF', // Factura Fisica
   IV = 'IV', //Ingresos Varios (Compras No Habituales)
   NE = 'NE', //Nota Entrega
+  CDV ='CDV' //Consolidao diario venta
 }
 
 export const enum DOC_TYPE_SRI {

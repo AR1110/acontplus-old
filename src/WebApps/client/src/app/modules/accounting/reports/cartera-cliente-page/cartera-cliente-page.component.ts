@@ -58,7 +58,7 @@ export class CarteraClientePageComponent {
 
   getDataFilter(){
     this.cuentaPorCobrarSvc.getDataFilter().subscribe(response=>{
-      console.log(response)
+ 
       const { estabs, estadosDoc, tiposDoc, empresas } = response;
 
       this.establecimientos = estabs;
