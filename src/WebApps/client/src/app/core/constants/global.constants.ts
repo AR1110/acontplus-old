@@ -87,6 +87,7 @@ export enum CODE_REPORT {
 
 export enum CODE_ESTADO {
   NCBR = 'NCBR',
+
 }
 
 export enum TAX_RATE_CODE {

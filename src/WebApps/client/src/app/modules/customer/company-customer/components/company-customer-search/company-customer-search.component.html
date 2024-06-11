@@ -1,8 +1,8 @@
 @if (isSearchSimple) {
 <input
-  id="typeahead-company-customers"
+  id="typeahead-company-customers-simple"
   type="text"
-  class="form-control form-control-border"
+  class="form-control"
   [(ngModel)]="textSearch"
   [ngbTypeahead]="search"
   [resultTemplate]="rt"
@@ -16,7 +16,7 @@
 } @else {
 <div class="input-group">
   <input
-    id="typeahead-company-customers"
+    id="typeahead-company-customers-advanced"
     type="text"
     class="form-control"
     [(ngModel)]="textSearch"

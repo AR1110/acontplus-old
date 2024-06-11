@@ -22,7 +22,7 @@ export class CuentaPorCobrarService {
       map((response: any) => {
         if (!response) throw response;
 
-        const { establecimientos, estadoPago, tipoDocumento } = response;
+        const { establecimientos, estadoPago, tipoDocumento, empresas} = response;
         let estabs = groupEstabUtil({
           estabs: establecimientos,
           isGroupPuntoEmision: true
@@ -31,7 +31,8 @@ export class CuentaPorCobrarService {
         return {
           estabs,
           estadosDoc: estadoPago,
-          tiposDoc: tipoDocumento
+          tiposDoc: tipoDocumento,
+          empresas
         }
       }
       ))

@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.model';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
@@ -49,27 +48,10 @@ export class AuthService {
 
   // Sign-in
   signIn(user: User) {
-    console.log(user);
     const self = this;
-    showLoader();
-    return this.http.post<any>(`${this.URL}login`, user).subscribe({
-      next(res) {
-        hideLoader();
-        console.log(res);
+    return this.http.post<any>(`${this.URL}login`, user).subscribe((res)=> {
         localStorage.setItem('access_token', res.token);
-        // self.getUserProfile(res._id).subscribe((res) => {
-        //   self.currentUser = res;
         self.router.navigate(['/', 'home']);
-        // });
-      },
-      error(err) {
-        hideLoader();
-        if (err.error.statusCode === 401) {
-        }
-      },
-      complete() {
-        hideLoader();
-      },
     });
   }
 
