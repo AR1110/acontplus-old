@@ -245,6 +245,7 @@ BEGIN
 				,ISNULL(e.direccion, '') as direccionEntidad
 				,@filtroFecha            as filtroFecha
                 ,'Reporte Stock'         as title
+                ,@stockStatusCode        as stockStatusCode
 			FROM dbo.Entidad e WITH (NOLOCK)
 			WHERE e.idEntidad = @idEntidad
 
