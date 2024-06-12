@@ -35,6 +35,7 @@ function ModalCobroDetalleCtrl($scope, $rootScope, $uibModalInstance, comprobant
                 }).catch(error => {
                     console.log(error)
                 }).finally(() => hideLoader())
+                
             } else if (params && params.idCuentaPorCobrar > 0) {
                 $scope.showDetalleCompIngresoByDoc = true;
                 showLoader();

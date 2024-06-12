@@ -318,36 +318,7 @@
             }
 
         }
-
-
-        //Reporte 
-        $scope.getReport = function (item) {
-
-            let format = 'pdf';
-
-            let dataParms = {
-                tipo: 3,
-                id: item.idComprobanteIngreso,
-            }
-            const parameters = { 
-                reportParams: JSON.stringify({
-                    hasParams: true,
-                    codigo: 'RCINGR',
-                    format,
-                    codEstab: item.codEstab,
-                    aditionalParams: []
-                }),
-                dataParams: JSON.stringify(dataParms)
-            }
-
-
-            _commonSvc.getReport({
-                parameters,
-                formatType: format,
-                v2: true
-            })
-        }
-
+ 
 
         $scope.getParamToSendMail = function (item) {
             return {
