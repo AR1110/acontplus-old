@@ -675,6 +675,7 @@ BEGIN
 
            SELECT idTarifa, descripcion, predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad
 
+           SELECT idMarca,descripcion FROM dbo.Marca WHERE idEntidad = @idEntidad AND estado = 1
            RETURN 
         END 
 

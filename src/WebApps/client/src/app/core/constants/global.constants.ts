@@ -38,6 +38,7 @@ export const enum DOC_TYPE {
   FF = 'FF', // Factura Fisica
   IV = 'IV', //Ingresos Varios (Compras No Habituales)
   NE = 'NE', //Nota Entrega
+  CDV ='CDV' //Consolidao diario venta
 }
 
 export const enum DOC_TYPE_SRI {
@@ -87,6 +88,7 @@ export enum CODE_REPORT {
 
 export enum CODE_ESTADO {
   NCBR = 'NCBR',
+
 }
 
 export enum TAX_RATE_CODE {

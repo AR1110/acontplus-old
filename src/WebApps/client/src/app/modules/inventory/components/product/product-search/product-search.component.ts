@@ -51,6 +51,7 @@ export class ProductSearchComponent {
     nameProduct: '',
     clearInput: false,
   };
+  @Input() isSearchSimple = true;
   @Input() textSearch = '';
 
   @Output() onProductSelected = new EventEmitter<{ data: any }>();

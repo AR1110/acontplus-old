@@ -160,17 +160,20 @@ BEGIN
 	--> Stock por Bodega
 	IF @tipo = 3
 		BEGIN 
+            DECLARE @stockStatusCode VARCHAR(5)
 			
             SELECT @idSubFamilia = bySubFamilia
 				  ,@rucProveedor = numeroIdentificacion
                   ,@idBodega     = idBodega
                   ,@codEstab     = codEstab
+                  ,@stockStatusCode = stockStatusCode
 			FROM OPENJSON(@json) WITH 
             (      
                  bySubFamilia                 INT 	
 			    ,numeroIdentificacion VARCHAR(25) 
                 ,idBodega                     INT
                 ,codEstab             VARCHAR(50)
+                ,stockStatusCode VARCHAR(5)
 			) AS dt
 
 			SET @params = '@idEntidad    INT									
@@ -192,6 +195,7 @@ BEGIN
 							  ,CAST(SUM(ar.cantidad) OVER(PARTITION BY ar.idArticulo) * ar.precioCosto as numeric(15, 2)) as totalInventario
                               ,ar.idEstablecimiento 
                               ,ar.nombreComercial
+                              ,ar.marca
 						FROM Inventario.v_Articulo_Stock ar
 						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '	
 
@@ -214,6 +218,23 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND ar.codEstab = @codEstab '
                 END 
+            IF @stockStatusCode IS NOT NULL
+                --con stock 
+                IF @stockStatusCode='CS'
+                    BEGIN
+                        SET @sql = @sql + 'AND ar.stock > 0 '
+                    END
+                --sin stock 
+                 IF @stockStatusCode='SS'
+                     BEGIN
+                         SET @sql = @sql + 'AND ar.stock < 0 '
+                     END
+                --stock minimo 
+                IF @stockStatusCode='SM'
+                 BEGIN
+                     SET @sql = @sql + ' AND ar.stock > 0 AND ar.stock < ar.stockMinimo '
+                 END
+
 
 			SET @sql = @sql + ' ORDER BY ar.idArticulo '
 
@@ -224,6 +245,7 @@ BEGIN
 				,ISNULL(e.direccion, '') as direccionEntidad
 				,@filtroFecha            as filtroFecha
                 ,'Reporte Stock'         as title
+                ,@stockStatusCode        as stockStatusCode
 			FROM dbo.Entidad e WITH (NOLOCK)
 			WHERE e.idEntidad = @idEntidad
 
@@ -272,7 +294,7 @@ BEGIN
 							  ,serieComprobante = tt.nroDocumento
                               ,tt.usuario
                               ,tt.bodega
-                              ,tt.medidaSalida
+                              ,tt.medida as medidaSalida
                               ,tt.subFamilia
 						FROM v_InventarioTransaccion tt WITH (NOLOCK)
 						WHERE tt.idEntidad = @idEntidad AND tt.estado = 1 '

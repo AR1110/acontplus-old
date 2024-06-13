@@ -1,0 +1,12 @@
+@page
+@model WebUI.Pages.FactElect.Report.Index
+@{
+    ViewData["Title"] = "Index";
+    
+}
+
+<input type="text" id="frontend" value="@ViewData["FrontEnd"]" hidden />
+<div id="iframeApp" ng-controller="iframeAngularCtrl"></div> 
+@section Scripts {
+    <script src="~/js/controllers/iframeAngularCtrl.js" asp-append-version="true"></script>
+}

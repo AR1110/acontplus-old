@@ -36,5 +36,8 @@ export enum GlobalRoutes {
   ContabilidadMovimientoCajaReport="accounting/movimiento-caja-report",
   ConfigCompany = 'config/company',
   ConfigPrinter = 'config/printer',
-
+  InventarioReporte='inventory/report',
+  ContabilidadCarteraCliente='accounting/cartera-cliente',
+  VentasReport='sale/reports/sale-report',
+  FactElectReport='billing/fact-elect-report'
 }

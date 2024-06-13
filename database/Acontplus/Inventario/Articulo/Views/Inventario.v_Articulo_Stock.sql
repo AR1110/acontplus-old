@@ -24,6 +24,7 @@ CREATE OR ALTER VIEW Inventario.v_Articulo_Stock WITH SCHEMABINDING AS (
           ,es.idEstablecimiento 
           ,es.nombreComercial
           ,marca = m.descripcion
+          ,ar.stockMinimo
 	FROM dbo.Articulo              ar WITH (NOLOCK)
 	INNER JOIN dbo.SubFamilia      sf WITH (NOLOCK) ON sf.idSubFamilia = ar.idSubFamilia
     LEFT JOIN dbo.Marca            m  WITH (NOLOCK) ON m.idMarca       = ar.idMarca 

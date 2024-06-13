@@ -1868,7 +1868,7 @@
                     let modalRef = modalService.openModalCustom({
                         controller,
                         template,
-                        size: 'lg',
+                        size: 'xl',
                         params: {
                             idComprobanteIngreso: scope.params.idComprobanteIngreso,
                             idCuentaPorCobrar: scope.params.idCuentaPorCobrar,                            
@@ -1887,5 +1887,47 @@
             }
         }
     })
+
+
+    //Reporte Comprobante Ingreso 
+    app.directive('btnComprobanteIngresoReport', ['commonService', function (commonSvc) {
+        return {
+            restrict: 'A',
+            scope: { 
+                unique: '=',
+                codEstab:'='
+            },
+            link: function (scope, element) {
+                element.on('click',  function () {
+
+                    let format = 'pdf';
+
+                    let dataParms = {
+                        tipo: 3,
+                        id: scope.unique,
+                    }
+                    const parameters = {
+                        reportParams: JSON.stringify({
+                            hasParams: true,
+                            codigo: 'RCINGR',
+                            format,
+                            codEstab: scope.codEstab,
+                            aditionalParams: []
+                        }),
+                        dataParams: JSON.stringify(dataParms)
+                    }
+
+
+                    commonSvc.getReport({
+                        parameters,
+                        formatType: format,
+                        v2: true
+                    })
+
+                })
+            }
+        }
+    }])
+
 
 })(window.angular)
