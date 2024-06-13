@@ -26,12 +26,13 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @importeTotal AS NUMERIC (18,5) 
-	DECLARE @abono AS NUMERIC(18,5)
-	DECLARE @idEstadoPago AS INT
-	DECLARE @residuo AS NUMERIC(18,5)
-	DECLARE @idTipoDocumento AS INT 
-	DECLARE @posfechado NUMERIC(18,5)
+	DECLARE @importeTotal NUMERIC (18,5) 
+	       ,@abono NUMERIC(18,5)
+           ,@mora NUMERIC(18,5)
+           ,@diasMora NUMERIC(18,5)
+	       ,@idEstadoPago INT
+	       ,@residuo NUMERIC(18,5)
+	       ,@posfechado NUMERIC(18,5)
 
     SELECT @posfechado = SUM(hc.abono) 
     FROM dbo.ComprobanteIngreso ci WITH (NOLOCK) 
@@ -78,9 +79,7 @@ BEGIN
 				END 
 		END
 
-
 	UPDATE Contabilidad.CuentaPorCobrar SET idEstadoPago = @idEstadoPago, abono = ISNULL(@abono,0) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
-		
 
 END
 GO

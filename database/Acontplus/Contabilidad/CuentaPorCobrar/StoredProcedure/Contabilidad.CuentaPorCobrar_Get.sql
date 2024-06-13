@@ -537,8 +537,6 @@ BEGIN
             IF EXISTS (SELECT 1 FROM Config.v_Sistema_Ventas WITH (NOLOCK) WHERE idEntidad = @idEntidad AND configDeuda = 1)
                 BEGIN
                     
-                    SELECT TOP 1 @tipoConfig = tipoConfig, @interes = interes FROM Config.v_Sistema_Ventas WITH (NOLOCK) WHERE idEntidad = @idEntidad 
-
                     IF EXISTS (SELECT 1 FROM contabilidad.CuentaPorCobrar cc WITH (NOLOCK) 
                                         INNER JOIN dbo.TiempoCredito      tc WITH (NOLOCK) ON tc.idTiempoCredito = cc.idTiempoCredito
                                WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar
@@ -553,7 +551,7 @@ BEGIN
                                                   AND ep.codigo IN ('PE','PP') 
                                       )
                                 BEGIN
-                                    SELECT @configDeuda = 1
+                                     SELECT TOP 1 @tipoConfig = tipoConfig, @interes = interes ,@configDeuda = configDeuda FROM Config.v_Sistema_Ventas WITH (NOLOCK) WHERE idEntidad = @idEntidad 
                                 END 
                         END
                 END 
@@ -582,7 +580,7 @@ BEGIN
                                   ,cx.nroCuota
 				                  ,cx.cuota
 				                  ,cx.mora
-				                  ,CASE @tipoConfig WHEN 'PI' THEN CAST((cx.saldo * (@interes / 100))/100 as numeric(18,5))
+				                  ,CASE @tipoConfig WHEN 'PI' THEN CAST((cx.saldo * @interes) / 100 as numeric(18,5))
                                                               ELSE 0
                                    END                 as interes
                                   ,CASE @tipoConfig WHEN 'PI' THEN DATEDIFF(DAY,cx.fechaVencimiento,GETDATE())

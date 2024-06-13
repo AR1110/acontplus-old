@@ -337,7 +337,7 @@ BEGIN
                               ,ncp.claveAcceso
 						      ,dbo.AFTGenerarNroDocumento(ncp.estab+ncp.ptoEmi,ncp.secuencial) as serieComprobante										
 							  ,Format(ncp.fechaEmision,''dd/MM/yyyy'')                         as fechaEmision	
-                              ,Format(fechaAutorizacion,''dd/MM/yyyy HH:mm'') as fechaAutorizacion
+                              ,Format(ncp.fechaAutorizacion,''dd/MM/yyyy HH:mm'')              as fechaAutorizacion
 							  ,ncp.identificacionComprador
 							  ,ncp.razonSocialComprador
 							  ,dbo.AFTGenerarNroDocumento(sFv.estab+peFv.ptoEmi,fv.nroFactura) as nroFactura										
@@ -716,14 +716,14 @@ BEGIN
                           ,@identificacion  VARCHAR(20)
                           ,@idUsuario       INT'
 
-            SET @sql = 'SELECT es.idEstablecimiento
-                              ,es.nombreComercial
-	                          ,es.estab + ''-'' + pt.ptoEmi + ''-'' + Helper.F_Auto_Sequential(de.nroDocumento) as serieComprobante
-	                          ,FORMAT(de.fechaEmision,''dd/MM/yyyy'') as fechaEmision
-                              ,Format(fechaAutorizacion,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion
-	                          ,claveAcceso
-	                          ,(SELECT TOP 1 numeroIdentificacion FROM Proveedor pr WITH (NOLOCK) WHERE pr.idProveedor = de.idContribuyente) as identificacionSujetoRetenido
-	                          ,(SELECT TOP 1 nombreFiscal         FROM Proveedor pr WITH (NOLOCK) WHERE pr.idProveedor = de.idContribuyente) as razonSocialSujetoRetenido
+            SET @sql = 'SELECT de.idEstablecimiento
+                              ,de.nombreComercial
+	                          ,de.serieComprobante                                as serieComprobante
+	                          ,FORMAT(de.fechaEmision,''dd/MM/yyyy'')             as fechaEmision
+                              ,Format(de.fechaAutorizacion,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion
+	                          ,de.claveAcceso
+	                          ,de.rucReceptor                                     as identificacionSujetoRetenido
+	                          ,de.razonSocial                                     as razonSocialSujetoRetenido
 	  
 	                          ,ISNULL(CASE versionComp WHEN ''1.0.0'' THEN (
 													                            SELECT CAST(SUM(ri.valorRetenido) as numeric(18,2)) 
@@ -795,22 +795,19 @@ BEGIN
 										                            )
 	                         END as fechaEmisionDocSustento
 
-	                        ,us.nombreUsuario as usuario
+	                        ,de.usuario
 	                        ,CASE WHEN de.codEstado = 4 THEN ''Autorizada''
                                   WHEN de.codEstado = 6 THEN ''Anulada''
                                                         ELSE ''No Autorizada'' 
                              END as estado
-                            ,versionComp
-                    FROM dbo.DocumentoElectronico  de WITH (NOLOCK)
-                    INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = de.idPuntoEmision
-                    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
-                    INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario      = de.idUsuario
-                    WHERE codDoc = ''07'' 
-                    AND de.idEntidad = @idEntidad '
+                            ,de.versionComp
+                    FROM FactElect.v_DocElectronico de WITH (NOLOCK)
+                    WHERE de.codDoc = ''07'' 
+                      AND de.idEntidad = @idEntidad '
 
             IF @codEstab IS NOT NULL
                 BEGIN
-                    SET @sql = @sql + 'AND es.codEstab = @codEstab '
+                    SET @sql = @sql + 'AND de.codEstab = @codEstab '
                 END 
 
             IF @idPuntoEmision > 0 
@@ -837,7 +834,7 @@ BEGIN
 
             IF @identificacion IS NOT NULL
                 BEGIN
-                    SET @sql = @sql + 'AND de.identificacionSujetoRetenido = @identificacion '
+                    SET @sql = @sql + 'AND de.rucReceptor = @identificacion '
                 END 
 
             IF @idUsuario IS NOT NULL
@@ -845,7 +842,7 @@ BEGIN
                     SET @sql = @sql + 'AND de.idUsuario = @idUsuario '
                 END 
                 
-            SET @sql = @sql + 'ORDER BY es.idEstablecimiento,de.idContribuyente,de.fechaEmision DESC '
+            SET @sql = @sql + 'ORDER BY de.idEstablecimiento,de.CustomerId,de.fechaEmision DESC '
 
             SELECT entidad as razonSocial 
                   ,rucEmpresa as ruc
