@@ -86,6 +86,8 @@ function alertEndSession() {
         title: "Ha perdido sesión!",
         html: "Redirigiendo en <b></b> segundos",
         timer: 10000,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
         timerProgressBar: true,
         didOpen: () => {
             Swal.showLoading();
