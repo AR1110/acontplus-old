@@ -68,6 +68,8 @@
             multiSelect: true
         };
 
+        let isCheckedDoc = false;
+
         $scope.getCuentasPorPagar = () => {
             try {
 
@@ -92,6 +94,7 @@
 
                 $scope.cuentasPorPagar = [];
                 $scope.selectedDocumentos = [];
+                isCheckedDoc = false;
 
                 showLoader();
                 cuentaPorPagarSvc.getAll(dataSearch).then(response => {
@@ -173,10 +176,59 @@
         }
 
 
+       
         $scope.onDesSelectDoc = function (item) {
+            isCheckedDoc = false;
             let index = selectedDocumentosTemp.indexOf(item);
             selectedDocumentosTemp.splice(index, 1);
         }
+
+        $scope.onSelectDoc= function(){
+            isCheckedDoc = true;
+        }
+ 
+        function getDocsBySupplierId(idProveedor) {
+            
+            cuentaPorPagarSvc.getDataFormaPago(idProveedor).then(response => {
+                let docs = response.docs;
+                if(docs.length===0) return;
+
+
+                for(let item of docs){ 
+                    item.isDocRelacionado = $scope.selectedDocumentos.some(sd => sd.numAutDocSustento === item.numAutDocSustento);
+                } 
+                  
+                modalSvc.openModalCustom({
+                    controller: ["$uibModalInstance", "$scope", "params", function($uibModalInstance, $scope, params){
+                        const {docs}= params;
+
+                        $scope.docs = docs;
+
+                        $scope.closeModal = function(){
+                            $uibModalInstance.close();
+                        }
+                    }],
+                    template: `${FILE_PATH_PARTIAL_UI}_ModalDocRelacionado.cshtml`,
+                    size: 'xl',
+                    params: {
+                        docs
+                    }
+                })
+            }) 
+               
+        } 
+
+        $scope.$watch('selectedDocumentos', function (newItems) {
+            if (newItems.length === 0 || !isCheckedDoc) return 
+            
+            if (!verificarProveedorIgual()) return;
+            
+            let idProveedor = $scope.selectedDocumentos[0].idProveedor;
+            getDocsBySupplierId(idProveedor);
+
+        }, true);
+
+
 
         // Función para verificar si los valores de razonSocialComprador son los mismos
         function verificarProveedorIgual() {
