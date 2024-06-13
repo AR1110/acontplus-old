@@ -20,7 +20,10 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorCobrar_Report @idUsuarioRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorCobrar_Report 
+     @userRoleId INT
+    ,@json VARCHAR(MAX)
+	,@tableNames VARCHAR(500) OUTPUT
 AS
 BEGIN
     
@@ -52,9 +55,10 @@ BEGIN
            ,@idTarifa           INT
            ,@idEmpresa          INT
            ,@convertToDoc       BIT
+           ,@id                 INT
 
     --> Variables
-    SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+    SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
@@ -62,6 +66,8 @@ BEGIN
     IF @tipo = 1
         BEGIN
             
+            SET @tableNames = 'headerDs,detalleDs'
+
             SELECT @idCliente    = idCliente  
                   ,@ckFecha      = ckFecha
                   ,@fechaInicio  = fechaInicio
@@ -216,6 +222,8 @@ BEGIN
     IF @tipo = 2
         BEGIN
             
+            SET @tableNames = 'headerDs,detalleDs'
+
             SELECT @codDoc         = codDoc 
                   ,@idCliente      = idCliente
                   ,@idUsuario      = idUsuario
@@ -344,6 +352,8 @@ BEGIN
     IF @tipo = 3
         BEGIN
             
+            SET @tableNames = 'headerDs,detalleDs'
+
 			SET @params =  '@idArticulo         INT
 	                       ,@idUsuario          INT
                            ,@codEstab           VARCHAR(100)
@@ -495,6 +505,8 @@ BEGIN
     IF @tipo = 4
         BEGIN
             
+            SET @tableNames = 'headerDs,detalleDs'
+
 			SET @params =  '@idArticulo         INT
 	                       ,@idUsuario          INT
                            ,@codEstab           VARCHAR(100)
@@ -642,6 +654,75 @@ BEGIN
 
 			RETURN
         END 
+    
+    --> Reporte de Estado de Cuenta
+    IF @tipo = 5
+        BEGIN
+            
+            SET @tableNames = 'comprobanteDs,cuotaDs,cobroDs'
 
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+            SELECT cc.serieComprobante
+                  ,FORMAT(cc.fechaEmision,'dd/MM/yyyy')           as fechaEmision
+                  ,FORMAT(cc.fechaVencimiento,'dd/MM/yyyy')       as fechaVencimiento
+                  ,CAST(cc.importeTotal as numeric(18,2))         as importeTotal
+                  ,CAST(cc.abono as numeric(18,2))                as abono
+                  ,CAST(cc.saldo as numeric(18,2))                as saldo
+                  ,cc.razonSocialComprador 
+                  ,cc.identificacionComprador
+                  ,cc.nombreComercial
+                  ,cc.ruc
+                  ,cc.dirEstablecimiento
+                  ,cc.telefonoEstablecimiento
+            FROM v_CuentaPorCobrar cc WITH (NOLOCK)
+            WHERE cc.idCuentaPorCobrar = @id
+
+            SELECT cx.nroCuota
+                  ,FORMAT(cx.fechaVencimiento,'dd/MM/yyyy') as fechaVencimiento
+                  ,CAST(cx.cuota as numeric(18,2))          as cuota
+                  ,CAST(cx.abono as numeric(18,2))          as abono
+                  ,CAST(cx.saldo as numeric(18,2))          as saldo
+            FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK) 
+            WHERE cx.idCuentaPorCobrar = @id
+              AND cx.estado = 1
+
+            SELECT cx.nroCuota
+                  ,FORMAT(co.fechaEmision,'dd/MM/yyyy') as fechaEmision
+                  ,ef.descripcion 
+                  ,CAST(cd.abono as numeric(18,2))      as abono
+                  ,(
+	                CASE ef.codigo WHEN 'EFE' THEN  ''
+								              ELSE  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), '$.nro')
+	                END
+	               )																						AS nro
+                  ,(
+	                CASE WHEN ef.codigo IN ( 'TAR','CHE') THEN  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), '$.referencia') 
+								                          ELSE  ''
+	                END
+	               )																					    AS referencia
+            FROM dbo.CobroDetalle                  cd WITH (NOLOCK) 
+            INNER JOIN Contabilidad.CuotaPorCobrar cx WITH (NOLOCK) ON cx.idCuotaPorCobrar     = cd.idCuotaPorCobrar
+            INNER JOIN dbo.Cobro                   co WITH (NOLOCK) ON co.idCobro              = cd.idCobro
+            INNER JOIN dbo.EntidadFinanciera       ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = co.idEntidadFinanciera
+            INNER JOIN dbo.ComprobanteIngreso      ci WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
+            WHERE cx.idCuentaPorCobrar = @id
+              AND ci.estado = 1
+
+            RETURN 
+        END 
+
+    --> Reporte de Solicitudad de credito
+    IF @tipo = 6
+        BEGIN   
+            
+            SET @tableNames = 'comprobanteDs,cuotaDs,cobroDs'
+
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+
+
+            RETURN 
+        END 
 END
 GO

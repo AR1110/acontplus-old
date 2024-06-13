@@ -9,6 +9,7 @@
         const DOC_TYPE = $injector.get('DOC_TYPE');
         const modalSvc = $injector.get("modalService");
         const nombreModalContabilidad = $injector.get("nombreModalContabilidad");
+        let commonSvc = $injector.get('commonService');
 
         $scope.dataSearch = {
             pageIndex: 1,
@@ -254,7 +255,33 @@
             });
         }
 
+        $scope.getReport = async (item) => {
+ 
+            const formatType = 'pdf';
+            let dataParams = JSON.stringify({
+                codEstab: item.codEstab,
+                id: item.idCuentaPorCobrar,
+                tipo : 5,
+            })
 
+            const parameters = {
+              
+                reportParams: JSON.stringify({
+                    hasParams: true,
+                    codEstab: item.codEstab,
+                    codigo: "RETC",
+                    format: formatType,
+                    aditionalParams: []
+                }),
+                dataParams
+            }
+
+            commonSvc.getReport({
+                parameters,
+                formatType,
+                v2: true
+            })
+        }
 
 
         async function openModalCobroLote(selectedDocumentos) {

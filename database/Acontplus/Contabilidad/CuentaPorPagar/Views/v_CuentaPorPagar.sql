@@ -39,8 +39,14 @@ CREATE OR ALTER VIEW v_CuentaPorPagar WITH SCHEMABINDING AS (
 		                                                        ELSE 0 END 
 		  ,usuario = us.nombreUsuario
           ,tc.descripcion as tiempoCredito
+          ,tc.diasCredito
           ,cp.subcategoryId
           ,sc.[Name] subcategoryName
+          ,(
+                CASE cp.codDoc WHEN '01' THEN cp.uniqueId
+                               WHEN 'FC' THEN (SELECT TOP 1 fc.nroAutorizacion FROM dbo.FacturaCompra fc WITH (NOLOCK) WHERE fc.idFacturaCompra = cp.idDocumento)
+                END 
+           ) as numAutDocSustento
 	FROM Contabilidad.CuentaPorPagar    cp WITH (NOLOCK)
 	INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento = cp.idEstablecimiento 
 	INNER JOIN dbo.Proveedor            pr WITH (NOLOCK) ON pr.idProveedor       = cp.idProveedor
