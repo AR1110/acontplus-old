@@ -66,6 +66,29 @@
             })
         }
 
+        service.getAll =  function(obj){
+            let pageIndex = obj.pageIndex || 1;
+            let pageSize = obj.pageSize || 25;  
+               
+            let json = JSON.stringify({
+                tipo: 1,                
+                ...obj,
+                pageIndex,
+                pageSize
+            })
+            return mS.getData('get', `${URL}?json=${json}`, null, true).then(response=>{
+                let results = [];
+                if(response.code==="1"){
+                    let [comprobantesElectronicos] = JSON.parse(response.payload)
+            
+                    results = comprobantesElectronicos || [];
+                }
+                return results;
+            })
+        }
+
+        
+
         service.getByStatus = (params) => {
             return mS.getData('get', `${URL}GetByStatus/?json=${JSON.stringify(params)}`, null, true).then(response => {
                 if (response.code === "1") {
