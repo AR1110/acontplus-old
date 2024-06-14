@@ -69,6 +69,7 @@
             try {
 
                 $scope.comprobantes = [];
+                let codEstado = $scope.dataSearch.codEstado;
 
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
@@ -82,67 +83,42 @@
                 }
 
 
-                if ($scope.tipo > 0) {
-                    showLoader();
-                    let dataSearch = {
-                        tipo: Number($scope.tipo),
-                        codDoc: $scope.dataSearch.codDoc,
-                        codEstado: $scope.dataSearch.codEstado,
-                        checkBoxDate: $scope.dataSearch.checkBoxDate,
-                        dateStart: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                        dateEnd: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                        codEstab: $scope.dataSearch.codEstab,
-                        idPuntoEmision: $scope.dataSearch.idPuntoEmision,
-                        identificacionReceptor: $scope.dataSearch.identificacionReceptor,
-                        idUsuario: $scope.dataSearch.idUsuario,
-                        pageIndex: $scope.dataSearch.pageIndex,
-                        pageSize: $scope.dataSearch.pageSize,
-                        nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
-                    }
-                    docElectSvc.getByStatus(dataSearch).then(response => {
-                        if (!$scope.isMobile) {
-                            document.getElementById('menu_toggle').click();
-                        }
-                        $scope.comprobantes = response;
-                        $scope.dataSearch.totalRecords = $scope.comprobantes.length > 0 ? $scope.comprobantes[0].totalRecords : 0
-                    })
-                        .finally(() => hideLoader())
-                        .catch(error => {
-                            $scope.dataSearch.totalRecords = 0;
-                            console.log(error)
-                        })
-                } else {
-                    showLoader();
-                    let dataSearch = {
-                        tipo: 1,
-                        codDoc: $scope.dataSearch.codDoc,
-                        codEstado: $scope.dataSearch.codEstado,
-                        checkBoxDate: $scope.dataSearch.checkBoxDate,
-                        dateStart: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                        dateEnd: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                        codEstab: $scope.dataSearch.codEstab,
-                        idPuntoEmision: $scope.dataSearch.idPuntoEmision,
-                        identificacionReceptor: $scope.dataSearch.identificacionReceptor,
-                        idUsuario: $scope.dataSearch.idUsuario,
-                        pageIndex: $scope.dataSearch.pageIndex,
-                        pageSize: $scope.dataSearch.pageSize,
-                        nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
-                    }
+                if ($scope.tipo > 0) {  
+                    codEstado = 8; 
+                } 
 
-                    docElectSvc.get(dataSearch).then(response => {
-                        if (!$scope.isMobile) {
-                            document.getElementById('menu_toggle').click();
-                        }
-                     
-                        $scope.comprobantes = response;
-                        $scope.dataSearch.totalRecords = $scope.comprobantes.length > 0 ? $scope.comprobantes[0].totalRecords : 0
-                    })
-                        .finally(() => hideLoader())
-                        .catch(error => {
-                            $scope.dataSearch.totalRecords = 0;
-                            console.log(error)
-                        })
+
+                showLoader();
+                let dataSearch = {
+                    tipo: 1,
+                    codDoc: $scope.dataSearch.codDoc,
+                    codEstado,
+                    checkBoxDate: $scope.dataSearch.checkBoxDate,
+                    dateStart: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                    dateEnd: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                    codEstab: $scope.dataSearch.codEstab,
+                    idPuntoEmision: $scope.dataSearch.idPuntoEmision,
+                    identificacionReceptor: $scope.dataSearch.identificacionReceptor,
+                    idUsuario: $scope.dataSearch.idUsuario,
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize,
+                    nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
                 }
+
+                docElectSvc.get(dataSearch).then(response => {
+                    if (!$scope.isMobile) {
+                        document.getElementById('menu_toggle').click();
+                    }
+                    
+                    $scope.comprobantes = response;
+                    $scope.dataSearch.totalRecords = $scope.comprobantes.length > 0 ? $scope.comprobantes[0].totalRecords : 0
+                })
+                    .finally(() => hideLoader())
+                    .catch(error => {
+                        $scope.dataSearch.totalRecords = 0;
+                        console.log(error)
+                    })
+                 
             } catch (error) {
                 console.log(error)
             }

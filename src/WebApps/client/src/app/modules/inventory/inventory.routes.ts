@@ -6,6 +6,7 @@ import { MassiveTaxPageComponent } from "./pages/massive-tax-page/massive-tax-pa
 import { MeasurePageComponent } from "./pages/measure-page/measure-page.component";
 import { ProductPageComponent } from "./pages/product-page/product-page.component";
 import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
+import {InventoryReportPageComponent} from "@inventory/reports/inventory-report-page/inventory-report-page.component";
 
 export const routes: Route[] = [
   {
@@ -58,6 +59,14 @@ export const routes: Route[] = [
       breadcrumb: 'Medida'
     },
   },
+  {
+    path: 'report',
+    title: 'Reporte Inventario',
+    component: InventoryReportPageComponent,
+    data: {
+      breadcrumb:  'Reporte Inventario'
+    }
+  }
 
 
 ]

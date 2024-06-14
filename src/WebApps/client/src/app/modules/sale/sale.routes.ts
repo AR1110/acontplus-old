@@ -1,5 +1,6 @@
 import { Route } from "@angular/router";
 import { RentabilidadPageComponent } from "./reports/rentabilidad-page/rentabilidad-page.component";
+import {SaleReportPageComponent} from "@sale/reports/sale-report-page/sale-report-page.component";
 
 export const routes: Route[] = [
   {
@@ -11,6 +12,14 @@ export const routes: Route[] = [
         title: 'Reporte Rentabilidad',
         data: {
           breadcrumb: 'Reporte Rentabilidad'
+        }
+      },
+      {
+        path: 'sale-report',
+        component: SaleReportPageComponent,
+        title: 'Reporte Venta',
+        data: {
+          breadcrumb: 'Reporte Venta'
         }
       }
     ]

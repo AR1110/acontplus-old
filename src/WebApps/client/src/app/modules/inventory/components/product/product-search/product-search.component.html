@@ -64,7 +64,7 @@
 }
 
 
-@if (props.isSearchSimple) {
+@if (props.isSearchSimple || isSearchSimple) {
 
 <input type="text" placeholder="Buscar producto.." [value]="textSearch" [formControl]="control" [matAutocomplete]="autoProductSearchSimple"
   class="form-control" />

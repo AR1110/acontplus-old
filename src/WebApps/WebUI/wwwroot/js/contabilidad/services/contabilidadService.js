@@ -36,6 +36,7 @@
                     console.log(response)
                 }
 
+                
                 let results = cuentasPorPagar.map(item => {
                     return {
                         idCuentaPorPagar: item.idCuentaPorPagar,
@@ -55,6 +56,7 @@
                         estado: item.estado,
                         codEstado: item.codPago,
                         colorRow: item.colorRow,
+                        numAutDocSustento: item.numAutDocSustento,
                         totalRecords: item.totalRecords
                     }
                 })
@@ -419,7 +421,7 @@
                 return {
                     idCuotaPorPagar: item.idCuotaPorPagar,
                     saldo: fS.roundNumber(item.saldoOriginal, 5),
-                    abono: fS.roundNumber(item.abono, contarDecimales),
+                    abono: fS.roundNumber(item.abono, 2),
                     secuencial: item.secuencial
                 }
             })
@@ -432,7 +434,7 @@
 
                     idCuentaPorPagar: item.idCuentaPorPagar,
                     saldo,
-                    abono: fS.roundNumber(item.abono, contarDecimales),
+                    abono: fS.roundNumber(item.abono, 2),
                     secuencial: item.secuencial
                 }
             })
@@ -447,7 +449,8 @@
         }
 
         function post(data) {
-            return mS.getData('post', url, { data }, true)
+            console.log(data)
+           return mS.getData('post', url, { data }, true)
         }
 
         function update(data) {

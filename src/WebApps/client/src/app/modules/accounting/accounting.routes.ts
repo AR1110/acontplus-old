@@ -11,6 +11,7 @@ import { SubcategoryPageComponent } from '@modules/accounting/pages/subcategory-
 import {
   MovimientoCajaReportPageComponent
 } from "@accounting/reports/movimiento-caja-report-page/movimiento-caja-report-page.component";
+import {CarteraClientePageComponent} from "@accounting/reports/cartera-cliente-page/cartera-cliente-page.component";
 
 export const routes: Routes = [
   {
@@ -93,6 +94,14 @@ export const routes: Routes = [
     component: MovimientoCajaReportPageComponent,
     data: {
       breadcrumb: 'Movimiento Caja Reporte',
+    },
+  },
+  {
+    path: 'cartera-cliente',
+    title: 'Cartera Cliente',
+    component: CarteraClientePageComponent,
+    data: {
+      breadcrumb: 'Cartera Cliente',
     },
   },
 ];
