@@ -4,7 +4,8 @@ GO
 IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_NotaEntrega')   
     DROP INDEX IX_NotaEntrega ON dbo.NotaEntrega;  
 GO
-CREATE NONCLUSTERED INDEX IX_NotaEntrega ON dbo.NotaEntrega(idCliente, idPuntoEmision, idTipoDocumento, fechaEmision, idUsuario, idEntidad) INCLUDE (nroDocumento)
+    CREATE NONCLUSTERED INDEX IX_NotaEntrega ON dbo.NotaEntrega(idCliente, idPuntoEmision, idTipoDocumento, idUsuario, idEntidad)
+    INCLUDE (nroDocumento, fechaEmision)
 GO
 
 IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_NotaEntrega_Detalle')   

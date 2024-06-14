@@ -123,7 +123,7 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
         return mappedObject;
     }
 
-    public async Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp)
+    public async Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp, bool timeout)
     {
         DataSet ds = null;
         await using var conn = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
@@ -144,6 +144,11 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
             if (!oldSp)
             {
                 ParametersUtilsSqlServer.AddSqlParameterOut(cmd, outParam, SqlDbType.VarChar, 500);
+            }
+
+            if (!timeout)
+            {
+                cmd.CommandTimeout = 0;
             }
 
             cmd.CommandType = CommandType.StoredProcedure;

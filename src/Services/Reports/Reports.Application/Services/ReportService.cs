@@ -10,11 +10,11 @@ namespace Reports.Application.Services
 
         public async Task<DataSet> GetParamsAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.GetDataSetAsync("Reporte.Report_Get", parameters).ConfigureAwait(false);
+            return await _repository.GetDataSetAsync("Reporte.Report_Get", parameters);
         }
         public async Task<DataSet> GetDataAsync(string spname, Dictionary<string, object> parameters, bool legacy)
         {
-            return await _repository.GetDataSetAsync(spname, parameters, legacy).ConfigureAwait(false);
+            return await _repository.GetDataSetAsync(spname, parameters, legacy, false);
         }
     }
 }
