@@ -167,15 +167,22 @@
         }
 
         function getDocs() {
-            return docElectSvc.getByStatus({ tipo: 3 });
+            //return docElectSvc.getByStatus({ tipo: 3 });
+
+            let dataSearch = {
+                codEstado: 8
+            }
+            return docElectSvc.getAll(dataSearch)
         }
 
         function init() {
             const dashboardPromises = getDashboard().catch(error => { console.log(error) });
             const documentsPromises = getDocs().catch(error => { console.log(error) });
             $q.all([dashboardPromises, documentsPromises]).then(response => {
-                if (response[0]) {
-                    const { statistics, licenses, releases } = JSON.parse(response[0].payload)
+                const [dashboardData, comprobantesElectronicos] = response;
+                 
+                if (dashboardData) {
+                    const { statistics, licenses, releases } = JSON.parse(dashboardData.payload)
                     $scope.cantidad = angular.fromJson(statistics)
                     $scope.licenses = angular.fromJson(licenses) || []
                     $scope.releases = angular.fromJson(releases) || []
@@ -227,15 +234,58 @@
                         }
                     }
                 }
-                if (response[1]) {
-                    $scope.docs = response[1]
+                if (comprobantesElectronicos) { 
                     modalService.openModalCustom({
-                        controller: ["$uibModalInstance", "$scope", ($uibModalInstance, $scope) => {
+                        controller: ["$uibModalInstance", "$scope", "docElectService", "params", ($uibModalInstance, $scope, docElectSvc, params) => {
+                            const { comprobantesElectronicos } = params;
+                            $scope.docs = comprobantesElectronicos;
+                            $scope.dataSearch = {
+                                pageIndex:1,
+                                pageSize:25,
+                                totalRecords: 0,
+                                recordsQuantity: [25,50,100],
+                                maxSize: 5
+                            }
+                            if($scope.docs.length>0){
+                                $scope.dataSearch.totalRecords = $scope.docs[0].totalRecords;
+                            }
+
+                            function getDocs() { 
+                                let dataSearch = {
+                                    codEstado: 8,
+                                    pageIndex: $scope.dataSearch.pageIndex,
+                                    pageSize: $scope.dataSearch.pageSize
+                                }
+                                docElectSvc.getAll(dataSearch).then(response=>{
+                                    $scope.docs = response;
+                                    if ($scope.docs.length > 0) {
+                                        $scope.dataSearch.totalRecords = $scope.docs[0].totalRecords;
+                                    }
+                                })
+                            }
+
+
+                            $scope.pageChanged = function () {
+                                getDocs()
+                            }
+
+                            $scope.changePageSize = function () {
+                                $scope.dataSearch.pageIndex = 1;
+                                getDocs()
+                            }
+
+                            $scope.fixDocs = () => {
+                                location.href = '/FactElect/DocumentoElectronico/Index?tipo=' + 3
+                            }
+
                             $scope.onClose = () => {
                                 $uibModalInstance.close();
                             }
                         }],
-                        scope: $scope,
+                        //scope: $scope,
+                        params: {
+                            comprobantesElectronicos
+                        },
                         size: 'xl',
                         template: '~/Pages/Shared/_ComprobantesErroneos.cshtml'
                     })
@@ -245,8 +295,6 @@
         }
         init()
 
-        $scope.fixDocs = () => {
-            location.href = '/FactElect/DocumentoElectronico/Index?tipo=' + 3
-        }
+        
     }
 })(window.angular)

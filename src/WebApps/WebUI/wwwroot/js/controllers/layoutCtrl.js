@@ -6,12 +6,11 @@
     layoutCtrl.$inject = [
         "$scope",
         "$rootScope",
-        "$window",
-        "decodeToken",
+        "$window", 
         "userCustomerPermissionService"
     ];
 
-    function layoutCtrl($scope, $rootScope, $window, decodeToken, userCustomerPermissionSvc) {
+    function layoutCtrl($scope, $rootScope, $window, userCustomerPermissionSvc) {
         "use strict";
 
         $scope.userData = {};

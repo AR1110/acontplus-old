@@ -36,6 +36,7 @@
                     console.log(response)
                 }
 
+                
                 let results = cuentasPorPagar.map(item => {
                     return {
                         idCuentaPorPagar: item.idCuentaPorPagar,
@@ -55,6 +56,7 @@
                         estado: item.estado,
                         codEstado: item.codPago,
                         colorRow: item.colorRow,
+                        numAutDocSustento: item.numAutDocSustento,
                         totalRecords: item.totalRecords
                     }
                 })
