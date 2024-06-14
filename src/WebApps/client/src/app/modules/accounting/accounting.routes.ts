@@ -8,6 +8,7 @@ import { CuentaPorCobrarPageComponent } from './pages/cuenta-por-cobrar-page/cue
 import { ReporteCobrosComponent } from './reports/reporte-cobros/reporte-cobros.component';
 import { CategoryPageComponent } from '@modules/accounting/pages/category-page/category-page.component';
 import { SubcategoryPageComponent } from '@modules/accounting/pages/subcategory-page/subcategory-page.component';
+import { AccountingSummaryPageComponent } from '@modules/accounting/pages/accounting-summary-page/accounting-summary-page.component';
 import {
   MovimientoCajaReportPageComponent
 } from "@accounting/reports/movimiento-caja-report-page/movimiento-caja-report-page.component";
@@ -102,6 +103,14 @@ export const routes: Routes = [
     component: CarteraClientePageComponent,
     data: {
       breadcrumb: 'Cartera Cliente',
+    },
+  },
+  {
+    path: 'accounting-summary',
+    title: 'Resumen Contable',
+    component: AccountingSummaryPageComponent,
+    data: {
+      breadcrumb: 'Resumen Contable',
     },
   },
 ];

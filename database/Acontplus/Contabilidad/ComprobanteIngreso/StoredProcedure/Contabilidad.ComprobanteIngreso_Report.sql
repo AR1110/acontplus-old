@@ -560,34 +560,34 @@ BEGIN
                 END
 		    
 
-		    SELECT cn.idCuentaPorCobrar
+		    SELECT cc.idCuentaPorCobrar
                   ,ci.idComprobanteIngreso
-                  ,cc.idCuotaPorCobrar
+                  ,cu.idCuotaPorCobrar
                   ,cd.idCobroDetalle
-                  ,FORMAT(cn.fechaEmision, 'dd/MM/yyyy hh:mm')                                                                                                                                             as fechaEmisionDoc
-                  ,FORMAT(cn.fechaVencimiento, 'dd/MM/yyyy')                                                                                                                                               as fechaVcto
-                  ,IIF(cn.codDoc = '01','FV','NE')                                                                                                                                                         as tipoDoc
-		          ,cn.serieComprobante
-			      ,cc.nroCuota
-			      ,CAST(cc.cuota as numeric(18,2))                                                                                                                                                         as cuota
-			      ,CAST(cn.importeTotal as numeric(18,2))                                                                                                                                                  as importeTotal
-			      ,CAST(cn.abono as numeric(18,2))                                                                                                                                                         as abonoDoc
-			      ,CAST(cn.saldo as numeric(18,2))                                                                                                                                                         as saldoDoc
-			      ,CAST(cd.interes as numeric(18,2))                                                                                                                                                       as interes
+                  ,FORMAT(cc.fechaEmision, 'dd/MM/yyyy hh:mm')                                                                    as fechaEmisionDoc
+                  ,FORMAT(cc.fechaVencimiento, 'dd/MM/yyyy')                                                                      as fechaVcto
+                  ,IIF(cc.codDoc = '01','FV','NE')                                                                                as tipoDoc
+		          ,cc.serieComprobante
+			      ,cu.nroCuota
+			      ,CAST(cu.cuota as numeric(18,2))                                                                                as cuota
+			      ,CAST(cc.importeTotal as numeric(18,2))                                                                         as importeTotal
+			      ,CAST(hc.abono as numeric(18,2))                                                                                as abonoDoc
+			      ,CAST(hc.saldo - hc.abono as numeric(18,2))                                                                     as saldoDoc
+			      ,CAST(cd.interes as numeric(18,2))                                                                              as interes
 			      ,cd.diasMora
-			      ,CAST(cd.mora as numeric(18,2))                                                                                                                                                          as mora
-			      ,CAST(cd.abono as numeric(18,2))                                                                                                                                                         as abono
-			      ,CASE WHEN cd.abono > cc.cuota THEN  CAST(cc.cuota - cd.abono as numeric(18,2)) ELSE 0 END  as abonoMora
-			      ,CAST((cc.cuota + cd.mora) - SUM(CASE WHEN co.cobro = 1 THEN cd.abono ELSE 0 END) OVER (PARTITION BY cc.idCuotaPorCobrar ORDER BY co.idCobro ROWS UNBOUNDED PRECEDING) as numeric(18,2)) as saldo
-			      ,ISNULL(sf.descripcion,ef.descripcion) + '-' + ISNULL(JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro'),'')                                                                          as ingreso
+			      ,CAST(cd.mora as numeric(18,2))                                                                                 as mora
+			      ,CAST(cd.abono as numeric(18,2))                                                                                as abono
+			      ,CAST(cd.saldo - cd.abono as numeric(18,2))																	  as saldo
+			      ,ISNULL(sf.descripcion,ef.descripcion) + '-' + ISNULL(JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro'),'') as ingreso
 		    FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
-		    INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
+			INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso   = ci.idComprobanteIngreso
+			INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar      = hc.idCuentaPorCobrar
+			INNER JOIN dbo.Cobro				    co WITH (NOLOCK) ON co.idCobro		          = hc.idCobro
 		    INNER JOIN dbo.CobroDetalle             cd WITH (NOLOCK) ON cd.idCobro                = co.idCobro
-		    INNER JOIN Contabilidad.CuotaPorCobrar  cc WITH (NOLOCK) ON cc.idCuotaPorCobrar       = cd.idCuotaPorCobrar
-		    INNER JOIN Contabilidad.CuentaPorCobrar cn WITH (NOLOCK) ON cn.idCuentaPorCobrar      = cc.idCuentaPorCobrar
-		    INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera 
+			INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera 
 		     LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
-		    WHERE ci.idComprobanteIngreso = @id 
+		    INNER JOIN Contabilidad.CuotaPorCobrar  cu WITH (NOLOCK) ON cu.idCuotaPorCobrar       = cd.idCuotaPorCobrar
+		    WHERE ci.idComprobanteIngreso = @id
 
             RETURN 
         END 
