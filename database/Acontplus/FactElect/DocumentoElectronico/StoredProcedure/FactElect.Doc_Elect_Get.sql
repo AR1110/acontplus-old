@@ -32,7 +32,6 @@ BEGIN
 	
     IF @tipo = 1
         BEGIN 
-            
             SET @params = '@idEntidad              INT
 						  ,@codEstab               VARCHAR(20)
 	                      ,@codDoc                 VARCHAR(10)
@@ -71,7 +70,7 @@ BEGIN
 							  ,de.telefonoEstablecimiento
 							  ,de.entidad
 							  ,de.nombreComercial
-                              ,count(*) over()           as totalRecords
+                              ,COUNT(*) OVER(ORDER BY de.idDocumentoElectronico) as totalRecords
 						FROM FactElect.v_DocElectronico de WITH (NOLOCK)
 						WHERE de.idEntidad = @idEntidad  '
 
@@ -147,7 +146,6 @@ BEGIN
 	
 	        IF @codEstado >= 0
 		        BEGIN
-                    
                     IF @codEstado = 8 
                         BEGIN
                             SET @sql = @sql +  'AND codEstado NOT IN (4,6) '
