@@ -318,14 +318,25 @@ GO
 ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN codEstado INT NULL
 GO 
 
+ALTER TABLE dbo.DocumentoElectronico ALTER COLUMN customerId INT NOT NULL
 
+IF EXISTS (
+    SELECT 1 
+    FROM sys.columns 
+    WHERE Name = N'codEstado' 
+    AND Object_ID = Object_ID(N'dbo.DocumentoElectronico')
+)
+BEGIN
+    ALTER TABLE dbo.DocumentoElectronico
+    DROP COLUMN codEstado;
+END
+GO
 
-
--- select top 100 dc.* from dbo.DocumentoElectronico  dc
--- 	INNER JOIN FactElect.EstadoServicio es WITH(NOLOCK) ON dc.idEstadoServicio = es.idEstadoServicio
--- where es.codigo = 2 
---and xmlAcontPlus is not  null
-----AND
-----dc.isAutomatic = 1
--- order by iddocumentoelectronico desc
+ select top 100 dc.* from dbo.DocumentoElectronico  dc
+ 	INNER JOIN FactElect.EstadoServicio es WITH(NOLOCK) ON dc.idEstadoServicio = es.idEstadoServicio
+ where es.codigo = 2 
+and xmlAcontPlus is not  null
+AND
+dc.isAutomatic = 1
+ order by iddocumentoelectronico desc
 
