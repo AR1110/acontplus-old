@@ -1,10 +1,7 @@
 USE AcontPlus
+GO 
 
-IF OBJECT_ID(N'v_CuentaPorCobrar', N'V')IS NOT NULL
-	DROP VIEW v_CuentaPorCobrar
-GO
-
-CREATE VIEW v_CuentaPorCobrar AS (
+CREATE OR ALTER VIEW v_CuentaPorCobrar AS (
 	SELECT cc.idCuentaPorCobrar
 		  ,cc.idDocumento
 		  ,cc.idCliente
@@ -16,9 +13,11 @@ CREATE VIEW v_CuentaPorCobrar AS (
 		  ,es.idEstablecimiento
           ,idEmpresa                = ISNULL(cl.idEmpresa, 0)
 		  ,es.codEstab
-		  ,cc.codDoc
-		  ,telefonoEstablecimiento = es.telefono
+          ,es.telefono as telefonoEstablecimiento
 		  ,es.nombreComercial
+          ,es.dirEstablecimiento 
+          ,es.ruc
+		  ,cc.codDoc
 		  ,cc.serieComprobante
 		  ,cc.secuencial
 		  ,cc.fechaEmision
@@ -38,7 +37,7 @@ CREATE VIEW v_CuentaPorCobrar AS (
 		  ,tiempoCredito           = tc.tipo
           ,tc.descripcion          AS tipoTiempoCredito
 		  ,estadoSri               = CASE WHEN cc.codDoc = '01' THEN (
-                                                                          SELECT es.codigo 
+                                                                          SELECT TOP 1 es.codigo 
                                                                           FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
                                                                           INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio = de.idEstadoServicio
                                                                           WHERE de.idDocumento = cc.idDocumento 

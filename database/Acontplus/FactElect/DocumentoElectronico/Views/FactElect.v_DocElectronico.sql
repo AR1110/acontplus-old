@@ -4,8 +4,8 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
     SELECT de.idDocumentoElectronico
           ,de.idEntidad
           ,de.idUsuario
-          ,de.CustomerId
           ,en.razonSocial entidad
+          ,de.CustomerId
           ,en.ruc
           ,pe.ambiente as codAmbiente
           ,ambiente = CASE WHEN pe.ambiente = '2' THEN 'PRODUCCIÓN' ELSE 'PRUEBAS' END
@@ -85,7 +85,7 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
                                                   INNER JOIN Customer.Customer cc WITH (NOLOCK) ON p.CustomerId = cc.Id  
                                                   WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad)
                    END
-        ,es.idEstadoServicio
+         ,es.idEstadoServicio
          ,es.codigo AS codEstado
          ,es.descripcion estado
          ,de.fechaRegistro
@@ -95,7 +95,6 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
          ,us.nombreUsuario as usuario
          ,de.isAutomatic
          ,se.idEstablecimiento
-
     FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
     INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad        = de.idEntidad  
     INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision   = de.idPuntoEmision

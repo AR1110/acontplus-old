@@ -240,12 +240,12 @@ BEGIN
 	-- ====================== Historial para mostrar los comprobantes de ingreso por Documento =========================
 	IF @tipo = 3
 		BEGIN
-			SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT '$.idCuentaPorCobrar')
+			SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT)
 
 			SELECT cl.numeroIdentificacion
 				  ,cl.nombreFiscal
-				  ,serieComprobante = cc.serieComprobante
-				  ,fechaEmision     = FORMAT(cc.fechaEmision,'dd/MM/yyyy hh:mm')
+				  ,cc.serieComprobante                        as serieComprobante
+				  ,FORMAT(cc.fechaEmision,'dd/MM/yyyy hh:mm') as fechaEmision
 				  ,cc.importeTotal
 				  ,cc.abono
 				  ,cc.saldo
@@ -256,52 +256,59 @@ BEGIN
 			WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar
 
 			SELECT ci.idComprobanteIngreso 
-				  ,fechaEmision     = FORMAT(ci.fechaRegistro,'dd/MM/yyyy hh:mm')
-				  ,serieComprobante = 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento) 
+				  ,FORMAT(ci.fechaRegistro,'dd/MM/yyyy hh:mm')                             as fechaEmision
+				  ,'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento) as serieComprobante
 				  ,ci.total
 				  ,ci.abono
 				  ,ci.cambio
-				  ,estado           = CASE ci.estado WHEN 1 THEN 'ACTIVO' ELSE 'ANULADO' END 
-                  ,[status] =  ci.estado
+				  ,CASE ci.estado WHEN 1 THEN 'ACTIVO' ELSE 'ANULADO' END                  as estado
+                  ,ci.estado                                                               as [status]
                   ,(
-                    SELECT COUNT(DISTINCT cc.idCuentaPorCobrar) FROM Contabilidad.Historial_Cobro cc WITH (NOLOCK) WHERE cc.idComprobanteIngreso = ci.idComprobanteIngreso
-                   ) as cantDocs
+                        SELECT COUNT(DISTINCT cc.idCuentaPorCobrar) 
+                        FROM Contabilidad.Historial_Cobro cc WITH (NOLOCK) 
+                        WHERE cc.idComprobanteIngreso = ci.idComprobanteIngreso
+
+                   )                                                                       as cantDocs
 			FROM dbo.ComprobanteIngreso     ci WITH (NOLOCK)
 			INNER JOIN Sri.Establecimiento  es WITH (NOLOCK) ON es.codEstab = ci.codEstab
 			WHERE ci.idComprobanteIngreso IN (SELECT hc.idComprobanteIngreso FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar)
+              AND ci.estado = 1
 
 			SELECT co.idComprobanteIngreso
 			      ,co.idCobro
-				  ,posfechado   =  CASE co.posfechado WHEN 1 THEN 'SI' ELSE 'NO' END 
-				  ,fechaEmision = FORMAT(co.fechaEmision,'dd/MM/yyyy hh:mm')
-				  ,formaCobro   = ISNULL(sf.descripcion,ef.descripcion)
-				  ,banco        = ISNULL(bc.descripcion,'-------------')
-				  ,infoCobro    = ISNULL(dbo.f_sanitize_json(co.infoCobro),'[]')
+				  ,CASE co.posfechado WHEN 1 THEN 'SI' ELSE 'NO' END         as posfechado
+				  ,FORMAT(co.fechaEmision,'dd/MM/yyyy hh:mm')                as fechaEmision
+				  ,ISNULL(sf.descripcion,ef.descripcion)                     as formaCobro
+				  ,ISNULL(bc.descripcion,'-------------')                    as banco
+				  ,ISNULL(dbo.f_sanitize_json(co.infoCobro),'[]')            as infoCobro
 				  ,co.valor
 				  ,co.abono
 				  ,co.vuelto
-				  ,estado       = CASE co.cobro WHEN 1 THEN 'COBRADO' ELSE 'POR COBRAR' END 
-				  ,codPago      = ef.codigo
+				  ,CASE co.cobro WHEN 1 THEN 'COBRADO' ELSE 'POR COBRAR' END as estado
+				  ,ef.codigo                                                 as codPago
 			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
 			INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON ci.idComprobanteIngreso   = hc.idComprobanteIngreso
-			INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
+			INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idCobro                = hc.idCobro
 			INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera
 			 LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
 			 LEFT JOIN dbo.Banco                    bc WITH (NOLOCK) ON bc.idBanco                = co.idBanco
 			WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar
+              AND ci.estado = 1
+            ORDER BY co.secuencial ASC
 
 			SELECT co.idCobro
 				  ,cx.nroCuota
-				  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'dd/MM/yyyy')
+				  ,FORMAT(cx.fechaVencimiento,'dd/MM/yyyy') as fechaVencimiento
 				  ,cx.cuota
-				  ,cx.saldo
 				  ,cc.abono
+                  ,cc.saldo - cc.abono                      as saldo
 			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
-			INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON ci.idComprobanteIngreso   = hc.idComprobanteIngreso
 			INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
 			INNER JOIN dbo.CobroDetalle             cc WITH (NOLOCK) ON cc.idCobro                = co.idCobro
 			INNER JOIN Contabilidad.CuotaPorCobrar  cx WITH (NOLOCK) ON cx.idCuotaPorCobrar       = cc.idCuotaPorCobrar
-			WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar
+			WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar
+              AND ci.estado = 1
+            ORDER BY co.secuencial,cx.nroCuota ASC
 
 			RETURN 
 		END 

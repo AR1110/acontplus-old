@@ -237,7 +237,7 @@ BEGIN
 											 codigo          VARCHAR(300)  '$.codigo'
 											,codBarras       VARCHAR(500)  '$.codBarras'
 											,codAuxiliar     VARCHAR(500)  '$.codigo'
-											,codSubFamilia   VARCHAR(150)  '$.codSubFamilia'
+											,codSubFamilia   VARCHAR(300)  '$.codSubFamilia'
 											,codMedida       VARCHAR(150)  '$.codMedida'
 											,codMarca        VARCHAR(150)  '$.codMarca'
 											,codModelo       VARCHAR(150)  '$.codModelo'
