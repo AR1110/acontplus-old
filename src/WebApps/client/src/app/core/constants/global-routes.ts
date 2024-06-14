@@ -38,6 +38,6 @@ export enum GlobalRoutes {
   ConfigPrinter = 'config/printer',
   InventarioReporte='inventory/report',
   ContabilidadCarteraCliente='accounting/cartera-cliente',
-  VentasReport='sale/reports/sale-report',
+  VentasReportVentaReporte ='sale/reports/sale-report',
   FactElectReport='billing/fact-elect-report'
 }

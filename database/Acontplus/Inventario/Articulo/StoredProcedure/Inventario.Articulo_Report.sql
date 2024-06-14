@@ -228,12 +228,12 @@ BEGIN
                 --sin stock 
                  IF @stockStatusCode='SS'
                      BEGIN
-                         SET @sql = @sql + 'AND ar.stock < 0 '
+                         SET @sql = @sql + 'AND ar.stock <= 0 '
                      END
                 --stock minimo 
                 IF @stockStatusCode='SM'
                  BEGIN
-                     SET @sql = @sql + ' AND ar.stock > 0 AND ar.stock < ar.stockMinimo '
+                     SET @sql = @sql + ' AND ar.stock <= ar.stockMinimo '
                  END
 
 
