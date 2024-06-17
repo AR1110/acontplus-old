@@ -13,7 +13,7 @@
     {
         _context.Categories.Add(category);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Guardada Exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Guardada Exitosamente" };
     }
 
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
@@ -22,7 +22,7 @@
         if (category == null)
         {
             // Handle case where category not found
-            return new ApiResponse { code = "0", message = "Categoría no encontrada" };
+            return new ApiResponse { Code = "0", Message = "Categoría no encontrada" };
         }
 
         category.Enabled = false;
@@ -30,23 +30,23 @@
         category.UserId = userId;
         _context.Update(category);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Eliminada Exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Eliminada Exitosamente" };
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         if (!await _context.Categories.AnyAsync())
         {
-            return new ApiResponse { code = "0", message = "No data" };
+            return new ApiResponse { Code = "0", Message = "No data" };
         }
 
         var dt = await _repository.GetDataTableAsync("TechnicalSupport.Category_Get", parameters);
         if (DataValidation.DataTableIsNull(dt))
         {
-            return new ApiResponse { code = "0", message = "No data" };
+            return new ApiResponse { Code = "0", Message = "No data" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataTableToJson(dt) };
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }
 
 
@@ -56,7 +56,7 @@
         if (categoryFound == null)
         {
             // Handle case where category not found
-            return new ApiResponse { code = "0", message = "Categoría no encontrada" };
+            return new ApiResponse { Code = "0", Message = "Categoría no encontrada" };
         }
 
         categoryFound.CompanyId = category.CompanyId;
@@ -66,6 +66,6 @@
         categoryFound.UserId = category.UserId;
         _context.Update(categoryFound);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Actualizada Exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Actualizada Exitosamente" };
     }
 }

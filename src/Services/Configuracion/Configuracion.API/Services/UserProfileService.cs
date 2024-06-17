@@ -21,9 +21,9 @@ public class UserProfileService : IUserProfileService
 
         if (ds == null)
         {
-            return new ApiResponse { code = "0", message = "No se pudo obtener los datos" };
+            return new ApiResponse { Code = "0", Message = "No se pudo obtener los datos" };
         }
 
-        return new ApiResponse { code = "0", message = "Ok", payload = DataConverters.DataSetToJson(ds) };
+        return new ApiResponse { Code = "0", Message = "Ok", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

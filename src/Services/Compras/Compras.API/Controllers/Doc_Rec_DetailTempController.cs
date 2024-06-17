@@ -18,7 +18,7 @@ public class Doc_Rec_DetailTempController : ControllerBase
     [HttpGet("{idDocumento}")]
     public async Task<IActionResult> GetId(int idDocumento)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -44,7 +44,7 @@ public class Doc_Rec_DetailTempController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -70,7 +70,7 @@ public class Doc_Rec_DetailTempController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Put([FromBody] ApiRequest parameters)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

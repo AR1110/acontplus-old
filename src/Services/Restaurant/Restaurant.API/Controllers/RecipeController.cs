@@ -19,9 +19,9 @@ namespace Restaurant.API.Controllers
             _log = log;
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> Get()
+        public async Task<ActionResult<ApiResponseDeprecated>> Get()
         {
-            var _response = new ApiResponse();
+            var _response = new ApiResponseDeprecated();
             try
             {
                 _response.payload = await _recipe.GetAsync();

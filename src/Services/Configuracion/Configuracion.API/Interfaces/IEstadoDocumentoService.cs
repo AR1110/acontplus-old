@@ -2,5 +2,5 @@
 
 public interface IEstadoDocumentoService
 {
-    Task<ApiResponse> GetAsync(string json);
+    Task<ApiResponseDeprecated> GetAsync(string json);
 }

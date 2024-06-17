@@ -45,7 +45,7 @@ public class SubFamiliaController : BaseApiController
 
         var response = await _service.AddAsync(parameters);
 
-        if (response.code == "1" && file != null)
+        if (response.Code == "1" && file != null)
         {
             await _storageService.UploadAsync(_s3ObjectCustom);
         }

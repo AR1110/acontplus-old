@@ -21,7 +21,7 @@ public class DocumentoElectronicoController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -41,7 +41,7 @@ public class DocumentoElectronicoController : ControllerBase
     [HttpGet("GetByStatus")]
     public async Task<IActionResult> GetByStatus(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -61,7 +61,7 @@ public class DocumentoElectronicoController : ControllerBase
     [HttpGet("GetDataForm")]
     public async Task<IActionResult> GetDataForm()
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -109,7 +109,7 @@ public class DocumentoElectronicoController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             

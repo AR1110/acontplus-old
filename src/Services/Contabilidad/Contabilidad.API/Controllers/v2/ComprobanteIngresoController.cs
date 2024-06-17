@@ -17,7 +17,7 @@ public class ComprobanteIngresoController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         await _dbAccess.SPExecute("Contabilidad.ComprobanteIngreso_Get");
         _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
@@ -30,7 +30,7 @@ public class ComprobanteIngresoController : ControllerBase
     [HttpPost("Insert")]
     public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         await _dbAccess.SPExecute("Contabilidad.ComprobanteIngreso_Insert");
         _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
@@ -43,7 +43,7 @@ public class ComprobanteIngresoController : ControllerBase
     [HttpPut("Cancel")]
     public async Task<IActionResult> Cancel([FromBody] ApiRequest paremeter)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         await _dbAccess.SPExecute("Contabilidad.ComprobanteIngreso_Update_Cancel");
         _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);

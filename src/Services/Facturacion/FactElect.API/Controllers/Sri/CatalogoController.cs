@@ -14,7 +14,7 @@ public class CatalogoController : ControllerBase
     [HttpGet("Get")]
     public async Task<IActionResult> Get()
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
 
         try
         {

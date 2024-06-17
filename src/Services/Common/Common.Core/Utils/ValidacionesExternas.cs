@@ -5,9 +5,9 @@ namespace Common.Core.Utils;
 public class ValidacionesExternas
 
 {
-    private readonly ApiResponse _gr = new();
+    private readonly ApiResponseDeprecated _gr = new();
 
-    internal ApiResponse VerificarDatos(string numeroIdentificacion, string tipoValidacion)
+    internal ApiResponseDeprecated VerificarDatos(string numeroIdentificacion, string tipoValidacion)
     {
         _ = new char[13];
         try
@@ -83,7 +83,7 @@ public class ValidacionesExternas
         return _gr;
     }
 
-    private ApiResponse VerificarCedula(char[] validarCedula)
+    private ApiResponseDeprecated VerificarCedula(char[] validarCedula)
     {
         try
         {
@@ -137,7 +137,7 @@ public class ValidacionesExternas
         return _gr;
     }
 
-    private ApiResponse VerificarPersonaNarutal(char[] validarCedula)
+    private ApiResponseDeprecated VerificarPersonaNarutal(char[] validarCedula)
     {
         try
         {
@@ -191,7 +191,7 @@ public class ValidacionesExternas
         return _gr;
     }
 
-    private ApiResponse VerificarPersonaJuridica(char[] validarCedula)
+    private ApiResponseDeprecated VerificarPersonaJuridica(char[] validarCedula)
     {
         try
         {
@@ -253,7 +253,7 @@ public class ValidacionesExternas
         return _gr;
     }
 
-    private ApiResponse VerificarSectorPublico(char[] validarCedula)
+    private ApiResponseDeprecated VerificarSectorPublico(char[] validarCedula)
     {
         try
         {

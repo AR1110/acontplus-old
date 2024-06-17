@@ -6,7 +6,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
     {
         await context.Pets.AddAsync(pet);
         await context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Guardada exitosamente", payload = pet };
+        return new ApiResponse { Code = "1", Message = "Guardada exitosamente", Payload = pet };
     }
 
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
@@ -14,7 +14,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
         var pet = await context.Pets.FindAsync(id);
         if (pet == null)
         {
-            return new ApiResponse { code = "0", message = "No se encontro raza para eliminar" };
+            return new ApiResponse { Code = "0", Message = "No se encontro raza para eliminar" };
         }
 
         pet.UserId = userId;
@@ -22,7 +22,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
         pet.Enabled = false;
         context.Update(pet);
         await context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Eliminada exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
@@ -30,16 +30,16 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
         var ds = await repository.GetDataSetAsync("Vet.Pet_Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
         {
-            return new ApiResponse { code = "0", message = "La transacción no devolvio respuesta" };
+            return new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJson(ds) };
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<ApiResponse> GetByIdAsync(int id)
     {
         var pet = await context.Pets.SingleOrDefaultAsync(x => x.Id == id);
-        return new ApiResponse { code = "1", payload = pet };
+        return new ApiResponse { Code = "1", Payload = pet };
     }
 
 
@@ -48,7 +48,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
         var petFound = await context.Pets.SingleOrDefaultAsync(x => x.Id == id);
         if (petFound == null)
         {
-            return new ApiResponse { code = "0", message = "No se encontro mascota para editar" };
+            return new ApiResponse { Code = "0", Message = "No se encontro mascota para editar" };
         }
 
         petFound.UserId = pet.UserId;
@@ -60,7 +60,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
         petFound.Birthdate = pet.Birthdate;
         context.Pets.Update(petFound);
         await context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Actualizada exitosamente", payload = pet };
+        return new ApiResponse { Code = "1", Message = "Actualizada exitosamente", Payload = pet };
     }
 
 
@@ -69,9 +69,9 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
         var ds = await repository.GetDataSetAsync("Vet.Pet_Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
         {
-            return new ApiResponse { code = "0", message = "La transacción no devolvio respuesta" };
+            return new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJson(ds) };
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

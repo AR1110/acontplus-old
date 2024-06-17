@@ -17,7 +17,7 @@ public class CompraHabitualController : ControllerBase
     public async Task<IActionResult> Get(string json)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Recepcion.CompraHabitual_Get");
@@ -44,7 +44,7 @@ public class CompraHabitualController : ControllerBase
     public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Recepcion.CompraHabitual_Insert");
@@ -71,7 +71,7 @@ public class CompraHabitualController : ControllerBase
     public async Task<IActionResult> Put(int id, string json)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Recepcion.CompraHabitual_Update");
@@ -99,7 +99,7 @@ public class CompraHabitualController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Recepcion.CompraHabitual_Delete");

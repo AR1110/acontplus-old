@@ -39,7 +39,7 @@ public class DocumentoRecibidoController : ControllerBase
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponseDeprecated();
         var ceXml = new ComprobanteElectronico();
         var sms = string.Empty;
         var getXmlSriData = new DataXmlComprobante();
@@ -73,7 +73,7 @@ public class DocumentoRecibidoController : ControllerBase
     [HttpPost("Read")]
     public async Task<IActionResult> Post(IFormFile file)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
 
         if (file.ContentType != "text/plain")
         {
@@ -193,7 +193,7 @@ public class DocumentoRecibidoController : ControllerBase
     [HttpGet("Preview/{id}")]
     public async Task<IActionResult> Preview(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -241,7 +241,7 @@ public class DocumentoRecibidoController : ControllerBase
     [HttpPut("Migrate")]
     public async Task<IActionResult> Migrate(ApiRequest parameters)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

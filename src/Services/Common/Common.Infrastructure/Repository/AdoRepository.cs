@@ -373,7 +373,7 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             if (await reader.ReadAsync())
             {
                 var schemaTable = await reader.GetSchemaTableAsync();
-                response.code = reader.IsDBNull(0) ? null : reader.GetString(0);
+                response.Code = reader.IsDBNull(0) ? null : reader.GetString(0);
                 // Check if the schema table contains the "message" column
                 var columnExists = schemaTable != null && schemaTable.Rows.Cast<DataRow>().Any(row =>
                     row["ColumnName"].ToString().Equals("message", StringComparison.OrdinalIgnoreCase));
@@ -382,7 +382,7 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
                     var indexMessage = reader.GetOrdinal("message");
                     if (indexMessage != -1 && !reader.IsDBNull(indexMessage))
                     {
-                        response.message = reader.GetString(indexMessage);
+                        response.Message = reader.GetString(indexMessage);
                     }
                 }
 
@@ -393,7 +393,7 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
                     var indexPayload = reader.GetOrdinal("payload");
                     if (indexPayload != -1 && !reader.IsDBNull(indexPayload))
                     {
-                        response.payload = reader.GetString(indexPayload);
+                        response.Payload = reader.GetString(indexPayload);
                     }
                 }
             }

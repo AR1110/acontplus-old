@@ -14,7 +14,7 @@ public class BancoController : BaseApiController
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -34,7 +34,7 @@ public class BancoController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Contabilidad.Banco_Insert");
@@ -54,7 +54,7 @@ public class BancoController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Contabilidad.Banco_Update");
@@ -75,7 +75,7 @@ public class BancoController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Contabilidad.Banco_Delete");

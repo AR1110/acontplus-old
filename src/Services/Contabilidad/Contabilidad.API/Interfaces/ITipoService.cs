@@ -2,8 +2,8 @@
 
 public interface ITipoService
 {
-    Task<ApiResponse> AddAsync(Tipo tipo);
-    Task<ApiResponse> DeleteAsync(int userId, int id);
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> UpdateAsync(int id, Tipo tipo);
+    Task<ApiResponseDeprecated> AddAsync(Tipo tipo);
+    Task<ApiResponseDeprecated> DeleteAsync(int userId, int id);
+    Task<ApiResponseDeprecated> GetAsync(Dictionary<string, object> parameters);
+    Task<ApiResponseDeprecated> UpdateAsync(int id, Tipo tipo);
 }

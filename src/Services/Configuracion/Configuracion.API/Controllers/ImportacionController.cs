@@ -12,7 +12,7 @@
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            var response = new ApiResponse();
+            var response = new ApiResponseDeprecated();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -32,7 +32,7 @@
         [HttpPost("GetValidation/{codImportacion}")]
         public async Task<IActionResult> GetValidation(string codImportacion, [FromBody] ImportacionParams data)
         {
-            var response = new ApiResponse();
+            var response = new ApiResponseDeprecated();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -54,7 +54,7 @@
         [HttpPost("{codImportacion}")]
         public async Task<IActionResult> Post(string codImportacion, [FromBody] ImportacionParams data)
         {
-            var response = new ApiResponse();
+            var response = new ApiResponseDeprecated();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))

@@ -19,10 +19,10 @@ public class DocumentoRecibidoService(IAdoRepository repository) : IDocumentoRec
         var ds = await repository.GetDataSetAsync("Recepcion.Documento_Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
         {
-            return new ApiResponse { code = "0", message = "Data not found" };
+            return new ApiResponse { Code = "0", Message = "Data not found" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJson(ds) };
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<XmlDocument> GetById(Dictionary<string, object> parameters)

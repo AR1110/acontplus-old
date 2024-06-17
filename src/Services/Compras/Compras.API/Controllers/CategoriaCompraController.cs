@@ -18,7 +18,7 @@ public class CategoriaCompraController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -43,7 +43,7 @@ public class CategoriaCompraController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Compra.Categoria_Insert");
@@ -68,7 +68,7 @@ public class CategoriaCompraController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Compra.Categoria_Update");
@@ -94,7 +94,7 @@ public class CategoriaCompraController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Compra.Categoria_Delete");

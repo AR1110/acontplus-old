@@ -8,7 +8,7 @@ public class TurnoService : ITurnoService
 {
     private readonly IAdoRepository _repository;
     private readonly IConfiguration _configuration;
-    private ApiResponse _gr = new ApiResponse();
+    private ApiResponseDeprecated _gr = new ApiResponseDeprecated();
     private readonly string _connectionStrings = string.Empty;
 
     public TurnoService(IAdoRepository respository, IConfiguration configuration)
@@ -28,7 +28,7 @@ public class TurnoService : ITurnoService
 
         return null;
     }
-    public async Task<ApiResponse> CreateTurnoAsync(int idRol, Turno data)
+    public async Task<ApiResponseDeprecated> CreateTurnoAsync(int idRol, Turno data)
     {
         using (var con = new SqlConnection(_connectionStrings))
         {
@@ -56,7 +56,7 @@ public class TurnoService : ITurnoService
         }
         return _gr;
     }
-    public async Task<ApiResponse> UpdateTurnoAsync(int idRol, Turno data)
+    public async Task<ApiResponseDeprecated> UpdateTurnoAsync(int idRol, Turno data)
     {
         try
         {
@@ -96,7 +96,7 @@ public class TurnoService : ITurnoService
         return _gr;
 
     }
-    public async Task<ApiResponse> ReadTurnoAsync(int idRol, int pageIndex, int pageSize)
+    public async Task<ApiResponseDeprecated> ReadTurnoAsync(int idRol, int pageIndex, int pageSize)
     {
         var listar = new List<TurnoViewModel>();
         using (var con = new SqlConnection(_connectionStrings))
@@ -136,7 +136,7 @@ public class TurnoService : ITurnoService
         _gr.data = listar;
         return _gr;
     }
-    public async Task<ApiResponse> DeleteTurnoAsync(int idRol, int idTurno)
+    public async Task<ApiResponseDeprecated> DeleteTurnoAsync(int idRol, int idTurno)
     {
         using (var con = new SqlConnection(_connectionStrings))
         {

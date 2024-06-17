@@ -24,7 +24,7 @@ public class TransportistaController : BaseApiController
     public async Task<IActionResult> Get(string json)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -44,7 +44,7 @@ public class TransportistaController : BaseApiController
     [HttpPost("Insert")]
     public async Task<IActionResult> Insert([FromBody] Transportista data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -67,7 +67,7 @@ public class TransportistaController : BaseApiController
     [HttpPut("Update/{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] Transportista data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -90,7 +90,7 @@ public class TransportistaController : BaseApiController
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {

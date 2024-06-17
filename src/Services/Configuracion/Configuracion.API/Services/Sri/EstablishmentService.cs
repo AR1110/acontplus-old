@@ -37,10 +37,10 @@ public class EstablishmentService : IEstablishmentService
         var affectedRows = await _repository.OnlyExecuteAsync(query, parameters, false);
         if (affectedRows > 0)
         {
-            return new ApiResponse { code = "1", message = "Actualizado Exitosamente!" };
+            return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente!" };
         }
         
-            return new ApiResponse { code = "0", message = "No se pudo actualizar!" };
+            return new ApiResponse { Code = "0", Message = "No se pudo actualizar!" };
         
     }
 

@@ -16,7 +16,7 @@ public class AprobacionDocumentoController : BaseApiController
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -72,7 +72,7 @@ public class AprobacionDocumentoController : BaseApiController
     public async Task<IActionResult> GetId(int id)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Ventas.Aprob_Document_Get_Id");

@@ -267,9 +267,9 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
         }
     }
 
-    public async Task<ApiResponse> SpExecuteAsync(string spname, Dictionary<string, object> parameters)
+    public async Task<ApiResponseDeprecated> SpExecuteAsync(string spname, Dictionary<string, object> parameters)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponseDeprecated();
         var conn = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
         await using var cmd = new SqlCommand(spname, conn);
         var wasOpen = cmd.Connection.State == ConnectionState.Open;

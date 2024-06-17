@@ -16,7 +16,7 @@ public class EstablecimientoController : BaseApiController
     {
         var _db = new DbAccess(_configuration);
 
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Sri.Establecimiento_Get");
@@ -43,7 +43,7 @@ public class EstablecimientoController : BaseApiController
     {
         var _db = new DbAccess(_configuration);
 
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Sri.Establecimiento_Get_Id");
@@ -68,7 +68,7 @@ public class EstablecimientoController : BaseApiController
     {
         var _db = new DbAccess(_configuration);
 
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Sri.Establecimiento_Get_Data_Form");
@@ -92,7 +92,7 @@ public class EstablecimientoController : BaseApiController
     {
         var _db = new DbAccess(_configuration);
 
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Sri.Establecimiento_Insert");
@@ -119,7 +119,7 @@ public class EstablecimientoController : BaseApiController
     {
         var _db = new DbAccess(_configuration);
 
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Sri.Establecimiento_Update");
@@ -145,7 +145,7 @@ public class EstablecimientoController : BaseApiController
     [HttpPut("PutSriAuth/{id}/{autoSriAuth}")]
     public async Task<IActionResult> PutSriAuth(int id, bool autoSriAuth)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             using (var _db = new DbAccess(_configuration))
@@ -173,7 +173,7 @@ public class EstablecimientoController : BaseApiController
     {
         var _db = new DbAccess(_configuration);
 
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Sri.Establecimiento_Delete");

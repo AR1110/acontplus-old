@@ -14,7 +14,7 @@ public class TarifaController : BaseApiController
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -35,7 +35,7 @@ public class TarifaController : BaseApiController
     [HttpPost("Insert")]
     public async Task<IActionResult> Insert([FromBody] Tarifa data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -57,7 +57,7 @@ public class TarifaController : BaseApiController
     [HttpPut("Update/{id}")]
     public async Task<IActionResult> Update(int id, string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -79,7 +79,7 @@ public class TarifaController : BaseApiController
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -100,7 +100,7 @@ public class TarifaController : BaseApiController
     [HttpGet("ListForSelect")]
     public async Task<IActionResult> ListForSelect(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {

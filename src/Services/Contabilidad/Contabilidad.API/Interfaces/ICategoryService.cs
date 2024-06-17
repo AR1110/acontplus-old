@@ -2,8 +2,8 @@
 
 public interface ICategoryService
 {
-    Task<ApiResponse> AddAsync(Category category);
-    Task<ApiResponse> DeleteAsync(int userId, int id);
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> UpdateAsync(int id, Category category);
+    Task<ApiResponseDeprecated> AddAsync(Category category);
+    Task<ApiResponseDeprecated> DeleteAsync(int userId, int id);
+    Task<ApiResponseDeprecated> GetAsync(Dictionary<string, object> parameters);
+    Task<ApiResponseDeprecated> UpdateAsync(int id, Category category);
 }
