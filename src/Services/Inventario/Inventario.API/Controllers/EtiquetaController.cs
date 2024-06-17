@@ -16,7 +16,7 @@ public class EtiquetaController : BaseApiController
     [HttpGet("Get/{json}")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Inventario.Etiqueta_Get");
@@ -36,7 +36,7 @@ public class EtiquetaController : BaseApiController
     [HttpPost("Insert")]
     public async Task<IActionResult> Insert(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Inventario.Etiqueta_Insert");
@@ -56,7 +56,7 @@ public class EtiquetaController : BaseApiController
     [HttpPut("Update/{id}")]
     public async Task<IActionResult> Update(int id, string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Inventario.Etiqueta_Update");
@@ -78,7 +78,7 @@ public class EtiquetaController : BaseApiController
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Inventario.Etiqueta_Delete");

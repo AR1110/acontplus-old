@@ -15,10 +15,10 @@
 
         if (DataValidation.DataSetIsNull(ds, true))
         {
-            return new ApiResponse { code = "0", message = "No se encontraron datos" };
+            return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
@@ -40,7 +40,7 @@
         if (orderMaintenance == null)
         {
             // Handle case where order not found
-            return new ApiResponse { code = "0", message = "No se encontró orden para eliminar" };
+            return new ApiResponse { Code = "0", Message = "No se encontró orden para eliminar" };
         }
 
         orderMaintenance.Enabled = false;
@@ -49,6 +49,6 @@
         _context.Update(orderMaintenance);
         await _context.SaveChangesAsync();
 
-        return new ApiResponse { code = "1", message = "Eliminado exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Eliminado exitosamente" };
     }
 }

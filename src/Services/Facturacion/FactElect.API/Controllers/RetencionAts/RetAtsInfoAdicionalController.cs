@@ -37,7 +37,7 @@ public class RetAtsInfoAdicionalController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -61,7 +61,7 @@ public class RetAtsInfoAdicionalController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -83,7 +83,7 @@ public class RetAtsInfoAdicionalController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             

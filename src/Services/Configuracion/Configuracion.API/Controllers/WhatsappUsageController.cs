@@ -19,9 +19,9 @@ namespace Configuracion.API.Controllers
            
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> Get(string json)
+        public async Task<ActionResult<ApiResponseDeprecated>> Get(string json)
         {
-            var _response = new ApiResponse();
+            var _response = new ApiResponseDeprecated();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -42,9 +42,9 @@ namespace Configuracion.API.Controllers
             return _response;
         }
         [HttpPost]
-        public async Task<ActionResult<ApiResponse>> Post([FromBody] ApiRequest parameters)
+        public async Task<ActionResult<ApiResponseDeprecated>> Post([FromBody] ApiRequest parameters)
         {
-            var _response = new ApiResponse();
+            var _response = new ApiResponseDeprecated();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -64,9 +64,9 @@ namespace Configuracion.API.Controllers
             return _response;
         }
         [HttpPut]
-        public async Task<ActionResult<ApiResponse>> Put(int id, [FromBody] ApiRequest parameters)
+        public async Task<ActionResult<ApiResponseDeprecated>> Put(int id, [FromBody] ApiRequest parameters)
         {
-            var _response = new ApiResponse();
+            var _response = new ApiResponseDeprecated();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -87,9 +87,9 @@ namespace Configuracion.API.Controllers
             return _response;
         }
         [HttpDelete]
-        public async Task<ActionResult<ApiResponse>> Delete(int id)
+        public async Task<ActionResult<ApiResponseDeprecated>> Delete(int id)
         {
-            var _response = new ApiResponse();
+            var _response = new ApiResponseDeprecated();
             var _db = new DbAccess(_configuration);
             try
             {

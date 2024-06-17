@@ -18,7 +18,7 @@ public class UsuarioPermisoController : ControllerBase
     [HttpGet("Get/{json}")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -42,7 +42,7 @@ public class UsuarioPermisoController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Put([FromBody] UsuarioPemisoDto data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -68,7 +68,7 @@ public class UsuarioPermisoController : ControllerBase
     [HttpGet("CheckHasPermission/{json}")]
     public async Task<IActionResult> CheckHasPermission(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();

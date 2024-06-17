@@ -23,7 +23,7 @@ public class ArticuloController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -49,7 +49,7 @@ public class ArticuloController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -69,7 +69,7 @@ public class ArticuloController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         var data = JsonConvert.DeserializeObject<ApiRequest>(json);
 
@@ -106,7 +106,7 @@ public class ArticuloController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         var data = JsonConvert.DeserializeObject<ApiRequest>(json);
 
@@ -129,7 +129,7 @@ public class ArticuloController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -150,7 +150,7 @@ public class ArticuloController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Search(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -176,7 +176,7 @@ public class ArticuloController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> FindForPurchase(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -197,7 +197,7 @@ public class ArticuloController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> FindForSale(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -217,7 +217,7 @@ public class ArticuloController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetDataForm(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {

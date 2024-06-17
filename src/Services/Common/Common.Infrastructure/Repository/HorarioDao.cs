@@ -6,16 +6,16 @@ public class HorarioDao
 {
     private readonly IConfiguration _config;
     private readonly string _connectionStrings = string.Empty;
-    protected ApiResponse _gr;
+    protected ApiResponseDeprecated _gr;
 
     public HorarioDao(IConfiguration config)
     {
         _config = config;
         _connectionStrings = _config.GetConnectionString("DefaultConnection");
-        _gr = new ApiResponse();
+        _gr = new ApiResponseDeprecated();
     }
 
-    public async Task<ApiResponse> ReadHorarioAsync(int idRol, int idTurno)
+    public async Task<ApiResponseDeprecated> ReadHorarioAsync(int idRol, int idTurno)
     {
         var listar = new List<HorarioViewModel>();
         try
@@ -71,7 +71,7 @@ public class HorarioDao
         return _gr;
     }
 
-    public async Task<ApiResponse> ListDiaAsycn()
+    public async Task<ApiResponseDeprecated> ListDiaAsycn()
     {
         var listar = new List<HorarioViewModel>();
         try

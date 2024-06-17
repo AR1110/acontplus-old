@@ -14,7 +14,7 @@ public class FamiliaController : BaseApiController
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -35,7 +35,7 @@ public class FamiliaController : BaseApiController
     [HttpPost("Insert")]
     public async Task<IActionResult> Insert(ApiRequest request)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -56,7 +56,7 @@ public class FamiliaController : BaseApiController
     [HttpPut("Update/{id}")]
     public async Task<IActionResult> Update(int id, ApiRequest request)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -78,7 +78,7 @@ public class FamiliaController : BaseApiController
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -99,7 +99,7 @@ public class FamiliaController : BaseApiController
     [HttpGet("ListForSelect")]
     public async Task<IActionResult> ListForSelect(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {

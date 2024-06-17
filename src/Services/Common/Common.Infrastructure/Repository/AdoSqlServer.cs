@@ -28,7 +28,7 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
             var reader = await cmd.ExecuteReaderAsync();
             while (reader.Read())
             {
-                response = new DbDataReaderMapper().ToList<T>(reader);
+                response = DbDataReaderMapper.ToList<T>(reader);
             }
         }
         finally
@@ -123,7 +123,8 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
         return mappedObject;
     }
 
-    public async Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp, bool timeout)
+    public async Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp,
+        bool timeout)
     {
         DataSet ds = null;
         await using var conn = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
@@ -266,9 +267,9 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
         }
     }
 
-    public async Task<ApiResponse> SpExecuteAsync(string spname, Dictionary<string, object> parameters)
+    public async Task<ApiResponseDeprecated> SpExecuteAsync(string spname, Dictionary<string, object> parameters)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponseDeprecated();
         var conn = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
         await using var cmd = new SqlCommand(spname, conn);
         var wasOpen = cmd.Connection.State == ConnectionState.Open;

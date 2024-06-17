@@ -18,7 +18,7 @@ public class LotPriceService : ILotPriceService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 

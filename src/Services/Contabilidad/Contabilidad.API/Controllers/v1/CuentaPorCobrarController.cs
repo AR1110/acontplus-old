@@ -34,7 +34,7 @@ public class CuentaPorCobrarController : ControllerBase
     public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
     {
         var _dbAccess = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -55,7 +55,7 @@ public class CuentaPorCobrarController : ControllerBase
     public async Task<IActionResult> Update([FromBody] ApiRequest paremeter)
     {
         var _dbAccess = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

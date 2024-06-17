@@ -18,7 +18,7 @@ public class MassiveTaxService : IMassiveTaxService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 

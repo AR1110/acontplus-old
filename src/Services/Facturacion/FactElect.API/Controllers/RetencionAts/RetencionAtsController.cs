@@ -20,7 +20,7 @@ public class RetencionAtsController : ControllerBase
     [HttpGet("{json}")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -40,7 +40,7 @@ public class RetencionAtsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] RetencionAtsDto data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -74,7 +74,7 @@ public class RetencionAtsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, RetencionAtsDto data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -95,7 +95,7 @@ public class RetencionAtsController : ControllerBase
     [HttpPut("Cancel/{id}")]
     public async Task<IActionResult> Cancel(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -116,7 +116,7 @@ public class RetencionAtsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             

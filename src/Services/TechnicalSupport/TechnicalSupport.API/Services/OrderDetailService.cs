@@ -27,7 +27,7 @@ public class OrderDetailService : IOrderDetailService
         {
             return new ApiResponse
             {
-                code = "0", message = "No se puede eliminar, este equipo ya tiene mantenimientos en curso"
+                Code = "0", Message = "No se puede eliminar, este equipo ya tiene mantenimientos en curso"
             };
         }
 
@@ -36,7 +36,7 @@ public class OrderDetailService : IOrderDetailService
         detailFound.Deleted = true;
         _context.Update(detailFound);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Eliminada exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
     }
 
     public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)

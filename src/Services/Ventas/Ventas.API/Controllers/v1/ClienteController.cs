@@ -18,7 +18,7 @@ public class ClienteController : ControllerBase
     public async Task<IActionResult> Get(string json)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
 
@@ -39,7 +39,7 @@ public class ClienteController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetDataForm(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -58,7 +58,7 @@ public class ClienteController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Search(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -81,7 +81,7 @@ public class ClienteController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Insert([FromBody] Cliente data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -102,7 +102,7 @@ public class ClienteController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] Cliente data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -124,7 +124,7 @@ public class ClienteController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -145,7 +145,7 @@ public class ClienteController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> FindById(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {

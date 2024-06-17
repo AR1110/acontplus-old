@@ -7,16 +7,16 @@ public class CobroDetalleDao
 {
     private readonly IConfiguration _config;
     private readonly string _connectionStrings = string.Empty;
-    private readonly ApiResponse _gr;
+    private readonly ApiResponseDeprecated _gr;
 
     public CobroDetalleDao(IConfiguration config)
     {
         _config = config;
         _connectionStrings = _config.GetConnectionString("DefaultConnection");
-        _gr = new ApiResponse();
+        _gr = new ApiResponseDeprecated();
     }
 
-    public async Task<ApiResponse> GetByDocumentAsync(int idRol, int idCobro, int idTipoDocumento, int idComprobante)
+    public async Task<ApiResponseDeprecated> GetByDocumentAsync(int idRol, int idCobro, int idTipoDocumento, int idComprobante)
     {
         var detalle = new List<CobroDetalleViewModel>();
         try
@@ -66,7 +66,7 @@ public class CobroDetalleDao
         return _gr;
     }
 
-    public async Task<ApiResponse> GetByCobroAsync(int idRol, int idCobro)
+    public async Task<ApiResponseDeprecated> GetByCobroAsync(int idRol, int idCobro)
     {
         var detalle = new List<CobroDetalleViewModel>();
         try

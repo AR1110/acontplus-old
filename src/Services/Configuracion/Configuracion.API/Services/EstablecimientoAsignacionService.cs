@@ -14,7 +14,7 @@ public class EstablecimientoAsignacionService : IEstablecimientoAsignacionServic
         var dt = await _repository.GetDataTableAsync("Config.Estab_Asig_Get", parameters);
         if (!DataValidation.DataTableIsNull(dt))
         {
-            return DataConverters.DataTableToJSON(dt);
+            return DataConverters.DataTableToJson(dt);
         }
 
         return null;
@@ -25,7 +25,7 @@ public class EstablecimientoAsignacionService : IEstablecimientoAsignacionServic
         var ds = await _repository.GetDataSetAsync("Config.Estab_Asig_Get_Data_Form", parameters);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
-        return DataConverters.DataSetToJSON(ds, true);
+        return DataConverters.DataSetToJson(ds, true);
     }
 
     public async Task<string> AddAsync(ApiRequest request)

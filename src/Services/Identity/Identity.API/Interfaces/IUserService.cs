@@ -2,5 +2,5 @@
 
 public interface IUserService
 {
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<ApiResponseDeprecated> GetAsync(Dictionary<string, object> parameters);
 }

@@ -16,7 +16,7 @@ public class NotaCreditoController : BaseApiController
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -36,7 +36,7 @@ public class NotaCreditoController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post(ApiRequest data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -56,7 +56,7 @@ public class NotaCreditoController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, ApiRequest parameters)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Ventas.NotaCredito_Update", true);
@@ -79,7 +79,7 @@ public class NotaCreditoController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Ventas.NotaCredito_Delete", true);

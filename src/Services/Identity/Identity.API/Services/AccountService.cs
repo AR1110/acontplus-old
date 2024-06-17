@@ -34,10 +34,10 @@ public class AccountService : IAccountService
 
         if (response == 0)
         {
-            return new ApiResponse { code = "0", message = "Código no válido" };
+            return new ApiResponse { Code = "0", Message = "Código no válido" };
         }
 
-        return new ApiResponse { code = "1", message = "Código válido" };
+        return new ApiResponse { Code = "1", Message = "Código válido" };
     }
 
     public async Task<ApiResponse> LoginAsync(string username, string password)
@@ -55,10 +55,10 @@ public class AccountService : IAccountService
             });
         if (response == 0)
         {
-            return new ApiResponse { code = "0", message = "Código no válido" };
+            return new ApiResponse { Code = "0", Message = "Código no válido" };
         }
 
-        return new ApiResponse { code = "1", message = "Código válido" };
+        return new ApiResponse { Code = "1", Message = "Código válido" };
     }
 
     public async Task<string> LoginAppAsync(string username, string password)

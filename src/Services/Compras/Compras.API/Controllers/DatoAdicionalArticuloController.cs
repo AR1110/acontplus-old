@@ -16,7 +16,7 @@ public class DatoAdicionalArticuloController : ControllerBase
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -42,7 +42,7 @@ public class DatoAdicionalArticuloController : ControllerBase
     [HttpPost("Insert/{id}")]
     public async Task<IActionResult> Insert(int id, ApiRequest request)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -69,7 +69,7 @@ public class DatoAdicionalArticuloController : ControllerBase
     [HttpDelete("Delete/{idInfoAdicional}")]
     public async Task<IActionResult> Delete(int idInfoAdicional)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {

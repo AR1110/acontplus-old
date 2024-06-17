@@ -16,7 +16,7 @@ public class EmailConfigController : ControllerBase
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -39,10 +39,10 @@ public class EmailConfigController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<ApiResponse>> Put(int id, [FromBody] ApiRequest parameters)
+    public async Task<ActionResult<ApiResponseDeprecated>> Put(int id, [FromBody] ApiRequest parameters)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Config.EmailConfig_Update");

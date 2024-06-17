@@ -16,7 +16,7 @@ public class CargoController : BaseApiController
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
            
@@ -37,7 +37,7 @@ public class CargoController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
            
@@ -57,7 +57,7 @@ public class CargoController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Administrador.Cargo_Update", true);
@@ -79,7 +79,7 @@ public class CargoController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Administrador.Cargo_Delete", true);

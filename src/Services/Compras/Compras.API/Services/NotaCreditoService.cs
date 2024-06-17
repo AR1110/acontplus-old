@@ -14,7 +14,7 @@ public class NotaCreditoService : INotaCreditoService
         var ds = await _repository.GetDataSetAsync("Compra.NotaCredito_Get", parameters);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public async Task<string> AddAsync(ApiRequest request)
@@ -31,7 +31,7 @@ public class NotaCreditoService : INotaCreditoService
         var ds = await _repository.GetDataSetAsync("Compra.NotaCredito_GetId", parameters, true);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
-        return DataConverters.DataSetToJSON(ds, true);
+        return DataConverters.DataSetToJson(ds, true);
     }
 
     public async Task<string> UpdateAsync(int id, ApiRequest request)

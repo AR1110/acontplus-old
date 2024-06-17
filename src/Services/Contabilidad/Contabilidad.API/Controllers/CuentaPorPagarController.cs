@@ -14,7 +14,7 @@ public class CuentaPorPagarController : BaseApiController
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -34,7 +34,7 @@ public class CuentaPorPagarController : BaseApiController
     [HttpPost("{json}")]
     public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -54,7 +54,7 @@ public class CuentaPorPagarController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, CuentaPorPagarDto data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

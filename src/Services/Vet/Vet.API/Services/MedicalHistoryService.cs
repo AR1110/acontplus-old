@@ -22,7 +22,7 @@ public class MedicalHistoryService(IAdoRepository genericRepository, VetContext 
 
         context.MedicalHistories.Add(medicalHistory);
         await context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Registrado exitosamente", payload = medicalHistory.Id };
+        return new ApiResponse { Code = "1", Message = "Registrado exitosamente", Payload = medicalHistory.Id };
     }
 
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
@@ -30,7 +30,7 @@ public class MedicalHistoryService(IAdoRepository genericRepository, VetContext 
         var medicalHistory = await context.MedicalHistories.FindAsync(id);
         if (medicalHistory == null)
         {
-            return new ApiResponse { code = "0", message = "Registro no encontrado" };
+            return new ApiResponse { Code = "0", Message = "Registro no encontrado" };
         }
 
         medicalHistory.Deleted = true;
@@ -38,15 +38,15 @@ public class MedicalHistoryService(IAdoRepository genericRepository, VetContext 
         medicalHistory.UserId = userId;
         context.Update(medicalHistory);
         await context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Eliminado Exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Eliminado Exitosamente" };
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await genericRepository.GetDataSetAsync("Vet.MedicalHistory_Get", parameters);
         return DataValidation.DataSetIsNull(ds, true)
-            ? new ApiResponse { code = "0", message = "La transacción no devolvio respuesta" }
-            : new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+            ? new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<ApiResponse> GetByIdAsync(int id)
@@ -55,8 +55,8 @@ public class MedicalHistoryService(IAdoRepository genericRepository, VetContext 
         var ds = await genericRepository.GetDataSetAsync("Vet.MedicalHistory_GetById", parameters);
 
         return DataValidation.DataSetIsNull(ds, true)
-            ? new ApiResponse { code = "0", message = "La transacción no devolvio respuesta" }
-            : new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+            ? new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<ApiResponse> UpdateAsync(int id, MedicalHistory medicalHistory)
@@ -64,7 +64,7 @@ public class MedicalHistoryService(IAdoRepository genericRepository, VetContext 
         var medicalHistoryFound = await context.MedicalHistories.FindAsync(id);
         if (medicalHistoryFound == null)
         {
-            return new ApiResponse { code = "0", message = "Registro no encontrado" };
+            return new ApiResponse { Code = "0", Message = "Registro no encontrado" };
         }
 
         medicalHistoryFound.Date = medicalHistory.Date;
@@ -75,6 +75,6 @@ public class MedicalHistoryService(IAdoRepository genericRepository, VetContext 
         medicalHistoryFound.UserId = medicalHistory.UserId;
         context.Update(medicalHistoryFound);
         await context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente" };
     }
 }

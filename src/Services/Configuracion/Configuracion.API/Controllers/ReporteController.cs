@@ -18,7 +18,7 @@ public class ReporteController : ControllerBase
     [HttpGet("Get/{json}")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -43,7 +43,7 @@ public class ReporteController : ControllerBase
     [HttpPost("Post")]
     public async Task<IActionResult> Post([FromBody] ReporteDto data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -72,7 +72,7 @@ public class ReporteController : ControllerBase
     [HttpPut("Put/{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] ReporteDto data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -103,7 +103,7 @@ public class ReporteController : ControllerBase
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();

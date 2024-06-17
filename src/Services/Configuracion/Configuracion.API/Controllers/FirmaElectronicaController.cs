@@ -16,7 +16,7 @@ public class FirmaElectronicaController : ControllerBase
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -42,7 +42,7 @@ public class FirmaElectronicaController : ControllerBase
     [HttpPost("Post")]
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -95,7 +95,7 @@ public class FirmaElectronicaController : ControllerBase
     [HttpPost("UpdateSignature/{id}")]
     public async Task<IActionResult> UpdateSignature(int id, IFormFile file)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -146,7 +146,7 @@ public class FirmaElectronicaController : ControllerBase
     [HttpPut("Put")]
     public async Task<IActionResult> Put(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {

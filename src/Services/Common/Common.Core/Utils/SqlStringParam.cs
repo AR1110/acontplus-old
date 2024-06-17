@@ -1,27 +1,26 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Common.Core.Utils
+namespace Common.Core.Utils;
+
+public static class SqlStringParam
 {
-    public static class SqlStringParam
+    public static string Sanitize(string input)
     {
-        public static string Sanitize(string input)
-        {
-            var expression =
-              new Regex(@";|=|<|>| or | and |select 
+        var expression =
+            new Regex(@";|=|<|>| or | and |select 
               | insert | update | drop | xp_ | --| exec"
             );
 
-            var result =
-              expression.Replace(input, new
-              MatchEvaluator(MatchEvaluatorHandler));
+        var result =
+            expression.Replace(input, MatchEvaluatorHandler);
 
-            return result;
-        }
-        public static string MatchEvaluatorHandler(Match match)
-        {
-            //Replace the matched items with a blank string of 
-            //equal length
-            return new string(' ', match.Length);
-        }
+        return result;
+    }
+
+    private static string MatchEvaluatorHandler(Match match)
+    {
+        //Replace the matched items with a blank string of 
+        //equal length
+        return new string(' ', match.Length);
     }
 }

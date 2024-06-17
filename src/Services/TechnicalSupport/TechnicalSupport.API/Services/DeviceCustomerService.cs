@@ -13,9 +13,9 @@
         if (DataValidation.DataSetIsNull(ds))
         {
             // Handle case where no data is found
-            return new ApiResponse { code = "1", message = "No se encontraron datos" };
+            return new ApiResponse { Code = "1", Message = "No se encontraron datos" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

@@ -18,7 +18,7 @@ public class EntidadController : ControllerBase
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -42,7 +42,7 @@ public class EntidadController : ControllerBase
     [HttpPost("Create")]
     public async Task<IActionResult> Create([FromBody] Entidad data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -50,9 +50,9 @@ public class EntidadController : ControllerBase
             _db.AddDynamicParam("ruc", data.ruc);
             _db.AddDynamicParam("razonSocial", data.razonSocial);
             _db.AddDynamicParam("nombreComercial", data.nombreComercial);
-            _db.AddDynamicParam("email", data.email.ToDBNullOrDefault());
-            _db.AddDynamicParam("telefono", data.telefono.ToDBNullOrDefault());
-            _db.AddDynamicParam("direccion", data.direccion.ToDBNullOrDefault());
+            _db.AddDynamicParam("email", data.email.ToDbNullOrDefault());
+            _db.AddDynamicParam("telefono", data.telefono.ToDbNullOrDefault());
+            _db.AddDynamicParam("direccion", data.direccion.ToDbNullOrDefault());
             _response = _db.GetDefault();
         }
         catch (Exception ex)
@@ -71,7 +71,7 @@ public class EntidadController : ControllerBase
     [HttpPut("Update/{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] Entidad data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -81,9 +81,9 @@ public class EntidadController : ControllerBase
             _db.AddDynamicParam("idCiudad", data.idCiudad);
             _db.AddDynamicParam("razonSocial", data.razonSocial);
             _db.AddDynamicParam("nombreComercial", data.nombreComercial);
-            _db.AddDynamicParam("email", data.email.ToDBNullOrDefault());
-            _db.AddDynamicParam("telefono", data.telefono.ToDBNullOrDefault());
-            _db.AddDynamicParam("direccion", data.direccion.ToDBNullOrDefault());
+            _db.AddDynamicParam("email", data.email.ToDbNullOrDefault());
+            _db.AddDynamicParam("telefono", data.telefono.ToDbNullOrDefault());
+            _db.AddDynamicParam("direccion", data.direccion.ToDbNullOrDefault());
             _response = _db.GetDefault();
         }
         catch (Exception ex)
@@ -102,7 +102,7 @@ public class EntidadController : ControllerBase
     [HttpPut("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();

@@ -48,7 +48,7 @@ public class AtsController : ControllerBase
     public async Task<IActionResult> Download(string json)
     {
         using var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         await _db.SPExecute("ASPAtsGetData", true);
         _db.AddDynamicParam("idRol", User.GetUserRoleId());
         _db.AddDynamicParam("json", json);

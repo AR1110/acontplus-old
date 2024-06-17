@@ -14,7 +14,7 @@ public class NotificacionTributariaController : BaseApiController
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -33,7 +33,7 @@ public class NotificacionTributariaController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {

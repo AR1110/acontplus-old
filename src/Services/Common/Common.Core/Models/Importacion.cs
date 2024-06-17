@@ -1,7 +1,6 @@
-﻿namespace Common.Core.Models
+﻿namespace Common.Core.Models;
+
+public class ImportacionParams
 {
-    public class ImportacionParams
-    {
-        public string jsonParams { get; set; }
-    }
+    public string jsonParams { get; set; }
 }

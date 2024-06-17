@@ -28,7 +28,7 @@ public class OrderService : IOrderService
 
         _context.Update(orderFound);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Entregada correctamente" };
+        return new ApiResponse { Code = "1", Message = "Entregada correctamente" };
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
@@ -36,10 +36,10 @@ public class OrderService : IOrderService
         var ds = await _repository.GetDataSetAsync($"{_module}Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
         {
-            return new ApiResponse { code = "0", message = "No se encontraron datos" };
+            return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)

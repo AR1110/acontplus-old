@@ -15,7 +15,7 @@ namespace Restaurant.API.Services
         {
             var ds = await _repository.GetDataSetAsync("Restaurant.ConsumoTpv_Get", parameters, true);
             if (ds.Tables[0].Rows.Count == 0) { return null; }
-            return DataConverters.DataSetToJSON(ds, true);
+            return DataConverters.DataSetToJson(ds, true);
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {

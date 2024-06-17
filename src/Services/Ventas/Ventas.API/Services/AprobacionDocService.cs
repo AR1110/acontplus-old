@@ -18,7 +18,7 @@ public class AprobacionDocService : IAprobacionDocService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 
@@ -32,7 +32,7 @@ public class AprobacionDocService : IAprobacionDocService
         var ds = await _repository.GetDataSetAsync(nameSchema + "GetId", parameters, true);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
-        return DataConverters.DataSetToJSON(ds, true);
+        return DataConverters.DataSetToJson(ds, true);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)

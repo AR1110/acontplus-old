@@ -2,6 +2,6 @@
 
 public interface IHorarioService
 {
-    Task<ApiResponse> GetAsync(int userRoleId, int turnoId);
-    Task<ApiResponse> GetDaysAsync();
+    Task<ApiResponseDeprecated> GetAsync(int userRoleId, int turnoId);
+    Task<ApiResponseDeprecated> GetDaysAsync();
 }

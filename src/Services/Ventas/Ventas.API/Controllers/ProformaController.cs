@@ -14,7 +14,7 @@ public class ProformaController : BaseApiController
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -35,7 +35,7 @@ public class ProformaController : BaseApiController
     [HttpPost("Insert")]
     public async Task<IActionResult> Insert(ApiRequest parameters)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -58,7 +58,7 @@ public class ProformaController : BaseApiController
     {
         var _db = new DbAccess(_configuration);
 
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
 
@@ -81,7 +81,7 @@ public class ProformaController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Ventas.Proforma_Delete", true);
@@ -102,7 +102,7 @@ public class ProformaController : BaseApiController
     public async Task<IActionResult> GetId(int id)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Ventas.Proforma_GetId");
@@ -122,7 +122,7 @@ public class ProformaController : BaseApiController
     [HttpPost("ConvertToDoc")]
     public async Task<IActionResult> ConvertToDoc(ApiRequest parameters)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {

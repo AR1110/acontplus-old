@@ -17,7 +17,7 @@ public class ArticlePhotoController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
 
         try

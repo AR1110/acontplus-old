@@ -14,12 +14,12 @@ public class SubFamiliaService : ISubFamiliaService
         var ds = await _repository.GetDataTableAsync("Inventario.Subfamilia_Get", parameters);
         if (ds.Rows.Count == 0)
         {
-            return new ApiResponse { code = "0", message = "Sin registros", payload = null };
+            return new ApiResponse { Code = "0", Message = "Sin registros", Payload = null };
         }
 
         return new ApiResponse
         {
-            code = "1", message = "Listado exitosamente", payload = DataConverters.DataTableToJSON(ds)
+            Code = "1", Message = "Listado exitosamente", Payload = DataConverters.DataTableToJson(ds)
         };
     }
 

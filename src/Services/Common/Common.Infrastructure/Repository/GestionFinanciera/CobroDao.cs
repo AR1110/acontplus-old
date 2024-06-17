@@ -7,16 +7,16 @@ public class CobroDao
 {
     private readonly IConfiguration _config;
     private readonly string _connectionStrings = string.Empty;
-    private readonly ApiResponse _gr;
+    private readonly ApiResponseDeprecated _gr;
 
     public CobroDao(IConfiguration config)
     {
         _config = config;
         _connectionStrings = _config.GetConnectionString("DefaultConnection");
-        _gr = new ApiResponse();
+        _gr = new ApiResponseDeprecated();
     }
 
-    public async Task<ApiResponse> GetByDocumentAsync(int idRol, int idComprobanteIngreso, int idTipoDocumento,
+    public async Task<ApiResponseDeprecated> GetByDocumentAsync(int idRol, int idComprobanteIngreso, int idTipoDocumento,
         int idComprobante)
     {
         var cobros = new List<CobroViewModel>();
@@ -74,7 +74,7 @@ public class CobroDao
         return _gr;
     }
 
-    public async Task<ApiResponse> GetByComprobanteAsync(int idRol, int idComprobanteIngreso)
+    public async Task<ApiResponseDeprecated> GetByComprobanteAsync(int idRol, int idComprobanteIngreso)
     {
         var cobros = new List<CobroViewModel>();
         try
@@ -128,7 +128,7 @@ public class CobroDao
         return _gr;
     }
 
-    public async Task<ApiResponse> UpdateAsync(int idRol, int idCobro, string observacion, bool cobro, bool anular)
+    public async Task<ApiResponseDeprecated> UpdateAsync(int idRol, int idCobro, string observacion, bool cobro, bool anular)
     {
         try
         {

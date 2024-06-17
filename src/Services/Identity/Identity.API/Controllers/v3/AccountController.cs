@@ -37,7 +37,7 @@ public class AccountController : ControllerBase
         }
 
         var _response =
-            JsonConvert.DeserializeObject<ApiResponse>(
+            JsonConvert.DeserializeObject<ApiResponseDeprecated>(
                 await _accountService.LoginRestaurantAsync(authRequest.Username, authRequest.Password));
 
         if (_response.code == "1")

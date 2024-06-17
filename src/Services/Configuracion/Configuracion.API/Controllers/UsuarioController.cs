@@ -18,7 +18,7 @@ public class UsuarioController : ControllerBase
     [HttpGet("{json}")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -43,7 +43,7 @@ public class UsuarioController : ControllerBase
     [HttpGet("Search")]
     public async Task<IActionResult> Search(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("App.Usuario_Search");
@@ -68,7 +68,7 @@ public class UsuarioController : ControllerBase
     [HttpPost("{json}")]
     public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -92,7 +92,7 @@ public class UsuarioController : ControllerBase
     [HttpPut("{id}/{json}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -117,7 +117,7 @@ public class UsuarioController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("App.Usuario_Delete");

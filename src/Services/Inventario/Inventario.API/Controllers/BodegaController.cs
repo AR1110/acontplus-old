@@ -16,7 +16,7 @@ public class BodegaController : BaseApiController
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Inventario.Bodega_Get");
@@ -36,7 +36,7 @@ public class BodegaController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Inventario.Bodega_Insert");
@@ -56,7 +56,7 @@ public class BodegaController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Inventario.Bodega_Update");
@@ -77,7 +77,7 @@ public class BodegaController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Inventario.Bodega_Delete");

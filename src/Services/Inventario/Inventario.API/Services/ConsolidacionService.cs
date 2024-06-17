@@ -18,7 +18,7 @@ public class ConsolidacionService : IConsolidacionService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public async Task<object> GetIdAsync(Dictionary<string, object> parameters)
@@ -29,7 +29,7 @@ public class ConsolidacionService : IConsolidacionService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 

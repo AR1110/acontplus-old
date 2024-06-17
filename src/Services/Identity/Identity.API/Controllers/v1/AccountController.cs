@@ -35,7 +35,7 @@ public class AccountController : BaseApiController
 
         var _response = await _accountService.LoginAsync(authRequest.Username, authRequest.Password);
         //User founded
-        if (_response.code == "1" && !string.IsNullOrEmpty(_response.payload))
+        if (_response.Code == "1" && !string.IsNullOrEmpty(_response.Payload))
         {
             //dynamic container = JsonConvert.DeserializeObject<dynamic>(_response.payload);
             //Guid guid;
@@ -47,7 +47,7 @@ public class AccountController : BaseApiController
             ////{
             ////    Console.WriteLine("No guid present or it has an invalid format");
             ////}
-            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(_response.payload);
+            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(_response.Payload);
 
             if (authRequest.ReturnUrl == "/") { authRequest.ReturnUrl = null; }
 

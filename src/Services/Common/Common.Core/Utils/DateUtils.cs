@@ -1,13 +1,12 @@
-﻿namespace Common.Core.Utils
+﻿namespace Common.Core.Utils;
+
+public static class DateUtils
 {
-    public static class DateUtils
+    public static DateTime GetEcuadorDate()
     {
-        public static DateTime GetEcuadorDate()
-        {
-            DateTime currentTime = DateTime.Now;
-            TimeZoneInfo ecuadorZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
-            DateTime ecuadorTime = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(currentTime, ecuadorZone.Id);
-            return ecuadorTime;
-        }
+        var currentTime = DateTime.Now;
+        var ecuadorZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
+        var ecuadorTime = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(currentTime, ecuadorZone.Id);
+        return ecuadorTime;
     }
 }
