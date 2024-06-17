@@ -4,22 +4,40 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Acontplus.Common.Core</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>Ivan Paz</Authors>
+    <Company>Acontplus S.A.S.</Company>
+    <Description>Lib to use common custom models, converters and validations</Description>
+    <PackageTags>models;validators</PackageTags>
+    <!--<RepositoryUrl></RepositoryUrl>-->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\GestionFinanciera\**"/>
-    <Compile Remove="ViewModels\Logistica\**"/>
-    <EmbeddedResource Remove="Models\GestionFinanciera\**"/>
-    <EmbeddedResource Remove="ViewModels\Logistica\**"/>
-    <None Remove="Models\GestionFinanciera\**"/>
-    <None Remove="ViewModels\Logistica\**"/>
+    <Compile Remove="Models\GestionFinanciera\**" />
+    <Compile Remove="ViewModels\Logistica\**" />
+    <EmbeddedResource Remove="Models\GestionFinanciera\**" />
+    <EmbeddedResource Remove="ViewModels\Logistica\**" />
+    <None Remove="Models\GestionFinanciera\**" />
+    <None Remove="ViewModels\Logistica\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App"/>
-    <PackageReference Include="BarcodeLib"/>
-    <PackageReference Include="Microsoft.Extensions.Configuration"/>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json"/>
-    <PackageReference Include="Newtonsoft.Json"/>
+    <None Remove="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="BarcodeLib" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 </Project>
