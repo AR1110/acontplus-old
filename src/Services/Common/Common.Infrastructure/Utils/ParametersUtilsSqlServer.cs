@@ -1,4 +1,6 @@
-﻿namespace Common.Infrastructure.Utils;
+﻿using Common.Infrastructure.Repository;
+
+namespace Common.Infrastructure.Utils;
 
 public static class ParametersUtilsSqlServer
 {

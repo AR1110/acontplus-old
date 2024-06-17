@@ -18,7 +18,7 @@ public class SubEntidadFinancieraService : ISubEntidadFinancieraService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 

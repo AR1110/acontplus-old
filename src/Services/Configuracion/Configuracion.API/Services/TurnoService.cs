@@ -23,7 +23,7 @@ public class TurnoService : ITurnoService
         var dt = await _repository.GetDataTableAsync("Config.Turno_Get", parameters);
         if (!DataValidation.DataTableIsNull(dt))
         {
-            return DataConverters.DataTableToJSON(dt);
+            return DataConverters.DataTableToJson(dt);
         }
 
         return null;

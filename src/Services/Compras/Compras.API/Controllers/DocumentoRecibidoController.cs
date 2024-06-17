@@ -94,7 +94,7 @@ public class DocumentoRecibidoController : ControllerBase
                 var dtExistent = _db.GetDataTable();
                 if (dtExistent.Columns.Contains("code") && dtExistent.Rows[0].Field<string>("code") == "-1")
                 {
-                    _response.Create("1", payload: DataConverters.DataTableToJSON(dt));
+                    _response.Create("1", payload: DataConverters.DataTableToJson(dt));
                 }
                 else
                 {
@@ -114,7 +114,7 @@ public class DocumentoRecibidoController : ControllerBase
                                     where subRow2 == null
                                     select row1).ToList();
                         var filteredDataTable = diff.CopyToDataTable();
-                        _response.Create("1", payload: DataConverters.DataTableToJSON(filteredDataTable));
+                        _response.Create("1", payload: DataConverters.DataTableToJson(filteredDataTable));
                     }
                 }
             }

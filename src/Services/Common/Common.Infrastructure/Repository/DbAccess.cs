@@ -56,7 +56,9 @@ public class DbAccess : IDisposable
             {
                 var sqlParam = new SqlParameter
                 {
-                    ParameterName = paramName, SqlDbType = SqlTypes.GetDbType(paramValue), Value = paramValue ?? DBNull.Value
+                    ParameterName = paramName,
+                    SqlDbType = SqlTypes.GetDbType(paramValue),
+                    Value = paramValue ?? DBNull.Value
                 };
                 _command.Parameters.Add(sqlParam);
             }
@@ -173,7 +175,7 @@ public class DbAccess : IDisposable
             }
             else
             {
-                response.Create("1", payload: DataConverters.DataTableToJSON(dt));
+                response.Create("1", payload: DataConverters.DataTableToJson(dt));
             }
         }
 
@@ -199,7 +201,7 @@ public class DbAccess : IDisposable
             }
             else
             {
-                response.Create("1", payload: DataConverters.DataSetToJSON(ds, true));
+                response.Create("1", payload: DataConverters.DataSetToJson(ds, true));
             }
         }
 

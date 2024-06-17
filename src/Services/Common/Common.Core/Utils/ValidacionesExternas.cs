@@ -1,225 +1,233 @@
 ﻿using Common.Core.Models;
-namespace Common.Core.Utils
+
+namespace Common.Core.Utils;
+
+public class ValidacionesExternas
+
 {
-    public class ValidacionesExternas
+    private readonly ApiResponse _gr = new();
 
+    internal ApiResponse VerificarDatos(string numeroIdentificacion, string tipoValidacion)
     {
-        protected ApiResponse _gr;
-        public ValidacionesExternas()
+        _ = new char[13];
+        try
         {
-            _gr = new ApiResponse();
-        }
-        internal ApiResponse VerificarDatos(string numeroIdentificacion, string tipoValidacion)
-        {
-            _ = new char[13];
-            int provincia;
-            int digito;
-            try
+            switch (tipoValidacion)
             {
-                switch (tipoValidacion)
-                {
-                    case "IDENTI":
+                case "IDENTI":
 
-                        if (numeroIdentificacion.Length >= 10)
+                    if (numeroIdentificacion.Length >= 10)
+                    {
+                        var valced = numeroIdentificacion.Trim().ToCharArray();
+                        var provincia = int.Parse(valced[0] + valced[1].ToString());
+
+                        if (provincia is > 0 and < 25)
                         {
-                            var _valced = numeroIdentificacion.Trim().ToCharArray();
-                            provincia = int.Parse(_valced[0].ToString() + _valced[1].ToString());
-
-                            if (provincia > 0 && provincia < 25)
+                            if (int.Parse(valced[2].ToString()) < 6 && numeroIdentificacion.Length <= 10)
                             {
-                                if (int.Parse(_valced[2].ToString()) < 6 && numeroIdentificacion.Length <= 10)
-                                {
-                                    VerificarCedula(_valced);
-                                }
-
-                                if (numeroIdentificacion.Length == 13)
-                                {
-                                    digito = int.Parse(_valced[10].ToString()) + int.Parse(_valced[11].ToString()) + int.Parse(_valced[12].ToString());
-
-                                    if (digito == 001)
-                                    {
-                                        if (int.Parse(_valced[2].ToString()) < 6)
-                                        {
-                                            VerificarPersonaNarutal(_valced);
-                                        }
-                                        else if (int.Parse(_valced[2].ToString()) == 6)
-                                        {
-                                            VerificarSectorPublico(_valced);
-                                        }
-                                        else if (int.Parse(_valced[2].ToString()) == 9)
-                                        {
-                                            VerificarPersonaJuridica(_valced);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        _gr.id = "0";
-                                        _gr.typeNotify = "is-invalid";
-                                        _gr.message = "Los últimos tres dígitos de un Ruc siempre serán: 001";
-                                    }
-                                }
+                                VerificarCedula(valced);
                             }
-                            else
+
+                            if (numeroIdentificacion.Length == 13)
                             {
-                                _gr.id = "0";
-                                _gr.typeNotify = "is-invalid";
-                                _gr.message = "Numero de identificacion fuera de los codigos de la Provincia";
+                                var digito = int.Parse(valced[10].ToString()) + int.Parse(valced[11].ToString()) +
+                                             int.Parse(valced[12].ToString());
+
+                                if (digito == 001)
+                                {
+                                    switch (int.Parse(valced[2].ToString()))
+                                    {
+                                        case < 6:
+                                            VerificarPersonaNarutal(valced);
+                                            break;
+                                        case 6:
+                                            VerificarSectorPublico(valced);
+                                            break;
+                                        case 9:
+                                            VerificarPersonaJuridica(valced);
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    _gr.id = "0";
+                                    _gr.typeNotify = "is-invalid";
+                                    _gr.message = "Los últimos tres dígitos de un Ruc siempre serán: 001";
+                                }
                             }
                         }
                         else
                         {
                             _gr.id = "0";
                             _gr.typeNotify = "is-invalid";
-                            _gr.message = "Cantidad de numeros no es correcta";
+                            _gr.message = "Numero de identificacion fuera de los codigos de la Provincia";
                         }
-                        break;
-                }
-
-
-
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-                _gr.titleSms = "Validacion Externa";
-            }
-
-            return _gr;
-        }
-        public ApiResponse VerificarCedula(char[] validarCedula)
-        {
-            try
-            {
-                int aux = 0, par = 0, impar = 0, verifi;
-                for (var i = 0; i < 9; i += 2)
-                {
-                    aux = 2 * int.Parse(validarCedula[i].ToString());
-                    if (aux > 9)
-                        aux -= 9;
-                    par += aux;
-                }
-                for (var i = 1; i < 9; i += 2)
-                {
-                    impar += int.Parse(validarCedula[i].ToString());
-                }
-                aux = par + impar;
-                if (aux % 10 != 0)
-                {
-                    verifi = 10 - aux % 10;
-                }
-                else verifi = 0;
-
-                if (verifi == int.Parse(validarCedula[9].ToString()))
-                {
-                    _gr.id = "1";
-                    _gr.typeNotify = "is-valid";
-                    _gr.message = "Cedula de Identidicación";
-                }
-                else
-                {
-                    _gr.id = "0";
-                    _gr.typeNotify = "is-invalid";
-                    _gr.message = "Numero de Cedula ingresado incorrectamente";
-                };
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-                _gr.titleSms = "Validadar Cedula";
-            }
-
-            return _gr;
-
-        }
-        public ApiResponse VerificarPersonaNarutal(char[] validarCedula)
-        {
-            try
-            {
-                int aux = 0, par = 0, impar = 0, verifi;
-                for (var i = 0; i < 9; i += 2)
-                {
-                    aux = 2 * int.Parse(validarCedula[i].ToString());
-                    if (aux > 9)
-                        aux -= 9;
-                    par += aux;
-                }
-                for (var i = 1; i < 9; i += 2)
-                {
-                    impar += int.Parse(validarCedula[i].ToString());
-                }
-                aux = par + impar;
-                if (aux % 10 != 0)
-                {
-                    verifi = 10 - aux % 10;
-                }
-                else verifi = 0;
-
-                if (verifi == int.Parse(validarCedula[9].ToString()))
-                {
-                    _gr.id = "1";
-                    _gr.typeNotify = "is-valid";
-                    _gr.message = "Ruc Persona Natural";
-                }
-                else
-                {
-                    _gr.id = "0";
-                    _gr.typeNotify = "is-invalid";
-                    _gr.message = "Ruc de Persona Natural ingresado incorrectamente";
-                };
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-                _gr.titleSms = "Validadar Ruc Persona Natural";
-            }
-
-            return _gr;
-
-        }
-        public ApiResponse VerificarPersonaJuridica(char[] validarCedula)
-        {
-            try
-            {
-                int aux = 0, prod, veri;
-                veri = int.Parse(validarCedula[10].ToString()) + int.Parse(validarCedula[11].ToString()) + int.Parse(validarCedula[12].ToString());
-                if (veri > 0)
-                {
-                    var coeficiente = new int[9] { 4, 3, 2, 7, 6, 5, 4, 3, 2 };
-                    for (var i = 0; i < 9; i++)
-                    {
-                        prod = int.Parse(validarCedula[i].ToString()) * coeficiente[i];
-                        aux += prod;
-                    }
-                    if (aux % 11 == 0)
-                    {
-                        veri = 0;
-                    }
-                    else if (aux % 11 == 1)
-                    {
-                        _gr.id = "0";
-                        _gr.typeNotify = "is-invalid";
-                        _gr.message = "Numero de identificacion Persona Juridica ingresado incorrectamente";
-                    }
-                    else
-                    {
-                        aux %= 11;
-                        veri = 11 - aux;
-                    }
-                    if (veri == int.Parse(validarCedula[9].ToString()))
-                    {
-                        _gr.id = "1";
-                        _gr.typeNotify = "is-valid";
-                        _gr.message = "Ruc De Persona Juridica";
                     }
                     else
                     {
                         _gr.id = "0";
                         _gr.typeNotify = "is-invalid";
-                        _gr.message = "Numero de identificacion Persona Juridica ingresado ingresado incorrectamente";
+                        _gr.message = "Cantidad de numeros no es correcta";
                     }
+
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _gr.id = "0";
+            _gr.message = ex.Message;
+            _gr.titleSms = "Validacion Externa";
+        }
+
+        return _gr;
+    }
+
+    private ApiResponse VerificarCedula(char[] validarCedula)
+    {
+        try
+        {
+            int aux = 0, par = 0, impar = 0, verifi;
+            for (var i = 0; i < 9; i += 2)
+            {
+                aux = 2 * int.Parse(validarCedula[i].ToString());
+                if (aux > 9)
+                {
+                    aux -= 9;
+                }
+
+                par += aux;
+            }
+
+            for (var i = 1; i < 9; i += 2)
+            {
+                impar += int.Parse(validarCedula[i].ToString());
+            }
+
+            aux = par + impar;
+            if (aux % 10 != 0)
+            {
+                verifi = 10 - (aux % 10);
+            }
+            else
+            {
+                verifi = 0;
+            }
+
+            if (verifi == int.Parse(validarCedula[9].ToString()))
+            {
+                _gr.id = "1";
+                _gr.typeNotify = "is-valid";
+                _gr.message = "Cedula de Identidicación";
+            }
+            else
+            {
+                _gr.id = "0";
+                _gr.typeNotify = "is-invalid";
+                _gr.message = "Numero de Cedula ingresado incorrectamente";
+            }
+        }
+        catch (Exception ex)
+        {
+            _gr.id = "0";
+            _gr.message = ex.Message;
+            _gr.titleSms = "Validadar Cedula";
+        }
+
+        return _gr;
+    }
+
+    private ApiResponse VerificarPersonaNarutal(char[] validarCedula)
+    {
+        try
+        {
+            int aux = 0, par = 0, impar = 0, verifi;
+            for (var i = 0; i < 9; i += 2)
+            {
+                aux = 2 * int.Parse(validarCedula[i].ToString());
+                if (aux > 9)
+                {
+                    aux -= 9;
+                }
+
+                par += aux;
+            }
+
+            for (var i = 1; i < 9; i += 2)
+            {
+                impar += int.Parse(validarCedula[i].ToString());
+            }
+
+            aux = par + impar;
+            if (aux % 10 != 0)
+            {
+                verifi = 10 - (aux % 10);
+            }
+            else
+            {
+                verifi = 0;
+            }
+
+            if (verifi == int.Parse(validarCedula[9].ToString()))
+            {
+                _gr.id = "1";
+                _gr.typeNotify = "is-valid";
+                _gr.message = "Ruc Persona Natural";
+            }
+            else
+            {
+                _gr.id = "0";
+                _gr.typeNotify = "is-invalid";
+                _gr.message = "Ruc de Persona Natural ingresado incorrectamente";
+            }
+        }
+        catch (Exception ex)
+        {
+            _gr.id = "0";
+            _gr.message = ex.Message;
+            _gr.titleSms = "Validadar Ruc Persona Natural";
+        }
+
+        return _gr;
+    }
+
+    private ApiResponse VerificarPersonaJuridica(char[] validarCedula)
+    {
+        try
+        {
+            int aux = 0;
+            var veri = int.Parse(validarCedula[10].ToString()) + int.Parse(validarCedula[11].ToString()) +
+                       int.Parse(validarCedula[12].ToString());
+            if (veri > 0)
+            {
+                var coeficiente = new int[] { 4, 3, 2, 7, 6, 5, 4, 3, 2 };
+                for (var i = 0; i < 9; i++)
+                {
+                    var prod = int.Parse(validarCedula[i].ToString()) * coeficiente[i];
+                    aux += prod;
+                }
+
+                if (aux % 11 == 0)
+                {
+                    veri = 0;
+                }
+                else if (aux % 11 == 1)
+                {
+                    _gr.id = "0";
+                    _gr.typeNotify = "is-invalid";
+                    _gr.message = "Numero de identificacion Persona Juridica ingresado incorrectamente";
+                }
+                else
+                {
+                    aux %= 11;
+                    veri = 11 - aux;
+                }
+
+                if (veri == int.Parse(validarCedula[9].ToString()))
+                {
+                    _gr.id = "1";
+                    _gr.typeNotify = "is-valid";
+                    _gr.message = "Ruc De Persona Juridica";
                 }
                 else
                 {
@@ -228,55 +236,60 @@ namespace Common.Core.Utils
                     _gr.message = "Numero de identificacion Persona Juridica ingresado ingresado incorrectamente";
                 }
             }
-            catch (Exception ex)
+            else
             {
                 _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-                _gr.titleSms = "Verificar Persona Juridica";
+                _gr.typeNotify = "is-invalid";
+                _gr.message = "Numero de identificacion Persona Juridica ingresado ingresado incorrectamente";
             }
-            return _gr;
         }
-        public ApiResponse VerificarSectorPublico(char[] validarCedula)
+        catch (Exception ex)
         {
-            try
+            _gr.id = "0";
+            _gr.message = ex.Message;
+            _gr.titleSms = "Verificar Persona Juridica";
+        }
+
+        return _gr;
+    }
+
+    private ApiResponse VerificarSectorPublico(char[] validarCedula)
+    {
+        try
+        {
+            int aux = 0;
+            var veri = int.Parse(validarCedula[9].ToString()) + int.Parse(validarCedula[10].ToString()) +
+                       int.Parse(validarCedula[11].ToString()) + int.Parse(validarCedula[12].ToString());
+            if (veri > 0)
             {
-                int aux = 0, prod, veri;
-                veri = int.Parse(validarCedula[9].ToString()) + int.Parse(validarCedula[10].ToString()) + int.Parse(validarCedula[11].ToString()) + int.Parse(validarCedula[12].ToString());
-                if (veri > 0)
+                var coeficiente = new int[] { 3, 2, 7, 6, 5, 4, 3, 2 };
+                for (var i = 0; i < 8; i++)
                 {
-                    var coeficiente = new int[8] { 3, 2, 7, 6, 5, 4, 3, 2 };
-                    for (var i = 0; i < 8; i++)
-                    {
-                        prod = int.Parse(validarCedula[i].ToString()) * coeficiente[i];
-                        aux += prod;
-                    }
-                    if (aux % 11 == 0)
-                    {
+                    var prod = int.Parse(validarCedula[i].ToString()) * coeficiente[i];
+                    aux += prod;
+                }
+
+                switch (aux % 11)
+                {
+                    case 0:
                         veri = 0;
-                    }
-                    else if (aux % 11 == 1)
-                    {
+                        break;
+                    case 1:
                         _gr.id = "0";
                         _gr.typeNotify = "is-invalid";
                         _gr.message = "Numero de identificacion Sector Publico ingresado incorrectamente";
-                    }
-                    else
-                    {
+                        break;
+                    default:
                         aux %= 11;
                         veri = 11 - aux;
-                    }
-                    if (veri == int.Parse(validarCedula[8].ToString()))
-                    {
-                        _gr.id = "1";
-                        _gr.typeNotify = "is-valid";
-                        _gr.message = "Ruc Del Sector Publico";
-                    }
-                    else
-                    {
-                        _gr.id = "0";
-                        _gr.typeNotify = "is-invalid";
-                        _gr.message = "Numero de identificacion Sector Publico ingresado incorrectamente";
-                    }
+                        break;
+                }
+
+                if (veri == int.Parse(validarCedula[8].ToString()))
+                {
+                    _gr.id = "1";
+                    _gr.typeNotify = "is-valid";
+                    _gr.message = "Ruc Del Sector Publico";
                 }
                 else
                 {
@@ -285,14 +298,20 @@ namespace Common.Core.Utils
                     _gr.message = "Numero de identificacion Sector Publico ingresado incorrectamente";
                 }
             }
-            catch (Exception ex)
+            else
             {
                 _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-                _gr.titleSms = "Verificar Sector Publico";
+                _gr.typeNotify = "is-invalid";
+                _gr.message = "Numero de identificacion Sector Publico ingresado incorrectamente";
             }
-            return _gr;
+        }
+        catch (Exception ex)
+        {
+            _gr.id = "0";
+            _gr.message = ex.Message;
+            _gr.titleSms = "Verificar Sector Publico";
         }
 
+        return _gr;
     }
 }

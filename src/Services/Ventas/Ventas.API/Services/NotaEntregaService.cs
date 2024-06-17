@@ -15,7 +15,7 @@ public class NotaEntregaService : INotaEntregaService
         var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters, true);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
-        return DataConverters.DataSetToJSON(ds, true);
+        return DataConverters.DataSetToJson(ds, true);
     }
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
@@ -23,7 +23,7 @@ public class NotaEntregaService : INotaEntregaService
         var ds = await _repository.GetDataSetAsync(nameSchema + "GetId", parameters, true);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
-        return DataConverters.DataSetToJSON(ds, true);
+        return DataConverters.DataSetToJson(ds, true);
     }
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)

@@ -29,7 +29,7 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                response = new DbDataReaderMapper().ToList<T>(reader);
+                response = DbDataReaderMapper.ToList<T>(reader);
             }
         }
         finally

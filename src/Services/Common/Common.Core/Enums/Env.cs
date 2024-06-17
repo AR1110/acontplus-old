@@ -1,11 +1,10 @@
-﻿namespace Common.Core.Enums
+﻿namespace Common.Core.Enums;
+
+public enum Env
 {
-    public enum Env
-    {
-        Development,
-        IntegrationTests,
-        QA,
-        Staging,
-        Production
-    }
+    Development,
+    IntegrationTests,
+    QA,
+    Staging,
+    Production
 }

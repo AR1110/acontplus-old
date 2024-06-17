@@ -41,7 +41,7 @@
             return new ApiResponse { code = "0", message = "No data" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
+        return new ApiResponse { code = "1", payload = DataConverters.DataTableToJson(dt) };
     }
 
     public async Task<ApiResponse> UpdateAsync(int id, Serie serie)

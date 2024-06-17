@@ -21,7 +21,7 @@ public class AnticipoService : IAnticipoService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 

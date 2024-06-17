@@ -21,7 +21,7 @@ public class MovimientoCajaService : IMovimientoCajaService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 

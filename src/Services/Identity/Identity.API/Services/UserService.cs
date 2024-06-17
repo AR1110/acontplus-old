@@ -17,6 +17,6 @@ public class UserService : IUserService
             return new ApiResponse { code = "0", message = "No se encontraron datos" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJson(ds) };
     }
 }

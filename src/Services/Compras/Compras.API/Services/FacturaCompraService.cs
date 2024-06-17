@@ -14,7 +14,7 @@ public class FacturaCompraService : IFacturaCompraService
         var ds = await _repository.GetDataSetAsync("Compra.Factura_Get", parameters);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public async Task<string> AddAsync(ApiRequest request)
@@ -31,7 +31,7 @@ public class FacturaCompraService : IFacturaCompraService
         var ds = await _repository.GetDataSetAsync("Compra.Factura_Get_Id", parameters, true);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
-        return DataConverters.DataSetToJSON(ds, true);
+        return DataConverters.DataSetToJson(ds, true);
     }
 
     public async Task<string> UpdateAsync(int id, ApiRequest request)

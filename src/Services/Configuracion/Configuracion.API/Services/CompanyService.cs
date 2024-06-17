@@ -23,7 +23,7 @@ namespace Configuracion.API.Services
                 return null;
             }
 
-            return DataConverters.DataSetToJSON(ds);
+            return DataConverters.DataSetToJson(ds);
         }
 
         public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)

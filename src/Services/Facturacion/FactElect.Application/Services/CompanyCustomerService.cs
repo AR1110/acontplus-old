@@ -32,7 +32,7 @@ public class CompanyCustomerService : ICompanyCustomerService
             return new ApiResponse { code = "0", message = "No se encontraron clientes" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds, true) };
+        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJson(ds, true) };
     }
 
     public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
@@ -43,7 +43,7 @@ public class CompanyCustomerService : ICompanyCustomerService
             return new ApiResponse { code = "0", message = "No se encontraron clientes con estos datos" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
+        return new ApiResponse { code = "1", payload = DataConverters.DataTableToJson(dt) };
     }
 
     public async Task<ApiResponse> GetIdAsync(Dictionary<string, object> parameters)
@@ -54,7 +54,7 @@ public class CompanyCustomerService : ICompanyCustomerService
             return new ApiResponse { code = "0", message = "No se encontró datos del cliente" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
+        return new ApiResponse { code = "1", payload = DataConverters.DataTableToJson(dt) };
     }
 
     public async Task<string> UpdateAsync(Dictionary<string, object> data)

@@ -1,7 +1,6 @@
-﻿namespace Common.Core.Models
+﻿namespace Common.Core.Models;
+
+public class Year
 {
-    public class Year
-    {
-        public int year { get; set; }
-    }
+    public int year { get; set; }
 }

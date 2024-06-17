@@ -25,7 +25,7 @@ public class StockFisicoService : IStockFisicoService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public async Task<string> AddAsync(ApiRequest request)

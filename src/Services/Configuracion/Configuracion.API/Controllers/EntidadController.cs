@@ -50,9 +50,9 @@ public class EntidadController : ControllerBase
             _db.AddDynamicParam("ruc", data.ruc);
             _db.AddDynamicParam("razonSocial", data.razonSocial);
             _db.AddDynamicParam("nombreComercial", data.nombreComercial);
-            _db.AddDynamicParam("email", data.email.ToDBNullOrDefault());
-            _db.AddDynamicParam("telefono", data.telefono.ToDBNullOrDefault());
-            _db.AddDynamicParam("direccion", data.direccion.ToDBNullOrDefault());
+            _db.AddDynamicParam("email", data.email.ToDbNullOrDefault());
+            _db.AddDynamicParam("telefono", data.telefono.ToDbNullOrDefault());
+            _db.AddDynamicParam("direccion", data.direccion.ToDbNullOrDefault());
             _response = _db.GetDefault();
         }
         catch (Exception ex)
@@ -81,9 +81,9 @@ public class EntidadController : ControllerBase
             _db.AddDynamicParam("idCiudad", data.idCiudad);
             _db.AddDynamicParam("razonSocial", data.razonSocial);
             _db.AddDynamicParam("nombreComercial", data.nombreComercial);
-            _db.AddDynamicParam("email", data.email.ToDBNullOrDefault());
-            _db.AddDynamicParam("telefono", data.telefono.ToDBNullOrDefault());
-            _db.AddDynamicParam("direccion", data.direccion.ToDBNullOrDefault());
+            _db.AddDynamicParam("email", data.email.ToDbNullOrDefault());
+            _db.AddDynamicParam("telefono", data.telefono.ToDbNullOrDefault());
+            _db.AddDynamicParam("direccion", data.direccion.ToDbNullOrDefault());
             _response = _db.GetDefault();
         }
         catch (Exception ex)

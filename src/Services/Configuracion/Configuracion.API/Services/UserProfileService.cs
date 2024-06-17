@@ -24,6 +24,6 @@ public class UserProfileService : IUserProfileService
             return new ApiResponse { code = "0", message = "No se pudo obtener los datos" };
         }
 
-        return new ApiResponse { code = "0", message = "Ok", payload = DataConverters.DataSetToJSON(ds) };
+        return new ApiResponse { code = "0", message = "Ok", payload = DataConverters.DataSetToJson(ds) };
     }
 }

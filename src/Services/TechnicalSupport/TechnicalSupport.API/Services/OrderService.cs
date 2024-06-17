@@ -39,7 +39,7 @@ public class OrderService : IOrderService
             return new ApiResponse { code = "0", message = "No se encontraron datos" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)

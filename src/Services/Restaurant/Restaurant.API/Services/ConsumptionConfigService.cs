@@ -15,7 +15,7 @@ namespace Restaurant.API.Services
         {
             var dt = await _repository.GetDataTableAsync("Restaurant.ConfigTpv_Get", parameters);
             if (dt.Rows.Count == 0) { return null; }
-            return DataConverters.DataTableToJSON(dt);
+            return DataConverters.DataTableToJson(dt);
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
@@ -33,7 +33,7 @@ namespace Restaurant.API.Services
         {
             var dt = await _repository.GetDataTableAsync("Restaurant.ConfigPrinter_Get", parameters);
             if (dt.Rows.Count == 0) { return null; }
-            return DataConverters.DataTableToJSON(dt);
+            return DataConverters.DataTableToJson(dt);
         }
         public async Task<string> AddPrinterAsync(Dictionary<string, object> parameters)
         {

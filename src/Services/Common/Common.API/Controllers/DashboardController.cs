@@ -7,8 +7,7 @@ public class DashboardController(IDashboardService dashboard) : BaseApiControlle
     {
         var response = await dashboard.GetAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
-            { "json", SqlStringParam.Sanitize(json ?? "") }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json ?? "") }
         });
         return Ok(response);
     }

@@ -19,7 +19,7 @@ public class SubFamiliaService : ISubFamiliaService
 
         return new ApiResponse
         {
-            code = "1", message = "Listado exitosamente", payload = DataConverters.DataTableToJSON(ds)
+            code = "1", message = "Listado exitosamente", payload = DataConverters.DataTableToJson(ds)
         };
     }
 

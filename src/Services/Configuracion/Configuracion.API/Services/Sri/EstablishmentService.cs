@@ -18,7 +18,7 @@ public class EstablishmentService : IEstablishmentService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)

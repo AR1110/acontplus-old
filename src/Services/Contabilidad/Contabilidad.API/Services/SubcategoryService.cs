@@ -36,7 +36,7 @@ public class SubcategoryService(ContabilidadContext context, IAdoRepository repo
             return new ApiResponse { code = "0", message = "Data not found" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<ApiResponse> UpdateAsync(int id, Subcategory subcategory)

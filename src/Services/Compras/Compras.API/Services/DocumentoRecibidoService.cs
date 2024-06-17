@@ -22,7 +22,7 @@ public class DocumentoRecibidoService(IAdoRepository repository) : IDocumentoRec
             return new ApiResponse { code = "0", message = "Data not found" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<XmlDocument> GetById(Dictionary<string, object> parameters)

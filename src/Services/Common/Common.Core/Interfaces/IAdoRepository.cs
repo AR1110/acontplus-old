@@ -1,16 +1,20 @@
 ﻿using System.Data;
 using Common.Core.Models;
 
-namespace Common.Core.Interfaces
+namespace Common.Core.Interfaces;
+
+public interface IAdoRepository
 {
-    public interface IAdoRepository
-    {
-        public Task<List<T>> DynamicListAsync<T>(string spName, Dictionary<string, object> parameters);
-        public Task<T> DinamycObjectAsync<T>(string spName, Dictionary<string, object> parameters) where T : class, new();
-        public Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool oldSp = false);
-        public Task<DataTable> GetDataTableAsync(string spName, Dictionary<string, object> parameters);
-        public Task<int> OnlyExecuteAsync(string query, Dictionary<string, object> parameters, bool useStoredProcedure = true, bool timeout = true);
-        public Task<string> SpExecuteDeprecatedAsync(string spName, Dictionary<string, object> parameters, bool timeout = true);
-        public Task<ApiResponse> SpExecuteAsync(string spName, Dictionary<string, object> parameters, bool timeout = true);
-    }
+    public Task<List<T>> DynamicListAsync<T>(string spName, Dictionary<string, object> parameters);
+    public Task<T> DinamycObjectAsync<T>(string spName, Dictionary<string, object> parameters) where T : class, new();
+    public Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool oldSp = false);
+    public Task<DataTable> GetDataTableAsync(string spName, Dictionary<string, object> parameters);
+
+    public Task<int> OnlyExecuteAsync(string query, Dictionary<string, object> parameters,
+        bool useStoredProcedure = true, bool timeout = true);
+
+    public Task<string> SpExecuteDeprecatedAsync(string spName, Dictionary<string, object> parameters,
+        bool timeout = true);
+
+    public Task<ApiResponse> SpExecuteAsync(string spName, Dictionary<string, object> parameters, bool timeout = true);
 }

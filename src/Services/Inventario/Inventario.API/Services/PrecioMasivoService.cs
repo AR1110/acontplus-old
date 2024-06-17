@@ -18,7 +18,7 @@ public class PrecioMasivoService : IPrecioMasivoService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 

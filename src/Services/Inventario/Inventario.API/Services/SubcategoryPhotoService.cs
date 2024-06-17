@@ -19,7 +19,7 @@ public class SubcategoryPhotoService : ISubcategoryPhotoService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public async Task<ApiResponse> AddAsync(SubcategoryPhoto data)

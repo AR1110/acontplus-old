@@ -21,7 +21,7 @@ public class ComprobanteEgresoService : IComprobanteEgresoService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 
