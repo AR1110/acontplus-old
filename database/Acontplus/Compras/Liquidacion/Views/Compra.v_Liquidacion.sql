@@ -32,7 +32,7 @@ CREATE OR ALTER VIEW Compra.v_Liquidacion WITH SCHEMABINDING AS (
             FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
             INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio = de.idEstadoServicio 
             WHERE de.codDoc = '03' 
-            AND de.idDocumento = lc.idLiquidacionCompra
+              AND de.idDocumento = lc.idLiquidacionCompra
 
          ) as codEstado
 	FROM dbo.LiquidacionCompra     lc WITH (NOLOCK)

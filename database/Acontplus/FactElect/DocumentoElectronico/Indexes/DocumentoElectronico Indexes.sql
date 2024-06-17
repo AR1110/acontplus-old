@@ -6,7 +6,7 @@ IF EXISTS (SELECT name FROM sys.indexes
             WHERE name = N'IX_DocumentoElectronico')   
     DROP INDEX IX_DocumentoElectronico ON dbo.DocumentoElectronico;  
 GO 
-	--CREATE NONCLUSTERED INDEX IX_DocumentoElectronico ON dbo.DocumentoElectronico(codDoc, idDocumento, nroDocumento, claveAcceso, fechaAutorizacion);
+	--CREATE NONCLUSTERED INDEX IX_DocumentoElectronico ON dbo.DocumentoElectronico(codDoc, idDocumento, nroDocumento, claveAcceso, fechaAutorizacion, idEstadoServicio);
 GO
 IF EXISTS (SELECT name from sys.indexes  
            WHERE name = N'UX_DocumentoElectronico_ClaveAcceso'
@@ -30,4 +30,17 @@ GO
 
 ALTER INDEX ALL ON dbo.DocumentoElectronico REBUILD;
 
+GO
+
+---- Index on EstadoServicio table
+--CREATE NONCLUSTERED INDEX idx_EstadoServicio_Codigo
+--ON FactElect.EstadoServicio (codigo);
+
+IF EXISTS (SELECT name FROM sys.indexes  
+            WHERE name = N'idx_DocumentoElectronico_Filtering')   
+    DROP INDEX idx_DocumentoElectronico_Filtering ON dbo.DocumentoElectronico;  
+GO 
+CREATE NONCLUSTERED INDEX idx_DocumentoElectronico_Filtering
+ON dbo.DocumentoElectronico (idEstadoServicio, idDocumentoElectronico, idEntidad, idPuntoEmision, customerId, idUsuario)
+INCLUDE (xmlAcontPlus, codDoc, fechaEmision, isAutomatic, idDocumento, nroDocumento, claveAcceso, fechaAutorizacion, versionComp);
 GO

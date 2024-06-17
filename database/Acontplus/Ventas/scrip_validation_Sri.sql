@@ -1,3 +1,6 @@
+USE [Acontplus]
+GO 
+
 --select * from TipoDocumento where codigoSri is not null
 
 
@@ -46,10 +49,45 @@
 --group by te.codigoSri
 --	  ,cl.numeroIdentificacion
 
-
 --update cl set
---	   cl.validationSri = (select c.SriValidation from Customer.Customer c where c.IDCard = cl.numeroIdentificacion)
+--	   cl.validationSri = ISNULL((select c.SriValidation from Customer.Customer c where c.IDCard = cl.numeroIdentificacion),0)
 --	  ,cl.CustomerId = (select c.Id from Customer.Customer c where c.IDCard = cl.numeroIdentificacion)
 --from Cliente cl 
 --inner join TipoIdentificacion te on te.idTipoIdentificacion = cl.idTipoIdentificacion
 --where CustomerId is null 
+
+--INSERT INTO [Customer].[Customer]
+--           ([IDType]
+--           ,[IDCard]
+--           ,[BusinessName]
+--           ,[TradeName]
+--           ,[Email]
+--           ,[Telephone]
+--           ,[Address]
+--           ,[SriValidation]
+--           ,[CreatedAt])
+--select te.codigoSri
+--	  ,pr.numeroIdentificacion
+--	  ,(select top 1 prr.nombreFiscal from Proveedor prr WHERE prr.numeroIdentificacion = pr.numeroIdentificacion)
+--	  ,(select top 1 prr.nombreComercial from Proveedor prr WHERE prr.numeroIdentificacion = pr.numeroIdentificacion)
+--	  ,(select top 1 prr.correo from Proveedor prr WHERE prr.numeroIdentificacion = pr.numeroIdentificacion)
+--	  ,(select top 1 prr.telefono from Proveedor prr WHERE prr.numeroIdentificacion = pr.numeroIdentificacion)
+--	  ,(select top 1 prr.direccion from Proveedor prr WHERE prr.numeroIdentificacion = pr.numeroIdentificacion)
+--	  ,1
+--	  ,GETDATE()
+--from
+--Proveedor pr 
+--inner join TipoIdentificacion te on te.idTipoIdentificacion = pr.idTipoIdentificacion
+--where CustomerId is null 
+--and pr.numeroIdentificacion not in (select IDCard from Customer.Customer)
+--group by te.codigoSri
+--	  ,pr.numeroIdentificacion
+
+--update pr set
+--	   pr.validationSri = ISNULL((select c.SriValidation from Customer.Customer c where c.IDCard = pr.numeroIdentificacion),0)
+--	  ,pr.CustomerId = (select c.Id from Customer.Customer c where c.IDCard = pr.numeroIdentificacion)
+--from Proveedor pr 
+--inner join TipoIdentificacion te on te.idTipoIdentificacion = pr.idTipoIdentificacion
+--where CustomerId is null 
+
+

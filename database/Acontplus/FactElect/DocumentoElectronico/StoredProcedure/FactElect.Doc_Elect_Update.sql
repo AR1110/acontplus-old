@@ -1,11 +1,8 @@
 USE [AcontPlus]
 GO
 
-IF OBJECT_ID('FactElect.Doc_Elect_Update') IS NOT NULL
-DROP PROCEDURE FactElect.Doc_Elect_Update
-GO
-
-CREATE PROCEDURE FactElect.Doc_Elect_Update
+ 
+CREATE OR ALTER PROCEDURE FactElect.Doc_Elect_Update
 	@idRol INT,
 	@id INT
 AS
@@ -17,14 +14,14 @@ BEGIN
 	DECLARE @message VARCHAR(100) = 'No actualizado'
 	DECLARE @codeResponse VARCHAR(1) = '0'
     DECLARE @fechaCaducidad DATE ,@firma INT
-
+    DECLARE @idEstadoServicio INT
 
 	BEGIN TRY	
         SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol	
 
         SELECT TOP 1 @fechaCaducidad = fechaCaducidad ,@firma = idFirmaElectronica FROM dbo.FirmaElectronica WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-	    IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado = 4) 
+	    IF EXISTS (SELECT 1 FROM FactElect.v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado = 4) 
 		    BEGIN
 			    SELECT '0'code,'El comprobante ya se encuentra autorizado' as 'message'
 			    RETURN 
@@ -46,23 +43,27 @@ BEGIN
 
 		BEGIN TRAN 
 
-			IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado = 2 AND isAutomatic = 0) 
+			IF EXISTS (SELECT 1 FROM FactElect.v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado = 2 AND isAutomatic = 0) 
 				BEGIN 
 					UPDATE DocumentoElectronico SET isAutomatic = 1 WHERE idDocumentoElectronico = @id
 					SET @codeResponse = '1'
 					SET @message = 'Enviado a autorizar en el SRI'
 				END
 
-            IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado = 2 AND isAutomatic = 1) 
+            IF EXISTS (SELECT 1 FROM FactElect.v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado = 2 AND isAutomatic = 1) 
 				BEGIN 
-					UPDATE DocumentoElectronico SET codEstado = 1 WHERE idDocumentoElectronico = @id
+                    SET @idEstadoServicio = (SELECT TOP 1 idEstadoServicio FROM FactElect.EstadoServicio WITH(NOLOCK) WHERE codigo = 1)
+					UPDATE DocumentoElectronico SET idEstadoServicio = @idEstadoServicio
+                    WHERE idDocumentoElectronico = @id
 					SET @codeResponse = '1'
 					SET @message = 'Enviado a autorizar en el SRI'
 				END
 
-			IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado IN (0,5))
+			IF EXISTS (SELECT 1 FROM FactElect.v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado IN (0,5))
 				BEGIN
-					UPDATE DocumentoElectronico SET codEstado = 1 WHERE idDocumentoElectronico = @id
+                     SET @idEstadoServicio = (SELECT TOP 1 idEstadoServicio FROM FactElect.EstadoServicio WITH(NOLOCK) WHERE codigo = 1)
+
+					UPDATE DocumentoElectronico SET idEstadoServicio =  @idEstadoServicio WHERE idDocumentoElectronico = @id
 					SET @codeResponse = '1'
 					SET @message = 'El Xml se esta Actualizando'
 				END

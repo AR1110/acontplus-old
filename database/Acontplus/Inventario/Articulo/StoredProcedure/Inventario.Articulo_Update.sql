@@ -260,11 +260,11 @@ BEGIN
 						RETURN;
 					END 
 
-               -- IF EXISTS(SELECT 1 FROM Inventario.TransaccionDetalle WITH (NOLOCK) WHERE idArticulo = @id AND estado = 1)
-               --     BEGIN
-               --         SELECT '0'code, 'El Articulo tiene realizada transacciones no pueden ser editado' as 'message'			
-			            --RETURN 
-               --     END
+                IF EXISTS(SELECT 1 FROM Inventario.TransaccionDetalle WITH (NOLOCK) WHERE idArticulo = @id AND estado = 1)
+                    BEGIN
+                        SELECT '0'code, 'El Articulo tiene realizada transacciones no pueden ser editado' as 'message'			
+			            RETURN 
+                    END
 			END 
 
 		IF @fraccionado = 0 

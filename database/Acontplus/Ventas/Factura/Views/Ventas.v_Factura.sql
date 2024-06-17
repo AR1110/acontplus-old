@@ -26,8 +26,8 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
           ,fa.guiaRemision
           ,fa.estado 
           ,fa.autorizada
-          ,cl.nombreFiscal as razonSocialComprador
-          ,cl.numeroIdentificacion as identificacionComprador
+          ,cl.nombreFiscal                  as razonSocialComprador
+          ,cl.numeroIdentificacion          as identificacionComprador
           ,es.estab
           ,es.nombreComercial
           ,es.idEstablecimiento
