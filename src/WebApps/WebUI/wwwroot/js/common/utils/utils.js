@@ -998,6 +998,11 @@
 
         formSvc.generateUuidv4 = () => uuid2.newguid()
 
+        formSvc.isNumber = function (value) {
+            var regex = /^\d+$/;
+            return regex.test(value);
+        };
+
 
 
         return formSvc;
