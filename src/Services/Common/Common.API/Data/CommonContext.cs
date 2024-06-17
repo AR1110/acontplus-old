@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Common.Infrastructure.Data;
+namespace Common.API.Data;
 
 public class CommonContext(DbContextOptions<CommonContext> options) : BaseContext(options)
 {

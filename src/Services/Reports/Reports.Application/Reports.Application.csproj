@@ -4,14 +4,20 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Acontplus.Reports.Application</PackageId>
+    <Version>1.0.1</Version>
+    <Authors>Ivan Paz</Authors>
+    <Company>Acontplus S.A.S.</Company>
+    <Description>Get Reports RDL</Description>
+    <PackageTags>models;validators</PackageTags>
+    <!--<RepositoryUrl></RepositoryUrl>-->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
-    <ProjectReference Include="..\Reports.Core\Reports.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Core" />
+    <PackageReference Include="Acontplus.Reports.Core" />
     <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="ReportViewerCore.NETCore" />
   </ItemGroup>
