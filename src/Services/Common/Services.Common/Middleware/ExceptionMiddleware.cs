@@ -1,11 +1,11 @@
 ﻿using System.Net;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Services.Common.Errors;
-using Services.Common.Logs;
 
 namespace Services.Common.Middleware;
 

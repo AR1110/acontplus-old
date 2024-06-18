@@ -191,14 +191,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
-    <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
-    <ProjectReference Include="..\Reports.Application\Reports.Application.csproj" />
-    <ProjectReference Include="..\Reports.Core\Reports.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Infrastructure" />
+    <PackageReference Include="Acontplus.Reports.Application" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
   </ItemGroup>
 

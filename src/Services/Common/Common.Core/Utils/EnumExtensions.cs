@@ -13,15 +13,15 @@ public static class EnumExtensions
         switch (memInfo.Length)
         {
             case > 0:
-            {
-                var attrs = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
-                if (attrs.Length > 0)
                 {
-                    return ((DescriptionAttribute)attrs[0]).Description;
-                }
+                    var attrs = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
+                    if (attrs.Length > 0)
+                    {
+                        return ((DescriptionAttribute)attrs[0]).Description;
+                    }
 
-                break;
-            }
+                    break;
+                }
         }
 
         return value.ToString();

@@ -6,10 +6,10 @@
     <Nullable>disable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Acontplus.Common.Core</PackageId>
-    <Version>0.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>Ivan Paz</Authors>
     <Company>Acontplus S.A.S.</Company>
-    <Description>Lib to use common custom models, converters and validations</Description>
+    <Description>Lib to use common models, converters and validators</Description>
     <PackageTags>models;validators</PackageTags>
     <!--<RepositoryUrl></RepositoryUrl>-->
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -18,11 +18,8 @@
 
   <ItemGroup>
     <Compile Remove="Models\GestionFinanciera\**" />
-    <Compile Remove="ViewModels\Logistica\**" />
     <EmbeddedResource Remove="Models\GestionFinanciera\**" />
-    <EmbeddedResource Remove="ViewModels\Logistica\**" />
     <None Remove="Models\GestionFinanciera\**" />
-    <None Remove="ViewModels\Logistica\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\"/>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,4 @@
-﻿using System.Data;
-using Common.Core.Models;
-
-namespace Common.Core.Interfaces;
+﻿namespace Common.Core.Interfaces;
 
 public interface IAdoSqlServer
 {
@@ -16,5 +13,5 @@ public interface IAdoSqlServer
     public Task<int> OnlyExecuteAsync(string query, Dictionary<string, object> parameters,
         bool useStoredProcedure = true);
 
-    public Task<ApiResponseDeprecated> SpExecuteAsync(string spname, Dictionary<string, object> parameters);
+    public Task<ApiResponse> SpExecuteAsync(string spname, Dictionary<string, object> parameters);
 }

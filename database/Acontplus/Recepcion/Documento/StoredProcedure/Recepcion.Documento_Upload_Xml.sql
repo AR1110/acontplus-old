@@ -65,6 +65,9 @@ BEGIN
 	
         SELECT TOP 1 @idEstab = idEstablecimiento FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
+        SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '04'
+
+
         IF (@codDoc = '01')
 			BEGIN
 				SELECT @razonSocial           = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoTributaria/razonSocial)[1]','VARCHAR(300)')
@@ -151,24 +154,6 @@ BEGIN
                      
 			END
 
-        IF @codDoc != '07' 
-            BEGIN
-                IF LEN(@identificacionCliProv) = 13
-                    BEGIN 
-                        SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '04'
-                    END 
-
-               ELSE IF LEN(@identificacionCliProv) = 10
-                    BEGIN 
-                        SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '05'
-                    END 
-
-                ELSE 
-                    BEGIN
-                        SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '06'
-                    END 
-             END
-
         --> Validacion de informacion 
         IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE claveAcceso = @claveAcceso)
             BEGIN
@@ -231,26 +216,28 @@ BEGIN
 				IF NOT EXISTS (SELECT 1 FROM Contabilidad.CuentaPorPagar WHERE uniqueId = @claveAcceso)
 					BEGIN 
 						INSERT INTO Contabilidad.CuentaPorPagar
-							   (idDocumento,idEstablecimiento, idProveedor, idEstadoPago,codDoc,uniqueId,serieComprobante,identificacion,
+							   (idDocumento,idEstablecimiento, idProveedor, idEstadoPago,codDoc,uniqueId,serieComprobante,
                                fechaEmision,importeTotal,idEntidad,idUsuario, subcategoryId)
-						SELECT @idDocumento,idEstablecimiento,@idProveedor,@idEstadoPago,codDoc,claveAcceso,serieComprobante,@identificacionCliProv,
-                        CONVERT (date, fechaEmision, 103),importeTotal,@idEntidad,dr.idUsuario, @subcategoryId
+						SELECT @idDocumento,idEstablecimiento,@idProveedor,@idEstadoPago,codDoc,claveAcceso,serieComprobante,
+                        CONVERT (date, fechaEmision, 103),ISNULL(importeTotal,0),@idEntidad,dr.idUsuario, @subcategoryId
 						FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
 						WHERE dr.idDocumento = @idDocumento 
-                          AND dr.codDoc = '01'
+                          AND dr.codDoc IN ('01','04')
 					END 
 		COMMIT TRAN
         SELECT '1' code, 'Registrado Exitosamente' as 'message'
 	END TRY
 	BEGIN CATCH
- 		IF (@@TRANCOUNT > 0)
-            BEGIN 
-			    ROLLBACK TRAN
-		    END 
-        DECLARE @method VARCHAR(200)
-        SELECT '0' code, 'Error en el procedimiento' as 'message'
- 		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate])
-		VALUES (NEWID(), 'DocumentoService/Update', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador())
+        IF @@TRANCOUNT > 0
+		    BEGIN
+			    ROLLBACK TRAN;
+		    END
+
+		INSERT INTO ErroresSistema WITH (ROWLOCK)
+              (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'/DocumentoService/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+
+        SELECT '0' code,'Info: Error en el procedimiento ' as 'message'
 	END CATCH 
 
 END

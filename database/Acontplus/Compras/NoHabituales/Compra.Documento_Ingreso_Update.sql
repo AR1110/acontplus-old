@@ -38,7 +38,7 @@ BEGIN
 	DECLARE @uniqueId VARCHAR(150) ,@fechaEmision DATETIME2 ,@importeTotal NUMERIC(18,5)
 
     --> contabilidad
-	DECLARE @idEstablecimiento INT ,@identificacion VARCHAR(20) ,@serieComprobante VARCHAR(20) ,@idProveedor INT ,@idTiempoCredito INT
+	DECLARE @idEstablecimiento INT ,@serieComprobante VARCHAR(20) ,@idProveedor INT ,@idTiempoCredito INT
         ,@subcategoryId INT
 
     -----DATOS CONTABILIDAD------
@@ -218,7 +218,7 @@ BEGIN
 		--> Recuperar datos de las Tablas
 		SELECT TOP 1 @fechaEmision = fechaEmision ,@importeTotal = importeTotal ,@idProveedor = idProveedor ,@fechaVencimiento = fechaVencimiento, @subcategoryId = subcategoryId FROM @document
 
-        SELECT TOP 1 @identificacion = numeroIdentificacion ,@CustomerId = ISNULL(CustomerId,0) FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
+        SELECT TOP 1 @CustomerId = ISNULL(CustomerId,0) FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
 
         IF (@CustomerId = 0)
             BEGIN
@@ -356,12 +356,11 @@ BEGIN
 
 		    --> Contabilidad
 		    UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)
-               SET idProveedor      =   @idProveedor
-		          ,identificacion   =   @identificacion
-		          ,fechaEmision     =   @fechaEmision
-                  ,fechaVencimiento =   @fechaVencimiento
-		          ,importeTotal     =   @importeTotal
-                  ,subcategoryId    =   @subcategoryId
+               SET idProveedor      = @idProveedor
+		          ,fechaEmision     = @fechaEmision
+                  ,fechaVencimiento = @fechaVencimiento
+		          ,importeTotal     = @importeTotal
+                  ,subcategoryId    = @subcategoryId
             WHERE idDocumento = @id 
               AND codDoc = 'DH'
 

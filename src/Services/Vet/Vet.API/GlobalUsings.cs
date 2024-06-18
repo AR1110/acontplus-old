@@ -12,7 +12,7 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json.Serialization;
 global using Services.Common.Extensions;
-global using Services.Common.Logs;
+
 global using Vet.API.Data;
 global using Vet.API.Entities;
 global using Vet.API.Extensions;

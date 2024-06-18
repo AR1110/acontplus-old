@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj"/>
+    <PackageReference Include="Acontplus.Common.Core" />
   </ItemGroup>
 
 </Project>

@@ -19,9 +19,15 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idUsuario INT 
+           ,@idRetencionAts INT
 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+	
 	BEGIN TRY
+        
+        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+
+        SET @idRetencionAts = (SELECT idRetencionAts FROM FactElect.RetencionAtsRet WHERE idRetencionAtsRet = @id)
+
 		BEGIN TRAN 
 
 			UPDATE rr SET rr.codigo = t.codigo
@@ -53,8 +59,13 @@ BEGIN
 			)) as t ON t.idRetencionAtsRet = rr.idRetencionAtsRet
 			WHERE rr.idRetencionAtsRet = @id
 
-			SELECT '1' code, 'Retención del sustento actualizada con exito'  as 'message'
+            UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)
+                SET importeTotal = (SELECT SUM(valorRetenido) FROM FactElect.RetencionAtsRet WITH (NOLOCK) WHERE idRetencionAts = @idRetencionAts )
+            WHERE idDocumento = @idRetencionAts
+              AND codDoc = '07'
+			
 		COMMIT TRAN
+        SELECT '1' code, 'Retención del sustento actualizada con exito'  as 'message'
 	END TRY
 	BEGIN CATCH
 	SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'

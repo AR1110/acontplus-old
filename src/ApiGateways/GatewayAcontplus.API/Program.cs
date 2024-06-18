@@ -6,7 +6,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Services.Common.Extensions;
-using Services.Common.Logs;
 using Services.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);

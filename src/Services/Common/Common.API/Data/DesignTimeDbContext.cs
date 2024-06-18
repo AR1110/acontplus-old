@@ -1,4 +1,6 @@
-﻿namespace Common.Infrastructure.Data;
+﻿using Microsoft.EntityFrameworkCore.Design;
+
+namespace Common.API.Data;
 
 public class DesignTimeDbContext : IDesignTimeDbContextFactory<CommonContext>
 {

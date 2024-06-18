@@ -7,12 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core"/>
-    <PackageReference Include="AWSSDK.S3"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Common.Core\Common.Core.csproj"/>
+    <PackageReference Include="Acontplus.Common.Core" />
+    <PackageReference Include="AWSSDK.Core" />
+    <PackageReference Include="AWSSDK.S3" />
   </ItemGroup>
 
 </Project>

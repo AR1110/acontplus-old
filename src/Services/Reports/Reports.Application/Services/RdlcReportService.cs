@@ -21,10 +21,12 @@ namespace Reports.Application.Services
             using var lr = new LocalReport();
             if (offline)
             {
-                var reportPath =
-                    Path.Combine(configuration.GetSection("dirReports").Value ?? throw new InvalidOperationException(),
-                        parameters.Tables[0].Rows[0]["reportPath"].ToString() ?? string.Empty);
-                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(reportPath));
+                var value = configuration.GetSection("dirReports").Value;
+                if (value != null)
+                {
+                    var reportPath = Path.Combine(value, parameters.Tables[0].Rows[0]["reportPath"].ToString());
+                    lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(reportPath));
+                }
             }
             else
             {

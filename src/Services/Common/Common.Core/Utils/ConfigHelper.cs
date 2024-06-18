@@ -1,5 +1,4 @@
 ﻿using Common.Core.Enums;
-using Microsoft.Extensions.Configuration;
 
 namespace Common.Core.Utils;
 

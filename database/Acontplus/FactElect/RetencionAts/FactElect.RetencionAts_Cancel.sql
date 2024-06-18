@@ -17,45 +17,60 @@ BEGIN
 	       ,@idRetencionAts INT
            ,@idEstadoServicio INT
 
-	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
-	SET @idRetencionAts = (select idDocumento from DocumentoElectronico with (nolock) where idDocumentoElectronico = @id)
-
-    SELECT @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 6
-
 	BEGIN TRY
+        
+        SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+
+        SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 6
+
+        SELECT TOP 1 @idRetencionAts = idDocumento FROM DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id
+
+        --> Validacion de Informacion
+        IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE codDoc = '07' AND idDocumento = @id AND codEstado != 4)
+            BEGIN
+                SELECT '0'code, 'El Documento no esta Autorizado no puede ser Anulado' as 'message'
+                RETURN 
+            END
+
+        IF EXISTS (SELECT 1 FROM v_CuentaPorPagar WITH (NOLOCK) WHERE codDoc = '07' AND codEstado != 'APL' AND idDocumento = @id)
+            BEGIN
+                SELECT '0'code, 'El Documento tiene movimientos financieros o esta Anulado' as 'message'
+                RETURN 
+            END
+
 		BEGIN TRAN 
 			
 			UPDATE FactElect.RetencionAts SET anuladaSri = 1 WHERE idRetencionAts = @idRetencionAts
+
 			UPDATE FactElect.RetAtsDocSustento SET estado = 0 WHERE idRetencionAts = @idRetencionAts
+
 			--ANULA EN FACTURA
 			UPDATE fc SET fc.retencion = 0
 			FROM FacturaCompra fc
-			JOIN (
+			JOIN 
+            (
 				SELECT numAutDocSustento, numDocSustento FROM FactElect.RetAtsDocSustento WHERE idRetencionAts = @idRetencionAts
+
 			) AS t ON fc.nroAutorizacion = t.numAutDocSustento
-			AND  REPLACE(fc.puntoEmision,'-','')+Helper.F_Auto_Sequential(fc.nroDocumento) = t.numDocSustento
+			AND REPLACE(fc.puntoEmision,'-','')+Helper.F_Auto_Sequential(fc.nroDocumento) = t.numDocSustento
 
-			--ANULA EN PAGOS
-			IF EXISTS(SELECT 1 FROM Pago p WITH(NOLOCK) INNER JOIN TipoDocumento td WITH(NOLOCK) ON p.idTipoDocumento = td.idTipoDocumento  
-								WHERE td.codigo = 'RC' AND p.idComprobante = @idRetencionAts AND p.versionComp = '2.0.0')
-				BEGIN
-					UPDATE p SET p.estado = 0 FROM Pago p WITH(NOLOCK) INNER JOIN TipoDocumento td WITH(NOLOCK) ON p.idTipoDocumento = td.idTipoDocumento
-					WHERE p.idComprobante = @idRetencionAts 
-					AND td.codigo = 'RC' AND p.versionComp = '2.0.0'
-				END
-
-			--ANULA EN DOCUMENTO ELECTRONICO
+			--> ANULA EN DOCUMENTO ELECTRONICO
 			UPDATE DocumentoElectronico SET idEstadoServicio = @idEstadoServicio WHERE idDocumentoElectronico = @id
 
-			SELECT '1' code, 'Retencion anulada en el SRI con exito'  as 'message'
 		COMMIT TRAN
+        SELECT '1' code, 'Retencion anulada en el SRI con exito'  as 'message'
 	END TRY
 	BEGIN CATCH
-	SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
-		IF (@@TRANCOUNT > 0)
-			ROLLBACK TRAN
-		INSERT INTO ErroresSistema(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-		VALUES (NEWID(), '/CANCEL', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+		IF @@TRANCOUNT > 0
+		    BEGIN
+			    ROLLBACK TRAN;
+		    END
+
+		INSERT INTO ErroresSistema WITH (ROWLOCK)
+              (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'/RetencionAts/Delete',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+
+        SELECT '0' code,'Info: Error en el procedimiento ' as 'message'
 	END CATCH
 END
 GO

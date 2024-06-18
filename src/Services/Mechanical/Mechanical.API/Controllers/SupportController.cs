@@ -4,7 +4,7 @@ using Mechanical.API.Interfaces;
 using Mechanical.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Extensions;
-using Services.Common.Logs;
+
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Mechanical.API.Controllers

@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
-using Microsoft.Extensions.Configuration;
 
-namespace Services.Common.Logs;
+namespace Common.Core.Utils;
 
 public interface ICustomLogger
 {
@@ -54,10 +53,8 @@ Message: {message}
     {
         try
         {
-            using (var sw = File.AppendText(filePath))
-            {
-                sw.WriteLine(message);
-            }
+            using var sw = File.AppendText(filePath);
+            sw.WriteLine(message);
         }
         catch (Exception ex)
         {
