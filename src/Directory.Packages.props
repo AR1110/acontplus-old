@@ -5,8 +5,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Acontplus.Common.Core" Version="1.0.2" />
-    <PackageVersion Include="Acontplus.Common.Infrastructure" Version="1.0.0" />
-    <PackageVersion Include="Acontplus.Reports.Application" Version="1.0.1" />
+    <PackageVersion Include="Acontplus.Common.Infrastructure" Version="1.0.1" />
+    <PackageVersion Include="Acontplus.Reports.Application" Version="1.0.2" />
     <PackageVersion Include="Acontplus.Reports.Core" Version="1.0.0" />
     <PackageVersion Include="Asp.Versioning.Mvc" Version="8.1.0" />
     <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
