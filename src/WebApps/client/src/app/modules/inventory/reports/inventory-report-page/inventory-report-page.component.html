@@ -6,7 +6,7 @@
         <button ngbNavLink>Consumo diario </button>
         <ng-template ngbNavContent>
           <div class="row">
-            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
               <div class="icheck-info">
                 <input type="checkbox" [(ngModel)]="dataSearch.checkboxArticuloFiltro"
                        class="form-control" name="checkboxArticuloConsumoDiario"
@@ -14,7 +14,15 @@
                 <label for="checkboxArticuloConsumoDiario">Articulo</label>
               </div>
             </div>
-            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+              <div class="icheck-info">
+                <input type="checkbox" [(ngModel)]="dataSearch.checkboxCompanyCustomer"
+                       class="form-control" name="checkboxCompanyCustomerConsumoDiario"
+                       id="checkboxCompanyCustomerConsumoDiario">
+                <label for="checkboxCompanyCustomerConsumoDiario">Cliente</label>
+              </div>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
               <div class="icheck-info">
                 <input type="checkbox" [(ngModel)]="dataSearch.checkboxUsuarioFiltro"
                        class="form-control" name="checkboxConsumoDiarioUsuario"
@@ -117,6 +125,16 @@
           </div>
 
           <div class="row">
+
+            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+              <div class="form-group">
+                <label>Cliente:</label>
+                 <app-company-customer-search
+                   (resultEmptyInput)="resultEmptyInputCustomer()"
+                   (onCustomerSelected)="onCustomerSelected($event)"
+                   [isSearchSimple]="true"/>
+              </div>
+            </div>
 
             <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
               <div class="form-group">

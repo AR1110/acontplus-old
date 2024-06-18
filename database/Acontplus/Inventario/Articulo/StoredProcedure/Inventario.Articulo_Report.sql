@@ -26,7 +26,7 @@ BEGIN
     DECLARE @filtroFecha   VARCHAR(50)
 	       ,@idSubFamilia          INT
 	       ,@idArticulo            INT
-	       ,@rucProveedor  VARCHAR(25)
+	       ,@rucClienteProveedor  VARCHAR(25)
 	       ,@idBodega              INT 
            ,@ubicacion    VARCHAR(150)
 	       ,@checkBoxFecha         BIT 
@@ -36,7 +36,7 @@ BEGIN
 	       ,@codTransaccion VARCHAR(5)
 	       ,@estado         VARCHAR(5)
 	       ,@usuario      VARCHAR(150)
-           ,@codEstab     VARCHAR(100)
+           ,@codEstab     VARCHAR(100) 
            
 
 	SELECT TOP 1  @idEntidad = idEntidad, @usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
@@ -49,7 +49,7 @@ BEGIN
 			
 			SELECT @idArticulo         = idArticulo 
 				  ,@idSubFamilia       = bySubFamilia           
-				  ,@rucProveedor       = numeroIdentificacion
+				  ,@rucClienteProveedor  = numeroIdentificacion
 			FROM OPENJSON(@json) WITH 
             (    idArticulo INT 
 			    ,bySubFamilia                 INT 
@@ -59,7 +59,7 @@ BEGIN
 			SET @params = '@idEntidad INT
 			              ,@idArticulo INT
 						  ,@idSubFamilia INT
-						  ,@rucProveedor VARCHAR(150)'
+						  ,@rucClienteProveedor VARCHAR(150)'
 
 			SET @sql = 'SELECT articulo           
 							  ,codigo
@@ -81,9 +81,9 @@ BEGIN
 					SET @sql = @sql + 'AND idSubFamilia = @idSubFamilia '
 				END
 
-			IF @rucProveedor IS NOT NULL
+			IF @rucClienteProveedor IS NOT NULL
 				BEGIN
-					SET @sql = @sql + 'AND idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor AND codTransaccion = ''E'') '
+					SET @sql = @sql + 'AND idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucClienteProveedor AND codTransaccion = ''E'') '
 				END 
 
 			--Entidad 
@@ -102,7 +102,7 @@ BEGIN
 						       ,@idEntidad    = @idEntidad
 						       ,@idArticulo   = @idArticulo
 							   ,@idSubFamilia = @idSubFamilia
-							   ,@rucProveedor = @rucProveedor
+							   ,@rucClienteProveedor = @rucClienteProveedor
 			RETURN 
 		END 
 
@@ -111,7 +111,7 @@ BEGIN
 		BEGIN
 			
             SELECT @idSubFamilia  = bySubFamilia
-				  ,@rucProveedor  = numeroIdentificacion
+				  ,@rucClienteProveedor  = numeroIdentificacion
 			FROM OPENJSON(@json) WITH 
             ( 
               bySubFamilia                 INT  
@@ -163,7 +163,7 @@ BEGIN
             DECLARE @stockStatusCode VARCHAR(5)
 			
             SELECT @idSubFamilia = bySubFamilia
-				  ,@rucProveedor = numeroIdentificacion
+				  ,@rucClienteProveedor = numeroIdentificacion
                   ,@idBodega     = idBodega
                   ,@codEstab     = codEstab
                   ,@stockStatusCode = stockStatusCode
@@ -180,7 +180,7 @@ BEGIN
 						  ,@idSubFamilia INT
 						  ,@idBodega     INT
                           ,@codEstab     VARCHAR(50)
-						  ,@rucProveedor VARCHAR(25)'
+						  ,@rucClienteProveedor VARCHAR(25)'
 
 			SET @sql = 'SELECT ar.idArticulo
 							  ,ar.descripcion
@@ -200,9 +200,9 @@ BEGIN
 						FROM Inventario.v_Articulo_Stock ar
 						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '	
 
-			IF @rucProveedor IS NOT NULL
+			IF @rucClienteProveedor IS NOT NULL
 				BEGIN
-					SET @sql = @sql + 'AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
+					SET @sql = @sql + 'AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucClienteProveedor) '
 				END
 
 			IF @idSubFamilia > 0
@@ -255,7 +255,7 @@ BEGIN
 							  ,@idEntidad    = @idEntidad
 							  ,@idSubFamilia = @idSubFamilia
 							  ,@idBodega     = @idBodega
-							  ,@rucProveedor = @rucProveedor
+							  ,@rucClienteProveedor = @rucClienteProveedor
                               ,@codEstab     = @codEstab
 
 			RETURN 
@@ -274,7 +274,8 @@ BEGIN
 						   ,@fechaInicio    DATETIME2
 						   ,@fechaFin       DATETIME2
 						   ,@idEntidad      INT
-						   ,@codTransaccion VARCHAR(5)'
+						   ,@codTransaccion VARCHAR(5)
+                           ,@rucClienteProveedor VARCHAR(20)'
 
 			SET @sql = 'SELECT tt.articulo
 							  ,tt.codArticulo
@@ -311,6 +312,7 @@ BEGIN
 				  ,@fechaInicio    = fechaInicio
                   ,@idBodega       = idBodega
                   ,@codEstab       = codEstab 
+                  ,@rucClienteProveedor = numeroIdentificacion
 			FROM OPENJSON(@json) WITH 
 			(
 				checkBoxArticulo BIT 
@@ -323,6 +325,8 @@ BEGIN
 		       ,fechaFin         DATETIME2 
                ,idBodega         INT  
                ,codEstab         VARCHAR(100)
+               ,idCliente        INT
+               ,numeroIdentificacion VARCHAR(25)
 			)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
@@ -361,6 +365,8 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND tt.idBodega = @idBodega '
                 END 
+            IF @rucClienteProveedor IS NOT NULL
+                 SET @sql = @sql + ' AND tt.rucClienteProveedor = @rucClienteProveedor '
 
 			SET @sql = @sql + 'ORDER BY tt.articulo,tt.fechaRegistro ASC '
 
@@ -387,6 +393,7 @@ BEGIN
 							  ,@codTransaccion = @codTransaccion
 							  ,@fechaInicio    = @fechaInicio
 							  ,@fechaFin       = @fechaFin
+                              ,@rucClienteProveedor = @rucClienteProveedor
 
 			RETURN 
 
@@ -397,7 +404,7 @@ BEGIN
 		BEGIN
 			
 			SET @params =  '@idEntidad INT
-			               ,@rucProveedor VARCHAR(20)
+			               ,@rucClienteProveedor VARCHAR(20)
 						   ,@idSubFamilia INT
 						   ,@fechaInicio DATETIME 
 						   ,@fechaFin DATETIME
@@ -421,7 +428,7 @@ BEGIN
 						  AND st.caducidad = 1 '
 
 			SELECT @estado             = estado
-				  ,@rucProveedor       = numeroIdentificacion
+				  ,@rucClienteProveedor = numeroIdentificacion
 				  ,@idSubFamilia       = bySubFamilia
 				  ,@checkBoxFecha      = checkBoxFecha
 				  ,@fechaInicio        = fechaInicio
@@ -434,8 +441,8 @@ BEGIN
 				 ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
 				 ,bySubFamilia                 INT '$.bySubFamilia'	
 				 ,checkBoxFecha                BIT '$.ckFechaCaducidad'
-				 ,fechaInicio             DATETIME '$.fechaInicio'
-				 ,fechaFin                DATETIME '$.fechaFin'
+				 ,fechaInicio             DATETIME2 '$.fechaInicio'
+				 ,fechaFin                DATETIME2 '$.fechaFin'
 				 ,idBodega                     INT '$.idBodega'
 				 ,ubicacion           VARCHAR(400) '$.ubicacion'
 				)
@@ -459,9 +466,9 @@ BEGIN
 						END 
 				END 
 
-			IF @rucProveedor IS NOT NULL
+			IF @rucClienteProveedor IS NOT NULL
 				BEGIN
-					SET @sql = @sql + 'AND st.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
+					SET @sql = @sql + 'AND st.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucClienteProveedor) '
 				END 
 
 			IF @idSubFamilia > 0
@@ -497,7 +504,7 @@ BEGIN
 			EXEC sp_executesql @sql
 							  ,@params
 							  ,@idEntidad    = @idEntidad
-							  ,@rucProveedor = @rucProveedor
+							  ,@rucClienteProveedor = @rucClienteProveedor
 							  ,@idSubFamilia = @idSubFamilia
 							  ,@fechaInicio  = @fechaInicio
 							  ,@fechaFin     = @fechaFin
