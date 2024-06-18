@@ -267,9 +267,9 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
         }
     }
 
-    public async Task<ApiResponseDeprecated> SpExecuteAsync(string spname, Dictionary<string, object> parameters)
+    public async Task<ApiResponse> SpExecuteAsync(string spname, Dictionary<string, object> parameters)
     {
-        var response = new ApiResponseDeprecated();
+        var response = new ApiResponse();
         var conn = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
         await using var cmd = new SqlCommand(spname, conn);
         var wasOpen = cmd.Connection.State == ConnectionState.Open;
@@ -294,7 +294,7 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
             if (await reader.ReadAsync())
             {
                 var schemaTable = reader.GetSchemaTable();
-                response.code = reader.IsDBNull(0) ? null : reader.GetString(0);
+                response.Code = reader.IsDBNull(0) ? null : reader.GetString(0);
                 // Check if the schema table contains the "message" column
                 var columnExists = schemaTable != null && schemaTable.Rows.Cast<DataRow>().Any(row =>
                     row["ColumnName"].ToString().Equals("message", StringComparison.OrdinalIgnoreCase));
@@ -303,7 +303,7 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
                     var indexMessage = reader.GetOrdinal("message");
                     if (indexMessage != -1 && !reader.IsDBNull(indexMessage))
                     {
-                        response.message = reader.GetString(indexMessage);
+                        response.Message = reader.GetString(indexMessage);
                     }
                 }
 
@@ -314,7 +314,7 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
                     var indexPayload = reader.GetOrdinal("payload");
                     if (indexPayload != -1 && !reader.IsDBNull(indexPayload))
                     {
-                        response.payload = reader.GetString(indexPayload);
+                        response.Payload = reader.GetString(indexPayload);
                     }
                 }
             }
