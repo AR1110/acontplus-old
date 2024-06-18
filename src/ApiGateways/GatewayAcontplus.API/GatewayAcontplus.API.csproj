@@ -7,6 +7,7 @@
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Core" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="Ocelot" />
