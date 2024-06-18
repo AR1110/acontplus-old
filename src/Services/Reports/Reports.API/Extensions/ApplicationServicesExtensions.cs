@@ -1,4 +1,8 @@
-﻿namespace Reports.API.Extensions
+﻿using Reports.API.Interfaces;
+using Reports.API.Services;
+using Reports.Application.Interfaces;
+
+namespace Reports.API.Extensions
 {
     public static class ApplicationServicesExtensions
     {

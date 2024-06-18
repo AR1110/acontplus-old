@@ -1,8 +1,6 @@
-﻿using System.Data;
-using Common.Core.Interfaces;
-using Reports.Core.Interfaces;
+﻿using Reports.API.Interfaces;
 
-namespace Reports.Application.Services
+namespace Reports.API.Services
 {
     public class ReportService(IAdoSqlServer repository) : IReportService
     {

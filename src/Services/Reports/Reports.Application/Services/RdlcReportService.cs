@@ -4,9 +4,9 @@ using System.Web;
 using Common.Core.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
-using Reports.Core.Enums;
-using Reports.Core.Interfaces;
-using Reports.Core.Models;
+using Reports.Application.Enums;
+using Reports.Application.Interfaces;
+using Reports.Application.Models;
 using static System.Enum;
 
 namespace Reports.Application.Services
