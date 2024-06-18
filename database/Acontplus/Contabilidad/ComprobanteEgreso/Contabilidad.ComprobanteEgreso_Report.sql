@@ -75,7 +75,6 @@ BEGIN
 		          ,ISNULL(se.descripcion,ef.descripcion)                            as formaPago
 		          ,IIF(p.posfechado = 1,'SI','NO')                                  as posfechado
 		          ,CASE WHEN ef.codigo = 'CHE' THEN b.descripcion 
-				        WHEN ef.codigo = 'DOC' THEN tdc.codigo
 		           END                                                              as entidadFinanciera
 		          ,p.nro                                                            as comprobantePago
 		          ,FORMAT(p.fechaEmision, 'dd/MM/yyyy hh:mm')                       as fechaPago
@@ -89,7 +88,6 @@ BEGIN
 	        INNER JOIN dbo.EntidadFinanciera              ef WITH (NOLOCK) ON ef.idEntidadFinanciera     = p.idEntidadFinanciera
 	         LEFT JOIN dbo.SubEntidadFinanciera           se WITH (NOLOCK) ON se.idSubEntidadFinanciera  = p.idSubEntidadFinanciera
 	         LEFT JOIN dbo.Banco                           b WITH (NOLOCK) ON p.idBanco                  = b.idBanco
-	         LEFT JOIN dbo.TipoDocumento                 tdc WITH (NOLOCK) ON tdc.idTipoDocumento        = p.idTipoDocumento
 	        INNER JOIN dbo.PagoDetalle                   pde WITH (NOLOCK) ON pde.idPago                 = p.idPago
 	        INNER JOIN Contabilidad.CuotaPorPagar   cuota_pp WITH (NOLOCK) ON cuota_pp.idCuotaPorPagar   = pde.idCuotaPorPagar 
 	        INNER JOIN Contabilidad.CuentaPorPagar cuenta_pp WITH (NOLOCK) ON cuenta_pp.idCuentaPorPagar = cuota_pp.idCuentaPorPagar

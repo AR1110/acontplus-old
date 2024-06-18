@@ -45,6 +45,11 @@ BEGIN
 				,precCajBan NUMERIC(18,5) '$.precCajBan'
 			)
 
+            UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)
+                SET importeTotal = (SELECT SUM(valorRetenido) FROM FactElect.RetencionAtsRet WITH (NOLOCK) WHERE idRetencionAts = @idRetencionAts )
+            WHERE idDocumento = @idRetencionAts
+              AND codDoc = '07'
+
 			SELECT '1' code, 'Retencion del sustento guardada con exito'  as 'message'
 		COMMIT TRAN
 	END TRY

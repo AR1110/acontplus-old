@@ -40,7 +40,7 @@ BEGIN
            ,@estab VARCHAR(20) ,@ptoEmi VARCHAR(10) ,@idProveedor INT
 
 	--> contabilidad
-	DECLARE @idEstadoPago INT ,@idEstablecimiento INT ,@identificacion VARCHAR(20) ,@serieComprobante VARCHAR(20) ,@idCuentaPorPagar INT
+	DECLARE @idEstadoPago INT ,@idEstablecimiento INT ,@serieComprobante VARCHAR(20) ,@idCuentaPorPagar INT
 
     --> Customer
     DECLARE @CustomerId INT 
@@ -217,7 +217,6 @@ BEGIN
               ,@idEstablecimiento = sr.idEstablecimiento
               ,@estab             = sr.estab
               ,@ptoEmi            = pt.ptoEmi
-              ,@identificacion    = pr.numeroIdentificacion
               ,@CustomerId        = ISNULL(pr.CustomerId,0)
 		FROM @document                 js
 		INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = js.idPuntoEmision
@@ -364,9 +363,9 @@ BEGIN
 
 			--> Contabilidad 
 			INSERT INTO Contabilidad.CuentaPorPagar WITH (ROWLOCK)
-                   (idEstablecimiento,idTiempoCredito,idProveedor, idEstadoPago,codDoc, idDocumento, uniqueId,serieComprobante,  identificacion,
+                   (idEstablecimiento,idTiempoCredito,idProveedor, idEstadoPago,codDoc, idDocumento, uniqueId,serieComprobante,
                    fechaEmision,fechaVencimiento,importeTotal, idEntidad, idUsuario, subcategoryId)
-		    SELECT @idEstablecimiento,idTiempoCredito,idProveedor,@idEstadoPago,codDoc,@idDocumentoIngreso,@uniqueId,@serieComprobante,@identificacion,
+		    SELECT @idEstablecimiento,idTiempoCredito,idProveedor,@idEstadoPago,codDoc,@idDocumentoIngreso,@uniqueId,@serieComprobante,
             fechaEmision,fechaVencimiento,importeTotal,@idEntidad,@idUsuario, subcategoryId
             FROM @document
 

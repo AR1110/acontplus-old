@@ -39,7 +39,6 @@ BEGIN
 	-->Filters
 	DECLARE @idProveedor INT
 	       ,@idCuentaPorPagar INT 
-           ,@CustomerId INT
            ,@checkboxFecha BIT 
 		   ,@codEstab VARCHAR(100)
 		   ,@codDoc VARCHAR(10)
@@ -173,6 +172,9 @@ BEGIN
     --> Cuotas del documento
 	IF @tipo = 2
 		BEGIN	
+            
+            SELECT @idCuentaPorPagar = idCuentaPorPagar FROM OPENJSON(@json) WITH (idCuentaPorPagar INT)
+
 			IF EXISTS (SELECT 1 FROM OPENJSON(@json) WITH (codPago VARCHAR(5)) WHERE codPago IS NULL)
 				BEGIN 
 					SELECT c.idCuotaPorPagar
@@ -203,7 +205,8 @@ BEGIN
 					FROM Contabilidad.CuotaPorPagar c WITH (NOLOCK) 
 					INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago = c.idEstadoPago
 					WHERE c.idCuentaPorPagar = @idCuentaPorPagar	
-					AND c.estado = 1 AND ep.codigo !='PA'
+					  AND c.estado = 1
+                      AND ep.codigo !='PA'
 				END 
               
             RETURN 
@@ -212,30 +215,7 @@ BEGIN
 	--> Forma Pago
 	IF @tipo = 3
 		BEGIN
-			
-            DECLARE @rucEmisor  VARCHAR(15)
-			       ,@identificacionReceptor VARCHAR(13)
-			       ,@cedula VARCHAR(10)
-
-			DECLARE @pagoDocuments AS TABLE 
-			(
-				 idComprobante INT
-				,codDoc VARCHAR(5)
-			)
-
             SELECT @idProveedor = idProveedor FROM OPENJSON(@json)WITH(idProveedor INT)
-
-			SELECT TOP 1 @rucEmisor = numeroIdentificacion, @CustomerId = CustomerId FROM Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
-
-			SELECT TOP 1 @identificacionReceptor = ruc , @cedula = ruc FROM Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
-				
-			INSERT INTO @pagoDocuments(idComprobante,codDoc)
-			SELECT p.idComprobante,td.codigoSri FROM Pago p WITH (NOLOCK) 
-												INNER JOIN dbo.TipoDocumento     td WITH (NOLOCK) ON p.idTipoDocumento      = td.idTipoDocumento 
-												INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = p.idEntidadFinanciera
-												INNER JOIN dbo.ComprobanteEgreso ce WITH (NOLOCK) ON ce.idComprobanteEgreso = p.idComprobanteEgreso
-												WHERE ef.codigo = 'DOC' AND ce.estado = 1  AND ce.idEntidad = @idEntidad
-
 				
             SELECT * FROM EntidadFinanciera WHERE estado = 1
 				
@@ -245,59 +225,20 @@ BEGIN
 				
             SELECT * FROM Ciudad WHERE estado = 1
 
-            SELECT * FROM 
-            (
-			    SELECT de.idDocumentoElectronico                                                                                as idComprobante
-				      ,(SELECT idTipoDocumento FROM dbo.TipoDocumento td (NOLOCK) WHERE td.codigo = 'RC')                       as idTipoDocumento
-				      ,de.serieComprobante                                                                                      as nroDocumento
-				      ,'Retención versión: 1.0.0'                                                                               as tipoDocumento
-                      ,(SELECT rc.total FROM dbo.RetencionCompra rc  WITH (NOLOCK) WHERE rc.idRetencionCompra = de.idDocumento) as saldo
-                      ,'' as numAutDocSustento
-			    FROM FactElect.v_DocElectronico  de WITH (NOLOCK) 
-			    WHERE de.codDoc      = '07' 
-				  AND de.versionComp = '1.0.0' 
-				  AND de.idEntidad   = @idEntidad
-				  AND de.codEstado   = 4
-				  AND de.CustomerId  = @CustomerId
-				  AND de.idDocumentoElectronico NOT IN (SELECT idComprobante FROM @pagoDocuments t WHERE t.codDoc = '07')
-
-                UNION ALL
-
-			    SELECT de.idDocumentoElectronico                                                                                                      as idComprobante
-				      ,(SELECT idTipoDocumento FROM dbo.TipoDocumento td WHERE td.codigo = 'RC')                                                      as idTipoDocumento
-				      ,de.serieComprobante                                                                                                            as nroDocumento
-				      ,'Retención versión: 2.0.0'                                                                                                     as tipoDocumento
-                      ,(SELECT SUM(ats.valorRetenido) FROM FactElect.RetencionAtsRet ats WHERE ats.idRetencionAts = de.idDocumento)                   as saldo
-                      ,(SELECT TOP 1 rs.numAutDocSustento FROM FactElect.RetAtsDocSustento rs WITH (NOLOCK) WHERE rs.idRetencionAts = de.idDocumento) as numAutDocSustento
-			    FROM FactElect.v_DocElectronico  de 
-			    WHERE de.codDoc = '07'
-				  AND de.versionComp = '2.0.0'
-				  AND de.codEstado = 4
-				  AND de.idEntidad = @idEntidad
-				  AND de.CustomerId = @CustomerId
-				  AND de.idDocumentoElectronico NOT IN (SELECT idComprobante FROM @pagoDocuments t WHERE t.codDoc = '07')
-
-                UNION ALL
-
-			    SELECT d.idDocRelacionado                                                                      as idComprobante                          
-				      ,(SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'NC') as idTipoDocumento
-				      ,dr.serieComprobante                                                                     as nroDocumento
-				      ,'Nota Crédito Version:' + dr.versionComp                                                as tipoDocumento
-                      ,ISNULL
-                      ((
-                        SELECT SUM(di.TaxValue + di.TaxBase) FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) WHERE di.DocumentoRecibidoId = dr.idDocumento
-
-                      ),0) 
-                      ,dr.claveAcceso                                                                          as numAutDocSustento
-			    FROM factelect.DocRelacionado d
-			    INNER JOIN Recepcion.DocumentoRecibido dr ON dr.idDocumento = d.idDocumentoRecibido
-			    WHERE dr.codDoc = '04' 
-				  AND dr.identificacionReceptor IN(@identificacionReceptor,@cedula)
-				  AND dr.rucEmisor = @rucEmisor 
-				  AND d.idDocRelacionado NOT IN (SELECT idComprobante FROM @pagoDocuments t WHERE t.codDoc = '04')
-
-            ) as dt 
-            WHERE dt.saldo > 0
+            SELECT cp.idCuentaPorPagar as idComprobante
+                  ,(SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento td (NOLOCK) WHERE td.codigoSri = cp.codDoc) as idTipoDocumento
+                  ,cp.serieComprobante                                                                              as nroDocumento
+                  ,IIF(cp.codDoc = '04','Nota Credito','Comprobante Retención')                                     as tipoDocumento
+                  ,importeTotal
+                  ,CASE cp.codDoc WHEN '04' THEN (SELECT TOP 1 d.numDocSustento FROM factelect.DocRelacionado d WITH (NOLOCK) WHERE d.idDocumentoRecibido = cp.idDocumento )
+                                  WHEN '07' THEN (SELECT TOP 1 rs.numAutDocSustento FROM FactElect.RetAtsDocSustento rs WITH (NOLOCK) WHERE rs.idRetencionAts = cp.idDocumento)
+                   END                                                                                              as numAutDocSustento
+            FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK)
+            INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cp.idEstadoPago
+            WHERE cp.codDoc IN ('04','07')
+              AND cp.importeTotal > 0
+              AND cp.idProveedor = @idProveedor
+              AND ep.codigo = 'PE'
 
             RETURN 
 				
