@@ -6,7 +6,7 @@ namespace Contabilidad.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountingMovementController : BaseApiController
+    public class AccountingMovementController (IAccountingMovement accountingMovement): BaseApiController
     {
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] string json)
@@ -15,7 +15,7 @@ namespace Contabilidad.API.Controllers
         {
             { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
-            return Ok(await subcategoryService.GetAsync(parameters));
+            return Ok(await accountingMovement.GetAsync(parameters));
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-
-namespace Common.Core.Utils;
+﻿namespace Common.Core.Utils;
 
 public class ValidacionesExternas
 

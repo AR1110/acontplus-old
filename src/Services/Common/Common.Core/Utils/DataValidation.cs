@@ -1,7 +1,5 @@
-﻿using System.Data;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Xml;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Common.Core.Utils;
@@ -24,16 +22,16 @@ public static class DataValidation
         switch (removeEmptyDt)
         {
             case true:
-            {
-                var tablesToRemove = ds.Tables.Cast<DataTable>().Where(dt => dt.Rows.Count == 0).ToList();
-
-                foreach (var dt in tablesToRemove)
                 {
-                    ds.Tables.Remove(dt);
-                }
+                    var tablesToRemove = ds.Tables.Cast<DataTable>().Where(dt => dt.Rows.Count == 0).ToList();
 
-                break;
-            }
+                    foreach (var dt in tablesToRemove)
+                    {
+                        ds.Tables.Remove(dt);
+                    }
+
+                    break;
+                }
         }
 
         return ds == null || ds.Tables.Count == 0;

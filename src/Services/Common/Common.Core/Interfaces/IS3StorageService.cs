@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-
-namespace Common.Core.Interfaces;
+﻿namespace Common.Core.Interfaces;
 
 public interface IS3StorageService
 {
