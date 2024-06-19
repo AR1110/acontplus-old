@@ -131,7 +131,7 @@
         </div>
       </div>
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-        @if (esTipoDocIngreso){
+
           <div class="form-group">
             <label>Cliente: <span class="text-danger">*</span></label>
             <app-company-customer-search
@@ -140,9 +140,9 @@
               (resultEmptyInput)="onEmptyCustomer()"
             />
           </div>
-        }
 
-        @if(esTipoDocGasto){
+
+        <!--@if(esTipoDocGasto){
           <div class="form-group">
             <label>Proveedor: <span class="text-danger">*</span></label>
             <app-supplier-search
@@ -150,7 +150,7 @@
             (onSelected)="onSelectCustomer($event)"
             />
           </div>
-        }
+        }-->
 
       </div>
 

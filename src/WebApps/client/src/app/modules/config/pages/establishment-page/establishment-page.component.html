@@ -7,7 +7,7 @@
 
 <div class="card">
   <div class="card-body">
-    <div ngbAccordion [closeOthers]="true">
+    <div ngbAccordion [closeOthers]="true"   >
       @for (item of establishments; track item) {
       <div ngbAccordionItem #first="ngbAccordionItem" (shown)="onEstabShow(item.idEstablecimiento)"
         (hidden)="onEstabHide()">
@@ -58,8 +58,24 @@
                       <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-12">
                           <div class="mb-3">
+
                             <label for="imageUpload" class="form-label">Elige una imagen:</label>
                             <input type="file" class="form-control" id="imageUpload" (change)="onFileSelected($event)" accept="image/*">
+                            <small class="text-warning">Tamaño máximo 1MB</small>
+
+                            @if (fileError){
+                              <div class="text-danger">
+                                @if(fileError && fileError.type==="size"){
+                                  <p>Archivo muy grande: {{ (fileError?.size || 0) / (1024 * 1024) | number:"1" }}MB: max 1MB</p>
+                                }
+
+                                @if (fileError?.type==="type"){
+                                  <p>Formato de archivo no aceptado</p>
+                                }
+
+                              </div>
+                            }
+
                           </div>
                           @if(imageUrl){
                           <div  class=" mt-3">

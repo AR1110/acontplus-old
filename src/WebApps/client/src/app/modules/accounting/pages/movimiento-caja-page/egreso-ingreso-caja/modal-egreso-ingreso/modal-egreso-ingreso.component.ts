@@ -113,12 +113,9 @@ export class ModalEgresoIngresoComponent {
 
   onSelectCustomer(params:any){
     if("data" in params){
-      this.dataForm.get("customerId")?.setValue(params.data.idCliente);
+      this.dataForm.get("customerId")?.setValue(params.data.customerId);
     }
-    if("idProveedor" in params){
-      this.dataForm.get("customerId")?.setValue(params.idProveedor);
 
-    }
   }
   onEmptyCustomer(){
     this.dataForm.get("customerId")?.setValue(0);
