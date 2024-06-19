@@ -1,29 +1,33 @@
 ﻿using System.IO.Compression;
 
-namespace Common.Core.Utils;
-
-public static class CompressionHelper
+namespace Common.Core.Utils
 {
-    public static byte[] Compress(byte[] data)
+    public static class CompressionHelper
     {
-        using var memoryStream = new MemoryStream();
-        using var deflateStream = new DeflateStream(memoryStream, CompressionMode.Compress);
-        deflateStream.Write(data, 0, data.Length);
-        var compressArray = memoryStream.ToArray();
-        return compressArray;
-    }
-
-    public static byte[] Decompress(byte[] data)
-    {
-        var decompressedStream = new MemoryStream();
-        using (var compressStream = new MemoryStream(data))
+        public static byte[] Compress(byte[] data)
         {
-            var deflateStream = new DeflateStream(compressStream, CompressionMode.Decompress);
-            deflateStream.CopyTo(decompressedStream);
+            if (data == null) throw new ArgumentNullException(nameof(data));
+
+            using var memoryStream = new MemoryStream();
+            using (var deflateStream = new DeflateStream(memoryStream, CompressionMode.Compress, true))
+            {
+                deflateStream.Write(data, 0, data.Length);
+            }
+
+            return memoryStream.ToArray();
         }
 
-        var decompressedArray = decompressedStream.ToArray();
+        public static byte[] Decompress(byte[] data)
+        {
+            if (data == null) throw new ArgumentNullException(nameof(data));
 
-        return decompressedArray;
+            using var compressStream = new MemoryStream(data);
+            using var deflateStream = new DeflateStream(compressStream, CompressionMode.Decompress);
+            using var decompressedStream = new MemoryStream();
+
+            deflateStream.CopyTo(decompressedStream);
+
+            return decompressedStream.ToArray();
+        }
     }
 }
