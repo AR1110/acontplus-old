@@ -20,10 +20,7 @@ GO
 -- Create date: 3/15/2023
 -- Description:	SP para editar las cuotas de una cuenta por pagar.
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.CuentaPorPagar_Update', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.CuentaPorPagar_Update
-GO
-CREATE PROCEDURE Contabilidad.CuentaPorPagar_Update @idUsuarioRol INT,@idCuentaPorPagar INT,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorPagar_Update @idUsuarioRol INT,@idCuentaPorPagar INT,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

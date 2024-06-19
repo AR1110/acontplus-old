@@ -42,18 +42,18 @@ BEGIN
 							  ,ce.total
                               ,es.codEstab
                               ,FORMAT(ce.fechaRegistro, ''dd/MM/yyyy HH:mm'')                   as fechaRegistro
-                              ,Common.ufnGetSerieDocument(td.codigo,es.estab,ce.nroDocumento,0) as nroDoc
-							  ,UPPER(ce.nombreFiscal)                                           as persona
-							  ,ce.nroIdentificacion 
+                              ,Common.ufnGetSerieDocument(''CE'',es.estab,ce.nroDocumento,0)    as nroDoc
+							  ,UPPER(cu.BusinessName)                                           as persona
+							  ,cu.IDCard												        as nroIdentificacion
 							  ,''Ninguna''                                                      as caja
 							  ,CASE WHEN ce.estado = 0 THEN ''table-danger'' ELSE '''' END      as color
 							  ,CASE WHEN ce.estado = 0 THEN ''Anulado'' ELSE ''Activo'' END     as estado
 							  ,us.nombreUsuario                                                 as usuario
                               ,COUNT(*) OVER()                                                  as totalRecords
 						FROM dbo.ComprobanteEgreso     ce WITH (NOLOCK) 
-						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab        = ce.codEstab
-						INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento = ce.idTipoDocumento 
-						INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON uS.idUsuario       = ce.idUsuario
+						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = ce.idEstablecimiento
+						INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = ce.idUsuario
+						INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id				= ce.CustomerId
 						WHERE ce.idEntidad = @idEntidad '
 
 
@@ -111,7 +111,7 @@ BEGIN
 			
 		    IF @byPersona IS NOT NULL
 			    BEGIN
-				    SET @sql = @sql + 'AND ce.nroIdentificacion = @nroIdentificacion '
+				    SET @sql = @sql + 'AND cu.IDCard = @nroIdentificacion '
 			    END 
 
 		    IF @byUsuario > 0

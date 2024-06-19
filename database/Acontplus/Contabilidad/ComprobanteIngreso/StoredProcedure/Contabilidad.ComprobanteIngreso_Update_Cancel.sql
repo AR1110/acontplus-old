@@ -20,32 +20,42 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.ComprobanteIngreso_Update_Cancel', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.ComprobanteIngreso_Update_Cancel
-GO
-CREATE PROCEDURE Contabilidad.ComprobanteIngreso_Update_Cancel @idUsuarioRol INT ,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Contabilidad.ComprobanteIngreso_Update_Cancel @idUsuarioRol INT ,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+    SET LANGUAGE SPANINS;
+
+    --> Global
 	DECLARE @idUsuario INT 
-	DECLARE @idCuotaPorCobrar INT
-	DECLARE @idCuentaPorCobrar INT
-	DECLARE @idComprobanteIngreso INT
-	DECLARE @observacion VARCHAR(300)
+
+    --> ControlCaja 
+    DECLARE @idControlCaja INT ,@idComprobanteIngreso INT ,@observacion VARCHAR(300)
+
+    --> Cursores
+	DECLARE @idCuotaPorCobrar INT ,@cuota NUMERIC(18,5) ,@idCuentaPorCobrar INT ,@importeTotal NUMERIC(18,5)
+
 
 	BEGIN TRY 
-		
-		SELECT @idComprobanteIngreso = idComprobanteIngreso, @observacion = observacion FROM OPENJSON(@json) WITH (idComprobanteIngreso INT '$.idComprobanteIngreso',observacion VARCHAR(500) '$.observacion')
+		--> Validaciones
+		SELECT @idComprobanteIngreso = idComprobanteIngreso, @observacion = observacion FROM OPENJSON(@json) WITH (idComprobanteIngreso INT ,observacion VARCHAR(500))
 
-		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+        SELECT TOP 1 @idControlCaja = idControlCaja FROM ComprobanteIngreso WITH (NOLOCK) WHERE idComprobanteIngreso = @idComprobanteIngreso
 
-		IF EXISTS (SELECT 1 FROM ComprobanteIngreso WITH (NOLOCK) WHERE idComprobanteIngreso = @idComprobanteIngreso  AND estado = 0)
-			BEGIN
-				SELECT '0'code,'El Comprobante de Ingreso ya se encuentra anulado' as 'message'
+        --> Validaciones
+		IF EXISTS (SELECT 1 FROM ComprobanteIngreso WITH (NOLOCK) WHERE idComprobanteIngreso = @idComprobanteIngreso AND estado = 0)
+			BEGIN 
+                SELECT '0' as code,'El Comprobante de Ingreso ya se encuentra anulado' as 'message'
 				RETURN 
 			END
+
+        IF EXISTS (SELECT 1 FROM ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja AND estado = 0)
+            BEGIN 
+                SELECT '0' as code,'El control de caja se encuentra cerrado no puede ser anulado el comproabnte' as 'message'
+				RETURN
+            END
 
 		BEGIN TRAN 
 			UPDATE ComprobanteIngreso SET estado = 0,observacion = @observacion,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteIngreso = @idComprobanteIngreso 
@@ -86,16 +96,19 @@ BEGIN
 
 		COMMIT TRAN 
 		SELECT '1' code ,'Anulado Correctamente' as 'message'
-		RETURN
 	END TRY 
 
 	BEGIN CATCH
-		IF @@TRANCOUNT > 0 
-		BEGIN
-			ROLLBACK TRAN; 
-		END
-		SELECT '0'code,'Info: Error en el procedimiento: ' + ERROR_MESSAGE() as 'message'
-		RETURN
+		IF @@TRANCOUNT > 0
+		    BEGIN
+			    ROLLBACK TRAN;
+		    END
+
+		INSERT INTO ErroresSistema WITH (ROWLOCK)
+              (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'/ComprobanteIngreso/Delete',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+
+        SELECT '0' code,'Info: Error en el procedimiento' as 'message'
 	END CATCH 
 END
 GO
