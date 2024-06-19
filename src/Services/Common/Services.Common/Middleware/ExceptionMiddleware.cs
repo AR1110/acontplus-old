@@ -1,19 +1,15 @@
 ﻿using System.Net;
-using Common.Core.Utils;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Services.Common.Errors;
 
 namespace Services.Common.Middleware;
 
 public class ExceptionMiddleware(
     RequestDelegate next,
     ILogger<ExceptionMiddleware> logger,
-    IHostEnvironment env,
-    ICustomLogger customLogger)
+    IHostEnvironment env)
 {
     public async Task InvokeAsync(HttpContext context)
     {
@@ -29,30 +25,19 @@ public class ExceptionMiddleware(
 
             var stackTrace = ex.StackTrace?.Replace(Environment.NewLine, "\n");
 
-            var response = env.IsDevelopment()
-                ? new ApiException(context.Response.StatusCode, ex.Message, stackTrace)
-                : new ApiException(context.Response.StatusCode, "Internal Server Error");
+            var problemDetails = env.IsDevelopment()
+                ? new ProblemDetails
+                {
+                    Status = context.Response.StatusCode,
+                    Title = "Server Error: " + ex.Message,
+                    Detail = stackTrace
+                } : new ProblemDetails
+                {
+                    Status = context.Response.StatusCode,
+                    Title = "Server Error" + ex.Message,
+                };
 
-            var options = new JsonSerializerSettings
-            {
-                ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() }
-            };
-
-            // Create a detailed log message
-            var logDetails = new
-            {
-                context.Response.StatusCode,
-                ex.Message,
-                StackTrace = stackTrace?.Split('\n'),
-                InnerException = ex.InnerException?.ToString(),
-                ex.Source
-            };
-
-            var logJson = JsonConvert.SerializeObject(logDetails, Formatting.Indented, options);
-            customLogger.LogActivity(logJson, context.Response.StatusCode.ToString());
-
-            var clientResponse = JsonConvert.SerializeObject(response, options);
-            await context.Response.WriteAsync(clientResponse);
+            await context.Response.WriteAsJsonAsync(problemDetails);
         }
     }
 }

@@ -10,7 +10,7 @@
     <Authors>Ivan Paz</Authors>
     <Company>Acontplus S.A.S.</Company>
     <Description>Lib to use common models, converters and validators</Description>
-    <PackageTags>models;validators</PackageTags>
+    <PackageTags>converters;models;validators</PackageTags>
     <!--<RepositoryUrl></RepositoryUrl>-->
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -10,7 +10,7 @@
     <Authors>Ivan Paz</Authors>
     <Company>Acontplus S.A.S.</Company>
     <Description>Get Reports RDL</Description>
-    <PackageTags>models;validators</PackageTags>
+    <PackageTags>reports;rdl;rdlc</PackageTags>
     <!--<RepositoryUrl></RepositoryUrl>-->
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
