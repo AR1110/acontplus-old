@@ -31,7 +31,7 @@
                     <div class="form-group">
                         <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span> </label>
                         <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
-                                ng-model="dataSearch.idPuntoEmision" ng-change="getComprobantes()">
+                                ng-model="dataSearch.idPuntoEmision" ng-change="refresh()">
                             <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                 {{item.ptoEmi}}
                             </option>
@@ -64,7 +64,7 @@
                         <label for="tipoDoc">Tipo Doc:</label>
                         <select name="tipoDoc" id="tipoDoc" class="form-control b-0" ng-model="dataSearch.codDoc"
                                 ng-change="onSelectTipoDoc()">
-                            <option value="">Todos</option>
+                            <option ng-value="null">Todos</option>
                             <option ng-value="item.codDoc" ng-repeat="item in tiposDocumento">
                                 {{item.descripcion}}
                             </option>
@@ -76,8 +76,8 @@
                         <label for="">Estado</label>
 
                         <select name="codEstado" id="codEstado" class="form-control border-select"
-                                ng-model="dataSearch.codEstado" ng-change="getComprobantes()">
-                            <option value="">Todos</option>
+                                ng-model="dataSearch.codEstado" ng-change="refresh()">
+                            <option ng-value="null">Todos</option>
                             <option ng-value="item.codEstado" ng-repeat="item in estadosDoc">
                                 {{item.descripcion}}
                             </option>
@@ -101,7 +101,7 @@
                             <input type="text" id="customer-provider-search" autocomplete="off"
                                    name="customer-provider-search" class="form-control border-select"
                                    placeholder="Ingrese C.I o Nombre Fiscal" ng-model="modelCustomerProvider"
-                                   ng-keyup="onKeyupCustomerProvider()"
+                                   ng-keyup="onKeyupCustomerSupplier()"
                                    uib-typeahead="item as item.nameCustomerProvider for item in searchCustomerProvider($viewValue)"
                                    typeahead-template-url="customerProviderTemplate.html" typeahead-min-length="1"
                                    typeahead-editable="false" typeahead-on-select="onSelectedCustomerProvider($item)"
@@ -199,7 +199,7 @@
                             <input type="text" class="form-control" ng-model="textSearch"
                                    placeholder="Buscar Comprobante">
                             <div class="input-group-append">
-                                <button type="button" class="btn btn-secondary btn-sm" ng-click="getComprobantes()">
+                                <button type="button" class="btn btn-secondary btn-sm" ng-click="refresh()">
                                     <i class="fas fa-redo"></i>
                                 </button>
                             </div>
@@ -223,19 +223,19 @@
                             <tr md-row>
                                 @* <th md-column>Nro</th> *@
                                 <th md-column>Op.</th>
+                                <th md-column>Estado</th>
                                 <th md-column>Comprobante</th>
                                 <th md-column md-order-by="fechaEmision">F. Emisión</th>
                                 <th md-column md-order-by="serieComprobante">serie</th>
                                 <th md-column>Ruc Receptor</th>
                                 <th md-column md-order-by="razonSocial">Razón Social Receptor</th>
                                 <th md-column>Clave de acceso/Nro. autorización</th>
-                                <th md-column>Estado</th>
                                 <th md-column>Usuario</th>
                             </tr>
                         </thead>
                         <tbody md-body>
                             <tr md-row md-auto-select="false" md-select="item"
-                                ng-disabled="!(item.codEstado===0 || item.codEstado===2 || item.codEstado===5)"
+                                ng-disabled="isDisabledRow(item) "
                                 md-on-select="onSelectComprobante"
                                 ng-repeat="item in comprobantes | orderBy: dataSearch.order | filter: textSearch "
                                 ng-class="item.style">
@@ -244,7 +244,7 @@
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
                                                    ng-click="$mdMenu.open($event)">
-                                            <icon class="mdi mdi-menu"></icon>
+                                            <i class="mdi mdi-menu"></i>
                                         </md-button>
                                         <md-menu-content class="md-dense">
                                             <md-menu-item ng-if="(item.codDoc=='07') && (item.codEstado != 4)">
@@ -335,13 +335,14 @@
                                     </md-menu>
                                 </td>
                                 @* <td md-cell>{{$index+1}}</td> *@
+                                <td md-cell>{{item.estado}}</td>
+
                                 <td md-cell>{{item.comprobante}}</td>
                                 <td md-cell>{{item.fechaEmision}}</td>
                                 <td md-cell>{{item.serieComprobante}}</td>
                                 <td md-cell>{{item.rucReceptor}}</td>
                                 <td md-cell>{{item.razonSocial}}</td>
                                 <td md-cell>{{item.claveAcceso}}</td>
-                                <td md-cell>{{item.estado}}</td>
                                 <td md-cell>{{item.usuario}}</td>
                             </tr>
 
@@ -370,7 +371,7 @@
 
 
 
-    <button class="btn btn-warning btn-lg" ng-if="tipo > 0" ng-click="refresh()">
+    <button class="btn btn-warning btn-lg" ng-if="tipo > 0" ng-click="refreshReload()">
         <i class="fa fa-close"></i> Cancelar
     </button>
 
