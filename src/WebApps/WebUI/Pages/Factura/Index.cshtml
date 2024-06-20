@@ -290,6 +290,16 @@
                                                         </span>
                                                     </md-button>
                                                 </md-menu-item>
+
+                                                 <md-menu-item>
+                                                    <md-button uib-tooltip="Cuentas por pagar" btn-gestion-financiera-personal tooltip-placement="top"
+                                                        btnGestionFinancieraPersonal>
+                                                        <span md-menu-align-target>
+                                                            Cuenta por pagar
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
+
                                             </md-menu-content>
                                         </md-menu>
                                         <button type="button " class="btn btn-secondary btn-sm m-r-10 m-b-5 m-t-5" ng-click="print(item)">
@@ -351,6 +361,7 @@
 
 </div>
 @section Scripts {
-    <script src="~/js/factElect/directives/factElectDirective.js" asp-append-version="true"></script> 
+    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script> 
     <script src="~/js/factElect/controllers/facturaCtrl.min.js" asp-append-version="true"></script>
+     <script src="~/js/contabilidad/components/cuenta-por-pagar.component.js" asp-append-version="true"></script>
 }

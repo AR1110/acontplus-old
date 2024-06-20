@@ -1944,26 +1944,20 @@
             },
             link: function (scope, element) {
                 element.on('click', async function () {
-                    let fileCtrl = nombreModalContabilidad.COMPONENTS.fileGestionFinancieraPersonal;
-                    let ctrl = nombreModalContabilidad.COMPONENTS.controllers["MGFP"];
-                    let template = nombreModalContabilidad.COMPONENTS.templates['MGFP'];
-                    let controller = (await import(fileCtrl))[ctrl];
+                    // let fileCtrl = nombreModalContabilidad.COMPONENTS.fileGestionFinancieraPersonal;
+                    // let ctrl = nombreModalContabilidad.COMPONENTS.controllers["MGFP"];
+                    // let template = nombreModalContabilidad.COMPONENTS.templates['MGFP'];
+                    // let controller = (await import(fileCtrl))[ctrl];
 
-                    let modalRef = modalService.openModalCustom({
-                        controller,
-                        template,
-                        size: 'xl',
-                        params: {
-                            idComprobanteIngreso: scope.params.idComprobanteIngreso,
-                            idCuentaPorCobrar: scope.params.idCuentaPorCobrar,
-
-                        },
-                        isRenderRazorPartial: true
+                    let modalRef = modalService.openWithComponent({
+                        component: 'menuItem',
+                        size: 'xl'
+                         
                     })
 
                     modalRef.result.then(result => {
                         if (result && typeof result === 'object' && typeof scope.onResult === 'function') {
-                            scope.onResult(result)
+                          //  scope.onResult(result)
                         }
                     })
 

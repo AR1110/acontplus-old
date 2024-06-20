@@ -434,6 +434,7 @@ function modalService($uibModal, $mdDialog) {
         openModalCustom: function ({
             controller,
             template,
+            component,
             size,
             params,
             keyboard = false,
@@ -453,6 +454,7 @@ function modalService($uibModal, $mdDialog) {
                 templateUrl,
                 controller,
                 controllerAs: "$ctrl",
+                component,
                 scope,
                 size,
                 windowClass,
@@ -474,7 +476,63 @@ function modalService($uibModal, $mdDialog) {
                 },
             });
         },
-        modalOptions: {},
+        open: function ({
+            controller,
+            template,
+            component,
+            size,
+            params,
+            keyboard = false,
+            animation = true,
+            windowClass = null,
+            windowTopClass,
+            openedClass,
+            scope,
+            props = {},
+        }) {
+            let templateUrl = "";
+
+            templateUrl = `/Home/Index?name=${template}`;
+
+            return $uibModal.open({
+                animation,
+                templateUrl,
+                controller,
+                controllerAs: "$ctrl",
+                component,
+                scope,
+                size,
+                windowClass,
+                backdrop: "static",
+                scrollable: true,
+                keyboard,
+                width: props.width,
+                height: props.height,
+                maxWidth: props.maxWidth,
+                maxHeight: props.maxHeight,
+                minWidth: props.minWidth,
+                minHeight: props.minHeight,
+                windowTopClass,
+                openedClass,
+                resolve: {
+                    params: function () {
+                        return params;
+                    },
+                },
+            });
+        },
+        openWithComponent: function ({ component, params,size }){
+            return $uibModal.open({
+                animation: true,
+                component,
+                size,
+                resolve: {
+                    params: function () {
+                        return params;
+                    },
+                },
+            })
+        }
     };
 }
 

@@ -10,6 +10,10 @@ const CHANGE_VERSION = (largo = 50) => {
 
 const PATH_API_COMPRA = 'Compras/'
 
+app.constant('mainPaths', {
+    cuenta_por_pagar_view: '~/Pages/Contabilidad/CuentaPorPagar/'
+})
+
 app.constant('nombreModalCommon', {
     MAIL: {
         fileCtrl: '/js/common/modals/modalMailCtrl.js' + CHANGE_VERSION(),
@@ -26,6 +30,7 @@ app.constant('nombreModalCommon', {
         template: '~/Pages/Common/_KeyRequestModal.cshtml',        
     }
 })
+
 
 
 //Inventario 

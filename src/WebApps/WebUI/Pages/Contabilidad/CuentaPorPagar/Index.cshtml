@@ -5,7 +5,14 @@
     
 }
 
-<div ng-controller="cuentaPorPagarCtrl">
+ <div class="row page-titles">
+    <div class="col-md-5 align-self-center">
+        <h5 class="text-themecolor">Cuentas por Pagar</h5>
+    </div>
+</div>
+<app-cuenta-por-pagar/>
+
+@*<div ng-controller="cuentaPorPagarCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
             <h5 class="text-themecolor">Cuentas por Pagar</h5>
@@ -223,8 +230,9 @@
                 class="pagination" boundary-links="true" rotate="false"></ul>
         </div>
     </div>
-</div>
+</div>*@
 
 @section Scripts {
-    <script src="~/js/contabilidad/controllers/cuentaPorPagarCtrl.min.js" asp-append-version="true"></script>
+   @* <script src="~/js/contabilidad/controllers/cuentaPorPagarCtrl.min.js" asp-append-version="true"></script>*@
+    <script src="~/js/contabilidad/components/cuenta-por-pagar.component.min.js" asp-append-version="true"></script>
 }

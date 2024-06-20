@@ -93,6 +93,7 @@
 
                 if ($scope.tipo > 0) {  
                     codEstado = 8; 
+                    checkBoxDate = false;
                 } 
 
 
