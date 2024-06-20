@@ -43,7 +43,8 @@ export class EstablishmentPageComponent {
   establishments: EstablishmentRead[] = [];
   puntosEmision: PuntoEmisionRead[] = []
 
-  fileError: { type: string, size?: number } | null = null;
+  fileError:any  = null
+
 
   dataSeach = {
     pageIndex: 1,
@@ -60,7 +61,7 @@ export class EstablishmentPageComponent {
       this.selectedFile = input.files[0];
 
       // Validate file size
-      if (this.selectedFile.size > (1*1024 * 1024)) {
+      if (this.selectedFile.size > (1024 * 1024)) {
         this.fileError = { type: 'size', size: this.selectedFile.size };
       } else if (!this.selectedFile.type.startsWith('image/')) {
         this.fileError = { type: 'type' };

@@ -24,6 +24,7 @@ interface MenuNode {
   subMenuId?: number
   enabled?: boolean
   codeAction?:string
+  unique?:string
 }
 
 interface MenuFlatNode {
@@ -35,6 +36,8 @@ interface MenuFlatNode {
   subMenuId?: number
   enabled?: boolean
   codeAction?:string
+  unique?:string
+
 }
 
 
@@ -77,7 +80,8 @@ export class UserCustomerRoleAccessComponent {
       checked: node.checked,
       codeAction: node.codeAction,
       subMenuId: node.subMenuId,
-      enabled:node.enabled
+      enabled:node.enabled,
+      unique: node.unique
     };
   };
 
@@ -297,15 +301,25 @@ export class UserCustomerRoleAccessComponent {
 
   onSave(){
     const checklistSelection = this.checklistSelection.selected;
-    const filteredCheckedsLevel3 = checklistSelection.filter(ck=>ck.level===3).reduce((acc:any, curr:any)=>{
-      let existingNode  = acc.find((m:any)=>m.subMenuId===curr.subMenuId);
+
+    console.log(this.checklistSelection.selected)
+
+
+    const filteredCheckedsLevel2 = this.treeControl.dataNodes.filter(ck=>ck.level===2);//Nivel submenus
+    const filteredCheckedsLevel3 = checklistSelection.filter(ck=>ck.level===3);//Nivel acciones
+
+    const mergeDuplicateLevel3 = filteredCheckedsLevel3.reduce((acc:any, curr:any)=>{
+
+      let subMenuId = filteredCheckedsLevel2.find(l2=>l2.unique===curr.unique)?.subMenuId
+      console.log(subMenuId)
+      let existingNode  = acc.find((m:any)=>m.subMenuId===subMenuId);
       let action = this.actions.find(a=>a.codeAction===curr.codeAction)
       let {codeAction, ...restAction} =action;
 
       if(!existingNode ){
 
         acc.push({
-          subMenuId: curr.subMenuId,
+          subMenuId,
           actions: [{...restAction, code: codeAction}]
         })
       }else{
@@ -316,7 +330,10 @@ export class UserCustomerRoleAccessComponent {
 
       return acc;
 
-    }, []).map((acc:any)=>({
+    }, [])
+    console.log(mergeDuplicateLevel3)
+
+    let mappedLevel3 = mergeDuplicateLevel3.map((acc:any)=>({
       subMenuId: acc.subMenuId,
       actions: JSON.stringify(acc.actions)
     }))
@@ -331,7 +348,7 @@ export class UserCustomerRoleAccessComponent {
 
 
 
-    if (filteredCheckedsLevel3.some((s:any) => (s.actions?.length === 0))) {
+    if (mappedLevel3.some((s:any) => (s.actions?.length === 0))) {
       this.tS.toastr({
         type: 'warning',
         message: '¡Agregue al menos una acción de todos los submenús seleccionados!'
@@ -352,7 +369,7 @@ export class UserCustomerRoleAccessComponent {
 
 
           let data =   {
-            accesses: JSON.stringify(filteredCheckedsLevel3)
+            accesses: JSON.stringify(mappedLevel3)
           }
 
 
