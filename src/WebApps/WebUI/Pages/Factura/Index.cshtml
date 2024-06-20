@@ -209,100 +209,95 @@
                                 ng-class="item.style">
                                 <td md-cell>
                                     <div class="d-flex">
-                                    <md-menu>
-                                        <md-button aria-label="Open demo menu" class="md-icon-button"
-                                            ng-click="$mdMenu.open($event)">
-                                            <i class="mdi mdi-menu"></i>
-                                        </md-button>
-                                        <md-menu-content class="md-dense">
-                                            <md-menu-item>
-                                                <md-button ng-click="openModalDetalle(item)">
-                                                    <span md-menu-align-target>
-                                                        <i class="ti-menu"></i>
-                                                        Detalle
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                        <md-menu>
+                                            <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                ng-click="$mdMenu.open($event)">
+                                                <i class="mdi mdi-menu"></i>
+                                            </md-button>
+                                            <md-menu-content class="md-dense">
+                                                <md-menu-item>
+                                                    <md-button ng-click="openModalDetalle(item)">
+                                                        <span md-menu-align-target>
+                                                            <i class="ti-menu"></i>
+                                                            Detalle
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.editar">
-                                                <md-button ng-click="openModalInvoiceEdit(item)"
-                                                    ng-disabled="item.disabledActionUpdate">
-                                                    <span md-menu-align-target>
-                                                        <i class="ti-pencil"></i>
-                                                        Editar
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item ng-if="accion.editar">
+                                                    <md-button ng-click="openModalInvoiceEdit(item)"
+                                                        ng-disabled="item.disabledActionUpdate">
+                                                        <span md-menu-align-target>
+                                                            <i class="ti-pencil"></i>
+                                                            Editar
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.crear">
-                                                <md-button ng-click="openModalInvoiceDuplicate(item)">
-                                                    <span md-menu-align-target>
-                                                        <i class="ti-files"></i>
-                                                        Duplicar
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item ng-if="accion.crear">
+                                                    <md-button ng-click="openModalInvoiceDuplicate(item)">
+                                                        <span md-menu-align-target>
+                                                            <i class="ti-files"></i>
+                                                            Duplicar
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.anular">
-                                                <md-button ng-click="askToDelete(item)"
-                                                    ng-disabled="item.disabledActionAnular">
-                                                    <span md-menu-align-target>
-                                                        <i class="ti-na"></i>
-                                                        Anular
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item ng-if="accion.anular">
+                                                    <md-button ng-click="askToDelete(item)"
+                                                        ng-disabled="item.disabledActionAnular">
+                                                        <span md-menu-align-target>
+                                                            <i class="ti-na"></i>
+                                                            Anular
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.cobroPago && item.enabledActionCobro">
-                                                <md-button ng-click="opcionCobro(item)">
-                                                    <span md-menu-align-target>
-                                                        <i class=" fas fa-hand-holding-usd"></i>
-                                                        Cobro
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item ng-if="accion.cobroPago && item.enabledActionCobro">
+                                                    <md-button ng-click="opcionCobro(item)">
+                                                        <span md-menu-align-target>
+                                                            <i class=" fas fa-hand-holding-usd"></i>
+                                                            Cobro
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.cuota && item.enabledActionCuota">
-                                                <md-button ng-click="openModalCuota(item)">
-                                                    <span md-menu-align-target>
-                                                        <i class=" fas fa-hand-holding-usd"></i>
-                                                        Cuotas
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item ng-if="accion.cuota && item.enabledActionCuota">
+                                                    <md-button ng-click="openModalCuota(item)">
+                                                        <span md-menu-align-target>
+                                                            <i class=" fas fa-hand-holding-usd"></i>
+                                                            Cuotas
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.historialFinanciero && item.enabledActionHC">
-                                                <md-button btn-historial-cobro params="item" on-result="refresh()">
-                                                    <span md-menu-align-target>
-                                                        <i class=" fas fa-tasks"></i>
-                                                        Hist. Mov.
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item ng-if="accion.historialFinanciero && item.enabledActionHC">
+                                                    <md-button btn-historial-cobro params="item" on-result="refresh()">
+                                                        <span md-menu-align-target>
+                                                            <i class=" fas fa-tasks"></i>
+                                                            Hist. Mov.
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
+ 
 
-                                            <md-menu-item ng-if="accion.reporte">
-                                                <md-button ng-click="getReport(item)">
-                                                    <span md-menu-align-target>
-                                                        <i class="fa fa-file-pdf fa-xs"></i>
-                                                        PDF
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item> 
-
-                                            <md-menu-item>
-                                                <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
-                                                    btn-send-to-whats-app params="item" has-permission="hasPermissions"
-                                                    type-send="typeSend">
-                                                    <span md-menu-align-target>
-                                                        <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
-                                        </md-menu-content>
-                                    </md-menu>
-                                    <button type="button " class="btn btn-secondary btn-sm m-r-10 m-b-5 m-t-5" ng-click="print(item)">
-                                        <i class="fas fa-print"></i>
-                                    </button>
+                                                <md-menu-item>
+                                                    <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
+                                                        btn-send-to-whats-app params="item" has-permission="hasPermissions"
+                                                        type-send="typeSend">
+                                                        <span md-menu-align-target>
+                                                            <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
+                                            </md-menu-content>
+                                        </md-menu>
+                                        <button type="button " class="btn btn-secondary btn-sm m-r-10 m-b-5 m-t-5" ng-click="print(item)">
+                                            <i class="fas fa-print"></i>
+                                        </button>
+                                        <button type="button" ng-if="accion.reporte" class="btn btn-secondary btn-sm m-r-10 m-b-5 m-t-5" ng-click="getReport(item)">
+                                            <i class="fa fa-file-pdf fa-xs"></i> 
+                                        </button>
                                     </div>
                                 </td>
                                 <td md-cell>{{item.nroFactura}}</td>

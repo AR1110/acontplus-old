@@ -1930,4 +1930,48 @@
     }])
 
 
+
+    /***
+     * @description Modal para generar reporte, solicitar credito 
+     * 
+     */
+    app.directive('btnGestionFinancieraPersonal', function (modalService, nombreModalContabilidad) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                onResult: '&'
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+                    let fileCtrl = nombreModalContabilidad.COMPONENTS.fileGestionFinancieraPersonal;
+                    let ctrl = nombreModalContabilidad.COMPONENTS.controllers["MGFP"];
+                    let template = nombreModalContabilidad.COMPONENTS.templates['MGFP'];
+                    let controller = (await import(fileCtrl))[ctrl];
+
+                    let modalRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'xl',
+                        params: {
+                            idComprobanteIngreso: scope.params.idComprobanteIngreso,
+                            idCuentaPorCobrar: scope.params.idCuentaPorCobrar,
+
+                        },
+                        isRenderRazorPartial: true
+                    })
+
+                    modalRef.result.then(result => {
+                        if (result && typeof result === 'object' && typeof scope.onResult === 'function') {
+                            scope.onResult(result)
+                        }
+                    })
+
+                })
+            }
+        }
+    })
+
+
+
 })(window.angular)
