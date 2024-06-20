@@ -22,10 +22,7 @@ GO
 -- Description:	SP para actualizar el tiempo de credito de la cuenta x pagar esa solo se podre editar al estar pendiente
 -- Contabilidad.CuotaPorPagar
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.CuentaPorPagar_Insert', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.CuentaPorPagar_Insert
-GO
-CREATE PROCEDURE Contabilidad.CuentaPorPagar_Insert  @idUsuarioRol INT,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorPagar_Insert  @idUsuarioRol INT,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

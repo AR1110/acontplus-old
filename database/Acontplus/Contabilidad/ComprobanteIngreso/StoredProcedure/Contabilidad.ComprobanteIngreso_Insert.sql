@@ -19,23 +19,20 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
     --> GLOBAL
-	DECLARE @idUsuario INT,@idEntidad INT,@idFactura INT ,@payload VARCHAR(MAX) ,@idTipoDocumento INT
+	DECLARE @idUsuario INT,@idEntidad INT ,@payload VARCHAR(MAX) 
 
     --> Data Json
 	DECLARE @comprobante NVARCHAR(MAX) ,@cobros NVARCHAR(MAX) ,@cobroDetalle NVARCHAR(MAX) ,@historial NVARCHAR(MAX)
 
     --> Comprobante
 	DECLARE @idComprobanteIngreso INT ,@codEstab VARCHAR(50) ,@secuencial INT ,@idCaja INT ,@idControlCaja INT ,@idCuotaPorCobrar INT ,@idCuentaPorCobrar INT
-           ,@idTipoPersona INT
+           ,@idEstablecimiento INT ,@idCliente INT, @CustomerId INT
 
 	DECLARE @documento AS TABLE(
 		 idCliente INT NOT NULL
 		,total NUMERIC(18,5) NOT NULL
 		,abono NUMERIC(18,5) NOT NULL
 		,codEstab VARCHAR(20) NOT NULL
-		,codTipoPersona VARCHAR(5) DEFAULT 'CL' 
-		,nroIdentificacion VARCHAR(20) NOT NULL
-		,nombreFiscal VARCHAR(180) NOT NULL
         ,observacion VARCHAR(300) NULL
 	)
 
@@ -93,23 +90,20 @@ BEGIN
 		) as dt 
 
         INSERT INTO @documento
-              (idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal,observacion)
-		SELECT idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal,observacion
+              (idCliente,total,abono,codEstab,observacion)
+		SELECT idCliente,total,abono,codEstab,observacion
 		FROM OPENJSON(@comprobante) WITH 
         (
              idCliente         INT          
 		    ,total             NUMERIC(18,5) 
 		    ,abono             NUMERIC(18,5) 
 		    ,codEstab          VARCHAR(20) 
-		    ,nroIdentificacion VARCHAR(20)  '$.numeroIdentificacion'
-		    ,nombreFiscal      VARCHAR(200)
             ,observacion       VARCHAR(300)
 		)
 		
 		INSERT INTO @payment
 			  (idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial,cobro,infoCobro,abono,controlCaja)
-		SELECT idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial
-              ,IIF(posfechado = 1,0,1),infoCobro,abono,controlCaja
+		SELECT idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial,cobro,infoCobro,abono,controlCaja
 		FROM OPENJSON(@cobros)WITH 
         (     
              idSubEntidadFinanciera INT 
@@ -131,7 +125,6 @@ BEGIN
 
 		INSERT INTO @paymentDetail
               (idCuotaPorCobrar,saldo,abono,interes,diasMora,mora,secuencial)
-
 	    SELECT idCuotaPorCobrar,saldo,abono,interes,diasMora,mora,secuencial 
         FROM OPENJSON(@cobroDetalle) WITH 
         (                          
@@ -162,13 +155,13 @@ BEGIN
 
 		--======================================Obteniendo variables ============================================================
 
-		SELECT @codEstab = codEstab FROM @documento 
+		SELECT TOP 1 @codEstab = codEstab ,@idCliente = idCliente FROM @documento 
 
-        SELECT TOP 1 @idTipoPersona =  idTipoPersona FROM TipoPersona WITH (NOLOCK) WHERE codigo = 'CL'
+        SELECT TOP 1 @idEstablecimiento = idEstablecimiento FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
-		SELECT @secuencial = COUNT(*)+1 FROM dbo.ComprobanteIngreso WITH(NOLOCK) WHERE codEstab = @codEstab
+        SELECT TOP 1 @CustomerId = ISNULL(CustomerId,0) FROM dbo.Cliente WITH (NOLOCK) WHERE idCliente = @idCliente
 
-		SELECT TOP 1 @idTipoDocumento = td.idTipoDocumento FROM TipoDocumento td WITH (NOLOCK) WHERE td.codigo = 'CI'
+		SELECT @secuencial = COUNT(*)+1 FROM dbo.ComprobanteIngreso WITH(NOLOCK) WHERE idEstablecimiento = @idEstablecimiento
 
 		SELECT TOP 1 @idCaja =  idCaja FROM AsignacionCaja WITH (NOLOCK) WHERE idUsuario = @idUsuario AND idEntidad = @idEntidad
 
@@ -206,7 +199,7 @@ BEGIN
 				RETURN
 			END 
 
-		IF EXISTS (SELECT 1 FROM dbo.ComprobanteIngreso WHERE codEstab = @codEstab AND nroDocumento = @secuencial)
+		IF EXISTS (SELECT 1 FROM dbo.ComprobanteIngreso WHERE idEstablecimiento = @idEstablecimiento AND nroDocumento = @secuencial)
 			BEGIN
 				SELECT '0' code,'Este secuencial ya se encuentra registrado' as 'message'
 				RETURN
@@ -226,8 +219,8 @@ BEGIN
 
 		BEGIN TRAN 
 			INSERT INTO dbo.ComprobanteIngreso WITH(ROWLOCK)
-				   (idTipoDocumento,idPersona,idTipoPersona,total,abono,nroDocumento,idUsuario,idEntidad,codEstab,fechaRegistro,idControlCaja,codTipoPersona,nroIdentificacion,nombreFiscal,observacion)
-		    SELECT @idTipoDocumento,idCliente,@idTipoPersona,total,abono,@secuencial,@idUsuario,@idEntidad,codEstab,dbo.ufnGetDateEcuador(),@idControlCaja,codTipoPersona,nroIdentificacion,nombreFiscal,observacion
+				   (CustomerId,total,abono,observacion,nroDocumento,idUsuario,idEntidad,fechaRegistro,idControlCaja,idEstablecimiento)
+		    SELECT @CustomerId,total,abono,observacion,@secuencial,@idUsuario,@idEntidad,dbo.ufnGetDateEcuador(),@idControlCaja,@idEstablecimiento
 			FROM @documento
 
 			SET @idComprobanteIngreso = @@IDENTITY 

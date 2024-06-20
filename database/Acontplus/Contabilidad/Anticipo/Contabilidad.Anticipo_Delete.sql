@@ -16,14 +16,14 @@ BEGIN
     DECLARE @idUsuario INT
 
     --> Movimiento Caja 
-    DECLARE @idTipoDocumento INT ,@codDoc VARCHAR(10) ,@idComprobante INT
+    DECLARE @idTipoDocumento INT ,@idComprobanteIngreso INT ,@idControlCaja INT
 
     BEGIN TRY 
         
         --> Recuperando Variables
-        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.Anticipo WITH (NOLOCK) WHERE idAnticipo = @id
+        SELECT TOP 1 @idComprobanteIngreso = idComprobanteIngreso FROM dbo.MovimientoCaja WITH (NOLOCK) WHERE idMovimientoCaja = @id 
 
-        SELECT TOP 1 @idComprobante = idComprobanteIngreso FROM dbo.CobroDocumento WITH (NOLOCK) WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
+        SELECT TOP 1 @idControlCaja = idControlCaja FROM dbo.ComprobanteIngreso WITH (NOLOCK) WHERE idComprobanteIngreso = @idComprobanteIngreso
 
         --> Validacion de Informacion
         IF EXISTS (SELECT 1 FROM dbo.Anticipo WITH (NOLOCK) WHERE idAnticipo = @id AND estado = 0)
@@ -32,10 +32,16 @@ BEGIN
                 RETURN 
             END
 
+        IF EXISTS (SELECT 1 FROM ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja AND estado = 0)
+            BEGIN 
+                SELECT '0' as code,'El control de caja se encuentra cerrado no puede ser anulado el comproabnte' as 'message'
+				RETURN
+            END
+
         BEGIN TRAN 
             UPDATE dbo.Anticipo WITH (ROWLOCK) SET estado = 0 WHERE idAnticipo = @id
 
-            UPDATE dbo.ComprobanteIngreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteIngreso = @idComprobante 
+            UPDATE dbo.ComprobanteIngreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteIngreso = @idComprobanteIngreso 
         COMMIT TRAN 
         SELECT Common.ufnSpResponse('1', 'Anulado Correctamente',  DEFAULT)
     END TRY 
