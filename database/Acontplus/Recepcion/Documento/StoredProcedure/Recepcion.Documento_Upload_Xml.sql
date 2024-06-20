@@ -219,7 +219,7 @@ BEGIN
 							   (idDocumento,idEstablecimiento, idProveedor, idEstadoPago,codDoc,uniqueId,serieComprobante,
                                fechaEmision,importeTotal,idEntidad,idUsuario, subcategoryId)
 						SELECT @idDocumento,idEstablecimiento,@idProveedor,@idEstadoPago,codDoc,claveAcceso,serieComprobante,
-                        CONVERT (date, fechaEmision, 103),ISNULL(importeTotal,0),@idEntidad,dr.idUsuario, @subcategoryId
+                        CONVERT (date, fechaEmision, 103),importeTotal,@idEntidad,dr.idUsuario, @subcategoryId
 						FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
 						WHERE dr.idDocumento = @idDocumento 
                           AND dr.codDoc IN ('01','04')

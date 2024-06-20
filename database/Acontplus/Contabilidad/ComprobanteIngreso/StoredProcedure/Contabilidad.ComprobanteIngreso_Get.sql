@@ -27,145 +27,118 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	
-	DECLARE @codEstab VARCHAR(50)			 
-	DECLARE @checkBoxPersona  BIT
-	DECLARE @checkBoxEstado BIT 
-	DECLARE @checkBoxDocumento BIT
-	DECLARE @checkBoxUsuario BIT
-	DECLARE @fechaInicio DATETIME 
-	DECLARE @fechaFin DATETIME
-	DECLARE @nroIdentificacion NVARCHAR(100)
-	DECLARE @byUsuarioSearch INT
-	DECLARE @idTipoDocumento INT
-	DECLARE @byComprobante INT
-	DECLARE @byEstado INT 
-	DECLARE @codTipoDoc CHAR(2)
-	DECLARE @nroSecuencialTipoDoc VARCHAR(13)
-	DECLARE @isSearchNroDoc BIT 
-	DECLARE @nroSecuencialDoc VARCHAR(13)
-	DECLARE @isViewOtherDocs BIT 
-	DECLARE @tipo AS INT 
-	DECLARE @idEntidad AS INT
-	DECLARE @idUsuario AS INT
-	DECLARE @idComprobanteIngreso AS INT 
-	DECLARE @idCuentaPorCobrar INT
-	DECLARE @codDoc AS VARCHAR(5)
-	DECLARE @params NVARCHAR(MAX)
-	DECLARE @sql NVARCHAR(MAX)
+    SET LANGUAGE SPANISH;
 
-	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
+    --> Global
+    DECLARE @tipo INT ,@idEntidad INT
+
+    --> Sql
+	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
+	
+    -->Filters
+	DECLARE @codEstab VARCHAR(50)
+	       ,@fechaInicio DATETIME2 
+	       ,@fechaFin DATETIME2
+	       ,@nroIdentificacion NVARCHAR(100)
+	       ,@byEstado INT 
+	       ,@nroSecuencialDoc VARCHAR(13)
+	       ,@idUsuario INT
+	       ,@idComprobanteIngreso INT 
+	       ,@idCuentaPorCobrar INT
+	       ,@codDoc VARCHAR(5)
+
+	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT )
 
 	SELECT TOP 1 @idUsuario = idUsuario , @idEntidad = idEntidad FROM v_Usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-	-- ====================== Lista Principal de Comprobantes de Ingreso ===============================================
+	--> Get 
 	IF @tipo = 1
 		BEGIN
 
 			SET @params = '@idEntidad         INT
-						  ,@fechaI            DATETIME
-						  ,@fechaF            DATETIME
+						  ,@fechaI            DATETIME2
+						  ,@fechaF            DATETIME2
 						  ,@nroIdentificacion NVARCHAR(100)
-						  ,@idTipoDocumento   INT
-						  ,@idComprobante     INT
 						  ,@estado            INT
 						  ,@idUsuario         INT
-						  ,@byUsuarioSearch	  INT
 						  ,@codEstab          VARCHAR(50)
-						  ,@nroSecuencialTipoDoc VARCHAR(13)
 						  ,@nroSecuencialDoc  VARCHAR(13)'
 
-			SET @sql = 'SELECT TOP 50
-							 idComprobanteIngreso = ci.idComprobanteIngreso
-							,idDocumento          = ci.idComprobanteIngreso
-							,s.codEstab
-							,total                = ci.total
-							,fechaRegistro        = FORMAT(ci.fechaRegistro,''dd/MM/yyyy'')
-							,abono                = ci.abono
-							,cambio               = ci.cambio
-							,nroDoc               = td.codigo+ ''-'' + s.estab + ''-'' +Helper.F_Auto_Sequential(ci.nroDocumento)
-							,cliente              = ci.nombreFiscal
-							,nroIdentificacion    = ci.nroIdentificacion  
-							,caja                 =''Ninguna''
-							,style                = CASE WHEN ci.estado = 0 THEN ''table-danger'' ELSE ''''       END 
-							,estado               = CASE WHEN ci.estado = 0 THEN ''Anulado''      ELSE ''Activo'' END 
-							,usuario              = u.nombreUsuario
-					FROM dbo.ComprobanteIngreso   ci WITH (NOLOCK) 
-					INNER JOIN Sri.Establecimiento s WITH (NOLOCK) ON s.codEstab         = ci.codEstab
-					INNER JOIN dbo.TipoDocumento  td WITH (NOLOCK) ON td.idTipoDocumento = ci.idTipoDocumento
-					INNER JOIN dbo.Usuario         u WITH (NOLOCK) ON u.idUsuario        = ci.idUsuario
-					WHERE ci.idEntidad = @idEntidad AND s.codEstab = @codEstab '
+			SET @sql = 'SELECT TOP 50 ci.idComprobanteIngreso
+							         ,ci.idComprobanteIngreso												       as idDocumento
+							         ,es.codEstab
+							         ,ci.total
+							         ,FORMAT(ci.fechaRegistro,''dd/MM/yyyy'')								       as fechaRegistro
+							         ,ci.abono
+							         ,ci.cambio
+							         ,''CI'' + ''-'' + es.estab + ''-'' +Helper.F_Auto_Sequential(ci.nroDocumento) as nroDoc
+							         ,cu.IDCard															           as nroIdentificacion
+							         ,cu.BusinessName													           as cliente
+							         ,''Ninguna''															       as caja
+							         ,CASE WHEN ci.estado = 0 THEN ''table-danger'' ELSE '''' END				   as style
+							         ,CASE WHEN ci.estado = 0 THEN ''Anulado''      ELSE ''Activo'' END			   as estado
+							         ,us.nombreUsuario														       as usuario
+					FROM dbo.ComprobanteIngreso    ci WITH (NOLOCK) 
+					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = ci.idEstablecimiento
+					INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = ci.idUsuario
+					INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.id                = ci.CustomerId
+                    WHERE ci.idEntidad = @idEntidad '
 
-			SELECT 
-				 @checkBoxDocumento    = checkBoxDocumento
-				,@checkBoxEstado       = checkBoxEstado 
-				,@checkBoxPersona      = checkBoxPersona
-				,@checkBoxUsuario      = checkBoxUsuario
-				,@byUsuarioSearch      = byUsuario
-				,@nroIdentificacion    = nroIdentificacion
-				,@codEstab             = codEstab
-				,@byEstado             = byEstado
-				,@fechaInicio          = CONVERT(DATETIME, fechaInicio, 121)
-				,@fechaFin             = CONVERT(DATETIME, fechaFin, 121)
-				,@codTipoDoc           = codTipoDoc
-				,@nroSecuencialTipoDoc = LTRIM(TRIM(nroSecuencialTipoDoc))
-				,@isSearchNroDoc       = isSearchNroDoc
-				,@nroSecuencialDoc     = LTRIM(TRIM(nroSecuencialDoc))
-			FROM OPENJSON(@json)
-			WITH ( 
-				  checkBoxPersona   BIT           '$.checkBoxPersona'
-				 ,checkBoxEstado    BIT           '$.checkBoxEstado'
-				 ,checkBoxDocumento BIT           '$.checkBoxDocumento'
-				 ,checkBoxUsuario   BIT           '$.checkBoxUsuario'
-				 ,fechaInicio       VARCHAR(60)   '$.fechaInicio'
-				 ,fechaFin          VARCHAR(60)   '$.fechaFin'
-				 ,nroIdentificacion NVARCHAR(100) '$.nroIdentificacion'
-				 ,codEstab          VARCHAR(100)  '$.codEstab'
-				 ,byUsuario         INT           '$.byUsuario'
-				 ,byEstado          INT           '$.byEstado'
-				 ,codTipoDoc        CHAR(2)       '$.codTipoDoc'
-				 ,nroSecuencialTipoDoc VARCHAR(13) '$.nroSecuencialTipoDoc'
-				 ,isSearchNroDoc    BIT            '$.isSearchNroDoc'
-				 ,nroSecuencialDoc  VARCHAR(13)    '$.nroSecuencialDoc'
-				 )
+			SELECT @idUsuario         = byUsuario
+				  ,@nroIdentificacion = nroIdentificacion
+				  ,@codEstab          = codEstab
+				  ,@byEstado          = byEstado
+				  ,@fechaInicio       = fechaInicio
+				  ,@fechaFin          = fechaFin
+				  ,@nroSecuencialDoc  = LTRIM(TRIM(nroSecuencialDoc))
+			FROM OPENJSON(@json)WITH
+            (
+                
+                 fechaInicio       DATETIME2
+                ,fechaFin          DATETIME2
+                ,nroIdentificacion NVARCHAR(100)
+                ,codEstab          VARCHAR(100)
+                ,byUsuario         INT
+                ,byEstado          INT
+                ,nroSecuencialDoc  VARCHAR(13)
+			)
 
-            SELECT TOP 1 @isViewOtherDocs =viewOthersDocs FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @idUsuarioRol
+            IF EXISTS (SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @idUsuarioRol AND viewOthersDocs = 0) 
+				BEGIN
+                    SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+				END
 
-			----SELECT @isViewOtherDocs = JSON_VALUE(jsonPermission, '$.additional.viewOthersDocs.view') FROM Config.UserPermission WITH (NOLOCK) WHERE codModule ='V' AND idUsuarioRol = @idUsuarioRol
-		
-			IF @isSearchNroDoc = 1
+            IF @codEstab IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND es.codEstab = @codEstab '
+                END 
+
+	        IF @byEstado IN (1,0)
+			    BEGIN
+				    SET @sql = @sql + 'AND ci.estado = @estado '
+			    END 		 
+			
+			IF @nroIdentificacion IS NOT NULL
+				BEGIN
+					SET @sql = @sql + 'AND ci.nroIdentificacion = @nroIdentificacion '
+				END 
+
+			IF @nroSecuencialDoc > 0
 				BEGIN
 					SET @sql = @sql + ' AND ci.nroDocumento = @nroSecuencialDoc '
-				END  
+				END 
 			ELSE 
 				BEGIN
-					SET @sql = @sql+'AND CAST(ci.fechaRegistro as date) BETWEEN CAST(@fechaI as date) AND CAST(@fechaF as date) '
+					SET @sql = @sql + 'AND CAST(ci.fechaRegistro as date) BETWEEN CAST(@fechaI as date) AND CAST(@fechaF as date) '
 
-					IF @checkBoxEstado = 1
-						BEGIN
-							SET @sql = @sql+'AND ci.estado = @estado '
-						END 		 
-			
-					IF @checkBoxPersona = 1
-						BEGIN
-							SET @sql = @sql + ' AND ci.nroIdentificacion = @nroIdentificacion '
-						END 
 				END
 
-			--Por defecto le va a listar los comrprobantes que hizo el usuario y esta logueado 
-			IF @isViewOtherDocs = 0
+			IF @idUsuario > 0 
 				BEGIN
-					SET @sql = @sql + ' AND ci.idUsuario = @idUsuario '
-				END
-			ELSE
-				BEGIN 
-					IF @checkBoxUsuario = 1 
-						BEGIN
-							SET @sql = @sql + ' AND ci.idUsuario = @byUsuarioSearch '
-						END 
+					SET @sql = @sql + 'AND ci.idUsuario = @byUsuarioSearch '
 				END 		
 
-			SET @sql = @sql + ' ORDER BY ci.nroDocumento DESC'
+			SET @sql = @sql + 'ORDER BY ci.nroDocumento DESC '
 		 
 			EXEC sp_executesql  @sql
 					           ,@params
@@ -175,30 +148,27 @@ BEGIN
 					           ,@fechaF               = @fechaFin
 					           ,@nroIdentificacion    = @nroIdentificacion
 					           ,@idUsuario            = @idUsuario
-					           ,@byUsuarioSearch      = @byUsuarioSearch
 					           ,@estado               = @byEstado
-					           ,@idTipoDocumento      = @idTipoDocumento
-					           ,@idComprobante        = @byComprobante
-							   ,@nroSecuencialTipoDoc = @nroSecuencialTipoDoc
 							   ,@nroSecuencialDoc     = @nroSecuencialDoc
 			RETURN 
 		END 
 
-	-- ====================== Historial para mostrar los detalles del comprobante de ingreso ===========================
+	--> Historial para mostrar los detalles del comprobante de ingreso 
 	IF @tipo = 2
 		BEGIN
 			SELECT @idComprobanteIngreso = idComprobanteIngreso FROM OPENJSON(@json) WITH (idComprobanteIngreso INT '$.idComprobanteIngreso')
 
 			SELECT ci.idComprobanteIngreso
-			      ,numeroIdentificacion = ci.nroIdentificacion
-				  ,ci.nombreFiscal
-				  ,serieComprobante     = 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento) 
-				  ,fechaEmision         = FORMAT(ci.fechaRegistro,'dd/MM/yyyy')
+				  ,'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento) as serieComprobante
+				  ,FORMAT(ci.fechaRegistro,'dd/MM/yyyy')                                   as fechaEmision
 				  ,ci.total
 				  ,ci.abono
 				  ,ci.cambio
+                  ,cu.IDCard                                                               as numeroIdentificacion
+				  ,cu.BusinessName                                                         as nombreFiscal
 			FROM dbo.ComprobanteIngreso    ci WITH (NOLOCK) 
-			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = ci.codEstab
+			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = ci.idEstablecimiento
+            INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.id                = ci.CustomerId
 			WHERE ci.idComprobanteIngreso = @idComprobanteIngreso
 
 			SELECT co.idCobro
@@ -237,7 +207,7 @@ BEGIN
 			RETURN 
 		END
 
-	-- ====================== Historial para mostrar los comprobantes de ingreso por Documento =========================
+	--> Historial para mostrar los comprobantes de ingreso por Documento
 	IF @tipo = 3
 		BEGIN
 			SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT)
@@ -270,7 +240,7 @@ BEGIN
 
                    )                                                                       as cantDocs
 			FROM dbo.ComprobanteIngreso     ci WITH (NOLOCK)
-			INNER JOIN Sri.Establecimiento  es WITH (NOLOCK) ON es.codEstab = ci.codEstab
+			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = ci.idEstablecimiento
 			WHERE ci.idComprobanteIngreso IN (SELECT hc.idComprobanteIngreso FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar)
               AND ci.estado = 1
 
@@ -313,7 +283,7 @@ BEGIN
 			RETURN 
 		END 
 
-    ---------- DATOS AUXILIARES PARA FILTROS -------
+    --> Filtros
     IF @tipo = 4
         BEGIN
             SELECT idEstablecimiento

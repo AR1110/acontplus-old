@@ -15,40 +15,55 @@ BEGIN
     --> Global
     DECLARE @idUsuario INT
 
-    --> Movimiento Caja 
-    DECLARE @idTipoDocumento INT ,@codDoc VARCHAR(10) ,@idComprobante INT
+    --> ComprobanteIngreso 
+    DECLARE @idComprobanteIngreso INT
+
+    --> ComprobanteEgreso 
+    DECLARE @idComprobanteEgreso INT
+
+    --> ControlCaja
+    DECLARE @idControlCaja INT
 
     BEGIN TRY 
         
         --> Recuperando Variables
-        SELECT TOP 1 @idTipoDocumento = td.idTipoDocumento
-                    ,@codDoc          = td.codigo
-        FROM dbo.MovimientoCaja      mc WITH (NOLOCK)
-        INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = mc.idTipoDocumento
-        WHERE mc.idMovimientoCaja = @id
+        SELECT TOP 1 @idComprobanteIngreso = idComprobanteIngreso ,@idComprobanteEgreso = idComprobanteEgreso FROM dbo.MovimientoCaja WITH (NOLOCK) WHERE idMovimientoCaja = @id
 
+        IF @idComprobanteIngreso > 0
+            BEGIN
+                SELECT TOP 1 @idControlCaja = idControlCaja FROM dbo.ComprobanteIngreso WITH (NOLOCK) WHERE idComprobanteIngreso = @idComprobanteIngreso
+            END 
+        
+        IF @idComprobanteEgreso > 0
+            BEGIN
+                SELECT TOP 1 @idControlCaja = idControlCaja FROM dbo.ComprobanteEgreso WITH (NOLOCK) WHERE idComprobanteEgreso = @idComprobanteEgreso
+            END 
+
+        --> Validaciones
         IF EXISTS (SELECT 1 FROM dbo.MovimientoCaja WITH (NOLOCK) WHERE idMovimientoCaja = @id AND estado = 0)
             BEGIN
                 SELECT Common.ufnSpResponse('0', 'Este Comprobante ya se encuentra anulado',  DEFAULT)	
                 RETURN 
             END
 
+        IF EXISTS (SELECT 1 FROM ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja AND estado = 0)
+            BEGIN 
+                SELECT '0' as code,'El control de caja se encuentra cerrado no puede ser anulado el comproabnte' as 'message'
+				RETURN
+            END
+
         BEGIN TRAN 
             
             UPDATE dbo.MovimientoCaja WITH (ROWLOCK) SET estado = 0 WHERE idMovimientoCaja = @id
 
-            IF @codDoc = 'IC'
+            IF @idComprobanteIngreso > 0
                 BEGIN
-                    SELECT TOP 1 @idComprobante = idComprobanteIngreso FROM dbo.CobroDocumento WITH (NOLOCK) WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
-
-                    UPDATE dbo.ComprobanteIngreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteIngreso = @idComprobante
+                    UPDATE dbo.ComprobanteIngreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteIngreso = @idComprobanteIngreso
                 END
                 
-            IF @codDoc = 'EC'
+            IF @idComprobanteEgreso > 0
                 BEGIN
-                    SELECT TOP 1 @idComprobante = idComprobanteEgreso FROM dbo.PagoDocumento WITH (NOLOCK) WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
-
-                    UPDATE dbo.ComprobanteEgreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteEgreso = @idComprobante
+                    UPDATE dbo.ComprobanteEgreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteEgreso = @idComprobanteEgreso
                 END
 
         COMMIT TRAN 
@@ -60,10 +75,12 @@ BEGIN
 		    BEGIN
 			    ROLLBACK TRAN; 
 		    END 
-        SELECT Common.ufnSpResponse('0', 'Info: Error en el procedimiento',  DEFAULT)
+        
 		INSERT INTO ErroresSistema
 		    (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'/MovimientoCaja/Delete',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+
+        SELECT Common.ufnSpResponse('0', 'Info: Error en el procedimiento',  DEFAULT)
     END CATCH
 
 END
