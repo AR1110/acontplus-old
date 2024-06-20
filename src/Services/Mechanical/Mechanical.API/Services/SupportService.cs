@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
 

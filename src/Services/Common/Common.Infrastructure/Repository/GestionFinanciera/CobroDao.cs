@@ -1,4 +1,5 @@
-﻿using Common.Core.Models.Tesoreria;
+﻿using Common.Core.Models;
+using Common.Core.Models.Tesoreria;
 using Common.Core.ViewModels.GestionFinanciera;
 
 namespace Common.Infrastructure.Repository.GestionFinanciera;

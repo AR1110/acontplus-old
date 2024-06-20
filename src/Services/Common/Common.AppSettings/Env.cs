@@ -1,4 +1,4 @@
-﻿namespace Common.Core.Enums;
+﻿namespace Common.AppSettings;
 
 public enum Env
 {

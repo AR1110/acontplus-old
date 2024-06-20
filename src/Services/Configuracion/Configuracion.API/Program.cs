@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Common.AppSettings;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());

@@ -13,6 +13,7 @@
     <PackageReference Include="Ocelot" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Services\Common\Common.AppSettings\Common.AppSettings.csproj" />
     <ProjectReference Include="..\..\Services\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
   <ItemGroup>

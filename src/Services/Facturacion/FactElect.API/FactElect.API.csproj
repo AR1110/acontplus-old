@@ -8,20 +8,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json"/>
+    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac.Extensions.DependencyInjection"/>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson"/>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Acontplus.Common.Infrastructure" />
-    <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj"/>
-    <ProjectReference Include="..\FactElect.Application\FactElect.Application.csproj"/>
-    <ProjectReference Include="..\FactElect.Core\FactElect.Core.csproj"/>
-    <ProjectReference Include="..\FactElect.Infrastructure\FactElect.Infrastructure.csproj"/>
+    <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
+    <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
+    <ProjectReference Include="..\FactElect.Application\FactElect.Application.csproj" />
+    <ProjectReference Include="..\FactElect.Core\FactElect.Core.csproj" />
+    <ProjectReference Include="..\FactElect.Infrastructure\FactElect.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

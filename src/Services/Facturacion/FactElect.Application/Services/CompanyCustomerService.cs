@@ -1,6 +1,7 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using FactElect.Core.Interfaces;
 
 namespace FactElect.Application.Services;

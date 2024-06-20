@@ -1,4 +1,5 @@
 ﻿using Autofac.Extensions.DependencyInjection;
+using Common.AppSettings;
 using Common.Core.Utils;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;

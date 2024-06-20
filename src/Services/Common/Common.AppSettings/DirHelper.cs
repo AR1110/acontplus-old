@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Common.Core.Utils;
+namespace Common.AppSettings;
 
 public static class DirHelper
 {

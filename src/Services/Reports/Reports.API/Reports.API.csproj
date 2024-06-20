@@ -191,6 +191,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
 

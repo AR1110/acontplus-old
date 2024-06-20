@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Common.AppSettings;
 using FactElect.API.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;

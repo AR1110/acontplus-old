@@ -11,6 +11,6 @@ public class StatsService : IStatsService
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync("TechnicalSupport.Stats_Get", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>("TechnicalSupport.Stats_Get", parameters);
     }
 }

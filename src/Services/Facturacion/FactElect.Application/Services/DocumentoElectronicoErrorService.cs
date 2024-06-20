@@ -1,4 +1,5 @@
 ﻿using Common.Core.Interfaces;
+using Common.Infrastructure.Repository;
 using FactElect.Core.Interfaces;
 
 namespace FactElect.Application.Services;
