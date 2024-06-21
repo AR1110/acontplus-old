@@ -3,12 +3,12 @@
 public class DeviceService : IDeviceService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IAdoRepository _repository;
+    private readonly IAdoSqlServer _adoSqlServer;
 
-    public DeviceService(IAdoRepository repository, TechnicalSupportContext context)
+    public DeviceService(IAdoSqlServer adoSqlServer, TechnicalSupportContext context)
     {
         _context = context;
-        _repository = repository;
+        _adoSqlServer = adoSqlServer;
     }
 
     public async Task<ApiResponse> AddAsync(Device device)
@@ -45,7 +45,7 @@ public class DeviceService : IDeviceService
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("TechnicalSupport.Device_Get", parameters);
+        var ds = await _adoSqlServer.GetDataSetAsync("TechnicalSupport.Device_Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
         {
             return new ApiResponse { Code = "0", Message = "No se encontraron datos" };

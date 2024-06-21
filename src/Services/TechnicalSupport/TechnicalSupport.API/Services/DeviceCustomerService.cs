@@ -1,15 +1,15 @@
 ﻿public class DeviceCustomerService : IDeviceCustomerService
 {
-    private readonly IAdoRepository _repository;
+    private readonly IAdoSqlServer _adoSqlServer;
 
-    public DeviceCustomerService(IAdoRepository repository)
+    public DeviceCustomerService(IAdoSqlServer adoSqlServer)
     {
-        _repository = repository;
+        _adoSqlServer = adoSqlServer;
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("TechnicalSupport.Device_Customer_Get", parameters);
+        var ds = await _adoSqlServer.GetDataSetAsync("TechnicalSupport.Device_Customer_Get", parameters);
         if (DataValidation.DataSetIsNull(ds))
         {
             // Handle case where no data is found

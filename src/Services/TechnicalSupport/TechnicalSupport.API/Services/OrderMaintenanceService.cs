@@ -1,17 +1,17 @@
 ﻿public class OrderMaintenanceService : IOrderMaintenanceService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IAdoRepository _repository;
+    private readonly IAdoSqlServer _adoSqlServer;
 
-    public OrderMaintenanceService(TechnicalSupportContext context, IAdoRepository repository)
+    public OrderMaintenanceService(TechnicalSupportContext context, IAdoSqlServer adoSqlServer)
     {
         _context = context;
-        _repository = repository;
+        _adoSqlServer = adoSqlServer;
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("TechnicalSupport.OrderMantenaince_Get", parameters);
+        var ds = await _adoSqlServer.GetDataSetAsync("TechnicalSupport.OrderMantenaince_Get", parameters);
 
         if (DataValidation.DataSetIsNull(ds, true))
         {
@@ -23,14 +23,14 @@
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        // Assuming _repository.SPExecuteAsync throws specific exceptions related to stored procedure execution
-        return await _repository.SpExecuteAsync<ApiResponse>("TechnicalSupport.OrderMantenaince_Insert", parameters);
+        // Assuming _adoSqlServer.SPExecuteAsync throws specific exceptions related to stored procedure execution
+        return await _adoSqlServer.SpExecuteAsync<ApiResponse>("TechnicalSupport.OrderMantenaince_Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        // Assuming _repository.SPExecuteAsync throws specific exceptions related to stored procedure execution
-        return await _repository.SpExecuteAsync<ApiResponse>("TechnicalSupport.OrderMantenaince_Update", parameters);
+        // Assuming _adoSqlServer.SPExecuteAsync throws specific exceptions related to stored procedure execution
+        return await _adoSqlServer.SpExecuteAsync<ApiResponse>("TechnicalSupport.OrderMantenaince_Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(int id)

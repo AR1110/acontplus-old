@@ -1,12 +1,12 @@
 ﻿public class SerieService : ISerieService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IAdoRepository _repository;
+    private readonly IAdoSqlServer _adoSqlServer;
 
-    public SerieService(TechnicalSupportContext context, IAdoRepository repository)
+    public SerieService(TechnicalSupportContext context, IAdoSqlServer adoSqlServer)
     {
         _context = context;
-        _repository = repository;
+        _adoSqlServer = adoSqlServer;
     }
 
     public async Task<ApiResponse> AddAsync(Serie serie)
@@ -35,7 +35,7 @@
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var dt = await _repository.GetDataTableAsync("TechnicalSupport.Serie_Get", parameters);
+        var dt = await _adoSqlServer.GetDataTableAsync("TechnicalSupport.Serie_Get", parameters);
         if (DataValidation.DataTableIsNull(dt))
         {
             return new ApiResponse { Code = "0", Message = "No data" };

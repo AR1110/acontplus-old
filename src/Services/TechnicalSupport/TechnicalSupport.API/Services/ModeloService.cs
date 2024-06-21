@@ -1,12 +1,12 @@
 ﻿public class ModeloService : IModeloService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IAdoRepository _repository;
+    private readonly IAdoSqlServer _adoSqlServer;
 
-    public ModeloService(TechnicalSupportContext context, IAdoRepository repository)
+    public ModeloService(TechnicalSupportContext context, IAdoSqlServer adoSqlServer)
     {
         _context = context;
-        _repository = repository;
+        _adoSqlServer = adoSqlServer;
     }
 
     public async Task<ApiResponse> AddAsync(Modelo modelo)
@@ -36,7 +36,7 @@
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var dt = await _repository.GetDataTableAsync("TechnicalSupport.Modelo_Get", parameters);
+        var dt = await _adoSqlServer.GetDataTableAsync("TechnicalSupport.Modelo_Get", parameters);
         if (DataValidation.DataTableIsNull(dt))
         {
             return new ApiResponse { Code = "0", Message = "No data" };

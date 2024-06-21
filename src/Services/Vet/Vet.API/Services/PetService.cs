@@ -1,6 +1,6 @@
 ﻿namespace Vet.API.Services;
 
-public class PetService(VetContext context, IAdoRepository repository) : IPetService
+public class PetService(VetContext context, IAdoSqlServer repository) : IPetService
 {
     public async Task<ApiResponse> AddAsync(Pet pet)
     {
