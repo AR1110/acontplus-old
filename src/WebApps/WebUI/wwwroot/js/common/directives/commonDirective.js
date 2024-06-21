@@ -1932,10 +1932,10 @@
 
 
     /***
-     * @description Modal para generar reporte, solicitar credito 
+     * @description Modal component cuenta por pagar
      * 
      */
-    app.directive('btnGestionFinancieraPersonal', function (modalService, nombreModalContabilidad) {
+    app.directive('btnCuentaPorPagar', ['modalService', function (modalSvc) {
         return {
             restrict: 'A',
             scope: {
@@ -1943,16 +1943,12 @@
                 onResult: '&'
             },
             link: function (scope, element) {
-                element.on('click', async function () {
-                    // let fileCtrl = nombreModalContabilidad.COMPONENTS.fileGestionFinancieraPersonal;
-                    // let ctrl = nombreModalContabilidad.COMPONENTS.controllers["MGFP"];
-                    // let template = nombreModalContabilidad.COMPONENTS.templates['MGFP'];
-                    // let controller = (await import(fileCtrl))[ctrl];
+                element.on('click', async function () { 
 
-                    let modalRef = modalService.openWithComponent({
-                        component: 'menuItem',
-                        size: 'xl'
-                         
+                    let modalRef = modalSvc.openWithComponent({
+                        component: 'appCuentaPorPagarComponent',
+                        size: 'xl',
+                        windowClass: 'uibModalFullScreen',                         
                     })
 
                     modalRef.result.then(result => {
@@ -1964,8 +1960,39 @@
                 })
             }
         }
-    })
+    }])
 
+
+    /***
+     * @description Modal component cuenta por pagar
+     * 
+     */
+    app.directive('btnCuentaPorCobrar', ['modalService', function (modalSvc) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                onResult: '&'
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+
+                    let modalRef = modalSvc.openWithComponent({
+                        component: 'appCuentaPorCobrarComponent',
+                        size: 'xl',
+                        windowClass: 'uibModalFullScreen',                        
+                    })
+
+                    modalRef.result.then(result => {
+                        if (result && typeof result === 'object' && typeof scope.onResult === 'function') {
+                            //  scope.onResult(result)
+                        }
+                    })
+
+                })
+            }
+        }
+    }])
 
 
 })(window.angular)

@@ -44,7 +44,7 @@
                             <div class="input-group-text">
                                 <div class="custom-control custom-checkbox mr-sm-2">
                                     <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
-                                        class="custom-control-input" id="checkBoxFecha">
+                                        class="custom-control-input" id="checkBoxFecha" ng-change="refresh()">
                                     <label class="custom-control-label" for="checkBoxFecha"></label>
                                 </div>
                             </div>
@@ -193,7 +193,7 @@
                                 <md-menu>
                                     <md-button aria-label="Open demo menu" class="md-icon-button"
                                         ng-click="$mdMenu.open($event)">
-                                        <icon class="mdi mdi-menu"></icon>
+                                        <i class="mdi mdi-menu"></i>
                                     </md-button>
                                     <md-menu-content class="md-dense">
                                         <md-menu-item>
@@ -212,7 +212,7 @@
                                         <md-menu-item ng-if="accion.anular">
                                             <md-button ng-click="askToDelete(item)">
                                                 <span md-menu-align-target>
-                                                    <icon class="ti-na"></icon> Anular
+                                                    <i class="ti-na"></i> Anular
                                                 </span>
                                             </md-button>
                                         </md-menu-item>
@@ -222,6 +222,15 @@
                                                 <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
                                             </md-button>
                                         </md-menu-item>
+
+                                        <md-menu-item  >
+                                            <md-button  btn-cuenta-por-pagar>
+                                                <span md-menu-align-target>
+                                                    <i class=" far fa-money-bill-alt"></i>                                                    
+                                                    Cuenta por pagar
+                                                </span>
+                                            </md-button>
+                                        </md-menu-item> 
 
 
                                     </md-menu-content>
@@ -264,9 +273,11 @@
 @section Scripts { 
     <environment include="Development">
         <script src="~/js/compras/controllers/liquidacionCompraCtrl.js" asp-append-version="true"></script>
+         <script src="~/js/contabilidad/components/cuentaPorPagarComponent.min.js" asp-append-version="true"></script>
     </environment>
     <environment include="Staging,Production">
         <script src="~/js/compras/controllers/liquidacionCompraCtrl.min.js" asp-append-version="true"></script>
+         <script src="~/js/contabilidad/components/cuentaPorPagarComponent.min.js" asp-append-version="true"></script>
     </environment>
 
 }

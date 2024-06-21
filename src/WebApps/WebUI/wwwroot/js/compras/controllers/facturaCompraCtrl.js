@@ -73,8 +73,13 @@
             $scope.saldo = fS.roundNumber(saldo, 5);
         };
 
+        $scope.refresh = function(){
+            $scope.getFacturas();
+        }
+
         $scope.getFacturas = function () {
             try {
+                 
                 const dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
                     checkBoxFecha: $scope.dataSearch.checkBoxFecha,
@@ -146,8 +151,8 @@
 
         //----------------------------------------------FILTROS ----------------------------------------
         $scope.resultRangeFilter = function (item) {
-            ($scope.dataSearch.fechaInicio = item.startDate),
-                ($scope.dataSearch.fechaFin = item.endDate);
+            $scope.dataSearch.fechaInicio = item.startDate;
+            $scope.dataSearch.fechaFin = item.endDate;
             $scope.getFacturas();
         };
 

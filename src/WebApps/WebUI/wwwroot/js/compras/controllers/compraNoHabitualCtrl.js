@@ -92,6 +92,7 @@
             })
         }
 
+    
 
         //Formulario Nuevo
         $scope.openModalNew = async () => {
@@ -180,6 +181,9 @@
         }
 
 
+        $scope.refresh = function(){
+            $scope.getComprasNoHabitual()
+        }
 
         //Obtenemos Datos 
         $scope.getComprasNoHabitual = () => {

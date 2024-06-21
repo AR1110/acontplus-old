@@ -1,8 +1,16 @@
-(function () {
+let templateUrl = `/Home/Index?name=~/Pages/Contabilidad/Components/_CuentaPorCobrarComponent.cshtml`;
 
-    'use strict';
+app.component("appCuentaPorCobrarComponent", {
+    templateUrl,
+    bindings: {
+        resolve: '<',
+        close: '&',
+        dismiss: '&',
+        isNotModal: '='
+    },
+    controller: ['$scope', '$injector', function ($scope, $injector) {
+        let $ctrl = this;
 
-    app.controller('cuentaPorCobrarCtrl', ['$scope', '$injector', function ($scope, $injector) {
         const cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
         const fS = $injector.get('formulario');
         const tS = $injector.get('toastService');
@@ -10,6 +18,13 @@
         const modalSvc = $injector.get("modalService");
         const nombreModalContabilidad = $injector.get("nombreModalContabilidad");
         let commonSvc = $injector.get('commonService');
+
+
+        $ctrl.$onInit = function () {
+            $scope.isNotModal = typeof $ctrl.resolve === 'object' ? true : false;
+        };
+
+        
 
         $scope.dataSearch = {
             pageIndex: 1,
@@ -24,7 +39,7 @@
             fechaInicio: new Date(),
             fechaFin: new Date(),
             codEstado: 0,
-            ckCxcVencida: false, 
+            ckCxcVencida: false,
             convertToDoc: false
         }
         $scope.cliente = {};
@@ -45,6 +60,7 @@
         $scope.estadosDoc = [];
         $scope.tiposDoc = [];
 
+ 
 
         initiload();
 
@@ -52,7 +68,7 @@
         function initiload() {
             try {
                 showLoader();
-                cuentaPorCobrarSvc.getDataFilter().then(response => { 
+                cuentaPorCobrarSvc.getDataFilter().then(response => {
                     const { estabs, estadosDoc, tiposDoc } = response;
                     $scope.establecimientos = estabs;
                     $scope.estadosDoc = estadosDoc;
@@ -68,7 +84,7 @@
                         $scope.dataSearch.codEstab = dataEstab.codEstab;
                         getCuentasPorCobrar();
                     }
-                  
+
                 }).catch(error => {
                     console.log(error)
                 }).finally(() => hideLoader());
@@ -90,7 +106,7 @@
         function getCuentasPorCobrar() {
             let ckFecha = $scope.dataSearch.checkBoxFecha;
             let secuencial = fS.isValidField($scope.dataSearch.secuencial);
-            if (secuencial){
+            if (secuencial) {
                 ckFecha = false;
                 tS.toastr('info', 'Buscando por Nro. Secuencial')
             }
@@ -115,7 +131,7 @@
             showLoader();
             cuentaPorCobrarSvc.getAll(params).then(response => {
                 const { cuentasPorCobrar, totalRecords, totalVenta, totalAbono, totalSaldo } = response;
-                
+
                 $scope.cuentasPorCobrar = cuentasPorCobrar;
                 $scope.dataSearch.totalRecords = totalRecords;
                 $scope.dataSearch.totalVenta = totalVenta;
@@ -230,7 +246,7 @@
             showLoader();
             Promise.all(promises)
                 .then(results => {
-                    hideLoader(); 
+                    hideLoader();
                     let mergeWithCuotas = mergeCuotas(selectedDocumentos, results);
                     openModalCobroLote(mergeWithCuotas);
                 })
@@ -245,7 +261,7 @@
             return selectedDocumentos.map(cxc => {
                 const [cuotasFiltradas] = results.filter(item =>
                     item.some(cuota => cuota.idCuentaPorCobrar === cxc.idCuentaPorCobrar)
-                )  
+                )
                 return {
                     ...cxc,
                     saldoTemporal: cxc.saldo,
@@ -256,16 +272,16 @@
         }
 
         $scope.getReport = async (item) => {
- 
+
             const formatType = 'pdf';
             let dataParams = JSON.stringify({
                 codEstab: item.codEstab,
                 id: item.idCuentaPorCobrar,
-                tipo : 5,
+                tipo: 5,
             })
 
             const parameters = {
-              
+
                 reportParams: JSON.stringify({
                     hasParams: true,
                     codEstab: item.codEstab,
@@ -309,10 +325,17 @@
                 console.log(error)
             }
         }
- 
 
 
-    }])
 
 
-})(window.angular)
+        $ctrl.ok = function () {
+            $ctrl.close();
+        };
+
+        $ctrl.cancel = function () {
+            $ctrl.dismiss();
+        };
+
+    }]
+})

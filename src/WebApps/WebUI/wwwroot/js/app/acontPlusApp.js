@@ -521,11 +521,12 @@ function modalService($uibModal, $mdDialog) {
                 },
             });
         },
-        openWithComponent: function ({ component, params,size }){
+        openWithComponent: function ({ component, params, size, windowClass }){
             return $uibModal.open({
                 animation: true,
                 component,
                 size,
+                windowClass,
                 resolve: {
                     params: function () {
                         return params;
