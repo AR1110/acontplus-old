@@ -62,6 +62,9 @@
             $scope.totalSaldo = fS.roundNumber(totalSaldo, 5);
         }
 
+        $scope.refresh = function(){
+            $scope.getLiquidacionesCompra();
+        }
 
         $scope.getLiquidacionesCompra = function () {
             try {
@@ -71,6 +74,7 @@
                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                         return
                     }
+                    tS.toastr('info', 'Buscando por número secuencial!')
                 }
 
                 $scope.liquidacionesCompra = [];

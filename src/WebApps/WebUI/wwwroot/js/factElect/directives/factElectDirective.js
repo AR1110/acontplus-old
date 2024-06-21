@@ -3,7 +3,7 @@
 
     'use strict';
 
-    app.directive('btnDatoAdicionalArticuloFactElect', function(modalService, nombreModalFactElect){
+    app.directive('btnDatoAdicionalArticuloFactElect', ['modalService','nombreModalFactElect',function(modalService, nombreModalFactElect){
         return {
             restrict: 'A',
             scope: {                
@@ -71,7 +71,7 @@
                 });
             }
         };
-    })
+    }])
 
 
     

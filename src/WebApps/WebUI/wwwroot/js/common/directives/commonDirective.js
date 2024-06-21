@@ -1930,4 +1930,69 @@
     }])
 
 
+
+    /***
+     * @description Modal component cuenta por pagar
+     * 
+     */
+    app.directive('btnCuentaPorPagar', ['modalService', function (modalSvc) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                onResult: '&'
+            },
+            link: function (scope, element) {
+                element.on('click', async function () { 
+
+                    let modalRef = modalSvc.openWithComponent({
+                        component: 'appCuentaPorPagarComponent',
+                        size: 'xl',
+                        windowClass: 'uibModalFullScreen',                         
+                    })
+
+                    modalRef.result.then(result => {
+                        if (result && typeof result === 'object' && typeof scope.onResult === 'function') {
+                          //  scope.onResult(result)
+                        }
+                    })
+
+                })
+            }
+        }
+    }])
+
+
+    /***
+     * @description Modal component cuenta por pagar
+     * 
+     */
+    app.directive('btnCuentaPorCobrar', ['modalService', function (modalSvc) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                onResult: '&'
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+
+                    let modalRef = modalSvc.openWithComponent({
+                        component: 'appCuentaPorCobrarComponent',
+                        size: 'xl',
+                        windowClass: 'uibModalFullScreen',                        
+                    })
+
+                    modalRef.result.then(result => {
+                        if (result && typeof result === 'object' && typeof scope.onResult === 'function') {
+                            //  scope.onResult(result)
+                        }
+                    })
+
+                })
+            }
+        }
+    }])
+
+
 })(window.angular)
