@@ -51,7 +51,7 @@ namespace Reports.API.Controllers.v2
                 return BadRequest("Can't get report data.");
             }
 
-            var response = rdlcReportService.GetReport(dsParams, ds);
+            using var response = rdlcReportService.GetReport(dsParams, ds);
 
             return response switch
             {
