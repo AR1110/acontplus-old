@@ -51,10 +51,10 @@ CREATE OR ALTER VIEW v_CuentaPorCobrar AS (
                                        ELSE 0
            END as convertToDoc
 	FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
-	INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision  = cc.idPuntoEmision
 	INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente       = cc.idCliente
 	INNER JOIN dbo.EstadoPago         ep WITH (NOLOCK) ON ep.idEstadoPago    = cc.idEstadoPago
 	INNER JOIN dbo.Usuario            us WITH (NOLOCK) ON us.idUsuario       = cc.idUsuario 
-    INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab        = pt.codEstab
+     LEFT JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision  = cc.idPuntoEmision
+     LEFT JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab        = pt.codEstab
      LEFT JOIN dbo.TiempoCredito      tc WITH (NOLOCK) ON tc.idTiempoCredito = cc.idTiempoCredito
 )

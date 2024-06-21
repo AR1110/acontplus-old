@@ -26,7 +26,6 @@ CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorCobrar_Get
     ,@tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
-    
     SET NOCOUNT ON;
     SET LANGUAGE SPANISH 
 
@@ -38,7 +37,6 @@ BEGIN
 
     -->Filters
     DECLARE @idCliente INT 
-           ,@CustomerId INT 
            ,@codEstab VARCHAR(50) 
            ,@idCuentaPorCobrar INT 
            ,@ckFecha BIT 
@@ -46,8 +44,6 @@ BEGIN
            ,@fechaFin DATETIME2 
            ,@codDoc VARCHAR(10) 
            ,@codEstado VARCHAR(5)
-	       ,@numeroIdentificacion VARCHAR(15) 
-           ,@identificacionReceptor VARCHAR(50)
            ,@ckCxcVencida BIT 
            ,@convertToDoc BIT
            ,@tipoConfig VARCHAR(20)
@@ -249,92 +245,10 @@ BEGIN
             
             SET @tableNames = 'entidadFinanciera,subEntidadFinanciera,banco,provincia,documentos,cuentaPorCobrar'
 
-            DECLARE @cobroDocuments AS TABLE
-	        (
-		         idComprobante INT 
-		        ,codDoc VARCHAR(5)
-		        ,codMov VARCHAR(5)
-	        )
-
-	        DECLARE @documents AS TABLE
-	        (
-		        idDocumento BIGINT
-		        ,idTipoDocumento BIGINT
-		        ,serieComprobante VARCHAR(25)
-		        ,saldo DECIMAL(15,5)
-		        ,codDoc VARCHAR(100)
-		        ,nroDoc VARCHAR(20)
-		        ,fechaEmision DATETIME 
-	        )
-
             SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT)
 
-            SELECT TOP 1 @identificacionReceptor = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
-
-            SELECT TOP 1 @CustomerId = CustomerId ,@idCliente = idCliente ,@numeroIdentificacion = identificacionComprador FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+            SELECT TOP 1 @idCliente = idCliente FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
 			
-			INSERT INTO @cobroDocuments (idComprobante,codDoc,codMov)
-			SELECT co.idComprobante,td.codigoSri,td.codigo 
-			FROM dbo.Cobro                    co WITH (NOLOCK)
-			INNER JOIN dbo.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento      = co.idTipoDocumento
-			INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = co.idEntidadFinanciera
-			INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
-			WHERE ef.codigo = 'DOC' 
-			  AND ci.estado = 1
-			  AND ci.idEntidad = @idEntidad
-
-			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc, fechaEmision)
-			SELECT 
-			     d.idDocRelacionado
-				,(SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '07') as idTipoDocumento
-				,dr.serieComprobante
-				,ISNULL
-                ((
-                    SELECT SUM(di.TaxValue) FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) WHERE di.DocumentoRecibidoId = dr.idDocumento
-                ),0) as saldo 
-				,'Retención Version:' + dr.versionComp as codDoc
-				,''
-				,GETDATE()
-			FROM factelect.DocRelacionado           d WITH (NOLOCK)
-			INNER JOIN Recepcion.DocumentoRecibido dr WITH (NOLOCK) ON dr.idDocumento = d.idDocumentoRecibido
-			WHERE dr.codDoc = '07' 
-				AND dr.identificacionReceptor = @identificacionReceptor 
-				AND dr.rucEmisor = @numeroIdentificacion 
-				AND d.estado = 'PE'
-				AND d.idDocRelacionado NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '07')
-
-			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc, fechaEmision)
-			SELECT 
-			     de.idDocumentoElectronico
-				,idTipoDocumento  = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '04')
-				,serieComprobante
-				,saldo            = (SELECT TOP 1 nc.total FROM dbo.NotaCredito nc WITH (NOLOCK) WHERE nc.idNotaCredito = de.idDocumento)
-				,codDoc           = 'Nota de Crédito Version: '+de.versionComp
-				,nroDoc           = ''
-				,de.fechaEmision
-			FROM FactElect.v_DocElectronico de WITH (NOLOCK)
-			WHERE de.codDoc = '04'
-		      AND de.codEstado = 4
-		      AND de.idEntidad = @idEntidad
-		      AND de.CustomerId = @CustomerId
-		      AND de.idDocumentoElectronico NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '04')
-
-			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc, fechaEmision)
-			SELECT 
-				 a.idAnticipo as idComprobante
-				,a.idTipoDocumento as idTipoDocumento
-				,td.codigo+'-'+es.estab+'-'+dbo.AFTAutoComplete(a.nroDoc) as nroDocumento
-				,a.valor
-				,td.codigo as tipoDocumento
-				,''
-				,a.fechaEmision
-			FROM dbo.Anticipo               a WITH (NOLOCK)
-			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab        = a.codEstab
-			INNER JOIN TipoDocumento       td WITH (NOLOCK) ON td.idTipoDocumento = a.idTipoDocumento
-			WHERE a.idCliente =  @idCliente 
-				AND a.estado = 1 
-				AND a.idAnticipo NOT IN (SELECT t.idComprobante FROM @cobroDocuments t WHERE t.codMov = 'A')
-
 			SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 
 			SELECT idEntidadFinanciera,idSubEntidadFinanciera,descripcion,codigo,interes,controlCaja FROM dbo.SubEntidadFinanciera WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 
@@ -343,7 +257,17 @@ BEGIN
 
 			SELECT cd.idCiudad,provincia = pr.descripcion ,cd.descripcion,pr.codigo FROM dbo.Provincia pr WITH (NOLOCK) INNER JOIN dbo.Ciudad cd WITH (NOLOCK) ON cd.idProvincia = pr.idProvincia WHERE cd.estado = 1
 
-			SELECT idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc, fechaEmision = FORMAT(fechaEmision,'dd/MM/yyyy HH:mm') FROM @documents
+			SELECT cc.idCuentaPorCobrar as idDocumento
+                  ,0                    as idTipoDocumento 
+	              ,cc.serieComprobante
+	              ,cc.importeTotal		as saldo
+	              ,CASE cc.codDoc WHEN '04' THEN 'Nota de Credito'
+	               END				    as nroDoc 
+	              ,cc.fechaEmision 
+            FROM v_CuentaPorCobrar cc WITH (NOLOCK)
+            WHERE cc.codDoc IN ('A','04','07')
+              AND cc.idCliente = @idCliente
+              AND cc.codEstado = 'PE'
             
             SELECT cc.idCuentaPorCobrar
 				  ,cc.idCliente

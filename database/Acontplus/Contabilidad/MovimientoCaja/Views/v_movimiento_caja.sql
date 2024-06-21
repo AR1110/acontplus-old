@@ -1,33 +1,34 @@
 USE AcontPlus
 GO
-IF OBJECT_ID(N'v_movimiento_caja', N'V') IS NOT NULL
-DROP VIEW v_movimiento_caja
-GO
-CREATE VIEW v_movimiento_caja AS (
-	SELECT 
-	mc.idMovimientoCaja
-	,e.razonSocial
-	,e.ruc
-	,establecimiento  = s.nombreComercial
-	,s.dirEstablecimiento
-	,s.estab 
-	,fechaEmision = mc.fechaEmision							
-	,mc.nroDoc
-	,tipoDoc = tdoc.descripcion
-	,codDoc = tdoc.codigo
-	,entregadoPor = u.nombreCompleto -- quitar
-	,recibidoPor = em.nombreCompleto --quitar
-	,empleado = em.nombreCompleto
-	,entidadFinanciera = sef.descripcion
-	,valor = mc.valor
-	,observacion = mc.observaciones
-	,usuario = u.nombreUsuario	
-	,em.nroIdentificacion
-	FROM dbo.MovimientoCaja mc	WITH(NOLOCK)
-	INNER JOIN dbo.Entidad e WITH(NOLOCK)    ON e.idEntidad = mc.idEntidad
-	INNER JOIN Sri.Establecimiento s WITH(NOLOCK)  ON s.codEstab = mc.codEstab
-	INNER JOIN dbo.Empleado em WITH(NOLOCK) ON em.idEmpleado = mc.idEmpleado
-	INNER JOIN dbo.SubEntidadFinanciera sef WITH(NOLOCK) ON sef.idSubEntidadFinanciera = mc.idSubEntidadFinanciera	
-	INNER JOIN dbo.TipoDocumento tdoc WITH(NOLOCK) ON tdoc.idTipoDocumento = mc.idTipoDocumento 
-	INNER JOIN dbo.Usuario u ON u.idUsuario = mc.idUsuarioRegister
+CREATE OR ALTER VIEW v_movimiento_caja AS (
+	SELECT mc.idMovimientoCaja
+	      ,mc.fechaEmision							
+	      ,mc.nroDoc
+          ,mc.valor
+	      ,mc.observaciones as observacion
+          ,en.razonSocial
+	      ,en.ruc
+	      ,es.nombreComercial
+	      ,es.dirEstablecimiento
+	      ,es.estab 
+	      ,td.descripcion                                   as tipoDoc
+	      ,td.codigo                                        as codDoc
+	      ,ef.descripcion                                   as entidadFinanciera
+	      ,us.nombreUsuario	                                as usuario
+	      ,CASE td.codigo WHEN 'EC' THEN se.BusinessName
+						  WHEN 'IC' THEN si.BusinessName
+		   END											    as empleado
+		  ,CASE td.codigo WHEN 'EC' THEN se.IDCard
+						  WHEN 'IC' THEN si.IDCard
+		  END											    as nroIdentificacion
+	FROM dbo.MovimientoCaja             mc WITH (NOLOCK)
+	INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad              = mc.idEntidad
+	INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = mc.idEstablecimiento
+	INNER JOIN dbo.SubEntidadFinanciera ef WITH (NOLOCK) ON ef.idSubEntidadFinanciera = mc.idSubEntidadFinanciera	
+	INNER JOIN dbo.TipoDocumento        td WITH (NOLOCK) ON td.idTipoDocumento        = mc.idTipoDocumento 
+	INNER JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario              = mc.idUsuarioRegister
+     LEFT JOIN dbo.ComprobanteIngreso   ci WITH (NOLOCK) ON ci.idComprobanteIngreso   = mc.idComprobanteIngreso
+	 LEFT JOIN dbo.ComprobanteEgreso    ce WITH (NOLOCK) ON ce.idComprobanteEgreso    = mc.idComprobanteEgreso
+	 LEFT JOIN Customer.Customer        si WITH (NOLOCK) ON si.Id					  = ci.CustomerId
+	 LEFT JOIN Customer.Customer		se WITH (NOLOCK) ON se.Id					  = ce.CustomerId
  )

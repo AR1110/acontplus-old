@@ -95,11 +95,68 @@ go
 
 
 
-SELECT top 100 * from ComprobanteIngreso 
+--SELECT top 100 * from ComprobanteIngreso 
 
 --ALTER TABLE dbo.ComprobanteIngreso ALTER COLUMN CustomerId INT NOT NULL
 
 --ALTER TABLE ComprobanteIngreso DROP CONSTRAINT fk_cliente_comprobanteIngreso
 
 --ALTER TABLE ComprobanteIngreso DROP COLUMN idCliente
+
+
+--ALTER TABLE dbo.Cobro ADD idCuentaPorCobrar INT CONSTRAINT fk_idCuentaPorCobrar_Cobro
+--FOREIGN KEY (idCuentaPorCobrar) REFERENCES Contabilidad.CuentaPorCobrar(idCuentaPorCobrar);
+
+--> Anticipos
+
+--update c    
+--    set c.idCuentaPorCobrar = (select top 1 cc.idCuentaPorCobrar from Contabilidad.CuentaPorCobrar cc where cc.codDoc = 'A' and cc.idDocumento = c.idComprobante )
+--FROM Cobro c
+--inner join TipoDocumento td on td.idTipoDocumento = c.idTipoDocumento
+--INNER JOIN ComprobanteIngreso ci on ci.idComprobanteIngreso = c.idComprobanteIngreso
+--where td.codigo in ('A') 
+
+--DEVOLUCIONES
+
+--update c    
+--    set c.idCuentaPorCobrar = (SELECT top 1 (SELECT top 1 cc.idCuentaPorCobrar FROM Contabilidad.CuentaPorCobrar cc where cc.codDoc = '04' and cc.idDocumento = de.idDocumento)
+--        FROM dbo.DocumentoElectronico de where de.codDoc = '04' and de.idDocumentoElectronico = c.idComprobante ) 
+--FROM Cobro c
+--inner join TipoDocumento td on td.idTipoDocumento = c.idTipoDocumento
+--INNER JOIN ComprobanteIngreso ci on ci.idComprobanteIngreso = c.idComprobanteIngreso
+--where td.codigo in ('NC')
+
+--update c    
+--    set c.idCuentaPorCobrar = (select top 1 (SELECT top 1 cc.idCuentaPorCobrar FROM Contabilidad.CuentaPorCobrar cc where cc.codDoc = '04' and cc.idDocumento = nc.idNotaCredito) 
+--       from dbo.NotaCredito nc where nc.idNotaCredito = c.idComprobante)
+--FROM Cobro c
+--inner join TipoDocumento td on td.idTipoDocumento = c.idTipoDocumento
+--INNER JOIN ComprobanteIngreso ci on ci.idComprobanteIngreso = c.idComprobanteIngreso
+--where td.codigo in ('NC')
+--and idCuentaPorCobrar is null
+
+--> Retenciones
+--update c    
+--    set c.idCuentaPorCobrar = (select TOP 1 (select top 1 cc.idCuentaPorCobrar 
+--                      from Contabilidad.CuentaPorCobrar cc
+--                      where cc.codDoc = '07' 
+--                      and cc.idDocumento = dr.idDocumento) from FactElect.DocRelacionado rd
+--       inner join Recepcion.DocumentoRecibido dr on dr.idDocumento = rd.idDocumentoRecibido
+--       where dr.codDoc = '07' AND rd.idDocRelacionado = c.idComprobante)
+--FROM Cobro c
+--inner join TipoDocumento td on td.idTipoDocumento = c.idTipoDocumento
+--INNER JOIN ComprobanteIngreso ci on ci.idComprobanteIngreso = c.idComprobanteIngreso
+--where td.codigo in ('RC')
+
+SELECT c.*
+FROM Cobro c
+INNER JOIN ComprobanteIngreso ci on ci.idComprobanteIngreso = c.idComprobanteIngreso
+where c.idCuentaPorCobrar >0
+
+
+--ALTER TABLE Cobro DROP CONSTRAINT FK__Cobro__idTipDocu__1B9E04AB
+
+--ALTER TABLE Cobro DROP COLUMN idTipoDocumento
+
+--ALTER TABLE Cobro DROP COLUMN idComprobante
 

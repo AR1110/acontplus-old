@@ -229,7 +229,7 @@ BEGIN
                   ,(SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento td (NOLOCK) WHERE td.codigoSri = cp.codDoc) as idTipoDocumento
                   ,cp.serieComprobante                                                                              as nroDocumento
                   ,IIF(cp.codDoc = '04','Nota Credito','Comprobante Retención')                                     as tipoDocumento
-                  ,importeTotal
+                  ,importeTotal                                                                                     as saldo
                   ,CASE cp.codDoc WHEN '04' THEN (SELECT TOP 1 d.numDocSustento FROM factelect.DocRelacionado d WITH (NOLOCK) WHERE d.idDocumentoRecibido = cp.idDocumento )
                                   WHEN '07' THEN (SELECT TOP 1 rs.numAutDocSustento FROM FactElect.RetAtsDocSustento rs WITH (NOLOCK) WHERE rs.idRetencionAts = cp.idDocumento)
                    END                                                                                              as numAutDocSustento
@@ -244,25 +244,23 @@ BEGIN
 				
 		END 
 
-	IF @tipo = 4
-		BEGIN 				
-			SELECT
-				ce.nroIdentificacion
-				,ce.nombreFiscal
-				,ce.total
-				,tipoDocumento = 'CE-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento) 
-				,usuario = us.nombreUsuario
-				,estado = IIF(ce.estado=1, 'ACTIVO', 'ANULADA')
-				,fechaRegistro = FORMAT(ce.fechaRegistro, 'yyyy-MM-dd hh:mm')
-
-			FROM Contabilidad.Historial_Pago hp WITH(NOLOCK)
-			INNER JOIN ComprobanteEgreso     ce WITH(NOLOCK) ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
-			INNER JOIN Sri.Establecimiento   es WITH(NOLOCK) ON es.codEstab            = ce.codEstab 
-			INNER JOIN Usuario               us WITH(NOLOCK) ON us.idUsuario           = ce.idUsuario
-			WHERE hp.idCuentaPorPagar = @idCuentaPorPagar
-			ORDER BY fechaRegistro 
-
-		END 
+	--IF @tipo = 4
+	--	BEGIN 				
+	--		SELECT cu.IdCard                                                           as nroIdentificacion
+	--			  ,cu.businessName                                                     as nombreFiscal
+	--			  ,ce.total
+	--			  ,'CE-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento)  as tipoDocumento
+	--			  ,us.nombreUsuario                                                    as usuario
+	--			  ,IIF(ce.estado=1, 'ACTIVO', 'ANULADA')                               as estado
+	--			  ,FORMAT(ce.fechaRegistro, 'yyyy-MM-dd hh:mm')                        as fechaRegistro
+	--		FROM Contabilidad.Historial_Pago hp WITH (NOLOCK)
+	--		INNER JOIN ComprobanteEgreso     ce WITH (NOLOCK) ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
+	--		INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento   = ce.idEstablecimiento 
+	--		INNER JOIN Usuario               us WITH (NOLOCK) ON us.idUsuario           = ce.idUsuario
+ --           INNER JOIN Customer.Customer     cu WITH (NOLOCK) ON cu.Id                  = ce.CustomerId
+	--		WHERE hp.idCuentaPorPagar = @idCuentaPorPagar
+	--		ORDER BY fechaRegistro 
+	--	END 
 	
     --> Data Form Cuotas 
     IF @tipo = 5 

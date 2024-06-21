@@ -3,6 +3,7 @@ GO
 CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
     SELECT de.idDocumentoElectronico
           ,de.idEntidad
+          ,de.isAutomatic
           ,de.idUsuario
           ,en.razonSocial entidad
           ,de.CustomerId
@@ -31,60 +32,62 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
           ,de.claveAcceso codigoAutorizacion
           ,de.fechaAutorizacion
           ,de.claveAcceso
-          ,telefono = CASE 
-                        WHEN de.codDoc = '01' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) 
-                                                    FROM dbo.Cliente c WITH(NOLOCK)
-                                                    INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
-                                                    WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad) 
-                        WHEN de.codDoc = '03' THEN (SELECT TOP 1 LTRIM(RTRIM(p.telefono)) 
-                                                    FROM dbo.Proveedor p WITH(NOLOCK) 
-                                                    INNER JOIN Customer.Customer cc WITH (NOLOCK) ON p.CustomerId = cc.Id  
-                                                    WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad)
-                        WHEN de.codDoc = '04' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) 
-                                                    FROM dbo.Cliente c WITH(NOLOCK)
-                                                    INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
-                                                    WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
-                        WHEN de.codDoc = '05' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) 
-                                                    FROM dbo.Cliente c WITH(NOLOCK)
-                                                    INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
-                                                    WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
-                        WHEN de.codDoc = '06' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) 
-                                                    FROM dbo.Cliente c WITH(NOLOCK)
-                                                    INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
-                                                    WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
-                        WHEN de.codDoc = '07' THEN (SELECT TOP 1 LTRIM(RTRIM(p.telefono)) 
-                                                    FROM dbo.Proveedor p WITH(NOLOCK) 
-                                                    INNER JOIN Customer.Customer cc WITH (NOLOCK) ON p.CustomerId = cc.Id  
-                                                    WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad)
-                      END
+          ,'' as telefono
+          --,telefono = CASE 
+          --              WHEN de.codDoc = '01' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) 
+          --                                          FROM dbo.Cliente c WITH(NOLOCK)
+          --                                          INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
+          --                                          WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad) 
+          --              WHEN de.codDoc = '03' THEN (SELECT TOP 1 LTRIM(RTRIM(p.telefono)) 
+          --                                          FROM dbo.Proveedor p WITH(NOLOCK) 
+          --                                          INNER JOIN Customer.Customer cc WITH (NOLOCK) ON p.CustomerId = cc.Id  
+          --                                          WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad)
+          --              WHEN de.codDoc = '04' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) 
+          --                                          FROM dbo.Cliente c WITH(NOLOCK)
+          --                                          INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
+          --                                          WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
+          --              WHEN de.codDoc = '05' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) 
+          --                                          FROM dbo.Cliente c WITH(NOLOCK)
+          --                                          INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
+          --                                          WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
+          --              WHEN de.codDoc = '06' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) 
+          --                                          FROM dbo.Cliente c WITH(NOLOCK)
+          --                                          INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
+          --                                          WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
+          --              WHEN de.codDoc = '07' THEN (SELECT TOP 1 LTRIM(RTRIM(p.telefono)) 
+          --                                          FROM dbo.Proveedor p WITH(NOLOCK) 
+          --                                          INNER JOIN Customer.Customer cc WITH (NOLOCK) ON p.CustomerId = cc.Id  
+          --                                          WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad)
+          --            END
          ,cs.BusinessName razonSocial 
          ,cs.IDCard rucReceptor
-         ,correo = CASE 
-                      WHEN de.codDoc = '01' THEN (SELECT TOP 1 c.correo 
-                                                  FROM dbo.Cliente c WITH(NOLOCK)
-                                                  INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
-                                                  WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
-                      WHEN de.codDoc = '03' THEN (SELECT TOP 1 p.correo 
-                                                  FROM dbo.Proveedor p WITH(NOLOCK) 
-                                                  INNER JOIN Customer.Customer cc WITH (NOLOCK) ON p.CustomerId = cc.Id  
-                                                  WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad)
-                      WHEN de.codDoc = '04' THEN (SELECT TOP 1 c.correo 
-                                                  FROM dbo.Cliente c WITH(NOLOCK)
-                                                  INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
-                                                  WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
-                      WHEN de.codDoc = '05' THEN (SELECT TOP 1 c.correo 
-                                                  FROM dbo.Cliente c WITH(NOLOCK)
-                                                  INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
-                                                  WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
-                      WHEN de.codDoc = '06' THEN (SELECT TOP 1 c.correo 
-                                                  FROM dbo.Cliente c WITH(NOLOCK)
-                                                  INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
-                                                  WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
-                      WHEN de.codDoc = '07' THEN (SELECT TOP 1 p.correo 
-                                                  FROM dbo.Proveedor p WITH(NOLOCK) 
-                                                  INNER JOIN Customer.Customer cc WITH (NOLOCK) ON p.CustomerId = cc.Id  
-                                                  WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad)
-                   END
+         ,'' as correo
+         --,correo = CASE 
+         --             WHEN de.codDoc = '01' THEN (SELECT TOP 1 c.correo 
+         --                                         FROM dbo.Cliente c WITH(NOLOCK)
+         --                                         INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
+         --                                         WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
+         --             WHEN de.codDoc = '03' THEN (SELECT TOP 1 p.correo 
+         --                                         FROM dbo.Proveedor p WITH(NOLOCK) 
+         --                                         INNER JOIN Customer.Customer cc WITH (NOLOCK) ON p.CustomerId = cc.Id  
+         --                                         WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad)
+         --             WHEN de.codDoc = '04' THEN (SELECT TOP 1 c.correo 
+         --                                         FROM dbo.Cliente c WITH(NOLOCK)
+         --                                         INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
+         --                                         WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
+         --             WHEN de.codDoc = '05' THEN (SELECT TOP 1 c.correo 
+         --                                         FROM dbo.Cliente c WITH(NOLOCK)
+         --                                         INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
+         --                                         WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
+         --             WHEN de.codDoc = '06' THEN (SELECT TOP 1 c.correo 
+         --                                         FROM dbo.Cliente c WITH(NOLOCK)
+         --                                         INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id  
+         --                                         WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad)
+         --             WHEN de.codDoc = '07' THEN (SELECT TOP 1 p.correo 
+         --                                         FROM dbo.Proveedor p WITH(NOLOCK) 
+         --                                         INNER JOIN Customer.Customer cc WITH (NOLOCK) ON p.CustomerId = cc.Id  
+         --                                         WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad)
+         --          END
          ,es.idEstadoServicio
          ,es.codigo AS codEstado
          ,es.descripcion estado
@@ -93,7 +96,6 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
          ,ISNULL(se.telefono, '') as telefonoEstablecimiento
          ,se.nombreComercial
          ,us.nombreUsuario as usuario
-         ,de.isAutomatic
          ,se.idEstablecimiento
     FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
     INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad        = de.idEntidad  

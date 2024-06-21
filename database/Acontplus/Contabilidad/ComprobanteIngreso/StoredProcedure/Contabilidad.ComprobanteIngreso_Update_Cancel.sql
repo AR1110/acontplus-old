@@ -58,8 +58,25 @@ BEGIN
             END
 
 		BEGIN TRAN 
-			UPDATE ComprobanteIngreso SET estado = 0,observacion = @observacion,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteIngreso = @idComprobanteIngreso 
+			UPDATE ComprobanteIngreso WITH (ROWLOCK)
+               SET estado              = 0
+                  ,observacion         = @observacion
+                  ,fechaAnulada        = dbo.ufnGetDateEcuador() 
+                  ,idUsuarioAnulado    = @idUsuario 
+            WHERE idComprobanteIngreso = @idComprobanteIngreso 
 			
+            --> Editarmos los estados y abonos de los estados de las cuentas
+            IF EXISTS (SELECT 1 FROM dbo.Cobro WITH (NOLOCK) WHERE idCuentaPorCobrar > 0 AND idComprobanteIngreso = @idComprobanteIngreso)
+                BEGIN
+                    DECLARE @idEstadoPago INT
+
+                    SELECT TOP 1 @idEstadoPago = idEstadoPago FROM EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
+
+                    UPDATE Contabilidad.CuentaPorCobrar WITH (ROWLOCK)
+                       SET idEstadoPago = @idEstadoPago
+                    WHERE idCuentaPorCobrar IN (SELECT idCuentaPorCobrar FROM dbo.Cobro WITH (NOLOCK) WHERE idCuentaPorCobrar > 0 AND idComprobanteIngreso = @idComprobanteIngreso)
+                END
+
 			DECLARE cursor_Cuotas CURSOR LOCAL FOR
 			SELECT cd.idCuotaPorCobrar 
 			FROM dbo.CobroDetalle cd WITH (NOLOCK)

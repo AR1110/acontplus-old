@@ -30,7 +30,7 @@ BEGIN
 			
 	DECLARE @tblInfoCompRet AS TABLE(
          idRetencionAts INT NOT NULL
-        ,fechaEmision DATETIME NOT NULL
+        ,fechaEmision DATETIME2 NOT NULL
 		,codEstab VARCHAR(25) NOT NULL
 		,estab VARCHAR(5) NOT NULL
 		,ptoEmi VARCHAR(5) NOT NULL
@@ -60,7 +60,7 @@ BEGIN
             ,estab                            VARCHAR(5)
             ,ptoEmi                           VARCHAR(5)
             ,secuencial                       VARCHAR(6)
-            ,fechaEmision                     DATETIME
+            ,fechaEmision                     DATETIME2
             ,contribuyentEspecial             VARCHAR(13)
             ,obligadoContabilidad             VARCHAR(2)
             ,tipoIdentificacionSujetoRetenido VARCHAR(2)
@@ -171,7 +171,6 @@ BEGIN
 			UPDATE DocumentoElectronico WITH (ROWLOCK)
                SET idPuntoEmision   = @idPuntoEmision
 			      ,claveAcceso      = @claveAcceso
-			      ,isAutomatic      = @isAutomatic
 			      ,fechaEmision     = @fechaEmision
 			      ,idEstadoServicio = @idEstadoServicio
 			      ,CustomerId       = @CustomerId

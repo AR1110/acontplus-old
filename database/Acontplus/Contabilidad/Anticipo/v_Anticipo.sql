@@ -1,37 +1,30 @@
 USE AcontPlus
 GO
-IF OBJECT_ID(N'v_Anticipo', N'V') IS NOT NULL
-DROP VIEW v_Anticipo
-GO
-CREATE VIEW v_Anticipo AS (
-	SELECT 
-		 
-		entidad    = e.razonSocial
-		,establecimiento  = s.nombreComercial
-		,e.ruc
-		,s.dirEstablecimiento
-		,s.estab
-		,a.idAnticipo
-		,a.fechaEmision
-		,a.valor
-		,a.observaciones
-		,a.nroDoc
-		,cl.numeroIdentificacion
-		,cliente = cl.nombreFiscal
-		,direccionCliente = cl.direccion
-		,telefonoCliente = cl.telefono
-		,entidadFinanciera = sef.descripcion
-		,estadoDoc = ep.descripcion
-		,codDoc = ep.codigo
-		,u.nombreUsuario
-		,identificacionUsuario = u.nroIdentificacion
-	FROM dbo.Anticipo a WITH (NOLOCK)
-	INNER JOIN dbo.Entidad e WITH(NOLOCK) ON e.idEntidad = a.idEntidad 
-	INNER JOIN dbo.EstadoPago            ep WITH (NOLOCK) ON ep.idEstadoPago            = a.idEstadoDocumento
-	INNER JOIN Sri.Establecimiento        s WITH (NOLOCK) ON s.codEstab                 = a.codEstab
-	INNER JOIN dbo.TipoDocumento         td WITH (NOLOCK) ON td.idTipoDocumento         = a.idTipoDocumento
-	INNER JOIN dbo.Cliente               cl WITH (NOLOCK) ON cl.idCliente               = a.idCliente
-	INNER JOIN dbo.SubEntidadFinanciera sef WITH (NOLOCK) ON sef.idSubEntidadFinanciera = a.idSubEntidadFinanciera
-	INNER JOIN dbo.Usuario                u WITH (NOLOCK) ON u.idUsuario                = a.idUsarioRegister
+CREATE OR ALTER VIEW v_Anticipo AS (
+	SELECT en.razonSocial     as entidad
+		  ,es.nombreComercial as establecimiento
+		  ,en.ruc
+		  ,es.dirEstablecimiento
+		  ,es.estab
+		  ,an.idAnticipo
+		  ,an.fechaEmision
+		  ,an.valor
+		  ,an.observaciones
+		  ,an.nroDoc
+		  ,cu.IDCard                                                                                                                     as numeroIdentificacion
+		  ,cu.BusinessName                                                                                                               as nombreFiscal
+		  ,(SELECT TOP 1 cl.direccion FROM Cliente cl WITH (NOLOCK) WHERE cl.CustomerId = ci.CustomerId AND cl.idEntidad = ci.idEntidad) as direccionCliente
+		  ,(SELECT TOP 1 cl.telefono  FROM Cliente cl WITH (NOLOCK) WHERE cl.CustomerId = ci.CustomerId AND cl.idEntidad = ci.idEntidad) as telefonoCliente
+		  ,ef.descripcion                                                                                                                as entidadFinanciera
+		  ,us.nombreUsuario                                                                                                              
+		  ,us.nroIdentificacion                                                                                                          as identificacionUsuario
+          ,CASE WHEN ci.estado = 0 THEN 'Anulado' ELSE 'Activo' END                                                                      as estadoDoc
+	FROM dbo.Anticipo                    an WITH (NOLOCK)
+	INNER JOIN dbo.Entidad               en WITH(NOLOCK)  ON en.idEntidad              = an.idEntidad 
+	INNER JOIN Sri.Establecimiento       es WITH (NOLOCK) ON es.idEstablecimiento      = an.idEstablecimiento
+	INNER JOIN dbo.SubEntidadFinanciera  ef WITH (NOLOCK) ON ef.idSubEntidadFinanciera = an.idSubEntidadFinanciera
+	INNER JOIN dbo.Usuario               us WITH (NOLOCK) ON us.idUsuario              = an.idUsarioRegister
+    INNER JOIN dbo.ComprobanteIngreso    ci WITH (NOLOCK) ON ci.idComprobanteIngreso   = an.idComprobanteIngreso
+    INNER JOIN Customer.Customer         cu WITH (NOLOCK) ON cu.Id                     = ci.CustomerId
 							 
  )
