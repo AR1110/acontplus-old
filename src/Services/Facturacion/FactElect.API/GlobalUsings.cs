@@ -17,7 +17,7 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Data.SqlClient;
 global using Microsoft.EntityFrameworkCore;
 global using Services.Common.Extensions;
-global using Services.Common.Logs;
+
 global using System.Data;
 global using System.Net;
 global using System.Text;

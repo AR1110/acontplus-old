@@ -1,9 +1,6 @@
 ﻿global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
-global using Autofac;
-global using Autofac.Extensions.DependencyInjection;
 global using Common.Core.Entities;
-global using Common.Core.Interfaces;
 global using Common.Core.Models;
 global using Common.Core.Utils;
 global using Common.Infrastructure.Data;
@@ -12,7 +9,6 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json.Serialization;
 global using Services.Common.Extensions;
-global using Services.Common.Logs;
 global using Vet.API.Data;
 global using Vet.API.Entities;
 global using Vet.API.Extensions;

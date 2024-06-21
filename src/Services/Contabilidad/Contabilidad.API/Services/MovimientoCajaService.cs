@@ -4,13 +4,13 @@ public class MovimientoCajaService : IMovimientoCajaService
 {
     private readonly ContabilidadContext _context;
     private readonly IAdoRepository _repository;
-    private readonly ApiResponse _response;
+    private readonly ApiResponseDeprecated _response;
 
     public MovimientoCajaService(IAdoRepository repository, ContabilidadContext context)
     {
         _repository = repository;
         _context = context;
-        _response = new ApiResponse();
+        _response = new ApiResponseDeprecated();
     }
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
@@ -21,7 +21,7 @@ public class MovimientoCajaService : IMovimientoCajaService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 

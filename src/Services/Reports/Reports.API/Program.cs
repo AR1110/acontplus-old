@@ -1,4 +1,5 @@
 ﻿using Autofac.Extensions.DependencyInjection;
+using Common.AppSettings;
 using Reports.API.Extensions;
 using Services.Common.Middleware;
 

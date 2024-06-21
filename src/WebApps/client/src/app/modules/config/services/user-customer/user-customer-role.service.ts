@@ -3,6 +3,7 @@ import { PATHS_API } from "@core/constants/global.constants";
 import { CONFIG_PATHS } from "../../enums/config.enums";
 import { HttpClient } from "@angular/common/http";
 import {map, tap} from "rxjs";
+import {generateUuidv4} from "@core/utils/generate-uuidv4";
 
 
 @Injectable({
@@ -31,14 +32,18 @@ export class UserCustomerRoleService {
         console.log(response)
         let subMenus = response.submenus.map((sm:any)=>{
           let actions = JSON.parse(sm.actions) ?? []
+          let unique = generateUuidv4()
           actions = actions.map((a:any)=>{
             return {
               ...a,
               codeAction: a.code,
-              enabled: true
+              enabled: true,
+              unique
+       //       sub
             }
           })
 
+          sm.unique = unique;
           return {
             ...sm,
             actions
@@ -47,14 +52,17 @@ export class UserCustomerRoleService {
 
         let licenciaSubMenus = response.licenciaSubMenu.map((sm:any)=>{
           let actions = JSON.parse(sm.actions) ?? []
+          let unique = generateUuidv4()
           actions = actions.map((a:any)=>{
             return {
               ...a,
               codeAction: a.code,
-              enabled: false
+              enabled: false,
+              unique
             }
           })
 
+          sm.unique = unique;
           return {
             ...sm,
             actions
@@ -75,6 +83,7 @@ export class UserCustomerRoleService {
               name: curr.menu,
               code: curr.codeMenu,
               subMenus: [{
+                unique: curr.unique,
                 subMenuId: curr.id,
                 menuId: curr.menuId,
                 name: curr.name,
@@ -88,6 +97,7 @@ export class UserCustomerRoleService {
             let actions = curr.actions  || [];
             // Si existe, agregar el submenú al array subMenus
             dataExist.subMenus.push({
+              unique: curr.unique,
               subMenuId: curr.id,
               menuId: curr.menuId,
               name: curr.name,

@@ -12,7 +12,7 @@ public class UserProfileService : IUserProfileService
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "_Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Update", parameters);
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
@@ -21,9 +21,9 @@ public class UserProfileService : IUserProfileService
 
         if (ds == null)
         {
-            return new ApiResponse { code = "0", message = "No se pudo obtener los datos" };
+            return new ApiResponse { Code = "0", Message = "No se pudo obtener los datos" };
         }
 
-        return new ApiResponse { code = "0", message = "Ok", payload = DataConverters.DataSetToJSON(ds) };
+        return new ApiResponse { Code = "0", Message = "Ok", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

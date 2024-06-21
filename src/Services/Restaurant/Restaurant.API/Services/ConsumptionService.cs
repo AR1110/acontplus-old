@@ -1,5 +1,6 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services
@@ -15,7 +16,7 @@ namespace Restaurant.API.Services
         {
             var ds = await _repository.GetDataSetAsync("Restaurant.ConsumoTpv_Get", parameters, true);
             if (ds.Tables[0].Rows.Count == 0) { return null; }
-            return DataConverters.DataSetToJSON(ds, true);
+            return DataConverters.DataSetToJson(ds, true);
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {

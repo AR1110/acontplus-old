@@ -18,7 +18,7 @@ public class TransaccionService : ITransaccionService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public void Process(Dictionary<string, object> parameters)

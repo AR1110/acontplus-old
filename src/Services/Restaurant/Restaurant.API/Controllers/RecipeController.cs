@@ -1,10 +1,11 @@
 ﻿using System.Security.Claims;
 using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
 using Services.Common.Extensions;
-using Services.Common.Logs;
+
 
 namespace Restaurant.API.Controllers
 {
@@ -19,9 +20,9 @@ namespace Restaurant.API.Controllers
             _log = log;
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> Get()
+        public async Task<ActionResult<ApiResponseDeprecated>> Get()
         {
-            var _response = new ApiResponse();
+            var _response = new ApiResponseDeprecated();
             try
             {
                 _response.payload = await _recipe.GetAsync();

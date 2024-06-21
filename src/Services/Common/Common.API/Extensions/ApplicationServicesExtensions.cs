@@ -1,4 +1,7 @@
-﻿namespace Common.API.Extensions;
+﻿using Common.API.Data;
+using Common.API.Services;
+
+namespace Common.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {

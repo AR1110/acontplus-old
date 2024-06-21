@@ -49,14 +49,21 @@
             pageIndex: 1,
             pageSize: 25,
             maxSize: 5,
-            secuencial: null
+            secuencial: null,
+            typeSearchNro: 1
         }
+
 
         $scope.tipoDocumentos = [
             // { codigo: '03', descripcion: 'LIQUIDACION COMPRA' },
             // { codigo: 'FC', descripcion: 'FACTURA' },
             // { codigo: 'DH', descripcion: 'DOCUMENTO NO HABITUAL' },
         ];
+        $scope.typesSearchNro = [
+            {code: 1, description: 'Ninguna'},
+            { code: 2, description: 'Retención' },
+            { code: 3, description: 'Nota Crédito' },
+        ]
 
         $scope.cuentasPorPagar = [];
         $scope.selectedDocumentos = [];
@@ -74,7 +81,12 @@
             try {
 
                 let checkboxFecha = $scope.dataSearch.checkBoxFecha;
-                if (fS.isValidField($scope.dataSearch.secuencial)){
+
+                if (fS.isValidField($scope.dataSearch.secuencial) ){
+                    if(!fS.isNumber($scope.dataSearch.secuencial)){
+                        tS.toastr('warning', 'Secuencial tiene que ser un número válido')
+                        return 
+                    }
                     checkboxFecha = false;
                     tS.toastr('info', 'Buscando por Nro. Secuencial')
                 }
@@ -89,7 +101,8 @@
                     dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
-                    secuencial: fS.isValidField($scope.dataSearch.secuencial)
+                    secuencial: fS.isValidField($scope.dataSearch.secuencial),
+                    typeSearchNro: $scope.dataSearch.typeSearchNro
                 }
 
                 $scope.cuentasPorPagar = [];

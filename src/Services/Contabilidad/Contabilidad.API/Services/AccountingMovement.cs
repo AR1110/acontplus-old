@@ -7,10 +7,10 @@
             var ds = await repository.GetDataSetAsync("Contabilidad.AccountingMovement_Get", parameters);
             if (DataValidation.DataSetIsNull(ds, true))
             {
-                return new ApiResponse { code = "0", message = "Data not found" };
+                return new ApiResponse { Code = "0", Message = "Data not found" };
             }
 
-            return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+            return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
         }
     }
 }

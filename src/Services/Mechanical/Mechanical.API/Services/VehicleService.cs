@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
 
@@ -32,7 +32,7 @@ namespace Mechanical.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
@@ -43,22 +43,22 @@ namespace Mechanical.API.Services
         {
             return await _repository.SpExecuteDeprecatedAsync("Mechanical.VehicleCompany_Update", parameters);
         }
-        public async Task<ApiResponse> DeleteAsync(int id)
+        public async Task<ApiResponseDeprecated> DeleteAsync(int id)
         {
             var vehicle = await _context.VehicleCompanys.FindAsync(id);
             vehicle.Enabled = false;
             vehicle.Deleted = true;
             _context.Update(vehicle);
             await _context.SaveChangesAsync();
-            return new ApiResponse { code = "1", message = "Eliminada Exitosamente" };
+            return new ApiResponseDeprecated { code = "1", message = "Eliminada Exitosamente" };
         }
-        public async Task<ApiResponse> UpdateStateAsync(int id, bool state)
+        public async Task<ApiResponseDeprecated> UpdateStateAsync(int id, bool state)
         {
             var vehicle = await _context.VehicleCompanys.FindAsync(id);
             vehicle.Enabled = state;
             _context.Update(vehicle);
             await _context.SaveChangesAsync();
-            return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };
+            return new ApiResponseDeprecated { code = "1", message = "Actualizado Exitosamente" };
         }
     }
 }

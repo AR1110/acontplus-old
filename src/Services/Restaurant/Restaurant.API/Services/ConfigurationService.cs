@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Common.Core.Interfaces;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services
@@ -28,7 +29,7 @@ namespace Restaurant.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
     }

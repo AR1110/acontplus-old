@@ -1,12 +1,12 @@
 ﻿public class ModeloService : IModeloService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IAdoRepository _repository;
+    private readonly IAdoSqlServer _adoSqlServer;
 
-    public ModeloService(TechnicalSupportContext context, IAdoRepository repository)
+    public ModeloService(TechnicalSupportContext context, IAdoSqlServer adoSqlServer)
     {
         _context = context;
-        _repository = repository;
+        _adoSqlServer = adoSqlServer;
     }
 
     public async Task<ApiResponse> AddAsync(Modelo modelo)
@@ -14,7 +14,7 @@
         modelo.SerieId = modelo.SerieId == 0 ? null : modelo.SerieId;
         _context.Modelos.Add(modelo);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Guardado Exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Guardado Exitosamente" };
     }
 
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
@@ -23,7 +23,7 @@
         if (modelo == null)
         {
             // Handle case where model not found
-            return new ApiResponse { code = "0", message = "Modelo no encontrado" };
+            return new ApiResponse { Code = "0", Message = "Modelo no encontrado" };
         }
 
         modelo.Enabled = false;
@@ -31,18 +31,18 @@
         modelo.UserId = userId;
         _context.Update(modelo);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Eliminado Exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Eliminado Exitosamente" };
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var dt = await _repository.GetDataTableAsync("TechnicalSupport.Modelo_Get", parameters);
+        var dt = await _adoSqlServer.GetDataTableAsync("TechnicalSupport.Modelo_Get", parameters);
         if (DataValidation.DataTableIsNull(dt))
         {
-            return new ApiResponse { code = "0", message = "No data" };
+            return new ApiResponse { Code = "0", Message = "No data" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }
 
     public async Task<ApiResponse> UpdateAsync(int id, Modelo modelo)
@@ -51,7 +51,7 @@
         if (modeloFound == null)
         {
             // Handle case where model not found
-            return new ApiResponse { code = "0", message = "Modelo no encontrado" };
+            return new ApiResponse { Code = "0", Message = "Modelo no encontrado" };
         }
 
         modeloFound.Code = modelo.Code;
@@ -61,6 +61,6 @@
         modeloFound.SerieId = modelo.SerieId;
         _context.Update(modeloFound);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente" };
     }
 }

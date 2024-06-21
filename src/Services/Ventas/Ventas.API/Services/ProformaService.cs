@@ -18,13 +18,13 @@ public class ProformaService : IProformaService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "Insert", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Insert", parameters);
     }
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
@@ -32,21 +32,21 @@ public class ProformaService : IProformaService
         var ds = await _repository.GetDataSetAsync(nameSchema + "GetId", parameters, true);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
-        return DataConverters.DataSetToJSON(ds, true);
+        return DataConverters.DataSetToJson(ds, true);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "Delete", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Delete", parameters);
     }
 
     public async Task<ApiResponse> ConvertToDoc(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "Convert_To_Doc", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Convert_To_Doc", parameters);
     }
 }

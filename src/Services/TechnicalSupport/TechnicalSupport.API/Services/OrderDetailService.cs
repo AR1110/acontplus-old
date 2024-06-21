@@ -4,17 +4,17 @@ public class OrderDetailService : IOrderDetailService
 {
     private readonly TechnicalSupportContext _context;
     private readonly string _module = "TechnicalSupport.OrderDetail";
-    private readonly IAdoRepository _repository;
+    private readonly IAdoSqlServer _adoSqlServer;
 
-    public OrderDetailService(IAdoRepository repository, TechnicalSupportContext context)
+    public OrderDetailService(IAdoSqlServer adoSqlServer, TechnicalSupportContext context)
     {
-        _repository = repository;
+        _adoSqlServer = adoSqlServer;
         _context = context;
     }
 
     public async Task<ApiResponse> AddAsync(ApiRequest data)
     {
-        return await _repository.SpExecuteAsync($"{_module}_Insert",
+        return await _adoSqlServer.SpExecuteAsync<ApiResponse>($"{_module}_Insert",
             new Dictionary<string, object>
             {
                 { "userRoleId", data.UserRoleId }, { "json", DataConverters.SerializeDictionary(data.Data) }
@@ -27,7 +27,7 @@ public class OrderDetailService : IOrderDetailService
         {
             return new ApiResponse
             {
-                code = "0", message = "No se puede eliminar, este equipo ya tiene mantenimientos en curso"
+                Code = "0", Message = "No se puede eliminar, este equipo ya tiene mantenimientos en curso"
             };
         }
 
@@ -36,7 +36,7 @@ public class OrderDetailService : IOrderDetailService
         detailFound.Deleted = true;
         _context.Update(detailFound);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Eliminada exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
     }
 
     public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
@@ -52,6 +52,6 @@ public class OrderDetailService : IOrderDetailService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(data.Data) }
         };
-        return await _repository.SpExecuteAsync($"{_module}_Update", parameters);
+        return await _adoSqlServer.SpExecuteAsync<ApiResponse>($"{_module}_Update", parameters);
     }
 }

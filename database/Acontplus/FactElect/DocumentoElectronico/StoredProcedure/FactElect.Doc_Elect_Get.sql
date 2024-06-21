@@ -148,7 +148,7 @@ BEGIN
 		        BEGIN
                     IF @codEstado = 8 
                         BEGIN
-                            SET @sql = @sql +  'AND codEstado IN (1,5,8) '
+                            SET @sql = @sql +  'AND codEstado IN (1,5,8,2) '
                         END 
                     ELSE 
                         BEGIN

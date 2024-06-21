@@ -31,8 +31,8 @@ export const enum DOC_TYPE {
   FC = 'FC',
   DNH = 'DH',
   LC = 'LC',
-  IC = 'IC',
-  EC = 'EC',
+  IC = 'IC', //Ingreso Caja(Ingresos)
+  EC = 'EC',//Egreso Caja (Gastos)
   FV = 'FV',
   FE = 'FE', //Factura Electrónica
   FF = 'FF', // Factura Fisica

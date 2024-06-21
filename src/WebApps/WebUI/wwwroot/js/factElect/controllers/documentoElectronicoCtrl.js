@@ -53,7 +53,9 @@
             pageSize: 50,
             pageIndex: 1,
             maxSize: 5,
-            totalRecords: 0
+            totalRecords: 0,
+            codEstado: null ,
+            codDoc: null
         };
 
         $scope.dataSearch.isCurrentDate = false;
@@ -65,21 +67,27 @@
         // Imprime el valor
         $scope.tipo = params.get("tipo");
 
-        $scope.getComprobantes = () => {
+        function getComprobantes () {
             try {
 
                 $scope.comprobantes = [];
                 let codEstado = $scope.dataSearch.codEstado;
+                let checkBoxDate = $scope.dataSearch.checkBoxDate = true;
 
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
-                        $scope.dataSearch.checkBoxDate = true;
+                         checkBoxDate = true;
                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                         return
                     }
+
                     if (!($scope.dataSearch.identificacionReceptor)) {
-                        $scope.dataSearch.checkBoxDate = false;
+                        checkBoxDate = false;
                     }
+                    tS.toastr({
+                        type: 'info',
+                        message: 'Buscando por número documento'
+                    })
                 }
 
 
@@ -93,7 +101,7 @@
                     tipo: 1,
                     codDoc: $scope.dataSearch.codDoc,
                     codEstado,
-                    checkBoxDate: $scope.dataSearch.checkBoxDate,
+                    checkBoxDate,
                     dateStart: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                     dateEnd: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
                     codEstab: $scope.dataSearch.codEstab,
@@ -122,12 +130,10 @@
             } catch (error) {
                 console.log(error)
             }
-        }
+        } 
 
-        //$scope.getComprobantes();
-
-
-        $scope.initiload = () => {
+        initiload()
+        function initiload () {
             showLoader();
             docElectSvc.getDataFilter().then(response => {
                 let {
@@ -149,17 +155,24 @@
                     } else {
                         tS.toastr('warning', 'No tienes asigando Puntos de Emisión')
                     }
-                    $scope.getComprobantes();
+                    getComprobantes();
                 }
             }).finally(() => hideLoader())
+        } 
+
+        $scope.refresh = function(){
+            getComprobantes()
         }
-        $scope.initiload()
+
+        $scope.isDisabledRow = function(item){
+            return !(item.codEstado === 0 || item.codEstado === 2 || item.codEstado === 5)
+        }
 
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate;
             $scope.dataSearch.fechaFin = item.endDate;
-            $scope.getComprobantes();
+            getComprobantes();
         }
 
         $scope.onchangeEstablecimiento = () => {
@@ -169,7 +182,7 @@
 
                 if ($scope.puntosEmision.length > 0) {
                     $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
-                    $scope.getComprobantes();
+                    getComprobantes();
                 } else {
                     tS.toastr('warning', 'No tiene puntos de emisión asignados')
                 }
@@ -183,7 +196,7 @@
                 $scope.modelCustomerProvider = null;
                 $scope.dataSearch.identificacionReceptor = null;
             }
-            $scope.getComprobantes();
+            getComprobantes();
         }
 
 
@@ -215,16 +228,24 @@
             }
         }
 
+        $scope.onKeyupCustomerSupplier= function(){
+            if (!fS.isValidField($scope.modelCustomerProvider)){
+                $scope.modelCustomerProvider = null;
+                $scope.dataSearch.isSearchCustomerProvider = false;
+                $scope.dataSearch.identificacionReceptor = null;
+            }
+        }
+
         $scope.onSelectedCustomerProvider = function (item) {
             $scope.dataSearch.isSearchCustomerProvider = true;
             $scope.dataSearch.identificacionReceptor = item.identificacionReceptor;
-            $scope.getComprobantes();
+            getComprobantes();
         }
 
         $scope.clearSearchCustomer = function () {
             $scope.modelCustomerProvider = null;
             $scope.dataSearch.identificacionReceptor = null;
-            $scope.getComprobantes();
+            getComprobantes();
         }
 
         $scope.searchUser = function (textSearch) {
@@ -242,22 +263,22 @@
         $scope.onSelectedUser = function (user) {
             $scope.modelUser = user.nombreCompleto;
             $scope.dataSearch.idUsuario = user.idUsuario;
-            $scope.getComprobantes();
+            getComprobantes();
         }
 
         $scope.clearUserSearch = function () {
             $scope.modelUser = null;
             $scope.dataSearch.idUsuario = 0;
-            $scope.getComprobantes();
+             getComprobantes();
         }
 
         $scope.pagechanged = function () {
-            $scope.getComprobantes();
+             getComprobantes();
         }
 
         $scope.changePageSize = function () {
             $scope.dataSearch.pageIndex = 1;
-            $scope.getComprobantes();
+            getComprobantes();
         }
 
         $scope.onSelectComprobante = (item) => {
@@ -460,7 +481,7 @@
                 docElectSvc.updateXml(item.idDocumentoElectronico).then(response => {
                     if((response)){
                         tS.toastr('success', response.message, response.titleSms);
-                        $scope.getComprobantes(); 
+                         getComprobantes(); 
                     }
                       
                 })
@@ -475,7 +496,7 @@
 
         $scope.updateComprobanteResult = function(result){
             if(typeof result==='object'){
-                $scope.getComprobantes();
+                 getComprobantes();
             }
         }
 
@@ -516,7 +537,7 @@
             docElectSvc.retencionAtsCancel(item.idDocumentoElectronico).then(response => {
                 if (response.code == '1') {
                     tS.toastr('success', response.message)
-                    $scope.getComprobantes()
+                     getComprobantes()
                 }
                 if (response.code == '0') {
                     tS.toastr('warning', response.message)
@@ -525,7 +546,7 @@
         }
 
 
-        $scope.refresh = () => {
+        $scope.refreshReload = () => {
             location.href = '/FactElect/DocumentoElectronico/Index';
         }
     }

@@ -42,7 +42,7 @@ public class NotaEntregaController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Insert([FromBody] ApiRequest data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -65,7 +65,7 @@ public class NotaEntregaController : ControllerBase
     {
         var _db = new DbAccess(_configuration);
 
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Ventas.NotaEntrega_Update", true);
@@ -87,7 +87,7 @@ public class NotaEntregaController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Ventas.NotaEntrega_Delete");

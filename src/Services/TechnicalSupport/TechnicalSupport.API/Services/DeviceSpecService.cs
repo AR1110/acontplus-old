@@ -3,11 +3,11 @@
 public class DeviceSpecService : IDeviceSpecService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IAdoRepository _repository;
+    private readonly IAdoSqlServer _adoSqlServer;
 
-    public DeviceSpecService(IAdoRepository repository, TechnicalSupportContext context)
+    public DeviceSpecService(IAdoSqlServer adoSqlServer, TechnicalSupportContext context)
     {
-        _repository = repository;
+        _adoSqlServer = adoSqlServer;
         _context = context;
     }
 
@@ -26,13 +26,13 @@ public class DeviceSpecService : IDeviceSpecService
         var itemFounded = await _context.DeviceSpecs.FindAsync(id);
         if (itemFounded == null)
         {
-            return new ApiResponse { code = "0", message = "No se encontró registro de especificaciones" };
+            return new ApiResponse { Code = "0", Message = "No se encontró registro de especificaciones" };
         }
 
         itemFounded.Specs = data.Specs;
         itemFounded.UserId = data.UserId;
         _context.Update(itemFounded);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Especificaciones actualizado exitosamente " };
+        return new ApiResponse { Code = "1", Message = "Especificaciones actualizado exitosamente " };
     }
 }

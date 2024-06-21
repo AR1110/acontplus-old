@@ -29,7 +29,7 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                response = new DbDataReaderMapper().ToList<T>(reader);
+                response = DbDataReaderMapper.ToList<T>(reader);
             }
         }
         finally
@@ -44,89 +44,6 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
         }
 
         return response;
-    }
-
-    public async Task<T> DinamycObjectAsync<T>(string spName, Dictionary<string, object> parameters)
-        where T : class, new()
-    {
-        var context = contexts.GetContext(configuration["ContextName"]);
-        var mappedObject = new T();
-        await using var cmd = context.Database.GetDbConnection().CreateCommand();
-        var wasOpen = cmd.Connection is { State: ConnectionState.Open };
-        try
-        {
-            cmd.CommandText = spName;
-            if (parameters.Count > 0)
-            {
-                foreach (var parameter in parameters.Where(parameter =>
-                             !string.IsNullOrEmpty(parameter.Key) && parameter.Value != null))
-                {
-                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value);
-                }
-            }
-
-            cmd.CommandType = CommandType.StoredProcedure;
-            if (!wasOpen)
-            {
-                await context.Database.OpenConnectionAsync();
-            }
-
-            var rd = await cmd.ExecuteReaderAsync();
-            if (!rd.HasRows)
-            {
-                return mappedObject;
-            }
-
-            var accessor = TypeAccessor.Create(typeof(T));
-            var members = accessor.GetMembers();
-            if (!await rd.ReadAsync())
-            {
-                return mappedObject;
-            }
-
-            for (var i = 0; i < rd.FieldCount; i++)
-            {
-                var columnNameFromDataTable = rd.GetName(i);
-                var columnValueFromDataTable = rd.GetValue(i);
-
-                var splits = columnNameFromDataTable.Split('_');
-                var columnName = new StringBuilder("");
-                foreach (var split in splits)
-                {
-                    columnName.Append(
-                        CultureInfo.InvariantCulture.TextInfo
-                            .ToLower(split.ToLower())); //invariant should be to TitleCase
-                }
-
-                var mappedColumnName = members.FirstOrDefault(x =>
-                    string.Equals(x.Name, columnName.ToString(), StringComparison.OrdinalIgnoreCase));
-
-                if (mappedColumnName == null)
-                {
-                    continue;
-                }
-
-                var columnType = mappedColumnName.Type;
-
-                if (columnValueFromDataTable != DBNull.Value)
-                {
-                    accessor[mappedObject, columnName.ToString()] =
-                        Convert.ChangeType(columnValueFromDataTable, columnType);
-                }
-            }
-        }
-        finally
-        {
-            if (!wasOpen)
-            {
-                if (cmd.Connection != null)
-                {
-                    await cmd.Connection.CloseAsync();
-                }
-            }
-        }
-
-        return mappedObject;
     }
 
     public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool oldSp)
@@ -337,10 +254,10 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
         return response;
     }
 
-    public async Task<ApiResponse> SpExecuteAsync(string spName, Dictionary<string, object> parameters,
-        bool timeout)
+    public async Task<T> SpExecuteAsync<T>(string spName, Dictionary<string, object> parameters,
+        bool timeout) where T : class, new()
     {
-        var response = new ApiResponse();
+        var response = new T();
         await using var context = contexts.GetContext(configuration["ContextName"]);
         await using var cmd = context.Database.GetDbConnection().CreateCommand();
         var wasOpen = cmd.Connection is { State: ConnectionState.Open };
@@ -372,30 +289,50 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             await using var reader = await cmd.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
-                var schemaTable = await reader.GetSchemaTableAsync();
-                response.code = reader.IsDBNull(0) ? null : reader.GetString(0);
-                // Check if the schema table contains the "message" column
-                var columnExists = schemaTable != null && schemaTable.Rows.Cast<DataRow>().Any(row =>
-                    row["ColumnName"].ToString().Equals("message", StringComparison.OrdinalIgnoreCase));
-                if (columnExists)
+                // Reflection to access properties dynamically
+                var properties = typeof(T).GetProperties();
+                foreach (var property in properties)
                 {
-                    var indexMessage = reader.GetOrdinal("message");
-                    if (indexMessage != -1 && !reader.IsDBNull(indexMessage))
-                    {
-                        response.message = reader.GetString(indexMessage);
-                    }
-                }
+                    // Check if property name matches a column name (case-insensitive)
+                    var columnName = reader.GetSchemaTable().Rows.Cast<DataRow>()
+                                          .Where(row => row["ColumnName"].ToString().Equals(property.Name, StringComparison.OrdinalIgnoreCase))
+                                          .Select(row => row["ColumnName"].ToString())
+                                          .FirstOrDefault();
 
-                var payloadExists = schemaTable != null && schemaTable.Rows.Cast<DataRow>().Any(row =>
-                    row["ColumnName"].ToString().Equals("payload", StringComparison.OrdinalIgnoreCase));
-                if (payloadExists)
-                {
-                    var indexPayload = reader.GetOrdinal("payload");
-                    if (indexPayload != -1 && !reader.IsDBNull(indexPayload))
+                    if (columnName != null)
                     {
-                        response.payload = reader.GetString(indexPayload);
+                        var index = reader.GetOrdinal(columnName);
+                        if (index != -1 && !reader.IsDBNull(index))
+                        {
+                            // Set property value based on data type
+                            property.SetValue(response, reader.GetValue(index));
+                        }
                     }
                 }
+                //var schemaTable = await reader.GetSchemaTableAsync();
+                //response.Code = reader.IsDBNull(0) ? null : reader.GetString(0);
+                //// Check if the schema table contains the "message" column
+                //var columnExists = schemaTable != null && schemaTable.Rows.Cast<DataRow>().Any(row =>
+                //    row["ColumnName"].ToString().Equals("message", StringComparison.OrdinalIgnoreCase));
+                //if (columnExists)
+                //{
+                //    var indexMessage = reader.GetOrdinal("message");
+                //    if (indexMessage != -1 && !reader.IsDBNull(indexMessage))
+                //    {
+                //        response.Message = reader.GetString(indexMessage);
+                //    }
+                //}
+
+                //var payloadExists = schemaTable != null && schemaTable.Rows.Cast<DataRow>().Any(row =>
+                //    row["ColumnName"].ToString().Equals("payload", StringComparison.OrdinalIgnoreCase));
+                //if (payloadExists)
+                //{
+                //    var indexPayload = reader.GetOrdinal("payload");
+                //    if (indexPayload != -1 && !reader.IsDBNull(indexPayload))
+                //    {
+                //        response.Payload = reader.GetString(indexPayload);
+                //    }
+                //}
             }
         }
         finally

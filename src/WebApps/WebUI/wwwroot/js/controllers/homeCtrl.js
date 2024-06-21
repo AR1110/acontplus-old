@@ -179,10 +179,13 @@
             const dashboardPromises = getDashboard().catch(error => { console.log(error) });
             const documentsPromises = getDocs().catch(error => { console.log(error) });
             $q.all([dashboardPromises, documentsPromises]).then(response => {
-                const [dashboardData, comprobantesElectronicos] = response;
-                 
+        
+                const [responseDashboard, comprobantesElectronicos] = response;
+                let dashboardData = JSON.parse(responseDashboard.payload)
+             
+          
                 if (dashboardData) {
-                    const { statistics, licenses, releases } = JSON.parse(dashboardData.payload)
+                    const { statistics, licenses, releases } = dashboardData;
                     $scope.cantidad = angular.fromJson(statistics)
                     $scope.licenses = angular.fromJson(licenses) || []
                     $scope.releases = angular.fromJson(releases) || []
@@ -234,7 +237,7 @@
                         }
                     }
                 }
-                if (comprobantesElectronicos) { 
+                if (comprobantesElectronicos.length>0) { 
                     modalService.openModalCustom({
                         controller: ["$uibModalInstance", "$scope", "docElectService", "params", ($uibModalInstance, $scope, docElectSvc, params) => {
                             const { comprobantesElectronicos } = params;

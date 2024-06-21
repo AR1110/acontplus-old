@@ -17,7 +17,7 @@ public class NotificacionTributariaController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {

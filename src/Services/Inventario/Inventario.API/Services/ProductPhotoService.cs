@@ -11,23 +11,23 @@ public class ProductPhotoService : IProductPhotoService
         _repository = repository;
     }
 
-    public async Task<ApiResponse> GetAsync(int productId)
+    public async Task<ApiResponseDeprecated> GetAsync(int productId)
     {
         if (!_context.ProductPhotos.Any(x => x.ProductId == productId))
         {
-            return new ApiResponse { code = "0", message = "No se encontraron imagenes!" };
+            return new ApiResponseDeprecated { code = "0", message = "No se encontraron imagenes!" };
         }
 
         var photos = await _context.ProductPhotos.Where(x => x.ProductId == productId).ToListAsync();
-        return new ApiResponse { code = "1", payload = photos };
+        return new ApiResponseDeprecated { code = "1", payload = photos };
     }
 
-    public async Task<ApiResponse> AddAsync(ProductPhoto productPhoto)
+    public async Task<ApiResponseDeprecated> AddAsync(ProductPhoto productPhoto)
     {
         var total = _context.ProductPhotos.Where(x => x.ProductId == productPhoto.ProductId).Count();
         if (total == 4)
         {
-            return new ApiResponse { code = "0", message = "Solo puede subir hasta cuatro imagenes por producto!" };
+            return new ApiResponseDeprecated { code = "0", message = "Solo puede subir hasta cuatro imagenes por producto!" };
         }
 
         if (!_context.ProductPhotos.Any(x => x.ProductId == productPhoto.ProductId))
@@ -37,16 +37,16 @@ public class ProductPhotoService : IProductPhotoService
 
         _context.Add(productPhoto);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Registrada exitosamente!" };
+        return new ApiResponseDeprecated { code = "1", message = "Registrada exitosamente!" };
     }
 
-    public async Task<ApiResponse> UpdateAsync(int id, ProductPhoto productPhoto)
+    public async Task<ApiResponseDeprecated> UpdateAsync(int id, ProductPhoto productPhoto)
     {
-        if (id != productPhoto.Id) { return new ApiResponse { code = "0", message = "Id no coincide" }; }
+        if (id != productPhoto.Id) { return new ApiResponseDeprecated { code = "0", message = "Id no coincide" }; }
 
         ;
         var productFound = await _context.ProductPhotos.FindAsync(id);
-        if (productFound == null) { return new ApiResponse { code = "0", message = "No existe el registro!" }; }
+        if (productFound == null) { return new ApiResponseDeprecated { code = "0", message = "No existe el registro!" }; }
 
         ;
         productFound.S3ObjectKey = productPhoto.S3ObjectKey;
@@ -55,13 +55,13 @@ public class ProductPhotoService : IProductPhotoService
         productFound.UserId = productPhoto.UserId;
         _context.Update(productFound);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Actualizada exitosamente!" };
+        return new ApiResponseDeprecated { code = "1", message = "Actualizada exitosamente!" };
     }
 
-    public async Task<ApiResponse> SetDefaultAsync(int id, bool isDefault, int userId)
+    public async Task<ApiResponseDeprecated> SetDefaultAsync(int id, bool isDefault, int userId)
     {
         var productFound = await _context.ProductPhotos.FindAsync(id);
-        if (productFound == null) { return new ApiResponse { code = "0", message = "No existe el registro!" }; }
+        if (productFound == null) { return new ApiResponseDeprecated { code = "0", message = "No existe el registro!" }; }
 
         ;
         productFound.IsDefault = isDefault;
@@ -79,10 +79,10 @@ public class ProductPhotoService : IProductPhotoService
 
         _context.Update(productFound);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Actualizada exitosamente!" };
+        return new ApiResponseDeprecated { code = "1", message = "Actualizada exitosamente!" };
     }
 
-    public async Task<ApiResponse> DeleteAsync(int id, int userId)
+    public async Task<ApiResponseDeprecated> DeleteAsync(int id, int userId)
     {
         var productFound = await _context.ProductPhotos.FindAsync(id);
         if (productFound.IsDefault && _context.ProductPhotos.Any(x => x.ProductId == productFound.ProductId))
@@ -98,6 +98,6 @@ public class ProductPhotoService : IProductPhotoService
 
         _context.Remove(productFound);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Eliminada exitosamente!", payload = productFound.S3ObjectKey };
+        return new ApiResponseDeprecated { code = "1", message = "Eliminada exitosamente!", payload = productFound.S3ObjectKey };
     }
 }

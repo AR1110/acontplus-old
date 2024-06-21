@@ -17,7 +17,7 @@ public class ArticuloUbicacionController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Insert(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -37,7 +37,7 @@ public class ArticuloUbicacionController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Inventario.ArticuloUbicacion_Update", true);
@@ -59,7 +59,7 @@ public class ArticuloUbicacionController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Inventario.ArticuloUbicacion_Delete", true);

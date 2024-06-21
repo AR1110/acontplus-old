@@ -17,7 +17,7 @@ public class BodegaAsignacionService : IBodegaAsignacionService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 

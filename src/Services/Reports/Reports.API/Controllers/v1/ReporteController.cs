@@ -1,4 +1,7 @@
-﻿namespace Reports.API.Controllers.v1
+﻿using Reports.API.Interfaces;
+using Reports.Application.Interfaces;
+
+namespace Reports.API.Controllers.v1
 {
     [Route("api/reporte/[action]")]
     [ApiController]
@@ -25,7 +28,7 @@
             {
                 return BadRequest("Can't get report params.");
             }
-            
+
             string storedProcedure = dsParams.Tables["ReportProps"].Rows[0].Field<string>("storedProcedure");
 
             var dataParams = new Dictionary<string, object>();
@@ -47,7 +50,7 @@
                 return BadRequest("Can't get report data.");
             }
 
-            var response = rdlcReportService.GetReport(dsParams, ds);
+           using var response = rdlcReportService.GetReport(dsParams, ds);
 
             if (response == null)
             {

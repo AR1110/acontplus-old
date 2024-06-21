@@ -18,17 +18,17 @@ public class EstablishmentService : IEstablishmentService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "Insert", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Update", parameters);
     }
 
     public async Task<ApiResponse> PutSriAuth(Dictionary<string, object> parameters)
@@ -37,15 +37,15 @@ public class EstablishmentService : IEstablishmentService
         var affectedRows = await _repository.OnlyExecuteAsync(query, parameters, false);
         if (affectedRows > 0)
         {
-            return new ApiResponse { code = "1", message = "Actualizado Exitosamente!" };
+            return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente!" };
         }
         
-            return new ApiResponse { code = "0", message = "No se pudo actualizar!" };
+            return new ApiResponse { Code = "0", Message = "No se pudo actualizar!" };
         
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "Delete", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Delete", parameters);
     }
 }

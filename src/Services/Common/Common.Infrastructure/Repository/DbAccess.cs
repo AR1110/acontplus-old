@@ -56,7 +56,9 @@ public class DbAccess : IDisposable
             {
                 var sqlParam = new SqlParameter
                 {
-                    ParameterName = paramName, SqlDbType = SqlTypes.GetDbType(paramValue), Value = paramValue ?? DBNull.Value
+                    ParameterName = paramName,
+                    SqlDbType = SqlTypes.GetDbType(paramValue),
+                    Value = paramValue ?? DBNull.Value
                 };
                 _command.Parameters.Add(sqlParam);
             }
@@ -138,10 +140,10 @@ public class DbAccess : IDisposable
         return dt;
     }
 
-    public ApiResponse GetDefault()
+    public ApiResponseDeprecated GetDefault()
     {
         var dt = new DataTable();
-        var response = new ApiResponse();
+        var response = new ApiResponseDeprecated();
         if (_command != null)
         {
             using var dataAdapter = new SqlDataAdapter(_command);
@@ -152,17 +154,17 @@ public class DbAccess : IDisposable
             }
             else
             {
-                response = DataTableMapper.BindData<ApiResponse>(dt);
+                response = DataTableMapper.BindData<ApiResponseDeprecated>(dt);
             }
         }
 
         return response;
     }
 
-    public ApiResponse GetDataTableAsync()
+    public ApiResponseDeprecated GetDataTableAsync()
     {
         var dt = new DataTable();
-        var response = new ApiResponse();
+        var response = new ApiResponseDeprecated();
         if (_command != null)
         {
             using var dataAdapter = new SqlDataAdapter(_command);
@@ -173,17 +175,17 @@ public class DbAccess : IDisposable
             }
             else
             {
-                response.Create("1", payload: DataConverters.DataTableToJSON(dt));
+                response.Create("1", payload: DataConverters.DataTableToJson(dt));
             }
         }
 
         return response;
     }
 
-    public ApiResponse GetDataSetAsync()
+    public ApiResponseDeprecated GetDataSetAsync()
     {
         var ds = new DataSet();
-        var response = new ApiResponse();
+        var response = new ApiResponseDeprecated();
         if (_command != null)
         {
             using var dataAdapter = new SqlDataAdapter(_command);
@@ -199,7 +201,7 @@ public class DbAccess : IDisposable
             }
             else
             {
-                response.Create("1", payload: DataConverters.DataSetToJSON(ds, true));
+                response.Create("1", payload: DataConverters.DataSetToJson(ds, true));
             }
         }
 

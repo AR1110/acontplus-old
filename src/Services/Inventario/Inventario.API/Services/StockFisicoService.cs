@@ -3,12 +3,12 @@
 public class StockFisicoService : IStockFisicoService
 {
     private readonly IAdoRepository _repository;
-    private readonly ApiResponse _response;
+    private readonly ApiResponseDeprecated _response;
 
     public StockFisicoService(IAdoRepository repository)
     {
         _repository = repository;
-        _response = new ApiResponse();
+        _response = new ApiResponseDeprecated();
     }
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
@@ -25,7 +25,7 @@ public class StockFisicoService : IStockFisicoService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public async Task<string> AddAsync(ApiRequest request)
@@ -50,14 +50,14 @@ public class StockFisicoService : IStockFisicoService
         return await _repository.SpExecuteDeprecatedAsync("Inventario.StockFisico_Update", request.Data);
     }
 
-    public async Task<ApiResponse> DeleteAsync(int id)
+    public async Task<ApiResponseDeprecated> DeleteAsync(int id)
     {
         // _context.StockFisicos.Add(stockFisico);
         // await _context.SaveChangesAsync(); 
         var dt = await _repository.GetDataTableAsync("Inventario.StockFisico_Delete", null);
         if (!DataValidation.DataTableIsNull(dt))
         {
-            _response.Create("1", payload: DataTableMapper.BindData<ApiResponse>(dt));
+            _response.Create("1", payload: DataTableMapper.BindData<ApiResponseDeprecated>(dt));
         }
         else
         {

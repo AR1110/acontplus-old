@@ -22,7 +22,7 @@ global using Microsoft.IdentityModel.Tokens;
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Serialization;
 global using Services.Common.Extensions;
-global using Services.Common.Logs;
+
 global using Services.Common.Middleware;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;

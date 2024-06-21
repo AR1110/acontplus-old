@@ -1,5 +1,6 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using FactElect.Core.Interfaces;
 
 namespace FactElect.Application.Services;
@@ -21,7 +22,7 @@ public class GuiaRemisionService : IGuiaRemisionService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
@@ -29,7 +30,7 @@ public class GuiaRemisionService : IGuiaRemisionService
         var ds = await _repository.GetDataSetAsync("Logistica.GuiaRemision_Get_Id", parameters);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public async Task<string> AddAsync(Dictionary<string, object> parameters)

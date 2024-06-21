@@ -3,7 +3,7 @@ using Common.Core.Utils;
 using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Extensions;
-using Services.Common.Logs;
+
 
 namespace Mechanical.API.Controllers
 {

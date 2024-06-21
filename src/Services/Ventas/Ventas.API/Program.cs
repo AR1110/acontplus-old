@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Common.AppSettings;
 using Newtonsoft.Json.Serialization;
 using Services.Common.Middleware;
 using Ventas.API.Extensions;

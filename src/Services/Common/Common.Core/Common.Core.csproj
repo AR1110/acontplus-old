@@ -8,11 +8,8 @@
 
   <ItemGroup>
     <Compile Remove="Models\GestionFinanciera\**" />
-    <Compile Remove="ViewModels\Logistica\**" />
     <EmbeddedResource Remove="Models\GestionFinanciera\**" />
-    <EmbeddedResource Remove="ViewModels\Logistica\**" />
     <None Remove="Models\GestionFinanciera\**" />
-    <None Remove="ViewModels\Logistica\**" />
   </ItemGroup>
 
   <ItemGroup>

@@ -102,7 +102,7 @@
           <label for="tipo-doc">Tipo Doc.</label>
           <select name="tipo-doc"
                   id="tipo-doc"
-                  [ngModel]="dataSearch.codDoc"
+                  [(ngModel)]="dataSearch.codDoc"
                   (change)="onChangeTipoDoc()"
                   class="form-select">
             <option [ngValue]="null">Todos</option>

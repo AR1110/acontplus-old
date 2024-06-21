@@ -1,4 +1,6 @@
-﻿namespace Common.API.Extensions;
+﻿using Common.API.Data;
+
+namespace Common.API.Extensions;
 
 public class AutoFacModule : Module
 {

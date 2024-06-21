@@ -16,7 +16,7 @@ public class ModeloController : BaseApiController
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -37,7 +37,7 @@ public class ModeloController : BaseApiController
     [HttpPost("Insert")]
     public async Task<IActionResult> Insert([FromBody] Modelo data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -59,7 +59,7 @@ public class ModeloController : BaseApiController
     [HttpPut("Update/{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] Modelo data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -83,7 +83,7 @@ public class ModeloController : BaseApiController
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -104,7 +104,7 @@ public class ModeloController : BaseApiController
     [HttpGet("ListForSelect")]
     public async Task<IActionResult> ListForSelect(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {

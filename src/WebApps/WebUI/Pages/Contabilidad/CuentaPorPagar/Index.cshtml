@@ -104,10 +104,24 @@
                     </div>                    
                 </div>
 
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    
                     <div class="form-group">
-                        <span  >Buscar por Nro. Doc.</span>
-                        <input type="text" class="form-control border-select" valid-number ng-model="dataSearch.secuencial" placeholder="Ej.20">
+                        <span>Buscar por Nro. Doc</span>
+                        <div class="input-group">
+                            <select class="form-control border-select" ng-model="dataSearch.typeSearchNro">
+                                <option ng-value="item.code" ng-repeat="item in typesSearchNro">
+                                    {{item.description}}
+                                </option>
+                            </select>
+                             <input type="text" class="form-control border-select" valid-number ng-model="dataSearch.secuencial" placeholder="Ej.20">
+                            
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-secondary btn-sm" ng-click="getCuentasPorPagar()">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                        </div> 
                     </div>
                 </div>
 

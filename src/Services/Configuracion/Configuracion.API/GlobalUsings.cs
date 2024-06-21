@@ -8,7 +8,7 @@ global using Services.Common.Extensions;
 global using Common.Core.Models;
 global using Common.Infrastructure.Repository;
 global using Microsoft.AspNetCore.Mvc;
-global using Services.Common.Logs;
+
 global using Configuracion.API.Interfaces.Sri;
 global using Configuracion.API.Interfaces;
 global using Common.Core.Models.Administracion;

@@ -16,11 +16,13 @@ import { EstabAddEditModalComponent } from './components/estab-add-edit-modal/es
 import {PuntoEmisionService} from "@modules/config/services/sri/punto-emision.service";
 import {FormsModule} from "@angular/forms";
 import {EstablishmentLogoService} from "@modules/config/services/sri/establishment-logo.service";
+import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-establishment-page',
   standalone: true,
   imports: [
+    CommonModule,
     FontAwesomeModule,
     NgbAccordionModule,
     NgbTooltipModule,
@@ -41,6 +43,9 @@ export class EstablishmentPageComponent {
   establishments: EstablishmentRead[] = [];
   puntosEmision: PuntoEmisionRead[] = []
 
+  fileError:any  = null
+
+
   dataSeach = {
     pageIndex: 1,
     pageSize: 25,
@@ -54,6 +59,18 @@ export class EstablishmentPageComponent {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       this.selectedFile = input.files[0];
+
+      // Validate file size
+      if (this.selectedFile.size > (1024 * 1024)) {
+        this.fileError = { type: 'size', size: this.selectedFile.size };
+      } else if (!this.selectedFile.type.startsWith('image/')) {
+        this.fileError = { type: 'type' };
+      } else {
+        this.fileError = null;
+      }
+
+      if(this.fileError) return;
+
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target) {
@@ -175,6 +192,8 @@ export class EstablishmentPageComponent {
   dataLogo:any = {}
   onEstabShow(id: number) {
     this.puntosEmision = [];
+    this.fileError = null;
+    this.imageUrl = null;
 
     this.estabSvc.getId(id).subscribe(response => {
       this.puntosEmision = response.puntosEmision;
@@ -182,9 +201,7 @@ export class EstablishmentPageComponent {
 
     })
 
-
     this.getDataLogo(id)
-
 
   }
 

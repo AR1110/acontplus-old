@@ -33,7 +33,7 @@ public class AccountController : ControllerBase
         }
 
         var mainResponse = await _accountService.LoginAppAsync(authRequest.Username, authRequest.Password);
-        var _response = JsonConvert.DeserializeObject<ApiResponse>(mainResponse);
+        var _response = JsonConvert.DeserializeObject<ApiResponseDeprecated>(mainResponse);
 
         if (_response.code == "1")
         {
@@ -75,7 +75,7 @@ public class AccountController : ControllerBase
         }
 
         userData.Token = token;
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         _response.Create("1", "Login Correcto", userData);
         return Ok(_response);
     }

@@ -16,7 +16,7 @@ public class ComprobanteIngresoController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -36,7 +36,7 @@ public class ComprobanteIngresoController : ControllerBase
     [HttpPost("Insert")]
     public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -57,7 +57,7 @@ public class ComprobanteIngresoController : ControllerBase
     [HttpPut("Cancel")]
     public async Task<IActionResult> Cancel(ApiRequest paremeter)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -78,7 +78,7 @@ public class ComprobanteIngresoController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Put(ApiRequest request)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

@@ -18,7 +18,7 @@ public class SolicitudController : ControllerBase
     [HttpGet("Get/{json}")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -43,7 +43,7 @@ public class SolicitudController : ControllerBase
     [HttpPost("Post/{json}")]
     public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -68,7 +68,7 @@ public class SolicitudController : ControllerBase
     [HttpPut("Put/{json}")]
     public async Task<IActionResult> Put(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -93,7 +93,7 @@ public class SolicitudController : ControllerBase
     [HttpDelete("Delete/{json}")]
     public async Task<IActionResult> Delete(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -118,7 +118,7 @@ public class SolicitudController : ControllerBase
     [HttpGet("Check/{json}")]
     public async Task<IActionResult> Check(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();

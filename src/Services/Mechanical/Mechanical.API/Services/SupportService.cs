@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
 
@@ -32,7 +32,7 @@ namespace Mechanical.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
@@ -48,13 +48,13 @@ namespace Mechanical.API.Services
             return await _repository.SpExecuteDeprecatedAsync("Mechanical.Support_Delete", parameters);
         }
 
-        public async Task<ApiResponse> UpdateStateAsync(int id, int SupportStatusId)
+        public async Task<ApiResponseDeprecated> UpdateStateAsync(int id, int SupportStatusId)
         {
             var support = await _context.Supports.FindAsync(id);
             support.SupportStatusId = SupportStatusId;
             _context.Update(support);
             await _context.SaveChangesAsync();
-            return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };
+            return new ApiResponseDeprecated { code = "1", message = "Actualizado Exitosamente" };
         }
     }
 }

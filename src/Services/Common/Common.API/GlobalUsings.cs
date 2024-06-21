@@ -1,14 +1,15 @@
 ﻿global using Autofac;
 global using Autofac.Extensions.DependencyInjection;
 global using Common.API.Extensions;
-global using Common.Core.Utils;
-global using Services.Common.Extensions;
-global using Microsoft.AspNetCore.Mvc;
+global using Common.API.Interfaces;
 global using Common.Core.Interfaces;
-global using Services.Common.Logs;
-global using Common.Application.Services;
+global using Common.Core.Models;
+global using Common.Core.Utils;
 global using Common.Infrastructure.Data;
-global using Microsoft.EntityFrameworkCore;
-global using Newtonsoft.Json.Serialization;
-global using Newtonsoft.Json;
 global using Common.Infrastructure.Repository;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using Newtonsoft.Json;
+global using Newtonsoft.Json.Serialization;
+global using Services.Common.Extensions;
+

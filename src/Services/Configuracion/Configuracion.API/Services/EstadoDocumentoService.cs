@@ -9,9 +9,9 @@ public class EstadoDocumentoService : IEstadoDocumentoService
         _repository = repository;
     }
 
-    public async Task<ApiResponse> GetAsync(string json)
+    public async Task<ApiResponseDeprecated> GetAsync(string json)
     {
-        var data = new ApiResponse();
+        var data = new ApiResponseDeprecated();
         var estados = await _repository.DynamicListAsync<EstadoPago>("Gestion.EstadoDocumento_Get",
             new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(json) } });
         if (estados.Count > 0)

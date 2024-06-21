@@ -14,7 +14,7 @@ public class CompraNoHabitualService : ICompraNoHabitualService
         var ds = await _repository.GetDataSetAsync("Compra.Documento_Ingreso_Get", parameters);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public async Task<string> AddAsync(ApiRequest request)

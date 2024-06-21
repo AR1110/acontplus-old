@@ -1,4 +1,5 @@
 ﻿using Autofac.Extensions.DependencyInjection;
+using Common.AppSettings;
 using Common.Core.Utils;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -6,7 +7,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Services.Common.Extensions;
-using Services.Common.Logs;
 using Services.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -4,13 +4,13 @@ public class CajaService : ICajaService
 {
     private readonly ContabilidadContext _context;
     private readonly IAdoRepository _repository;
-    private readonly ApiResponse _response;
+    private readonly ApiResponseDeprecated _response;
 
     public CajaService(IAdoRepository repository, ContabilidadContext context)
     {
         _repository = repository;
         _context = context;
-        _response = new ApiResponse();
+        _response = new ApiResponseDeprecated();
     }
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
@@ -21,7 +21,7 @@ public class CajaService : ICajaService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 

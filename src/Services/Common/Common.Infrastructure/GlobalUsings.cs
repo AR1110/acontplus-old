@@ -3,7 +3,6 @@ global using Common.Core.Interfaces;
 global using Common.Infrastructure.Data;
 global using Microsoft.Data.SqlClient;
 global using Microsoft.EntityFrameworkCore;
-global using Microsoft.EntityFrameworkCore.Design;
 global using Microsoft.Extensions.Configuration;
 global using System.Data;
 global using Common.Core.Utils;

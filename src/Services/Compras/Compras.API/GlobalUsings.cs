@@ -18,7 +18,6 @@ global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Serialization;
 global using Services.Common.Extensions;
-global using Services.Common.Logs;
 global using Services.Common.Middleware;
 global using System.Data;
 global using System.Text;

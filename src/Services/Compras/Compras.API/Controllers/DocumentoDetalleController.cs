@@ -37,7 +37,7 @@ public class DocumentoDetalleController : ControllerBase
     [HttpPost("{idDocumento}/{idArticulo}")]
     public async Task<IActionResult> Post(int idDocumento, int idArticulo)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Recepcion.DocumentoDetalle_Insert", true);
@@ -70,7 +70,7 @@ public class DocumentoDetalleController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Recepcion.DocumentoDetalle_Delete");

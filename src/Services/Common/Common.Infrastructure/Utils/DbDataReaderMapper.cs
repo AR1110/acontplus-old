@@ -2,14 +2,12 @@
 
 namespace Common.Infrastructure.Utils;
 
-public class DbDataReaderMapper
+public static class DbDataReaderMapper
 {
-    public virtual List<T> ToList<T>(IDataReader rdr)
+    public static List<T> ToList<T>(IDataReader rdr)
     {
         var ret = new List<T>();
-        T entity;
         var typ = typeof(T);
-        PropertyInfo col;
         var columns = new List<PropertyInfo>();
         // Get all the properties in Entity Class
         var props = typ.GetProperties();
@@ -21,7 +19,7 @@ public class DbDataReaderMapper
         for (var index = 0; index < rdr.FieldCount; index++)
         {
             // See if column name maps directly to property name
-            col = props.FirstOrDefault(c => c.Name == rdr.GetName(index));
+            var col = props.FirstOrDefault(c => c.Name == rdr.GetName(index));
             if (col != null)
             {
                 columns.Add(col);
@@ -32,18 +30,11 @@ public class DbDataReaderMapper
         while (rdr.Read())
         {
             // Create new instance of Entity
-            entity = Activator.CreateInstance<T>();
+            var entity = Activator.CreateInstance<T>();
             // Loop through columns to assign data
-            for (var i = 0; i < columns.Count; i++)
+            foreach (var t in columns)
             {
-                if (rdr[columns[i].Name].Equals(DBNull.Value))
-                {
-                    columns[i].SetValue(entity, null, null);
-                }
-                else
-                {
-                    columns[i].SetValue(entity, rdr[columns[i].Name], null);
-                }
+                t.SetValue(entity, rdr[t.Name].Equals(DBNull.Value) ? null : rdr[t.Name], null);
             }
 
             ret.Add(entity);

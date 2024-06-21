@@ -17,7 +17,7 @@ public class ChequeService : IChequeService
             return null;
         }
 
-        return DataConverters.DataSetToJSON(ds);
+        return DataConverters.DataSetToJson(ds);
     }
 
 

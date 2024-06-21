@@ -3,12 +3,12 @@
 public class DeviceService : IDeviceService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IAdoRepository _repository;
+    private readonly IAdoSqlServer _adoSqlServer;
 
-    public DeviceService(IAdoRepository repository, TechnicalSupportContext context)
+    public DeviceService(IAdoSqlServer adoSqlServer, TechnicalSupportContext context)
     {
         _context = context;
-        _repository = repository;
+        _adoSqlServer = adoSqlServer;
     }
 
     public async Task<ApiResponse> AddAsync(Device device)
@@ -24,7 +24,7 @@ public class DeviceService : IDeviceService
         _context.Devices.Add(device);
         await _context.SaveChangesAsync();
         device.Id = device.Id;
-        return new ApiResponse { code = "1", message = "Registrado exitosamente", payload = device };
+        return new ApiResponse { Code = "1", Message = "Registrado exitosamente", Payload = device };
     }
 
     public async Task<ApiResponse> DeleteAsync(int id, int userId)
@@ -32,7 +32,7 @@ public class DeviceService : IDeviceService
         var device = await _context.Devices.FindAsync(id);
         if (device == null)
         {
-            return new ApiResponse { code = "0", message = "No existe el equipo" };
+            return new ApiResponse { Code = "0", Message = "No existe el equipo" };
         }
 
         device.Enabled = false;
@@ -40,25 +40,25 @@ public class DeviceService : IDeviceService
         device.UserId = userId;
         _context.Update(device);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Eliminado Exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Eliminado Exitosamente" };
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("TechnicalSupport.Device_Get", parameters);
+        var ds = await _adoSqlServer.GetDataSetAsync("TechnicalSupport.Device_Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
         {
-            return new ApiResponse { code = "0", message = "No se encontraron datos" };
+            return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<ApiResponse> UpdateAsync(int id, Device device)
     {
         if (id != device.Id)
         {
-            return new ApiResponse { code = "0", message = "El id no coincide" };
+            return new ApiResponse { Code = "0", Message = "El id no coincide" };
         }
 
         var productFounded = await _context.Devices.FindAsync(id);
@@ -69,6 +69,6 @@ public class DeviceService : IDeviceService
         productFounded.UserId = device.UserId;
         _context.Update(productFounded);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente" };
     }
 }

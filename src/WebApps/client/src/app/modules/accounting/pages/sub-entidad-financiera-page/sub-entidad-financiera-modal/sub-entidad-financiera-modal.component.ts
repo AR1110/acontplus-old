@@ -73,7 +73,7 @@ export class SubEntidadFinancieraModalComponent {
   onChangeDescripcion() {
     const descripcion = this.dataForm.value.descripcion || '';
     if (isValidField(descripcion)) {
-      this.dataForm.get('codigo')?.setValue(descripcion.slice(1, 3))
+      this.dataForm.get('codigo')?.setValue(descripcion.slice(0, 3))
     }
   }
 

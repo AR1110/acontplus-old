@@ -19,7 +19,7 @@ public class FacturaController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -39,7 +39,7 @@ public class FacturaController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Insert(ApiRequest data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -59,7 +59,7 @@ public class FacturaController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, ApiRequest data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Ventas.Factura_Update", true);
@@ -80,7 +80,7 @@ public class FacturaController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Ventas.Factura_Get_Id", true);
@@ -101,7 +101,7 @@ public class FacturaController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Ventas.Factura_Delete", true);

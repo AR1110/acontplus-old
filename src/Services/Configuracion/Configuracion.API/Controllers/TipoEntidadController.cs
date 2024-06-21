@@ -17,7 +17,7 @@ public class TipoEntidadController : ControllerBase
     public async Task<IActionResult> Get(string json)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Config.TipoEntidad_Get");
@@ -43,7 +43,7 @@ public class TipoEntidadController : ControllerBase
     public async Task<IActionResult> Insert(string json)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Config.TipoEntidad_Insert");
@@ -69,7 +69,7 @@ public class TipoEntidadController : ControllerBase
     public async Task<IActionResult> Update(int id, string json)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Config.TipoEntidad_Update");
@@ -97,7 +97,7 @@ public class TipoEntidadController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Config.TipoEntidad_Delete");
@@ -125,7 +125,7 @@ public class TipoEntidadController : ControllerBase
     public async Task<IActionResult> ListForSelect(int id)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             await _db.SPExecute("Config.TipoEntidad_For_Select");

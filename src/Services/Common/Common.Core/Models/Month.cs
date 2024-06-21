@@ -1,8 +1,7 @@
-﻿namespace Common.Core.Models
+﻿namespace Common.Core.Models;
+
+public class Month
 {
-    public class Month
-    {
-        public short month { get; set; }
-        public string name { get; set; }
-    }
+    public short month { get; set; }
+    public string name { get; set; }
 }

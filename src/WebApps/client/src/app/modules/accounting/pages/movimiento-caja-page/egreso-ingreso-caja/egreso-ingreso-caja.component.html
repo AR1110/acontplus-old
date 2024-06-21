@@ -4,7 +4,7 @@
       <label for="exstablecimiento">Establecimiento: </label>
       <select
         name="establecimiento"
-        id="onChangeEntidadFinanciera"
+        id="exstablecimiento"
         class="form-select form-control-border"
         [(ngModel)]="dataSearch.codEstab"
         (change)="getMovimientosCaja()"
@@ -19,7 +19,7 @@
   </div>
   <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
     <div class="form-group">
-      <label for="dateRangeSelect">Rango Fechas</label>
+      <label  >Rango Fechas</label>
       <app-date-range-selection
         (onChangeDateRange)="onDateRangeSelection($event)"
       />
@@ -27,12 +27,12 @@
   </div>
   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
     <div class="form-group">
-      <label for="employeeFilter">Empleado: </label>
-      <app-employee-search
-        [isSearchSimple]="isSearchEmployeeSimple"
-        (onSupplierSelected)="onEmployeeSelected($event)"
-        (emptyInput)="employeeResultEmptyInput($event)"
-      />
+      <label  >Cliente: </label>
+       <app-company-customer-search
+         [isSearchSimple]="true"
+         (onCustomerSelected)="onSelectCustomer($event)"
+         (resultEmptyInput)="onEmptyCustomer()"
+       />
     </div>
   </div>
   <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
@@ -90,9 +90,10 @@
   </div>
 </div>
 
-<div class="table-responsive">
-  <table class="table table-striped">
-    <thead>
+<div class="main">
+  <div class="table-responsive" style="overflow-y: inherit ;max-height: 400px;">
+    <table class="table table-striped" >
+      <thead  >
       <tr>
         <th>N°.</th>
         <th>Op.</th>
@@ -105,69 +106,72 @@
         <th>Empleado</th>
         <th>Estado</th>
       </tr>
-    </thead>
-    <tbody>
-      @for (item of movimientosCaja; track $index) {
-      <tr>
-        <th scope="row">{{ $index + 1 }}</th>
-        <td>
-          <div ngbDropdown container="body">
-            <button
-              type="button"
-              class="btn btn-outline-primary btn-sm"
-              ngbDropdownToggle
-            >
-              Acciones
-            </button>
-            <div ngbDropdownMenu>
-              <button ngbDropdownItem (click)="getPrint(item)">
-                <fa-icon [icon]="'print'"></fa-icon>
+      </thead>
+      <tbody>
+        @for (item of movimientosCaja; track $index) {
+          <tr>
+            <th scope="row">{{ $index + 1 }}</th>
+            <td>
+              <div ngbDropdown container="body">
+                <button
+                  type="button"
+                  class="btn btn-outline-primary btn-sm"
+                  ngbDropdownToggle
+                >
+                  Acciones
+                </button>
+                <div ngbDropdownMenu>
+                  <button ngbDropdownItem (click)="getPrint(item)">
+                    <fa-icon [icon]="'print'"></fa-icon>
 
-                Imprimir
-              </button>
+                    Imprimir
+                  </button>
 
-              <button ngbDropdownItem (click)="getReport(item)">
-                <fa-icon [icon]="'file-pdf'"></fa-icon>
-                Reporte
-              </button>
-              <button ngbDropdownItem (click)="askToDelete(item)">
-                <fa-icon [icon]="'trash-alt'"></fa-icon>
-                Anular
-              </button>
-            </div>
-          </div>
-        </td>
-        <td>{{ item.caja }}</td>
-        <td>{{ item.fechaEmision }}</td>
-        <td>{{ item.nroDoc }}</td>
-        <td>{{ item.subEntidadFinanciera }}</td>
-        <td>{{ item.valor }}</td>
-        <td>{{ item.observaciones }}</td>
-        <td>{{ item.empleado }}</td>
-        <td>
-          {{ item.estado }}
-        </td>
-      </tr>
-      } @empty {
-      <tr>
-        <td colspan="10" class="text-center">No hay registros</td>
-      </tr>
-      }
-    </tbody>
-    <tfoot>
-      <tr>
-        <td align="center" colspan="9">
-          <ngb-pagination
-            [collectionSize]="totalRecords"
-            [(page)]="dataSearch.pageIndex"
-            [maxSize]="dataSearch.maxSize"
-            [pageSize]="dataSearch.pageSize"
-            [rotate]="true"
-            (pageChange)="pageChanged()"
-            [boundaryLinks]="true"
-          />
-        </td>
-      </tr>
-    </tfoot>
-  </table>
+                  <button ngbDropdownItem (click)="getReport(item)">
+                    <fa-icon [icon]="'file-pdf'"></fa-icon>
+                    Reporte
+                  </button>
+                  <button ngbDropdownItem (click)="askToDelete(item)">
+                    <fa-icon [icon]="'trash-alt'"></fa-icon>
+                    Anular
+                  </button>
+                </div>
+              </div>
+            </td>
+            <td>{{ item.caja }}</td>
+            <td>{{ item.fechaEmision }}</td>
+            <td>{{ item.nroDoc }}</td>
+            <td>{{ item.subEntidadFinanciera }}</td>
+            <td>{{ item.valor }}</td>
+            <td>{{ item.observaciones }}</td>
+            <td>{{ item.empleado }}</td>
+            <td>
+              {{ item.estado }}
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="10" class="text-center">No hay registros</td>
+          </tr>
+        }
+      </tbody>
+      <tfoot>
+
+      </tfoot>
+    </table>
+  </div>
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+      <ngb-pagination
+        [collectionSize]="totalRecords"
+        [(page)]="dataSearch.pageIndex"
+        [maxSize]="dataSearch.maxSize"
+        [pageSize]="dataSearch.pageSize"
+        [rotate]="true"
+        (pageChange)="pageChanged()"
+        [boundaryLinks]="true"
+      />
+    </div>
+  </div>
 </div>
+

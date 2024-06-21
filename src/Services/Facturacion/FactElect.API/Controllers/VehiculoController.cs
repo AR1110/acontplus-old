@@ -24,7 +24,7 @@ public class VehiculoController : BaseApiController
     public async Task<IActionResult> Get(string json)
     {
         var _db = new DbAccess(_configuration);
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -44,7 +44,7 @@ public class VehiculoController : BaseApiController
     [HttpPost("Insert")]
     public async Task<IActionResult> Insert([FromBody] Vehiculo data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -68,7 +68,7 @@ public class VehiculoController : BaseApiController
     [HttpPut("Update/{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] Vehiculo data)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -93,7 +93,7 @@ public class VehiculoController : BaseApiController
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {
@@ -115,7 +115,7 @@ public class VehiculoController : BaseApiController
     [HttpGet("Search")]
     public async Task<IActionResult> Search(string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         var _db = new DbAccess(_configuration);
         try
         {

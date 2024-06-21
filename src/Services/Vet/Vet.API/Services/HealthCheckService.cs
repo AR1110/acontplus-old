@@ -7,7 +7,7 @@ public class HealthCheckService(VetContext context) : IHealthCheckService
         var healthCheckFound = await context.HealthChecks.FindAsync(id);
         if (healthCheckFound == null)
         {
-            return new ApiResponse { code = "0", message = "Item no encontrado!" };
+            return new ApiResponse { Code = "0", Message = "Item no encontrado!" };
         }
 
         healthCheckFound.DiseaseId = healthCheck.DiseaseId;
@@ -16,6 +16,6 @@ public class HealthCheckService(VetContext context) : IHealthCheckService
 
         context.Update(healthCheckFound);
         await context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Actualizado Exitosamente", payload = healthCheck };
+        return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente", Payload = healthCheck };
     }
 }

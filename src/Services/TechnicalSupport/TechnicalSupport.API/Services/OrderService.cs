@@ -4,12 +4,12 @@ public class OrderService : IOrderService
 {
     private readonly TechnicalSupportContext _context;
     private readonly string _module = "TechnicalSupport.Order_";
-    private readonly IAdoRepository _repository;
+    private readonly IAdoSqlServer _adoSqlServer;
 
-    public OrderService(TechnicalSupportContext context, IAdoRepository repository)
+    public OrderService(TechnicalSupportContext context, IAdoSqlServer adoSqlServer)
     {
         _context = context;
-        _repository = repository;
+        _adoSqlServer = adoSqlServer;
     }
 
     public async Task<ApiResponse> DeliveryAsync(OrderDeliveryDto deliveryDto, int id)
@@ -28,32 +28,32 @@ public class OrderService : IOrderService
 
         _context.Update(orderFound);
         await _context.SaveChangesAsync();
-        return new ApiResponse { code = "1", message = "Entregada correctamente" };
+        return new ApiResponse { Code = "1", Message = "Entregada correctamente" };
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync($"{_module}Get", parameters);
+        var ds = await _adoSqlServer.GetDataSetAsync($"{_module}Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
         {
-            return new ApiResponse { code = "0", message = "No se encontraron datos" };
+            return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
         }
 
-        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync($"{_module}Insert", parameters);
+        return await _adoSqlServer.SpExecuteAsync<ApiResponse>($"{_module}Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync($"{_module}Update", parameters);
+        return await _adoSqlServer.SpExecuteAsync<ApiResponse>($"{_module}Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync($"{_module}Delete", parameters);
+        return await _adoSqlServer.SpExecuteAsync<ApiResponse>($"{_module}Delete", parameters);
     }
 }

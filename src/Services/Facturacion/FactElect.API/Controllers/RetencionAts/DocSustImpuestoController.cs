@@ -37,7 +37,7 @@ public class DocSustImpuestoController : ControllerBase
     [HttpPost("{idDocSust}")]
     public async Task<IActionResult> Post(int idDocSust, string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -59,7 +59,7 @@ public class DocSustImpuestoController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             
@@ -81,7 +81,7 @@ public class DocSustImpuestoController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponse();
+        var _response = new ApiResponseDeprecated();
         try
         {
             

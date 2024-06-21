@@ -1,6 +1,6 @@
 ﻿using System.Data;
-using Common.Core.Interfaces;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
 
@@ -31,7 +31,7 @@ namespace Mechanical.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)

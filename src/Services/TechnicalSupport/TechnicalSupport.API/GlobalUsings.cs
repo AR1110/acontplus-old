@@ -14,7 +14,7 @@ global using Microsoft.EntityFrameworkCore.Design;
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Serialization;
 global using Services.Common.Extensions;
-global using Services.Common.Logs;
+
 global using TechnicalSupport.API.Data;
 global using TechnicalSupport.API.Dtos;
 global using TechnicalSupport.API.Entities;

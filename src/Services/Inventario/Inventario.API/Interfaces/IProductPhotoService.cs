@@ -2,9 +2,9 @@
 
 public interface IProductPhotoService
 {
-    Task<ApiResponse> GetAsync(int productId);
-    Task<ApiResponse> AddAsync(ProductPhoto productPhoto);
-    Task<ApiResponse> UpdateAsync(int id, ProductPhoto productPhoto);
-    Task<ApiResponse> SetDefaultAsync(int id, bool isDefault, int userId);
-    Task<ApiResponse> DeleteAsync(int id, int userId);
+    Task<ApiResponseDeprecated> GetAsync(int productId);
+    Task<ApiResponseDeprecated> AddAsync(ProductPhoto productPhoto);
+    Task<ApiResponseDeprecated> UpdateAsync(int id, ProductPhoto productPhoto);
+    Task<ApiResponseDeprecated> SetDefaultAsync(int id, bool isDefault, int userId);
+    Task<ApiResponseDeprecated> DeleteAsync(int id, int userId);
 }

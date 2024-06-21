@@ -18,6 +18,9 @@ import {isValidField} from "@core/utils/utils";
 import {INVENTORY_CODE_REPORT} from "@inventory/enums/inventory.enum";
 import {SharedService} from "@core/services/shared.service";
 import {SupplierSearchComponent} from "@purchase/components/supplier-search/supplier-search.component";
+import {
+  CompanyCustomerSearchComponent
+} from "@company-customer/components/company-customer-search/company-customer-search.component";
 
 @Component({
   selector: 'app-inventory-report-page',
@@ -31,6 +34,7 @@ import {SupplierSearchComponent} from "@purchase/components/supplier-search/supp
     UserSearchComponent,
     DateRangeSelectionComponent,
     SupplierSearchComponent,
+    CompanyCustomerSearchComponent,
   ],
   templateUrl: './inventory-report-page.component.html',
   styles: ``
@@ -72,7 +76,8 @@ export class InventoryReportPageComponent {
     byTipoReporte: 0,
     expiredStatusCode: 'VI',
     tipoReporteStock: INVENTORY_CODE_REPORT.STOCK_VALORACION,
-    stockStatusCode: null
+    stockStatusCode: null,
+    checkboxCompanyCustomer: false,
   }
 
   expirationStates=[
@@ -192,6 +197,15 @@ export class InventoryReportPageComponent {
     }
   }
 
+  resultEmptyInputCustomer(){
+    //this.dataSearch.companyCustomerId = 0;
+    this.dataSearch.numeroIdentificacion = null;
+  }
+  onCustomerSelected({data}:any){
+    this.dataSearch.numeroIdentificacion=data.identificacionComprador;
+
+  }
+
 
 
 
@@ -263,6 +277,16 @@ export class InventoryReportPageComponent {
       }
     }
 
+    if(this.dataSearch.checkboxCompanyCustomer){
+      if(!isValidField(this.dataSearch.numeroIdentificacion)){
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Seleccione el cliente'
+        })
+        return
+      }
+    }
+
     if (this.activeTab=== 3) {
       if (this.dataSearch.chkUbicacion) {
         if (!this.dataSearch.textUbicacion) {
@@ -324,7 +348,8 @@ export class InventoryReportPageComponent {
   // REPORTE DE CONSUMO DIARIO DE ARTICULOS
   private  getReportConsumoDiario() {
 
-    let idSubFamilia = this.dataSearch.checkboxSubCategoryFilter ? isValidField(this.dataSearch.idSubFamilia) : null
+    let idSubFamilia = this.dataSearch.checkboxSubCategoryFilter ? isValidField(this.dataSearch.idSubFamilia) : null;
+    let numeroIdentificacion = this.dataSearch.checkboxCompanyCustomer? isValidField(this.dataSearch.numeroIdentificacion):null
 
 
     let dataSearch = {
@@ -337,7 +362,8 @@ export class InventoryReportPageComponent {
       fechaFin: this.dataSearch.toDate,
       codEstab: this.getCodEstab(),
       idBodega: isValidField(this.dataSearch.idBodega),
-      idSubFamilia
+      idSubFamilia,
+      numeroIdentificacion
     }
 
     const parameters = {
