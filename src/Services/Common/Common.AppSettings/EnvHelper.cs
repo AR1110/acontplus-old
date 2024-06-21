@@ -1,6 +1,4 @@
-﻿using Common.Core.Enums;
-
-namespace Common.Core.Utils;
+﻿namespace Common.AppSettings;
 
 public static class EnvHelper
 {

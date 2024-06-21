@@ -8,6 +8,6 @@ public class UserReleaseReadService(IAdoRepository repository) : IUserReleaseRea
         {
             { "userRoleId", apiRequest.UserRoleId }, { "json", DataConverters.SerializeDictionary(apiRequest.Data) }
         };
-        return await repository.SpExecuteAsync("Common.UserReleaseRead_Insert", parameters);
+        return await repository.SpExecuteAsync<ApiResponse>("Common.UserReleaseRead_Insert", parameters);
     }
 }

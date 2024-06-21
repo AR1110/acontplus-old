@@ -1,4 +1,5 @@
-﻿using Services.Common.Middleware;
+﻿using Common.AppSettings;
+using Services.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 

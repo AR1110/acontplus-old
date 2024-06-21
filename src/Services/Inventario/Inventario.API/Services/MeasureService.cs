@@ -23,16 +23,16 @@ public class MeasureService : IMeasureService
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "_Insert", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "_Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "_Delete", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Delete", parameters);
     }
 }

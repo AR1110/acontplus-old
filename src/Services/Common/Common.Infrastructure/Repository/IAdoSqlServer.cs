@@ -1,4 +1,4 @@
-﻿namespace Common.Core.Interfaces;
+﻿namespace Common.Infrastructure.Repository;
 
 public interface IAdoSqlServer
 {
@@ -11,7 +11,7 @@ public interface IAdoSqlServer
     public Task<DataTable> GetDataTableAsync(string spname, Dictionary<string, object> parameters);
 
     public Task<int> OnlyExecuteAsync(string query, Dictionary<string, object> parameters,
-        bool useStoredProcedure = true);
+        bool useStoredProcedure = true, bool timeout = true);
 
-    public Task<ApiResponse> SpExecuteAsync(string spname, Dictionary<string, object> parameters);
+    public Task<T> SpExecuteAsync<T>(string spname, Dictionary<string, object> parameters, bool timeout = true) where T : class, new();
 }

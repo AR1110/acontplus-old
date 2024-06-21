@@ -1,6 +1,6 @@
 ﻿using System.Data;
-using Common.Core.Interfaces;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Mechanical.API.Interfaces;
 
 namespace Mechanical.API.Services

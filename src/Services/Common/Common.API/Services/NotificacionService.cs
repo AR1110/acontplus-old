@@ -4,6 +4,6 @@ public class NotificacionService(IAdoRepository repository) : INotificacionServi
 {
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync("App.Notificacion_Serv_Insert", parameters);
+        return await repository.SpExecuteAsync<ApiResponse>("App.Notificacion_Serv_Insert", parameters);
     }
 }

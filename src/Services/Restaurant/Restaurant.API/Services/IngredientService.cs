@@ -1,6 +1,7 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Restaurant.API.Data;
 using Restaurant.API.Interfaces;
 
@@ -74,7 +75,7 @@ namespace Restaurant.API.Services
             // var parameters = new Dictionary<string, object>{
             //     {"id", id}
             // };
-            // var response = await _repository.SPExecuteAsync("Restaurant.Ingredient_Delete", parameters);
+            // var response = await _repository.SpExecuteAsync<ApiResponse>("Restaurant.Ingredient_Delete", parameters);
             // return response;
         }
     }

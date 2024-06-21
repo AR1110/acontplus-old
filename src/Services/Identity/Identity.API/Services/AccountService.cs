@@ -42,7 +42,7 @@ public class AccountService : IAccountService
 
     public async Task<ApiResponse> LoginAsync(string username, string password)
     {
-        return await _repository.SpExecuteAsync("Seguridad.Login_Start",
+        return await _repository.SpExecuteAsync<ApiResponse>("Seguridad.Login_Start",
             new Dictionary<string, object> { { "username", username }, { "password", password } });
     }
 

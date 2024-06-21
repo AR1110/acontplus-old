@@ -28,21 +28,21 @@ public class NotaEntregaService : INotaEntregaService
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "Insert", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "Delete", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Delete", parameters);
     }
 
     public async Task<ApiResponse> ConvertToDocAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "Convert_To_Doc", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Convert_To_Doc", parameters);
     }
 }

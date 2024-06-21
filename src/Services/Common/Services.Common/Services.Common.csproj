@@ -4,24 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <PackageId>Acontplus.Services.Common</PackageId>
-    <Version>1.0.3</Version>
-    <Authors>Ivan Paz</Authors>
-    <Company>Acontplus S.A.S.</Company>
-    <Description>Lib to use common services config</Description>
-    <PackageTags>infrastructure;services;api;versioning</PackageTags>
-    <!--<RepositoryUrl></RepositoryUrl>-->
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="README.md" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" />

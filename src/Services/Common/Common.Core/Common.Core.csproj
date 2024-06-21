@@ -4,30 +4,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>Acontplus.Common.Core</PackageId>
-    <Version>1.0.3</Version>
-    <Authors>Ivan Paz</Authors>
-    <Company>Acontplus S.A.S.</Company>
-    <Description>Lib to use common models, converters and validators</Description>
-    <PackageTags>converters;models;validators</PackageTags>
-    <!--<RepositoryUrl></RepositoryUrl>-->
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Models\GestionFinanciera\**" />
     <EmbeddedResource Remove="Models\GestionFinanciera\**" />
     <None Remove="Models\GestionFinanciera\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="README.md" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -23,11 +23,11 @@ public class ProductService : IProductService
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "_Insert", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync(nameSchema + "_Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Update", parameters);
     }
 }

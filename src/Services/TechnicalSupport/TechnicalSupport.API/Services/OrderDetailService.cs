@@ -14,7 +14,7 @@ public class OrderDetailService : IOrderDetailService
 
     public async Task<ApiResponse> AddAsync(ApiRequest data)
     {
-        return await _repository.SpExecuteAsync($"{_module}_Insert",
+        return await _repository.SpExecuteAsync<ApiResponse>($"{_module}_Insert",
             new Dictionary<string, object>
             {
                 { "userRoleId", data.UserRoleId }, { "json", DataConverters.SerializeDictionary(data.Data) }
@@ -52,6 +52,6 @@ public class OrderDetailService : IOrderDetailService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(data.Data) }
         };
-        return await _repository.SpExecuteAsync($"{_module}_Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{_module}_Update", parameters);
     }
 }
