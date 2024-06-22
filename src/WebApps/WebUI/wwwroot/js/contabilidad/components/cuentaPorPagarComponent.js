@@ -1,7 +1,7 @@
-let templateUrl = `/Home/Index?name=~/Pages/Contabilidad/Components/_CuentaPorPagarComponent.cshtml`;
+let mainPath = `/Home/Index?name=~/Pages/Contabilidad/CuentaPorPagar/Components/` ;
 
 app.component("appCuentaPorPagarComponent", {
-    templateUrl,
+    templateUrl: `${mainPath}_CuentaPorPagarComponent.cshtml`,
     bindings: {
         resolve: '<',
         close: '&',
@@ -224,17 +224,8 @@ app.component("appCuentaPorPagarComponent", {
                     item.isDocRelacionado = $scope.selectedDocumentos.some(sd => sd.numAutDocSustento === item.numAutDocSustento);
                 }
 
-                modalSvc.open({
-                    controller: ["$uibModalInstance", "$scope", "params", function ($uibModalInstance, $scope, params) {
-                        const { docs } = params;
-
-                        $scope.docs = docs;
-
-                        $scope.closeModal = function () {
-                            $uibModalInstance.close();
-                        }
-                    }],
-                    template: `${mainPaths.cuenta_por_pagar_view}Shared/_ModalDocRelacionado.cshtml`,
+                modalSvc.openWithComponent({
+                    component:'appDocRelacionadoComponent',  
                     size: 'xl',
                     params: {
                         docs
@@ -340,105 +331,7 @@ app.component("appCuentaPorPagarComponent", {
                 console.log(error)
             }
         }
-
-
-        //-------------------------------------PAGO ----------------------------
-        $scope.openModalPagoLote = () => {
-            if ($scope.dataSearch.codEstab !== 'ALL' && $scope.dataSearch.idProveedor > 0 && $scope.options.rowSelection && $scope.selectedDocumentos.length > 0) {
-
-                let modalParams = {
-                    controller: 'modalPagoCtrl',
-                    template: `${mainPaths.cuenta_por_pagar_view}Shared/_ModalPago.cshtml`,
-                    size: 'xl',
-                    //  windowClass: 'uibModalFullScreen',
-                    isRenderRazorPartial: true
-                }
-
-
-                modalParams.params = {
-                    data: $scope.selectedDocumentos[0],
-                    selectedDocumentos: $scope.selectedDocumentos,
-                }
-
-                //Open Modal 
-                let modalRef = modalSvc.open(modalParams)
-                modalRef.result.then(result => {
-                    if (typeof result === 'object') {
-                        $scope.selectedDocumentos = [];
-                        $scope.getCuentasPorPagar();
-                    }
-                })
-
-
-            } else {
-
-                fS.sweetAlert(
-                    'info',
-                    `<div class="text-left">
-                        Para realizar Pago por Lote realice lo siguiente: 
-                        <ol>
-                            <li value="01">Seleccione el Establecimiento.</li>                            
-                            <li>Seleccione el Proveedor</li>                            
-                            <li>Seleccione los documentos <span class="text-danger"><b>pendientes</b></span> </li>                    
-                        </ol>
-                    </div>`
-                )
-            }
-        }
-
-
-        //Obtenemos las cuotas
-        $scope.getCuotaCuentaPorPagar = (item) => {
-            //Params APi 
-            let spParams = JSON.stringify({
-                idCuentaPorPagar: item.idCuentaPorPagar,
-                codPago: 'PE',
-                tipo: 2
-            })
-
-
-            return _mS.getData('get', 'Contabilidad/CuentaPorPagar?json=' + spParams, null, true);
-        }
-
-
-        $scope.selectedRow = (item) => {
-            try {
-                $scope.proveedor = {
-                    idProveedor: item.idProveedor
-                }
-
-                showLoader();
-
-
-                $scope.getCuotaCuentaPorPagar(item).then(response => {
-
-                    if (response.code === "0") {
-                        hideLoader();
-                        $scope.deleteDocSeleted(item);
-                    }
-
-                    if (response.code === "1") {
-                        item.cuotas = JSON.parse(response.payload)[0] || [];
-                        hideLoader();
-                    }
-                }).catch(error => {
-                    hideLoader();
-                    console.log(error)
-                })
-
-
-            } catch (error) {
-                $scope.deleteDocSeleted(item);
-                hideLoader();
-                console.log(error)
-            }
-
-        }
-
-        $scope.deleteDocSeleted = (item) => {
-            let index = $scope.selectedDocumentos.indexOf(item);
-            $scope.selectedDocumentos.splice(index, 1);
-        }
+ 
 
         //======================================MODAL CUOTA================================================ 
         $scope.openModalCuota = async (item) => {
@@ -533,6 +426,36 @@ app.component("appCuentaPorPagarComponent", {
     }]
 });
 
+
+app.component("appDocRelacionadoComponent", {
+    templateUrl: `${mainPath}_DocRelacionadoComponent.cshtml`,
+    bindings: {
+        resolve: '<',
+        close: '&',
+        dismiss: '&', 
+    },
+    controller: ["$scope", function($scope){
+        let $ctrl = this;
+        console.log($ctrl)
+        $scope.docs = [];
+
+        $ctrl.$onInit = function(){
+            console.log($ctrl.resolve.params)
+            $scope.docs = $ctrl.resolve.params.docs;
+        }
+
+        $ctrl.ok = function () {
+            
+            
+            $ctrl.close( );
+        };
+
+        $ctrl.cancel = function () {
+            $ctrl.dismiss( );
+        };
+
+    }]
+});
 
 
 

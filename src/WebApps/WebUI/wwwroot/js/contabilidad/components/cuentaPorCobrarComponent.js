@@ -1,7 +1,7 @@
-let templateUrl = `/Home/Index?name=~/Pages/Contabilidad/Components/_CuentaPorCobrarComponent.cshtml`;
+let mainPath = `/Home/Index?name=~/Pages/Contabilidad/CuentaPorCobrar/Components/` ;
 
 app.component("appCuentaPorCobrarComponent", {
-    templateUrl,
+    templateUrl: `${mainPath}_CuentaPorCobrarComponent.cshtml`,
     bindings: {
         resolve: '<',
         close: '&',
@@ -239,10 +239,10 @@ app.component("appCuentaPorCobrarComponent", {
 
 
             const selectedDocumentos = structuredClone($scope.selectedDocumentos);
-            // Crear un array de promesas para cada solicitud
+          
             const promises = selectedDocumentos.map(cxc => cuentaPorCobrarSvc.getCuotasById(cxc.idCuentaPorCobrar));
 
-            // Utilizar Promise.all para ejecutar las promesas concurrentemente
+           
             showLoader();
             Promise.all(promises)
                 .then(results => {
@@ -327,6 +327,21 @@ app.component("appCuentaPorCobrarComponent", {
         }
 
 
+        $scope.solicitarCredito = function(item){
+            let modalRef = modalSvc.openWithComponent({
+                component: 'appSolicitarCreditoComponent',
+                size: 'xl',
+              //  windowClass: 'uibModalFullScreen',
+            })
+
+            modalRef.result.then(result => {
+                if (result && typeof result === 'object' && typeof scope.onResult === 'function') {
+                    //  scope.onResult(result)
+                }
+            })
+        }
+
+
 
 
         $ctrl.ok = function () {
@@ -338,4 +353,31 @@ app.component("appCuentaPorCobrarComponent", {
         };
 
     }]
-})
+});
+
+
+app.component("appSolicitarCreditoComponent", {
+    templateUrl: `${mainPath}_SolicitarCreditoComponent.cshtml`,
+    bindings: {
+        resolve: '<',
+        close: '&',
+        dismiss: '&',
+        isNotModal: '='
+    },
+    controller: ['$scope', '$injector', function ($scope){
+        let $ctrl = this;
+
+        $ctrl.$onInit = function(){
+            console.log($scope)
+        }
+
+        $ctrl.ok = function () {
+            $ctrl.close();
+        };
+
+        $ctrl.cancel = function () {
+            $ctrl.dismiss();
+        };
+
+    }]
+});

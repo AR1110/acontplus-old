@@ -220,8 +220,18 @@
                         }
                     })
 
+                    let docsRelacionados = docsTemp.map(item=>{
+                        return {
+                            idComprobante: item.idComprobante,
+                            idTipoDocumento: item.idTipoDocumento,
+                            nroDocumento: item.nroDocumento,
+                            tipoDocumento: item.tipoDocumento,
+                            importeTotal: item.importeTotal,
+                            numAutDocSustento: item.numAutDocSustento
+                        }
+                    })
                     data.ciudades = ciudadesTemp;
-                    data.docs = docsTemp; 
+                    data.docs = docsRelacionados; 
                 }
 
                 return data;

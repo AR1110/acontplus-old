@@ -1,9 +1,14 @@
+ 
 <div class="modal-header">
     <h5 class="modal-title"><i class="fas fa-file"></i> Doc. Relacionado</h5>
-    <button class="close" ng-click="closeModal()">&times;</button>
+    <button class="close" ng-click="$ctrl.cancel()">&times;</button>
 </div>
 
 <div class="modal-body">
+
+
+    
+
    <div class="table-responsive">
         <table class="table table-sm table-bordered table-striped text-center">
             <thead class="thead-dark">
@@ -28,5 +33,5 @@
    </div>
 </div> 
 <div class="modal-footer"> 
-    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
+    <button type="button" class="btn btn-dark" ng-click="$ctrl.cancel()">&times; Cerrar</button>
 </div>

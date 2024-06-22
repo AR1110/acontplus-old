@@ -61,12 +61,12 @@
 
                             <label for="imageUpload" class="form-label">Elige una imagen:</label>
                             <input type="file" class="form-control" id="imageUpload" (change)="onFileSelected($event)" accept="image/*">
-                            <small class="text-warning">Tamaño máximo 1MB</small>
+                            <small class="text-warning">Tamaño máximo 500kb</small>
 
                             @if (fileError){
                               <div class="text-danger">
                                 @if(fileError && fileError?.type==="size"){
-                                  <p>Archivo muy grande: max 1MB</p>
+                                  <p>Archivo muy grande: max 500kb</p>
                                 }
 
                                 @if (fileError && fileError?.type==="type"){
