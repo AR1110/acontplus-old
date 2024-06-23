@@ -4,12 +4,12 @@ public class OrderService : IOrderService
 {
     private readonly TechnicalSupportContext _context;
     private readonly string _module = "TechnicalSupport.Order_";
-    private readonly IAdoRepository _repository;
+    private readonly IAdoSqlServer _adoSqlServer;
 
-    public OrderService(TechnicalSupportContext context, IAdoRepository repository)
+    public OrderService(TechnicalSupportContext context, IAdoSqlServer adoSqlServer)
     {
         _context = context;
-        _repository = repository;
+        _adoSqlServer = adoSqlServer;
     }
 
     public async Task<ApiResponse> DeliveryAsync(OrderDeliveryDto deliveryDto, int id)
@@ -33,7 +33,7 @@ public class OrderService : IOrderService
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync($"{_module}Get", parameters);
+        var ds = await _adoSqlServer.GetDataSetAsync($"{_module}Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
         {
             return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
@@ -44,16 +44,16 @@ public class OrderService : IOrderService
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{_module}Insert", parameters);
+        return await _adoSqlServer.SpExecuteAsync<ApiResponse>($"{_module}Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{_module}Update", parameters);
+        return await _adoSqlServer.SpExecuteAsync<ApiResponse>($"{_module}Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{_module}Delete", parameters);
+        return await _adoSqlServer.SpExecuteAsync<ApiResponse>($"{_module}Delete", parameters);
     }
 }

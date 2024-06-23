@@ -5,32 +5,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>Acontplus.Reports.Application</PackageId>
-    <Version>1.0.2</Version>
-    <Authors>Ivan Paz</Authors>
-    <Company>Acontplus S.A.S.</Company>
-    <Description>Get Reports RDL</Description>
-    <PackageTags>reports;rdl;rdlc</PackageTags>
-    <!--<RepositoryUrl></RepositoryUrl>-->
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="README.md" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="README.md">
-      <PackagePath>\</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Acontplus.Common.Core" />
     <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="ReportViewerCore.NETCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
   </ItemGroup>
 </Project>

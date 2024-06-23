@@ -3,8 +3,6 @@
 public interface IAdoSqlServer
 {
     public Task<List<T>> DynamicListAsync<T>(string spname, Dictionary<string, object> parameters);
-    public Task<T> DinamycObjectAsync<T>(string spname, Dictionary<string, object> parameters) where T : class, new();
-
     public Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp = false,
         bool timeout = true);
 

@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Text;
 using System.Web;
+using System.Collections.Concurrent;
 using Common.Core.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
@@ -11,21 +12,55 @@ using static System.Enum;
 
 namespace Reports.Application.Services
 {
-    public class RdlcReportService(IConfiguration configuration) : IRdlcReportService
+    public class RdlcReportService : IRdlcReportService, IDisposable
     {
+        private readonly IConfiguration _configuration;
+        private readonly ConcurrentDictionary<string, Lazy<MemoryStream>> _reportCache;
+        private bool _disposed;
+
+        public RdlcReportService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _reportCache = new ConcurrentDictionary<string, Lazy<MemoryStream>>();
+        }
+
         public ReportResponse GetReport(DataSet parameters, DataSet data, bool offline = false)
         {
             var response = new ReportResponse();
             var reportProps = DataTableMapper.BindData<ReportProps>(parameters.Tables["ReportProps"]);
 
             using var lr = new LocalReport();
+            string reportPath = GetReportPath(parameters, reportProps, offline);
+
+            var reportDefinitionStream = _reportCache.GetOrAdd(reportPath, path =>
+            {
+                return new Lazy<MemoryStream>(() =>
+                {
+                    var stream = RdlcHelpers.LoadReportDefinition(path);
+                    return stream;
+                });
+            }).Value;
+
+            reportDefinitionStream.Seek(0, SeekOrigin.Begin); // Ensure the stream position is reset before reading
+            lr.LoadReportDefinition(reportDefinitionStream);
+
+            AddDataSources(lr, parameters, data);
+            AddReportParameters(lr, parameters, data);
+
+            var fileReport = lr.Render(reportProps.ReportFormat, null, out _, out _, out _, out _, out _);
+            response = BuildReportResponse(reportProps, fileReport);
+
+            return response;
+        }
+
+        private string GetReportPath(DataSet parameters, ReportProps reportProps, bool offline)
+        {
             if (offline)
             {
-                var value = configuration.GetSection("dirReports").Value;
+                var value = _configuration.GetSection("dirReports").Value;
                 if (value != null)
                 {
-                    var reportPath = Path.Combine(value, parameters.Tables[0].Rows[0]["reportPath"].ToString());
-                    lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(reportPath));
+                    return Path.Combine(value, parameters.Tables[0].Rows[0]["reportPath"].ToString());
                 }
             }
             else
@@ -34,22 +69,18 @@ namespace Reports.Application.Services
                 var paths = reportProps.ReportPath.Split("/");
                 paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
-                switch (paths.Length)
+                return paths.Length switch
                 {
-                    case 1:
-                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0])));
-                        break;
-                    case 2:
-                        lr.LoadReportDefinition(
-                            RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0], paths[1])));
-                        break;
-                    default:
-                        lr.LoadReportDefinition(
-                            RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, reportProps.ReportPath)));
-                        break;
-                }
+                    1 => Path.Combine(mainPath, paths[0]),
+                    2 => Path.Combine(mainPath, paths[0], paths[1]),
+                    _ => Path.Combine(mainPath, reportProps.ReportPath),
+                };
             }
+            return string.Empty;
+        }
 
+        private void AddDataSources(LocalReport lr, DataSet parameters, DataSet data)
+        {
             if (parameters.Tables.Contains("DataSources"))
             {
                 var dataSources = parameters.Tables["DataSources"];
@@ -70,7 +101,10 @@ namespace Reports.Application.Services
                     lr.DataSources.Add(new ReportDataSource(dataSourceName, data.Tables[dataSourceName]));
                 }
             }
+        }
 
+        private void AddReportParameters(LocalReport lr, DataSet parameters, DataSet data)
+        {
             var firstDataSource = data.Tables[0];
             if (firstDataSource.Columns.Contains("codigoAutorizacion"))
             {
@@ -97,17 +131,23 @@ namespace Reports.Application.Services
                     else
                     {
                         paramValue = Encoding.UTF8.GetString(item.Field<byte[]>("paramValue"));
-                        lr.SetParameters(new ReportParameter(item.Field<string>("paramName"), paramValue));
                     }
+                    lr.SetParameters(new ReportParameter(item["paramName"].ToString(), paramValue));
                 }
             }
+        }
 
-            byte[] fileReport = lr.Render(reportProps.ReportFormat, null, out _, out _, out _, out _, out _);
+        private ReportResponse BuildReportResponse(ReportProps reportProps, byte[] fileReport)
+        {
             TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileContentType fc);
             TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileExtension fe);
-            response.FileContents = fileReport;
-            response.ContentType = fc.DisplayName();
-            response.FileDownloadName = HttpUtility.UrlEncode(reportProps.ReportName + fe.DisplayName(), Encoding.UTF8);
+
+            var response = new ReportResponse
+            {
+                FileContents = fileReport,
+                ContentType = fc.DisplayName(),
+                FileDownloadName = HttpUtility.UrlEncode(reportProps.ReportName + fe.DisplayName(), Encoding.UTF8)
+            };
             return response;
         }
 
@@ -117,8 +157,47 @@ namespace Reports.Application.Services
             var fileContents = await File.ReadAllBytesAsync(filePath);
             return new ReportResponse
             {
-                FileContents = fileContents, ContentType = "application/pdf", FileDownloadName = "Not Found.pdf"
+                FileContents = fileContents,
+                ContentType = "application/pdf",
+                FileDownloadName = "Not Found.pdf"
             };
+        }
+
+        private void CleanupCache()
+        {
+            foreach (var lazyMemoryStream in _reportCache.Values)
+            {
+                if (lazyMemoryStream.IsValueCreated)
+                {
+                    lazyMemoryStream.Value.Dispose();
+                }
+            }
+            _reportCache.Clear();
+        }
+
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                CleanupCache();
+            }
+
+            _disposed = true;
+        }
+
+        ~RdlcReportService()
+        {
+            Dispose(false);
         }
     }
 }

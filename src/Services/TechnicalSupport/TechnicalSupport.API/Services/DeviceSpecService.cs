@@ -3,11 +3,11 @@
 public class DeviceSpecService : IDeviceSpecService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IAdoRepository _repository;
+    private readonly IAdoSqlServer _adoSqlServer;
 
-    public DeviceSpecService(IAdoRepository repository, TechnicalSupportContext context)
+    public DeviceSpecService(IAdoSqlServer adoSqlServer, TechnicalSupportContext context)
     {
-        _repository = repository;
+        _adoSqlServer = adoSqlServer;
         _context = context;
     }
 
