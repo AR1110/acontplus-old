@@ -372,10 +372,9 @@ BEGIN
 		BEGIN 
 			SET @header = (	
 							SELECT 
-								 
 								 mc.razonSocial
 								,mc.ruc
-								,mc.establecimiento
+								,mc.nombreComercial as establecimiento
 								,dirMatriz = mc.dirEstablecimiento
 								,fechaEmision =  CONVERT(NVARCHAR, FORMAT(mc.fechaEmision, 'dd/MM/yyyy hh:mm')) 						
 								,nroDoc= UPPER(mc.tipoDoc) + ' : ' + mc.codDoc + '-'+ mc.estab+ '-'+ dbo.AFTAutoComplete(mc.nroDoc)
@@ -408,12 +407,11 @@ BEGIN
 								,valorTotal = CAST(a.valor AS numeric(18,2))
 								,observacion = a.observaciones
 								,identificacionComprador = a.numeroIdentificacion
-								,a.cliente
 								,a.direccionCliente
 								,a.telefonoCliente
 								,a.entidadFinanciera 
 								,a.estadoDoc  
-								,a.codDoc 
+								,'A' as codDoc
 								,usuario = a.nombreUsuario
 							FROM v_Anticipo a
 							WHERE a.idAnticipo = @idDocument

@@ -24,7 +24,8 @@ BEGIN
 
     --> Filters
     DECLARE @checkBoxFecha BIT ,@idUsuario INT ,@idEmpleado INT ,@codEstado NVARCHAR(10) ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2
-	
+	       ,@IDCard VARCHAR(50)
+
     --> Recuperacion de variables
 	SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
@@ -37,35 +38,43 @@ BEGIN
             SET @tableNames = 'movimientos'
 
             SET @params = '@idEntidad   INT
-						  ,@idEmpleado  INT 
+						  ,@IDCard      VARCHAR(50) 
 						  ,@fechaInicio DATETIME2
 						  ,@fechaFin    DATETIME2
 						  ,@codEstado   VARCHAR(20)
                           ,@pageIndex   INT
                           ,@pageSize    INT'
 
-            SET @sql = 'SELECT idTipoDocumento      = td.idTipoDocumento									
-							  ,codDoc               = td.codigo
-							  ,idMovimientoCaja     = mc.idMovimientoCaja
-							  ,codEstab             = mc.codEstab
-							  ,fechaEmision         = dbo.AFTConvertDate(mc.fechaEmision)
-							  ,valor                = mc.valor * IIF(td.codigo = ''EC'',-1,1)
-							  ,observaciones        = ISNULL(mc.observaciones,'''')
-							  ,nroDoc               = td.codigo + ''-'' + s.estab + ''-'' + dbo.AFTAutoComplete(mc.nroDoc) 
-							  ,estado               = IIF(mc.estado = 1,''Activo'',''Anulado'')
-							  ,subEntidadFinanciera = sef.descripcion
-							  ,empleado             = UPPER(e.nombreCompleto)
-							  ,caja                 = UPPER(c.descripcion)
-							  ,u.nroIdentificacion
-                              ,COUNT(*) OVER() as totalRecords
-					FROM dbo.MovimientoCaja              mc WITH (NOLOCK) 
-					INNER JOIN dbo.Caja                   c WITH (NOLOCK) ON c.idCaja                   = mc.idCaja
-					INNER JOIN dbo.TipoDocumento         td WITH (NOLOCK) ON td.idTipoDocumento         = mc.idTipoDocumento
-					INNER JOIN dbo.SubEntidadFinanciera sef WITH (NOLOCK) ON sef.idSubEntidadFinanciera = mc.idSubEntidadFinanciera								
-					INNER JOIN Sri.Establecimiento        s WITH (NOLOCK) ON s.codEstab                 = mc.codEstab
-					INNER JOIN dbo.Empleado               e WITH (NOLOCK) ON e.idEmpleado               = mc.idEmpleado
-					INNER JOIN dbo.Usuario                u WITH (NOLOCK) ON u.idUsuario                = mc.idUsuarioRegister    
-					WHERE mc.idEntidad = @idEntidad '
+            SET @sql = 'SELECT mc.idMovimientoCaja
+						      ,td.idTipoDocumento									
+						      ,td.codigo								                             as codDoc
+						      ,es.codEstab
+						      ,FORMAT(mc.fechaEmision,''dd/MM/yyyy HH:mm'')                          as fechaEmision
+						      ,mc.valor * IIF(td.codigo = ''EC'',-1,1)                               as valor
+						      ,ISNULL(mc.observaciones,'')				                             as observaciones
+						      ,td.codigo + ''-'' + es.estab + ''-'' + dbo.AFTAutoComplete(mc.nroDoc) as nroDoc 
+						      ,IIF(mc.estado = 1,''Activo'',''Anulado'')						     as estado
+						      ,ef.descripcion													     as subEntidadFinanciera
+							  
+						      ,CASE td.codigo WHEN ''EC'' THEN se.BusinessName
+											  WHEN ''IC'' THEN si.BusinessName
+						       END																     as empleado
+						      ,CASE td.codigo WHEN ''EC'' THEN se.IDCard
+											  WHEN ''IC'' THEN si.IDCard
+						       END																     as nroIdentificacion
+						      ,UPPER(ca.descripcion)											     as caja
+                              ,COUNT(*) OVER()													     as totalRecords
+					    FROM dbo.MovimientoCaja              mc WITH (NOLOCK) 
+					    INNER JOIN dbo.Caja                  ca WITH (NOLOCK) ON ca.idCaja                 = mc.idCaja
+					    INNER JOIN dbo.TipoDocumento         td WITH (NOLOCK) ON td.idTipoDocumento        = mc.idTipoDocumento
+					    INNER JOIN dbo.SubEntidadFinanciera  ef WITH (NOLOCK) ON ef.idSubEntidadFinanciera = mc.idSubEntidadFinanciera								
+					    INNER JOIN Sri.Establecimiento       es WITH (NOLOCK) ON es.idEstablecimiento      = mc.idEstablecimiento
+					    INNER JOIN dbo.Usuario               us WITH (NOLOCK) ON us.idUsuario              = mc.idUsuarioRegister
+					     LEFT JOIN dbo.ComprobanteIngreso    ci WITH (NOLOCK) ON ci.idComprobanteIngreso   = mc.idComprobanteIngreso
+				         LEFT JOIN dbo.ComprobanteEgreso     ce WITH (NOLOCK) ON ce.idComprobanteEgreso    = mc.idComprobanteEgreso
+					     LEFT JOIN Customer.Customer         si WITH (NOLOCK) ON si.Id					   = ci.CustomerId
+					     LEFT JOIN Customer.Customer		 se WITH (NOLOCK) ON se.Id					   = ce.CustomerId
+					    WHERE mc.idEntidad = @idEntidad '
 
 	        SELECT @checkBoxFecha  = checkBoxFecha
 		          ,@idEmpleado     = idEmpleado
@@ -88,7 +97,9 @@ BEGIN
 	
 		    IF @idEmpleado > 0 
 			    BEGIN
-				    SET @sql = @sql + 'AND mc.idEmpleado =  @idEmpleado'
+                    SELECT TOP 1 @IDCard = nroIdentificacion FROM Empleado WITH (NOLOCK) WHERE idEmpleado = @idEmpleado
+
+				    SET @sql = @sql + 'AND si.IDCard =  @IDCard OR se.IDCard = @IDCard '
 			    END 
 	    
 		    IF @codEstado IS NOT NULL 
@@ -107,7 +118,7 @@ BEGIN
  		    EXEC sp_executesql @sql
 			                  ,@params 
 			                  ,@idEntidad   = @idEntidad
-				              ,@idEmpleado  = @idEmpleado
+				              ,@IDCard      = @IDCard
 				              ,@fechaInicio = @fechaInicio
 				              ,@fechaFin    = @fechaFin
 				              ,@codEstado   = @codEstado
@@ -131,7 +142,8 @@ BEGIN
             FROM dbo.AsignacionCaja ac WITH (NOLOCK) 
             INNER JOIN dbo.Usuario  us WITH (NOLOCK) ON us.idUsuario = ac.idUsuario
             INNER JOIN dbo.Caja     ca WITH (NOLOCK) ON ca.idCaja    = ac.idCaja
-            WHERE ac.idUsuario = @idUsuario AND ac.idEntidad = @idEntidad
+            WHERE ac.idUsuario = @idUsuario 
+              AND ac.idEntidad = @idEntidad
 
 
             SELECT idTipoDocumento,descripcion,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('IC','EC') ORDER BY descripcion DESC

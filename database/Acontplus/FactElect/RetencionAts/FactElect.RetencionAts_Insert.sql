@@ -26,7 +26,7 @@ BEGIN
 	DECLARE @idUsuario INT,@idEntidad INT
 
     --> Contabilidad
-    DECLARE @importeTotal NUMERIC(18,5) ,@idEstablecimiento INT ,@idEstadoPago INT ,@serieComprobante VARCHAR(20)
+    DECLARE @importeTotal NUMERIC(18,5) ,@idEstablecimiento INT ,@idEstadoPago INT ,@serieComprobante VARCHAR(20) ,@codEstab VARCHAR(50)
 
     --> Facturacion Electronica
 	DECLARE @ruc NVARCHAR(100) ,@fechaEmision DATETIME ,@ambiente INT ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@claveAcceso NVARCHAR(50) ,@isAutomatic INT ,@uniqueId VARCHAR(150) ,@secuencial INT
@@ -36,7 +36,7 @@ BEGIN
 	DECLARE @idRetencionAts INT ,@tipoEmision TINYINT = 1 ,@idPuntoEmision INT ,@idTipoDocumento INT ,@idProveedor INT 
 
 	DECLARE @tblInfoCompRet AS TABLE(
-		 fechaEmision DATETIME NOT NULL
+		 fechaEmision DATETIME2 NOT NULL
 		,codEstab VARCHAR(25) NOT NULL
 		,estab VARCHAR(5) NOT NULL
 		,ptoEmi VARCHAR(5) NOT NULL
@@ -124,7 +124,7 @@ BEGIN
              codEstab                         VARCHAR(25)
             ,estab                            VARCHAR(5)
             ,ptoEmi                           VARCHAR(5)
-            ,fechaEmision                     DATETIME
+            ,fechaEmision                     DATETIME2
             ,contribuyentEspecial             VARCHAR(13)
             ,obligadoContabilidad             VARCHAR(2)
             ,tipoIdentificacionSujetoRetenido VARCHAR(2)
@@ -218,7 +218,14 @@ BEGIN
 
         SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
-        SELECT TOP 1 @idPuntoEmision = idPuntoEmision, @ambiente = ambiente ,@fechaEmision = fechaEmision FROM @tblInfoCompRet t INNER JOIN PuntoEmision p WITH (NOLOCK) ON p.codEstab = t.codEstab
+        SELECT TOP 1 @idPuntoEmision = idPuntoEmision
+                    ,@ambiente       = ambiente 
+                    ,@fechaEmision   = fechaEmision
+                    ,@codEstab       = tb.codEstab
+        FROM @tblInfoCompRet           tb
+        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.codEstab = tb.codEstab
+
+        SELECT TOP 1 @idEstablecimiento = idEstablecimiento FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
         SELECT @importeTotal = SUM(valorRetenido) FROM @tblRetenciones 
 
@@ -246,9 +253,11 @@ BEGIN
 			                                                   ,estab+ptoEmi                                                     
 			                                                   ,Helper.F_Auto_Sequential(@secuencial)
                                                              ) 
+                   ,@serieComprobante = estab + '-' +  ptoEmi  + '-' + Helper.F_Auto_Sequential(@secuencial)
 		FROM @tblInfoCompRet
 
-        --> Validaciones 
+        --> Validaciones
+
         IF NOT EXISTS (SELECT 1 FROM @tblInfoCompRet)
 			BEGIN
 				SELECT '0' code, 'Debe agregar al menos un documento de sustento' as 'message'

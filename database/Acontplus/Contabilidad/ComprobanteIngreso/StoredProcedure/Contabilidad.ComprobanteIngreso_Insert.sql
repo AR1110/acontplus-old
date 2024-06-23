@@ -40,8 +40,7 @@ BEGIN
 		 idEntidadFinanciera INT NOT NULL
 		,idSubEntidadFinanciera INT NOT NULL
 		,idBanco INT NULL
-		,idTipoDocumento INT NULL 
-		,idComprobante INT NULL
+		,idCuentaPorCobrar INT NULL
 		,fechaEmision DATETIME2 NOT NULL
 		,valor NUMERIC (18,5) NOT NULL
 		,abono NUMERIC (18,5) NOT NULL
@@ -102,8 +101,8 @@ BEGIN
 		)
 		
 		INSERT INTO @payment
-			  (idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial,cobro,infoCobro,abono,controlCaja)
-		SELECT idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial,cobro,infoCobro,abono,controlCaja
+			  (idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idCuentaPorCobrar,fechaEmision,valor,posfechado,secuencial,cobro,infoCobro,abono,controlCaja)
+		SELECT idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idCuentaPorCobrar,fechaEmision,valor,posfechado,secuencial,cobro,infoCobro,abono,controlCaja
 		FROM OPENJSON(@cobros)WITH 
         (     
              idSubEntidadFinanciera INT 
@@ -111,7 +110,8 @@ BEGIN
 		    ,idBanco                INT 
 		    ,idCuentaBancaria       INT 
 		    ,idTipoDocumento        INT 
-		    ,idComprobante          INT 
+		    ,idCuentaPorCobrar      INT '$.idCuentaPorCobrar'
+            ,idComprobante          INT 
 		    ,fechaEmision           DATETIME2 
 		    ,valor                  NUMERIC(15,5)
 		    ,posfechado             BIT 
@@ -153,7 +153,7 @@ BEGIN
 
         ) AS dt
 
-		--======================================Obteniendo variables ============================================================
+		--> Obteniendo variables 
 
 		SELECT TOP 1 @codEstab = codEstab ,@idCliente = idCliente FROM @documento 
 
@@ -167,7 +167,7 @@ BEGIN
 
 		SELECT TOP 1 @idControlCaja = idControlCaja FROM ControlCaja WITH (NOLOCK) WHERE idCaja = @idCaja AND estado = 1
 
-		--======================================Validacion de datos============================================================
+		--> Validacion de datos
 
         IF (SELECT COUNT(*) FROM @documento) = 0
 			BEGIN
@@ -218,6 +218,7 @@ BEGIN
 			END 
 
 		BEGIN TRAN 
+            --> Comprobante
 			INSERT INTO dbo.ComprobanteIngreso WITH(ROWLOCK)
 				   (CustomerId,total,abono,observacion,nroDocumento,idUsuario,idEntidad,fechaRegistro,idControlCaja,idEstablecimiento)
 		    SELECT @CustomerId,total,abono,observacion,@secuencial,@idUsuario,@idEntidad,dbo.ufnGetDateEcuador(),@idControlCaja,@idEstablecimiento
@@ -225,11 +226,13 @@ BEGIN
 
 			SET @idComprobanteIngreso = @@IDENTITY 
 
+            --> Cobro
 			INSERT INTO dbo.Cobro WITH(ROWLOCK)
-				   (idComprobanteIngreso,idEntidadFinanciera,idSubEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,abono,posfechado,secuencial,cobro,infoCobro,controlCaja)
-			SELECT @idComprobanteIngreso,idEntidadFinanciera,idSubEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,abono,posfechado,secuencial,cobro,infoCobro,controlCaja
+				   (idComprobanteIngreso,idEntidadFinanciera,idSubEntidadFinanciera,idBanco,idCuentaPorCobrar,fechaEmision,valor,abono,posfechado,secuencial,cobro,infoCobro,controlCaja)
+			SELECT @idComprobanteIngreso,idEntidadFinanciera,idSubEntidadFinanciera,idBanco,idCuentaPorCobrar,fechaEmision,valor,abono,posfechado,secuencial,cobro,infoCobro,controlCaja
 			FROM @payment
 
+            --> Cobro Detalle por cuotas
 			INSERT INTO dbo.CobroDetalle WITH (ROWLOCK) 
                   (idCobro,idCuotaPorCobrar,saldo,abono,interes,diasMora,mora)
 			SELECT idCobro,idCuotaPorCobrar,saldo,dt.abono,interes,diasMora,mora 
@@ -238,13 +241,26 @@ BEGIN
             WHERE c.idComprobanteIngreso = @idComprobanteIngreso
             ORDER BY c.secuencial ASC
 
+            --> HIstorial de cuentas por cobrar
 			INSERT INTO Contabilidad.Historial_Cobro WITH (ROWLOCK)
                    (idComprobanteIngreso,idCuentaPorCobrar,idCobro,saldo,abono,diasMora,mora) 
-			SELECT @idComprobanteIngreso,idCuentaPorCobrar,idCobro,saldo,h.abono,diasMora,mora 
+			SELECT @idComprobanteIngreso,h.idCuentaPorCobrar,idCobro,h.saldo,h.abono,diasMora,mora 
             FROM @history h 
             INNER JOIN dbo.Cobro c WITH (NOLOCK) ON c.secuencial = h.secuencial 
             WHERE c.idComprobanteIngreso = @idComprobanteIngreso
             ORDER BY c.secuencial ASC
+
+            --> Edicion de estado de las cuentas
+            IF EXISTS (SELECT 1 FROM @payment WHERE idCuentaPorCobrar > 0)
+                BEGIN
+                    DECLARE @idEstadoPago INT
+
+                    SELECT TOP 1 @idEstadoPago = idEstadoPago FROM EstadoPago WITH (NOLOCK) WHERE codigo = 'APL'
+
+                    UPDATE Contabilidad.CuentaPorCobrar WITH (ROWLOCK)
+                       SET idEstadoPago = @idEstadoPago
+                    WHERE idCuentaPorCobrar IN (SELECT idCuentaPorCobrar FROM @payment WHERE idCuentaPorCobrar > 0)
+                END 
 
 			DECLARE cursor_Cuotas CURSOR LOCAL FOR
 			SELECT idCuotaPorCobrar FROM @paymentDetail

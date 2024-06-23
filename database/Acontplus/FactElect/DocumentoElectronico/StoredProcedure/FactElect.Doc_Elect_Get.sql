@@ -70,7 +70,7 @@ BEGIN
 							  ,de.telefonoEstablecimiento
 							  ,de.entidad
 							  ,de.nombreComercial
-                              ,COUNT(*) OVER(ORDER BY de.idDocumentoElectronico) as totalRecords
+                              ,COUNT(*) OVER() as totalRecords
 						FROM FactElect.v_DocElectronico de WITH (NOLOCK)
 						WHERE de.idEntidad = @idEntidad  '
 
@@ -83,7 +83,7 @@ BEGIN
 	              ,@codEstab                 = codEstab
 	              ,@idPuntoEmision           = idPuntoEmision
 	              ,@identificacionReceptor   = identificacionReceptor
-	              ,@idUsuario                = idUsuarioSearch
+	              ,@idUsuario                = idUsuario
 		          ,@pageSize                 = pageSize
 		          ,@pageIndex                = pageIndex
                   ,@secuencial               = LTRIM(RTRIM(nroSecuencial))
@@ -98,7 +98,7 @@ BEGIN
 		        ,codEstab               VARCHAR(20) 
 		        ,idPuntoEmision         INT 
 		        ,identificacionReceptor VARCHAR(20) 
-		        ,idUsuarioSearch        INT 
+		        ,idUsuario              INT 
 		        ,nroSecuencial          VARCHAR(50) 
                 ,pageIndex              INT 
 		        ,pageSize               INT 

@@ -19,12 +19,7 @@ GO
 -- Create date: 2022-11-24
 -- Description:	SP FOR GET DATA OVER RETENCIONES ATS
 -- =============================================
-USE AcontPlus
-IF OBJECT_ID(N'FactElect.RetencionAts_Get', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetencionAts_Get 
-GO
-CREATE PROCEDURE FactElect.RetencionAts_Get @idRol INT
-,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Get @idRol INT ,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -46,21 +41,33 @@ BEGIN
 	IF EXISTS(SELECT 1 FROM @params WHERE tipo = 1)
 		BEGIN
 			SELECT * FROM TipoIdentificacion WITH (NOLOCK) 
+
 			SELECT * FROM Sri.SujetoRetenido WITH (NOLOCK) 
+
 			SELECT * FROM Sri.DocumentoSustento WITH (NOLOCK) 
+
 			SELECT dst.codDocSustento, st.codSustento, st.descripcion  FROM Sri.SustentoTributario st  WITH (NOLOCK)
 			INNER JOIN Sri.DocumentoSustentoTrib dst  WITH (NOLOCK) ON st.codSustento = dst.codSustento
-			SELECT * FROM Sri.TipoPago WITH (NOLOCK) 
+			
+            SELECT * FROM Sri.TipoPago WITH (NOLOCK) 
+
 			SELECT * FROM Sri.TipoRegimenFE WITH (NOLOCK) 
+
 			SELECT * FROM Sri.Pais WITH (NOLOCK)  
+
 			SELECT * FROM Sri.ParaisoFiscal WITH (NOLOCK) 
+
 			SELECT * FROM Sri.Impuesto WITH (NOLOCK) 
+
 			SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK) 
+
 			SELECT * FROM Sri.ImpuestoRetencion  WITH (NOLOCK)
+
 			SELECT * FROM Sri.PorcentajeRetIva  WITH (NOLOCK)
-			SELECT idCodigoRetencion, codigo, concepto descripcion, porcentajeMin porcentaje, estado 
-			FROM Sri.CodigoRetencion  WITH (NOLOCK)
-			SELECT * FROM Sri.FormaPago  WITH (NOLOCK)
+
+			SELECT idCodigoRetencion, codigo, concepto descripcion, porcentajeMin porcentaje, estado FROM Sri.CodigoRetencion  WITH (NOLOCK)
+			
+            SELECT * FROM Sri.FormaPago  WITH (NOLOCK)
  
 			SELECT ea.codEstab_Asig, ea.predeterminado,
 			e.*
