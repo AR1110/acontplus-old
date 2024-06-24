@@ -527,6 +527,7 @@ function modalService($uibModal, $mdDialog) {
                 component,
                 size,
                 windowClass,
+                backdrop: "static",
                 resolve: {
                     params: function () {
                         return params;

@@ -19,6 +19,7 @@ import { ModalEgresoIngresoComponent } from './modal-egreso-ingreso/modal-egreso
 import {
   CompanyCustomerSearchComponent
 } from "@company-customer/components/company-customer-search/company-customer-search.component";
+import {ACCOUNTING_CODE_REPORT} from "@accounting/enums/accounting.constants";
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
@@ -139,14 +140,13 @@ export class EgresoIngresoCajaComponent {
     try {
       let format = 'pdf';
       let dataParms = {
+        tipo: 1,
         id: item.idMovimientoCaja,
       };
 
       const parameters = {
-        hasService: true,
         reportParams: JSON.stringify({
-          hasParams: false,
-          codigo: CODE_REPORT.RMIE,
+          codigo: ACCOUNTING_CODE_REPORT.RMIE,
           format,
           codEstab: item.codEstab,
           aditionalParams: [],
@@ -157,7 +157,6 @@ export class EgresoIngresoCajaComponent {
       this.sharedSvc.getReport({
         data: parameters,
         format: 'pdf',
-        isOldVersion: true,
       });
     } catch (error) {
       console.log(error);
