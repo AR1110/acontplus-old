@@ -27,17 +27,17 @@ BEGIN
 
 	SELECT @idComprobanteEgreso = id FROM OPENJSON(@json) WITH(id INT)
 
-	IF EXISTS(SELECT 1 FROM dbo.PagoDocumento pd INNER JOIN TipoDocumento td ON td.idTipoDocumento = pd.idTipoDocumento WHERE pd.idComprobanteEgreso = @idComprobanteEgreso AND td.codigo = 'EC')
+	IF EXISTS (SELECT 1 FROM MovimientoCaja WITH (NOLOCK) WHERE idComprobanteEgreso = @idComprobanteEgreso)
 		BEGIN
 			SET @byEgreso = 1
 		END 
 
     SET @tableNames = 'comprobanteEgresoDs,comprobanteDetalleDs'
 
-	SELECT 'Nro.:'+td.codigo+dbo.AFTAutoComplete(ce.nroDocumento) as nroComprobante
+	SELECT 'Nro.:'+'CE'+dbo.AFTAutoComplete(ce.nroDocumento) as nroComprobante
 		  ,@byEgreso                                              as byEgreso
-		  ,ce.nombreFiscal                                        as proveedor
-		  ,ce.nroIdentificacion
+		  ,BusinessName                                           as proveedor
+		  ,IdCard                                                 as nroIdentificacion
 		  ,FORMAT(ce.fechaRegistro, 'dd/MM/yyyy HH:mm')           as fechaEmision
 		  ,CAST(ce.total as numeric(18,2))                        as total
 		  ,en.nombreComercial
@@ -46,24 +46,23 @@ BEGIN
 		  ,en.direccion   
           ,ce.observacion
 	FROM dbo.ComprobanteEgreso   ce WITH (NOLOCK) 
-	INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = ce.idTipoDocumento
-	INNER JOIN dbo.Entidad       en WITH (NOLOCK) ON en.idEntidad       = ce.idEntidad
+    INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id        = ce.CustomerId
+	INNER JOIN dbo.Entidad       en WITH (NOLOCK) ON en.idEntidad = ce.idEntidad
 	WHERE ce.idComprobanteEgreso = @idComprobanteEgreso
 		
 	IF @byEgreso = 1
 		BEGIN
-			SELECT td.codigo as tipoDoc
-				  ,'EC' + '-' + es.estab + '-'  + dbo.AFTAutoComplete(ma.nroDoc) as nroDoc
-				  ,ma.fechaEmision                                               as fechaEmision
-				  ,CAST(ma.valor as numeric(18,2))                               as total
-				  ,se.descripcion                                                as formaCobro
-			FROM PagoDocumento pd
-			INNER JOIN dbo.ComprobanteEgreso    ce WITH (NOLOCK) ON ce.idComprobanteEgreso    = pd.idComprobanteEgreso
-			INNER JOIN dbo.TipoDocumento        td WITH (NOLOCK) ON td.idTipoDocumento        = pd.idTipoDocumento
-			INNER JOIN dbo.MovimientoCaja       ma WITH (NOLOCK) ON ma.idMovimientoCaja       = pd.idComprobante AND ma.idTipoDocumento = pd.idTipoDocumento
-			 LEFT JOIN dbo.SubEntidadFinanciera se WITH (NOLOCK) ON se.idSubEntidadFinanciera = ma.idSubEntidadFinanciera
-			INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.codEstab			      = ma.codEstab
-            WHERE ce.idComprobanteEgreso = @idComprobanteEgreso 
+            SELECT 'EC'                                                          as tipoDoc
+                  ,'EC' + '-' + es.estab + '-'  + dbo.AFTAutoComplete(mc.nroDoc) as nroDoc
+                  ,FORMAT(ce.fechaRegistro, 'dd/MM/yyyy HH:mm')                  as fechaEmision
+                  ,CAST(mc.valor as numeric(18,2))                               as total
+                  ,sf.descripcion                                                as formaCobro
+            FROM dbo.MovimientoCaja             mc WITH (NOLOCK)
+            INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
+             LEFT JOIN dbo.ComprobanteEgreso    ce WITH (NOLOCK) ON ce.idComprobanteEgreso    = mc.idComprobanteEgreso
+             LEFT JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = ce.idEstablecimiento
+            WHERE mc.idComprobanteEgreso = @idComprobanteEgreso
+
 		END 
     ELSE 
         BEGIN
@@ -82,8 +81,7 @@ BEGIN
 		          ,CAST(cuota_pp.cuota AS decimal(16, 2))                           as valorCuota
 		          ,CAST(pde.abono as decimal(16, 2))                                as abono
 		          ,CAST(pde.saldo - IIF(p.cobro = 1,pde.abono,0) as decimal(16, 2)) as saldo
-	        FROM dbo.ComprobanteEgreso                    ce WITH (NOLOCK) 		
-	        INNER JOIN dbo.TipoDocumento                  td WITH (NOLOCK) ON td.idTipoDocumento         = ce.idTipoDocumento		
+	        FROM dbo.ComprobanteEgreso                    ce WITH (NOLOCK) 				
 	        INNER JOIN dbo.Pago                            p WITH (NOLOCK) ON p.idComprobanteEgreso      = ce.idComprobanteEgreso
 	        INNER JOIN dbo.EntidadFinanciera              ef WITH (NOLOCK) ON ef.idEntidadFinanciera     = p.idEntidadFinanciera
 	         LEFT JOIN dbo.SubEntidadFinanciera           se WITH (NOLOCK) ON se.idSubEntidadFinanciera  = p.idSubEntidadFinanciera

@@ -110,8 +110,7 @@ BEGIN
 		    ,idBanco                INT 
 		    ,idCuentaBancaria       INT 
 		    ,idTipoDocumento        INT 
-		    ,idCuentaPorCobrar      INT '$.idCuentaPorCobrar'
-            ,idComprobante          INT 
+		    ,idCuentaPorCobrar      INT '$.idComprobante' 
 		    ,fechaEmision           DATETIME2 
 		    ,valor                  NUMERIC(15,5)
 		    ,posfechado             BIT 

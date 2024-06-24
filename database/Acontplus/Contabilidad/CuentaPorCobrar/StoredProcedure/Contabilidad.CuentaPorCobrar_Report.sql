@@ -720,8 +720,6 @@ BEGIN
 
             SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
 
-
-
             RETURN 
         END 
 END

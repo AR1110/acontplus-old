@@ -257,13 +257,15 @@ BEGIN
 
 			SELECT cd.idCiudad,provincia = pr.descripcion ,cd.descripcion,pr.codigo FROM dbo.Provincia pr WITH (NOLOCK) INNER JOIN dbo.Ciudad cd WITH (NOLOCK) ON cd.idProvincia = pr.idProvincia WHERE cd.estado = 1
 
-			SELECT cc.idCuentaPorCobrar as idDocumento
-                  ,0                    as idTipoDocumento 
+			SELECT cc.idCuentaPorCobrar                 as idDocumento
+                  ,0                                    as idTipoDocumento 
 	              ,cc.serieComprobante
-	              ,cc.importeTotal		as saldo
-	              ,CASE cc.codDoc WHEN '04' THEN 'Nota de Credito'
-	               END				    as nroDoc 
-	              ,cc.fechaEmision 
+	              ,cc.importeTotal		                as saldo
+	              ,CASE cc.codDoc WHEN '04' THEN 'Nota de Crédito'
+                                  WHEN '07' THEN 'Comprobante de Retención'
+                                  WHEN 'A'  THEN 'Anticipo'
+	               END				                    as codDoc 
+	              ,FORMAT(cc.fechaEmision,'MM/dd/yyyy') as fechaEmision
             FROM v_CuentaPorCobrar cc WITH (NOLOCK)
             WHERE cc.codDoc IN ('A','04','07')
               AND cc.idCliente = @idCliente

@@ -17,6 +17,8 @@ go
 
 --ALTER TABLE dbo.Anticipo  ADD idEstablecimiento INT CONSTRAINT fk_Anticipo_Establecimiento FOREIGN KEY(idEstablecimiento) REFERENCES Sri.Establecimiento(idEstablecimiento)
 
+--ALTER TABLE dbo.Anticipo DROP CONSTRAINT FK__Anticipo__codEst__40237F73
+
 --ALTER TABLE dbo.Anticipo DROP COLUMN [codEstab]
 
 --ALTER TABLE dbo.Anticipo ADD idComprobanteIngreso BIGINT CONSTRAINT fk_Anticipo_ComprobanteIngreso FOREIGN KEY(idComprobanteIngreso) REFERENCES dbo.ComprobanteIngreso(idComprobanteIngreso)

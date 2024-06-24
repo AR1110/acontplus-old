@@ -188,6 +188,3 @@ go
 --inner join dbo.ComprobanteIngreso ci on ci.idComprobanteIngreso = co.idComprobanteIngreso
 --where cc.codDoc = '07'
 --and ci.estado = 1
-
-
-SELECT * FROM v_CuentaPorCobrar where codDoc = '07' AND codEstado = 'APL'

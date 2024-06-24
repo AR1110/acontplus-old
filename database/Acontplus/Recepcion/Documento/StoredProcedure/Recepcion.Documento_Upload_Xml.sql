@@ -55,7 +55,7 @@ BEGIN
        ,ptoEmi VARCHAR(25) NOT NULL             
        ,secuencial VARCHAR(25) NOT NULL         
        ,identificacionReceptor VARCHAR(300) NOT NULL
-       ,importeTotal NUMERIC(18,5) NOT NULL
+       ,importeTotal NUMERIC(18,5) NULL
        ,serieComprobante AS estab + '-' + ptoEmi + '-' + secuencial
        ,tipoEmision VARCHAR(25) DEFAULT 'NORMAL'  
     )
@@ -71,6 +71,7 @@ BEGIN
 
         SELECT @xmlCompressed = COMPRESS(CONVERT(VARBINARY(MAX), @xmlDoc))
 
+
         --> Factura 
         IF @codDoc = '01'
 			BEGIN
@@ -85,6 +86,7 @@ BEGIN
                     ,secuencial
                     ,identificacionReceptor
                     ,importeTotal
+                    ,comprobante
                 )
 				SELECT x.y.value('(infoTributaria/razonSocial)[1]','VARCHAR(300)')          as razonSocialEmisor
                       ,x.y.value('(infoTributaria/nombreComercial)[1]','VARCHAR(300)')      as nombreComercial
@@ -95,6 +97,7 @@ BEGIN
                       ,x.y.value('(infoTributaria/secuencial)[1]','VARCHAR(25)')            as secuencial
                       ,x.y.value('(infoFactura/identificacionComprador)[1]','VARCHAR(300)') as identificacionComprador
                       ,x.y.value('(infoFactura/importeTotal)[1]','NUMERIC(18,5)')			as importeTotal
+                      ,'Factura'
                 FROM @xmlQuery.nodes('//factura') x(y)
 			END
 
@@ -112,6 +115,7 @@ BEGIN
                     ,secuencial
                     ,identificacionReceptor
                     ,importeTotal
+                    ,comprobante
                 )
                 SELECT x.y.value('(infoTributaria/razonSocial)[1]','VARCHAR(300)')              as razonSocialEmisor
                       ,x.y.value('(infoTributaria/nombreComercial)[1]','VARCHAR(300)')          as nombreComercial
@@ -122,6 +126,7 @@ BEGIN
                       ,x.y.value('(infoTributaria/secuencial)[1]','VARCHAR(25)')                as secuencial
                       ,x.y.value('(infoNotaCredito/identificacionComprador)[1]','VARCHAR(300)') as identificacionComprador
                       ,x.y.value('(infoNotaCredito/valorModificacion)[1]','NUMERIC(18,5)')      as importeTotal
+                      ,'Notas de Crédito'
                 FROM @xmlQuery.nodes('//notaCredito') x(y)
 			END
 
@@ -139,6 +144,7 @@ BEGIN
                     ,ptoEmi
                     ,secuencial
                     ,identificacionReceptor
+                    ,comprobante
                 )
                 SELECT x.y.value('(infoTributaria/razonSocial)[1]','VARCHAR(300)')                     as razonSocialEmisor
                       ,x.y.value('(infoTributaria/nombreComercial)[1]','VARCHAR(300)')                 as nombreComercial
@@ -148,6 +154,7 @@ BEGIN
                       ,x.y.value('(infoTributaria/ptoEmi)[1]','VARCHAR(25)')                           as ptoEmi
                       ,x.y.value('(infoTributaria/secuencial)[1]','VARCHAR(25)')                       as secuencial
                       ,x.y.value('(infoCompRetencion/identificacionSujetoRetenido)[1]','VARCHAR(300)') as identificacionComprador
+                      ,'Comprobante de Retención'
                 FROM @xmlQuery.nodes('//comprobanteRetencion') x(y)
 
                 IF @versionComp = '2.0.0'
@@ -164,7 +171,7 @@ BEGIN
 			END
 
 
-        SELECT TOP 1 @identificacionReceptor = identificacionReceptor FROM @tbDocumento
+        SELECT TOP 1 @identificacionReceptor = identificacionReceptor, @rucEmisor = rucEmisor FROM @tbDocumento
 
         SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK)  WHERE codigo = 'PE'
 
@@ -254,7 +261,7 @@ BEGIN
 
 						    INSERT INTO Contabilidad.CuentaPorPagar
 							       (idDocumento,idEstablecimiento,codDoc,serieComprobante,idUsuario, idProveedor, idEstadoPago,uniqueId,fechaEmision,importeTotal,idEntidad,subcategoryId)
-						    SELECT @idDocumento,@idEstablecimiento,@codDoc,serieComprobante,@idUsuario,@idProveedor,@idEstadoPago,@claveAcceso,@fechaEmision,@importeTotal,@idEntidad,@subcategoryId
+						    SELECT @idDocumento,@idEstablecimiento,@codDoc,serieComprobante,@idUsuario,@idProveedor,@idEstadoPago,@claveAcceso,@fechaEmision,ISNULL(importeTotal,@importeTotal),@idEntidad,@subcategoryId
 						    FROM @tbDocumento
 					    END 
 				END
