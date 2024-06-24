@@ -33,7 +33,7 @@ go
 --       end as idTipoIdentificacion
 --,nroIdentificacion,nombreFiscal,nombreFiscal,idEntidad
 --,ISNULL((SELECT TOP 1 ur.idUsuario FROM App.UsuarioRol ur WHERE ur.idEntidad = ci.idEntidad),1)
---from dbo.ComprobanteIngreso
+--from dbo.ComprobanteIngreso ci
 --where idCliente is null and codTipoPersona = 'CL'
 --group by nroIdentificacion,nombreFiscal,idEntidad,idUsuario
 
@@ -48,6 +48,7 @@ go
 --from dbo.ComprobanteIngreso ci
 --where idCliente is null and codTipoPersona = 'E'
 --group by nroIdentificacion,nombreFiscal,idEntidad
+
 
 --ALTER TABLE dbo.ComprobanteIngreso ALTER COLUMN idCliente INT NOT NULL
 
@@ -93,8 +94,6 @@ go
 --      ci.CustomerId = (select TOP 1 CustomerId from Cliente cl where cl.idCliente = ci.idCliente)
 --from ComprobanteIngreso ci
 
-
-
 --SELECT top 100 * from ComprobanteIngreso 
 
 --ALTER TABLE dbo.ComprobanteIngreso ALTER COLUMN CustomerId INT NOT NULL
@@ -102,7 +101,6 @@ go
 --ALTER TABLE ComprobanteIngreso DROP CONSTRAINT fk_cliente_comprobanteIngreso
 
 --ALTER TABLE ComprobanteIngreso DROP COLUMN idCliente
-
 
 --ALTER TABLE dbo.Cobro ADD idCuentaPorCobrar INT CONSTRAINT fk_idCuentaPorCobrar_Cobro
 --FOREIGN KEY (idCuentaPorCobrar) REFERENCES Contabilidad.CuentaPorCobrar(idCuentaPorCobrar);

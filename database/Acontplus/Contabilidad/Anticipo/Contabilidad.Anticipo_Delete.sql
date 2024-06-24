@@ -18,12 +18,17 @@ BEGIN
     --> Movimiento Caja 
     DECLARE @idTipoDocumento INT ,@idComprobanteIngreso INT ,@idControlCaja INT
 
+    --> Contabilidad
+    DECLARE @idEstadoPago INT
+
     BEGIN TRY 
         
         --> Recuperando Variables
         SELECT TOP 1 @idComprobanteIngreso = idComprobanteIngreso FROM dbo.MovimientoCaja WITH (NOLOCK) WHERE idMovimientoCaja = @id 
 
         SELECT TOP 1 @idControlCaja = idControlCaja FROM dbo.ComprobanteIngreso WITH (NOLOCK) WHERE idComprobanteIngreso = @idComprobanteIngreso
+
+        SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
         --> Validacion de Informacion
         IF EXISTS (SELECT 1 FROM dbo.Anticipo WITH (NOLOCK) WHERE idAnticipo = @id AND estado = 0)
@@ -34,7 +39,13 @@ BEGIN
 
         IF EXISTS (SELECT 1 FROM ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja AND estado = 0)
             BEGIN 
-                SELECT '0' as code,'El control de caja se encuentra cerrado no puede ser anulado el comproabnte' as 'message'
+                SELECT Common.ufnSpResponse('0','El control de caja se encuentra cerrado no puede ser anulado el comproabnte',  DEFAULT)	
+				RETURN
+            END
+
+        IF EXISTS (SELECT 1 FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE codDoc = 'A' AND idDocumento = @id AND codEstado NOT IN ('PE'))
+            BEGIN 
+                SELECT Common.ufnSpResponse('0','El anticipo cuenta en un estado contable no puede ser anulado',  DEFAULT)	
 				RETURN
             END
 
@@ -42,6 +53,8 @@ BEGIN
             UPDATE dbo.Anticipo WITH (ROWLOCK) SET estado = 0 WHERE idAnticipo = @id
 
             UPDATE dbo.ComprobanteIngreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteIngreso = @idComprobanteIngreso 
+        
+            UPDATE Contabilidad.CuentaPorCobrar WITH (ROWLOCK) SET idEstadoPago = @idEstadoPago WHERE idDocumento = @id AND codDoc = 'A'
         COMMIT TRAN 
         SELECT Common.ufnSpResponse('1', 'Anulado Correctamente',  DEFAULT)
     END TRY 

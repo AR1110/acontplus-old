@@ -129,6 +129,10 @@ BEGIN
 				BEGIN
 					SET @sql = @sql + 'AND pp.codDoc= @codDoc '
 				END 
+            ELSE
+                BEGIN
+                    SET @sql = @sql + 'AND pp.codDoc NOT IN (''04'',''07'') ' 
+                END 
 
 			IF @codEstado IS NOT NULL
 				BEGIN

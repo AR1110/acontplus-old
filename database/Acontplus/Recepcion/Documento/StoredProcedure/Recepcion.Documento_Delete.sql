@@ -17,18 +17,43 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-	DECLARE @idUsuario INT 
+	
+    DECLARE @idUsuario INT 
+    
+    --> Contabilidad 
+    DECLARE @codDoc VARCHAR(10)
 
 	
 	BEGIN TRY
-        
-        SET @idUsuario = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
-		
+        --> Variables
+        SELECT TOP 1 @idUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
+
+        SELECT TOP 1 @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
+
         IF EXISTS(SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND complete = 1)
 			 BEGIN
 				SELECT '0' code, 'Imposible eliminar, este archivo ya ha sido importado' as 'message'
 				RETURN
 			 END
+
+        IF @codDoc IN ('04','01')
+            BEGIN
+                IF EXISTS (SELECT 1 FROM v_CuentaPorPagar WITH (NOLOCK) WHERE codDoc = @codDoc AND idDocumento = @idDocumento AND codEstado NOT IN ('PE'))
+                    BEGIN
+				        SELECT '0' code, 'Esta Documento tiene un proceso contable no puede ser eliminado' as 'message'
+				        RETURN
+			         END
+            END 
+
+        IF @codDoc IN ('07')
+            BEGIN
+                IF EXISTS (SELECT 1 FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE codDoc = '07' AND idDocumento = @idDocumento AND codEstado NOT IN ('PE'))
+                    BEGIN
+				        SELECT '0' code, 'Esta Documento tiene un proceso contable no puede ser eliminado' as 'message'
+				        RETURN
+			         END
+            END 
+        
 
 		BEGIN TRAN
 				

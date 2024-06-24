@@ -24,6 +24,7 @@ BEGIN
 
     --> Filters
     DECLARE @checkBoxFecha BIT ,@idUsuario INT ,@idCliente INT ,@codEstado NVARCHAR(10) ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2
+           ,@nroIdentificacion VARCHAR(20)
 	
     --> Recuperacion de variables
 	SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -36,37 +37,35 @@ BEGIN
             
             SET @tableNames = 'anticipos'
 
-            SET @params = '@idEntidad   INT
-                          ,@idCliente   INT
-						  ,@fechaInicio DATETIME2
-						  ,@fechaFin    DATETIME2
-						  ,@codEstado   VARCHAR(20)
-                          ,@pageIndex   INT
-                          ,@pageSize    INT'
+            SET @params = '@idEntidad         INT
+                          ,@nroIdentificacion VARCHAR(50)
+						  ,@fechaInicio       DATETIME2
+						  ,@fechaFin          DATETIME2
+						  ,@codEstado         VARCHAR(20)
+                          ,@pageIndex         INT
+                          ,@pageSize          INT'
 
-            SET @sql = 'SELECT a.idAnticipo
-                              ,td.idTipoDocumento
-							  ,s.codEstab
-							  ,dbo.AFTConvertDate(a.fechaEmision)                                  as fechaEmision
-							  ,a.valor
-							  ,ISNULL(UPPER(a.observaciones),'''')                                 as obs
-							  ,td.codigo + ''-'' + s.estab + ''-'' + dbo.AFTAutoComplete(a.nroDoc) as serieComprobante
-							  ,cl.numeroIdentificacion                                             as identificacion
-							  ,cl.nombreFiscal
-							  ,sef.descripcion                                                     as subEntidadFinanciera
-							  ,ep.descripcion                                                      as estadoDoc
-							  ,td.codigo                                                           as codDoc
-							  ,u.nombreUsuario                                                     as usuario
-							  ,u.nroIdentificacion                                                 as identificacionUsuario
-                              ,COUNT(*) OVER()                                                     as totalRecords
-						FROM dbo.Anticipo                     a WITH (NOLOCK)								  
-						INNER JOIN dbo.EstadoPago            ep WITH (NOLOCK) ON ep.idEstadoPago            = a.idEstadoDocumento
-						INNER JOIN Sri.Establecimiento        s WITH (NOLOCK) ON s.codEstab                 = a.codEstab
-						INNER JOIN dbo.TipoDocumento         td WITH (NOLOCK) ON td.idTipoDocumento         = a.idTipoDocumento
-						INNER JOIN dbo.Cliente               cl WITH (NOLOCK) ON cl.idCliente               = a.idCliente
-						INNER JOIN dbo.SubEntidadFinanciera sef WITH (NOLOCK) ON sef.idSubEntidadFinanciera = a.idSubEntidadFinanciera
-						INNER JOIN dbo.Usuario                u WITH (NOLOCK) ON u.idUsuario                = a.idUsarioRegister
-						WHERE a.idEntidad = @idEntidad '
+            SET @sql = 'SELECT an.idAnticipo
+							  ,es.codEstab
+							  ,FORMAT(an.fechaEmision, ''dd/MM/yyyy HH:mm'')				     as fechaEmision 
+							  ,an.valor
+							  ,ISNULL(UPPER(an.observaciones),'''')                              as obs
+							  ,''A'' + ''-'' + es.estab + ''-'' + dbo.AFTAutoComplete(an.nroDoc) as serieComprobante
+							  ,cu.IDCard			                                             as identificacion
+							  ,cu.IDCard    											         as nombreFiscal
+							  ,sf.descripcion                                                    as subEntidadFinanciera
+							  ,IIF(ci.estado = 1 ,''Activo'',''Anulado'')                        as estadoDoc
+							  ,''A''														     as codDoc
+							  ,us.nombreUsuario                                                  as usuario
+							  ,us.nroIdentificacion                                              as identificacionUsuario
+                              ,COUNT(*) OVER()                                                   as totalRecords
+						FROM dbo.Anticipo                    an WITH (NOLOCK)								  
+						INNER JOIN dbo.SubEntidadFinanciera  sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera  = an.idSubEntidadFinanciera
+						INNER JOIN dbo.Usuario               us WITH (NOLOCK) ON us.idUsuario               = an.idUsarioRegister
+						INNER JOIN dbo.ComprobanteIngreso    ci WITH (NOLOCK) ON ci.idComprobanteIngreso    = an.idComprobanteIngreso 
+						INNER JOIN Sri.Establecimiento       es WITH (NOLOCK) ON es.idEstablecimiento       = ci.idEstablecimiento
+						INNER JOIN Customer.Customer         cu WITH (NOLOCK) ON cu.Id						= ci.CustomerId
+						WHERE an.idEntidad = @idEntidad '
 
 	        SELECT @checkBoxFecha = checkBoxFecha
 		          ,@idCliente     = idCliente
@@ -89,30 +88,32 @@ BEGIN
 	
 		    IF @idCliente > 0 
 			    BEGIN
-				    SET @sql = @sql + 'AND a.idCliente =  @idCliente'
+                    SELECT TOP 1 @nroIdentificacion = numeroIdentificacion FROM dbo.Cliente WITH (NOLOCK) WHERE idCliente = @idCliente
+
+				    SET @sql = @sql + 'AND cu.IdCard =  @nroIdentificacion '
 			    END 
 	    
 		    IF @codEstado IS NOT NULL 
 			    BEGIN
-				    SET @sql = @sql + 'AND a.estado = IIF(@codEstado = ''AC'',1,0)'
+				    SET @sql = @sql + 'AND ci.estado = IIF(@codEstado = ''AC'',1,0)'
 			    END 
 
 		    IF @checkBoxFecha = 1
 			    BEGIN
-				    SET @sql = @sql + 'AND CAST(a.fechaEmision AS DATE) BETWEEN CAST(@fechaInicio as date) AND CAST(@FechaFin as date) '
+				    SET @sql = @sql + 'AND CAST(an.fechaEmision AS DATE) BETWEEN CAST(@fechaInicio as date) AND CAST(@FechaFin as date) '
 			    END 
 
-		    SET @sql = @sql + ' ORDER BY a.idAnticipo DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
+		    SET @sql = @sql + ' ORDER BY an.idAnticipo DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
  		    EXEC sp_executesql @sql
 			                  ,@params 
-			                  ,@idEntidad   = @idEntidad
-				              ,@idCliente   = @idCliente
-				              ,@fechaInicio = @fechaInicio
-				              ,@fechaFin    = @fechaFin
-				              ,@codEstado   = @codEstado
-                              ,@pageIndex   = @pageIndex
-                              ,@pageSize    = @pageSize
+			                  ,@idEntidad         = @idEntidad
+				              ,@nroIdentificacion = @nroIdentificacion
+				              ,@fechaInicio       = @fechaInicio
+				              ,@fechaFin          = @fechaFin
+				              ,@codEstado         = @codEstado
+                              ,@pageIndex         = @pageIndex
+                              ,@pageSize          = @pageSize
             RETURN 
         END 
     
