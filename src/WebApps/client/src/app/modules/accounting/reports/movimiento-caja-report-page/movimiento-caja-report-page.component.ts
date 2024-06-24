@@ -156,6 +156,7 @@ export class MovimientoCajaReportPageComponent {
     let userId = this.dataSearch.checkboxUser && this.dataSearch.userId || 0
 
     const dataParams = {
+      tipo: 2,
       codEstab: this.dataSearch.codEstab,
       tipoDoc: this.dataSearch.codDoc,
       checkBoxCliente: companyCustomerId > 0 && this.dataSearch.checkboxCompanyCustomerEmployee ,
@@ -171,7 +172,6 @@ export class MovimientoCajaReportPageComponent {
 
     let reportParams = JSON.stringify({
       codEstab: this.dataSearch.codEstab,
-      hasParams: true,
       codigo: ACCOUNTING_CODE_REPORT.RMC,
       format: this.dataSearch.format,
       aditionalParams: []
@@ -182,10 +182,10 @@ export class MovimientoCajaReportPageComponent {
     }
 
 
+
     this.sharedSvc.getReport({
       data: parameters,
       format: this.dataSearch.format,
-      isOldVersion: true
     })
 
   }
