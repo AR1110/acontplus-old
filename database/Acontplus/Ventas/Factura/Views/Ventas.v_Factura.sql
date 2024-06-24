@@ -28,6 +28,8 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
           ,fa.autorizada
           ,cl.nombreFiscal                  as razonSocialComprador
           ,cl.numeroIdentificacion          as identificacionComprador
+          ,cl.correo                        
+          ,cl.telefono
           ,es.estab
           ,es.nombreComercial
           ,es.idEstablecimiento
@@ -39,12 +41,12 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
           ,cc.fechaVencimiento
           ,cc.abono                                             
           ,cc.saldo
-          ,ep.descripcion                                                                               as estadoCuenta
-          ,ep.codigo                                                                                    as codCuenta
-          ,sf.codigo                                                                                    as estadoSri
-          ,es.estab + '-' + pe.ptoEmi + '-' + RIGHT('000000000' + CAST(fa.nroFactura AS VARCHAR(9)), 9) as serieComprobante
-          ,us.nombreUsuario                                                                             as usuario
-          ,tc.tipo                                                                                      as tipoTiempoCredito
+          ,ep.descripcion                                                                              as estadoCuenta
+          ,ep.codigo                                                                                   as codCuenta
+          ,sf.codigo                                                                                   as estadoSri
+          ,es.estab + '-' + pe.ptoEmi + '-' + RIGHT('000000000' + CAST(fa.nroFactura AS VARCHAR(9)),9) as serieComprobante
+          ,us.nombreUsuario                                                                            as usuario
+          ,tc.tipo                                                                                     as tipoTiempoCredito
 	FROM dbo.Factura                        fa WITH (NOLOCK)
 	INNER JOIN dbo.PuntoEmision             pe WITH (NOLOCK) ON pe.idPuntoEmision   = fa.idPuntoEmision
 	INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente        = fa.idCliente
