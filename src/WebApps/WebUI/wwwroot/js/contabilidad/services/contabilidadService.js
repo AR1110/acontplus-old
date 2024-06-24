@@ -219,6 +219,7 @@
                             descripcion: b.descripcion,
                         }
                     })
+               
 
                     let docsRelacionados = docsTemp.map(item=>{
                         return {
@@ -226,8 +227,9 @@
                             idTipoDocumento: item.idTipoDocumento,
                             nroDocumento: item.nroDocumento,
                             tipoDocumento: item.tipoDocumento,
-                            importeTotal: item.importeTotal,
-                            numAutDocSustento: item.numAutDocSustento
+                            saldo: item.saldo,
+                            numAutDocSustento: item.numAutDocSustento,
+                            codDoc: item.codDoc,
                         }
                     })
                     data.ciudades = ciudadesTemp;

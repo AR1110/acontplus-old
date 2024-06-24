@@ -27,9 +27,8 @@ thead th {
     <button class="close" ng-click="$ctrl.cancel()">&times;</button>
 </div>
 
-<div class="modal-body">
-
-    <h5>Factura - Retención</h5>
+<div class="modal-body">  
+    <span class="badge badge-success">Factura - Retención</span>
     <div class="table-responsive">
             <table class="table table-sm table-bordered table-striped text-center"> 
                 <thead class="thead-info"> 
@@ -38,58 +37,69 @@ thead th {
                         <th>Nro Doc.</th>
                         <th>Fecha</th>
                         <th>Total</th>
-                        <th>Nro. Ret.</th>
-                        <th>Fecha Ret.</th>
+                        <th>Nro. Ret.</th> 
                         <th>Valor Ret.</th>
                         <th>Total Dev.</th>
                         <th>Fact. Ret.</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="item in docs" ng-class="{'table-info': item.isDocRelacionado}">
+                    <tr ng-repeat="item in facturasRetencion"  >
                         <td>{{ $index + 1 }}</td> 
-                        <td>{{ item.nroDocumento }}</td>
-                        <td>{{ item.tipoDocumento }}</td>
-                        <td>{{ item.saldo }}</td>
-                        <td>3</td>
-                        <td>3</td>
-                        <td>3</td>
-                        <td>3</td>
-                        <td>3</td>
-                    </tr>
+                        <td>{{ item.serieComprobante }}</td>
+                        <td>{{ item.fechaEmision }}</td>
+                        <td>{{ item.importeTotal }}</td>
+                        <td>{{item.serieComprobanteRetencion}}</td>
+                        <td>{{item.valorRetencion}}</td>
+                        <td>{{item.totalValorDevolucion}}</td>
+                        <td>{{item.valorFactRetencion}}</td>                        
+                    </tr>                    
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td ></td>
+                        <td ></td>
+                        <td ></td>
+                        <td  >{{dataTotal.importeTotal}}</td>
+                        <td  > </td>
+                        <td  >{{dataTotal.valorRetencion}}</td>
+                        <td  >{{dataTotal.totalValorDevolucion}}</td>
+                        <td >{{dataTotal.valorFactRetencion}}</td>
+                    </tr>
+                </tfoot>
             </table>
     </div>
 
-    <h5>Factura - Nota Crédito</h5>
+ 
+    <span class="badge badge-danger">Nota Crédito-Factura</span>
     <div class="table-responsive">
         <table class="table table-sm table-bordered table-striped text-center"> 
             <thead class="thead-info"> 
                 <tr> 
                     <th>N°</th>
-                    <th>Nro Doc.</th>
-                    <th>Fecha</th>
+                    <th>Tipo Doc.</th>
+                    <th>Nro. Doc</th>
                     <th>Total</th>
-                    <th>Nro. Ret.</th>
-                    <th>Fecha Ret.</th>
-                    <th>Valor Ret.</th>
-                    <th>Total Dev.</th>
-                    <th>Fact. Ret.</th>
+                    <th>Nro. Factura</th> 
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="item in docs" ng-class="{'table-info': item.isDocRelacionado}">
-                    <td>{{ $index + 1 }}</td> 
-                    <td>{{ item.nroDocumento }}</td>
-                    <td>{{ item.tipoDocumento }}</td>
-                    <td>{{ item.saldo }}</td>
-                    <td>3</td>
-                    <td>3</td>
-                    <td>3</td>
-                    <td>3</td>
-                    <td>3</td>
+                <tr ng-repeat="item in notasCreditoFactura"  >
+                    <td>{{$index + 1 }}</td> 
+                    <td>{{item.tipoDocumento }}</td>
+                    <td>{{item.nroDocumento }}</td>
+                    <td>{{item.saldo }}</td>
+                    <td>{{item.serieComprobanteFactura}}</td> 
                 </tr>
             </tbody>
+             <tfoot>
+                    <tr>
+                        <td  ></td> 
+                        <td  ></td> 
+                        <td  ></td> 
+                        <td  >{{valorTotalNotaCreditoFactura}}</td> 
+                    </tr>
+                </tfoot>
         </table>
     </div>
 </div> 
