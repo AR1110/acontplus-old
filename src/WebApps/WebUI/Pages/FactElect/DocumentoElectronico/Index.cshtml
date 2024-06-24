@@ -238,7 +238,7 @@
                                 ng-disabled="isDisabledRow(item) "
                                 md-on-select="onSelectComprobante"
                                 ng-repeat="item in comprobantes | orderBy: dataSearch.order | filter: textSearch "
-                                ng-class="item.style">
+                                ng-class="getClass(item)">
 
                                 <td md-cell>
                                     <md-menu>
@@ -296,7 +296,7 @@
                                             </md-menu-item>
 
                                             <md-menu-item>
-                                                <md-button btn-send-to-email params="item" type-send="typeSendMail">
+                                                <md-button action-send-mail params="item">
                                                     <span md-menu-align-target>
                                                         <i class="mdi mdi-email-outline"></i>
                                                         Enviar Correo
@@ -314,16 +314,15 @@
                                             </md-menu-item>
 
                                             @* ng-click="openModalSendWhatsapp(item)" *@
-                                            <md-menu-item ng-if="item.codEstado==4">
+                                            <md-menu-item  >
                                                 <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
-                                                           btn-send-to-whats-app params="item" has-permission="hasPermissions"
-                                                           type-send="typeSend">
+                                                           action-send-to-whats-app params="item"  >
                                                     <span md-menu-align-target>
                                                         <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
                                                     </span>
                                                 </md-button>
                                             </md-menu-item>
-                                            <md-menu-item ng-if="item.codEstado==4">
+                                            <md-menu-item ng-if="validateRowAction(item).authorized">
                                                 <md-button uib-tooltip="Descargar Xml" tooltip-placement="top"
                                                            ng-click="downloadXml(item)">
                                                     <span md-menu-align-target>
@@ -337,7 +336,7 @@
                                 @* <td md-cell>{{$index+1}}</td> *@
                                 <td md-cell>{{item.estado}}</td>
 
-                                <td md-cell>{{item.comprobante}}</td>
+                                <td md-cell>{{item.comprobanteVersion}}</td>
                                 <td md-cell>{{item.fechaEmision}}</td>
                                 <td md-cell>{{item.serieComprobante}}</td>
                                 <td md-cell>{{item.rucReceptor}}</td>

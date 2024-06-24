@@ -80,8 +80,31 @@
                 let results = [];
                 if(response.code==="1"){
                     let [comprobantesElectronicos] = JSON.parse(response.payload)
+                        console.log(comprobantesElectronicos)
+                    
             
-                    results = comprobantesElectronicos || [];
+                    comprobantesElectronicos = comprobantesElectronicos || [];
+                    results = comprobantesElectronicos.map(item=>{
+                        return {
+                            idDocumentoElectronico: item.idDocumentoElectronico,
+                            idDocumento: item.idDocumento,
+                            codDoc: item.codDoc,
+                            comprobante: item.comprobante,
+                            comprobanteVersion: `${item.comprobante}-${item.versionComp}`,
+                            serieComprobante: item.serieComprobante,
+                            rucReceptor: item.rucReceptor,
+                            razonSocial: item.razonSocial,
+                            fechaEmision: item.fechaEmision,
+                            claveAcceso: item.claveAcceso,
+                            fechaAutorizacion: item.fechaAutorizacion,
+                            estado: item.estado,
+                            codEstado: item.codEstado,
+                            versionComp: item.versionComp,
+                            usuario: item.usuario,
+                            codEstab: item.codEstab,
+                            totalRecords: item.totalRecords, 
+                        }
+                    })
                 }
                 return results;
             })
@@ -268,30 +291,22 @@
                     let { totalRecords, totalDocument, totalAbono, totalSaldo } = facturasRepository[0];
 
                     let facturas = facturasRepository.map(item => {
-                        return {
-                            codigoTipoDoc: 'FV',//📛
+                        return { 
                             comprobante: 'Factura',
                             idCliente: item.idCliente,
                             idDocumento: item.idDocumento,
                             idCuentaPorCobrar: item.idCuentaPorCobrar,
-                            codEstab: item.codEstab,
-                            telefonoEstablecimiento: item.telefonoEstablecimiento,
-                            nombreComercial: item.nombreComercial,
+                            codEstab: item.codEstab,  
+                            razonSocialComprador: item.nombreFiscal,
                             fechaEmision: item.fechaEmision,
                             fechaVencimiento: item.fechaVencimiento,
-                            total: item.total,
-                            nroFactura: item.nroFactura, //📛
-                            serieComprobante: item.nroFactura,
-                            telefono: item.telefono,
-                            nombreFiscal: item.nombreFiscal,
-                            correos: item.correos,
-                            identificacionComprador: item.identificacionComprador,
+                            total: item.total, 
+                            serieComprobante: item.serieComprobante, 
                             estadoFinanciero: item.estadoFinanciero,
-                            codDoc: item.codDoc,
+                            codDoc:"01",
                             abono: item.abono,
                             saldo: item.saldo,
-                            tiempoCredito: item.tiempoCredito,
-                            style: item.style,
+                            tiempoCredito: item.tiempoCredito, 
                             usuario: item.usuario,
                             codEstado: item.codEstado,
                             esContado: item.tiempoCredito,

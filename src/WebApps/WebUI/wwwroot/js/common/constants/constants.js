@@ -15,6 +15,7 @@ app.constant('mainPaths', {
 })
 
 app.constant('nombreModalCommon', {
+    //old version
     MAIL: {
         fileCtrl: '/js/common/modals/modalMailCtrl.js' + CHANGE_VERSION(),
         controllers: {
@@ -23,6 +24,21 @@ app.constant('nombreModalCommon', {
         templates: {
             ME: '~/Pages/Common/Shared/_ModalSendMail.cshtml',
         },
+    },
+    //new version
+    SEND_MAIL: {
+        fileCtrl: '/js/common/modals/modalSendMailCtrl.min.js' + CHANGE_VERSION(),
+        controllers: {
+            MSM: 'modalSendMailCtrl'
+        },
+        templates:{
+            MSM: '~/Pages/Common/Shared/_ModalSendMail.cshtml',
+        } 
+    },
+    SEND_WHATSAPP: {
+        fileCtrl: '/js/common/modals/modalSendWhatsAppCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'modalSendWhatsAppCtrl',
+        template: '~/Pages/Common/_ModalWhatsApp.cshtml'
     },
     KEY_REQUEST_MODAL: {
         fileCtrl: '/js/common/modals/keyRequestCtrl.js' + CHANGE_VERSION(),
@@ -423,7 +439,8 @@ app.constant('DOC_TYPE', {
     CNH: 'CNH',
     OC: 'OC',
     GR_SRI: '06',
-    R_SRI: '07'
+    R_SRI: '07',
+    LC_SRI:'03'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC: "04",

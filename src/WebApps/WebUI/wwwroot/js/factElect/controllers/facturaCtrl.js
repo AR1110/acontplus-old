@@ -204,13 +204,9 @@
                     console.log(response)
                     let { facturas, dataTotals } = response;
                     $scope.facturas = facturas;
-                    $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
-
-                    //Totales
-                    $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                    // $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
-                    // $scope.totalAbono = fS.roundNumber(dataTotals.totalAbono, 5);
-                    // $scope.totalSaldo = fS.roundNumber(dataTotals.totalSaldo, 5);
+                    $scope.cloneFacturas = structuredClone($scope.facturas);
+ 
+                    $scope.dataSearch.totalRecords = dataTotals.totalRecords; 
                     $scope.getTotales();
                     hideLoader();
                 }).catch(error => {
