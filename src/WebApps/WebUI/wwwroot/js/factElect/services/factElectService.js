@@ -279,7 +279,7 @@
                             nombreComercial: item.nombreComercial,
                             fechaEmision: item.fechaEmision,
                             fechaVencimiento: item.fechaVencimiento,
-                            total: item.total,
+                            total: item.importeTotal,
                             nroFactura: item.nroFactura, //📛
                             serieComprobante: item.nroFactura,
                             telefono: item.telefono,

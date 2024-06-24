@@ -1976,11 +1976,15 @@
             },
             link: function (scope, element) {
                 element.on('click', async function () {
+                    let params = scope.params || {}
 
                     let modalRef = modalSvc.openWithComponent({
                         component: 'appCuentaPorCobrarComponent',
                         size: 'xl',
-                        windowClass: 'uibModalFullScreen',                        
+                        windowClass: 'uibModalFullScreen', 
+                        params: {
+                            idCuentaPorCobrar: params.idCuentaPorCobrar
+                        }                       
                     })
 
                     modalRef.result.then(result => {

@@ -1,4 +1,27 @@
- 
+ <style>
+    /* Custom CSS to fix the table header */
+.table-responsive {
+  height: 200px; /* Set the desired height */
+  overflow-y: auto;
+}
+
+.table {
+  position: relative;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #bee5eb; /* or use any other background color */
+  z-index: 2; /* Ensures the header stays on top */
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #dee2e6; /* Ensures the border appears around the header */
+}
+
+ </style>
 <div class="modal-header">
     <h5 class="modal-title"><i class="fas fa-file"></i> Doc. Relacionado</h5>
     <button class="close" ng-click="$ctrl.cancel()">&times;</button>
@@ -6,18 +29,52 @@
 
 <div class="modal-body">
 
+    <h5>Factura - Retención</h5>
+    <div class="table-responsive">
+            <table class="table table-sm table-bordered table-striped text-center"> 
+                <thead class="thead-info"> 
+                    <tr> 
+                        <th>N°</th>
+                        <th>Nro Doc.</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Nro. Ret.</th>
+                        <th>Fecha Ret.</th>
+                        <th>Valor Ret.</th>
+                        <th>Total Dev.</th>
+                        <th>Fact. Ret.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in docs" ng-class="{'table-info': item.isDocRelacionado}">
+                        <td>{{ $index + 1 }}</td> 
+                        <td>{{ item.nroDocumento }}</td>
+                        <td>{{ item.tipoDocumento }}</td>
+                        <td>{{ item.saldo }}</td>
+                        <td>3</td>
+                        <td>3</td>
+                        <td>3</td>
+                        <td>3</td>
+                        <td>3</td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
 
-    
-
-   <div class="table-responsive">
-        <table class="table table-sm table-bordered table-striped text-center">
-            <thead class="thead-dark">
+    <h5>Factura - Nota Crédito</h5>
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered table-striped text-center"> 
+            <thead class="thead-info"> 
                 <tr> 
                     <th>N°</th>
-                    <th>Nro Documento</th>
-                    <th>Tipo Documento</th>
-                    <th>Saldo</th>
-                    <th>Num Aut Doc Sustento</th>
+                    <th>Nro Doc.</th>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                    <th>Nro. Ret.</th>
+                    <th>Fecha Ret.</th>
+                    <th>Valor Ret.</th>
+                    <th>Total Dev.</th>
+                    <th>Fact. Ret.</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,11 +83,15 @@
                     <td>{{ item.nroDocumento }}</td>
                     <td>{{ item.tipoDocumento }}</td>
                     <td>{{ item.saldo }}</td>
-                    <td>{{ item.numAutDocSustento }}</td>
+                    <td>3</td>
+                    <td>3</td>
+                    <td>3</td>
+                    <td>3</td>
+                    <td>3</td>
                 </tr>
             </tbody>
         </table>
-   </div>
+    </div>
 </div> 
 <div class="modal-footer"> 
     <button type="button" class="btn btn-dark" ng-click="$ctrl.cancel()">&times; Cerrar</button>

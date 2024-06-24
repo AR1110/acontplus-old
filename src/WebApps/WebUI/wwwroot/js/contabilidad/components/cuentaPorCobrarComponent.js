@@ -20,12 +20,6 @@ app.component("appCuentaPorCobrarComponent", {
         let commonSvc = $injector.get('commonService');
 
 
-        $ctrl.$onInit = function () {
-            $scope.isNotModal = typeof $ctrl.resolve === 'object' ? true : false;
-        };
-
-        
-
         $scope.dataSearch = {
             pageIndex: 1,
             pageSize: 25,
@@ -42,6 +36,21 @@ app.component("appCuentaPorCobrarComponent", {
             ckCxcVencida: false,
             convertToDoc: false
         }
+
+        $ctrl.$onInit = function () {
+
+            if ($ctrl.resolve && typeof $ctrl.resolve==='object'){
+                $scope.isNotModal = true;
+                console.log($ctrl.resolve.params)
+                $scope.dataSearch.idCuentaPorCobrar = $ctrl.resolve.params.idCuentaPorCobrar;
+                $scope.dataSearch.checkBoxFecha = false;
+
+            }
+        };
+
+        
+
+       
         $scope.cliente = {};
 
         $scope.cuentasPorCobrar = [];
@@ -123,7 +132,8 @@ app.component("appCuentaPorCobrarComponent", {
                 codDoc: fS.isValidField(getCodigoTipoDoc()),
                 ckCxcVencida: fS.isValidField($scope.dataSearch.ckCxcVencida),
                 convertToDoc: $scope.dataSearch.convertToDoc,
-                secuencial
+                secuencial,
+                idCuentaPorCobrar: $scope.dataSearch.idCuentaPorCobrar
             }
             $scope.selectedDocumentos = [];
             $scope.cuentasPorCobrar = [];
@@ -140,7 +150,10 @@ app.component("appCuentaPorCobrarComponent", {
 
             }).catch(error => {
                 console.log(error)
-            }).finally(() => hideLoader());
+            }).finally(() => {
+                hideLoader()
+                $scope.dataSearch.idCuentaPorCobrar= null;
+            });
         }
 
         //=========================START FILTERS =======================================

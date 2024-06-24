@@ -48,7 +48,7 @@ BEGIN
            ,@convertToDoc BIT
            ,@tipoConfig VARCHAR(20)
            ,@interes NUMERIC(18,5) 
-           ,@configDeuda BIT
+           ,@configDeuda BIT  
 
     --> Variables
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -72,6 +72,7 @@ BEGIN
 				  ,@pageIndex    = pageIndex
                   ,@ckCxcVencida = ckCxcVencida
                   ,@convertToDoc = convertToDoc
+                  ,@idCuentaPorCobrar = idCuentaPorCobrar 
             FROM OPENJSON(@json) WITH 
             (
                 idCliente    INT         
@@ -85,6 +86,7 @@ BEGIN
                ,pageIndex    INT
                ,ckCxcVencida BIT
                ,convertToDoc BIT
+               ,idCuentaPorCobrar INT 
             )
 
             SET @params = '@idCliente    INT
@@ -96,7 +98,8 @@ BEGIN
                           ,@codDoc       VARCHAR(10)
                           ,@pageIndex    INT
                           ,@pageSize     INT
-                          ,@convertToDoc BIT'
+                          ,@convertToDoc BIT
+                          ,@idCuentaPorCobrar INT '
 
             SET @sql = 'SELECT cc.idCuentaPorCobrar
                               ,cc.idCliente
@@ -170,6 +173,9 @@ BEGIN
                                                                        AND DATEDIFF(DAY,cu.fechaVencimiento,GETDATE()) > 0                             
                                                                    ) '
                 END 
+
+            IF @idCuentaPorCobrar IS NOT NULL
+                SET @sql = @sql + 'AND cc.idCuentaPorCobrar = @idCuentaPorCobrar '
             
 
             SET @sql = @sql + 'ORDER BY cc.fechaEmision ASC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
@@ -186,6 +192,7 @@ BEGIN
                               ,@pageIndex    = @pageIndex
                               ,@pageSize     = @pageSize
                               ,@convertToDoc = @convertToDoc
+                              ,@idCuentaPorCobrar = @idCuentaPorCobrar
 
             RETURN 
         END 
