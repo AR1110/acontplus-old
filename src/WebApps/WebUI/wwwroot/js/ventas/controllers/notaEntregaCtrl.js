@@ -173,8 +173,7 @@
                 $scope.cloneNotaEntregas = [];
                 $scope.getTotales();
 
-                notaEntregaSvc.getAll(dataSearch).then(response => {
-                    console.log(response)
+                notaEntregaSvc.getAll(dataSearch).then(response => { 
                     hideLoader();
                     let { notaEntregas, dataTotals } = response;
                     $scope.notaEntregas = notaEntregas;

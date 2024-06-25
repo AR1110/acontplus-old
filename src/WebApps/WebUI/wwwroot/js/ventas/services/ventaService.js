@@ -368,7 +368,7 @@
                     let notaEntregaRepos = mainData[0];
                     let { totalRecords, totalDocument, totalAbono, totalSaldo } = notaEntregaRepos[0];
 
-                    console.log(notaEntregaRepos)
+                   
                     let notaEntregas = notaEntregaRepos.map(item => {
                         
                         return { 
@@ -953,7 +953,7 @@
             let total = 0, totalAbono = 0, totalSaldo = 0;
             for (let val of notaEntregas) {
                 if (val.codEstado !== 'A') {
-                    total += val.importeTotal;
+                    total += val.total;
                     totalAbono += val.abono;
                     totalSaldo += val.saldo;
                 }
