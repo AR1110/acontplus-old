@@ -9,94 +9,39 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
           ,de.CustomerId
           ,en.ruc
           ,pe.ambiente as codAmbiente
-          ,ambiente = CASE WHEN pe.ambiente = '2' THEN 'PRODUCCIÓN' ELSE 'PRUEBAS' END
+          ,CASE WHEN pe.ambiente = '2' THEN 'PRODUCCIÓN' ELSE 'PRUEBAS' END                                as ambiente
           ,de.codDoc
           ,de.idDocumento
           ,de.versionComp
-          ,comprobante = CASE 
-                            WHEN de.codDoc = '01' THEN 'Factura' 
-                            WHEN de.codDoc = '03' THEN 'Liquidación de Compras' 
-                            WHEN de.codDoc = '04' THEN 'Nota de Crédito' 
-                            WHEN de.codDoc = '05' THEN 'Nota de Débito' 
-                            WHEN de.codDoc = '06' THEN 'Guía de Remisión' 
-                            WHEN de.codDoc = '07' THEN 'Comprobante de Retención'
-                         END
+          ,CASE WHEN de.codDoc = '01' THEN 'Factura' 
+                WHEN de.codDoc = '03' THEN 'Liquidación de Compras' 
+                WHEN de.codDoc = '04' THEN 'Nota de Crédito' 
+                WHEN de.codDoc = '05' THEN 'Nota de Débito' 
+                WHEN de.codDoc = '06' THEN 'Guía de Remisión' 
+                WHEN de.codDoc = '07' THEN 'Comprobante de Retención'
+           END                                                                                            as comprobante
           ,se.codEstab
           ,se.estab
           ,pe.ptoEmi
           ,de.nroDocumento secuencial
-          ,se.estab + '-' + pe.ptoEmi + '-' + RIGHT('000000000' + CAST(de.nroDocumento AS VARCHAR(9)), 9) serieComprobante
+          ,se.estab + '-' + pe.ptoEmi + '-' + RIGHT('000000000' + CAST(de.nroDocumento AS VARCHAR(9)), 9) as serieComprobante
           ,de.fechaEmision
           ,de.xmlAcontPlus
-          ,CONVERT(XML, DECOMPRESS(de.xmlCompressed)) xmlSri
-          ,de.claveAcceso codigoAutorizacion
+          ,CONVERT(XML, DECOMPRESS(de.xmlCompressed))                                                     as xmlSri
+          ,de.claveAcceso                                                                                 as codigoAutorizacion
           ,de.fechaAutorizacion
           ,de.claveAcceso
-          ,telefono = CASE WHEN de.codDoc = '01' THEN (
-                                                        SELECT TOP 1 LTRIM(RTRIM(c.telefono)) 
-                                                        FROM dbo.Cliente c WITH(NOLOCK)
-                                                        WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad
-
-                                                      ) 
-                           WHEN de.codDoc = '03' THEN (
-                                                        SELECT TOP 1 LTRIM(RTRIM(p.telefono)) 
-                                                        FROM dbo.Proveedor p WITH(NOLOCK) 
-                                                        WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad
-                                                      )
-                           WHEN de.codDoc = '04' THEN (
-                                                        SELECT TOP 1 LTRIM(RTRIM(c.telefono)) 
-                                                        FROM dbo.Cliente c WITH(NOLOCK)
-                                                        WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad
-                                                      )
-                           WHEN de.codDoc = '06' THEN (
-                                                        SELECT TOP 1 LTRIM(RTRIM(c.telefono)) 
-                                                        FROM dbo.Cliente c WITH(NOLOCK)
-                                                        WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad
-                                                      )
-                           WHEN de.codDoc = '07' THEN (
-                                                        SELECT TOP 1 LTRIM(RTRIM(p.telefono)) 
-                                                        FROM dbo.Proveedor p WITH(NOLOCK)  
-                                                        WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad
-                                                      )
-                      END
-         ,cs.BusinessName razonSocial 
-         ,cs.IDCard rucReceptor
-         ,correo = CASE WHEN de.codDoc = '01' THEN (
-                                                        SELECT TOP 1 LTRIM(RTRIM(c.correo)) 
-                                                        FROM dbo.Cliente c WITH(NOLOCK)
-                                                        WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad
-
-                                                    ) 
-                        WHEN de.codDoc = '03' THEN (
-                                                        SELECT TOP 1 LTRIM(RTRIM(p.correo)) 
-                                                        FROM dbo.Proveedor p WITH(NOLOCK) 
-                                                        WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad
-                                                   )
-                        WHEN de.codDoc = '04' THEN (
-                                                        SELECT TOP 1 LTRIM(RTRIM(c.correo)) 
-                                                        FROM dbo.Cliente c WITH(NOLOCK)
-                                                        WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad
-                                                    )
-                        WHEN de.codDoc = '06' THEN (
-                                                        SELECT TOP 1 LTRIM(RTRIM(c.correo)) 
-                                                        FROM dbo.Cliente c WITH(NOLOCK)
-                                                        WHERE c.CustomerId = de.customerId AND c.idEntidad = de.idEntidad
-                                                   )
-                        WHEN de.codDoc = '07' THEN (
-                                                        SELECT TOP 1 LTRIM(RTRIM(p.correo)) 
-                                                        FROM dbo.Proveedor p WITH(NOLOCK)  
-                                                        WHERE p.CustomerId = de.customerId AND p.idEntidad = de.idEntidad
-                                                   )
-                      END
-         ,es.idEstadoServicio
-         ,es.codigo AS codEstado
-         ,es.descripcion estado
-         ,de.fechaRegistro
-         ,de.idPuntoEmision
-         ,ISNULL(se.telefono, '') as telefonoEstablecimiento
-         ,se.nombreComercial
-         ,us.nombreUsuario as usuario
-         ,se.idEstablecimiento
+          ,cs.BusinessName razonSocial 
+          ,cs.IDCard rucReceptor
+          ,es.idEstadoServicio
+          ,es.codigo AS codEstado
+          ,es.descripcion estado
+          ,de.fechaRegistro
+          ,de.idPuntoEmision
+          ,ISNULL(se.telefono, '') as telefonoEstablecimiento
+          ,se.nombreComercial
+          ,us.nombreUsuario as usuario
+          ,se.idEstablecimiento
     FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
     INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad        = de.idEntidad  
     INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision   = de.idPuntoEmision

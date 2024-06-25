@@ -115,7 +115,8 @@ BEGIN
 	                      ,@nroIdentificacion VARCHAR(50) 
 				          ,@idUsuario         INT
                           ,@fechaInicio       DATETIME2
-                          ,@fechaFin          DATETIME2'
+                          ,@fechaFin          DATETIME2
+                          ,@idEntidad         INT'
 
             SET @sql = 'SELECT * FROM 
 			            (
@@ -218,6 +219,7 @@ BEGIN
                                  ,@nroIdentificacion = @nroIdentificacion
                                  ,@fechaInicio       = @fechaInicio
                                  ,@fechaFin          = @fechaFin
+                                 ,@idEntidad         = @idEntidad
             RETURN 
         END 
 END
