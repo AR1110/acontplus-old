@@ -3,6 +3,7 @@ GO
 /****** Object:  StoredProcedure [dbo].[ASPMovimientoCajaGet]    Script Date: 2/6/2023 9:25:59 AM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE OR ALTER PROCEDURE Contabilidad.MovimientoCaja_Get
@@ -51,11 +52,10 @@ BEGIN
 						      ,es.codEstab
 						      ,FORMAT(mc.fechaEmision,''dd/MM/yyyy HH:mm'')                          as fechaEmision
 						      ,mc.valor * IIF(td.codigo = ''EC'',-1,1)                               as valor
-						      ,ISNULL(mc.observaciones,'')				                             as observaciones
+						      ,ISNULL(mc.observaciones,'''')				                         as observaciones
 						      ,td.codigo + ''-'' + es.estab + ''-'' + dbo.AFTAutoComplete(mc.nroDoc) as nroDoc 
 						      ,IIF(mc.estado = 1,''Activo'',''Anulado'')						     as estado
 						      ,ef.descripcion													     as subEntidadFinanciera
-							  
 						      ,CASE td.codigo WHEN ''EC'' THEN se.BusinessName
 											  WHEN ''IC'' THEN si.BusinessName
 						       END																     as empleado

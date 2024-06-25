@@ -47,30 +47,19 @@ BEGIN
             SET @sql = 'SELECT de.idDocumentoElectronico
 							  ,de.idDocumento
 							  ,de.codDoc
-							  ,de.comprobante + '' - '' + de.versionComp as comprobante
+							  ,de.comprobante
 							  ,de.serieComprobante
 							  ,de.rucReceptor 
 							  ,de.razonSocial
-							  ,de.correo
 							  ,FORMAT(de.fechaEmision, ''dd/MM/yyyy'')   as fechaEmision
 							  ,claveAcceso
 							  ,de.fechaAutorizacion
 							  ,de.estado
 							  ,de.codEstado
-							  ,CASE de.codEstado WHEN 4 THEN ''table-success'' 
-										         WHEN 5 THEN ''table-warning''
-											     WHEN 6 THEN ''table-danger''
-											     WHEN 0 THEN ''table-warning''
-							   END as style
 							  ,de.versionComp
-							  ,de.ambiente
 							  ,de.usuario
-							  ,ISNULL(de.codEstab, '''') as codEstab
-							  ,ISNULL(telefono, '''')    as telefono
-							  ,de.telefonoEstablecimiento
-							  ,de.entidad
-							  ,de.nombreComercial
-                              ,COUNT(*) OVER() as totalRecords
+							  ,ISNULL(de.codEstab, '''')                 as codEstab
+                              ,COUNT(*) OVER()                           as totalRecords
 						FROM FactElect.v_DocElectronico de WITH (NOLOCK)
 						WHERE de.idEntidad = @idEntidad  '
 
@@ -148,7 +137,7 @@ BEGIN
 		        BEGIN
                     IF @codEstado = 8 
                         BEGIN
-                            SET @sql = @sql +  'AND codEstado IN (1,5,8,2) '
+                            SET @sql = @sql +  'AND codEstado NOT IN (4,6) '
                         END 
                     ELSE 
                         BEGIN
