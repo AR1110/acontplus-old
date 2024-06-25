@@ -1,8 +1,6 @@
-﻿using Common.Core.Interfaces;
-using Common.Infrastructure.Repository;
-using FactElect.Core.Interfaces;
+﻿using FactElect.API.Interfaces;
 
-namespace FactElect.Application.Services;
+namespace FactElect.API.Services;
 
 public class DocumentoElectronicoErrorService : IDocumentoElectronicoErrorService
 {

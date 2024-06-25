@@ -8,13 +8,12 @@ public class RetencionAtsController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    
+
 
     public RetencionAtsController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        
     }
 
     [HttpGet("{json}")]
@@ -23,7 +22,6 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.RetencionAts_Get");
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -43,7 +41,6 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.RetencionAts_Insert");
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("infoCompRet", SqlStringParam.Sanitize(data.infoCompRet));
@@ -77,7 +74,6 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.RetencionAts_Update");
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
@@ -98,7 +94,6 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.RetencionAts_Cancel");
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
@@ -119,7 +114,6 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.RetencionAts_Delete");
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("idRol", User.GetUserRoleId());

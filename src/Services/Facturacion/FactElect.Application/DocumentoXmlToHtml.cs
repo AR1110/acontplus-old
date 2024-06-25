@@ -1,6 +1,6 @@
 ﻿using Common.Core.Enums;
 using Common.Core.Utils;
-using FactElect.Core.Models;
+using FactElect.Application.Models;
 
 namespace FactElect.Application;
 

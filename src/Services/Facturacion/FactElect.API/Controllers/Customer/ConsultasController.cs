@@ -1,4 +1,8 @@
-﻿namespace FactElect.API.Controllers.Customer;
+﻿using FactElect.API.Data;
+using FactElect.API.Dtos;
+using FactElect.API.Services;
+
+namespace FactElect.API.Controllers.Customer;
 
 public class ConsultasController : BaseApiController
 {
@@ -6,7 +10,7 @@ public class ConsultasController : BaseApiController
     private readonly CedulaService _cedulasSri;
     private readonly IConfiguration _configuration;
     private readonly FactElectContext _customerContext;
-    
+
 
     public ConsultasController(RucService cConsultaSri,
         CedulaService cedulasSri,
@@ -18,7 +22,6 @@ public class ConsultasController : BaseApiController
         _cedulasSri = cedulasSri;
         _configuration = configuration;
         _customerContext = customerContext;
-        
     }
 
     [AllowAnonymous]

@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Controllers;
+﻿using FactElect.API.Interfaces;
+
+namespace FactElect.API.Controllers;
 
 public class GuiaRemisionController : BaseApiController
 {
@@ -10,20 +12,19 @@ public class GuiaRemisionController : BaseApiController
     {
         _configuration = configuration;
         _svc = service;
-
     }
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
-            };
+        {
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
         var response = await _svc.GetAsync(parameters);
         if (response == null) { return NoContent(); }
 
-            ;
+        ;
         return Ok(response);
     }
 
@@ -34,7 +35,7 @@ public class GuiaRemisionController : BaseApiController
         var response = await _svc.GetByIdAsync(parameters);
         if (response == null) { return NoContent(); }
 
-            ;
+        ;
         return Ok(new { code = "1", payload = response });
     }
 
@@ -42,12 +43,14 @@ public class GuiaRemisionController : BaseApiController
     public async Task<IActionResult> Post(ApiRequest data)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-            };
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
         var response = await _svc.AddAsync(parameters);
-        if (response == null) { return NoContent(); };
+        if (response == null) { return NoContent(); }
+
+        ;
         return Ok(response);
     }
 
@@ -56,15 +59,15 @@ public class GuiaRemisionController : BaseApiController
     public async Task<IActionResult> Put(int id, ApiRequest data)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() },
-                { "id", id },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-            };
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
         var response = await _svc.UpdateAsync(parameters);
         if (response == null) { return NoContent(); }
 
-            ;
+        ;
         return Ok(response);
     }
 

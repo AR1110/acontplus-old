@@ -7,13 +7,12 @@ public class RetencionAtsController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    
+
 
     public RetencionAtsController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        
     }
 
     [HttpPut("Cancel/{id}")]
@@ -22,7 +21,6 @@ public class RetencionAtsController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.RetencionAts_Cancel");
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("idRol", User.GetUserRoleId());

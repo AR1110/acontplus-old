@@ -10,7 +10,6 @@ public class VehiculoController : BaseApiController
     public VehiculoController(IConfiguration configuration)
     {
         _configuration = configuration;
-
     }
 
     /*
@@ -27,7 +26,6 @@ public class VehiculoController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("Logistica.Vehiculo_Get");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -48,7 +46,6 @@ public class VehiculoController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            
             await _db.SPExecute("Logistica.Vehiculo_Insert");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("placa", data.placa);
@@ -72,7 +69,6 @@ public class VehiculoController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            
             await _db.SPExecute("Logistica.Vehiculo_Update");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
@@ -97,7 +93,6 @@ public class VehiculoController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            
             await _db.SPExecute("Logistica.Vehiculo_Delete");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
@@ -119,7 +114,6 @@ public class VehiculoController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            
             await _db.SPExecute("Logistica.Vehiculo_Search");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));

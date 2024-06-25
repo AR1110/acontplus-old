@@ -1,13 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore.Design;
 
-namespace FactElect.Infrastructure.Data;
+namespace FactElect.API.Data;
 
 public class DesignTimeDbContext : IDesignTimeDbContextFactory<FactElectContext>
 {
     private const string _databaseName = "DefaultConnection";
-    private const string _migrationAssembly = "FactElect.Infrastructure";
+    private const string _migrationAssembly = "FactElect.API";
 
     public FactElectContext CreateDbContext(string[] args)
     {

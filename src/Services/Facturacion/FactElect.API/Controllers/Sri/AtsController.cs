@@ -1,18 +1,12 @@
-﻿namespace FactElect.API.Controllers.Sri;
+﻿using FactElect.API.Interfaces;
+
+namespace FactElect.API.Controllers.Sri;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AtsController : ControllerBase
+public class AtsController(IAtsService atsService) : ControllerBase
 {
-    private readonly IConfiguration _configuration;
-
     private readonly AtsXml _atsXml = new();
-
-    public AtsController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-
-    }
 
     [HttpGet("Get")]
     public IActionResult GetPeriods()
@@ -47,12 +41,12 @@ public class AtsController : ControllerBase
     [HttpGet("Download")]
     public async Task<IActionResult> Download(string json)
     {
-        using var _db = new DbAccess(_configuration);
-        var _response = new ApiResponseDeprecated();
-        await _db.SPExecute("ASPAtsGetData", true);
-        _db.AddDynamicParam("idRol", User.GetUserRoleId());
-        _db.AddDynamicParam("json", json);
-        var ds = _db.GetDataSet();
+        var parameters = new Dictionary<string, object>
+        {
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+
+        var ds = await atsService.GetAts(parameters);
         if (!ds.Tables[0].Columns.Contains("code"))
         {
             byte[] xmlAts = null;
@@ -64,8 +58,10 @@ public class AtsController : ControllerBase
                                       + ds.Tables[0].Rows[0]["mes"];
                 return File(xmlAts, "text/xml", fileName + ".xml");
             }
+
             return BadRequest("No se pudo generar el ats");
         }
+
         return BadRequest(ds.Tables[0].Rows[0].Field<string>("message"));
     }
 }

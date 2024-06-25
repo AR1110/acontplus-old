@@ -1,4 +1,4 @@
-﻿namespace FactElect.Core.Interfaces;
+﻿namespace FactElect.API.Interfaces;
 
 public interface IGuiaRemisionService
 {
