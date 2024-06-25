@@ -1130,7 +1130,7 @@
     /**
      * 
      * ==========================SEND DOCS. BY EMAIL ========================= 
-     * 
+     * @warning OldVersion
      * 
      */
     app.directive('btnSendToEmail', function (modalService, nombreModalCommon) {
@@ -1168,6 +1168,52 @@
             }
         }
     })
+
+
+    /**
+     * @description Nueva Version 
+     */
+    app.directive('actionSendMail', ['modalService','nombreModalCommon', function (modalSvc, nombreModalCommon) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+                typeSend: '=',
+                getParamToSendMail: '&' //funcion que arma parametro necesario para el envio de correo
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+
+                    let fileCtrl = nombreModalCommon.SEND_MAIL.fileCtrl;
+                    let ctrl = nombreModalCommon.SEND_MAIL.controllers['MSM'];
+                    let template = nombreModalCommon.SEND_MAIL.templates['MSM'];
+                    let controller = (await import(fileCtrl))[ctrl];
+                    
+                     
+                    let params = scope.getParamToSendMail({
+                            params: scope.params
+                        }) || scope.params;
+                     
+                   
+
+                    modalSvc.open({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: {
+                            data: structuredClone(params)
+                            //...params,
+                           // typeSend: scope.typeSend
+                        }
+                    })
+
+                })
+            }
+        }
+    }])
+
+
 
     /**
      * -------------------------------SEND DOCS. BY WHATSAPP-----------------------
@@ -1251,6 +1297,76 @@
         }
     }])
 
+    //nueva version 
+
+    app.directive('actionSendToWhatsApp', ['modalService', 'nombreModalCommon', 'mainService', 'toastService', function (modalSvc, nombreModalCommon, mS, tS) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+                hasPermission: '=',
+                typeSend: '=',
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+                   
+                    showLoader();
+                    let json = JSON.stringify({ tipo: 2, idEntidad: 0 });
+                    let url = `Config/WhatsappUsage/?json=${json}`;
+                    
+                    showLoader();
+                    let response =  await  mS.getData('get', url, null, true).finally(()=>hideLoader());
+
+                    if(response.code==="0"){
+                        tS.toastr({
+                            type: 'warning',
+                            message: response.message
+                        })
+                        return 
+                    }
+
+                    let [tempArray] = JSON.parse(response.payload);
+                    let tempResponse = tempArray[0];
+
+                    if (tempResponse.code == '0') {
+                        Swal.fire({ title: 'Aviso', text: tempResponse.message, icon: 'warning' })
+                        return 
+                    }
+
+                    
+                    if (tempResponse.message) {
+                        Swal.fire({ title: 'Aviso', text: tempResponse.message, icon: 'info' })
+                        return
+                    }
+
+                    let { fileCtrl, template, controller } = nombreModalCommon.SEND_WHATSAPP;
+                    let ctrl = (await import(fileCtrl))[controller];
+ 
+                   
+
+                    const modalRef = modalSvc.open({
+                        controller: ctrl,
+                        template,
+                        size: 'md',
+                        params: {
+                            data: structuredClone(scope.params) || {},
+                        }
+                    })
+
+                    modalRef.result.then(result => {
+                        if (typeof result === "object") {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                    
+ 
+                });
+            }
+        }
+    }])
 
     app.directive('openModalAdditionalDataDocument', function (modalService, nombreModal) {
         return {
@@ -1976,11 +2092,15 @@
             },
             link: function (scope, element) {
                 element.on('click', async function () {
+                    let params = scope.params || {}
 
                     let modalRef = modalSvc.openWithComponent({
                         component: 'appCuentaPorCobrarComponent',
                         size: 'xl',
-                        windowClass: 'uibModalFullScreen',                        
+                        windowClass: 'uibModalFullScreen', 
+                        params: {
+                            idCuentaPorCobrar: params.idCuentaPorCobrar
+                        }                       
                     })
 
                     modalRef.result.then(result => {

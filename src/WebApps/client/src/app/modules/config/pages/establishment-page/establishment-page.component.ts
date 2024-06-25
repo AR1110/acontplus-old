@@ -60,8 +60,10 @@ export class EstablishmentPageComponent {
     if (input.files && input.files[0]) {
       this.selectedFile = input.files[0];
 
+      const maxSizeInBytes = 500 * 1024; // 500 KB en bytes
+
       // Validate file size
-      if (this.selectedFile.size > (1024 * 1024)) {
+      if (this.selectedFile.size > maxSizeInBytes) {
         this.fileError = { type: 'size', size: this.selectedFile.size };
       } else if (!this.selectedFile.type.startsWith('image/')) {
         this.fileError = { type: 'type' };

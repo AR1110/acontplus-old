@@ -60,8 +60,8 @@
         <CommandText />
       </Query>
       <Fields>
-        <Field Name="fechaEmison">
-          <DataField>fechaEmison</DataField>
+        <Field Name="fechaEmision">
+          <DataField>fechaEmision</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="serieComprobante">
@@ -84,12 +84,8 @@
           <DataField>usuario</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
-        <Field Name="ingreso">
-          <DataField>ingreso</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="egreso">
-          <DataField>egreso</DataField>
+        <Field Name="valor">
+          <DataField>valor</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
@@ -119,7 +115,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox8</rd:DefaultName>
             <Top>2.56047cm</Top>
-            <Left>28.15899cm</Left>
+            <Left>25.40732cm</Left>
             <Height>0.41479cm</Height>
             <Width>3.63361cm</Width>
             <Style>
@@ -151,7 +147,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox8</rd:DefaultName>
             <Top>2.56047cm</Top>
-            <Left>24.66239cm</Left>
+            <Left>21.91072cm</Left>
             <Height>0.41479cm</Height>
             <Width>3.42604cm</Width>
             <ZIndex>1</ZIndex>
@@ -185,7 +181,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
             <Top>1.91156cm</Top>
-            <Left>24.66239cm</Left>
+            <Left>21.91072cm</Left>
             <Height>0.6cm</Height>
             <Width>7.13021cm</Width>
             <ZIndex>2</ZIndex>
@@ -220,7 +216,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox2</rd:DefaultName>
             <Top>1.37329cm</Top>
-            <Left>24.66239cm</Left>
+            <Left>21.91072cm</Left>
             <Height>0.46771cm</Height>
             <Width>7.13021cm</Width>
             <ZIndex>3</ZIndex>
@@ -255,7 +251,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox2</rd:DefaultName>
             <Top>0.8703cm</Top>
-            <Left>24.66239cm</Left>
+            <Left>21.91072cm</Left>
             <Height>0.46771cm</Height>
             <Width>7.13021cm</Width>
             <ZIndex>4</ZIndex>
@@ -290,7 +286,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
             <Top>0.3175cm</Top>
-            <Left>24.66239cm</Left>
+            <Left>21.91072cm</Left>
             <Height>0.6cm</Height>
             <Width>7.13021cm</Width>
             <ZIndex>5</ZIndex>
@@ -319,9 +315,6 @@
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.77964cm</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>2.05021cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>4.19333cm</Width>
@@ -518,7 +511,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Ingreso</Value>
+                                  <Value>Valor</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -533,64 +526,6 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox20</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>Solid</Style>
-                            </Border>
-                            <TopBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </TopBorder>
-                            <BottomBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </BottomBorder>
-                            <LeftBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </LeftBorder>
-                            <RightBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </RightBorder>
-                            <BackgroundColor>#d61672</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox6">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Egreso</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <Color>White</Color>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox6</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -806,14 +741,14 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="fechaEmison">
+                        <Textbox Name="fechaEmision">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!fechaEmison.Value</Value>
+                                  <Value>=Fields!fechaEmision.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -825,7 +760,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>fechaEmison</rd:DefaultName>
+                          <rd:DefaultName>fechaEmision</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -969,14 +904,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="ingreso2">
+                        <Textbox Name="valor">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!ingreso.Value</Value>
+                                  <Value>=Fields!valor.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -988,62 +923,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>ingreso2</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>Solid</Style>
-                            </Border>
-                            <TopBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </TopBorder>
-                            <BottomBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </BottomBorder>
-                            <LeftBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </LeftBorder>
-                            <RightBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </RightBorder>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="egreso1">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!egreso.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>egreso1</rd:DefaultName>
+                          <rd:DefaultName>valor</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1309,14 +1189,14 @@
                     <TablixCell />
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="ingreso">
+                        <Textbox Name="valor1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!ingreso.Value)</Value>
+                                  <Value>=Sum(Fields!valor.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1329,62 +1209,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>ingreso</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>Solid</Style>
-                            </Border>
-                            <TopBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </TopBorder>
-                            <BottomBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </BottomBorder>
-                            <LeftBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </LeftBorder>
-                            <RightBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </RightBorder>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="egreso">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Sum(Fields!egreso.Value)</Value>
-                                  <Style>
-                                    <FontSize>8pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>egreso</rd:DefaultName>
+                          <rd:DefaultName>valor1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1488,7 +1313,6 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -1507,7 +1331,7 @@
             <DataSetName>detailDs</DataSetName>
             <Top>3.67729cm</Top>
             <Height>1.8cm</Height>
-            <Width>31.7926cm</Width>
+            <Width>29.74239cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
@@ -1559,10 +1383,10 @@
           </Border>
         </Style>
       </Body>
-      <Width>31.7926cm</Width>
+      <Width>29.74239cm</Width>
       <Page>
         <PageFooter>
-          <Height>1.29483cm</Height>
+          <Height>0.77639cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -1616,8 +1440,8 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox4</rd:DefaultName>
-              <Top>0.14111cm</Top>
-              <Left>10.07748cm</Left>
+              <Top>0.17639cm</Top>
+              <Left>7.49104cm</Left>
               <Height>0.6cm</Height>
               <Width>10.13267cm</Width>
               <ZIndex>1</ZIndex>
@@ -1669,8 +1493,8 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox14</rd:DefaultName>
-              <Top>0.14111cm</Top>
-              <Left>24.64046cm</Left>
+              <Top>0.17639cm</Top>
+              <Left>22.59025cm</Left>
               <Height>0.6cm</Height>
               <Width>7.15214cm</Width>
               <ZIndex>2</ZIndex>

@@ -219,9 +219,21 @@
                             descripcion: b.descripcion,
                         }
                     })
+               
 
+                    let docsRelacionados = docsTemp.map(item=>{
+                        return {
+                            idComprobante: item.idComprobante,
+                            idTipoDocumento: item.idTipoDocumento,
+                            nroDocumento: item.nroDocumento,
+                            tipoDocumento: item.tipoDocumento,
+                            saldo: item.saldo,
+                            numAutDocSustento: item.numAutDocSustento,
+                            codDoc: item.codDoc,
+                        }
+                    })
                     data.ciudades = ciudadesTemp;
-                    data.docs = docsTemp; 
+                    data.docs = docsRelacionados; 
                 }
 
                 return data;

@@ -279,12 +279,11 @@
                                                         </span>
                                                     </md-button>
                                                 </md-menu-item>
- 
+                                                
+                                                
 
                                                 <md-menu-item>
-                                                    <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
-                                                        btn-send-to-whats-app params="item" has-permission="hasPermissions"
-                                                        type-send="typeSend">
+                                                    <md-button  tooltip-placement="top"  action-send-to-whats-app params="item"   >
                                                         <span md-menu-align-target>
                                                             <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
                                                         </span>
@@ -292,7 +291,7 @@
                                                 </md-menu-item>
 
                                                  <md-menu-item>
-                                                    <md-button uib-tooltip="Cuentas por cobrar" btn-cuenta-por-cobrar tooltip-placement="top">
+                                                    <md-button uib-tooltip="Cuentas por cobrar" btn-cuenta-por-cobrar tooltip-placement="top" params="item">
                                                         <span md-menu-align-target>
                                                             Cuenta por cobrar
                                                         </span>
@@ -309,10 +308,10 @@
                                         </button>
                                     </div>
                                 </td>
-                                <td md-cell>{{item.nroFactura}}</td>
+                                <td md-cell>{{item.serieComprobante}}</td>
                                 <td md-cell>{{item.fechaEmision}}</td>
                                 <td md-cell>{{item.fechaVencimiento}}</td>
-                                <td md-cell>{{item.nombreFiscal}}</td>
+                                <td md-cell>{{item.razonSocialComprador}}</td>
                                 <td md-cell totales-venta-view="ventaPermiso">${{item.total}}</td>
                                 <td md-cell totales-venta-view="ventaPermiso">${{item.abono}}</td>
                                 <td md-cell totales-venta-view="ventaPermiso">${{item.saldo}}</td>

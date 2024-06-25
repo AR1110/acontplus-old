@@ -1,7 +1,7 @@
-let templateUrl = `/Home/Index?name=~/Pages/Contabilidad/Components/_CuentaPorCobrarComponent.cshtml`;
+let mainPath = `/Home/Index?name=~/Pages/Contabilidad/CuentaPorCobrar/Components/` ;
 
 app.component("appCuentaPorCobrarComponent", {
-    templateUrl,
+    templateUrl: `${mainPath}_CuentaPorCobrarComponent.cshtml`,
     bindings: {
         resolve: '<',
         close: '&',
@@ -20,12 +20,6 @@ app.component("appCuentaPorCobrarComponent", {
         let commonSvc = $injector.get('commonService');
 
 
-        $ctrl.$onInit = function () {
-            $scope.isNotModal = typeof $ctrl.resolve === 'object' ? true : false;
-        };
-
-        
-
         $scope.dataSearch = {
             pageIndex: 1,
             pageSize: 25,
@@ -42,6 +36,21 @@ app.component("appCuentaPorCobrarComponent", {
             ckCxcVencida: false,
             convertToDoc: false
         }
+
+        $ctrl.$onInit = function () {
+
+            if ($ctrl.resolve && typeof $ctrl.resolve==='object'){
+                $scope.isNotModal = true;
+                console.log($ctrl.resolve.params)
+                $scope.dataSearch.idCuentaPorCobrar = $ctrl.resolve.params.idCuentaPorCobrar;
+                $scope.dataSearch.checkBoxFecha = false;
+
+            }
+        };
+
+        
+
+       
         $scope.cliente = {};
 
         $scope.cuentasPorCobrar = [];
@@ -123,7 +132,8 @@ app.component("appCuentaPorCobrarComponent", {
                 codDoc: fS.isValidField(getCodigoTipoDoc()),
                 ckCxcVencida: fS.isValidField($scope.dataSearch.ckCxcVencida),
                 convertToDoc: $scope.dataSearch.convertToDoc,
-                secuencial
+                secuencial,
+                idCuentaPorCobrar: $scope.dataSearch.idCuentaPorCobrar
             }
             $scope.selectedDocumentos = [];
             $scope.cuentasPorCobrar = [];
@@ -140,7 +150,10 @@ app.component("appCuentaPorCobrarComponent", {
 
             }).catch(error => {
                 console.log(error)
-            }).finally(() => hideLoader());
+            }).finally(() => {
+                hideLoader()
+                $scope.dataSearch.idCuentaPorCobrar= null;
+            });
         }
 
         //=========================START FILTERS =======================================
@@ -239,10 +252,10 @@ app.component("appCuentaPorCobrarComponent", {
 
 
             const selectedDocumentos = structuredClone($scope.selectedDocumentos);
-            // Crear un array de promesas para cada solicitud
+          
             const promises = selectedDocumentos.map(cxc => cuentaPorCobrarSvc.getCuotasById(cxc.idCuentaPorCobrar));
 
-            // Utilizar Promise.all para ejecutar las promesas concurrentemente
+           
             showLoader();
             Promise.all(promises)
                 .then(results => {
@@ -327,6 +340,21 @@ app.component("appCuentaPorCobrarComponent", {
         }
 
 
+        $scope.solicitarCredito = function(item){
+            let modalRef = modalSvc.openWithComponent({
+                component: 'appSolicitarCreditoComponent',
+                size: 'xl',
+              //  windowClass: 'uibModalFullScreen',
+            })
+
+            modalRef.result.then(result => {
+                if (result && typeof result === 'object' && typeof scope.onResult === 'function') {
+                    //  scope.onResult(result)
+                }
+            })
+        }
+
+
 
 
         $ctrl.ok = function () {
@@ -338,4 +366,31 @@ app.component("appCuentaPorCobrarComponent", {
         };
 
     }]
-})
+});
+
+
+app.component("appSolicitarCreditoComponent", {
+    templateUrl: `${mainPath}_SolicitarCreditoComponent.cshtml`,
+    bindings: {
+        resolve: '<',
+        close: '&',
+        dismiss: '&',
+        isNotModal: '='
+    },
+    controller: ['$scope', '$injector', function ($scope){
+        let $ctrl = this;
+
+        $ctrl.$onInit = function(){
+            console.log($scope)
+        }
+
+        $ctrl.ok = function () {
+            $ctrl.close();
+        };
+
+        $ctrl.cancel = function () {
+            $ctrl.dismiss();
+        };
+
+    }]
+});
