@@ -1,4 +1,8 @@
-﻿namespace FactElect.API.Extensions;
+﻿using FactElect.API.Data;
+using FactElect.API.Interfaces;
+using FactElect.API.Services;
+
+namespace FactElect.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
@@ -8,6 +12,8 @@ public static class ApplicationServicesExtensions
         services.AddDbContextPool<FactElectContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+        services.AddScoped<IAdoSqlServer, AdoSqlServer>();
+        services.AddScoped<IAtsService, AtsService>();
         services.AddScoped<ICompanyCustomerService, CompanyCustomerService>();
         services.AddScoped<IDocumentoElectronicoErrorService, DocumentoElectronicoErrorService>();
         services.AddScoped<IGuiaRemisionService, GuiaRemisionService>();

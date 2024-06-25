@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Controllers.Customer;
+﻿using FactElect.API.Interfaces;
+
+namespace FactElect.API.Controllers.Customer;
 
 public class CompanyCustomerController : BaseApiController
 {
@@ -14,9 +16,9 @@ public class CompanyCustomerController : BaseApiController
     public async Task<IActionResult> Get(string json)
     {
         var response = await _companyCustomer.GetAsync(new Dictionary<string, object>
-            {
-                { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
-            });
+        {
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        });
         return Ok(response);
     }
 
@@ -24,9 +26,9 @@ public class CompanyCustomerController : BaseApiController
     public async Task<IActionResult> Post(ApiRequest request)
     {
         var response = await _companyCustomer.AddAsync(new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(request.Data) }
-            });
+        {
+            { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(request.Data) }
+        });
         if (response == null) { return BadRequest("Cant Save"); }
 
         return Ok(response);
@@ -36,11 +38,11 @@ public class CompanyCustomerController : BaseApiController
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {
         var response = await _companyCustomer.UpdateAsync(new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() },
-                { "id", id },
-                { "json", DataConverters.SerializeDictionary(request.Data) }
-            });
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", DataConverters.SerializeDictionary(request.Data) }
+        });
         if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Cant Save"); }
 
         return Ok(response);
@@ -51,9 +53,9 @@ public class CompanyCustomerController : BaseApiController
     public async Task<IActionResult> Search(string json)
     {
         var response = await _companyCustomer.SearchAsync(new Dictionary<string, object>
-            {
-                { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
-            });
+        {
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        });
         return Ok(response);
     }
 

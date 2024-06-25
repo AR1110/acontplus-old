@@ -1,8 +1,7 @@
-﻿using FactElect.Core.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using FactElect.API.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FactElect.Infrastructure.Config;
+namespace FactElect.API.Data.Config;
 
 public class CustomerConfiguration : IEntityTypeConfiguration<AppCustomer>
 {

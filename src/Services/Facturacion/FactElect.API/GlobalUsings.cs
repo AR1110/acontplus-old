@@ -1,23 +1,16 @@
 ﻿global using Asp.Versioning;
 global using Autofac;
 global using Common.Core.Enums;
-global using Common.Core.Interfaces;
 global using Common.Core.Models;
 global using Common.Core.Utils;
 global using Common.Infrastructure.Data;
 global using Common.Infrastructure.Repository;
 global using FactElect.Application;
-global using FactElect.Application.Services;
-global using FactElect.Core.Entities;
-global using FactElect.Core.Interfaces;
-global using FactElect.Core.Models;
-global using FactElect.Infrastructure.Data;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Data.SqlClient;
 global using Microsoft.EntityFrameworkCore;
 global using Services.Common.Extensions;
-
 global using System.Data;
 global using System.Net;
 global using System.Text;

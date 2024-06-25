@@ -1,9 +1,6 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using FactElect.Core.Interfaces;
+﻿using FactElect.API.Interfaces;
 
-namespace FactElect.Application.Services;
+namespace FactElect.API.Services;
 
 public class GuiaRemisionService : IGuiaRemisionService
 {
