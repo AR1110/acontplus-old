@@ -368,34 +368,26 @@
                     let notaEntregaRepos = mainData[0];
                     let { totalRecords, totalDocument, totalAbono, totalSaldo } = notaEntregaRepos[0];
 
+                   
                     let notaEntregas = notaEntregaRepos.map(item => {
                         
-                        return {
-                            idCliente: item.idCliente,
+                        return { 
                             comprobante: 'Nota de Entrega',
-                            idDocumento: item.idDocumento,
-                            idNotaEntrega: item.idNotaEntrega,
+                            idDocumento: item.idDocumento, 
                             idCuentaPorCobrar: item.idCuentaPorCobrar,
                             codEstab: item.codEstab,
-                            telefonoEstablecimiento: item.telefonoEstablecimiento,
-                            nombreComercial: item.nombreComercial,
+                            razonSocialComprador: item.nombreFiscal,                           
                             fechaEmision: item.fechaEmision,
                             fechaVencimiento: item.fechaVencimiento,
-                            total: item.total,
-                            serieComprobante: item.nroDocumento,
-                            nombreFiscal: item.nombreFiscal,
-                            identificacionComprador: item.identificacionComprador,
-                            correo: item.correo,
-                            telefono: item.telefono,
+                            total: item.total, 
+                            serieComprobante: item.serieComprobante,  
                             estadoFinanciero: item.estadoFinanciero,
-                            codDoc: item.codDoc,
+                            codDoc: "NE",
                             abono: item.abono,
                             saldo: item.saldo,
                             style: item.style,
                             usuario: item.usuario,
-                            codEstado: item.codEstado,
-                            tiempoCredito: item.tiempoCredito,
-                            esContado: item.tiempoCredito,
+                            codEstado: item.codEstado,  
                             disabledUpdate: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR' || item.anulada || item.convertToDoc,
                             disabledAnular: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR' || item.convertToDoc,
                             enabledConvertToDoc: !(item.convertToDoc || item.codEstado === 'A'),

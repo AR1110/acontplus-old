@@ -206,7 +206,7 @@
                         </thead>
                         <tbody md-body>
                             <tr md-row ng-repeat="item in facturas | orderBy: dataSearch.order track by $index"
-                                ng-class="item.style">
+                                ng-class="item.colorRow">
                                 <td md-cell>
                                     <div class="d-flex">
                                         <md-menu>
@@ -279,12 +279,11 @@
                                                         </span>
                                                     </md-button>
                                                 </md-menu-item>
- 
+                                                
+                                                
 
                                                 <md-menu-item>
-                                                    <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
-                                                        btn-send-to-whats-app params="item" has-permission="hasPermissions"
-                                                        type-send="typeSend">
+                                                    <md-button  tooltip-placement="top"  action-send-to-whats-app params="item"   >
                                                         <span md-menu-align-target>
                                                             <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
                                                         </span>
@@ -309,10 +308,10 @@
                                         </button>
                                     </div>
                                 </td>
-                                <td md-cell>{{item.nroFactura}}</td>
+                                <td md-cell>{{item.serieComprobante}}</td>
                                 <td md-cell>{{item.fechaEmision}}</td>
                                 <td md-cell>{{item.fechaVencimiento}}</td>
-                                <td md-cell>{{item.nombreFiscal}}</td>
+                                <td md-cell>{{item.razonSocialComprador}}</td>
                                 <td md-cell totales-venta-view="ventaPermiso">${{item.total}}</td>
                                 <td md-cell totales-venta-view="ventaPermiso">${{item.abono}}</td>
                                 <td md-cell totales-venta-view="ventaPermiso">${{item.saldo}}</td>
@@ -334,7 +333,7 @@
                                         Facturas
                                     </span>
                                 </td>
-                                <td md-cell colspan="3"><span class="font-weight-bold">Total</span></td>
+                                <td md-cell colspan="3"><span class="font-weight-bold"></span></td>
                                 <td md-cell totales-venta-view="ventaPermiso">
                                     <span class="font-weight-bold">{{total}}</span>
                                 </td>

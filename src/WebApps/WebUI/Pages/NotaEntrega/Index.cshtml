@@ -293,7 +293,7 @@
                                                 </md-menu-item> 
 
                                                 <md-menu-item ng-if="accion.enviarCorreo">
-                                                    <md-button btn-send-to-email params="ne" type-send="typeSendToMail"
+                                                    <md-button action-send-mail params="ne" type-send="typeSendToMail"
                                                             get-param-to-send-mail="getParamToSendMail(params)">
                                                         <span md-menu-align-target>
                                                             <i class="far fa-envelope"></i>
@@ -303,9 +303,7 @@
                                                 </md-menu-item>
 
                                                 <md-menu-item>
-                                                    <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
-                                                            btn-send-to-whats-app params="ne" has-permission="hasPermissions"
-                                                            type-send="typeSend">
+                                                    <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top" action-send-to-whats-app params="ne"  >
                                                         <span md-menu-align-target>
                                                             <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
                                                         </span>
@@ -339,7 +337,7 @@
                                                 </md-menu-item>
 
                                                 <md-menu-item>
-                                                    <md-button uib-tooltip="Cuentas por cobrar" btn-cuenta-por-cobrar tooltip-placement="top">
+                                                    <md-button  btn-cuenta-por-cobrar params="ne" tooltip-placement="top">
                                                         <span md-menu-align-target>
                                                             Cuenta por cobrar
                                                         </span>
@@ -362,7 +360,7 @@
                                 <td md-cell>{{ne.serieComprobante}}</td>
                                 <td md-cell>{{ne.fechaEmision}}</td>
                                 <td md-cell>{{ne.fechaVencimiento}}</td>
-                                <td md-cell>{{ne.nombreFiscal}}</td>
+                                <td md-cell>{{ne.razonSocialComprador}}</td>
                                 <td md-cell totales-venta-view="ventaPermiso">${{ne.total}}</td>
                                 <td md-cell totales-venta-view="ventaPermiso">${{ne.abono}}</td>
                                 <td md-cell totales-venta-view="ventaPermiso">${{ne.saldo}}</td>

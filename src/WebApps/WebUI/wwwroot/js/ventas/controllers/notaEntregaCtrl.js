@@ -173,11 +173,11 @@
                 $scope.cloneNotaEntregas = [];
                 $scope.getTotales();
 
-                notaEntregaSvc.getAll(dataSearch).then(response => {
+                notaEntregaSvc.getAll(dataSearch).then(response => { 
                     hideLoader();
                     let { notaEntregas, dataTotals } = response;
                     $scope.notaEntregas = notaEntregas;
-                    $scope.cloneNotaEntregas = JSON.parse(JSON.stringify($scope.notaEntregas));
+                    $scope.cloneNotaEntregas = structuredClone($scope.notaEntregas);
  
                     $scope.dataSearch.totalRecords = dataTotals.totalRecords;
                     $scope.getTotales(); 

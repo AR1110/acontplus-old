@@ -114,7 +114,7 @@
                     nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
                 }
 
-                docElectSvc.get(dataSearch).then(response => {
+                docElectSvc.getAll(dataSearch).then(response => {
                     if (!$scope.isMobile) {
                         document.getElementById('menu_toggle').click();
                     }
@@ -161,12 +161,26 @@
             }).finally(() => hideLoader())
         } 
 
+        $scope.getClass = function (item) {
+            return {
+                'table-success': item.codEstado == 4,
+                'table-danger': item.codEstado == 6, 
+            };
+        };
+
+
         $scope.refresh = function(){
             getComprobantes()
         }
 
         $scope.isDisabledRow = function(item){
             return !(item.codEstado === 0 || item.codEstado === 2 || item.codEstado === 5)
+        }
+
+        $scope.validateRowAction = function(item){
+           return {
+               authorized: item.codEstado ===4
+           }
         }
 
 

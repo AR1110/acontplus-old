@@ -91,6 +91,11 @@ app.component("appCuentaPorPagarComponent", {
 
                 let checkboxFecha = $scope.dataSearch.checkBoxFecha;
 
+                if ($scope.dataSearch.typeSearchNro > 1 && !fS.isValidField($scope.dataSearch.secuencial)){
+                    tS.toastr('warning', 'Ingrese número secuencial')
+                    return
+                }
+
                 if (fS.isValidField($scope.dataSearch.secuencial)) {
                     if (!fS.isNumber($scope.dataSearch.secuencial)) {
                         tS.toastr('warning', 'Secuencial tiene que ser un número válido')
