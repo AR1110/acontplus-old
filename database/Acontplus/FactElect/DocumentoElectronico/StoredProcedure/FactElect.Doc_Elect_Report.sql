@@ -212,9 +212,9 @@ BEGIN
                                               ), 0) AS retRenta
                                               ,f.nombreUsuario as usuario
                                               ,f.idUsuario
-							                  ,f.codEstado
-                                              ,CASE WHEN codEstado = 4 THEN ''Autorizada''
-                                                    WHEN codEstado = 6 THEN ''Anulada''
+							                  ,f.estadoSri
+                                              ,CASE WHEN estadoSri = 4 THEN ''Autorizada''
+                                                    WHEN estadoSri = 6 THEN ''Anulada''
                                                                        ELSE ''No Autorizada''
                                                END as estado
                                         FROM Ventas.v_Factura f WITH (NOLOCK)
@@ -241,11 +241,11 @@ BEGIN
                 BEGIN
                     IF @codEstado IN (4,6)
                         BEGIN
-                            SET @sql = @sql + 'AND dt.codEstado = @codEstado '
+                            SET @sql = @sql + 'AND dt.estadoSri = @codEstado '
                         END 
                     ELSE 
                         BEGIN 
-                            SET @sql = @sql + 'AND dt.codEstado != 4 '
+                            SET @sql = @sql + 'AND dt.estadoSri != 4 '
                         END 
                 END 
 

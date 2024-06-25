@@ -17,10 +17,10 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
           ,fa.totalDescuento
 		  ,fa.porcentajeDescuento
 		  ,0 as totalIce
-		  ,propina
-		  ,recargo
-		  ,transporte
-		  ,total
+		  ,fa.propina
+		  ,fa.recargo
+		  ,fa.transporte
+		  ,fa.total
 		  ,ISNULL(fa.observacion, '')       as observacion
           ,fa.notaCredito
           ,fa.guiaRemision

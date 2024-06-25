@@ -90,6 +90,19 @@ BEGIN
                     WHERE rt.idRetencionAts = @id
                 END
 
+
+            --> Documento no Electronicos
+
+            --> Nota Entrega
+            IF @codDoc = 'NE'
+                BEGIN
+                    SELECT TOP 1 cl.correo 
+                                ,cl.telefono
+                    FROM dbo.NotaEntrega   ne WITH (NOLOCK) 
+                    INNER JOIN dbo.Cliente cl WITH (NOLOCK) ON cl.idCliente = ne.idCliente
+                    WHERE ne.idNotaEntrega = @id
+                END 
+
             RETURN 
         END
 END
