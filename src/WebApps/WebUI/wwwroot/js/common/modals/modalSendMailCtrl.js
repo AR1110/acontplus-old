@@ -21,7 +21,7 @@ function modalSendMailCtrl($scope, $uibModalInstance, $injector, sharedSvc, fS, 
         return {
             id: idDocumento,
             codDoc: codDoc,
-            esNotificacionTributaria: esNotificacionTributaria
+            esNotificacionTributaria: true
         };
     }
     function createDataParamDoc(idDocumento, codDoc) {

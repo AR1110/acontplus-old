@@ -206,7 +206,7 @@
                         </thead>
                         <tbody md-body>
                             <tr md-row ng-repeat="item in facturas | orderBy: dataSearch.order track by $index"
-                                ng-class="item.style">
+                                ng-class="item.colorRow">
                                 <td md-cell>
                                     <div class="d-flex">
                                         <md-menu>
@@ -333,7 +333,7 @@
                                         Facturas
                                     </span>
                                 </td>
-                                <td md-cell colspan="3"><span class="font-weight-bold">Total</span></td>
+                                <td md-cell colspan="3"><span class="font-weight-bold"></span></td>
                                 <td md-cell totales-venta-view="ventaPermiso">
                                     <span class="font-weight-bold">{{total}}</span>
                                 </td>

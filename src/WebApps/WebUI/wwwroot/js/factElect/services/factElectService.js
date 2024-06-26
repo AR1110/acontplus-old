@@ -9,7 +9,11 @@
     'use strict';
     const URL_API = 'FactElect/'
 
-    app.factory('docElectService', function ($injector) {
+    app.factory('docElectService', docElectService)
+    
+    docElectService.$inject = ['$injector']
+    
+    function docElectService($injector) {
         let URL = `${URL_API}DocumentoElectronico/`
         let URL_RETENCION_ATS = 'FactElect/RetencionAts/'
         let mS = $injector.get('mainService');
@@ -79,9 +83,7 @@
             return mS.getData('get', `${URL}?json=${json}`, null, true).then(response=>{
                 let results = [];
                 if(response.code==="1"){
-                    let [comprobantesElectronicos] = JSON.parse(response.payload)
-                        console.log(comprobantesElectronicos)
-                    
+                    let [comprobantesElectronicos] = JSON.parse(response.payload) 
             
                     comprobantesElectronicos = comprobantesElectronicos || [];
                     results = comprobantesElectronicos.map(item=>{
@@ -149,10 +151,14 @@
 
         return service;
 
-    })
+    }
 
 
-    app.factory('facturaService', ['$injector', function ($injector) {
+    app.factory('facturaService', facturaService)
+    
+    facturaService.$inject = ['$injector'];
+    
+    function facturaService($injector) {
         let url = `${URL_API}Factura/`
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
@@ -289,8 +295,16 @@
                     let mainData = JSON.parse(response.payload);
                     let facturasRepository = mainData[0];
                     let { totalRecords, totalDocument, totalAbono, totalSaldo } = facturasRepository[0];
-
+              
                     let facturas = facturasRepository.map(item => {
+                        let colorRow ='';
+                        if (item.estadoSri === 6){
+                            colorRow = 'table-danger'; 
+                        }
+                        if(item.estadoSri===4){
+                            colorRow = 'table-success'
+                        }
+                 
                         return { 
                             comprobante: 'Factura',
                             idCliente: item.idCliente,
@@ -310,6 +324,8 @@
                             usuario: item.usuario,
                             codEstado: item.codEstado,
                             esContado: item.tiempoCredito,
+                            estadoSri: item.estadoSri,
+                            colorRow,
                             totalRecords: item.totalRecords,
                             esCobrado: item.codEstado === 'CBR',
                             disabledActionUpdate: item.codEstado === 'CBR' || item.codEstado === 'PP' || item.codEstado === 'A',
@@ -453,7 +469,7 @@
                         razonSocialComprador: cliente.nombreFiscal,
                         placas: cliente.placa ? cliente.placa.split(/[\|;]/) : []
                     }
-                    console.log(cliente)
+       
 
 
                     let items = itemsApi.map((itemPrincipal, index) => {
@@ -846,39 +862,13 @@
 
         return service;
 
-    }])
-
-
-
-    function groupEstab(estabsAndPuntosEmision) {
-        const estabs = estabsAndPuntosEmision.reduce((acc, item) => {
-            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-            if (!existingItem) {
-                acc.push({
-                    idEstablecimiento: item.idEstablecimiento,
-                    nombreComercial: item.nombreComercial,
-                    codEstab: item.codEstab,
-                    defaultEstab: item.defaultEstab,
-                    puntosEmision: [{
-                        idPuntoEmision: item.idPuntoEmision,
-                        ptoEmi: item.ptoEmi,
-                        defaultPtoEmi: item.defaultPtoEmi
-                    }]
-                });
-            } else {
-                existingItem.puntosEmision.push({
-                    idPuntoEmision: item.idPuntoEmision,
-                    ptoEmi: item.ptoEmi,
-                    defaultPtoEmi: item.defaultPtoEmi
-                });
-            }
-            return acc;
-        }, []);
-        return estabs;
     }
+ 
 
-    app.factory('notaCreditoService',['$injector', function ($injector) {
+    app.factory('notaCreditoService', notaCreditoService)
+    
+    notaCreditoService.$inject = ['$injector']
+    function notaCreditoService($injector) {
         const mS = $injector.get('mainService');
         const fS = $injector.get('formulario');
         const pricingUtils = $injector.get('pricingUtils')
@@ -958,7 +948,12 @@
                     if (params.tipo === 3) {
                         let tempEstabsAndPtosEmision = mainData[0];
                         let estadosDoc = mainData[1];
-                        let estabs = groupEstab(tempEstabsAndPtosEmision);
+
+                        let dataToGroup = {
+                            estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
+                            bodegas: [], // Establecimientos con bodegas 
+                        }
+                        let estabs = fS.groupingEstab(dataToGroup); 
                         return {
                             estabs,
                             estadosDoc
@@ -1233,7 +1228,7 @@
 
 
 
-    }]);
+    };
 
 
 
@@ -1241,7 +1236,11 @@
      * Retencion ATS version 2.0.0
      */
 
-    app.factory('retencionAtsService', function ($injector) {
+    app.factory('retencionAtsService', retencionAtsService)
+    
+    retencionAtsService.$inject = ['$injector']
+    
+    function retencionAtsService ($injector) {
         let url = 'FactElect/RetencionAts/';
         let mS = $injector.get('mainService');
         return {
@@ -1296,6 +1295,6 @@
                 }
             )
         }
-    })
+    }
 
 })(window.angular);

@@ -201,7 +201,7 @@
                 $scope.facturas = [];
                 $scope.getTotales();
                 facturaSvc.getAll(dataSearch).then(response => {
-                    console.log(response)
+              
                     let { facturas, dataTotals } = response;
                     $scope.facturas = facturas;
                     $scope.cloneFacturas = structuredClone($scope.facturas);
