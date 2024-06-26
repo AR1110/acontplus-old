@@ -1,6 +1,4 @@
-﻿
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FactElect.API.Controllers.RetencionAts;
 
@@ -10,13 +8,12 @@ public class RetAtsInfoAdicionalController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    
+
 
     public RetAtsInfoAdicionalController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        
     }
 
     // GET: api/<RetAtsInfoAdicionalController>
@@ -40,7 +37,6 @@ public class RetAtsInfoAdicionalController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.RetAts_InfoAdicional_Insert");
 
             var parameters = new Dictionary<string, object>
@@ -64,7 +60,6 @@ public class RetAtsInfoAdicionalController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.RetAts_InfoAdicional_Update");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
@@ -86,7 +81,6 @@ public class RetAtsInfoAdicionalController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.RetAts_InfoAdicional_Delete");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);

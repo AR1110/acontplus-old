@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Xml.Linq;
 using Common.Core.Entities;
 
-namespace FactElect.Core.Entities;
+namespace FactElect.API.Entities;
 
 [Table("DocumentoElectronico", Schema = "FactElect")]
 public class DocumentoElectronico : BaseEntity

@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Controllers.DocElect.v2;
+﻿using FactElect.API.Interfaces;
+
+namespace FactElect.API.Controllers.DocElect.v2;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
@@ -11,7 +13,6 @@ public class DocumentoElectronicoErrorController : ControllerBase
     public DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService factElect)
     {
         _factElect = factElect;
-
     }
 
 

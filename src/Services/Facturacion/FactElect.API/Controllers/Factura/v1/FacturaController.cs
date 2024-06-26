@@ -13,7 +13,6 @@ public class FacturaController : ControllerBase
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-
     }
 
     [HttpGet]
@@ -22,7 +21,6 @@ public class FacturaController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("Ventas.Factura_Get", true);
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -42,7 +40,6 @@ public class FacturaController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("Ventas.Factura_Insert", true);
             _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));

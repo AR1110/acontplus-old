@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Common.Core.Entities;
 
-namespace FactElect.Core.Entities;
+namespace FactElect.API.Entities;
 
 [Table("Customer", Schema = "Customer")]
 public class AppCustomer : BaseEntity

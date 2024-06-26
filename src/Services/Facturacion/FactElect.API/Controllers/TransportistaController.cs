@@ -10,7 +10,6 @@ public class TransportistaController : BaseApiController
     public TransportistaController(IConfiguration configuration)
     {
         _configuration = configuration;
-
     }
 
     /*
@@ -27,7 +26,6 @@ public class TransportistaController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("Logistica.Transportista_Get");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -48,7 +46,6 @@ public class TransportistaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            
             await _db.SPExecute("Logistica.Transportista_Insert");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("idTipoIdentificacion", data.idTipoIdentificacion);
@@ -71,7 +68,6 @@ public class TransportistaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            
             await _db.SPExecute("Logistica.Transportista_Update");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
@@ -94,7 +90,6 @@ public class TransportistaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            
             await _db.SPExecute("Logistica.Transportista_Delete");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);

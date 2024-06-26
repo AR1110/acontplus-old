@@ -1,6 +1,4 @@
-﻿
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FactElect.API.Controllers.RetencionAts;
 
@@ -10,13 +8,12 @@ public class DocSustentoController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    
+
 
     public DocSustentoController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        
     }
 
     // GET: api/<DocSustentoController>
@@ -40,7 +37,6 @@ public class DocSustentoController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.RetAts_Doc_Sust_Insert");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("idRetencionAts", idRetencionAts);
@@ -62,7 +58,6 @@ public class DocSustentoController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.RetAts_Doc_Sust_Update");
             _db.AddDynamicParam("idUsuarioRol ", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
@@ -84,7 +79,6 @@ public class DocSustentoController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.RetAts_Doc_Sust_Delete");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
