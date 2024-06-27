@@ -3,8 +3,8 @@ GO
 CREATE OR ALTER VIEW v_usuario AS (
 	SELECT u.idUsuario
 	,u.nombreUsuario
-	,u.nombreCompleto
-	,u.nroIdentificacion
+	,c.BusinessName nombreCompleto
+	,c.IDCard nroIdentificacion
 	,u.estado estadoUsuario
 	,ur.idUsuarioRol
 	,ur.idEntidad
@@ -20,4 +20,5 @@ CREATE OR ALTER VIEW v_usuario AS (
 	INNER JOIN App.UsuarioRol ur WITH (NOLOCK) ON u.idUsuario = ur.idUsuario
 	INNER JOIN dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
 	INNER JOIN AcontplusAdmin.Seguridad.[Role] r WITH (NOLOCK) ON ur.RoleId = r.Id
+    INNER JOIN Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
 ) 

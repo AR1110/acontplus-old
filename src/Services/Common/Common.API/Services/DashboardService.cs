@@ -1,9 +1,9 @@
 ﻿namespace Common.API.Services;
 
-public class DashboardService(IAdoRepository repository) : IDashboardService
+public class DashboardService(IAdoSqlServer adoSqlServer) : IDashboardService
 {
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>("Common.Dashboard_Get", parameters);
+        return await adoSqlServer.SpExecuteAsync<ApiResponse>("Common.Dashboard_Get", parameters);
     }
 }

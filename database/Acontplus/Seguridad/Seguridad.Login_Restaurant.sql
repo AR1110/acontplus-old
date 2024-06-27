@@ -51,9 +51,9 @@ BEGIN
                                 ,codeRole         = ro.Code
                                 ,[role]           = ro.[Name]
 			                    ,username         = u.nombreUsuario
-			                    ,fullname         = u.nombreCompleto
+			                    ,fullname         = c.businessName
                                 ,email            = u.correo
-			                    ,IDCardUser       = ISNULL(u.nroIdentificacion,'')
+			                    ,IDCardUser       = c.IDCard
 			                    ,profilePicture   = ''
 			                    ,tradeName        = e.razonSocial
 			                    ,businessName     = e.nombreComercial 
@@ -72,6 +72,7 @@ BEGIN
 				                FROM App.UsuarioRol                          r WITH (NOLOCK)
 				                INNER JOIN dbo.Entidad                       e WITH (NOLOCK) ON e.idEntidad = r.idEntidad
 				                INNER JOIN dbo.Usuario                       u WITH (NOLOCK) ON u.idUsuario = r.idUsuario
+                                INNER JOIN Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
 				                INNER JOIN AcontplusAdmin.Seguridad.[Role]  ro WITH (NOLOCK) ON ro.Id       = r.RoleId
 				                WHERE r.estado    = 1
                                   AND r.idUsuario = @userId

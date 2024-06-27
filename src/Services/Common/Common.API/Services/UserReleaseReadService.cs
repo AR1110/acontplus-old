@@ -1,6 +1,6 @@
 ﻿namespace Common.API.Services;
 
-public class UserReleaseReadService(IAdoRepository repository) : IUserReleaseReadService
+public class UserReleaseReadService(IAdoSqlServer adoSqlServer) : IUserReleaseReadService
 {
     public async Task<ApiResponse> AddAsync(ApiRequest apiRequest)
     {
@@ -8,6 +8,6 @@ public class UserReleaseReadService(IAdoRepository repository) : IUserReleaseRea
         {
             { "userRoleId", apiRequest.UserRoleId }, { "json", DataConverters.SerializeDictionary(apiRequest.Data) }
         };
-        return await repository.SpExecuteAsync<ApiResponse>("Common.UserReleaseRead_Insert", parameters);
+        return await adoSqlServer.SpExecuteAsync<ApiResponse>("Common.UserReleaseRead_Insert", parameters);
     }
 }

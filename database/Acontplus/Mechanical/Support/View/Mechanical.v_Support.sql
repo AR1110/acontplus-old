@@ -29,7 +29,7 @@ CREATE OR ALTER VIEW Mechanical.v_Support WITH SCHEMABINDING AS (
           ,es.estab
           ,es.nombreComercial
           ,es.idEstablecimiento as EstablecimientoId
-          ,us.nombreCompleto as nameAssigned
+          ,us.firstName as nameAssigned
           ,us.nombreUsuario as UserAssigned
           ,vt.[Description] as VehicleType
           ,pt.codEstab

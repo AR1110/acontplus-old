@@ -1,5 +1,4 @@
-﻿using Common.API.Data;
-using Common.API.Services;
+﻿using Common.API.Services;
 
 namespace Common.API.Extensions;
 
@@ -16,9 +15,7 @@ public static class ApplicationServicesExtensions
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
 
-        services.AddDbContextPool<CommonContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
+        services.AddScoped<IAdoSqlServer, AdoSqlServer>();
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<INotificacionService, NotificacionService>();
         services.AddScoped<ICustomLogger, CustomLogger>();

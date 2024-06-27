@@ -17,19 +17,12 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE 
-        @cantidadArticulo INT,
-        @cantidadCliente INT,
-        @cantidadProveedor INT,
-        @cantidadUsuario INT,
-        @idEntidad INT,
-        @facturaVenta INT,
-        @notaEntrega INT,
-        @proforma INT,
-        @facturaCompra INT,
+    DECLARE @idEntidad INT, 
+        @uuid UNIQUEIDENTIFIER,
         @expired BIT = 0,
         @licenses VARCHAR(MAX) = '[]',
         @releases VARCHAR(MAX) = '[]',
+        @stepsConfig VARCHAR(MAX) = '[]',
         @userId INT;
 
     -- Use a temporary table to store intermediate results
@@ -38,43 +31,36 @@ BEGIN
         cantidadCliente INT,
         cantidadProveedor INT,
         cantidadUsuario INT,
-        facturaVenta INT,
-        notaEntrega INT,
-        proforma INT,
-        facturaCompra INT
+        cantidadFacturaVenta INT,
+        cantidadNotaEntrega INT,
+        cantidadProforma INT,
+        cantidadFacturaCompra INT
     );
 
     BEGIN TRY
         -- Get the company ID and user ID associated with the user's role
         SELECT 
             @idEntidad = idEntidad, 
-            @userId = idUsuario 
+            @userId = idUsuario
         FROM v_usuario 
         WHERE idUsuarioRol = @userRoleId;
+
+        SET @uuid = (SELECT TOP 1 uuid FROM dbo.Entidad WITH(NOLOCK) WHERE idEntidad = @idEntidad)
 
         -- Populate temporary table with counts
         INSERT INTO @TempResults
         SELECT
-            (SELECT COUNT(*) FROM Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM Cliente WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM Usuario WITH (NOLOCK) WHERE idUsuario IN (SELECT idUsuario FROM App.UsuarioRol WHERE idEntidad = @idEntidad)),
-            (SELECT COUNT(*) FROM Factura WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM NotaEntrega WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM Proforma WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM FacturaCompra WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1);
-
-        -- Retrieve counts from temporary table
-        SELECT
-            @cantidadArticulo = cantidadArticulo,
-            @cantidadCliente = cantidadCliente,
-            @cantidadProveedor = cantidadProveedor,
-            @cantidadUsuario = cantidadUsuario,
-            @facturaVenta = facturaVenta,
-            @notaEntrega = notaEntrega,
-            @proforma = proforma,
-            @facturaCompra = facturaCompra
-        FROM @TempResults;
+            (SELECT COUNT(*) FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            (SELECT COUNT(*) FROM dbo.Cliente WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            (SELECT COUNT(*) FROM dbo.Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            (SELECT COUNT(*) FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario IN (SELECT idUsuario FROM App.UsuarioRol WHERE idEntidad = @idEntidad)),
+            (SELECT COUNT(*) FROM dbo.Factura WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            (SELECT COUNT(*) FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            (SELECT COUNT(*) FROM dbo.Proforma WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            ((SELECT COUNT(*) FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK) 
+            INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON dr.idEstablecimiento = e.idEstablecimiento
+            WHERE e.idEntidad = @idEntidad 
+                AND dr.complete = 1) + ISNULL((SELECT COUNT(*) FROM dbo.FacturaCompra WHERE idEntidad = @idEntidad AND estado = 1), 0));
 
         -- Check subscription status
         DECLARE @subscriptionCount INT, @maxPaymentDateCount INT;
@@ -152,6 +138,16 @@ BEGIN
             );
         END
 
+        IF EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH(NOLOCK) WHERE uuid = @uuid)
+            BEGIN
+                SET @stepsConfig = (
+                    SELECT cds.Id, cds.DemoStepId, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
+                    FROM AcontplusAdmin.Config.CompanyDemoStep cds WITH(NOLOCK)
+                        INNER JOIN AcontplusAdmin.Config.DemoStep ds ON cds.DemoStepId = ds.Id
+                    WHERE uuid = @uuid FOR JSON PATH
+                )
+            END
+
         -- Check for new releases
         IF (SELECT COUNT(*) FROM AcontplusAdmin.Common.Release WITH (NOLOCK)) <> 
            (SELECT COUNT(*) FROM AcontplusAdmin.Common.UserReleaseRead WITH (NOLOCK))
@@ -173,30 +169,28 @@ BEGIN
         SELECT '1' AS code, 
                payload = (
                    SELECT
-                       (SELECT @cantidadUsuario   AS cantidadUsuario,
-                               @cantidadArticulo  AS cantidadArticulo,
-                               @cantidadCliente   AS cantidadCliente,
-                               @cantidadProveedor AS cantidadProveedor,
-                               @facturaVenta      AS cantidadFacturaV,
-                               @facturaCompra     AS cantidadFacturaC,
-                               @proforma          AS cantidadProforma,
-                               @notaEntrega       AS cantidadNotaEntrega 
+                       (SELECT cantidadUsuario,
+                              cantidadArticulo,
+                              cantidadCliente,
+                              cantidadProveedor,
+                             cantidadFacturaVenta as cantidadFacturaV,
+                                cantidadFacturaCompra As  cantidadFacturaC,
+                              cantidadProforma,
+                              cantidadNotaEntrega 
+                        FROM @TempResults
                         FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) AS 'statistics',
                        ISNULL(@licenses, '[]') AS licenses,
-                       ISNULL(@releases, '[]') AS releases
+                       ISNULL(@releases, '[]') AS releases,
+                       ISNULL(@stepsConfig, '[]') AS stepsConfig
                    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
                );
 
     END TRY
     BEGIN CATCH
         -- Handle any errors that may have occurred
-        SELECT 
-            ERROR_NUMBER() AS ErrorNumber,
-            ERROR_SEVERITY() AS ErrorSeverity,
-            ERROR_STATE() AS ErrorState,
-            ERROR_PROCEDURE() AS ErrorProcedure,
-            ERROR_LINE() AS ErrorLine,
-            ERROR_MESSAGE() AS ErrorMessage;
+        INSERT INTO dbo.ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], idUsuario)
+        VALUES(NEWID(), 'Common/Dashboard/Get', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), GETDATE(), @userId)
+        SELECT '0' AS code, 'Error on Bd' AS 'message'
     END CATCH
 END
 GO
