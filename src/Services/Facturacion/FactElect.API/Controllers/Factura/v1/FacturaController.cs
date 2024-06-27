@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Controllers.Factura.v1;
+﻿using FactElect.API.Interfaces;
+
+namespace FactElect.API.Controllers.Factura.v1;
 
 //[Route("api/[controller]")]
 [Route("api/factura/[action]")]

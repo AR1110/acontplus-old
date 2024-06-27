@@ -1,10 +1,6 @@
-﻿
-using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using FactElect.Core.Interfaces;
+﻿using FactElect.API.Interfaces;
 
-namespace FactElect.Application.Services
+namespace FactElect.API.Services
 {
     public class FacturaService:IFacturaService
     {
@@ -26,7 +22,7 @@ namespace FactElect.Application.Services
         }
 
         public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
-        { 
+        {
             var ds = await _repository.GetDataSetAsync(nameSchema + "Get_Id", parameters, true);
             if (ds.Tables[0].Rows.Count == 0) { return null; }
 
@@ -35,17 +31,17 @@ namespace FactElect.Application.Services
 
         public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Insert", parameters); 
+            return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Insert", parameters);
         }
 
         public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Update", parameters); 
+            return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Update", parameters);
         }
 
         public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Delete", parameters); 
+            return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Delete", parameters);
         }
     }
 }
