@@ -94,3 +94,4 @@ bin-release/
 /src/WebApps/client-sveltekit/.idea
 /src/WebApps/WebUI/.vscode
 /src/AcontPlus.sln.DotSettings
+/src/WebApps/client/.fleet

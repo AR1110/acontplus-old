@@ -1,6 +1,6 @@
 ﻿using FactElect.API.Data;
 using FactElect.API.Interfaces;
-using FactElect.API.Services;
+using FactElect.API.Services; 
 
 namespace FactElect.API.Extensions;
 
@@ -17,6 +17,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ICompanyCustomerService, CompanyCustomerService>();
         services.AddScoped<IDocumentoElectronicoErrorService, DocumentoElectronicoErrorService>();
         services.AddScoped<IGuiaRemisionService, GuiaRemisionService>();
+        services.AddScoped<IFacturaService, FacturaService>();
+
         services.AddScoped<RucService>();
         services.AddScoped<CedulaService>();
         return services;
