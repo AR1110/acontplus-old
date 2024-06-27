@@ -10,56 +10,33 @@ public class FacturaController : ControllerBase
 
     private readonly IFacturaService _svc;
 
-    public FacturaController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-        _db = new DbAccess(_configuration);
-
+    public FacturaController(IFacturaService service)
+    { 
+        _svc = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
-    {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            
-            await _db.SPExecute("Ventas.Factura_Get", true);
-            _db.AddDynamicParam("idRol", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+    {   
+        var response = await _svc.GetAsync(new Dictionary<string, object>
+            {
+                { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            });
+        if (response == null) { return NoContent(); }
+        return Ok(new { code = "1", payload = response });
+
+    }
 
     [HttpPost]
     public async Task<IActionResult> Insert(ApiRequest data)
-    {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            
-            await _db.SPExecute("Ventas.Factura_Insert", true);
-            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-            _response = _db.GetDefault();
-        }
-        finally
-        {
-            _db.Close();
-        }
-            await _db.SPExecute("Ventas.Factura_Insert", true);
-            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-            _response = _db.GetDefault();
-        }
-        finally
-        {
-            _db.Close();
-        }
->>>>>>>>> Temporary merge branch 2
+    {  
+        var parameters = new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetUserRoleId() },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            };
+        var response = await _svc.AddAsync(parameters); 
+        return Ok(response);
 
     }
 
