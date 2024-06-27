@@ -444,8 +444,8 @@ export class MovimientoCajaModalComponent {
         idUsuario: this.params.idUsuario,
         idCliente: null,
       };
+
       const parameters = {
-        hasIdUsuarioRol: true,
         reportParams: JSON.stringify({
           hasParams: false,
           codigo: CODE_REPORT.FG,
@@ -458,7 +458,6 @@ export class MovimientoCajaModalComponent {
       this.sharedSvc.getReport({
         data: parameters,
         format: format,
-        isOldVersion: true,
       });
     } catch (error) {
       console.log(error);
