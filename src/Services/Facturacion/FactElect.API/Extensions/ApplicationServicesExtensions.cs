@@ -11,6 +11,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ICompanyCustomerService, CompanyCustomerService>();
         services.AddScoped<IDocumentoElectronicoErrorService, DocumentoElectronicoErrorService>();
         services.AddScoped<IGuiaRemisionService, GuiaRemisionService>();
+        services.AddScoped<IFacturaService, FacturaService>();
+
         services.AddScoped<RucService>();
         services.AddScoped<CedulaService>();
         return services;

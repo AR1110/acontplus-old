@@ -161,7 +161,7 @@
             <rd:DefaultName>Textbox224</rd:DefaultName>
             <Top>2.25833cm</Top>
             <Height>0.6cm</Height>
-            <Width>48.90121cm</Width>
+            <Width>41.93806cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -200,7 +200,7 @@
             <rd:DefaultName>usuario</rd:DefaultName>
             <Top>1.62306cm</Top>
             <Height>0.6cm</Height>
-            <Width>48.90121cm</Width>
+            <Width>41.93806cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -234,7 +234,7 @@
             </Paragraphs>
             <rd:DefaultName>nombreReporte1</rd:DefaultName>
             <Height>0.6cm</Height>
-            <Width>48.90121cm</Width>
+            <Width>41.93806cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -274,7 +274,7 @@
             <rd:DefaultName>filtroFechas</rd:DefaultName>
             <Top>2.89361cm</Top>
             <Height>0.6cm</Height>
-            <Width>48.90121cm</Width>
+            <Width>41.93806cm</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -307,7 +307,7 @@
             <rd:DefaultName>razonSocial</rd:DefaultName>
             <Top>1.02306cm</Top>
             <Height>0.6cm</Height>
-            <Width>48.90121cm</Width>
+            <Width>41.93806cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
@@ -3077,17 +3077,17 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>176.672mm</Height>
+        <Height>69.78033mm</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>514.33773mm</Width>
+      <Width>419.3806mm</Width>
       <Page>
         <PageFooter>
-          <Height>6.94079mm</Height>
+          <Height>7.05833mm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -3158,8 +3158,8 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox14</rd:DefaultName>
-              <Top>0.03528cm</Top>
-              <Left>41.74907cm</Left>
+              <Top>0.10583cm</Top>
+              <Left>34.78592cm</Left>
               <Height>0.6cm</Height>
               <Width>7.15214cm</Width>
               <ZIndex>1</ZIndex>
@@ -3181,7 +3181,7 @@
           </Style>
         </PageFooter>
         <PageHeight>45cm</PageHeight>
-        <PageWidth>52cm</PageWidth>
+        <PageWidth>60cm</PageWidth>
         <LeftMargin>0.25cm</LeftMargin>
         <RightMargin>0.25cm</RightMargin>
         <TopMargin>0.25cm</TopMargin>
