@@ -16,7 +16,7 @@ go
 --      ,nc.idCliente
 --      ,'04'
 --      ,nc.fechaEmision
---      ,nc.idEstadoDocumento
+--      ,(select TOP 1 ep.idEstadoPago from EstadoPago ep where codigo = 'PE')
 --      ,nc.idNotaCredito
 --      ,nc.nroDocumento 
 --      ,es.estab + '-' + pe.ptoEmi + '-' + [Helper].[F_Auto_Sequential](nroDocumento)
@@ -35,7 +35,7 @@ go
 --      ,'A' as codDoc
 --      ,a.fechaEmision
 --      ,case ci.estado when 0 then (select TOP 1 ep.idEstadoPago from EstadoPago ep where codigo = 'A')
---                             else (select TOP 1 ep.idEstadoPago from EstadoPago ep where codigo = 'AC')
+--                             else (select TOP 1 ep.idEstadoPago from EstadoPago ep where codigo = 'PE')
 --       end 
 --      ,a.idAnticipo
 --      ,a.nroDoc
@@ -120,6 +120,8 @@ go
 --INSERT INTO Customer.Customer (IDType,IDCard,BusinessName,TradeName,Email,Telephone,[Address],SriValidation)
 --SELECT '04','1791260376001','FANLO BARBA MARIA MACARENA','TELEAMAZONAS',NULL,NULL,'PICHINCHA - QUITO - RUMIPAMBA - JOSE VILLALENGUA OE4-22 Y AVENIDA AMERICA	',1
 
+--INSERT INTO Customer.Customer (IDType,IDCard,BusinessName,TradeName,Email,Telephone,[Address],SriValidation)
+--SELECT '04','1790018032001','ESPINOSA ESPINOSA PABLO ESTEVAN','ESPINOSA PAEZ S.A',NULL,NULL,'PICHINCHA / QUITO / ITCHIMBIA / RAFAEL LEON LARREA N24-147 Y VIZCAYA',1
 
 --> Actualacion de estados 
 
@@ -182,9 +184,9 @@ go
 --> Retenciones
 
 --UPDATE cc set
---    cc.idEstadoPago = (select idEstadoPago from EstadoPago where codigo = 'APL')
---FROM Contabilidad.CuentaPorCobrar cc
---inner join dbo.cobro              co on co.idCuentaPorCobrar    = cc.idCuentaPorCobrar
---inner join dbo.ComprobanteIngreso ci on ci.idComprobanteIngreso = co.idComprobanteIngreso
+--    cc.idEstadoPago = 11
+--FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
+--inner join dbo.cobro              co WITH (NOLOCK) on co.idCuentaPorCobrar    = cc.idCuentaPorCobrar
+--inner join dbo.ComprobanteIngreso ci WITH (NOLOCK) on ci.idComprobanteIngreso = co.idComprobanteIngreso
 --where cc.codDoc = '07'
 --and ci.estado = 1
