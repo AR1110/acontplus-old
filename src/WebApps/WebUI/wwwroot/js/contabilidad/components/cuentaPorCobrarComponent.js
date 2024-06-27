@@ -36,14 +36,15 @@ app.component("appCuentaPorCobrarComponent", {
             ckCxcVencida: false,
             convertToDoc: false
         }
+        let loadFromDoc = false;
 
         $ctrl.$onInit = function () {
 
             if ($ctrl.resolve && typeof $ctrl.resolve==='object'){
-                $scope.isNotModal = true;
-                console.log($ctrl.resolve.params)
+                $scope.isNotModal = true; 
                 $scope.dataSearch.idCuentaPorCobrar = $ctrl.resolve.params.idCuentaPorCobrar;
                 $scope.dataSearch.checkBoxFecha = false;
+                loadFromDoc= true;
 
             }
         };
@@ -114,10 +115,15 @@ app.component("appCuentaPorCobrarComponent", {
 
         function getCuentasPorCobrar() {
             let ckFecha = $scope.dataSearch.checkBoxFecha;
+            let codEstado = fS.isValidField($scope.dataSearch.codEstado);
+
             let secuencial = fS.isValidField($scope.dataSearch.secuencial);
             if (secuencial) {
                 ckFecha = false;
                 tS.toastr('info', 'Buscando por Nro. Secuencial')
+            }
+            if (loadFromDoc){
+                codEstado = null;
             }
 
             let params = {
@@ -127,7 +133,7 @@ app.component("appCuentaPorCobrarComponent", {
                 ckFecha,
                 fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                 fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
-                codEstado: fS.isValidField($scope.dataSearch.codEstado),
+                codEstado,
                 idCliente: fS.isValidField($scope.dataSearch.idCliente),
                 codDoc: fS.isValidField(getCodigoTipoDoc()),
                 ckCxcVencida: fS.isValidField($scope.dataSearch.ckCxcVencida),
@@ -153,6 +159,7 @@ app.component("appCuentaPorCobrarComponent", {
             }).finally(() => {
                 hideLoader()
                 $scope.dataSearch.idCuentaPorCobrar= null;
+                loadFromDoc= false;
             });
         }
 
