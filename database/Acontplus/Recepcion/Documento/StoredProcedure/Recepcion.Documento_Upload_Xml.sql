@@ -26,7 +26,7 @@ CREATE OR ALTER PROCEDURE Recepcion.Documento_Upload_Xml @idUsuarioRol INT
 ,@codDoc VARCHAR(2)
 ,@claveAcceso AS VARCHAR(49)
 ,@versionComp VARCHAR(5)
-,@fechaEmision VARCHAR(10)
+,@fechaEmision VARCHAR(50)
 ,@xmlDoc XML
 AS
 BEGIN
@@ -215,7 +215,7 @@ BEGIN
 			SELECT @idEstablecimiento,@codEstab,comprobante,@codDoc,serieComprobante,rucEmisor,razonSocialEmisior,@fechaEmision,@fechaAutorizacion,tipoEmision,identificacionReceptor,@claveAcceso,@claveAcceso,@importeTotal,@xmlCompressed, @versionComp,@idUsuario,dbo.ufnGetDateEcuador(),'DE',@subcategoryId
             FROM @tbDocumento
 
-			SET @idDocumento = @@IDENTITY
+			SET @idDocumento = SCOPE_IDENTITY()
 
              
             --> Valiration Sri
@@ -225,6 +225,7 @@ BEGIN
                           (IDType,IDCard,BusinessName,TradeName,[Address],SriValidation)
 					SELECT '04',rucEmisor,razonSocialEmisior,nombreComercial,dirMatriz, 1 
                     FROM @tbDocumento 
+
                     SET @customerId = SCOPE_IDENTITY()
 				END
 			ELSE
@@ -257,7 +258,7 @@ BEGIN
                     IF NOT EXISTS (SELECT 1 FROM Contabilidad.CuentaPorPagar WHERE uniqueId = @claveAcceso)
 					    BEGIN 
                         
-                            SELECT  @fechaEmision = CONVERT(date, @fechaEmision, 103)
+                            SELECT  @fechaEmision = CONVERT(datetime2, @fechaEmision,103)
 
 						    INSERT INTO Contabilidad.CuentaPorPagar
 							       (idDocumento,idEstablecimiento,codDoc,serieComprobante,idUsuario, idProveedor, idEstadoPago,uniqueId,fechaEmision,importeTotal,idEntidad,subcategoryId)
@@ -287,7 +288,7 @@ BEGIN
                                 SELECT TOP 1 @idCliente = idCliente FROM dbo.Cliente WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = LTRIM(RTRIM(@rucEmisor)) 
                             END
 
-                        SELECT @fechaEmision = CONVERT(date, @fechaEmision, 103)
+                        SELECT @fechaEmision = CONVERT(datetime2, @fechaEmision,103)
 
                         INSERT INTO Contabilidad.CuentaPorCobrar
                                (idCliente,codDoc, fechaEmision, idEstadoPago,idDocumento,secuencial,serieComprobante,importeTotal,idEntidad,idUsuario,fechaRegistro)

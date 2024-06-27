@@ -21,3 +21,5 @@ ON [Ventas].[NotaEntregaImpuesto] (NotaEntregaId ASC, [TaxId], [TaxPercentId])
 INCLUDE ([Id], [Percent], [TaxBase], [TaxValue])
 GO
 
+
+

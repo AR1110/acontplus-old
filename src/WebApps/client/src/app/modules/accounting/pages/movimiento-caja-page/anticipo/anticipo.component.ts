@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
-import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import {NgbDropdownModule, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-anticipo',
@@ -23,6 +23,7 @@ import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
   imports: [
     FormsModule,
     FontAwesomeModule,
+    NgbDropdownModule,
     CompanyCustomerSearchComponent,
     NgbPagination,
     DateRangeSelectionComponent,
@@ -128,13 +129,12 @@ export class AnticipoComponent {
     let format = 'pdf';
 
     let dataParms = {
+      tipo: 1,
       id: data.idAnticipo,
     };
 
     const parameters = {
-      hasService: true,
       reportParams: JSON.stringify({
-        hasParams: false,
         codigo: CODE_REPORT.RA,
         format,
         codEstab: data.codEstab,
@@ -146,7 +146,6 @@ export class AnticipoComponent {
     this.sharedSvc.getReport({
       data: parameters,
       format: 'pdf',
-      isOldVersion: true,
     });
   }
 
