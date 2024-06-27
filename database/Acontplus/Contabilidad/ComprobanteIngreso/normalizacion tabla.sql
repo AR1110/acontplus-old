@@ -94,7 +94,7 @@ go
 --      ci.CustomerId = (select TOP 1 CustomerId from Cliente cl where cl.idCliente = ci.idCliente)
 --from ComprobanteIngreso ci
 
---SELECT top 100 * from ComprobanteIngreso 
+--SELECT TOP 200 * from ComprobanteIngreso
 
 --ALTER TABLE dbo.ComprobanteIngreso ALTER COLUMN CustomerId INT NOT NULL
 
@@ -149,7 +149,7 @@ go
 SELECT c.*
 FROM Cobro c
 INNER JOIN ComprobanteIngreso ci on ci.idComprobanteIngreso = c.idComprobanteIngreso
-where c.idCuentaPorCobrar >0
+where c.idCuentaPorCobrar > 0
 
 
 --ALTER TABLE Cobro DROP CONSTRAINT FK__Cobro__idTipDocu__1B9E04AB

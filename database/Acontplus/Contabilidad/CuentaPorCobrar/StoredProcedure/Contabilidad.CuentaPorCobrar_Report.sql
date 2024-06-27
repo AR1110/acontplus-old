@@ -149,6 +149,10 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND cc.codDoc = @codDoc '
                 END
+            ELSE 
+                BEGIN
+                    SET @sql = @sql + 'AND codDoc IN (''01'',''NE'') '
+                END 
 
             IF @ckCuotas = 0
                 BEGIN
@@ -278,6 +282,10 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND codDoc = @codDoc '
                 END 
+            ELSE 
+                BEGIN
+                    SET @sql = @sql + 'AND codDoc IN (''01'',''NE'') '
+                END
 
             IF @codEstab IS NOT NULL
                 BEGIN

@@ -37,13 +37,20 @@ go
 --where td.codigo = 'IC'
 --and mc.idComprobanteIngreso is null
 
---ALTER TABLE MovimientoCaja ADD idComprobanteEgreso BIGINT CONSTRAINT FK_MovimientoCaja_ComprobanteEgreso FOREIGN KEY (idComprobanteEgreso) REFERENCES dbo.ComprobanteEgreso(idComprobanteEgreso)--
+--ALTER TABLE MovimientoCaja ADD idComprobanteEgreso BIGINT CONSTRAINT FK_MovimientoCaja_ComprobanteEgreso FOREIGN KEY (idComprobanteEgreso) REFERENCES dbo.ComprobanteEgreso(idComprobanteEgreso)
 
 --update mc 
 --set mc.idComprobanteEgreso = (SELECT pd.idComprobanteEgreso FROM PagoDocumento pd where pd.idComprobante = mc.idMovimientoCaja and pd.idTipoDocumento = mc.idTipoDocumento)
 --from MovimientoCaja mc
 --inner join TipoDocumento td on td.idTipoDocumento = mc.idTipoDocumento
 --where td.codigo = 'EC'
+
+--UPDATE mc
+--    set mc.idComprobanteEgreso = (SELECT pa.idComprobanteEgreso FROM Pago pa where pa.idComprobante = mc.idMovimientoCaja and pa.idTipoDocumento = mc.idTipoDocumento)
+--from MovimientoCaja mc
+--inner join TipoDocumento td on td.idTipoDocumento = mc.idTipoDocumento
+--where td.codigo = 'EC'
+--and mc.idComprobanteEgreso is null
 
 --ALTER TABLE MovimientoCaja DROP CONSTRAINT FK__Movimient__idEmp__40EF84EB
 

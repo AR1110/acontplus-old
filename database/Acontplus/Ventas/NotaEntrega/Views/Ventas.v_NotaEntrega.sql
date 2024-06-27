@@ -38,6 +38,7 @@ CREATE OR ALTER VIEW Ventas.v_NotaEntrega WITH SCHEMABINDING AS (
           ,es.estab + '-' + pe.ptoEmi + '-' + RIGHT('000000000' + CAST(ne.nroDocumento AS VARCHAR(9)), 9) as serieComprobante
           ,us.nombreUsuario                                                                               as usuario
           ,tc.tipo                                                                                        as tipoTiempoCredito
+          ,tc.descripcion                                                                                 as tiempoCredito
 	FROM dbo.NotaEntrega                    ne WITH (NOLOCK)
 	INNER JOIN dbo.PuntoEmision             pe WITH (NOLOCK) ON pe.idPuntoEmision  = ne.idPuntoEmision
     INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente       = ne.idCliente
