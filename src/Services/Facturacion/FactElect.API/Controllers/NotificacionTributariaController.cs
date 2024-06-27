@@ -3,12 +3,11 @@
 public class NotificacionTributariaController : BaseApiController
 {
     private readonly IConfiguration _configuration;
-    
+
 
     public NotificacionTributariaController(IConfiguration configuration)
     {
         _configuration = configuration;
-        
     }
 
     [HttpGet("{id}")]

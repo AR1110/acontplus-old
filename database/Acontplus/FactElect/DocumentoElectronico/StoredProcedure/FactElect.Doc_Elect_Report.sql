@@ -59,223 +59,97 @@ BEGIN
                           ,@identificacion  VARCHAR(20)
                           ,@idUsuario       INT'
 
-            SET @sql = 'SELECT * FROM ( 
-                                        SELECT idFactura 
-                                              ,idEstablecimiento
-                                              ,idPuntoEmision
-                                              ,codEstab
-                                              ,nombreComercial
-                                              ,estab + ''-'' + ptoEmi + ''-'' + RIGHT(''000000000'' + CONVERT(VARCHAR(9), secuencial), 9) serieComprobante
-                                              ,claveAcceso
-	                                          ,Format(fechaEmision,''dd/MM/yyyy'') as fechaEmision
-	                                          ,Format(fechaAutorizacion,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion
-	                                          ,f.razonSocialComprador
-	                                          ,f.identificacionComprador
-	                                          ,ISNULL
-                                              ((
-                                                 SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
-                                                 FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                 WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.codigoPorcentaje = ''7''
-
-                                              ),0) as subTotalExento
-
-							                  ,ISNULL
-                                              ((
-                                                 SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
-                                                 FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                 WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.codigoPorcentaje = ''6''
-
-                                              ),0) as subTotalNoObjetoIva
-
-                                              ,ISNULL((
-                                                     
-                                                     SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
-                                                     FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                     WHERE fi.FacturaId = f.idFactura 
-                                                     AND fi.codigo = ''2'' 
-                                                     AND fi.codigoPorcentaje = ''5''
-
-                                               ),0) as subTotalIvaCinco
-
-                                              ,ISNULL((
-                                                         SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
-                                                         FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                         WHERE fi.FacturaId = f.idFactura 
-                                                         AND fi.codigo = ''2'' 
-                                                         AND fi.codigoPorcentaje = ''4''
-
-                                               ),0) as subTotalIvaQuince
-
-	                                          ,ISNULL
-                                              ((
-                                                 SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
-                                                 FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                 WHERE fi.FacturaId = f.idFactura 
-                                                   AND fi.codigo = ''2'' 
-                                                   AND fi.codigoPorcentaje = ''0''
-
-                                              ),0) as subTotalIvaCero
-
-	                                          ,ISNULL
-                                              ((
-                                                 SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
-                                                 FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                 WHERE fi.FacturaId = f.idFactura 
-                                                 AND fi.codigo = ''2'' 
-                                                 AND fi.codigoPorcentaje = ''2''
-                                              ),0) as subTotalIva
-
-	                                          ,CAST(f.subTotalSinImpuestos  as numeric(18,2))  as precioTotalSinImpuestos
-	                                          
-                                              ,ISNULL
-                                              ((
-                                                 SELECT CAST(SUM(TaxValue)as numeric(18,2)) 
-                                                 FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                 WHERE fi.FacturaId = f.idFactura 
-                                                 AND fi.codigo = ''2''
-                                                 AND fi.codigoPorcentaje = ''2''
-                                              ),0) as iva
-
-                                              ,ISNULL
-                                              ((
-                                                 SELECT CAST(SUM(TaxValue)as numeric(18,2)) 
-                                                 FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                 WHERE fi.FacturaId = f.idFactura 
-                                                   AND fi.codigo = ''2''
-                                                   AND fi.codigoPorcentaje = ''5''
-
-                                              ),0) as iva5
-
-                                              ,ISNULL
-                                              ((
-                                                 SELECT CAST(SUM(TaxValue)as numeric(18,2)) 
-                                                 FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                 WHERE fi.FacturaId = f.idFactura 
-                                                   AND fi.codigo = ''2''
-                                                   AND fi.codigoPorcentaje = ''4''
-                                              ),0) as iva15
-
-	                                          ,CAST(f.totalDescuento as numeric(18,2))         as descuento
-
-	                                          ,CAST(f.total as numeric(18,2))                  as total
-
-
-	                                          ,(
-                                                    SELECT TOP 1 dd.serieComprobante 
-							                        FROM FactElect.DocRelacionado          dr WITH (NOLOCK)
-							                        INNER JOIN Recepcion.DocumentoRecibido dd WITH (NOLOCK) ON dd.idDocumento = dr.idDocumentoRecibido
-							                        WHERE dr.claveAcceso = f.claveAcceso 
-
-							                   ) as nroRetencion
-
-	                                          ,(
-                                                  SELECT CAST(SUM(t3.TaxValue)				AS NUMERIC(18,2))
-                                                  FROM Recepcion.DocumentoRecibido t1			WITH(NOLOCK)
-                                                  INNER JOIN FactElect.DocRelacionado t2		WITH(NOLOCK) ON t2.idDocumentoRecibido = t1.idDocumento
-                                                  INNER JOIN Recepcion.DocumentoImpuesto t3	WITH(NOLOCK) ON t3.DocumentoRecibidoId = t1.idDocumento
-                                                  WHERE t1.codDoc         = ''07''
-                                                    AND t2.claveAcceso      = f.claveAcceso
-
-                                               ) as totalRet
-
-                                              ,(
-                                                    SELECT TOP 1 es.estab + ''-'' + pt.ptoEmi + ''-'' + RIGHT(''000000000'' + CONVERT(VARCHAR(9), nc.nroDocumento), 9) 
-                                                    FROM dbo.NotaCredito           nc WITH (NOLOCK)
-                                                    INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = nc.idPuntoEmision
-                                                    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = pt.codEstab
-                                                    WHERE nc.idFactura = f.idFactura
-                                                    AND nc.estado = 1
-                                               ) as nroDevolucion
-                                              ,(
-                                                    SELECT TOP 1 CAST(nc.total as numeric(18,2)) 
-                                                    FROM dbo.NotaCredito nc WITH (NOLOCK) 
-                                                    WHERE nc.idFactura = f.idFactura
-                                                    AND nc.estado = 1
-                                               ) AS devolucion
-                                              ,ISNULL((
-                                                    SELECT CAST(SUM(t3.TaxValue)				AS NUMERIC(18,2))
-                                                    FROM Recepcion.DocumentoRecibido t1			WITH(NOLOCK)
-                                                    INNER JOIN FactElect.DocRelacionado t2		WITH(NOLOCK) ON t2.idDocumentoRecibido = t1.idDocumento
-                                                    INNER JOIN Recepcion.DocumentoImpuesto t3	WITH(NOLOCK) ON t3.DocumentoRecibidoId = t1.idDocumento
-                                                    WHERE t1.codDoc         = ''07''
-                                                    and t2.claveAcceso      = f.claveAcceso
-                                                    AND t3.Code             = 2
-                                              ), 0) AS retIva
-                                              ,ISNULL((
-                                                    SELECT CAST(SUM(t3.TaxValue)				AS NUMERIC(18,2))
-                                                    FROM Recepcion.DocumentoRecibido t1			WITH(NOLOCK)
-                                                    INNER JOIN FactElect.DocRelacionado t2		WITH(NOLOCK) ON t2.idDocumentoRecibido = t1.idDocumento
-                                                    INNER JOIN Recepcion.DocumentoImpuesto t3	WITH(NOLOCK) ON t3.DocumentoRecibidoId = t1.idDocumento
-                                                    WHERE t1.codDoc         = ''07''
-                                                    and t2.claveAcceso      = f.claveAcceso
-                                                    AND t3.Code             = 1
-                                              ), 0) AS retRenta
-                                              ,f.nombreUsuario as usuario
-                                              ,f.idUsuario
-							                  ,f.estadoSri
-                                              ,CASE WHEN estadoSri = 4 THEN ''Autorizada''
-                                                    WHEN estadoSri = 6 THEN ''Anulada''
-                                                                       ELSE ''No Autorizada''
-                                               END as estado
-                                        FROM Ventas.v_Factura f WITH (NOLOCK)
-                                        WHERE f.idEntidad = @idEntidad
-                                        AND f.estado = 1
-                                      )AS dt WHERE dt.idFactura > 0'
+            SET @sql = 'SELECT f.nombreComercial
+                              ,f.idEstablecimiento
+                              ,f.serieComprobante
+                              ,f.claveAcceso
+	                          ,Format(f.fechaEmision,''dd/MM/yyyy'')			 as fechaEmision
+	                          ,Format(f.fechaAutorizacion,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion
+	                          ,f.razonSocialComprador
+	                          ,f.identificacionComprador
+	                          ,f.nombreUsuario								     as usuario
+	                          ,fi.tax										     as impuesto
+	                          ,CAST(SUM(fi.TaxBase) as numeric(18,2))		     as subTotal
+	                          ,CAST(SUM(fi.TaxValue) as numeric(18,2))		     as iva
+	                          ,CAST(nc.total as numeric(18,2))				     as devolucion
+	                          ,IIF(di.Code = 1,''Renta'',''Iva'')				 as tipoImpuesto
+	                          ,di.TaxValue         							     as valorRetenido
+	                          ,CAST(f.totalDescuento as numeric(18,2))           as totalDescuento
+                              ,CAST(f.total as numeric(18,2))                    as total
+	                          ,f.estadoSri
+                        FROM Ventas.v_Factura			       f WITH (NOLOCK) 
+                        INNER JOIN Ventas.v_FacturaImpuesto    fi WITH (NOLOCK) ON fi.FacturaId           = f.idFactura
+                         LEFT JOIN Ventas.v_NotaCredito        nc WITH (NOLOCK) ON nc.idFactura           = f.idFactura
+                         LEFT JOIN FactElect.DocRelacionado    dr WITH (NOLOCK) ON dr.claveAcceso         = f.claveAcceso
+                         LEFT JOIN Recepcion.DocumentoImpuesto di WITH (NOLOCK) ON di.DocumentoRecibidoId = dr.idDocumentoRecibido
+                        WHERE f.idEntidad = @idEntidad '
 
             IF @codEstab IS NOT NULL
                 BEGIN
-                    SET @sql = @sql + 'AND dt.codEstab = @codEstab '
+                    SET @sql = @sql + 'AND f.codEstab = @codEstab '
                 END 
 
             IF @idPuntoEmision > 0 
                 BEGIN
-                    SET @sql = @sql + 'AND dt.idPuntoEmision = @idPuntoEmision '
+                    SET @sql = @sql + 'AND f.idPuntoEmision = @idPuntoEmision '
                 END
                 
-            IF @ckFecha = 1
-                BEGIN
-                    SET @sql = @sql + 'AND CAST(dt.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
-                END 
+            --IF @ckFecha = 1
+            --    BEGIN
+            --        SET @sql = @sql + 'AND CAST(f.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+            --    END 
 
             IF @codEstado >= 0
                 BEGIN
                     IF @codEstado IN (4,6)
                         BEGIN
-                            SET @sql = @sql + 'AND dt.estadoSri = @codEstado '
+                            SET @sql = @sql + 'AND f.estadoSri = @codEstado '
                         END 
                     ELSE 
                         BEGIN 
-                            SET @sql = @sql + 'AND dt.estadoSri != 4 '
+                            SET @sql = @sql + 'AND f.estadoSri != 4 '
                         END 
                 END 
 
             IF @identificacion IS NOT NULL
                 BEGIN
-                    SET @sql = @sql + 'AND dt.identificacionComprador = @identificacion '
+                    SET @sql = @sql + 'AND f.identificacionComprador = @identificacion '
                 END 
 
             IF @idUsuario IS NOT NULL
                 BEGIN
-                    SET @sql = @sql + 'AND dt.idUsuario = @idUsuario '
+                    SET @sql = @sql + 'AND f.idUsuario = @idUsuario '
                 END 
 
             IF @ckDevolucion = 1
                 BEGIN
-                    SET @sql = @sql + 'AND dt.nroDevolucion IS NOT NULL '
+                    SET @sql = @sql + 'AND nc.idNotaCredito > 0 '
                 END 
 
             IF @ckRetencion = 1
                 BEGIN
-                    SET @sql = @sql + 'AND dt.nroRetencion IS NOT NULL '
+                    SET @sql = @sql + 'AND dr.idDocRelacionado > 0 '
                 END 
 
-            IF @ckRetencion = 0
-                BEGIN
-                    SET @sql = @sql + 'AND dt.nroRetencion IS NULL '
-                END 
-           
 
-            SET @sql = @sql + 'ORDER BY dt.fechaEmision,dt.identificacionComprador DESC '
+            SET @sql = @sql + 'GROUP BY f.nombreComercial
+                                       ,f.serieComprobante
+                                       ,f.claveAcceso
+	                                   ,f.fechaEmision
+	                                   ,f.fechaAutorizacion
+	                                   ,f.razonSocialComprador
+	                                   ,f.identificacionComprador
+	                                   ,f.nombreUsuario
+		                               ,f.total 
+		                               ,f.totalDescuento
+                                       ,f.idEstablecimiento
+		                               ,f.estadoSri
+		                               ,dr.valorRetenido
+                                       ,nc.total
+		                               ,fi.tax
+                                       ,di.Code
+		                               ,di.TaxValue
+                               ORDER BY f.fechaEmision,f.identificacionComprador DESC '
 
             SELECT entidad as razonSocial 
                   ,rucEmpresa as ruc

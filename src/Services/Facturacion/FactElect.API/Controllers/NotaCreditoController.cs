@@ -10,7 +10,6 @@ public class NotaCreditoController : BaseApiController
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-
     }
 
     [HttpGet]
@@ -19,7 +18,6 @@ public class NotaCreditoController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("Ventas.NotaCredito_Get", true);
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -39,7 +37,6 @@ public class NotaCreditoController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("Ventas.NotaCredito_Insert", true);
             _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));

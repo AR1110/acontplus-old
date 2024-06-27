@@ -1,14 +1,12 @@
 ﻿using System.Reflection;
 using Common.Core.Entities;
-using Common.Infrastructure.Data;
-using FactElect.Core.Entities;
-using FactElect.Infrastructure.Config;
-using Microsoft.EntityFrameworkCore;
+using FactElect.API.Data.Config;
+using FactElect.API.Entities;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace FactElect.Infrastructure.Data;
+namespace FactElect.API.Data;
 
 public class FactElectContext : BaseContext
 {

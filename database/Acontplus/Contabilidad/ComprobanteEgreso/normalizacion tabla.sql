@@ -78,7 +78,7 @@ GO
 --      ce.CustomerId = (select TOP 1 CustomerId from Proveedor pr where pr.idProveedor = ce.idProveedor)
 --from ComprobanteEgreso ce
 
-select TOP 100 * 
+select TOP 100 *
 from ComprobanteEgreso ce 
 
 --ALTER TABLE dbo.ComprobanteEgreso ALTER COLUMN CustomerId INT NOT NULL

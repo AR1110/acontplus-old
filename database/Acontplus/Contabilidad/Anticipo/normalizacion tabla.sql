@@ -24,9 +24,6 @@ go
 --ALTER TABLE dbo.Anticipo ADD idComprobanteIngreso BIGINT CONSTRAINT fk_Anticipo_ComprobanteIngreso FOREIGN KEY(idComprobanteIngreso) REFERENCES dbo.ComprobanteIngreso(idComprobanteIngreso)
 
 
-SELECT *
-FROM dbo.Anticipo a 
-
 
 --update a set
 --    a.idComprobanteIngreso =isnull((
@@ -53,3 +50,5 @@ FROM dbo.Anticipo a
 --ALTER TABLE dbo.Anticipo DROP CONSTRAINT FK__Anticipo__idClie__31AD415B
 
 --alter table Anticipo drop column idCliente
+
+select * from Anticipo

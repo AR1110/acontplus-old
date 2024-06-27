@@ -12,7 +12,7 @@ global using Compras.API.Services;
 global using Compras.API.Utils;
 global using FactElect.Application;
 global using FactElect.Application.Services;
-global using FactElect.Core.Models;
+global using FactElect.Application.Models;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json;

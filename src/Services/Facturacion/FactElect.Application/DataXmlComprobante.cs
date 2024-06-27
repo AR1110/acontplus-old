@@ -1,5 +1,5 @@
 ﻿using System.Xml;
-using FactElect.Core.Models;
+using FactElect.Application.Models;
 
 namespace FactElect.Application;
 
@@ -7,20 +7,31 @@ public class DataXmlComprobante
 {
     public bool GetData(XmlDocument xmlSri, ref ComprobanteElectronico comp, ref string message)
     {
-        var _resp = true;
+        var resp = true;
         try
         {
             var nodeAuth = xmlSri.GetElementsByTagName("autorizacion")[0];
-            var nodeComp = nodeAuth.SelectSingleNode("comprobante");
+            var nodeComp = nodeAuth?.SelectSingleNode("comprobante");
             var xmlComp = new XmlDocument();
-            xmlComp.LoadXml(nodeComp.InnerText);
+            if (nodeComp != null)
+            {
+                xmlComp.LoadXml(nodeComp.InnerText);
+            }
+            else
+            {
+                return false;
+            }
 
-            comp.numeroAutorizacion = nodeAuth.SelectSingleNode("numeroAutorizacion").InnerText;
-            comp.fechaAutorizacion = nodeAuth.SelectSingleNode("fechaAutorizacion").InnerText;
+            comp.numeroAutorizacion = nodeAuth.SelectSingleNode("numeroAutorizacion")?.InnerText;
+            comp.fechaAutorizacion = nodeAuth.SelectSingleNode("fechaAutorizacion")?.InnerText;
 
             var nodeInfoTrib = xmlComp.GetElementsByTagName("infoTributaria")[0];
-            comp.codDoc = nodeInfoTrib.SelectSingleNode("codDoc").InnerText;
-            GetInfoTributaria(comp, nodeInfoTrib);
+            if (nodeInfoTrib != null)
+            {
+                comp.codDoc = nodeInfoTrib.SelectSingleNode("codDoc")?.InnerText;
+                GetInfoTributaria(comp, nodeInfoTrib);
+            }
+
             switch (comp.codDoc)
             {
                 case "01":
@@ -89,14 +100,12 @@ public class DataXmlComprobante
         }
         catch (Exception ex)
         {
-            _resp = false;
+            resp = false;
             message = "Error al obtener la informacion del comprobante: " + ex.Message;
         }
 
-        return _resp;
+        return resp;
     }
-
-    #region "Informacion Tributaria"
 
     public void GetInfoTributaria(ComprobanteElectronico ce, XmlNode nodeInfoTrib)
     {
@@ -118,10 +127,6 @@ public class DataXmlComprobante
             dirMatriz = nodeInfoTrib.SelectSingleNode("dirMatriz").InnerText
         };
     }
-
-    #endregion
-
-    #region "NotaCredito"
 
     public void GetInfoNotaCredito(string codDoc, ComprobanteElectronico ce, XmlNode nodeInfoNotaCredito)
     {
@@ -162,29 +167,19 @@ public class DataXmlComprobante
         ce.CreateInfoComp(codDoc, infoFac);
     }
 
-    #endregion
-
-    #region "Nodos comunes"
-
     public void GetInfoAdicional(ComprobanteElectronico comp, XmlNode infoAdi)
     {
-        var infoAdicionals = new List<InfoAdicional>();
-        foreach (XmlNode item in infoAdi)
-        {
-            var info = new InfoAdicional();
-            info.nombre = item.Attributes.GetNamedItem("nombre").Value;
-            info.valor = item.InnerText;
-            infoAdicionals.Add(info);
-        }
+        var infoAdicionals = (from XmlNode item in infoAdi
+                select new InfoAdicional
+                {
+                    nombre = item.Attributes.GetNamedItem("nombre").Value, valor = item.InnerText
+                })
+            .ToList();
 
         comp.CreateAdditionalInfo(infoAdicionals);
     }
 
-    #endregion
-
-    #region "Factura 1.1.0"
-
-    public void GetInfoFactura(string codDoc, ComprobanteElectronico ce, XmlNode nodeInfoFactura)
+    private void GetInfoFactura(string codDoc, ComprobanteElectronico ce, XmlNode nodeInfoFactura)
     {
         var infoFac = new InfoFactura();
         infoFac.fechaEmision = nodeInfoFactura.SelectSingleNode("fechaEmision").InnerText;
@@ -226,21 +221,19 @@ public class DataXmlComprobante
         ce.CreateInfoComp(codDoc, infoFac);
     }
 
-    public void GetTotalTaxes(string codDoc, object obj, XmlNode impuestos)
+    private void GetTotalTaxes(string codDoc, object obj, XmlNode impuestos)
     {
-        var totalImpuestos = new List<TotalImpuesto>();
-        foreach (XmlNode item in impuestos)
-        {
-            var totalImpuesto = new TotalImpuesto();
-            totalImpuesto.codigo = item.SelectSingleNode("codigo").InnerText;
-            totalImpuesto.codigoPorcentaje = item.SelectSingleNode("codigoPorcentaje").InnerText;
-            totalImpuesto.descuentoAdicional = item.SelectSingleNode("descuentoAdicional") == null
-                ? "0.00"
-                : item.SelectSingleNode("descuentoAdicional").InnerText;
-            totalImpuesto.baseImponible = item.SelectSingleNode("baseImponible").InnerText;
-            totalImpuesto.valor = item.SelectSingleNode("valor").InnerText;
-            totalImpuestos.Add(totalImpuesto);
-        }
+        var totalImpuestos = (from XmlNode item in impuestos
+            select new TotalImpuesto
+            {
+                codigo = item.SelectSingleNode("codigo")?.InnerText,
+                codigoPorcentaje = item.SelectSingleNode("codigoPorcentaje")?.InnerText,
+                descuentoAdicional = item.SelectSingleNode("descuentoAdicional") == null
+                    ? "0.00"
+                    : item.SelectSingleNode("descuentoAdicional")?.InnerText,
+                baseImponible = item.SelectSingleNode("baseImponible")?.InnerText,
+                valor = item.SelectSingleNode("valor")?.InnerText
+            }).ToList();
 
         switch (codDoc)
         {
@@ -255,72 +248,70 @@ public class DataXmlComprobante
         }
     }
 
-    public void GetInvoicePayments(InfoFactura comp, XmlNode payments)
+    private void GetInvoicePayments(InfoFactura comp, XmlNode payments)
     {
-        var pagos = new List<Pago>();
-        foreach (XmlNode item in payments)
-        {
-            var pago = new Pago();
-            pago.formaPago = item.SelectSingleNode("formaPago").InnerText;
-            pago.total = item.SelectSingleNode("total").InnerText;
-            pago.plazo = item.SelectSingleNode("plazo") == null ? "" : item.SelectSingleNode("plazo").InnerText;
-            pago.unidadTiempo = item.SelectSingleNode("unidadTiempo") == null
-                ? ""
-                : item.SelectSingleNode("unidadTiempo").InnerText;
-            pagos.Add(pago);
-        }
+        var pagos = (from XmlNode item in payments
+            select new Pago
+            {
+                formaPago = item.SelectSingleNode("formaPago")?.InnerText,
+                total = item.SelectSingleNode("total")?.InnerText,
+                plazo = item.SelectSingleNode("plazo") == null ? "" : item.SelectSingleNode("plazo")?.InnerText,
+                unidadTiempo = item.SelectSingleNode("unidadTiempo") == null
+                    ? ""
+                    : item.SelectSingleNode("unidadTiempo")?.InnerText
+            }).ToList();
 
         comp.CreatePayments(pagos);
     }
 
-    public void GetDetails(ComprobanteElectronico comp, XmlNode details)
+    private void GetDetails(ComprobanteElectronico comp, XmlNode details)
     {
         var detalles = new List<Detalle>();
         var impuestos = new List<Impuesto>();
         var idDetalle = 0;
         foreach (XmlNode item in details)
         {
-            var detail = new Detalle();
-            detail.idDetalle = idDetalle;
+            var detail = new Detalle { idDetalle = idDetalle };
             if (comp.codDoc == "01")
             {
                 detail.codigoPrincipal = item.SelectSingleNode("codigoPrincipal") == null
                     ? ""
-                    : item.SelectSingleNode("codigoPrincipal").InnerText;
+                    : item.SelectSingleNode("codigoPrincipal")?.InnerText;
             }
             else
             {
                 detail.codigoPrincipal = item.SelectSingleNode("codigoInterno") == null
                     ? ""
-                    : item.SelectSingleNode("codigoInterno").InnerText;
+                    : item.SelectSingleNode("codigoInterno")?.InnerText;
             }
 
             detail.codigoAuxiliar = item.SelectSingleNode("codigoAuxiliar") == null
                 ? ""
-                : item.SelectSingleNode("codigoAuxiliar").InnerText;
-            detail.descripcion = item.SelectSingleNode("descripcion").InnerText;
-            detail.cantidad = item.SelectSingleNode("cantidad").InnerText;
-            detail.precioUnitario = item.SelectSingleNode("precioUnitario").InnerText;
-            detail.descuento = item.SelectSingleNode("descuento").InnerText;
-            detail.precioTotalSinImpuesto = item.SelectSingleNode("precioTotalSinImpuesto").InnerText;
+                : item.SelectSingleNode("codigoAuxiliar")?.InnerText;
+            detail.descripcion = item.SelectSingleNode("descripcion")?.InnerText;
+            detail.cantidad = item.SelectSingleNode("cantidad")?.InnerText;
+            detail.precioUnitario = item.SelectSingleNode("precioUnitario")?.InnerText;
+            detail.descuento = item.SelectSingleNode("descuento") == null 
+                ? ""
+                : item.SelectSingleNode("descuento")?.InnerText;
+            detail.precioTotalSinImpuesto = item.SelectSingleNode("precioTotalSinImpuesto")?.InnerText;
             detail.impuestos = item.SelectSingleNode("impuestos") == null
                 ? ""
                 : item.SelectNodes("impuestos")[0].OuterXml;
             detail.detallesAdicionales = item.SelectSingleNode("detallesAdicionales") == null
                 ? ""
                 : item.SelectNodes("detallesAdicionales")[0].OuterXml;
-            foreach (XmlElement taxes in item.SelectNodes("impuestos"))
-            {
-                var tax = new Impuesto();
-                tax.idDetalle = idDetalle;
-                tax.codArticulo = detail.codigoPrincipal;
-                tax.codigo = taxes.GetElementsByTagName("codigo")[0].InnerText;
-                tax.codigoPorcentaje = taxes.GetElementsByTagName("codigoPorcentaje")[0].InnerText;
-                tax.tarifa = taxes.GetElementsByTagName("tarifa")[0].InnerText;
-                tax.baseImponible = taxes.GetElementsByTagName("baseImponible")[0].InnerText;
-                tax.valor = taxes.GetElementsByTagName("valor")[0].InnerText;
-                impuestos.Add(tax);
-            }
+            impuestos.AddRange(from XmlElement taxes in item.SelectNodes("impuestos")
+                select new Impuesto
+                {
+                    idDetalle = idDetalle,
+                    codArticulo = detail.codigoPrincipal,
+                    codigo = taxes.GetElementsByTagName("codigo")[0]?.InnerText,
+                    codigoPorcentaje = taxes.GetElementsByTagName("codigoPorcentaje")[0]?.InnerText,
+                    tarifa = taxes.GetElementsByTagName("tarifa")[0]?.InnerText,
+                    baseImponible = taxes.GetElementsByTagName("baseImponible")[0]?.InnerText,
+                    valor = taxes.GetElementsByTagName("valor")[0]?.InnerText
+                });
 
             detalles.Add(detail);
             idDetalle++;
@@ -331,11 +322,7 @@ public class DataXmlComprobante
         comp.CreateDetails(detalles);
     }
 
-    #endregion
-
-    #region "Retencion"
-
-    public void GetInfoCompRetencion(string versionComp, ComprobanteElectronico ce, XmlNode nodeInfoCompRetencion)
+    private void GetInfoCompRetencion(string versionComp, ComprobanteElectronico ce, XmlNode nodeInfoCompRetencion)
     {
         if (nodeInfoCompRetencion != null)
         {
@@ -369,9 +356,7 @@ public class DataXmlComprobante
         }
     }
 
-    #region "1.0.0"
-
-    public void GetImpuestoRetencion(ComprobanteElectronico comp, XmlNode impuestosRet)
+    private void GetImpuestoRetencion(ComprobanteElectronico comp, XmlNode impuestosRet)
     {
         var impuestos = new List<ImpuestoRetencion>();
         foreach (XmlElement taxes in impuestosRet)
@@ -391,11 +376,7 @@ public class DataXmlComprobante
         comp.CreateRetencionTaxes(impuestos);
     }
 
-    #endregion
-
-    #region "ATS -> 2.0.0"
-
-    public void GetDocSustento(ComprobanteElectronico ce, XmlNode nodeDocsSustento)
+    private void GetDocSustento(ComprobanteElectronico ce, XmlNode nodeDocsSustento)
     {
         var docsSustento = new List<DocSustento>();
         foreach (XmlElement item in nodeDocsSustento)
@@ -453,7 +434,7 @@ public class DataXmlComprobante
         ce.CreateDocSustentos(docsSustento);
     }
 
-    public void GetImpuestoDocSustento(DocSustento doc, XmlNode nodeImpuestos)
+    private void GetImpuestoDocSustento(DocSustento doc, XmlNode nodeImpuestos)
     {
         var impuestos = new List<ImpuestoDocSustento>();
         foreach (XmlElement item in nodeImpuestos)
@@ -470,7 +451,7 @@ public class DataXmlComprobante
         doc.CreateTax(impuestos);
     }
 
-    public void GetRetenciones(DocSustento doc, XmlNode nodeRetenciones, ComprobanteElectronico ce)
+    private void GetRetenciones(DocSustento doc, XmlNode nodeRetenciones, ComprobanteElectronico ce)
     {
         var retenciones = new List<Retencion>();
         var retToView = new List<ImpuestoRetencion>();
@@ -501,7 +482,7 @@ public class DataXmlComprobante
         doc.CreateRetencion(retenciones);
     }
 
-    public void GetReembolsos(DocSustento doc, XmlNode nodeReemb)
+    private void GetReembolsos(DocSustento doc, XmlNode nodeReemb)
     {
         var reembolsos = new List<ReembolsoDetalle>();
         foreach (XmlElement item in nodeReemb)
@@ -527,7 +508,7 @@ public class DataXmlComprobante
         doc.CreateReembolsos(reembolsos);
     }
 
-    public void GetImpuestosReembolsos(ReembolsoDetalle reemb, XmlNode nodeImpReemb)
+    private void GetImpuestosReembolsos(ReembolsoDetalle reemb, XmlNode nodeImpReemb)
     {
         var impuestos = new List<DetalleImpuesto>();
         foreach (XmlElement item in nodeImpReemb)
@@ -544,7 +525,7 @@ public class DataXmlComprobante
         reemb.CreateTax(impuestos);
     }
 
-    public void GetRetencionPayments(DocSustento doc, XmlNode payments)
+    private void GetRetencionPayments(DocSustento doc, XmlNode payments)
     {
         var pagos = new List<Pago>();
         foreach (XmlNode item in payments)
@@ -557,8 +538,4 @@ public class DataXmlComprobante
 
         doc.CreatePayments(pagos);
     }
-
-    #endregion
-
-    #endregion
 }

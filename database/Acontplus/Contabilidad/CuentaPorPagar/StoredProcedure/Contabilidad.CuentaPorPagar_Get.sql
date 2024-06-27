@@ -248,23 +248,23 @@ BEGIN
 				
 		END 
 
-	--IF @tipo = 4
-	--	BEGIN 				
-	--		SELECT cu.IdCard                                                           as nroIdentificacion
-	--			  ,cu.businessName                                                     as nombreFiscal
-	--			  ,ce.total
-	--			  ,'CE-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento)  as tipoDocumento
-	--			  ,us.nombreUsuario                                                    as usuario
-	--			  ,IIF(ce.estado=1, 'ACTIVO', 'ANULADA')                               as estado
-	--			  ,FORMAT(ce.fechaRegistro, 'yyyy-MM-dd hh:mm')                        as fechaRegistro
-	--		FROM Contabilidad.Historial_Pago hp WITH (NOLOCK)
-	--		INNER JOIN ComprobanteEgreso     ce WITH (NOLOCK) ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
-	--		INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento   = ce.idEstablecimiento 
-	--		INNER JOIN Usuario               us WITH (NOLOCK) ON us.idUsuario           = ce.idUsuario
- --           INNER JOIN Customer.Customer     cu WITH (NOLOCK) ON cu.Id                  = ce.CustomerId
-	--		WHERE hp.idCuentaPorPagar = @idCuentaPorPagar
-	--		ORDER BY fechaRegistro 
-	--	END 
+	IF @tipo = 4
+		BEGIN 				
+			SELECT cu.IdCard                                                           as nroIdentificacion
+				  ,cu.businessName                                                     as nombreFiscal
+				  ,ce.total
+				  ,'CE-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento)  as tipoDocumento
+				  ,us.nombreUsuario                                                    as usuario
+				  ,IIF(ce.estado = 1, 'ACTIVO', 'ANULADA')                             as estado
+				  ,FORMAT(ce.fechaRegistro, 'yyyy-MM-dd hh:mm')                        as fechaRegistro
+			FROM Contabilidad.Historial_Pago hp WITH (NOLOCK)
+			INNER JOIN ComprobanteEgreso     ce WITH (NOLOCK) ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
+			INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento   = ce.idEstablecimiento 
+			INNER JOIN Usuario               us WITH (NOLOCK) ON us.idUsuario           = ce.idUsuario
+            INNER JOIN Customer.Customer     cu WITH (NOLOCK) ON cu.Id                  = ce.CustomerId
+			WHERE hp.idCuentaPorPagar = @idCuentaPorPagar
+			ORDER BY fechaRegistro 
+		END 
 	
     --> Data Form Cuotas 
     IF @tipo = 5 

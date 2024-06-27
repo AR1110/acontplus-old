@@ -80,42 +80,6 @@ public class DbAccess : IDisposable
         return await _command.ExecuteNonQueryAsync();
     }
 
-    public DataSet GetDataSet()
-    {
-        var ds = new DataSet();
-        var dtResp = new DataTable();
-        try
-        {
-            if (_command != null)
-            {
-                using var dataAdapter = new SqlDataAdapter(_command);
-                dataAdapter.Fill(ds);
-                if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-                {
-                    if (ds.Tables.Count > 0)
-                    {
-                        ds = new DataSet();
-                    }
-
-                    DtWarning(ref dtResp);
-                    ds.Tables.Add(dtResp);
-                }
-            }
-        }
-        catch (Exception)
-        {
-            if (ds.Tables.Count > 0)
-            {
-                ds = new DataSet();
-            }
-
-            Close();
-            throw;
-        }
-
-        return ds;
-    }
-
     public DataTable GetDataTable()
     {
         var dt = new DataTable();

@@ -6,12 +6,11 @@
 public class NotificacionTributariaController : ControllerBase
 {
     private readonly IConfiguration _configuration;
-    
+
 
     public NotificacionTributariaController(IConfiguration configuration)
     {
         _configuration = configuration;
-        
     }
 
     [HttpPost]

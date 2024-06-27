@@ -49,6 +49,7 @@ BEGIN
            ,@tipoConfig VARCHAR(20)
            ,@interes NUMERIC(18,5) 
            ,@configDeuda BIT  
+           ,@secuencial INT
 
     --> Variables
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -61,45 +62,48 @@ BEGIN
             
             SET @tableNames = 'cuentasPorCobrar'
 
-            SELECT @idCliente    = idCliente  
-                  ,@ckFecha      = ckFecha
-                  ,@fechaInicio  = fechaInicio
-                  ,@fechaFin     = fechaFin
-                  ,@codEstab     = codEstab
-                  ,@codEstado    = codEstado
-                  ,@codDoc       = codDoc
-                  ,@pageSize     = pageSize
-				  ,@pageIndex    = pageIndex
-                  ,@ckCxcVencida = ckCxcVencida
-                  ,@convertToDoc = convertToDoc
+            SELECT @idCliente         = idCliente  
+                  ,@ckFecha           = ckFecha
+                  ,@fechaInicio       = fechaInicio
+                  ,@fechaFin          = fechaFin
+                  ,@codEstab          = codEstab
+                  ,@codEstado         = codEstado
+                  ,@codDoc            = codDoc
+                  ,@pageSize          = pageSize
+				  ,@pageIndex         = pageIndex
+                  ,@ckCxcVencida      = ckCxcVencida
+                  ,@convertToDoc      = convertToDoc
                   ,@idCuentaPorCobrar = idCuentaPorCobrar 
+                  ,@secuencial        = secuencial
             FROM OPENJSON(@json) WITH 
             (
-                idCliente    INT         
-               ,ckFecha      BIT         
-               ,fechaInicio  DATETIME2   
-               ,fechaFin     DATETIME2   
-               ,codEstab     VARCHAR(25) 
-               ,codEstado    VARCHAR(15) 
-               ,codDoc       VARCHAR(10)
-               ,pageSize     INT
-               ,pageIndex    INT
-               ,ckCxcVencida BIT
-               ,convertToDoc BIT
+                idCliente         INT         
+               ,ckFecha           BIT         
+               ,fechaInicio       DATETIME2   
+               ,fechaFin          DATETIME2   
+               ,codEstab          VARCHAR(25) 
+               ,codEstado         VARCHAR(15) 
+               ,codDoc            VARCHAR(10)
+               ,pageSize          INT
+               ,pageIndex         INT
+               ,ckCxcVencida      BIT
+               ,convertToDoc      BIT
                ,idCuentaPorCobrar INT 
+               ,secuencial        INT
             )
 
-            SET @params = '@idCliente    INT
-                          ,@idEntidad    INT
-                          ,@codEstab     VARCHAR(25)
-                          ,@fechaInicio  DATETIME2
-                          ,@fechaFin     DATETIME2
-                          ,@codEstado    VARCHAR(15)
-                          ,@codDoc       VARCHAR(10)
-                          ,@pageIndex    INT
-                          ,@pageSize     INT
-                          ,@convertToDoc BIT
-                          ,@idCuentaPorCobrar INT '
+            SET @params = '@idCliente         INT
+                          ,@idEntidad         INT
+                          ,@codEstab          VARCHAR(25)
+                          ,@fechaInicio       DATETIME2
+                          ,@fechaFin          DATETIME2
+                          ,@codEstado         VARCHAR(15)
+                          ,@codDoc            VARCHAR(10)
+                          ,@pageIndex         INT
+                          ,@pageSize          INT
+                          ,@convertToDoc      BIT
+                          ,@idCuentaPorCobrar INT
+                          ,@secuencial        INT '
 
             SET @sql = 'SELECT cc.idCuentaPorCobrar
                               ,cc.idCliente
@@ -129,6 +133,10 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND cc.codDoc = @codDoc '
                 END
+            ELSE 
+                BEGIN
+                    SET @sql = @sql + 'AND cc.codDoc IN (''01'',''NE'')'
+                END 
 
             IF @codEstab IS NOT NULL 
                 BEGIN
@@ -174,25 +182,33 @@ BEGIN
                                                                    ) '
                 END 
 
-            IF @idCuentaPorCobrar IS NOT NULL
-                SET @sql = @sql + 'AND cc.idCuentaPorCobrar = @idCuentaPorCobrar '
+            IF @idCuentaPorCobrar > 0 
+                BEGIN 
+                    SET @sql = @sql + 'AND cc.idCuentaPorCobrar = @idCuentaPorCobrar '
+                END 
+
+             IF @secuencial > 0
+                BEGIN
+                    SET @sql = @sql + 'AND cc.secuencial = @secuencial '
+                END
             
 
             SET @sql = @sql + 'ORDER BY cc.fechaEmision ASC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
             EXEC sp_executesql @sql
 						      ,@params 
-                              ,@codEstab     = @codEstab
-                              ,@idCliente    = @idCliente
-                              ,@idEntidad    = @idEntidad
-                              ,@fechaInicio  = @fechaInicio
-                              ,@fechaFin     = @fechaFin
-                              ,@codEstado    = @codEstado
-                              ,@codDoc       = @codDoc
-                              ,@pageIndex    = @pageIndex
-                              ,@pageSize     = @pageSize
-                              ,@convertToDoc = @convertToDoc
+                              ,@codEstab          = @codEstab
+                              ,@idCliente         = @idCliente
+                              ,@idEntidad         = @idEntidad
+                              ,@fechaInicio       = @fechaInicio
+                              ,@fechaFin          = @fechaFin
+                              ,@codEstado         = @codEstado
+                              ,@codDoc            = @codDoc
+                              ,@pageIndex         = @pageIndex
+                              ,@pageSize          = @pageSize
+                              ,@convertToDoc      = @convertToDoc
                               ,@idCuentaPorCobrar = @idCuentaPorCobrar
+                              ,@secuencial        = @secuencial
 
             RETURN 
         END 

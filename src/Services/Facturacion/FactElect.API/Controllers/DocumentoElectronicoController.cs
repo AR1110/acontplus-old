@@ -14,7 +14,6 @@ public class DocumentoElectronicoController : ControllerBase
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-
     }
 
     [HttpGet]
@@ -23,7 +22,6 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.Doc_Elect_Get", true);
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -43,7 +41,6 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.Doc_Elect_GetByStatus", true);
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -63,8 +60,6 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
-
             await _db.SPExecute("FactElect.Doc_Elect_Get_Data_Form");
             _db.AddDynamicParam("idUsuarioRol ", User.GetUserRoleId());
             _response = _db.GetDataSetAsync();
@@ -80,8 +75,6 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new FileModel();
         try
         {
-            
-
             await _db.SPExecute("FactElect.Doc_Elect_Get_Xml");
             _db.AddDynamicParam("idUsuarioRol ", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
@@ -111,7 +104,6 @@ public class DocumentoElectronicoController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            
             await _db.SPExecute("FactElect.Doc_Elect_Update");
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);

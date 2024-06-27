@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Controllers;
+﻿using FactElect.API.Interfaces;
+
+namespace FactElect.API.Controllers;
 
 public class DocumentoElectronicoErrorController : BaseApiController
 {
@@ -8,7 +10,6 @@ public class DocumentoElectronicoErrorController : BaseApiController
     public DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService docElect)
     {
         _docElect = docElect;
-
     }
 
     [HttpGet("{id}")]
