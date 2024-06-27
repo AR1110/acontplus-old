@@ -286,6 +286,10 @@
          */
         service.getAll = function (query) {
             return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                let data = {
+                    facturas: [],
+                    dataTotals: {}
+                }
                 if (response.code === "0") {
                     throw response;
                 }
@@ -337,12 +341,12 @@
                     })
 
 
-                    return {
-                        facturas,
-                        dataTotals: { totalRecords, totalDocument, totalAbono, totalSaldo }
-                    }
-
+                    
+                    data.facturas = facturas,
+                    data.dataTotals = { totalRecords, totalDocument, totalAbono, totalSaldo }  
                 }
+                console.log(data)
+                return data;
             })
         }
 
