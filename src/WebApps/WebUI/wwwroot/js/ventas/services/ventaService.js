@@ -386,6 +386,8 @@
                             abono: item.abono,
                             saldo: item.saldo,
                             style: item.style,
+                            esContado: item.tiempoCredito,
+                            tiempoCredito: item.tiempoCredito,
                             usuario: item.usuario,
                             codEstado: item.codEstado,  
                             disabledUpdate: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR' || item.anulada || item.convertToDoc,

@@ -121,11 +121,11 @@
                 Imprimir
               </button>
 
-              <button ngbDropdownItem (click)="getReport(item)">
+              <button ngbDropdownItem (click)="getReport(item)" appActionReport>
                 <fa-icon [icon]="'file-pdf'"></fa-icon>
                 Reporte
               </button>
-              <button ngbDropdownItem (click)="askToDelete(item)">
+              <button ngbDropdownItem (click)="askToDelete(item)" appActionAnular>
                 <fa-icon [icon]="'trash-alt'"></fa-icon>
                 Anular
               </button>
