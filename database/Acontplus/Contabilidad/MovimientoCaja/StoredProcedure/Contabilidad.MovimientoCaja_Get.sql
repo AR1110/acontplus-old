@@ -24,8 +24,8 @@ BEGIN
 	DECLARE @params nvarchar(MAX) ,@sql nvarchar(MAX) ,@pageIndex INT ,@pageSize INT
 
     --> Filters
-    DECLARE @checkBoxFecha BIT ,@idUsuario INT ,@idEmpleado INT ,@codEstado NVARCHAR(10) ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2
-	       ,@IDCard VARCHAR(50)
+    DECLARE @checkBoxFecha BIT ,@idUsuario INT ,@customerId INT ,@codEstado NVARCHAR(10) ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@IDCard VARCHAR(100)
+	       
 
     --> Recuperacion de variables
 	SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -77,7 +77,7 @@ BEGIN
 					    WHERE mc.idEntidad = @idEntidad '
 
 	        SELECT @checkBoxFecha  = checkBoxFecha
-		          ,@idEmpleado     = idEmpleado
+		          ,@customerId     = customerId
 		          ,@codEstado      = codEstado
 		          ,@fechaInicio    = fechaInicio
 		          ,@fechaFin       = fechaFin
@@ -87,7 +87,7 @@ BEGIN
             (     
                   fechaInicio     DATETIME2
 		         ,fechaFin        DATETIME2 
-		         ,idEmpleado      INT 
+		         ,customerId      INT 
 		         ,checkBoxFecha   BIT 
                  ,codEstado       VARCHAR(10)
                  ,pageSize        INT
@@ -95,9 +95,9 @@ BEGIN
             )
 
 	
-		    IF @idEmpleado > 0 
+		    IF @customerId > 0 
 			    BEGIN
-                    SELECT TOP 1 @IDCard = nroIdentificacion FROM Empleado WITH (NOLOCK) WHERE idEmpleado = @idEmpleado
+                    SELECT TOP 1 @IDCard = IDCard FROM Customer.Customer WITH (NOLOCK) WHERE Id = @customerId
 
 				    SET @sql = @sql + 'AND si.IDCard =  @IDCard OR se.IDCard = @IDCard '
 			    END 
