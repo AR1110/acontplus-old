@@ -1,6 +1,6 @@
 ﻿namespace Contabilidad.API.Services
 {
-    public class AccountingMovement(IAdoRepository repository) : IAccountingMovement
+    public class AccountingMovementService(IAdoRepository repository) : IAccountingMovementService
     {
         public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {

@@ -107,3 +107,18 @@ export const addDayToDate = function (fechaEmision: Date, dia: number) {
   newDate.setDate(newDate.getDate() + dia);
   return newDate;
 };
+
+export const formatDateToString = function (date:Date){
+  if (!isDateValid(date)) {
+    throw new Error("La fecha es inválida");
+  }
+  return moment(date).tz('America/Guayaquil').format('YYYY-MM-DD HH:mm:ss A')
+}
+
+export const isDateValid = function (dateString: Date) {
+  if (dateString === null) {
+    return false; // Valor nulo no es válido
+  }
+  let date = new Date(dateString);
+  return date instanceof Date;
+}

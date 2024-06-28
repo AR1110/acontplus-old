@@ -184,3 +184,9 @@ export enum SEPARATOR_KEY_CODE {
 export enum CODE_ROLE {
   ADM = 'ADM',
 }
+
+
+export enum TIPO_TRANSACCION {
+  C='C',
+  V='V'
+}

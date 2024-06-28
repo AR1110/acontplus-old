@@ -42,21 +42,9 @@
                                         start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
                                         result-range-date="resultRangeFilter(result)"></date-range-filter>
                                 </div>
-                            </div>
-                            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <span>Persona</span>
-                                    <select name="cliente-empleado" id="cliente-empleado" class="form-control"
-                                        ng-model="dataSearch.byTipoPersona" ng-change="onChangePersona()"
-                                        ng-disabled="disabledTempInputPersona">
-                                        <option value="">Todos</option>
-                                        <option ng-value="item.codigo" ng-repeat="item in tiposPersona">
-                                            {{item.descripcion}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                                <div class="form-group" ng-if="showCliente">
+                            </div> 
+                            <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
+                                <div class="form-group"  >
                                     <span>Cliente</span>
                                     <input type="text" id="customerInputSearchCliente"
                                         class="form-control border-select" ng-model="searchCliente.nombreCliente"
@@ -71,20 +59,7 @@
                                     </script>
                                 </div>
 
-                                <div class="form-group" ng-if="showEmpleado">
-                                    <span>Empleado</span>
-                                    <input type="text" id="customerInputSearchEmpleado"
-                                        class="form-control border-select" ng-model="searchEmpleado.nombreCompleto"
-                                        empleado-search-drtv on-select="onSelectEmpleado(result)"
-                                        on-keyup="onKeyupEmpleado()" placeholder="..." onclick="select();"
-                                        ng-disabled="disabledTempInputPersona">
-
-                                    <script type="text/ng-template" id="autocompleteEmpleadoTemplate.html">
-                                        <div class="autocomplete-suggestion-uib-typeahead">
-                                            <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
-                                        </div>
-                                    </script>
-                                </div>
+                                 
                             </div>
                         </div>
                     </div>

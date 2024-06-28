@@ -46,6 +46,7 @@ BEGIN
 	       ,@idComprobanteIngreso INT 
 	       ,@idCuentaPorCobrar INT
 	       ,@codDoc VARCHAR(5)
+           ,@isSearchDate BIT
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT )
 
@@ -62,7 +63,8 @@ BEGIN
 						  ,@estado            INT
 						  ,@idUsuario         INT
 						  ,@codEstab          VARCHAR(50)
-						  ,@nroSecuencialDoc  VARCHAR(13)'
+						  ,@nroSecuencialDoc  VARCHAR(13)
+                          ,@isSearchDate     BIT'
 
 			SET @sql = 'SELECT TOP 50 ci.idComprobanteIngreso
 							         ,ci.idComprobanteIngreso												       as idDocumento
@@ -91,6 +93,7 @@ BEGIN
 				  ,@fechaInicio       = fechaInicio
 				  ,@fechaFin          = fechaFin
 				  ,@nroSecuencialDoc  = LTRIM(TRIM(nroSecuencialDoc))
+                  ,@isSearchDate      = isSearchDate
 			FROM OPENJSON(@json)WITH
             (
                 
@@ -101,6 +104,7 @@ BEGIN
                 ,byUsuario         INT
                 ,byEstado          INT
                 ,nroSecuencialDoc  VARCHAR(13)
+                ,isSearchDate BIT
 			)
 
             IF EXISTS (SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @idUsuarioRol AND viewOthersDocs = 0) 
@@ -120,17 +124,17 @@ BEGIN
 			
 			IF @nroIdentificacion IS NOT NULL
 				BEGIN
-					SET @sql = @sql + 'AND ci.nroIdentificacion = @nroIdentificacion '
+					SET @sql = @sql + 'AND cu.IDCard = @nroIdentificacion '
 				END 
 
 			IF @nroSecuencialDoc > 0
 				BEGIN
 					SET @sql = @sql + ' AND ci.nroDocumento = @nroSecuencialDoc '
 				END 
-			ELSE 
+			
+			IF @isSearchDate = 1
 				BEGIN
 					SET @sql = @sql + 'AND CAST(ci.fechaRegistro as date) BETWEEN CAST(@fechaI as date) AND CAST(@fechaF as date) '
-
 				END
 
 			IF @idUsuario > 0 
@@ -150,6 +154,7 @@ BEGIN
 					           ,@idUsuario            = @idUsuario
 					           ,@estado               = @byEstado
 							   ,@nroSecuencialDoc     = @nroSecuencialDoc
+                               ,@isSearchDate         = @isSearchDate
 			RETURN 
 		END 
 
