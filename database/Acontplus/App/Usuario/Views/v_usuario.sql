@@ -1,23 +1,24 @@
 use AcontPlus
 GO
 CREATE OR ALTER VIEW v_usuario AS (
-	SELECT us.idUsuario
-	      ,us.nombreUsuario
-	      ,us.nombreCompleto
-	      ,us.nroIdentificacion
-	      ,us.estado          as estadoUsuario
-	      ,ur.idUsuarioRol
-	      ,ur.idEntidad
-	      ,en.ruc             as rucEmpresa
-	      ,en.razonSocial     as entidad
-          ,en.nombreComercial
-          ,en.telefono
-          ,en.direccion
-	      ,ro.Code            as codRol
-	      ,ro.[Name]          as rol
-          ,ro.Id              as RoleId
-	FROM dbo.Usuario                           us WITH (NOLOCK)
-	INNER JOIN App.UsuarioRol                  ur WITH (NOLOCK) ON ur.idUsuario = us.idUsuario
-	INNER JOIN dbo.Entidad                     en WITH (NOLOCK) ON en.idEntidad = ur.idEntidad
-	INNER JOIN AcontplusAdmin.Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId 
+	SELECT u.idUsuario
+	,u.nombreUsuario
+	,c.BusinessName nombreCompleto
+	,c.IDCard nroIdentificacion
+	,u.estado estadoUsuario
+	,ur.idUsuarioRol
+	,ur.idEntidad
+	,e.ruc rucEmpresa
+	,e.razonSocial entidad
+    ,e.nombreComercial
+    ,e.telefono
+    ,e.direccion
+	,r.Code codRol
+	,r.[Name] rol
+    ,r.Id RoleId
+	FROM dbo.Usuario u WITH (NOLOCK)
+	INNER JOIN App.UsuarioRol ur WITH (NOLOCK) ON u.idUsuario = ur.idUsuario
+	INNER JOIN dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
+	INNER JOIN AcontplusAdmin.Seguridad.[Role] r WITH (NOLOCK) ON ur.RoleId = r.Id
+    INNER JOIN Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
 ) 
