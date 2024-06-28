@@ -1822,7 +1822,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Fields!ingreso.Value-Fields!egreso.Value</Value>
+                                      <Value>=Fields!total.Value</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
                                       </Style>

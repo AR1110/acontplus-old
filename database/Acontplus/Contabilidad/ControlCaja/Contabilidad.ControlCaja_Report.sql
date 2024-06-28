@@ -1,16 +1,6 @@
 USE [AcontPlus]
 GO 
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -121,14 +111,14 @@ BEGIN
               AND ci.idControlCaja = @idControlCaja
 
             INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera)
-            SELECT 'CI' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(ci.nroDocumento AS VARCHAR(9)), 9) as nroComprobante
-                  ,'IC'                                                                                      as tipoDoc
-                  ,'IC' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(mc.nroDoc AS VARCHAR(9)),9)        as nroDoc
+            SELECT 'CI' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(ci.nroDocumento AS VARCHAR(9)),9) as nroComprobante
+                  ,'IC'                                                                                     as tipoDoc
+                  ,'IC' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(mc.nroDoc AS VARCHAR(9)),9)       as nroDoc
                   ,mc.fechaEmision
-                  ,cu.BusinessName                                                                           as persona
-                  ,mc.valor                                                                                  as total
-                  ,mc.valor                                                                                  as abono
-                  ,sf.descripcion                                                                            as pay
+                  ,cu.BusinessName                                                                          as persona
+                  ,mc.valor                                                                                 as total
+                  ,mc.valor                                                                                 as abono
+                  ,sf.descripcion                                                                           as pay
                   ,sf.idEntidadFinanciera
             FROM dbo.MovimientoCaja             mc WITH (NOLOCK)
             INNER JOIN dbo.ComprobanteIngreso   ci WITH (NOLOCK) ON ci.idComprobanteIngreso   = mc.idComprobanteIngreso
@@ -144,8 +134,8 @@ BEGIN
                   ,'EC' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(mc.nroDoc AS VARCHAR(9)),9)        as nroDoc
                   ,mc.fechaEmision
                   ,cu.BusinessName                                                                           as persona
-                  ,mc.valor                                                                                  as total
-                  ,mc.valor                                                                                  as abono
+                  ,mc.valor * -1                                                                             as total
+                  ,mc.valor * -1                                                                             as abono
                   ,sf.descripcion                                                                            as pay
                   ,sf.idEntidadFinanciera
             FROM dbo.MovimientoCaja             mc WITH (NOLOCK)
@@ -209,7 +199,8 @@ BEGIN
 	         SELECT  
 		         formaPago = ef.descripcion
 	            ,ingreso   = CAST(ISNULL((SELECT sum(abono) FROM @tbDetalleCaja WHERE tipDoc != 'EC' AND idEntidadFinanciera = ef.idEntidadFinanciera AND cobro = 1),0) AS numeric(15,2))
-		        ,egreso    = CAST(ISNULL((SELECT sum(abono) FROM @tbDetalleCaja WHERE tipDoc  = 'EC' AND idEntidadFinanciera = ef.idEntidadFinanciera AND cobro = 1),0) * -1 AS numeric(15,2))		
+		        ,egreso    = CAST(ISNULL((SELECT sum(abono) FROM @tbDetalleCaja WHERE tipDoc  = 'EC' AND idEntidadFinanciera = ef.idEntidadFinanciera AND cobro = 1),0) AS numeric(15,2))		
+		        ,total     = CAST(ISNULL((SELECT sum(abono) FROM @tbDetalleCaja WHERE idEntidadFinanciera = ef.idEntidadFinanciera AND cobro = 1),0) AS numeric(15,2))		
 	         FROM EntidadFinanciera ef WITH (NOLOCK)
 	         WHERE ef.estado = 1 
                AND ef.codigo NOT IN ('DOC')
@@ -309,171 +300,80 @@ BEGIN
 		                          ,co.idEntidadFinanciera                                                            as idEntidadFinanciera
                                   ,FORMAT(ci.fechaRegistro, ''dd/MM/yyyy HH:mm'')                                    as fechaComprobante
 			                FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
-			                INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
-	                        INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso = ci.idComprobanteIngreso
-			                INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idCobro              = hc.idCobro
-			                INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = hc.idCuentaPorCobrar
-			                INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente			= cc.idCliente
+			                INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.idEstablecimiento      = ci.idEstablecimiento
+	                        INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso   = ci.idComprobanteIngreso
+			                INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idCobro                = hc.idCobro
+			                INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar      = hc.idCuentaPorCobrar
+			                INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente			  = cc.idCliente
 			                 LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
 			                WHERE ci.idControlCaja = @idControlCaja  
                               AND ci.estado = 1
 
                             UNION ALL 
 
-                            SELECT nroComprobante = ''CI'' + ''-'' + es.estab + ''-'' + Helper.F_Auto_Sequential(ci.nroDocumento)
-		                          ,doc = td.codigo
-		                          ,nroDoc    =   CASE td.codigo WHEN ''A''  THEN (
-														                            SELECT ''A'' + ''-'' + es.estab + ''-'' + Helper.F_Auto_Sequential(an.nroDoc)
-														                            FROM dbo.Anticipo an WITH (NOLOCK) 
-														                            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = an.codEstab
-														                            WHERE an.idAnticipo = cd.idComprobante
-														                          )  
-										                        WHEN ''IC'' THEN  (
-														                            SELECT ''IC'' + ''-'' + es.estab + ''-'' + Helper.F_Auto_Sequential(mc.nroDoc)
-														                            FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
-														                            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = mc.codEstab
-														                            WHERE mc.idMovimientoCaja = cd.idComprobante
-														                          )
-						                          END 
-		                        ,fechaEmsion =    CASE td.codigo WHEN ''A''  THEN (
-														                            SELECT FORMAT(an.fechaEmision, ''dd/MM/yyyy HH:mm'') FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
-														                          )  
-										                         WHEN ''IC'' THEN (
-														                            SELECT FORMAT(mc.fechaEmision, ''dd/MM/yyyy HH:mm'') FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
-														                          )
-						                           END 
-		                        ,agenteEconomico = CASE td.codigo WHEN ''A'' THEN (
-														                            SELECT cl.nombreFiscal
-														                            FROM dbo.Anticipo an WITH (NOLOCK) 
-														                            INNER JOIN dbo.Cliente cl WITH (NOLOCK) ON cl.idCliente = an.idCliente
-														                            WHERE an.idAnticipo = cd.idComprobante
-														                          )  
-										                          WHEN ''IC'' THEN (
-														                            SELECT em.nombreCompleto 
-														                            FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
-														                            INNER JOIN dbo.Empleado em WITH (NOLOCK) ON em.idEmpleado = mc.idEmpleado
-														                            WHERE mc.idMovimientoCaja = cd.idComprobante
-														                           )
-							                        END
-		                        ,total            = CASE td.codigo WHEN ''A''  THEN 
-														                        (
-														                        SELECT CAST(an.valor as numeric(18,2)) FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
-														                        )  
-										                           WHEN ''IC'' THEN 
-														                        (
-														                        SELECT CAST(mc.valor as numeric(18,2)) FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
-														                        )
-							                        END
-                                ,total            = CASE td.codigo WHEN ''A''  THEN 
-														                        (
-														                        SELECT CAST(an.valor as numeric(18,2)) FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
-														                        )  
-										                           WHEN ''IC'' THEN 
-														                        (
-														                        SELECT CAST(mc.valor as numeric(18,2)) FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
-														                        )
-							                        END
-		                        ,CAST(cd.abono as numeric(18,2)) as abono 
-		                        ,CAST(0 as NUMERIC(18,2))        as saldo
-                                ,pay              = CASE td.codigo WHEN ''A''  THEN 
-														                        (
-														                        SELECT sf.descripcion
-														                        FROM dbo.Anticipo an WITH (NOLOCK) 
-														                        INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = an.idSubEntidadFinanciera
-														                        WHERE an.idAnticipo = cd.idComprobante
-														                        )  
-										                           WHEN ''IC'' THEN 
-														                        (
-														                        SELECT sf.descripcion
-														                        FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
-														                        INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
-														                        WHERE mc.idMovimientoCaja = cd.idComprobante
-														                        )
-							                        END
-		                        ,idEntidadFinanciera =  CASE td.codigo WHEN ''A''  THEN 
-														                        (
-														                        SELECT sf.idEntidadFinanciera
-														                        FROM dbo.Anticipo an WITH (NOLOCK) 
-														                        INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = an.idSubEntidadFinanciera
-														                        WHERE an.idAnticipo = cd.idComprobante
-														                        )  
-											                           WHEN ''IC'' THEN 
-														                        (
-														                        SELECT sf.idEntidadFinanciera
-														                        FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
-														                        INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
-														                        WHERE mc.idMovimientoCaja = cd.idComprobante
-														                        )
-								                        END
-                                ,FORMAT(ci.fechaRegistro, ''dd/MM/yyyy HH:mm'')                         as fechaComprobante
-	                        FROM dbo.ComprobanteIngreso    ci WITH (NOLOCK)
-	                        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
-	                        INNER JOIN dbo.CobroDocumento  cd WITH (NOLOCK) ON cd.idComprobanteIngreso = ci.idComprobanteIngreso
-	                        INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento      = cd.idTipoDocumento
-	                        WHERE td.codigo IN (''A'',''IC'') 
-                              AND ci.estado = 1 
+                            SELECT ''CI'' + ''-'' + es.estab + ''-'' + RIGHT(''000000000'' + CAST(ci.nroDocumento AS VARCHAR(9)),9) as nroComprobante
+                                  ,''A''                                                                                            as tipoDoc
+                                  ,''A'' + ''-'' + es.estab + ''-'' + RIGHT(''000000000'' + CAST(an.nroDoc AS VARCHAR(9)),9)        as nroDoc
+                                  ,FORMAT(an.fechaEmision, ''dd/MM/yyyy HH:mm'')                                                    as fechaEmision
+                                  ,cu.BusinessName                                                                                  as persona
+                                  ,an.valor                                                                                         as total
+                                  ,an.valor                                                                                         as saldoAnterior
+                                  ,an.valor                                                                                         as abono
+                                  ,0
+                                  ,sf.descripcion                                                                                   as pay
+                                  ,sf.idEntidadFinanciera
+                                  ,FORMAT(ci.fechaRegistro, ''dd/MM/yyyy HH:mm'')                                                   as fechaComprobante
+                            FROM dbo.Anticipo                   an WITH (NOLOCK)
+                            INNER JOIN dbo.ComprobanteIngreso   ci WITH (NOLOCK) ON ci.idComprobanteIngreso   = an.idComprobanteIngreso
+                            INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = an.idSubEntidadFinanciera
+                            INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = ci.idEstablecimiento
+                            INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = ci.CustomerId
+                            WHERE ci.estado = 1
+                              AND ci.idControlCaja = @idControlCaja
+                            
+                            UNION ALL
+
+                            SELECT ''CI'' + ''-'' + es.estab + ''-'' + RIGHT(''000000000'' + CAST(ci.nroDocumento AS VARCHAR(9)),9) as nroComprobante
+                                  ,''IC''                                                                                           as tipoDoc
+                                  ,''IC'' + ''-'' + es.estab + ''-'' + RIGHT(''000000000'' + CAST(mc.nroDoc AS VARCHAR(9)),9)       as nroDoc
+                                  ,FORMAT(mc.fechaEmision, ''dd/MM/yyyy HH:mm'')                                                    as fechaEmision
+                                  ,cu.BusinessName                                                                                  as persona
+                                  ,mc.valor                                                                                         as total
+                                  ,mc.valor                                                                                         as saldoAnterior
+                                  ,mc.valor                                                                                         as abono
+                                  ,0
+                                  ,sf.descripcion                                                                                   as pay
+                                  ,sf.idEntidadFinanciera
+                                  ,FORMAT(ci.fechaRegistro, ''dd/MM/yyyy HH:mm'')                                                   as fechaComprobante
+                            FROM dbo.MovimientoCaja             mc WITH (NOLOCK)
+                            INNER JOIN dbo.ComprobanteIngreso   ci WITH (NOLOCK) ON ci.idComprobanteIngreso   = mc.idComprobanteIngreso
+                            INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
+                            INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = ci.idEstablecimiento
+                            INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = ci.CustomerId
+                            WHERE ci.estado = 1
                               AND ci.idControlCaja = @idControlCaja
 
-                            UNION ALL 
 
-                            SELECT nroComprobante = ''CE'' + ''-'' + es.estab + ''-'' + Helper.F_Auto_Sequential(ce.nroDocumento)
-		                          ,doc = td.codigo
-		                          ,nroDoc        = CASE td.codigo  WHEN ''EC'' THEN 
-														                        (
-														                        SELECT ''IC'' + ''-'' + es.estab + ''-'' + Helper.F_Auto_Sequential(mc.nroDoc)
-														                        FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
-														                        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = mc.codEstab
-														                        WHERE mc.idMovimientoCaja = pd.idComprobante
-														                        )
-						                           END 
-		                        ,fechaEmsion     = CASE td.codigo WHEN ''EC'' THEN 
-														                        (
-														                        SELECT FORMAT(mc.fechaEmision, ''dd/MM/yyyy HH:mm'') FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = pd.idComprobante
-														                        )
-						                           END 
-		                        ,agenteEconomico = CASE td.codigo WHEN ''EC'' THEN 
-														                        (
-														                        SELECT em.nombreCompleto 
-														                        FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
-														                        INNER JOIN dbo.Empleado em WITH (NOLOCK) ON em.idEmpleado = mc.idEmpleado
-														                        WHERE mc.idMovimientoCaja = pd.idComprobante
-														                        )
-							                        END
-		                        ,total            = CASE td.codigo WHEN ''EC'' THEN 
-														                        (
-														                        SELECT CAST(mc.valor as numeric(18,2)) FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = pd.idComprobante
-														                        )
-							                        END * -1
-                                ,total            = CASE td.codigo WHEN ''EC'' THEN 
-														                        (
-														                        SELECT CAST(mc.valor as numeric(18,2)) FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = pd.idComprobante
-														                        )
-							                        END * -1
-		                        ,CAST(pd.abono * -1 as numeric(18,2))
-                                ,CAST(0 as NUMERIC(18,2)) as saldo
-		                        ,pay              = CASE td.codigo WHEN ''EC'' THEN 
-														                        (
-														                        SELECT sf.descripcion
-														                        FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
-														                        INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
-														                        WHERE mc.idMovimientoCaja = pd.idComprobante
-														                        )
-							                        END
-		                        ,idEntidadFinanciera =  CASE td.codigo WHEN ''EC'' THEN 
-														                        (
-														                        SELECT sf.idEntidadFinanciera
-														                        FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
-														                        INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
-														                        WHERE mc.idMovimientoCaja = pd.idComprobante
-														                        )
-								                        END
-                                ,FORMAT(ce.fechaRegistro, ''dd/MM/yyyy HH:mm'')                         as fechaComprobante
-	                        FROM dbo.ComprobanteEgreso     ce WITH (NOLOCK)
-	                        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab             = ce.codEstab
-	                        INNER JOIN dbo.PagoDocumento   pd WITH (NOLOCK) ON pd.idComprobanteEgreso  = ce.idComprobanteEgreso
-	                        INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento      = pd.idTipoDocumento
-	                        WHERE td.codigo = ''EC'' 
-                              AND ce.estado = 1 
+                            UNION ALL 
+                            
+                            SELECT ''CE'' + ''-'' + es.estab + ''-'' + RIGHT(''000000000'' + CAST(ce.nroDocumento AS VARCHAR(9)), 9) as nroComprobante
+                                  ,''EC''                                                                                            as tipoDoc
+                                  ,''EC'' + ''-'' + es.estab + ''-'' + RIGHT(''000000000'' + CAST(mc.nroDoc AS VARCHAR(9)),9)        as nroDoc
+                                  ,FORMAT(mc.fechaEmision, ''dd/MM/yyyy HH:mm'')                                                     as fechaEmision
+                                  ,cu.BusinessName                                                                                   as persona
+                                  ,mc.valor * -1                                                                                     as total
+                                  ,mc.valor * -1                                                                                     as saldoAnterior
+                                  ,mc.valor * -1                                                                                     as abono
+                                  ,0
+                                  ,sf.descripcion                                                                                    as pay
+                                  ,sf.idEntidadFinanciera
+                                  ,FORMAT(ce.fechaRegistro, ''dd/MM/yyyy HH:mm'')                                                    as fechaComprobante
+                            FROM dbo.MovimientoCaja             mc WITH (NOLOCK)
+                            INNER JOIN dbo.ComprobanteEgreso    ce WITH (NOLOCK) ON ce.idComprobanteEgreso    = mc.idComprobanteEgreso
+                            INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
+                            INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = ce.idEstablecimiento
+                            INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = ce.CustomerId
+                            WHERE ce.estado = 1
                               AND ce.idControlCaja = @idControlCaja
 
                         )as cd WHERE cd.nroComprobante IS NOT NULL '

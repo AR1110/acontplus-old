@@ -102,7 +102,7 @@ BEGIN
                               ,CAST(saldo as numeric(18,2))               as saldo
                               ,estado 
                         FROM v_CuentaPorCobrar cc WITH (NOLOCK)
-                        WHERE idCuentaPorCobrar > 0 '
+                        WHERE cc.idEntidad = @idEntidad '
 
             SET @params = '@idCliente         INT
                           ,@codEstab  VARCHAR(25)
@@ -110,7 +110,8 @@ BEGIN
                           ,@fechaFin     DATETIME
                           ,@codEstado VARCHAR(15)
                           ,@codDoc    VARCHAR(10)
-                          ,@idEmpresa        INT'
+                          ,@idEmpresa        INT
+                          ,@idEntidad        INT'
                           
 
 
@@ -137,7 +138,7 @@ BEGIN
                                 FROM v_CuentaPorCobrar                 cc WITH (NOLOCK) 
                                 INNER JOIN Contabilidad.CuotaPorCobrar cp WITH (NOLOCK) ON cp.idCuentaPorCobrar = cc.idCuentaPorCobrar
                                 INNER JOIN dbo.EstadoPago              ep WITH (NOLOCK) ON ep.idEstadoPago      = cp.idEstadoPago
-                                WHERE cc.idCuentaPorCobrar > 0 '
+                                WHERE cc.idEntidad = @idEntidad '
 
                     IF @ckCxcVencida = 1 
                         BEGIN
@@ -217,6 +218,7 @@ BEGIN
                               ,@codEstado   = @codEstado
                               ,@codDoc      = @codDoc
                               ,@idEmpresa   = @idEmpresa
+                              ,@idEntidad   = @idEntidad
 
             RETURN 
 

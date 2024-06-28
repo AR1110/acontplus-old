@@ -106,17 +106,18 @@ BEGIN
                                 SELECT @company = IIF(e.nombreComercial IS NULL, e.razonSocial, e.nombreComercial)
                                     ,@role = r.[Name]
                                     ,@username = u.nombreUsuario
-                                    ,@requesting_user = UPPER(u.nombreCompleto)
-                                FROM Acontplus.App.UsuarioRol ur 
-                                INNER JOIN Acontplus.dbo.Entidad e ON ur.idEntidad = e.idEntidad
+                                    ,@requesting_user = UPPER(cu.BusinessName)
+                                FROM Acontplus.App.UsuarioRol             ur 
+                                INNER JOIN Acontplus.dbo.Entidad           e ON ur.idEntidad = e.idEntidad
                                 INNER JOIN AcontplusAdmin.Seguridad.[Role] r ON ur.RoleId = r.Id
-                                INNER JOIN Acontplus.dbo.Usuario u ON ur.idUsuario = u.idUsuario
+                                INNER JOIN Acontplus.dbo.Usuario           u ON ur.idUsuario = u.idUsuario
+                                INNER JOIN Customer.Customer              cu ON cu.Id       = u.CustomerId
                                 WHERE ur.idUsuarioRol = @userRoleId
 
                             INSERT INTO @userToSendEmail(emailData, params, receptor)
 							SELECT  
                                 (SELECT body = (SELECT @requesting_user requesting_user
-                                                ,approving_user = UPPER(u.nombreCompleto)
+                                                ,approving_user = UPPER(cu.BusinessName)
                                                 ,@browser browser
                                                 ,@os os
                                                 ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm'), 13) loginDate
@@ -139,6 +140,7 @@ BEGIN
                                (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
                                u.correo
 								FROM Acontplus.dbo.Usuario u 
+                                    INNER JOIN Customer.Customer              cu ON cu.Id       = u.CustomerId
                                     INNER JOIN Acontplus.App.UsuarioRol ur ON u.idUsuario = ur.idUsuario
                                      INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
                                      INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.Uuid = c.Uuid 
