@@ -1,117 +1,76 @@
-﻿namespace FactElect.API.Controllers.Factura.v2;
+﻿using FactElect.API.Interfaces;
+
+namespace FactElect.API.Controllers.Factura.v2;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("2.0")]
 public class FacturaController : ControllerBase
 {
-    private readonly IConfiguration _configuration;
-    private readonly DbAccess _db;
+    private readonly IFacturaService _svc;
 
-
-    public FacturaController(IConfiguration configuration)
+    public FacturaController(IFacturaService service)
     {
-        _configuration = configuration;
-        _db = new DbAccess(_configuration);
+        _svc = service;
     }
 
-    [HttpGet("Get")]
+    [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SPExecute("Ventas.Factura_Get", true);
-            _db.AddDynamicParam("idRol", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+        var response = await _svc.GetAsync(new Dictionary<string, object>
+            {
+                { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            });
+        if (response == null) { return NoContent(); }
+        return Ok(new { code = "1", payload = response });
 
-        return Ok(_response);
-    }
-
-    [HttpGet("GetId/{id}")]
-    public async Task<IActionResult> GetId(int id)
-    {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SPExecute("Ventas.Factura_Get_Id", true);
-            _db.AddDynamicParam("idRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Insert([FromBody] ApiRequest data)
+    public async Task<IActionResult> Insert(ApiRequest data)
     {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SPExecute("Ventas.Factura_Insert", true);
-            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-            _response = _db.GetDefault();
-        }
-        finally
-        {
-            _db.Close();
-        }
+        var parameters = new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetUserRoleId() },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            };
+        var response = await _svc.AddAsync(parameters);
+        return Ok(response);
 
-        return Ok(_response);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, ApiRequest data)
     {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SPExecute("Ventas.Factura_Update", true);
-            _db.AddDynamicParam("userRoleId",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-            _response = _db.GetDefault();
-        }
-        finally
-        {
-            _db.Close();
-        }
+        var parameters = new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetUserRoleId() },
+                { "id", id },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            };
+        var response = await _svc.UpdateAsync(parameters);
+        return Ok(response);
 
-        return Ok(_response);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetId(int id)
+    {
+        var response = await _svc.GetByIdAsync(new Dictionary<string, object>
+           {
+                    { "idRol", User.GetUserRoleId() }, { "id", id }
+           });
+        if (response == null) { return NoContent(); }
+        return Ok(new { code = "1", payload = response });
+
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SPExecute("Ventas.Factura_Delete", true);
-            _db.AddDynamicParam("idRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } };
+        var response = await _svc.DeleteAsync(parameters);
+        return Ok(response);
     }
 }
