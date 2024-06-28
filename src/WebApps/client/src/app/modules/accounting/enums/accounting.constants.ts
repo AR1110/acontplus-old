@@ -9,6 +9,7 @@ export const enum ACCOUNTING_PATHS {
   CUENTA_POR_COBRAR = 'CuentaPorCobrar/',
   CATEGORY = 'Category/',
   SUBCATEGORY = 'Subcategory/',
+  ACCOUNTING_MOVEMENT='AccountingMovement/'
 }
 
 export const enum PaymentTypeCode {
@@ -24,4 +25,5 @@ export const enum ACCOUNTING_CODE_REPORT {
   CCCR ='CCCR' ,
   CCR ='CCR',
   RMIE='RMIE', //REPORTE MOVIMIENTO CAJA POR DOCUMENTO ID (MOVIMIENTO CAJA/ANTICIPO)
+  AM = 'AM' //(Accounting Movement) Resument Movimiento
 }

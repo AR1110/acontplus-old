@@ -1,0 +1,47 @@
+<app-breadcrumb/>
+
+
+<div class="card">
+  <div class="card-body">
+    
+    <div class="row">
+      
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label>Tipo Transacción</label>
+          <select class="form-select" [(ngModel)]="dataSearch.idTipoTransaccion">
+            @for(item of transactionTypes; track $index){
+               <option [ngValue]="item.idTipoTransaccion">{{item.descripcion}}</option>
+            }
+          </select>
+        </div>
+      </div>
+      
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label>Subcategoría</label>
+          <select class="form-select" [(ngModel)]="dataSearch.idSubcategoria">
+            <option [ngValue]="0">-- Todos --</option>
+            @for(item of subcategories; track $index){
+               <option [ngValue]="item.id">{{item.name}}</option>
+            }
+          </select>
+        </div>
+      </div>
+      
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label>Rango fecha: </label>
+           <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" /> 
+        </div>
+      </div>
+      
+    </div> 
+  </div>
+  <div class="card-footer">
+    <div class="d-flex flex-row gap-1">
+      <button type="button" class="btn btn-success" (click)="reportPdf()">PDF</button>
+      <button type="button" class="btn btn-info" (click)="reportExcel()">EXCEL</button>
+    </div>
+  </div>
+</div>

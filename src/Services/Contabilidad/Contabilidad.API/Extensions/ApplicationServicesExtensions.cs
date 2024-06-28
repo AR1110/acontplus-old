@@ -31,6 +31,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ISubcategoryService, SubcategoryService>();
         services.AddScoped<ISubEntidadFinancieraService, SubEntidadFinancieraService>();
         services.AddScoped<ITipoService, TipoService>();
+        services.AddScoped<IAccountingMovementService, AccountingMovementService>();
+
         return services;
     }
 }

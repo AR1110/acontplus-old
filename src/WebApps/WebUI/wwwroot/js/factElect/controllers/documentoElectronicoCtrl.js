@@ -165,6 +165,7 @@
             return {
                 'table-success': item.codEstado == 4,
                 'table-danger': item.codEstado == 6, 
+                'table-warning': item.codEstado===5
             };
         };
 

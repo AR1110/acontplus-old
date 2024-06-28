@@ -39,5 +39,6 @@ export enum GlobalRoutes {
   InventarioReporte='inventory/report',
   ContabilidadCarteraCliente='accounting/cartera-cliente',
   VentasReportVentaReporte='sale/reports/sale-report',
-  FactElectReport='billing/fact-elect-report'
+  FactElectReport='billing/fact-elect-report',
+  ContabilidadAccountingSummary='accounting/accounting-movement'
 }

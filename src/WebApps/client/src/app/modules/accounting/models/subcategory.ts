@@ -7,3 +7,5 @@ export interface Subcategory {
   name: string;
   enabled: boolean;
 }
+
+export interface  SubCategorySelectHtmlOnly extends Pick<Subcategory, "id" |"code"|"name">{}

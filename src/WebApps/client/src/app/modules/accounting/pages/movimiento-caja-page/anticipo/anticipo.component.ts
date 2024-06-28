@@ -16,6 +16,8 @@ import { formatDateMoment } from '@core/utils/format-date-moment';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
 import {NgbDropdownModule, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
+import { ActionAnularDirective } from '@shared/directives/permission/action-anular.directive';
+import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 
 @Component({
   selector: 'app-anticipo',
@@ -27,6 +29,8 @@ import {NgbDropdownModule, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
     CompanyCustomerSearchComponent,
     NgbPagination,
     DateRangeSelectionComponent,
+    ActionAnularDirective,
+    ActionReportDirective
   ],
   templateUrl: './anticipo.component.html',
 })

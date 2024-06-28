@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CODE_REPORT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { ModalService } from '@core/services/modal.service';
@@ -20,6 +19,8 @@ import {
   CompanyCustomerSearchComponent
 } from "@company-customer/components/company-customer-search/company-customer-search.component";
 import {ACCOUNTING_CODE_REPORT} from "@accounting/enums/accounting.constants";
+import { ActionAnularDirective } from '@shared/directives/permission/action-anular.directive';
+import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
@@ -31,6 +32,8 @@ import {ACCOUNTING_CODE_REPORT} from "@accounting/enums/accounting.constants";
     NgbPagination,
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
+    ActionAnularDirective,
+    ActionReportDirective
   ],
   templateUrl: './egreso-ingreso-caja.component.html',
 })

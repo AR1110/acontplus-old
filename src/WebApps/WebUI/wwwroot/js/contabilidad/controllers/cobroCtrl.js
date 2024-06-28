@@ -19,6 +19,7 @@
     function cobroCtrl($scope, $filter, $injector, _mS, _commonSvc, _modalSvc, nombreModalContabilidad, _form, tS) {
 
         let compIngresoSvc = $injector.get('comprobanteIngresoService');
+        let fS = _form;
         //Filtro y Pagination  
         $scope.moreSearchOptions = false;
 
@@ -206,13 +207,27 @@
                 $scope.cloneCobros = [];
                 setTotalsColumn();
 
+                let isSearchDate = true;
+
+                if(fS.isValidField($scope.dataSearch.nroIdentificacion)){
+                    isSearchDate = false;
+                }
+
+                if (fS.isValidField($scope.dataSearch.nroSecuencialDoc)) { 
+                    isSearchDate = false;
+                    tS.toastr({
+                        type: 'info',
+                        message: 'Buscando por número secuencial'
+                    })
+                }
+
                 const dataSearch = {
                     tipo: 1,
                     codEstab: $scope.dataSearch.codEstab,
                     fechaInicio: _form.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: _form.formatDateMoment($scope.dataSearch.fechaFin),
                     checkBoxPersona: $scope.tiposPersona.some(item => item.codigo === $scope.dataSearch.byTipoPersona),
-                    nroIdentificacion: $scope.dataSearch.nroIdentificacion,
+                    nroIdentificacion: fS.isValidField($scope.dataSearch.nroIdentificacion),
                     checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
                     byUsuario: $scope.dataSearch.byUsuario,
                     checkBoxEstado: [0, 1].includes($scope.dataSearch.byEstado),
@@ -220,7 +235,8 @@
                     codTipoDoc: $scope.dataSearch.codTipoDoc,
                     nroSecuencialTipoDoc: $scope.dataSearch.nroSecuencialTipoDoc,
                     isSearchNroDoc: $scope.dataSearch.nroSecuencialDoc ? true : false,
-                    nroSecuencialDoc: $scope.dataSearch.nroSecuencialDoc
+                    nroSecuencialDoc: $scope.dataSearch.nroSecuencialDoc,
+                    isSearchDate
                 }
 
                 showLoader();

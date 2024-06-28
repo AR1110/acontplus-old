@@ -11,6 +11,7 @@ type ActionState = {
   cerrarCaja: boolean
   aperturarCaja: boolean
   movimiento: boolean
+  reporte: boolean
 }
 export class PermissionCashAccounting  {
   verOtrasCajas: boolean = false;

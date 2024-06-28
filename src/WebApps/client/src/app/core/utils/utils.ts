@@ -35,3 +35,5 @@ export function isValidJSON(texto: string) {
   }
 }
 
+
+export const getValidId = (id:number) => id > 0 ? id : null;

@@ -1,6 +1,6 @@
 ﻿namespace Contabilidad.API.Interfaces
 {
-    public interface IAccountingMovement
+    public interface IAccountingMovementService
     {
         Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
     }
