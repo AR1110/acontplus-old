@@ -50,13 +50,6 @@ BEGIN
                 SELECT '0' as code,'El Comprobante de Ingreso ya se encuentra anulado' as 'message'
 				RETURN 
 			END
-
-        IF EXISTS (SELECT 1 FROM ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja AND estado = 0)
-            BEGIN 
-                SELECT '0' as code,'El control de caja se encuentra cerrado no puede ser anulado el comproabnte' as 'message'
-				RETURN
-            END
-
 		BEGIN TRAN 
 			UPDATE ComprobanteIngreso WITH (ROWLOCK)
                SET estado              = 0

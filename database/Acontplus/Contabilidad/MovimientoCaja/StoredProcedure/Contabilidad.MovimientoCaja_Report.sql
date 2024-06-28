@@ -131,10 +131,14 @@ BEGIN
 					              ,FORMAT(an.fechaEmision,''dd/MM/yyyy HH:mm'')					          as fechaEmision
 					              ,an.valor
 					              ,an.observaciones
-				            FROM dbo.Anticipo                 an WITH (NOLOCK) 
-				            INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = an.idComprobanteIngreso
-				            INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento    = ci.idEstablecimiento
-				            INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                   = ci.CustomerId
+                                  ,ef.descripcion                                                         as entidadFinanciera
+                                  ,us.nombreUsuario                                                       as usuario
+				            FROM dbo.Anticipo                    an WITH (NOLOCK) 
+				            INNER JOIN dbo.ComprobanteIngreso    ci WITH (NOLOCK) ON ci.idComprobanteIngreso   = an.idComprobanteIngreso
+				            INNER JOIN dbo.SubEntidadFinanciera  ef WITH (NOLOCK) ON ef.idSubEntidadFinanciera = an.idSubEntidadFinanciera
+                            INNER JOIN dbo.Usuario               us WITH (NOLOCK) ON us.idUsuario              = an.idUsarioRegister
+                            INNER JOIN Sri.Establecimiento       es WITH (NOLOCK) ON es.idEstablecimiento      = ci.idEstablecimiento
+				            INNER JOIN Customer.Customer         cu WITH (NOLOCK) ON cu.Id                     = ci.CustomerId
 				            WHERE an.idEntidad = @idEntidad
                               AND CAST(an.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date)
 
@@ -154,6 +158,8 @@ BEGIN
 					              ,FORMAT(mc.fechaEmision,''dd/MM/yyyy HH:mm'')                          as fechaEmision
 					              ,mc.valor * IIF(td.codigo = ''EC'',-1,1)                               as valor
 					              ,ISNULL(mc.observaciones,'''')				                         as observaciones
+                                  ,ef.descripcion                                                        as entidadFinanciera
+                                  ,us.nombreUsuario                                                      as usuario
 				            FROM dbo.MovimientoCaja              mc WITH (NOLOCK) 
 				            INNER JOIN dbo.Caja                  ca WITH (NOLOCK) ON ca.idCaja                 = mc.idCaja
 				            INNER JOIN dbo.TipoDocumento         td WITH (NOLOCK) ON td.idTipoDocumento        = mc.idTipoDocumento

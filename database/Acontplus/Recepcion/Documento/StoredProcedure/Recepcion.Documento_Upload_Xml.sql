@@ -40,14 +40,14 @@ BEGIN
     DECLARE @fechaAutorizacion VARCHAR(50) ,@xmlQuery XML ,@xmlCompressed VARBINARY(MAX)
 
     --> Contabilidad
-    DECLARE @idProveedor INT ,@CustomerId INT ,@subcategoryId INT ,@idCliente INT ,@idEstadoPago INT  ,@idTipoIdentificacion INT
+    DECLARE @idProveedor INT ,@CustomerId INT ,@subcategoryId INT ,@idCliente INT ,@idEstadoPago INT  ,@idTipoIdentificacion INT ,@fechaEmisionC DATETIME2
 
     --> Documento Recibido 
 	DECLARE @identificacionReceptor VARCHAR(20) ,@rucReceptor VARCHAR(15) ,@rucEmisor VARCHAR(13) ,@codEstab  VARCHAR(50) ,@idEstablecimiento INT ,@idDocumento INT ,@importeTotal NUMERIC(18,5)
 
     DECLARE @tbDocumento AS TABLE(
         razonSocialEmisior VARCHAR(300) NOT NULL 
-       ,nombreComercial VARCHAR(300) NOT NULL
+       ,nombreComercial VARCHAR(300) NULL
        ,rucEmisor VARCHAR(13) NOT NULL			        
        ,dirMatriz VARCHAR(300) NOT NULL
        ,estab VARCHAR(25) NOT NULL
@@ -55,7 +55,7 @@ BEGIN
        ,ptoEmi VARCHAR(25) NOT NULL             
        ,secuencial VARCHAR(25) NOT NULL         
        ,identificacionReceptor VARCHAR(300) NOT NULL
-       ,importeTotal NUMERIC(18,5) NULL
+       ,importeTotal NUMERIC(18,5) NOT NULL DEFAULT 0
        ,serieComprobante AS estab + '-' + ptoEmi + '-' + secuencial
        ,tipoEmision VARCHAR(25) DEFAULT 'NORMAL'  
     )
@@ -189,7 +189,6 @@ BEGIN
                 RETURN 
             END 
 
-
         IF NOT EXISTS (SELECT 1 FROM @tbDocumento)
             BEGIN
                 SELECT '0' code, 'Error en la lectura del xml' as 'message'
@@ -212,7 +211,7 @@ BEGIN
 		BEGIN TRAN
 			INSERT  INTO Recepcion.DocumentoRecibido
                    (idEstablecimiento, codEstab,comprobante,codDoc, serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,importeTotal,xmlCompressed,versionComp,idUsuario,fechaRegistro,downloaded,subcategoryId)
-			SELECT @idEstablecimiento,@codEstab,comprobante,@codDoc,serieComprobante,rucEmisor,razonSocialEmisior,@fechaEmision,@fechaAutorizacion,tipoEmision,identificacionReceptor,@claveAcceso,@claveAcceso,@importeTotal,@xmlCompressed, @versionComp,@idUsuario,dbo.ufnGetDateEcuador(),'DE',@subcategoryId
+			SELECT @idEstablecimiento,@codEstab,comprobante,@codDoc,serieComprobante,rucEmisor,razonSocialEmisior,@fechaEmision,@fechaAutorizacion,tipoEmision,identificacionReceptor,@claveAcceso,@claveAcceso,importeTotal,@xmlCompressed, @versionComp,@idUsuario,dbo.ufnGetDateEcuador(),'DE',@subcategoryId
             FROM @tbDocumento
 
 			SET @idDocumento = SCOPE_IDENTITY()
@@ -257,9 +256,6 @@ BEGIN
                     --> Contabilidad
                     IF NOT EXISTS (SELECT 1 FROM Contabilidad.CuentaPorPagar WHERE uniqueId = @claveAcceso)
 					    BEGIN 
-                        
-                            SELECT  @fechaEmision = CONVERT(datetime2, @fechaEmision,103)
-
 						    INSERT INTO Contabilidad.CuentaPorPagar
 							       (idDocumento,idEstablecimiento,codDoc,serieComprobante,idUsuario, idProveedor, idEstadoPago,uniqueId,fechaEmision,importeTotal,idEntidad,subcategoryId)
 						    SELECT @idDocumento,@idEstablecimiento,@codDoc,serieComprobante,@idUsuario,@idProveedor,@idEstadoPago,@claveAcceso,@fechaEmision,ISNULL(importeTotal,@importeTotal),@idEntidad,@subcategoryId
@@ -288,8 +284,6 @@ BEGIN
                                 SELECT TOP 1 @idCliente = idCliente FROM dbo.Cliente WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = LTRIM(RTRIM(@rucEmisor)) 
                             END
 
-                        SELECT @fechaEmision = CONVERT(datetime2, @fechaEmision,103)
-
                         INSERT INTO Contabilidad.CuentaPorCobrar
                                (idCliente,codDoc, fechaEmision, idEstadoPago,idDocumento,secuencial,serieComprobante,importeTotal,idEntidad,idUsuario,fechaRegistro)
                         SELECT @idCliente,@codDoc,@fechaEmision,@idEstadoPago,@idDocumento,secuencial,serieComprobante,@importeTotal,@idEntidad,@idUsuario,GETDATE() 
@@ -307,7 +301,7 @@ BEGIN
 
 		INSERT INTO ErroresSistema WITH (ROWLOCK)
               (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		SELECT NEWID(),'/DocumentoService/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+		SELECT NEWID(),'/DocumentoService/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE() + @fechaEmision,GETDATE(),@idUsuario
 
         SELECT '0' code,'Info: Error en el procedimiento ' as 'message'
 	END CATCH 

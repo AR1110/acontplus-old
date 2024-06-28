@@ -239,8 +239,9 @@ BEGIN
                         WHERE cc.idComprobanteIngreso = ci.idComprobanteIngreso
 
                    )                                                                       as cantDocs
+                  ,es.codEstab
 			FROM dbo.ComprobanteIngreso     ci WITH (NOLOCK)
-			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = ci.idEstablecimiento
+			INNER JOIN Sri.Establecimiento  es WITH (NOLOCK) ON es.idEstablecimiento = ci.idEstablecimiento
 			WHERE ci.idComprobanteIngreso IN (SELECT hc.idComprobanteIngreso FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar)
               AND ci.estado = 1
 
