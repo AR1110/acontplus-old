@@ -25,5 +25,5 @@ export const enum ACCOUNTING_CODE_REPORT {
   CCCR ='CCCR' ,
   CCR ='CCR',
   RMIE='RMIE', //REPORTE MOVIMIENTO CAJA POR DOCUMENTO ID (MOVIMIENTO CAJA/ANTICIPO)
-  AM = 'AM' //(Accounting Movement) Resument Movimiento
+  RAAM = 'RAAM' //(Accounting Movement) Resument Movimiento
 }

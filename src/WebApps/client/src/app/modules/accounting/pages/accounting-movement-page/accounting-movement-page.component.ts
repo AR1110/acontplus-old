@@ -77,10 +77,9 @@ export class AccountingMovementPageComponent {
       subCategoryId : getValidId(this.dataSearch.idSubcategoria)
     };
 
-
     let  reportParams = JSON.stringify({
       hasParams: false,
-      codigo: ACCOUNTING_CODE_REPORT.AM,
+      codigo: ACCOUNTING_CODE_REPORT.RAAM,
       format: this.format,
       aditionalParams: []
     })
