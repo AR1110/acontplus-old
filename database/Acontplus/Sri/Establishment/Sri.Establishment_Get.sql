@@ -31,7 +31,7 @@ BEGIN
 		BEGIN 
 			SET @tableNames='estabs'
 			SELECT 
-				e.idEstablecimiento
+				 e.idEstablecimiento
 				,e.codEstab
 				,e.estab
 				,e.nombreComercial

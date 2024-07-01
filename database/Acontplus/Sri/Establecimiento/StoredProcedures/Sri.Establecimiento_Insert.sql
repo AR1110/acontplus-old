@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Sri.Establecimiento_Insert', N'P') IS NOT NULL
-DROP PROCEDURE Sri.Establecimiento_Insert 
-GO
-CREATE PROCEDURE Sri.Establecimiento_Insert @idRol INT,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Sri.Establecimiento_Insert @idRol INT,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -47,6 +44,21 @@ BEGIN
 	DECLARE @codEstab VARCHAR(50)
 	DECLARE @telefono VARCHAR(100)
 	DECLARE @correo VARCHAR(300)
+
+    DECLARE @tbEstablecimiento AS TABLE (
+         canton VARCHAR(10) NULL
+	    ,actividad VARCHAR(5) NOT NULL 
+	    ,agenteRetencion VARCHAR(150) NULL
+	    ,contribuyente VARCHAR(5) NOT NULL  
+	    ,estab VARCHAR(5) NOT NULL 
+	    ,contribuyenteEspecial VARCHAR(10) NULL
+	    ,obligadoContabilidad VARCHAR(5) NOT NULL  
+	    ,nombreComercial VARCHAR(150) NOT NULL
+	    ,dirEstablecimiento VARCHAR(300) NOT NULL
+	    ,telefono VARCHAR(150) NULL
+	    ,contribuyenteRimpe VARCHAR(150) NULL
+	    ,correo VARCHAR(300) NULL
+    )
 	
 	BEGIN TRY
 		SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol

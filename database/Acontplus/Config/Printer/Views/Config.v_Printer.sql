@@ -13,6 +13,6 @@ CREATE OR ALTER VIEW Config.v_Printer WITH SCHEMABINDING AS (
 	,i.[Enabled]
 	FROM Config.Printer i
 	INNER JOIN Sri.Establecimiento e ON i.EstablecimientoId = e.idEstablecimiento
-	INNER JOIN dbo.Entidad en ON e.ruc = en.ruc
+	INNER JOIN dbo.Entidad en ON e.idEntidad = en.idEntidad
 	INNER JOIN Config.PrinterType ti ON i.PrinterTypeId = ti.Id
 )

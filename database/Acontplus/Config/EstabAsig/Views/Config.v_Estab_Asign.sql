@@ -2,21 +2,22 @@ USE AcontPlus
 GO
 CREATE OR ALTER VIEW Config.v_Estab_Asign WITH SCHEMABINDING AS (
 	SELECT ea.codEstab
-          ,e.idEstablecimiento
-	      ,e.ruc
-	      ,e.nombreComercial
-	      ,e.estado estadoEstab
-	      ,e.agenteRetencion
-	      ,e.estab
-	      ,e.contribuyenteEspecial
-	      ,e.obligadoContabilidad
-	      ,e.dirEstablecimiento
-	      ,e.contribuyenteRimpe
-	      ,e.actividad
+          ,en.ruc
+          ,es.idEstablecimiento
+	      ,es.nombreComercial
+	      ,es.estado estadoEstab
+	      ,es.agenteRetencion
+	      ,es.estab
+	      ,es.contribuyenteEspecial
+	      ,es.obligadoContabilidad
+	      ,es.dirEstablecimiento
+	      ,es.contribuyenteRimpe
+	      ,es.actividad
           ,ae.idActividadEconomica AS ActividadEconomicaId 
-          ,e.telefono
-          ,e.correo
-	FROM Config.Estab_Asig ea WITH (NOLOCK)     
-	INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON ea.codEstab = e.codEstab
-    INNER JOIN Sri.ActividadEconomica ae WITH (NOLOCK) ON ae.codigo = e.actividad 
+          ,es.telefono
+          ,es.correo
+	FROM Config.Estab_Asig            ea WITH (NOLOCK)     
+	INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab  = ea.codEstab
+    INNER JOIN Sri.ActividadEconomica ae WITH (NOLOCK) ON ae.codigo    = es.actividad 
+    INNER JOIN dbo.Entidad            en WITH (NOLOCK) ON en.idEntidad = es.idEntidad
 )

@@ -36,7 +36,7 @@ CREATE OR ALTER VIEW Compra.v_Liquidacion WITH SCHEMABINDING AS (
 
          ) as codEstado
 	FROM dbo.LiquidacionCompra     lc WITH (NOLOCK)
-    INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = lc.idPuntoEmision
-    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
-    INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor    = lc.idProveedor
+    INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = lc.idPuntoEmision
+    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pt.idEstablecimiento
+    INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor       = lc.idProveedor
 )

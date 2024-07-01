@@ -26,7 +26,6 @@ BEGIN
 	DECLARE @idSubFamilia INT ,@idMedida  INT ,@idMarca INT ,@idModelo INT
 	       ,@checkBoxFraccionado BIT ,@idTipoIva INT ,@estado BIT ,@byStock INT ,@checkBoxInventario  BIT 
 	       ,@idArticulo INT ,@idBodega INT ,@bySearch NVARCHAR(300) ,@byColumn VARCHAR(10)
-           ,@ruc VARCHAR(20)
 
     --> Inventario 
 	DECLARE @ventaStockMinimo BIT ,@stockCantidad BIT ,@ventaStockCero BIT ,@stock NUMERIC(18,5) ,@stockMinimo NUMERIC(18,5) ,@cantidad NUMERIC(18,5)
@@ -613,8 +612,6 @@ BEGIN
     --> Get de StockBodega 
     IF @tipo = 10
         BEGIN
-            SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
-            
             SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT)
 
             SELECT es.nombreComercial as branchOffice
@@ -633,7 +630,7 @@ BEGIN
 
                   ),'[]') as warehouses
 	        FROM Sri.Establecimiento es WITH (NOLOCK) 
-	        WHERE es.ruc = @ruc
+	        WHERE es.idEntidad = @idEntidad
 
             RETURN 
         END 

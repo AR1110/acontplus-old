@@ -9,17 +9,11 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
           ,de.CustomerId
           ,en.ruc
           ,pe.ambiente as codAmbiente
-          ,CASE WHEN pe.ambiente = '2' THEN 'PRODUCCIÓN' ELSE 'PRUEBAS' END                                as ambiente
+          ,CASE WHEN pe.ambiente = '2' THEN 'PRODUCCIÓN' ELSE 'PRUEBAS' END                               as ambiente
           ,de.codDoc
           ,de.idDocumento
           ,de.versionComp
-          ,CASE WHEN de.codDoc = '01' THEN 'Factura' 
-                WHEN de.codDoc = '03' THEN 'Liquidación de Compras' 
-                WHEN de.codDoc = '04' THEN 'Nota de Crédito' 
-                WHEN de.codDoc = '05' THEN 'Nota de Débito' 
-                WHEN de.codDoc = '06' THEN 'Guía de Remisión' 
-                WHEN de.codDoc = '07' THEN 'Comprobante de Retención'
-           END                                                                                            as comprobante
+          ,td.descripcion                                                                                 as comprobante
           ,se.codEstab
           ,se.estab
           ,pe.ptoEmi
@@ -43,11 +37,13 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
           ,us.nombreUsuario as usuario
           ,se.idEstablecimiento
     FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
-    INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad        = de.idEntidad  
-    INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision   = de.idPuntoEmision
-     LEFT JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario        = de.idUsuario
-     LEFT JOIN Sri.Establecimiento      se WITH (NOLOCK) ON pe.codEstab         = se.codEstab
-     LEFT JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON de.idEstadoServicio = es.idEstadoServicio
-     LEFT JOIN Customer.Customer        cs WITH (NOLOCK) ON cs.Id               = de.customerId 
+    INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad         = de.idEntidad  
+    INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision    = de.idPuntoEmision
+     LEFT JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario         = de.idUsuario
+     LEFT JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio  = de.idEstadoServicio
+     LEFT JOIN Customer.Customer        cs WITH (NOLOCK) ON cs.Id                = de.customerId
+    INNER JOIN dbo.TipoDocumento        td WITH (NOLOCK) ON td.idTipoDocumento   = de.idTipoDocumento
+     LEFT JOIN Sri.Establecimiento      se WITH (NOLOCK) ON se.idEstablecimiento = pe.idEstablecimiento
+     
 )
 GO
