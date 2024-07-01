@@ -44,7 +44,7 @@ BEGIN
 	   ,e.dirEstablecimiento
 	   ,estado = IIF(e.estado = 1,'ABIERTO','CERRADO')
 	FROM Sri.Establecimiento e
-	WHERE e.ruc = @ruc
+	WHERE e.idEntidad = @idEntidad
 	ORDER BY e.idEstablecimiento DESC
 
 

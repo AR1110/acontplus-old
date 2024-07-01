@@ -8,7 +8,7 @@
     let commonSvc = {};
     let mS = {};
     let tS = {};
-    let fS = {}
+    let fS = {};
 
     let establecimientos = [];
     let bodegas = [];
@@ -29,7 +29,6 @@
         $injector,
         $filter
     ) {
-
         modalSvc = $injector.get("modalService");
         commonSvc = $injector.get("commonService");
         mS = $injector.get("mainService");

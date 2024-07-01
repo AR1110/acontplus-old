@@ -36,24 +36,25 @@ BEGIN
 	SELECT @codEstab = codEstab FROM Sri.Establecimiento WHERE idEstablecimiento = @id
 
 	SELECT 
-		 idEstablecimiento
-		,codEstab
-		,canton
-		,actividad
-		,agenteRetencion
-		,contribuyente
-		,ruc
-		,estab
-		,contribuyenteEspecial
-		,obligadoContabilidad
-		,nombreComercial
-		,dirEstablecimiento
-		,telefono
-		,contribuyenteRimpe
-		,correo
-		,estado
-        ,autoSriAuth
-	FROM Sri.Establecimiento 
+		 se.idEstablecimiento
+		,se.codEstab
+		,se.canton
+		,se.actividad
+		,se.agenteRetencion
+		,se.contribuyente
+		,ruc = e.ruc
+		,se.estab
+		,se.contribuyenteEspecial
+		,se.obligadoContabilidad
+		,se.nombreComercial
+		,se.dirEstablecimiento
+		,se.telefono
+		,se.contribuyenteRimpe
+		,se.correo
+		,se.estado
+        ,se.autoSriAuth
+	FROM Sri.Establecimiento se
+    INNER JOIN dbo.Entidad e WITH(NOLOCK) ON e.idEntidad = se.idEntidad
 	WHERE idEstablecimiento = @id
 
 	IF @typeList = 1
@@ -65,7 +66,7 @@ BEGIN
 					,pe.estado
 			FROM dbo.PuntoEmision pe
 			INNER JOIN Sri.Ambiente a ON a.codigo = pe.ambiente
-			WHERE pe.codEstab = @codEstab
+			WHERE pe.idEstablecimiento = @id
 		END 
 END
 GO

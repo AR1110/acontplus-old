@@ -10,11 +10,11 @@ AS
 BEGIN
 	 
 	SET NOCOUNT ON; 
-	DECLARE @ruc VARCHAR(15)
 	DECLARE @tipo INT
     DECLARE @id INT 
+    DECLARE @idEntidad INT
 
-	SELECT @ruc = rucEmpresa FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+	SELECT @idEntidad= idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
  
 
 	SELECT 
@@ -39,7 +39,7 @@ BEGIN
 				,estado 
                 
 			FROM Sri.Establecimiento e
-			WHERE e.ruc = @ruc
+			WHERE e.idEntidad = @idEntidad
 			ORDER BY e.idEstablecimiento DESC
 		    RETURN 
 		END 
@@ -64,24 +64,25 @@ BEGIN
         BEGIN 
             SET @tableNames = 'data,puntosEmision'
             SELECT 
-		         idEstablecimiento
-		        ,codEstab
-		        ,canton
-		        ,actividad
-		        ,agenteRetencion
-		        ,contribuyente
-		        ,ruc
-		        ,estab
-		        ,contribuyenteEspecial
-		        ,obligadoContabilidad
-		        ,nombreComercial
-		        ,dirEstablecimiento
-		        ,telefono
-		        ,contribuyenteRimpe
-		        ,correo
-		        ,estado
-                ,autoSriAuth
-	        FROM Sri.Establecimiento 
+		         se.idEstablecimiento
+		        ,se.codEstab
+		        ,se.canton
+		        ,se.actividad
+		        ,se.agenteRetencion
+		        ,se.contribuyente
+		        ,ruc = e.ruc
+		        ,se.estab
+		        ,se.contribuyenteEspecial
+		        ,se.obligadoContabilidad
+		        ,se.nombreComercial
+		        ,se.dirEstablecimiento
+		        ,se.telefono
+		        ,se.contribuyenteRimpe
+		        ,se.correo
+		        ,se.estado
+                ,se.autoSriAuth
+	        FROM Sri.Establecimiento se 
+            INNER JOIN dbo.Entidad e WITH(NOLOCK) ON e.idEntidad = se.idEntidad 
 	        WHERE idEstablecimiento = @id
 
              SELECT idPuntoEmision
@@ -91,7 +92,7 @@ BEGIN
 					,pe.estado
 			FROM dbo.PuntoEmision pe
 			INNER JOIN Sri.Ambiente a ON a.codigo = pe.ambiente
-			WHERE pe.codEstab = (SELECT codEstab FROM Sri.Establecimiento WHERE idEstablecimiento = @id)
+			WHERE pe.idEstablecimiento =  @id
             RETURN 
         END 
 
