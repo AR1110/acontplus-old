@@ -19,7 +19,7 @@ public class AccountController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpPost("login")]
+    [HttpPost("Login")]
     public async Task<IActionResult> Login([FromBody] AuthRequestDto authRequest)
     {
         if (string.IsNullOrEmpty(authRequest.Username))
@@ -32,17 +32,15 @@ public class AccountController : ControllerBase
             return BadRequest("Contraseña no puede estar vacia");
         }
 
-        var mainResponse = await _accountService.LoginAppAsync(authRequest.Username, authRequest.Password);
-        var _response = JsonConvert.DeserializeObject<ApiResponseDeprecated>(mainResponse);
-
-        if (_response.code == "1")
+        var _response = await _accountService.LoginAppAsync(authRequest.Username, authRequest.Password);
+        
+        if (_response.Code == "1" && !string.IsNullOrEmpty(_response.Payload))
         {
-            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(_response.payload);
+            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(_response.Payload);
 
             if (userData.Count == 1)
             {
                 var user = userData[0];
-
                 user.UrlGateway = _config["ApiGateways:Acontplus"];
 
                 var token = _tokenService.CreateToken(user);
@@ -53,14 +51,13 @@ public class AccountController : ControllerBase
                 }
 
                 user.Token = token;
-
                 _response.Create("1", "Login Correcto", user);
 
                 return Ok(_response);
             }
         }
 
-        return Ok(mainResponse);
+        return Ok(_response);
     }
 
     [AllowAnonymous]
