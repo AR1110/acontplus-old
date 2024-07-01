@@ -19,6 +19,8 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
+app.UseMiddleware<MobileRequestMiddleware>();
+
 app.UseSwaggerDocumentation();
 
 app.UseRouting();

@@ -8,4 +8,5 @@ public class BaseEntity
     public bool? Enabled { get; set; } = true;
     public bool? Deleted { get; set; }
     public int? UserId { get; set; }
+    public bool? FromMobile { get; set; }
 }
