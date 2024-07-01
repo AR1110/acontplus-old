@@ -17,16 +17,20 @@ function sharedService($injector, mS){
         return mS.getData('get', `${url}Get?json=${json}`, null, true).then(response => {
             let data = {
                 correos: [],
-                telefonos: []
+                telefonos: [],
+                telefonoEstab: null
             }
             if (response.code === "1") {
                 let [mainData] = JSON.parse(response.payload);
-                let { correo, telefono } = mainData[0];
+                let { correo, telefono, telefonoEstab,correoEstab,nombreEstab } = mainData[0];
 
                 data.correos = correo ? correo.split(/[\|;]/) : [];
                 data.telefonos = telefono ? telefono.split(/[\|;]/) : [];
+                data.telefonoEstab = telefonoEstab;
+                data.correoEstab = correoEstab;
+                data.nombreEstab = nombreEstab;
                
-            }
+            } 
             return data;
         }).finally(() => hideLoader())
     }

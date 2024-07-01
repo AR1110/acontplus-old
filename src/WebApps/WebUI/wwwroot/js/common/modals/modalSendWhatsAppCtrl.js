@@ -47,6 +47,9 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
     let esNotificacionTributaria = false;
     let esNotificacionGeneral = false;
 
+    let telefonoEstab = null;
+    let nombreEstab = null;
+
     function createDataParamDocSri() {
         return {
             id: data.idDocumento,
@@ -116,6 +119,8 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
 
         sharedSvc.getDataFormNotificacion(params).then(response => {
             phoneNumbers = response.telefonos; 
+            telefonoEstab = response.telefonoEstab;
+            nombreEstab = response.nombreEstab;
             
             $scope.phoneNumbers = phoneNumbers.filter(p=>p.length===10).map(p=>({
                 number: p
@@ -249,8 +254,8 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
                 totalMessages++
                 if (lastMessage) {
                     let messageAdd = ''
-                    if (params.telefonoEstablecimiento) {
-                        messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${params.nombreComercial}* al siguiente número: *${params.telefonoEstablecimiento}*`
+                    if (telefonoEstab) {
+                        messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${nombreEstab}* al siguiente número: *${telefonoEstab}*`
                         sendSms(messageAdd)
                     }
                     setTimeout(() => {

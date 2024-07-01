@@ -107,7 +107,7 @@ BEGIN
     IF @tipo = 2
 		BEGIN
             
-            SET @tableNames = 'ptoEmision,bodegas,subFamilia,decimales'
+            SET @tableNames = 'ptoEmision,bodegas,subFamilia,decimales,tiposTransaccion'
 
 			SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 			
@@ -116,7 +116,8 @@ BEGIN
             SELECT * FROM SubFamilia     WITH(NOLOCK) WHERE idEntidad = @idEntidad
 			
             SELECT * FROM Config.v_Sistema_Decimal WITH(NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL' 
-
+            SELECT * FROM Inventario.TipoTransaccion WHERE codigo IN ('E','S')
+            SELECT * FROM Inventario.TipoDocumento WHERE codigo IN ('CI')
             RETURN 
 		END
 
