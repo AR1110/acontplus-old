@@ -61,10 +61,14 @@ public class AccountService : IAccountService
         return new ApiResponse { Code = "1", Message = "Código válido" };
     }
 
-    public async Task<string> LoginAppAsync(string username, string password)
+    public async Task<ApiResponse> LoginAppAsync(string username, string password)
     {
-        return await _repository.SpExecuteDeprecatedAsync("App.Account_Login",
-            new Dictionary<string, object> { { "username", username }, { "password", password } });
+        return await _repository.SpExecuteAsync<ApiResponse>("App.Account_Login",
+            new Dictionary<string, object> { 
+                { "username", username },
+                { "password", password } 
+            }
+        );
     }
 
     public async Task<string> LoginRestaurantAsync(string username, string password)
