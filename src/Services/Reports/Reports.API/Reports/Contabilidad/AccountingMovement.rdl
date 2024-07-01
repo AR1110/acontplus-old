@@ -434,8 +434,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>detalleDs</DataSetName>
-            <Top>0.99369cm</Top>
-            <Left>1.10807cm</Left>
+            <Top>0.17639cm</Top>
+            <Left>0.29104cm</Left>
             <Height>1.2cm</Height>
             <Width>7.5cm</Width>
             <Style>
@@ -465,7 +465,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>51.59375mm</Height>
+        <Height>17.72708mm</Height>
         <Style>
           <Border>
             <Style>None</Style>
