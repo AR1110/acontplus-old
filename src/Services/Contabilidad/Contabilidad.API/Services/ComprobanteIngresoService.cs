@@ -2,10 +2,10 @@
 {
     public class ComprobanteIngresoService: IComprobanteIngresoService
     {
-        private readonly IAdoRepository _repository;
+        private readonly IAdoSqlServer _repository;
         private readonly string nameSchema = "Contabilidad.ComprobanteIngreso_";
 
-        public ComprobanteIngresoService(IAdoRepository repository)
+        public ComprobanteIngresoService(IAdoSqlServer repository)
         {
             _repository = repository;
         }
