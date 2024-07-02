@@ -137,7 +137,7 @@ BEGIN
                   ,es.estab + '-' + pe.ptoEmi as ptoEmi 
 			FROM dbo.ConsolidacionInventario ci WITH (NOLOCK)
 			INNER JOIN dbo.PuntoEmision      pe WITH (NOLOCK) ON pe.idPuntoEmision = ci.idPuntoEmision
-			INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
+			INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
 			WHERE ci.idConsolidacionInventario = @id
 
 			SELECT cd.idConsolidacionInventarioDetalle

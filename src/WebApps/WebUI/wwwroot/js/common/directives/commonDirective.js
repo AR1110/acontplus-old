@@ -1708,9 +1708,11 @@
                 placement: "@"
             },
             link: function (scope, element) {
+                let isPopoverInitialized = false;
                 var popoverOptions = {
                     title: '<i class="mdi mdi-information-outline"></i> Artículo Fraccionado',
                     content: function () {
+                        isPopoverInitialized = true;
                         var popoverContent = ` <div class="table-responsive">
                                                 <table class="table table-sm">
                                                     <thead>
@@ -1761,22 +1763,24 @@
                     customClass: 'contentArticlePopover',
                     container: 'body'
                 };
+ 
 
-
-                // // Initialize the popover using element.popover()
                 $(element).popover(popoverOptions);
 
-                // // Open popover on element click
+
                 element.on('mouseover', function () {
-                    $(element).popover('show');
+                    if (!isPopoverInitialized) {
+                        $(element).popover('show');
+                    }
                 });
 
-                // // Close popover on outside click
+
                 $(document).on('mouseover', function (event) {
+                    isPopoverInitialized = false;
                     if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
                         $(element).popover('hide');
                     }
-                });
+                }); 
 
                 // Clean up the popover when the directive is destroyed
                 // scope.$on('$destroy', function () {
