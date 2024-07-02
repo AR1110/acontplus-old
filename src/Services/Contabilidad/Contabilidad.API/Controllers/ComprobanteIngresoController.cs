@@ -1,8 +1,9 @@
-﻿namespace Contabilidad.API.Controllers.v2;
+﻿ 
 
-[Route("api/v{version:apiVersion}/[controller]")]
+namespace Contabilidad.API.Controllers;
+
+[Route("api/[controller]")]
 [ApiController]
-[ApiVersion("2.0")]
 public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : ControllerBase
 {
 
@@ -10,12 +11,14 @@ public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : Con
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>{
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await _svc.GetAsync(parameters);
         if (response == null) { return NoContent(); }
-        return Ok(new { code = "1", payload = response });
+
+        ;
+        return Ok(response);
     }
 
     [HttpPost("Insert")]
@@ -23,22 +26,19 @@ public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : Con
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) },
-        };
-        var response = await _svc.AddAsync(parameters);
-
-        return Ok(response);
+        };  
+        return Ok(await _svc.AddAsync(parameters));
     }
 
     [HttpPut("Cancel")]
     public async Task<IActionResult> Cancel(ApiRequest paremeter)
     {
         var parameters = new Dictionary<string, object> {
-            { "idUsuarioRol", User.GetUserRoleId() },
-            { "json",  DataConverters.SerializeDictionary(paremeter.Data) } };
-        var response = await _svc.CancelAsync(parameters);
-        return Ok(response);
+            { "userRoleId", User.GetUserRoleId() },
+            { "json",  DataConverters.SerializeDictionary(paremeter.Data) } }; 
+        return Ok(await _svc.CancelAsync(parameters));
     }
 
 
@@ -46,9 +46,8 @@ public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : Con
     public async Task<IActionResult> Put(ApiRequest request)
     {
         var parameters = new Dictionary<string, object> {
-            { "idUsuarioRol", User.GetUserRoleId() },
-            { "json",  DataConverters.SerializeDictionary(request.Data) } };
-        var response = await _svc.UpdateAsync(parameters);
-        return Ok(response);
+            { "userRoleId", User.GetUserRoleId() },
+            { "json",  DataConverters.SerializeDictionary(request.Data) } }; 
+        return Ok(await _svc.UpdateAsync(parameters));
     }
 }
