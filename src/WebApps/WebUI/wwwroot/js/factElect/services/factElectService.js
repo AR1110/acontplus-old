@@ -344,8 +344,7 @@
                     
                     data.facturas = facturas,
                     data.dataTotals = { totalRecords, totalDocument, totalAbono, totalSaldo }  
-                }
-                console.log(data)
+                } 
                 return data;
             })
         }
