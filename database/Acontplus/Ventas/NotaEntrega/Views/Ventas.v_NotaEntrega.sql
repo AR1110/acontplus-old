@@ -19,10 +19,10 @@ CREATE OR ALTER VIEW Ventas.v_NotaEntrega WITH SCHEMABINDING AS (
 		  ,ne.total
           ,ne.estado
           ,ne.convertToDoc
+          ,es.codEstab
           ,es.estab
           ,es.nombreComercial
           ,es.idEstablecimiento
-          ,pe.codEstab
 		  ,pe.ptoEmi
           ,cl.nombreFiscal         as razonSocialComprador
           ,cl.numeroIdentificacion as identificacionComprador
@@ -40,13 +40,13 @@ CREATE OR ALTER VIEW Ventas.v_NotaEntrega WITH SCHEMABINDING AS (
           ,tc.tipo                                                                                        as tipoTiempoCredito
           ,tc.descripcion                                                                                 as tiempoCredito
 	FROM dbo.NotaEntrega                    ne WITH (NOLOCK)
-	INNER JOIN dbo.PuntoEmision             pe WITH (NOLOCK) ON pe.idPuntoEmision  = ne.idPuntoEmision
-    INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente       = ne.idCliente
-    INNER JOIN dbo.Usuario                  us WITH (NOLOCK) ON us.idUsuario       = ne.idUsuario
-     LEFT JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idDocumento     = ne.idNotaEntrega AND cc.codDoc = 'NE'
-     LEFT JOIN dbo.EstadoPago               ep WITH (NOLOCK) ON ep.idEstadoPago    = cc.idEstadoPago
-     LEFT JOIN dbo.TiempoCredito            tc WITH (NOLOCK) ON tc.idTiempoCredito = cc.idTiempoCredito
-    INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab        = pe.codEstab
+	INNER JOIN dbo.PuntoEmision             pe WITH (NOLOCK) ON pe.idPuntoEmision    = ne.idPuntoEmision
+    INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente         = ne.idCliente
+    INNER JOIN dbo.Usuario                  us WITH (NOLOCK) ON us.idUsuario         = ne.idUsuario
+     LEFT JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idDocumento       = ne.idNotaEntrega AND cc.codDoc = 'NE'
+     LEFT JOIN dbo.EstadoPago               ep WITH (NOLOCK) ON ep.idEstadoPago      = cc.idEstadoPago
+     LEFT JOIN dbo.TiempoCredito            tc WITH (NOLOCK) ON tc.idTiempoCredito   = cc.idTiempoCredito
+    INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
     
 
 )

@@ -19,8 +19,9 @@ SELECT  rt.Id
     ,rr.FloorId
     ,f.[Description] as 'Floor'
     ,f.CodEstab
-    ,e.ruc
+    ,en.ruc
 FROM Restaurant.[Table] rt WITH (NOLOCK)
 INNER JOIN Restaurant.Room rr WITH (NOLOCK) ON rr.Id = rt.RoomId
 INNER JOIN Restaurant.[Floor] f WITH (NOLOCK) ON rr.FloorId = f.Id
 INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON f.CodEstab = e.codEstab
+INNER JOIN dbo.Entidad         en WITH (NOLOCK) ON en.idEntidad = e.idEntidad
