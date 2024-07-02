@@ -736,5 +736,17 @@
     "inputFiles": [
       "wwwroot/js/modal/common/modalComprobanteErrorCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/controllers/facturaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/controllers/facturaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/controllers/notaCreditoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/controllers/notaCreditoCtrl.js"
+    ]
   }
 ]

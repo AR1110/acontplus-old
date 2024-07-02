@@ -3,21 +3,12 @@
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("2.0")]
-public class AccountController : ControllerBase
+public class AccountController(
+    IConfiguration config,
+    ITokenService tokenService,
+    IAccountService accountService)
+    : ControllerBase
 {
-    private readonly IAccountService _accountService;
-    private readonly IConfiguration _config;
-    private readonly ITokenService _tokenService;
-
-    public AccountController(IConfiguration config,
-        ITokenService tokenService,
-        IAccountService accountService)
-    {
-        _config = config;
-        _tokenService = tokenService;
-        _accountService = accountService;
-    }
-
     [AllowAnonymous]
     [HttpPost("Login")]
     public async Task<IActionResult> Login([FromBody] AuthRequestDto authRequest)
@@ -32,18 +23,18 @@ public class AccountController : ControllerBase
             return BadRequest("Contraseña no puede estar vacia");
         }
 
-        var _response = await _accountService.LoginAppAsync(authRequest.Username, authRequest.Password);
-        
-        if (_response.Code == "1" && !string.IsNullOrEmpty(_response.Payload))
+        var response = await accountService.LoginAppAsync(authRequest.Username, authRequest.Password);
+
+        if (response.Code == "1" && !string.IsNullOrEmpty(response.Payload))
         {
-            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(_response.Payload);
+            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
 
             if (userData.Count == 1)
             {
                 var user = userData[0];
-                user.UrlGateway = _config["ApiGateways:Acontplus"];
+                user.UrlGateway = config["ApiGateways:Acontplus"];
 
-                var token = _tokenService.CreateToken(user);
+                var token = tokenService.CreateToken(user);
 
                 if (token == null || string.IsNullOrEmpty(token))
                 {
@@ -51,29 +42,29 @@ public class AccountController : ControllerBase
                 }
 
                 user.Token = token;
-                _response.Create("1", "Login Correcto", user);
+                response.Create("1", "Login Correcto", user);
 
-                return Ok(_response);
+                return Ok(response);
             }
         }
 
-        return Ok(_response);
+        return Ok(response);
     }
 
     [AllowAnonymous]
     [HttpPost("createToken")]
     public IActionResult CreateToken([FromBody] UserData userData)
     {
-        userData.UrlGateway = _config["ApiGateways:Acontplus"];
-        var token = _tokenService.CreateToken(userData);
+        userData.UrlGateway = config["ApiGateways:Acontplus"];
+        var token = tokenService.CreateToken(userData);
         if (token == null || string.IsNullOrEmpty(token))
         {
             return BadRequest("Error al iniciar session");
         }
 
         userData.Token = token;
-        var _response = new ApiResponseDeprecated();
-        _response.Create("1", "Login Correcto", userData);
-        return Ok(_response);
+        var response = new ApiResponse();
+        response.Create("1", "Login Correcto", userData);
+        return Ok(response);
     }
 }

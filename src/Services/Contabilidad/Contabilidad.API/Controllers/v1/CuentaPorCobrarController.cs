@@ -37,7 +37,7 @@ public class CuentaPorCobrarController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Insert");
             _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
@@ -58,7 +58,7 @@ public class CuentaPorCobrarController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Update");
             _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
