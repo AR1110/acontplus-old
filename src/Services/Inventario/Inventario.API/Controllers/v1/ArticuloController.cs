@@ -109,9 +109,7 @@ public class ArticuloController : ControllerBase
             { "json", SqlStringParam.Sanitize(json) }
         };
 
-        var response = await _svc.SearchAsync(parameters);
-        if (response == null) { return NoContent(); }
-        return Ok(new { code = "1", payload = response }); 
+        return Ok(await _svc.SearchAsync(parameters)); 
         
     }
      
