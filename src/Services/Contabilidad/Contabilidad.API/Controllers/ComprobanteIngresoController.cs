@@ -1,4 +1,6 @@
-﻿namespace Contabilidad.API.Controllers;
+﻿ 
+
+namespace Contabilidad.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -14,7 +16,9 @@ public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : Con
         };
         var response = await _svc.GetAsync(parameters);
         if (response == null) { return NoContent(); }
-        return Ok(new { code = "1", payload = response });
+
+        ;
+        return Ok(response);
     }
 
     [HttpPost("Insert")]
