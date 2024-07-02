@@ -15,13 +15,27 @@
             var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters, true);
             if (ds.Tables[0].Rows.Count == 0) { return null; }
 
+            //if (!DataValidation.DataSetIsNull(ds))
+            //{
+
+            //}
+
             return DataConverters.DataSetToJson(ds, true);
+
+
 
         }
 
-        public async Task<object> SearchAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.GetDataTableAsync(nameSchema + "Get_Search", parameters);                       
+            var dt = await _repository.GetDataTableAsync(nameSchema + "Get_Search", parameters);
+
+            if (!DataValidation.DataTableIsNull(dt))
+            {
+                return new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
+            }
+
+            return  new ApiResponse { Code = "0", Message = "No existen datos."};
         }
 
         public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
