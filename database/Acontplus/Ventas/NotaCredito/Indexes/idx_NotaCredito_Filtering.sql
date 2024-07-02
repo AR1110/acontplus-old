@@ -7,6 +7,6 @@ IF EXISTS (SELECT name FROM sys.indexes
     DROP INDEX idx_NotaCredito_Filtering ON dbo.NotaCredito;  
 GO 
 CREATE NONCLUSTERED INDEX idx_NotaCredito_Filtering
-ON dbo.NotaCredito (idNotaCredito, idFactura, idCliente, idPuntoEmision, idEntidad, idUsuario)
-INCLUDE (fechaEmision, nroDocumento,claveAcceso, fechaAutorizacion);
+ON dbo.NotaCredito (idNotaCredito, idFactura, idCliente, idUsuario,idDocumentoElectronico)
+INCLUDE (estado);
 GO

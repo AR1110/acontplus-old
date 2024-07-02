@@ -39,18 +39,14 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
               AND de.idDocumento = gr.idGuiaRemision 
 
          ) as codEstado
-        ,ef.estab      as estabFac
-        ,pf.ptoEmi     as ptoFac
-        ,fa.nroFactura as secFac
-        ,ts.nombre     as razonSocialTransportista
+        ,ts.nombre        as razonSocialTransportista
         ,us.nombreUsuario as usuario
-	FROM dbo.GuiaRemision          gr WITH (NOLOCK)
-    INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision  = gr.idPuntoEmision
-    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab        = pt.codEstab
-    INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente       = gr.idCliente
-    INNER JOIN dbo.Transportista   ts WITH (NOLOCK) ON ts.idTransportista = gr.idTransportista
-    INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario       = gr.idUsuario
-     LEFT JOIN dbo.Factura         fa WITH (NOLOCK) ON fa.idFactura       = gr.idFactura
-     LEFT JOIN dbo.PuntoEmision    pf WITH (NOLOCK) ON pf.idPuntoEmision  = fa.idPuntoEmision
-     LEFT JOIN Sri.Establecimiento ef WITH (NOLOCK) ON ef.codEstab        = pf.codEstab
+	FROM dbo.GuiaRemision               gr WITH (NOLOCK)
+    INNER JOIN dbo.PuntoEmision         pt WITH (NOLOCK) ON pt.idPuntoEmision         = gr.idPuntoEmision
+    INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pt.idEstablecimiento
+    INNER JOIN dbo.Cliente              cl WITH (NOLOCK) ON cl.idCliente              = gr.idCliente
+    INNER JOIN dbo.Transportista        ts WITH (NOLOCK) ON ts.idTransportista        = gr.idTransportista
+    INNER JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario              = gr.idUsuario
+     LEFT JOIN dbo.Factura              fa WITH (NOLOCK) ON fa.idFactura              = gr.idFactura
+     LEFT JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = fa.idDocumentoElectronico
 )
