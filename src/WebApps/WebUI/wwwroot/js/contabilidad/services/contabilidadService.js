@@ -498,8 +498,9 @@
                 let results = [];
                 
                 if (response.code === "1") {
-                    const [comprobantesIngreso] = JSON.parse(response.payload);
-                    results = comprobantesIngreso.map(compIngreso => {
+                    console.log(JSON.parse(response.payload))
+                    const { comprobanteIngreso} = JSON.parse(response.payload);
+                    results = comprobanteIngreso.map(compIngreso => {
                         return {
                             codDoc: 'CI',
                             idComprobanteIngreso: compIngreso.idComprobanteIngreso,

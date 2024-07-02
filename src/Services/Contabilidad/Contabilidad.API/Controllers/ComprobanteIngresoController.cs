@@ -13,12 +13,8 @@ public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : Con
         var parameters = new Dictionary<string, object>{
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(json) }
-        };
-        var response = await _svc.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
-
-        ;
-        return Ok(response);
+        };  
+        return Ok(await _svc.GetAsync(parameters));
     }
 
     [HttpPost("Insert")]

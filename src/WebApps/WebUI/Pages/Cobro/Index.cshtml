@@ -5,7 +5,7 @@
     ViewData["title"] = "Cobro";
     
 }
-<div ng-controller="cobroCtrl">
+<div ng-controller="comprobanteIngresoCtrl">
     <div>
         <div class="row page-titles">
             <div class="col-md-5 align-self-center">
@@ -298,5 +298,10 @@
 
 
 @section Scripts{
-    <script src="~/js/contabilidad/controllers/cobroCtrl.min.js" asp-append-version="true"></script>
+    <environment include="Development">
+        <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script> 
+    </environment>
+    <environment include="Staging,Production">
+    <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script>
+    </environment>
 }
