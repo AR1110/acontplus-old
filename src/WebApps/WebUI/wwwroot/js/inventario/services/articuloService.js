@@ -197,12 +197,13 @@
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 return
             }
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true, null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
 
                 if (response.code === "1") {
+                 
                     let dataRepository = JSON.parse(response.payload)[0];
                     return dataRepository.map(item => {
                         let tarifas = item.tarifas && JSON.parse(item.tarifas)

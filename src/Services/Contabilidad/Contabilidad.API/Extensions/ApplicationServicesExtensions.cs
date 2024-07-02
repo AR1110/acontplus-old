@@ -32,6 +32,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ISubEntidadFinancieraService, SubEntidadFinancieraService>();
         services.AddScoped<ITipoService, TipoService>();
         services.AddScoped<IAccountingMovementService, AccountingMovementService>();
+        services.AddScoped<IComprobanteIngresoService, ComprobanteIngresoService>(); 
 
         return services;
     }
