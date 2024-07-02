@@ -10,16 +10,20 @@
             _repository = repository;
         }
 
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         { 
 
             var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters);
             if (ds.Tables.Count == 0)
             {
-                return null;
+                return new ApiResponse { Code = "1", Message = "No existen datos." };
             }
 
-            return DataConverters.DataSetToJson(ds);
+            return new ApiResponse
+            {
+                Code = "1",
+                Payload = DataConverters.DataSetToJson(ds)
+            };
 
         }
   
