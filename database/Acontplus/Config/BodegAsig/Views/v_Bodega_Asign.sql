@@ -1,28 +1,27 @@
 USE AcontPlus
 GO
-IF OBJECT_ID(N'v_Bodega_Asign', N'V') IS NOT NULL
-DROP VIEW v_Bodega_Asign
-GO
-CREATE VIEW v_Bodega_Asign AS (
+CREATE OR ALTER VIEW v_Bodega_Asign AS (
 	SELECT ba.idBodeg_Asig
-	,ba.codEstab_Asig
-	,ba.idBodega 
-	,ba.predeterminado defaultBodega
-	,ba.estado estadoBodegaAsign
-	,b.descripcion bodega
-	,b.estado estadoBodega
-	,ea.idEstab_Asig
-	,ea.codEstab
-	,ea.idUsuarioRol
-	,ea.predeterminado defaultEstab
-	,ea.estado estadoEstabAsign
-	,e.idEstablecimiento
-    ,e.ruc
-	,e.nombreComercial
-	,e.estab
-	,e.estado estadoEstab
-	FROM Config.Bodeg_Asig ba WITH (NOLOCK)
-	INNER JOIN Config.Estab_Asig ea WITH(NOLOCK) ON ba.codEstab_Asig = ea.codEstab_Asig
-	INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON ea.codEstab = e.codEstab
-	INNER JOIN Bodega b WITH (NOLOCK) ON ba.idBodega = b.idBodega
+	      ,ba.codEstab_Asig
+	      ,ba.idBodega 
+	      ,ba.predeterminado defaultBodega
+	      ,ba.estado estadoBodegaAsign
+	      ,bo.descripcion bodega
+	      ,bo.estado estadoBodega
+	      ,ea.idEstab_Asig
+	      ,ea.codEstab
+	      ,ea.idUsuarioRol
+	      ,ea.predeterminado defaultEstab
+	      ,ea.estado estadoEstabAsign
+	      ,en.ruc
+          ,es.idEstablecimiento
+	      ,es.nombreComercial
+	      ,es.estab
+	      ,es.estado estadoEstab
+	FROM Config.Bodeg_Asig          ba WITH (NOLOCK)
+	INNER JOIN Config.Estab_Asig    ea WITH(NOLOCK)  ON ea.codEstab_Asig = ba.codEstab_Asig
+    INNER JOIN Bodega               bo WITH (NOLOCK) ON bo.idBodega      = ba.idBodega
+	INNER JOIN Sri.Establecimiento  es WITH (NOLOCK) ON es.codEstab      = ea.codEstab
+    INNER JOIN dbo.Entidad          en WITH (NOLOCK) ON en.idEntidad     = es.idEntidad
+	
 )

@@ -21,7 +21,7 @@ GO
 -- Description:	SP para lisatar las cuentas por pagar.
 -- =============================================
 
---  Contabilidad.CuentaPorPagar_Get 44, '{"tipo":1}'
+--  Contabilidad.AccountingMovement_Get 44, '{"tipo":2}',''
 CREATE OR ALTER PROCEDURE Contabilidad.AccountingMovement_Get
      @userRoleId INT
     ,@json VARCHAR(MAX)
