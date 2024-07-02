@@ -196,7 +196,7 @@ public class DocumentoRecibidoController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
 
             using (var _db = new DbAccess(_configuration))
             {
@@ -244,7 +244,7 @@ public class DocumentoRecibidoController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Recepcion.Documento_Migrate");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));

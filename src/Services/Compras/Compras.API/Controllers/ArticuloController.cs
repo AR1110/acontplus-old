@@ -21,9 +21,8 @@ public class ArticuloController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             await _db.SPExecute("Recepcion.Articulo_Get");
-            _db.AddDynamicParam("idRol", idUsuarioRol);
+            _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("jsonData", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
         }

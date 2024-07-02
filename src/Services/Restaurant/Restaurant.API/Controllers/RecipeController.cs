@@ -41,8 +41,6 @@ namespace Restaurant.API.Controllers
         {
             try
             {
-                var userId = HttpContext.User.FindFirstValue("userId");
-                Console.WriteLine(userId);
                 var result = await _recipe.GetByIdAsync(id);
                 return Ok(result);
             }

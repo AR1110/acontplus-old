@@ -26,7 +26,7 @@ namespace Configuracion.API.Controllers
             try
             {
                 await _db.SPExecute("Config.WhatsappUsage_Get");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
+                _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
@@ -49,7 +49,7 @@ namespace Configuracion.API.Controllers
             try
             {
                 await _db.SPExecute("Config.WhatsappUsage_Insert");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
+                _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
@@ -71,7 +71,7 @@ namespace Configuracion.API.Controllers
             try
             {
                 await _db.SPExecute("Config.WhatsappUsage_Update");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
+                _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
@@ -94,7 +94,7 @@ namespace Configuracion.API.Controllers
             try
             {
                 await _db.SPExecute("Config.WhatsappUsage_Delete");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
+                _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
             }

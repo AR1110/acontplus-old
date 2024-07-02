@@ -20,7 +20,7 @@
             textHtml += `<li class="user-pro">
                 <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                     <img src="/assets/images/user/user.png" alt="" class="img-circle">
-                    <span class="hide-menu">${$scope.userData.fullname}</span>
+                    <span class="hide-menu">${$scope.userData.username}</span>
                 </a>
                 <ul aria-expanded="false" class="collapse">
                     <li><a href="/Config/UserProfile/Index"><i class="ti-user"></i> Mi Perfil</a></li>

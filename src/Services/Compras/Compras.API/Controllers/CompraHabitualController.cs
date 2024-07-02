@@ -22,7 +22,7 @@ public class CompraHabitualController : ControllerBase
         {
             await _db.SPExecute("Recepcion.CompraHabitual_Get");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", json);
             _response = _db.GetDataTableAsync();
         }
@@ -49,7 +49,7 @@ public class CompraHabitualController : ControllerBase
         {
             await _db.SPExecute("Recepcion.CompraHabitual_Insert");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
             _response = _db.GetDefault();
         }
@@ -76,7 +76,7 @@ public class CompraHabitualController : ControllerBase
         {
             await _db.SPExecute("Recepcion.CompraHabitual_Update");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", json);
             _response = _db.GetDefault();
@@ -104,7 +104,7 @@ public class CompraHabitualController : ControllerBase
         {
             await _db.SPExecute("Recepcion.CompraHabitual_Delete");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
         }

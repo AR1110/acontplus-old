@@ -268,7 +268,7 @@
             try {
                 let query = {
                     busqueda: textSearch,
-                    idRol: decodeToken.idUsuarioRol
+                    idRol: decodeToken.userRoleId
                 }
                 return commonSvc.usuarioSearch(query)
             } catch (error) {

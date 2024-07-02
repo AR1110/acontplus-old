@@ -8,7 +8,7 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
     let {typeSend} = params
     $scope.data = params || {};
     
-    let idUsuarioRol = Number(decodeToken.idUsuarioRol)
+    let idUsuarioRol = Number(decodeToken.userRoleId)
 
     $scope.correos = [];
     // console.log($scope.data) 

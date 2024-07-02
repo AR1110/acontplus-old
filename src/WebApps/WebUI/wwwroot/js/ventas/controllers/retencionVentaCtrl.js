@@ -20,7 +20,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
     //     $scope.accion = accion[0];
     // }
 
-    let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
+    let idUsuarioRol = parseInt(decodeToken.userRoleId)
     const TIPO_DOC = _commonSvc.tipoDoc["RV"];
 
     $scope.data = {};

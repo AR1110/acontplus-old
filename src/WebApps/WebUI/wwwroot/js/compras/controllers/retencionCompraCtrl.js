@@ -15,7 +15,7 @@ function retencionCompraCtrl($scope, $filter, proveedorSvc, _mS, _commonSvc, _mo
     // }
 
     const TIPO_DOC = _commonSvc.tipoDoc['RC'], VERSION_COMPROBANTE = '1.0.0'
-    let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
+    let idUsuarioRol = parseInt(decodeToken.userRoleId)
     $scope.dataSearch = {
         pageIndex: 1,
         pageSize: 100
