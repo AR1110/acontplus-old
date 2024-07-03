@@ -87,7 +87,7 @@
                     }
 
                     if (params.tipo === 4) {
-                        console.log(mainData)
+                       
                     }
 
                     if (params.tipo === 5) {
@@ -545,8 +545,7 @@
                     cuentaPorCobrar: [],
                     estadosPago: []
                 }
-                if (response.code==="1") {
-                    console.log(JSON.parse(response.payload))
+                if (response.code==="1") { 
 
                     const { entidadFinanciera, banco, documentos, subEntidadFinanciera, provincia, cuentaPorCobrar,
                         estadoPago } = JSON.parse(response.payload);
@@ -601,6 +600,7 @@
                                 abono: cxc.abono,
                                 saldo: cxc.saldo,
                                 saldoTemporal: cxc.saldo,
+                                valorSaldoLectura: cxc.saldo,
                                 descripcion: cxc.descripcion,
                                 cuotas: structuredClone(resultsCuotas),
                                 cuotasOriginal: structuredClone(resultsCuotas)
@@ -742,26 +742,32 @@
         function getHistorialCobrosById(idComprobanteIngreso) {
             let params = JSON.stringify({ idComprobanteIngreso, tipo: 2 })
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
-                if (response.code === '0') {
-                    throw response;
+                let resultData = {
+                    comprobante: [],
+                    cobros: [],
+                    cobroDetalles:[]
                 }
-                let mainDataRepository = JSON.parse(response.payload);
+                if (response.code === '1') {
+                    
+                    let { comprobanteIngreso, cobro, cobroDetalle } = JSON.parse(response.payload);
 
-                let comprobante = mainDataRepository[0][0];
-                let cobros = mainDataRepository[1];
-                let cobroDetalles = mainDataRepository[2];
+                    let comprobante = comprobanteIngreso[0];
+                    let cobros = cobro;
+                    let cobroDetalles = cobroDetalle;
 
-                for (let item of cobros) {
-                    item.infoCobro = JSON.parse(item.infoCobro)
-                    item.cobroDetalles = cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
-                    item.showInfoCobro = item.codPago !== 'EFE'
+                    for (let item of cobros) {
+                        item.infoCobro = JSON.parse(item.infoCobro)
+                        item.cobroDetalles = cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
+                        item.showInfoCobro = item.codPago !== 'EFE'
+                    }
+
+                   
+                        resultData.comprobante = comprobante;
+                        resultData.cobros = cobros;
+                        resultData.cobroDetalles = cobroDetalles
+                     
                 }
-
-                return {
-                    comprobante,
-                    cobros,
-                    cobroDetalles
-                }
+                return resultData;
             })
         }
         function getHistorialCobrosByDoc(idCuentaPorCobrar) {
@@ -772,36 +778,34 @@
                     cobroDetalles: [],
                     comprobanteIngresos: []
                 }
-                if (response.code === '0') {
-                    throw response;
+                if (response.code === '1') { 
+
+                    let { cuentaPorCobrar, comprobanteIngreso , cobro, cobroDetalle} = JSON.parse(response.payload);
+
+                    result.comprobante = cuentaPorCobrar[0];
+                    let comprobanteIngresos = comprobanteIngreso;
+
+                    let cobros = cobro;
+                    result.cobroDetalles = cobroDetalle;
+
+
+
+                    for (let item of cobros) {
+                        item.infoCobro = JSON.parse(item.infoCobro)
+                        item.cobroDetalles = result.cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
+
+                    }
+
+                    result.comprobanteIngresos = comprobanteIngresos.map(item => {
+                        item.cobros = cobros.filter(cc => cc.idComprobanteIngreso === item.idComprobanteIngreso)
+                            .map(cobro => {
+                                cobro.infoCobro = cobro.infoCobro
+                                cobro.showInfoCobro = cobro.codPago !== 'EFE'
+                                return cobro;
+                            })
+                        return item;
+                    })
                 }
-
-
-                let mainDataRepository = JSON.parse(response.payload);
-
-                result.comprobante = mainDataRepository[0][0];
-                let comprobanteIngresos = mainDataRepository[1];
-
-                let cobros = mainDataRepository[2];
-                result.cobroDetalles = mainDataRepository[3];
-
-
-
-                for (let item of cobros) {
-                    item.infoCobro = JSON.parse(item.infoCobro)
-                    item.cobroDetalles = result.cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
-
-                }
-
-                result.comprobanteIngresos = comprobanteIngresos.map(item => {
-                    item.cobros = cobros.filter(cc => cc.idComprobanteIngreso === item.idComprobanteIngreso)
-                        .map(cobro => {
-                            cobro.infoCobro = cobro.infoCobro
-                            cobro.showInfoCobro = cobro.codPago !== 'EFE'
-                            return cobro;
-                        })
-                    return item;
-                })
 
                 return result;
             })

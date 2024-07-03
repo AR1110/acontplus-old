@@ -12,6 +12,7 @@ export interface Quota {
     estado: string    
     abonoPosfechado: number,
     saldoOriginal: number
+    valorSaldoLectura: number
 }
 export interface VoucherQuota {
     idCuentaPorCobrar: number
@@ -28,4 +29,5 @@ export interface VoucherQuota {
     estado: string,
     cuotas: Array<Quota>
     cloneCuotas: Array<Quota>
+    valorSaldoLectura: number
 }

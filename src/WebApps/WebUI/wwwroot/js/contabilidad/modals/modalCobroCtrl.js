@@ -154,7 +154,7 @@ class CobroService {
         }, [])
 
         let cuentasPorCobrarEstado = [];
-        console.log(cuentasPorCobrarAgrupado)
+         
 
         for (let item of cuentasPorCobrarAgrupado) {
             let  valorSaldo = 0,   dataEstadoPago={}; 
@@ -204,9 +204,7 @@ class CobroService {
 
     }
 
-    generarHistorialCuentaPorCobrar(){
-        
-       
+    generarHistorialCuentaPorCobrar(){  
     }
 
     generarCuotasPorCobrarEstado({ cobrosDetalle }){ 
@@ -499,8 +497,7 @@ class CobroService {
             valorMovimientoSaldo = item.saldoOriginal;
         }
 
-
-        console.log(this.esAbonoPosfechado)
+ 
         this.cobrosDetalle.push({
             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
             idCuotaPorCobrar: item.idCuotaPorCobrar,
@@ -669,7 +666,8 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                     entidadesFinanciera,
                     bancos,
                     ciudades,
-                    cuentaPorCobrar
+                    cuentaPorCobrar,
+                    estadosPago
                 } = response;
                 $scope.entidadesFinancieras = entidadesFinanciera;
                 let dataEntidadFinanciera = $scope.entidadesFinancieras.find(val => val.codigo === 'EFE');
@@ -678,6 +676,8 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                 $scope.bancos = bancos;
 
                 $scope.ciudades = ciudades;
+
+                cobroSvc.setEstadosPago = estadosPago;
 
                 if (cuentaPorCobrar.some(item => [null, undefined].includes(item.cuotas))) {
                     fS.sweetAlert('warning', 'No posee cuotas');
@@ -840,11 +840,26 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                             throw 'Cobro detalle vacio';
                         }
 
+                        let cobrosDetalle = cobroSvc.cobrosDetalle.filter(item => (item.abono > 0));
+                        let historialCobros = cobroSvc.historialCuentas;
+
+                        let cuentasPorCobrarEstado = cobroSvc.generarCuentasPorCobrarEstado({
+                            historialCuentas: historialCobros,
+                            cobros,
+                            cobrosDetalle
+                        })
+
+                        let cuotasPorCobrarEstado = cobroSvc.generarCuotasPorCobrarEstado({
+                            cobrosDetalle
+                        })
+
                         let data = {
                             comprobante,
                             cobros,
-                            cobroDetalle: cobroSvc.cobrosDetalle.filter(item => (item.abono > 0)),
-                            historialCobros: cobroSvc.historialCuentas,
+                            cobroDetalle: cobrosDetalle,
+                            historialCobros,
+                            cuentasPorCobrarEstado,
+                            cuotasPorCobrarEstado
                         }
 
                         const params = comprobanteIngresoSvc.mapperTo(data);
@@ -988,13 +1003,14 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                 idCliente = selectedDocumentos[0].idCliente;
             }
             comprobanteIngresoSvc.getDataForm(idCuentaPorCobrar, idCliente).then(response => {
-
+               
                 dataFormaCobro = response;
                 cobroSvc.setEstadosPago = dataFormaCobro.estadosPago;
 
                 if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
                     $scope.tipoDocumentos = structuredClone(selectedDocumentos);
                     $scope.selectedDocumentos = structuredClone(selectedDocumentos);
+                  
 
                     let dataSelectedDoc = selectedDocumentos[0];
                     $scope.comprobante = {
@@ -1518,11 +1534,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                         historialCobros,
                         cuentasPorCobrarEstado,
                         cuotasPorCobrarEstado
-                    }
-
-                    console.log(data)
-                    console.log(cuentasPorCobrarEstado)
-                    console.log(cuotasPorCobrarEstado)
+                    } 
 
                    
  
