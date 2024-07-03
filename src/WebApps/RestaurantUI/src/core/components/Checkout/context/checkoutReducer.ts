@@ -66,7 +66,7 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
             return { ...state, checkoutLoading: true }
         case GET_CHECKOUT_SUCCESS: {
             const { data, closeDialog, checkoutParams } = action.payload;
-            const { paymentTypes, voucherQuotas } = data;
+            const { paymentTypes, voucherQuotas, estadosPago } = data;
             const paymentData = paymentTypes.find(item => item.code === PaymentTypeCode.EFE);
             if (paymentData) {
                 state.checkout.paymentSubTypes = paymentData.paymentSubTypes;
@@ -90,7 +90,8 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
                 ...state,
                 closeDialog,
                 checkoutParams: checkoutParams,
-                checkoutLoading: false
+                checkoutLoading: false,
+                estadosPago
             }
         }
         case GET_CHECKOUT_ERROR:
