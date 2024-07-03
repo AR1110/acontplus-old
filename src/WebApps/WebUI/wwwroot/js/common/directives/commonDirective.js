@@ -2119,4 +2119,33 @@
     }])
 
 
+
+     /***
+     * @description anular comprobante ingreso 
+     * 
+     */
+    app.directive('btnAnularComprobanteIngreso', ['comprobanteIngresoService',function (compIngresoSvc) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                onResult: '&'
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+                    
+                    let {idComprobanteIngreso} = scope.params;
+
+                    compIngresoSvc.getDataToOverride(idComprobanteIngreso).then(response=>{
+                    
+                    })                
+                    console.log(scope)
+
+                })
+            }
+        }
+    }])
+
+
+
 })(window.angular)

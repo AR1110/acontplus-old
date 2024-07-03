@@ -13,7 +13,7 @@ public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : Con
         var parameters = new Dictionary<string, object>{
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(json) }
-        };  
+        };
         return Ok(await _svc.GetAsync(parameters));
     }
 
@@ -24,7 +24,7 @@ public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : Con
         {
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) },
-        };  
+        };
         return Ok(await _svc.AddAsync(parameters));
     }
 
@@ -33,16 +33,17 @@ public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : Con
     {
         var parameters = new Dictionary<string, object> {
             { "userRoleId", User.GetUserRoleId() },
-            { "json",  DataConverters.SerializeDictionary(paremeter.Data) } }; 
+            { "json",  DataConverters.SerializeDictionary(paremeter.Data) } };
         return Ok(await _svc.CancelAsync(parameters));
     }
 
 
-    [HttpPut]
-    public async Task<IActionResult> Put(ApiRequest request)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, ApiRequest request)
     {
         var parameters = new Dictionary<string, object> {
             { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
             { "json",  DataConverters.SerializeDictionary(request.Data) } }; 
         return Ok(await _svc.UpdateAsync(parameters));
     }

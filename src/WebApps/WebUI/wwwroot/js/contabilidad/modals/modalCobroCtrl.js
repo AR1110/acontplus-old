@@ -11,6 +11,11 @@ class CobroService {
         this.selectedDocumentos = [];
         this.cobrosDetalle = [];
         this.historialCuentas = [];
+
+        this.cuentasPorCobrarEstado = [];
+        this.cuotasPorCobrarEstado = [];
+
+        this.estadosPago = [];
         this.valorAbono = 0;
 
         this.esAbonoPosfechado = false;
@@ -19,6 +24,9 @@ class CobroService {
         this.MAX_NUMBER_ROUND = 3;
         this.MAX_NUMBER_ROUND_GENERAL = 3;
         this.MAX_NUMBER_ROUND_CUOTA_ABONO = 5;
+    }
+    set setEstadosPago(estadosPago){
+        this.estadosPago = estadosPago;
     }
 
     isDateValid(dateString) {
@@ -119,8 +127,137 @@ class CobroService {
 
 
 
+    /**
+     * 
+     * @param {*} historialCuentas 
+     * @param {*} cobros 
+     * @param {*} cobrosDetalle 
+     */
+    generarCuentasPorCobrarEstado({historialCuentas, cobros, cobrosDetalle}){
+        let cuentasPorCobrarAgrupado = historialCuentas.reduce((acc, curr) => {
 
-    //--------------
+            let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar);
+            if (!existeDato) {
+                acc.push({
+                    idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                    valorSaldoLectura: curr.valorSaldoLectura,
+                    abono: curr.abono,
+                    diasMora: curr.diasMora,
+                    mora: curr.mora
+                })
+            } else {
+                existeDato.abono += curr.abono;
+
+            }
+            return acc;
+
+        }, [])
+
+        let cuentasPorCobrarEstado = [];
+        console.log(cuentasPorCobrarAgrupado)
+
+        for (let item of cuentasPorCobrarAgrupado) {
+            let  valorSaldo = 0,   dataEstadoPago={}; 
+
+            let totalPosfechado = cobrosDetalle.filter(cd=>cd.idCuentaPorCobrar === item.idCuentaPorCobrar && cd.posfechado).reduce((acc, curr)=>{
+                acc += curr.abono;
+                return acc;
+            }, 0)
+
+            let totalNoPosfechado = cobrosDetalle.filter(cd=>cd.idCuentaPorCobrar === item.idCuentaPorCobrar && !cd.posfechado).reduce((acc, curr) => {
+                acc += curr.abono;
+                return acc;
+            }, 0)
+
+            // if (cobros.some(c =>
+            //     cobrosDetalle.some(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar
+            //         && c.posfechado))) {
+            //     totalPosfechado += item.abono
+            // } else {
+            //     totalNoPosfechado += item.abono;
+            // }
+
+            valorSaldo = item.valorSaldoLectura - totalNoPosfechado;
+       
+            if (totalPosfechado > 0) {
+                dataEstadoPago = this.getEstadoCuota({
+                    esPosfechado: true
+                })
+            }
+  
+
+            if (totalPosfechado <= 0) {
+                dataEstadoPago = this.getEstadoCuota({
+                    saldo: valorSaldo,
+                    abono: totalNoPosfechado
+                }) 
+            } 
+     
+            cuentasPorCobrarEstado.push({
+                idCuentaPorCobrar: item.idCuentaPorCobrar,
+                idEstadoPago: dataEstadoPago.idEstadoPago, 
+                abono: totalNoPosfechado
+            })
+
+        }
+        return cuentasPorCobrarEstado;
+
+    }
+
+    generarHistorialCuentaPorCobrar(){
+        
+       
+    }
+
+    generarCuotasPorCobrarEstado({ cobrosDetalle }){ 
+
+        let cuotasPorCobrarAgrupado = cobrosDetalle.reduce((acc, curr) => {
+
+            let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar && curr.idCuentaPorCobrar && dataCxc.idCuotaPorCobrar === curr.idCuotaPorCobrar);
+            if (!existeDato) {
+                acc.push({
+                    idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                    idCuotaPorCobrar: curr.idCuotaPorCobrar,
+                    valorSaldoLectura: curr.valorSaldoLectura,
+                    abono: curr.abono, 
+                })
+            } else {
+                existeDato.abono += curr.abono;
+
+            }
+            return acc;
+
+        }, [])
+
+        let cuotasPorCobrarEstado = [];
+
+        for (let item of cuotasPorCobrarAgrupado) {
+
+            let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuotaPorCobrar === item.idCuotaPorCobrar && !cd.posfechado).reduce((acc, curr) => {
+                acc += curr.abono;
+                return acc;
+            }, 0)
+            
+            let valorSaldo = item.valorSaldoLectura - totalNoPosfechado;
+             
+            let dataEstadoPago = this.getEstadoCuota({
+                    saldo: valorSaldo,
+                    abono: item.abono
+                })
+           
+
+            cuotasPorCobrarEstado.push({
+                idEstadoPago: dataEstadoPago.idEstadoPago,
+                abono: totalNoPosfechado,
+                idCuotaPorCobrar: item.idCuotaPorCobrar
+            })
+
+        }
+        return cuotasPorCobrarEstado;
+
+    }
+    
+    
     addFormaCobro() {
 
         for (let group of this.selectedDocumentos) {
@@ -128,7 +265,6 @@ class CobroService {
             this.group = group;
 
             if (typeof this.valorAbono !== 'number' || this.valorAbono > 0) {
-
                 let valorMovimientoSaldo = 0, historialAbono = 0;
 
                 const cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar)
@@ -140,9 +276,9 @@ class CobroService {
                     let historialCuentasFiltered = this.historialCuentas.filter(cd => (
                         cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar && cd.secuencial === this.indexDatoCobro
                     ));
- 
+
                     let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
-                   
+
                     if (dataUltimoCobroDetalle) {
                         valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
                     } else {
@@ -155,9 +291,10 @@ class CobroService {
                     } else if (this.valorAbono >= this.group.saldo) {
                         historialAbono = this.group.saldo;
                     }
- 
+
                     this.historialCuentas.push({
                         secuencial: this.indexDatoCobro,
+                        valorSaldoLectura: this.group.valorSaldoLectura,
                         idCuentaPorCobrar: this.group.idCuentaPorCobrar,
                         abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
                         saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
@@ -167,12 +304,12 @@ class CobroService {
 
                 }
                 if (cobrosDetalleFiltered.length > 0) {
-                    if (totalAbonoCuenta !== this.fS.roundNumber(this.group.saldo, this.MAX_NUMBER_ROUND_GENERAL)) { 
+                    if (totalAbonoCuenta !== this.fS.roundNumber(this.group.saldo, this.MAX_NUMBER_ROUND_GENERAL)) {
 
                         let historialCuentasFiltered = this.historialCuentas.filter(cd => (
-                            cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar  
+                            cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar
                         ));
-                  
+
                         let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
 
                         if (dataUltimoCobroDetalle) {
@@ -184,20 +321,22 @@ class CobroService {
                         if (this.valorAbono <= valorMovimientoSaldo) {
                             historialAbono = this.valorAbono;
 
-                        } else  {
+                        } else {
                             historialAbono = valorMovimientoSaldo
                         }
 
                         this.historialCuentas.push({
                             secuencial: this.indexDatoCobro,
+                            valorSaldoLectura: this.group.valorSaldoLectura,
                             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
                             abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
                             saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
                             diasMora: this.group.diasMora,
                             mora: this.group.mora,
-                        }) 
-                    } 
+                        })
+                    }
                 } 
+              
             }
 
 
@@ -221,10 +360,18 @@ class CobroService {
                 item.abono = this.fS.roundNumber(item.abono, this.MAX_NUMBER_ROUND);
                 item.abonoPosfechado = this.fS.roundNumber(item.abonoPosfechado, this.MAX_NUMBER_ROUND);
                 // item.saldo = this.getValorSaldo(item) //Verificamos el saldo de la Cuota 
-                item.estado = this.getEstadoCuota(item);
+               
+                let dataEstadoPago = this.getEstadoCuota({
+                    saldo: item.saldo,
+                    abono: item.abono
+                });
+                item.estado = dataEstadoPago.descripcion;
+
 
                 item.esCuotaAfectada = true; // 
 
+
+               // this.generarCuotasPorCobrarEstado(dataEstadoPago, item.abono)
 
 
             } 
@@ -353,6 +500,7 @@ class CobroService {
         }
 
 
+        console.log(this.esAbonoPosfechado)
         this.cobrosDetalle.push({
             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
             idCuotaPorCobrar: item.idCuotaPorCobrar,
@@ -363,7 +511,9 @@ class CobroService {
             cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
             saldo,
             secuencial: this.indexDatoCobro,
-            saldoOriginal: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO)
+            valorSaldoLectura: item.valorSaldoLectura,
+            saldoOriginal: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+            posfechado: this.esAbonoPosfechado
         })
         item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND);
         item.saldoOriginal = this.fS.roundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND);
@@ -375,6 +525,7 @@ class CobroService {
      * @returns number
      */
     getValorSaldo(item) {
+        
         // let total = item.abono + item.abonoPosfechado;
         // return this.fS.roundNumber(total, 5) === this.fS.roundNumber(item.cuota, 5) ? 0 : this.fS.roundNumber(item.saldo, 5);
         return this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND);
@@ -382,16 +533,38 @@ class CobroService {
 
 
     /**
-         * 
-         * @param {object} item  cuota
-         * @returns {string} estado 
-         */
-    getEstadoCuota(item) {
+     * 
+     * @param {*} saldo 
+     * @param {*} abono 
+     * @returns 
+     */
+    getEstadoCuota({saldo, abono, esPosfechado}) {
         let estado = '';
-        if (item.saldo === 0) estado = 'COBRADA'
-        if (item.saldo > 0) estado = "PENDIENTE PARCIAL";
-        if (item.abono === 0) estado = "PENDIENTE";
-        return estado
+        let dataEstadoPago = {};
+
+        if(esPosfechado){
+            dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'PFC');
+        }else{
+            if (saldo === 0) {
+                dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'CBR');
+                estado = 'COBRADA'
+            }
+            if (saldo > 0) {
+                dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'PP');
+                estado = "PENDIENTE PARCIAL";
+            }
+            if (abono === 0) {
+                dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'PE');
+                estado = "PENDIENTE";
+            }
+
+        }
+        
+
+        return {
+            idEstadoPago: dataEstadoPago.idEstadoPago,
+            descripcion: estado
+        }
     }
  
 
@@ -423,7 +596,6 @@ ModalCobroRapidoCtrl.$inject = [
 
 function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, nombreModalContabilidad, tS, fS, params) {
 
-    const cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
     const comprobanteIngresoSvc = $injector.get('comprobanteIngresoService')
 
     let { data } = params;
@@ -492,7 +664,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
     function loadInitialData() {
         try {
             showLoader();
-            cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar).then(response => {
+            comprobanteIngresoSvc.getDataForm(idCuentaPorCobrar).then(response => {
                 let {
                     entidadesFinanciera,
                     bancos,
@@ -782,6 +954,8 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
     $scope.datosCobro = [];
     $scope.cobrosDetalle = [];
     $scope.historialCobros = [];
+    let cuentasPorCobrarEstado = [];
+    let cuotasPorCobrarEstado = [];
 
 
     $scope.selectedDocumentos = [];
@@ -813,9 +987,10 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
             if (selectedDocumentos !== null && Array.isArray(selectedDocumentos)) {
                 idCliente = selectedDocumentos[0].idCliente;
             }
-            cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar, idCliente).then(response => {
+            comprobanteIngresoSvc.getDataForm(idCuentaPorCobrar, idCliente).then(response => {
 
                 dataFormaCobro = response;
+                cobroSvc.setEstadosPago = dataFormaCobro.estadosPago;
 
                 if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
                     $scope.tipoDocumentos = structuredClone(selectedDocumentos);
@@ -1048,12 +1223,12 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
             modalRef.result.then(result => {
                 if (typeof result === 'object') {
                     try {
-                        let { isPosFechado, valorAbono } = result;
+                        let { posFechado, valorAbono } = result;
 
                         cobroSvc.selectedDocumentos = $scope.selectedDocumentos;
 
                         cobroSvc.indexDatoCobro = $scope.datosCobro.length + 1;
-                        cobroSvc.esAbonoPosfechado = isPosFechado;
+                        cobroSvc.esAbonoPosfechado = posFechado;
                         cobroSvc.valorAbono = valorAbono;
 
 
@@ -1063,6 +1238,9 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
 
                         $scope.cobrosDetalle = cobroSvc.cobrosDetalle;
                         $scope.selectedDocumentos = cobroSvc.selectedDocumentos;
+
+                        cuentasPorCobrarEstado = cobroSvc.cuentasPorCobrarEstado;
+                        cuotasPorCobrarEstado = cobroSvc.cuotasPorCobrarEstado;
 
                         let abonoCuota = $scope.cobrosDetalle.filter(item => item.secuencial === cobroSvc.indexDatoCobro)
                             .reduce((prev, curr) => prev + curr.abono, 0)
@@ -1198,10 +1376,12 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
 
                         cobroSvc.cobrosDetalle = [];
                         cobroSvc.historialCuentas = [];
-                        $scope.cobrosDetalle = [];
+                        cobroSvc.cuotasPorCobrarEstado = [];
 
-                        // cobroSvc.selectedDocumentos = []
-                        // $scope.selectedDocumentos = [];
+                        cuentasPorCobrarEstado = [];
+                        cuotasPorCobrarEstado = [];
+
+                        $scope.cobrosDetalle = []; 
 
 
                         let index = $scope.datosCobro.indexOf(item);
@@ -1226,13 +1406,16 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                             cobroSvc.indexDatoCobro = $scope.indexDatoCobro;
 
                             cobroSvc.valorAbono = item.valorAbono;
-                            cobroSvc.esAbonoPosfechado = item.isPosfechado;
+                            cobroSvc.esAbonoPosfechado = item.posFechado;
 
                             //--------agregando abono ---
                             cobroSvc.addFormaCobro();
                         }
 
                         $scope.cobrosDetalle = cobroSvc.cobrosDetalle;
+
+                        cuentasPorCobrarEstado = cobroSvc.cuentasPorCobrarEstado ;                    
+                        cuotasPorCobrarEstado = cobroSvc.cuotasPorCobrarEstado;
 
                         calculoTotales();
                     })
@@ -1312,13 +1495,34 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                         return obj;
                     })
 
+                    
+                    let cobrosDetalle = $scope.cobrosDetalle.filter(item => (item.abono > 0))
+                    let historialCobros = cobroSvc.historialCuentas;
+
+                  
+
+                    let cuentasPorCobrarEstado = cobroSvc.generarCuentasPorCobrarEstado({
+                        historialCuentas: historialCobros,
+                        cobros,
+                        cobrosDetalle
+                    })
+
+                    let cuotasPorCobrarEstado = cobroSvc.generarCuotasPorCobrarEstado({
+                        cobrosDetalle
+                    })
 
                     let data = {
                         comprobante,
                         cobros,
-                        cobroDetalle: $scope.cobrosDetalle.filter(item => (item.abono > 0)),
-                        historialCobros: cobroSvc.historialCuentas,
+                        cobroDetalle: cobrosDetalle,
+                        historialCobros,
+                        cuentasPorCobrarEstado,
+                        cuotasPorCobrarEstado
                     }
+
+                    console.log(data)
+                    console.log(cuentasPorCobrarEstado)
+                    console.log(cuotasPorCobrarEstado)
 
                    
  
@@ -1475,6 +1679,7 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
             let banco = $scope.bancos.find(item => item.idBanco === $scope.data.idBanco);
 
             let formattedDateTime = fS.formatDateMoment($scope.data.fechaEmision);
+           
             return {
                 //Info
                 entidadFinanciera: entidadFinanciera.descripcion,
@@ -1491,6 +1696,7 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
                 idCiudad: $scope.data.idCiudad,
                 fechaEmision: formattedDateTime,
                 posFechado: $scope.data.posFechado,
+                
                 cobro: !$scope.data.posFechado,
                 referencia: $scope.data.referencia,
                 aprobacion: $scope.data.aprobacion,
