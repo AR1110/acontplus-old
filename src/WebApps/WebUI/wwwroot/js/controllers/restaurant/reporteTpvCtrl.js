@@ -54,7 +54,7 @@
                 }
                 let parameters = {
                     reportParams: JSON.stringify({
-                        idUsuarioRol: decodedJwt.idUsuarioRol,
+                        idUsuarioRol: decodedJwt.userRoleId,
                         codigo: 'RCETPV',
                         format: format == 1 ? 'pdf' : 'excel',
                         hasParams: false

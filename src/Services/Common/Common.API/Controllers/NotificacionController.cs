@@ -7,7 +7,7 @@ public class NotificacionController(INotificacionService notificacion) : BaseApi
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value) },
+            { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await notificacion.AddAsync(parameters));

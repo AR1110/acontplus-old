@@ -21,7 +21,7 @@ public class Doc_Rec_DetailTempController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Recepcion.Doc_Detail_Temp_Get");
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("idDocumento", idDocumento);
@@ -47,7 +47,7 @@ public class Doc_Rec_DetailTempController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Recepcion.Doc_Detail_Temp_Insert");
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("jsonData",
@@ -73,7 +73,7 @@ public class Doc_Rec_DetailTempController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Recepcion.Doc_Detail_Temp_Update");
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("jsonData",

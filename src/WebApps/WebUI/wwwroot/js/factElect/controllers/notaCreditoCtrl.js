@@ -50,7 +50,7 @@
         $scope.cliente = {
 
         }
-        let idUsuarioRol = Number(decodeToken.idUsuarioRol)
+        let idUsuarioRol = Number(decodeToken.userRoleId)
 
         //---------------------------------Busqueda Avanzada ----------------------------------
         //========================Start Filters=================

@@ -25,7 +25,7 @@ function notaCreditoProvCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalCon
     // }
 
     const TIPO_DOC = _commonSvc.tipoDoc['NCP'];
-    let idUsuarioRol= parseInt(decodeToken.idUsuarioRol);
+    let idUsuarioRol= parseInt(decodeToken.userRoleId);
 
     $scope.dataSearch = {
         pageIndex: 1,

@@ -63,7 +63,7 @@
         $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
         $scope.parametersPrint = {};
 
-        let idUsuarioRol = Number(decodeToken.idUsuarioRol)
+        let idUsuarioRol = Number(decodeToken.userRoleId)
 
 
         $scope.permisoEditarDoc = {};
