@@ -45,9 +45,10 @@
 
         $scope.dataSearch = {
             pageIndex: 1,
-            pageSize: 1000,
-            tipo: 1
+            pageSize: 25, 
+            maxSize: 5
         }
+        $scope.recordsQuantity = [25,50,100];
 
         $scope.typeSend = 'GenericFile';
         $scope.typeSendMail = 'N';
@@ -223,8 +224,7 @@
                     })
                 }
 
-                const dataSearch = {
-                    tipo: 1,
+                const dataSearch = { 
                     codEstab: $scope.dataSearch.codEstab,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
@@ -250,6 +250,11 @@
                     $scope.cloneCobros = structuredClone(response)
                     setTotalsColumn();
 
+                    if($scope.cobros.length>0){
+                        $scope.dataSearch.totalRecords = $scope.cobros[0].totalRecords;
+
+                    }
+
                 }).catch(error => {
                     console.log(error)
                 }).finally(() => hideLoader())
@@ -268,6 +273,15 @@
             })
         }
         $scope.initiload();
+
+        $scope.pagechanged = function () {
+            $scope.getCobros();
+        };
+
+        $scope.changePageSize = function () {
+            $scope.dataSearch.pageIndex = 1;
+            $scope.getCobros();
+        };
 
         $scope.openModalParam = async ({
             controller,
@@ -321,7 +335,7 @@
                     observacion: value
                 }
                 showLoader();
-                compIngresoSvc.cancel(data).then(response => {
+                compIngresoSvc.update(item.idComprobanteIngreso, data).then(response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message, response.titleSms);
                     }
