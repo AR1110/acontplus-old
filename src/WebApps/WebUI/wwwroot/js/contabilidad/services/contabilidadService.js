@@ -651,11 +651,11 @@
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response=>{
                 let resultData = {};
                 if(response.code==="1"){
-                    console.log(JSON.parse(response.payload))
+                
                     let {cuentas,cuotas,estadoPago} = JSON.parse(response.payload);
                     
                     resultData.cuentasPorCobrar = cuentas;
-                    resultData.cuentasPorCobrar = cuotas;
+                    resultData.cuotasPorCobrar = cuotas;
                     resultData.estadosPago = estadoPago;
                 }else{
                     throw new Error('Error en petición')
