@@ -1,3 +1,6 @@
+
+ 
+
 (function () {
     'use strict';
 
@@ -170,12 +173,19 @@
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         $scope.dataSearch.checkBoxFecha = true;
-                        tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
+                        tS.toastr({
+                            type: 'warning',
+                            message: 'Define correctamente el número de secuencial o el rango de número secuencial!'
+                        })
                         return
                     }
                     if (!($scope.dataSearch.idCliente > 0)) {
                         $scope.dataSearch.checkBoxFecha = false;
                     }
+                    tS.toastr({
+                        type:'info',
+                        message: 'Buscando por número secuencial'
+                    })
                 }
                 if ($scope.dataSearch.infoAdicional) {
                     $scope.dataSearch.checkBoxFecha = false;
