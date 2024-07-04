@@ -273,6 +273,7 @@
             })
         }
         $scope.initiload();
+ 
 
         $scope.pagechanged = function () {
             $scope.getCobros();

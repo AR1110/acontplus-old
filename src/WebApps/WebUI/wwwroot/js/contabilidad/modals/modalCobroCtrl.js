@@ -21,9 +21,10 @@ class CobroService {
         this.esAbonoPosfechado = false;
         this.indexDatoCobro = 0; 
 
-        this.MAX_NUMBER_ROUND = 3;
+        this.MAX_NUMBER_ROUND = 5;
         this.MAX_NUMBER_ROUND_GENERAL = 3;
         this.MAX_NUMBER_ROUND_CUOTA_ABONO = 5;
+        
     }
     set setEstadosPago(estadosPago){
         this.estadosPago = estadosPago;
@@ -133,73 +134,55 @@ class CobroService {
      * @param {*} cobros 
      * @param {*} cobrosDetalle 
      */
-    generarCuentasPorCobrarEstado({historialCuentas, cobros, cobrosDetalle}){
+    generarCuentasPorCobrarEstado({historialCuentas, cobrosDetalle}){
+        // Your existing code snippet with modifications for decimal.js
         let cuentasPorCobrarAgrupado = historialCuentas.reduce((acc, curr) => {
-
             let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar);
             if (!existeDato) {
                 acc.push({
                     idCuentaPorCobrar: curr.idCuentaPorCobrar,
-                    valorSaldoLectura: curr.valorSaldoLectura,
-                    abono: curr.abono,
+                    valorSaldoLectura: new Decimal(curr.valorSaldoLectura),
+                    abono: new Decimal(curr.abono),
                     diasMora: curr.diasMora,
                     mora: curr.mora
-                })
+                });
             } else {
-                existeDato.abono += curr.abono;
-
+                existeDato.abono = new Decimal(existeDato.abono).plus(curr.abono);
             }
             return acc;
-
-        }, [])
+        }, []);
 
         let cuentasPorCobrarEstado = [];
-         
 
         for (let item of cuentasPorCobrarAgrupado) {
-            let  valorSaldo = 0,   dataEstadoPago={}; 
+            let valorSaldo = new Decimal(item.valorSaldoLectura);
+            let totalPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && cd.posfechado)
+                .reduce((acc, curr) => acc.plus(curr.abono), new Decimal(0));
 
-            let totalPosfechado = cobrosDetalle.filter(cd=>cd.idCuentaPorCobrar === item.idCuentaPorCobrar && cd.posfechado).reduce((acc, curr)=>{
-                acc += curr.abono;
-                return acc;
-            }, 0)
+            let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && !cd.posfechado)
+                .reduce((acc, curr) => acc.plus(curr.abono), new Decimal(0));
 
-            let totalNoPosfechado = cobrosDetalle.filter(cd=>cd.idCuentaPorCobrar === item.idCuentaPorCobrar && !cd.posfechado).reduce((acc, curr) => {
-                acc += curr.abono;
-                return acc;
-            }, 0)
+            valorSaldo = valorSaldo.minus(totalNoPosfechado).toNumber()
 
-            // if (cobros.some(c =>
-            //     cobrosDetalle.some(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar
-            //         && c.posfechado))) {
-            //     totalPosfechado += item.abono
-            // } else {
-            //     totalNoPosfechado += item.abono;
-            // }
-
-            valorSaldo = item.valorSaldoLectura - totalNoPosfechado;
-       
-            if (totalPosfechado > 0) {
+            let dataEstadoPago;
+            if (totalPosfechado.gt(0)) {
                 dataEstadoPago = this.getEstadoCuota({
                     esPosfechado: true
-                })
-            }
-  
-
-            if (totalPosfechado <= 0) {
+                });
+            } else {
                 dataEstadoPago = this.getEstadoCuota({
                     saldo: valorSaldo,
-                    abono: totalNoPosfechado
-                }) 
-            } 
-     
+                    abono: totalNoPosfechado.toNumber()
+                });
+            }
+
             cuentasPorCobrarEstado.push({
                 idCuentaPorCobrar: item.idCuentaPorCobrar,
-                idEstadoPago: dataEstadoPago.idEstadoPago, 
-                abono: totalNoPosfechado
-            })
-
+                idEstadoPago: dataEstadoPago.idEstadoPago,
+                abono: totalNoPosfechado.toNumber()
+            });
         }
+
         return cuentasPorCobrarEstado;
 
     }
@@ -210,47 +193,45 @@ class CobroService {
     generarCuotasPorCobrarEstado({ cobrosDetalle }){ 
 
         let cuotasPorCobrarAgrupado = cobrosDetalle.reduce((acc, curr) => {
-
-            let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar && curr.idCuentaPorCobrar && dataCxc.idCuotaPorCobrar === curr.idCuotaPorCobrar);
+            let existeDato = acc.find(dataCxc => (dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar) && (dataCxc.idCuotaPorCobrar === curr.idCuotaPorCobrar));
             if (!existeDato) {
                 acc.push({
                     idCuentaPorCobrar: curr.idCuentaPorCobrar,
                     idCuotaPorCobrar: curr.idCuotaPorCobrar,
                     valorSaldoLectura: curr.valorSaldoLectura,
-                    abono: curr.abono, 
-                })
+                    abono: new Decimal(curr.abono)
+                });
             } else {
-                existeDato.abono += curr.abono;
-
+                existeDato.abono = new Decimal(existeDato.abono).plus(curr.abono);
             }
             return acc;
-
-        }, [])
+        }, []);
 
         let cuotasPorCobrarEstado = [];
 
         for (let item of cuotasPorCobrarAgrupado) {
+            let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuotaPorCobrar === item.idCuotaPorCobrar && !cd.posfechado)
+                .reduce((acc, curr) => {
+                    return new Decimal(acc).plus(curr.abono);
+                }, new Decimal(0));
 
-            let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuotaPorCobrar === item.idCuotaPorCobrar && !cd.posfechado).reduce((acc, curr) => {
-                acc += curr.abono;
-                return acc;
-            }, 0)
-            
-            let valorSaldo = item.valorSaldoLectura - totalNoPosfechado;
-             
+            let valorSaldoLectura = this.fS.roundNumber(item.valorSaldoLectura, 3);
+            let valorSaldo = new Decimal(valorSaldoLectura)
+                .minus(this.fS.roundNumber(totalNoPosfechado.toNumber(),3))
+                .toNumber();
+
             let dataEstadoPago = this.getEstadoCuota({
-                    saldo: valorSaldo,
-                    abono: item.abono
-                })
-           
+                saldo: valorSaldo,
+                abono: item.abono.toNumber() // Convert Decimal back to number if needed
+            });
 
             cuotasPorCobrarEstado.push({
                 idEstadoPago: dataEstadoPago.idEstadoPago,
-                abono: totalNoPosfechado,
+                abono: totalNoPosfechado.toNumber(),
                 idCuotaPorCobrar: item.idCuotaPorCobrar
-            })
-
+            });
         }
+
         return cuotasPorCobrarEstado;
 
     }
@@ -263,11 +244,16 @@ class CobroService {
             this.group = group;
 
             if (typeof this.valorAbono !== 'number' || this.valorAbono > 0) {
-                let valorMovimientoSaldo = 0, historialAbono = 0;
+                //let valorMovimientoSaldo = 0, historialAbono = 0;
+                let valorMovimientoSaldo = new Decimal(0), historialAbono = new Decimal(0);
 
                 const cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar)
 
-                const totalAbonoCuenta = this.fS.roundNumber(cobrosDetalleFiltered.reduce((acc, curr) => acc + curr.abono, 0), this.MAX_NUMBER_ROUND_GENERAL);
+                //const totalAbonoCuenta = this.fS.roundNumber(cobrosDetalleFiltered.reduce((acc, curr) => acc + curr.abono, 0), this.MAX_NUMBER_ROUND_GENERAL);
+
+                const totalAbonoCuenta = cobrosDetalleFiltered.reduce((acc, curr) => acc.plus(curr.abono), new Decimal(0));
+
+
 
                 if (cobrosDetalleFiltered.length === 0) {
 
@@ -278,9 +264,13 @@ class CobroService {
                     let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
 
                     if (dataUltimoCobroDetalle) {
-                        valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
+
+                        valorMovimientoSaldo = new Decimal(dataUltimoCobroDetalle.saldo).minus(dataUltimoCobroDetalle.abono).toNumber();
+
+                       // valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
                     } else {
-                        valorMovimientoSaldo = group.saldo;
+                       // valorMovimientoSaldo = group.saldo;
+                        valorMovimientoSaldo = new Decimal(group.saldo).toNumber();
                     }
 
                     if (this.valorAbono <= this.group.saldo) {
@@ -290,12 +280,16 @@ class CobroService {
                         historialAbono = this.group.saldo;
                     }
 
+                      
+
                     this.historialCuentas.push({
                         secuencial: this.indexDatoCobro,
                         valorSaldoLectura: this.group.valorSaldoLectura,
                         idCuentaPorCobrar: this.group.idCuentaPorCobrar,
-                        abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
-                        saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                      //  abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                      //  saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                        abono: new Decimal(historialAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
+                        saldo: new Decimal(valorMovimientoSaldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
                         diasMora: this.group.diasMora,
                         mora: this.group.mora,
                     })
@@ -311,9 +305,13 @@ class CobroService {
                         let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
 
                         if (dataUltimoCobroDetalle) {
-                            valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
+
+                            valorMovimientoSaldo = new Decimal(dataUltimoCobroDetalle.saldo).minus(dataUltimoCobroDetalle.abono).toNumber();
+
+
+                            //valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
                         } else {
-                            valorMovimientoSaldo = group.saldo;
+                            valorMovimientoSaldo = new Decimal(group.saldo).toNumber();
                         }
 
                         if (this.valorAbono <= valorMovimientoSaldo) {
@@ -322,13 +320,16 @@ class CobroService {
                         } else {
                             historialAbono = valorMovimientoSaldo
                         }
+ 
 
                         this.historialCuentas.push({
                             secuencial: this.indexDatoCobro,
                             valorSaldoLectura: this.group.valorSaldoLectura,
                             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
-                            abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
-                            saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                        //    abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                        //    saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                            abono: new Decimal(historialAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
+                            saldo: new Decimal(valorMovimientoSaldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
                             diasMora: this.group.diasMora,
                             mora: this.group.mora,
                         })
@@ -354,10 +355,13 @@ class CobroService {
                     this.cuotaSinAbono(item)
                 }
 
-                item.cuota = this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND);
-                item.abono = this.fS.roundNumber(item.abono, this.MAX_NUMBER_ROUND);
-                item.abonoPosfechado = this.fS.roundNumber(item.abonoPosfechado, this.MAX_NUMBER_ROUND);
-                // item.saldo = this.getValorSaldo(item) //Verificamos el saldo de la Cuota 
+                // item.cuota = this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND);
+                // item.abono = this.fS.roundNumber(item.abono, this.MAX_NUMBER_ROUND);
+                // item.abonoPosfechado = this.fS.roundNumber(item.abonoPosfechado, this.MAX_NUMBER_ROUND);
+
+                item.cuota = new Decimal(item.cuota).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+                item.abono = new Decimal(item.abono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+                item.abonoPosfechado = new Decimal(item.abonoPosfechado).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
                
                 let dataEstadoPago = this.getEstadoCuota({
                     saldo: item.saldo,
@@ -386,8 +390,12 @@ class CobroService {
 
         //Validaciones Saldo Cuota 
         if (item.saldoCta >= this.valorAbono) {
-            let valorSaldoCta = item.saldoCta - this.valorAbono;
-            item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND);
+          //  let valorSaldoCta = item.saldoCta - this.valorAbono;
+
+            item.saldoCta = new Decimal(item.saldoCta).minus(this.valorAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+
+
+          //  item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND);
         } else if (item.saldoCta <= this.valorAbono) {
             item.saldoCta = 0;
         }
@@ -401,9 +409,11 @@ class CobroService {
             //Si el abono pago es posfechado
             item.abonoPosfechado = this.esAbonoPosfechado ? this.valorAbono : 0;
 
-            let valorSaldo = item.saldo - this.valorAbono;
+            //let valorSaldo = item.saldo - this.valorAbono;
+            item.saldo = new Decimal(item.saldo).minus(this.valorAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+
             // let valorSaldoCta = item.saldoCta - this.valorAbono;
-            item.saldo = this.fS.roundNumber(valorSaldo, this.MAX_NUMBER_ROUND);
+            //item.saldo = this.fS.roundNumber(valorSaldo, this.MAX_NUMBER_ROUND);
             // item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND);
 
             this.addCobroDetalle(item, this.valorAbono, item.saldo)
@@ -412,12 +422,13 @@ class CobroService {
         } else if (item.saldo <= this.valorAbono) {
 
             //Si el Abono pago no es Posfechado
-            item.abono = this.esAbonoPosfechado ? 0 : item.saldo;
+            item.abono = this.esAbonoPosfechado ? 0 : new Decimal(item.saldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
 
             //Si el abono pago es posfechado
-            item.abonoPosfechado = this.esAbonoPosfechado ? item.saldo : 0;
+            item.abonoPosfechado = this.esAbonoPosfechado ? new Decimal(item.saldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber() : 0;
 
-            this.valorAbono = this.valorAbono - item.saldo;
+            //this.valorAbono = this.valorAbono - item.saldo;
+            this.valorAbono = new Decimal(this.valorAbono).minus(item.saldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
 
             this.addCobroDetalle(item, item.saldo, 0)
             item.saldo = 0;
@@ -434,8 +445,11 @@ class CobroService {
 
         //Validaciones Saldo Cuota 
         if (item.saldoCta >= this.valorAbono) {
-            let valorSaldoCta = item.saldoCta - this.valorAbono;
-            item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND);
+         //   let valorSaldoCta = item.saldoCta - this.valorAbono;
+         //   item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND);
+
+            item.saldoCta = new Decimal(item.saldoCta).minus(this.valorAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+
         } else if (item.saldoCta <= this.valorAbono) {
             item.saldoCta = 0;
         }
@@ -444,32 +458,23 @@ class CobroService {
 
         if (item.saldo >= this.valorAbono) {
 
-            if (this.esAbonoPosfechado) {
-                item.abonoPosfechado = this.valorAbono + item.abonoPosfechado;
-            } else {
-                item.abono = this.valorAbono + item.abono;
-            }
+            item.abono = this.esAbonoPosfechado ? item.abono : new Decimal(item.abono).plus(this.valorAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+            item.abonoPosfechado = this.esAbonoPosfechado ? new Decimal(item.abonoPosfechado).plus(this.valorAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber() : item.abonoPosfechado;
 
-            let valorSaldo = item.saldo - this.valorAbono;
-            // let valorSaldoCta = item.saldoCta - this.valorAbono;
-            item.saldo = this.fS.roundNumber(valorSaldo, this.MAX_NUMBER_ROUND);
-            // item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND);
+            item.saldo = new Decimal(item.saldo).minus(this.valorAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+ 
 
             this.addCobroDetalle(item, this.valorAbono, item.saldo);
             this.valorAbono = 0;
 
 
         } else if (item.saldo <= this.valorAbono) {
-            let abonoCuota = item.saldo;
-            if (this.esAbonoPosfechado) {
-                item.abonoPosfechado = item.abonoPosfechado + item.saldo;
-            } else {
-                item.abono = item.abono + item.saldo;
-            }
+            item.abono = this.esAbonoPosfechado ? item.abono : new Decimal(item.abono).plus(item.saldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+            item.abonoPosfechado = this.esAbonoPosfechado ? new Decimal(item.abonoPosfechado).plus(item.saldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber() : item.abonoPosfechado;
 
-            this.valorAbono = this.valorAbono - item.saldo;
-            this.valorAbono = this.fS.roundNumber(this.valorAbono, this.MAX_NUMBER_ROUND);
-            this.addCobroDetalle(item, abonoCuota, 0);
+            this.addCobroDetalle(item, item.saldo, 0);
+
+            this.valorAbono = new Decimal(this.valorAbono).minus(item.saldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
             item.saldo = 0;
         }
     }
@@ -492,41 +497,36 @@ class CobroService {
 
         let dataUltimoCobroDetalle = cobrosDetalleFiltered.pop();
         if (dataUltimoCobroDetalle) {
-            valorMovimientoSaldo = dataUltimoCobroDetalle.saldoOriginal - dataUltimoCobroDetalle.abono;
+            valorMovimientoSaldo = new Decimal(dataUltimoCobroDetalle.saldoOriginal).minus(dataUltimoCobroDetalle.abono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
         } else {
-            valorMovimientoSaldo = item.saldoOriginal;
+            valorMovimientoSaldo = new Decimal(item.saldoOriginal).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
         }
 
  
         this.cobrosDetalle.push({
             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
             idCuotaPorCobrar: item.idCuotaPorCobrar,
-            abono: this.fS.roundNumber(abono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+            abono,
+          //  abono: this.fS.roundNumber(abono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
             interes: item.interes,
             diasMora: item.diasMora,
             mora: item.mora,
-            cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
-            saldo,
+            cuota: new Decimal(item.cuota).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
+          //  cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+            saldo: new Decimal(saldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
             secuencial: this.indexDatoCobro,
             valorSaldoLectura: item.valorSaldoLectura,
-            saldoOriginal: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+          //  saldoOriginal: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+            saldoOriginal: new Decimal(valorMovimientoSaldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
             posfechado: this.esAbonoPosfechado
         })
-        item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND);
-        item.saldoOriginal = this.fS.roundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND);
+      //  item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND);
+      //  item.saldoOriginal = this.fS.roundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND);
+        item.saldo = new Decimal(item.saldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber() 
+        item.saldoOriginal = new Decimal(item.saldoOriginal).minus(abono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber()
     }
 
-    /**
-     * 
-     * @param {object} item item cuota  
-     * @returns number
-     */
-    getValorSaldo(item) {
-        
-        // let total = item.abono + item.abonoPosfechado;
-        // return this.fS.roundNumber(total, 5) === this.fS.roundNumber(item.cuota, 5) ? 0 : this.fS.roundNumber(item.saldo, 5);
-        return this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND);
-    }
+  
 
 
     /**
@@ -1070,21 +1070,24 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
         }
     }
  
-    
+   
+
     function getTotalesCuota() {
-        let importeTotal = 0, abono = 0, saldo = 0, totalMora = 0, totalSaldoDoc = 0;
+        let importeTotal = new Decimal(0), abono = new Decimal(0), saldo = new Decimal(0), totalMora = new Decimal(0), totalSaldoDoc = new Decimal(0);
+
         for (let item of $scope.selectedDocumentos) {
-            importeTotal += item.importeTotal;
-            saldo += item.saldo;
-            abono += item.abono;
-            totalMora += item.mora || 0;
-            totalSaldoDoc += item.saldoDoc || 0;
+            importeTotal = importeTotal.plus(item.importeTotal);
+            saldo = saldo.plus(item.saldo);
+            abono = abono.plus(item.abono);
+            totalMora = totalMora.plus(item.mora || 0);
+            totalSaldoDoc = totalSaldoDoc.plus(item.saldoDoc || 0);
         }
-        $scope.data.importeTotal = fS.roundNumber(importeTotal, 5);
-        $scope.data.totalSaldo = fS.roundNumber(saldo, 5);
-        $scope.data.totalAbonoAnterior = fS.roundNumber(abono, 5)
-        $scope.data.totalMora = fS.roundNumber(totalMora, 5)
-        $scope.data.totalSaldoDoc = fS.roundNumber(totalSaldoDoc, 5)
+
+        $scope.data.importeTotal = importeTotal.toNumber();
+        $scope.data.totalSaldo = saldo.toNumber();
+        $scope.data.totalAbonoAnterior = abono.toNumber();
+        $scope.data.totalMora = totalMora.toNumber();
+        $scope.data.totalSaldoDoc = totalSaldoDoc.toNumber();
         $scope.data.totalValorAbono = 0;
         $scope.data.valorCambio = 0;
 
@@ -1096,6 +1099,8 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
             $scope.comprobante.totalMora = $scope.data.totalMora;
         }
     }
+
+
 
     $scope.hasDatosCobro = () => $scope.datosCobro.length > 0;
     //Cuando Seleccionan los documentos 
@@ -1111,31 +1116,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                 fS.sweetAlert('warning', `Documento ${item.tipoDoc} Nro.: ${item.serieComprobante} no posee cuotas`);
                 $scope.deleteDocSeleted(item);
             }
-
-            // if($scope.hastDatosCobro()){
-            //     Swal.fire({
-            //         //title: 'Are you sure?',
-            //         text: "Tienes formas de cobro aplicados a los documentos seleccionados, desea borrar e iniciar nuevamente!",
-            //         icon: 'warning',
-            //         showCancelButton: true,
-            //         confirmButtonColor: '#3085d6',
-            //         cancelButtonColor: '#d33',
-            //         confirmButtonText: 'Si!',
-            //         cancelButtonText: 'No'
-            //     }).then((result) => {
-            //         if (result.isConfirmed) {
-            //             $scope.datosCobro = [];    
-            //             cobroSvc.cobrosDetalle = [];
-            //             cobroSvc.indexDatoCobro = 0;
-            //             cobroSvc.selectedDocumentos = [];                  
-            //         }else{
-            //             $scope.deleteDocSeleted(item);
-            //         }
-            //     })
-            // }             
-
-            // item.showCuota = true;
-            // item.cuotaOriginal = JSON.parse(JSON.stringify(item.cuotas));
+ 
 
             getTotalesCuota();
         } catch (error) {
@@ -1144,18 +1125,8 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
     }
 
 
-    $scope.onDesSelectDoc = function () {
-        console.log('quitado elemento')
-        // if($scope.cobrosDetalle.some(ccd=>ccd.idDocumento ===item.idDocumento && ccd.idTipoDocumento && item.idTipoDocumento)){
-        //     $scope.selectedDocumentos.push(item);
-        //     Swal.fire({
-        //         //title: 'Are you sure?',
-        //         text: "Tienes formas de cobro aplicados a este documento, no puedes deseleccionar!",
-        //         icon: 'warning',               
-        //     })
-        // }
-        getTotalesCuota();
-        console.log('calculando totales ')
+    $scope.onDesSelectDoc = function () { 
+        getTotalesCuota(); 
     }
 
     $scope.displayCuota = (item) => {
@@ -1258,8 +1229,13 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                         cuentasPorCobrarEstado = cobroSvc.cuentasPorCobrarEstado;
                         cuotasPorCobrarEstado = cobroSvc.cuotasPorCobrarEstado;
 
-                        let abonoCuota = $scope.cobrosDetalle.filter(item => item.secuencial === cobroSvc.indexDatoCobro)
-                            .reduce((prev, curr) => prev + curr.abono, 0)
+                        let abonoCuota = $scope.cobrosDetalle
+                            .filter(item => item.secuencial === cobroSvc.indexDatoCobro)
+                            .reduce((prev, curr) => new Decimal(prev).plus(curr.abono), new Decimal(0))
+                            .toNumber();
+
+
+
                         $scope.addDatosCobro(result, abonoCuota);
 
                         calculoTotales();
@@ -1284,7 +1260,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
     $scope.addDatosCobro = function (obj, abonoCuota) {
         $scope.datosCobro.push({
             ...obj,
-            abonoCuota: fS.roundNumber(abonoCuota, 2),
+            abonoCuota: fS.roundNumber(new Decimal(abonoCuota).toNumber(), 2),
             secuencial: cobroSvc.indexDatoCobro
         })
     }
@@ -1348,9 +1324,9 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
     function calculoTotales() {
 
         let { totalValorAbono, totalValorAbonoEfectivo } = $scope.datosCobro.reduce((prev, curr) => {
-            prev.totalValorAbono += curr.valorAbono;
+            prev.totalValorAbono = new Decimal(prev.totalValorAbono).plus(curr.valorAbono).toNumber();
             if (curr.codEntidadFinanciera === "EFE") {
-                prev.totalValorAbonoEfectivo += curr.valorAbono;
+                prev.totalValorAbonoEfectivo = new Decimal(prev.totalValorAbonoEfectivo).plus(curr.valorAbono).toNumber();
             }
             return prev;
         }, {
@@ -1359,18 +1335,18 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
         });
 
         let totalSaldo = $scope.selectedDocumentos.flatMap(item => item.cuotas)
-            .reduce((prev, curr) => prev + curr.saldo, 0);
+            .reduce((prev, curr) => new Decimal(prev).plus(curr.saldo).toNumber(), 0);
         let valorCambio = 0;
 
         $scope.data.totalValorAbono = fS.roundNumber(totalValorAbono, 5);
         $scope.data.totalSaldo = fS.roundNumber(totalSaldo, 5);
 
-
         if (totalValorAbonoEfectivo >= $scope.comprobante.saldo) {
-            valorCambio = totalValorAbonoEfectivo - $scope.comprobante.saldo
+            valorCambio = new Decimal(totalValorAbonoEfectivo).minus($scope.comprobante.saldo).toNumber();
         }
 
         $scope.data.valorCambio = fS.roundNumber(valorCambio, 5);
+
 
     }
 
@@ -1474,15 +1450,19 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
 
                 if (result.isConfirmed) {
 
+                    let totalValorAbono = $scope.datosCobro.reduce((acc, curr) => new Decimal(acc).plus(curr.valorAbono), new Decimal(0)).toNumber();
+                    let totalAbonoCuota = $scope.datosCobro.reduce((acc, curr) => new Decimal(acc).plus(curr.abonoCuota), new Decimal(0)).toNumber();
+
                     let comprobante = {
                         idCliente: $scope.comprobante.idCliente,
-                        total: $scope.datosCobro.reduce((acc, curr) => acc + curr.valorAbono, 0),
-                        abono: $scope.datosCobro.reduce((acc, curr) => acc + curr.abonoCuota, 0),
+                        total: totalValorAbono,
+                        abono: totalAbonoCuota,
                         codEstab: $scope.comprobante.codEstab,
                         numeroIdentificacion: $scope.comprobante.identificacionComprador,
                         nombreFiscal: $scope.comprobante.razonSocialComprador,
                         observacion: $scope.comprobante.observacion
-                    }
+                    };
+
 
                     let cobros = $scope.datosCobro.map(item => {
                         let infoCobro = [{
@@ -1539,7 +1519,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                    
  
                     let params = comprobanteIngresoSvc.mapperTo(data); 
-                  
+                              
                     showLoader();
                     comprobanteIngresoSvc.post(params).then(response => {
                         hideLoader();
