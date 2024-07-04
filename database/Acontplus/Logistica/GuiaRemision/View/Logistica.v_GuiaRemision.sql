@@ -4,16 +4,10 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
 
   SELECT gr.idGuiaRemision
         ,gr.idCliente
-        ,gr.idPuntoEmision
-        ,gr.idEntidad
         ,gr.idUsuario
         ,gr.idFactura
-        ,gr.nroDocumento as secuencial
-        ,gr.fechaEmision
         ,gr.fechaInicio
         ,gr.fechaFin
-        ,gr.fechaAutorizacion
-        ,gr.claveAcceso
         ,gr.emision
         ,gr.estado
         ,gr.docAduanero
@@ -24,6 +18,12 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
 		,gr.estableDestino
 		,gr.entregar
         ,gr.motivo
+        ,de.nroDocumento as secuencial
+        ,de.idPuntoEmision
+        ,de.fechaEmision
+        ,de.fechaAutorizacion
+        ,de.claveAcceso
+        ,es.idEntidad
         ,es.idEstablecimiento
         ,es.codEstab
         ,es.nombreComercial
@@ -31,22 +31,17 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
         ,pt.ambiente
         ,cl.nombreFiscal         as razonSocialDestinatario
         ,cl.numeroIdentificacion as identificacionDestinatario
-        ,(
-            SELECT TOP 1 es.codigo 
-            FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
-            INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio = de.idEstadoServicio 
-            WHERE de.codDoc = '06' 
-              AND de.idDocumento = gr.idGuiaRemision 
-
-         ) as codEstado
-        ,ts.nombre        as razonSocialTransportista
-        ,us.nombreUsuario as usuario
+        ,se.codigo               as codEstado
+        ,ts.nombre               as razonSocialTransportista
+        ,us.nombreUsuario        as usuario
 	FROM dbo.GuiaRemision               gr WITH (NOLOCK)
-    INNER JOIN dbo.PuntoEmision         pt WITH (NOLOCK) ON pt.idPuntoEmision         = gr.idPuntoEmision
-    INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pt.idEstablecimiento
+    INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = gr.idDocumentoElectronico
     INNER JOIN dbo.Cliente              cl WITH (NOLOCK) ON cl.idCliente              = gr.idCliente
     INNER JOIN dbo.Transportista        ts WITH (NOLOCK) ON ts.idTransportista        = gr.idTransportista
     INNER JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario              = gr.idUsuario
      LEFT JOIN dbo.Factura              fa WITH (NOLOCK) ON fa.idFactura              = gr.idFactura
-     LEFT JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = fa.idDocumentoElectronico
+    INNER JOIN dbo.PuntoEmision         pt WITH (NOLOCK) ON pt.idPuntoEmision         = de.idPuntoEmision
+    INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pt.idEstablecimiento
+    INNER JOIN FactElect.EstadoServicio se WITH (NOLOCK) ON se.idEstadoServicio       = de.idEstadoServicio
+     LEFT JOIN dbo.DocumentoElectronico df WITH (NOLOCK) ON df.idDocumentoElectronico = fa.idDocumentoElectronico
 )

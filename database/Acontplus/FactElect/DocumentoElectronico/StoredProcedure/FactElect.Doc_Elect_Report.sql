@@ -82,7 +82,8 @@ BEGIN
                          LEFT JOIN Ventas.v_NotaCredito        nc WITH (NOLOCK) ON nc.idFactura           = f.idFactura
                          LEFT JOIN FactElect.DocRelacionado    dr WITH (NOLOCK) ON dr.claveAcceso         = f.claveAcceso
                          LEFT JOIN Recepcion.DocumentoImpuesto di WITH (NOLOCK) ON di.DocumentoRecibidoId = dr.idDocumentoRecibido
-                        WHERE f.idEntidad = @idEntidad '
+                        WHERE f.idEntidad = @idEntidad
+                          AND fi.[Enabled] = 1 '
 
             IF @codEstab IS NOT NULL
                 BEGIN
@@ -94,10 +95,10 @@ BEGIN
                     SET @sql = @sql + 'AND f.idPuntoEmision = @idPuntoEmision '
                 END
                 
-            --IF @ckFecha = 1
-            --    BEGIN
-            --        SET @sql = @sql + 'AND CAST(f.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
-            --    END 
+            IF @ckFecha = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST(f.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                END 
 
             IF @codEstado >= 0
                 BEGIN

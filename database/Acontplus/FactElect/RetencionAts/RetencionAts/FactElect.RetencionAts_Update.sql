@@ -25,7 +25,7 @@ BEGIN
            ,@idEstadoServicio INT ,@CustomerId INT 
 
     --> RetencionAts
-	DECLARE @tipoEmision TINYINT = 1 ,@idPuntoEmision INT ,@idTipoDocumento INT ,@idProveedor INT 
+	DECLARE @tipoEmision TINYINT = 1 ,@idPuntoEmision INT ,@idTipoDocumento INT ,@idProveedor INT  ,@idRentencionAts INT
 
 			
 	DECLARE @tblInfoCompRet AS TABLE(
@@ -75,9 +75,14 @@ BEGIN
         --> Recuperacion de Varialbles
         SELECT TOP 1 @ruc = ruc FROM Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-        SELECT TOP 1 @secuencial = secuencial FROM FactElect.RetencionAts WITH (NOLOCK) WHERE idRetencionAts = @id
-
-        SELECT TOP 1 @idPuntoEmision = idPuntoEmision, @ambiente = ambiente ,@fechaEmision = fechaEmision FROM @tblInfoCompRet t INNER JOIN PuntoEmision p WITH (NOLOCK) ON p.codEstab = t.codEstab
+        SELECT @idRentencionAts = rt.idRetencionAts
+              ,@secuencial      = de.nroDocumento
+              ,@fechaEmision    = de.fechaEmision
+              ,@ambiente        = pe.ambiente 
+        FROM FactElect.RetencionAts         rt WITH (NOLOCK)
+        INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
+        INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
+        WHERE rt.idDocumentoElectronico = @id
 
         SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1
 
@@ -149,19 +154,9 @@ BEGIN
 		BEGIN TRAN
 
 			UPDATE ret WITH (ROWLOCK)
-               SET ret.codEstab                         = t.codEstab
-			      ,ret.claveAcceso                      = @claveAcceso 
-			      ,ret.estab                            = t.estab
-			      ,ret.ptoEmi                           = t.ptoEmi 
-			      ,ret.fechaEmision                     = t.fechaEmision
-			      ,ret.contribuyentEspecial             = t.contribuyentEspecial
-			      ,ret.obligadoContabilidad             = t.obligadoContabilidad
-			      ,ret.tipoIdentificacionSujetoRetenido = t.tipoIdentificacionSujetoRetenido
-			      ,ret.tipoSujetoRetenido               = t.tipoSujetoRetenido 
+               SET ret.tipoSujetoRetenido               = t.tipoSujetoRetenido 
 			      ,ret.parteRel                         = t.parteRel
 			      ,ret.idCliente                        = t.idCliente
-			      ,ret.razonSocialSujetoRetenido        = t.razonSocialSujetoRetenido
-			      ,ret.identificacionSujetoRetenido     = t.identificacionSujetoRetenido
 			      ,ret.periodoFiscal                    = t.periodoFiscal
 			      ,ret.idUsuario                        = @idUsuario
 			      ,ret.idProveedor                      = @idProveedor
@@ -174,9 +169,7 @@ BEGIN
 			      ,fechaEmision     = @fechaEmision
 			      ,idEstadoServicio = @idEstadoServicio
 			      ,CustomerId       = @CustomerId
-			WHERE idDocumento = @id 
-              AND codDoc = '07' 
-              AND versionComp = '2.0.0'
+			WHERE idDocumentoElectronico = @id
 
             UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)
                SET idProveedor  = @idProveedor

@@ -23,7 +23,7 @@ BEGIN
 
         SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 6
 
-        SELECT TOP 1 @idRetencionAts = idDocumento FROM DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id
+        SELECT TOP 1 @idRetencionAts = idRetencionAts FROM FactElect.RetencionAts WITH (NOLOCK) WHERE idDocumentoElectronico = @id
 
         --> Validacion de Informacion
         IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE codDoc = '07' AND idDocumento = @id AND codEstado != 4)
@@ -40,6 +40,9 @@ BEGIN
 
 		BEGIN TRAN 
 			
+            --> ANULA EN DOCUMENTO ELECTRONICO
+			UPDATE DocumentoElectronico SET idEstadoServicio = @idEstadoServicio WHERE idDocumentoElectronico = @id
+
 			UPDATE FactElect.RetencionAts SET anuladaSri = 1 WHERE idRetencionAts = @idRetencionAts
 
 			UPDATE FactElect.RetAtsDocSustento SET estado = 0 WHERE idRetencionAts = @idRetencionAts
@@ -54,8 +57,6 @@ BEGIN
 			) AS t ON fc.nroAutorizacion = t.numAutDocSustento
 			AND REPLACE(fc.puntoEmision,'-','')+Helper.F_Auto_Sequential(fc.nroDocumento) = t.numDocSustento
 
-			--> ANULA EN DOCUMENTO ELECTRONICO
-			UPDATE DocumentoElectronico SET idEstadoServicio = @idEstadoServicio WHERE idDocumentoElectronico = @id
 
 		COMMIT TRAN
         SELECT '1' code, 'Retencion anulada en el SRI con exito'  as 'message'
