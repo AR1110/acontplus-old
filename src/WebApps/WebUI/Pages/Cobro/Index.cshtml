@@ -210,8 +210,9 @@
                                                 </md-button>
                                             </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.anular && !c.esAnulado">
-                                                <md-button  ng-click="askToDelete(c)">
+                                           <!-- ng-if="accion.anular && !c.esAnulado"-->
+                                            <md-menu-item >
+                                                <md-button btn-anular-comprobante-ingreso params="c" on-result="refresh()">
                                                     <span md-menu-align-target>
                                                         <i class="ti-na"></i> Anular
                                                     </span>

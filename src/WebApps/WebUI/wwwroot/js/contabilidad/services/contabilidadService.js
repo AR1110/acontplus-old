@@ -649,12 +649,18 @@
         function getDataToOverride(id){
             const params = JSON.stringify({ id, tipo: 7 });
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response=>{
-                let data = {};
+                let resultData = {};
                 if(response.code==="1"){
-                    let mainData = JSON.parse(response.payload);
-                    console.log(mainData)
+                    console.log(JSON.parse(response.payload))
+                    let {cuentas,cuotas,estadoPago} = JSON.parse(response.payload);
+                    
+                    resultData.cuentasPorCobrar = cuentas;
+                    resultData.cuentasPorCobrar = cuotas;
+                    resultData.estadosPago = estadoPago;
+                }else{
+                    throw new Error('Error en petición')
                 }
-                
+                return resultData
             })
         }
 
@@ -1094,6 +1100,160 @@
         }
     }])
 
+
+    app.factory('contabilidadUtils', [function(){
+        return {
+            generarCuentasPorCobrarEstado,
+            generarCuotasPorCobrarEstado
+        }
+
+
+        function getDataEstadoPago({ saldo, abono, esPosfechado, estadosPago }) {
+            let estado = '';
+            let dataEstadoPago = {};
+
+            if (esPosfechado) {
+                dataEstadoPago = estadosPago.find(ep => ep.codigo === 'PFC');
+            } else {
+                if (saldo === 0) {
+                    dataEstadoPago = estadosPago.find(ep => ep.codigo === 'CBR');
+                    estado = 'COBRADA'
+                }
+                if (saldo > 0) {
+                    dataEstadoPago = estadosPago.find(ep => ep.codigo === 'PP');
+                    estado = "PENDIENTE PARCIAL";
+                }
+                if (abono === 0) {
+                    dataEstadoPago = estadosPago.find(ep => ep.codigo === 'PE');
+                    estado = "PENDIENTE";
+                }
+
+            }
+
+
+            return {
+                idEstadoPago: dataEstadoPago.idEstadoPago,
+                descripcion: estado
+            }
+        }
+
+        function generarCuentasPorCobrarEstado({ historialCuentas, cobrosDetalle, estadosPago }){
+            let cuentasPorCobrarAgrupado = historialCuentas.reduce((acc, curr) => {
+
+                let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar);
+                if (!existeDato) {
+                    acc.push({
+                        idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                        valorSaldoLectura: curr.valorSaldoLectura,
+                        abono: curr.abono,
+                        diasMora: curr.diasMora,
+                        mora: curr.mora
+                    })
+                } else {
+                    existeDato.abono += curr.abono;
+
+                }
+                return acc;
+
+            }, [])
+
+            let cuentasPorCobrarEstado = [];
+
+
+            for (let item of cuentasPorCobrarAgrupado) {
+                let valorSaldo = 0, dataEstadoPago = {};
+
+                let totalPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && cd.posfechado).reduce((acc, curr) => {
+                    acc += curr.abono;
+                    return acc;
+                }, 0)
+
+                let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && !cd.posfechado).reduce((acc, curr) => {
+                    acc += curr.abono;
+                    return acc;
+                }, 0) 
+
+                valorSaldo = item.valorSaldoLectura - totalNoPosfechado;
+
+                if (totalPosfechado > 0) {
+                    dataEstadoPago = getDataEstadoPago({
+                        esPosfechado: true,
+                        estadosPago
+                    })
+                }
+
+
+                if (totalPosfechado <= 0) {
+                    dataEstadoPago = getDataEstadoPago({
+                        saldo: valorSaldo,
+                        abono: totalNoPosfechado,
+                        estadosPago
+                    })
+                }
+
+                cuentasPorCobrarEstado.push({
+                    idCuentaPorCobrar: item.idCuentaPorCobrar,
+                    idEstadoPago: dataEstadoPago.idEstadoPago,
+                    abono: totalNoPosfechado
+                })
+
+            }
+            return cuentasPorCobrarEstado;
+
+        }
+ 
+
+        function generarCuotasPorCobrarEstado({ cobrosDetalle, estadosPago }){
+
+            let cuotasPorCobrarAgrupado = cobrosDetalle.reduce((acc, curr) => {
+
+                let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar && curr.idCuentaPorCobrar && dataCxc.idCuotaPorCobrar === curr.idCuotaPorCobrar);
+                if (!existeDato) {
+                    acc.push({
+                        idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                        idCuotaPorCobrar: curr.idCuotaPorCobrar,
+                        valorSaldoLectura: curr.valorSaldoLectura,
+                        abono: curr.abono,
+                    })
+                } else {
+                    existeDato.abono += curr.abono;
+
+                }
+                return acc;
+
+            }, [])
+
+            let cuotasPorCobrarEstado = [];
+
+            for (let item of cuotasPorCobrarAgrupado) {
+
+                let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuotaPorCobrar === item.idCuotaPorCobrar && !cd.posfechado).reduce((acc, curr) => {
+                    acc += curr.abono;
+                    return acc;
+                }, 0)
+
+                let valorSaldo = item.valorSaldoLectura - totalNoPosfechado;
+
+                let dataEstadoPago = getDataEstadoPago({
+                    saldo: valorSaldo,
+                    abono: item.abono,
+                    estadosPago
+                })
+
+
+                cuotasPorCobrarEstado.push({
+                    idEstadoPago: dataEstadoPago.idEstadoPago,
+                    abono: totalNoPosfechado,
+                    idCuotaPorCobrar: item.idCuotaPorCobrar
+                })
+
+            }
+            return cuotasPorCobrarEstado;
+
+        }
+
+
+    }])
 
 
 })(window.angular)

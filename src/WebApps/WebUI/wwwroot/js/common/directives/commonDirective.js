@@ -2124,25 +2124,148 @@
      * @description anular comprobante ingreso 
      * 
      */
-    app.directive('btnAnularComprobanteIngreso', ['comprobanteIngresoService',function (compIngresoSvc) {
+    app.directive('btnAnularComprobanteIngreso', ['comprobanteIngresoService','toastService', 'formulario',function (compIngresoSvc,tS,fS) {
         return {
             restrict: 'A',
             scope: {
                 params: '=',
                 onResult: '&'
             },
-            link: function (scope, element) {
+            link: async function (scope, element) {
+                let cuentasPorCobrar = [], cuotasPorCobrar = [], estadosPago = [];
+
                 element.on('click', async function () {
-                    
-                    let {idComprobanteIngreso} = scope.params;
+                    const { idComprobanteIngreso } = scope.params;
 
-                    compIngresoSvc.getDataToOverride(idComprobanteIngreso).then(response=>{
-                    
-                    })                
-                    console.log(scope)
+                    try {
+                        const response = await compIngresoSvc.getDataToOverride(idComprobanteIngreso); 
 
-                })
+                        cuentasPorCobrar = response.cuentasPorCobrar;
+                        cuotasPorCobrar = response.cuotasPorCobrar;
+                        estadosPago = response.estadosPago;
+
+                        if (cuentasPorCobrar.length === 0 || cuotasPorCobrar.length === 0) {
+
+                            console.log("cuentasPorCobrar", cuentasPorCobrar);
+                            console.log("cuotasPorCobrar", cuotasPorCobrar);
+                            return;
+                        }
+
+                        const { isConfirmed, value } = await Swal.fire({
+                            icon: 'warning',
+                            html: '<small>¿Está seguro/a de anular este registro ahora?</small>',
+                            input: 'text',
+                            inputPlaceholder: 'Ingrese la observación',
+                            showConfirmButton: true,
+                            confirmButtonText: 'Sí, anular',
+                            showCancelButton: true,
+                            cancelButtonText: 'No, cancelar',
+                            allowOutsideClick: false,
+                            inputValidator: value => !value && '¡Ingrese la observación!'
+                        });
+
+                        if (!isConfirmed) return;
+
+                        const dataParams = getDataParams();
+                        const data = {
+                            observacion: value,
+                            ...dataParams
+                        };
+
+                        showLoader();
+                        const updateResponse = await compIngresoSvc.update(idComprobanteIngreso, data);
+
+                        if (updateResponse.code === "0") {
+                            tS.toastr({
+                                type: 'warning',
+                                message: updateResponse.message
+                            });
+                        } else if (updateResponse.code === "1") {
+                            tS.toastr({
+                                type: 'success',
+                                message: updateResponse.message
+                            });
+
+                            scope.onResult(updateResponse);
+                        }
+
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        hideLoader();
+                    }
+                });
+
+                function getDataIdEstadoPago(codigoEstadoPago) {
+                    const dataEstadoPago = estadosPago.find(ep => ep.codigo === codigoEstadoPago);
+                    return dataEstadoPago ? dataEstadoPago.idEstadoPago : 0;
+                }
+
+                function getDataParams() {
+                    // Agrupa cuentas por cobrar
+                    const cuentasPorCobrarAgrupado = cuentasPorCobrar.reduce((acc, curr) => {
+                        let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar);
+                        let abono = curr.cobro ? curr.abono : 0;
+
+                        if (!existeDato) {
+                            acc.push({
+                                idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                                abonoDoc: curr.abonoDoc,
+                                abono,
+                            });
+                        } else {
+                            existeDato.abono += abono;
+                        }
+                        return acc;
+                    }, []);
+
+                    // Agrupa cuotas por cobrar
+                    const cuotasPorCobrarAgrupado = cuotasPorCobrar.reduce((acc, curr) => {
+                        let existeDato = acc.find(dataCxc => dataCxc.idCuotaPorCobrar === curr.idCuotaPorCobrar);
+                      //  let abono = curr.cobro ? curr.abono : 0;
+                      let abono = curr.abono
+
+                        if (!existeDato) {
+                            acc.push({
+                                idCuotaPorCobrar: curr.idCuotaPorCobrar,
+                                abonoCuota: curr.abonoCuota,
+                                abono,
+                            });
+                        } else {
+                            existeDato.abono += abono;
+                        }
+                        return acc;
+                    }, []);
+
+                    // Calcula los valores residuales y el estado de pago para cuentas por cobrar
+                    const tempCuentasPorCobrar = cuentasPorCobrarAgrupado.map(item => {
+                        const valorResiduo = item.abonoDoc - item.abono;
+                        return {
+                            idCuentaPorCobrar: item.idCuentaPorCobrar,
+                            abono: fS.roundNumber(valorResiduo, 3),
+                            idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP')
+                        };
+                    });
+
+                    // Calcula los valores residuales y el estado de pago para cuotas por cobrar
+                    const tempCuotasPorCobrar = cuotasPorCobrarAgrupado.map(item => {
+                        const valorResiduo = item.abonoCuota - item.abono;
+                        return {
+                            idCuotaPorCobrar: item.idCuotaPorCobrar,
+                            abono: fS.roundNumber(valorResiduo, 3),
+                            idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP')
+                        };
+                    });
+
+                    // Retorna los datos agrupados y calculados
+                    return {
+                        cuenta: tempCuentasPorCobrar,
+                        cuota: tempCuotasPorCobrar
+                    };
+                }
+
             }
+
         }
     }])
 
