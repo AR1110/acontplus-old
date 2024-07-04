@@ -9,6 +9,7 @@ CREATE OR ALTER VIEW Ventas.v_FacturaImpuesto WITH SCHEMABINDING AS (
 		  ,fi.TaxBase
 		  ,fi.TaxValue
           ,fi.Discount
+          ,fi.[Enabled]
 		  ,it.codigo
 		  ,ti.descripcion as tax
           ,ti.codigoPorcentaje
