@@ -1,29 +1,20 @@
-﻿using FactElect.API.Interfaces;
+﻿namespace FactElect.API.Services;
 
-namespace FactElect.API.Services;
-
-public class CompanyCustomerService : ICompanyCustomerService
+public class CompanyCustomerService(IAdoRepository repository) : ICompanyCustomerService
 {
-    private readonly IAdoRepository _repository;
-
-    public CompanyCustomerService(IAdoRepository repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<string> AddAsync(Dictionary<string, object> data)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Insert", data);
+        return await repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Insert", data);
     }
 
     public async Task<string> DeleteAsync(Dictionary<string, object> data)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Delete", data);
+        return await repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Delete", data);
     }
 
     public async Task<ApiResponseDeprecated> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("Ventas.Cliente_Get", parameters, true);
+        var ds = await repository.GetDataSetAsync("Ventas.Cliente_Get", parameters, true);
         if (DataValidation.DataSetIsNull(ds, true))
         {
             return new ApiResponseDeprecated { code = "0", message = "No se encontraron clientes" };
@@ -34,7 +25,7 @@ public class CompanyCustomerService : ICompanyCustomerService
 
     public async Task<ApiResponseDeprecated> SearchAsync(Dictionary<string, object> parameters)
     {
-        var dt = await _repository.GetDataTableAsync("Ventas.Cliente_Get_Search", parameters);
+        var dt = await repository.GetDataTableAsync("Ventas.Cliente_Get_Search", parameters);
         if (DataValidation.DataTableIsNull(dt))
         {
             return new ApiResponseDeprecated { code = "0", message = "No se encontraron clientes con estos datos" };
@@ -45,7 +36,7 @@ public class CompanyCustomerService : ICompanyCustomerService
 
     public async Task<ApiResponseDeprecated> GetIdAsync(Dictionary<string, object> parameters)
     {
-        var dt = await _repository.GetDataTableAsync("Ventas.Cliente_Get_Id", parameters);
+        var dt = await repository.GetDataTableAsync("Ventas.Cliente_Get_Id", parameters);
         if (DataValidation.DataTableIsNull(dt))
         {
             return new ApiResponseDeprecated { code = "0", message = "No se encontró datos del cliente" };
@@ -56,6 +47,6 @@ public class CompanyCustomerService : ICompanyCustomerService
 
     public async Task<string> UpdateAsync(Dictionary<string, object> data)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Update", data);
+        return await repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Update", data);
     }
 }

@@ -1,19 +1,7 @@
-﻿using FactElect.API.Interfaces;
+﻿namespace FactElect.API.Controllers;
 
-namespace FactElect.API.Controllers;
-
-public class GuiaRemisionController : BaseApiController
+public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-
-    private readonly IGuiaRemisionService _svc;
-
-    public GuiaRemisionController(IConfiguration configuration, IGuiaRemisionService service)
-    {
-        _configuration = configuration;
-        _svc = service;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -21,7 +9,7 @@ public class GuiaRemisionController : BaseApiController
         {
             { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
-        var response = await _svc.GetAsync(parameters);
+        var response = await service.GetAsync(parameters);
         if (response == null) { return NoContent(); }
 
         ;
@@ -32,7 +20,7 @@ public class GuiaRemisionController : BaseApiController
     public async Task<IActionResult> GetId(int id)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await _svc.GetByIdAsync(parameters);
+        var response = await service.GetByIdAsync(parameters);
         if (response == null) { return NoContent(); }
 
         ;
@@ -47,7 +35,7 @@ public class GuiaRemisionController : BaseApiController
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await _svc.AddAsync(parameters);
+        var response = await service.AddAsync(parameters);
         if (response == null) { return NoContent(); }
 
         ;
@@ -64,7 +52,7 @@ public class GuiaRemisionController : BaseApiController
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await _svc.UpdateAsync(parameters);
+        var response = await service.UpdateAsync(parameters);
         if (response == null) { return NoContent(); }
 
         ;
@@ -76,7 +64,7 @@ public class GuiaRemisionController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await _svc.DeleteAsync(parameters);
+        var response = await service.DeleteAsync(parameters);
         return Ok(response);
     }
 }

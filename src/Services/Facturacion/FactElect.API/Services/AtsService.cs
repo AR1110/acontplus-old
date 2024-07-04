@@ -1,6 +1,4 @@
-﻿using FactElect.API.Interfaces;
-
-namespace FactElect.API.Services;
+﻿namespace FactElect.API.Services;
 
 public class AtsService(IAdoSqlServer adoSqlServer) : IAtsService
 {

@@ -1,6 +1,4 @@
-﻿using FactElect.API.Interfaces;
-
-namespace FactElect.API.Controllers.Customer;
+﻿namespace FactElect.API.Controllers.Customer;
 
 public class CompanyCustomerController : BaseApiController
 {

@@ -70,40 +70,6 @@ public class DbAccess : IDisposable
         }
     }
 
-    public async Task<int> OnlyExecuteAsync(bool timeout = true)
-    {
-        if (!timeout)
-        {
-            _command.CommandTimeout = 0;
-        }
-
-        return await _command.ExecuteNonQueryAsync();
-    }
-
-    public DataTable GetDataTable()
-    {
-        var dt = new DataTable();
-        try
-        {
-            if (_command != null)
-            {
-                using var dataAdapter = new SqlDataAdapter(_command);
-                dataAdapter.Fill(dt);
-                if (DataValidation.DataTableIsNull(dt))
-                {
-                    DtWarning(ref dt);
-                }
-            }
-        }
-        catch (Exception)
-        {
-            Close();
-            throw;
-        }
-
-        return dt;
-    }
-
     public ApiResponseDeprecated GetDefault()
     {
         var dt = new DataTable();

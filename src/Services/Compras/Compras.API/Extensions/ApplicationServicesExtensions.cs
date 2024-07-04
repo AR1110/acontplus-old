@@ -16,6 +16,7 @@ public static class ApplicationServicesExtensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<FileTxt>();
+        services.AddScoped<IAdoSqlServer, AdoSqlServer>();
         services.AddScoped<ICustomLogger, CustomLogger>();
         services.AddScoped<IDocumentoTempService, DocumentoTempService>();
         services.AddScoped<IProveedorService, ProveedorService>();
