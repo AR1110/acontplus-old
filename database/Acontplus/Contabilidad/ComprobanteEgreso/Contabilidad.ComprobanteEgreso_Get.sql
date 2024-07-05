@@ -3,7 +3,10 @@ USE [AcontPlus]
 -- Author:		Emilio Senguana
 -- Create date: 21-02-2024 
 GO
-CREATE OR ALTER PROCEDURE Contabilidad.ComprobanteEgreso_Get @userRoleId INT, @json NVARCHAR(MAX),  @tableNames VARCHAR(MAX) OUTPUT
+CREATE OR ALTER PROCEDURE Contabilidad.ComprobanteEgreso_Get 
+    @userRoleId INT
+   ,@json NVARCHAR(MAX)
+   ,@tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -156,5 +159,69 @@ BEGIN
 
             RETURN 
         END 
+    
+    --> DataForm
+	IF @tipo = 3
+		BEGIN
+            DECLARE @idProveedor INT
 
+            SET @tableNames = 'entidadFinanciera,subEntidadFinanciera,banco,ciudad,documentos'
+
+            SELECT @idProveedor = idProveedor FROM OPENJSON(@json)WITH(idProveedor INT)
+				
+            SELECT * FROM EntidadFinanciera WHERE estado = 1
+				
+            SELECT * FROM SubEntidadFinanciera WHERE idEntidad = @idEntidad AND estado = 1
+				
+            SELECT * FROM Banco WHERE estado = 1
+				
+            SELECT * FROM Ciudad WHERE estado = 1
+
+            SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP','PA','PFC')
+
+            SELECT cp.idCuentaPorPagar as idComprobante
+                  ,(SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento td (NOLOCK) WHERE td.codigoSri = cp.codDoc) as idTipoDocumento
+                  ,cp.serieComprobante                                                                              as nroDocumento
+                  ,IIF(cp.codDoc = '04','Nota Credito','Comprobante Retención')                                     as tipoDocumento
+                  ,importeTotal                                                                                     as saldo
+                  ,CASE cp.codDoc WHEN '04' THEN (SELECT TOP 1 d.numDocSustento FROM factelect.DocRelacionado d WITH (NOLOCK) WHERE d.idDocumentoRecibido = cp.idDocumento )
+                                  WHEN '07' THEN (SELECT TOP 1 rs.numAutDocSustento FROM FactElect.RetAtsDocSustento rs WITH (NOLOCK) WHERE rs.idRetencionAts = cp.idDocumento)
+                   END                                                                                              as numAutDocSustento
+            FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK)
+            INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cp.idEstadoPago
+            WHERE cp.codDoc IN ('04','07')
+              AND cp.importeTotal > 0
+              AND cp.idProveedor = @idProveedor
+              AND ep.codigo = 'PE'
+
+            RETURN 
+				
+		END 
+    
+    --> Cuotas en pagos multiples
+    IF @tipo = 4
+        BEGIN
+            DECLARE @idCuentaPorPagar INT
+
+            SET @tableNames = 'cuotas'
+
+            SELECT @idCuentaPorPagar = idCuentaPorPagar FROM OPENJSON(@json) WITH (idCuentaPorPagar INT)
+
+            SELECT c.idCuotaPorPagar
+                  ,c.idCuentaPorPagar
+				  ,Format(c.fechaVencimiento, 'yyyy-MM-dd') as fechaVencimiento
+				  ,c.nroCuota
+				  ,c.cuota
+				  ,c.abono
+				  ,c.saldo
+				  ,ep.descripcion
+				  ,ep.codigo
+		    FROM Contabilidad.CuotaPorPagar c WITH (NOLOCK) 
+		    INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago = c.idEstadoPago
+		    WHERE c.idCuentaPorPagar = @idCuentaPorPagar	
+			  AND c.estado = 1
+             AND ep.codigo !='PA'
+
+            RETURN
+        END 
 END

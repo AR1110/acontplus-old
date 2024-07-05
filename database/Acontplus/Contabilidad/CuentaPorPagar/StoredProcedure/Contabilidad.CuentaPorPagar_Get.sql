@@ -216,38 +216,6 @@ BEGIN
             RETURN 
 		END
 
-	--> Forma Pago
-	IF @tipo = 3
-		BEGIN
-            SELECT @idProveedor = idProveedor FROM OPENJSON(@json)WITH(idProveedor INT)
-				
-            SELECT * FROM EntidadFinanciera WHERE estado = 1
-				
-            SELECT * FROM SubEntidadFinanciera WHERE idEntidad = @idEntidad AND estado = 1
-				
-            SELECT * FROM Banco WHERE estado = 1
-				
-            SELECT * FROM Ciudad WHERE estado = 1
-
-            SELECT cp.idCuentaPorPagar as idComprobante
-                  ,(SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento td (NOLOCK) WHERE td.codigoSri = cp.codDoc) as idTipoDocumento
-                  ,cp.serieComprobante                                                                              as nroDocumento
-                  ,IIF(cp.codDoc = '04','Nota Credito','Comprobante Retención')                                     as tipoDocumento
-                  ,importeTotal                                                                                     as saldo
-                  ,CASE cp.codDoc WHEN '04' THEN (SELECT TOP 1 d.numDocSustento FROM factelect.DocRelacionado d WITH (NOLOCK) WHERE d.idDocumentoRecibido = cp.idDocumento )
-                                  WHEN '07' THEN (SELECT TOP 1 rs.numAutDocSustento FROM FactElect.RetAtsDocSustento rs WITH (NOLOCK) WHERE rs.idRetencionAts = cp.idDocumento)
-                   END                                                                                              as numAutDocSustento
-            FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK)
-            INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cp.idEstadoPago
-            WHERE cp.codDoc IN ('04','07')
-              AND cp.importeTotal > 0
-              AND cp.idProveedor = @idProveedor
-              AND ep.codigo = 'PE'
-
-            RETURN 
-				
-		END 
-
 	IF @tipo = 4
 		BEGIN 				
 			SELECT cu.IdCard                                                           as nroIdentificacion
