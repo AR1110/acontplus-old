@@ -1,5 +1,4 @@
-﻿using Autofac.Core;
-using Newtonsoft.Json.Serialization;
+﻿using Newtonsoft.Json.Serialization;
 
 namespace Ventas.API.Extensions;
 
@@ -16,14 +15,10 @@ public static class ApplicationServicesExtensions
                         new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
                 });
 
-        services.AddDbContextPool<VentasContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
+        services.AddScoped<IAprobacionDocService, AprobacionDocService>();
+        services.AddScoped<IClienteService, ClienteService>();
         services.AddScoped<INotaEntregaService, NotaEntregaService>();
         services.AddScoped<IProformaService, ProformaService>();
-        services.AddScoped<IAprobacionDocService, AprobacionDocService>();
-
-        services.AddScoped<ICustomLogger, CustomLogger>();
         return services;
     }
 }

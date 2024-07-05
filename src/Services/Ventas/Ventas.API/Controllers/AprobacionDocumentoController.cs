@@ -1,37 +1,15 @@
 ﻿namespace Ventas.API.Controllers;
 
-public class AprobacionDocumentoController : BaseApiController
+public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    
-    private readonly IAprobacionDocService _svc;
-
-    public AprobacionDocumentoController(IConfiguration configuration, ICustomLogger log, IAprobacionDocService svc)
-    {
-        _configuration = configuration;
-        
-        _svc = svc;
-    }
-
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
-        {
-            await _db.SPExecute("Ventas.Aprob_Document_Get", true);
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>{
+            {"idUsuarioRol", User.GetUserRoleId()},
+            {"json", SqlStringParam.Sanitize(json)},
+        };
+        return Ok(await svc.GetAsync(parameters));
     }
 
     [HttpPost("Insert")]
@@ -42,7 +20,7 @@ public class AprobacionDocumentoController : BaseApiController
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
-        var response = await _svc.AddAsync(parameters);
+        var response = await svc.AddAsync(parameters);
         return Ok(response);
     }
 
@@ -55,7 +33,7 @@ public class AprobacionDocumentoController : BaseApiController
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
-        var response = await _svc.UpdateAsync(parameters);
+        var response = await svc.UpdateAsync(parameters);
         return Ok(response);
     }
 
@@ -64,27 +42,17 @@ public class AprobacionDocumentoController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
-        var response = await _svc.DeleteAsync(parameters);
+        var response = await svc.DeleteAsync(parameters);
         return Ok(response);
     }
 
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var _db = new DbAccess(_configuration);
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SPExecute("Ventas.Aprob_Document_Get_Id");
-            _db.AddDynamicParam("id", id);
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>{
+            {"id", id},
+        };
+        return Ok(await svc.GetByIdAsync(parameters));
     }
 
     [HttpPost("ConvertToDoc")]
@@ -95,7 +63,7 @@ public class AprobacionDocumentoController : BaseApiController
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
-        var response = await _svc.ConvertToDocAsync(parameters);
+        var response = await svc.ConvertToDocAsync(parameters);
         return Ok(response);
     }
 }

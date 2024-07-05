@@ -4,31 +4,23 @@ public class NotaCreditoController : BaseApiController
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
+    private readonly INotaCreditoService _notaCreditoService;
 
-
-    public NotaCreditoController(IConfiguration configuration)
+    public NotaCreditoController(IConfiguration configuration, INotaCreditoService notaCreditoService)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
+        _notaCreditoService = notaCreditoService;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SPExecute("Ventas.NotaCredito_Get", true);
-            _db.AddDynamicParam("idRol", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>{
+            {"idRol", User.GetUserRoleId()},
+            {"json", SqlStringParam.Sanitize(json)},
+        };
+        return Ok(await _notaCreditoService.GetAsync(parameters));
     }
 
     [HttpPost]

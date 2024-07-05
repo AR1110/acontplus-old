@@ -4,13 +4,13 @@ public class CargoController : BaseApiController
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    
+
 
     public CargoController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        
+
     }
 
     [HttpGet]
@@ -19,7 +19,7 @@ public class CargoController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-           
+
             await _db.SPExecute("Administrador.Cargo_Get", true);
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -40,7 +40,7 @@ public class CargoController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-           
+
             await _db.SPExecute("Administrador.Cargo_Insert", true);
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));

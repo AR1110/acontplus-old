@@ -3,12 +3,12 @@
 public class EmpleadoController : BaseApiController
 {
     private readonly IConfiguration _configuration;
-    
+
 
     public EmpleadoController(IConfiguration configuration)
     {
         _configuration = configuration;
-        
+
     }
 
     [HttpGet("Get")]
@@ -18,7 +18,7 @@ public class EmpleadoController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-           
+
             await _db.SPExecute("Ventas.Empleado_Get");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -40,7 +40,7 @@ public class EmpleadoController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-           
+
 
             await _db.SPExecute("Ventas.Empleado_Search");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
@@ -60,7 +60,7 @@ public class EmpleadoController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-           
+
             await _db.SPExecute("Ventas.Empleado_Insert");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -81,7 +81,7 @@ public class EmpleadoController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-           
+
             await _db.SPExecute("Ventas.Empleado_Update");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
@@ -103,7 +103,7 @@ public class EmpleadoController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-           
+
             await _db.SPExecute("Ventas.Empleado_Delete");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);

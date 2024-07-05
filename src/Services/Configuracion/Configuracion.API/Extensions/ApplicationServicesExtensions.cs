@@ -15,9 +15,11 @@ public static class ApplicationServicesExtensions
                 x.SerializerSettings.ContractResolver =
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
-
+        
+        services.AddScoped<IEmailConfigService, EmailConfigService>();
         services.AddScoped<IEstablecimientoAsignacionService, EstablecimientoAsignacionService>();
         services.AddScoped<IEstadoDocumentoService, EstadoDocumentoService>();
+        services.AddScoped<IFirmaElectronicaService, FirmaElectronicaService>();
         services.AddScoped<IPrinterService, PrinterService>();
         services.AddScoped<IPrintService, PrintService>();
         services.AddScoped<IEstablecimientoLogoService, EstablecimientoLogoService>();
@@ -36,6 +38,7 @@ public static class ApplicationServicesExtensions
 
         services.AddScoped<ICustomLogger, CustomLogger>();
         services.AddScoped<ITurnoService, TurnoService>();
+        services.AddScoped<IWhatsappUsageService, WhatsappUsageService>();
 
         services.AddAutoMapper(typeof(MappingProfiles));
         return services;

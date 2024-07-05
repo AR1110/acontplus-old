@@ -1,34 +1,16 @@
-﻿using System.Reflection.Metadata;
-using System.Security.Claims;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-
-
-namespace Configuracion.API.Controllers
+﻿namespace Configuracion.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class WhatsappUsageController(IConfiguration configuration) : ControllerBase
+    public class WhatsappUsageController(IConfiguration configuration, IWhatsappUsageService whatsappUsageService) : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<ApiResponseDeprecated>> Get(string json)
+        public async Task<IActionResult> Get(string json)
         {
-            var response = new ApiResponseDeprecated();
-            var db = new DbAccess(configuration);
-            try
+            var parameters = new Dictionary<string, object>
             {
-                await db.SPExecute("Config.WhatsappUsage_Get");
-                db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-                db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                response = db.GetDataSetAsync();
-            }
-            finally
-            {
-                db.Close();
-            }
-            return response;
+                {"idUsuarioRol" , User.GetUserRoleId()},
+                {"json" , SqlStringParam.Sanitize(json)},
+            };
+            return Ok(await whatsappUsageService.GetAsync(parameters));
         }
         [HttpPost]
         public async Task<ActionResult<ApiResponseDeprecated>> Post([FromBody] ApiRequest parameters)
