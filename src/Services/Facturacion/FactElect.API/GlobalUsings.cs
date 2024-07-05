@@ -1,4 +1,4 @@
-﻿global using Asp.Versioning;
+﻿global using FactElect.API.Interfaces;
 global using Autofac;
 global using Common.Core.Enums;
 global using Common.Core.Models;

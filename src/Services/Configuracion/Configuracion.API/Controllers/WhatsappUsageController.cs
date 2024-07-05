@@ -10,52 +10,37 @@ namespace Configuracion.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WhatsappUsageController : ControllerBase
+    public class WhatsappUsageController(IConfiguration configuration) : ControllerBase
     {
-        private readonly IConfiguration _configuration; 
-        public WhatsappUsageController(IConfiguration configuration)
-        {
-            _configuration = configuration;
-           
-        }
         [HttpGet]
         public async Task<ActionResult<ApiResponseDeprecated>> Get(string json)
         {
-            var _response = new ApiResponseDeprecated();
-            var _db = new DbAccess(_configuration);
+            var response = new ApiResponseDeprecated();
+            var db = new DbAccess(configuration);
             try
             {
-                await _db.SPExecute("Config.WhatsappUsage_Get");
-                _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
-                _response.Create(code: "0", message: "Error al obtener el uso de whatsapp"); 
-               
+                await db.SPExecute("Config.WhatsappUsage_Get");
+                db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
+                db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                response = db.GetDataSetAsync();
             }
             finally
             {
-                _db.Close();
+                db.Close();
             }
-            return _response;
+            return response;
         }
         [HttpPost]
         public async Task<ActionResult<ApiResponseDeprecated>> Post([FromBody] ApiRequest parameters)
         {
             var _response = new ApiResponseDeprecated();
-            var _db = new DbAccess(_configuration);
+            var _db = new DbAccess(configuration);
             try
             {
                 await _db.SPExecute("Config.WhatsappUsage_Insert");
                 _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _response.Create(code: "0", message: "Error al guardar el uso de whatsapp"); 
             }
             finally
             {
@@ -67,7 +52,7 @@ namespace Configuracion.API.Controllers
         public async Task<ActionResult<ApiResponseDeprecated>> Put(int id, [FromBody] ApiRequest parameters)
         {
             var _response = new ApiResponseDeprecated();
-            var _db = new DbAccess(_configuration);
+            var _db = new DbAccess(configuration);
             try
             {
                 await _db.SPExecute("Config.WhatsappUsage_Update");
@@ -75,10 +60,6 @@ namespace Configuracion.API.Controllers
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _response.Create(code: "0", message: "Error al actualizar el uso de whatsapp"); 
             }
             finally
             {
@@ -90,17 +71,13 @@ namespace Configuracion.API.Controllers
         public async Task<ActionResult<ApiResponseDeprecated>> Delete(int id)
         {
             var _response = new ApiResponseDeprecated();
-            var _db = new DbAccess(_configuration);
+            var _db = new DbAccess(configuration);
             try
             {
                 await _db.SPExecute("Config.WhatsappUsage_Delete");
                 _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _response.Create(code: "0", message: "Error al eliminar el uso de whatsapp"); 
             }
             finally
             {

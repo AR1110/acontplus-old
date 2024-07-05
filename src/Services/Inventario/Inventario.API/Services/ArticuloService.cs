@@ -13,17 +13,13 @@
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
             var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters, true);
-            if (ds.Tables[0].Rows.Count == 0) { return null; }
 
-            //if (!DataValidation.DataSetIsNull(ds))
-            //{
+            if (!DataValidation.DataSetIsNull(ds))
+            {
+                return DataConverters.DataSetToJson(ds, true);
+            }
 
-            //}
-
-            return DataConverters.DataSetToJson(ds, true);
-
-
-
+            return null;
         }
 
         public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)

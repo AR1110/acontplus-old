@@ -4,32 +4,19 @@ namespace Compras.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class DocumentoRecibidoController : ControllerBase
+public class DocumentoRecibidoController(
+    IAdoSqlServer adoSqlServer,
+    IConfiguration configuration,
+    IDocumentoRecibidoService docRecibidoSvc,
+    FileTxt txtComp,
+    IDocumentoTempService documentoTemp,
+    IWebServiceSri webServiceSri)
+    : ControllerBase
 {
-    private readonly DbAccess _db;
-    private readonly FileTxt _txtComp;
-    private readonly IConfiguration _configuration;
-    private readonly IDocumentoRecibidoService _docRecibidoSvc;
-    private readonly ICustomLogger _log;
-    private readonly IDocumentoTempService _documentoTemp;
-    private readonly IWebServiceSri _webServiceSri;
-
-    public DocumentoRecibidoController(IConfiguration configuration, IDocumentoRecibidoService docRecibidoSvc,
-        FileTxt txtComp, ICustomLogger log, IDocumentoTempService documentoTemp, IWebServiceSri webServiceSri)
-    {
-        _configuration = configuration;
-        _docRecibidoSvc = docRecibidoSvc;
-        _txtComp = txtComp;
-        _log = log;
-        _documentoTemp = documentoTemp;
-        _db = new DbAccess(_configuration);
-        _webServiceSri = webServiceSri;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        return Ok(await _docRecibidoSvc.GetAsync(new Dictionary<string, object>
+        return Ok(await docRecibidoSvc.GetAsync(new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             }))
@@ -43,15 +30,12 @@ public class DocumentoRecibidoController : ControllerBase
         var ceXml = new ComprobanteElectronico();
         var sms = string.Empty;
         var getXmlSriData = new DataXmlComprobante();
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetUserRoleId() }, { "id", id }
-        };
-        var xdoc = await _docRecibidoSvc.GetById(parameters);
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var xdoc = await docRecibidoSvc.GetById(parameters);
 
         if (xdoc != null && getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
         {
-            if (ceXml.codDoc == "01" || ceXml.codDoc == "04")
+            if (ceXml.codDoc is "01" or "04")
             {
                 var details = new Dictionary<string, object>
                 {
@@ -60,7 +44,7 @@ public class DocumentoRecibidoController : ControllerBase
                     { "jsonData", JsonConvert.SerializeObject(ceXml.detalles) },
                     { "impuestos", JsonConvert.SerializeObject(ceXml.impuestos) }
                 };
-                var rowsAffected = await _documentoTemp.AddAsync(details);
+                var rowsAffected = await documentoTemp.AddAsync(details);
             }
 
             response.Create(code: "1", payload: ceXml);
@@ -73,74 +57,62 @@ public class DocumentoRecibidoController : ControllerBase
     [HttpPost("Read")]
     public async Task<IActionResult> Post(IFormFile file)
     {
-        var _response = new ApiResponseDeprecated();
+        var response = new ApiResponseDeprecated();
 
         if (file.ContentType != "text/plain")
         {
-            _response.Create("0", "Formato de archivo no soportado");
-            return BadRequest(_response);
+            response.Create("0", "Formato de archivo no soportado");
+            return BadRequest(response);
         }
 
-        try
+
+        var path = configuration.GetSection("ImportacionTxt").Value;
+        FileData.SaveFile(path, file);
+        var dt = await txtComp.GetDocs(FileData.GetFileByte(file));
+        if (!DataValidation.DataTableIsNull(dt))
         {
-            var path = _configuration.GetSection("ImportacionTxt").Value;
-            FileData.SaveFile(path, file);
-            var dt = new DataTable("Comprobantes");
-            dt = await _txtComp.GetDocs(FileData.GetFileByte(file));
-            if (!DataValidation.DataTableIsNull(dt))
+            var dtExistent = await adoSqlServer.GetDataTableAsync("Recepcion.Documento_Check_Existence",
+                new Dictionary<string, object> { { "json", JsonConvert.SerializeObject(dt) } });
+
+            if (DataValidation.DataTableIsNull(dt))
             {
-                await _db.SPExecute("Recepcion.Documento_Check_Existence");
-                _db.AddDynamicParam("json", JsonConvert.SerializeObject(dt));
-                var dtExistent = _db.GetDataTable();
-                if (dtExistent.Columns.Contains("code") && dtExistent.Rows[0].Field<string>("code") == "-1")
-                {
-                    _response.Create("1", payload: DataConverters.DataTableToJson(dt));
-                }
-                else
-                {
-                    if (dt.Rows.Count == dtExistent.Rows.Count)
-                    {
-                        _response.Create("0",
-                            "Los registros que intenta importar ya se encuentran registrados, intente con otro archivo!");
-                    }
-                    else
-                    {
-                        var diff = (from row1 in dt.AsEnumerable()
-                                    join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
-                                    {
-                                        Column1 = row2["claveAcceso"]
-                                    } into gj
-                                    from subRow2 in gj.DefaultIfEmpty()
-                                    where subRow2 == null
-                                    select row1).ToList();
-                        var filteredDataTable = diff.CopyToDataTable();
-                        _response.Create("1", payload: DataConverters.DataTableToJson(filteredDataTable));
-                    }
-                }
+                response.Create("1", payload: DataConverters.DataTableToJson(dt));
             }
             else
             {
-                _response.Create("0", "No se encontraron registros para importar");
+                if (dt.Rows.Count == dtExistent.Rows.Count)
+                {
+                    response.Create("0",
+                        "Los registros que intenta importar ya se encuentran registrados, intente con otro archivo!");
+                }
+                else
+                {
+                    var diff = (from row1 in dt.AsEnumerable()
+                        join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
+                        {
+                            Column1 = row2["claveAcceso"]
+                        } into gj
+                        from subRow2 in gj.DefaultIfEmpty()
+                        where subRow2 == null
+                        select row1).ToList();
+                    var filteredDataTable = diff.CopyToDataTable();
+                    response.Create("1", payload: DataConverters.DataTableToJson(filteredDataTable));
+                }
             }
         }
-        catch (Exception ex)
+        else
         {
-            _log.LogActivity("Error al importar el archivo: " + ex);
-            _response.Create("0", "Error al importar el archivo");
-        }
-        finally
-        {
-            _db.Close();
+            response.Create("0", "No se encontraron registros para importar");
         }
 
-        return Ok(_response);
+        return Ok(response);
     }
 
 
     [HttpPost("CheckExistenceXml")]
     public async Task<IActionResult> CheckExistenceXml(string claveAcceso)
     {
-        var response = await _webServiceSri.CheckExistenceAsync(claveAcceso,
+        var response = await webServiceSri.CheckExistenceAsync(claveAcceso,
             "https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl");
         return Ok(response);
     }
@@ -150,7 +122,7 @@ public class DocumentoRecibidoController : ControllerBase
     public async Task<IActionResult> Post(ApiRequest request)
     {
         request.UserRoleId = User.GetUserRoleId();
-        return Ok(await _docRecibidoSvc.AddAsync(request));
+        return Ok(await docRecibidoSvc.AddAsync(request));
     }
 
     [HttpPost("UploadXml")]
@@ -178,7 +150,7 @@ public class DocumentoRecibidoController : ControllerBase
             { "fechaEmision", dataComprobante.FechaEmision },
             { "XmlDoc", dataComprobante.XmlTosave.OuterXml },
         };
-        return Ok(await _docRecibidoSvc.UploadXmlAsync(parameters));
+        return Ok(await docRecibidoSvc.UploadXmlAsync(parameters));
     }
 
 
@@ -186,81 +158,55 @@ public class DocumentoRecibidoController : ControllerBase
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
         data.UserRoleId = User.GetUserRoleId();
-        return Ok(await _docRecibidoSvc.UpdateAsync(id, data));
+        return Ok(await docRecibidoSvc.UpdateAsync(id, data));
     }
 
 
     [HttpGet("Preview/{id}")]
     public async Task<IActionResult> Preview(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            var idUsuarioRol = User.GetUserRoleId();
+        var response = new ApiResponse();
 
-            using (var _db = new DbAccess(_configuration))
+        var dt = await adoSqlServer.GetDataTableAsync("Recepcion.Documento_Get_Id",
+            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } });
+        if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
+        {
+            response.Code = "1";
+            var xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
+            var xdoc = new XmlDocument();
+            if (xmlDoc != null)
             {
-                var parameters = new Dictionary<string, object>();
-                await _db.SPExecute("Recepcion.Documento_Get_Id");
-                _db.AddDynamicParam("userRoleId", idUsuarioRol);
-                _db.AddDynamicParam("id", id);
-                var dt = _db.GetDataTable();
-                if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
-                {
-                    _response.code = "1";
-                    var xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
-                    var xdoc = new XmlDocument();
-                    xdoc.LoadXml(xmlDoc);
-                    var ceXml = new ComprobanteElectronico();
-                    var sms = string.Empty;
-                    var _getXmlSriData = new DataXmlComprobante();
-                    if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
-                    {
-                        _response.Create("0", sms);
-                    }
-                    else
-                    {
-                        _response.payload = DocumentoXmlToHtml.CreateHtml(ceXml);
-                    }
-                }
-                else
-                {
-                    _response.Create("0", "No se encontro xml");
-                }
+                xdoc.LoadXml(xmlDoc);
+            }
+
+            var ceXml = new ComprobanteElectronico();
+            var sms = string.Empty;
+            var getXmlSriData = new DataXmlComprobante();
+            if (!getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
+            {
+                response.Create("0", sms);
+            }
+            else
+            {
+                response.Payload = DocumentoXmlToHtml.CreateHtml(ceXml);
             }
         }
-        catch (Exception ex)
+        else
         {
-            _log.LogActivity("Error getting data of doc: " + ex);
-            _response.Create("0", "Error al obtener los datos del comprobante");
+            response.Create("0", "No se encontro xml");
         }
 
-        return Ok(_response);
+        return Ok(response);
     }
 
     [HttpPut("Migrate")]
-    public async Task<IActionResult> Migrate(ApiRequest parameters)
+    public async Task<IActionResult> Migrate(ApiRequest data)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("Recepcion.Documento_Migrate");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-            _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
-            _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al importar el archivo: " + ex);
-            _response.Create("0", "Error al importar el archivo");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(data.Data) }
+        };
+        return Ok(await docRecibidoSvc.MigrateAsync(parameters));
     }
 
     [HttpDelete("{id}")]
@@ -268,29 +214,28 @@ public class DocumentoRecibidoController : ControllerBase
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
-            { "idDocumento", id }
+            { "userRoleId", User.GetUserRoleId() }, { "idDocumento", id }
         };
-        return Ok(await _docRecibidoSvc.DeleteAsync(parameters));
+        return Ok(await docRecibidoSvc.DeleteAsync(parameters));
     }
+
     [HttpGet("DownloadXml/{id}")]
     public async Task<IActionResult> Download(int id)
     {
-        var parameters = new Dictionary<string, object> {
-            {"userRoleId", User.GetUserRoleId()},
-            {"id", id }
-        };
-        var response = await _docRecibidoSvc.DownloadAsync(parameters);
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var response = await docRecibidoSvc.DownloadAsync(parameters);
         if (response == null)
         {
             return BadRequest();
         }
+
         return File(response, "text/xml");
     }
+
     [HttpPut("PutSubcategory")]
     public async Task<IActionResult> PutSubcategory([FromBody] ApiRequest data)
     {
         data.UserRoleId = User.GetUserRoleId();
-        return Ok(await _docRecibidoSvc.UpdateSubcategoryAsync(data));
+        return Ok(await docRecibidoSvc.UpdateSubcategoryAsync(data));
     }
 }

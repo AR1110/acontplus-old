@@ -1,18 +1,9 @@
-﻿using FactElect.API.Interfaces;
+﻿namespace FactElect.API.Services;
 
-namespace FactElect.API.Services;
-
-public class DocumentoElectronicoErrorService : IDocumentoElectronicoErrorService
+public class DocumentoElectronicoErrorService(IAdoRepository repository) : IDocumentoElectronicoErrorService
 {
-    private readonly IAdoRepository _repository;
-
-    public DocumentoElectronicoErrorService(IAdoRepository repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<string> GetAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("FactElect.Doc_Elect_Error_Get_Id", parameters);
+        return await repository.SpExecuteDeprecatedAsync("FactElect.Doc_Elect_Error_Get_Id", parameters);
     }
 }
