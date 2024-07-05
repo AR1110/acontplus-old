@@ -3,12 +3,12 @@
 public class BrandService : IBrandService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IAdoSqlServer _adoSqlServer;
+    private readonly IAdoRepository _adoRepository;
 
-    public BrandService(TechnicalSupportContext context, IAdoSqlServer adoSqlServer)
+    public BrandService(TechnicalSupportContext context, IAdoRepository adoRepository)
     {
         _context = context;
-        _adoSqlServer = adoSqlServer;
+        _adoRepository = adoRepository;
     }
 
     public async Task<ApiResponse> AddAsync(Brand brand)
@@ -43,7 +43,7 @@ public class BrandService : IBrandService
             return new ApiResponse { Code = "0", Message = "No data" };
         }
 
-        var dt = await _adoSqlServer.GetDataTableAsync("TechnicalSupport.Brand_Get", parameters);
+        var dt = await _adoRepository.GetDataTableAsync("TechnicalSupport.Brand_Get", parameters);
         if (DataValidation.DataTableIsNull(dt))
         {
             return new ApiResponse { Code = "0", Message = "No data" };

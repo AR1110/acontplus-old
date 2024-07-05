@@ -3,12 +3,12 @@
 public class CategoryService : ICategoryService
 {
     private readonly TechnicalSupportContext _context;
-    private readonly IAdoSqlServer _adoSqlServer;
+    private readonly IAdoRepository _adoRepository;
 
-    public CategoryService(TechnicalSupportContext context, IAdoSqlServer adoSqlServer)
+    public CategoryService(TechnicalSupportContext context, IAdoRepository adoRepository)
     {
         _context = context;
-        _adoSqlServer = adoSqlServer;
+        _adoRepository = adoRepository;
     }
 
     public async Task<ApiResponse> AddAsync(Category category)
@@ -42,7 +42,7 @@ public class CategoryService : ICategoryService
             return new ApiResponse { Code = "0", Message = "No data" };
         }
 
-        var dt = await _adoSqlServer.GetDataTableAsync("TechnicalSupport.Category_Get", parameters);
+        var dt = await _adoRepository.GetDataTableAsync("TechnicalSupport.Category_Get", parameters);
         if (DataValidation.DataTableIsNull(dt))
         {
             return new ApiResponse { Code = "0", Message = "No data" };

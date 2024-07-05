@@ -1,9 +1,9 @@
 ﻿namespace FactElect.API.Services;
 
-public class AtsService(IAdoSqlServer adoSqlServer) : IAtsService
+public class AtsService(IAdoRepository adoRepository) : IAtsService
 {
     public async Task<DataSet> GetAts(Dictionary<string, object> parameters)
     {
-        return await adoSqlServer.GetDataSetAsync("ASPAtsGetData", parameters, true, false);
+        return await adoRepository.GetDataSetAsync("ASPAtsGetData", parameters, true, false);
     }
 }

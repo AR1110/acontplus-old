@@ -11,7 +11,6 @@ public static class ApplicationServicesExtensions
         services.AddDbContextPool<FactElectContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddScoped<IAdoSqlServer, AdoSqlServer>();
         services.AddScoped<IAtsService, AtsService>();
         services.AddScoped<ICompanyCustomerService, CompanyCustomerService>();
         services.AddScoped<IDocumentoElectronicoService, DocumentoElectronicoService>();

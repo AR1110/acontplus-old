@@ -1,4 +1,6 @@
-﻿using Common.AppSettings;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Common.AppSettings;
 using Services.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,9 @@ ConfigHelper.AddJsonFiles(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddIdentityService(builder.Configuration);
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

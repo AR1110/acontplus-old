@@ -4,17 +4,17 @@ public class OrderDetailService : IOrderDetailService
 {
     private readonly TechnicalSupportContext _context;
     private readonly string _module = "TechnicalSupport.OrderDetail";
-    private readonly IAdoSqlServer _adoSqlServer;
+    private readonly IAdoRepository _adoRepository;
 
-    public OrderDetailService(IAdoSqlServer adoSqlServer, TechnicalSupportContext context)
+    public OrderDetailService(IAdoRepository adoRepository, TechnicalSupportContext context)
     {
-        _adoSqlServer = adoSqlServer;
+        _adoRepository = adoRepository;
         _context = context;
     }
 
     public async Task<ApiResponse> AddAsync(ApiRequest data)
     {
-        return await _adoSqlServer.SpExecuteAsync<ApiResponse>($"{_module}_Insert",
+        return await _adoRepository.SpExecuteAsync<ApiResponse>($"{_module}_Insert",
             new Dictionary<string, object>
             {
                 { "userRoleId", data.UserRoleId }, { "json", DataConverters.SerializeDictionary(data.Data) }
@@ -52,6 +52,6 @@ public class OrderDetailService : IOrderDetailService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(data.Data) }
         };
-        return await _adoSqlServer.SpExecuteAsync<ApiResponse>($"{_module}_Update", parameters);
+        return await _adoRepository.SpExecuteAsync<ApiResponse>($"{_module}_Update", parameters);
     }
 }
