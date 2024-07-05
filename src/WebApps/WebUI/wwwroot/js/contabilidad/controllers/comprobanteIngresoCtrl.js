@@ -1,25 +1,21 @@
-(function () {
+(function(){
 
     'use strict';
 
-    app.controller('cobroCtrl', cobroCtrl);
-
-    cobroCtrl.$inject = [
+    app.controller('comprobanteIngresoCtrl', [
         '$scope',
         '$filter',
-        '$injector',
-        'mainService',
-        'commonService',
-        'modalService',
-        'nombreModalContabilidad',
-        'formulario',
-        'toastService',
-    ]
-
-    function cobroCtrl($scope, $filter, $injector, _mS, _commonSvc, _modalSvc, nombreModalContabilidad, _form, tS) {
-
+        '$injector', 
+        
+        function comprobanteIngresoCtrl($scope, $filter, $injector) {
+        let commonSvc = $injector.get('commonService')
+        let modalSvc = $injector.get('modalService')
+        let nombreModalContabilidad = $injector.get('nombreModalContabilidad')
+        let fS = $injector.get('formulario');
+        let tS = $injector.get('toastService');
         let compIngresoSvc = $injector.get('comprobanteIngresoService');
-        let fS = _form;
+
+
         //Filtro y Pagination  
         $scope.moreSearchOptions = false;
 
@@ -49,9 +45,10 @@
 
         $scope.dataSearch = {
             pageIndex: 1,
-            pageSize: 1000,
-            tipo: 1
+            pageSize: 25, 
+            maxSize: 5
         }
+        $scope.recordsQuantity = [25,50,100];
 
         $scope.typeSend = 'GenericFile';
         $scope.typeSendMail = 'N';
@@ -64,7 +61,7 @@
                 let template = nombreModalContabilidad.COBRO.templates['CL'];
                 let controller = (await import(fileCtrl))[ctrl];
 
-                let modalRef = _modalSvc.openModalCustom({
+                let modalRef = modalSvc.openModalCustom({
                     controller,
                     template,
                     params: {
@@ -85,8 +82,8 @@
 
         //Filters 
         $scope.resultRangeFilter = function (item) {
-            $scope.dataSearch.fechaInicio = item.startDate,
-                $scope.dataSearch.fechaFin = item.endDate
+            $scope.dataSearch.fechaInicio = item.startDate;
+            $scope.dataSearch.fechaFin = item.endDate;
             $scope.filterValidation();
         }
 
@@ -161,14 +158,20 @@
         $scope.filterValidation = function () {
             if ($scope.dataSearch.byTipoPersona) {
                 if (!$scope.dataSearch.nroIdentificacion) {
-                    tS.toastr('warning', 'Seleccione el cliente o el empleado');
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'Seleccione el cliente o el empleado'
+                    });
                     return
                 }
             }
 
             if (['FV', 'NE'].includes($scope.dataSearch.codTipoDoc)) {
                 if (!$scope.dataSearch.nroSecuencialTipoDoc) {
-                    tS.toastr('warning', 'Ingrese número secuencial de tipo documento (Nota Entrega o Factura)')
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'Ingrese número secuencial de tipo documento (Nota Entrega o Factura)'
+                    })
                     return
                 }
             }
@@ -191,9 +194,9 @@
                 abono += item.abono;
                 cambio += item.cambio;
             }
-            $scope.total = _form.roundNumber(total);
-            $scope.abono = _form.roundNumber(abono);
-            $scope.cambio = _form.roundNumber(cambio);
+            $scope.total = fS.roundNumber(total);
+            $scope.abono = fS.roundNumber(abono);
+            $scope.cambio = fS.roundNumber(cambio);
         }
 
         $scope.refresh = function () {
@@ -209,11 +212,11 @@
 
                 let isSearchDate = true;
 
-                if(fS.isValidField($scope.dataSearch.nroIdentificacion)){
+                if (fS.isValidField($scope.dataSearch.nroIdentificacion)) {
                     isSearchDate = false;
                 }
 
-                if (fS.isValidField($scope.dataSearch.nroSecuencialDoc)) { 
+                if (fS.isValidField($scope.dataSearch.nroSecuencialDoc)) {
                     isSearchDate = false;
                     tS.toastr({
                         type: 'info',
@@ -221,11 +224,10 @@
                     })
                 }
 
-                const dataSearch = {
-                    tipo: 1,
+                const dataSearch = { 
                     codEstab: $scope.dataSearch.codEstab,
-                    fechaInicio: _form.formatDateMoment($scope.dataSearch.fechaInicio),
-                    fechaFin: _form.formatDateMoment($scope.dataSearch.fechaFin),
+                    fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                    fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     checkBoxPersona: $scope.tiposPersona.some(item => item.codigo === $scope.dataSearch.byTipoPersona),
                     nroIdentificacion: fS.isValidField($scope.dataSearch.nroIdentificacion),
                     checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
@@ -236,7 +238,9 @@
                     nroSecuencialTipoDoc: $scope.dataSearch.nroSecuencialTipoDoc,
                     isSearchNroDoc: $scope.dataSearch.nroSecuencialDoc ? true : false,
                     nroSecuencialDoc: $scope.dataSearch.nroSecuencialDoc,
-                    isSearchDate
+                    isSearchDate,
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize
                 }
 
                 showLoader();
@@ -245,6 +249,11 @@
                     $scope.cobros = response;
                     $scope.cloneCobros = structuredClone(response)
                     setTotalsColumn();
+
+                    if($scope.cobros.length>0){
+                        $scope.dataSearch.totalRecords = $scope.cobros[0].totalRecords;
+
+                    }
 
                 }).catch(error => {
                     console.log(error)
@@ -256,7 +265,7 @@
         }
 
         $scope.initiload = () => {
-            _commonSvc.getEstabAsign().then(response => {
+            commonSvc.getEstabAsign().then(response => {
                 $scope.establecimientos = response
                 let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0;
                 $scope.dataSearch.codEstab = codEstab;
@@ -264,6 +273,16 @@
             })
         }
         $scope.initiload();
+ 
+
+        $scope.pagechanged = function () {
+            $scope.getCobros();
+        };
+
+        $scope.changePageSize = function () {
+            $scope.dataSearch.pageIndex = 1;
+            $scope.getCobros();
+        };
 
         $scope.openModalParam = async ({
             controller,
@@ -271,7 +290,7 @@
             size = 'xl',
             params
         }) => {
-            _modalSvc.openModalCustom({
+            modalSvc.openModalCustom({
                 controller,
                 template,
                 size,
@@ -317,7 +336,7 @@
                     observacion: value
                 }
                 showLoader();
-                compIngresoSvc.cancel(data).then(response => {
+                compIngresoSvc.update(item.idComprobanteIngreso, data).then(response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message, response.titleSms);
                     }
@@ -334,7 +353,7 @@
             }
 
         }
- 
+
 
         $scope.getParamToSendMail = function (item) {
             return {
@@ -358,6 +377,15 @@
             }
         }
 
+
+
+
+
+
+
     }
+]); 
+
+
 
 })(window.angular)

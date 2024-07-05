@@ -20,6 +20,8 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
+app.UseMiddleware<MobileRequestMiddleware>();
+
 app.UseSwaggerVersionedDocumentation();
 
 if (Environment.OSVersion.Platform != PlatformID.Win32NT)

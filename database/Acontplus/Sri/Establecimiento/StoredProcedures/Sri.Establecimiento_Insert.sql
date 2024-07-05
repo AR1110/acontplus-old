@@ -28,8 +28,7 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT 
 	DECLARE @idUsuario INT
-	DECLARE @sequencial INT
-	DECLARE @nombreUsuario VARCHAR(100)
+	DECLARE @sequencial INT 
 	DECLARE @ruc VARCHAR(15)
 	DECLARE @canton VARCHAR(10) 
     DECLARE @actividad VARCHAR(5)
@@ -63,7 +62,7 @@ BEGIN
 	BEGIN TRY
 		SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-		SELECT TOP 1 @nombreUsuario = nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
+ 
 
 		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
@@ -100,20 +99,19 @@ BEGIN
 				,correo                VARCHAR(300)'$.correo'
 				)
 
-		IF EXISTS (SELECT 1 FROM Sri.Establecimiento WHERE ruc = @ruc AND estab = @estab)
+		IF EXISTS (SELECT 1 FROM Sri.Establecimiento WHERE idEntidad = @idEntidad AND estab = @estab)
 			BEGIN
 				SELECT '0'code,'El numero de establecimiento ya se encuentra registrado' as 'message'
 				RETURN 
 			END 
 
 		BEGIN TRAN 
-				INSERT INTO Sri.Establecimiento
+				INSERT INTO@idEntidad
 					(codEstab
                     ,canton
 					,actividad
 					,agenteRetencion
-					,contribuyente
-					,ruc
+					,contribuyente 
 					,estab
 					,contribuyenteEspecial
 					,obligadoContabilidad
@@ -122,16 +120,15 @@ BEGIN
 					,telefono
 					,correo
 					,contribuyenteRimpe
-					,fechaRegistro
-					,usuario
-                    ,idEntidad)
+					,fechaRegistro 
+                    ,idEntidad
+                    ,idUsuario)
 				SELECT 
 				     @codEstab
                     ,@canton
 				    ,@actividad
 				    ,@agenteRetencion
-				    ,@contribuyente
-				    ,@ruc
+				    ,@contribuyente 
 				    ,@estab
 				    ,@contribuyenteEspecial
 				    ,@obligadoContabilidad
@@ -140,9 +137,9 @@ BEGIN
 					,@telefono
 					,@correo
 				    ,@contribuyenteRimpe
-				    ,dbo.ufnGetDateEcuador()
-				    ,@nombreUsuario
+				    ,dbo.ufnGetDateEcuador() 
                     ,@idEntidad
+                    ,@idUsuario
 					
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' AS 'message'

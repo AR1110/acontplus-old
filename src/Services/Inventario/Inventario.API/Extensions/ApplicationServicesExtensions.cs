@@ -31,6 +31,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IMeasureService, MeasureService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ISubFamiliaService, SubFamiliaService>();
+        services.AddScoped<IArticuloService, ArticuloService>();
+         
 
         services.AddScoped<ICustomLogger, CustomLogger>();
         services.AddSingleton<S3ObjectCustom>();

@@ -1,5 +1,7 @@
 import { RoundNumber } from ".";
-import { MultiplesPaymentType, PaymentDetail, PaymentHistory, Quota, Voucher, VoucherQuota } from "../models";
+import { CODIGO_ESTADO_PAGO } from "../constants";
+import { CuentasPorCobrarAgrupado, CuotasPorCobrarEstado, MultiplesPaymentType, PaymentDetail, PaymentHistory, Quota, Voucher, VoucherQuota } from "../models";
+import { EstadoPagoRead } from "../models/estado-pago-model";
 
 
 //--------------
@@ -10,6 +12,8 @@ class CheckoutUtility {
     private esAbonoPosfechado = false;
     paymentDetails: Array<PaymentDetail> = [];
     historialCuentas: Array<PaymentHistory> = [];
+    private estadosPago:EstadoPagoRead[]=[]
+
     private sequencia = 0;
 
     constructor(sequencia: number) {
@@ -24,6 +28,137 @@ class CheckoutUtility {
 
     setPaymentDetail(paymentDetails: Array<PaymentDetail>) {
         this.paymentDetails = paymentDetails;
+    }
+
+    set setEstadosPago(estadosPago:EstadoPagoRead[]){
+        this.estadosPago = estadosPago
+    }
+
+    /**
+     * 
+     * @param {*} historialCuentas 
+     * @param {*} cobros 
+     * @param {*} cobrosDetalle 
+     */
+    generarCuentasPorCobrarEstado<T extends { 
+        historialCuentas :PaymentHistory[]
+        cobrosDetalle:PaymentDetail[] 
+    }>({ historialCuentas, cobrosDetalle }:T) {
+        const cuentasPorCobrarAgrupado = historialCuentas.reduce((acc, curr) => {
+
+            const existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar);
+            if (!existeDato) {
+                acc.push({
+                    idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                    valorSaldoLectura: curr.valorSaldoLectura,
+                    abono: curr.abono,
+                    diasMora: curr.diasMora,
+                    mora: curr.mora
+                })
+            } else {
+                existeDato.abono += curr.abono;
+
+            }
+            return acc;
+
+        }, [] as CuentasPorCobrarAgrupado[])
+
+        const cuentasPorCobrarEstado = [];
+
+
+        for (const item of cuentasPorCobrarAgrupado) {
+            let valorSaldo = 0, dataEstadoPago:any = {};
+
+            const totalPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && cd.posfechado).reduce((acc, curr) => {
+                acc += curr.abono;
+                return acc;
+            }, 0)
+
+            const totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && !cd.posfechado).reduce((acc, curr) => {
+                acc += curr.abono;
+                return acc;
+            }, 0)
+ 
+
+            valorSaldo = item.valorSaldoLectura - totalNoPosfechado;
+
+            if (totalPosfechado > 0) {
+                dataEstadoPago = this.getDataEstadoPago({
+                    esPosfechado: true,
+                    saldo: 0,
+                    abono: 0
+                })
+            }
+
+
+            if (totalPosfechado <= 0) {
+                dataEstadoPago = this.getDataEstadoPago({
+                    esPosfechado: false,
+                    saldo: valorSaldo,
+                    abono: totalNoPosfechado
+                })
+            }
+
+            cuentasPorCobrarEstado.push({
+                idCuentaPorCobrar: item.idCuentaPorCobrar,
+                idEstadoPago: dataEstadoPago?.idEstadoPago,
+                abono: totalNoPosfechado
+            })
+
+        }
+        return cuentasPorCobrarEstado;
+
+    }
+
+     
+
+    generarCuotasPorCobrarEstado<T extends { cobrosDetalle: PaymentDetail []}>({ cobrosDetalle }:T) {
+
+        const cuotasPorCobrarAgrupado = cobrosDetalle.reduce((acc, curr) => {
+
+            const existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar && curr.idCuentaPorCobrar && dataCxc.idCuotaPorCobrar === curr.idCuotaPorCobrar);
+            if (!existeDato) {
+                acc.push({
+                    idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                    idCuotaPorCobrar: curr.idCuotaPorCobrar,
+                    valorSaldoLectura: curr.valorSaldoLectura,
+                    abono: curr.abono,
+                })
+            } else {
+                existeDato.abono += curr.abono;
+
+            }
+            return acc;
+
+        }, [] as CuotasPorCobrarEstado[])
+
+        const cuotasPorCobrarEstado = [];
+
+        for (const item of cuotasPorCobrarAgrupado) {
+
+            const totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuotaPorCobrar === item.idCuotaPorCobrar && !cd.posfechado).reduce((acc, curr) => {
+                acc += curr.abono;
+                return acc;
+            }, 0)
+
+            const valorSaldo = item.valorSaldoLectura - totalNoPosfechado;
+
+            const dataEstadoPago = this.getDataEstadoPago({
+                esPosfechado: false,
+                saldo: valorSaldo,
+                abono: item.abono
+            })
+
+
+            cuotasPorCobrarEstado.push({
+                idEstadoPago: dataEstadoPago.idEstadoPago,
+                abono: totalNoPosfechado,
+                idCuotaPorCobrar: item.idCuotaPorCobrar
+            })
+
+        }
+        return cuotasPorCobrarEstado;
+
     }
 
     applyReceivedAmountToQuota(voucherQuotas: Array<VoucherQuota>): Array<VoucherQuota> {
@@ -63,6 +198,7 @@ class CheckoutUtility {
 
                     this.historialCuentas.push({
                         secuencial: this.sequencia,
+                        valorSaldoLectura: this.voucher.valorSaldoLectura,
                         idCuentaPorCobrar: this.voucher.idCuentaPorCobrar,
                         abono: historialAbono,
                         saldo: RoundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
@@ -95,6 +231,7 @@ class CheckoutUtility {
 
                         this.historialCuentas.push({
                             secuencial: this.sequencia,
+                            valorSaldoLectura: this.voucher.valorSaldoLectura,
                             idCuentaPorCobrar: this.voucher.idCuentaPorCobrar,
                             abono: historialAbono,
                             saldo: RoundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
@@ -251,36 +388,55 @@ class CheckoutUtility {
             cuota: RoundNumber(item.cuota, this.MAX_NUMBER_ROUND),
             saldo,
             secuencial: this.sequencia,
-            saldoOriginal: RoundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND)
+            saldoOriginal: RoundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
+            posfechado: this.esAbonoPosfechado,
+            valorSaldoLectura: item.valorSaldoLectura,
         });
         item.saldo = RoundNumber(item.saldo, this.MAX_NUMBER_ROUND);
         item.saldoOriginal = RoundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND);
     }
 
-    // getHistoryPayments(voucherQuotas: Array<VoucherQuota>, paymentDetails: Array<PaymentDetail>): Array<PaymentHistory> {
-    //     const historialCobros: Array<PaymentHistory> = [];
-    //     for (const item of voucherQuotas) {
-    //         const totalAbono = paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
-    //             .reduce((prev, curr) => prev + curr.abono, 0);
-    //         // if (paymentDetails) {
-    //         //     totalAbono = paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
-    //         //         .reduce((prev, curr) => prev + curr.abono, 0);
-    //         // } else {
-    //         //     totalAbono = this.paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
-    //         //         .reduce((prev, curr) => prev + curr.abono, 0);
-    //         // }
-    //         if (totalAbono > 0) {
-    //             historialCobros.push({
-    //                 idCuentaPorCobrar: item.idCuentaPorCobrar,
-    //                 abono: totalAbono,
-    //                 diasMora: item.diasMora,
-    //                 mora: item.mora,
-    //                 saldo: item.saldo,
-    //             })
-    //         } else break;
-    //     }
-    //     return historialCobros;
-    // }
+
+    /**
+    * 
+    * @param {*} saldo 
+    * @param {*} abono 
+    * @returns 
+    */
+    getDataEstadoPago<T extends { saldo: number, abono: number, esPosfechado :boolean}>({ saldo, abono, esPosfechado }:T) {
+        let estado = '';
+        let dataEstadoPago:EstadoPagoRead | undefined= {
+            idEstadoPago: 0,
+            codigo: null
+        };
+
+        if (esPosfechado) {
+            dataEstadoPago = this.estadosPago.find(ep => ep.codigo === CODIGO_ESTADO_PAGO.PFC);
+        } else {
+            if (saldo === 0) {
+                dataEstadoPago = this.estadosPago.find(ep => ep.codigo === CODIGO_ESTADO_PAGO.CBR);
+                estado = 'COBRADA'
+            }
+            if (saldo > 0) {
+                dataEstadoPago = this.estadosPago.find(ep => ep.codigo === CODIGO_ESTADO_PAGO.PP);
+                estado = "PENDIENTE PARCIAL";
+            }
+            if (abono === 0) {
+                dataEstadoPago = this.estadosPago.find(ep => ep.codigo === CODIGO_ESTADO_PAGO.PE);
+                estado = "PENDIENTE";
+            }
+
+        }
+        if(!dataEstadoPago){
+            console.error('no se encontro datos de estado pago')
+        }
+
+
+        return {
+            idEstadoPago: dataEstadoPago?.idEstadoPago,
+            descripcion: estado
+        }
+    }
 }
 
 export const getTotalesCuota = (voucherQuotas: Array<VoucherQuota>) => {

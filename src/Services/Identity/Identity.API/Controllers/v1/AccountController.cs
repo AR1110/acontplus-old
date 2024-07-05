@@ -3,22 +3,13 @@
 [Route("api/account/[action]")]
 [ApiController]
 [ApiVersion("1.0")]
-public class AccountController : BaseApiController
+public class AccountController(
+    ITokenService tokenService,
+    IConfiguration config,
+    ApplicationDbContext context,
+    IAccountService accountService)
+    : BaseApiController
 {
-    private readonly IAccountService _accountService;
-    private readonly IConfiguration _config;
-    private readonly ApplicationDbContext _context;
-    private readonly ITokenService _tokenService;
-
-    public AccountController(ITokenService tokenService, IConfiguration config, ApplicationDbContext context,
-        IAccountService accountService)
-    {
-        _tokenService = tokenService;
-        _config = config;
-        _context = context;
-        _accountService = accountService;
-    }
-
     [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] AuthRequestDto authRequest)
@@ -33,115 +24,102 @@ public class AccountController : BaseApiController
             return BadRequest("Contraseña no puede estar vacia");
         }
 
-        var _response = await _accountService.LoginAsync(authRequest.Username, authRequest.Password);
+        var response = await accountService.LoginAsync(authRequest.Username, authRequest.Password);
         //User founded
-        if (_response.Code == "1" && !string.IsNullOrEmpty(_response.Payload))
+        if (response.Code == "1" && !string.IsNullOrEmpty(response.Payload))
         {
-            //dynamic container = JsonConvert.DeserializeObject<dynamic>(_response.payload);
-            //Guid guid;
-            //if (Guid.TryParse(container[0].uuid?.ToString(), out guid))
-            //{
-            //    Console.WriteLine(guid);
-            //}
-            ////else
-            ////{
-            ////    Console.WriteLine("No guid present or it has an invalid format");
-            ////}
-            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(_response.Payload);
+            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
 
             if (authRequest.ReturnUrl == "/") { authRequest.ReturnUrl = null; }
 
             userData.ForEach(x => x.ReturnUrl = authRequest.ReturnUrl ?? "/Index");
 
-            if (userData.Count == 1 && !userData[0].NeedAuthorization)
+            switch (userData.Count)
             {
-                userData.ForEach(x => x.UrlGateway = _config["ApiGateways:Acontplus"]);
-
-                var token = _tokenService.CreateToken(userData.FirstOrDefault());
-
-                if (token == null || string.IsNullOrEmpty(token))
+                case 1 when !userData[0].NeedAuthorization:
                 {
-                    return BadRequest("Error al iniciar session");
+                    userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
+
+                    var token = tokenService.CreateToken(userData.FirstOrDefault());
+
+                    if (token == null || string.IsNullOrEmpty(token))
+                    {
+                        return BadRequest("Error al iniciar session");
+                    }
+
+                    userData.ForEach(x => x.Token = token);
+                    var logingHistory = new LoginHistory
+                    {
+                        UserId = userData[0].UserId,
+                        Username = userData[0].Username,
+                        UserRoleId = userData[0].UserRoleId,
+                        UserAgent = authRequest.UserAgent,
+                        Token = token
+                    };
+                    context.LoginHistories.Add(logingHistory);
+                    await context.SaveChangesAsync();
+
+                    await accountService.AddNotificationAsync(logingHistory);
+
+                    return Ok(new
+                    {
+                        code = "1",
+                        message = "Login correcto",
+                        payload = JsonConvert.SerializeObject(userData,
+                            new JsonSerializerSettings
+                            {
+                                ContractResolver =
+                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                Formatting = Formatting.Indented
+                            })
+                    });
                 }
-
-                userData.ForEach(x => x.Token = token);
-                var logingHistory = new LoginHistory
-                {
-                    UserId = userData[0].UserId,
-                    Username = userData[0].Username,
-                    UserRoleId = userData[0].UserRoleId,
-                    UserAgent = authRequest.UserAgent,
-                    Token = token
-                };
-                _context.LoginHistories.Add(logingHistory);
-                await _context.SaveChangesAsync();
-
-                await _accountService.AddNotificationAsync(logingHistory);
-
-                return Ok(new
-                {
-                    code = "1",
-                    message = "Login correcto",
-                    payload = JsonConvert.SerializeObject(userData,
-                        new JsonSerializerSettings
-                        {
-                            ContractResolver =
-                                new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                            Formatting = Formatting.Indented
-                        })
-                });
-            }
-
-            if (userData.Count == 1 && userData[0].NeedAuthorization)
-            {
-                return Ok(new
-                {
-                    code = "1",
-                    message = "Su ingreso requiere ser autenticado, espere la confirmación",
-                    payload = JsonConvert.SerializeObject(userData,
-                        new JsonSerializerSettings
-                        {
-                            ContractResolver =
-                                new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                            Formatting = Formatting.Indented
-                        })
-                });
-            }
-
-            if (userData.Count > 1)
-            {
-                return Ok(new
-                {
-                    code = "1",
-                    message = "Seleccione la empresa",
-                    payload = JsonConvert.SerializeObject(userData,
-                        new JsonSerializerSettings
-                        {
-                            ContractResolver =
-                                new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                            Formatting = Formatting.Indented
-                        })
-                });
+                case 1 when userData[0].NeedAuthorization:
+                    return Ok(new
+                    {
+                        code = "1",
+                        message = "Su ingreso requiere ser autenticado, espere la confirmación",
+                        payload = JsonConvert.SerializeObject(userData,
+                            new JsonSerializerSettings
+                            {
+                                ContractResolver =
+                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                Formatting = Formatting.Indented
+                            })
+                    });
+                case > 1:
+                    return Ok(new
+                    {
+                        code = "1",
+                        message = "Seleccione la empresa",
+                        payload = JsonConvert.SerializeObject(userData,
+                            new JsonSerializerSettings
+                            {
+                                ContractResolver =
+                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                Formatting = Formatting.Indented
+                            })
+                    });
             }
         }
         else
         {
-            _context.LoginFaileds.Add(new LoginFailed
+            context.LoginFaileds.Add(new LoginFailed
             {
                 UserAgent = authRequest.UserAgent, Username = authRequest.Username, Password = authRequest.Password
             });
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
 
-        return Ok(_response);
+        return Ok(response);
     }
 
     [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> CreateToken([FromBody] UserData userData)
     {
-        userData.UrlGateway = _config["ApiGateways:Acontplus"];
-        var token = _tokenService.CreateToken(userData);
+        userData.UrlGateway = config["ApiGateways:Acontplus"];
+        var token = tokenService.CreateToken(userData);
         if (token == null || string.IsNullOrEmpty(token))
         {
             return BadRequest("Error al iniciar session");
@@ -155,9 +133,9 @@ public class AccountController : BaseApiController
             UserAgent = userData.UserAgent,
             Token = token
         };
-        _context.LoginHistories.Add(logingHistory);
-        await _context.SaveChangesAsync();
-        await _accountService.AddNotificationAsync(logingHistory);
+        context.LoginHistories.Add(logingHistory);
+        await context.SaveChangesAsync();
+        await accountService.AddNotificationAsync(logingHistory);
         userData.Token = token;
         return Ok(new
         {
@@ -177,7 +155,7 @@ public class AccountController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> RequestAccess([FromBody] RequestAccessDto data)
     {
-        var response = await _accountService.RequestAccessAsync(data);
+        var response = await accountService.RequestAccessAsync(data);
         return Ok(response);
     }
 
@@ -185,7 +163,7 @@ public class AccountController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Authenticate([FromBody] AccessAuthorization data)
     {
-        var response = await _accountService.AuthenticateAsync(data);
+        var response = await accountService.AuthenticateAsync(data);
         return Ok(response);
     }
 }

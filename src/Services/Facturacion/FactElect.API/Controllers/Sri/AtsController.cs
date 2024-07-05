@@ -1,6 +1,4 @@
-﻿using FactElect.API.Interfaces;
-
-namespace FactElect.API.Controllers.Sri;
+﻿namespace FactElect.API.Controllers.Sri;
 
 [ApiController]
 [Route("api/[controller]")]

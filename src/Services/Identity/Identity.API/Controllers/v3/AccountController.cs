@@ -3,25 +3,13 @@
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("3.0")]
-public class AccountController : ControllerBase
+public class AccountController(
+    ApplicationDbContext context,
+    IConfiguration config,
+    ITokenService tokenService,
+    IAccountService accountService)
+    : ControllerBase
 {
-    private readonly IAccountService _accountService;
-    private readonly IConfiguration _config;
-    private readonly ApplicationDbContext _context;
-    private readonly ITokenService _tokenService;
-
-    public AccountController(
-        ApplicationDbContext context,
-        IConfiguration config,
-        ITokenService tokenService,
-        IAccountService accountService)
-    {
-        _context = context;
-        _config = config;
-        _tokenService = tokenService;
-        _accountService = accountService;
-    }
-
     [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] AuthRequestDto authRequest)
@@ -36,75 +24,78 @@ public class AccountController : ControllerBase
             return BadRequest("Contraseña no puede estar vacia");
         }
 
-        var _response =
+        var response =
             JsonConvert.DeserializeObject<ApiResponseDeprecated>(
-                await _accountService.LoginRestaurantAsync(authRequest.Username, authRequest.Password));
+                await accountService.LoginRestaurantAsync(authRequest.Username, authRequest.Password));
 
-        if (_response.code == "1")
+        if (response.code == "1")
         {
-            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(_response.payload);
+            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(response.payload);
 
-            if (userData.Count == 1)
+            switch (userData.Count)
             {
-                userData.ForEach(x => x.UrlGateway = _config["ApiGateways:Acontplus"]);
-
-                var token = _tokenService.CreateToken(userData.FirstOrDefault());
-
-                if (token == null || string.IsNullOrEmpty(token))
+                case 1:
                 {
-                    return BadRequest("Error al iniciar session");
+                    userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
+
+                    var token = tokenService.CreateToken(userData.FirstOrDefault());
+
+                    if (token == null || string.IsNullOrEmpty(token))
+                    {
+                        return BadRequest("Error al iniciar session");
+                    }
+
+                    userData.ForEach(x => x.Token = token);
+
+                    context.LoginHistories.Add(new LoginHistory
+                    {
+                        UserId = userData[0].UserId,
+                        Username = userData[0].Username,
+                        UserRoleId = userData[0].UserRoleId,
+                        UserAgent = authRequest.UserAgent,
+                        Token = token
+                    });
+                    await context.SaveChangesAsync();
+
+                    return Ok(new
+                    {
+                        code = "1",
+                        message = "Login correcto",
+                        payload = JsonConvert.SerializeObject(userData,
+                            new JsonSerializerSettings
+                            {
+                                ContractResolver =
+                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                Formatting = Formatting.Indented
+                            })
+                    });
                 }
-
-                userData.ForEach(x => x.Token = token);
-
-                _context.LoginHistories.Add(new LoginHistory
-                {
-                    UserId = userData[0].UserId,
-                    Username = userData[0].Username,
-                    UserRoleId = userData[0].UserRoleId,
-                    UserAgent = authRequest.UserAgent,
-                    Token = token
-                });
-                await _context.SaveChangesAsync();
-
-                return Ok(new
-                {
-                    code = "1",
-                    message = "Login correcto",
-                    payload = JsonConvert.SerializeObject(userData,
-                        new JsonSerializerSettings
-                        {
-                            ContractResolver =
-                                new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                            Formatting = Formatting.Indented
-                        })
-                });
             }
         }
         else
         {
-            _context.LoginFaileds.Add(new LoginFailed
+            context.LoginFaileds.Add(new LoginFailed
             {
                 UserAgent = authRequest.UserAgent, Username = authRequest.Username, Password = authRequest.Password
             });
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
 
-        return Ok(_response);
+        return Ok(response);
     }
 
     [AllowAnonymous]
     [HttpPost("createToken")]
     public async Task<IActionResult> CreateToken([FromBody] UserData userData)
     {
-        userData.UrlGateway = _config["ApiGateways:Acontplus"];
-        var token = _tokenService.CreateToken(userData);
+        userData.UrlGateway = config["ApiGateways:Acontplus"];
+        var token = tokenService.CreateToken(userData);
         if (token == null || string.IsNullOrEmpty(token))
         {
             return BadRequest("Error al iniciar session");
         }
 
-        _context.LoginHistories.Add(new LoginHistory
+        context.LoginHistories.Add(new LoginHistory
         {
             UserId = userData.UserId,
             Username = userData.Username,
@@ -112,7 +103,7 @@ public class AccountController : ControllerBase
             UserAgent = userData.UserAgent,
             Token = token
         });
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
         userData.Token = token;
         return Ok(new
         {

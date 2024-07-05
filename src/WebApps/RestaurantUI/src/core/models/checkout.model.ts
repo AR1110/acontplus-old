@@ -1,4 +1,5 @@
 import { Bank, City, PaymentSubType, PaymentType, VoucherQuota } from "."
+import { EstadoPagoRead } from "./estado-pago-model"
 
 export interface Voucher {
     customerCompanyId: number,
@@ -55,6 +56,7 @@ export interface CheckoutDataForm {
     banks: Array<Bank>
     cities: Array<City>
     comprobante: Voucher
+    estadosPago: EstadoPagoRead[]    
 }
 
 
@@ -96,6 +98,8 @@ export interface PaymentDetail {
     saldo: number
     secuencial: number
     saldoOriginal: number
+    posfechado:boolean
+    valorSaldoLectura: number
 }
 
 export interface PaymentHistory {
@@ -105,6 +109,21 @@ export interface PaymentHistory {
     mora: number,
     saldo: number
     secuencial: number
+    valorSaldoLectura:number
+}
+
+export interface CuentasPorCobrarAgrupado{
+    idCuentaPorCobrar: number
+    valorSaldoLectura: number
+    abono: number
+    diasMora: number
+    mora:number
+}
+export interface CuotasPorCobrarEstado {
+    idCuentaPorCobrar:number
+    idCuotaPorCobrar: number
+    valorSaldoLectura: number
+    abono: number
 }
 
 //Context Checkout
@@ -129,6 +148,7 @@ export interface CheckoutState {
     checkoutError: boolean
     checkout: Checkout
     observacion: string | null
+    estadosPago: EstadoPagoRead[]
     closeDialog(data?:any): void
 }
 
@@ -192,7 +212,8 @@ export const checkoutDataFormInitialState: CheckoutDataForm = {
         creationDate: "",
         nroDoc: "",
         totalValorAbono: 0
-    }
+    },
+    estadosPago:[]
 }
 
 

@@ -1,22 +1,12 @@
-﻿using FactElect.API.Interfaces;
+﻿namespace FactElect.API.Controllers;
 
-namespace FactElect.API.Controllers;
-
-public class DocumentoElectronicoErrorController : BaseApiController
+public class DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService docElect) : BaseApiController
 {
-    private readonly IDocumentoElectronicoErrorService _docElect;
-
-
-    public DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService docElect)
-    {
-        _docElect = docElect;
-    }
-
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
         var parameters = new Dictionary<string, object> { { "id", id } };
-        var orders = await _docElect.GetAsync(parameters);
+        var orders = await docElect.GetAsync(parameters);
 
         if ((orders == null) | string.IsNullOrEmpty(orders))
         {

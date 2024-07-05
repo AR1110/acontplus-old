@@ -17,7 +17,7 @@ public class CuentaPorPagarController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Get");
             _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -37,7 +37,7 @@ public class CuentaPorPagarController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Insert");
             _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -57,7 +57,7 @@ public class CuentaPorPagarController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idUsuarioRol = User.GetUserRoleId();
             await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Update");
             _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _dbAccess.AddDynamicParam("idCuentaPorPagar", id);

@@ -17,8 +17,8 @@ import { SharedService, accountReceivableService as accountReceivableSvc } from 
 import { CheckoutUtility, RoundNumber, SnackbarUtility, isValidField } from "@/core/utilities";
 import { PaymentTypeCode } from "@/core/constants";
 import Swal from "sweetalert2";
-import { showLoader, hideLoader } from "@/spinner";
-import checkout from "@/core/components/Checkout/Checkout.tsx";
+import { showLoader, hideLoader } from "@/spinner"; 
+import { comprobanteIngresoSvc } from "@/core/services/comprobante-ingreso.service";
 const initialCheckoutParams: CheckoutParams = {
     orderId: 0,
     idDocumento: 0,
@@ -40,7 +40,8 @@ const initialState: CheckoutState = {
     checkoutError: false,
     checkout: structuredClone(initialCheckoutState),
     closeDialog: () => [],
-    observacion: null
+    observacion: null,
+    estadosPago:[]
 }
 const initialActions: CheckoutActions = {
     fetchCheckout: () => [],
@@ -81,7 +82,7 @@ export const CheckoutProvider = ({ children }: Props) => {
 
 
         try {
-            const { codEstab, idCuentaPorCobrar, tiempoCredito } = params;
+            const { idCuentaPorCobrar } = params;
             // Inicia el indicador de carga
             dispatch({ type: GET_CHECKOUT_BEGIN })
             // Check if we made a request
@@ -91,11 +92,8 @@ export const CheckoutProvider = ({ children }: Props) => {
             }
             // Create a new CancelTokenSource
             cancelTokenSource = axios.CancelToken.source();
-            const response = await accountReceivableSvc.get({
-                tipo: 3,
-                codEstab: codEstab,
-                idCuentaPorCobrar: idCuentaPorCobrar,
-                credito: tiempoCredito
+            const response = await comprobanteIngresoSvc.getDataForm({  
+                idCuentaPorCobrar: idCuentaPorCobrar, 
             })
             dispatch({
                 type: GET_CHECKOUT_SUCCESS,
@@ -106,6 +104,7 @@ export const CheckoutProvider = ({ children }: Props) => {
                 }
             });
         } catch (error) {
+            console.log(error)
             dispatch({ type: GET_CHECKOUT_ERROR })
         }
     }
@@ -149,8 +148,9 @@ export const CheckoutProvider = ({ children }: Props) => {
                 paymentData,
                 multiplesPaymentType,
                 paymentSubTypes,
-                paymentDetails
+                paymentDetails  
             } = state.checkout;
+            
             const { voucherQuotas } = dataForm;
             if (voucher.totalBalance == 0 || voucher.totalBalance < 0) {
                 Swal.fire({
@@ -362,20 +362,7 @@ export const CheckoutProvider = ({ children }: Props) => {
             SnackbarUtility.warning('Seleccione la SubEntidad Financiera');
             return
         }
-
-        // if(!cobro.fechaEmision){
-        //     this.tS.toastr('warning', 'Ingrese la fecha de emisión')
-        //     return
-        // }
-        // if(!this.isDateValid(cobro.fechaEmision)){
-        //     this.tS.toastr('warning', 'Ingrese una fecha válida')
-        //     return
-        // } 
-
-        // if (!(voucher.receivedAmount > 0)) {
-        //     SnackbarUtility.warning('Ingrese el valor de abono')
-        //     return
-        // }
+ 
 
         // =================== TARJETA DE CREDITO / DEBITO  =================================== //
         if (paymentData.paymentTypeCode === PaymentTypeCode.TAR) {
@@ -455,9 +442,11 @@ export const CheckoutProvider = ({ children }: Props) => {
     const save = async () => {
         const {
              checkout,
-            observacion
+            observacion,
+            estadosPago
 
         } = state;
+        console.log(estadosPago)
         const {
             voucher,
             multiplesPaymentType,
@@ -499,7 +488,9 @@ export const CheckoutProvider = ({ children }: Props) => {
             })
             if (!isConfirmed) return
 
-            // const checkoutUtility = new CheckoutUtility(0);
+             const checkoutUtility = new CheckoutUtility(0);
+             checkoutUtility.setEstadosPago = estadosPago;
+
             // const historyPayments = checkoutUtility.getHistoryPayments(dataForm.voucherQuotas, paymentDetails);
             const comprobante = {
                 idCliente: voucher.customerCompanyId,
@@ -530,7 +521,8 @@ export const CheckoutProvider = ({ children }: Props) => {
                 return obj;
             })
 
-            const cobroDetalle = paymentDetails.filter(item => (item.abono > 0))
+            const cobroDetalle = paymentDetails.filter(item => (item.abono > 0));
+
             const cobroDetalleMappeado = cobroDetalle.map(detalle => {
                 return {
                     idCuentaPorCobrar: detalle.idCuentaPorCobrar,
@@ -545,15 +537,7 @@ export const CheckoutProvider = ({ children }: Props) => {
                 }
             })
 
-            // const historialCobrosMappeado = historyPayments.map(hc => {
-            //     return {
-            //         idCuentaPorCobrar: hc.idCuentaPorCobrar,
-            //         abono: hc.abono,
-            //         diasMora: hc.diasMora,
-            //         mora: hc.mora,
-            //         saldo: hc.saldo,
-            //     }
-            // })
+       
 
             const historialCobrosMappeado = historialCuentas.map(hc => {
                 return {
@@ -566,11 +550,27 @@ export const CheckoutProvider = ({ children }: Props) => {
                 }
             })
 
+            const cuentasPorCobrarEstado = checkoutUtility.generarCuentasPorCobrarEstado({
+                historialCuentas, 
+                cobrosDetalle: paymentDetails
+            })
+
+            const cuotasPorCobrarEstado = checkoutUtility.generarCuotasPorCobrarEstado({
+                cobrosDetalle: paymentDetails
+            })
+
             const data = {
                 comprobante,
                 cobros,
                 cobroDetalle: cobroDetalleMappeado,
                 historial: historialCobrosMappeado,
+                cuenta: cuentasPorCobrarEstado,
+                cuota: cuotasPorCobrarEstado
+            }
+            if (cuentasPorCobrarEstado.length === 0 || cuotasPorCobrarEstado.length===0){
+                console.log('cuentasPorCobrarEstado', cuentasPorCobrarEstado)
+                console.log('cuotasPorCobrarEstado', cuotasPorCobrarEstado)
+                return 
             }
 
             showLoader();

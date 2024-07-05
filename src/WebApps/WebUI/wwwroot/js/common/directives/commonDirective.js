@@ -1493,7 +1493,7 @@
                     if (textSearch.length > 1) {
                         let json = {
                             busqueda: textSearch,
-                            idRol: decodeToken.idUsuarioRol
+                            idRol: decodeToken.userRoleId
                         }
                         return commonService.usuarioSearch(json).then(response => {
                             let usuarios = response;
@@ -1708,9 +1708,11 @@
                 placement: "@"
             },
             link: function (scope, element) {
+                let isPopoverInitialized = false;
                 var popoverOptions = {
                     title: '<i class="mdi mdi-information-outline"></i> Artículo Fraccionado',
                     content: function () {
+                        isPopoverInitialized = true;
                         var popoverContent = ` <div class="table-responsive">
                                                 <table class="table table-sm">
                                                     <thead>
@@ -1761,22 +1763,24 @@
                     customClass: 'contentArticlePopover',
                     container: 'body'
                 };
+ 
 
-
-                // // Initialize the popover using element.popover()
                 $(element).popover(popoverOptions);
 
-                // // Open popover on element click
+
                 element.on('mouseover', function () {
-                    $(element).popover('show');
+                    if (!isPopoverInitialized) {
+                        $(element).popover('show');
+                    }
                 });
 
-                // // Close popover on outside click
+
                 $(document).on('mouseover', function (event) {
+                    isPopoverInitialized = false;
                     if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
                         $(element).popover('hide');
                     }
-                });
+                }); 
 
                 // Clean up the popover when the directive is destroyed
                 // scope.$on('$destroy', function () {
@@ -2113,6 +2117,158 @@
             }
         }
     }])
+
+
+
+     /***
+     * @description anular comprobante ingreso 
+     * 
+     */
+    app.directive('btnAnularComprobanteIngreso', ['comprobanteIngresoService','toastService', 'formulario',function (compIngresoSvc,tS,fS) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                onResult: '&'
+            },
+            link: async function (scope, element) {
+                let cuentasPorCobrar = [], cuotasPorCobrar = [], estadosPago = [];
+
+                element.on('click', async function () {
+                    const { idComprobanteIngreso } = scope.params;
+
+                    try {
+                        const response = await compIngresoSvc.getDataToOverride(idComprobanteIngreso); 
+
+                        cuentasPorCobrar = response.cuentasPorCobrar;
+                        cuotasPorCobrar = response.cuotasPorCobrar;
+                        estadosPago = response.estadosPago;
+
+                        if (cuentasPorCobrar.length === 0 || cuotasPorCobrar.length === 0) {
+
+                            console.log("cuentasPorCobrar", cuentasPorCobrar);
+                            console.log("cuotasPorCobrar", cuotasPorCobrar);
+                            return;
+                        }
+
+                        const { isConfirmed, value } = await Swal.fire({
+                            icon: 'warning',
+                            html: '<small>¿Está seguro/a de anular este registro ahora?</small>',
+                            input: 'text',
+                            inputPlaceholder: 'Ingrese la observación',
+                            showConfirmButton: true,
+                            confirmButtonText: 'Sí, anular',
+                            showCancelButton: true,
+                            cancelButtonText: 'No, cancelar',
+                            allowOutsideClick: false,
+                            inputValidator: value => !value && '¡Ingrese la observación!'
+                        });
+
+                        if (!isConfirmed) return;
+
+                        const dataParams = getDataParams();
+                        const data = {
+                            observacion: value,
+                            ...dataParams
+                        };
+
+                        showLoader();
+                        const updateResponse = await compIngresoSvc.update(idComprobanteIngreso, data);
+
+                        if (updateResponse.code === "0") {
+                            tS.toastr({
+                                type: 'warning',
+                                message: updateResponse.message
+                            });
+                        } else if (updateResponse.code === "1") {
+                            tS.toastr({
+                                type: 'success',
+                                message: updateResponse.message
+                            });
+
+                            scope.onResult(updateResponse);
+                        }
+
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        hideLoader();
+                    }
+                });
+
+                function getDataIdEstadoPago(codigoEstadoPago) {
+                    const dataEstadoPago = estadosPago.find(ep => ep.codigo === codigoEstadoPago);
+                    return dataEstadoPago ? dataEstadoPago.idEstadoPago : 0;
+                }
+
+                function getDataParams() {
+                    // Agrupa cuentas por cobrar
+                    const cuentasPorCobrarAgrupado = cuentasPorCobrar.reduce((acc, curr) => {
+                        let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar);
+                        let abono = curr.cobro ? curr.abono : 0;
+
+                        if (!existeDato) {
+                            acc.push({
+                                idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                                abonoDoc: curr.abonoDoc,
+                                abono,
+                            });
+                        } else {
+                            existeDato.abono += abono;
+                        }
+                        return acc;
+                    }, []);
+
+                    // Agrupa cuotas por cobrar
+                    const cuotasPorCobrarAgrupado = cuotasPorCobrar.reduce((acc, curr) => {
+                        let existeDato = acc.find(dataCxc => dataCxc.idCuotaPorCobrar === curr.idCuotaPorCobrar);
+                      //  let abono = curr.cobro ? curr.abono : 0;
+                      let abono = curr.abono
+
+                        if (!existeDato) {
+                            acc.push({
+                                idCuotaPorCobrar: curr.idCuotaPorCobrar,
+                                abonoCuota: curr.abonoCuota,
+                                abono,
+                            });
+                        } else {
+                            existeDato.abono += abono;
+                        }
+                        return acc;
+                    }, []);
+
+                    // Calcula los valores residuales y el estado de pago para cuentas por cobrar
+                    const tempCuentasPorCobrar = cuentasPorCobrarAgrupado.map(item => {
+                        const valorResiduo = item.abonoDoc - item.abono;
+                        return {
+                            idCuentaPorCobrar: item.idCuentaPorCobrar,
+                            abono: fS.roundNumber(valorResiduo, 3),
+                            idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP')
+                        };
+                    });
+
+                    // Calcula los valores residuales y el estado de pago para cuotas por cobrar
+                    const tempCuotasPorCobrar = cuotasPorCobrarAgrupado.map(item => {
+                        const valorResiduo = item.abonoCuota - item.abono;
+                        return {
+                            idCuotaPorCobrar: item.idCuotaPorCobrar,
+                            abono: fS.roundNumber(valorResiduo, 3),
+                            idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP')
+                        };
+                    });
+
+                    // Retorna los datos agrupados y calculados
+                    return {
+                        cuenta: tempCuentasPorCobrar,
+                        cuota: tempCuotasPorCobrar
+                    };
+                }
+
+            }
+
+        }
+    }])
+
 
 
 })(window.angular)

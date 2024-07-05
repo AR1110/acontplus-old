@@ -70,7 +70,7 @@ BEGIN
 				,correo                VARCHAR(300)'$.correo'
 				)
 
-		IF EXISTS (SELECT 1 FROM Sri.Establecimiento WHERE ruc = @ruc AND estab = @estab)
+		IF EXISTS (SELECT 1 FROM Sri.Establecimiento WHERE idEntidad = @idEntidad AND estab = @estab)
 			BEGIN
 				SELECT '0'code,'El numero de establecimiento ya se encuentra registrado' as 'message'
 				RETURN 
@@ -82,8 +82,7 @@ BEGIN
                     ,canton
 					,actividad
 					,agenteRetencion
-					,contribuyente
-					,ruc
+					,contribuyente 
 					,estab
 					,contribuyenteEspecial
 					,obligadoContabilidad
@@ -92,16 +91,14 @@ BEGIN
 					,telefono
 					,correo
 					,contribuyenteRimpe
-					,fechaRegistro
-					,usuario
+					,fechaRegistro 
                     ,idEntidad)
 				SELECT 
 				     @codEstab
                     ,@canton
 				    ,@actividad
 				    ,@agenteRetencion
-				    ,@contribuyente
-				    ,@ruc
+				    ,@contribuyente 
 				    ,@estab
 				    ,@contribuyenteEspecial
 				    ,@obligadoContabilidad
@@ -110,8 +107,7 @@ BEGIN
 					,@telefono
 					,@correo
 				    ,@contribuyenteRimpe
-				    ,dbo.ufnGetDateEcuador()
-				    ,@nombreUsuario
+				    ,dbo.ufnGetDateEcuador() 
                     ,@idEntidad
 					
 		COMMIT TRAN 

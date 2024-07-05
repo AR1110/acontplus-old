@@ -43,6 +43,8 @@ public class Program
 
         app.UseMiddleware<ExceptionMiddleware>();
 
+        app.UseMiddleware<MobileRequestMiddleware>();
+
         app.UseSwaggerVersionedDocumentation();
 
 

@@ -63,3 +63,9 @@ export enum DOC_TYPE_REPORT {
     NE = 'RNE',
     OR = 'RRO'
 }
+export enum CODIGO_ESTADO_PAGO {
+    PFC ='PFC', //Posfechado
+    CBR ='CBR', //Cobrado
+    PP ='PP',//pendiente parcial 
+    PE ='PE' //Pendiente
+}

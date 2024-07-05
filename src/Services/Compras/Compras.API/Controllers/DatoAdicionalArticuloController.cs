@@ -22,7 +22,7 @@ public class DatoAdicionalArticuloController : ControllerBase
         {
             await _db.SPExecute("Recepcion.Dato_Adicional_Articulo_Get");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
         }
@@ -48,7 +48,7 @@ public class DatoAdicionalArticuloController : ControllerBase
         {
             await _db.SPExecute("Recepcion.Dato_Adicional_Articulo_Insert");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("idDocumento", id);
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
             _response = _db.GetDefault();
@@ -75,7 +75,7 @@ public class DatoAdicionalArticuloController : ControllerBase
         {
             await _db.SPExecute("Recepcion.Dato_Adicional_Articulo_Delete");
             _db.AddDynamicParam("idUsuarioRol",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("idInfoAdicional", idInfoAdicional);
             _response = _db.GetDefault();
         }

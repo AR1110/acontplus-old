@@ -87,7 +87,7 @@
                     }
 
                     if (params.tipo === 4) {
-                        console.log(mainData)
+                       
                     }
 
                     if (params.tipo === 5) {
@@ -484,45 +484,183 @@
         const url = `Contabilidad/ComprobanteIngreso/`
         return {
             getAll,
+            getDataForm,
             post,
             mapperTo,
             getHistorialCobrosById,
             getHistorialCobrosByDoc,
             update,
             cancel,
+            getCuotasByIdCuentaPorCobrar,
+            getDataToOverride
         }
 
         function getAll(obj) {
-            let params = JSON.stringify(obj)
+            
+            let params = JSON.stringify({
+                ...obj,
+                tipo: 1
+            })
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 let results = [];
                 
-                if (response.code === "1") {
-                    const [comprobantesIngreso] = JSON.parse(response.payload);
-                    results = comprobantesIngreso.map(compIngreso => {
+                if (response.code === "1") {                    
+                    const { comprobanteIngreso} = JSON.parse(response.payload);
+                    results = comprobanteIngreso.map(item => {
                         return {
                             codDoc: 'CI',
-                            idComprobanteIngreso: compIngreso.idComprobanteIngreso,
-                            idDocumento: compIngreso.idDocumento,
-                            codEstab: compIngreso.codEstab,
-                            total: compIngreso.total,
-                            fechaRegistro: compIngreso.fechaRegistro,
-                            abono: compIngreso.abono,
-                            cambio: compIngreso.cambio,
-                            nroDoc: compIngreso.nroDoc,
-                            cliente: compIngreso.cliente,
-                            nroIdentificacion: compIngreso.nroIdentificacion,
-                            caja: compIngreso.caja,
-                            style: compIngreso.style,
-                            estado: compIngreso.estado,
-                            usuario: compIngreso.usuario,
-                            serieComprobante: compIngreso.nroDoc,
+                            idComprobanteIngreso: item.idComprobanteIngreso,
+                            idDocumento: item.idDocumento,
+                            codEstab: item.codEstab,
+                            total: item.total,
+                            fechaRegistro: item.fechaRegistro,
+                            abono: item.abono,
+                            cambio: item.cambio,
+                            nroDoc: item.nroDoc,
+                            cliente: item.cliente,
+                            nroIdentificacion: item.nroIdentificacion,
+                            caja: item.caja,
+                            style: item.style,
+                            estado: item.estado,
+                            usuario: item.usuario,
+                            serieComprobante: item.nroDoc,
                             comprobante: 'Comprobante Ingreso',
-                            esAnulado: compIngreso.color === 'table-danger'
+                            esAnulado: item.color === 'table-danger',
+                            totalRecords: item.totalRecords
                         }
                     })
                 }
                 return results;
+            })
+        }
+
+        function getDataForm(idCuentaPorCobrar, idCliente){
+            const params = JSON.stringify({ idCuentaPorCobrar, idCliente, tipo: 5 });
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+                let resultData = {
+                    entidadesFinanciera: [],
+                    bancos: [],
+                    documentos:[],
+                    ciudades:[],
+                    cuentaPorCobrar: [],
+                    estadosPago: []
+                }
+                if (response.code==="1") { 
+
+                    const { entidadFinanciera, banco, documentos, subEntidadFinanciera, provincia, cuentaPorCobrar,
+                        estadoPago } = JSON.parse(response.payload);
+
+                    const resultEntidadesFinanciera = entidadFinanciera.map(ef => {
+                        let filteredSubEntidadFinanciera = subEntidadFinanciera.filter(sef => sef.idEntidadFinanciera === ef.idEntidadFinanciera)
+                        return {
+                            idEntidadFinanciera: ef.idEntidadFinanciera,
+                            descripcion: ef.descripcion,
+                            detalle: ef.detalle,
+                            codigo: ef.codigo,
+                            subEntidadesFinanciera: filteredSubEntidadFinanciera
+                        }
+                    })
+
+                
+                    //cuando el cobro es por documento 
+                    if (Array.isArray(cuentaPorCobrar)) {
+                      
+                        resultData.cuentaPorCobrar = cuentaPorCobrar.map(cxc => {
+                            let cuotas = JSON.parse(cxc.cuotas);
+                            let resultsCuotas = cuotas.map(cuota => {
+                                return {
+                                    idCuotaPorCobrar: cuota.idCuotaPorCobrar,
+                                    idCuentaPorCobrar: cuota.idCuentaPorCobrar,
+                                    nroCuota: cuota.nroCuota,
+                                    cuota: cuota.cuota,
+                                    mora: cuota.mora,
+                                    interes: cuota.interes,
+                                    diasMora: cuota.diasMora,
+                                    abono: cuota.abono,
+                                    saldoCta: cuota.saldoCta,
+                                    saldo: cuota.saldo,
+                                    estado: cuota.estado,
+                                    saldoOriginal: cuota.saldo,
+                                    valorSaldoLectura: cuota.saldo
+                                }
+                            })
+                            return {
+                                codEstab: cxc.codEstab,
+                                idCliente: cxc.idCliente,
+                                identificacionComprador: cxc.identificacionComprador,
+                                razonSocialComprador: cxc.razonSocialComprador,
+                                idCuentaPorCobrar: cxc.idCuentaPorCobrar,
+                                serieComprobante: cxc.serieComprobante,
+                                codDoc: cxc.codDoc,
+                                fechaEmision: cxc.fechaEmision,
+                                fechaVencimiento: cxc.fechaVencimiento,
+                                importeTotal: cxc.importeTotal,
+                                diasMora: cxc.diasMora,
+                                mora: cxc.mora,
+                                abono: cxc.abono,
+                                saldo: cxc.saldo,
+                                saldoTemporal: cxc.saldo,
+                                valorSaldoLectura: cxc.saldo,
+                                descripcion: cxc.descripcion,
+                                cuotas: structuredClone(resultsCuotas),
+                                cuotasOriginal: structuredClone(resultsCuotas)
+                            }
+                        })
+                    } 
+                    resultData.entidadesFinanciera = resultEntidadesFinanciera;
+                    resultData.bancos = banco;
+                    resultData.documentos = documentos;
+                    resultData.ciudades = provincia; 
+                    resultData.estadosPago = estadoPago;
+                }
+                return resultData;
+            })
+        }
+
+        function getCuotasByIdCuentaPorCobrar(id) {
+            const params = JSON.stringify({ idCuentaPorCobrar: id, tipo: 6 });
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+                if (response.code==="1") {
+                    let {cuotas}= JSON.parse(response.payload)
+
+                    return cuotas.map(cuota => {
+                        return {
+                            idCuotaPorCobrar: cuota.idCuotaPorCobrar,
+                            idCuentaPorCobrar: cuota.idCuentaPorCobrar,
+                            nroCuota: cuota.nroCuota,
+                            cuota: cuota.cuota,
+                            mora: cuota.mora,
+                            interes: cuota.interes,
+                            diasMora: cuota.diasMora,
+                            abono: cuota.abono,
+                            saldoCta: cuota.saldoCta,
+                            saldo: cuota.saldo,
+                            estado: cuota.estado,
+                            saldoOriginal: cuota.saldo,
+                            valorSaldoLectura: cuota.saldo
+                        }
+                    })
+                }
+                return []
+            })
+        }
+
+        //obtiene datos para anular el comprobante de ingreso 
+        function getDataToOverride(id){
+            const params = JSON.stringify({ id, tipo: 7 });
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response=>{
+                let resultData = {};
+                if(response.code==="1"){
+                    console.log(JSON.parse(response.payload))
+                    let {cuentas,cuotas,estadoPago} = JSON.parse(response.payload);
+                    
+                    resultData.cuentasPorCobrar = cuentas;
+                    resultData.cuentasPorCobrar = cuotas;
+                    resultData.estadosPago = estadoPago;
+                }else{
+                    throw new Error('Error en petición')
+                }
+                return resultData
             })
         }
 
@@ -532,6 +670,8 @@
                 cobros,
                 cobroDetalle,
                 historialCobros,
+                cuentasPorCobrarEstado,
+                cuotasPorCobrarEstado
             } = obj;
 
             let comprobanteMappeado = {
@@ -544,7 +684,7 @@
                 observacion: fS.isValidField(comprobante.observacion) 
             }
 
-            let comprosMappeado = cobros.map(cobro => {
+            let cobrosMappeado = cobros.map(cobro => {
                 return {
                     idSubEntidadFinanciera: cobro.idSubEntidadFinanciera,
                     idEntidadFinanciera: cobro.idEntidadFinanciera,
@@ -591,10 +731,13 @@
 
             const objComprobanteIngreso = {
                 comprobante: comprobanteMappeado,
-                cobros: comprosMappeado,
+                cobros: cobrosMappeado,
                 cobroDetalle: cobroDetalleMappeado,
                 historial: historialCobrosMappeado,
+                cuenta: cuentasPorCobrarEstado,
+                cuota: cuotasPorCobrarEstado
             }
+            
             return objComprobanteIngreso;
         }
 
@@ -605,26 +748,32 @@
         function getHistorialCobrosById(idComprobanteIngreso) {
             let params = JSON.stringify({ idComprobanteIngreso, tipo: 2 })
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
-                if (response.code === '0') {
-                    throw response;
+                let resultData = {
+                    comprobante: [],
+                    cobros: [],
+                    cobroDetalles:[]
                 }
-                let mainDataRepository = JSON.parse(response.payload);
+                if (response.code === '1') {
+                    
+                    let { comprobanteIngreso, cobro, cobroDetalle } = JSON.parse(response.payload);
 
-                let comprobante = mainDataRepository[0][0];
-                let cobros = mainDataRepository[1];
-                let cobroDetalles = mainDataRepository[2];
+                    let comprobante = comprobanteIngreso[0];
+                    let cobros = cobro;
+                    let cobroDetalles = cobroDetalle;
 
-                for (let item of cobros) {
-                    item.infoCobro = JSON.parse(item.infoCobro)
-                    item.cobroDetalles = cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
-                    item.showInfoCobro = item.codPago !== 'EFE'
+                    for (let item of cobros) {
+                        item.infoCobro = JSON.parse(item.infoCobro)
+                        item.cobroDetalles = cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
+                        item.showInfoCobro = item.codPago !== 'EFE'
+                    }
+
+                   
+                        resultData.comprobante = comprobante;
+                        resultData.cobros = cobros;
+                        resultData.cobroDetalles = cobroDetalles
+                     
                 }
-
-                return {
-                    comprobante,
-                    cobros,
-                    cobroDetalles
-                }
+                return resultData;
             })
         }
         function getHistorialCobrosByDoc(idCuentaPorCobrar) {
@@ -635,47 +784,47 @@
                     cobroDetalles: [],
                     comprobanteIngresos: []
                 }
-                if (response.code === '0') {
-                    throw response;
+                if (response.code === '1') { 
+
+                    let { cuentaPorCobrar, comprobanteIngreso , cobro, cobroDetalle} = JSON.parse(response.payload);
+
+                    result.comprobante = cuentaPorCobrar[0];
+                    let comprobanteIngresos = comprobanteIngreso;
+
+                    let cobros = cobro;
+                    result.cobroDetalles = cobroDetalle;
+
+
+
+                    for (let item of cobros) {
+                        item.infoCobro = JSON.parse(item.infoCobro)
+                        item.cobroDetalles = result.cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
+
+                    }
+
+                    result.comprobanteIngresos = comprobanteIngresos.map(item => {
+                        item.cobros = cobros.filter(cc => cc.idComprobanteIngreso === item.idComprobanteIngreso)
+                            .map(cobro => {
+                                cobro.infoCobro = cobro.infoCobro
+                                cobro.showInfoCobro = cobro.codPago !== 'EFE'
+                                return cobro;
+                            })
+                        return item;
+                    })
                 }
-
-
-                let mainDataRepository = JSON.parse(response.payload);
-
-                result.comprobante = mainDataRepository[0][0];
-                let comprobanteIngresos = mainDataRepository[1];
-
-                let cobros = mainDataRepository[2];
-                result.cobroDetalles = mainDataRepository[3];
-
-
-
-                for (let item of cobros) {
-                    item.infoCobro = JSON.parse(item.infoCobro)
-                    item.cobroDetalles = result.cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
-
-                }
-
-                result.comprobanteIngresos = comprobanteIngresos.map(item => {
-                    item.cobros = cobros.filter(cc => cc.idComprobanteIngreso === item.idComprobanteIngreso)
-                        .map(cobro => {
-                            cobro.infoCobro = cobro.infoCobro
-                            cobro.showInfoCobro = cobro.codPago !== 'EFE'
-                            return cobro;
-                        })
-                    return item;
-                })
 
                 return result;
             })
         }
 
         //==================SE USA EN CHEQUE===========
-        function update(data) {
-            return mS.getData('put', `${url}`, { data }, true)
+        function update(comprobanteIngresoId, data) {
+            return mS.getData('put', `${url}${comprobanteIngresoId}`, { data }, true)
         }
 
-        function cancel(data){
+        
+
+        function cancel( data){
             return mS.getData('put', `${url}Cancel`, { data }, true)
         }
 
@@ -951,6 +1100,160 @@
         }
     }])
 
+
+    app.factory('contabilidadUtils', [function(){
+        return {
+            generarCuentasPorCobrarEstado,
+            generarCuotasPorCobrarEstado
+        }
+
+
+        function getDataEstadoPago({ saldo, abono, esPosfechado, estadosPago }) {
+            let estado = '';
+            let dataEstadoPago = {};
+
+            if (esPosfechado) {
+                dataEstadoPago = estadosPago.find(ep => ep.codigo === 'PFC');
+            } else {
+                if (saldo === 0) {
+                    dataEstadoPago = estadosPago.find(ep => ep.codigo === 'CBR');
+                    estado = 'COBRADA'
+                }
+                if (saldo > 0) {
+                    dataEstadoPago = estadosPago.find(ep => ep.codigo === 'PP');
+                    estado = "PENDIENTE PARCIAL";
+                }
+                if (abono === 0) {
+                    dataEstadoPago = estadosPago.find(ep => ep.codigo === 'PE');
+                    estado = "PENDIENTE";
+                }
+
+            }
+
+
+            return {
+                idEstadoPago: dataEstadoPago.idEstadoPago,
+                descripcion: estado
+            }
+        }
+
+        function generarCuentasPorCobrarEstado({ historialCuentas, cobrosDetalle, estadosPago }){
+            let cuentasPorCobrarAgrupado = historialCuentas.reduce((acc, curr) => {
+
+                let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar);
+                if (!existeDato) {
+                    acc.push({
+                        idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                        valorSaldoLectura: curr.valorSaldoLectura,
+                        abono: curr.abono,
+                        diasMora: curr.diasMora,
+                        mora: curr.mora
+                    })
+                } else {
+                    existeDato.abono += curr.abono;
+
+                }
+                return acc;
+
+            }, [])
+
+            let cuentasPorCobrarEstado = [];
+
+
+            for (let item of cuentasPorCobrarAgrupado) {
+                let valorSaldo = 0, dataEstadoPago = {};
+
+                let totalPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && cd.posfechado).reduce((acc, curr) => {
+                    acc += curr.abono;
+                    return acc;
+                }, 0)
+
+                let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && !cd.posfechado).reduce((acc, curr) => {
+                    acc += curr.abono;
+                    return acc;
+                }, 0) 
+
+                valorSaldo = item.valorSaldoLectura - totalNoPosfechado;
+
+                if (totalPosfechado > 0) {
+                    dataEstadoPago = getDataEstadoPago({
+                        esPosfechado: true,
+                        estadosPago
+                    })
+                }
+
+
+                if (totalPosfechado <= 0) {
+                    dataEstadoPago = getDataEstadoPago({
+                        saldo: valorSaldo,
+                        abono: totalNoPosfechado,
+                        estadosPago
+                    })
+                }
+
+                cuentasPorCobrarEstado.push({
+                    idCuentaPorCobrar: item.idCuentaPorCobrar,
+                    idEstadoPago: dataEstadoPago.idEstadoPago,
+                    abono: totalNoPosfechado
+                })
+
+            }
+            return cuentasPorCobrarEstado;
+
+        }
+ 
+
+        function generarCuotasPorCobrarEstado({ cobrosDetalle, estadosPago }){
+
+            let cuotasPorCobrarAgrupado = cobrosDetalle.reduce((acc, curr) => {
+
+                let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar && curr.idCuentaPorCobrar && dataCxc.idCuotaPorCobrar === curr.idCuotaPorCobrar);
+                if (!existeDato) {
+                    acc.push({
+                        idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                        idCuotaPorCobrar: curr.idCuotaPorCobrar,
+                        valorSaldoLectura: curr.valorSaldoLectura,
+                        abono: curr.abono,
+                    })
+                } else {
+                    existeDato.abono += curr.abono;
+
+                }
+                return acc;
+
+            }, [])
+
+            let cuotasPorCobrarEstado = [];
+
+            for (let item of cuotasPorCobrarAgrupado) {
+
+                let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuotaPorCobrar === item.idCuotaPorCobrar && !cd.posfechado).reduce((acc, curr) => {
+                    acc += curr.abono;
+                    return acc;
+                }, 0)
+
+                let valorSaldo = item.valorSaldoLectura - totalNoPosfechado;
+
+                let dataEstadoPago = getDataEstadoPago({
+                    saldo: valorSaldo,
+                    abono: item.abono,
+                    estadosPago
+                })
+
+
+                cuotasPorCobrarEstado.push({
+                    idEstadoPago: dataEstadoPago.idEstadoPago,
+                    abono: totalNoPosfechado,
+                    idCuotaPorCobrar: item.idCuotaPorCobrar
+                })
+
+            }
+            return cuotasPorCobrarEstado;
+
+        }
+
+
+    }])
 
 
 })(window.angular)

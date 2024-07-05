@@ -184,13 +184,12 @@ function ModalCobroDetalleCtrl($scope, $rootScope, $uibModalInstance, comprobant
             if (!isConfirmed) return
 
 
-            let params = {
+            let data = {
                 idComprobanteIngreso: item.idComprobanteIngreso,
                 observacion: value
             }
             showLoader();
-      
-            comprobanteIngresoSvc.cancel(params).then(response => {
+            comprobanteIngresoSvc.update(item.idComprobanteIngreso, data).then(response => {
                 if (response.code == "0") {
                     tS.toastr('warning', response.message, response.titleSms);
                 }

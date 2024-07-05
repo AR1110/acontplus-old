@@ -4,234 +4,114 @@
 [ApiController]
 [ApiVersion("1.0")]
 public class ArticuloController : ControllerBase
-{
-    private readonly IConfiguration _configuration;
-    
+{ 
     private readonly S3ObjectCustom _s3ObjectCustom;
     private readonly IS3StorageService _storageService;
+    private readonly IArticuloService _svc;
 
     public ArticuloController(IConfiguration configuration,
         S3ObjectCustom s3ObjectCustom,
-        IS3StorageService storageService)
-    {
-        _configuration = configuration;
+        IS3StorageService storageService,
+        IArticuloService svc)
+    { 
         _s3ObjectCustom = s3ObjectCustom;
         _storageService = storageService;
-        
+        _svc = svc;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
+        if (!DataValidation.IsValidJson(json))
         {
-            if (!DataValidation.IsValidJson(json))
-            {
-                return BadRequest("Caracteres de busqueda invalidos");
-            }
-
-            await _db.SPExecute("Inventario.Articulo_Get");
-            _db.AddDynamicParam("idRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataSetAsync();
+            return BadRequest("Caracteres de busqueda invalidos");
         }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>{
+            { "idRol", User.GetUserRoleId() }, 
+            { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await _svc.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
+        return Ok(new { code = "1", payload = response });
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
-        {
-            await _db.SPExecute("Inventario.Articulo_Get_Id");
-            //_db.AddDynamicParam("idRol", User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>{ 
+            { "id", id }
+        };
+        var response = await _svc.GetByIdAsync(parameters);
+        if (response == null) { return NoContent(); }
+        return Ok(new { code = "1", payload = response }); 
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(string json, IFormFile file)
-    {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
+    { 
         var data = JsonConvert.DeserializeObject<ApiRequest>(json);
-
-        try
+         
+        if (file != null)
         {
-            if (file != null)
-            {
-                await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
-            }
-
-            await _db.SPExecute("Inventario.Articulo_Insert", true);
-            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-            _db.AddDynamicParam("s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "");
-            _db.AddDynamicParam("s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "");
-            _response = _db.GetDefault();
-            if (_response.code == "1" && file != null)
-            {
-                var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
-            }
-        }
-        finally
-        {
-            _db.Close();
-            if (file != null)
-            {
-                _s3ObjectCustom.Dispose();
-            }
+            await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
         }
 
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetUserRoleId() }, 
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "s3ObjectKey",  _s3ObjectCustom.S3ObjectKey ?? "" },
+            { "s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "" }
+        };
+        var response = await _svc.AddAsync(parameters);
+         
+        if (response.Code == "1" && file != null)
+        {
+            var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
+            _s3ObjectCustom.Dispose();
+        } 
+
+        return Ok(response);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
         var data = JsonConvert.DeserializeObject<ApiRequest>(json);
-
-        try
-        {
-            await _db.SPExecute("Inventario.Articulo_Update");
-            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-            _response = _db.GetDefault();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetUserRoleId() },
+                { "id", id },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            };
+        var response = await _svc.UpdateAsync(parameters);
+        return Ok(response); 
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
-        {
-            await _db.SPExecute("Inventario.Articulo_Delete");
-            _db.AddDynamicParam("idRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } };
+        var response = await _svc.DeleteAsync(parameters);
+        return Ok(response); 
     }
 
     [HttpGet]
     public async Task<IActionResult> Search(string json)
-    {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
+    {        
+        if (!DataValidation.IsValidJson(json))
         {
-            if (!DataValidation.IsValidJson(json))
-            {
-                return BadRequest("Caracteres de busqueda invalidos");
-            }
-
-            await _db.SPExecute("Inventario.Articulo_Get_Search");
-            _db.AddDynamicParam("idRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
+            return BadRequest("Caracteres de busqueda invalidos");
         }
 
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>{
+            { "idRol", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(json) }
+        };
+
+        return Ok(await _svc.SearchAsync(parameters)); 
+        
     }
-
-    [HttpGet]
-    public async Task<IActionResult> FindForPurchase(string json)
-    {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
-        {
-            await _db.SPExecute("Almacen.Articulo_Get_Id_By_Purchase");
-            _db.AddDynamicParam("idRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> FindForSale(string json)
-    {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
-        {
-            await _db.SPExecute("Almacen.Articulo_Get_Id_By_Sale");
-            _db.AddDynamicParam("idRol", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> GetDataForm(string json)
-    {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
-        {
-            await _db.SPExecute("Sistema.Almacen_Get_Data_Form");
-            _db.AddDynamicParam("idRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
-    }
+     
+     
 }

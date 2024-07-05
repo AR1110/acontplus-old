@@ -5,7 +5,7 @@
     ViewData["title"] = "Cobro";
     
 }
-<div ng-controller="cobroCtrl">
+<div ng-controller="comprobanteIngresoCtrl">
     <div>
         <div class="row page-titles">
             <div class="col-md-5 align-self-center">
@@ -154,36 +154,18 @@
             </div>
         </div>
         <div class="card">
-            <div class="card-body">
+            <div class="card-body"> 
+                <div class="row">
+                    <div class="col-6 d-flex justify-content-start">
+                        <span class="form-group pull-left page-size form-inline">
+                            <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                            </select>
+                        </span>
+                    </div>
 
-
-                @* <md-toolbar class="md-table-toolbar md-default">
-                <div class="md-toolbar-tools">
-                <div class="col-lg-9 col-md-9 col-sm-1">
-                <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i
-                class="fa fa-filter"></i> Filtro</button>
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                <form class="form-material">
-                <div class="input-group">
-                <input type="text" class="form-control" ng-model="buscar"
-                placeholder="Buscar cobros" />
-                <div class="input-group-append">
-                <button class="btn btn-secondary btn-xs" ng-click="getCobros()">
-                <i class="fas fa-redo"></i>
-                </button>
-                </div>
-                </div>
-                </form>
-                </div>
-                </div>
-                </md-toolbar> *@
-                <div class="row justify-content-end">
-                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                        <form class="form-material">
-                            <input type="text" class="form-control" ng-change="filterLocal()"
-                                ng-model="dataSearch.bySearch" placeholder="Buscar cobros" />
-                        </form>
+                    <div class="col-6 d-flex justify-content-end">
+                        
                     </div>
                 </div>
                 <md-table-container style="max-height: 400px;">
@@ -228,9 +210,9 @@
                                                 </md-button>
                                             </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.anular">
-                                                <md-button  ng-click="askToDelete(c)"
-                                                    ng-disabled="c.esAnulado">
+                                           <!-- ng-if="accion.anular && !c.esAnulado"-->
+                                            <md-menu-item >
+                                                <md-button btn-anular-comprobante-ingreso params="c" on-result="refresh()">
                                                     <span md-menu-align-target>
                                                         <i class="ti-na"></i> Anular
                                                     </span>
@@ -290,6 +272,11 @@
                     </table>
                 </md-table-container>
             </div>
+            <div class="card-body">
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
+        </div>
         </div>
 
     </div>
@@ -298,5 +285,10 @@
 
 
 @section Scripts{
-    <script src="~/js/contabilidad/controllers/cobroCtrl.min.js" asp-append-version="true"></script>
+    <environment include="Development">
+        <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script> 
+    </environment>
+    <environment include="Staging,Production">
+    <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script>
+    </environment>
 }

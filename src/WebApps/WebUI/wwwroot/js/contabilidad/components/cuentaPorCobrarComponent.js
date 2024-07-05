@@ -12,6 +12,7 @@ app.component("appCuentaPorCobrarComponent", {
         let $ctrl = this;
 
         const cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
+        const comprobanteIngresoSvc = $injector.get('comprobanteIngresoService')
         const fS = $injector.get('formulario');
         const tS = $injector.get('toastService');
         const DOC_TYPE = $injector.get('DOC_TYPE');
@@ -260,7 +261,7 @@ app.component("appCuentaPorCobrarComponent", {
 
             const selectedDocumentos = structuredClone($scope.selectedDocumentos);
           
-            const promises = selectedDocumentos.map(cxc => cuentaPorCobrarSvc.getCuotasById(cxc.idCuentaPorCobrar));
+            const promises = selectedDocumentos.map(cxc => comprobanteIngresoSvc.getCuotasByIdCuentaPorCobrar(cxc.idCuentaPorCobrar));
 
            
             showLoader();
@@ -268,6 +269,7 @@ app.component("appCuentaPorCobrarComponent", {
                 .then(results => {
                     hideLoader();
                     let mergeWithCuotas = mergeCuotas(selectedDocumentos, results);
+                    console.log(mergeWithCuotas)
                     openModalCobroLote(mergeWithCuotas);
                 })
                 .catch(error => {
@@ -284,7 +286,8 @@ app.component("appCuentaPorCobrarComponent", {
                 )
                 return {
                     ...cxc,
-                    saldoTemporal: cxc.saldo,
+                    saldoOriginal: cxc.saldo,
+                    valorSaldoLectura: cxc.saldo,
                     cuotas: structuredClone(cuotasFiltradas),
                     cuotasOriginal: structuredClone(cuotasFiltradas)
                 };
@@ -355,7 +358,7 @@ app.component("appCuentaPorCobrarComponent", {
             })
 
             modalRef.result.then(result => {
-                if (result && typeof result === 'object' && typeof scope.onResult === 'function') {
+                if (result && typeof result === 'object' ) {
                     //  scope.onResult(result)
                 }
             })

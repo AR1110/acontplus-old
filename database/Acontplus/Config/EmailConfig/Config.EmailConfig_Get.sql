@@ -45,7 +45,11 @@ BEGIN
                 BEGIN
                     SELECT TOP 1 fe.correo
                                 ,fe.telefono
+                                ,telefonoEstab = se.telefono
+                                ,correoEstab   = se.correo 
+                                ,nombreEstab   = se.nombreComercial 
                     FROM Ventas.v_Factura fe WITH (NOLOCK) 
+                    INNER JOIN Sri.Establecimiento se WITH(NOLOCK) ON se.idEstablecimiento = fe.idEstablecimiento
                     WHERE fe.idFactura = @id
 
                 END 
@@ -55,8 +59,13 @@ BEGIN
                 BEGIN
                     SELECT TOP 1 pr.correo  
                                 ,pr.telefono
+                                ,telefonoEstab = se.telefono
+                                ,correoEstab   = se.correo 
+                                ,nombreEstab   = se.nombreComercial 
                     FROM dbo.LiquidacionCompra lc WITH (NOLOCK)
-                    INNER JOIN dbo.Proveedor   pr WITH (NOLOCK) ON pr.idProveedor = lc.idProveedor
+                    INNER JOIN dbo.Proveedor   pr WITH (NOLOCK) ON pr.idProveedor    = lc.idProveedor
+                    INNER JOIN dbo.PuntoEmision pe WITH(NOLOCK) ON pe.idPuntoEmision = lc.idPuntoEmision
+                    INNER JOIN Sri.Establecimiento se WITH(NOLOCK) ON se.codEstab    = pe.codEstab
                     WHERE lc.idLiquidacionCompra = @id
                 END 
 
@@ -65,8 +74,13 @@ BEGIN
                 BEGIN
                     SELECT TOP 1 cl.correo 
                                 ,cl.telefono
+                                ,telefonoEstab = se.telefono
+                                ,correoEstab   = se.correo 
+                                ,nombreEstab   = se.nombreComercial 
                     FROM dbo.NotaCredito   nc WITH (NOLOCK) 
                     INNER JOIN dbo.Cliente cl WITH (NOLOCK) ON cl.idCliente = nc.idCliente
+                    INNER JOIN dbo.PuntoEmision pe WITH(NOLOCK) ON pe.idPuntoEmision = nc.idPuntoEmision
+                    INNER JOIN Sri.Establecimiento se WITH(NOLOCK) ON se.codEstab    = pe.codEstab
                     WHERE nc.idNotaCredito = @id
                 END 
 
@@ -75,8 +89,13 @@ BEGIN
                 BEGIN
                     SELECT TOP 1 cl.correo 
                                 ,cl.telefono
+                                ,telefonoEstab = se.telefono
+                                ,correoEstab   = se.correo 
+                                ,nombreEstab   = se.nombreComercial 
                     FROM dbo.GuiaRemision  gr WITH (NOLOCK) 
                     INNER JOIN dbo.Cliente cl WITH (NOLOCK) ON cl.idCliente = gr.idCliente
+                    INNER JOIN dbo.PuntoEmision pe WITH(NOLOCK) ON pe.idPuntoEmision = gr.idPuntoEmision
+                    INNER JOIN Sri.Establecimiento se WITH(NOLOCK) ON se.codEstab    = pe.codEstab
                     WHERE gr.idGuiaRemision = @id
                 END 
 
@@ -85,8 +104,12 @@ BEGIN
                 BEGIN
                     SELECT TOP 1 pr.correo  
                                 ,pr.telefono
+                                ,telefonoEstab = se.telefono
+                                ,correoEstab   = se.correo 
+                                ,nombreEstab   = se.nombreComercial 
                     FROM FactElect.RetencionAts rt WITH (NOLOCK)
                     INNER JOIN dbo.Proveedor    pr WITH (NOLOCK) ON pr.idProveedor = rt.idProveedor
+                    INNER JOIN Sri.Establecimiento se WITH(NOLOCK) ON se.codEstab    = rt.codEstab
                     WHERE rt.idRetencionAts = @id
                 END
 
@@ -98,8 +121,13 @@ BEGIN
                 BEGIN
                     SELECT TOP 1 cl.correo 
                                 ,cl.telefono
+                                ,telefonoEstab = se.telefono
+                                ,correoEstab   = se.correo 
+                                ,nombreEstab   = se.nombreComercial 
                     FROM dbo.NotaEntrega   ne WITH (NOLOCK) 
                     INNER JOIN dbo.Cliente cl WITH (NOLOCK) ON cl.idCliente = ne.idCliente
+                    INNER JOIN dbo.PuntoEmision pe WITH(NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision
+                    INNER JOIN Sri.Establecimiento se WITH(NOLOCK) ON se.codEstab    = pe.codEstab
                     WHERE ne.idNotaEntrega = @id
                 END 
 

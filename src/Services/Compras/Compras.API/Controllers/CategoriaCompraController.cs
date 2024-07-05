@@ -20,10 +20,9 @@ public class CategoriaCompraController : ControllerBase
     {
         var _response = new ApiResponseDeprecated();
         try
-        {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+        { 
             await _db.SPExecute("Compra.Categoria_Get");
-            _db.AddDynamicParam("userRoleId", idUsuarioRol);
+            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDataTableAsync();
         }
@@ -48,7 +47,7 @@ public class CategoriaCompraController : ControllerBase
         {
             await _db.SPExecute("Compra.Categoria_Insert");
             _db.AddDynamicParam("userRoleId",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+               User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
         }
@@ -73,7 +72,7 @@ public class CategoriaCompraController : ControllerBase
         {
             await _db.SPExecute("Compra.Categoria_Update");
             _db.AddDynamicParam("userRoleId",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = _db.GetDefault();
@@ -99,7 +98,7 @@ public class CategoriaCompraController : ControllerBase
         {
             await _db.SPExecute("Compra.Categoria_Delete");
             _db.AddDynamicParam("userRoleId",
-                Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _response = _db.GetDefault();
         }

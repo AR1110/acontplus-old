@@ -5,7 +5,7 @@ namespace Inventario.API.Data;
 public class DesignTimeDbContext : IDesignTimeDbContextFactory<InventarioContext>
 {
     private const string _databaseName = "DefaultConnection";
-    private const string _migrationAssembly = "Inventario.Infrastructure";
+    private const string _migrationAssembly = "Inventario.API";
 
     public InventarioContext CreateDbContext(string[] args)
     {
