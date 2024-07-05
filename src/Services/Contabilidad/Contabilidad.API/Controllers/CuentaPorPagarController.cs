@@ -1,74 +1,40 @@
 ﻿namespace Contabilidad.API.Controllers;
 
-public class CuentaPorPagarController : BaseApiController
+public class CuentaPorPagarController(ICuentaPorPagarService _svc) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    private readonly DbAccess _dbAccess;
-
-    public CuentaPorPagarController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-        _dbAccess = new DbAccess(_configuration);
-    }
-
+  
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            var idUsuarioRol = User.GetUserRoleId();
-            await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Get");
-            _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-            _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _dbAccess.GetDataSetAsync();
-        }
-        finally
-        {
-            _dbAccess.Close();
-        }
+            {"idUsuarioRol", User.GetUserRoleId() },
+            {"json",  SqlStringParam.Sanitize(json)}
+        };
 
-        return Ok(_response);
+        return Ok(await _svc.GetAsync(parameters)); 
     }
 
     [HttpPost("{json}")]
     public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parametros = new Dictionary<string, object>
         {
-            var idUsuarioRol = User.GetUserRoleId();
-            await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Insert");
-            _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-            _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _dbAccess.GetDefault();
-        }
-        finally
-        {
-            _dbAccess.Close();
-        }
-
-        return Ok(_response);
+            {"idUsuarioRol", User.GetUserRoleId() },
+            {"json",  SqlStringParam.Sanitize(json)}
+        };
+        return Ok(await _svc.AddAsync(parametros)); 
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, CuentaPorPagarDto data)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            var idUsuarioRol = User.GetUserRoleId();
-            await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Update");
-            _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-            _dbAccess.AddDynamicParam("idCuentaPorPagar", id);
-            _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(data.cuotas));
-            _response = _dbAccess.GetDefault();
-        }
-        finally
-        {
-            _dbAccess.Close();
-        }
-
-        return Ok(_response);
+            {"idUsuarioRol", User.GetUserRoleId()},
+           {"idCuentaPorPagar", id},
+            { "json", SqlStringParam.Sanitize(data.cuotas) }
+        };
+        return Ok(await _svc.UpdateAsync(parameters));
     }
 }

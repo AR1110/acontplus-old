@@ -2134,10 +2134,27 @@
             link: async function (scope, element) {
                 let cuentasPorCobrar = [], cuotasPorCobrar = [], estadosPago = [];
 
+                async function messageQtyDoc() {
+                    let isConfirmed = await Swal.fire({
+                        icon: 'warning',
+                        text: 'Este anulación de comprobante afectará mas de un doc. porque se ha realizado cobro por lote ¿Desea continuar? '
+                    })
+                    return isConfirmed;
+                }
+
                 element.on('click', async function () {
                     const { idComprobanteIngreso } = scope.params;
 
                     try {
+
+                        let isContinue = true;
+
+                        if (scope.params.cantDocs > 1) {
+                            isContinue = await messageQtyDoc();
+                        }
+
+                        if (!isContinue) return
+
                         const response = await compIngresoSvc.getDataToOverride(idComprobanteIngreso); 
 
                         cuentasPorCobrar = response.cuentasPorCobrar;
@@ -2170,7 +2187,7 @@
                         const data = {
                             observacion: value,
                             ...dataParams
-                        };
+                        }; 
 
                         showLoader();
                         const updateResponse = await compIngresoSvc.update(idComprobanteIngreso, data);
@@ -2210,11 +2227,11 @@
                         if (!existeDato) {
                             acc.push({
                                 idCuentaPorCobrar: curr.idCuentaPorCobrar,
-                                abonoDoc: curr.abonoDoc,
+                                abonoDoc: new Decimal(curr.abonoDoc).toNumber(),
                                 abono,
                             });
-                        } else {
-                            existeDato.abono += abono;
+                        } else { 
+                             existeDato.abono = new Decimal(existeDato.abono).plus(curr.abono);
                         }
                         return acc;
                     }, []);
@@ -2231,28 +2248,28 @@
                                 abonoCuota: curr.abonoCuota,
                                 abono,
                             });
-                        } else {
-                            existeDato.abono += abono;
+                        } else { 
+                             existeDato.abono = new Decimal(existeDato.abono).plus(curr.abono);
                         }
                         return acc;
                     }, []);
 
                     // Calcula los valores residuales y el estado de pago para cuentas por cobrar
-                    const tempCuentasPorCobrar = cuentasPorCobrarAgrupado.map(item => {
-                        const valorResiduo = item.abonoDoc - item.abono;
+                    const tempCuentasPorCobrar = cuentasPorCobrarAgrupado.map(item => { 
+                        let valorResiduo = new Decimal(item.abonoDoc).minus(item.abono).toNumber()
                         return {
                             idCuentaPorCobrar: item.idCuentaPorCobrar,
-                            abono: fS.roundNumber(valorResiduo, 3),
+                            abono: valorResiduo,
                             idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP')
                         };
                     });
 
                     // Calcula los valores residuales y el estado de pago para cuotas por cobrar
-                    const tempCuotasPorCobrar = cuotasPorCobrarAgrupado.map(item => {
-                        const valorResiduo = item.abonoCuota - item.abono;
+                    const tempCuotasPorCobrar = cuotasPorCobrarAgrupado.map(item => { 
+                        let valorResiduo = new Decimal(item.abonoCuota).minus(item.abono).toNumber()
                         return {
                             idCuotaPorCobrar: item.idCuotaPorCobrar,
-                            abono: fS.roundNumber(valorResiduo, 3),
+                            abono:  valorResiduo ,
                             idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP')
                         };
                     });

@@ -304,7 +304,6 @@
         }
 
 
-
         $scope.askToDelete = async (item) => {
 
             try {

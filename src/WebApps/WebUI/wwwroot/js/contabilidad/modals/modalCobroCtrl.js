@@ -1,7 +1,4 @@
-
-//====================================================SERVICIO COMPRATIDO=====================================
-//=====================================================================================================
-
+ 
 class CobroService {
     constructor(tS, mS, fS) { 
         this.tS = tS;
@@ -270,7 +267,7 @@ class CobroService {
                        // valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
                     } else {
                        // valorMovimientoSaldo = group.saldo;
-                        valorMovimientoSaldo = new Decimal(group.saldo).toNumber();
+                        valorMovimientoSaldo = new Decimal(this.group.saldo).toNumber();
                     }
 
                     if (this.valorAbono <= this.group.saldo) {
@@ -307,11 +304,9 @@ class CobroService {
                         if (dataUltimoCobroDetalle) {
 
                             valorMovimientoSaldo = new Decimal(dataUltimoCobroDetalle.saldo).minus(dataUltimoCobroDetalle.abono).toNumber();
-
-
-                            //valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
+ 
                         } else {
-                            valorMovimientoSaldo = new Decimal(group.saldo).toNumber();
+                            valorMovimientoSaldo = new Decimal(this.group.saldo).toNumber();
                         }
 
                         if (this.valorAbono <= valorMovimientoSaldo) {
@@ -326,8 +321,7 @@ class CobroService {
                             secuencial: this.indexDatoCobro,
                             valorSaldoLectura: this.group.valorSaldoLectura,
                             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
-                        //    abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
-                        //    saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                     
                             abono: new Decimal(historialAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
                             saldo: new Decimal(valorMovimientoSaldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
                             diasMora: this.group.diasMora,
@@ -371,9 +365,7 @@ class CobroService {
 
 
                 item.esCuotaAfectada = true; // 
-
-
-               // this.generarCuotasPorCobrarEstado(dataEstadoPago, item.abono)
+ 
 
 
             } 
@@ -431,8 +423,7 @@ class CobroService {
             this.valorAbono = new Decimal(this.valorAbono).minus(item.saldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
 
             this.addCobroDetalle(item, item.saldo, 0)
-            item.saldo = 0;
-            // item.saldoCta = 0;
+            item.saldo = 0; 
         }
 
     }

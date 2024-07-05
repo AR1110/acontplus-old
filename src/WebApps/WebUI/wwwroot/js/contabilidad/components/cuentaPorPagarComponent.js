@@ -1,3 +1,4 @@
+//@ts-check
 let mainPath = `/Home/Index?name=~/Pages/Contabilidad/CuentaPorPagar/Components/` ;
 
 app.component("appCuentaPorPagarComponent", {
@@ -19,6 +20,7 @@ app.component("appCuentaPorPagarComponent", {
         const nombreModalContabilidad = $injector.get('nombreModalContabilidad');
         const mainPaths = $injector.get('mainPaths');
         const DOC_TYPE = $injector.get('DOC_TYPE');
+        const comprobanteEgresoSvc = $injector.get('comprobanteEgresoService')
      
 
         $ctrl.$onInit = function () {  
@@ -221,7 +223,7 @@ app.component("appCuentaPorPagarComponent", {
 
         function getDocsBySupplierId(idProveedor) {
 
-            cuentaPorPagarSvc.getDataFormaPago(idProveedor).then(response => {
+            comprobanteEgresoSvc.getDataFormaPago(idProveedor).then(response => {
                 let docs = response.docs;
                 if (docs.length === 0) return;
  
@@ -347,6 +349,7 @@ app.component("appCuentaPorPagarComponent", {
                 return {
                     ...cxc,
                     saldoTemporal: cxc.saldo,
+                    valorSaldoLectura: cxc.saldo,
                     cuotas: structuredClone(cuotasFiltradas),
                     cloneCuotas: structuredClone(cuotasFiltradas)
                 };
@@ -366,7 +369,7 @@ app.component("appCuentaPorPagarComponent", {
 
             const selectedDocumentos = structuredClone($scope.selectedDocumentos);
             // Crear un array de promesas para cada solicitud
-            const promises = selectedDocumentos.map(cxc => cuentaPorPagarSvc.getCuotasById(cxc.idCuentaPorPagar));
+            const promises = selectedDocumentos.map(cxc => comprobanteEgresoSvc.getCuotasByIdCuentaPorPagar(cxc.idCuentaPorPagar));
 
             // Utilizar Promise.all para ejecutar las promesas concurrentemente
             showLoader();

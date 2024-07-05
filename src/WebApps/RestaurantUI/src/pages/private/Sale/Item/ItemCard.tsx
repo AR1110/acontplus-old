@@ -139,7 +139,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                     discount: 0,
                     discountTotal: 0,
                     total: salePrice ?? 0,
-                    s3ObjectUrl: product.s3ObjectUrl ? product.s3ObjectUrl : brand_img,
+                    s3ObjectUrl: item.s3ObjectUrl ? item.s3ObjectUrl : brand_img,
                     carryInventory: product.carryInventory,
                     bodegaId: order.bodegaId,
                     taxes: [{
