@@ -30,7 +30,7 @@ BEGIN
 
     --> Facturacion Electronica
 	DECLARE @ruc NVARCHAR(100) ,@fechaEmision DATETIME ,@ambiente INT ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@claveAcceso NVARCHAR(50) ,@isAutomatic INT ,@uniqueId VARCHAR(150) ,@secuencial INT
-           ,@idEstadoServicio INT ,@CustomerId INT 
+           ,@idEstadoServicio INT ,@CustomerId INT ,@idDocumentoElectronico INT
 
     --> RetencionAts
 	DECLARE @idRetencionAts INT ,@tipoEmision TINYINT = 1 ,@idPuntoEmision INT ,@idTipoDocumento INT ,@idProveedor INT 
@@ -223,7 +223,8 @@ BEGIN
                     ,@fechaEmision   = fechaEmision
                     ,@codEstab       = tb.codEstab
         FROM @tblInfoCompRet           tb
-        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.codEstab = tb.codEstab
+        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab          = tb.codEstab
+        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento
 
         SELECT TOP 1 @idEstablecimiento = idEstablecimiento FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
@@ -300,17 +301,6 @@ BEGIN
                 RETURN
             END
 
-        IF EXISTS (SELECT 1 
-                        FROM FactElect.RetAtsDocSustento  rds WITH(NOLOCK)
-						INNER JOIN @tblDocs                 t              ON LTRIM(RTRIM(rds.numDocSustento)) = LTRIM(RTRIM(t.numDocSustento)) 
-						INNER JOIN FactElect.RetencionAts ret WITH(NOLOCK) ON rds.idRetencionAts               = ret.idRetencionats 
-						WHERE codEstab = (SELECT codEstab FROM @tblInfoCompRet)
-                            AND ret.identificacionSujetoRetenido = (SELECT identificacionSujetoRetenido FROM @tblInfoCompRet)
-						    AND ret.anuladaSri = 0)
-		BEGIN
-			SELECT '0' code, 'Este documento de sustento ya pertenece a una retención' as 'message'
-			RETURN
-		END
 
         IF EXISTS (SELECT 1 FROM @tblInfoCompRet WHERE tipoIdentificacionSujetoRetenido = '04' AND LEN(LTRIM(RTRIM(identificacionSujetoRetenido))) != 13)
 		    BEGIN
@@ -323,6 +313,17 @@ BEGIN
 				SELECT '0' code, 'Revise el numero de identificación del proveedor' as 'message'
 				RETURN
 			END
+
+        IF EXISTS (SELECT 1 
+                        FROM FactElect.RetAtsDocSustento  rds WITH(NOLOCK)
+						INNER JOIN @tblDocs                 t              ON LTRIM(RTRIM(rds.numAutDocSustento)) = LTRIM(RTRIM(t.numAutDocSustento)) 
+						INNER JOIN FactElect.RetencionAts ret WITH(NOLOCK) ON rds.idRetencionAts               = ret.idRetencionats 
+						WHERE ret.idProveedor = @idProveedor
+						  AND ret.anuladaSri = 0)
+		    BEGIN
+			    SELECT '0' code, 'Este documento de sustento ya pertenece a una retención' as 'message'
+			    RETURN
+		    END
 
         IF @claveAcceso IS NULL
 		    BEGIN
@@ -337,11 +338,18 @@ BEGIN
 			END
 
 		BEGIN TRAN
-			
-            --> InfoRetencion
+			--> DocumentoElectronico
+			INSERT INTO dbo.DocumentoElectronico
+                   (idTipoDocumento,versionComp,fechaEmision,nroDocumento,idPuntoEmision,claveAcceso,isAutomatic,idUsuario,CustomerId,idEstadoServicio,serieComprobante)
+			SELECT @idTipoDocumento,versionComp,fechaEmision,@secuencial,@idPuntoEmision,@claveAcceso,@isAutomatic,@idUsuario,@CustomerId,@idEstadoServicio,@serieComprobante
+            FROM @tblInfoCompRet
+
+            SET @idDocumentoElectronico = SCOPE_IDENTITY()
+
+            --> InfoComprobanteRetencion
 			INSERT INTO FactElect.RetencionAts
-                  (codEstab,codDoc,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal, ambiente, tipoEmision, claveAcceso, secuencial,fechaRegistro,idUsuario,idProveedor)
-			SELECT codEstab,codDoc,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal,@ambiente,@tipoEmision,@claveAcceso,@secuencial,dbo.ufnGetDateEcuador(),@idUsuario, @idProveedor
+                  (tipoSujetoRetenido,parteRel,idCliente,periodoFiscal, tipoEmision,fechaRegistro,idUsuario,idProveedor,idDocumentoElectronico)
+			SELECT tipoSujetoRetenido,parteRel,idCliente,periodoFiscal,@tipoEmision,dbo.ufnGetDateEcuador(),@idUsuario, @idProveedor,@idDocumentoElectronico
 			FROM @tblInfoCompRet
 
 			SET @idRetencionAts = SCOPE_IDENTITY()
@@ -379,12 +387,6 @@ BEGIN
 					SELECT @idRetencionAts,nombre,valor 
                     FROM @tblAddInfo
 				END
-
-            --> DocumentoElectronico
-			INSERT INTO dbo.DocumentoElectronico
-                  (codDoc,versionComp,fechaEmision,idDocumento,nroDocumento,idPuntoEmision,claveAcceso,isAutomatic,idUsuario,idEntidad,CustomerId,idEstadoServicio)
-			SELECT codDoc,versionComp,fechaEmision,@idRetencionAts,@secuencial,@idPuntoEmision,@claveAcceso,@isAutomatic,@idUsuario,@idEntidad,@CustomerId,@idEstadoServicio
-            FROM @tblInfoCompRet
 
             --> CONTABILIDAD 
 			INSERT INTO Contabilidad.CuentaPorPagar

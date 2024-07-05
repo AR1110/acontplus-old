@@ -2134,10 +2134,27 @@
             link: async function (scope, element) {
                 let cuentasPorCobrar = [], cuotasPorCobrar = [], estadosPago = [];
 
+                async function messageQtyDoc() {
+                    let isConfirmed = await Swal.fire({
+                        icon: 'warning',
+                        text: 'Este anulación de comprobante afectará mas de un doc. porque se ha realizado cobro por lote ¿Desea continuar? '
+                    })
+                    return isConfirmed;
+                }
+
                 element.on('click', async function () {
                     const { idComprobanteIngreso } = scope.params;
 
                     try {
+
+                        let isContinue = true;
+
+                        if (scope.params.cantDocs > 1) {
+                            isContinue = await messageQtyDoc();
+                        }
+
+                        if (!isContinue) return
+
                         const response = await compIngresoSvc.getDataToOverride(idComprobanteIngreso); 
 
                         cuentasPorCobrar = response.cuentasPorCobrar;

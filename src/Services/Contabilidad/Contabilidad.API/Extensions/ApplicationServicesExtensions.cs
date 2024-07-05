@@ -33,6 +33,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ITipoService, TipoService>();
         services.AddScoped<IAccountingMovementService, AccountingMovementService>();
         services.AddScoped<IComprobanteIngresoService, ComprobanteIngresoService>(); 
+        services.AddScoped<ICuentaPorPagarService, CuentaPorPagarService>();  
 
         return services;
     }

@@ -1,3 +1,51 @@
+//@ts-check
+
+/**
+ * 
+ * @param {*} num 
+ * @param {*} max por defecto 0 
+ * @returns 
+ */
+function instanceDecimal(num, max = 0) {
+    if (max > 0) {
+        return new Decimal(num).toDecimalPlaces(max).toNumber()
+    }
+    return new Decimal(num);
+}
+
+/**
+ * 
+ * @param {*} num1 
+ * @param {*} num2 
+ * @param {*} max 
+ * @returns 
+ */
+function plus(num1, num2, max = 0) {
+    let instanceDecimal = new Decimal(num1).plus(num2)
+    if (max > 0) {
+        return instanceDecimal.toDecimalPlaces(max).toNumber()
+    }
+
+    return instanceDecimal;
+
+}
+/**
+ * 
+ * @param {*} num1 
+ * @param {*} num2 
+ * @param {*} max 
+ * @returns 
+ */
+
+function minus(num1, num2, max = 0) {
+    let instanceDecimal = new Decimal(num1).minus(num2)
+    if (max > 0) {
+        return instanceDecimal.toDecimalPlaces(max).toNumber()
+    }
+
+    return instanceDecimal;
+
+}
 class PagoService {
     constructor(tS, fS) {
         this.tS = tS;
@@ -6,6 +54,9 @@ class PagoService {
         this.selectedDocumentos = [];
         this.pagosDetalle = [];
         this.historialCuentas = [];
+
+        this.estadosPago = [];
+
         this.valorAbono = 0;
 
         this.esAbonoPosfechado = false;
@@ -13,6 +64,11 @@ class PagoService {
 
         this.MAX_NUMBER_ROUND_GENERAL = 3;
         this.MAX_NUMBER_ROUND_CUOTA_ABONO = 5;
+        this.MAX_NUMBER_ROUND = 5;
+    }
+
+    set setEstadosPago(estadosPago) {
+        this.estadosPago = estadosPago;
     }
 
     isDateValid(dateString) {
@@ -23,14 +79,16 @@ class PagoService {
         return true; // La fecha es válida
     }
 
+
+
     /**
      * 
-     * @param {Object} cobro 
-     * @param {String} codigoEntidad 
-     * @returns Boolean
+     * @param {*} data 
+     * @param {*} codigoEntidad 
+     * @returns 
      */
     isValidForm(data, codigoEntidad) {
-        if (!data.idSubEntidadFinanciera > 0) {
+        if (!(data.idSubEntidadFinanciera > 0)) {
             this.tS.toastr('warning', 'Seleccione la SubEntidad Financiera')
         }
 
@@ -43,7 +101,7 @@ class PagoService {
             return
         }
 
-        if (!data.valorAbono > 0) {
+        if (!(data.valorAbono > 0)) {
             this.tS.toastr('warning', 'Ingrese el valor de abono')
             return
         }
@@ -76,7 +134,7 @@ class PagoService {
         // =================== TRANSFERENCIAS  =================================== //
 
         if (codigoEntidad === 'TRA') {
-            if (!data.idBanco > 0) {
+            if (!(data.idBanco > 0)) {
                 this.tS.toastr('warning', 'Ingrese el Banco')
                 return
             }
@@ -89,7 +147,7 @@ class PagoService {
         // =================== CHEQUES  =================================== //
 
         if (codigoEntidad === 'CHE') {
-            if (!data.idBanco > 0) {
+            if (!(data.idBanco > 0)) {
                 this.tS.toastr('warning', 'Ingrese el Banco')
                 return
             }
@@ -98,7 +156,7 @@ class PagoService {
                 return
             }
 
-            if (!data.idCiudad > 0) {
+            if (!(data.idCiudad > 0)) {
                 this.tS.toastr('warning', 'Ingrese la Ciudad')
                 return
             }
@@ -112,13 +170,125 @@ class PagoService {
     }
 
 
+    /**
+     * 
+     * @param {*} param0 
+     * @returns 
+     */
+
+    generarCuentasPorPagarEstado({ historialCuentas, pagosDetalle }) {
+        // Your existing code snippet with modifications for decimal.js
+        let cuentasPorPagarAgrupado = historialCuentas.reduce((acc, curr) => {
+            let existeDato = acc.find(item => item.idCuentaPorPagar === curr.idCuentaPorPagar);
+            if (!existeDato) {
+                acc.push({
+                    idCuentaPorPagar: curr.idCuentaPorPagar,
+                    valorSaldoLectura: instanceDecimal(curr.valorSaldoLectura),
+                    abono: instanceDecimal(curr.abono),
+                    diasMora: curr.diasMora,
+                    mora: curr.mora
+                });
+            } else {
+                existeDato.abono = plus(existeDato.abono, curr.abono);
+            }
+            return acc;
+        }, []);
+
+        let cuentasPorPagarEstado = [];
+
+        for (let item of cuentasPorPagarAgrupado) {
+            let valorSaldo = instanceDecimal(item.valorSaldoLectura);
+
+            let totalPosfechado = pagosDetalle.filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && cd.posfechado)
+                .reduce((acc, curr) => acc.plus(curr.abono), instanceDecimal(0));
+
+            let totalNoPosfechado = pagosDetalle.filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && !cd.posfechado)
+                .reduce((acc, curr) => acc.plus(curr.abono), instanceDecimal(0));
+
+            valorSaldo = valorSaldo.minus(totalNoPosfechado).toNumber()
+
+            let dataEstadoPago = {};
+            if (totalPosfechado.gt(0)) {
+                dataEstadoPago = this.getEstadoCuota({
+                    esPosfechado: true
+                });
+            } else {
+                dataEstadoPago = this.getEstadoCuota({
+                    saldo: valorSaldo,
+                    abono: totalNoPosfechado.toNumber()
+                });
+            }
+
+            cuentasPorPagarEstado.push({
+                idCuentaPorPagar: item.idCuentaPorPagar,
+                idEstadoPago: dataEstadoPago.idEstadoPago,
+                abono: totalNoPosfechado.toNumber()
+            });
+        }
+
+        return cuentasPorPagarEstado;
+
+    }
+
+
+    /**
+     * 
+     * @param {*} param0 
+     * @returns 
+     */
+    generarCuotasPorPagarEstado({ pagosDetalle }) {
+
+        let cuotasPorPagarAgrupado = pagosDetalle.reduce((acc, curr) => {
+            let existeDato = acc.find(item => (item.idCuentaPorPagar === curr.idCuentaPorPagar) && (item.idCuotaPorPagar === curr.idCuotaPorPagar));
+            if (!existeDato) {
+                acc.push({
+                    idCuentaPorPagar: curr.idCuentaPorPagar,
+                    idCuotaPorPagar: curr.idCuotaPorPagar,
+                    valorSaldoLectura: curr.valorSaldoLectura,
+                    abono: instanceDecimal(curr.abono)
+                });
+            } else {
+                existeDato.abono = plus(existeDato.abono, curr.abono);
+            }
+            return acc;
+        }, []);
+
+        let cuotasPorPagarEstado = [];
+
+        for (let item of cuotasPorPagarAgrupado) {
+            let totalNoPosfechado = pagosDetalle.filter(cd => cd.idCuotaPorPagar === item.idCuotaPorPagar && !cd.posfechado)
+                .reduce((acc, curr) => {
+                    return plus(acc, curr.abono);
+                }, instanceDecimal(0));
+
+            let valorSaldoLectura = this.fS.roundNumber(item.valorSaldoLectura, 3);
+            let totalNoPosfechadoTemp = this.fS.roundNumber(totalNoPosfechado.toNumber(), 3);
+
+            let valorSaldo = minus(valorSaldoLectura, totalNoPosfechadoTemp).toNumber();
+
+            let dataEstadoPago = this.getEstadoCuota({
+                saldo: valorSaldo,
+                abono: item.abono.toNumber() // Convert Decimal back to number if needed
+            });
+
+            cuotasPorPagarEstado.push({
+                idEstadoPago: dataEstadoPago.idEstadoPago,
+                abono: totalNoPosfechado.toNumber(),
+                idCuotaPorPagar: item.idCuotaPorPagar
+            });
+        }
+
+        return cuotasPorPagarEstado;
+
+    }
 
     addHistorialCuentas() {
-        let valorMovimientoSaldo = 0, historialAbono = 0;
+        let valorMovimientoSaldo = instanceDecimal(0), historialAbono = instanceDecimal(0);
 
         const pagosDetalleFiltered = this.pagosDetalle.filter(cd => cd.idCuentaPorPagar === this.group.idCuentaPorPagar)
 
-        const totalAbonoCuenta = this.fS.roundNumber(pagosDetalleFiltered.reduce((acc, curr) => acc + curr.abono, 0), this.MAX_NUMBER_ROUND_GENERAL);
+
+        const totalAbonoCuenta = pagosDetalleFiltered.reduce((acc, curr) => acc.plus(curr.abono), instanceDecimal(0));
 
         if (pagosDetalleFiltered.length === 0) {
 
@@ -129,9 +299,10 @@ class PagoService {
             let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
 
             if (dataUltimoCobroDetalle) {
-                valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
+                valorMovimientoSaldo = minus(dataUltimoCobroDetalle.saldo, dataUltimoCobroDetalle.abono).toNumber();
+
             } else {
-                valorMovimientoSaldo = this.group.saldo;
+                valorMovimientoSaldo = instanceDecimal(this.group.saldo).toNumber();
             }
 
             if (this.valorAbono <= this.group.saldo) {
@@ -144,8 +315,12 @@ class PagoService {
             this.historialCuentas.push({
                 secuencial: this.secuencial,
                 idCuentaPorPagar: this.group.idCuentaPorPagar,
-                abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
-                saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                valorSaldoLectura: this.group.valorSaldoLectura,
+
+                abono: instanceDecimal(historialAbono, this.MAX_NUMBER_ROUND),
+                saldo: instanceDecimal(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
+
+
                 diasMora: this.group.diasMora,
                 mora: this.group.mora,
             })
@@ -161,9 +336,9 @@ class PagoService {
                 let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
 
                 if (dataUltimoCobroDetalle) {
-                    valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
+                    valorMovimientoSaldo = minus(dataUltimoCobroDetalle.saldo, dataUltimoCobroDetalle.abono).toNumber();
                 } else {
-                    valorMovimientoSaldo = group.saldo;
+                    valorMovimientoSaldo = instanceDecimal(this.group.saldo).toNumber();
                 }
 
                 if (this.valorAbono <= valorMovimientoSaldo) {
@@ -176,8 +351,11 @@ class PagoService {
                 this.historialCuentas.push({
                     secuencial: this.secuencial,
                     idCuentaPorPagar: this.group.idCuentaPorPagar,
-                    abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
-                    saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                    valorSaldoLectura: this.group.valorSaldoLectura,
+
+                    abono: instanceDecimal(historialAbono, this.MAX_NUMBER_ROUND),
+                    saldo: instanceDecimal(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
+
                     diasMora: this.group.diasMora,
                     mora: this.group.mora,
                 })
@@ -213,12 +391,17 @@ class PagoService {
                     this.cuotaSinAbono(item)
                 }
 
-                item.cuota = this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND_GENERAL);
-                item.abono = this.fS.roundNumber(item.abono, this.MAX_NUMBER_ROUND_GENERAL);
-                item.abonoPosfechado = this.fS.roundNumber(item.abonoPosfechado, this.MAX_NUMBER_ROUND_GENERAL);
-                // item.saldo = this.getValorSaldo(item) //Verificamos el saldo de la Cuota 
-                item.estado = this.getEstadoCuota(item);
-                item.descripcion = this.getEstadoCuota(item);
+                item.cuota = instanceDecimal(item.cuota, this.MAX_NUMBER_ROUND)
+                item.abono = instanceDecimal(item.abono, this.MAX_NUMBER_ROUND)
+                item.abonoPosfechado = instanceDecimal(item.abonoPosfechado, this.MAX_NUMBER_ROUND)
+
+
+                let dataEstadoPago = this.getEstadoCuota({
+                    saldo: item.saldo,
+                    abono: item.abono
+                });
+                item.estado = dataEstadoPago.descripcion;
+                item.descripcion = dataEstadoPago.descripcion;
 
                 item.esCuotaAfectada = true; //  
 
@@ -236,8 +419,8 @@ class PagoService {
 
         //Validaciones Saldo Cuota 
         if (item.saldoCta >= this.valorAbono) {
-            let valorSaldoCta = item.saldoCta - this.valorAbono;
-            item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND_GENERAL);
+            item.saldoCta = minus(item.saldoCta, this.valorAbono, this.MAX_NUMBER_ROUND);
+
         } else if (item.saldoCta <= this.valorAbono) {
             item.saldoCta = 0;
         }
@@ -251,10 +434,8 @@ class PagoService {
             //Si el abono pago es posfechado
             item.abonoPosfechado = this.esAbonoPosfechado ? this.valorAbono : 0;
 
-            let valorSaldo = item.saldo - this.valorAbono;
-            // let valorSaldoCta = item.saldoCta - this.valorAbono;
-            item.saldo = this.fS.roundNumber(valorSaldo, this.MAX_NUMBER_ROUND_GENERAL);
-            // item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND);
+            item.saldo = minus(item.saldo,this.valorAbono,this.MAX_NUMBER_ROUND);
+
 
             this.addPagoDetalle(item, this.valorAbono, item.saldo)
             this.valorAbono = 0;
@@ -262,16 +443,16 @@ class PagoService {
         } else if (item.saldo <= this.valorAbono) {
 
             //Si el Abono pago no es Posfechado
-            item.abono = this.esAbonoPosfechado ? 0 : item.saldo;
+            item.abono = this.esAbonoPosfechado ? 0 : instanceDecimal(item.saldo, this.MAX_NUMBER_ROUND);
 
             //Si el abono pago es posfechado
-            item.abonoPosfechado = this.esAbonoPosfechado ? item.saldo : 0;
+            item.abonoPosfechado = this.esAbonoPosfechado ? instanceDecimal(item.saldo, this.MAX_NUMBER_ROUND) : 0;
 
-            this.valorAbono = this.valorAbono - item.saldo;
+            //this.valorAbono = this.valorAbono - item.saldo;
+            this.valorAbono = minus(this.valorAbono, item.saldo, this.MAX_NUMBER_ROUND);
 
             this.addPagoDetalle(item, item.saldo, 0)
             item.saldo = 0;
-            // item.saldoCta = 0;
         }
 
     }
@@ -284,8 +465,7 @@ class PagoService {
 
         //Validaciones Saldo Cuota 
         if (item.saldoCta >= this.valorAbono) {
-            let valorSaldoCta = item.saldoCta - this.valorAbono;
-            item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND_GENERAL);
+            item.saldoCta = minus(item.saldoCta, this.valorAbono, this.MAX_NUMBER_ROUND);
         } else if (item.saldoCta <= this.valorAbono) {
             item.saldoCta = 0;
         }
@@ -294,32 +474,24 @@ class PagoService {
 
         if (item.saldo >= this.valorAbono) {
 
-            if (this.esAbonoPosfechado) {
-                item.abonoPosfechado = this.valorAbono + item.abonoPosfechado;
-            } else {
-                item.abono = this.valorAbono + item.abono;
-            }
+            item.abono = this.esAbonoPosfechado ? item.abono : plus(item.abono, this.valorAbono, this.MAX_NUMBER_ROUND);
+            item.abonoPosfechado = this.esAbonoPosfechado ? plus(item.abonoPosfechado, this.valorAbono, this.MAX_NUMBER_ROUND) : item.abonoPosfechado;
 
-            let valorSaldo = item.saldo - this.valorAbono;
-            // let valorSaldoCta = item.saldoCta - this.valorAbono;
-            item.saldo = this.fS.roundNumber(valorSaldo, this.MAX_NUMBER_ROUND_GENERAL);
-            // item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND);
+            item.saldo = minus(item.saldo, this.valorAbono, this.MAX_NUMBER_ROUND);
 
             this.addPagoDetalle(item, this.valorAbono, item.saldo);
             this.valorAbono = 0;
 
 
         } else if (item.saldo <= this.valorAbono) {
-            let abonoCuota = item.saldo;
-            if (this.esAbonoPosfechado) {
-                item.abonoPosfechado = item.abonoPosfechado + item.saldo;
-            } else {
-                item.abono = item.abono + item.saldo;
-            }
+            item.abono = this.esAbonoPosfechado ? item.abono : plus(item.abono, item.saldo, this.MAX_NUMBER_ROUND);
 
-            this.valorAbono = this.valorAbono - item.saldo;
-            this.valorAbono = this.fS.roundNumber(this.valorAbono, this.MAX_NUMBER_ROUND_GENERAL);
-            this.addPagoDetalle(item, abonoCuota, 0);
+            item.abonoPosfechado = this.esAbonoPosfechado ? plus(item.abonoPosfechado, item.saldo, this.MAX_NUMBER_ROUND) : item.abonoPosfechado;
+
+            this.addPagoDetalle(item, item.saldo, 0);
+
+            this.valorAbono = minus(this.valorAbono, item.saldo, this.MAX_NUMBER_ROUND);
+
             item.saldo = 0;
         }
     }
@@ -327,10 +499,12 @@ class PagoService {
 
     /**
      * 
-     * @param {object} item 
-     * @param {number} abono 
-     * @returns void
+     * @param {*} item 
+     * @param {*} abono 
+     * @param {*} saldo 
+     * @returns 
      */
+   
     addPagoDetalle(item, abono, saldo) {
         if (item.cuota === 0 || abono === 0) return;
 
@@ -342,51 +516,67 @@ class PagoService {
 
         let dataUltimoCobroDetalle = pagosDetalleFiltered.pop();
         if (dataUltimoCobroDetalle) {
-            valorMovimientoSaldo = dataUltimoCobroDetalle.saldoOriginal - dataUltimoCobroDetalle.abono;
+            valorMovimientoSaldo = minus(dataUltimoCobroDetalle.saldoOriginal, dataUltimoCobroDetalle.abono, this.MAX_NUMBER_ROUND)
         } else {
-            valorMovimientoSaldo = item.saldoOriginal;
+            valorMovimientoSaldo = instanceDecimal(item.saldoOriginal, this.MAX_NUMBER_ROUND);
         }
 
 
         this.pagosDetalle.push({
             idCuentaPorPagar: this.group.idCuentaPorPagar,
             idCuotaPorPagar: item.idCuotaPorPagar,
-            abono: this.fS.roundNumber(abono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+            abono,
             interes: item.interes,
             diasMora: item.diasMora,
             mora: item.mora,
-            cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
-            saldo,
+            cuota: instanceDecimal(item.cuota, this.MAX_NUMBER_ROUND),
+            saldo: instanceDecimal(saldo, this.MAX_NUMBER_ROUND),
             secuencial: this.secuencial,
-            saldoOriginal: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO)
+            valorSaldoLectura: item.valorSaldoLectura,
+
+            saldoOriginal: instanceDecimal(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
+            posfechado: this.esAbonoPosfechado
         })
-        item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND_GENERAL);
-        item.saldoOriginal = this.fS.roundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND_GENERAL);
+        item.saldo = instanceDecimal(item.saldo, this.MAX_NUMBER_ROUND);
+
+        item.saldoOriginal = minus(item.saldoOriginal, abono, this.MAX_NUMBER_ROUND);
+
     }
+
+   
 
     /**
      * 
-     * @param {object} item item cuota  
-     * @returns number
+     * @param {*} param0 
+     * @returns 
      */
-    getValorSaldo(item) {
-        // let total = item.abono + item.abonoPosfechado;
-        // return this.fS.roundNumber(total, 5) === this.fS.roundNumber(item.cuota, 5) ? 0 : this.fS.roundNumber(item.saldo, 5);
-        return this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND_GENERAL);
-    }
-
-
-    /**
-         * 
-         * @param {object} item  cuota
-         * @returns {string} estado 
-         */
-    getEstadoCuota(item) {
+    getEstadoCuota({ saldo, abono, esPosfechado }) {
         let estado = '';
-        if (item.saldo === 0) estado = 'PAGADA'
-        if (item.saldo > 0) estado = "PENDIENTE PARCIAL";
-        if (item.abono === 0) estado = "PENDIENTE";
-        return estado
+        let dataEstadoPago = {};
+
+        if (esPosfechado) {
+            dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'PFC');
+        } else {
+            if (saldo === 0) {
+                dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'PA');
+                estado = 'PAGADA'
+            }
+            if (saldo > 0) {
+                dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'PP');
+                estado = "PENDIENTE PARCIAL";
+            }
+            if (abono === 0) {
+                dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'PE');
+                estado = "PENDIENTE";
+            }
+
+        }
+
+
+        return {
+            idEstadoPago: dataEstadoPago.idEstadoPago,
+            descripcion: estado
+        }
     }
 
 
@@ -443,22 +633,48 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
         item.display = !item.display
     }
 
+    let mainDataFormPago = {};
+
+    //Se inicializa al abrir modal 
+    initLoad();
+    function initLoad() {
+
+        try {
+            showLoader();
+            comprobanteEgresoSvc.getDataFormaPago($scope.proveedor.idProveedor).then(response => {
+                mainDataFormPago = response;
+
+                pagoSvc.setEstadosPago = mainDataFormPago.estadosPago;
+
+            })
+            .catch(error=>{
+                console.log(error)
+            })
+            .finally(() => hideLoader())
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
 
     getTotalesCuota();
     function getTotalesCuota() {
         //let groupCuotas = $scope.selectedDocumentos.flatMap(item=>item.cuotas);
-        let totalCuota = 0, totalAbonoAnterior = 0, totalSaldo = 0;
+        let totalCuota = instanceDecimal(0);
+        let totalAbonoAnterior = instanceDecimal(0);
+        let totalSaldo = instanceDecimal(0);
 
         for (let item of $scope.selectedDocumentos) {
-            totalCuota += item.importeTotal;
-            totalAbonoAnterior += item.abono;
-            totalSaldo += item.saldo;
+            totalCuota = totalCuota.plus(item.importeTotal)
+            totalAbonoAnterior = totalAbonoAnterior.plus(item.abono);
+            totalSaldo = totalSaldo.plus(item.saldo);
         }
 
-        $scope.data.importeTotal = fS.roundNumber(totalCuota, 5);
-        $scope.data.totalSaldo = fS.roundNumber(totalSaldo, 5);
-        $scope.data.totalSaldoOriginal = fS.roundNumber(totalSaldo, 5);
-        $scope.data.totalAbonoAnterior = fS.roundNumber(totalAbonoAnterior, 5)
+        $scope.data.importeTotal = totalCuota.toNumber();
+        $scope.data.totalSaldo = totalSaldo.toNumber();
+        $scope.data.totalSaldoOriginal = totalSaldo.toNumber();
+        $scope.data.totalAbonoAnterior = totalAbonoAnterior.toNumber();
         $scope.data.totalValorAbono = 0;
         $scope.data.valorCambio = 0;
     }
@@ -466,10 +682,13 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
     //Calculo de abono y saldo una vez agregado el forma pago 
-    function calculoTotales() {
+    function calculoTotales() { 
 
-        let totalValorAbono = $scope.pagos.map(item => item.valorAbono).reduce((prev, curr) => prev + curr, 0)
-        let totalSaldo = $scope.selectedDocumentos.flatMap(item => item.cuotas).map(item => item.saldo).reduce((prev, curr) => prev + curr, 0);
+        let totalValorAbono = $scope.pagos.map(item => item.valorAbono)
+            .reduce((prev, curr) => instanceDecimal(prev).plus(curr).toNumber(), 0);
+
+        let totalSaldo = $scope.selectedDocumentos.flatMap(item => item.cuotas)
+            .reduce((prev, curr) => instanceDecimal(prev).plus(curr.saldo).toNumber(), 0); 
         let valorCambio = 0;
 
         $scope.data.totalValorAbono = fS.roundNumber(totalValorAbono, 5);
@@ -477,10 +696,10 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
         if ($scope.data.totalValorAbono >= $scope.data.totalSaldoOriginal) {
-            valorCambio = $scope.data.totalValorAbono - $scope.data.totalSaldoOriginal;
+            valorCambio = minus($scope.data.totalValorAbono, $scope.data.totalSaldoOriginal, 5)
         }
 
-        $scope.data.valorCambio = fS.roundNumber(valorCambio, 5);
+        $scope.data.valorCambio = valorCambio;
 
     }
 
@@ -498,6 +717,7 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
                 proveedor: $scope.proveedor,
                 importeTotal: $scope.data.importeTotal,
                 saldo: $scope.data.totalSaldo,
+                mainDataFormPago
             };
 
             let fileCtrl = nombreModalContabilidad.PAGO.fileCtrl;
@@ -533,12 +753,14 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         pagoSvc.addFormaCobro();
 
                         $scope.pagosDetalle = pagoSvc.pagosDetalle;
-                        $scope.selectedDocumentos = pagoSvc.selectedDocumentos;
+                        $scope.selectedDocumentos = pagoSvc.selectedDocumentos; 
 
-                        let abonoCuota = $scope.pagosDetalle.filter(item => item.secuencial === pagoSvc.secuencial)
-                            .reduce((prev, curr) => prev + curr.abono, 0);
+                        let abonoCuota = $scope.pagosDetalle
+                            .filter(item => item.secuencial === pagoSvc.secuencial)
+                            .reduce((prev, curr) =>instanceDecimal(prev).plus(curr.abono), instanceDecimal(0))
+                            .toNumber();
 
-                       
+
                         $scope.addDataPayment(result, abonoCuota);
 
                         calculoTotales();
@@ -560,7 +782,7 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.addDataPayment = function (obj, abonoCuota) {
         $scope.pagos.push({
             ...obj,
-            abonoCuota: fS.roundNumber(abonoCuota, 2),
+            abonoCuota: instanceDecimal(abonoCuota, 2),
             secuencial: pagoSvc.secuencial
         })
     }
@@ -696,10 +918,15 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
                 if (result.isConfirmed) {
                     try {
+
+                        let totalValorAbono = $scope.pagos.reduce((acc, curr) => instanceDecimal(acc).plus(curr.valorAbono), instanceDecimal(0)).toNumber();
+                        let totalAbonoCuota = $scope.pagos.reduce((acc, curr) => instanceDecimal(acc).plus(curr.abonoCuota), instanceDecimal(0)).toNumber();
+
+
                         let comprobante = {
                             idProveedor: $scope.proveedor.idProveedor,
-                            total: fS.roundNumber($scope.pagos.reduce((acc, curr) => acc + curr.valorAbono, 0), 5),
-                            abono: fS.roundNumber($scope.pagos.reduce((acc, curr) => acc + curr.abonoCuota, 0), 5),
+                            total: totalValorAbono,
+                            abono: totalAbonoCuota,
                             codEstab: $scope.data.codEstab,
                             identificacionComprador: $scope.proveedor.identificacionComprador,
                             razonSocialComprador: $scope.proveedor.razonSocialComprador,
@@ -738,12 +965,27 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
                             return obj;
                         })
 
+                        let pagosDetalle = $scope.pagosDetalle.filter(item => (item.abono > 0));
+                        let historialCuentas = pagoSvc.historialCuentas;
+
+                        let cuentasPorPagarEstado = pagoSvc.generarCuentasPorPagarEstado({
+                            historialCuentas,
+                            pagos,
+                            pagosDetalle
+                        })
+
+                        let cuotasPorPagarEstado = pagoSvc.generarCuotasPorPagarEstado({
+                            pagosDetalle
+                        })
+
 
                         let data = {
                             comprobante,
                             pagos,
-                            pagosDetalle: $scope.pagosDetalle.filter(item => (item.abono > 0)),
-                            historialCuentas: pagoSvc.historialCuentas,
+                            pagosDetalle,
+                            historialCuentas,
+                            cuentasPorPagarEstado,
+                            cuotasPorPagarEstado
                         }
 
 
@@ -784,15 +1026,14 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 modalFormaPagoCtrl.$inject = ['$scope', '$uibModalInstance', '$injector', 'params'];
 function modalFormaPagoCtrl($scope, $uibModalInstance, $injector, params) {
-
-    const cuentaPorPagarSvc = $injector.get('cuentaPorPagarService');
+ 
     const fS = $injector.get('formulario');
     const tS = $injector.get('toastService');
     let pagoSvc = new PagoService(tS)
 
 
 
-    let { saldo, proveedor } = params;
+    let { saldo, proveedor, mainDataFormPago } = params;
     const VALOR_ABONO_ORIGINAL = saldo;
 
     $scope.data = {};
@@ -802,7 +1043,7 @@ function modalFormaPagoCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.data.fechaEmision = new Date();
     $scope.data.valorAbono = fS.roundNumber(VALOR_ABONO_ORIGINAL, 3)
 
- 
+
 
 
     //Entidad Financiera Documento 
@@ -823,23 +1064,18 @@ function modalFormaPagoCtrl($scope, $uibModalInstance, $injector, params) {
     function initLoad() {
 
         try {
-            showLoader();
-            cuentaPorPagarSvc.getDataFormaPago($scope.proveedor.idProveedor).then(response => {
-                const {
-                    entidadesFinancieras,
-                    bancos,
-                    ciudades,
-                    docs
-                } = response;
-                $scope.entidadesFinancieras = entidadesFinancieras;
+            const {
+                entidadesFinancieras,
+                bancos,
+                ciudades,
+                docs
+            } = mainDataFormPago;
+            $scope.entidadesFinancieras = entidadesFinancieras;
 
-                $scope.selectedIndexTab = $scope.entidadesFinancieras.findIndex(item => item.codigo === 'EFE');
-                $scope.bancos = bancos;
-                $scope.ciudades = ciudades;
-                $scope.documentosElectronicos = docs;
-
-
-            }).finally(() => hideLoader())
+            $scope.selectedIndexTab = $scope.entidadesFinancieras.findIndex(item => item.codigo === 'EFE');
+            $scope.bancos = bancos;
+            $scope.ciudades = ciudades;
+            $scope.documentosElectronicos = docs;
         } catch (error) {
             console.log(error);
         }
@@ -871,9 +1107,9 @@ function modalFormaPagoCtrl($scope, $uibModalInstance, $injector, params) {
             $scope.data.aprobacion = null;
             $scope.data.posFechado = false;
             $scope.selectedDocElectronico = [];
-            if(codigo==='CHE'){
-                $scope.data.referencia = $scope.proveedor.razonSocialComprador;            
-            }else{
+            if (codigo === 'CHE') {
+                $scope.data.referencia = $scope.proveedor.razonSocialComprador;
+            } else {
                 $scope.data.referencia = null;
             }
 
