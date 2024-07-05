@@ -8,7 +8,8 @@ function modalSendMailCtrl($scope, $uibModalInstance, $injector, sharedSvc, fS, 
     let DOC_TYPE = $injector.get('DOC_TYPE');
     let mS = $injector.get('mainService');
 
-    let { data } = params
+    let { data } = params;
+    console.log(params)
     $scope.data = data || {};
 
     $scope.correos = []; 
@@ -17,27 +18,29 @@ function modalSendMailCtrl($scope, $uibModalInstance, $injector, sharedSvc, fS, 
     let esNotificacionGeneral = false;
  
 
-    function createDataParamDocSri(idDocumento, codDoc, esNotificacionTributaria) {
-        return {
-            id: idDocumento,
+    function createDataParamDocSri(id, codDoc) {
+        return { 
+            tipo: 2,
+            id,
             codDoc: codDoc,
             esNotificacionTributaria: true
         };
     }
-    function createDataParamDoc(idDocumento, codDoc) {
-        return {
-            id: idDocumento,
+    function createDataParamDoc(id, codDoc) {
+        return { 
+            tipo:3,
+            id,
             codDoc: codDoc,
             esNotificacionGeneral: true
         };
     }
 
     let dataParamGetDataForm = {
-        [DOC_TYPE.FV_SRI]: createDataParamDocSri(data.idDocumento, data.codDoc),
-        [DOC_TYPE.LC_SRI]: createDataParamDocSri(data.idDocumento, data.codDoc),
-        [DOC_TYPE.GR_SRI]: createDataParamDocSri(data.idDocumento, data.codDoc),
-        [DOC_TYPE.R_SRI]: createDataParamDocSri(data.idDocumento, data.codDoc),
-        [DOC_TYPE.NC_SRI]: createDataParamDocSri(data.idDocumento, data.codDoc),
+        [DOC_TYPE.FV_SRI]: createDataParamDocSri(data.idDocumentoElectronico, data.codDoc),
+        [DOC_TYPE.LC_SRI]: createDataParamDocSri(data.idDocumentoElectronico, data.codDoc),
+        [DOC_TYPE.GR_SRI]: createDataParamDocSri(data.idDocumentoElectronico, data.codDoc),
+        [DOC_TYPE.R_SRI]: createDataParamDocSri(data.idDocumentoElectronico, data.codDoc),
+        [DOC_TYPE.NC_SRI]: createDataParamDocSri(data.idDocumentoElectronico, data.codDoc),
         [DOC_TYPE.NE]: createDataParamDoc(data.idDocumento, data.codDoc)
     };
     
@@ -52,6 +55,7 @@ function modalSendMailCtrl($scope, $uibModalInstance, $injector, sharedSvc, fS, 
         esNotificacionTributaria = params.esNotificacionTributaria;
         esNotificacionGeneral = params.esNotificacionGeneral;
 
+        console.log(params)
         sharedSvc.getDataFormNotificacion(params).then(response=>{  
             $scope.correos =  response.correos; 
         }) 

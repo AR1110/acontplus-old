@@ -117,7 +117,7 @@
                 docElectSvc.getAll(dataSearch).then(response => {
                     if (!$scope.isMobile) {
                         document.getElementById('menu_toggle').click();
-                    }
+                    } 
                     
                     $scope.comprobantes = response;
                     $scope.dataSearch.totalRecords = $scope.comprobantes.length > 0 ? $scope.comprobantes[0].totalRecords : 0

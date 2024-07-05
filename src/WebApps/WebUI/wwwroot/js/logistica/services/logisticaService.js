@@ -60,6 +60,7 @@
 
                 return guiasRemision.map(item => {
                     return {
+                        idDocumento: item.idDocumento,
                         idGuiaRemision: item.idGuiaRemision,
                         codEstab: item.codEstab,
                         fechaEmision: item.fechaEmision,

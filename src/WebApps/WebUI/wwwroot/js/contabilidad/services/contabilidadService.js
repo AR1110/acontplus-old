@@ -229,6 +229,7 @@
             getAll,
             getCuotasByIdCuentaPorPagar,
             getDataFormaPago,
+            getDataToDelete,
             mapperTo,
             post,
             anular,
@@ -393,6 +394,27 @@
 
         }
 
+        function getDataToDelete(id){
+             const json = JSON.stringify({
+                tipo: 5,
+                id
+            })
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response=>{
+                let resultData = {};
+                if (response && typeof response==='object') {
+
+                    let { cuentas, cuotas, estadoPago } = response;
+
+                    resultData.cuentasPorPagar = cuentas;
+                    resultData.cuotasPorPagar = cuotas;
+                    resultData.estadosPago = estadoPago;
+                } else {
+                    throw new Error('Error en petición')
+                }
+                return resultData
+            })
+        }
+
         function mapperTo(obj) {
             const {
                 comprobante,
@@ -439,12 +461,11 @@
                 }
             })
 
-            const pagosDetalleMappeado = pagosDetalle.map(item => {
-                let contarDecimales = fS.contarDecimales(item.saldo)
+            const pagosDetalleMappeado = pagosDetalle.map(item => { 
                 return {
                     idCuotaPorPagar: item.idCuotaPorPagar,
                     saldo: fS.roundNumber(item.saldoOriginal, 5),
-                    abono: fS.roundNumber(item.abono, 2),
+                    abono: fS.roundNumber(item.abono, 5),
                     secuencial: item.secuencial
                 }
             })
@@ -452,12 +473,12 @@
 
             const historialCuentasMappeado = historialCuentas.map(item => {
                 let saldo = fS.roundNumber(item.saldo, 5)
-                let contarDecimales = fS.contarDecimales(saldo)
+              
                 return {
 
                     idCuentaPorPagar: item.idCuentaPorPagar,
                     saldo,
-                    abono: fS.roundNumber(item.abono, 2),
+                    abono: fS.roundNumber(item.abono, 5),
                     secuencial: item.secuencial
                 }
             })
@@ -473,8 +494,7 @@
             return params;
         }
 
-        function post(data) {
-            console.log(data)
+        function post(data) { 
            return mS.getData('post', url, { data }, true)
         }
 
@@ -483,8 +503,8 @@
         }
 
 
-        function anular(id, observacion) {
-            return mS.getData('delete', `${url}${id}?observacion=${observacion}`, null, true)
+        function anular(id, data) {
+            return mS.getData('put', `${url}${id}`, {data}, true)
         }
 
     }])

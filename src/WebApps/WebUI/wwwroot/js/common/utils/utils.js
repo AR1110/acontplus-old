@@ -1003,6 +1003,49 @@
             return regex.test(value);
         };
 
+ 
+        formSvc.instanceDecimal = function(num, max = 0) {
+            if (max > 0) {
+                return new Decimal(num).toDecimalPlaces(max).toNumber()
+            }
+            return new Decimal(num);
+        }
+
+        /**
+         * 
+         * @param {*} num1 
+         * @param {*} num2 
+         * @param {*} max 
+         * @returns 
+         */
+        formSvc.plus = function(num1, num2, max = 0) {
+            let instanceDecimal = new Decimal(num1).plus(num2)
+            if (max > 0) {
+                return instanceDecimal.toDecimalPlaces(max).toNumber()
+            }
+
+            return instanceDecimal;
+
+        }
+         
+        /**
+         * 
+         * @param {*} num1 
+         * @param {*} num2 
+         * @param {*} max 
+         * @returns 
+         */
+
+        formSvc.minus = function(num1, num2, max = 0) {
+            let instanceDecimal = new Decimal(num1).minus(num2)
+            if (max > 0) {
+                return instanceDecimal.toDecimalPlaces(max).toNumber()
+            }
+
+            return instanceDecimal;
+
+        }
+
 
 
         return formSvc;
