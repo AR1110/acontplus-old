@@ -44,7 +44,13 @@
 
                                 <i ng-if="item.showInfoCobro" ng-click="showInfo(item)" class="ml-2 fas fa-info-circle text-info"></i>
 
-                                <button type="button"  ng-if="accion.anularComprobanteIngresoDoc && item.status" class="btn btn-danger btn-sm" ng-click="askToDelete(item)">
+                                <button 
+                                type="button"  
+                                ng-if="accion.anularComprobanteIngresoDoc && item.status" 
+                                class="btn btn-danger btn-sm"  
+                                btn-anular-comprobante-ingreso params="item" on-result="refresh()"
+                                
+                                >
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
@@ -149,7 +155,11 @@
 
                                 </div>
                                 <div class="p-1" ng-if="accion.anularComprobanteIngresoDoc && item.status">
-                                    <button type="button" class="btn btn-danger btn-sm" ng-click="askToDelete(item)">
+                                    <button 
+                                    type="button" 
+                                    class="btn btn-danger btn-sm" 
+                                    btn-anular-comprobante-ingreso params="item" on-result="refresh()"
+                                    >
                                         <i class="fas fa-trash-alt fa-xs"></i>
                                     </button>
                                 </div>

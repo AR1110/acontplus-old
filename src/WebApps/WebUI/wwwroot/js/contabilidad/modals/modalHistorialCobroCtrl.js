@@ -141,74 +141,14 @@ function ModalCobroDetalleCtrl($scope, $rootScope, $uibModalInstance, comprobant
 
     }
 
-    async function messageQtyDoc() {
-        let isConfirmed = await Swal.fire({
-            icon: 'warning',
-            text: 'Este anulación de comprobante afectará mas de un doc. porque se ha realizado cobro por lote ¿Desea continuar? '
-        })
-        return isConfirmed;
+    
+
+    $scope.refresh = function(){
+        initialLoad()
+        isRefreshPage = true;
     }
 
-    $scope.askToDelete = async (item) => {
-
-        try {
-
-            let isContinue = true;
-
-            if (item.cantDocs > 1) {
-                isContinue = await messageQtyDoc();
-            }
-
-            if (!isContinue) return
-
-            let {
-                isConfirmed,
-                value
-            } = await Swal.fire({
-                icon: 'warning',
-                html: '<small>Esta seguro/a de Anular este registro ahora?</small>',
-                input: 'text',
-                inputPlaceholder: 'Ingrese la observación',
-                showConfirmButton: true,
-                confirmButtonText: 'Si, anular',
-                showCancelButton: true,
-                cancelButtonText: 'No, cancelar!',
-                allowOutsideClick: false,
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'Ingrese la Observación!'
-                    }
-                }
-            })
-
-            if (!isConfirmed) return
-
-
-            let data = {
-                idComprobanteIngreso: item.idComprobanteIngreso,
-                observacion: value
-            }
-            showLoader();
-            comprobanteIngresoSvc.update(item.idComprobanteIngreso, data).then(response => {
-                if (response.code == "0") {
-                    tS.toastr('warning', response.message, response.titleSms);
-                }
-                if (response.code == "1") {
-                    tS.toastr('success', response.message, response.titleSms);
-                    initialLoad()
-                    isRefreshPage = true;
-                    // $uibModalInstance.close(response)
-                }
-            }).catch(error => {
-                console.log(error)
-            }).finally(() => hideLoader())
-        } catch (error) {
-            hideLoader();
-            console.log(error)
-        }
-
-    }
-
+   
 
     $scope.closeModal = function () {
         if (isRefreshPage) {
