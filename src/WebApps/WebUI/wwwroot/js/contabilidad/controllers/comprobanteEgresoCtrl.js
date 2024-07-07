@@ -1,3 +1,4 @@
+//@ts-check
 (function () {
 
     'use strict';
@@ -137,50 +138,159 @@
 
 
 
+        async function showAlert(){
+            return await Swal.fire({
+                icon: 'warning',
+                html: '<small>Esta seguro/a de Anular este registro de pago ahora?</small>',
+                input: 'text',
+                inputPlaceholder: 'Ingrese la observación',
+                showConfirmButton: true,
+                confirmButtonText: 'Sí, anular',
+                showCancelButton: true,
+                cancelButtonText: 'No, cancelar!',
+                allowOutsideClick: false,
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Ingrese la Observación!'
+                    }
+                    if (value.length <= 8) {
+                        return 'La observación tiene que tener al menos 10 caracteres!'
+                    }
+                }
+            })
+        }
 
-        $scope.askToCancel = function (item) {
+        /**
+         * 
+         * @param {*} codigoEstadoPago 
+         * @param {*} estadosPago 
+         * @returns 
+         */
+        function getDataIdEstadoPago(codigoEstadoPago, estadosPago) {
+            const dataEstadoPago = estadosPago.find(ep => ep.codigo === codigoEstadoPago);
+            return dataEstadoPago ? dataEstadoPago.idEstadoPago : 0;
+        }
+
+        /**
+         * 
+         * @param {*} cuentasPorPagar 
+         * @param {*} cuotasPorPagar 
+         * @param {*} estadosPago 
+         * @returns 
+         */
+        function getDataParams(cuentasPorPagar, cuotasPorPagar, estadosPago) {
+            // Agrupa cuentas por pagar
+            const cuentasPorPagarAgrupado = cuentasPorPagar.reduce((acc, curr) => {
+                let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorPagar === curr.idCuentaPorPagar);
+                let abono = curr.cobro ? curr.abono : 0;
+
+                if (!existeDato) {
+                    acc.push({
+                        idCuentaPorPagar: curr.idCuentaPorPagar,
+                        abonoDoc: new Decimal(curr.abonoDoc).toNumber(),
+                        abono,
+                    });
+                } else {
+                    existeDato.abono = new Decimal(existeDato.abono).plus(curr.abono);
+                }
+                return acc;
+            }, []);
+
+            // Agrupa cuotas por pagar
+            const cuotasPorPagarAgrupado = cuotasPorPagar.reduce((acc, curr) => {
+                let existeDato = acc.find(dataCxc => dataCxc.idCuotaPorPagar === curr.idCuotaPorPagar);
+                //  let abono = curr.cobro ? curr.abono : 0;
+                let abono = curr.abono
+
+                if (!existeDato) {
+                    acc.push({
+                        idCuotaPorPagar: curr.idCuotaPorPagar,
+                        abonoCuota: curr.abonoCuota,
+                        abono,
+                    });
+                } else {
+                    existeDato.abono = new Decimal(existeDato.abono).plus(curr.abono);
+                }
+                return acc;
+            }, []);
+
+            // Calcula los valores residuales y el estado de pago para cuentas por cobrar
+            const tempCuentasPorPagar = cuentasPorPagarAgrupado.map(item => {
+                //let valorResiduo = fS.minus(item.abonoDoc,item.abono).toNumber()
+                let valorResiduo = new Decimal(item.abonoDoc).minus(item.abono).toNumber()
+                return {
+                    idCuentaPorPagar: item.idCuentaPorPagar,
+                    abono: valorResiduo,
+                    idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP', estadosPago)
+                };
+            });
+
+            // Calcula los valores residuales y el estado de pago para cuotas por cobrar
+            const tempCuotasPorCobrar = cuotasPorPagarAgrupado.map(item => {
+                let valorResiduo = new Decimal(item.abonoCuota).minus(item.abono).toNumber()
+                
+                return {
+                    idCuotaPorPagar: item.idCuotaPorPagar,
+                    abono: valorResiduo,
+                    idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP', estadosPago)
+                };
+            });
+
+            // Retorna los datos agrupados y calculados
+            return {
+                cuenta: tempCuentasPorPagar,
+                cuota: tempCuotasPorCobrar
+            };
+        }
+
+
+        $scope.askToCancel = async function (item) {
             try {
-                Swal.fire({
-                    icon: 'warning',
-                    html: '<small>Esta seguro/a de Anular este registro de pago ahora?</small>',
-                    input: 'text',
-                    inputPlaceholder: 'Ingrese la observación',
-                    showConfirmButton: true,
-                    confirmButtonText: 'Sí, anular',
-                    showCancelButton: true,
-                    cancelButtonText: 'No, cancelar!',
-                    allowOutsideClick: false,
-                    inputValidator: (value) => {
-                        if (!value) {
-                            return 'Ingrese la Observación!'
-                        }
-                        if (value.length <= 8) {
-                            return 'La observación tiene que tener al menos 10 caracteres!'
-                        }
-                    }
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        try {
-                            showLoader();
-                            comprobanteEgresoSvc.anular(item.idComprobanteEgreso, result.value).then(response => {
-                                if (response.code == "0") {
-                                    fS.sweetAlert('warning', response.message, response.titleSms)
-                                }
-                                if (response.code == "1") {
-                                    fS.sweetAlert('success', response.message, response.titleSms, 1000)
-                                    getComprobantesEgreso();
-                                }
-                            }).catch(error => {
-                                console.log(error);
-                            }).finally(() => {
-                                hideLoader();
-                            })
-                        } catch (error) {
+
+                let cuentasPorPagar = [], cuotasPorPagar = [], estadosPago = [];
+
+                let response = await comprobanteEgresoSvc.getDataToDelete(item.idComprobanteEgreso) ;
+                
+                cuentasPorPagar = response.cuentasPorPagar;
+                cuotasPorPagar = response.cuotasPorPagar;
+                estadosPago = response.estadosPago;
+
+                if (cuentasPorPagar.length === 0 || cuotasPorPagar.length === 0) {
+
+                    console.log("cuentasPorPagar", cuentasPorPagar);
+                    console.log("cuotasPorPagar", cuotasPorPagar);
+                    return;
+                }
+
+                let result = await showAlert();
+                if (result.isConfirmed) {
+                    try {
+
+                        const dataParams = getDataParams(cuentasPorPagar, cuotasPorPagar, estadosPago);
+                        const data = {
+                            observacion: result.value,
+                            ...dataParams
+                        };  
+
+                        showLoader();
+                        comprobanteEgresoSvc.anular(item.idComprobanteEgreso, data).then(response => {
+                            if (response.code == "0") {
+                                fS.sweetAlert('warning', response.message, response.titleSms)
+                            }
+                            if (response.code == "1") {
+                                fS.sweetAlert('success', response.message, response.titleSms, 1000)
+                                getComprobantesEgreso();
+                            }
+                        }).catch(error => {
+                            console.log(error);
+                        }).finally(() => {
                             hideLoader();
-                            console.log(error)
-                        }
+                        })
+                    } catch (error) {
+                        hideLoader();
+                        console.log(error)
                     }
-                })
+                } 
             } catch (error) {
                 console.log(error)
             }
