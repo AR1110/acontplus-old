@@ -1171,7 +1171,7 @@
 
 
     /**
-     * @description Nueva Version 
+     * @description Nueva Version usar esta en proximos modulos
      */
     app.directive('actionSendMail', ['modalService','nombreModalCommon', function (modalSvc, nombreModalCommon) {
         return {
@@ -1297,7 +1297,7 @@
         }
     }])
 
-    //nueva version 
+    //Nueva Version usar esta en proximos modulos
 
     app.directive('actionSendToWhatsApp', ['modalService', 'nombreModalCommon', 'mainService', 'toastService', function (modalSvc, nombreModalCommon, mS, tS) {
         return {

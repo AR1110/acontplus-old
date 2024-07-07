@@ -1,4 +1,6 @@
-﻿namespace Contabilidad.API.Controllers;
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace Contabilidad.API.Controllers;
 
 public class ComprobanteEgresoController : BaseApiController
 {
@@ -35,18 +37,22 @@ public class ComprobanteEgresoController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "observacion", observacion }
+            { "userRoleId",   User.GetUserRoleId() }, 
+            { "id", id }, 
+            { "observacion", observacion }
         };
         var response = await _svc.DeleteAsync(parameters);
         return Ok(response);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Put(ApiRequest request)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(request.Data) }
+            { "userRoleId", User.GetUserRoleId() },
+            {"id", id },
+           { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
 
         var response = await _svc.UpdateAsync(parameters);
