@@ -16,7 +16,6 @@ public static class ApplicationServicesExtensions
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
 
-        services.AddScoped<IAdoSqlServer, AdoSqlServer>();
         services.AddScoped<IBrandService, BrandService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<ICustomLogger, CustomLogger>();

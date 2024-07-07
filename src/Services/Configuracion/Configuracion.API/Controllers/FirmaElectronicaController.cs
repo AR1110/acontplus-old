@@ -1,49 +1,25 @@
 ﻿namespace Configuracion.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class FirmaElectronicaController : ControllerBase
+public class FirmaElectronicaController(
+    IConfiguration configuration,
+    ICustomLogger log,
+    IFirmaElectronicaService firmaElectronicaService) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
-
-    public FirmaElectronicaController(IConfiguration configuration, ICustomLogger log)
-    {
-        _configuration = configuration;
-        _log = log;
-    }
-
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SPExecute("Config.FirmaElectronica_Get");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataSetAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error on Get Firma Electronica: \n" + ex);
-            _response.Create("0", "Error al obtener la firma electronica");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await firmaElectronicaService.GetAsync(parameters));
     }
 
     [HttpPost("Post")]
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
         var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
+        var _db = new DbAccess(configuration);
         try
         {
             var idRol = User.GetUserRoleId();
@@ -59,7 +35,7 @@ public class FirmaElectronicaController : ControllerBase
                 ContentType = file.ContentType,
                 Content = FileData.GetFileByte(file)
             };
-            if (await new FileUpload().Upload(_configuration.GetSection("FactElectCerts").Value, signFile.FileName,
+            if (await new FileUpload().Upload(configuration.GetSection("FactElectCerts").Value, signFile.FileName,
                     signFile.Content))
             {
                 var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
@@ -80,7 +56,7 @@ public class FirmaElectronicaController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error on Insert Firma Electronica: \n" + ex);
+            log.LogActivity("Error on Insert Firma Electronica: \n" + ex);
             _response.Create("0", "Error al registrar la firma electronica");
         }
         finally
@@ -96,7 +72,7 @@ public class FirmaElectronicaController : ControllerBase
     public async Task<IActionResult> UpdateSignature(int id, IFormFile file)
     {
         var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
+        var _db = new DbAccess(configuration);
         try
         {
             var idRol = User.GetUserRoleId();
@@ -112,7 +88,7 @@ public class FirmaElectronicaController : ControllerBase
                 ContentType = file.ContentType,
                 Content = FileData.GetFileByte(file)
             };
-            if (await new FileUpload().Upload(_configuration.GetSection("FactElectCerts").Value, signFile.FileName,
+            if (await new FileUpload().Upload(configuration.GetSection("FactElectCerts").Value, signFile.FileName,
                     signFile.Content))
             {
                 await _db.SPExecute("Config.FirmaElectronica_Update_Signature");
@@ -131,7 +107,7 @@ public class FirmaElectronicaController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error on Update Firma Electronica: \n" + ex);
+            log.LogActivity("Error on Update Firma Electronica: \n" + ex);
             _response.Create("0", "Error al Actualizar la firma electronica");
         }
         finally
@@ -147,7 +123,7 @@ public class FirmaElectronicaController : ControllerBase
     public async Task<IActionResult> Put(string json)
     {
         var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
+        var _db = new DbAccess(configuration);
         try
         {
             var idRol = User.GetUserRoleId();
@@ -164,7 +140,7 @@ public class FirmaElectronicaController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error on Update Firma Electronica: \n" + ex);
+            log.LogActivity("Error on Update Firma Electronica: \n" + ex);
             _response.Create("0", "Error al Actualizar la firma electronica");
         }
         finally

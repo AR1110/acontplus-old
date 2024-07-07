@@ -1,42 +1,23 @@
 ﻿namespace Ventas.API.Controllers;
 
-public class ProformaController : BaseApiController
+public class ProformaController(IConfiguration configuration, IProformaService proformaService) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-
-
-    public ProformaController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-
-    }
-
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
-        {
-            await _db.SPExecute("Ventas.Proforma_Get", true);
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>
+            {
+                {"idUsuarioRol" , User.GetUserRoleId()},
+                {"json" , SqlStringParam.Sanitize(json)},
+            };
+        return Ok(await proformaService.GetAsync(parameters));
     }
 
     [HttpPost("Insert")]
     public async Task<IActionResult> Insert(ApiRequest parameters)
     {
         var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
+        var _db = new DbAccess(configuration);
         try
         {
 
@@ -56,7 +37,7 @@ public class ProformaController : BaseApiController
     [HttpPut("Update/{id}")]
     public async Task<IActionResult> Update(int id, ApiRequest parameters)
     {
-        var _db = new DbAccess(_configuration);
+        var _db = new DbAccess(configuration);
 
         var _response = new ApiResponseDeprecated();
         try
@@ -80,7 +61,7 @@ public class ProformaController : BaseApiController
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _db = new DbAccess(_configuration);
+        var _db = new DbAccess(configuration);
         var _response = new ApiResponseDeprecated();
         try
         {
@@ -101,29 +82,19 @@ public class ProformaController : BaseApiController
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var _db = new DbAccess(_configuration);
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SPExecute("Ventas.Proforma_GetId");
-            _db.AddDynamicParam("idRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>
+            {
+                {"idRol" , User.GetUserRoleId()},
+                {"id" , id},
+            };
+        return Ok(await proformaService.GetByIdAsync(parameters));
     }
 
     [HttpPost("ConvertToDoc")]
     public async Task<IActionResult> ConvertToDoc(ApiRequest parameters)
     {
         var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
+        var _db = new DbAccess(configuration);
         try
         {
 

@@ -1,7 +1,5 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
+﻿using Autofac.Extensions.DependencyInjection;
 using Common.AppSettings;
-using Newtonsoft.Json.Serialization;
 using Services.Common.Middleware;
 using Ventas.API.Extensions;
 
@@ -21,7 +19,6 @@ builder.Services.AddSwaggerDocumentation();
 builder.Services.AddApiVersioningConfig();
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

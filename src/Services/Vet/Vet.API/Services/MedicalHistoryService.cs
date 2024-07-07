@@ -1,6 +1,6 @@
 ﻿namespace Vet.API.Services;
 
-public class MedicalHistoryService(IAdoSqlServer adoSqlServer, VetContext context) : IMedicalHistoryService
+public class MedicalHistoryService(IAdoRepository adoRepository, VetContext context) : IMedicalHistoryService
 {
     public async Task<ApiResponse> AddAsync(MedicalHistory medicalHistory)
     {
@@ -43,7 +43,7 @@ public class MedicalHistoryService(IAdoSqlServer adoSqlServer, VetContext contex
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync("Vet.MedicalHistory_Get", parameters);
+        var ds = await adoRepository.GetDataSetAsync("Vet.MedicalHistory_Get", parameters);
         return DataValidation.DataSetIsNull(ds, true)
             ? new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" }
             : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
@@ -52,7 +52,7 @@ public class MedicalHistoryService(IAdoSqlServer adoSqlServer, VetContext contex
     public async Task<ApiResponse> GetByIdAsync(int id)
     {
         var parameters = new Dictionary<string, object> { { "id", id } };
-        var ds = await adoSqlServer.GetDataSetAsync("Vet.MedicalHistory_GetById", parameters);
+        var ds = await adoRepository.GetDataSetAsync("Vet.MedicalHistory_GetById", parameters);
 
         return DataValidation.DataSetIsNull(ds, true)
             ? new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" }

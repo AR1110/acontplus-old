@@ -1,6 +1,6 @@
 ﻿namespace Vet.API.Services
 {
-    public class StatsService(IAdoSqlServer repository) : IStatsService
+    public class StatsService(IAdoRepository repository) : IStatsService
     {
         public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {

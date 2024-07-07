@@ -5,7 +5,7 @@ namespace Common.Infrastructure.Repository;
 public interface IAdoRepository
 {
     public Task<List<T>> DynamicListAsync<T>(string spname, Dictionary<string, object> parameters);
-    public Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp = false);
+    public Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp = false, bool timeout = true);
     public Task<DataTable> GetDataTableAsync(string spname, Dictionary<string, object> parameters);
 
     public Task<int> OnlyExecuteAsync(string query, Dictionary<string, object> parameters,

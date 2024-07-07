@@ -14,3 +14,5 @@ global using Services.Common.Extensions;
 global using System.Data;
 global using System.Net;
 global using System.Text;
+global using FactElect.API.Data;
+global using FactElect.API.Services;

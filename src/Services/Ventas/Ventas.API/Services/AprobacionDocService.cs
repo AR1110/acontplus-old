@@ -1,52 +1,42 @@
 ﻿namespace Ventas.API.Services;
 
-public class AprobacionDocService : IAprobacionDocService
+public class AprobacionDocService(IAdoSqlServer adoSqlServer) : IAprobacionDocService
 {
-    private readonly IAdoRepository _repository;
-    private readonly string nameSchema = "Ventas.Aprob_Document_";
+    private const string NameSchema = "Ventas.Aprob_Document_";
 
-    public AprobacionDocService(IAdoRepository repository)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        _repository = repository;
+        var ds = await adoSqlServer.GetDataSetAsync($"{NameSchema}Get", parameters, oldSp: true);
+        return !DataValidation.DataSetIsNull(ds)
+            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
+            : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
     }
-
-    public async Task<object> GetAsync(Dictionary<string, object> parameters)
-    {
-        var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters);
-        if (ds.Tables.Count == 0)
-        {
-            return null;
-        }
-
-        return DataConverters.DataSetToJson(ds);
-    }
-
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Insert", parameters);
+        return await adoSqlServer.SpExecuteAsync<ApiResponse>(NameSchema + "Insert", parameters);
     }
 
-    public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync(nameSchema + "GetId", parameters, true);
-        if (ds.Tables[0].Rows.Count == 0) { return null; }
-
-        return DataConverters.DataSetToJson(ds, true);
+        var ds = await adoSqlServer.GetDataSetAsync($"{NameSchema}GetId", parameters, oldSp: true);
+        return !DataValidation.DataSetIsNull(ds)
+            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
+            : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Update", parameters);
+        return await adoSqlServer.SpExecuteAsync<ApiResponse>(NameSchema + "Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Delete", parameters);
+        return await adoSqlServer.SpExecuteAsync<ApiResponse>(NameSchema + "Delete", parameters);
     }
 
     public async Task<ApiResponse> ConvertToDocAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Convert_To_Doc", parameters);
+        return await adoSqlServer.SpExecuteAsync<ApiResponse>(NameSchema + "Convert_To_Doc", parameters);
     }
 }

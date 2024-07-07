@@ -12,6 +12,7 @@ builder.Services.AddIdentityService(builder.Configuration);
 builder.Services.AddSwaggerDocumentation();
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

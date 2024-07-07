@@ -2,15 +2,15 @@
 
 public class StatsService : IStatsService
 {
-    private readonly IAdoSqlServer _adoSqlServer;
+    private readonly IAdoRepository _adoRepository;
 
-    public StatsService(IAdoSqlServer adoSqlServer)
+    public StatsService(IAdoRepository adoRepository)
     {
-        _adoSqlServer = adoSqlServer;
+        _adoRepository = adoRepository;
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        return await _adoSqlServer.SpExecuteAsync<ApiResponse>("TechnicalSupport.Stats_Get", parameters);
+        return await _adoRepository.SpExecuteAsync<ApiResponse>("TechnicalSupport.Stats_Get", parameters);
     }
 }

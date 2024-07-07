@@ -46,7 +46,7 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
         return response;
     }
 
-    public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool oldSp)
+    public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool oldSp, bool timeout)
     {
         DataSet ds = null;
         await using var context = contexts.GetContext(configuration["ContextName"]);
@@ -69,7 +69,10 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             {
                 ParametersUtils.AddSqlParameterOut(cmd, outParam, SqlDbType.VarChar, 500);
             }
-
+            if (!timeout)
+            {
+                cmd.CommandTimeout = 0;
+            }
             cmd.CommandType = CommandType.StoredProcedure;
             if (!wasOpen)
             {

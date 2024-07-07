@@ -4,13 +4,13 @@ public class EmpresaController : BaseApiController
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    
+
 
     public EmpresaController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        
+
     }
 
     [HttpGet]
@@ -19,7 +19,7 @@ public class EmpresaController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            
+
             await _db.SPExecute("Administrador.Empresa_Get", true);
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -40,7 +40,7 @@ public class EmpresaController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-           
+
             await _db.SPExecute("Administrador.Empresa_Insert", true);
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));

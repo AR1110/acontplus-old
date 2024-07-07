@@ -2,37 +2,27 @@
 
 namespace FactElect.API.Controllers.RetencionAts;
 
-[Route("api/[controller]")]
-[ApiController]
-public class RetencionAtsController : ControllerBase
+public class RetencionAtsController : BaseApiController
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
+    private readonly IRetencionAtsService _retencionAtsService;
 
-
-    public RetencionAtsController(IConfiguration configuration)
+    public RetencionAtsController(IConfiguration configuration, IRetencionAtsService retencionAtsService)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
+        _retencionAtsService = retencionAtsService;
     }
 
     [HttpGet("{json}")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SPExecute("FactElect.RetencionAts_Get");
-            _db.AddDynamicParam("idRol", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataSetAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>{
+            {"idRol", User.GetUserRoleId()},
+            {"json", SqlStringParam.Sanitize(json)},
+        };
+        return Ok(await _retencionAtsService.GetAsync(parameters));
     }
 
     [HttpPost]

@@ -112,32 +112,6 @@ public class DbAccess : IDisposable
         return response;
     }
 
-    public ApiResponseDeprecated GetDataSetAsync()
-    {
-        var ds = new DataSet();
-        var response = new ApiResponseDeprecated();
-        if (_command != null)
-        {
-            using var dataAdapter = new SqlDataAdapter(_command);
-            dataAdapter.Fill(ds);
-            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-            {
-                if (ds.Tables.Count > 0)
-                {
-                    ds = new DataSet();
-                }
-
-                response.Create("0", "La transacción no devolvio respuesta");
-            }
-            else
-            {
-                response.Create("1", payload: DataConverters.DataSetToJson(ds, true));
-            }
-        }
-
-        return response;
-    }
-
 
     //If error exists
     public void Close()
