@@ -24,7 +24,7 @@ public class UsuarioController : ControllerBase
             var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("App.Usuario_Get");
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         catch (Exception ex)
         {
@@ -49,7 +49,7 @@ public class UsuarioController : ControllerBase
             await _db.SPExecute("App.Usuario_Search");
             _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         catch (Exception ex)
         {

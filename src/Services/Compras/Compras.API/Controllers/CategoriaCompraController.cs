@@ -24,7 +24,7 @@ public class CategoriaCompraController : ControllerBase
             await _db.SPExecute("Compra.Categoria_Get");
             _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         catch (Exception ex)
         {

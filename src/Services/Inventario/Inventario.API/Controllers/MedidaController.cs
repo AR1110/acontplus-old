@@ -24,7 +24,7 @@ public class MedidaController : BaseApiController
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {
@@ -109,7 +109,7 @@ public class MedidaController : BaseApiController
             await _db.SPExecute("Almacen.Medida_For_Select");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {

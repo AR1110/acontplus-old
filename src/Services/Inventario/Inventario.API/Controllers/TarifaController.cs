@@ -22,7 +22,7 @@ public class TarifaController : BaseApiController
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {
@@ -107,7 +107,7 @@ public class TarifaController : BaseApiController
             await _db.SPExecute("Almacen.Tarifa_For_Select");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {

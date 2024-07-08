@@ -52,16 +52,18 @@ public class DbAccess : IDisposable
     {
         try
         {
-            if (!string.IsNullOrEmpty(paramName) && paramValue != null && _command != null)
+            if (string.IsNullOrEmpty(paramName) || paramValue == null || _command == null)
             {
-                var sqlParam = new SqlParameter
-                {
-                    ParameterName = paramName,
-                    SqlDbType = SqlTypes.GetDbType(paramValue),
-                    Value = paramValue ?? DBNull.Value
-                };
-                _command.Parameters.Add(sqlParam);
+                return;
             }
+
+            var sqlParam = new SqlParameter
+            {
+                ParameterName = paramName,
+                SqlDbType = SqlTypes.GetDbType(paramValue),
+                Value = paramValue ?? DBNull.Value
+            };
+            _command.Parameters.Add(sqlParam);
         }
         catch (Exception)
         {
@@ -74,46 +76,49 @@ public class DbAccess : IDisposable
     {
         var dt = new DataTable();
         var response = new ApiResponseDeprecated();
-        if (_command != null)
+        if (_command == null)
         {
-            using var dataAdapter = new SqlDataAdapter(_command);
-            dataAdapter.Fill(dt);
-            if (DataValidation.DataTableIsNull(dt))
-            {
-                response.Create("0", "La transacción no devolvio respuesta");
-            }
-            else
-            {
-                response = DataTableMapper.BindData<ApiResponseDeprecated>(dt);
-            }
+            return response;
+        }
+
+        using var dataAdapter = new SqlDataAdapter(_command);
+        dataAdapter.Fill(dt);
+        if (DataValidation.DataTableIsNull(dt))
+        {
+            response.Create("0", "La transacción no devolvio respuesta");
+        }
+        else
+        {
+            response = DataTableMapper.BindData<ApiResponseDeprecated>(dt);
         }
 
         return response;
     }
 
-    public ApiResponseDeprecated GetDataTableAsync()
+    public async Task<ApiResponseDeprecated> GetDataTableAsync()
     {
         var dt = new DataTable();
         var response = new ApiResponseDeprecated();
-        if (_command != null)
+        if (_command == null)
         {
-            using var dataAdapter = new SqlDataAdapter(_command);
-            dataAdapter.Fill(dt);
-            if (DataValidation.DataTableIsNull(dt))
-            {
-                response.Create("0", "La transacción no devolvio respuesta");
-            }
-            else
-            {
-                response.Create("1", payload: DataConverters.DataTableToJson(dt));
-            }
+            return response;
+        }
+
+        await using var reader = await _command.ExecuteReaderAsync();
+        dt.Load(reader);
+
+        if (DataValidation.DataTableIsNull(dt))
+        {
+            response.Create("0", "La transacción no devolvio respuesta");
+        }
+        else
+        {
+            response.Create("1", payload: DataConverters.DataTableToJson(dt));
         }
 
         return response;
     }
-
-
-    //If error exists
+    
     public void Close()
     {
         if (_connection.State == ConnectionState.Open)
@@ -122,51 +127,26 @@ public class DbAccess : IDisposable
             _connection.Dispose();
         }
 
-        if (_command != null)
+        if (_command == null)
         {
-            _command.Dispose();
-            _connection.Close();
-        }
-    }
-
-    private void DtColumns(ref DataTable dt)
-    {
-        dt.Columns.Add(new DataColumn("code", typeof(string)));
-        dt.Columns.Add(new DataColumn("message", typeof(string)));
-        dt.Columns.Add(new DataColumn("payload", typeof(string)));
-    }
-
-    private void DtRows(ref DataTable dt, string message, string payload = null)
-    {
-        var dr = dt.NewRow();
-        dr["code"] = "-1";
-        dr["message"] = message;
-        if (payload != null)
-        {
-            dr["payload"] = payload;
+            return;
         }
 
-        dt.Rows.Add(dr);
+        _command.Dispose();
+        _connection.Close();
     }
-
-    private void DtWarning(ref DataTable dt)
-    {
-        DtColumns(ref dt);
-        DtRows(ref dt, "La transacción no devolvio respuesta", "");
-    }
-
+    
     private void Dispose(bool disposing)
     {
-        if (disposing)
+        if (!disposing)
         {
-            if (_command != null)
-            {
-                _command.Dispose();
-            }
-
-            _connection.Close();
-            _connection.Dispose();
+            return;
         }
+
+        _command?.Dispose();
+
+        _connection.Close();
+        _connection.Dispose();
     }
 
     ~DbAccess()

@@ -18,7 +18,7 @@ public class Doc_Rec_DetailTempController : ControllerBase
     [HttpGet("{idDocumento}")]
     public async Task<IActionResult> GetId(int idDocumento)
     {
-        var _response = new ApiResponseDeprecated();
+        var response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -26,25 +26,25 @@ public class Doc_Rec_DetailTempController : ControllerBase
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("idDocumento", idDocumento);
             _db.AddDynamicParam("jsonData", "");
-            _response = _db.GetDataTableAsync();
+            response = await _db.GetDataTableAsync();
         }
         catch (Exception ex)
         {
             _log.LogActivity("Error al obtener los detalles temporales: " + ex);
-            _response.Create("0", "Error al obtener los detalles temporales");
+            response.Create("0", "Error al obtener los detalles temporales");
         }
         finally
         {
             _db.Close();
         }
 
-        return Ok(_response);
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
     {
-        var _response = new ApiResponseDeprecated();
+        var response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -52,25 +52,25 @@ public class Doc_Rec_DetailTempController : ControllerBase
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("jsonData",
                 SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-            _response = _db.GetDefault();
+            response = _db.GetDefault();
         }
         catch (Exception ex)
         {
             _log.LogActivity("Error al insertar el detalle temporal: " + ex);
-            _response.Create("0", "Error al insertar el detalle");
+            response.Create("0", "Error al insertar el detalle");
         }
         finally
         {
             _db.Close();
         }
 
-        return Ok(_response);
+        return Ok(response);
     }
 
     [HttpPut]
     public async Task<IActionResult> Put([FromBody] ApiRequest parameters)
     {
-        var _response = new ApiResponseDeprecated();
+        var response = new ApiResponseDeprecated();
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
@@ -78,18 +78,18 @@ public class Doc_Rec_DetailTempController : ControllerBase
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("jsonData",
                 SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-            _response = _db.GetDefault();
+            response = _db.GetDefault();
         }
         catch (Exception ex)
         {
             _log.LogActivity("Error al actualizar el detalle temporal: " + ex);
-            _response.Create("0", "Error al actualizar el detalle");
+            response.Create("0", "Error al actualizar el detalle");
         }
         finally
         {
             _db.Close();
         }
 
-        return Ok(_response);
+        return Ok(response);
     }
 }
