@@ -197,6 +197,7 @@ BEGIN
                               ,ar.nombreComercial
                               ,ar.marca
                               ,ar.stockMinimo
+                              ,ar.medida
 						FROM Inventario.v_Articulo_Stock ar
 						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '	
 
