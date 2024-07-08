@@ -19,7 +19,7 @@ public class BodegaController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Inventario.Bodega_Get");
+            await _db.SpExecuteAsync("Inventario.Bodega_Get");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -39,7 +39,7 @@ public class BodegaController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Inventario.Bodega_Insert");
+            await _db.SpExecuteAsync("Inventario.Bodega_Insert");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -59,12 +59,12 @@ public class BodegaController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Inventario.Bodega_Update");
+            await _db.SpExecuteAsync("Inventario.Bodega_Update");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -80,11 +80,11 @@ public class BodegaController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Inventario.Bodega_Delete");
+            await _db.SpExecuteAsync("Inventario.Bodega_Delete");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {

@@ -22,7 +22,7 @@ public class UsuarioPermisoController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("Config.UserPermission_Get");
+            await _db.SpExecuteAsync("Config.UserPermission_Get");
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = await _db.GetDataTableAsync();
         }
@@ -46,10 +46,10 @@ public class UsuarioPermisoController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("Config.UserPermission_Update");
+            await _db.SpExecuteAsync("Config.UserPermission_Update");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("jsonPermission", SqlStringParam.Sanitize(data.jsonPermission));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -72,10 +72,10 @@ public class UsuarioPermisoController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("Config.UserPermission_CheckHasPermission");
+            await _db.SpExecuteAsync("Config.UserPermission_CheckHasPermission");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {

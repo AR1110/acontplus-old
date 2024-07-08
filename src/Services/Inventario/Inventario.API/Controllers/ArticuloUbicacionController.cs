@@ -21,10 +21,10 @@ public class ArticuloUbicacionController : BaseApiController
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("Inventario.ArticuloUbicacion_Insert", true);
+            await _db.SpExecuteAsync("Inventario.ArticuloUbicacion_Insert", true);
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -40,12 +40,12 @@ public class ArticuloUbicacionController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Inventario.ArticuloUbicacion_Update", true);
+            await _db.SpExecuteAsync("Inventario.ArticuloUbicacion_Update", true);
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -62,11 +62,11 @@ public class ArticuloUbicacionController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Inventario.ArticuloUbicacion_Delete", true);
+            await _db.SpExecuteAsync("Inventario.ArticuloUbicacion_Delete", true);
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {

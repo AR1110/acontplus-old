@@ -20,7 +20,7 @@ public class MedidaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Medida_Get");
+            await _db.SpExecuteAsync("Almacen.Medida_Get");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -41,11 +41,11 @@ public class MedidaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Medida_Insert");
+            await _db.SpExecuteAsync("Almacen.Medida_Insert");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("descripcion", data.descripcion);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -62,13 +62,13 @@ public class MedidaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Medida_Update");
+            await _db.SpExecuteAsync("Almacen.Medida_Update");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("descripcion", data.descripcion);
             _db.AddDynamicParam("estado", data.estado);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -85,11 +85,11 @@ public class MedidaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Medida_Delete");
+            await _db.SpExecuteAsync("Almacen.Medida_Delete");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -106,7 +106,7 @@ public class MedidaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Medida_For_Select");
+            await _db.SpExecuteAsync("Almacen.Medida_For_Select");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _response = await _db.GetDataTableAsync();

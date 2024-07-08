@@ -21,10 +21,10 @@ public class WhatsappMessageController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("Config.WhatsAppMessage_Insert");
+            await _db.SpExecuteAsync("Config.WhatsAppMessage_Insert");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -48,10 +48,10 @@ public class WhatsappMessageController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("Config.WhatsAppMessage_Insert_v2");
+            await _db.SpExecuteAsync("Config.WhatsAppMessage_Insert_v2");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {

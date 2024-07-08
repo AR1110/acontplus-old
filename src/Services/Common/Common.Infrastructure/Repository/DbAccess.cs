@@ -1,16 +1,9 @@
 ﻿namespace Common.Infrastructure.Repository;
 
-public class DbAccess : IDisposable
+public class DbAccess(IConfiguration config) : IDisposable
 {
-    private readonly IConfiguration _config;
-    private readonly SqlConnection _connection;
+    private readonly SqlConnection _connection = new(config.GetConnectionString("DefaultConnection"));
     private SqlCommand _command;
-
-    public DbAccess(IConfiguration config)
-    {
-        _config = config;
-        _connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-    }
 
     public void Dispose()
     {
@@ -18,17 +11,7 @@ public class DbAccess : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public async Task QueryExecute(string query)
-    {
-        if (_connection != null)
-        {
-            await _connection.OpenAsync();
-            _command = new SqlCommand(query, _connection);
-            _command.CommandType = CommandType.Text;
-        }
-    }
-
-    public async Task SPExecute(string spName, bool notimeout = false)
+    public async Task SpExecuteAsync(string spName, bool notimeout = false)
     {
         try
         {
@@ -72,7 +55,7 @@ public class DbAccess : IDisposable
         }
     }
 
-    public ApiResponseDeprecated GetDefault()
+    public async Task<ApiResponseDeprecated> GetDefaultAsync()
     {
         var dt = new DataTable();
         var response = new ApiResponseDeprecated();
@@ -81,8 +64,9 @@ public class DbAccess : IDisposable
             return response;
         }
 
-        using var dataAdapter = new SqlDataAdapter(_command);
-        dataAdapter.Fill(dt);
+        await using var reader = await _command.ExecuteReaderAsync();
+        dt.Load(reader);
+        
         if (DataValidation.DataTableIsNull(dt))
         {
             response.Create("0", "La transacción no devolvio respuesta");

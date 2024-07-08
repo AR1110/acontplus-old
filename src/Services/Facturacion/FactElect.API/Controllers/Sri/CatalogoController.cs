@@ -20,7 +20,7 @@ public class CatalogoController : ControllerBase
         {
             using (var db = new DbAccess(_config))
             {
-                await db.SPExecute("Sri.Catalogo_Get");
+                await db.SpExecuteAsync("Sri.Catalogo_Get");
                _response = await db.GetDataTableAsync();
             }
         }

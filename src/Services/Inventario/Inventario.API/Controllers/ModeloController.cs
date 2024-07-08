@@ -20,7 +20,7 @@ public class ModeloController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Modelo_Get");
+            await _db.SpExecuteAsync("Almacen.Modelo_Get");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -41,12 +41,12 @@ public class ModeloController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Modelo_Insert");
+            await _db.SpExecuteAsync("Almacen.Modelo_Insert");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("idMarca", data.idMarca);
             _db.AddDynamicParam("descripcion", data.descripcion);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -63,14 +63,14 @@ public class ModeloController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Modelo_Update");
+            await _db.SpExecuteAsync("Almacen.Modelo_Update");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("idMarca", data.idMarca);
             _db.AddDynamicParam("descripcion", data.descripcion);
             _db.AddDynamicParam("estado", data.estado);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -87,11 +87,11 @@ public class ModeloController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Modelo_Delete");
+            await _db.SpExecuteAsync("Almacen.Modelo_Delete");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -108,7 +108,7 @@ public class ModeloController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Modelo_For_Select");
+            await _db.SpExecuteAsync("Almacen.Modelo_For_Select");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _response = await _db.GetDataTableAsync();

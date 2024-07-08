@@ -20,7 +20,7 @@ public class DatoAdicionalArticuloController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Recepcion.Dato_Adicional_Articulo_Get");
+            await _db.SpExecuteAsync("Recepcion.Dato_Adicional_Articulo_Get");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -46,12 +46,12 @@ public class DatoAdicionalArticuloController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Recepcion.Dato_Adicional_Articulo_Insert");
+            await _db.SpExecuteAsync("Recepcion.Dato_Adicional_Articulo_Insert");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("idDocumento", id);
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -73,11 +73,11 @@ public class DatoAdicionalArticuloController : ControllerBase
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Recepcion.Dato_Adicional_Articulo_Delete");
+            await _db.SpExecuteAsync("Recepcion.Dato_Adicional_Articulo_Delete");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("idInfoAdicional", idInfoAdicional);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {

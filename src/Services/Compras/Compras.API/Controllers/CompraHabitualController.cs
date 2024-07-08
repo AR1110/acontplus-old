@@ -11,7 +11,7 @@ public class CompraHabitualController(IConfiguration configuration, ICustomLogge
         var response = new ApiResponseDeprecated();
         try
         {
-            await db.SPExecute("Recepcion.CompraHabitual_Get");
+            await db.SpExecuteAsync("Recepcion.CompraHabitual_Get");
             db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             db.AddDynamicParam("json", json);
@@ -38,11 +38,11 @@ public class CompraHabitualController(IConfiguration configuration, ICustomLogge
         var response = new ApiResponseDeprecated();
         try
         {
-            await db.SPExecute("Recepcion.CompraHabitual_Insert");
+            await db.SpExecuteAsync("Recepcion.CompraHabitual_Insert");
             db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-            response = db.GetDefault();
+            response = await db.GetDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -65,12 +65,12 @@ public class CompraHabitualController(IConfiguration configuration, ICustomLogge
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Recepcion.CompraHabitual_Update");
+            await _db.SpExecuteAsync("Recepcion.CompraHabitual_Update");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", json);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -93,11 +93,11 @@ public class CompraHabitualController(IConfiguration configuration, ICustomLogge
         var response = new ApiResponseDeprecated();
         try
         {
-            await db.SPExecute("Recepcion.CompraHabitual_Delete");
+            await db.SpExecuteAsync("Recepcion.CompraHabitual_Delete");
             db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             db.AddDynamicParam("id", id);
-            response = db.GetDefault();
+            response = await db.GetDefaultAsync();
         }
         catch (Exception ex)
         {

@@ -35,7 +35,7 @@ public class PrecioMasivoController : BaseApiController
     //        await _db.SPExecute("Inventario.PrecioMasivo_Insert");
     //        _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
     //        _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
-    //        _response = _db.GetDefault();
+    //        _response = await _db.GetDefaultAsync();
     //    }
     //    catch (Exception ex)
     //    {

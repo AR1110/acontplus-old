@@ -22,7 +22,7 @@ public class Doc_Rec_DetailTempController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("Recepcion.Doc_Detail_Temp_Get");
+            await _db.SpExecuteAsync("Recepcion.Doc_Detail_Temp_Get");
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("idDocumento", idDocumento);
             _db.AddDynamicParam("jsonData", "");
@@ -48,11 +48,11 @@ public class Doc_Rec_DetailTempController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("Recepcion.Doc_Detail_Temp_Insert");
+            await _db.SpExecuteAsync("Recepcion.Doc_Detail_Temp_Insert");
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("jsonData",
                 SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-            response = _db.GetDefault();
+            response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -74,11 +74,11 @@ public class Doc_Rec_DetailTempController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("Recepcion.Doc_Detail_Temp_Update");
+            await _db.SpExecuteAsync("Recepcion.Doc_Detail_Temp_Update");
             _db.AddDynamicParam("idRol", idUsuarioRol);
             _db.AddDynamicParam("jsonData",
                 SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-            response = _db.GetDefault();
+            response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {

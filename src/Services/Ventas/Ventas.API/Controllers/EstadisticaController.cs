@@ -12,7 +12,7 @@ public class EstadisticaController(IConfiguration configuration) : ControllerBas
         try
         {
 
-            await db.SPExecute("Ventas.Estadisticas_Dashboard_Get");
+            await db.SpExecuteAsync("Ventas.Estadisticas_Dashboard_Get");
             db.AddDynamicParam("idRol", User.GetUserRoleId());
             db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
            _response = await db.GetDataTableAsync();

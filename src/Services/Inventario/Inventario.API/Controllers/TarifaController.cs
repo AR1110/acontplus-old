@@ -18,7 +18,7 @@ public class TarifaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Tarifa_Get");
+            await _db.SpExecuteAsync("Almacen.Tarifa_Get");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -39,12 +39,12 @@ public class TarifaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Tarifa_Insert");
+            await _db.SpExecuteAsync("Almacen.Tarifa_Insert");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("descripcion", data.descripcion);
             _db.AddDynamicParam("codigo", data.codigo);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -61,12 +61,12 @@ public class TarifaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Tarifa_Update");
+            await _db.SpExecuteAsync("Almacen.Tarifa_Update");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -83,11 +83,11 @@ public class TarifaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Tarifa_Delete");
+            await _db.SpExecuteAsync("Almacen.Tarifa_Delete");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -104,7 +104,7 @@ public class TarifaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Tarifa_For_Select");
+            await _db.SpExecuteAsync("Almacen.Tarifa_For_Select");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _response = await _db.GetDataTableAsync();

@@ -37,7 +37,7 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
                 return BadRequest("Caracteres de busqueda invalidos");
             }
 
-            await _db.SPExecute("Ventas.Cliente_Get_Search");
+            await _db.SpExecuteAsync("Ventas.Cliente_Get_Search");
             _db.AddDynamicParam("idRol ", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
             _response = await _db.GetDataTableAsync();
@@ -56,10 +56,10 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
         try
         {
 
-            await _db.SPExecute("Ventas.Cliente_Insert");
+            await _db.SpExecuteAsync("Ventas.Cliente_Insert");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", JsonConvert.SerializeObject(data));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -77,11 +77,11 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
         try
         {
 
-            await _db.SPExecute("Ventas.Cliente_Update");
+            await _db.SpExecuteAsync("Ventas.Cliente_Update");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", JsonConvert.SerializeObject(data));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -99,10 +99,10 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
         try
         {
 
-            await _db.SPExecute("Ventas.Cliente_Delete");
+            await _db.SpExecuteAsync("Ventas.Cliente_Delete");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -119,7 +119,7 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
         var _db = new DbAccess(configuration);
         try
         {
-            await _db.SPExecute("Ventas.Cliente_Get_Id");
+            await _db.SpExecuteAsync("Ventas.Cliente_Get_Id");
             _db.AddDynamicParam("id", id);
             _response = await _db.GetDataTableAsync();
         }

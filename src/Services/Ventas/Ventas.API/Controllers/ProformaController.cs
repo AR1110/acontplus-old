@@ -21,10 +21,10 @@ public class ProformaController(IConfiguration configuration, IProformaService p
         try
         {
 
-            await _db.SPExecute("Ventas.Proforma_Insert", true);
+            await _db.SpExecuteAsync("Ventas.Proforma_Insert", true);
             _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -43,11 +43,11 @@ public class ProformaController(IConfiguration configuration, IProformaService p
         try
         {
 
-            await _db.SPExecute("Ventas.Proforma_Update");
+            await _db.SpExecuteAsync("Ventas.Proforma_Update");
             _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -65,11 +65,11 @@ public class ProformaController(IConfiguration configuration, IProformaService p
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Ventas.Proforma_Delete", true);
+            await _db.SpExecuteAsync("Ventas.Proforma_Delete", true);
             _db.AddDynamicParam("idRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -98,10 +98,10 @@ public class ProformaController(IConfiguration configuration, IProformaService p
         try
         {
 
-            await _db.SPExecute("Ventas.Proforma_Convert_To_Doc", true);
+            await _db.SpExecuteAsync("Ventas.Proforma_Convert_To_Doc", true);
             _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
