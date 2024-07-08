@@ -15,7 +15,7 @@ public class EstadisticaController(IConfiguration configuration) : ControllerBas
             await db.SPExecute("Ventas.Estadisticas_Dashboard_Get");
             db.AddDynamicParam("idRol", User.GetUserRoleId());
             db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = db.GetDataTableAsync();
+           _response = await db.GetDataTableAsync();
         }
         finally
         {

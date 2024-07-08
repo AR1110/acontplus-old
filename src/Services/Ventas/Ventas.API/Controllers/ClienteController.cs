@@ -40,7 +40,7 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
             await _db.SPExecute("Ventas.Cliente_Get_Search");
             _db.AddDynamicParam("idRol ", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally { _db.Close(); }
 
@@ -121,7 +121,7 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
         {
             await _db.SPExecute("Ventas.Cliente_Get_Id");
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {

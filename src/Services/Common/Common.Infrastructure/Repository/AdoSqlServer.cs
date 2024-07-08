@@ -115,7 +115,7 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
 
     public async Task<DataTable> GetDataTableAsync(string spname, Dictionary<string, object> parameters)
     {
-        DataTable dt = null;
+        DataTable dt = new DataTable();
         var conn = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
         await using var cmd = new SqlCommand(spname, conn);
         var wasOpen = cmd.Connection.State == ConnectionState.Open;
@@ -136,10 +136,8 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
                 await conn.OpenAsync();
             }
 
-            using var adapter = new SqlDataAdapter();
-            adapter.SelectCommand = cmd;
-            dt = new DataTable();
-            adapter.Fill(dt);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            dt.Load(reader);
         }
         finally
         {

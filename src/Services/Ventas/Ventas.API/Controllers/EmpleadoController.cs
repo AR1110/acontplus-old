@@ -22,7 +22,7 @@ public class EmpleadoController : BaseApiController
             await _db.SPExecute("Ventas.Empleado_Get");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {
@@ -45,7 +45,7 @@ public class EmpleadoController : BaseApiController
             await _db.SPExecute("Ventas.Empleado_Search");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally { _db.Close(); }
 

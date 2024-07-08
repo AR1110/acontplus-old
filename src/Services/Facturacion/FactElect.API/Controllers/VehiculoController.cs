@@ -29,7 +29,7 @@ public class VehiculoController : BaseApiController
             await _db.SPExecute("Logistica.Vehiculo_Get");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {
@@ -117,7 +117,7 @@ public class VehiculoController : BaseApiController
             await _db.SPExecute("Logistica.Vehiculo_Search");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {

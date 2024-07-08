@@ -120,7 +120,7 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
 
     public async Task<DataTable> GetDataTableAsync(string spName, Dictionary<string, object> parameters)
     {
-        DataTable dt = null;
+        DataTable dt = new DataTable();
         var context = contexts.GetContext(configuration["ContextName"]);
         await using var cmd = context.Database.GetDbConnection().CreateCommand();
         var wasOpen = cmd.Connection is { State: ConnectionState.Open };
@@ -142,10 +142,8 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
                 await context.Database.OpenConnectionAsync();
             }
 
-            using var adapter = new SqlDataAdapter();
-            adapter.SelectCommand = (SqlCommand)cmd;
-            dt = new DataTable();
-            adapter.Fill(dt);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            dt.Load(reader);
         }
         finally
         {

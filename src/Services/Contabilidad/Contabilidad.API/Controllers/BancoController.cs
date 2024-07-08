@@ -21,7 +21,7 @@ public class BancoController : BaseApiController
             await _db.SPExecute("Contabilidad.Banco_Get");
             _db.AddDynamicParam("userRoleId", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {

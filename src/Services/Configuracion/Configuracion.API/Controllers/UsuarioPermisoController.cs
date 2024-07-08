@@ -24,7 +24,7 @@ public class UsuarioPermisoController : ControllerBase
             var idUsuarioRol = User.GetUserRoleId();
             await _db.SPExecute("Config.UserPermission_Get");
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         catch (Exception ex)
         {
@@ -102,7 +102,7 @@ public class UsuarioPermisoController : ControllerBase
     //        await _db.SPExecute("Config.UserPermission_Update");
     //        _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
     //        _db.AddDynamicParam("jsonPermission", SqlValidation.ValidateSqlString(data.jsonPermission));
-    //        _response = _db.GetDataTableAsync();
+    //        _response = await _db.GetDataTableAsync();
     //    }
     //    catch (Exception ex)
     //    {

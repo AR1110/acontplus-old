@@ -19,7 +19,7 @@
                 {
                     await _db.SPExecute("Importaciones.TipoImportacion_Get");
                     _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                    response = _db.GetDataTableAsync();
+                    response = await _db.GetDataTableAsync();
                 }
                 return Ok(response);
             }

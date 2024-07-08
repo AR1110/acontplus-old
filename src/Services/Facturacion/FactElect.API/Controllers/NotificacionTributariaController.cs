@@ -19,7 +19,7 @@ public class NotificacionTributariaController : BaseApiController
         {
             await _db.SPExecute("FactElect.Notificacion_Tributaria_Get");
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {

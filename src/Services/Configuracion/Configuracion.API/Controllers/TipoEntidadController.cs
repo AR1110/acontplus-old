@@ -24,7 +24,7 @@ public class TipoEntidadController : ControllerBase
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", json);
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         catch (Exception ex)
         {
@@ -131,7 +131,7 @@ public class TipoEntidadController : ControllerBase
             await _db.SPExecute("Config.TipoEntidad_For_Select");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         catch (Exception ex)
         {

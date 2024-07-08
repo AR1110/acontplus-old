@@ -29,7 +29,7 @@ public class TransportistaController : BaseApiController
             await _db.SPExecute("Logistica.Transportista_Get");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {
