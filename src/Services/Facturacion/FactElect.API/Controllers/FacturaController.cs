@@ -1,7 +1,7 @@
 ﻿namespace FactElect.API.Controllers;
 public class FacturaController(IFacturaService service) : BaseApiController
 {
-    [HttpGet("Get")]
+    [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var response = await service.GetAsync(new Dictionary<string, object>
