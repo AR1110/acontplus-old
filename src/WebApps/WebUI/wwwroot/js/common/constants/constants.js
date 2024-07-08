@@ -222,23 +222,7 @@ app.constant('nombreModalVenta', {
         templates: {
             D: 'NotaEntrega/_ModalDetalle.cshtml',
         }
-    },
-    APROB_COMPROBANTE: {
-        fileCtrl: '',
-        controllers: {
-            MSD: ' ',
-            MADE: ' ',
-            MADF: ' ', //Modal Aprobacion Documento Factura
-            MAD: ' ',
-            MFA: '' //Modal Aprob. Comprobante Ctrl    
-        },
-        templates: {
-            MSD: ' ',
-            MADE: ' ',
-            MADF: ' ',
-            MADD: ' '
-        }
-    },
+    }, 
     PROFORMA: {
         fileCtrl: '/js/modal/ventas/modalProformaCtrl.js' + CHANGE_VERSION(),
         controllers: {
@@ -466,5 +450,6 @@ app.constant('CODE_REPORT', {
     RCNH: 'RCNH', //PDF compra no habitual
     ROC: 'ROC', //Orden Compra 
     RGR: 'RGR', //Reporte Guia Remision 
-    FCRRG: 'FCRRG' //Facturación Retención Reporte General
+    FCRRG: 'FCRRG', //Facturación Retención Reporte General
+    RRC:'RRC' 
 })

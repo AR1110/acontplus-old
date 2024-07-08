@@ -1,3 +1,4 @@
+//@ts-check
 export {
     modalRetencionAtsCtrl
 }
@@ -29,6 +30,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
     const modalSvc = $injector.get('modalService');
     const PATH_FACT_ELECT = 'FactElect/'
     const url = 'RetencionAts/'
+    let fS = $injector.get('formulario');
 
     /**Initial Load */
     $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
@@ -140,7 +142,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                     $scope.initialLoad()
                     setTimeout(() => {
                         $scope.infoCompRet = tempArray[0][0]
-                        $scope.infoCompRet.fechaEmision = formatDate(tempArray[0][0].fechaEmision)
+                        $scope.infoCompRet.fechaEmision = fS.formatDate(tempArray[0][0].fechaEmision)
                         $scope.infoCompRet.codEstab_Asig = $scope.establecimientos.find(item => (item.codEstab == $scope.infoCompRet.codEstab)).codEstab_Asig
                         $scope.onChangeEstablecimiento()
                         $scope.subContribuyente = tempArray[0].subContribuyente
