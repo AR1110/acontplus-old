@@ -14,7 +14,7 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
     }
 
     //Eliminar mas adelante
-    [HttpGet]
+    [HttpGet("GetDataForm")]
     public async Task<IActionResult> GetDataForm(string json)
     {
         var parameters = new Dictionary<string, object>
@@ -25,7 +25,7 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
         return Ok(await clienteService.GetDataFormAsync(parameters));
     }
 
-    [HttpGet]
+    [HttpGet("Search")]
     public async Task<IActionResult> Search(string json)
     {
         var _response = new ApiResponseDeprecated();

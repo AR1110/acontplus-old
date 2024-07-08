@@ -1,7 +1,7 @@
 ﻿namespace FactElect.API.Controllers;
 public class FacturaController(IFacturaService service) : BaseApiController
 {
-    [HttpGet]
+    [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
         var response = await service.GetAsync(new Dictionary<string, object>
@@ -14,7 +14,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Insert(ApiRequest data)
+    public async Task<IActionResult> Post(ApiRequest data)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -26,7 +26,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, ApiRequest data)
+    public async Task<IActionResult> Put(int id, ApiRequest data)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -39,7 +39,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetId(int id)
+    public async Task<IActionResult> GetById(int id)
     {
         var response = await service.GetByIdAsync(new Dictionary<string, object>
         {
