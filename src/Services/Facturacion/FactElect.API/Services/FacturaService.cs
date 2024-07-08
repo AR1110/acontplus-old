@@ -6,7 +6,7 @@ public class FacturaService(IAdoRepository repository) : IFacturaService
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync(_nameSchema + "Get", parameters, true);
+        var ds = await repository.GetDataSetAsync(_nameSchema + "Get", parameters, true, false);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
         return DataConverters.DataSetToJson(ds, true);

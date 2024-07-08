@@ -32,8 +32,6 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddSwaggerDocumentation();
 
-        builder.Services.AddApiVersioningConfig();
-
         builder.Services.AddScoped<ICustomLogger, CustomLogger>();
 
         builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -45,8 +43,7 @@ public class Program
 
         app.UseMiddleware<MobileRequestMiddleware>();
 
-        app.UseSwaggerVersionedDocumentation();
-
+        app.UseSwaggerDocumentation();
 
         if (Environment.OSVersion.Platform != PlatformID.Win32NT)
         {
