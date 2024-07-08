@@ -327,6 +327,4 @@
     }
 
 
-
-
 })(window.angular)

@@ -24,6 +24,7 @@
         let nombreModalConst = $injector.get('nombreModal');
         let fS = $injector.get('formulario');
         let tS = $injector.get('toastService');
+        let nombreModalVenta = $injector.get('nombreModalVenta');
 
 
 
@@ -304,14 +305,14 @@
         const REPORT_CODES = Object.freeze({
             '01': CODE_REPORT.RF,
             '03': CODE_REPORT.RLC,
-            '04': CODE_REPORT.RNCC,
+            '04': CODE_REPORT.RNC,
             '06': CODE_REPORT.RGR,
             '07': CODE_REPORT.RRC,
         })
 
         //Get Report 
         $scope.getReport = (item) => {
-            try {
+            try { 
 
                 if (!(Object.keys(REPORT_CODES).includes(item.codDoc))) {
                     tS.toastr('warning', 'No Disponible')
@@ -319,11 +320,12 @@
                 }
 
                 let format = 'pdf';
+                console.log(REPORT_CODES[item.codDoc])
 
                 const parameters = {
                     dataParams: JSON.stringify({
                         versionComp: item.versionComp,
-                        id: item.idDocumentoElectronico,
+                        idDocumentoElectronico: item.idDocumentoElectronico,
                         normalMethod: true,
                     }),
                     reportParams: JSON.stringify({
@@ -352,16 +354,19 @@
 
         $scope.getDetalleDoc = async (item) => {
             try {
+
                 const tipoDoc = $scope.tiposDocumento.find(doc => doc.codDoc === item.codDoc);
+              
                 let codigo = '';
                 if (tipoDoc.codDoc === "01") {
-                    codigo = 'FV'
+                    loadDetalleInvoice(item.idDocumentoElectronico, tipoDoc.codDoc)
+                    return
                 }
                 if (tipoDoc.codDoc === "06") {
                     codigo = 'GR'
                 }
-                commonSvc.viewDetailDocument({
-                    id: item.idDocumentoElectronico,
+                commonSvc.viewDetailDocument({                    
+                    idDocumentoElectronico: item.idDocumentoElectronico,
                     codigoDocumento: codigo,
                     size: 'xl',
                     windowClass: 'uibModalFullScreen'
@@ -371,6 +376,25 @@
                 console.error(error)
             }
         }
+
+        async function loadDetalleInvoice(idDocumentoElectronico, codDoc){
+            let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
+            let ctrl = (await import(fileCtrl))[controller];
+            let template = templates['FV_SRI'];
+            modalSvc.openModalCustom({
+                controller: ctrl,
+                template: template,
+                size: 'xl',
+                params: {
+                    codDoc,                    
+                    idDocumentoElectronico,
+                },
+                windowClass: 'uibModalFullScreen',
+                isRenderRazorPartial: true
+            })
+        }
+
+
 
         $scope.getAuthorizate = async () => {
             try {

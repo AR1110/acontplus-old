@@ -21,7 +21,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     let gridOptionsSvc = $injector.get('gridOptionsService');
     const fS = $injector.get('formulario')
 
-    let { id, codDoc } = params; 
+    let { id, codDoc, idDocumentoElectronico } = params; 
     $scope.showHeader = true;
     $scope.infoAdicionalDocumento = [];
     $scope.tarifasImpuesto = [];
@@ -93,7 +93,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     if (codDoc === DOC_TYPE['FV_SRI']) {
         try {
             showLoader();
-            facturaSvc.getIdForInfo(id).then(response => {
+            facturaSvc.getIdForInfo(id, idDocumentoElectronico).then(response => {
                 let { data, cliente, items, infoAdicionalDocumento, tarifasImpuesto, formasPago } = response;
                 $scope.data = data;
                 $scope.cliente = cliente;

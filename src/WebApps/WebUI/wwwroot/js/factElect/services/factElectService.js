@@ -381,10 +381,11 @@
             })
         }
 
-        service.getIdForInfo = function (id) {
+        service.getIdForInfo = function (id, idDocumentoElectronico) {
             let spParams = {
                 tipo: 8,
-                id
+                id,
+                idDocumentoElectronico //solo se envia cuando proviene de doc. electronico 
             }
             return mS.getData('get', `${url}?json=${JSON.stringify(spParams)}`, null, true).then(response => {
                 if (response.code === "0") {
