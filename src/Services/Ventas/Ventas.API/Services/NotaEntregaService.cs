@@ -6,7 +6,7 @@ public class NotaEntregaService(IAdoSqlServer adoSqlServer) : INotaEntregaServic
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync(NameSchema + "Get", parameters, true);
+        var ds = await adoSqlServer.GetDataSetAsync(NameSchema + "Get", parameters, true, false);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
         return DataConverters.DataSetToJson(ds, true);
