@@ -33,7 +33,7 @@ CREATE VIEW v_Transferencia_Bodega AS (
 		tb.observacion
 	FROM TransferenciaBodega tb WITH(NOLOCK)
 	INNER JOIN PuntoEmision pto WITH(NOLOCK) ON pto.idPuntoEmision = tb.idPuntoEmision
-	INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.codEstab = pto.codEstab
+	INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.idEstablecimiento = pto.idEstablecimiento
 	INNER JOIN EstadoPago ep WITH(NOLOCK) ON ep.idEstadoPago = tb.idEstadoDocumento
 	INNER JOIN Bodega bo WITH(NOLOCK) ON bo.idBodega = tb.idBodegaOrigen
 	INNER JOIN Bodega bd WITH(NOLOCK) ON bd.idBodega = tb.idBodegaDestino

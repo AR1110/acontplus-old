@@ -76,7 +76,7 @@ DECLARE @year SMALLINT
 				fechaRegistro  
 		INTO #tempDocEstadistica FROM (
 			SELECT 
-				idEntidad       = fv.idEntidad,
+				idEntidad       = es.idEntidad,
 				codEstab        = es.codEstab,
 				idPuntoEmision  = pe.idPuntoEmision,
 				idTipoDocumento = td.idTipoDocumento,
@@ -85,15 +85,16 @@ DECLARE @year SMALLINT
 				codigo          = td.codigo,
 				total           = fv.total,
 				tipoDoc         = td.descripcion,
-				codMes          = DATEPART(MM, fv.fechaEmision),									
-				fechaEmision    = fv.fechaEmision,
+				codMes          = DATEPART(MM, de.fechaEmision),									
+				fechaEmision    = de.fechaEmision,
 				fechaRegistro   = fv.fechaRegistro				
 			FROM Factura fv 
-			INNER JOIN PuntoEmision        pe ON pe.idPuntoEmision = fv.idPuntoEmision
-			INNER JOIN Sri.Establecimiento es ON es.codEstab = pe.codEstab
-			INNER JOIN TipoDocumento       td ON td.idTipoDocumento = fv.idTipoDocumento
+            INNER JOIN dbo.DocumentoElectronico de ON de.idDocumentoElectronico = fv.idDocumentoElectronico
+			INNER JOIN PuntoEmision        pe ON pe.idPuntoEmision = de.idPuntoEmision
+			INNER JOIN Sri.Establecimiento es ON es.idEstablecimiento = pe.idEstablecimiento
+			INNER JOIN TipoDocumento       td ON td.idTipoDocumento = de.idTipoDocumento
 			INNER JOIN Cliente             cl ON cl.idCliente = fv.idCliente
-			WHERE fv.idEntidad = @byEntidad
+			WHERE es.idEntidad = @byEntidad
 
 			UNION ALL
 
@@ -112,7 +113,7 @@ DECLARE @year SMALLINT
 				fechaRegistro   = ne.fechaRegistro	
 			FROM dbo.NotaEntrega ne
 			INNER JOIN PuntoEmision        pe ON pe.idPuntoEmision  = ne.idPuntoEmision
-			INNER JOIN Sri.Establecimiento es ON es.codEstab        = pe.codEstab
+			INNER JOIN Sri.Establecimiento es ON es.idEstablecimiento = pe.idEstablecimiento
 			INNER JOIN TipoDocumento       td ON td.idTipoDocumento = ne.idTipoDocumento
 			INNER JOIN Cliente             cl ON cl.idCliente       = ne.idCliente
 			WHERE ne.idEntidad = @byEntidad
@@ -120,7 +121,7 @@ DECLARE @year SMALLINT
 			UNION ALL
 
 			SELECT 
-				idEntidad       = nc.idEntidad,
+				idEntidad       = es.idEntidad,
 				codEstab        = es.codEstab,
 				idPuntoEmision  = pe.idPuntoEmision,
 				idTipoDocumento = td.idTipoDocumento,
@@ -129,15 +130,16 @@ DECLARE @year SMALLINT
 				codigo          = td.codigo,
 				total           = nc.total,
 				tipoDoc         = td.descripcion,
-				codMes          = DATEPART(MM, nc.fechaEmision),									
-				fechaEmision    = nc.fechaEmision,
+				codMes          = DATEPART(MM, de.fechaEmision),									
+				fechaEmision    = de.fechaEmision,
 				fechaRegistro   = nc.fechaRegistro	
 			FROM NotaCredito nc 
-			INNER JOIN PuntoEmision        pe ON pe.idPuntoEmision  = nc.idPuntoEmision
-			INNER JOIN Sri.Establecimiento es ON es.codEstab        = pe.codEstab
-			INNER JOIN TipoDocumento       td ON td.idTipoDocumento = nc.idTipoDocumento
+            INNER JOIN dbo.DocumentoElectronico de ON de.idDocumentoElectronico = nc.idDocumentoElectronico
+			INNER JOIN PuntoEmision        pe ON pe.idPuntoEmision  = de.idPuntoEmision
+			INNER JOIN Sri.Establecimiento es ON es.idEstablecimiento        = pe.idEstablecimiento
+			INNER JOIN TipoDocumento       td ON td.idTipoDocumento = de.idTipoDocumento
 			INNER JOIN Cliente             cl ON cl.idCliente       = nc.idCliente
-			WHERE nc.idEntidad = @byEntidad
+			WHERE es.idEntidad = @byEntidad
 
 			UNION ALL 
 

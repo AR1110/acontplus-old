@@ -74,10 +74,10 @@ BEGIN
 				              ,IIF(ep.codigo = ''A'',''table-danger'','''')             as style
                               ,COUNT(*) OVER()                                          as totalRecords
 			            FROM dbo.ConsolidacionInventario ci WITH (NOLOCK)
-			            INNER JOIN dbo.PuntoEmision      pe WITH (NOLOCK) ON pe.idPuntoEmision = ci.idPuntoEmision
-			            INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
-			            INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario      = ci.idUsuario
-			            INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago   = ci.idEstadoDocumento
+			            INNER JOIN dbo.PuntoEmision      pe WITH (NOLOCK) ON pe.idPuntoEmision    = ci.idPuntoEmision
+			            INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+			            INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario         = ci.idUsuario
+			            INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago      = ci.idEstadoDocumento
 			            WHERE ci.idEntidad = @idEntidad '
 
             SET @params = '@idEntidad   INT

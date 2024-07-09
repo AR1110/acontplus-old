@@ -299,7 +299,7 @@ BEGIN
 				BEGIN
 					INSERT INTO Inventario.Stock
 					       (idArticulo,idBodega,cantidad,lastUpdate,idUsuario)
-					SELECT @idArticulo,bo.idBodega,0,GETDATE(),@idUsuario FROM dbo.Bodega bo WITH (NOLOCK) INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = bo.codEstab WHERE es.ruc = @ruc
+					SELECT @idArticulo,bo.idBodega,0,GETDATE(),@idUsuario FROM dbo.Bodega bo WITH (NOLOCK) INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = bo.codEstab WHERE es.idEntidad = @idEntidad
 				END 
 
 			 UPDATE SubFamilia SET ultimoSecuencial = ultimoSecuencial+1 WHERE idSubFamilia = @idSubFamilia

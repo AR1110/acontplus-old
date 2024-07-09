@@ -27,37 +27,37 @@ BEGIN
 	FROM OPENJSON(@json) WITH (id INT '$.id', codDoc VARCHAR(10) '$.codDoc', rdlcParams VARCHAR(MAX) '$.rdlcParams')
 
 
-	IF @codDoc = '01' AND @isReportImport =1
-		BEGIN
-			SELECT @idEntidad = (SELECT e.idEntidad FROM Sri.Establecimiento se WITH(NOLOCK)
-													 INNER JOIN Entidad e WITH(NOLOCK) ON e.ruc = se.ruc
-													 WHERE se.codEstab = dr.codEstab )
-			FROM Recepcion.DocumentoRecibido dr WHERE idDocumento = @id
-		END 
+	--IF @codDoc = '01' AND @isReportImport =1
+	--	BEGIN
+	--		SELECT @idEntidad = (SELECT e.idEntidad FROM Sri.Establecimiento se WITH(NOLOCK)
+	--												 INNER JOIN Entidad e WITH(NOLOCK) ON e.idEntidad = se.idEntidad
+	--												 WHERE se.codEstab = dr.codEstab )
+	--		FROM Recepcion.DocumentoRecibido dr WHERE idDocumento = @id
+	--	END 
 
-	IF @codDoc = 'FC'
-		BEGIN 
-			SELECT @idEntidad = idEntidad FROM dbo.FacturaCompra WITH(NOLOCK) WHERE idFacturaCompra = @id		
-		END 
+	--IF @codDoc = 'FC'
+	--	BEGIN 
+	--		SELECT @idEntidad = idEntidad FROM dbo.FacturaCompra WITH(NOLOCK) WHERE idFacturaCompra = @id		
+	--	END 
 
-	IF @codDoc = 'IB'
-		BEGIN 
-			SELECT @idEntidad = idEntidad FROM dbo.IngresoBodega WITH(NOLOCK) WHERE idIngresoBodega = @id		
-		END 
+	--IF @codDoc = 'IB'
+	--	BEGIN 
+	--		SELECT @idEntidad = idEntidad FROM dbo.IngresoBodega WITH(NOLOCK) WHERE idIngresoBodega = @id		
+	--	END 
 
-	IF @codDoc = 'LC'
-		BEGIN 
-			SELECT @idEntidad = idEntidad FROM dbo.LiquidacionCompra WITH(NOLOCK) WHERE idLiquidacionCompra = @id		
-		END 
+	--IF @codDoc = 'LC'
+	--	BEGIN 
+	--		SELECT @idEntidad = idEntidad FROM dbo.LiquidacionCompra WITH(NOLOCK) WHERE idLiquidacionCompra = @id		
+	--	END 
 
-	IF @codDoc = 'CNH'
-		BEGIN 
-			SELECT @idEntidad = idEntidad FROM Compra.Documento_Ingreso WITH(NOLOCK) WHERE idDocumentoIngreso = @id		
-		END 
-    IF @codDoc = 'CI'
-		BEGIN 
-			SELECT @idEntidad = idEntidad FROM dbo.ConsolidacionInventario  WITH(NOLOCK) WHERE idConsolidacionInventario = @id		
-		END 
+	--IF @codDoc = 'CNH'
+	--	BEGIN 
+	--		SELECT @idEntidad = idEntidad FROM Compra.Documento_Ingreso WITH(NOLOCK) WHERE idDocumentoIngreso = @id		
+	--	END 
+ --   IF @codDoc = 'CI'
+	--	BEGIN 
+	--		SELECT @idEntidad = idEntidad FROM dbo.ConsolidacionInventario  WITH(NOLOCK) WHERE idConsolidacionInventario = @id		
+	--	END 
 
 	IF @codDoc = '01' 
 		BEGIN 

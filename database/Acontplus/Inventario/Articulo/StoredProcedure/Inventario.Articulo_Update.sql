@@ -346,7 +346,7 @@ BEGIN
 						SELECT @id,bo.idBodega,0,GETDATE(),@idUsuario 
 						FROM dbo.Bodega                bo WITH (NOLOCK) 
 						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = bo.codEstab 
-						WHERE es.ruc = @ruc AND bo.idBodega NOT IN (SELECT sb.idBodega FROM Inventario.Stock sb WITH (NOLOCK) WHERE sb.idArticulo = @id)
+						WHERE es.idEntidad = @idEntidad AND bo.idBodega NOT IN (SELECT sb.idBodega FROM Inventario.Stock sb WITH (NOLOCK) WHERE sb.idArticulo = @id)
 					END
 					
 

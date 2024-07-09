@@ -26,8 +26,11 @@ BEGIN
 	SET NOCOUNT ON;
     DECLARE @tipo INT
     ,@id INT
+    ,@idEntidad INT
 
     SELECT @tipo = tipo, @id = id FROM OPENJSON (@json) WITH(tipo INT '$.tipo', id INT '$.id')
+
+    SELECT @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol =  @userRoleId
 
     IF (@tipo = 1)
         BEGIN
@@ -39,7 +42,7 @@ BEGIN
                 INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON p.EstablecimientoId = e.idEstablecimiento
                 INNER JOIN Config.PrinterType pt WITH(NOLOCK) ON p.PrinterTypeId = pt.Id
             WHERE p.Deleted IS NULL
-                AND e.ruc = (SELECT rucEmpresa FROM v_usuario WHERE idUsuarioRol =  @userRoleId)
+                AND e.idEntidad = @idEntidad
         END
 
     IF (@tipo = 2)
