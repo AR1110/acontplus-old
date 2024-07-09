@@ -16,15 +16,17 @@ public static class ApplicationServicesExtensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<FileTxt>();
-        services.AddScoped<IAdoSqlServer, AdoSqlServer>();
+        services.AddScoped<IArticuloService, ArticuloService>();
+        services.AddScoped<ICompraHabitualService, CompraHabitualService>();
+        services.AddScoped<ICompraNoHabitualService, CompraNoHabitualService>();
         services.AddScoped<ICustomLogger, CustomLogger>();
         services.AddScoped<IDocumentoTempService, DocumentoTempService>();
+        services.AddScoped<IDocRecDetailTempService, DocRecDetailTempService>();
         services.AddScoped<IProveedorService, ProveedorService>();
         services.AddScoped<ILiquidacionCompraService, LiquidacionCompraService>();
         services.AddScoped<IFacturaCompraService, FacturaCompraService>();
         services.AddScoped<IOrdenCompraService, OrdenCompraService>();
         services.AddScoped<INotaCreditoService, NotaCreditoService>();
-        services.AddScoped<ICompraNoHabitualService, CompraNoHabitualService>();
         services.AddScoped<IDocumentoRecibidoService, DocumentoRecibidoService>();
         services.AddScoped<IWebServiceSri, WebServiceSri>();
         return services;

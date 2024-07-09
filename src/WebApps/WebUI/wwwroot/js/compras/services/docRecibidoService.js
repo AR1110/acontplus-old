@@ -128,7 +128,7 @@
         }
 
         function getTempDetails(idDocumento) {
-            return mS.getData('get', 'Compra/Doc_Rec_DetailTemp/' + idDocumento, null, true).then(
+            return mS.getData('get', 'Compra/DocRecDetailTemp/' + idDocumento, null, true).then(
                 response => {
                     if (response.code === "0") {
                         throw response;
@@ -166,7 +166,7 @@
         }
 
         function saveArticleTemp(data, method) {
-            return mS.getData(method, "Compra/Doc_Rec_DetailTemp/", { data }, true)
+            return mS.getData(method, "Compra/DocRecDetailTemp/", { data }, true)
         }
 
         function searchArticle(obj) {

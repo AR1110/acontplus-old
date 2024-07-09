@@ -2,16 +2,14 @@
 
 namespace Compras.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
 public class DocumentoRecibidoController(
-    IAdoSqlServer adoSqlServer,
+    IAdoRepository adoRepository,
     IConfiguration configuration,
     IDocumentoRecibidoService docRecibidoSvc,
     FileTxt txtComp,
     IDocumentoTempService documentoTemp,
     IWebServiceSri webServiceSri)
-    : ControllerBase
+    : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
@@ -33,22 +31,24 @@ public class DocumentoRecibidoController(
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
         var xdoc = await docRecibidoSvc.GetById(parameters);
 
-        if (xdoc != null && getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
+        if (xdoc == null || !getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
         {
-            if (ceXml.codDoc is "01" or "04")
-            {
-                var details = new Dictionary<string, object>
-                {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "idDocumento", id },
-                    { "jsonData", JsonConvert.SerializeObject(ceXml.detalles) },
-                    { "impuestos", JsonConvert.SerializeObject(ceXml.impuestos) }
-                };
-                var rowsAffected = await documentoTemp.AddAsync(details);
-            }
-
-            response.Create(code: "1", payload: ceXml);
+            return Ok(response);
         }
+
+        if (ceXml.codDoc is "01" or "04")
+        {
+            var details = new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetUserRoleId() },
+                { "idDocumento", id },
+                { "jsonData", JsonConvert.SerializeObject(ceXml.detalles) },
+                { "impuestos", JsonConvert.SerializeObject(ceXml.impuestos) }
+            };
+            await documentoTemp.AddAsync(details);
+        }
+
+        response.Create(code: "1", payload: ceXml);
 
         return Ok(response);
     }
@@ -71,7 +71,7 @@ public class DocumentoRecibidoController(
         var dt = await txtComp.GetDocs(FileData.GetFileByte(file));
         if (!DataValidation.DataTableIsNull(dt))
         {
-            var dtExistent = await adoSqlServer.GetDataTableAsync("Recepcion.Documento_Check_Existence",
+            var dtExistent = await adoRepository.GetDataTableAsync("Recepcion.Documento_Check_Existence",
                 new Dictionary<string, object> { { "json", JsonConvert.SerializeObject(dt) } });
 
             if (DataValidation.DataTableIsNull(dt))
@@ -167,7 +167,7 @@ public class DocumentoRecibidoController(
     {
         var response = new ApiResponse();
 
-        var dt = await adoSqlServer.GetDataTableAsync("Recepcion.Documento_Get_Id",
+        var dt = await adoRepository.GetDataTableAsync("Recepcion.Documento_Get_Id",
             new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } });
         if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
         {
