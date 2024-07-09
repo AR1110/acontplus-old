@@ -886,7 +886,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!direccion.Value, "comprobanteIngresoDs")</Value>
+                        <Value>=First(Fields!telefono.Value, "comprobanteIngresoDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -921,7 +921,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!telefono.Value, "comprobanteIngresoDs")</Value>
+                        <Value>=First(Fields!direccion.Value, "comprobanteIngresoDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>

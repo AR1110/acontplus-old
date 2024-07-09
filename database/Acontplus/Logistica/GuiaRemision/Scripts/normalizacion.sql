@@ -6,6 +6,12 @@ go
 
 --select top 5 * from DocumentoElectronico where idTipoDocumento = 9
 
+
+
+--UPDATE gr set
+--    gr.idDocumentoElectronico = (select top 1 idDocumentoElectronico from dbo.DocumentoElectronico de where de.codDoc = '06' and de.idDocumento = gr.idGuiaRemision )
+--FROM GuiaRemision gr
+
 --> Facturacion Electronica
 --INSERT INTO dbo.DocumentoElectronico WITH (ROWLOCK)
 --        (codDoc,idTipoDocumento,idPuntoEmision,fechaEmision,versionComp,idDocumento,CustomerId,nroDocumento,claveAcceso,isAutomatic,idUsuario,idEntidad,idEstadoServicio,serieComprobante)
@@ -17,10 +23,6 @@ go
 --where idDocumentoElectronico is null
 
 --update GuiaRemision set idUsuario = 209 where idDocumentoElectronico is null
-
---UPDATE gr set
---    gr.idDocumentoElectronico = (select top 1 idDocumentoElectronico from dbo.DocumentoElectronico de where de.codDoc = '06' and de.idDocumento = gr.idGuiaRemision )
---FROM GuiaRemision gr
 
 --ALTER TABLE dbo.GuiaRemision ALTER COLUMN idDocumentoElectronico BIGINT NOT NULL
 

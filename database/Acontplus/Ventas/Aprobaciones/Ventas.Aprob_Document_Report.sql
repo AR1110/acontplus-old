@@ -58,11 +58,11 @@ BEGIN
                           ,CAST(0 as numeric(18,2))                                            as irbpnr
 		                  ,av.observacion
 	                FROM Ventas.Aprob_Document        av WITH (NOLOCK)
-                    INNER JOIN dbo.Entidad            en WITH (NOLOCK) ON en.idEntidad      = av.idEntidad
-	                INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision = av.idPuntoEmision 
-	                INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
-	                INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente      = av.idCliente
-                     LEFT JOIN dbo.Ciudad             ci WITH (NOLOCK) ON ci.idCiudad       = cl.idCiudad 
+                    INNER JOIN dbo.Entidad            en WITH (NOLOCK) ON en.idEntidad         = av.idEntidad
+	                INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision    = av.idPuntoEmision 
+	                INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+	                INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente         = av.idCliente
+                     LEFT JOIN dbo.Ciudad             ci WITH (NOLOCK) ON ci.idCiudad          = cl.idCiudad 
 	                WHERE av.idAprob_Document = @id
                 END 
             ELSE 
@@ -92,11 +92,11 @@ BEGIN
                           ,CAST(0 as numeric(18,2))                                            as irbpnr
 		                  ,av.observacion 
 	                FROM Ventas.Aprob_Document        av WITH (NOLOCK)
-                    INNER JOIN dbo.Entidad            en WITH (NOLOCK) ON en.idEntidad      = av.idEntidad
-	                INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision = av.idPuntoEmision 
-	                INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
-	                INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente      = av.idCliente
-                     LEFT JOIN dbo.Ciudad             ci WITH (NOLOCK) ON ci.idCiudad       = cl.idCiudad 
+                    INNER JOIN dbo.Entidad            en WITH (NOLOCK) ON en.idEntidad         = av.idEntidad
+	                INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision    = av.idPuntoEmision 
+	                INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+	                INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente         = av.idCliente
+                     LEFT JOIN dbo.Ciudad             ci WITH (NOLOCK) ON ci.idCiudad          = cl.idCiudad 
 	                WHERE av.idAprob_Document = @id
                 END 
     

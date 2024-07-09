@@ -74,11 +74,11 @@ BEGIN
                               ,count(*) over() as totalRecords
                               ,userName                = u.nombreUsuario 
 						FROM Ventas.Aprob_Document     ad WITH (NOLOCK) 
-						INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.codigo         = ad.codEstado
-						INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = ad.idCliente
-						INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision = ad.idPuntoEmision
-						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab 
-                        INNER JOIN dbo.Usuario         u WITH (NOLOCK) ON u.idUsuario       = ad.idUsuario  
+						INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.codigo            = ad.codEstado
+						INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente         = ad.idCliente
+						INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision    = ad.idPuntoEmision
+						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento 
+                        INNER JOIN dbo.Usuario         u  WITH (NOLOCK) ON u.idUsuario          = ad.idUsuario  
 						WHERE ad.idEntidad = @idEntidad 
                           AND es.codEstab = @codEstab '
 
@@ -270,7 +270,7 @@ BEGIN
 	              ,importeTotal	   
              FROM Ventas.Aprob_Document     d WITH (NOLOCK)
              INNER JOIN dbo.PuntoEmision   pe WITH (NOLOCK) ON pe.idPuntoEmision = d.idPuntoEmision 
-             INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON e.codEstab = pe.codEstab
+             INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON e.idEstablecimiento = pe.idEstablecimiento
              WHERE d.idAprob_Document = @id
 
              SELECT cl.idCliente
