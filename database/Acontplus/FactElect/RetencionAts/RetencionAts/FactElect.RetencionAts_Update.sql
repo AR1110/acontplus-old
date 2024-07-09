@@ -21,8 +21,8 @@ BEGIN
 	DECLARE @idUsuario INT,@idEntidad INT
 
     --> Facturacion Electronica
-	DECLARE @ruc NVARCHAR(100) ,@fechaEmision DATETIME ,@ambiente INT ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@claveAcceso NVARCHAR(50) ,@isAutomatic INT ,@uniqueId VARCHAR(150) ,@secuencial INT
-           ,@idEstadoServicio INT ,@CustomerId INT 
+	DECLARE @ruc NVARCHAR(100) ,@fechaEmision DATETIME2 ,@ambiente INT ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@claveAcceso NVARCHAR(50) ,@isAutomatic INT ,@uniqueId VARCHAR(150) ,@secuencial INT
+           ,@idEstadoServicio INT ,@CustomerId INT ,@idDocumentoElectronico INT
 
     --> RetencionAts
 	DECLARE @tipoEmision TINYINT = 1 ,@idPuntoEmision INT ,@idTipoDocumento INT ,@idProveedor INT  ,@idRentencionAts INT
@@ -34,7 +34,6 @@ BEGIN
 		,codEstab VARCHAR(25) NOT NULL
 		,estab VARCHAR(5) NOT NULL
 		,ptoEmi VARCHAR(5) NOT NULL
-		,secuencial VARCHAR(9) NOT NULL
 		,contribuyentEspecial VARCHAR(13) NULL
 		,obligadoContabilidad VARCHAR(2) NULL
 		,tipoIdentificacionSujetoRetenido VARCHAR(2) NULL
@@ -52,8 +51,8 @@ BEGIN
 
         --> Info Json
         INSERT INTO @tblInfoCompRet
-              (idRetencionAts,codEstab,estab,ptoEmi,secuencial,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
-		SELECT @id           ,codEstab,estab,ptoEmi,secuencial,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
+              (idRetencionAts,codEstab,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
+		SELECT @id           ,codEstab,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
 		FROM OPENJSON(@infoCompRet) WITH
         (
              codEstab                         VARCHAR(25)
@@ -75,14 +74,14 @@ BEGIN
         --> Recuperacion de Varialbles
         SELECT TOP 1 @ruc = ruc FROM Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-        SELECT @idRentencionAts = rt.idRetencionAts
-              ,@secuencial      = de.nroDocumento
-              ,@fechaEmision    = de.fechaEmision
-              ,@ambiente        = pe.ambiente 
+        SELECT @idDocumentoElectronico = de.idDocumentoElectronico
+              ,@secuencial             = de.nroDocumento
+              ,@fechaEmision           = de.fechaEmision
+              ,@ambiente               = pe.ambiente 
         FROM FactElect.RetencionAts         rt WITH (NOLOCK)
         INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
         INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
-        WHERE rt.idDocumentoElectronico = @id
+        WHERE rt.idRetencionAts = @id
 
         SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1
 
@@ -145,31 +144,31 @@ BEGIN
 				RETURN
 			END
 
-        IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE codDoc = '07' AND idDocumento = @id AND codEstado IN (4,3,6))
+        IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE idDocumentoElectronico = @idDocumentoElectronico AND codEstado IN (4,3,6))
             BEGIN
                 SELECT '0'code, 'El Documento tiene un proceso en el Sri' as 'message'
                 RETURN 
             END
 
 		BEGIN TRAN
-
-			UPDATE ret WITH (ROWLOCK)
-               SET ret.tipoSujetoRetenido               = t.tipoSujetoRetenido 
-			      ,ret.parteRel                         = t.parteRel
-			      ,ret.idCliente                        = t.idCliente
-			      ,ret.periodoFiscal                    = t.periodoFiscal
-			      ,ret.idUsuario                        = @idUsuario
-			      ,ret.idProveedor                      = @idProveedor
-			FROM FactElect.RetencionAts ret
-			INNER JOIN @tblInfoCompRet    t on ret.idRetencionAts = t.idRetencionAts
-
-			UPDATE DocumentoElectronico WITH (ROWLOCK)
-               SET idPuntoEmision   = @idPuntoEmision
-			      ,claveAcceso      = @claveAcceso
+            -->InfoTributaria
+            UPDATE DocumentoElectronico WITH (ROWLOCK)
+               SET claveAcceso      = @claveAcceso
 			      ,fechaEmision     = @fechaEmision
 			      ,idEstadoServicio = @idEstadoServicio
 			      ,CustomerId       = @CustomerId
-			WHERE idDocumentoElectronico = @id
+			WHERE idDocumentoElectronico = @idDocumentoElectronico
+
+            --> InfoComprobanteRetencion
+			UPDATE ret WITH (ROWLOCK)
+               SET ret.tipoSujetoRetenido = t.tipoSujetoRetenido 
+			      ,ret.parteRel           = t.parteRel
+			      ,ret.idCliente          = t.idCliente
+			      ,ret.periodoFiscal      = t.periodoFiscal
+			      ,ret.idUsuario          = @idUsuario
+			      ,ret.idProveedor        = @idProveedor
+			FROM FactElect.RetencionAts ret
+			INNER JOIN @tblInfoCompRet    t on ret.idRetencionAts = t.idRetencionAts
 
             UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)
                SET idProveedor  = @idProveedor

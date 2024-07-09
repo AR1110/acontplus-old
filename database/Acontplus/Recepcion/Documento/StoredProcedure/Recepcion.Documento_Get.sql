@@ -221,14 +221,16 @@ BEGIN
                     SELECT TOP 1 @claveAcceso = claveAcceso FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @id
 
 			        SELECT 'Retención'                                                           as comprobante
-				           ,rAts.estab + rAts.ptoEmi + Helper.F_Auto_Sequential(rAts.secuencial) as serieComprobante
-				           ,rAts.identificacionSujetoRetenido                                    as rucEmisor
-				           ,rAts.razonSocialSujetoRetenido                                       as razonSocialEmisor
-				           ,CONVERT(NVARCHAR, FORMAT(rAts.fechaEmision, 'dd/MM/yyyy HH:mm'))     as fechaEmision
-				           ,rAts.claveAcceso
+				           ,de.serieComprobante
+				           ,pr.numeroIdentificacion                                              as rucEmisor
+				           ,pr.nombreComercial                                                   as razonSocialEmisor
+				           ,CONVERT(NVARCHAR, FORMAT(de.fechaEmision, 'dd/MM/yyyy HH:mm'))       as fechaEmision
+				           ,de.claveAcceso
 				           ,0                                                                    as importeTotal
 			        FROM FactElect.RetAtsDocSustento retDoc
-			        INNER JOIN FactElect.RetencionAts rAts ON rAts.idRetencionAts = retDoc.idRetencionAts
+			        INNER JOIN FactElect.RetencionAts rAts ON rAts.idRetencionAts       = retDoc.idRetencionAts
+                    INNER JOIN dbo.DocumentoElectronico de ON de.idDocumentoElectronico = rAts.idDocumentoElectronico
+                    INNER JOIN dbo.Proveedor            pr ON pr.idProveedor            = rAts.idProveedor
 			        WHERE retDoc.numAutDocSustento = @claveAcceso
 			          AND rAts.anuladaSri = 0
 		        END

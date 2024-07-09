@@ -1,9 +1,6 @@
 USE Acontplus
 GO
-IF OBJECT_ID(N'v_DocRecibido', N'V') IS NOT NULL
-DROP VIEW v_DocRecibido
-GO
-CREATE VIEW v_DocRecibido WITH SCHEMABINDING AS (
+CREATE OR ALTER VIEW v_DocRecibido WITH SCHEMABINDING AS (
 	
 	SELECT rd.idDocumento
         ,rd.idEstablecimiento
@@ -27,10 +24,10 @@ CREATE VIEW v_DocRecibido WITH SCHEMABINDING AS (
         ,rd.obs
         ,rd.fechaRegistro
         ,rd.idUsuario
-        ,e.ruc
+        ,en.ruc
         ,en.razonSocial empresa
         ,en.idEntidad
 	FROM Recepcion.DocumentoRecibido rd WITH (NOLOCK)
 	INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON rd.idEstablecimiento = e.idEstablecimiento
-	INNER JOIN dbo.Entidad en WITH (NOLOCK) ON e.ruc = en.ruc 
+	INNER JOIN dbo.Entidad        en WITH (NOLOCK) ON en.idEntidad         = e.idEntidad 
 )

@@ -18,10 +18,16 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-	DECLARE @idGuiaRemision BIGINT 
-    DECLARE @idTipoDocumento bigint 
+
+    --> Filters
+	DECLARE @id INT ,@idTipoDocumento INT ,@idDocumentoElectronico INT
     
-    SELECT @idGuiaRemision = idGuiaRemision  FROM OPENJSON(@json) WITH (idGuiaRemision INT '$.id') AS dt 
+    SELECT @id = id ,@idDocumentoElectronico = idDocumentoElectronico FROM OPENJSON(@json) WITH (id INT, idDocumentoElectronico INT) AS dt 
+
+    IF @idDocumentoElectronico > 0
+        BEGIN
+            SELECT TOP 1 @id = idGuiaRemision FROM dbo.GuiaRemision WITH (NOLOCK) WHERE idDocumentoElectronico = @idDocumentoElectronico
+        END
 
     SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) where codigoSri = '06'
 
@@ -68,7 +74,7 @@ BEGIN
     INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
     INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad              = es.idEntidad
      LEFT JOIN dbo.DocumentoElectronico df WITH (NOLOCK) ON df.idDocumentoElectronico = fa.idDocumentoElectronico
-	WHERE gr.idGuiaRemision = @idGuiaRemision
+	WHERE gr.idGuiaRemision = @id
 
     SELECT ar.codigo 
 		  ,ar.codigoAuxiliar 
@@ -76,13 +82,13 @@ BEGIN
 		  ,gr.descripcion 			
 	FROM GuiaRemisionDetalle gr WITH (NOLOCK)		
 	INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = gr.idArticulo 
-	WHERE gr.idGuiaRemision = @idGuiaRemision
+	WHERE gr.idGuiaRemision = @id
       AND gr.estado = 1
     ORDER BY gr.idGuiaRemisionDetalle ASC
 
     SELECT nombre,valor
 	FROM dbo.InfoAdicionalDoc WITH (NOLOCK)
-	WHERE idComprobante = @idGuiaRemision 
+	WHERE idComprobante = @id 
       AND idTipoDocumento = @idTipoDocumento
       AND estado = 1
 

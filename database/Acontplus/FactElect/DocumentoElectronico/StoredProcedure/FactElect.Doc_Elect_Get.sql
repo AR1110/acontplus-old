@@ -45,7 +45,6 @@ BEGIN
                           ,@idPuntoEmision         INT'
 
             SET @sql = 'SELECT de.idDocumentoElectronico
-							  ,de.idDocumento
 							  ,de.codDoc
 							  ,de.comprobante
 							  ,de.serieComprobante
@@ -168,7 +167,7 @@ BEGIN
             RETURN 
         END 
 
-    -- FILTERS 
+    --> FILTERS 
     IF @tipo = 2
         BEGIN
             SELECT idEstablecimiento

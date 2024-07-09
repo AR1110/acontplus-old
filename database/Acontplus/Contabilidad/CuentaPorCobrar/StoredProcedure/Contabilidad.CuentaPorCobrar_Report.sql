@@ -199,14 +199,14 @@ BEGIN
 
             SELECT en.razonSocial
                   ,es.nombreComercial
-                  ,es.ruc
+                  ,en.ruc
                   ,es.telefono
                   ,es.dirEstablecimiento
                   ,@usuario             as usuario 
                   ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT(@fechaFin, 'dd/MM/yyyy') as filtroFechas
                   ,'Cartera de Cliente' as nombreReporte
             FROM Sri.Establecimiento es WITH (NOLOCK)
-            INNER JOIN dbo.Entidad   en WITH (NOLOCK) ON en.ruc = es.ruc
+            INNER JOIN dbo.Entidad   en WITH (NOLOCK) ON en.idEntidad = es.idEntidad
             WHERE codEstab = @codEstab
 
             EXEC sp_executesql @sql

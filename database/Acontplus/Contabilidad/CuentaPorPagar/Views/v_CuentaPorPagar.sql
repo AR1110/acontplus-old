@@ -26,14 +26,6 @@ CREATE OR ALTER VIEW v_CuentaPorPagar WITH SCHEMABINDING AS (
 		  ,cp.saldo
 		  ,estado                  = ep.descripcion
 		  ,codEstado               = ep.codigo
-		  ,estadoSri               = CASE WHEN cp.codDoc = '03' THEN (
-                                                                          SELECT TOP 1 es.codigo 
-                                                                          FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
-                                                                          INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio = de.idEstadoServicio 
-                                                                          WHERE de.idDocumento = cp.idDocumento 
-                                                                            AND de.codDoc = '03'
-                                                                     ) 
-		                                                        ELSE 0 END 
 		  ,usuario = us.nombreUsuario
           ,tc.descripcion as tiempoCredito
           ,tc.diasCredito

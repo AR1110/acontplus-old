@@ -197,9 +197,9 @@ BEGIN
 		   ,@fechaEmision            = dt.fechaEmision
            ,@idUsuario               = dt.idUsuario
 		FROM @tbComprobante dt 
-		INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = dt.idPuntoEmision
-		INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
-		INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = dt.idCliente 
+		INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = dt.idPuntoEmision
+		INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pt.idEstablecimiento
+		INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente         = dt.idCliente 
 		
 		SELECT @secuencial =  COUNT(*) + 1 FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision
 
