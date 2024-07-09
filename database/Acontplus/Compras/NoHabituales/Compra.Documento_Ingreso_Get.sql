@@ -51,21 +51,20 @@ BEGIN
             
             SET @tableNames = 'documentos'
 
-			SET @sql  = 'SELECT idDocumento as id
+			SET @sql  = 'SELECT idDocumentoIngreso                             as id
 		                       ,serieComprobante
 		                       ,FORMAT(fechaEmision, ''dd/MM/yyyy HH:mm'')     as fechaEmision
 		                       ,razonSocialProveedor
 		                       ,importeTotal
-		                       ,estado
+		                       ,estadoCuenta                                   as estado
 		                       ,usuario
-		                       ,IIF(codEstado = ''A'', ''table-danger'','''')  as colorRow 
-                               ,codEstado
+		                       ,IIF(codCuenta = ''A'', ''table-danger'','''')  as colorRow 
+                               ,codCuenta                                      as codEstado
                                ,COUNT(*) OVER()                                as totalRecods
-                               ,ISNULL(subcategoryId, 0) subcategoryId
-                               ,ISNULL(subcategoryName, '''') subcategoryName
-	                     FROM v_CuentaPorPagar 
-	                     WHERE codDoc = ''DH''
-                          AND idEntidad = @idEntidad '
+                               ,ISNULL(subcategoryId, 0)                       as subcategoryId
+                               ,ISNULL(subcategoryName, '''')                  as subcategoryName
+	                     FROM Compra.v_DocumentoIngreso 
+	                     WHERE idEntidad = @idEntidad '
 
 			SET @params = '@idEntidad      INT
 						  ,@codEstab       VARCHAR(100)
@@ -139,10 +138,10 @@ BEGIN
 
 			IF @codEstado IS NOT NULL
 				BEGIN
-					SET @sql = @sql + 'AND codEstado = @codEstado '
+					SET @sql = @sql + 'AND codCuenta = @codEstado '
 				END 
 
-			SET @sql = @sql + 'ORDER BY idDocumento DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
+			SET @sql = @sql + 'ORDER BY idDocumentoIngreso DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
 			EXEC sp_executesql @sql
 			                  ,@params 

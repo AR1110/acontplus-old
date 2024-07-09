@@ -26,7 +26,7 @@ BEGIN
     ,@endDate     DATETIME2
     ,@tableId     INT
     ,@sql         NVARCHAR(MAX)
-    ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT, @tableId INT, @userId INT,@finished BIT,@rucEmpresa VARCHAR(13) '
+    ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT, @tableId INT, @userId INT,@finished BIT,@rucEmpresa VARCHAR(13), @idEntidad INT '
     ,@idEntidad INT 
     ,@userId INT
     ,@finished BIT
@@ -66,7 +66,9 @@ BEGIN
                     LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId
                     LEFT JOIN Usuario u ON u.idUsuario = o.UserId
                     LEFT JOIN Restaurant.v_Table vt WITH(NOLOCK) ON o.tableId = vt.Id
-                    WHERE sri_e.ruc = @rucEmpresa AND CAST(o.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) AND o.Enabled = 1 '
+                    WHERE sri_e.idEntidad = @idEntidad
+                      AND CAST(o.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE)
+                      AND CAST(@endDate AS DATE) AND o.Enabled = 1 '
 
             
     SELECT @tipo                 = tipo
@@ -130,6 +132,7 @@ BEGIN
                                 ,@userId
                                 ,@finished
                                 ,@rucEmpresa
+                                ,@idEntidad = @idEntidad
         END
     
     --Editar Orden
