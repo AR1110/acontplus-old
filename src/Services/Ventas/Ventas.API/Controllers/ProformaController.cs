@@ -1,6 +1,6 @@
 ﻿namespace Ventas.API.Controllers;
 
-public class ProformaController(IConfiguration configuration, IProformaService proformaService) : BaseApiController
+public class ProformaController(IConfiguration configuration, IProformaService _svc) : BaseApiController
 {
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
@@ -10,73 +10,46 @@ public class ProformaController(IConfiguration configuration, IProformaService p
                 {"idUsuarioRol" , User.GetUserRoleId()},
                 {"json" , SqlStringParam.Sanitize(json)},
             };
-        return Ok(await proformaService.GetAsync(parameters));
+        return Ok(await _svc.GetAsync(parameters));
     }
 
     [HttpPost("Insert")]
-    public async Task<IActionResult> Insert(ApiRequest parameters)
+    public async Task<IActionResult> Insert(ApiRequest request)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(configuration);
-        try
-        {
+        var parameters = new Dictionary<string, object>
+            {
+                {"userRoleId" , User.GetUserRoleId()},
+                {"json" , SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))},
+            }; 
 
-            await _db.SpExecuteAsync("Ventas.Proforma_Insert", true);
-            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        return Ok(await _svc.AddAsync(parameters));
     }
 
     [HttpPut("Update/{id}")]
-    public async Task<IActionResult> Update(int id, ApiRequest parameters)
+    public async Task<IActionResult> Update(int id, ApiRequest request)
     {
-        var _db = new DbAccess(configuration);
 
-        var _response = new ApiResponseDeprecated();
-        try
-        {
+        var parameters = new Dictionary<string, object>
+            {
+                {"userRoleId" , User.GetUserRoleId()},
+                {"id",id },
+                {"json" , SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))},
+            }; 
 
-            await _db.SpExecuteAsync("Ventas.Proforma_Update");
-            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        return Ok(await _svc.UpdateAsync(parameters));
     }
 
 
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _db = new DbAccess(configuration);
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SpExecuteAsync("Ventas.Proforma_Delete", true);
-            _db.AddDynamicParam("idRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+        var parameters = new Dictionary<string, object>
+            {
+                {"idRol" , User.GetUserRoleId()},
+                {"id",id }, 
+            }; 
 
-        return Ok(_response);
+        return Ok(await _svc.DeleteAsync(parameters));
     }
 
     [HttpGet("GetId/{id}")]
@@ -87,27 +60,18 @@ public class ProformaController(IConfiguration configuration, IProformaService p
                 {"idRol" , User.GetUserRoleId()},
                 {"id" , id},
             };
-        return Ok(await proformaService.GetByIdAsync(parameters));
+        return Ok(await _svc.GetByIdAsync(parameters));
     }
 
     [HttpPost("ConvertToDoc")]
-    public async Task<IActionResult> ConvertToDoc(ApiRequest parameters)
+    public async Task<IActionResult> ConvertToDoc(ApiRequest request)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(configuration);
-        try
-        {
+        var parameters = new Dictionary<string, object>
+            {
+                {"userRoleId" , User.GetUserRoleId()},
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))},
+            }; 
 
-            await _db.SpExecuteAsync("Ventas.Proforma_Convert_To_Doc", true);
-            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        return Ok(await _svc.ConvertToDoc(parameters));
     }
 }

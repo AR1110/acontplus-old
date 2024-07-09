@@ -1,3 +1,4 @@
+//@ts-check
 /**
  * 1. ventaService
  * 2. notaEntregaService
@@ -1100,7 +1101,7 @@
      */
     app.factory('proformaService', ['$injector', function ($injector) {
         let url = `${URL_API}Proforma/`;
-        let url_v2 = `${URL_API}v2/Proforma/`;
+       // let url_v2 = `${URL_API}v2/Proforma/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
         const pricingUtils = $injector.get('pricingUtils')
@@ -1474,25 +1475,11 @@
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, { data }, true).then(response => {
-                if (response.code === "0") {
-                    return response;
-                }
-                if (response.code === "1") {
-                    return response
-                }
-            })
+            return mS.getData('put', url + 'Update/' + id, { data }, true) 
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
-                if (response.code === "0") {
-                    return response;
-                }
-                if (response.code === "1") {
-                    return response
-                }
-            })
+            return mS.getData('delete', url + 'Delete/' + id, null, true) 
         }
 
 
@@ -1628,7 +1615,7 @@
         }
 
         service.convertToDoc = function (data) {
-            return mS.getData('post', url_v2 + 'ConvertToDoc', { data }, true)
+            return mS.getData('post', url + 'ConvertToDoc', { data }, true)
         }
 
         service.queryMapperConvertToDoc = function (obj) {

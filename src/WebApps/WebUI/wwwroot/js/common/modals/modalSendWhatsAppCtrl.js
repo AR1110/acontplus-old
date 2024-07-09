@@ -1,3 +1,4 @@
+//@ts-check
 export {
     modalSendWhatsAppCtrl
 }
@@ -84,9 +85,12 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
 
 
     function createDataParamSenFile(codigo){
+        let id = data.idDocumento;
+        let idDocumentoElectronico = data.idDocumentoElectronico;
         return {
             codigo,
-            id: data.idDocumento,
+            id,
+            idDocumentoElectronico,
             codEstab: data.codEstab,
             versionComp: data.versionComp
         }
@@ -94,14 +98,14 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
      
  
     let dataParamSenFile = {
-        [DOC_TYPE.FV_SRI]: createDataParamSenFile('RF'),
-        [DOC_TYPE.LC_SRI]: createDataParamSenFile("RLC"),
+        [DOC_TYPE.FV_SRI]: createDataParamSenFile(CODE_REPORT.RF),
+        [DOC_TYPE.LC_SRI]: createDataParamSenFile(CODE_REPORT.RLC),
         [DOC_TYPE.GR_SRI]: createDataParamSenFile(CODE_REPORT.RGR),
-        [DOC_TYPE.R_SRI]: createDataParamSenFile('RRC'),
-        [DOC_TYPE.NC_SRI]: createDataParamSenFile("RNCC"),
-        [DOC_TYPE.NE]: createDataParamSenFile('RNE'),
-        [DOC_TYPE.PR]: createDataParamSenFile("PR"),
-        [DOC_TYPE.CI]: createDataParamSenFile("RCINGR"), 
+        [DOC_TYPE.R_SRI]: createDataParamSenFile(CODE_REPORT.RRC),
+        [DOC_TYPE.NC_SRI]: createDataParamSenFile(CODE_REPORT.RNC),
+        [DOC_TYPE.NE]: createDataParamSenFile(CODE_REPORT.RNE),
+        [DOC_TYPE.PR]: createDataParamSenFile(CODE_REPORT.PR),
+        [DOC_TYPE.CI]: createDataParamSenFile(CODE_REPORT.RCINGR), 
     };
 
 
@@ -306,6 +310,7 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
 
     $scope.generateFile = () => {
         let dataParamFile = dataParamSenFile[data.codDoc];
+   
         if(!dataParamFile){
             console.error('no definido el codigo documento');
             return 
@@ -314,6 +319,7 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
         let dataParms = {
             hasParams: true,
             id: dataParamFile.id,
+            idDocumentoElectronico: dataParamFile.idDocumentoElectronico,
             versionComp: dataParamFile.versionComp
         }
         let reportParams = {
@@ -324,9 +330,7 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
             aditionalParams: [],
             versionComp: dataParamFile.versionComp
         }
-
-
-        console.log(dataParamFile)
+ 
 
         if (data.codDoc === 'CI') {
             dataParms.tipo = 3;

@@ -320,7 +320,7 @@
                 }
 
                 let format = 'pdf';
-                console.log(REPORT_CODES[item.codDoc])
+
 
                 const parameters = {
                     dataParams: JSON.stringify({

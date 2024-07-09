@@ -1,3 +1,4 @@
+//@ts-check
 (function () {
 
     'use strict';
@@ -1194,8 +1195,7 @@
                     let params = scope.getParamToSendMail({
                             params: scope.params
                         }) || scope.params;
-                     
-                   
+                      
 
                     modalSvc.open({
                         controller,
