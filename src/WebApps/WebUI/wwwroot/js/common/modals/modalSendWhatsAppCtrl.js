@@ -52,8 +52,9 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
     let nombreEstab = null;
 
     function createDataParamDocSri() {
+        let id = data.idDocumentoElectronico > 0 ? data.idDocumentoElectronico : data.idDocumento;
         return {
-            id: data.idDocumento,
+            id,
             codDoc: data.codDoc,
             esNotificacionTributaria: true,
             comprobante: `${data.comprobanteVersion || data.comprobante} : ${data.serieComprobante}`,

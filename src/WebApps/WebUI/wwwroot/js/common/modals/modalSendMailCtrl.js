@@ -19,8 +19,8 @@ function modalSendMailCtrl($scope, $uibModalInstance, $injector, sharedSvc, fS, 
     let esNotificacionGeneral = false;
  
 
-    function createDataParamDocSri() {
-        let id = data.id;
+    function createDataParamDocSri() { 
+        let id = data.idDocumentoElectronico > 0 ? data.idDocumentoElectronico : data.idDocumento;
         let idDocumentoElectronico = data.idDocumentoElectronico;
         let codDoc = data.codDoc;
         return { 
