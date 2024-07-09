@@ -370,13 +370,31 @@ BEGIN
         BEGIN          
             SET @claveAcceso = (SELECT dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab), '01', @ambiente, 1, dbo.AFTConvertDate(@fechaEmision), @ruc, @estab + @ptoEmi, Helper.F_Auto_Sequential(@nroDocumento)))
 
-            DECLARE @idEstadoServicio INT
+            DECLARE @idEstadoServicio INT ,@idDocumentoElectronico INT
             
             SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1
 
+             INSERT INTO dbo.DocumentoElectronico(idTipoDocumento,CustomerId,nroDocumento,idPuntoEmision
+                                                ,claveAcceso,versionComp,isAutomatic,fechaEmision
+                                                ,idUsuario,idEstadoServicio,serieComprobante)
+
+            SELECT @tipoDocumentoId
+                , @customerId
+                , @nroDocumento
+                , @puntoEmisionId
+                , @claveAcceso
+                , '1.1.0'
+                , @autoSriAuth
+                , @fechaEmision
+                , @userId
+                , @idEstadoServicio
+                , @serieDocument
+
+            SET @idDocumentoElectronico = SCOPE_IDENTITY()
+
             INSERT INTO Factura 
-            (idCliente, idPuntoEmision, idTipoDocumento, ambiente, idEntidad, idUsuario, claveAcceso, nroFactura, fechaEmision, subTotalSinImpuestos, totalDescuento, porcentajeDescuento, propina, recargo, transporte, total, observacion, fechaRegistro)
-            SELECT @customerCompanyId,@puntoEmisionId,@tipoDocumentoId,@ambiente,@companyId, @userId, @claveAcceso, @nroDocumento, @fechaEmision, @subTotalSinImpuesto, @discount, 0, @tip,0,0, @total, @obs, @fechaRegistro
+                   (idDocumentoElectronico,idCliente, idUsuario, subTotalSinImpuestos, totalDescuento, porcentajeDescuento, propina, recargo, transporte, total, observacion, fechaRegistro)
+            SELECT @idDocumentoElectronico,@customerCompanyId, @userId, @subTotalSinImpuesto, @discount, 0, @tip,0,0, @total, @obs, @fechaRegistro
                                      
             SET @documentoId = (SELECT SCOPE_IDENTITY())
 
@@ -410,22 +428,7 @@ BEGIN
             FROM dbo.FormaPagoSri WITH (NOLOCK) 
             WHERE codigo = '20'
             
-            INSERT INTO dbo.DocumentoElectronico(codDoc,idDocumento,CustomerId,nroDocumento,idPuntoEmision
-                                                ,claveAcceso,versionComp,isAutomatic,fechaEmision
-                                                ,idUsuario,idEntidad,idEstadoServicio)
-
-            SELECT  '01'
-                , @documentoId
-                , @customerId
-                , @nroDocumento
-                , @puntoEmisionId
-                , @claveAcceso
-                , '1.1.0'
-                , @autoSriAuth
-                , @fechaEmision
-                , @userId
-                , @companyId
-                , @idEstadoServicio
+           
         END
 
     ---- INSERT OrderDocument -----

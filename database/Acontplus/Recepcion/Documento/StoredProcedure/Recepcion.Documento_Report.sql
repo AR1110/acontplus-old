@@ -189,9 +189,10 @@ BEGIN
 	                                  ,CAST(dr.importeTotal as numeric(18,2)) as importeTotal
 	                                  ,(
 		
-			                                SELECT TOP 1 rt.estab + ''-'' + rt.ptoEmi + ''-'' + Helper.F_Auto_Sequential(rt.secuencial)
+			                                SELECT TOP 1 de.serieComprobante
 			                                FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
+                                            INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
+			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts         = rt.idRetencionAts
 			                                WHERE ds.numAutDocSustento = dr.claveAcceso
 				                            AND rt.anuladaSri = 0 
 
@@ -349,9 +350,10 @@ BEGIN
 	                                   ,CAST(fc.total as numeric(18,2))
                                        ,(
 		
-			                                SELECT TOP 1 rt.estab + ''-'' + rt.ptoEmi + ''-'' + Helper.F_Auto_Sequential(rt.secuencial)
+			                                SELECT TOP 1 de.serieComprobante
 			                                FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
+                                            INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
+			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts         = rt.idRetencionAts
 			                                WHERE ds.numAutDocSustento = fc.nroAutorizacion
 				                            AND rt.anuladaSri = 0 
 

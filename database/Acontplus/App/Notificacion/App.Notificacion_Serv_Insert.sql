@@ -128,7 +128,7 @@ BEGIN
 								FROM dbo.Proforma pr 
 								INNER JOIN Cliente               cl ON cl.idCliente      = pr.idCliente 
 								INNER JOIN dbo.PuntoEmision      pe ON pe.idPuntoEmision = pr.idPuntoEmision
-								INNER JOIN Sri.Establecimiento    s ON s.codEstab        = pe.codEstab
+								INNER JOIN Sri.Establecimiento    s ON s.idEstablecimiento  = pe.idEstablecimiento
 								INNER JOIN dbo.Entidad            e ON e.idEntidad       = pr.idEntidad
 								INNER JOIN @tlDecimal            cd ON cd.idEntidad      = pr.idEntidad
 								WHERE pr.idProforma = @id
@@ -158,7 +158,7 @@ BEGIN
 									FROM dbo.NotaEntrega ne 
 									INNER JOIN Cliente               cl ON cl.idCliente      = ne.idCliente 
 									INNER JOIN dbo.PuntoEmision      pe ON pe.idPuntoEmision = ne.idPuntoEmision
-									INNER JOIN Sri.Establecimiento    s ON s.codEstab        = pe.codEstab
+									INNER JOIN Sri.Establecimiento    s ON s.idEstablecimiento  = pe.idEstablecimiento
 									INNER JOIN dbo.Entidad            e ON e.idEntidad       = ne.idEntidad
 									INNER JOIN @tlDecimal            cd ON cd.idEntidad      = ne.idEntidad
 									WHERE ne.idNotaEntrega = @id
@@ -184,14 +184,15 @@ BEGIN
 			IF @codDoc='CI'
 				BEGIN
 					SET @template = 'EmailCompIngreso.html'
-					SET @body = (SELECT cliente     = ci.nombreFiscal, 
+					SET @body = (SELECT cliente     = cu.BusinessName, 
 						   documento    = @serieComprobante,
 					       fechaEmision = dbo.AFTConvertDate(ci.fechaRegistro)+''''+ dbo.AFTConvertHora(ci.fechaRegistro),
 						   importeTotal = ci.total,																   
 						   telefono     = ISNULL(estab.telefono, ''),
 						   razonSocial  = estab.nombreComercial
 					 FROM dbo.ComprobanteIngreso ci WITH(NOLOCK)
-					 INNER JOIN Sri.Establecimiento estab WITH (NOLOCK) ON estab.codEstab = ci.codEstab
+					 INNER JOIN Sri.Establecimiento estab WITH (NOLOCK) ON estab.idEstablecimiento = ci.idEstablecimiento
+                     INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id = ci.CustomerId
 					 WHERE ci.idComprobanteIngreso = @id
 					 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 					 )

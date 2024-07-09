@@ -18,14 +18,15 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
           ,fa.notaCredito
           ,fa.guiaRemision
           ,fa.estado 
+          ,de.idDocumentoElectronico 
           ,de.idPuntoEmision
           ,de.claveAcceso
           ,de.fechaEmision
-          ,de.nroDocumento		   as secuencial
+          ,de.nroDocumento		       as secuencial
           ,de.serieComprobante
           ,de.fechaAutorizacion
-          ,cl.nombreFiscal         as razonSocialComprador
-          ,cl.numeroIdentificacion as identificacionComprador
+          ,cl.nombreFiscal             as razonSocialComprador
+          ,cl.numeroIdentificacion     as identificacionComprador
           ,cl.correo                        
           ,cl.telefono
           ,es.idEntidad

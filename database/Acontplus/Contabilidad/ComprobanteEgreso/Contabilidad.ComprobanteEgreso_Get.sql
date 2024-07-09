@@ -165,7 +165,7 @@ BEGIN
 		BEGIN
             DECLARE @idProveedor INT
 
-            SET @tableNames = 'entidadFinanciera,subEntidadFinanciera,banco,ciudad,documentos'
+            SET @tableNames = 'entidadFinanciera,subEntidadFinanciera,banco,ciudad,estadoPago,documentos'
 
             SELECT @idProveedor = idProveedor FROM OPENJSON(@json)WITH(idProveedor INT)
 				
@@ -223,5 +223,32 @@ BEGIN
              AND ep.codigo !='PA'
 
             RETURN
+        END 
+
+    --> Get For Data Delete 
+    IF @tipo = 5
+        BEGIN
+            
+            DECLARE @id INT
+
+            SET @tableNames = 'cuentas,cuotas,estadoPago'
+
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+            SELECT hp.idCuentaPorPagar ,cp.importeTotal as saldo, cp.abono as abonoDoc ,hp.abono ,pa.cobro
+            FROM Contabilidad.Historial_Pago        hp WITH (NOLOCK) 
+            INNER JOIN dbo.Pago                     pa WITH (NOLOCK) ON pa.idPago           = hp.idPago
+            INNER JOIN Contabilidad.CuentaPorPagar  cp WITH (NOLOCK) ON cp.idCuentaPorPagar = hp.idCuentaPorPagar
+            WHERE hp.idComprobanteEgreso = @id
+
+            SELECT pd.idCuotaPorPagar ,cp.cuota as saldo ,cp.abono as abonoCuota ,pd.abono ,pa.cobro
+            FROM dbo.PagoDetalle                   pd WITH (NOLOCK)
+            INNER JOIN dbo.Pago                    pa WITH (NOLOCK) ON pa.idPago           = pd.idPago
+            INNER JOIN Contabilidad.CuotaPorPagar  cp WITH (NOLOCK) ON cp.idCuotaPorPagar  = pd.idCuotaPorPagar
+            WHERE pa.idComprobanteEgreso = @id
+
+            SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP')
+
+            RETURN 
         END 
 END

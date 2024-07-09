@@ -51,21 +51,20 @@ BEGIN
             
             SET @tableNames = 'documentos'
 
-			SET @sql  = 'SELECT idDocumento as id
+			SET @sql  = 'SELECT idDocumentoIngreso                             as id
 		                       ,serieComprobante
 		                       ,FORMAT(fechaEmision, ''dd/MM/yyyy HH:mm'')     as fechaEmision
 		                       ,razonSocialProveedor
 		                       ,importeTotal
-		                       ,estado
+		                       ,estadoCuenta                                   as estado
 		                       ,usuario
-		                       ,IIF(codEstado = ''A'', ''table-danger'','''')  as colorRow 
-                               ,codEstado
+		                       ,IIF(codCuenta = ''A'', ''table-danger'','''')  as colorRow 
+                               ,codCuenta                                      as codEstado
                                ,COUNT(*) OVER()                                as totalRecods
-                               ,ISNULL(subcategoryId, 0) subcategoryId
-                               ,ISNULL(subcategoryName, '''') subcategoryName
-	                     FROM v_CuentaPorPagar 
-	                     WHERE codDoc = ''DH''
-                          AND idEntidad = @idEntidad '
+                               ,ISNULL(subcategoryId, 0)                       as subcategoryId
+                               ,ISNULL(subcategoryName, '''')                  as subcategoryName
+	                     FROM Compra.v_DocumentoIngreso 
+	                     WHERE idEntidad = @idEntidad '
 
 			SET @params = '@idEntidad      INT
 						  ,@codEstab       VARCHAR(100)
@@ -139,10 +138,10 @@ BEGIN
 
 			IF @codEstado IS NOT NULL
 				BEGIN
-					SET @sql = @sql + 'AND codEstado = @codEstado '
+					SET @sql = @sql + 'AND codCuenta = @codEstado '
 				END 
 
-			SET @sql = @sql + 'ORDER BY idDocumento DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
+			SET @sql = @sql + 'ORDER BY idDocumentoIngreso DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
 			EXEC sp_executesql @sql
 			                  ,@params 
@@ -225,7 +224,7 @@ BEGIN
 
 			SELECT es.estab+'-'+pe.ptoEmi+'-'+Helper.F_Auto_Sequential(@secuencial) as serieComprobante
 			FROM dbo.PuntoEmision pe WITH (NOLOCK)
-			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = pe.codEstab
+			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
 			WHERE pe.idPuntoEmision = @idPuntoEmision
 		END 
 	
@@ -240,7 +239,7 @@ BEGIN
 			SELECT di.idDocumentoIngreso
 				  ,es.idEstablecimiento
 				  ,pe.idPuntoEmision
-				  ,pe.codEstab
+				  ,es.codEstab
 				  ,ptoEmi = es.estab+'-'+pe.ptoEmi
 				  ,es.nombreComercial
 				  ,Helper.F_Auto_Sequential(di.secuencial) as secuencial
@@ -252,8 +251,8 @@ BEGIN
                   ,ISNULL(cpp.subcategoryId, 0)            as subcategoryId
                   ,ISNULL(cpp.subcategoryName,  '')        as subcategoryName
 			FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
-			INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = di.idPuntoEmision
-			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
+			INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = di.idPuntoEmision
+			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
             LEFT JOIN v_CuentaPorPagar cpp ON di.idDocumentoIngreso = cpp.idDocumento AND cpp.codDoc = 'DH'
 			WHERE di.idDocumentoIngreso = @id
 
@@ -395,8 +394,8 @@ BEGIN
                   ,ISNULL(cpp.subcategoryId, 0) subcategoryId
                   ,ISNULL(cpp.subcategoryName,  '') subcategoryName
             FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
-            INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = di.idPuntoEmision
-            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
+            INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision     = di.idPuntoEmision
+            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento  = pt.idEstablecimiento
             LEFT JOIN v_CuentaPorPagar cpp ON di.idDocumentoIngreso = cpp.idDocumento AND cpp.codDoc = 'DH'
             WHERE di.idDocumentoIngreso = @id
 

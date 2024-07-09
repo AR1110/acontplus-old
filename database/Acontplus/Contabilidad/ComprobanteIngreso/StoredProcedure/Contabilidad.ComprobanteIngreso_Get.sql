@@ -237,9 +237,9 @@ BEGIN
 				  ,cc.abono
 				  ,cc.saldo
 			FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
-			INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente      = cc.idCliente
-			INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision = cc.idPuntoEmision
-			INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
+			INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente         = cc.idCliente
+			INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision    = cc.idPuntoEmision
+			INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pt.idEstablecimiento
 			WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar
 
 			SELECT ci.idComprobanteIngreso 
@@ -380,7 +380,7 @@ BEGIN
 
             SELECT cc.idCuentaPorCobrar
 				  ,cc.idCliente
-                  ,pt.codEstab
+                  ,es.codEstab
                   ,cl.nombreFiscal         as razonSocialComprador
                   ,cl.numeroIdentificacion as identificacionComprador
                   ,cc.serieComprobante 
@@ -415,10 +415,10 @@ BEGIN
 							   FOR JSON PATH
 							)
 			FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) 
-			INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision = cc.idPuntoEmision
-			INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
-			INNER JOIN dbo.EstadoPago         ep WITH (NOLOCK) ON ep.idEstadoPago   = cc.idEstadoPago
-            INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente      = cc.idCliente
+			INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision    = cc.idPuntoEmision
+			INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pt.idEstablecimiento
+			INNER JOIN dbo.EstadoPago         ep WITH (NOLOCK) ON ep.idEstadoPago      = cc.idEstadoPago
+            INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente         = cc.idCliente
 			WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar 
               AND ep.codigo IN ('PP','PE')
 

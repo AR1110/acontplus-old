@@ -250,11 +250,6 @@ BEGIN
 				RETURN 
 			END 
 
-		IF EXISTS (SELECT 1 FROM Articulo WITH (NOLOCK) WHERE codigoAuxiliar = @codigoAuxiliar AND idEntidad = @idEntidad)
-			BEGIN
-				SELECT '0'code,'Este codigo Auxiliar se encuentra en uso para otro articulo' as 'message'
-				RETURN 
-			END 
 
 		IF @llevaInventario = 1 AND @inventory = 'NO'
 			BEGIN
@@ -304,7 +299,7 @@ BEGIN
 				BEGIN
 					INSERT INTO Inventario.Stock
 					       (idArticulo,idBodega,cantidad,lastUpdate,idUsuario)
-					SELECT @idArticulo,bo.idBodega,0,GETDATE(),@idUsuario FROM dbo.Bodega bo WITH (NOLOCK) INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = bo.codEstab WHERE es.ruc = @ruc
+					SELECT @idArticulo,bo.idBodega,0,GETDATE(),@idUsuario FROM dbo.Bodega bo WITH (NOLOCK) INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = bo.codEstab WHERE es.idEntidad = @idEntidad
 				END 
 
 			 UPDATE SubFamilia SET ultimoSecuencial = ultimoSecuencial+1 WHERE idSubFamilia = @idSubFamilia

@@ -10,15 +10,17 @@ go
 --UPDATE f set
 --	f.idDocumentoElectronico  = (select top 1 idDocumentoElectronico from documentoElectronico where codDoc = '01' and idDocumento = f.idFactura)
 --from factura f
+--where idDocumentoElectronico  is null
 
 
 --ALTER TABLE dbo.factura ALTER COLUMN idDocumentoElectronico BIGINT  NOT NULL
 
  --> Facturacion Electronica
 --INSERT INTO dbo.DocumentoElectronico WITH (ROWLOCK)
---        (codDoc,idPuntoEmision,fechaEmision,versionComp,idDocumento,CustomerId,nroDocumento,claveAcceso,isAutomatic,idUsuario,idEntidad,idEstadoServicio)
+--        (codDoc,idTipoDocumento,idPuntoEmision,fechaEmision,versionComp,idDocumento,CustomerId,nroDocumento,claveAcceso,isAutomatic,idUsuario,idEntidad,idEstadoServicio,serieComprobante)
 			
---select '01',f.idPuntoEmision,f.fechaEmision,'1.1.0',idFactura,cl.CustomerId,nroFactura,claveAcceso,0,f.idUsuario,f.idEntidad,8
+--select '01',f.idTipoDocumento,f.idPuntoEmision,f.fechaEmision,'1.1.0',idFactura,cl.CustomerId,nroFactura,claveAcceso,0,f.idUsuario,f.idEntidad,8
+--      ,es.estab + '-' + pe.ptoEmi + '-' + RIGHT('000000000' + CAST(f.nroFactura AS VARCHAR(9)),9)
 --from factura f
 --INNER JOIN dbo.PuntoEmision pe ON pe.idPuntoEmision = f.idPuntoEmision
 --inner join Sri.Establecimiento es on es.idEstablecimiento = pe.idEstablecimiento
@@ -78,6 +80,4 @@ go
 
 --ALTER TABLE dbo.Factura DROP COLUMN idEntidad
 
-select top 1 * from dbo.Factura
-
-select top 1 * from documentoElectronico
+select top 5 * from factura
