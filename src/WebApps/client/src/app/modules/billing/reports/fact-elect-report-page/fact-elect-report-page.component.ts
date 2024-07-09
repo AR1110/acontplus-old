@@ -40,7 +40,7 @@ export class FactElectReportPageComponent {
     idPuntoEmision: 0,
     fromDate: formatDateMoment(new Date()),
     toDate: formatDateMoment(new Date()),
-    idEstadoDocumento: 0,
+    codEstado: 0,
     codeRetencion: 'ALL',
     codeDevolucion: 'ALL',
     companyCustomerId: 0,
@@ -182,7 +182,7 @@ export class FactElectReportPageComponent {
         return
       }
       let dataEstab = this.establecimientos.find(estab => estab.idEstablecimiento === this.dataSearch.idEstablecimiento);
-      let dataEstado = this.estadosDoc.find(estado => estado.idEstadoDocumento === this.dataSearch.idEstadoDocumento);
+      // let dataEstado = this.estadosDoc.find(estado => estado.idEstadoDocumento === this.dataSearch.idEstadoDocumento);
       let { codDoc } = this.tiposDoc.find(item => item.idTipoDocumento === this.dataSearch.idTipoDocumento)
       let idCliente = this.dataSearch.checkBoxCustomer ? this.dataSearch.companyCustomerId : null;
       let identificacion = this.dataSearch.checkBoxCustomer ? isValidField(this.dataSearch.identificacion) : null;
@@ -197,7 +197,7 @@ export class FactElectReportPageComponent {
         codDoc,
         codEstab: dataEstab && dataEstab.codEstab || null,
         idCliente,
-        codEstado: dataEstado && dataEstado.codigo || null,
+        codEstado: this.dataSearch.codEstado && this.dataSearch.codEstado || null,
         fechaInicio: this.dataSearch.fromDate,
         fechaFin: this.dataSearch.toDate,
         identificacion,

@@ -58,10 +58,10 @@ public class ProductPhotoController : BaseApiController
         data.UserId = User.GetUserId();
         if (file != null)
         {
-            await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file, data.S3ObjectKey,
-                data.S3ObjectUrl);
+            await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
         }
-
+        data.S3ObjectKey = _s3ObjectCustom.S3ObjectKey;
+        data.S3ObjectUrl = _s3ObjectCustom.S3ObjectUrl;
         var response = await _productPhoto.UpdateAsync(id, data);
         if (response.code == "1" && file != null)
         {
