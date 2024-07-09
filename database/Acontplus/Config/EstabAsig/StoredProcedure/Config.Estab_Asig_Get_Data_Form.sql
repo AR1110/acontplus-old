@@ -47,8 +47,8 @@ BEGIN
 		ap.idPuntoEmision
 	   ,ptoEmi = e.estab+'-'+pe.ptoEmi
 	FROM Config.PtoEmi_Asig ap
-	INNER JOIN dbo.PuntoEmision   pe ON pe.idPuntoEmision = ap.idPuntoEmision
-	INNER JOIN Sri.Establecimiento e ON e.codEstab        = pe.codEstab
+	INNER JOIN dbo.PuntoEmision   pe ON pe.idPuntoEmision  = ap.idPuntoEmision
+	INNER JOIN Sri.Establecimiento e ON e.idEstablecimiento = pe.idEstablecimiento
 	WHERE codEstab_Asig = @codEstab_Asig 
 
 	SELECT ab.idBodega

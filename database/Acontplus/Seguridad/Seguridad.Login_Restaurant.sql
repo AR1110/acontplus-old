@@ -27,7 +27,7 @@ BEGIN
             SELECT @count =  COUNT(DISTINCT r.idUsuarioRol) 
             FROM App.UsuarioRol                                     r WITH (NOLOCK)
             INNER JOIN dbo.Entidad                                  e WITH (NOLOCK) ON e.idEntidad   = r.idEntidad
-			INNER JOIN Sri.Establecimiento						   es WITH (NOLOCK) ON es.ruc        = e.ruc
+			INNER JOIN Sri.Establecimiento						   es WITH (NOLOCK) ON es.idEntidad   = e.idEntidad
 			INNER JOIN AcontplusAdmin.[Seguridad].[Role]           ro WITH (NOLOCK) ON ro.Id         = r.RoleId
             INNER JOIN AcontplusAdmin.[Seguridad].[LicenciaAcceso] la WITH (NOLOCK) ON la.RoleId     = ro.Id
             INNER JOIN AcontplusAdmin.[Config].[Licencia]          cl WITH (NOLOCK) ON cl.Id         = la.LicenciaId

@@ -82,18 +82,18 @@ BEGIN
 	IF @codDoc = 'FV'
 		BEGIN
             
-            SELECT TOP 1 @fechaEmision = fechaEmision FROM dbo.Factura WITH (NOLOCK) WHERE idFactura = @idDocument
+            SELECT TOP 1 @fechaEmision = fechaEmision FROM Ventas.v_Factura WITH (NOLOCK) WHERE idFactura = @idDocument
 
 			SET @header = (
 					        SELECT 
 					             codDoc = 'FV'
-						        ,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
-						        ,nroFactura = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
+						        ,nroDoc = de.serieComprobante 
+						        ,nroFactura = de.serieComprobante 
 						        ,labelNroDoc = 'FACTURA Nro. '
 						        ,ambiente = IIF(pe.ambiente=2, 'PRODUCCIÓN', 'PRUEBAS')
 						        ,emision = IIF(f.emision=1, 'NORMAL', '')
-						        ,codigoAutorizacion = f.claveAcceso
-						        ,fechaEmision = CONVERT(NVARCHAR, FORMAT(f.fechaEmision, 'dd/MM/yyyy hh:mm')) 
+						        ,codigoAutorizacion = de.claveAcceso
+						        ,fechaEmision = CONVERT(NVARCHAR, FORMAT(de.fechaEmision, 'dd/MM/yyyy hh:mm')) 
                                 ,(SELECT TOP 1 CONVERT(NVARCHAR,FORMAT(cx.fechaVencimiento, 'dd/MM/yyyy')) FROM dbo.v_CuentaPorCobrar cx WITH (NOLOCK) WHERE cx.codDoc = '01' AND cx.idDocumento = f.idFactura) as fechaVencimiento 
 						        ,tipoDoc = 'FACTURA DE VENTA'
 						        ,razonSocial = e.razonSocial
@@ -123,12 +123,13 @@ BEGIN
 						        ,regimen = UPPER(s.contribuyenteRimpe)
 						        ,usuario = u.nombreUsuario
                                 ,@saldo saldo
-					        FROM dbo.Factura f WITH (NOLOCK)
-					        INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK)  ON pe.idPuntoEmision = f.idPuntoEmision 
-					        INNER JOIN Sri.Establecimiento s  WITH (NOLOCK)  ON s.codEstab        = pe.codEstab
-					        INNER JOIN dbo.Cliente         cl WITH (NOLOCK)  ON cl.idCliente      = f.idCliente
-					        INNER JOIN dbo.Entidad         e  WITH (NOLOCK)  ON e.idEntidad       = f.idEntidad
-					        INNER JOIN dbo.Usuario         u  WITH (NOLOCK)  ON u.idUsuario       = f.idUsuario 
+					        FROM dbo.Factura                     f WITH (NOLOCK)
+                            INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = f.idDocumentoElectronico
+					        INNER JOIN dbo.Usuario               u WITH (NOLOCK) ON u.idUsuario               = f.idUsuario 
+                            INNER JOIN dbo.Cliente              cl WITH (NOLOCK) ON cl.idCliente              = f.idCliente
+                            INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision 
+                            INNER JOIN Sri.Establecimiento       s WITH (NOLOCK) ON s.idEstablecimiento       = pe.idEstablecimiento
+					        INNER JOIN dbo.Entidad               e WITH (NOLOCK) ON e.idEntidad               = s.idEntidad
 					        WHERE f.idFactura = @idDocument 
 					        FOR JSON PATH
 				        )
@@ -157,6 +158,7 @@ BEGIN
                     SELECT CAST(SUM(fi.TaxBase) as numeric(18,2)) 
                     FROM Ventas.v_FacturaImpuesto fi 
                     where FacturaId = @idDocument AND fi.TaxPercentId = ti.idTipoIva
+                    and fi.[Enabled] = 1
 
                     ),0) as subTotal
             FROM dbo.TipoIva ti WITH (NOLOCK) 
@@ -170,6 +172,7 @@ BEGIN
                     SELECT CAST(SUM(fi.TaxValue) as numeric(18,2)) 
                     FROM Ventas.v_FacturaImpuesto fi 
                     where FacturaId = @idDocument AND fi.TaxPercentId = ti.idTipoIva
+                    and fi.[Enabled] = 1
                     ),0) 
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE ti.porcentaje > 0 
@@ -220,7 +223,7 @@ BEGIN
                             ,@saldo saldo
 						FROM dbo.NotaEntrega ne WITH (NOLOCK)
 						INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision 
-						INNER JOIN Sri.Establecimiento  s WITH (NOLOCK) ON s.codEstab        = pe.codEstab
+						INNER JOIN Sri.Establecimiento  s WITH (NOLOCK) ON s.idEstablecimiento  = pe.idEstablecimiento
 						INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = ne.idCliente
 						LEFT  JOIN dbo.Ciudad           c WITH (NOLOCK) ON c.idCiudad        = cl.idCiudad 
 						INNER JOIN dbo.Entidad          e WITH (NOLOCK) ON e.idEntidad       = ne.idEntidad
@@ -249,7 +252,9 @@ BEGIN
                     ((
                     SELECT  CAST(SUM(ni.TaxBase) as numeric(18,2)) 
                     FROM Ventas.NotaEntregaImpuesto ni WITH (NOLOCK) 
-                    WHERE ni.NotaEntregaId = @idDocument AND ni.TaxPercentId = ti.idTipoIva
+                    WHERE ni.NotaEntregaId = @idDocument 
+                      AND ni.TaxPercentId = ti.idTipoIva
+                      AND ni.[Enabled] = 1
 
                     ),0) as subTotal
             FROM dbo.TipoIva ti WITH (NOLOCK)
@@ -262,7 +267,9 @@ BEGIN
                   ((
                     SELECT  CAST(SUM(ni.TaxValue) as numeric(18,2)) 
                     FROM Ventas.NotaEntregaImpuesto ni WITH (NOLOCK) 
-                    WHERE ni.NotaEntregaId = @idDocument AND ni.TaxPercentId = ti.idTipoIva
+                    WHERE ni.NotaEntregaId = @idDocument 
+                    AND ni.TaxPercentId = ti.idTipoIva
+                    AND ni.[Enabled] = 1
 
                   ),0) 
             FROM dbo.TipoIva ti WITH (NOLOCK) 
@@ -314,7 +321,7 @@ BEGIN
 								,observacion = ISNULL(UPPER(pr.observacion), '')	
 							FROM dbo.Proforma pr
 							INNER JOIN dbo.PuntoEmision       pe  ON pe.idPuntoEmision       = pr.idPuntoEmision 
-							INNER JOIN Sri.Establecimiento    s   ON s.codEstab              = pe.codEstab
+							INNER JOIN Sri.Establecimiento    s   ON s.idEstablecimiento              = pe.idEstablecimiento
 							INNER JOIN dbo.TipoDocumento      td  ON td.idTipoDocumento      = pr.idTipoDocumento
 							INNER JOIN dbo.Cliente            cl  ON cl.idCliente            = pr.idCliente
 							INNER JOIN dbo.TipoIdentificacion ti  ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
@@ -344,7 +351,9 @@ BEGIN
                     ((
                     SELECT  CAST(SUM(pr.TaxBase) as numeric(18,2)) 
                     FROM Ventas.ProformaImpuesto pr WITH (NOLOCK) 
-                    WHERE pr.ProformaId = @idDocument AND pr.TaxPercentId = ti.idTipoIva
+                    WHERE pr.ProformaId = @idDocument 
+                     AND pr.TaxPercentId = ti.idTipoIva
+                     AND pr.[Enabled] = 1
 
                     ),0) as subTotal
             FROM dbo.TipoIva ti WITH (NOLOCK)
@@ -358,6 +367,7 @@ BEGIN
                     SELECT  CAST(SUM(pr.TaxValue) as numeric(18,2)) 
                     FROM Ventas.ProformaImpuesto pr WITH (NOLOCK) 
                     WHERE pr.ProformaId = @idDocument AND pr.TaxPercentId = ti.idTipoIva
+                    and pr.[Enabled] = 1
 
                   ),0) 
             FROM dbo.TipoIva ti WITH (NOLOCK) 

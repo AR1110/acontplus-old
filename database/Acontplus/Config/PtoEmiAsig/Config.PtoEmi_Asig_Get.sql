@@ -57,8 +57,8 @@ BEGIN
 	   ,CAST(0 as bit)
 	   ,CAST(0 as bit)
 	FROM dbo.PuntoEmision pe 
-	INNER JOIN Sri.Establecimiento e ON e.codEstab = pe.codEstab
-	WHERE pe.codEstab = @codEstab AND pe.idPuntoEmision NOT IN (SELECT idPuntoEmision FROM Config.PtoEmi_Asig WHERE codEstab_Asig = @codEstab_Asig )
+	INNER JOIN Sri.Establecimiento e ON e.idEstablecimiento = pe.idEstablecimiento
+	WHERE e.codEstab = @codEstab AND pe.idPuntoEmision NOT IN (SELECT idPuntoEmision FROM Config.PtoEmi_Asig WHERE codEstab_Asig = @codEstab_Asig )
 
 END 
 GO
