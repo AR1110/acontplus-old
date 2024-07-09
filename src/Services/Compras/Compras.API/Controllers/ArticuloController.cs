@@ -21,10 +21,10 @@ public class ArticuloController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Recepcion.Articulo_Get");
+            await _db.SpExecuteAsync("Recepcion.Articulo_Get");
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("jsonData", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         catch (Exception ex)
         {

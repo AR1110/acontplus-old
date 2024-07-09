@@ -14,11 +14,12 @@ public static class ApplicationServicesExtensions
                     x.SerializerSettings.ContractResolver =
                         new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
                 });
-
+        services.AddScoped<IAdoSqlServer, AdoSqlServer>();
         services.AddScoped<IAprobacionDocService, AprobacionDocService>();
         services.AddScoped<IClienteService, ClienteService>();
         services.AddScoped<INotaEntregaService, NotaEntregaService>();
         services.AddScoped<IProformaService, ProformaService>();
+       
         return services;
     }
 }

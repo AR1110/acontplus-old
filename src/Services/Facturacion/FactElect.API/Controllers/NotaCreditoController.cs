@@ -29,10 +29,10 @@ public class NotaCreditoController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Ventas.NotaCredito_Insert", true);
+            await _db.SpExecuteAsync("Ventas.NotaCredito_Insert", true);
             _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -48,13 +48,13 @@ public class NotaCreditoController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Ventas.NotaCredito_Update", true);
+            await _db.SpExecuteAsync("Ventas.NotaCredito_Update", true);
             _db.AddDynamicParam("userRoleId",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
 
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -71,11 +71,11 @@ public class NotaCreditoController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Ventas.NotaCredito_Delete", true);
+            await _db.SpExecuteAsync("Ventas.NotaCredito_Delete", true);
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {

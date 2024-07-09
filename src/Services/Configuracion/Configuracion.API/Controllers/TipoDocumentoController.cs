@@ -21,10 +21,10 @@ public class TipoDocumentoController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("Config.TipoDocumento_Get");
+            await _db.SpExecuteAsync("Config.TipoDocumento_Get");
             _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {

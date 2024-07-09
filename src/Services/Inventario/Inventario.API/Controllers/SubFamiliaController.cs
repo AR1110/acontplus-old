@@ -107,7 +107,7 @@ public class SubFamiliaController : BaseApiController
     //        await _db.SPExecute("Almacen.SubFamilia_For_Select");
     //        _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
     //        _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-    //        _response = _db.GetDataTableAsync();
+    //        _response = await _db.GetDataTableAsync();
     //    }
     //    catch (Exception ex)
     //    {

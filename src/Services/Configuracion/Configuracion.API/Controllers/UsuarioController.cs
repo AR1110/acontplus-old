@@ -22,9 +22,9 @@ public class UsuarioController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("App.Usuario_Get");
+            await _db.SpExecuteAsync("App.Usuario_Get");
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         catch (Exception ex)
         {
@@ -46,10 +46,10 @@ public class UsuarioController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("App.Usuario_Search");
+            await _db.SpExecuteAsync("App.Usuario_Search");
             _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         catch (Exception ex)
         {
@@ -72,9 +72,9 @@ public class UsuarioController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("App.Usuario_Insert");
+            await _db.SpExecuteAsync("App.Usuario_Insert");
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -96,10 +96,10 @@ public class UsuarioController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _db.SPExecute("App.Usuario_Update");
+            await _db.SpExecuteAsync("App.Usuario_Update");
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -120,9 +120,9 @@ public class UsuarioController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("App.Usuario_Delete");
+            await _db.SpExecuteAsync("App.Usuario_Delete");
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {

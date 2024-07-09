@@ -110,6 +110,10 @@
           <DataField>stockMinimo</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="medida">
+          <DataField>medida</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -467,6 +471,42 @@
                   </TablixCornerCell>
                   <TablixCornerCell>
                     <CellContents>
+                      <Textbox Name="Textbox26">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value />
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox26</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                  <TablixCornerCell>
+                    <CellContents>
                       <Textbox Name="Textbox24">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
@@ -676,6 +716,44 @@
                           </Paragraph>
                         </Paragraphs>
                         <rd:DefaultName>Textbox11</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>#d61672</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox27">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Medida</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox27</rd:DefaultName>
                         <Style>
                           <Border>
                             <Style>Solid</Style>
@@ -1654,16 +1732,16 @@
                               <TablixMembers>
                                 <TablixMember>
                                   <TablixHeader>
-                                    <Size>1.70625cm</Size>
+                                    <Size>1.78563cm</Size>
                                     <CellContents>
-                                      <Textbox Name="marca">
+                                      <Textbox Name="medida">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!marca.Value</Value>
+                                                <Value>=Fields!medida.Value</Value>
                                                 <Style>
                                                   <FontFamily>Arial</FontFamily>
                                                   <FontSize>7pt</FontSize>
@@ -1675,7 +1753,7 @@
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>marca</rd:DefaultName>
+                                        <rd:DefaultName>medida</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>Solid</Style>
@@ -1692,16 +1770,16 @@
                                   <TablixMembers>
                                     <TablixMember>
                                       <TablixHeader>
-                                        <Size>2.5cm</Size>
+                                        <Size>1.70625cm</Size>
                                         <CellContents>
-                                          <Textbox Name="precioCosto1">
+                                          <Textbox Name="marca">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!precioCosto.Value</Value>
+                                                    <Value>=Fields!marca.Value</Value>
                                                     <Style>
                                                       <FontFamily>Arial</FontFamily>
                                                       <FontSize>7pt</FontSize>
@@ -1713,7 +1791,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>precioCosto1</rd:DefaultName>
+                                            <rd:DefaultName>marca</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -1728,7 +1806,47 @@
                                         </CellContents>
                                       </TablixHeader>
                                       <TablixMembers>
-                                        <TablixMember />
+                                        <TablixMember>
+                                          <TablixHeader>
+                                            <Size>1.89146cm</Size>
+                                            <CellContents>
+                                              <Textbox Name="precioCosto1">
+                                                <CanGrow>true</CanGrow>
+                                                <KeepTogether>true</KeepTogether>
+                                                <Paragraphs>
+                                                  <Paragraph>
+                                                    <TextRuns>
+                                                      <TextRun>
+                                                        <Value>=Fields!precioCosto.Value</Value>
+                                                        <Style>
+                                                          <FontFamily>Arial</FontFamily>
+                                                          <FontSize>7pt</FontSize>
+                                                        </Style>
+                                                      </TextRun>
+                                                    </TextRuns>
+                                                    <Style>
+                                                      <TextAlign>Center</TextAlign>
+                                                    </Style>
+                                                  </Paragraph>
+                                                </Paragraphs>
+                                                <rd:DefaultName>precioCosto1</rd:DefaultName>
+                                                <Style>
+                                                  <Border>
+                                                    <Style>Solid</Style>
+                                                  </Border>
+                                                  <VerticalAlign>Middle</VerticalAlign>
+                                                  <PaddingLeft>2pt</PaddingLeft>
+                                                  <PaddingRight>2pt</PaddingRight>
+                                                  <PaddingTop>2pt</PaddingTop>
+                                                  <PaddingBottom>2pt</PaddingBottom>
+                                                </Style>
+                                              </Textbox>
+                                            </CellContents>
+                                          </TablixHeader>
+                                          <TablixMembers>
+                                            <TablixMember />
+                                          </TablixMembers>
+                                        </TablixMember>
                                       </TablixMembers>
                                     </TablixMember>
                                   </TablixMembers>
@@ -1780,7 +1898,7 @@
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>15.20625cm</Size>
+                        <Size>16.38334cm</Size>
                         <CellContents>
                           <Textbox Name="Textbox30">
                             <CanGrow>true</CanGrow>
@@ -1826,7 +1944,7 @@
             <DataSetName>detalleDs</DataSetName>
             <Top>3.0607cm</Top>
             <Height>2.50354cm</Height>
-            <Width>25.01833cm</Width>
+            <Width>26.19541cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
@@ -1842,7 +1960,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>250.18333mm</Width>
+      <Width>261.95413mm</Width>
       <Page>
         <PageFooter>
           <Height>0.76729cm</Height>

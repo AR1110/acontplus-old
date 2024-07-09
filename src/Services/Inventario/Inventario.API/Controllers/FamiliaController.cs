@@ -18,11 +18,11 @@ public class FamiliaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Familia_Get");
+            await _db.SpExecuteAsync("Almacen.Familia_Get");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {
@@ -40,10 +40,10 @@ public class FamiliaController : BaseApiController
         try
         {
             var userRoleId = User.GetUserRoleId();
-            await _db.SPExecute("Almacen.Familia_Insert");
+            await _db.SpExecuteAsync("Almacen.Familia_Insert");
             _db.AddDynamicParam("userRoleId", userRoleId);
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -61,11 +61,11 @@ public class FamiliaController : BaseApiController
         try
         {
             var userRoleId = User.GetUserRoleId();
-            await _db.SPExecute("Almacen.Familia_Update");
+            await _db.SpExecuteAsync("Almacen.Familia_Update");
             _db.AddDynamicParam("userRoleId", userRoleId);
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -82,11 +82,11 @@ public class FamiliaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Familia_Update_Cancel");
+            await _db.SpExecuteAsync("Almacen.Familia_Update_Cancel");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -103,10 +103,10 @@ public class FamiliaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Almacen.Familia_For_Select");
+            await _db.SpExecuteAsync("Almacen.Familia_For_Select");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {

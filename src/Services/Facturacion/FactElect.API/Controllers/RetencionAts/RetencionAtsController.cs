@@ -31,7 +31,7 @@ public class RetencionAtsController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("FactElect.RetencionAts_Insert");
+            await _db.SpExecuteAsync("FactElect.RetencionAts_Insert");
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("infoCompRet", SqlStringParam.Sanitize(data.infoCompRet));
             _db.AddDynamicParam("docsSust", SqlStringParam.Sanitize(data.docsSust));
@@ -48,7 +48,7 @@ public class RetencionAtsController : BaseApiController
                 _db.AddDynamicParam("infoAdicional", SqlStringParam.Sanitize(data.infoAdicional));
             }
 
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -64,11 +64,11 @@ public class RetencionAtsController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("FactElect.RetencionAts_Update");
+            await _db.SpExecuteAsync("FactElect.RetencionAts_Update");
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("infoCompRet", SqlStringParam.Sanitize(data.infoCompRet));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -84,10 +84,10 @@ public class RetencionAtsController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("FactElect.RetencionAts_Cancel");
+            await _db.SpExecuteAsync("FactElect.RetencionAts_Cancel");
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
             ;
         }
         finally
@@ -104,10 +104,10 @@ public class RetencionAtsController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("FactElect.RetencionAts_Delete");
+            await _db.SpExecuteAsync("FactElect.RetencionAts_Delete");
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("idRol", User.GetUserRoleId());
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {

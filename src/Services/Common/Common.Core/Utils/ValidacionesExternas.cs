@@ -48,7 +48,7 @@ public class ValidacionesExternas
                                 }
                                 else
                                 {
-                                    _gr.id = "0";
+                                    _gr.code = "0";
                                     _gr.typeNotify = "is-invalid";
                                     _gr.message = "Los últimos tres dígitos de un Ruc siempre serán: 001";
                                 }
@@ -56,14 +56,14 @@ public class ValidacionesExternas
                         }
                         else
                         {
-                            _gr.id = "0";
+                            _gr.code = "0";
                             _gr.typeNotify = "is-invalid";
                             _gr.message = "Numero de identificacion fuera de los codigos de la Provincia";
                         }
                     }
                     else
                     {
-                        _gr.id = "0";
+                        _gr.code = "0";
                         _gr.typeNotify = "is-invalid";
                         _gr.message = "Cantidad de numeros no es correcta";
                     }
@@ -73,7 +73,7 @@ public class ValidacionesExternas
         }
         catch (Exception ex)
         {
-            _gr.id = "0";
+            _gr.code = "0";
             _gr.message = ex.Message;
             _gr.titleSms = "Validacion Externa";
         }
@@ -114,20 +114,20 @@ public class ValidacionesExternas
 
             if (verifi == int.Parse(validarCedula[9].ToString()))
             {
-                _gr.id = "1";
+                _gr.code = "1";
                 _gr.typeNotify = "is-valid";
                 _gr.message = "Cedula de Identidicación";
             }
             else
             {
-                _gr.id = "0";
+                _gr.code = "0";
                 _gr.typeNotify = "is-invalid";
                 _gr.message = "Numero de Cedula ingresado incorrectamente";
             }
         }
         catch (Exception ex)
         {
-            _gr.id = "0";
+            _gr.code = "0";
             _gr.message = ex.Message;
             _gr.titleSms = "Validadar Cedula";
         }
@@ -168,20 +168,20 @@ public class ValidacionesExternas
 
             if (verifi == int.Parse(validarCedula[9].ToString()))
             {
-                _gr.id = "1";
+                _gr.code = "1";
                 _gr.typeNotify = "is-valid";
                 _gr.message = "Ruc Persona Natural";
             }
             else
             {
-                _gr.id = "0";
+                _gr.code = "0";
                 _gr.typeNotify = "is-invalid";
                 _gr.message = "Ruc de Persona Natural ingresado incorrectamente";
             }
         }
         catch (Exception ex)
         {
-            _gr.id = "0";
+            _gr.code = "0";
             _gr.message = ex.Message;
             _gr.titleSms = "Validadar Ruc Persona Natural";
         }
@@ -211,7 +211,7 @@ public class ValidacionesExternas
                 }
                 else if (aux % 11 == 1)
                 {
-                    _gr.id = "0";
+                    _gr.code = "0";
                     _gr.typeNotify = "is-invalid";
                     _gr.message = "Numero de identificacion Persona Juridica ingresado incorrectamente";
                 }
@@ -223,27 +223,27 @@ public class ValidacionesExternas
 
                 if (veri == int.Parse(validarCedula[9].ToString()))
                 {
-                    _gr.id = "1";
+                    _gr.code = "1";
                     _gr.typeNotify = "is-valid";
                     _gr.message = "Ruc De Persona Juridica";
                 }
                 else
                 {
-                    _gr.id = "0";
+                    _gr.code = "0";
                     _gr.typeNotify = "is-invalid";
                     _gr.message = "Numero de identificacion Persona Juridica ingresado ingresado incorrectamente";
                 }
             }
             else
             {
-                _gr.id = "0";
+                _gr.code = "0";
                 _gr.typeNotify = "is-invalid";
                 _gr.message = "Numero de identificacion Persona Juridica ingresado ingresado incorrectamente";
             }
         }
         catch (Exception ex)
         {
-            _gr.id = "0";
+            _gr.code = "0";
             _gr.message = ex.Message;
             _gr.titleSms = "Verificar Persona Juridica";
         }
@@ -273,7 +273,7 @@ public class ValidacionesExternas
                         veri = 0;
                         break;
                     case 1:
-                        _gr.id = "0";
+                        _gr.code = "0";
                         _gr.typeNotify = "is-invalid";
                         _gr.message = "Numero de identificacion Sector Publico ingresado incorrectamente";
                         break;
@@ -285,27 +285,27 @@ public class ValidacionesExternas
 
                 if (veri == int.Parse(validarCedula[8].ToString()))
                 {
-                    _gr.id = "1";
+                    _gr.code = "1";
                     _gr.typeNotify = "is-valid";
                     _gr.message = "Ruc Del Sector Publico";
                 }
                 else
                 {
-                    _gr.id = "0";
+                    _gr.code = "0";
                     _gr.typeNotify = "is-invalid";
                     _gr.message = "Numero de identificacion Sector Publico ingresado incorrectamente";
                 }
             }
             else
             {
-                _gr.id = "0";
+                _gr.code = "0";
                 _gr.typeNotify = "is-invalid";
                 _gr.message = "Numero de identificacion Sector Publico ingresado incorrectamente";
             }
         }
         catch (Exception ex)
         {
-            _gr.id = "0";
+            _gr.code = "0";
             _gr.message = ex.Message;
             _gr.titleSms = "Verificar Sector Publico";
         }

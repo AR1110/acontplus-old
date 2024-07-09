@@ -37,11 +37,11 @@ public class DocSustPagoController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("FactElect.RetAts_Doc_Sust_Pago_Insert");
+            await _db.SpExecuteAsync("FactElect.RetAts_Doc_Sust_Pago_Insert");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("idDocSust", idDocSust);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -58,11 +58,11 @@ public class DocSustPagoController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("FactElect.RetAts_Doc_Sust_Pago_Update");
+            await _db.SpExecuteAsync("FactElect.RetAts_Doc_Sust_Pago_Update");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -79,10 +79,10 @@ public class DocSustPagoController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("FactElect.RetAts_Doc_Sust_Pago_Delete");
+            await _db.SpExecuteAsync("FactElect.RetAts_Doc_Sust_Pago_Delete");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {

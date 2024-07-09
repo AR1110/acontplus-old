@@ -171,7 +171,7 @@
 
 
         service.getDataForm = () => {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -257,7 +257,7 @@
         }
 
         service.getDataFilter = () => {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 4 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 4 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -285,7 +285,7 @@
          * @returns 
          */
         service.getAll = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 let data = {
                     facturas: [],
                     dataTotals: {}
@@ -359,7 +359,7 @@
                 throw ''
             }
             query.tipo = 2;
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -381,12 +381,13 @@
             })
         }
 
-        service.getIdForInfo = function (id) {
+        service.getIdForInfo = function (id, idDocumentoElectronico) {
             let spParams = {
                 tipo: 8,
-                id
+                id,
+                idDocumentoElectronico //solo se envia cuando proviene de doc. electronico 
             }
-            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify(spParams)}`, null, true).then(response => {
                 if (response.code === "0") {
                     console.log("Get Data Info", response)
                     throw response;
@@ -433,7 +434,7 @@
         }
 
         service.generateSerieComprobante = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 7 })), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 7 })), null, true).then(response => {
                 if (response.code === "0") {
                     console.warn(response)
                     throw null;
@@ -447,7 +448,7 @@
         }
 
         service.getId = function (id) {
-            return mS.getData('get', `${url}GetId/${id}`, null, true).then(response => {
+            return mS.getData('get', `${url}${id}`, null, true).then(response => {
                 if (response.code === "0") {
                     console.log(response)
                 }
@@ -604,7 +605,7 @@
                 tipo: 9,
                 id
             }
-            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify(spParams)}`, null, true).then(response => {
                 if (response.code === "0") {
                     console.log("Get Data Info", response)
                     throw response;
@@ -691,7 +692,7 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url + 'Insert', { data }, true).then(response => {
+            return mS.getData('post', url, { data }, true).then(response => {
                 if (response.code === "0") {
                     service.data = {};
                     return response;
@@ -716,7 +717,7 @@
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, { data }, true).then(response => {
+            return mS.getData('put', url+id, { data }, true).then(response => {
                 if (response.code === "0") {
                     service.data = {}
                     return response;
@@ -732,7 +733,7 @@
 
 
         service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
+            return mS.getData('delete',`${url}${id}`, null, true).then(response => {
                 return response;
             })
         }

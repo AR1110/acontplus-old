@@ -26,10 +26,10 @@ public class TransportistaController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Logistica.Transportista_Get");
+            await _db.SpExecuteAsync("Logistica.Transportista_Get");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {
@@ -46,12 +46,12 @@ public class TransportistaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Logistica.Transportista_Insert");
+            await _db.SpExecuteAsync("Logistica.Transportista_Insert");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("idTipoIdentificacion", data.idTipoIdentificacion);
             _db.AddDynamicParam("nroIdentificacion", data.nroIdentificacion);
             _db.AddDynamicParam("nombre", data.nombre);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -68,12 +68,12 @@ public class TransportistaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Logistica.Transportista_Update");
+            await _db.SpExecuteAsync("Logistica.Transportista_Update");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("nroIdentificacion", data.nroIdentificacion);
             _db.AddDynamicParam("nombre", data.nombre);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -90,10 +90,10 @@ public class TransportistaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("Logistica.Transportista_Delete");
+            await _db.SpExecuteAsync("Logistica.Transportista_Delete");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {

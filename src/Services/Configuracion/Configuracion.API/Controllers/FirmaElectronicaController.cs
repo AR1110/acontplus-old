@@ -39,7 +39,7 @@ public class FirmaElectronicaController(
                     signFile.Content))
             {
                 var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
-                await _db.SPExecute("Config.FirmaElectronica_Insert");
+                await _db.SpExecuteAsync("Config.FirmaElectronica_Insert");
                 _db.AddDynamicParam("idUsuarioRol",
                     User.GetUserRoleId());
                 _db.AddDynamicParam("contrasenia", data.contrasenia);
@@ -47,7 +47,7 @@ public class FirmaElectronicaController(
                 _db.AddDynamicParam("firma", signFile.Content);
                 _db.AddDynamicParam("contentType", signFile.ContentType);
                 _db.AddDynamicParam("fechaCaducidad", data.fechaCaducidad);
-                _response = _db.GetDefault();
+                _response = await _db.GetDefaultAsync();
             }
             else
             {
@@ -91,14 +91,14 @@ public class FirmaElectronicaController(
             if (await new FileUpload().Upload(configuration.GetSection("FactElectCerts").Value, signFile.FileName,
                     signFile.Content))
             {
-                await _db.SPExecute("Config.FirmaElectronica_Update_Signature");
+                await _db.SpExecuteAsync("Config.FirmaElectronica_Update_Signature");
                 _db.AddDynamicParam("idUsuarioRol",
                     User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("fileName", signFile.FileName);
                 _db.AddDynamicParam("firma", signFile.Content);
                 _db.AddDynamicParam("contentType", signFile.ContentType);
-                _response = _db.GetDefault();
+                _response = await _db.GetDefaultAsync();
             }
             else
             {
@@ -129,14 +129,14 @@ public class FirmaElectronicaController(
             var idRol = User.GetUserRoleId();
 
             var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
-            await _db.SPExecute("Config.FirmaElectronica_Update");
+            await _db.SpExecuteAsync("Config.FirmaElectronica_Update");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("idFirmaElectronica", data.idFirmaElectronica);
             _db.AddDynamicParam("contrasenia", data.contrasenia);
             _db.AddDynamicParam("fechaCaducidad", data.fechaCaducidad);
             _db.AddDynamicParam("estado", data.estado);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {

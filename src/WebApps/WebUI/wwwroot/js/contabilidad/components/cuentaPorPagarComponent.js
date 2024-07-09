@@ -356,6 +356,7 @@ app.component("appCuentaPorPagarComponent", {
             });
         }
 
+        
         $scope.openDocPaymentModal = function () {
             if ($scope.selectedDocumentos.length === 0) {
                 tS.toastr('warning', 'Seleccione al menos un documento!');

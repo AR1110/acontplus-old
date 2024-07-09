@@ -17,9 +17,9 @@ public class NotificacionTributariaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("FactElect.Notificacion_Tributaria_Get");
+            await _db.SpExecuteAsync("FactElect.Notificacion_Tributaria_Get");
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {
@@ -36,11 +36,11 @@ public class NotificacionTributariaController : BaseApiController
         var _db = new DbAccess(_configuration);
         try
         {
-            await _db.SPExecute("FactElect.Notificacion_Tributaria_Insert");
+            await _db.SpExecuteAsync("FactElect.Notificacion_Tributaria_Insert");
             _db.AddDynamicParam("idRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {

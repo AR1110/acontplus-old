@@ -1,3 +1,4 @@
+//@ts-check
 (function () {
 
     'use strict';
@@ -5,29 +6,30 @@
     app.controller('documentoElectronicoCtrl', documentoElectronicoCtrl)
     documentoElectronicoCtrl.$inject = [
         '$scope',
-        'mainService',
-        'commonService',
-        'docElectService',
-        'modalService',
-        'nombreModal',
-        'formulario',
-        'toastService',
-        'decodeToken',
+        '$injector',    
         'proveedorService'
     ]
 
     function documentoElectronicoCtrl(
         $scope,
-        mS,
-        commonSvc,
-        docElectSvc,
-        modalSvc,
-        nombreModalConst,
-        fS,
-        tS,
-        decodeToken,
+        $injector,    
         proveedorSvc
     ) {
+
+        let CODE_REPORT = $injector.get('CODE_REPORT');
+        let mS = $injector.get('mainService');
+        let commonSvc = $injector.get('commonService');
+        let docElectSvc = $injector.get('docElectService');
+        let modalSvc = $injector.get('modalService');
+        let nombreModalConst = $injector.get('nombreModal');
+        let fS = $injector.get('formulario');
+        let tS = $injector.get('toastService');
+        let nombreModalVenta = $injector.get('nombreModalVenta');
+
+
+
+
+
 
         $scope.comprobantes = [];
         $scope.selectedComprobantes = [];
@@ -267,8 +269,7 @@
         $scope.searchUser = function (textSearch) {
             try {
                 let query = {
-                    busqueda: textSearch,
-                    idRol: decodeToken.userRoleId
+                    busqueda: textSearch, 
                 }
                 return commonSvc.usuarioSearch(query)
             } catch (error) {
@@ -302,16 +303,16 @@
         }
         //=====================================================END FILTER===============================================
         const REPORT_CODES = Object.freeze({
-            '01': 'RF',
-            '03': 'RLC',
-            '04': 'RNCC',
-            '06': 'RGR',
-            '07': 'RRC',
+            '01': CODE_REPORT.RF,
+            '03': CODE_REPORT.RLC,
+            '04': CODE_REPORT.RNC,
+            '06': CODE_REPORT.RGR,
+            '07': CODE_REPORT.RRC,
         })
 
         //Get Report 
         $scope.getReport = (item) => {
-            try {
+            try { 
 
                 if (!(Object.keys(REPORT_CODES).includes(item.codDoc))) {
                     tS.toastr('warning', 'No Disponible')
@@ -320,10 +321,11 @@
 
                 let format = 'pdf';
 
+
                 const parameters = {
                     dataParams: JSON.stringify({
                         versionComp: item.versionComp,
-                        id: item.idDocumento,
+                        idDocumentoElectronico: item.idDocumentoElectronico,
                         normalMethod: true,
                     }),
                     reportParams: JSON.stringify({
@@ -352,16 +354,19 @@
 
         $scope.getDetalleDoc = async (item) => {
             try {
+
                 const tipoDoc = $scope.tiposDocumento.find(doc => doc.codDoc === item.codDoc);
+              
                 let codigo = '';
                 if (tipoDoc.codDoc === "01") {
-                    codigo = 'FV'
+                    loadDetalleInvoice(item.idDocumentoElectronico, tipoDoc.codDoc)
+                    return
                 }
                 if (tipoDoc.codDoc === "06") {
                     codigo = 'GR'
                 }
-                commonSvc.viewDetailDocument({
-                    id: item.idDocumento,
+                commonSvc.viewDetailDocument({                    
+                    idDocumentoElectronico: item.idDocumentoElectronico,
                     codigoDocumento: codigo,
                     size: 'xl',
                     windowClass: 'uibModalFullScreen'
@@ -371,6 +376,25 @@
                 console.error(error)
             }
         }
+
+        async function loadDetalleInvoice(idDocumentoElectronico, codDoc){
+            let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
+            let ctrl = (await import(fileCtrl))[controller];
+            let template = templates['FV_SRI'];
+            modalSvc.openModalCustom({
+                controller: ctrl,
+                template: template,
+                size: 'xl',
+                params: {
+                    codDoc,                    
+                    idDocumentoElectronico,
+                },
+                windowClass: 'uibModalFullScreen',
+                isRenderRazorPartial: true
+            })
+        }
+
+
 
         $scope.getAuthorizate = async () => {
             try {
@@ -391,19 +415,34 @@
                 })
 
                 if (isConfirmed) {
+                    
+                    let updatePromises = $scope.selectedComprobantes.map(item =>
+                        docElectSvc.updateXml(item.idDocumentoElectronico)
+                    );
+                    
                     showLoader();
-                    for (let item of $scope.selectedComprobantes) {
-                        docElectSvc.updateXml(item.idDocumentoElectronico).then(() => {
-                            let index = $scope.selectedComprobantes.indexOf(item);
-                            $scope.selectedComprobantes.splice(index, 1);
+                    await Promise.all(updatePromises).then(() => {
+                        // Vaciar el array selectedComprobantes después de la actualización
+                        Swal.fire({
+                            icon: 'success',
+                            html: `<small>Autorizando...</small>`,
+                            timer: 1000
                         })
-                    }
-                    Swal.fire({
-                        icon: 'success',
-                        html: `<small>Autorizando...</small>`,
-                        timer: 1000
+                        $scope.selectedComprobantes = [];
+                        $scope.refresh();
+                    }).catch((error) => {                        
+                        console.error("Failed to update one or more items:", error);
+                    }).finally(()=>{
+                        hideLoader();
                     })
-                    hideLoader();
+
+
+                    // for (let item of $scope.selectedComprobantes) {
+                    //     docElectSvc.updateXml(item.idDocumentoElectronico).then(() => {
+                    //         let index = $scope.selectedComprobantes.indexOf(item);
+                    //         $scope.selectedComprobantes.splice(index, 1);
+                    //     })
+                    // } 
                 }
             } catch (error) {
                 console.log(error)
@@ -464,16 +503,7 @@
                 console.log(error)
             }
         }
-
-        $scope.typeSendMail = 'SRI';
-
-        //------------------SEND WHATSAPP
-        $scope.typeSend = 'SRI';
-        $scope.hasPermissions = decodeToken.codeRole == 'SU' ? true : false
-
-        $scope.paramsToWhatsapp = {
-            loginOnly: true
-        }
+  
 
         $scope.showBtnUpdateXml = (item) => {
             return [2, 0, 5].includes(item.codEstado)
@@ -497,7 +527,7 @@
                 docElectSvc.updateXml(item.idDocumentoElectronico).then(response => {
                     if((response)){
                         tS.toastr('success', response.message, response.titleSms);
-                         getComprobantes(); 
+                         $scope.refresh(); 
                     }
                       
                 })
@@ -512,7 +542,7 @@
 
         $scope.updateComprobanteResult = function(result){
             if(typeof result==='object'){
-                 getComprobantes();
+                $scope.refresh(); 
             }
         }
 
@@ -553,7 +583,7 @@
             docElectSvc.retencionAtsCancel(item.idDocumentoElectronico).then(response => {
                 if (response.code == '1') {
                     tS.toastr('success', response.message)
-                     getComprobantes()
+                    $scope.refresh(); 
                 }
                 if (response.code == '0') {
                     tS.toastr('warning', response.message)

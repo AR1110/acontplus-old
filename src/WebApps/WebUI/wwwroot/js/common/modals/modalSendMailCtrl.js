@@ -1,3 +1,4 @@
+//@ts-check
 export {
     modalSendMailCtrl,
     StatusEmail
@@ -9,7 +10,7 @@ function modalSendMailCtrl($scope, $uibModalInstance, $injector, sharedSvc, fS, 
     let mS = $injector.get('mainService');
 
     let { data } = params;
-    console.log(params)
+    
     $scope.data = data || {};
 
     $scope.correos = []; 
@@ -18,11 +19,15 @@ function modalSendMailCtrl($scope, $uibModalInstance, $injector, sharedSvc, fS, 
     let esNotificacionGeneral = false;
  
 
-    function createDataParamDocSri(id, codDoc) {
+    function createDataParamDocSri() {
+        let id = data.id;
+        let idDocumentoElectronico = data.idDocumentoElectronico;
+        let codDoc = data.codDoc;
         return { 
             tipo: 2,
             id,
-            codDoc: codDoc,
+            idDocumentoElectronico,
+            codDoc,
             esNotificacionTributaria: true
         };
     }
@@ -34,13 +39,14 @@ function modalSendMailCtrl($scope, $uibModalInstance, $injector, sharedSvc, fS, 
             esNotificacionGeneral: true
         };
     }
+ 
 
     let dataParamGetDataForm = {
-        [DOC_TYPE.FV_SRI]: createDataParamDocSri(data.idDocumentoElectronico, data.codDoc),
-        [DOC_TYPE.LC_SRI]: createDataParamDocSri(data.idDocumentoElectronico, data.codDoc),
-        [DOC_TYPE.GR_SRI]: createDataParamDocSri(data.idDocumentoElectronico, data.codDoc),
-        [DOC_TYPE.R_SRI]: createDataParamDocSri(data.idDocumentoElectronico, data.codDoc),
-        [DOC_TYPE.NC_SRI]: createDataParamDocSri(data.idDocumentoElectronico, data.codDoc),
+        [DOC_TYPE.FV_SRI]: createDataParamDocSri(),
+        [DOC_TYPE.LC_SRI]: createDataParamDocSri(),
+        [DOC_TYPE.GR_SRI]: createDataParamDocSri(),
+        [DOC_TYPE.R_SRI]: createDataParamDocSri(),
+        [DOC_TYPE.NC_SRI]: createDataParamDocSri(),
         [DOC_TYPE.NE]: createDataParamDoc(data.idDocumento, data.codDoc)
     };
     
@@ -55,7 +61,7 @@ function modalSendMailCtrl($scope, $uibModalInstance, $injector, sharedSvc, fS, 
         esNotificacionTributaria = params.esNotificacionTributaria;
         esNotificacionGeneral = params.esNotificacionGeneral;
 
-        console.log(params)
+         
         sharedSvc.getDataFormNotificacion(params).then(response=>{  
             $scope.correos =  response.correos; 
         }) 

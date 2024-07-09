@@ -19,10 +19,10 @@ public class EmpleadoController : BaseApiController
         try
         {
 
-            await _db.SPExecute("Ventas.Empleado_Get");
+            await _db.SpExecuteAsync("Ventas.Empleado_Get");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {
@@ -42,10 +42,10 @@ public class EmpleadoController : BaseApiController
         {
 
 
-            await _db.SPExecute("Ventas.Empleado_Search");
+            await _db.SpExecuteAsync("Ventas.Empleado_Search");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally { _db.Close(); }
 
@@ -61,10 +61,10 @@ public class EmpleadoController : BaseApiController
         try
         {
 
-            await _db.SPExecute("Ventas.Empleado_Insert");
+            await _db.SpExecuteAsync("Ventas.Empleado_Insert");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -82,11 +82,11 @@ public class EmpleadoController : BaseApiController
         try
         {
 
-            await _db.SPExecute("Ventas.Empleado_Update");
+            await _db.SpExecuteAsync("Ventas.Empleado_Update");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -104,10 +104,10 @@ public class EmpleadoController : BaseApiController
         try
         {
 
-            await _db.SPExecute("Ventas.Empleado_Delete");
+            await _db.SpExecuteAsync("Ventas.Empleado_Delete");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {

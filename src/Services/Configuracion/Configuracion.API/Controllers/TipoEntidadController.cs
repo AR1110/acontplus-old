@@ -20,11 +20,11 @@ public class TipoEntidadController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Config.TipoEntidad_Get");
+            await _db.SpExecuteAsync("Config.TipoEntidad_Get");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", json);
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         catch (Exception ex)
         {
@@ -46,11 +46,11 @@ public class TipoEntidadController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Config.TipoEntidad_Insert");
+            await _db.SpExecuteAsync("Config.TipoEntidad_Insert");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", json);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -72,13 +72,13 @@ public class TipoEntidadController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Config.TipoEntidad_Update");
+            await _db.SpExecuteAsync("Config.TipoEntidad_Update");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", json);
 
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -100,12 +100,12 @@ public class TipoEntidadController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Config.TipoEntidad_Delete");
+            await _db.SpExecuteAsync("Config.TipoEntidad_Delete");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
 
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -128,10 +128,10 @@ public class TipoEntidadController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Config.TipoEntidad_For_Select");
+            await _db.SpExecuteAsync("Config.TipoEntidad_For_Select");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         catch (Exception ex)
         {

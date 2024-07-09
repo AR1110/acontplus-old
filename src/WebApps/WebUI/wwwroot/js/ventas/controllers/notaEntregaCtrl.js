@@ -644,6 +644,8 @@
         $scope.getParamToSendMail = function (item) {
             return {
                 TYPE_NOTIFICATION: 'N',
+                codDoc: item.codDoc,
+                idDocumento: item.idDocumento,
                 serieComprobante: item.serieComprobante,
                 correo: item.correo,
                 subject: 'Documento Nota Entrega - Acontplus N°: ' + item.serieComprobante,

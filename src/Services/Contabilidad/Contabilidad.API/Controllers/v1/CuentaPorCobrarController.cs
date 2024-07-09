@@ -38,10 +38,10 @@ public class CuentaPorCobrarController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Insert");
+            await _dbAccess.SpExecuteAsync("Contabilidad.CuotaPorCobrar_Insert");
             _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
-            _response = _dbAccess.GetDefault();
+            _response = await _dbAccess.GetDefaultAsync();
         }
         finally
         {
@@ -59,10 +59,10 @@ public class CuentaPorCobrarController : ControllerBase
         try
         {
             var idUsuarioRol = User.GetUserRoleId();
-            await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Update");
+            await _dbAccess.SpExecuteAsync("Contabilidad.CuotaPorCobrar_Update");
             _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
             _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
-            _response = _dbAccess.GetDefault();
+            _response = await _dbAccess.GetDefaultAsync();
         }
         finally
         {

@@ -19,10 +19,10 @@
             var _db = new DbAccess(configuration);
             try
             {
-                await _db.SPExecute("Config.WhatsappUsage_Insert");
+                await _db.SpExecuteAsync("Config.WhatsappUsage_Insert");
                 _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
+                _response = await _db.GetDefaultAsync();
             }
             finally
             {
@@ -37,11 +37,11 @@
             var _db = new DbAccess(configuration);
             try
             {
-                await _db.SPExecute("Config.WhatsappUsage_Update");
+                await _db.SpExecuteAsync("Config.WhatsappUsage_Update");
                 _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
+                _response = await _db.GetDefaultAsync();
             }
             finally
             {
@@ -56,10 +56,10 @@
             var _db = new DbAccess(configuration);
             try
             {
-                await _db.SPExecute("Config.WhatsappUsage_Delete");
+                await _db.SpExecuteAsync("Config.WhatsappUsage_Delete");
                 _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
+                _response = await _db.GetDefaultAsync();
             }
             finally
             {

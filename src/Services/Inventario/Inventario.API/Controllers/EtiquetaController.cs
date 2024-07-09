@@ -19,11 +19,11 @@ public class EtiquetaController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Inventario.Etiqueta_Get");
+            await _db.SpExecuteAsync("Inventario.Etiqueta_Get");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", json);
-            _response = _db.GetDataTableAsync();
+            _response = await _db.GetDataTableAsync();
         }
         finally
         {
@@ -39,11 +39,11 @@ public class EtiquetaController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Inventario.Etiqueta_Insert");
+            await _db.SpExecuteAsync("Inventario.Etiqueta_Insert");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("json", json);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -59,13 +59,13 @@ public class EtiquetaController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Inventario.Etiqueta_Update");
+            await _db.SpExecuteAsync("Inventario.Etiqueta_Update");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("json", json);
 
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {
@@ -81,12 +81,12 @@ public class EtiquetaController : BaseApiController
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Inventario.Etiqueta_Delete");
+            await _db.SpExecuteAsync("Inventario.Etiqueta_Delete");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
 
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         finally
         {

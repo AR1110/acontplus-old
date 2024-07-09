@@ -19,7 +19,7 @@ public class AprobacionDocService(IAdoSqlServer adoSqlServer) : IAprobacionDocSe
 
     public async Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync($"{NameSchema}GetId", parameters, oldSp: true);
+        var ds = await adoSqlServer.GetDataSetAsync($"{NameSchema}Get_Id", parameters, oldSp: true);
         return !DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };

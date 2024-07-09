@@ -40,12 +40,12 @@ public class DocumentoDetalleController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Recepcion.DocumentoDetalle_Insert", true);
+            await _db.SpExecuteAsync("Recepcion.DocumentoDetalle_Insert", true);
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("idDocumento", idDocumento);
             _db.AddDynamicParam("idArticulo", idArticulo);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -73,11 +73,11 @@ public class DocumentoDetalleController : ControllerBase
         var _response = new ApiResponseDeprecated();
         try
         {
-            await _db.SPExecute("Recepcion.DocumentoDetalle_Delete");
+            await _db.SpExecuteAsync("Recepcion.DocumentoDetalle_Delete");
             _db.AddDynamicParam("idUsuarioRol",
                 User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
-            _response = _db.GetDefault();
+            _response = await _db.GetDefaultAsync();
         }
         catch (Exception ex)
         {

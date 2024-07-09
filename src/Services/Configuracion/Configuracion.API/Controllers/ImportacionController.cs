@@ -17,9 +17,9 @@
             {
                 using (DbAccess _db = new DbAccess(_configuration))
                 {
-                    await _db.SPExecute("Importaciones.TipoImportacion_Get");
+                    await _db.SpExecuteAsync("Importaciones.TipoImportacion_Get");
                     _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                    response = _db.GetDataTableAsync();
+                    response = await _db.GetDataTableAsync();
                 }
                 return Ok(response);
             }
@@ -37,11 +37,11 @@
             {
                 using (DbAccess _db = new DbAccess(_configuration))
                 {
-                    await _db.SPExecute("Importaciones.Valid_Datos_Get");
+                    await _db.SpExecuteAsync("Importaciones.Valid_Datos_Get");
                     _db.AddDynamicParam("idRol", User.GetUserRoleId());
                     _db.AddDynamicParam("codImportacion", codImportacion);
                     _db.AddDynamicParam("json", SqlStringParam.Sanitize(data.jsonParams));
-                    response = _db.GetDefault();
+                    response = await _db.GetDefaultAsync();
                 }
                 return Ok(response);
             }
@@ -59,10 +59,10 @@
             {
                 using (DbAccess _db = new DbAccess(_configuration))
                 {
-                    await _db.SPExecute(StoredProcedureDynamic(codImportacion) + "_Insert");
+                    await _db.SpExecuteAsync(StoredProcedureDynamic(codImportacion) + "_Insert");
                     _db.AddDynamicParam("idRol", User.GetUserRoleId());
                     _db.AddDynamicParam("json", SqlStringParam.Sanitize(data.jsonParams));
-                    response = _db.GetDefault();
+                    response = await _db.GetDefaultAsync();
                 }
                 return Ok(response);
             }
