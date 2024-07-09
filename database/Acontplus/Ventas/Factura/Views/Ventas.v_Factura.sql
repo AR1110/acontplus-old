@@ -18,6 +18,7 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
           ,fa.notaCredito
           ,fa.guiaRemision
           ,fa.estado 
+          ,de.idDocumentoElectronico 
           ,de.idPuntoEmision
           ,de.claveAcceso
           ,de.fechaEmision

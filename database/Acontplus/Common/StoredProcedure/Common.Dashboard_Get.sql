@@ -50,17 +50,25 @@ BEGIN
         -- Populate temporary table with counts
         INSERT INTO @TempResults
         SELECT
-            (SELECT COUNT(*) FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM dbo.Cliente WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM dbo.Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario IN (SELECT idUsuario FROM App.UsuarioRol WHERE idEntidad = @idEntidad)),
-            (SELECT COUNT(*) FROM dbo.Factura WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            (SELECT COUNT(*) FROM dbo.Articulo    WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            (SELECT COUNT(*) FROM dbo.Cliente     WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            (SELECT COUNT(*) FROM dbo.Proveedor   WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            (SELECT COUNT(*) FROM dbo.Usuario     WITH (NOLOCK) WHERE idUsuario IN (SELECT idUsuario FROM App.UsuarioRol WHERE idEntidad = @idEntidad)),
+            (
+                SELECT COUNT(*) FROM dbo.Factura    fe
+                INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = fe.idDocumentoElectronico
+                INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
+                INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
+                WHERE es.idEntidad = @idEntidad
+                  AND fe.estado = 1
+            ),
             (SELECT COUNT(*) FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM dbo.Proforma WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            ((SELECT COUNT(*) FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK) 
-            INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON dr.idEstablecimiento = e.idEstablecimiento
-            WHERE e.idEntidad = @idEntidad 
-                AND dr.complete = 1) + ISNULL((SELECT COUNT(*) FROM dbo.FacturaCompra WHERE idEntidad = @idEntidad AND estado = 1), 0));
+            (SELECT COUNT(*) FROM dbo.Proforma    WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            ((SELECT COUNT(*) 
+        FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK) 
+        INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON dr.idEstablecimiento = e.idEstablecimiento
+        WHERE e.idEntidad = @idEntidad 
+          AND dr.complete = 1) + ISNULL((SELECT COUNT(*) FROM dbo.FacturaCompra WHERE idEntidad = @idEntidad AND estado = 1), 0));
 
         -- Check subscription status
         DECLARE @subscriptionCount INT, @maxPaymentDateCount INT;
