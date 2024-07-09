@@ -23,6 +23,7 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
         ,de.fechaEmision
         ,de.fechaAutorizacion
         ,de.claveAcceso
+        ,de.serieComprobante
         ,es.idEntidad
         ,es.idEstablecimiento
         ,es.codEstab
@@ -34,6 +35,7 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
         ,se.codigo               as codEstado
         ,ts.nombre               as razonSocialTransportista
         ,us.nombreUsuario        as usuario
+        ,df.serieComprobante     as numDocSustento
 	FROM dbo.GuiaRemision               gr WITH (NOLOCK)
     INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = gr.idDocumentoElectronico
     INNER JOIN dbo.Cliente              cl WITH (NOLOCK) ON cl.idCliente              = gr.idCliente

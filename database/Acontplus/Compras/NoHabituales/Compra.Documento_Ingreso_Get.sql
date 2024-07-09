@@ -225,7 +225,7 @@ BEGIN
 
 			SELECT es.estab+'-'+pe.ptoEmi+'-'+Helper.F_Auto_Sequential(@secuencial) as serieComprobante
 			FROM dbo.PuntoEmision pe WITH (NOLOCK)
-			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = pe.codEstab
+			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
 			WHERE pe.idPuntoEmision = @idPuntoEmision
 		END 
 	
@@ -240,7 +240,7 @@ BEGIN
 			SELECT di.idDocumentoIngreso
 				  ,es.idEstablecimiento
 				  ,pe.idPuntoEmision
-				  ,pe.codEstab
+				  ,es.codEstab
 				  ,ptoEmi = es.estab+'-'+pe.ptoEmi
 				  ,es.nombreComercial
 				  ,Helper.F_Auto_Sequential(di.secuencial) as secuencial
@@ -252,8 +252,8 @@ BEGIN
                   ,ISNULL(cpp.subcategoryId, 0)            as subcategoryId
                   ,ISNULL(cpp.subcategoryName,  '')        as subcategoryName
 			FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
-			INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = di.idPuntoEmision
-			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
+			INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = di.idPuntoEmision
+			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
             LEFT JOIN v_CuentaPorPagar cpp ON di.idDocumentoIngreso = cpp.idDocumento AND cpp.codDoc = 'DH'
 			WHERE di.idDocumentoIngreso = @id
 
@@ -395,8 +395,8 @@ BEGIN
                   ,ISNULL(cpp.subcategoryId, 0) subcategoryId
                   ,ISNULL(cpp.subcategoryName,  '') subcategoryName
             FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
-            INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = di.idPuntoEmision
-            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
+            INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision     = di.idPuntoEmision
+            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento  = pt.idEstablecimiento
             LEFT JOIN v_CuentaPorPagar cpp ON di.idDocumentoIngreso = cpp.idDocumento AND cpp.codDoc = 'DH'
             WHERE di.idDocumentoIngreso = @id
 

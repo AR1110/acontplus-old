@@ -250,11 +250,6 @@ BEGIN
 				RETURN 
 			END 
 
-		IF EXISTS (SELECT 1 FROM Articulo WITH (NOLOCK) WHERE codigoAuxiliar = @codigoAuxiliar AND idEntidad = @idEntidad)
-			BEGIN
-				SELECT '0'code,'Este codigo Auxiliar se encuentra en uso para otro articulo' as 'message'
-				RETURN 
-			END 
 
 		IF @llevaInventario = 1 AND @inventory = 'NO'
 			BEGIN

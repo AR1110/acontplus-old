@@ -219,9 +219,9 @@ BEGIN
               ,@ptoEmi            = pt.ptoEmi
               ,@CustomerId        = ISNULL(pr.CustomerId,0)
 		FROM @document                 js
-		INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = js.idPuntoEmision
-        INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor    = js.idProveedor
-        INNER JOIN Sri.Establecimiento sr WITH (NOLOCK) ON sr.codEstab       = pt.codEstab
+		INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = js.idPuntoEmision
+        INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor       = js.idProveedor
+        INNER JOIN Sri.Establecimiento sr WITH (NOLOCK) ON sr.idEstablecimiento = pt.idEstablecimiento
 
         IF (@CustomerId = 0)
             BEGIN

@@ -26,7 +26,7 @@ BEGIN
         SELECT TOP 1 @idRetencionAts = idRetencionAts FROM FactElect.RetencionAts WITH (NOLOCK) WHERE idDocumentoElectronico = @id
 
         --> Validacion de Informacion
-        IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE codDoc = '07' AND idDocumento = @id AND codEstado != 4)
+        IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado != 4)
             BEGIN
                 SELECT '0'code, 'El Documento no esta Autorizado no puede ser Anulado' as 'message'
                 RETURN 

@@ -246,12 +246,6 @@ BEGIN
 				RETURN 
 			END 
 
-		IF EXISTS (SELECT 1 FROM Articulo WITH (NOLOCK) WHERE codigoAuxiliar = @codigoAuxiliar and idEntidad = @idEntidad AND idArticulo != @id)
-			BEGIN
-				SELECT '0'code,'Este codigo Auxiliar se encuentra en uso para otro articulo' as 'message'
-				RETURN 
-			END 
-
 		IF EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE idMedida != @idMedida AND idArticulo = @id)
 			BEGIN
 				IF EXISTS (SELECT 1 FROM ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @id AND idMedida = @idMedida)
@@ -259,12 +253,7 @@ BEGIN
 						SELECT '0'code,'Este Articulo se encuntra fraccionado con esta medida' as 'message'
 						RETURN;
 					END 
-
-               -- IF EXISTS(SELECT 1 FROM Inventario.TransaccionDetalle WITH (NOLOCK) WHERE idArticulo = @id AND estado = 1)
-               --     BEGIN
-               --         SELECT '0'code, 'El Articulo tiene realizada transacciones no pueden ser editado' as 'message'			
-			            --RETURN 
-               --     END
+             
 			END 
 
 		IF @fraccionado = 0 

@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Config.Estab_Asig_Get', N'P') IS NOT NULL
-DROP PROCEDURE Config.Estab_Asig_Get 
-GO
-CREATE PROCEDURE Config.Estab_Asig_Get @idRol INT,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Config.Estab_Asig_Get @idRol INT,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -69,7 +66,7 @@ BEGIN
 		,CAST(0 AS bit)
 	FROM Sri.Establecimiento es  WITH (NOLOCK)
 	WHERE es.codEstab NOT IN (SELECT sc.codEstab FROM Config.Estab_Asig sc WITH (NOLOCK) WHERE sc.idUsuarioRol = @idUsuarioRol)
-	AND es.ruc = @ruc 
+	AND es.idEntidad = @idEntidad 
 	) AS t ORDER BY t.predeterminado DESC
 
 

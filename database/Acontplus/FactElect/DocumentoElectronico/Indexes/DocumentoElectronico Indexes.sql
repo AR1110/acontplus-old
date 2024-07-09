@@ -41,6 +41,6 @@ IF EXISTS (SELECT name FROM sys.indexes
     DROP INDEX idx_DocumentoElectronico_Filtering ON dbo.DocumentoElectronico;  
 GO 
 CREATE NONCLUSTERED INDEX idx_DocumentoElectronico_Filtering
-ON dbo.DocumentoElectronico (idEstadoServicio, idDocumentoElectronico, idEntidad, idPuntoEmision, customerId, idUsuario)
-INCLUDE (xmlAcontPlus, codDoc, fechaEmision, isAutomatic, idDocumento, nroDocumento, claveAcceso, fechaAutorizacion, versionComp);
+ON dbo.DocumentoElectronico (idEstadoServicio, idDocumentoElectronico, idPuntoEmision, customerId, idUsuario)
+INCLUDE (xmlAcontPlus, fechaEmision, isAutomatic, nroDocumento, claveAcceso, fechaAutorizacion, versionComp);
 GO

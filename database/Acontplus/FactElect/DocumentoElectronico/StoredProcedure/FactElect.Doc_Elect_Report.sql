@@ -299,6 +299,7 @@ BEGIN
                                     WHERE ni.NotaCreditoId          = ncp.idNotaCredito 
                                     AND ni.codigo                   = ''2''
                                     AND ni.codigoPorcentaje         = ''4''
+
                                 ),0) AS iva15
 
 	                          ,CAST(ncp.totalDescuento as numeric(18,2))         as descuento
@@ -492,9 +493,9 @@ BEGIN
                                                         ELSE ''No Autorizada'' 
                                 END as estado
                         FROM Compra.v_Liquidacion       lc WITH (NOLOCK)									
-                        INNER JOIN PuntoEmision         pt WITH (NOLOCK) ON pt.idPuntoEmision = lc.idPuntoEmision 
-                        INNER JOIN Sri.Establecimiento  es WITH (NOLOCK) ON es.codEstab		  = pt.codEstab
-                        INNER JOIN Usuario              us WITH (NOLOCK) ON us.idUsuario	  = lc.idUsuario
+                        INNER JOIN PuntoEmision         pt WITH (NOLOCK) ON pt.idPuntoEmision    = lc.idPuntoEmision 
+                        INNER JOIN Sri.Establecimiento  es WITH (NOLOCK) ON es.idEstablecimiento = pt.idEstablecimiento
+                        INNER JOIN Usuario              us WITH (NOLOCK) ON us.idUsuario	     = lc.idUsuario
                         WHERE lc.idEntidad = @idEntidad '
 
             IF @codEstab IS NOT NULL
@@ -600,73 +601,41 @@ BEGIN
 	                          ,de.rucReceptor                                     as identificacionSujetoRetenido
 	                          ,de.razonSocial                                     as razonSocialSujetoRetenido
 	  
-	                          ,ISNULL(CASE versionComp WHEN ''1.0.0'' THEN (
-													                            SELECT CAST(SUM(ri.valorRetenido) as numeric(18,2)) 
-													                            FROM RetencionCompraDetalle ri WITH (NOLOCK)
-													                            INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = ri.idImpuesto
-													                            WHERE im.codigo = ''1'' 
-													                              AND ri.idRetencionCompra = de.idDocumento 
-											                               )
-							                           WHEN ''2.0.0'' THEN (
+	                          ,ISNULL(CASE versionComp WHEN ''2.0.0'' THEN (
 													                            SELECT CAST(SUM(ra.valorRetenido) as numeric(18,2)) 
 													                            FROM FactElect.RetencionAtsRet ra 
 													                            WHERE ra.codigo = ''1'' 
-													                              AND ra.idRetencionAts = de.idDocumento
+													                              AND ra.idRetencionAts = rt.idRetencionAts
 												                           )
 			                         END
                               ,0) as retRenta
 
-	                          ,ISNULL(CASE versionComp WHEN ''1.0.0'' THEN (
-													                            SELECT CAST(SUM(ri.valorRetenido) as numeric(18,2)) 
-													                            FROM RetencionCompraDetalle ri WITH (NOLOCK)
-													                            INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = ri.idImpuesto
-													                            WHERE im.codigo = ''2'' 
-													                              AND ri.idRetencionCompra = de.idDocumento 
-											                               )
-							                           WHEN ''2.0.0'' THEN (
+	                          ,ISNULL(CASE versionComp WHEN ''2.0.0'' THEN (
 													                            SELECT CAST(SUM(ra.valorRetenido) as numeric(18,2)) 
 													                            FROM FactElect.RetencionAtsRet ra 
 													                            WHERE ra.codigo = ''2'' 
-													                              AND ra.idRetencionAts = de.idDocumento
+													                              AND ra.idRetencionAts = rt.idRetencionAts
 												                           )
 			                          END
                               ,0) as retIva
-	                          ,ISNULL(CASE versionComp WHEN ''1.0.0'' THEN (
-													                            SELECT CAST(SUM(ri.valorRetenido) as numeric(18,2)) 
-													                            FROM RetencionCompraDetalle ri WITH (NOLOCK)
-													                            INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = ri.idImpuesto
-													                            WHERE ri.idRetencionCompra = de.idDocumento 
-											                               )
-							                           WHEN ''2.0.0'' THEN (
+	                          ,ISNULL(CASE versionComp WHEN ''2.0.0'' THEN (
 													                            SELECT CAST(SUM(ra.valorRetenido) as numeric(18,2)) 
 													                            FROM FactElect.RetencionAtsRet ra 
-													                            WHERE ra.idRetencionAts = de.idDocumento
+													                            WHERE ra.idRetencionAts = rt.idRetencionAts
 												                           )
 			                          END
                               ,0) as totalRet
-	                          ,CASE versionComp WHEN ''1.0.0'' THEN (
-											                            SELECT TOP 1 fc.puntoEmision + ''-'' + Helper.F_Auto_Sequential(fc.nroDocumento) 
-											                            FROM RetencionCompra          rc WITH (NOLOCK)
-											                            INNER JOIN dbo.facturaCompra  fc WITH (NOLOCK) ON fc.idFacturaCompra = rc.idFacturaCompra
-											                            WHERE rc.idRetencionCompra = de.idDocumento
-										                            )
-						                        WHEN ''2.0.0'' THEN (
+	                          ,CASE versionComp WHEN ''2.0.0'' THEN (
 											                            SELECT TOP 1 SUBSTRING(nd.numDocSustento,1,3) + ''-'' + SUBSTRING(nd.numDocSustento,4,3) + ''-'' + SUBSTRING(nd.numDocSustento,7,9) 
 											                            FROM FactElect.RetAtsDocSustento nd WITH (NOLOCK)
-											                            WHERE nd.idRetencionAts = de.idDocumento
+											                            WHERE nd.idRetencionAts = rt.idRetencionAts
 										                            )
 	                           END as numDocSustento
 
-	                          ,CASE versionComp WHEN ''1.0.0'' THEN (
-											                            SELECT TOP 1 FORMAT(fc.fechaEmision ,''dd/MM/yyyy'') 
-											                            FROM RetencionCompra          rc WITH (NOLOCK)
-											                            INNER JOIN dbo.facturaCompra  fc WITH (NOLOCK) ON fc.idFacturaCompra = rc.idFacturaCompra
-											                            WHERE rc.idRetencionCompra = de.idDocumento
-										                            )
-						                        WHEN ''2.0.0'' THEN (
+	                          ,CASE versionComp WHEN ''2.0.0'' THEN (
 											                            SELECT TOP 1 FORMAT(nd.fechaEmisionDocSustento,''dd/MM/yyyy'') 
 											                            FROM FactElect.RetAtsDocSustento nd WITH (NOLOCK)
-											                            WHERE nd.idRetencionAts = de.idDocumento
+											                            WHERE nd.idRetencionAts = rt.idRetencionAts
 										                            )
 	                         END as fechaEmisionDocSustento
 
@@ -676,7 +645,8 @@ BEGIN
                                                         ELSE ''No Autorizada'' 
                              END as estado
                             ,de.versionComp
-                    FROM FactElect.v_DocElectronico de WITH (NOLOCK)
+                    FROM FactElect.v_DocElectronico   de WITH (NOLOCK)
+                    INNER JOIN FactElect.RetencionAts rt WITH (NOLOCK) ON rt.idDocumentoElectronico = de.idDocumentoElectronico
                     WHERE de.codDoc = ''07'' 
                       AND de.idEntidad = @idEntidad '
 
