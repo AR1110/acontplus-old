@@ -4,17 +4,12 @@ import { ToasterService } from '@core/services/toaster.service';
 import {
   CODE_REPORT,
   DOC_TYPE,
-  PATHS_API,
 } from '@core/constants/global.constants';
-import { ACCOUNTING_PATHS } from '@modules/accounting/enums/accounting.constants';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { isApiResponse } from '@core/models/api-response';
 import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
-import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { isValidField, removeSpacesInValue } from '@core/utils/utils';
 import {
@@ -26,6 +21,7 @@ import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { ComprobanteIngresoService } from '@modules/accounting/services/comprobante-ingreso.service';
 
 @Component({
   selector: 'app-reporte-cobros',
@@ -70,64 +66,38 @@ export class ReporteCobrosComponent implements OnInit {
   // Services
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
-  private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.COMPROBANTE_INGRESO}`;
+  private compIngresoSvc = inject(ComprobanteIngresoService)
 
   ngOnInit(): void {
     this.getInitialLoad();
   }
 
   getInitialLoad() {
-    showLoader();
 
-    const PARAMS = {
-      params: { json: JSON.stringify({ tipo: 4 }) },
-    };
+    this.compIngresoSvc.getDataFilter().subscribe(response => {
+      const { establecimientos, tiposDoc, subEntidadesFinanciera, bancos } = response;
 
-    this.http.get(this.url, PARAMS).subscribe({
-      next: (response) => {
-        hideLoader();
+      this.establecimientos = establecimientos;
 
-        if (isApiResponse(response)) {
-          if (response.code === '0') {
-            return console.log(response);
-          }
+      const dataEstab = this.establecimientos.find((estab) => estab.defaultEstab);
 
-          const [estabs, tiposDoc, subEntidadFinanciera, bancos] = JSON.parse(
-            response.payload as string,
-          );
+      if (dataEstab) {
+        this.dataSearch.codEstab = dataEstab.codEstab;
+        this.puntosEmision = dataEstab.puntosEmision;
 
-          this.establecimientos = groupEstabUtil({
-            estabs,
-            isGroupPuntoEmision: true,
-          });
-
-          const dataEstab = this.establecimientos.find(
-            (estab) => estab.defaultEstab,
-          );
-          if (dataEstab) {
-            this.dataSearch.codEstab = dataEstab.codEstab;
-            this.puntosEmision = dataEstab.puntosEmision;
-
-            const dataPuntoEmision = this.puntosEmision.find(
-              (ptoEmi) => ptoEmi.defaultPtoEmi,
-            );
-            if (dataPuntoEmision) {
-              this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
-            }
-          }
-          this.tiposDoc = tiposDoc;
-          this.subEntidadFinanciera = subEntidadFinanciera;
-          this.bancos = bancos;
-          this.dataSearch.codDoc =
-            this.tiposDoc.find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FV)
-              ?.codDoc || '';
+        const dataPuntoEmision = this.puntosEmision.find(
+          (ptoEmi) => ptoEmi.defaultPtoEmi,
+        );
+        if (dataPuntoEmision) {
+          this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
         }
-      },
-      error(err) {
-        hideLoader();
-        console.log(err);
-      },
-    });
+      }
+      this.tiposDoc = tiposDoc;
+      this.subEntidadFinanciera = subEntidadesFinanciera;
+      this.bancos = bancos;
+      this.dataSearch.codDoc = this.tiposDoc.find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FV)?.codDoc || '';
+    })
+
   }
 
   onChangeEstab() {

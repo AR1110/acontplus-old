@@ -77,10 +77,10 @@
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
         <div class="form-group">
           <label>Estado</label>
-          <select class="form-select" [(ngModel)]="dataSearch.idEstadoDocumento">
+          <select class="form-select" [(ngModel)]="dataSearch.codEstado">
             <option [ngValue]="0">Todos</option>
             @for(item of estadosDoc;track $index){
-              <option [ngValue]="item.idEstadoDocumento" >
+              <option [ngValue]="item.codEstado" >
                 {{item.descripcion}}
               </option>
             }
