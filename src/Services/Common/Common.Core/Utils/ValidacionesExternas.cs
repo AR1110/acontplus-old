@@ -75,7 +75,6 @@ public class ValidacionesExternas
         {
             _gr.code = "0";
             _gr.message = ex.Message;
-            _gr.titleSms = "Validacion Externa";
         }
 
         return _gr;
@@ -129,7 +128,6 @@ public class ValidacionesExternas
         {
             _gr.code = "0";
             _gr.message = ex.Message;
-            _gr.titleSms = "Validadar Cedula";
         }
 
         return _gr;
@@ -183,7 +181,6 @@ public class ValidacionesExternas
         {
             _gr.code = "0";
             _gr.message = ex.Message;
-            _gr.titleSms = "Validadar Ruc Persona Natural";
         }
 
         return _gr;
@@ -245,7 +242,6 @@ public class ValidacionesExternas
         {
             _gr.code = "0";
             _gr.message = ex.Message;
-            _gr.titleSms = "Verificar Persona Juridica";
         }
 
         return _gr;
@@ -307,7 +303,6 @@ public class ValidacionesExternas
         {
             _gr.code = "0";
             _gr.message = ex.Message;
-            _gr.titleSms = "Verificar Sector Publico";
         }
 
         return _gr;
