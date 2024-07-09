@@ -46,7 +46,8 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
         return response;
     }
 
-    public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool oldSp, bool timeout)
+    public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool oldSp,
+        bool timeout)
     {
         DataSet ds = null;
         await using var context = contexts.GetContext(configuration["ContextName"]);
@@ -69,10 +70,12 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             {
                 ParametersUtils.AddSqlParameterOut(cmd, outParam, SqlDbType.VarChar, 500);
             }
+
             if (!timeout)
             {
                 cmd.CommandTimeout = 0;
             }
+
             cmd.CommandType = CommandType.StoredProcedure;
             if (!wasOpen)
             {
@@ -120,7 +123,7 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
 
     public async Task<DataTable> GetDataTableAsync(string spName, Dictionary<string, object> parameters)
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         var context = contexts.GetContext(configuration["ContextName"]);
         await using var cmd = context.Database.GetDbConnection().CreateCommand();
         var wasOpen = cmd.Connection is { State: ConnectionState.Open };
@@ -296,9 +299,10 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
                 {
                     // Check if property name matches a column name (case-insensitive)
                     var columnName = reader.GetSchemaTable().Rows.Cast<DataRow>()
-                                          .Where(row => row["ColumnName"].ToString().Equals(property.Name, StringComparison.OrdinalIgnoreCase))
-                                          .Select(row => row["ColumnName"].ToString())
-                                          .FirstOrDefault();
+                        .Where(row =>
+                            row["ColumnName"].ToString().Equals(property.Name, StringComparison.OrdinalIgnoreCase))
+                        .Select(row => row["ColumnName"].ToString())
+                        .FirstOrDefault();
 
                     if (columnName != null)
                     {

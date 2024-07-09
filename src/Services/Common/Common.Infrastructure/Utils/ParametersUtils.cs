@@ -1,6 +1,4 @@
-﻿using System.Data;
-using System.Drawing;
-using Common.Infrastructure.Repository;
+﻿using Common.Infrastructure.Repository;
 
 namespace Common.Infrastructure.Utils;
 
@@ -33,9 +31,7 @@ public static class ParametersUtils
     {
         var sqlParam = new SqlParameter
         {
-            ParameterName = key,
-            SqlDbType = SqlTypes.GetDbType(value),
-            Value = value ?? DBNull.Value
+            ParameterName = key, SqlDbType = SqlTypes.GetDbType(value), Value = value ?? DBNull.Value
         };
         return sqlParam;
     }
@@ -44,10 +40,7 @@ public static class ParametersUtils
     {
         var sqlParam = new SqlParameter
         {
-            ParameterName = outParam,
-            SqlDbType = sqlDbType,
-            Size = size,
-            Direction = ParameterDirection.Output
+            ParameterName = outParam, SqlDbType = sqlDbType, Size = size, Direction = ParameterDirection.Output
         };
         return sqlParam;
     }

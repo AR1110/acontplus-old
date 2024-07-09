@@ -115,7 +115,7 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
 
     public async Task<DataTable> GetDataTableAsync(string spname, Dictionary<string, object> parameters)
     {
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         var conn = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
         await using var cmd = new SqlCommand(spname, conn);
         var wasOpen = cmd.Connection.State == ConnectionState.Open;
@@ -166,10 +166,12 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
                     ParametersUtilsSqlServer.AddSqlParameter(cmd, parameter.Key, parameter.Value);
                 }
             }
+
             if (!timeout)
             {
                 cmd.CommandTimeout = 0;
             }
+
             cmd.CommandType = useStoredProcedure ? CommandType.StoredProcedure : CommandType.Text;
             if (!wasOpen)
             {
@@ -187,7 +189,8 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
         }
     }
 
-    public async Task<T> SpExecuteAsync<T>(string spname, Dictionary<string, object> parameters, bool timeout) where T : class, new()
+    public async Task<T> SpExecuteAsync<T>(string spname, Dictionary<string, object> parameters, bool timeout)
+        where T : class, new()
     {
         var response = new T();
         var conn = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
@@ -203,10 +206,12 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
                     ParametersUtilsSqlServer.AddSqlParameter(cmd, parameter.Key, parameter.Value);
                 }
             }
+
             if (!timeout)
             {
                 cmd.CommandTimeout = 0;
             }
+
             cmd.CommandType = CommandType.StoredProcedure;
             if (!wasOpen)
             {
@@ -222,9 +227,10 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
                 {
                     // Check if property name matches a column name (case-insensitive)
                     var columnName = reader.GetSchemaTable().Rows.Cast<DataRow>()
-                                          .Where(row => row["ColumnName"].ToString().Equals(property.Name, StringComparison.OrdinalIgnoreCase))
-                                          .Select(row => row["ColumnName"].ToString())
-                                          .FirstOrDefault();
+                        .Where(row =>
+                            row["ColumnName"].ToString().Equals(property.Name, StringComparison.OrdinalIgnoreCase))
+                        .Select(row => row["ColumnName"].ToString())
+                        .FirstOrDefault();
 
                     if (columnName != null)
                     {

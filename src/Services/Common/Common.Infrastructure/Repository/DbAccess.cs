@@ -66,7 +66,7 @@ public class DbAccess(IConfiguration config) : IDisposable
 
         await using var reader = await _command.ExecuteReaderAsync();
         dt.Load(reader);
-        
+
         if (DataValidation.DataTableIsNull(dt))
         {
             response.Create("0", "La transacción no devolvio respuesta");
@@ -102,7 +102,7 @@ public class DbAccess(IConfiguration config) : IDisposable
 
         return response;
     }
-    
+
     public void Close()
     {
         if (_connection.State == ConnectionState.Open)
@@ -119,7 +119,7 @@ public class DbAccess(IConfiguration config) : IDisposable
         _command.Dispose();
         _connection.Close();
     }
-    
+
     private void Dispose(bool disposing)
     {
         if (!disposing)
