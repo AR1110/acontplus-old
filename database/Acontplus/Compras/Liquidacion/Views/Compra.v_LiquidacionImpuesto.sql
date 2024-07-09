@@ -9,7 +9,8 @@ CREATE OR ALTER VIEW Compra.v_LiquidacionImpuesto WITH SCHEMABINDING AS (
 		  ,lc.TaxBase
 		  ,lc.TaxValue
           ,lc.Discount
-		  ,it.codigo
+		  ,lc.[Enabled]
+          ,it.codigo
 		  ,ti.codigoPorcentaje
 	FROM Compra.LiquidacionImpuesto lc WITH (NOLOCK)
 	INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = lc.TaxPercentId

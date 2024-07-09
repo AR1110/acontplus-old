@@ -484,6 +484,8 @@ BEGIN
     IF @codDoc = 'NE'
         BEGIN
              
+            SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
+
             INSERT INTO NotaEntrega 
                    (idCliente         ,idPuntoEmision,  nroDocumento,  subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,fechaRegistro,idUsuario,idEntidad,fechaEmision,idTipoDocumento)
             SELECT @customerCompanyId,@puntoEmisionId, @nroDocumento, @subtotalSinImpuestos,@discount,0,0,0,0,@total,@obs,dbo.ufnGetDateEcuador(),@userId,@companyId, @fechaEmision,@tipoDocumentoId
@@ -549,6 +551,8 @@ BEGIN
             SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1
 
             SET @claveAcceso = (SELECT dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab), '01', @ambiente, 1, dbo.AFTConvertDate(@fechaEmision), @ruc, @estab + @ptoEmi, Helper.F_Auto_Sequential(@nroDocumento)))
+
+            SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
 
             INSERT INTO dbo.DocumentoElectronico(idTipoDocumento,CustomerId,nroDocumento,idPuntoEmision
                                                 ,claveAcceso,versionComp,isAutomatic,fechaEmision
@@ -693,8 +697,7 @@ BEGIN
 
             SET @codDocTran = (SELECT IIF(@codDoc = 'FV', 'FE', 'NE'))
             
-            SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
-
+            
             IF EXISTS (SELECT 1 FROM @tblInventory)
                 BEGIN
                     DECLARE @idTipoTransaccion  INT ,@idTipoDocumentoIv INT ,@idTransaccion INT
