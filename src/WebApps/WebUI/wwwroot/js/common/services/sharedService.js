@@ -22,7 +22,7 @@ function sharedService($injector, mS){
             }
             if (response.code === "1") {
                 let [mainData] = JSON.parse(response.payload);
-                console.log(mainData)
+              
                 let { correo, telefono, telefonoEstab,correoEstab,nombreEstab } = mainData[0];
 
                 data.correos = correo ? correo.split(/[\|;]/) : [];
