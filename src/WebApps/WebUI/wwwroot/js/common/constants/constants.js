@@ -451,5 +451,6 @@ app.constant('CODE_REPORT', {
     ROC: 'ROC', //Orden Compra 
     RGR: 'RGR', //Reporte Guia Remision 
     FCRRG: 'FCRRG', //Facturación Retención Reporte General
-    RRC:'RRC' 
+    RRC:'RRC',
+    RCINGR: 'RCINGR'
 })
