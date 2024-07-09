@@ -3,6 +3,7 @@
 public interface IAdoSqlServer
 {
     public Task<List<T>> DynamicListAsync<T>(string spname, Dictionary<string, object> parameters);
+
     public Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp = false,
         bool timeout = true);
 
@@ -11,5 +12,6 @@ public interface IAdoSqlServer
     public Task<int> OnlyExecuteAsync(string query, Dictionary<string, object> parameters,
         bool useStoredProcedure = true, bool timeout = true);
 
-    public Task<T> SpExecuteAsync<T>(string spname, Dictionary<string, object> parameters, bool timeout = true) where T : class, new();
+    public Task<T> SpExecuteAsync<T>(string spname, Dictionary<string, object> parameters, bool timeout = true)
+        where T : class, new();
 }
