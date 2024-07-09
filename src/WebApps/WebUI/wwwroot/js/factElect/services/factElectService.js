@@ -10,9 +10,9 @@
     const URL_API = 'FactElect/'
 
     app.factory('docElectService', docElectService)
-    
+
     docElectService.$inject = ['$injector']
-    
+
     function docElectService($injector) {
         let URL = `${URL_API}DocumentoElectronico/`
         let URL_RETENCION_ATS = 'FactElect/RetencionAts/'
@@ -70,23 +70,23 @@
             })
         }
 
-        service.getAll =  function(obj){
+        service.getAll = function (obj) {
             let pageIndex = obj.pageIndex || 1;
-            let pageSize = obj.pageSize || 25;  
-               
+            let pageSize = obj.pageSize || 25;
+
             let json = JSON.stringify({
-                tipo: 1,                
+                tipo: 1,
                 ...obj,
                 pageIndex,
                 pageSize
             })
-            return mS.getData('get', `${URL}?json=${json}`, null, true).then(response=>{
+            return mS.getData('get', `${URL}?json=${json}`, null, true).then(response => {
                 let results = [];
-                if(response.code==="1"){
-                    let [comprobantesElectronicos] = JSON.parse(response.payload) 
-            
+                if (response.code === "1") {
+                    let [comprobantesElectronicos] = JSON.parse(response.payload)
+
                     comprobantesElectronicos = comprobantesElectronicos || [];
-                    results = comprobantesElectronicos.map(item=>{
+                    results = comprobantesElectronicos.map(item => {
                         return {
                             idDocumentoElectronico: item.idDocumentoElectronico,
                             idDocumento: item.idDocumento,
@@ -104,7 +104,7 @@
                             versionComp: item.versionComp,
                             usuario: item.usuario,
                             codEstab: item.codEstab,
-                            totalRecords: item.totalRecords, 
+                            totalRecords: item.totalRecords,
                         }
                     })
                 }
@@ -112,7 +112,7 @@
             })
         }
 
-        
+
 
         service.getByStatus = (params) => {
             return mS.getData('get', `${URL}GetByStatus/?json=${JSON.stringify(params)}`, null, true).then(response => {
@@ -155,9 +155,9 @@
 
 
     app.factory('facturaService', facturaService)
-    
+
     facturaService.$inject = ['$injector'];
-    
+
     function facturaService($injector) {
         let url = `${URL_API}Factura/`
         let mS = $injector.get('mainService');
@@ -221,7 +221,7 @@
 
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
                     let { sales, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
-                
+
 
                     // Transforma datos temporales en un formato estructurado para establecimientos y puntos de emisión
                     let dataToGroup = {
@@ -231,7 +231,7 @@
                     }
                     let estabs = fS.groupingEstab(dataToGroup);
 
-                    let formasPago = mainData[11]; 
+                    let formasPago = mainData[11];
                     let tiposIdentificacion = mainData[12]
                     // Devuelve los datos finales estructurados
 
@@ -298,33 +298,42 @@
 
                     let mainData = JSON.parse(response.payload);
                     let facturasRepository = mainData[0];
-                    let { totalRecords, totalDocument, totalAbono, totalSaldo } = facturasRepository[0];
-              
+                    let totalRecords = 0, totalDocument = 0, totalAbono = 0, totalSaldo = 0;
+                    if (facturasRepository.length > 0) {
+                        let data = facturasRepository[0];
+
+                        totalRecords = data.totalRecords;
+                        totalDocument = data.totalDocument;
+                        totalAbono = data.totalAbono;
+                        totalSaldo = data.totalSaldo
+                    }
+
                     let facturas = facturasRepository.map(item => {
-                        let colorRow ='';
-                        if (item.estadoSri === 6){
-                            colorRow = 'table-danger'; 
+                        let colorRow = '';
+                        if (item.estadoSri === 6) {
+                            colorRow = 'table-danger';
                         }
-                        if(item.estadoSri===4){
+                        if (item.estadoSri === 4) {
                             colorRow = 'table-success'
                         }
-                 
-                        return { 
+
+                        return {
                             comprobante: 'Factura',
                             idCliente: item.idCliente,
                             idDocumento: item.idDocumento,
                             idCuentaPorCobrar: item.idCuentaPorCobrar,
-                            codEstab: item.codEstab,  
+                            idDocumentoElectronico: item.idDocumentoElectronico,
+                            codEstab: item.codEstab,
                             razonSocialComprador: item.nombreFiscal,
                             fechaEmision: item.fechaEmision,
                             fechaVencimiento: item.fechaVencimiento,
-                            total: item.total, 
-                            serieComprobante: item.serieComprobante, 
+                            total: item.total,
+                            serieComprobante: item.serieComprobante,
                             estadoFinanciero: item.estadoFinanciero,
-                            codDoc:"01",
+                            codDoc: "01",
                             abono: item.abono,
                             saldo: item.saldo,
-                            tiempoCredito: item.tiempoCredito, 
+                            tiempoCredito: item.tiempoCredito,
                             usuario: item.usuario,
                             codEstado: item.codEstado,
                             esContado: item.tiempoCredito,
@@ -341,10 +350,10 @@
                     })
 
 
-                    
+
                     data.facturas = facturas,
-                    data.dataTotals = { totalRecords, totalDocument, totalAbono, totalSaldo }  
-                } 
+                        data.dataTotals = { totalRecords, totalDocument, totalAbono, totalSaldo }
+                }
                 return data;
             })
         }
@@ -393,7 +402,7 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    let mainDataApi = JSON.parse(response.payload); 
+                    let mainDataApi = JSON.parse(response.payload);
 
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
@@ -464,7 +473,7 @@
                         cuenta,
                         cuotas
                     ] = mainDataApi;
-                     
+
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
                     cliente = {
@@ -473,7 +482,7 @@
                         razonSocialComprador: cliente.nombreFiscal,
                         placas: cliente.placa ? cliente.placa.split(/[\|;]/) : []
                     }
-       
+
 
 
                     let items = itemsApi.map((itemPrincipal, index) => {
@@ -550,9 +559,9 @@
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
                         fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
                         irbpnr: comprobanteTemp.irbpnr || 0,
-                        idTiempoCredito : cuenta[0].idTiempoCredito,
-                           fechaVencimiento: fS.formatDate(cuenta[0].fechaVencimiento),
-                       
+                        idTiempoCredito: cuenta[0].idTiempoCredito,
+                        fechaVencimiento: fS.formatDate(cuenta[0].fechaVencimiento),
+
                     }
 
                     cuotas = cuotas.map(item => {
@@ -670,7 +679,7 @@
                             tarifa: itemPrincipal.tarifa,//✅
                             valorDescuento: itemPrincipal.valorDescuento,
                             valorImpuesto: itemPrincipal.valorImpuesto,//✅
-                            medidas,                            
+                            medidas,
                             conversion: dataMedida.conversion,
                             precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             articuloTarifas: dataMedida.tarifas,
@@ -717,7 +726,7 @@
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url+id, { data }, true).then(response => {
+            return mS.getData('put', url + id, { data }, true).then(response => {
                 if (response.code === "0") {
                     service.data = {}
                     return response;
@@ -733,7 +742,7 @@
 
 
         service.delete = function (id) {
-            return mS.getData('delete',`${url}${id}`, null, true).then(response => {
+            return mS.getData('delete', `${url}${id}`, null, true).then(response => {
                 return response;
             })
         }
@@ -853,8 +862,8 @@
                     nota: item.nota,
                     llevaInventario: item.llevaInventario,
                     precioCosto: item.precioCosto,
-                    precioCostoFraccionado : item.precioCostoFraccionado,
-                    conversion : item.conversion,
+                    precioCostoFraccionado: item.precioCostoFraccionado,
+                    conversion: item.conversion,
                     cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : item.cantidad * item.conversion,
                     estado: item.estado,
                     valorImpuesto: item.valorImpuesto //✅
@@ -867,10 +876,10 @@
         return service;
 
     }
- 
+
 
     app.factory('notaCreditoService', notaCreditoService)
-    
+
     notaCreditoService.$inject = ['$injector']
     function notaCreditoService($injector) {
         const mS = $injector.get('mainService');
@@ -957,7 +966,7 @@
                             estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
                             bodegas: [], // Establecimientos con bodegas 
                         }
-                        let estabs = fS.groupingEstab(dataToGroup); 
+                        let estabs = fS.groupingEstab(dataToGroup);
                         return {
                             estabs,
                             estadosDoc
@@ -1119,7 +1128,7 @@
                             precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
                             medidas,
                             conversion: dataMedida.conversion,
-                            precioCostoFraccionado : dataMedida.precioCostoFraccionado,
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
@@ -1217,8 +1226,8 @@
                     idTipoIva: orderItem.idTipoIva,
                     llevaInventario: orderItem.llevaInventario,
                     cantidadTransaccion: cantidadTransaccion * -1,
-                    conversion : orderItem.conversion,
-                    precioCostoFraccionado : orderItem.precioCostoFraccionado,
+                    conversion: orderItem.conversion,
+                    precioCostoFraccionado: orderItem.precioCostoFraccionado,
                     precioCosto: orderItem.precioCosto,
                     valorImpuesto: orderItem.valorImpuesto,
                     estado: orderItem.estado
@@ -1241,10 +1250,10 @@
      */
 
     app.factory('retencionAtsService', retencionAtsService)
-    
+
     retencionAtsService.$inject = ['$injector']
-    
-    function retencionAtsService ($injector) {
+
+    function retencionAtsService($injector) {
         let url = 'FactElect/RetencionAts/';
         let mS = $injector.get('mainService');
         return {
