@@ -74,6 +74,27 @@ public class ArticuloController : ControllerBase
         return Ok(response);
     }
 
+    /**
+     * Se agrega este metódo porque ocurre un montón de problemas 
+     * con métodos que aceptan argumentos de tipo archivo
+     **/
+    [HttpPost]
+    public async Task<IActionResult> PostByApp(string json)
+    {
+        var data = JsonConvert.DeserializeObject<ApiRequest>(json);
+
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "s3ObjectKey",  "" },
+            { "s3ObjectUrl", "" }
+        };
+        var response = await _svc.AddAsync(parameters);
+
+        return Ok(response);
+    }
+
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
