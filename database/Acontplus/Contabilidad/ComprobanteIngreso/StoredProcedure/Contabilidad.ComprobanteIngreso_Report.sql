@@ -20,7 +20,7 @@ GO
 -- Create date: 2024/05/15
 -- Description:	REPORT FOR COBROS
 -- =============================================
--- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":1,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":"FV","idSubEntidadFinanciera":0,"idCustomer":194578,"idPuntoEmision":225,"fechaInicio":"2024-06-05 11:18:44 AM","fechaFin":"2024-06-05 11:18:44 AM","dateChecked":false,"idBanco":0,"nroDocChecked":false,"nroDocument":"","referenceChecked":false,"reference":"","loteChecked":false,"lote":""}', ''
+-- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":3,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":"FV","idSubEntidadFinanciera":0,"idCustomer":194578,"idPuntoEmision":225,"fechaInicio":"2024-06-05 11:18:44 AM","fechaFin":"2024-06-05 11:18:44 AM","dateChecked":false,"idBanco":0,"nroDocChecked":false,"nroDocument":"","referenceChecked":false,"reference":"","loteChecked":false,"lote":""}', ''
 CREATE OR ALTER PROC Contabilidad.ComprobanteIngreso_Report
 	 @userRoleId INT
 	,@json	     VARCHAR(MAX)
@@ -39,7 +39,7 @@ BEGIN
     --> Filters
     DECLARE @usuario                VARCHAR(150)
            ,@idUsuario              INT
-           ,@codDoc                 VARCHAR(5)
+           ,@codDoc                 VARCHAR(5) 
            ,@idSubEntidadFinanciera INT
            ,@fechaInicio            DATETIME2
            ,@fechaFin               DATETIME2
@@ -576,7 +576,7 @@ BEGIN
                 END
 		    
 
-		    SELECT cc.idCuentaPorCobrar
+		   /** SELECT cc.idCuentaPorCobrar
                   ,ci.idComprobanteIngreso
                   ,cu.idCuotaPorCobrar
                   ,cd.idCobroDetalle
@@ -603,7 +603,35 @@ BEGIN
 			INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera 
 		     LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
 		    INNER JOIN Contabilidad.CuotaPorCobrar  cu WITH (NOLOCK) ON cu.idCuotaPorCobrar       = cd.idCuotaPorCobrar
-		    WHERE ci.idComprobanteIngreso = @id
+		    WHERE ci.idComprobanteIngreso = @id*/
+            SELECT 
+	            cuota_pc.idCuentaPorCobrar
+                ,co.idComprobanteIngreso
+                ,cuota_pc.idCuotaPorCobrar
+                ,cd.idCobroDetalle
+                ,FORMAT(cuenta_pc.fechaEmision, 'dd/MM/yyyy hh:mm')                                                             as fechaEmisionDoc
+                ,FORMAT(cuenta_pc.fechaVencimiento, 'dd/MM/yyyy')                                                               as fechaVcto
+                ,IIF(cuenta_pc.codDoc = '01','FV','NE')                                                                         as tipoDoc
+	            ,cuenta_pc.serieComprobante
+	            ,cuota_pc.nroCuota
+	            ,CAST(cuota_pc.cuota as numeric(18,2))                                                                          as cuota
+	            ,CAST(cuenta_pc.importeTotal as numeric(18,2))                                                                  as importeTotal
+	            ,CAST(hc.abono as numeric(18,2))                                                                                as abonoDoc
+	            ,CAST(hc.saldo - hc.abono as numeric(18,2))                                                                     as saldoDoc
+	            ,CAST(cd.interes as numeric(18,2))                                                                              as interes
+	            ,cd.diasMora
+	            ,CAST(cd.mora as numeric(18,2))                                                                                 as mora
+	            ,CAST(cd.abono as numeric(18,2))                                                                                as abono
+	            ,CAST(cd.saldo - cd.abono as numeric(18,2))																	    as saldo
+	            ,ISNULL(sf.descripcion,ef.descripcion) + '-' + ISNULL(JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro'),'') as ingreso
+            FROM Contabilidad.CuotaPorCobrar cuota_pc 
+            INNER JOIN Contabilidad.CuentaPorCobrar cuenta_pc WITH (NOLOCK) ON cuenta_pc.idCuentaPorCobrar      = cuota_pc.idCuentaPorCobrar
+            INNER JOIN dbo.CobroDetalle             cd WITH (NOLOCK) ON cd.idCuotaPorCobrar                     = cuota_pc.idCuotaPorCobrar
+            INNER JOIN dbo.Cobro				    co WITH (NOLOCK) ON co.idCobro		                        = cd.idCobro
+            INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso   = co.idComprobanteIngreso AND hc.idCuentaPorCobrar =cuenta_pc.idCuentaPorCobrar
+            INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera 
+            LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera  = co.idSubEntidadFinanciera
+            WHERE co.idComprobanteIngreso =  @id
 
             RETURN 
         END 
