@@ -28,6 +28,7 @@
         proveedorSvc = $injector.get("proveedorService");
         fS = $injector.get("formulario");
         subcategoryService = $injector.get("subcategoryService");
+        let DOC_TYPE = $injector.get('DOC_TYPE');
 
         $scope.establecimientos = [];
         $scope.tipoComprobantes = [];
@@ -53,6 +54,9 @@
 
         $scope.proveedor = {};
         $scope.claveAccesoLongitud = null;
+
+        $scope.isSelectedDocRetencion = false;
+        $scope.clienteSearch = {}
 
         $scope.onKeyupSearchFilter = () => {
             let comprobantes = JSON.parse(JSON.stringify($scope.cloneComprobantes));
@@ -147,6 +151,22 @@
             $scope.dataSearch.pageIndex = 1;
             $scope.getComprobantes();
         };
+        $scope.refresh= function(){
+            $scope.getComprobantes();
+        }
+
+        $scope.onChangeTipoDoc = function(){ 
+            $scope.isSelectedDocRetencion = $scope.dataSearch.codDoc === DOC_TYPE.R_SRI;
+
+            if ($scope.isSelectedDocRetencion){ 
+                $scope.dataSearch.rucProveedor = null;
+                $scope.proveedor.nombreProveedor = null;
+            }else{ 
+                $scope.clienteSearch.nombreCliente = null;
+            }
+            $scope.getComprobantes();
+
+        }
 
         $scope.onClickBtnMore = function () {
             $scope.moreOptionsFilter = !$scope.moreOptionsFilter;
@@ -168,6 +188,18 @@
             $scope.dataSearch.rucProveedor = item.numeroIdentificacion;
             $scope.getComprobantes();
         };
+
+        $scope.onKeyupCliente = function () {
+            if (!$scope.clienteSearch.nombreCliente) {
+                $scope.dataSearch.rucProveedor = null;
+
+            }
+        }
+        $scope.onSelectCliente = function (item) {
+            $scope.dataSearch.rucProveedor = item.numeroIdentificacion;
+
+            $scope.getComprobantes();
+        }
 
         $scope.onChangeClaveAcceso = function () {
             $scope.claveAccesoLongitud = null;

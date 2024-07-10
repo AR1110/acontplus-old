@@ -41,7 +41,7 @@
                             <div class="input-group-text">
                                 <div class="custom-control custom-checkbox mr-sm-2">
                                     <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
-                                           class="custom-control-input" id="checkBoxFecha">
+                                           class="custom-control-input" id="checkBoxFecha" ng-change="refresh()">
                                     <label class="custom-control-label" for="checkBoxFecha"></label>
                                 </div>
                             </div>
@@ -59,7 +59,7 @@
                         <label for="tipoComprobante"> Tipo Comprobante</label>
                         <div class="input-group">
                             <select class="form-control border-select" ng-model="dataSearch.codDoc"
-                                    ng-change="getComprobantes()">
+                                    ng-change="onChangeTipoDoc()">
                                 <option ng-value="">Todos</option>
                                 <option ng-value="item.codDoc" ng-repeat="item in tipoComprobantes">
                                     {{item.descripcion}}
@@ -70,7 +70,7 @@
                                     <i class="{{extraOptionsIcon}}" uib-tooltip="{{extraOptionsTooltip}}"></i>
                                 </button>
                                 <button type="button" class="btn btn-success" uib-tooltip="Recargar"
-                                        ng-click="getComprobantes()">
+                                        ng-click="refresh()">
                                     <i class="fas fa-redo"></i>
                                 </button>
                             </div>
@@ -81,7 +81,7 @@
 
             <div class="row" ng-if="moreOptionsFilter">
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-                    <div class="form-group">
+                    <div class="form-group" ng-if="!isSelectedDocRetencion">
                         <label for="proveedorFiltro">Proveedor:</label>
                         <input type="text" id="providerInputSearch" class="form-control border-select"
                                ng-model="proveedor.nombreProveedor" provider-search-drtv
@@ -94,6 +94,22 @@
                             </div>
                         </script>
                     </div>
+
+                    <div class="form-group" ng-if="isSelectedDocRetencion">
+                        <span for="clienteFiltro">Cliente</span>
+                        <input type="text" id="customerInputSearch" class="form-control border-select"
+                            ng-model="clienteSearch.nombreCliente" cliente-search-drtv
+                            on-select="onSelectCliente(result)" on-keyup-cliente="onKeyupCliente()"
+                            placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+
+                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                            </div>
+                        </script>
+                    </div>
+
+
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="form-group">
