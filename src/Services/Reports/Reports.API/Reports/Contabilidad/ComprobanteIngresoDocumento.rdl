@@ -9,7 +9,7 @@
       <am:Name>MSRB</am:Name>
       <am:Version>15.0.20283.0</am:Version>
     </am:UpdatedBy>
-    <am:LastModifiedTimestamp>2024-07-10T21:16:48.6910920Z</am:LastModifiedTimestamp>
+    <am:LastModifiedTimestamp>2024-07-11T16:30:10.3641642Z</am:LastModifiedTimestamp>
   </am:AuthoringMetadata>
   <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
   <AutoRefresh>0</AutoRefresh>
@@ -57,6 +57,10 @@
         </Field>
         <Field Name="fechaFin">
           <DataField>fechaFin</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="tipoDocumento">
+          <DataField>tipoDocumento</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
@@ -337,7 +341,7 @@
               </Textbox>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Height>3.13411cm</Height>
+            <Height>3.16939cm</Height>
             <Width>29.21653cm</Width>
             <Style>
               <Border>
@@ -386,7 +390,6 @@
                                       <Value>Fecha Inicio:</Value>
                                       <Style>
                                         <FontFamily>Arial</FontFamily>
-                                        <FontSize>11pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
@@ -423,7 +426,6 @@
                                       <Value>=First(Fields!fechaInicio.Value, "header")</Value>
                                       <Style>
                                         <FontFamily>Arial</FontFamily>
-                                        <FontSize>11pt</FontSize>
                                         <Format>d</Format>
                                       </Style>
                                     </TextRun>
@@ -458,7 +460,6 @@
                                       <Value>Fecha Fin:</Value>
                                       <Style>
                                         <FontFamily>Arial</FontFamily>
-                                        <FontSize>11pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
@@ -493,7 +494,6 @@
                                       <Value>=First(Fields!fechaFin.Value, "header")</Value>
                                       <Style>
                                         <FontFamily>Arial</FontFamily>
-                                        <FontSize>11pt</FontSize>
                                         <Format>d</Format>
                                       </Style>
                                     </TextRun>
@@ -520,6 +520,84 @@
                         <TablixCell />
                       </TablixCells>
                     </TablixRow>
+                    <TablixRow>
+                      <Height>0.6cm</Height>
+                      <TablixCells>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox1">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>Tipo Documento:</Value>
+                                      <Style>
+                                        <FontFamily>Arial</FontFamily>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox1</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                            <ColSpan>2</ColSpan>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell />
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox3">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=First(Fields!tipoDocumento.Value, "header")</Value>
+                                      <Style>
+                                        <FontFamily>Arial</FontFamily>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Left</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox3</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                            <ColSpan>4</ColSpan>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell />
+                        <TablixCell />
+                        <TablixCell />
+                      </TablixCells>
+                    </TablixRow>
                   </TablixRows>
                 </TablixBody>
                 <TablixColumnHierarchy>
@@ -535,11 +613,12 @@
                 <TablixRowHierarchy>
                   <TablixMembers>
                     <TablixMember />
+                    <TablixMember />
                   </TablixMembers>
                 </TablixRowHierarchy>
                 <DataSetName>details</DataSetName>
                 <Top>0.21061cm</Top>
-                <Height>0.6cm</Height>
+                <Height>1.2cm</Height>
                 <Width>29.21651cm</Width>
                 <Style>
                   <Border>
@@ -549,8 +628,9 @@
               </Tablix>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>3.2554cm</Top>
-            <Height>0.98466cm</Height>
+            <Top>3.3105cm</Top>
+            <Left>0.00001in</Left>
+            <Height>1.70433cm</Height>
             <Width>29.21653cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
@@ -1400,7 +1480,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>F. EMISIÓN</Value>
+                                                <Value>F. EMISIÓN CI</Value>
                                                 <Style>
                                                   <FontFamily>Arial</FontFamily>
                                                   <FontSize>7pt</FontSize>
@@ -1583,7 +1663,7 @@
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!nombreFiscal.Value</Value>
+                      <Value>=Fields!serieComprobante.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -2128,7 +2208,12 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>details</DataSetName>
-            <Top>4.88103cm</Top>
+            <SortExpressions>
+              <SortExpression>
+                <Value>=Fields!serieComprobante.Value</Value>
+              </SortExpression>
+            </SortExpressions>
+            <Top>5.83353cm</Top>
             <Left>0cm</Left>
             <Height>3.62033cm</Height>
             <Width>29.21651cm</Width>
@@ -2147,7 +2232,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>292.16532mm</Width>
+      <Width>292.16555mm</Width>
       <Page>
         <PageFooter>
           <Height>7.05556mm</Height>
