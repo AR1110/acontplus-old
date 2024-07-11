@@ -39,6 +39,10 @@
         $scope.tempPuntosEmision = [];
         $scope.codEstab_Asig = null;
 
+        $scope.dataCustomerSearch = {
+            
+        }
+
         //DETECT MOBILE DEVICE
         mS.detectDevice()
 
@@ -211,7 +215,7 @@
 
         $scope.onSelectTipoDoc = () => {
             if ([null, undefined, ""].includes($scope.dataSearch.codDoc)) {
-                $scope.modelCustomerProvider = null;
+                $scope.dataCustomerSearch.name = null;
                 $scope.dataSearch.identificacionReceptor = null;
             }
             getComprobantes();
@@ -247,8 +251,9 @@
         }
 
         $scope.onKeyupCustomerSupplier= function(){
-            if (!fS.isValidField($scope.modelCustomerProvider)){
-                $scope.modelCustomerProvider = null;
+      
+            if (!fS.isValidField($scope.dataCustomerSearch.name)){
+             //   $scope.dataCustomerSearch.name = null;
                 $scope.dataSearch.isSearchCustomerProvider = false;
                 $scope.dataSearch.identificacionReceptor = null;
             }
@@ -261,7 +266,7 @@
         }
 
         $scope.clearSearchCustomer = function () {
-            $scope.modelCustomerProvider = null;
+            $scope.dataCustomerSearch.name = null;
             $scope.dataSearch.identificacionReceptor = null;
             getComprobantes();
         }
