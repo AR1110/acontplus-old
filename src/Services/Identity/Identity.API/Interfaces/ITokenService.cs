@@ -2,5 +2,5 @@
 
 public interface ITokenService
 {
-    string CreateToken(UserData data);
+    JwtResponse CreateToken(UserData data);
 }

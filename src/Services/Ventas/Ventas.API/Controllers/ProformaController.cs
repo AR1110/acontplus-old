@@ -1,6 +1,6 @@
 ﻿namespace Ventas.API.Controllers;
 
-public class ProformaController(IConfiguration configuration, IProformaService _svc) : BaseApiController
+public class ProformaController(IProformaService svc) : BaseApiController
 {
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
@@ -10,7 +10,7 @@ public class ProformaController(IConfiguration configuration, IProformaService _
                 {"idUsuarioRol" , User.GetUserRoleId()},
                 {"json" , SqlStringParam.Sanitize(json)},
             };
-        return Ok(await _svc.GetAsync(parameters));
+        return Ok(await svc.GetAsync(parameters));
     }
 
     [HttpPost("Insert")]
@@ -22,7 +22,7 @@ public class ProformaController(IConfiguration configuration, IProformaService _
                 {"json" , SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))},
             }; 
 
-        return Ok(await _svc.AddAsync(parameters));
+        return Ok(await svc.AddAsync(parameters));
     }
 
     [HttpPut("Update/{id}")]
@@ -36,7 +36,7 @@ public class ProformaController(IConfiguration configuration, IProformaService _
                 {"json" , SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))},
             }; 
 
-        return Ok(await _svc.UpdateAsync(parameters));
+        return Ok(await svc.UpdateAsync(parameters));
     }
 
 
@@ -49,7 +49,7 @@ public class ProformaController(IConfiguration configuration, IProformaService _
                 {"id",id }, 
             }; 
 
-        return Ok(await _svc.DeleteAsync(parameters));
+        return Ok(await svc.DeleteAsync(parameters));
     }
 
     [HttpGet("GetId/{id}")]
@@ -60,7 +60,7 @@ public class ProformaController(IConfiguration configuration, IProformaService _
                 {"idRol" , User.GetUserRoleId()},
                 {"id" , id},
             };
-        return Ok(await _svc.GetByIdAsync(parameters));
+        return Ok(await svc.GetByIdAsync(parameters));
     }
 
     [HttpPost("ConvertToDoc")]
@@ -72,6 +72,6 @@ public class ProformaController(IConfiguration configuration, IProformaService _
                 {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))},
             }; 
 
-        return Ok(await _svc.ConvertToDoc(parameters));
+        return Ok(await svc.ConvertToDoc(parameters));
     }
 }
