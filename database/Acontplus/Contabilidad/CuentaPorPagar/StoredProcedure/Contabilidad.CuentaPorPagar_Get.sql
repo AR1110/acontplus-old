@@ -217,7 +217,10 @@ BEGIN
 		END
 
 	IF @tipo = 4
-		BEGIN 				
+		BEGIN 	
+        
+             SELECT @idCuentaPorPagar = idCuentaPorPagar FROM OPENJSON(@json) WITH (idCuentaPorPagar INT)
+
 			SELECT cu.IdCard                                                           as nroIdentificacion
 				  ,cu.businessName                                                     as nombreFiscal
 				  ,ce.total

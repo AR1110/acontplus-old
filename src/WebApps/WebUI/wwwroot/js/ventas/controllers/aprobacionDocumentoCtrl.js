@@ -199,19 +199,31 @@
 
         $scope.getAprobComprobantes = function () {
             try {
+                let checkBoxFecha =   true;
+                if ($scope.dataSearch.nroSecuencial) {
+                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) { 
+                        tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
+                        return
+                    }
+                     tS.toastr({
+                        type:'info',
+                        message: 'Buscando por número secuencial'
+                     })
+                     checkBoxFecha = false;
+                }
+
                 $scope.aprobComprobantes = [];
                 let dataSearch = {
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
                     codEstab: $scope.dataSearch.codEstab,
                     byCliente: $scope.dataSearch.byCliente,
-                    checkBoxFecha: true,
+                    checkBoxFecha,
                     byUsuario: $scope.dataSearch.byUsuario,
                     byEstado: ["", 0, null, undefined].includes($scope.dataSearch.byEstado) ? null : $scope.dataSearch.byEstado,
                     fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                    fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                    isSearchNroSequential: $scope.dataSearch.nroSecuencial ? true : false,
-                    nroSecuencial: $scope.dataSearch.nroSecuencial,
+                    fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin), 
+                    nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
                 }
 
 
