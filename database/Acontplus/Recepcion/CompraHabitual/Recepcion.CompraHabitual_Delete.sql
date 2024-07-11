@@ -33,7 +33,7 @@ BEGIN
 	SELECT @idArticulo = idArticulo, @productNewCode = codArticulo, @codEstab = codEstab FROM Recepcion.CompraHabitual WITH (NOLOCK) WHERE idCompraHabitual = @id
 	
     SET @companyId = (SELECT en.idEntidad FROM Sri.Establecimiento e WITH (NOLOCK)
-                                            INNER JOIN dbo.Entidad en WITH (NOLOCK) ON e.ruc = en.ruc WHERE e.codEstab = @codEstab)
+                                            INNER JOIN dbo.Entidad en WITH (NOLOCK) ON en.idEntidad = e.idEntidad WHERE e.codEstab = @codEstab)
 
     IF NOT EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE codigo = @productNewCode AND idEntidad = @companyId)
         BEGIN

@@ -27,8 +27,8 @@ BEGIN
           ,[Common].[ufnGetSerieDocument](es.estab,pe.ptoEmi,sp.[Sequence],0) as [sequence]
     FROM Mechanical.Support        sp WITH (NOLOCK)
     INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = sp.PuntoEmisionId
-    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
-    INNER JOIN dbo.Entidad         en WITH (NOLOCK) ON en.ruc            = es.ruc
+    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento    = pe.idEstablecimiento
+    INNER JOIN dbo.Entidad         en WITH (NOLOCK) ON en.idEntidad            = es.idEntidad
     WHERE sp.Id = @SupportId
 
     SELECT sp.[Date]        as [date]
