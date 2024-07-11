@@ -352,13 +352,13 @@ app.constant('nombreModalContabilidad', {
             MFP: '~/Pages/Contabilidad/CuentaPorPagar/Shared/_ModalFormaPago.cshtml'
         }
     },
-    COMPONENTS: {
-        fileGestionFinancieraPersonal: '/js/contabilidad/modals/modalGestionFinancieraPersonal.min.js' + CHANGE_VERSION(),
+    SOLICITUD_CREDITO: {
+        fileCtrl: '/js/contabilidad/modals/modalSolicitudCreditoCtrl.min.js' + CHANGE_VERSION(),
         controllers: {  
-            MGFP: 'modalGestionFinancieraPersonalCtrl'
+            MSC: 'modalSolictudCreditoCtrl'
         },
         templates: { 
-            MGFP: '~/Pages/Contabilidad/Components/_GestionFinancieraPersonal.cshtml',
+            MSC: '~/Pages/Contabilidad/CuentaPorCobrar/Components/_SolicitudCreditoComponent.cshtml',
         }
     }
 })
