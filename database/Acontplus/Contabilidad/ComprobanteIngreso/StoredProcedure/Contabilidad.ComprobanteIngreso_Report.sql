@@ -119,7 +119,7 @@ BEGIN
                                             , se.nombreComercial
                                             , se.codEstab
                                             , ''CI'' +''-''+ se.estab +''-''+ Helper.F_Auto_Sequential(ci.nroDocumento)	                AS serie
-                                            , ci.fechaRegistro                              											AS fechaRegistro
+                                            , FORMAT(ci.fechaRegistro, ''dd/MM/yyyy HH:mm'')         								    AS fechaRegistro
                                             , CAST(ci.abono  AS NUMERIC(18,2))															AS abono
                                             , CAST(ci.total  AS NUMERIC(18,2))															AS total
                                             , ci.nroDocumento
@@ -137,7 +137,7 @@ BEGIN
                                             , ISNULL(cd.descripcion, '''')																AS ciudad
                                             , co.idSubEntidadFinanciera         														AS idSubEntidadFinanciera
                                             , co.secuencial                                                                             AS secuencial
-                                            , co.fechaEmision                                            
+                                            , FORMAT(co.fechaEmision, ''dd/MM/yyyy'')                                                   AS fechaEmision                                           
                                             , co.idBanco
                                             , ci.observacion
                                             , (
@@ -311,7 +311,7 @@ BEGIN
                                         , se.nombreComercial
                                         , se.codEstab
                                         , ''CI'' +''-''+ se.estab +''-''+ Helper.F_Auto_Sequential(ci.nroDocumento)						    AS serie
-                                        , ci.fechaRegistro                              											        AS fechaRegistro
+                                        , FORMAT(ci.fechaRegistro, ''dd/MM/yyyy HH:mm'')                  								    AS fechaRegistro
                                         , CAST(ci.abono  AS NUMERIC(18,2))      															AS abono
                                         , CAST(ci.total  AS NUMERIC(18,2))															        AS total
                                         , ci.nroDocumento
@@ -330,7 +330,7 @@ BEGIN
                                         , ISNULL(cd.descripcion, '''')																        AS ciudad
                                         , ISNULL(co.idSubEntidadFinanciera, 0)														        AS idSubEntidadFinanciera
                                         , co.secuencial                                                                                     AS secuencial
-                                        , co.fechaEmision                                        
+                                        , FORMAT(co.fechaEmision, ''dd/MM/yyyy'')                                                           AS fechaEmision                                        
                                         , co.idBanco
                                         , ci.observacion
                                         , (
