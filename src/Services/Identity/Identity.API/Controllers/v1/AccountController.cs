@@ -1,4 +1,7 @@
-﻿namespace Identity.API.Controllers.v1;
+﻿using Identity.API.Helpers;
+using Identity.API.Models;
+
+namespace Identity.API.Controllers.v1;
 
 [Route("api/account/[action]")]
 [ApiController]
@@ -6,9 +9,10 @@
 public class AccountController(
     ITokenService tokenService,
     IConfiguration config,
-    ApplicationDbContext context,
+    ILoginFailedService loginFailedService,
+    ILoginHistoryService loginHistoryService,
     IAccountService accountService)
-    : BaseApiController
+    : ControllerBase
 {
     [AllowAnonymous]
     [HttpPost]
@@ -37,43 +41,46 @@ public class AccountController(
             switch (userData.Count)
             {
                 case 1 when !userData[0].NeedAuthorization:
-                {
-                    userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
-
-                    var token = tokenService.CreateToken(userData.FirstOrDefault());
-
-                    if (token == null || string.IsNullOrEmpty(token))
                     {
-                        return BadRequest("Error al iniciar session");
+                        userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
+
+                        var token = tokenService.CreateToken(userData.FirstOrDefault());
+
+                        if (token == null || string.IsNullOrEmpty(token.Token))
+                        {
+                            return BadRequest("Error al iniciar session");
+                        }
+
+                        userData.ForEach(x => x.Token = token.Token);
+                        var logingHistory = new LoginHistory
+                        {
+                            UserId = userData[0].UserId,
+                            Username = userData[0].Username,
+                            UserRoleId = userData[0].UserRoleId,
+                            UserAgent = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).userAgent,
+                            IpAddress = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).ipAddress,
+                            Token = token.Token,
+                            TokenExpiration = token.Expires
+                        };
+
+                        await loginHistoryService.AddAsync(logingHistory);
+
+                        logingHistory.UserAgent = userData[0].UserAgent;
+                        await accountService.AddNotificationAsync(logingHistory);
+
+                        return Ok(new
+                        {
+                            code = "1",
+                            message = "Login correcto",
+                            payload = JsonConvert.SerializeObject(userData,
+                                new JsonSerializerSettings
+                                {
+                                    ContractResolver =
+                                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                    Formatting = Formatting.Indented
+                                })
+                        });
                     }
-
-                    userData.ForEach(x => x.Token = token);
-                    var logingHistory = new LoginHistory
-                    {
-                        UserId = userData[0].UserId,
-                        Username = userData[0].Username,
-                        UserRoleId = userData[0].UserRoleId,
-                        UserAgent = authRequest.UserAgent,
-                        Token = token
-                    };
-                    context.LoginHistories.Add(logingHistory);
-                    await context.SaveChangesAsync();
-
-                    await accountService.AddNotificationAsync(logingHistory);
-
-                    return Ok(new
-                    {
-                        code = "1",
-                        message = "Login correcto",
-                        payload = JsonConvert.SerializeObject(userData,
-                            new JsonSerializerSettings
-                            {
-                                ContractResolver =
-                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                Formatting = Formatting.Indented
-                            })
-                    });
-                }
                 case 1 when userData[0].NeedAuthorization:
                     return Ok(new
                     {
@@ -104,11 +111,21 @@ public class AccountController(
         }
         else
         {
-            context.LoginFaileds.Add(new LoginFailed
+            if (string.IsNullOrEmpty(authRequest.UserAgent) ||
+                string.IsNullOrEmpty(authRequest.Username) ||
+                string.IsNullOrEmpty(authRequest.Password))
             {
-                UserAgent = authRequest.UserAgent, Username = authRequest.Username, Password = authRequest.Password
-            });
-            await context.SaveChangesAsync();
+                return Ok(response);
+            } 
+
+            var loginFailed = new LoginFailed
+            {
+                UserAgent = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).userAgent,
+                IpAddress = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).ipAddress,
+                Username = authRequest.Username,
+                Password = authRequest.Password
+            };
+            await loginFailedService.AddAsync(loginFailed);
         }
 
         return Ok(response);
@@ -120,7 +137,7 @@ public class AccountController(
     {
         userData.UrlGateway = config["ApiGateways:Acontplus"];
         var token = tokenService.CreateToken(userData);
-        if (token == null || string.IsNullOrEmpty(token))
+        if (token == null || string.IsNullOrEmpty(token.Token))
         {
             return BadRequest("Error al iniciar session");
         }
@@ -130,13 +147,15 @@ public class AccountController(
             UserId = userData.UserId,
             Username = userData.Username,
             UserRoleId = userData.UserRoleId,
-            UserAgent = userData.UserAgent,
-            Token = token
+            UserAgent = UserAgentHelper.SummarizeUserAgent(userData.UserAgent).userAgent,
+            IpAddress = UserAgentHelper.SummarizeUserAgent(userData.UserAgent).ipAddress,
+            Token = token.Token,
+            TokenExpiration = token.Expires
         };
-        context.LoginHistories.Add(logingHistory);
-        await context.SaveChangesAsync();
+        await loginHistoryService.AddAsync(logingHistory);
+        logingHistory.UserAgent = userData.UserAgent;
         await accountService.AddNotificationAsync(logingHistory);
-        userData.Token = token;
+        userData.Token = token.Token;
         return Ok(new
         {
             code = "1",

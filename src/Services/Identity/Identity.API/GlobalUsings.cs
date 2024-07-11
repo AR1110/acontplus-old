@@ -2,7 +2,6 @@
 global using Autofac;
 global using Autofac.Extensions.DependencyInjection;
 global using Common.Core.Entities;
-global using Common.Core.Interfaces;
 global using Common.Core.Models;
 global using Common.Core.Utils;
 global using Common.Infrastructure.Data;

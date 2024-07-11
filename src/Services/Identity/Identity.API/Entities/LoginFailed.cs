@@ -13,4 +13,5 @@ public class LoginFailed
     public DateTime ErrorDate { get; set; }
 
     [MaxLength(15)] public string IpAddress { get; set; }
+    public bool? FromMobile { get; set; }
 }

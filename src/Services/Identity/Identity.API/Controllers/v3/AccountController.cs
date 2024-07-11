@@ -1,12 +1,15 @@
-﻿namespace Identity.API.Controllers.v3;
+﻿using Identity.API.Helpers;
+
+namespace Identity.API.Controllers.v3;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("3.0")]
 public class AccountController(
-    ApplicationDbContext context,
     IConfiguration config,
     ITokenService tokenService,
+    ILoginFailedService loginFailedService,
+    ILoginHistoryService loginHistoryService,
     IAccountService accountService)
     : ControllerBase
 {
@@ -40,22 +43,24 @@ public class AccountController(
 
                     var token = tokenService.CreateToken(userData.FirstOrDefault());
 
-                    if (token == null || string.IsNullOrEmpty(token))
+                    if (token == null || string.IsNullOrEmpty(token.Token))
                     {
                         return BadRequest("Error al iniciar session");
                     }
 
-                    userData.ForEach(x => x.Token = token);
+                    userData.ForEach(x => x.Token = token.Token);
 
-                    context.LoginHistories.Add(new LoginHistory
+                    var logingHistory = new LoginHistory
                     {
                         UserId = userData[0].UserId,
                         Username = userData[0].Username,
                         UserRoleId = userData[0].UserRoleId,
                         UserAgent = authRequest.UserAgent,
-                        Token = token
-                    });
-                    await context.SaveChangesAsync();
+                        Token = token.Token,
+                        TokenExpiration = token.Expires
+                    };
+
+                    await loginHistoryService.AddAsync(logingHistory);
 
                     return Ok(new
                     {
@@ -73,12 +78,15 @@ public class AccountController(
             }
         }
         else
-        {
-            context.LoginFaileds.Add(new LoginFailed
+        { 
+
+            var loginFailed = new LoginFailed
             {
-                UserAgent = authRequest.UserAgent, Username = authRequest.Username, Password = authRequest.Password
-            });
-            await context.SaveChangesAsync();
+                UserAgent = authRequest.UserAgent, 
+                Username = authRequest.Username,
+                Password = authRequest.Password
+            };
+            await loginFailedService.AddAsync(loginFailed);
         }
 
         return Ok(response);
@@ -90,21 +98,23 @@ public class AccountController(
     {
         userData.UrlGateway = config["ApiGateways:Acontplus"];
         var token = tokenService.CreateToken(userData);
-        if (token == null || string.IsNullOrEmpty(token))
+        if (token == null || string.IsNullOrEmpty(token.Token))
         {
             return BadRequest("Error al iniciar session");
         }
 
-        context.LoginHistories.Add(new LoginHistory
+        var logingHistory = new LoginHistory
         {
             UserId = userData.UserId,
             Username = userData.Username,
             UserRoleId = userData.UserRoleId,
             UserAgent = userData.UserAgent,
-            Token = token
-        });
-        await context.SaveChangesAsync();
-        userData.Token = token;
+            Token = token.Token,
+            TokenExpiration = token.Expires
+        };
+        await loginHistoryService.AddAsync(logingHistory);
+
+        userData.Token = token.Token;
         return Ok(new
         {
             code = "1",
