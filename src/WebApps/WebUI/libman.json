@@ -91,7 +91,7 @@
       "destination": "wwwroot/assets/icons/font-awesome/"
     },
     {
-      "library": "limonte-sweetalert2@11.10.8",
+      "library": "limonte-sweetalert2@11.12.2",
       "destination": "wwwroot/lib/limonte-sweetalert2/"
     },
     {
@@ -123,7 +123,7 @@
       "destination": "wwwroot/lib/ngStorage/"
     },
     {
-      "library": "microsoft-signalr@8.0.0",
+      "library": "microsoft-signalr@8.0.7",
       "destination": "wwwroot/lib/microsoft-signalr/"
     },
     {
@@ -139,7 +139,7 @@
       "destination": "wwwroot/lib/UAParser.js/"
     },
     {
-      "library": "axios@1.6.8",
+      "library": "axios@1.7.2",
       "destination": "wwwroot/lib/axios/"
     },
     {

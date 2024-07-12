@@ -15,6 +15,8 @@ GO
 ALTER TABLE App.UsuarioRol ALTER COLUMN idEntidad INT NOT NULL
 GO
 
+ALTER TABLE Acontplus.App.UsuarioRol ADD fromMobile BIT NULL
+GO
 
 IF EXISTS (SELECT 1 
            FROM sys.columns 
@@ -122,18 +124,18 @@ BEGIN
 END
 GO
 
-ALTER TABLE Acontplus.dbo.Usuario ALTER COLUMN customerId INT NOT NULL
-GO
+--ALTER TABLE Acontplus.dbo.Usuario ALTER COLUMN customerId INT NULL
+--GO
 
-IF NOT EXISTS (
-    SELECT 1
-    FROM sys.indexes
-    WHERE name = 'IX_Users_CustomerId'
-)
-BEGIN
-    CREATE UNIQUE INDEX IX_Users_CustomerId
-    ON Acontplus.dbo.Usuario(customerId);
-END
+--IF NOT EXISTS (
+--    SELECT 1
+--    FROM sys.indexes
+--    WHERE name = 'IX_Users_CustomerId'
+--)
+--BEGIN
+--    CREATE UNIQUE INDEX IX_Users_CustomerId
+--    ON Acontplus.dbo.Usuario(customerId);
+--END
 
 
 IF EXISTS (SELECT 1 
