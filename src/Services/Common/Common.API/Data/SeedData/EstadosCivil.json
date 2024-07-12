@@ -1,0 +1,22 @@
+[
+  {
+    "Code": "C",
+    "Name": "Casado(a)"
+  },
+  {
+    "Code": "S",
+    "Name": "Soltero(a)"
+  },
+  {
+    "Code": "UL",
+    "Name": "Unión Libre"
+  },
+  {
+    "Code": "D",
+    "Name": "Divorciado(a)"
+  },
+  {
+    "Code": "V",
+    "Name": "Viudo(a)"
+  }
+]

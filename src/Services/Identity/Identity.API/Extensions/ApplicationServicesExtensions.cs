@@ -17,7 +17,6 @@ public static class ApplicationServicesExtensions
             });
         services.AddHostedService<TokenCleanupService>();
         services.AddScoped<IAccountService, AccountService>();
-        services.AddScoped<ICustomLogger, CustomLogger>();
         services.AddScoped<ILoginFailedService, LoginFailedService>();
         services.AddScoped<ILoginHistoryService, LoginHistoryService>();
         services.AddScoped<ITokenService, TokenService>();

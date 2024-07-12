@@ -100,7 +100,7 @@
                         <div class="input-group">
                             <input type="text" id="customer-provider-search" autocomplete="off"
                                    name="customer-provider-search" class="form-control border-select"
-                                   placeholder="Ingrese C.I o Nombre Fiscal" ng-model="modelCustomerProvider"
+                                   placeholder="Ingrese C.I o Nombre Fiscal" ng-model="dataCustomerSearch.name"
                                    ng-keyup="onKeyupCustomerSupplier()"
                                    uib-typeahead="item as item.nameCustomerProvider for item in searchCustomerProvider($viewValue)"
                                    typeahead-template-url="customerProviderTemplate.html" typeahead-min-length="1"
