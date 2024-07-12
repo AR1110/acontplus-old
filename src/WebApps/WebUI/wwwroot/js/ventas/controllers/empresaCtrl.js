@@ -1,4 +1,5 @@
 
+//@ts-check
 
 (function(){
 
@@ -10,25 +11,41 @@
 
     function empresaCtrl($scope, empresaSvc, tS){
         
-        $scope.initiload = function(){
+        $scope.dataSearch = {
+            pageIndex: 1,
+            pageSize: 25,
+            totalRecords: 0,
+            maxSize: 5
+        }
+        $scope.recordsQuantity = [25,50,100];
+     
+
+
+        initiload()
+        function initiload(){
             try {
                 showLoader();
+                let params = {
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize
+                }
                 $scope.empresas = [];
-                empresaSvc.get({pageIndex: 1,pageSize: 10}).then(response=>{ 
+                empresaSvc.getAll(params).then(response=>{ 
                     $scope.empresas = response;
+                    console.log(response)
                 })
-                .catch(error=>{
-                    hideLoader();
+                .catch(error=>{ 
                     console.log(error)
                 })
-                .finally(()=>hideLoader()) 
+                .finally(()=>hideLoader()) ;
+
             } catch (error) {
                 hideLoader();
                 console.log(error);                
             }
-        }
+        } 
 
-        $scope.initiload();
+        
     
         
     

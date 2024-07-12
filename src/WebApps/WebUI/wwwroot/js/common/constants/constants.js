@@ -202,7 +202,7 @@ app.constant('nombreModalVenta', {
     EMPRESA: {
         fileCtrl: '/js/ventas/modals/modalEmpresaCtrl.min.js',
         controller: 'ModalEmpresaCtrl',
-        template: '~/Pages/Empresa/_ModalAddUpdate.cshtml'
+        template: '~/Pages/Ventas/Empresa/_ModalAddEdit.cshtml'
     },
     EMPLEADO: {
         fileCtrl: '/js/ventas/modals/modalEmpleadoCtrl.min.js',
