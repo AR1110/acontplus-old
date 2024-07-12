@@ -879,7 +879,7 @@
                     let ctrl = nombreModalVenta.EMPRESA.controller
                     let template = nombreModalVenta.EMPRESA.template
                     let controller = (await import(fileCtrl))[ctrl];
-
+                    let id = typeof scope.params==='object'? scope.params.idEmpresa : 0
 
 
                     const modalDialogRef = modalSvc.openModalCustom({
@@ -887,7 +887,9 @@
                         template,
                         size: 'md',
                         isRenderRazorPartial: true,
-                        params: Object.assign({}, scope.params) || {},
+                        params: {
+                            id
+                        },
                     })
 
                     modalDialogRef.result.then(result => {

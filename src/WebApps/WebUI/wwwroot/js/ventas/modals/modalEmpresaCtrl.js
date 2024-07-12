@@ -5,16 +5,18 @@ ModalEmpresaCtrl.$inject = [
     '$scope', 
     '$uibModalInstance', 
     '$injector', 
-    'toastService',  
+    '$q' ,
     'params'
 ];
 
-function ModalEmpresaCtrl($scope, $uibModalInstance, $injector, tS, params){        
+function ModalEmpresaCtrl($scope, $uibModalInstance, $injector, $q, params){        
 
     let empresaSvc = $injector.get('empresaService');
     let fS = $injector.get('formulario');
     let SRI_IDENTIFITION_CODE = $injector.get('SRI_IDENTIFITION_CODE');
     let clienteSvc = $injector.get('clienteService');
+    let tS = $injector.get("toastService");
+    
 
     $scope.modalTitle = 'Nueva Empresa';
     $scope.btnText = 'Guardar';
@@ -38,18 +40,37 @@ function ModalEmpresaCtrl($scope, $uibModalInstance, $injector, tS, params){
         textChip = fS.removeAccents(textChip);
         item = textChip.toLowerCase();
     }
+
+    function loadDataForm(){
+        if(params.id>0){       
+            return $q.all([
+                empresaSvc.getDataForm(),
+                empresaSvc.getId(params.id)
+            ])
+        }
+        return empresaSvc.getDataForm();
+    }
      
 
     initiload();
-    function initiload(){
-        empresaSvc.getDataForm().then(response=>{
-            console.log(response)
-            $scope.tiposIdentificacion = response.tiposIdentificacion;
-            let dataTipoIdentificacion = $scope.tiposIdentificacion.find(ti => ti.codigoSri === SRI_IDENTIFITION_CODE.RUC);
-            if(dataTipoIdentificacion){
-                $scope.data.idTipoIdentificacion = dataTipoIdentificacion.idTipoIdentificacion;
-            }
+    function initiload(){ 
+        loadDataForm().then(response=>{
+            $scope.data = {};
+            
+            if(Array.isArray(response)){
+                let [dataUno, dataDos] = response; 
+                $scope.tiposIdentificacion = dataUno.tiposIdentificacion;
+                $scope.data = dataDos;
+            }else{
+                $scope.tiposIdentificacion = response.tiposIdentificacion;
+            } 
         })
+        
+        let dataTipoIdentificacion = $scope.tiposIdentificacion.find(ti => ti.codigoSri === SRI_IDENTIFITION_CODE.RUC);
+        if(dataTipoIdentificacion){
+            $scope.data.idTipoIdentificacion = dataTipoIdentificacion.idTipoIdentificacion;
+        }
+         
     }
 
     function isValidIdentificacion(){
@@ -90,6 +111,7 @@ function ModalEmpresaCtrl($scope, $uibModalInstance, $injector, tS, params){
         if (dataTipoIdentificacion && dataTipoIdentificacion.codigoSri === SRI_IDENTIFITION_CODE.PASSPORT) {
             result.isPassport = true;
         }
+        result.numeroIdentificacion = numeroIdentificacion;
         return result;
     }
 
@@ -99,7 +121,7 @@ function ModalEmpresaCtrl($scope, $uibModalInstance, $injector, tS, params){
 
         if (dataValid.rucValid){
             showLoader();
-            clienteSvc.checkClientSRIByRUC(numeroIdentificacion).then(response => {
+            clienteSvc.checkClientSRIByRUC(dataValid.numeroIdentificacion).then(response => {
                 if (response.error) {
                     tS.toastr('info', response.error);
                     return
@@ -150,7 +172,9 @@ function ModalEmpresaCtrl($scope, $uibModalInstance, $injector, tS, params){
     }
 
     $scope.save = function() {
-        if (!($scope.data.idTipoIdentificacion>0)) {
+        let dataTipoIdentificacion = $scope.tiposIdentificacion.find(ti => ti.idTipoIdentificacion === $scope.data.idTipoIdentificacion);
+
+        if (!fS.isValidField($scope.data.idTipoIdentificacion>0)) {
             tS.toastr('warning', 'Seleccione el Tipo de Identificación');
             return
         } 
@@ -169,21 +193,39 @@ function ModalEmpresaCtrl($scope, $uibModalInstance, $injector, tS, params){
             tS.toastr('warning', 'Ingrese campo Nombre Comercial');
             return
         }
+        
 
-        showLoader();
-        if ($scope.data.idEmpresa > 0) {
-            empresaSvc.put($scope.data.idEmpresa, $scope.data).then($scope.successReponse)
-                .catch(err => {
-                    hideLoader();
-                    console.log(err);
-                })
-        } else if(!($scope.data.idEmpresa>0)) { 
-            empresaSvc.post($scope.data).then($scope.successReponse)
-                .catch(err => {
-                    hideLoader();
-                    console.log(err);
-                })
-        }  
+       try {
+        let params = {
+            ...$scope.data,
+            telefonos: $scope.telefonos,
+            correos: $scope.correos,
+            codigoSri: dataTipoIdentificacion.codigoSri
+        }
+           showLoader();
+           if ($scope.data.idEmpresa > 0) {
+               empresaSvc.put($scope.data.idEmpresa, params).then($scope.successReponse)
+                    .catch(error=>{
+                        console.log(error)
+                    })
+                   .finally(err => {
+                       hideLoader();
+                       console.log(err);
+                   })
+           } else if (!($scope.data.idEmpresa > 0)) {
+               empresaSvc.post(params).then($scope.successReponse)
+                    .catch(error=>{
+                        console.log(error)
+                    })
+                   .finally(err => {
+                       hideLoader();
+                       console.log(err);
+                   })
+           }  
+       } catch (error) {
+        hideLoader();
+        console.log(error)
+       }
 
     }
 

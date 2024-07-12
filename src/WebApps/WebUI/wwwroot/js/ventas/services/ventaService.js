@@ -2217,14 +2217,30 @@
             })
         }
 
+        service.getId = function(id){
+            let json = JSON.stringify({
+                tipo: 1,
+                id
+            })
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response=>{
+                let data = {};
+                if(response.code==="1"){
+                    let {empresa} = JSON.parse(response.payload);
+                    data = empresa[0];
+                }
+                console.log(data)
+                return data;
+            })
+        }
+
         service.mappTo = function (data) {
 
             let telephone = data.telefonos.length > 0 ? data.telefonos.join('|') : null;
             let email = data.correos.length > 0 ? data.correos.join('|') : null;
             return {
-                iDType: data.idTipoIdentificacion,
+                iDType: data.codigoSri,
                 iDCard: data.numeroIdentificacion,
-                bussinesName: data.razonSocial,
+                businessName: data.razonSocial,
                 tradeName: data.nombreComercial,
                 email,
                 telephone,

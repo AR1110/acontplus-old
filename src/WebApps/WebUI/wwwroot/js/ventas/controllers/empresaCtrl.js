@@ -21,8 +21,8 @@
      
 
 
-        initiload()
-        function initiload(){
+        getEmpresas()
+        function getEmpresas(){
             try {
                 showLoader();
                 let params = {
@@ -45,13 +45,25 @@
             }
         } 
 
+        $scope.refresh = function(){
+            getEmpresas();
+        }
+
+        $scope.pagechanged = function () {
+             $scope.refresh();
+        };
+
+        $scope.changePageSize = function () {
+            $scope.dataSearch.pageIndex = 1;
+             $scope.refresh();
+        };
         
     
         
     
         $scope.resultModal = function(result){                      
             if(typeof result ==='object'){
-                this.initiload();
+                $scope.refresh()
             }            
         }
     
@@ -66,17 +78,20 @@
             
             if(isConfirmed){
                 showLoader();
-                empresaSvc.delete(item.idEmpresa).then(response=>{
-                    hideLoader();
+                empresaSvc.delete(item.idEmpresa).then(response=>{ 
                     if(response.code==="0"){
                         tS.toastr('warning',response.message);
                         return
                     }
                     if(response.code==="1"){                        
                         tS.toastr('success',response.message, response.titleSms);
-                        $scope.initiload();
+                        $scope.refresh()
                     }
                 })
+                .catch(error=>{
+                    console.log(error)
+                })
+                .finally(()=>hideLoader())
             }
         }
     }
