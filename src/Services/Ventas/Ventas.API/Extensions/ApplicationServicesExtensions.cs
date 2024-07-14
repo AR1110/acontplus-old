@@ -19,6 +19,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IClienteService, ClienteService>();
         services.AddScoped<INotaEntregaService, NotaEntregaService>();
         services.AddScoped<IProformaService, ProformaService>();
+        services.AddScoped<IEmpresaService, EmpresaService>();
        
         return services;
     }
