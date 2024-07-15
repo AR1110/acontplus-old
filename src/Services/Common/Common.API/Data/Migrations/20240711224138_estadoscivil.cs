@@ -6,7 +6,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Common.API.Data.Migrations
 {
     /// <inheritdoc />
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     public partial class estadoscivil : Migration
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
