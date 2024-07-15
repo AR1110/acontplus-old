@@ -172,3 +172,19 @@ FROM Acontplus.dbo.Usuario u WITH(ROWLOCK)
 INNER JOIN Acontplus.App.UsuarioRol ur ON u.idUsuario = ur.idUsuario
 WHERE u.fechaRegistro IS NULL
 GO
+
+DROP PROC IF EXISTS App.Usuario_Get
+GO
+
+DROP PROC IF EXISTS App.Usuario_Get_Search
+GO
+
+
+DROP PROC IF EXISTS App.Usuario_Insert
+GO
+
+DROP PROC IF EXISTS App.Usuario_Search
+GO
+
+DROP PROC IF EXISTS App.Usuario_Update
+GO

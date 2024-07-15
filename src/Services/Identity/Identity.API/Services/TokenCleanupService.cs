@@ -14,7 +14,7 @@ public class TokenCleanupService(IServiceProvider serviceProvider) : BackgroundS
     private async Task CleanExpiredTokens()
     {
         using var scope = serviceProvider.CreateScope();
-        var loginFailedService = scope.ServiceProvider.GetRequiredService<ILoginHistoryService>();
-        await loginFailedService.CleanExpiredTokensAsync();
+        var loginHistoryService = scope.ServiceProvider.GetRequiredService<ILoginHistoryService>();
+        await loginHistoryService.CleanExpiredTokensAsync();
     }
 }

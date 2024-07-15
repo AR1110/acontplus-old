@@ -28,15 +28,18 @@ BEGIN
     SELECT * FROM Acontplus.dbo.Usuario WHERE idUsuario = @idUsuario
 
     SELECT au.idUsuarioRol
-        , au.nroIdentificacion
-        , au.ruc
-        , sr.Code
-        , CONVERT(NVARCHAR, FORMAT(au.fechaRegistro, 'dd/MM/yyyy HH:mm:ss')) AS fechaRegistro        
-        , au.codigo
-        , sr.Name AS name
-        , au.estado
+        ,c.IDCard nroIdentificacion
+        ,e.razonSocial companyName
+        ,e.ruc
+        ,sr.Code
+        ,CONVERT(NVARCHAR, FORMAT(au.fechaRegistro, 'dd/MM/yyyy HH:mm:ss')) AS fechaRegistro
+        ,sr.Name AS name
+        ,au.estado
     FROM Acontplus.App.UsuarioRol au WITH(NOLOCK)
     INNER JOIN AcontplusAdmin.Seguridad.[Role] sr WITH(NOLOCK) ON sr.Id = au.RoleId
+    INNER JOIN Acontplus.dbo.Usuario u WITH(NOLOCK) ON au.idUsuario = u.idUsuario
+    INNER JOIN Acontplus.Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
+    INNER JOIN Acontplus.dbo.Entidad e WITH(NOLOCK) ON au.idEntidad = e.idEntidad
     WHERE au.idUsuario = @idUsuario
 END
 GO
