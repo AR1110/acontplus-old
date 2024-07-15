@@ -33,11 +33,11 @@ SELECT c.[idCliente]
     ,c.[validationSri]
     ,c.[CustomerId]
     ,e.ruc rucEntidad
-    ,e.razonSocial entidad
-    ,emp.razonSocial empresa
-    ,ti.descripcion tipoIdentificacion
-    ,ti.codigo as codTipoIdentificacion
-    ,ti.codigoSri codIdentSri
+    ,e.razonSocial   as entidad
+    ,ce.BusinessName as empresa
+    ,ti.descripcion  as tipoIdentificacion
+    ,ti.codigo       as codTipoIdentificacion
+    ,ti.codigoSri    as codIdentSri
     ,IIF(cs.IDType IS NULL,ti.codigoSri,cs.IDType)                as IDType
     ,IIF(cs.IDCard IS NULL,c.numeroIdentificacion,cs.IDCard)      as IDCard
     ,IIF(cs.BusinessName IS NULL, c.nombreFiscal,cs.BusinessName) as BusinessName
@@ -45,9 +45,11 @@ SELECT c.[idCliente]
     ,c.correo as Email
     ,c.telefono as Telephone
     ,c.direccion as [Address]
-FROM dbo.Cliente                       c WITH(NOLOCK)
-    INNER JOIN dbo.Entidad             e WITH(NOLOCK)  ON c.idEntidad            = e.idEntidad
-    INNER JOIN dbo.TipoIdentificacion ti WITH(NOLOCK)  ON c.idTipoIdentificacion = ti.idTipoIdentificacion 
-    LEFT JOIN Administrador.Empresa  emp WITH (NOLOCK) ON c.idEmpresa            = emp.idEmpresa
-    LEFT JOIN Customer.Customer       cs WITH (NOLOCK) ON cs.Id                  = c.CustomerId
+FROM dbo.Cliente                    c WITH (NOLOCK)
+INNER JOIN dbo.Entidad              e WITH (NOLOCK) ON e.idEntidad             = c.idEntidad
+INNER JOIN dbo.TipoIdentificacion  ti WITH (NOLOCK) ON ti.idTipoIdentificacion = c.idTipoIdentificacion 
+ LEFT JOIN Customer.Customer       cs WITH (NOLOCK) ON cs.Id                   = c.CustomerId
+ LEFT JOIN Administrador.Empresa  emp WITH (NOLOCK) ON emp.idEmpresa           = c.idEmpresa
+ LEFT JOIN Customer.Customer       ce WITH (NOLOCK) ON ce.Id                   = emp.CustomerId
+ 
 )
