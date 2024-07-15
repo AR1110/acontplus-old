@@ -266,7 +266,7 @@ BEGIN
                 --> Cotabilidad Cuentas Por Cobrar
                 IF @codDoc = '07'
                     BEGIN
-                        --> Proveedor
+                        --> Cliente
 					    IF NOT EXISTS(SELECT 1 FROM dbo.Cliente WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@rucEmisor)))
 						    BEGIN
 
