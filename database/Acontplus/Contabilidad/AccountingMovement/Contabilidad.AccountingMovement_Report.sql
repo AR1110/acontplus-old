@@ -49,7 +49,7 @@ BEGIN
 	IF @tipo = 1
 		BEGIN
             
-            SET @tableNames = 'headerDs,detalleDs'
+            SET @tableNames = 'headerDs,saleDs,cobroDs,docRelacionadoDs,movimientoDs,controlCajaDs,compraDs,docRelCompraDs,subcategoriaDs'
 
             SELECT e.ruc
 				  ,e.razonSocial 
@@ -62,23 +62,97 @@ BEGIN
 			FROM Entidad e WITH (NOLOCK)
 			WHERE e.idEntidad = @idEntidad
 
+            --> Ventas
 			SELECT CASE codDoc WHEN '01' THEN 'Factura'
 		                       WHEN 'NE' THEN 'N.Entrega'
+	               END               as tipo            
+                  ,COUNT(*)                                 as cant
+                  ,CAST(SUM(importeTotal) as numeric(18,2)) as total 
+                  ,CAST(SUM(abono) as numeric(18,2))        as abono
+                  ,CAST(SUM(saldo) as numeric(18,2))        as saldo
+            FROM v_CuentaPorCobrar WITH (NOLOCK)
+            WHERE idEntidad = @idEntidad
+              AND codDoc IN ('01','NE') 
+              AND codEstado NOT IN ('A')
+              AND convertToDoc = 0
+            GROUP BY codDoc
+
+            SELECT ef.descripcion as tipo , CAST(SUM(co.abono)as numeric(18,2)) as valor
+            FROM dbo.Cobro                    co WITH (NOLOCK)
+            INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
+            INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = co.idEntidadFinanciera
+            INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento    = ci.idEstablecimiento
+            WHERE ci.estado = 1
+              AND es.idEntidad = @idEntidad
+              AND co.cobro = 1
+            GROUP BY ef.descripcion
+
+            SELECT CASE codDoc WHEN 'A'  THEN 'Anticipo'
 				               WHEN '04' THEN 'Devolución'
 				               WHEN '07' THEN 'Comprobante de Renteción'
-	               END as tipo            
-                  ,CASE WHEN codDoc IN('01','NE') THEN SUM(importeTotal)
-									              ELSE 0
-	               END as ingreso 
-	              ,CASE WHEN codDoc IN('04','07') THEN SUM(importeTotal)
-									              ELSE 0
-	               END as egreso
-	  
-            FROM v_CuentaPorCobrar
-            WHERE idEntidad = 7 
-              AND codDoc NOT IN ('A') 
+	               END                                      as tipo            
+                  ,COUNT(*)                                 as cant
+                  ,CAST(SUM(importeTotal) as numeric(18,2)) as valor 
+            FROM v_CuentaPorCobrar WITH (NOLOCK)
+            WHERE idEntidad = @idEntidad
+              AND codDoc IN ('07','04','A') 
               AND codEstado NOT IN ('A')
             GROUP BY codDoc
+
+            SELECT td.descripcion                                                    as tipo
+                  ,CAST(SUM(mc.valor) as numeric(18,2)) * IIF(td.codigo = 'EC',-1,1) as valor
+                  ,COUNT(*)                                                         as cant
+            FROM MovimientoCaja mc WITH (NOLOCK)
+            INNER JOIN dbo.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento      = mc.idTipoDocumento
+             LEFT JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = mc.idComprobanteIngreso
+             LEFT JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento    = ci.idEstablecimiento
+            WHERE es.idEntidad = @idEntidad
+            GROUP BY td.descripcion,td.codigo
+
+            SELECT CAST(SUM(cc.entrada) as numeric(18,2))     as entrada
+                  ,CAST(SUM(cc.totalArqueo) as numeric(18,2)) as totalArqueo
+            FROM dbo.ControlCaja cc WITH (NOLOCK)
+            INNER JOIN dbo.Caja  ca WITH (NOLOCK) ON ca.idCaja = cc.idCaja
+            WHERE cc.estado = 0
+              AND ca.idEntidad = @idEntidad
+
+            --> Compra
+            SELECT CASE codDoc WHEN '01' THEN 'Factura'
+		                       WHEN '07' THEN 'Liquidacion'
+		                       WHEN 'DH' THEN 'Compra Habitual'
+		                       WHEN 'FC' THEN 'F.Fisica'
+	               END               as tipo            
+                  ,COUNT(*)                                 as cant
+                  ,CAST(SUM(importeTotal) as numeric(18,2)) as total 
+                  ,CAST(SUM(abono) as numeric(18,2))        as abono
+                  ,CAST(SUM(saldo) as numeric(18,2))        as saldo
+            FROM v_CuentaPorPagar cp WITH (NOLOCK)
+            WHERE cp.idEntidad = @idEntidad
+              AND cp.codDoc IN ('01','07','DH','FC')
+              AND cp.codEstado NOT IN ('A')
+            GROUP BY codDoc
+
+            SELECT CASE codDoc WHEN '04' THEN 'Devolución'
+				               WHEN '07' THEN 'Comprobante de Renteción'
+	               END                                      as tipo  
+                  ,COUNT(*)                                 as cant 
+                  ,CAST(SUM(importeTotal) as numeric(18,2)) as valor 
+            FROM v_CuentaPorPagar WITH (NOLOCK)
+            WHERE idEntidad = @idEntidad
+              AND codDoc IN ('07','04') 
+              AND codEstado NOT IN ('A')
+            GROUP BY codDoc
+
+            SELECT ISNULL(cp.subcategoryName,'Compra')      as tipo            
+                  ,COUNT(*)                                 as cant
+                  ,CAST(SUM(importeTotal) as numeric(18,2)) as total 
+                  ,CAST(SUM(abono) as numeric(18,2))        as abono
+                  ,CAST(SUM(saldo) as numeric(18,2))        as saldo
+            FROM v_CuentaPorPagar cp WITH (NOLOCK)
+            WHERE cp.idEntidad = @idEntidad
+              AND cp.codDoc IN ('01','07','DH','FC')
+              AND cp.codEstado NOT IN ('A')
+            GROUP BY subcategoryName
 
             RETURN 
 		END 
