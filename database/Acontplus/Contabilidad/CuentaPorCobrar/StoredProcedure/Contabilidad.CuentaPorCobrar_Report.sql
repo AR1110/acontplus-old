@@ -194,6 +194,10 @@ BEGIN
                             SET @sql = @sql + 'AND cc.codEstado = @codEstado AND cc.convertToDoc = 0 '
                         END 
                 END 
+            ELSE
+                BEGIN
+                    SET @sql = @sql + 'AND cc.codEstado NOT IN (''A'',''TRA'') AND cc.convertToDoc = 0 '
+                END 
 
             SET @sql = @sql + 'ORDER BY cc.fechaEmision,cc.idCliente,cc.codDoc ASC '
 
