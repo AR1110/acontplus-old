@@ -1723,16 +1723,20 @@
                         throw response
                     }
                     if (response.code === '1') {
-                        let mainDataRepository = JSON.parse(response.payload)
+                        let mainData = JSON.parse(response.payload)
+                    
+                        console.log(mainData)
                         return {
-                            tipoIdentificacion: mainDataRepository[0],
-                            tipoContribuyentes: mainDataRepository[1],
-                            tiempoCreditos: mainDataRepository[2] || [],
-                            ciudades: mainDataRepository[3],
-                            tiposCliente: mainDataRepository[4] || [],
-                            empresas: mainDataRepository[5] || [],
-                            cargos: mainDataRepository[6] || [],
-                            formasPagoSri: mainDataRepository[7] || []
+                            tipoIdentificacion: mainData[0],
+                            tipoContribuyentes: mainData[1],
+                            tiempoCreditos: mainData[2] || [],
+                            ciudades: mainData[3],
+                            tiposCliente: mainData[4] || [],
+                            empresas: mainData[5] || [],
+                       //     cargos: mainData[6] || [],
+                            formasPagoSri: mainData[7] || [],
+                            housingTypes: mainData[8] || [],
+                            maritalStatuses: mainData[9] || []
                         }
                     }
                 })

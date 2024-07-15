@@ -1,11 +1,11 @@
-﻿using Common.Core.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.Core.Entities;
 
 namespace Common.API.Entities
 {
-    [Table("TipoVivienda", Schema = "Common")]
-    public class TipoVivienda : BaseEntity
+    [Table("HousingType", Schema = "Common")]
+    public class HousingType:BaseEntity
     {
         [Required]
         [MaxLength(5)]
