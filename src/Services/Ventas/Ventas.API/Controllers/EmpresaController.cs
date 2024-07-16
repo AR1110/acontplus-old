@@ -1,98 +1,52 @@
 ﻿namespace Ventas.API.Controllers;
 
-public class EmpresaController : BaseApiController
-{
-    private readonly IConfiguration _configuration;
-    private readonly DbAccess _db;
-
-
-    public EmpresaController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-        _db = new DbAccess(_configuration);
-
-    }
+public class EmpresaController(IEmpresaService _svc) : BaseApiController
+{ 
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-
-            await _db.SpExecuteAsync("Administrador.Empresa_Get", true);
-            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            {"userRoleId", User.GetUserRoleId() },
+            {"json",  SqlStringParam.Sanitize(json)}
+        };
+        return Ok(await _svc.GetAsync(parameters));  
     }
 
 
     [HttpPost]
-    public async Task<IActionResult> Post(string json)
+    public async Task<IActionResult> Post(ApiRequest request)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string , object>
         {
-
-            await _db.SpExecuteAsync("Administrador.Empresa_Insert", true);
-            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            {"userRoleId", User.GetUserRoleId()},
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
+        return Ok(await _svc.AddAsync(parameters)); 
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, string json)
+    public async Task<IActionResult> Put(int id, ApiRequest request)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Administrador.Empresa_Update", true);
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            {"userRoleId", User.GetUserRoleId() },
+            {"id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
+        return Ok(await _svc.UpdateAsync(parameters));
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Administrador.Empresa_Delete", true);
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            {"userRoleId", User.GetUserRoleId() },
+            {"id",id }
+        };
+        return Ok(await _svc.DeleteAsync(parameters));     
     }
 }

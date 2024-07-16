@@ -1,4 +1,5 @@
 USE AcontPlus
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9,10 +10,8 @@ GO
 -- Description:	SP PARA OBTENER LOS ARTICULOS SIMILARES A LOS IMPORTADOS
 -- =============================================
 --Recepcion.Articulo_Get 28, '{"id":74327,"tipo":"H"}'
-IF OBJECT_ID(N'Recepcion.Articulo_Get ', N'P') IS NOT NULL
-DROP PROCEDURE Recepcion.Articulo_Get
-GO
-CREATE PROCEDURE Recepcion.Articulo_Get 
+ 
+CREATE OR ALTER PROCEDURE Recepcion.Articulo_Get 
 @idRol INT
 ,@jsonData NVARCHAR(MAX)
 AS
@@ -48,24 +47,6 @@ BEGIN
 		BEGIN
 			IF (SELECT tipo FROM @tmp) = 'C'
 				BEGIN
-					--SELECT a.idEntidad
-					--,a.idArticulo
-					--,a.codigo codigoPrincipal
-					--,a.codigoAuxiliar
-					--,a.descripcion
-					--,a.precioCosto precioUnitario
-					--,p.nombreFiscal razonSocial
-					--INTO #TempFirst
-					--FROM dbo.Articulo a  
-					--INNER JOIN FacturaCompraDetalle fcd ON a.idArticulo = fcd.idArticulo
-					--INNER JOIN FacturaCompra fc ON fcd.idFacturaCompra = fc.idFacturaCompra 
-					--AND fc.idEntidad = @idEntidad
-					--INNER JOIN Proveedor p ON fc.idProveedor = p.idProveedor 
-					--AND p.idEntidad = @idEntidad
-					--WHERE  a.codigo = (SELECT t.descripcion FROM @tmp t)  COLLATE SQL_Latin1_General_Cp1_CI_AI
-					--AND a.idEntidad = @idEntidad
-
-					--INSERT INTO #TempFirst
 					SELECT a.idEntidad
 					,a.idArticulo
 					,a.codigo codigoPrincipal
@@ -74,7 +55,7 @@ BEGIN
 					,a.precioCosto precioUnitario
 					,'Sin compras registradas' razonSocial
 					INTO #TempFirst
-					FROM dbo.Articulo a
+					FROM dbo.Articulo a WITH(NOLOCK)
 					WHERE a.codigo = (SELECT t.descripcion FROM @tmp t)  COLLATE SQL_Latin1_General_Cp1_CI_AI
 					AND  a.idEntidad = @idEntidad
 					OR (a.codigoAuxiliar = (SELECT t.descripcion FROM @tmp t)  COLLATE SQL_Latin1_General_Cp1_CI_AI)
@@ -102,15 +83,14 @@ BEGIN
 			IF (SELECT tipo FROM @tmp) = 'H'
 				BEGIN 
 					SELECT fc.razonSocialEmisior proveedor
-					--,ISNULL(fc.estab,'') + ' - ' + 
 					,fc.serieComprobante nroDocumento
 					,fc.fechaEmision
 					,fcd.cantidad
 					,fcd.precioUnitario
 					INTO #TempH
 					FROM dbo.Articulo a WITH (NOLOCK) 
-					INNER JOIN Recepcion.DocumentoDetalle fcd ON a.idArticulo = fcd.idArticulo
-					INNER JOIN Recepcion.DocumentoRecibido fc ON fcd.idDocumento = fc.idDocumento
+					INNER JOIN Recepcion.DocumentoDetalle fcd  WITH(NOLOCK) ON a.idArticulo = fcd.idArticulo
+					INNER JOIN Recepcion.DocumentoRecibido fc  WITH(NOLOCK) ON fcd.idDocumento = fc.idDocumento
 					WHERE  a.idArticulo = (SELECT TOP 1 id FROM @tmp)
 					ORDER BY fc.fechaEmision DESC 
 
@@ -124,26 +104,7 @@ BEGIN
 					ORDER BY fechaEmision DESC
 					DROP TABLE #TempH
 					RETURN
-				END
-
-				--SELECT a.idEntidad
-				--,a.idArticulo
-				--,a.codigo codigoPrincipal
-				--,a.codigoAuxiliar
-				--,a.descripcion
-				--,a.precioCosto precioUnitario
-				--,p.nombreFiscal razonSocial
-				--INTO #TempFirstII
-				--FROM dbo.Articulo a  
-				--INNER JOIN FacturaCompraDetalle fcd ON a.idArticulo = fcd.idArticulo
-				--INNER JOIN FacturaCompra fc ON fcd.idFacturaCompra = fc.idFacturaCompra 
-				--AND fc.idEntidad = @idEntidad
-				--INNER JOIN Proveedor p ON fc.idProveedor = p.idProveedor 
-				--AND p.idEntidad = @idEntidad
-				--WHERE   a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
-				--AND a.idEntidad = @idEntidad
-
-				--INSERT INTO #TempFirstII
+				END 
 					SELECT a.idEntidad
 					,a.idArticulo
 					,a.codigo codigoPrincipal
@@ -152,14 +113,11 @@ BEGIN
 					,a.precioCosto precioUnitario
 					,'Sin compras registradas' razonSocial
 					INTO #TempFirstII
-					FROM dbo.Articulo a
+					FROM dbo.Articulo a  WITH(NOLOCK)
 					WHERE a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
 					AND  a.idEntidad = @idEntidad
 					AND a.estado = 1
-					--AND a.idArticulo NOT IN (
-					--	SELECT fcd.idArticulo FROM FacturaCompraDetalle fcd WHERE a.idArticulo = fcd.idArticulo
-					--)
-			
+ 
  
 			
 				SELECT * FROM #TempFirstII a WHERE idEntidad = @idEntidad 
@@ -174,28 +132,8 @@ BEGIN
 
 				DROP TABLE #TempFirstII
 				RETURN
-		END
+		END 
 
-
-	--SELECT a.idEntidad
-	--,a.idArticulo
-	--,a.codigo codigoPrincipal
-	--,a.codigoAuxiliar
-	--,a.descripcion
-	--,a.precioCosto precioUnitario
-	--,p.nombreFiscal razonSocial
-	--INTO #Temp
-	--FROM dbo.Articulo a  
-	--INNER JOIN FacturaCompraDetalle fcd ON a.idArticulo = fcd.idArticulo
-	--INNER JOIN FacturaCompra fc ON fcd.idFacturaCompra = fc.idFacturaCompra 
-	--AND fc.idEntidad = @idEntidad
-	--INNER JOIN Proveedor p ON fc.idProveedor = p.idProveedor 
-	--AND p.idEntidad = @idEntidad
-	--WHERE  a.codigo = (SELECT t.codigoPrincipal FROM @tmp t)
-	--OR a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
-	--AND a.idEntidad = @idEntidad
-	
-	--INSERT INTO #Temp
 	SELECT a.idEntidad
 	,a.idArticulo
 	,a.codigo codigoPrincipal
@@ -204,16 +142,13 @@ BEGIN
 	,a.precioCosto precioUnitario
 	,'Sin compras registradas' razonSocial
 	INTO #Temp
-	FROM dbo.Articulo a
+	FROM dbo.Articulo a  WITH(NOLOCK)
 	WHERE   a.idEntidad = @idEntidad
 	AND a.estado = 1
 	AND (a.codigo = (SELECT t.codigoPrincipal FROM @tmp t) OR 
 			a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
-	)
-	--AND a.idArticulo NOT IN (
-	--	SELECT fcd.idArticulo FROM FacturaCompraDetalle fcd WHERE a.idArticulo = fcd.idArticulo
-	--)
-		
+	) 
+
 	SELECT * FROM #Temp a WHERE idEntidad = @idEntidad 
 	GROUP BY 
 	 a.idEntidad

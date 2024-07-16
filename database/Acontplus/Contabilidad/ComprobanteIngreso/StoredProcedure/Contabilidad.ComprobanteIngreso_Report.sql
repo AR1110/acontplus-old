@@ -20,7 +20,7 @@ GO
 -- Create date: 2024/05/15
 -- Description:	REPORT FOR COBROS
 -- =============================================
--- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":3,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":"FV","idSubEntidadFinanciera":0,"idCustomer":194578,"idPuntoEmision":225,"fechaInicio":"2024-06-05 11:18:44 AM","fechaFin":"2024-06-05 11:18:44 AM","dateChecked":false,"idBanco":0,"nroDocChecked":false,"nroDocument":"","referenceChecked":false,"reference":"","loteChecked":false,"lote":""}', ''
+-- Contabilidad.ComprobanteIngreso_Report 343, '{"tipo":1,"format":"pdf","codEstab":"ESTAB-000000237","codDoc":"NE","idSubEntidadFinanciera":0,"idCustomer":null,"idPuntoEmision":246,"fechaInicio":"2023-09-01 00:00:00 AM","fechaFin":"2023-09-30 23:59:59 PM","dateChecked":true,"idBanco":0,"nroDocChecked":false,"nroDocument":"","referenceChecked":false,"reference":"","loteChecked":false,"lote":""}', ''
 CREATE OR ALTER PROC Contabilidad.ComprobanteIngreso_Report
 	 @userRoleId INT
 	,@json	     VARCHAR(MAX)
@@ -56,11 +56,27 @@ BEGIN
            ,@lote                   VARCHAR(30)
            ,@id                     INT
 		   ,@byIngreso              BIT
+           ,@tipoDoc                VARCHAR(20)
 	
 	--> Variables
     SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-    SELECT @tipo = tipo FROM OPENJSON(@json) WITH ( tipo INT )
+    SELECT @tipo = tipo, @codDoc = codDoc FROM OPENJSON(@json) WITH ( tipo INT, codDoc                    VARCHAR(5))
+
+    IF @codDoc = 'NE'   
+        BEGIN
+            SET @tipoDoc = 'NOTA DE ENTREGA'
+        END
+
+    IF @codDoc = 'FV'
+        BEGIN
+            SET @tipoDoc = 'FACTURA'
+        END
+
+    IF @codDoc IS NULL OR @codDoc = ''
+        BEGIN
+            SET @tipoDoc = 'TODOS'
+        END
 
 	--> Por Documentos.
 	IF @tipo = 1
@@ -119,7 +135,7 @@ BEGIN
                                             , se.nombreComercial
                                             , se.codEstab
                                             , ''CI'' +''-''+ se.estab +''-''+ Helper.F_Auto_Sequential(ci.nroDocumento)	                AS serie
-                                            , ci.fechaRegistro                              											AS fechaRegistro
+                                            , FORMAT(ci.fechaRegistro, ''dd/MM/yyyy HH:mm'')         								    AS fechaRegistro
                                             , CAST(ci.abono  AS NUMERIC(18,2))															AS abono
                                             , CAST(ci.total  AS NUMERIC(18,2))															AS total
                                             , ci.nroDocumento
@@ -137,7 +153,7 @@ BEGIN
                                             , ISNULL(cd.descripcion, '''')																AS ciudad
                                             , co.idSubEntidadFinanciera         														AS idSubEntidadFinanciera
                                             , co.secuencial                                                                             AS secuencial
-                                            , co.fechaEmision                                            
+                                            , FORMAT(co.fechaEmision, ''dd/MM/yyyy'')                                                   AS fechaEmision                                           
                                             , co.idBanco
                                             , ci.observacion
                                             , (
@@ -222,8 +238,8 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND CAST(dt.fechaRegistro AS DATE) BETWEEN CAST(@fechaInicio AS DATE) AND CAST(@fechaFin AS DATE) '
                 END
-
-            SET @sql = @sql + 'ORDER BY dt.fechaEmision ASC '
+            
+            SET @sql = @sql + 'ORDER BY dt.serieComprobante, dt.fechaEmision ASC '
             
             ---> Header
             SELECT TOP 1 
@@ -231,9 +247,10 @@ BEGIN
                 , ve.ruc
                 , ve.telefono
                 , ve.correo
-                , @usuario          AS usuario
-                , @fechaInicio      AS fechaInicio
-                , @fechaFin         AS fechaFin
+                , @usuario                                AS usuario
+                , FORMAT(@fechaInicio, 'dd/MM/yyyy')      AS fechaInicio
+                , FORMAT(@fechaFin, 'dd/MM/yyyy')         AS fechaFin
+                , @tipoDoc                                AS tipoDocumento
             FROM v_Estab_Asign ve WITH(NOLOCK)
             WHERE ve.codEstab = @codEstab
 
@@ -311,7 +328,7 @@ BEGIN
                                         , se.nombreComercial
                                         , se.codEstab
                                         , ''CI'' +''-''+ se.estab +''-''+ Helper.F_Auto_Sequential(ci.nroDocumento)						    AS serie
-                                        , ci.fechaRegistro                              											        AS fechaRegistro
+                                        , FORMAT(ci.fechaRegistro, ''dd/MM/yyyy HH:mm'')                  								    AS fechaRegistro
                                         , CAST(ci.abono  AS NUMERIC(18,2))      															AS abono
                                         , CAST(ci.total  AS NUMERIC(18,2))															        AS total
                                         , ci.nroDocumento
@@ -330,7 +347,7 @@ BEGIN
                                         , ISNULL(cd.descripcion, '''')																        AS ciudad
                                         , ISNULL(co.idSubEntidadFinanciera, 0)														        AS idSubEntidadFinanciera
                                         , co.secuencial                                                                                     AS secuencial
-                                        , co.fechaEmision                                        
+                                        , FORMAT(co.fechaEmision, ''dd/MM/yyyy'')                                                           AS fechaEmision                                        
                                         , co.idBanco
                                         , ci.observacion
                                         , (
@@ -418,16 +435,17 @@ BEGIN
                     SET @sql = @sql + 'AND CAST(dt.fechaRegistro AS DATE) BETWEEN CAST(@fechaInicio AS DATE) AND CAST(@fechaFin AS DATE) '
                 END
                 
-            SET @sql = @sql + 'ORDER BY dt.fechaEmision ASC '
+            SET @sql = @sql + 'ORDER BY dt.serieComprobante, dt.fechaEmision ASC '
 
             ---> Header
             SELECT TOP 1 ve.nombreComercial
                 , ve.ruc
                 , ve.telefono
                 , ve.correo
-                , @usuario          AS usuario
-                , @fechaInicio      AS fechaInicio
-                , @fechaFin         AS fechaFin
+                , @usuario                                AS usuario
+                , FORMAT(@fechaInicio, 'dd/MM/yyyy')      AS fechaInicio
+                , FORMAT(@fechaFin, 'dd/MM/yyyy')         AS fechaFin
+                , @tipoDoc                                AS tipoDocumento
             FROM v_Estab_Asign ve   WITH(NOLOCK)
             WHERE ve.codEstab = @codEstab
 

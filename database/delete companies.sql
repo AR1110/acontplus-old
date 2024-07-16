@@ -1,4 +1,4 @@
-DECLARE @uuid UNIQUEIDENTIFIER = 'C7DEF417-8B71-4EAB-B89C-B41B690C16A1'
+DECLARE @uuid UNIQUEIDENTIFIER = '4458AD83-6D63-44B1-B54B-DD0B0F970276'
 
 DELETE sd FROM AcontplusAdmin.Sales.SuscripcionDetalle sd WITH (ROWLOCK)
 WHERE SuscripcionId in (
@@ -43,3 +43,19 @@ INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON s.idEntidad = e.idEntidad
 WHERE e.Uuid = @uuid
 
 DELETE FROM Acontplus.dbo.Entidad WHERE Uuid = @uuid
+
+DELETE FROM AcontplusDemo.Demo.UserCustomer WHERE uuid = @uuid
+
+DELETE FROM AcontplusDemo.Demo.EmailValidationCode WHERE uuid = @uuid
+
+DELETE FROM AcontplusDemo.Demo.UserCustomer WHERE uuid = @uuid
+
+DELETE FROM AcontplusDemo.Demo.EmailValidationCode WHERE uuid = @uuid
+
+DELETE FROM AcontplusDemo.Demo.UserCustomer WHERE uuid = @uuid
+
+DELETE FROM AcontplusDemo.Demo.EmailValidationCode WHERE uuid = @uuid
+
+DELETE FROM AcontplusDemo.Demo.UserCustomer WHERE uuid = @uuid
+
+DELETE FROM AcontplusDemo.Demo.EmailValidationCode WHERE uuid = @uuid

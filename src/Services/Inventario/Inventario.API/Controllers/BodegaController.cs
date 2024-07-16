@@ -2,95 +2,63 @@
 
 public class BodegaController : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    private readonly DbAccess _db;
+    private readonly IBodegaService _service;
 
-
-    public BodegaController(IConfiguration configuration)
+    public BodegaController(IBodegaService service)
     {
-        _configuration = configuration;
-
-        _db = new DbAccess(_configuration);
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Inventario.Bodega_Get");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+            { "idUsuarioRol", User.GetUserRoleId() }
+        };
 
-        return Ok(_response);
+        var response = await _service.GetAsync(parameters);
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Inventario.Bodega_Insert");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+            { "idUsuarioRol", User.GetUserRoleId() },
+            { "json",  SqlStringParam.Sanitize(json) }
+        };
 
-        return Ok(_response);
+        var response = await _service.AddAsync(parameters);
+
+        return Ok(response);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Inventario.Bodega_Update");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+            { "idUsuarioRol", User.GetUserRoleId() },
+            { "id", id },
+            { "json",  SqlStringParam.Sanitize(json) }
+        };
 
-        return Ok(_response);
+        var response = await _service.UpdateAsync(parameters);
+        return Ok(response);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Inventario.Bodega_Delete");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+            { "idUsuarioRol", User.GetUserRoleId() },
+            { "id", id },
+        };
 
-        return Ok(_response);
+        var response = await _service.DeleteAsync(parameters);
+        return Ok(response);
     }
 }

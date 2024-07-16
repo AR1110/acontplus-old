@@ -202,7 +202,7 @@ app.constant('nombreModalVenta', {
     EMPRESA: {
         fileCtrl: '/js/ventas/modals/modalEmpresaCtrl.min.js',
         controller: 'ModalEmpresaCtrl',
-        template: '~/Pages/Empresa/_ModalAddUpdate.cshtml'
+        template: '~/Pages/Ventas/Empresa/_ModalAddEdit.cshtml'
     },
     EMPLEADO: {
         fileCtrl: '/js/ventas/modals/modalEmpleadoCtrl.min.js',
@@ -352,13 +352,13 @@ app.constant('nombreModalContabilidad', {
             MFP: '~/Pages/Contabilidad/CuentaPorPagar/Shared/_ModalFormaPago.cshtml'
         }
     },
-    COMPONENTS: {
-        fileGestionFinancieraPersonal: '/js/contabilidad/modals/modalGestionFinancieraPersonal.min.js' + CHANGE_VERSION(),
+    SOLICITUD_CREDITO: {
+        fileCtrl: '/js/contabilidad/modals/modalSolicitudCreditoCtrl.min.js' + CHANGE_VERSION(),
         controllers: {  
-            MGFP: 'modalGestionFinancieraPersonalCtrl'
+            MSC: 'modalSolictudCreditoCtrl'
         },
         templates: { 
-            MGFP: '~/Pages/Contabilidad/Components/_GestionFinancieraPersonal.cshtml',
+            MSC: '~/Pages/Contabilidad/CuentaPorCobrar/Components/_SolicitudCreditoComponent.cshtml',
         }
     }
 })

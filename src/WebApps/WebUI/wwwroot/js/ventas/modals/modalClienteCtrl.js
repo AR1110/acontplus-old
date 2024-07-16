@@ -1,3 +1,4 @@
+//@ts-check
 export {
     ModalClienteCtrl,
     ModalClienteListaCtrl
@@ -30,6 +31,15 @@ function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, 
 
     $scope.onKeyupEmail = clienteSvc.onKeyupEmail
     $scope.transformChipEmail = clienteSvc.transformChipEmail;
+
+
+    //información crediticia
+    $scope.housingTypes = [];
+    $scope.maritalStatuses = [];
+    $scope.dataInfoCred = {
+        
+    }
+
 
     if (params.idCliente > 0) {
         $scope.tipoRegistro = 2;
@@ -64,7 +74,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, 
             getLoadData().then(response=>{
                 let mainDataForm = {};
                 let dataCompanyCustomer = {};
-                console.log(response.length)
+            
                 if (Array.isArray(response) && response.length===2) {
                     mainDataForm = response[0];
                     dataCompanyCustomer = response[1]
@@ -81,8 +91,11 @@ function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, 
                     tiposCliente,
                     empresas,
                     cargos,
-                    formasPagoSri
+                    formasPagoSri,
+                    housingTypes,
+                    maritalStatuses
                 } = mainDataForm;
+                console.log(mainDataForm)
 
                 $scope.tiposIdentificacion = tipoIdentificacion;
                 $scope.tipoContribuyentes = tipoContribuyentes;
@@ -95,6 +108,10 @@ function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, 
                 $scope.empresas = empresas;
                 $scope.cargos = cargos;
                 $scope.formasPagoSri = formasPagoSri;
+
+                $scope.housingTypes = housingTypes;
+
+                $scope.maritalStatuses = maritalStatuses;
 
                 if (!(id>0)) {
                     let { idTipoIdentificacion, codigo } = $scope.tiposIdentificacion.find(item => item.codigo === 'R');

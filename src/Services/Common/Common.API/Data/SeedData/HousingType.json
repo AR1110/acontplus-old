@@ -1,0 +1,15 @@
+[
+  {
+    "Code": "VA",
+    "Name": "Vivienda Alquilada"    
+  },
+  {
+    "Code": "P",
+    "Name": "Propia",
+    "Order": 2
+  },
+  {
+    "Code": "O",
+    "Name": "Otros"    
+  }
+]

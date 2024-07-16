@@ -1,9 +1,7 @@
 ﻿namespace Identity.API.Services;
 
-public class AccountService(IAdoRepository repository, ApplicationDbContext context) : IAccountService
+public class AccountService(IAdoRepository repository) : IAccountService
 {
-    private readonly ApplicationDbContext _context = context;
-
     public async Task AddNotificationAsync(LoginHistory loginHistory)
     {
         var response = await repository.OnlyExecuteAsync("Seguridad.LoginHistory_Notif_Insert",

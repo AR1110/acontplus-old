@@ -330,7 +330,7 @@ app.component("appCuentaPorCobrarComponent", {
                 let template = nombreModalContabilidad.COBRO.templates['CL'];
                 let controller = (await import(fileCtrl))[ctrl];
 
-                let modalRef = modalSvc.openModalCustom({
+                let modalRef = modalSvc.open({
                     controller,
                     template,
                     params: {
@@ -350,18 +350,31 @@ app.component("appCuentaPorCobrarComponent", {
         }
 
 
-        $scope.solicitarCredito = function(item){
-            let modalRef = modalSvc.openWithComponent({
-                component: 'appSolicitarCreditoComponent',
-                size: 'xl',
-              //  windowClass: 'uibModalFullScreen',
-            })
+        $scope.solicitarCredito = async function(item){
+            try {
+                let { controllers, templates, fileCtrl } = nombreModalContabilidad.SOLICITUD_CREDITO;
+                let ctrl = controllers['MSC'];
+                let template = templates['MSC'];
+            
+                let controller = (await import(fileCtrl))[ctrl];
 
-            modalRef.result.then(result => {
-                if (result && typeof result === 'object' ) {
-                    //  scope.onResult(result)
-                }
-            })
+                let modalRef = modalSvc.open({
+                    controller,
+                    template,
+                    params: {
+                        
+                    },
+                    size: 'xl', 
+                })
+                modalRef.result.then(result => {
+                    if (typeof result === 'object') {
+                        getCuentasPorCobrar();
+                    }
+                })
+
+            } catch (error) {
+                console.log(error)
+            } 
         }
 
 
@@ -379,28 +392,4 @@ app.component("appCuentaPorCobrarComponent", {
 });
 
 
-app.component("appSolicitarCreditoComponent", {
-    templateUrl: `${mainPath}_SolicitarCreditoComponent.cshtml`,
-    bindings: {
-        resolve: '<',
-        close: '&',
-        dismiss: '&',
-        isNotModal: '='
-    },
-    controller: ['$scope', '$injector', function ($scope){
-        let $ctrl = this;
-
-        $ctrl.$onInit = function(){
-            console.log($scope)
-        }
-
-        $ctrl.ok = function () {
-            $ctrl.close();
-        };
-
-        $ctrl.cancel = function () {
-            $ctrl.dismiss();
-        };
-
-    }]
-});
+ 

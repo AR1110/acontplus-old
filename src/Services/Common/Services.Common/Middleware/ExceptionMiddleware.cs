@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -13,13 +14,23 @@ public class ExceptionMiddleware(
 {
     public async Task InvokeAsync(HttpContext context)
     {
+        string requestBody = string.Empty;
+
         try
         {
+            if (context.Request.Method == HttpMethods.Post || context.Request.Method == HttpMethods.Put)
+            {
+                requestBody = await ReadRequestBodyAsync(context);
+            }
             await next(context);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ex.Message);
+            var queryString = context.Request.QueryString.ToString();
+
+            logger.LogError(ex, "Exception caught: {Message}. Request Body: {RequestBody}. Query String: {QueryString}",
+                ex.Message, requestBody, queryString);
+
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
@@ -39,5 +50,18 @@ public class ExceptionMiddleware(
 
             await context.Response.WriteAsJsonAsync(problemDetails);
         }
+    }
+    private async Task<string> ReadRequestBodyAsync(HttpContext context)
+    {
+        var request = context.Request;
+        var requestContent = "";
+        request.EnableBuffering();
+        using (var reader = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
+        {
+            requestContent = await reader.ReadToEndAsync();
+        }
+        request.Body.Position = 0; // Rewind the stream to 0
+
+        return requestContent;
     }
 }

@@ -59,7 +59,7 @@ BEGIN
     INNER JOIN dbo.Cliente c			            WITH (NOLOCK) ON c.idCliente			= o.CustomerCompanyId
     INNER JOIN Customer.Customer cc		            WITH (NOLOCK) ON cc.Id					= c.CustomerId
     INNER JOIN Sri.Establecimiento e	            WITH (NOLOCK) ON e.idEstablecimiento	= o.EstablecimientoId
-    INNER JOIN dbo.Entidad en			            WITH (NOLOCK) ON en.ruc					= e.ruc
+    INNER JOIN dbo.Entidad en			            WITH (NOLOCK) ON en.idEntidad    		= e.idEntidad
     INNER JOIN TechnicalSupport.OrderStatus tos     WITH (NOLOCK) ON tos.Id                 = o.OrderStatusId
     LEFT JOIN v_Usuario ua                          WITH (NOLOCK) ON ua.idUsuario           = o.AssignedUserId
     WHERE o.Id = @id

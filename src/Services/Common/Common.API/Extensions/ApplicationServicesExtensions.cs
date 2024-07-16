@@ -1,4 +1,6 @@
-﻿using Common.API.Services;
+﻿using Common.API.Data;
+using Common.API.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Common.API.Extensions;
 
@@ -7,6 +9,9 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddDbContextPool<CommonContext>(options =>
+           options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {
