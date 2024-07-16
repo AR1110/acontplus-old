@@ -20,6 +20,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<INotaEntregaService, NotaEntregaService>();
         services.AddScoped<IProformaService, ProformaService>();
         services.AddScoped<IEmpresaService, EmpresaService>();
+        services.AddScoped<ICreditoGaranteService, CreditoGaranteService>();
        
         return services;
     }

@@ -54,6 +54,7 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
     function createDataParamDocSri() {
         let id = data.idDocumentoElectronico > 0 ? data.idDocumentoElectronico : data.idDocumento;
         return {
+            tipo: 2,
             id,
             codDoc: data.codDoc,
             esNotificacionTributaria: true,
@@ -64,6 +65,7 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
  
     function createDataParamDoc() {
         return {
+            tipo: 3,
             id: data.idDocumento,
             codDoc: data.codDoc,
             esNotificacionGeneral: true,

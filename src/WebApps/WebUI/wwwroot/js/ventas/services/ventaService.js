@@ -1725,7 +1725,7 @@
                     if (response.code === '1') {
                         let mainData = JSON.parse(response.payload)
                     
-                        console.log(mainData)
+                       
                         return {
                             tipoIdentificacion: mainData[0],
                             tipoContribuyentes: mainData[1],
@@ -1733,7 +1733,7 @@
                             ciudades: mainData[3],
                             tiposCliente: mainData[4] || [],
                             empresas: mainData[5] || [],
-                       //     cargos: mainData[6] || [],
+                            cargos: mainData[6] || [],
                             formasPagoSri: mainData[7] || [],
                             housingTypes: mainData[8] || [],
                             maritalStatuses: mainData[9] || []
@@ -1801,7 +1801,8 @@
                 nota: fS.isValidField(data.nota),
                 validationSri: data.validationSri,
                 idFormaPagoSri: fS.isValidField(data.idFormaPagoSri),
-                estado: data.estado || true
+                estado: data.estado || true,
+                infoCrediticia: data.dataInfoCred && JSON.stringify(data.dataInfoCred) 
             }
 
         }
@@ -1826,7 +1827,7 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    let { correo, telefono, placa, ...data } = JSON.parse(response.payload)[0];
+                    let { correo, telefono, placa, infoCrediticia, ...data } = JSON.parse(response.payload)[0];
 
                     const correos = correo ? correo.split(/[\|;]/) : [];
                     const telefonos = telefono ? telefono.split(/[\|;]/) : [];
@@ -1860,7 +1861,8 @@
                         correos,
                         telefonos,
                         placas,
-                        idFormaPagoSri: data.idFormaPagoSri
+                        idFormaPagoSri: data.idFormaPagoSri,
+                        dataInfoCred: JSON.parse(infoCrediticia) || {}
                     }
                 }
             })
