@@ -10,18 +10,18 @@ public class CommonContextSeed
     {
         var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-        if (!context.EstadosCivil.Any())
+        if (!context.MaritalStatuses.Any())
         {
-            var typesData = File.ReadAllText(path + @"/Data/SeedData/EstadosCivil.json");
-            var types = JsonConvert.DeserializeObject<List<EstadoCivil>>(typesData);
-            context.EstadosCivil.AddRange(types);
+            var typesData = File.ReadAllText(path + @"/Data/SeedData/MaritalStatus.json");
+            var types = JsonConvert.DeserializeObject<List<MaritalStatus>>(typesData);
+            context.MaritalStatuses.AddRange(types);
         }
 
-        if (!context.TiposVivienda.Any())
+        if (!context.HousingTypes.Any())
         {
-            var sexData = File.ReadAllText(path + @"/Data/SeedData/TiposVivienda.json");
-            var sexes = JsonConvert.DeserializeObject<List<TipoVivienda>>(sexData);
-            context.TiposVivienda.AddRange(sexes);
+            var sexData = File.ReadAllText(path + @"/Data/SeedData/HousingType.json");
+            var sexes = JsonConvert.DeserializeObject<List<HousingType>>(sexData);
+            context.HousingTypes.AddRange(sexes);
         }
 
          

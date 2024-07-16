@@ -992,7 +992,7 @@
         //sacamos numero decimal del saldo
         formSvc.contarDecimales = function(input) { 
             const partes = input.toString().split(".");
-            return partes.length > 1 ? partes[1].length : 0;
+            return partes.length > 1 ? partes[1].length : 3;
              
         }
 

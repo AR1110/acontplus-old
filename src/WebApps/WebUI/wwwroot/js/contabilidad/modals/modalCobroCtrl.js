@@ -159,6 +159,8 @@ class CobroService {
             let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && !cd.posfechado)
                 .reduce((acc, curr) => acc.plus(curr.abono), new Decimal(0));
 
+          
+
             valorSaldo = valorSaldo.minus(totalNoPosfechado).toNumber()
 
             let dataEstadoPago;
@@ -1555,7 +1557,7 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
 
     let { dataFormaCobro, comprobante, saldo, datosCobro } = params;
     let { documentos, entidadesFinanciera, bancos, ciudades } = dataFormaCobro;
-
+  
     let cobroSvc = new CobroService(tS)
     const VALOR_ABONO_ORIGINAL = fS.roundNumber(saldo, 3);
 

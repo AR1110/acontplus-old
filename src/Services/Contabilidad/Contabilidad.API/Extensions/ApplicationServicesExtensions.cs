@@ -34,6 +34,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IAccountingMovementService, AccountingMovementService>();
         services.AddScoped<IComprobanteIngresoService, ComprobanteIngresoService>(); 
         services.AddScoped<ICuentaPorPagarService, CuentaPorPagarService>();  
+        services.AddScoped<ISolicitudCreditoService, SolicitudCreditoService>();  
 
         return services;
     }
