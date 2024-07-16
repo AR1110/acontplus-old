@@ -34,15 +34,16 @@ BEGIN
 			SELECT @pageSize = pageSize, @pageIndex  = pageIndex FROM OPENJSON(@json) WITH ( pageIndex INT '$.pageIndex', pageSize  INT '$.pageSize')
 
 			SELECT u.idUsuario          
-				  ,u.nroIdentificacion 
+				  ,c.IDCard nroIdentificacion 
 				  ,u.nombreUsuario  
 				  ,u.correo            
-				  ,u.nombreCompleto    
+				  ,c.BusinessName nombreCompleto    
 				  ,COUNT(*) OVER()   as TotalRecords
                   ,ur.roleId
                   ,ur.estado
 			FROM dbo.Usuario u WITH (NOLOCK) 
             INNER JOIN App.UsuarioRol ur WITH(NOLOCK) ON ur.idUsuario = u.idUsuario
+            LEFT JOIN Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
             WHERE ur.idEntidad = @idEntidad
 			ORDER BY idUsuario DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
 
@@ -69,13 +70,14 @@ BEGIN
 			SELECT @textSearch = textSearch, @pageSize = pageSize, @pageIndex  = pageIndex FROM OPENJSON(@json) WITH ( pageIndex INT '$.pageIndex', pageSize  INT '$.pageSize', textSearch VARCHAR(100) '$.textSearch')
 
 			SELECT idUsuario         as Id
-				  ,nroIdentificacion as IDCard
+				  ,c.IDCard as IDCard
 				  ,nombreUsuario     as Username
 				  ,correo            as Email
-				  ,nombreCompleto    as Fullname
+				  ,c.BusinessName    as Fullname
 				  ,COUNT(*) OVER()   as TotalRecords
-			FROM dbo.Usuario WITH (NOLOCK) 
-			WHERE nombreCompleto LIKE '%' + @textSearch + '%'
+			FROM dbo.Usuario u WITH (NOLOCK) 
+            LEFT JOIN Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
+			WHERE c.BusinessName LIKE '%' + @textSearch + '%'
 				OR nombreUsuario LIKE '%'  +@textSearch + '%'
 			ORDER BY idUsuario DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
 		END
