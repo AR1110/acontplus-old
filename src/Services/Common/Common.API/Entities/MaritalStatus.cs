@@ -4,14 +4,14 @@ using Common.Core.Entities;
 
 namespace Common.API.Entities
 {
-    [Table("EstadoCivil", Schema = "Common")]
-    public class EstadoCivil : BaseEntity
+    [Table("MaritalStatus", Schema = "Common")]
+    public class MaritalStatus:BaseEntity
     {
         [Required]
         [MaxLength(5)]
         public string Code { get; set; }
         [Required]
         [MaxLength(50)]
-        public string Name { get; set; }  
+        public string Name { get; set; }
     }
 }

@@ -346,6 +346,97 @@
                         </div>
                     </div>
             </uib-tab>
+            <uib-tab index="2">
+                <uib-tab-heading>
+                    <i class="far fa-money-bill-alt"></i> Información crediticia
+                </uib-tab-heading>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Estado Civil</label>
+                                    <select class="form-control border-select" ng-model="dataInfoCred.maritalStatusId">
+                                        <option ng-value="item.id" ng-repeat="item in maritalStatuses">
+                                            {{item.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12">
+                                <div class="row">
+                                    <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+                                        <div class="form-group">
+                                            <label>Esposo(a):</label>
+                                            <input type="text" class="form-control border-select">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                                        <div class="form-group">
+                                            <label>Teléfono:</label>
+                                            <input type="text" class="form-control border-select" valid-number>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+                                        <div class="form-group">
+                                            <label>Referencia Familiar:</label>
+                                            <input type="text" class="form-control border-select">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                                        <div class="form-group">
+                                            <label>Teléfono:</label>
+                                            <input type="text" class="form-control border-select" valid-number>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                             
+                        </div>
+                        <hr>
+
+                         <div class="row">
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Tipo Vivienda</label>
+                                    <select class="form-control border-select" ng-model="dataInfoCred.housingTypeId">
+                                        <option ng-value="item.id" ng-repeat="item in housingTypes">
+                                            {{item.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Dirección de la Vivienda:</label>
+                                            <input type="text" class="form-control border-select">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Referencia del Domicilio:</label>
+                                            <input type="text" class="form-control border-select" valid-number>
+                                        </div>
+                                    </div>
+                                </div> 
+                               
+                            </div>
+                             
+                        </div>
+                        <hr>
+ 
+                    
+                    </div>
+                </div>
+
+            </uib-tab>
         </uib-tabset>
     </div>
     <div class="modal-footer">

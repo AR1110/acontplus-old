@@ -1555,7 +1555,7 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
 
     let { dataFormaCobro, comprobante, saldo, datosCobro } = params;
     let { documentos, entidadesFinanciera, bancos, ciudades } = dataFormaCobro;
-
+    console.log(dataFormaCobro)
     let cobroSvc = new CobroService(tS)
     const VALOR_ABONO_ORIGINAL = fS.roundNumber(saldo, 3);
 

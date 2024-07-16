@@ -54,7 +54,7 @@ function ModalEmpresaCtrl($scope, $uibModalInstance, $injector, $q, params){
 
     initiload();
     function initiload(){ 
-        loadDataForm().then(response=>{
+        loadDataForm().then(response=>{ 
             $scope.data = {};
             
             if(Array.isArray(response)){
@@ -64,12 +64,19 @@ function ModalEmpresaCtrl($scope, $uibModalInstance, $injector, $q, params){
             }else{
                 $scope.tiposIdentificacion = response.tiposIdentificacion;
             } 
+
+
+            let dataTipoIdentificacion = $scope.tiposIdentificacion.find(ti => { 
+                return ti.codigoSri === SRI_IDENTIFITION_CODE.RUC;
+            });
+          
+            if (dataTipoIdentificacion) {
+                $scope.data.idTipoIdentificacion = dataTipoIdentificacion.idTipoIdentificacion;
+            }
+
         })
         
-        let dataTipoIdentificacion = $scope.tiposIdentificacion.find(ti => ti.codigoSri === SRI_IDENTIFITION_CODE.RUC);
-        if(dataTipoIdentificacion){
-            $scope.data.idTipoIdentificacion = dataTipoIdentificacion.idTipoIdentificacion;
-        }
+        
          
     }
 

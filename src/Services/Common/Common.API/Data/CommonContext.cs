@@ -11,8 +11,8 @@ public class CommonContext : BaseContext
     public CommonContext(DbContextOptions<CommonContext> options) : base(options)
     {
     }
-    public DbSet<EstadoCivil> EstadosCivil { get; set; }
-    public DbSet<TipoVivienda> TiposVivienda { get; set; }
+    public DbSet<MaritalStatus> MaritalStatuses { get; set; }
+    public DbSet<HousingType> HousingTypes { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -44,13 +44,13 @@ public class CommonContext : BaseContext
             }
         }
          
-        modelBuilder.Entity<EstadoCivil>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<EstadoCivil>().Property(x => x.Enabled).HasDefaultValue(true);
-        modelBuilder.Entity<EstadoCivil>().HasIndex(x => x.Code).HasDatabaseName("UI_EstadoCivil_Code").IsUnique();
+        modelBuilder.Entity<MaritalStatus>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+        modelBuilder.Entity<MaritalStatus>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<MaritalStatus>().HasIndex(x => x.Code).HasDatabaseName("UI_MaritalStatus_Code").IsUnique();
 
-        modelBuilder.Entity<TipoVivienda>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<TipoVivienda>().Property(x => x.Enabled).HasDefaultValue(true);
-        modelBuilder.Entity<TipoVivienda>().HasIndex(x => x.Code).HasDatabaseName("UI_TipoVivienda_Code").IsUnique();
+        modelBuilder.Entity<HousingType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+        modelBuilder.Entity<HousingType>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<HousingType>().HasIndex(x => x.Code).HasDatabaseName("UI_HousingType_Code").IsUnique();
 
 
     }
