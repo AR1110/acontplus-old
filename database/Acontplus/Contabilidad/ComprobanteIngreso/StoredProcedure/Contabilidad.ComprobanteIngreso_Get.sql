@@ -350,9 +350,7 @@ BEGIN
 
             SET @tableNames = 'entidadFinanciera,subEntidadFinanciera,banco,provincia,documentos,estadoPago,cuentaPorCobrar'
 
-            SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT)
-
-            SELECT TOP 1 @idCliente = idCliente FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+            SELECT @idCuentaPorCobrar = idCuentaPorCobrar ,@idCliente = idCliente FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT ,idCliente INT)
 			
 			SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 

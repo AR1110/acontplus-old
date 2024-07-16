@@ -35,10 +35,13 @@ BEGIN
     SET LANGUAGE SPANISH 
 
 	 --> Global
-    DECLARE @idEntidad INT ,@tipo INT 
+    DECLARE @idEntidad INT ,@tipo INT ,@idUsuario INT
 	
     --> Sql
 	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
+
+    --> Filters
+    DECLARE @fromDate DATETIME2 ,@toDate DATETIME2
 
     --> Variables
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -50,6 +53,8 @@ BEGIN
 		BEGIN
             
             SET @tableNames = 'headerDs,saleDs,cobroDs,docRelacionadoDs,movimientoDs,controlCajaDs,compraDs,docRelCompraDs,subcategoriaDs'
+
+            SELECT @fromDate = fromDate ,@toDate = toDate FROM OPENJSON(@json) WITH (fromDate DATETIME2 ,toDate DATETIME2)
 
             SELECT e.ruc
 				  ,e.razonSocial 
@@ -75,6 +80,7 @@ BEGIN
               AND codDoc IN ('01','NE') 
               AND codEstado NOT IN ('A')
               AND convertToDoc = 0
+              AND CAST(fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
             GROUP BY codDoc
 
             SELECT ef.descripcion as tipo , CAST(SUM(co.abono)as numeric(18,2)) as valor
@@ -85,6 +91,7 @@ BEGIN
             WHERE ci.estado = 1
               AND es.idEntidad = @idEntidad
               AND co.cobro = 1
+              AND CAST(ci.fechaRegistro as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
             GROUP BY ef.descripcion
 
             SELECT CASE codDoc WHEN 'A'  THEN 'Anticipo'
@@ -97,16 +104,17 @@ BEGIN
             WHERE idEntidad = @idEntidad
               AND codDoc IN ('07','04','A') 
               AND codEstado NOT IN ('A')
+              AND CAST(fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
             GROUP BY codDoc
 
             SELECT td.descripcion                                                    as tipo
                   ,CAST(SUM(mc.valor) as numeric(18,2)) * IIF(td.codigo = 'EC',-1,1) as valor
                   ,COUNT(*)                                                         as cant
-            FROM MovimientoCaja mc WITH (NOLOCK)
+            FROM MovimientoCaja               mc WITH (NOLOCK)
             INNER JOIN dbo.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento      = mc.idTipoDocumento
-             LEFT JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = mc.idComprobanteIngreso
-             LEFT JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento    = ci.idEstablecimiento
+            INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento    = mc.idEstablecimiento
             WHERE es.idEntidad = @idEntidad
+              AND CAST(mc.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
             GROUP BY td.descripcion,td.codigo
 
             SELECT CAST(SUM(cc.entrada) as numeric(18,2))     as entrada
@@ -115,6 +123,7 @@ BEGIN
             INNER JOIN dbo.Caja  ca WITH (NOLOCK) ON ca.idCaja = cc.idCaja
             WHERE cc.estado = 0
               AND ca.idEntidad = @idEntidad
+              AND CAST(cc.fechaApertura as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
 
             --> Compra
             SELECT CASE codDoc WHEN '01' THEN 'Factura'
@@ -130,6 +139,7 @@ BEGIN
             WHERE cp.idEntidad = @idEntidad
               AND cp.codDoc IN ('01','07','DH','FC')
               AND cp.codEstado NOT IN ('A')
+              AND CAST(fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
             GROUP BY codDoc
 
             SELECT CASE codDoc WHEN '04' THEN 'Devolución'
@@ -141,6 +151,7 @@ BEGIN
             WHERE idEntidad = @idEntidad
               AND codDoc IN ('07','04') 
               AND codEstado NOT IN ('A')
+              AND CAST(fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
             GROUP BY codDoc
 
             SELECT ISNULL(cp.subcategoryName,'Compra')      as tipo            
@@ -152,6 +163,7 @@ BEGIN
             WHERE cp.idEntidad = @idEntidad
               AND cp.codDoc IN ('01','07','DH','FC')
               AND cp.codEstado NOT IN ('A')
+              AND CAST(fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
             GROUP BY subcategoryName
 
             RETURN 
