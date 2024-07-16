@@ -1,6 +1,4 @@
-﻿using FactElect.API.Dtos;
-
-namespace FactElect.API.Controllers.RetencionAts;
+﻿namespace FactElect.API.Controllers.RetencionAts;
 
 public class RetencionAtsController : BaseApiController
 {
@@ -18,9 +16,9 @@ public class RetencionAtsController : BaseApiController
     [HttpGet("{json}")]
     public async Task<IActionResult> Get(string json)
     {
-        var parameters = new Dictionary<string, object>{
-            {"idRol", User.GetUserRoleId()},
-            {"json", SqlStringParam.Sanitize(json)},
+        var parameters = new Dictionary<string, object>
+        {
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await _retencionAtsService.GetAsync(parameters));
     }

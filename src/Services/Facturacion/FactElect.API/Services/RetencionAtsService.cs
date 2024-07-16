@@ -1,18 +1,14 @@
-﻿
-using Common.Infrastructure.Repository;
+﻿namespace FactElect.API.Services;
 
-namespace FactElect.API.Services
+public class RetencionAtsService(IAdoRepository adoRepository) : IRetencionAtsService
 {
-    public class RetencionAtsService (IAdoRepository adoRepository): IRetencionAtsService
-    {
-        private const string ModuleName = "FactElect.RetencionAts_";
+    private const string ModuleName = "FactElect.RetencionAts_";
 
-        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, oldSp: true);
-            return !DataValidation.DataSetIsNull(ds)
-                ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
-                : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
-        }
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, true);
+        return !DataValidation.DataSetIsNull(ds)
+            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
+            : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
     }
 }

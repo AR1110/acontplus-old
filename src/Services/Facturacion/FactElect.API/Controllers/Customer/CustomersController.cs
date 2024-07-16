@@ -1,125 +1,45 @@
-﻿using FactElect.API.Data;
-using FactElect.API.Entities;
+﻿using FactElect.API.Entities;
 
 namespace FactElect.API.Controllers.Customer;
 
-public class CustomersController : BaseApiController
+public class CustomersController(ICustomerService customerService) : BaseApiController
 {
-    private readonly FactElectContext _context;
-
-    public CustomersController(FactElectContext context)
-    {
-        _context = context;
-    }
-
     // GET: api/Customers
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AppCustomer>>> GetCustomers()
+    public async Task<IActionResult> Get()
     {
-        if (_context.Customers == null)
-        {
-            return NotFound();
-        }
-
-        // Get the current page number
-        var pageNumber = 1;
-
-        // Get the number of products per page
-        var pageSize = 50;
-
-        // Get the products for the current page
-
-        return await _context.Customers.Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize).ToListAsync();
+        return Ok(await customerService.GetAsync(new Dictionary<string, object>()));
     }
 
     // GET: api/Customers/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<AppCustomer>> GetAppCustomer(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        if (_context.Customers == null)
-        {
-            return NotFound();
-        }
-
-        var appCustomer = await _context.Customers.FindAsync(id);
-
-        if (appCustomer == null)
-        {
-            return NotFound();
-        }
-
-        return appCustomer;
+        return Ok(await customerService.GetAsync(new Dictionary<string, object>()));
     }
 
     // PUT: api/Customers/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutAppCustomer(int id, AppCustomer appCustomer)
+    public async Task<IActionResult> Put(int id, AppCustomer appCustomer)
     {
-        if (id != appCustomer.Id)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(appCustomer).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!AppCustomerExists(id))
-            {
-                return NotFound();
-            }
-
-            throw;
-        }
-
-        return NoContent();
+        appCustomer.UserId = User.GetUserId();
+        return Ok(await customerService.UpdateAsync(id, appCustomer));
     }
 
     // POST: api/Customers
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<AppCustomer>> PostAppCustomer(AppCustomer appCustomer)
+    public async Task<ActionResult<AppCustomer>> Post(AppCustomer appCustomer)
     {
-        if (_context.Customers == null)
-        {
-            return Problem("Entity set 'FactElectContext.Customers'  is null.");
-        }
-
-        _context.Customers.Add(appCustomer);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction("GetAppCustomer", new { id = appCustomer.Id }, appCustomer);
+        appCustomer.UserId = User.GetUserId();
+        return Ok(await customerService.AddAsync(appCustomer));
     }
 
     // DELETE: api/Customers/5
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAppCustomer(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        if (_context.Customers == null)
-        {
-            return NotFound();
-        }
-
-        var appCustomer = await _context.Customers.FindAsync(id);
-        if (appCustomer == null)
-        {
-            return NotFound();
-        }
-
-        _context.Customers.Remove(appCustomer);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    private bool AppCustomerExists(int id)
-    {
-        return (_context.Customers?.Any(e => e.Id == id)).GetValueOrDefault();
+        return Ok(await customerService.DeleteAsync(User.GetUserId(), id));
     }
 }

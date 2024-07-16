@@ -20,7 +20,7 @@ public class CategoriaCompraController : ControllerBase
     {
         var _response = new ApiResponseDeprecated();
         try
-        { 
+        {
             await _db.SpExecuteAsync("Compra.Categoria_Get");
             _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
             _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
