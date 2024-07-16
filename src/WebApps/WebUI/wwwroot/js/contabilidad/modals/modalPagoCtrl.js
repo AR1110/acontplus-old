@@ -198,6 +198,7 @@ class PagoService {
 
         for (let item of cuentasPorPagarAgrupado) {
             let valorSaldo = instanceDecimal(item.valorSaldoLectura);
+ 
 
             let totalPosfechado = pagosDetalle.filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && cd.posfechado)
                 .reduce((acc, curr) => acc.plus(curr.abono), instanceDecimal(0));
@@ -205,7 +206,12 @@ class PagoService {
             let totalNoPosfechado = pagosDetalle.filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && !cd.posfechado)
                 .reduce((acc, curr) => acc.plus(curr.abono), instanceDecimal(0));
 
-            valorSaldo = valorSaldo.minus(totalNoPosfechado).toNumber()
+       
+            let maxDecimalNumber = this.fS.contarDecimales(valorSaldo)
+            let totalNoPosfechadoRounded = this.fS.roundNumber(totalNoPosfechado.toNumber(), maxDecimalNumber);
+
+            valorSaldo = valorSaldo.minus(totalNoPosfechadoRounded).toNumber()
+        
 
             let dataEstadoPago = {};
             if (totalPosfechado.gt(0)) {
@@ -553,6 +559,7 @@ class PagoService {
     getEstadoCuota({ saldo, abono, esPosfechado }) {
         let estado = '';
         let dataEstadoPago = {};
+      
 
         if (esPosfechado) {
             dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'PFC');
@@ -990,8 +997,7 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
 
-                        let params = comprobanteEgresoSvc.mapperTo(data);
-
+                        let params = comprobanteEgresoSvc.mapperTo(data); 
 
                         showLoader();
                         comprobanteEgresoSvc.post(params).then(response => {
