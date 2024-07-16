@@ -14,7 +14,8 @@ public class BodegaController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }
+            { "idUsuarioRol", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(json) }
         };
 
         var response = await _service.GetAsync(parameters);
