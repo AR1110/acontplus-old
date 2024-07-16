@@ -76,7 +76,6 @@ BEGIN
 
         SELECT @idDocumentoElectronico = de.idDocumentoElectronico
               ,@secuencial             = de.nroDocumento
-              ,@fechaEmision           = de.fechaEmision
               ,@ambiente               = pe.ambiente 
         FROM FactElect.RetencionAts         rt WITH (NOLOCK)
         INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
@@ -94,14 +93,16 @@ BEGIN
 			                                                   ,'07'
 												               ,CAST(@ambiente as nvarchar)
 												               ,CAST(@tipoEmision as nvarchar)                         
-			                                                   ,dbo.AFTConvertDate(@fechaEmision)                
+			                                                   ,dbo.AFTConvertDate(fechaEmision)                
 			                                                   ,@ruc                                             
 			                                                   ,estab+ptoEmi                                                     
 			                                                   ,Helper.F_Auto_Sequential(@secuencial)
                                                              ) 
+                   ,@fechaEmision = fechaEmision
 		FROM @tblInfoCompRet 
         
         --> Validaciones 
+
         IF NOT EXISTS (SELECT 1 FROM @tblInfoCompRet)
 			BEGIN
 				SELECT '0' code, 'Debe agregar al menos un documento de sustento' as 'message'

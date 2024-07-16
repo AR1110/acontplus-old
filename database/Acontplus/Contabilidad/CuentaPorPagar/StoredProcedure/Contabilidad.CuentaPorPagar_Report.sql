@@ -103,10 +103,6 @@ BEGIN
                     SET @sql = @sql + 'AND cp.codDoc = @codDoc '
                 END
 
-            IF @idPuntoEmision > 0
-                BEGIN
-                    SET @sql = @sql + 'AND cp.idPuntoEmision = @idPuntoEmision '
-                END
 
             IF @codEstab IS NOT NULL 
                 BEGIN
