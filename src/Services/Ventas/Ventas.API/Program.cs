@@ -1,7 +1,5 @@
-﻿using Autofac.Extensions.DependencyInjection;
+﻿ 
 using Common.AppSettings;
-using Services.Common.Middleware;
-using Ventas.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +16,7 @@ builder.Services.AddSwaggerDocumentation();
 
 builder.Services.AddApiVersioningConfig();
 
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()); 
 
 var app = builder.Build();
 

@@ -12,7 +12,7 @@
     'use strict';
     const URL_API = 'Venta/'
 
-    app.factory('ventaService', function ($injector) {
+    app.factory('ventaService',['$injector', function ($injector) {
         let service = {};
         let mS = $injector.get('mainService');
         /**
@@ -194,7 +194,7 @@
                 })
         }
         return service;
-    })
+    }])
 
     /**
      * Nota Entrega 
@@ -2064,7 +2064,7 @@
     }])
 
 
-    app.factory('empleadoService', function ($injector) {
+    app.factory('empleadoService', ['$injector', function ($injector) {
         let url = `${URL_API}Empleado/`;
         let mS = $injector.get('mainService');
         return {
@@ -2147,10 +2147,10 @@
             return mS.getData('put', url + 'Update/' + id + '?json=' + JSON.stringify(data), null, true)
         }
 
-    })
+    }])
 
 
-    app.factory('cargoService', function ($injector) {
+    app.factory('cargoService', ['$injector', function ($injector) {
         let URL = `${URL_API}Cargo/`;
         let mS = $injector.get('mainService');
 
@@ -2183,7 +2183,7 @@
 
         return service;
 
-    })
+    }])
 
 
     app.factory('empresaService', ['$injector', function ($injector) {
@@ -2273,5 +2273,36 @@
 
     }])
 
+
+
+    app.factory('creditoGaranteService', ['$injector', function($injector){
+        let url = `${URL_API}CreditoGarante`;
+        let mS = $injector.get('mainService');
+        return {
+            getAll,            
+            post,
+        }
+
+        function getAll(obj){
+            let json = JSON.stringify({
+                tipo: 1,
+                ...obj
+            })
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response=>{
+                let result = {
+                    guarantors: []
+                }
+                if(response.code==="1"){
+                    let {guarantors}= JSON.parse(response.payload)
+                    result.guarantors = guarantors;
+                }
+                return result;
+        })
+        }
+
+        function post(data){
+            return mS.getData('post', url, {data}, true )
+        }
+    }])
 
 })(window.angular)

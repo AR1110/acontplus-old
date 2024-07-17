@@ -1,7 +1,9 @@
 ﻿ 
 namespace Ventas.API.Controllers
 {
-    public class CreditoGaranteController (ICreditoGaranteService _svc): ControllerBase
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CreditoGaranteController(ICreditoGaranteService _svc) : BaseApiController
     {
         [HttpGet]
         public async Task<IActionResult> Get(string json)

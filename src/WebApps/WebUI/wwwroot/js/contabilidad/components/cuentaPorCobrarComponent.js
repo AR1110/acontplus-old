@@ -18,6 +18,7 @@ app.component("appCuentaPorCobrarComponent", {
         const DOC_TYPE = $injector.get('DOC_TYPE');
         const modalSvc = $injector.get("modalService");
         const nombreModalContabilidad = $injector.get("nombreModalContabilidad");
+        const nombreModalVenta = $injector.get("nombreModalVenta");
         let commonSvc = $injector.get('commonService');
 
 
@@ -352,7 +353,7 @@ app.component("appCuentaPorCobrarComponent", {
 
         $scope.solicitarCredito = async function(item){
             try {
-                let { controllers, templates, fileCtrl } = nombreModalContabilidad.SOLICITUD_CREDITO;
+                let { controllers, templates, fileCtrl } = nombreModalVenta.SOLICITUD_CREDITO;
                 let ctrl = controllers['MSC'];
                 let template = templates['MSC'];
             
@@ -362,7 +363,7 @@ app.component("appCuentaPorCobrarComponent", {
                     controller,
                     template,
                     params: {
-                        
+                        data: structuredClone(item)
                     },
                     size: 'xl', 
                 })

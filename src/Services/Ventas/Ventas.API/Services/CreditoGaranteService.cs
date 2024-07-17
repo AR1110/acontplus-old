@@ -1,6 +1,6 @@
 ﻿namespace Ventas.API.Services
 {
-    public class CreditoGaranteService(IAdoRepository _repo):ICreditoGaranteService
+    public class CreditoGaranteService(IAdoSqlServer _repo):ICreditoGaranteService
     {
         private readonly string nameSp = "Ventas.CreditoGarante_"; 
         public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)

@@ -2,7 +2,7 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
-    <DataSource Name="CuentasPorCobrar">
+    <DataSource Name="mainDs">
       <ConnectionProperties>
         <DataProvider>SQL</DataProvider>
         <ConnectString />
@@ -12,9 +12,9 @@
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="comprobanteDs">
+    <DataSet Name="headerDs">
       <Query>
-        <DataSourceName>CuentasPorCobrar</DataSourceName>
+        <DataSourceName>mainDs</DataSourceName>
         <CommandText />
       </Query>
       <Fields>
@@ -68,6 +68,18 @@
         </Field>
         <Field Name="telefonoEstablecimiento">
           <DataField>telefonoEstablecimiento</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="creditoGaranteDs">
+      <Query>
+        <DataSourceName>mainDs</DataSourceName>
+        <CommandText />
+      </Query>
+      <Fields>
+        <Field Name="test">
+          <DataField>test</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
@@ -162,21 +174,21 @@
                         </TablixCell>
                         <TablixCell>
                           <CellContents>
-                            <Textbox Name="Textbox166">
+                            <Textbox Name="fechaEmision">
                               <CanGrow>true</CanGrow>
                               <KeepTogether>true</KeepTogether>
                               <Paragraphs>
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value />
+                                      <Value>=Fields!fechaEmision.Value</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
                                 </Paragraph>
                               </Paragraphs>
-                              <rd:DefaultName>Textbox166</rd:DefaultName>
+                              <rd:DefaultName>fechaEmision</rd:DefaultName>
                               <Style>
                                 <Border>
                                   <Color>LightGrey</Color>
@@ -205,6 +217,7 @@
                     <TablixMember />
                   </TablixMembers>
                 </TablixRowHierarchy>
+                <DataSetName>headerDs</DataSetName>
                 <Top>2.38979cm</Top>
                 <Left>0.16508cm</Left>
                 <Height>0.6cm</Height>
@@ -372,21 +385,21 @@
                         </TablixCell>
                         <TablixCell>
                           <CellContents>
-                            <Textbox Name="Textbox218">
+                            <Textbox Name="ruc">
                               <CanGrow>true</CanGrow>
                               <KeepTogether>true</KeepTogether>
                               <Paragraphs>
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value />
+                                      <Value>=Fields!ruc.Value</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
                                 </Paragraph>
                               </Paragraphs>
-                              <rd:DefaultName>Textbox218</rd:DefaultName>
+                              <rd:DefaultName>ruc</rd:DefaultName>
                               <Style>
                                 <Border>
                                   <Color>LightGrey</Color>
@@ -560,10 +573,11 @@
                     <TablixMember />
                   </TablixMembers>
                 </TablixRowHierarchy>
+                <DataSetName>headerDs</DataSetName>
                 <Top>0.27229cm</Top>
                 <Left>7.07316cm</Left>
                 <Height>2.7175cm</Height>
-                <Width>7.20616cm</Width>
+                <Width>7.20615cm</Width>
                 <ZIndex>1</ZIndex>
                 <Style>
                   <Border>
@@ -795,14 +809,14 @@
                     <TablixCell />
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox48">
+                        <Textbox Name="test2">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!test.Value</Value>
                                   <Style>
                                     <TextDecoration>Underline</TextDecoration>
                                   </Style>
@@ -813,7 +827,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox48</rd:DefaultName>
+                          <rd:DefaultName>test2</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1105,7 +1119,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>test</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -1336,21 +1350,21 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox86">
+                        <Textbox Name="test3">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!test.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox86</rd:DefaultName>
+                          <rd:DefaultName>test3</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1783,14 +1797,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox110">
+                        <Textbox Name="test4">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!test.Value</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1799,7 +1813,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox110</rd:DefaultName>
+                          <rd:DefaultName>test4</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1930,6 +1944,7 @@
                 <TablixMember />
               </TablixMembers>
             </TablixRowHierarchy>
+            <DataSetName>creditoGaranteDs</DataSetName>
             <Top>3.48627cm</Top>
             <Left>0.07056cm</Left>
             <Height>4.8cm</Height>
@@ -2233,21 +2248,21 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox176">
+                        <Textbox Name="test1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!test.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox176</rd:DefaultName>
+                          <rd:DefaultName>test1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2383,6 +2398,7 @@
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
+            <DataSetName>creditoGaranteDs</DataSetName>
             <Top>8.3921cm</Top>
             <Left>0.07056cm</Left>
             <Height>1.8cm</Height>
@@ -2582,21 +2598,21 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox198">
+                        <Textbox Name="test">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!test.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox198</rd:DefaultName>
+                          <rd:DefaultName>test</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2664,6 +2680,7 @@
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
+            <DataSetName>creditoGaranteDs</DataSetName>
             <Top>10.33321cm</Top>
             <Left>0.07056cm</Left>
             <Height>1.8cm</Height>
@@ -2705,18 +2722,6 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>mimeType</Prompt>
     </ReportParameter>
-    <ReportParameter Name="barcode">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>barcode</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="mimeTypeBarcode">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
-    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
@@ -2732,16 +2737,6 @@
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>0</RowIndex>
           <ParameterName>mimeType</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>2</ColumnIndex>
-          <RowIndex>0</RowIndex>
-          <ParameterName>barcode</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>3</ColumnIndex>
-          <RowIndex>0</RowIndex>
-          <ParameterName>mimeTypeBarcode</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>
