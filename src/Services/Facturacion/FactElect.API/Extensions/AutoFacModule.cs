@@ -1,6 +1,4 @@
-﻿using FactElect.API.Data;
-
-namespace FactElect.API.Extensions;
+﻿namespace FactElect.API.Extensions;
 
 public class AutoFacModule : Module
 {

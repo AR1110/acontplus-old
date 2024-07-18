@@ -1,12 +1,12 @@
 <div class="modal-header">
-     <h5 class="modal-title" id="modal-title">Solicitar crédito</h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$ctrl.cancel()">
+    <h5 class="modal-title" id="modal-title">Solicitar crédito</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="closeModal()">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 <div class="modal-body">
-    <div class="card rounded border border-info">
-        <div class="card-header">Datos cliente <i class="fas fa-edit fa-xs"  btn-cliente></i></div>
+    <div class="card rounded border border-info" ng-if="false">
+        <div class="card-header">Datos cliente <i class="fas fa-edit fa-xs" btn-cliente></i></div>
         <div class="card-body">
             <div class="row">
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
@@ -21,40 +21,34 @@
                         <input type="text" class="form-control" readonly>
                     </div>
                 </div>
-
-
-                
             </div>
             <div class="row">
                 <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label>Dirección:</label>
-                         <input type="text" class="form-control" readonly>
+                        <input type="text" class="form-control" readonly>
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label>Ciudad:</label>
-                         <input type="text" class="form-control" readonly>
+                        <input type="text" class="form-control" readonly>
                     </div>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label>Estado civil</label>
                         <select class="form-control border-select"></select>
-                    </div>            
+                    </div>
                 </div>
-
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label>Tipo vivienda</label>
                         <select class="form-control border-select"></select>
-                    </div>            
+                    </div>
                 </div>
-
             </div>
             <hr>
             <div class="row">
@@ -78,37 +72,29 @@
                 </div>
             </div>
         </div>
-        
     </div>
-
     <div class="card rounded border border-info">
-        <div class="card-header">Datos del garante </div>
+        <div class="card-header">Datos del garante</div>
         <div class="card-body">
             <div class="row">
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
-                        <label class="text-success"><em>Buscar garante:</em> </label>
+                        <label class="text-success"><em>Buscar garante:</em></label>
                         <div class="input-group">
-                            <input type="text" id="clienteSearchInvoice" 
+                            <input type="text" id="clienteSearchInvoice"
                                 name="clienteSearchInvoice"
-                                class="form-control border-select" 
-                                ng-model="dataClienteSearch.name" 
+                                class="form-control border-select"
+                                ng-model="dataClienteSearch.name"
                                 customer-search-sale-drtv
-                                on-select="onSelectedClienteChange(result)" 
-                                on-keyup="onKeyupClienteSearch()"  
+                                on-select="onSelectedClienteChange(result)"
+                                on-keyup="onKeyupClienteSearch()"
                                 autocomplete="off"
-                                placeholder="Ingrese C.I o Nombre Comercial" 
+                                placeholder="Ingrese C.I o Nombre Comercial"
                                 onclick="select();">
-
                             <div class="input-group-append">
                                 <button type="button" class="btn btn-outline-secondary btn-xs border-select"
                                     id="btnNewCustomerDocument" btn-cliente result-modal="onSelectedClienteChange(result)">
                                     <i class="fa fa-plus fa-xs"></i>
-                                </button>
-
-                                <button type="button" class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0"
-                                    btn-cliente result-modal="onSelectedClienteChange(result)" params="cliente" tabindex="-1">
-                                    <i class="fa fa-edit fa-xs"></i>
                                 </button> 
                             </div>
                         </div>
@@ -119,43 +105,63 @@
                         </script>
                     </div>
                 </div>
-            </div>        
-        
+            </div>
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-sm">
-                <thead class="thead-info">
-                    <tr>
-                        <th>#</th>
-                        <th>Op.</th>
-                        <th>Identificación </th>
-                        <th>Nombre</th>
-                        <th>Dirección</th>
-                        <th>Telefono</th>
-                    </tr>
-                    
-                <thead>
-                <tbody>
-                    <tr ng-repeat="item in guarantors">
-                        <td>{{$index+1}}</td>
-                        <td>
-                            <button type="button" class="btn btn-danger btn-sm" ng-click="askToDelete(item)">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    <tr>
-                </tbody>  
-            </table>      
+
+            <md-table-container  >
+                <table md-table >
+                    <thead  md-head>
+                        <tr md-row>
+                            <th md-column>#</th>
+                            <th md-column>Op.</th>
+                            <th md-column>Identificación</th>
+                            <th md-column>Razon Social</th>
+                            <th md-column>Nombre Comercial</th>
+                            <th md-column>Dirección</th>
+                            <th md-column>Correo</th>
+                            <th md-column>Teléfono</th>
+                        </tr> 
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row   
+                            ng-repeat="item in guarantors track by $index">
+                            <td md-cell>{{$index+1}}</td>
+                            <td md-cell>
+                               <div class="d-flex flex-row">
+                                    <button type="button" class="btn btn-danger btn-sm  mr-1" ng-click="askToDelete(item)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-info btn-sm " btn-cliente params="item">
+                                        <i class="fas fa-pencil"></i>
+                                    </button>
+                                </div>
+
+                            </td> 
+                            <td md-cell>{{item.identificacionComprador}}</td>
+                            <td md-cell>{{item.razonSocialComprador}}</td>
+                            <td md-cell>{{item.nombreComercial}}</td>
+                            <td md-cell>{{item.direccion}}</td>
+                            <td md-cell>{{item.correo}}</td>
+                            <td md-cell>{{item.telefono}}</td>
+                             
+                        </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+
+ 
         </div>
-        
-    </div> 
+    </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-dark" ng-click="$ctrl.cancel()">
+    <button type="button" class="btn btn-info"  >
+       <i class="fas fa-download"></i>  Descargar
+    </button>
+    <button type="button" class="btn btn-success"  >
+       <i class="fas fa-save"></i>  Guardar
+    </button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">
         &times; Cerrar
     </button>
 </div>

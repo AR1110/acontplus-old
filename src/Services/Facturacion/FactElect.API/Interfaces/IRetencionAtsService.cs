@@ -1,7 +1,6 @@
-﻿namespace FactElect.API.Interfaces
+﻿namespace FactElect.API.Interfaces;
+
+public interface IRetencionAtsService
 {
-    public interface IRetencionAtsService
-    {
-        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    }
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
 }

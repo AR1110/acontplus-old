@@ -239,6 +239,16 @@ app.constant('nombreModalVenta', {
             MDUPLICATE: '~/Pages/Proforma/_ModalDuplicar.cshtml',
             MF: '~/Pages/Proforma/_ModalFiltro.cshtml'
         }
+    },
+
+    SOLICITUD_CREDITO: {
+        fileCtrl: '/js/ventas/modals/modalSolicitudCreditoCtrl.min.js' + CHANGE_VERSION(),
+        controllers: {
+            MSC: 'modalSolictudCreditoCtrl'
+        },
+        templates: {
+            MSC: '~/Pages/Ventas/Components/_SolicitudCreditoComponent.cshtml',
+        }
     }
 })
 
@@ -351,16 +361,7 @@ app.constant('nombreModalContabilidad', {
             MPL: '~/Pages/Contabilidad/CuentaPorPagar/Shared/_ModalPagoLote.cshtml',
             MFP: '~/Pages/Contabilidad/CuentaPorPagar/Shared/_ModalFormaPago.cshtml'
         }
-    },
-    SOLICITUD_CREDITO: {
-        fileCtrl: '/js/contabilidad/modals/modalSolicitudCreditoCtrl.min.js' + CHANGE_VERSION(),
-        controllers: {  
-            MSC: 'modalSolictudCreditoCtrl'
-        },
-        templates: { 
-            MSC: '~/Pages/Contabilidad/CuentaPorCobrar/Components/_SolicitudCreditoComponent.cshtml',
-        }
-    }
+    }, 
 })
 
 app.constant('nombreModal', { 
@@ -452,5 +453,6 @@ app.constant('CODE_REPORT', {
     RGR: 'RGR', //Reporte Guia Remision 
     FCRRG: 'FCRRG', //Facturación Retención Reporte General
     RRC:'RRC',
-    RCINGR: 'RCINGR'
+    RCINGR: 'RCINGR',
+    VSC : 'VSC' // Venta Solicitud Garante
 })

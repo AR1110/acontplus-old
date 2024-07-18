@@ -95,7 +95,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, 
                     housingTypes,
                     maritalStatuses
                 } = mainDataForm;
-                console.log(mainDataForm)
+             
 
                 $scope.tiposIdentificacion = tipoIdentificacion;
                 $scope.tipoContribuyentes = tipoContribuyentes;
@@ -127,7 +127,8 @@ function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, 
                         telefonos,
                         placas,
                         empleado,
-                        estado
+                        estado,
+                        dataInfoCred
                     } = dataCompanyCustomer;
 
                     $scope.isDisableInputIdentificacion = true;
@@ -136,7 +137,8 @@ function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, 
 
 
                     $scope.data = dataCompanyCustomer;
-                    console.log($scope.data)
+                    $scope.dataInfoCred = dataInfoCred;
+                    
                     $scope.tempIdTipoIdentificacion = $scope.data.idTipoIdentificacion;
 
                     $scope.correos = correos;
@@ -572,7 +574,8 @@ function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, 
                 ...$scope.data,
                 correos: $scope.correos,
                 telefonos: $scope.telefonos,
-                placas: $scope.placas
+                placas: $scope.placas,
+                dataInfoCred: $scope.dataInfoCred
             }
  
 

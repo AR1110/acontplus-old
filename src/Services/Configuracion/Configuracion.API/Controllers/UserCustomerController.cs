@@ -1,78 +1,44 @@
 ﻿namespace Configuracion.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class UserCustomerController : ControllerBase
+public class UserCustomerController(IUserCustomerService service) : BaseApiController
 {
-    private readonly ICustomLogger _log;
-    private readonly IUserCustomerService _service;
-
-    public UserCustomerController(IUserCustomerService service, ICustomLogger log)
-    {
-        _service = service;
-        _log = log;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        try
+        var parameters = new Dictionary<string, object>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
-            };
-            var response = await _service.GetAsync(parameters);
-            if (response == null) { return NoContent(); }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await service.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
 
-            ;
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en get " + ex.Message);
-            return BadRequest("Error en get " + ex.Message);
-        }
+        ;
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(ApiRequest data)
     {
-        try
+        var parameters = new Dictionary<string, object>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-            };
-            var response = await _service.AddAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en Post " + ex.Message);
-            return BadRequest("Error en Post " + ex.Message);
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+        };
+        var response = await service.AddAsync(parameters);
+        return Ok(response);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, ApiRequest data)
     {
-        try
+        var parameters = new Dictionary<string, object>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() },
-                { "id", id },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-            };
-            var response = await _service.UpdateAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en Update User Customer " + ex.Message);
-            return BadRequest("Error en Update User Customer " + ex.Message);
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        var response = await service.UpdateAsync(parameters);
+        return Ok(response);
     }
 }

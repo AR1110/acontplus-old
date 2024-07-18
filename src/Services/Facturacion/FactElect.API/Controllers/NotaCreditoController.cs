@@ -16,9 +16,9 @@ public class NotaCreditoController : BaseApiController
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var parameters = new Dictionary<string, object>{
-            {"idRol", User.GetUserRoleId()},
-            {"json", SqlStringParam.Sanitize(json)},
+        var parameters = new Dictionary<string, object>
+        {
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await _notaCreditoService.GetAsync(parameters));
     }

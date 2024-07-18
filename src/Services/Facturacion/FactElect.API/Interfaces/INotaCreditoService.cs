@@ -1,7 +1,6 @@
-﻿namespace FactElect.API.Interfaces
+﻿namespace FactElect.API.Interfaces;
+
+public interface INotaCreditoService
 {
-    public interface INotaCreditoService
-    {
-        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    }
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
 }

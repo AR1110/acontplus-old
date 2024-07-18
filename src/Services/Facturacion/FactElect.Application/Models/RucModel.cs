@@ -1,4 +1,4 @@
-﻿namespace FactElect.API.Dtos;
+﻿namespace FactElect.Application.Models;
 
 public class ClasificacionMiPyme
 {
@@ -29,7 +29,7 @@ public class RepresentantesLegales
     public string nombre { get; set; }
 }
 
-public class DatosPersonaSriUpdate
+public class RucModel
 {
     public string numeroRuc { get; set; }
     public string razonSocial { get; set; }

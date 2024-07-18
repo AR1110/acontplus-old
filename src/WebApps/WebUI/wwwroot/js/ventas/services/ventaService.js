@@ -12,7 +12,7 @@
     'use strict';
     const URL_API = 'Venta/'
 
-    app.factory('ventaService', function ($injector) {
+    app.factory('ventaService',['$injector', function ($injector) {
         let service = {};
         let mS = $injector.get('mainService');
         /**
@@ -194,7 +194,7 @@
                 })
         }
         return service;
-    })
+    }])
 
     /**
      * Nota Entrega 
@@ -1725,7 +1725,7 @@
                     if (response.code === '1') {
                         let mainData = JSON.parse(response.payload)
                     
-                        console.log(mainData)
+                       
                         return {
                             tipoIdentificacion: mainData[0],
                             tipoContribuyentes: mainData[1],
@@ -1733,7 +1733,7 @@
                             ciudades: mainData[3],
                             tiposCliente: mainData[4] || [],
                             empresas: mainData[5] || [],
-                       //     cargos: mainData[6] || [],
+                            cargos: mainData[6] || [],
                             formasPagoSri: mainData[7] || [],
                             housingTypes: mainData[8] || [],
                             maritalStatuses: mainData[9] || []
@@ -1801,7 +1801,8 @@
                 nota: fS.isValidField(data.nota),
                 validationSri: data.validationSri,
                 idFormaPagoSri: fS.isValidField(data.idFormaPagoSri),
-                estado: data.estado || true
+                estado: data.estado || true,
+                infoCrediticia: data.dataInfoCred && JSON.stringify(data.dataInfoCred) 
             }
 
         }
@@ -1826,7 +1827,7 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    let { correo, telefono, placa, ...data } = JSON.parse(response.payload)[0];
+                    let { correo, telefono, placa, infoCrediticia, ...data } = JSON.parse(response.payload)[0];
 
                     const correos = correo ? correo.split(/[\|;]/) : [];
                     const telefonos = telefono ? telefono.split(/[\|;]/) : [];
@@ -1860,7 +1861,8 @@
                         correos,
                         telefonos,
                         placas,
-                        idFormaPagoSri: data.idFormaPagoSri
+                        idFormaPagoSri: data.idFormaPagoSri,
+                        dataInfoCred: JSON.parse(infoCrediticia) || {}
                     }
                 }
             })
@@ -2062,7 +2064,7 @@
     }])
 
 
-    app.factory('empleadoService', function ($injector) {
+    app.factory('empleadoService', ['$injector', function ($injector) {
         let url = `${URL_API}Empleado/`;
         let mS = $injector.get('mainService');
         return {
@@ -2145,10 +2147,10 @@
             return mS.getData('put', url + 'Update/' + id + '?json=' + JSON.stringify(data), null, true)
         }
 
-    })
+    }])
 
 
-    app.factory('cargoService', function ($injector) {
+    app.factory('cargoService', ['$injector', function ($injector) {
         let URL = `${URL_API}Cargo/`;
         let mS = $injector.get('mainService');
 
@@ -2181,7 +2183,7 @@
 
         return service;
 
-    })
+    }])
 
 
     app.factory('empresaService', ['$injector', function ($injector) {
@@ -2271,5 +2273,36 @@
 
     }])
 
+
+
+    app.factory('creditoGaranteService', ['$injector', function($injector){
+        let url = `${URL_API}CreditoGarante`;
+        let mS = $injector.get('mainService');
+        return {
+            getAll,            
+            post,
+        }
+
+        function getAll(obj){
+            let json = JSON.stringify({
+                tipo: 1,
+                ...obj
+            })
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response=>{
+                let result = {
+                    guarantors: []
+                }
+                if(response.code==="1"){
+                    let {guarantors}= JSON.parse(response.payload)
+                    result.guarantors = guarantors;
+                }
+                return result;
+        })
+        }
+
+        function post(data){
+            return mS.getData('post', url, {data}, true )
+        }
+    }])
 
 })(window.angular)
