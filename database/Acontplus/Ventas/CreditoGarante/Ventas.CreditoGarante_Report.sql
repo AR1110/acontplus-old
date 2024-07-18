@@ -57,26 +57,56 @@ BEGIN
 
         -- Cuenta por Cobrar Dataset
         SELECT
-            vcc.razonSocialComprador,
-            vcc.identificacionComprador,
-            dirComprador = c.direccion,
-            telComprador = c.telefono,
-            correoComprador = c.correo,
-            ciudadComprador = c.ciudadNom, 
-            c.conyugeNombre,
-            c.conyugeTel,
-            c.refFamNombre,
-            c.dirVivienda,
-            c.refDomicilio,
-            c.refFamTel,
-            c.estadoCivilNom,
-            c.tipoViviendaNom, 
-            empresaNom = c.empresa
+            vcc.razonSocialComprador
+            ,vcc.identificacionComprador
+            ,dirComprador = c.direccion
+            ,telComprador = c.telefono
+            ,correoComprador = c.correo
+            ,ciudadComprador = c.ciudadNom
+            ,c.conyugeNombre
+            ,c.conyugeTel
+            ,c.refFamNombre
+            ,c.dirVivienda
+            ,c.refDomicilio
+            ,c.refFamTel
+            ,c.estadoCivilNom
+            ,c.tipoViviendaNom
+            ,empresaNom = c.empresa
+            ,identificacionEmpresa = cc.IDCard
+            ,dirEmpresa = ae.direccion
+            ,correoEmpresa = ae.correo
+            ,telEmpresa = ae.telefono
         FROM dbo.v_CuentaPorCobrar vcc  
-        INNER JOIN dbo.v_Cliente c   ON c.idCliente = vcc.idCliente
+        INNER JOIN dbo.v_Cliente c WITH(NOLOCK)   ON c.idCliente = vcc.idCliente
+        LEFT JOIN Administrador.Empresa ae WITH(NOLOCK) ON ae.idEmpresa = c.idEmpresa
+        LEFT JOIN Customer.Customer cc WITH(NOLOCK) ON cc.Id = ae.CustomerId
         WHERE vcc.idCuentaPorCobrar = @idCuentaPorCobrar;
 
-        SELECT '' AS N
+        SELECT 
+             razonSocialGarante = c.BusinessName
+            ,identificacionGarante = c.IDCard
+            ,dirGarante = c.direccion
+            ,telGarante = c.telefono
+            ,correoGarante = c.correo
+            ,ciudadGarante = c.ciudadNom
+            ,c.conyugeNombre
+            ,c.conyugeTel
+            ,c.refFamNombre
+            ,c.dirVivienda
+            ,c.refDomicilio
+            ,c.refFamTel
+            ,c.estadoCivilNom
+            ,c.tipoViviendaNom
+            ,empresaNom = cc.BusinessName
+            ,identificacionEmpresa = cc.IDCard
+            ,dirEmpresa = ae.direccion
+            ,correoEmpresa = ae.correo
+            ,telEmpresa = ae.telefono
+        FROM Ventas.CreditoGarante vcg
+        INNER JOIN dbo.v_Cliente c WITH(NOLOCK)   ON c.idCliente = vcg.idCliente
+        LEFT JOIN Administrador.Empresa ae WITH(NOLOCK) ON ae.idEmpresa = c.idEmpresa
+        LEFT JOIN Customer.Customer cc WITH(NOLOCK) ON cc.Id = ae.CustomerId
+        WHERE vcg.idCuentaPorCobrar = @idCuentaPorCobrar;
     END
 END;
 GO
