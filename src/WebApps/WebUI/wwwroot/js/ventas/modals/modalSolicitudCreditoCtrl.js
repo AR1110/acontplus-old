@@ -218,7 +218,7 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, params) 
     $scope.getReport = function(){
         let format = 'pdf';
         let dataParms = {
-            id: $scope.dataForm.idCuentaPorCobrar,
+            idCuentaPorCobrar: $scope.dataForm.idCuentaPorCobrar,
             tipo: 1,
             codEstab: $scope.dataForm.codEstab,
         }
