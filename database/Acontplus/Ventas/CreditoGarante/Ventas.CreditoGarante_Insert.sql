@@ -70,10 +70,18 @@ BEGIN
 			WHERE tb.tipoAccion='C'
 
             -- D - deleted
-			DELETE cg
+		/**	DELETE cg
 			FROM Ventas.CreditoGarante cg
 			INNER JOIN @tbCreditoGarante tg ON cg.idCuentaPorCobrar = tg.idCuentaPorCobrar AND cg.idCliente = tg.idCliente
-			WHERE tg.tipoAccion = 'D';
+			WHERE tg.tipoAccion = 'D';**/
+            UPDATE cg
+            SET cg.estado = 0, cg.updatedAt =  (SELECT dbo.ufnGetDateEcuador())
+            FROM Ventas.CreditoGarante cg
+            INNER JOIN @tbCreditoGarante tg 
+                ON cg.idCuentaPorCobrar = tg.idCuentaPorCobrar 
+                AND cg.idCliente = tg.idCliente
+            WHERE tg.tipoAccion = 'D';
+
 
 
 				

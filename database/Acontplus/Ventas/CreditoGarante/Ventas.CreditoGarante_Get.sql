@@ -38,7 +38,7 @@ BEGIN
 	         FROM Ventas.CreditoGarante cg WITH (NOLOCK)
 			 INNER JOIN dbo.Cliente c WITH (NOLOCK) ON c.idCliente  = cg.idCliente
 			 INNER JOIN Customer.Customer cc WITH (NOLOCK) ON cc.Id = c.customerId
-	         WHERE cg.idCuentaPorCobrar = @idCuentaPorCobrar
+	         WHERE cg.estado = 1 AND cg.idCuentaPorCobrar = @idCuentaPorCobrar
              RETURN
         END 
 		 

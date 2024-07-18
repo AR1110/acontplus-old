@@ -730,11 +730,12 @@ BEGIN
     IF @tipo = 6
         BEGIN   
             
-            SET @tableNames = 'comprobanteDs,cuotaDs,cobroDs'
+            DECLARE @idDocumento INT
 
-            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+            SELECT @id = id,@codEstab =codEstab FROM OPENJSON(@json) WITH (id INT, codEstab VARCHAR(100))
+            SELECT @codDoc = codDoc, @idDocumento = idDocumento FROM v_CuentaPorCobrar WHERE idCuentaPorCobrar = @id
 
-            SET @tableNames = 'headerDs,cuentaPorCobrarDs,creditoGaranteDs';
+            SET @tableNames = 'headerDs,cuentaPorCobrarDs,creditoGaranteDs,productsDs,cuotaDs';
 
             -- Header Dataset
             SELECT 
@@ -758,25 +759,39 @@ BEGIN
                 ,telComprador = c.telefono
                 ,correoComprador = c.correo
                 ,ciudadComprador = c.ciudadNom
-                ,c.conyugeNombre
-                ,c.conyugeTel
-                ,c.refFamNombre
-                ,c.dirVivienda
-                ,c.refDomicilio
-                ,c.refFamTel
-                ,c.estadoCivilNom
-                ,c.tipoViviendaNom
-                ,empresaNom = c.empresa
+                ,ic.conyugeNombre
+                ,ic.conyugeTel
+                ,ic.refFamNombre
+                ,ic.dirVivienda
+                ,ic.refDomicilio
+                ,ic.refFamTel
+                ,estadoCivilNom  = ms.[Name]
+                ,tipoViviendaNom = ht.[Name]
+                ,empresaNom      = c.empresa
                 ,identificacionEmpresa = cc.IDCard
-                ,dirEmpresa = ae.direccion
+                ,dirEmpresa    = ae.direccion
                 ,correoEmpresa = ae.correo
-                ,telEmpresa = ae.telefono
+                ,telEmpresa    = ae.telefono
             FROM dbo.v_CuentaPorCobrar vcc  
-            INNER JOIN dbo.v_Cliente c WITH(NOLOCK)   ON c.idCliente = vcc.idCliente
+            INNER JOIN dbo.v_cliente c WITH(NOLOCK)   ON c.idCliente = vcc.idCliente
+            OUTER  APPLY OPENJSON (c.infoCrediticia)
+            WITH(
+	            maritalStatusId INT
+	            ,housingTypeId  INT
+	            ,conyugeNombre VARCHAR(150)
+	            ,conyugeTel VARCHAR(100)
+	            ,refFamNombre VARCHAR(100) 
+	            ,dirVivienda VARCHAR(150)
+	            ,refDomicilio VARCHAR(100) 
+	            ,refFamTel VARCHAR(100)
+            ) as ic
             LEFT JOIN Administrador.Empresa ae WITH(NOLOCK) ON ae.idEmpresa = c.idEmpresa
-            LEFT JOIN Customer.Customer cc WITH(NOLOCK) ON cc.Id = ae.CustomerId
+            LEFT JOIN Customer.Customer     cc WITH(NOLOCK)        ON cc.Id = ae.CustomerId
+            LEFT JOIN Common.MaritalStatus  ms WITH(NOLOCK)        ON ms.Id = ic.maritalStatusId
+            LEFT JOIN Common.HousingType   ht WITH(NOLOCK)         ON ht.Id = ic.housingTypeId 
             WHERE vcc.idCuentaPorCobrar = @id;
 
+            -- Credito Garante DataSet
             SELECT 
                  razonSocialGarante = c.BusinessName
                 ,identificacionGarante = c.IDCard
@@ -784,24 +799,102 @@ BEGIN
                 ,telGarante = c.telefono
                 ,correoGarante = c.correo
                 ,ciudadGarante = c.ciudadNom
-                ,c.conyugeNombre
-                ,c.conyugeTel
-                ,c.refFamNombre
-                ,c.dirVivienda
-                ,c.refDomicilio
-                ,c.refFamTel
-                ,c.estadoCivilNom
-                ,c.tipoViviendaNom
+                ,ic.conyugeNombre
+                ,ic.conyugeTel
+                ,ic.refFamNombre
+                ,ic.dirVivienda
+                ,ic.refDomicilio
+                ,ic.refFamTel
+                ,estadoCivilNom = ms.[Name]
+                ,tipoViviendaNom = ht.[Name]
                 ,empresaNom = cc.BusinessName
                 ,identificacionEmpresa = cc.IDCard
                 ,dirEmpresa = ae.direccion
                 ,correoEmpresa = ae.correo
                 ,telEmpresa = ae.telefono
             FROM Ventas.CreditoGarante vcg
-            INNER JOIN dbo.v_Cliente c WITH(NOLOCK)   ON c.idCliente = vcg.idCliente
+            INNER JOIN dbo.v_cliente c WITH(NOLOCK)   ON c.idCliente = vcg.idCliente
+            OUTER  APPLY OPENJSON (c.infoCrediticia)
+            WITH(
+	            maritalStatusId INT
+	            ,housingTypeId  INT
+	            ,conyugeNombre VARCHAR(150)
+	            ,conyugeTel VARCHAR(100)
+	            ,refFamNombre VARCHAR(100) 
+	            ,dirVivienda VARCHAR(150)
+	            ,refDomicilio VARCHAR(100) 
+	            ,refFamTel VARCHAR(100)
+            ) as ic
             LEFT JOIN Administrador.Empresa ae WITH(NOLOCK) ON ae.idEmpresa = c.idEmpresa
-            LEFT JOIN Customer.Customer cc WITH(NOLOCK) ON cc.Id = ae.CustomerId
-            WHERE vcg.idCuentaPorCobrar = @id;
+            LEFT JOIN Customer.Customer     cc WITH(NOLOCK)        ON cc.Id = ae.CustomerId
+            LEFT JOIN Common.MaritalStatus  ms WITH(NOLOCK)        ON ms.Id = ic.maritalStatusId
+            LEFT JOIN Common.HousingType    ht WITH(NOLOCK)        ON ht.Id = ic.housingTypeId 
+            WHERE vcg.estado = 1 AND vcg.idCuentaPorCobrar = @id;
+
+            -- Detalle DataSet 
+            IF @codDoc ='01'
+                BEGIN 
+                   SELECT 
+                        ar.codigo,
+                        fd.descripcion,
+                        me.descripcion AS medida,
+                        CAST(fd.cantidad AS numeric(18, 2)) AS cantidad,
+                        CAST(fd.precioUnitario AS numeric(18, 2)) AS precioUnitario,
+                        CAST(fd.valorDescuento AS numeric(18, 2)) AS valorDescuento, 
+                        CAST(fd.precioTotalSinImpuesto AS numeric(18, 2)) AS precioTotal,
+                        IIF(fd.nota = 'S/N', '', fd.nota) AS nota,
+                        descTemplate = '<div><p>'+fd.descripcion+'</p><p>'+fd.nota+'</p></div>'
+                    FROM 
+                        dbo.FacturaDetalle fd WITH (NOLOCK)
+                    INNER JOIN 
+                        dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = fd.idArticulo
+                    INNER JOIN 
+                        dbo.Medida me WITH (NOLOCK) ON me.idMedida = fd.idMedida
+                    WHERE 
+                        fd.idFactura = @idDocumento
+                        AND fd.estado = 1  
+                        AND fd.envioSri = 1
+                    ORDER BY 
+                        fd.idFacturaDetalle ASC;
+
+
+
+                END 
+
+            IF @codDoc ='NE'
+                BEGIN
+                    SELECT 
+                        ar.codigo,
+                        CAST(nd.cantidad AS numeric(18, 2)) AS cantidad,
+                        nd.descripcion,
+                        CAST(nd.precioUnitario AS numeric(18, 2)) AS precioUnitario,
+                        CAST(nd.valorDescuento AS numeric(18, 2)) AS valorDescuento,
+                        CAST(nd.precioTotalSinImpuesto AS numeric(18, 2)) AS precioTotal,
+                        me.descripcion AS medida,
+                        IIF(nd.nota = 'S/N', '', nd.nota) AS nota
+                    FROM 
+                        dbo.NotaEntregaDetalle nd WITH (NOLOCK)
+                    INNER JOIN 
+                        dbo.Medida me WITH (NOLOCK) ON me.idMedida = nd.idMedida
+                    INNER JOIN 
+                        dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = nd.idArticulo 
+                    WHERE 
+                        nd.idNotaEntrega = @idDocumento 
+                        AND nd.estado = 1
+                    ORDER BY 
+                        nd.idNotaEntregaDetalle ASC;
+
+                END 
+
+            -- Cuota DataSet
+            SELECT cx.nroCuota
+                  ,FORMAT(cx.fechaVencimiento,'dd/MM/yyyy') as fechaVencimiento
+                  ,CAST(cx.cuota as numeric(18,2))          as cuota
+                  ,CAST(cx.abono as numeric(18,2))          as abono
+                  ,CAST(cx.saldo as numeric(18,2))          as saldo
+            FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK) 
+            WHERE cx.idCuentaPorCobrar = @id
+              AND cx.estado = 1
 
 
             RETURN 

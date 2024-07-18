@@ -45,7 +45,8 @@ SELECT c.[idCliente]
     ,c.correo as Email
     ,c.telefono as Telephone
     ,c.direccion as [Address]
-    ,ic.maritalStatusId
+    ,c.infoCrediticia
+   /* ,ic.maritalStatusId
 	,ic.housingTypeId
 	,ic.conyugeNombre
 	,ic.conyugeTel 
@@ -54,12 +55,12 @@ SELECT c.[idCliente]
 	,ic.refDomicilio
 	,ic.refFamTel 
 	,estadoCivilNom = ms.[Name]
-	,tipoViviendaNom = ht.[Name] 
+	,tipoViviendaNom = ht.[Name]*/ 
     ,ciudadNom = c2.descripcion
 FROM dbo.Cliente                    c WITH (NOLOCK)
 INNER JOIN dbo.Entidad              e WITH (NOLOCK) ON e.idEntidad             = c.idEntidad
 INNER JOIN dbo.TipoIdentificacion  ti WITH (NOLOCK) ON ti.idTipoIdentificacion = c.idTipoIdentificacion 
-OUTER  APPLY OPENJSON (c.infoCrediticia)
+/**OUTER  APPLY OPENJSON (c.infoCrediticia)
 WITH(
 	maritalStatusId INT
 	,housingTypeId  INT
@@ -69,13 +70,13 @@ WITH(
 	,dirVivienda VARCHAR(150)
 	,refDomicilio VARCHAR(100) 
 	,refFamTel VARCHAR(100)
-) as ic
+) as ic*/
 
  LEFT JOIN Customer.Customer       cs WITH (NOLOCK) ON cs.Id                   = c.CustomerId
  LEFT JOIN dbo.Ciudad c2 WITH(NOLOCK) ON c2.idCiudad = c.idCiudad
  LEFT JOIN Administrador.Empresa  emp WITH (NOLOCK) ON emp.idEmpresa           = c.idEmpresa
  LEFT JOIN Customer.Customer       ce WITH (NOLOCK) ON ce.Id                   = emp.CustomerId
- LEFT JOIN Common.MaritalStatus ms WITH(NOLOCK) ON ms.Id = ic.maritalStatusId
-LEFT JOIN Common.HousingType ht WITH(NOLOCK) ON ht.Id = ic.housingTypeId
+ --LEFT JOIN Common.MaritalStatus ms WITH(NOLOCK) ON ms.Id = ic.maritalStatusId
+--LEFT JOIN Common.HousingType ht WITH(NOLOCK) ON ht.Id = ic.housingTypeId
  
 )
