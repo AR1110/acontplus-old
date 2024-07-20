@@ -753,7 +753,10 @@ BEGIN
 
             -- Cuenta por Cobrar Dataset
             SELECT
-                vcc.razonSocialComprador
+                tipoDoc =IIF(@codDoc = '01','Factura','Nota Entrega')
+                ,vcc.serieComprobante
+                ,fechaEmision = FORMAT(vcc.fechaEmision,'dd/MM/yyyy')                         
+                ,vcc.razonSocialComprador
                 ,vcc.identificacionComprador
                 ,dirComprador = c.direccion
                 ,telComprador = c.telefono
@@ -772,6 +775,7 @@ BEGIN
                 ,dirEmpresa    = ae.direccion
                 ,correoEmpresa = ae.correo
                 ,telEmpresa    = ae.telefono
+                ,importeTotal = CAST(vcc.importeTotal as numeric(18,2))                             
             FROM dbo.v_CuentaPorCobrar vcc  
             INNER JOIN dbo.v_cliente c WITH(NOLOCK)   ON c.idCliente = vcc.idCliente
             OUTER  APPLY OPENJSON (c.infoCrediticia)
@@ -792,8 +796,9 @@ BEGIN
             WHERE vcc.idCuentaPorCobrar = @id;
 
             -- Credito Garante DataSet
-            SELECT 
-                 razonSocialGarante = c.BusinessName
+            SELECT
+                
+                razonSocialGarante = c.BusinessName
                 ,identificacionGarante = c.IDCard
                 ,dirGarante = c.direccion
                 ,telGarante = c.telefono
@@ -843,7 +848,8 @@ BEGIN
                         CAST(fd.valorDescuento AS numeric(18, 2)) AS valorDescuento, 
                         CAST(fd.precioTotalSinImpuesto AS numeric(18, 2)) AS precioTotal,
                         IIF(fd.nota = 'S/N', '', fd.nota) AS nota,
-                        descTemplate = '<div><p>'+fd.descripcion+'</p><p>'+fd.nota+'</p></div>'
+                        descTemplate = '<div><p>'+fd.descripcion+'</p><p>'+fd.nota+'</p></div>',
+                        CAST(fd.valorImpuesto AS numeric(18, 2)) AS valorImpuesto
                     FROM 
                         dbo.FacturaDetalle fd WITH (NOLOCK)
                     INNER JOIN 
@@ -871,7 +877,8 @@ BEGIN
                         CAST(nd.valorDescuento AS numeric(18, 2)) AS valorDescuento,
                         CAST(nd.precioTotalSinImpuesto AS numeric(18, 2)) AS precioTotal,
                         me.descripcion AS medida,
-                        IIF(nd.nota = 'S/N', '', nd.nota) AS nota
+                        IIF(nd.nota = 'S/N', '', nd.nota) AS nota,
+                        CAST(nd.valorImpuesto AS numeric(18, 2)) AS valorImpuesto
                     FROM 
                         dbo.NotaEntregaDetalle nd WITH (NOLOCK)
                     INNER JOIN 
