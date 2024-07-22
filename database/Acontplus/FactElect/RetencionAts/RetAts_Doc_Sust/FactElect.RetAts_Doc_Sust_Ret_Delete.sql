@@ -29,7 +29,7 @@ BEGIN
 			DELETE FROM FactElect.RetencionAtsRet WHERE idRetencionAtsRet = @id
 
             UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)
-                SET importeTotal = (SELECT SUM(valorRetenido) FROM FactElect.RetencionAtsRet WITH (NOLOCK) WHERE idRetencionAts = @idRetencionAts )
+                SET importeTotal = ISNULL((SELECT SUM(valorRetenido) FROM FactElect.RetencionAtsRet WITH (NOLOCK) WHERE idRetencionAts = @idRetencionAts ),0)
             WHERE idDocumento = @idRetencionAts
               AND codDoc = '07'
 
