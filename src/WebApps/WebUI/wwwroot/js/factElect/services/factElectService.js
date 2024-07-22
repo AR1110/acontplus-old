@@ -1,9 +1,4 @@
-
-/**
- * - Documento Electronico
- * - Factura 
- * - Nota Credito
- */
+//@ts-check
 (function () {
 
     'use strict';
@@ -442,6 +437,21 @@
             })
         }
 
+        service.getGroupInfoAdicionalArticulo = function(idInfoAdicional){
+            let json = JSON.stringify({
+                tipo: 6,
+                idInfoAdicional
+            })
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response=>{
+                let results = [];
+                if(response.code==="1"){
+                    let [mainData] = JSON.parse(response.payload);
+                    results = mainData;
+                }
+                return results;
+            })
+        }
+
         service.generateSerieComprobante = function (query) {
             return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 7 })), null, true).then(response => {
                 if (response.code === "0") {
@@ -516,6 +526,7 @@
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
                         let obj = {
                             n: index + 1,
+                            uniqueRowId: restItem.uuid,
                             idFacturaDetalle: restItem.idFacturaDetalle,
                             cantidad: restItem.cantidad,
                             cantidadOriginal: restItem.cantidad,
@@ -584,6 +595,17 @@
                         selected: item.selected,
                         estado: item.estado
                     }))
+
+                    infoAdicionalDocumento = infoAdicionalDocumento || [];
+                    infoAdicionalDocumento = infoAdicionalDocumento.map(item=>{
+                        return {
+                            uuid: item.uuid,
+                            idInfoAdicionalDoc: item.idInfoAdicionalDoc,
+                            nombre: item.nombre,
+                            valor: item.valor,
+                            item: item.estado
+                        }
+                    })
 
                     let formasPago = formasPagoTemp.map(fp => {
                         return {
@@ -742,13 +764,11 @@
 
 
         service.delete = function (id) {
-            return mS.getData('delete', `${url}${id}`, null, true).then(response => {
-                return response;
-            })
+            return mS.getData('delete', `${url}${id}`, null, true) 
         }
 
         service.queryMapper = function (params) {
-            const {
+            let {
                 data,
                 cliente,
                 dataFormaPago,
@@ -789,12 +809,30 @@
                 ...itemsDeletedMapper
             ]
 
+            infoAdicionalDocumento = infoAdicionalDocumento || [];
+            let infoAdicionalDocumentoMapped = infoAdicionalDocumento.map(item=>{
+                return {
+                    uuid: item.uuid,
+                    nombre: item.nombre,
+                    valor: item.valor
+                }
+            })
+
+            historyDatosAdicionales = historyDatosAdicionales || [];
+            let historyDatosAdicionalesMapped = historyDatosAdicionales.map(item=>{
+                return {
+                    uuid: item.uuid,
+                    idArticulo: item.idArticulo,
+                    idInfoAdicional: item.idInfoAdicional,
+                }
+            })
+
             return {
                 infoFactura: service.infoComprobanteMapperTo(factura),
                 detalles: mergeItems,
                 impuestos: impuestos,
-                infoAdicional: infoAdicionalDocumento || [],
-                infoAdicionalArticulo: historyDatosAdicionales,
+                infoAdicional: infoAdicionalDocumentoMapped,
+                infoAdicionalArticulo: historyDatosAdicionalesMapped,
                 formaPago: dataFormaPago,
                 cuotas
             }
@@ -840,9 +878,9 @@
             let orderIndex = 1;
 
             for (let item of detalles) {
-
                 tempDetails.push({
                     orderIndex: orderIndex++,
+                    uuid: item.uniqueRowId,
                     idFacturaDetalle: item.idFacturaDetalle || 0,
                     idArticulo: item.idArticulo,
                     idTarifa: item.idTarifa,

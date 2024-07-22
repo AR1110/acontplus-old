@@ -14,8 +14,7 @@
             },
             link: function (scope, element) {
 
-                element.on('click', async function () {
-                    console.log(scope)
+                element.on('click', async function () { 
                     if(!Number.isInteger(scope.entity.cantidad)){
                         Swal.fire({
                             title: 'Datos Adicionales',
