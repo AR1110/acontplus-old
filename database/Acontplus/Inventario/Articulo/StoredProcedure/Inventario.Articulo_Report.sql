@@ -300,7 +300,8 @@ BEGIN
                               ,tt.medida as medidaSalida
                               ,tt.subFamilia
 						FROM v_InventarioTransaccion tt WITH (NOLOCK)
-						WHERE tt.idEntidad = @idEntidad AND tt.estado = 1 '
+						WHERE tt.idEntidad = @idEntidad 
+                          AND tt.estado = 1 '
 
 			SELECT @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
@@ -366,8 +367,11 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND tt.idBodega = @idBodega '
                 END 
+
             IF @rucClienteProveedor IS NOT NULL
-                 SET @sql = @sql + ' AND tt.rucClienteProveedor = @rucClienteProveedor '
+                BEGIN 
+                    SET @sql = @sql + ' AND tt.rucClienteProveedor = @rucClienteProveedor '
+                END 
 
 			SET @sql = @sql + 'ORDER BY tt.articulo,tt.fechaRegistro ASC '
 
