@@ -1,7 +1,4 @@
-﻿using System.Xml;
-using FactElect.Application.Models;
-
-namespace FactElect.Application;
+﻿namespace FactElect.Application.Services;
 
 public class DataXmlComprobante
 {
@@ -170,10 +167,11 @@ public class DataXmlComprobante
     public void GetInfoAdicional(ComprobanteElectronico comp, XmlNode infoAdi)
     {
         var infoAdicionals = (from XmlNode item in infoAdi
-                select new InfoAdicional
-                {
-                    nombre = item.Attributes.GetNamedItem("nombre").Value, valor = item.InnerText
-                })
+                              select new InfoAdicional
+                              {
+                                  nombre = item.Attributes.GetNamedItem("nombre").Value,
+                                  valor = item.InnerText
+                              })
             .ToList();
 
         comp.CreateAdditionalInfo(infoAdicionals);
@@ -224,16 +222,16 @@ public class DataXmlComprobante
     private void GetTotalTaxes(string codDoc, object obj, XmlNode impuestos)
     {
         var totalImpuestos = (from XmlNode item in impuestos
-            select new TotalImpuesto
-            {
-                codigo = item.SelectSingleNode("codigo")?.InnerText,
-                codigoPorcentaje = item.SelectSingleNode("codigoPorcentaje")?.InnerText,
-                descuentoAdicional = item.SelectSingleNode("descuentoAdicional") == null
-                    ? "0.00"
-                    : item.SelectSingleNode("descuentoAdicional")?.InnerText,
-                baseImponible = item.SelectSingleNode("baseImponible")?.InnerText,
-                valor = item.SelectSingleNode("valor")?.InnerText
-            }).ToList();
+                              select new TotalImpuesto
+                              {
+                                  codigo = item.SelectSingleNode("codigo")?.InnerText,
+                                  codigoPorcentaje = item.SelectSingleNode("codigoPorcentaje")?.InnerText,
+                                  descuentoAdicional = item.SelectSingleNode("descuentoAdicional") == null
+                                      ? "0.00"
+                                      : item.SelectSingleNode("descuentoAdicional")?.InnerText,
+                                  baseImponible = item.SelectSingleNode("baseImponible")?.InnerText,
+                                  valor = item.SelectSingleNode("valor")?.InnerText
+                              }).ToList();
 
         switch (codDoc)
         {
@@ -251,15 +249,15 @@ public class DataXmlComprobante
     private void GetInvoicePayments(InfoFactura comp, XmlNode payments)
     {
         var pagos = (from XmlNode item in payments
-            select new Pago
-            {
-                formaPago = item.SelectSingleNode("formaPago")?.InnerText,
-                total = item.SelectSingleNode("total")?.InnerText,
-                plazo = item.SelectSingleNode("plazo") == null ? "" : item.SelectSingleNode("plazo")?.InnerText,
-                unidadTiempo = item.SelectSingleNode("unidadTiempo") == null
-                    ? ""
-                    : item.SelectSingleNode("unidadTiempo")?.InnerText
-            }).ToList();
+                     select new Pago
+                     {
+                         formaPago = item.SelectSingleNode("formaPago")?.InnerText,
+                         total = item.SelectSingleNode("total")?.InnerText,
+                         plazo = item.SelectSingleNode("plazo") == null ? "" : item.SelectSingleNode("plazo")?.InnerText,
+                         unidadTiempo = item.SelectSingleNode("unidadTiempo") == null
+                             ? ""
+                             : item.SelectSingleNode("unidadTiempo")?.InnerText
+                     }).ToList();
 
         comp.CreatePayments(pagos);
     }
@@ -291,7 +289,7 @@ public class DataXmlComprobante
             detail.descripcion = item.SelectSingleNode("descripcion")?.InnerText;
             detail.cantidad = item.SelectSingleNode("cantidad")?.InnerText;
             detail.precioUnitario = item.SelectSingleNode("precioUnitario")?.InnerText;
-            detail.descuento = item.SelectSingleNode("descuento") == null 
+            detail.descuento = item.SelectSingleNode("descuento") == null
                 ? ""
                 : item.SelectSingleNode("descuento")?.InnerText;
             detail.precioTotalSinImpuesto = item.SelectSingleNode("precioTotalSinImpuesto")?.InnerText;
@@ -302,16 +300,16 @@ public class DataXmlComprobante
                 ? ""
                 : item.SelectNodes("detallesAdicionales")[0].OuterXml;
             impuestos.AddRange(from XmlElement taxes in item.SelectNodes("impuestos")
-                select new Impuesto
-                {
-                    idDetalle = idDetalle,
-                    codArticulo = detail.codigoPrincipal,
-                    codigo = taxes.GetElementsByTagName("codigo")[0]?.InnerText,
-                    codigoPorcentaje = taxes.GetElementsByTagName("codigoPorcentaje")[0]?.InnerText,
-                    tarifa = taxes.GetElementsByTagName("tarifa")[0]?.InnerText,
-                    baseImponible = taxes.GetElementsByTagName("baseImponible")[0]?.InnerText,
-                    valor = taxes.GetElementsByTagName("valor")[0]?.InnerText
-                });
+                               select new Impuesto
+                               {
+                                   idDetalle = idDetalle,
+                                   codArticulo = detail.codigoPrincipal,
+                                   codigo = taxes.GetElementsByTagName("codigo")[0]?.InnerText,
+                                   codigoPorcentaje = taxes.GetElementsByTagName("codigoPorcentaje")[0]?.InnerText,
+                                   tarifa = taxes.GetElementsByTagName("tarifa")[0]?.InnerText,
+                                   baseImponible = taxes.GetElementsByTagName("baseImponible")[0]?.InnerText,
+                                   valor = taxes.GetElementsByTagName("valor")[0]?.InnerText
+                               });
 
             detalles.Add(detail);
             idDetalle++;

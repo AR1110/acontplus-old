@@ -1,16 +1,13 @@
-﻿ 
-
-namespace Contabilidad.API.Services
+﻿namespace Ventas.API.Services
 {
-    public class SolicitudCreditoService(IAdoRepository _repo):ISolicitudCreditoService
+    public class CreditoGaranteService(IAdoSqlServer _repo):ICreditoGaranteService
     {
-        private readonly string nameSp = "Contabilidad.SolicitudCredito_";
+        private readonly string nameSp = "Ventas.CreditoGarante_"; 
         public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
-        {
-            ApiResponse response = new ApiResponse();
+        { 
             var ds = await _repo.GetDataSetAsync($"{nameSp}Get", parameters, false, true);
 
-            if (DataValidation.DataSetIsNull(ds, true))
+            if (DataValidation.DataSetIsNull(ds))
             {
                 return new ApiResponse { Code = "0", Message = "Data not found" };
             }
@@ -28,6 +25,5 @@ namespace Contabilidad.API.Services
         {
             return await _repo.SpExecuteAsync<ApiResponse>($"{nameSp}Update", parameters);
         }
-
     }
 }

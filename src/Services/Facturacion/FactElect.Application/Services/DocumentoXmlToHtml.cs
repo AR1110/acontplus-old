@@ -1,8 +1,7 @@
 ﻿using Common.Core.Enums;
 using Common.Core.Utils;
-using FactElect.Application.Models;
 
-namespace FactElect.Application;
+namespace FactElect.Application.Services;
 
 public static class DocumentoXmlToHtml
 {

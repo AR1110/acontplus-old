@@ -81,15 +81,12 @@
                 let checkBoxDate = $scope.dataSearch.checkBoxDate = true;
 
                 if ($scope.dataSearch.nroSecuencial) {
-                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
-                         checkBoxDate = true;
+                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) { 
                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                         return
-                    }
+                    } 
 
-                    if (!($scope.dataSearch.identificacionReceptor)) {
-                        checkBoxDate = false;
-                    }
+                    checkBoxDate = false;
                     tS.toastr({
                         type: 'info',
                         message: 'Buscando por número documento'

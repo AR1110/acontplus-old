@@ -1,4 +1,5 @@
 ﻿namespace FactElect.API.Controllers;
+
 public class FacturaController(IFacturaService service) : BaseApiController
 {
     [HttpGet]

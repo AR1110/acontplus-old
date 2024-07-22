@@ -1,6 +1,6 @@
 ﻿namespace Compras.API.Services;
 
-public class CompraHabitualService (IAdoRepository adoRepository): ICompraHabitualService
+public class CompraHabitualService(IAdoRepository adoRepository) : ICompraHabitualService
 {
     private const string ModuleName = "Recepcion.CompraHabitual_";
 

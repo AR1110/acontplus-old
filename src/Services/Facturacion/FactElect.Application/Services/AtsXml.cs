@@ -1,7 +1,4 @@
-﻿using System.Data;
-using System.Xml;
-
-namespace FactElect.Application;
+﻿namespace FactElect.Application.Services;
 
 public class AtsXml
 {

@@ -51,15 +51,15 @@ public class DocumentoRecibidoService(IAdoRepository repository) : IDocumentoRec
         switch (dt.Rows.Count)
         {
             case > 0 when dt.Columns.Contains("xmlDoc"):
-            {
-                var xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
-                if (xmlDoc != null)
                 {
-                    xdoc.LoadXml(xmlDoc);
-                }
+                    var xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
+                    if (xmlDoc != null)
+                    {
+                        xdoc.LoadXml(xmlDoc);
+                    }
 
-                return xdoc;
-            }
+                    return xdoc;
+                }
             default:
                 return new XmlDocument();
         }

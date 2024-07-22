@@ -21,7 +21,7 @@ public class CatalogoController : ControllerBase
             using (var db = new DbAccess(_config))
             {
                 await db.SpExecuteAsync("Sri.Catalogo_Get");
-               _response = await db.GetDataTableAsync();
+                _response = await db.GetDataTableAsync();
             }
         }
         catch (Exception)

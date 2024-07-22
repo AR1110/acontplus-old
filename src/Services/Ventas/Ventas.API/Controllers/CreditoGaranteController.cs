@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-
-namespace Contabilidad.API.Controllers
+﻿ 
+namespace Ventas.API.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    public class SolicitudCreditoController(ISolicitudCreditoService _svc) : ControllerBase
+    [ApiController]
+    public class CreditoGaranteController(ICreditoGaranteService _svc) : BaseApiController
     {
         [HttpGet]
         public async Task<IActionResult> Get(string json)
@@ -46,8 +41,5 @@ namespace Contabilidad.API.Controllers
 
             return Ok(await _svc.UpdateAsync(parameters));
         }
-
-
-
     }
 }
