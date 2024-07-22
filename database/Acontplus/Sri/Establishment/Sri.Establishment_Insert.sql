@@ -14,8 +14,11 @@ BEGIN
     SET LANGUAGE SPANISH;
 
     --> Global
-	DECLARE @idEntidad INT ,@idUsuario INT
-
+	DECLARE @idEntidad INT,
+        @idUsuario INT,
+        @demoStepId INT,
+        @uuid UNIQUEIDENTIFIER,
+        @companyId INT;
     --> Establecimiento
 	DECLARE @sequencial INT ,@codEstab VARCHAR(150) ,@estab VARCHAR(15)
 
@@ -79,8 +82,23 @@ BEGIN
 			END 
 
         
+        SET @uuid = (SELECT TOP 1 uuid FROM v_usuario WHERE idUsuarioRol = @userRoleId);
+
+        SET @companyId = (SELECT Id FROM AcontplusAdmin.Config.Company WITH(NOLOCK) WHERE Uuid = @uuid);
+
 
 		BEGIN TRAN 
+
+           IF (@demoStepId > 0)
+                BEGIN
+                    IF NOT EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH (NOLOCK) 
+                                                    WHERE Uuid = @uuid AND DemoStepId = @demoStepId)
+                        BEGIN
+                            INSERT INTO AcontplusAdmin.Config.CompanyDemoStep(DemoStepId, CompanyId, Uuid)
+                            VALUES(@demoStepId, @companyId, @uuid);
+                        END
+                END
+
 			INSERT INTO Sri.Establecimiento
 				   (codEstab,canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario)
 			SELECT @codEstab,canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario
