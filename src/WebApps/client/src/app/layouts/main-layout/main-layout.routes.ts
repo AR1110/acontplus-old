@@ -18,6 +18,9 @@ export const routes: Routes = [
         title: 'App - Config',
         loadChildren: () =>
           import('@modules/config/config.routes').then((r) => r.routes),
+        data: {
+          breadcrumb: 'Config',
+        },
       },
       {
         path: 'technical-support',
