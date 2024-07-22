@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { Component, effect, inject, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { GlobalRoutes } from '@core/constants/global-routes';
 import { getEnumValueByKey } from '@core/utils/constant-value';
@@ -12,6 +12,9 @@ import {
   UserPermission,
   UserRoleStateService,
 } from '@shared/store/user-role-state.service';
+import { THEME_OPTIONS } from '@core/theme/theme-options';
+import { ThemeService } from '@core/theme/theme.service';
+import { ThemeClass } from '@core/theme/types';
 
 @Component({
   selector: 'app-root',
@@ -22,8 +25,16 @@ import {
 })
 export class AppComponent implements OnInit {
   title = 'client';
-
+  //temporalmente
+  themeOptions = THEME_OPTIONS;
+  //end temporalmente
   userRoleState = inject(UserRoleStateService);
+  //temporalmente
+  #themeService = inject(ThemeService);
+  #document = inject(DOCUMENT);
+  #renderer = inject(Renderer2);
+
+  //end temporalmente
 
   constructor(
     private route: ActivatedRoute,
@@ -32,7 +43,21 @@ export class AppComponent implements OnInit {
     library: FaIconLibrary,
   ) {
     library.addIconPacks(fab, fas, far);
+    effect(() => {
+      this.#renderer.setAttribute(
+        this.#document.documentElement,
+        'class',
+        this.#themeService.theme(),
+      );
+    });
   }
+
+  //temporalmente
+  changeTheme(newTheme: ThemeClass) {
+    this.#themeService.changeTheme(newTheme);
+  }
+
+  //end temporalmente
 
   ngOnInit() {
     let self = this;
@@ -69,6 +94,17 @@ export class AppComponent implements OnInit {
       }
 
       if (token) {
+        //temporalmente
+        const themeClass = this.themeOptions.find((x) => x.name === 'cyan')
+          ?.light.class;
+        if (themeClass) {
+          this.changeTheme(themeClass);
+        } else {
+          console.error('Theme not found!');
+        }
+
+        //end temporalmente
+
         if (!this.authService.isAuthenticated()) {
           localStorage.removeItem('access_token');
         }

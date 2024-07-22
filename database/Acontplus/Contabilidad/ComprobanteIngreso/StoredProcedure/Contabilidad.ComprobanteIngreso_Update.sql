@@ -83,17 +83,20 @@ BEGIN
         )
 
         --> Validaciones
-        IF NOT EXISTS(SELECT 1 FROM @tbCuenta)  
-            BEGIN
-                SELECT '0'code,'Error en la informacion de las cuentas' as 'message'
-				RETURN 
-            END
+        IF EXISTS (SELECT 1 FROM ComprobanteIngreso WITH (NOLOCK) WHERE idComprobanteIngreso = @id AND movimiento = 0)
+            BEGIN 
+                IF NOT EXISTS(SELECT 1 FROM @tbCuenta)  
+                    BEGIN
+                        SELECT '0'code,'Error en la informacion de las cuentas' as 'message'
+				        RETURN 
+                    END
             
-         IF NOT EXISTS(SELECT 1 FROM @tbCuota)  
-            BEGIN
-                SELECT '0'code,'Error en la informacion de las cuotas' as 'message'
-				RETURN 
-            END
+                 IF NOT EXISTS(SELECT 1 FROM @tbCuota)  
+                    BEGIN
+                        SELECT '0'code,'Error en la informacion de las cuotas' as 'message'
+				        RETURN 
+                    END
+            END 
 
 		IF EXISTS (SELECT 1 FROM ComprobanteIngreso WITH (NOLOCK) WHERE idComprobanteIngreso = @id AND estado = 0)
 			BEGIN 
@@ -122,19 +125,34 @@ BEGIN
                     WHERE idCuentaPorCobrar IN (SELECT idCuentaPorCobrar FROM dbo.Cobro WITH (NOLOCK) WHERE idCuentaPorCobrar > 0 AND idComprobanteIngreso = @id)
                 END
 
-            --> Editar Estados de las Cuenta
-            UPDATE cc SET
-                   cc.idEstadoPago = tc.idEstadoPago
-                  ,cc.abono        = tc.abono
-            FROM Contabilidad.CuentaPorCobrar cc
-            INNER JOIN @tbCuenta              tc ON tc.idCuentaPorCobrar = cc.idCuentaPorCobrar
+            IF EXISTS (SELECT 1 FROM ComprobanteIngreso WITH (NOLOCK) WHERE idComprobanteIngreso = @id AND movimiento = 0)
+                BEGIN 
+                    --> Editar Estados de las Cuenta
+                    UPDATE cc SET
+                           cc.idEstadoPago = tc.idEstadoPago
+                          ,cc.abono        = tc.abono
+                    FROM Contabilidad.CuentaPorCobrar cc
+                    INNER JOIN @tbCuenta              tc ON tc.idCuentaPorCobrar = cc.idCuentaPorCobrar
 
-            --> Editar Estados de la cuota
-            UPDATE cx SET 
-                   cx.idEstadoPago = tc.idEstadoPago
-                  ,cx.abono        = tc.abono
-            FROM Contabilidad.CuotaPorCobrar cx
-            INNER JOIN @tbCuota              tc ON tc.idCuotaPorCobrar = cx.idCuotaPorCobrar
+                    --> Editar Estados de la cuota
+                    UPDATE cx SET 
+                           cx.idEstadoPago = tc.idEstadoPago
+                          ,cx.abono        = tc.abono
+                    FROM Contabilidad.CuotaPorCobrar cx
+                    INNER JOIN @tbCuota              tc ON tc.idCuotaPorCobrar = cx.idCuotaPorCobrar
+                END
+            ELSE 
+                BEGIN
+                    IF EXISTS (SELECT 1 FROM Anticipo WITH (NOLOCK) WHERE idComprobanteIngreso = @id)
+                        BEGIN
+                            UPDATE dbo.Anticipo WITH (ROWLOCK) SET estado = 0 WHERE idComprobanteIngreso = @id
+                        END 
+
+                    IF EXISTS (SELECT 1 FROM dbo.MovimientoCaja WITH (NOLOCK) WHERE idComprobanteIngreso = @id)
+                        BEGIN
+                            UPDATE dbo.MovimientoCaja WITH (ROWLOCK) SET estado = 0 WHERE idComprobanteIngreso = @id
+                        END 
+                END 
 
 
 		COMMIT TRAN 

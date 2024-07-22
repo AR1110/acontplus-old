@@ -325,23 +325,6 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/Common{everything}"
-    },
-    {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7120
-        }
-      ],
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/gateway/Customer{everything}"
     }
   ]
 }

@@ -1,6 +1,6 @@
 <div class="modal-header">
     <h5 class="modal-title">Retencion Ats</h5>
-    <button class="close" ng-click="closeModal()">&times;</button>
+    <button type="button" class="close" ng-click="closeModal()">&times;</button>
 </div>
 <div class="modal-body">
     <div class="card border border-info rounded">
@@ -314,7 +314,7 @@
                                     <td>{{tax.tarifa}}</td>
                                     <td>{{tax.valorImpuesto | currency}}</td>
                                     <td>
-                                        <button class="btn btn-danger btn-sm" ng-click="removeTaxTemp($index)">
+                                        <button type="button" class="btn btn-danger btn-sm" ng-click="removeTaxTemp($index)">
                                             <i class="ti-trash"></i>
                                         </button>
                                     </td>
@@ -372,12 +372,11 @@
                                         ng-click="docPreview(item)" title="Ver Documento de Sustento">
                                     <i class="fa fa-eye"></i>
                                 </button>
-                                <button class="btn btn-warning btn-sm" ng-click="editDocSust($index)"
+                                <button type="button" class="btn btn-warning btn-sm" ng-click="editDocSust($index)"
                                         title="Editar datos">
                                     <i class="ti-pencil"></i>
                                 </button>
-                                <button class="btn btn-danger btn-sm" ng-click="deleteDocSust($index)"
-                                        ng-if="item.idRetAtsDocSustento == 0">
+                                <button type="button" class="btn btn-danger btn-sm" ng-click="deleteDocSust($index)">
                                     <i class="ti-trash"></i>
                                 </button>
                             </td>

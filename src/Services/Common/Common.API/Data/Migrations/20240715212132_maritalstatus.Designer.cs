@@ -13,7 +13,9 @@ namespace Common.API.Data.Migrations
 {
     [DbContext(typeof(CommonContext))]
     [Migration("20240715212132_maritalstatus")]
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     partial class maritalstatus
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

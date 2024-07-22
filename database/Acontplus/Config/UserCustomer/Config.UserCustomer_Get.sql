@@ -36,7 +36,9 @@ BEGIN
 			SELECT u.idUsuario          
 				  ,c.IDCard nroIdentificacion 
 				  ,u.nombreUsuario  
-				  ,u.correo            
+				  ,u.correo email           
+                  ,ISNULL(u.firstName, '') firstName
+                  ,ISNULL(u.lastName, '') lastName
 				  ,c.BusinessName nombreCompleto    
 				  ,COUNT(*) OVER()   as TotalRecords
                   ,ur.roleId

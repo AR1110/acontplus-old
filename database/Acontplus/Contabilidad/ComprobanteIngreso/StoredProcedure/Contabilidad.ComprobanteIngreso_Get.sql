@@ -352,6 +352,11 @@ BEGIN
 
             SELECT @idCuentaPorCobrar = idCuentaPorCobrar ,@idCliente = idCliente FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT ,idCliente INT)
 			
+            IF @idCliente IS NULL
+                BEGIN
+                    SELECT TOP 1 @idCliente = idCliente FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+                END 
+
 			SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 
 			SELECT idEntidadFinanciera,idSubEntidadFinanciera,descripcion,codigo,interes,controlCaja FROM dbo.SubEntidadFinanciera WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 

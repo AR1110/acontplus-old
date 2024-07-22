@@ -14,11 +14,14 @@ public class TokenService(IConfiguration configuration) : ITokenService
         var expires = _expInDays ? DateTime.UtcNow.AddDays(_exp) : DateTime.UtcNow.AddMinutes(_exp);
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Name, data.Fullname ?? ""),
+            new(JwtRegisteredClaimNames.Email, data.Email ?? ""),
             new(JwtRegisteredClaimNames.GivenName, data.Fullname ?? ""),
-            new(JwtRegisteredClaimNames.UniqueName, data.Username),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Name, data.Fullname ?? ""),
             new(ClaimTypes.NameIdentifier, Convert.ToString(data.UserId)),
             new(ClaimTypes.Role, data.Role),
+            new(JwtRegisteredClaimNames.Sub, Convert.ToString(data.UserId)),
+            new(JwtRegisteredClaimNames.UniqueName, data.Username),
             new("userRoleId", Convert.ToString(data.UserRoleId)),
             new("idCardCompany", data.IDCardCompany),
             new("companyId", Convert.ToString(data.CompanyId)),

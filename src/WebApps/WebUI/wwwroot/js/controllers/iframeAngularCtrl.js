@@ -94,8 +94,8 @@
                 codeRole
             }
             // Create a new iframe element
-            var iframe = document.createElement('iframe');
-
+            let iframe = document.createElement('iframe');
+            iframe.title = 'Angular App';
             iframe.style.width = '100%';
             iframe.style.height = '600px';
             iframe.style.border = 'none';
