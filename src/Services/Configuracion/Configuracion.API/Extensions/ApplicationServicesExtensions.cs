@@ -1,4 +1,7 @@
-﻿namespace Configuracion.API.Extensions;
+﻿using Configuracion.API.Interfaces.WizardConfig;
+using Configuracion.API.Services.WizardConfig;
+
+namespace Configuracion.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
@@ -15,7 +18,9 @@ public static class ApplicationServicesExtensions
                 x.SerializerSettings.ContractResolver =
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
-        
+
+        services.AddScoped<ICompanyDemoStepService, CompanyDemoStepService>();
+        services.AddScoped<IDemoStepService, DemoStepService>();
         services.AddScoped<IEmailConfigService, EmailConfigService>();
         services.AddScoped<IEstablecimientoAsignacionService, EstablecimientoAsignacionService>();
         services.AddScoped<IEstadoDocumentoService, EstadoDocumentoService>();

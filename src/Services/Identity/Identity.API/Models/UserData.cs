@@ -8,6 +8,7 @@ public class UserData
     public int CompanyId { get; set; }
     public dynamic LicenseExpiration { get; set; }
     public dynamic Establecimientos { get; set; }
+    public string Email { get; set; }
     public string Fullname { get; set; }
     public string IDCardCompany { get; set; }
     public string IDCardUser { get; set; }
