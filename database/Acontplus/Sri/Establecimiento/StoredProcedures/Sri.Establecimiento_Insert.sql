@@ -62,8 +62,6 @@ BEGIN
 	BEGIN TRY
 		SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
- 
-
 		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
 		SELECT @sequencial = COUNT(*)+1 FROM Sri.Establecimiento WITH (NOLOCK)

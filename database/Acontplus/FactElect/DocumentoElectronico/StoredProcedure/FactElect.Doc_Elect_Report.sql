@@ -215,7 +215,7 @@ BEGIN
                               ,Format(ncp.fechaAutorizacion,''dd/MM/yyyy HH:mm'')              as fechaAutorizacion
 							  ,ncp.identificacionComprador
 							  ,ncp.razonSocialComprador
-							  ,dbo.AFTGenerarNroDocumento(sFv.estab+peFv.ptoEmi,fv.nroFactura) as nroFactura										
+							  ,ncp.numDocSustento                                              as nroFactura										
 							  ,ISNULL
                                 ((
                                     SELECT CAST(SUM(ni.TaxBase)as numeric(18,2)) 
@@ -314,16 +314,9 @@ BEGIN
 
 	                          ,CAST(ncp.totalDescuento as numeric(18,2))         as descuento
 	                          ,CAST(ncp.total as numeric(18,2))                  as total		
-							  ,u.nombreUsuario                                   as usuario
-                              ,CASE WHEN codEstado = 4 THEN ''Autorizada''
-                                    WHEN codEstado = 6 THEN ''Anulada''
-                                                       ELSE ''No Autorizada'' 
-                               END as estado
+							  ,ncp.usuario
+                              ,ncp.servicioSri as estado
 						FROM Ventas.v_NotaCredito      ncp WITH (NOLOCK)	
-						INNER JOIN Factura              fv WITH (NOLOCK) ON fv.idFactura			  = ncp.idFactura								
-						INNER JOIN PuntoEmision       peFv WITH (NOLOCK) ON peFv.idPuntoEmision       = fv.idPuntoEmision 
-						INNER JOIN Sri.Establecimiento sFv WITH (NOLOCK) ON sFv.codEstab		      = peFv.codEstab
-						INNER JOIN Usuario               u WITH (NOLOCK) ON u.idUsuario				  = ncp.idUsuario
                         WHERE ncp.idEntidad = @idEntidad '
 
             IF @codEstab IS NOT NULL
@@ -345,11 +338,11 @@ BEGIN
                 BEGIN
                     IF @codEstado IN (4,6)
                         BEGIN
-                            SET @sql = @sql + 'AND ncp.codEstado = @codEstado '
+                            SET @sql = @sql + 'AND ncp.codServicio = @codEstado '
                         END 
                     ELSE 
                         BEGIN
-                            SET @sql = @sql + 'AND ncp.codEstado != 4'
+                            SET @sql = @sql + 'AND ncp.codServicio != 4'
                         END 
                 END 
 
@@ -621,40 +614,60 @@ BEGIN
 	                          ,de.razonSocial                                     as razonSocialSujetoRetenido
 	  
 	                          ,ISNULL(CASE versionComp WHEN ''2.0.0'' THEN (
-													                            SELECT CAST(SUM(ra.valorRetenido) as numeric(18,2)) 
-													                            FROM FactElect.RetencionAtsRet ra 
-													                            WHERE ra.codigo = ''1'' 
-													                              AND ra.idRetencionAts = rt.idRetencionAts
+                                                                                SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
+			                                                                    FROM FactElect.RetencionAts            ra WITH (NOLOCK)
+			                                                                    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = ra.idRetencionAts
+			                                                                    INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = ra.idRetencionAts
+			                                                                    WHERE ra.idRetencionAts = rt.idRetencionAts
+	 			                                                                  AND rt.anuladaSri = 0 
+				                                                                  AND ir.codigo = 1
+                                                                                  AND ds.estado = 1
 												                           )
 			                         END
                               ,0) as retRenta
 
 	                          ,ISNULL(CASE versionComp WHEN ''2.0.0'' THEN (
-													                            SELECT CAST(SUM(ra.valorRetenido) as numeric(18,2)) 
-													                            FROM FactElect.RetencionAtsRet ra 
-													                            WHERE ra.codigo = ''2'' 
-													                              AND ra.idRetencionAts = rt.idRetencionAts
+                                                                                SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
+			                                                                    FROM FactElect.RetencionAts            ra WITH (NOLOCK)
+			                                                                    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = ra.idRetencionAts
+			                                                                    INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = ra.idRetencionAts
+			                                                                    WHERE ra.idRetencionAts = rt.idRetencionAts
+	 			                                                                  AND rt.anuladaSri = 0 
+				                                                                  AND ir.codigo = 2
+                                                                                  AND ds.estado = 1
 												                           )
 			                          END
                               ,0) as retIva
 	                          ,ISNULL(CASE versionComp WHEN ''2.0.0'' THEN (
-													                            SELECT CAST(SUM(ra.valorRetenido) as numeric(18,2)) 
-													                            FROM FactElect.RetencionAtsRet ra 
-													                            WHERE ra.idRetencionAts = rt.idRetencionAts
+													                            SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
+			                                                                    FROM FactElect.RetencionAts            ra WITH (NOLOCK)
+			                                                                    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = ra.idRetencionAts
+			                                                                    INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = ra.idRetencionAts
+			                                                                    WHERE ra.idRetencionAts = rt.idRetencionAts
+	 			                                                                  AND rt.anuladaSri = 0 
+                                                                                  AND ds.estado = 1
 												                           )
 			                          END
                               ,0) as totalRet
 	                          ,CASE versionComp WHEN ''2.0.0'' THEN (
-											                            SELECT TOP 1 SUBSTRING(nd.numDocSustento,1,3) + ''-'' + SUBSTRING(nd.numDocSustento,4,3) + ''-'' + SUBSTRING(nd.numDocSustento,7,9) 
-											                            FROM FactElect.RetAtsDocSustento nd WITH (NOLOCK)
-											                            WHERE nd.idRetencionAts = rt.idRetencionAts
+											                            SELECT TOP 1 SUBSTRING(ds.numDocSustento,1,3) + ''-'' + SUBSTRING(ds.numDocSustento,4,3) + ''-'' + SUBSTRING(ds.numDocSustento,7,9)
+			                                                            FROM FactElect.RetencionAts            ra WITH (NOLOCK)
+			                                                            INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = ra.idRetencionAts
+			                                                            INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = ra.idRetencionAts
+			                                                            WHERE ra.idRetencionAts = rt.idRetencionAts
+	 			                                                            AND rt.anuladaSri = 0 
+                                                                            AND ds.estado = 1
 										                            )
 	                           END as numDocSustento
 
 	                          ,CASE versionComp WHEN ''2.0.0'' THEN (
-											                            SELECT TOP 1 FORMAT(nd.fechaEmisionDocSustento,''dd/MM/yyyy'') 
-											                            FROM FactElect.RetAtsDocSustento nd WITH (NOLOCK)
-											                            WHERE nd.idRetencionAts = rt.idRetencionAts
+                                                                        SELECT TOP 1 FORMAT(ds.fechaEmisionDocSustento,''dd/MM/yyyy'') 
+			                                                            FROM FactElect.RetencionAts            ra WITH (NOLOCK)
+			                                                            INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = ra.idRetencionAts
+			                                                            INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = ra.idRetencionAts
+			                                                            WHERE ra.idRetencionAts = rt.idRetencionAts
+	 			                                                            AND rt.anuladaSri = 0 
+                                                                            AND ds.estado = 1
 										                            )
 	                         END as fechaEmisionDocSustento
 
