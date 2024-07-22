@@ -685,7 +685,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
             }
             if (toBd && idDocumentoElectronico > 0) {
                 setTimeout(() => {
-                    $window.location.reload()
+                    $scope.initialLoad();
                 }, 2200)
             }
             $scope.docSustento = {}
@@ -1399,7 +1399,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                             document.getElementById('btnEditDocSust').style.display = 'none'
                             tS.toastr('success', response.message)
                             setTimeout(() => {
-                                $window.location.reload()
+                                $scope.initialLoad();
                             }, 2200)
                         }
                     }
@@ -1438,7 +1438,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
         }
     }
 
-    $scope.deleteDocSust = (item) => {
+    $scope.removeDocSust = (item) => {
         let uniqueIdDoc = $scope.docsAdded[item].uniqueIdDoc
         if ($scope.taxesAdded.length > 0) {
             for (let t = 0; t < $scope.taxesAdded.length; t++) {
@@ -1462,6 +1462,26 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
             }
         }
         $scope.docsAdded.splice(item, 1)
+    }
+
+    $scope.deleteDocSust = (item) => {
+        $scope.docSustento = $scope.docsAdded[item];
+        if ($scope.docSustento.idRetAtsDocSustento > 0) {
+            mS.getData('delete', `${PATH_FACT_ELECT}` + 'DocSustento/' + $scope.docSustento.idRetAtsDocSustento).then(
+                response => {
+                    if (response.code == '0') {
+                        tS.toastr('warning', response.message);
+                    }
+                    if (response.code == '1') {
+                        tS.toastr('success', response.message);
+                        $scope.removeDocSust(item);
+                    }
+                }
+            ).catch(error => { console.log(error) })
+        } else {
+            $scope.removeDocSust(item);
+        }
+        
     }
 
     /**************************************************************************************** */
