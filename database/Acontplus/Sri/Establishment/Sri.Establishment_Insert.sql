@@ -11,33 +11,32 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @idEntidad INT 
-	DECLARE @idUsuario INT
-	DECLARE @sequencial INT
-	DECLARE @nombreUsuario VARCHAR(100)
-	DECLARE @ruc VARCHAR(15)
-	DECLARE @canton VARCHAR(10) 
-    DECLARE @actividad VARCHAR(5)
-    DECLARE @agenteRetencion VARCHAR(150) 
-    DECLARE @contribuyente VARCHAR(5)
-    DECLARE @estab VARCHAR(5) 
-    DECLARE @contribuyenteEspecial VARCHAR(10) 
-    DECLARE @obligadoContabilidad VARCHAR(5) 
-    DECLARE @nombreComercial VARCHAR(150) 
-    DECLARE @dirEstablecimiento VARCHAR(300) 
-    DECLARE @contribuyenteRimpe VARCHAR(150) 
-	DECLARE @codEstab VARCHAR(50)
-	DECLARE @telefono VARCHAR(100)
-	DECLARE @correo VARCHAR(300)
-	
+	DECLARE @idEntidad INT, 
+	    @idUsuario INT,
+	    @sequencial INT, 
+	    @canton VARCHAR(10), 
+        @actividad VARCHAR(5),
+        @agenteRetencion VARCHAR(150), 
+        @contribuyente VARCHAR(5),
+        @estab VARCHAR(5), 
+        @contribuyenteEspecial VARCHAR(10), 
+        @obligadoContabilidad VARCHAR(5), 
+        @nombreComercial VARCHAR(150), 
+        @dirEstablecimiento VARCHAR(300), 
+        @contribuyenteRimpe VARCHAR(150), 
+	    @codEstab VARCHAR(50),
+	    @telefono VARCHAR(100),
+	    @correo VARCHAR(300),
+	    @demoStepId INT,
+        @uuid UNIQUEIDENTIFIER,
+        @companyId INT;
+
 	BEGIN TRY
-		SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+		SELECT TOP 1 @idEntidad = idEntidad
+            ,@idUsuario = idUsuario 
+            FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
-		SELECT TOP 1 @nombreUsuario = nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
-
-		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
-
-		SELECT @sequencial = COUNT(*)+1 FROM Sri.Establecimiento WITH (NOLOCK)
+		SELECT @sequencial = COUNT(*) + 1 FROM Sri.Establecimiento WITH (NOLOCK)
 
 		SELECT @codEstab =  'ESTAB-'+Helper.F_Auto_Sequential(@sequencial)
 
@@ -54,20 +53,22 @@ BEGIN
 				,@telefono              = telefono
 				,@contribuyenteRimpe    = contribuyenteRimpe
 				,@correo                = correo
+                ,@demoStepId            = demoStepId
 		FROM OPENJSON (@json)
 		WITH (
-				 canton                VARCHAR(10) '$.canton'
-				,actividad             VARCHAR(5)  '$.actividad'
-				,agenteRetencion       VARCHAR(150)'$.agenteRetencion'
-				,contribuyente         VARCHAR(5)  '$.contribuyente'
-				,estab                 VARCHAR(5)  '$.estab'
-				,contribuyenteEspecial VARCHAR(10) '$.contribuyenteEspecial'
-				,obligadoContabilidad  VARCHAR(5)  '$.obligadoContabilidad'
-				,nombreComercial       VARCHAR(150)'$.nombreComercial'
-				,dirEstablecimiento    VARCHAR(300)'$.dirEstablecimiento'
-				,telefono              VARCHAR(150)'$.telefono'
-				,contribuyenteRimpe    VARCHAR(150)'$.contribuyenteRimpe'
-				,correo                VARCHAR(300)'$.correo'
+				 canton                 VARCHAR(10) 
+				,actividad              VARCHAR(5)  
+				,agenteRetencion        VARCHAR(150)
+				,contribuyente          VARCHAR(5)  
+				,estab                  VARCHAR(5)  
+				,contribuyenteEspecial  VARCHAR(10) 
+				,obligadoContabilidad   VARCHAR(5)  
+				,nombreComercial        VARCHAR(150)
+				,dirEstablecimiento     VARCHAR(300)
+				,telefono               VARCHAR(150)
+				,contribuyenteRimpe     VARCHAR(150)
+				,correo                 VARCHAR(300)
+                ,demoStepId             INT
 				)
 
 		IF EXISTS (SELECT 1 FROM Sri.Establecimiento WHERE idEntidad = @idEntidad AND estab = @estab)
@@ -76,7 +77,22 @@ BEGIN
 				RETURN 
 			END 
 
+        SET @uuid = (SELECT TOP 1 uuid FROM v_usuario WHERE idUsuarioRol = @userRoleId);
+
+        SET @companyId = (SELECT Id FROM AcontplusAdmin.Config.Company WITH(NOLOCK) WHERE Uuid = @uuid);
+
 		BEGIN TRAN 
+
+            IF (@demoStepId > 0)
+                BEGIN
+                    IF NOT EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH (NOLOCK) 
+                                                    WHERE Uuid = @uuid AND DemoStepId = @demoStepId)
+                        BEGIN
+                            INSERT INTO AcontplusAdmin.Config.CompanyDemoStep(DemoStepId, CompanyId, Uuid)
+                            VALUES(@demoStepId, @companyId, @uuid);
+                        END
+                END
+
 				INSERT INTO Sri.Establecimiento
 					(codEstab
                     ,canton
@@ -116,11 +132,13 @@ BEGIN
 	END TRY 
 
 	BEGIN CATCH 
-		IF @@TRANCOUNT > 0 
-			BEGIN
-				ROLLBACK TRAN; 
-			END
-			SELECT '0'code,'Info: Error en el procedimiento: ' + ERROR_MESSAGE() as  'message'
+		IF (@@TRANCOUNT > 0) 
+        BEGIN
+		   ROLLBACK TRAN; 
+		END
+        INSERT INTO Acontplus.dbo.ErroresSistema (method, token, [ErrorNumber],[ErrorSeverity],[ErrorState],[ErrorProcedure],[ErrorLine],[ErrorMessage])
+		VALUES ('Establishment/Post', NEWID(), ERROR_NUMBER(), ERROR_SEVERITY(),  ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE());
+		SELECT '0' as code,'Info: Error en el procedimiento' as [message];
 	END CATCH 
 
 END
