@@ -183,7 +183,7 @@ BEGIN
 			                                SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
 			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                                WHERE di.DocumentoRecibidoId = dr.idDocumento
-			                                AND di.Code = ''3''
+			                                  AND di.Code = ''3''
 	                                  ),0) as totalIce
 
 	                                  ,CAST(dr.importeTotal as numeric(18,2)) as importeTotal
@@ -194,7 +194,8 @@ BEGIN
                                             INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
 			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts         = rt.idRetencionAts
 			                                WHERE ds.numAutDocSustento = dr.claveAcceso
-				                            AND rt.anuladaSri = 0 
+				                              AND rt.anuladaSri = 0 
+                                              AND ds.estado = 1
 
 		                                ) as nroRetencion
 
@@ -207,6 +208,7 @@ BEGIN
 			                                WHERE ds.numAutDocSustento = dr.claveAcceso
 	 			                                AND rt.anuladaSri = 0 
 				                                AND ir.codigo = 1
+                                                AND ds.estado = 1
 
 		                                ),0) as retRenta
 
@@ -219,6 +221,7 @@ BEGIN
 			                                WHERE ds.numAutDocSustento = dr.claveAcceso
 	 			                                AND rt.anuladaSri = 0 
 				                                AND ir.codigo = 2
+                                                AND ds.estado = 1
 
 		                                ),0) as retIva
                                         ,us.nombreUsuario as usuario
@@ -355,7 +358,9 @@ BEGIN
                                             INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
 			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts         = rt.idRetencionAts
 			                                WHERE ds.numAutDocSustento = fc.nroAutorizacion
-				                            AND rt.anuladaSri = 0 
+				                              AND rt.anuladaSri = 0 
+                                              AND rt.idProveedor = fc.idProveedor
+                                              AND ds.estado = 1
 
 		                                ) as nroRetencion
 
@@ -366,8 +371,10 @@ BEGIN
 			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
 			                                INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
 			                                WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			                                AND rt.anuladaSri = 0 
-				                                AND ir.codigo = 1
+	 			                              AND rt.anuladaSri = 0 
+				                              AND rt.idProveedor = fc.idProveedor
+                                              AND ds.estado = 1
+                                              AND ir.codigo = 1
 
 		                                ),0) as retRenta
 
@@ -379,7 +386,9 @@ BEGIN
 			                                INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
 			                                WHERE ds.numAutDocSustento = fc.nroAutorizacion
 	 			                                AND rt.anuladaSri = 0 
-				                                AND ir.codigo = 2
+				                                AND rt.idProveedor = fc.idProveedor
+                                                AND ds.estado = 1
+                                                AND ir.codigo = 2
 
 		                                ),0) as retIva
                                         ,us.nombreUsuario as usuario

@@ -45,6 +45,7 @@ BEGIN
 	   ,montoCredito DECIMAL(15,5) NULL 
 	   ,nota VARCHAR(300) NULL
 	   ,validationSri BIT NOT NULL
+       ,infoCrediticia NVARCHAR(MAX) NULL
     )
 	
 	BEGIN TRY 
@@ -54,8 +55,8 @@ BEGIN
 
         --> Data Json 
         INSERT INTO @tblCliente 
-              (idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri)
-	    SELECT idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri
+              (idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri,infoCrediticia)
+	    SELECT idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri,infoCrediticia
 	    FROM OPENJSON(@json) WITH
         (
              idEmpleado             INT 
@@ -78,13 +79,14 @@ BEGIN
 		    ,montoCredito           NUMERIC(15,5) 
 		    ,nota                   VARCHAR(300) 
 		    ,validationSri          BIT
+            ,infoCrediticia         NVARCHAR(MAX) AS JSON
         )
 
         --> Recuperando Informacion
         SELECT TOP 1 @numeroIdentificacion = LTRIM(RTRIM(numeroIdentificacion)) , @idTipoIdentificacion = idTipoIdentificacion FROM @tblCliente 
 
         --> Validacion de informacion 
-        IF (SELECT COUNT(*) FROM @tblCliente) = 0 
+        IF NOT EXISTS(SELECT 1 FROM @tblCliente)
             BEGIN
                 SELECT [Common].[ufnSpResponse]('0','Error en la info del cliente', DEFAULT)
                 RETURN
@@ -95,6 +97,9 @@ BEGIN
 			    SELECT [Common].[ufnSpResponse]('0','El cliente ya se encuentra registrado', DEFAULT)
 			    RETURN 
 		    END 
+
+        SELECT [Common].[ufnSpResponse]('0',ISNULL(infoCrediticia,'{}'), DEFAULT) from @tblCliente
+		RETURN
 
 		BEGIN TRAN
 
