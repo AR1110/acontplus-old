@@ -1,9 +1,9 @@
  <div class="modal-header">
     <h5 class="modal-title">Información Adicional</h5>
-    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    <button class="close" ng-click="closeModal()">&times;</button>
 </div>
 <div class="modal-body">
-    <div ui-grid="$ctrl.gridOptions"
+    <div ui-grid="gridOptions"
         ui-grid-edit
         ui-grid-resize-columns
         ui-grid-cellNav
@@ -14,5 +14,5 @@
 </div>
 <div class="modal-footer">
     @* <button class="btn btn-success" ng-click="guardarInfoAdicional()"><i class="ti-save"></i> Guardar</button> *@
-    <button class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+    <button class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
 </div>

@@ -1383,6 +1383,7 @@
                 element.on('click', async function () {
 
                     let { fileCtrl, controller, template } = nombreModalCommon.INFO_ADICIONAL_DOC;
+                    console.log(nombreModalCommon.INFO_ADICIONAL_DOC)
                     let ctrl = (await import(fileCtrl))[controller]
 
  
@@ -2308,10 +2309,11 @@
         return {
             restrict: 'A',
             scope: {
-                entity: '=',
+                entity: '=', //Datos del detalle 
                 resultModalAdicional: '&',
-                datosAdicionales: '=',
-                historyDatosAdicionales: '='
+                datosAdicionales: '=', //Datos adicionales del articulo ingresado en la compra
+                datosAdicionalesArticulo: '=', //Listado general de datos adicionales registrado en el documento
+                infoAdicionalDoc:"=" //Información Adicional del Documento 
             },
            link
         }
@@ -2338,10 +2340,11 @@
                     size: 'lg',
                     params: {
                         entity: scope.entity,
-                        datosAdicionales: scope.datosAdicionales || [],
-                        historyDatosAdicionales: scope.historyDatosAdicionales || [],
-                    },
-                    isRenderRazorPartial: true
+                        datosAdicionales: scope.datosAdicionales || [], 
+                        datosAdicionalesArticulo: scope.datosAdicionalesArticulo || [],
+                        infoAdicionalDoc: scope.infoAdicionalDoc || []
+
+                    }, 
                 })
 
                 modalRef.result.then(result => {

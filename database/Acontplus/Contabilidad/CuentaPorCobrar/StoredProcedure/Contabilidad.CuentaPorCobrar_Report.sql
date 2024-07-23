@@ -735,7 +735,7 @@ BEGIN
             SELECT @id = id,@codEstab =codEstab FROM OPENJSON(@json) WITH (id INT, codEstab VARCHAR(100))
             SELECT @codDoc = codDoc, @idDocumento = idDocumento FROM v_CuentaPorCobrar WHERE idCuentaPorCobrar = @id
 
-            SET @tableNames = 'headerDs,cuentaPorCobrarDs,creditoGaranteDs,productsDs,cuotaDs';
+            SET @tableNames = 'headerDs,cuentaPorCobrarDs,creditoGaranteDs,productsDs,productDatoAdicionalDs,cuotaDs';
 
             -- Header Dataset
             SELECT 
@@ -848,7 +848,7 @@ BEGIN
                         CAST(fd.valorDescuento AS numeric(18, 2)) AS valorDescuento, 
                         CAST(fd.precioTotalSinImpuesto AS numeric(18, 2)) AS precioTotal,
                         IIF(fd.nota = 'S/N', '', fd.nota) AS nota,
-                        descTemplate = '<div><p>'+fd.descripcion+'</p><p>'+fd.nota+'</p></div>',
+                        CONCAT('<div>', fd.descripcion, IIF(fd.nota IS NOT NULL, '<br>' + '<small><em>' +fd.nota+'</em></small>', ''), '</div>') AS descTemplate,
                         CAST(fd.valorImpuesto AS numeric(18, 2)) AS valorImpuesto
                     FROM 
                         dbo.FacturaDetalle fd WITH (NOLOCK)
@@ -862,6 +862,24 @@ BEGIN
                         AND fd.envioSri = 1
                     ORDER BY 
                         fd.idFacturaDetalle ASC;
+
+
+
+                     --- Datos Adicionales Products DataSet
+                      SELECT 
+	                    fd.idFacturaDetalle as rowId,
+                        ar.codigo,
+                        fd.descripcion,
+                        ja.[key] AS nombre,
+                        STRING_AGG(ja.[value], ', ') WITHIN GROUP (ORDER BY ja.[value]) AS descValor
+                    FROM Ventas.HistoryInfoAdicional vhi
+                    LEFT JOIN Compra.InfoAdicional cia WITH (NOLOCK) ON vhi.idInfoAdicional = cia.idInfoAdicional
+                    CROSS APPLY OPENJSON(cia.jsonAdicional)  ja
+                    LEFT JOIN FacturaDetalle fd WITH (NOLOCK)        ON fd.idFacturaDetalle = vhi.idFacturaDetalle
+                    LEFT JOIN dbo.Articulo ar WITH (NOLOCK)                ON ar.idArticulo = fd.idArticulo
+                    WHERE fd.idFactura = @idDocumento
+                    GROUP BY  fd.idFacturaDetalle,  ar.codigo, fd.descripcion, ja.[key]
+                    ORDER BY ar.codigo, fd.descripcion, ja.[key];
 
 
 
@@ -891,7 +909,12 @@ BEGIN
                     ORDER BY 
                         nd.idNotaEntregaDetalle ASC;
 
+
+                    SELECT ''
+
                 END 
+
+           
 
             -- Cuota DataSet
             SELECT cx.nroCuota
