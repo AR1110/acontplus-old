@@ -2,12 +2,12 @@
 using System.Text;
 using System.Web;
 using System.Collections.Concurrent;
-using Common.Core.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 using Reports.Application.Enums;
 using Reports.Application.Interfaces;
 using Reports.Application.Models;
+using Common.Core.Utils;
 using static System.Enum;
 
 namespace Reports.Application.Services
@@ -32,14 +32,7 @@ namespace Reports.Application.Services
             using var lr = new LocalReport();
             string reportPath = GetReportPath(parameters, reportProps, offline);
 
-            var reportDefinitionStream = _reportCache.GetOrAdd(reportPath, path =>
-            {
-                return new Lazy<MemoryStream>(() =>
-                {
-                    var stream = RdlcHelpers.LoadReportDefinition(path);
-                    return stream;
-                });
-            }).Value;
+            var reportDefinitionStream = GetOrAddReportDefinition(reportPath).Value;
 
             reportDefinitionStream.Seek(0, SeekOrigin.Begin); // Ensure the stream position is reset before reading
             lr.LoadReportDefinition(reportDefinitionStream);
@@ -51,6 +44,18 @@ namespace Reports.Application.Services
             response = BuildReportResponse(reportProps, fileReport);
 
             return response;
+        }
+
+        private Lazy<MemoryStream> GetOrAddReportDefinition(string reportPath)
+        {
+            return _reportCache.GetOrAdd(reportPath, path =>
+            {
+                return new Lazy<MemoryStream>(() =>
+                {
+                    var stream = RdlcHelpers.LoadReportDefinition(path);
+                    return new MemoryStream(stream.ToArray()); // Ensure a fresh MemoryStream instance
+                });
+            });
         }
 
         private string GetReportPath(DataSet parameters, ReportProps reportProps, bool offline)
@@ -88,8 +93,7 @@ namespace Reports.Application.Services
                 {
                     foreach (DataRow row in dataSources.Rows)
                     {
-                        lr.DataSources.Add(new ReportDataSource(row["dataSource"].ToString(),
-                            data.Tables[row.Field<int>("position")]));
+                        lr.DataSources.Add(new ReportDataSource(row["dataSource"].ToString(), data.Tables[row.Field<int>("position")]));
                     }
                 }
             }
@@ -109,10 +113,8 @@ namespace Reports.Application.Services
             if (firstDataSource.Columns.Contains("codigoAutorizacion"))
             {
                 var byteBarcode = BarcodeGen.Create(firstDataSource.Rows[0].Field<string>("codigoAutorizacion"));
-                lr.SetParameters(new ReportParameter("barcode", Convert.ToBase64String(
-                    byteBarcode,
-                    0,
-                    byteBarcode.Length)));
+                var base64Barcode = Convert.ToBase64String(byteBarcode);
+                lr.SetParameters(new ReportParameter("barcode", base64Barcode));
                 lr.SetParameters(new ReportParameter("mimeTypeBarcode", "image/png"));
             }
 
@@ -123,10 +125,11 @@ namespace Reports.Application.Services
                     string paramValue = "";
                     if (Convert.ToBoolean(item["isPicture"]))
                     {
-                        paramValue = item.Field<bool>("isCompressed")
-                            ? FileExtensions.GetBase64FromByte(CompressionHelper.Decompress((byte[])item["paramValue"]))
-                            : FileExtensions.GetBase64FromByte((byte[])item["paramValue"]);
-                        lr.SetParameters(new ReportParameter(item["paramName"].ToString(), paramValue));
+                        byte[] imageBytes = item.Field<bool>("isCompressed")
+                            ? CompressionHelper.Decompress((byte[])item["paramValue"])
+                            : (byte[])item["paramValue"];
+
+                        paramValue = Convert.ToBase64String(imageBytes);
                     }
                     else
                     {
@@ -174,7 +177,6 @@ namespace Reports.Application.Services
             }
             _reportCache.Clear();
         }
-
 
         public void Dispose()
         {

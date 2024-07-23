@@ -9,22 +9,44 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for delete sustentos
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Delete', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_Doc_Sust_Delete 
-GO
-CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Delete @idUsuarioRol INT 
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Delete @idUsuarioRol INT 
 ,@id INT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @idUsuario INT
+	DECLARE @idUsuario INT,
+        @idRetencionAts INT
 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+   
 	BEGIN TRY
+
+        SET @idRetencionAts = (SELECT TOP 1 idRetencionAts FROM FactELect.RetAtsDocSustento  WITH(NOLOCK) WHERE idRetAtsDocSustento = @id)
+
+	    SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol)
+
 		BEGIN TRAN
+            IF EXISTS (SELECT TOP 1 1 FROM FactElect.RetAtsImpDocSustento WITH(NOLOCK) WHERE idRetAtsDocSustento = @id)
+                BEGIN
+                    DELETE FactElect.RetAtsImpDocSustento WITH (ROWLOCK) WHERE idRetAtsDocSustento = @id
+                END
+
+             IF EXISTS (SELECT TOP 1 1 FROM FactElect.RetencionAtsRet WITH(NOLOCK) WHERE idRetAtsDocSustento = @id)
+                BEGIN
+                  UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)
+                    SET importeTotal = ISNULL((SELECT SUM(valorRetenido) FROM FactElect.RetencionAtsRet WITH (NOLOCK) WHERE idRetencionAts = @idRetencionAts ),0)
+                    WHERE idDocumento = @idRetencionAts
+                      AND codDoc = '07'
+                    DELETE FactElect.RetencionAtsRet WITH (ROWLOCK) WHERE idRetAtsDocSustento = @id
+                END
+
+             IF EXISTS (SELECT TOP 1 1 FROM FactElect.RetencionAtsPago WITH(NOLOCK) WHERE idRetAtsDocSustento = @id)
+                BEGIN
+                    DELETE FactElect.RetencionAtsPago WITH (ROWLOCK)  WHERE idRetAtsDocSustento = @id
+                END
+
 			DELETE FROM FactElect.RetAtsDocSustento WITH (ROWLOCK) WHERE idRetAtsDocSustento = @id
-			SELECT '1' code, 'Documento de sustento eliminado con exito'  as 'message'
 		COMMIT TRAN
+        SELECT '1' code, 'Documento de sustento eliminado con exito'  as 'message'
 	END TRY
 	BEGIN CATCH
 	SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'

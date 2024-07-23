@@ -8,6 +8,7 @@ CREATE OR ALTER VIEW v_usuario AS (
 	,u.estado estadoUsuario
 	,ur.idUsuarioRol
 	,ur.idEntidad
+    ,e.uuid
 	,e.ruc rucEmpresa
 	,e.razonSocial entidad
     ,e.nombreComercial

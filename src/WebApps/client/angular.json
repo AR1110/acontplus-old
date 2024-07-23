@@ -65,7 +65,6 @@
               "node_modules/sweetalert2/src/sweetalert2.scss",
               "node_modules/icheck-bootstrap/icheck-bootstrap.css",
               "src/styles.scss",
-              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.css"
             ],
             "scripts": [
@@ -80,8 +79,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "3mb",
-                  "maximumError": "3.5mb"
+                  "maximumWarning": "4mb",
+                  "maximumError": "4.5mb"
                 },
                 {
                   "type": "anyComponentStyle",

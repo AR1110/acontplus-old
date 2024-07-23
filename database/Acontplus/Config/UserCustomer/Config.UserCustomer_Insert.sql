@@ -18,6 +18,7 @@ AS
 BEGIN
 
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
 	SET LANGUAGE SPANISH;
 
 	DECLARE @roleCode VARCHAR(10)
@@ -108,8 +109,8 @@ BEGIN
 		    BEGIN
 			    ROLLBACK TRAN; 
 		    END
-        INSERT INTO Acontplus.dbo.ErroresSistema (method,[ErrorNumber],[ErrorSeverity],[ErrorState],[ErrorProcedure],[ErrorLine],[ErrorMessage])
-		VALUES ('UserCustomerInsert/Insert', ERROR_NUMBER(), ERROR_SEVERITY(),  ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE())
-		SELECT '0' as code,'Info: Error en el procedimiento de agregar' + ERROR_MESSAGE() as [message]
+        INSERT INTO Acontplus.dbo.ErroresSistema (method, token, [ErrorNumber],[ErrorSeverity],[ErrorState],[ErrorProcedure],[ErrorLine],[ErrorMessage])
+		VALUES ('UserCustomer/Insert', NEWID(), ERROR_NUMBER(), ERROR_SEVERITY(),  ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE());
+		SELECT '0' as code,'Info: Error en el procedimiento' as [message];
 	END CATCH 
 END
