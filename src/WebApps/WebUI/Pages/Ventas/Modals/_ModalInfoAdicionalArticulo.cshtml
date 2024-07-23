@@ -1,0 +1,43 @@
+<div class="modal-header">
+    <h5 class="modal-title"><i class="fa fa-tags"></i> Dato adicional del artículo</h5>
+    <button type="button" class="close" ng-click="closeModal()">&times;</button>
+</div>
+
+<div class="modal-body">
+    <h5><b>Código: {{articulo.codigo}}</b></h5> 
+    <h5><b>Artículo: {{articulo.descripcion}}</b></h5>
+    <div class="table-responsive">
+       
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th ng-repeat="column in etiquetas" ng-dblclick="updateNameColumn($index, column)">
+                        <span uib-tooltip="Haz doble click para editar el nombre de la columna!">{{column}}</span>
+                    </th>
+                    <th>                       
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in data">
+                    <td ng-repeat="column in etiquetas">
+                        {{item.jsonAdicional[column]}}
+                    </td>
+                    <td>
+                        <div class="icheck-info">
+                            <input type="checkbox" ng-model="item.selected" ng-change="onCheck(item)" id="icheck{{$index+1}}" name="icheck{{$index+1}}">
+                            <label for="icheck{{$index+1}}"></label>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>           
+        </table>
+    </div>
+
+</div>
+
+<div class="modal-footer">   
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">
+        &times; Cerrar
+    </button>
+</div>

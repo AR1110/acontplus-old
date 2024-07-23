@@ -1370,7 +1370,7 @@
         }
     }])
 
-    app.directive('openModalAdditionalDataDocument', function (modalService, nombreModal) {
+    app.directive('openModalAdditionalDataDocument', function (modalService, nombreModalCommon) {
         return {
             restrict: 'A',
             scope: {
@@ -1381,13 +1381,11 @@
             link: function (scope, element) {
 
                 element.on('click', async function () {
-                    let {
-                        MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL,
-                        MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML
-                    } = nombreModal.common;
-                    let {
-                        InfoAdicionalTipoDocCtrl
-                    } = await import('./../../modal/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL);
+
+                    let { fileCtrl, controller, template } = nombreModalCommon.INFO_ADICIONAL_DOC;
+                    let ctrl = (await import(fileCtrl))[controller]
+
+ 
 
                     let params = {
                         isView: scope.isView,
@@ -1395,9 +1393,9 @@
                     }
              
                     let modalRef = modalService.openModalCustom({
-                        controller: InfoAdicionalTipoDocCtrl,
-                        template: '~/Pages/Common/Shared/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML,
-                        size: 'md',
+                        controller: ctrl,
+                        template,
+                        size: 'lg',
                         params,
                     })
 
@@ -2288,6 +2286,86 @@
         }
     }])
 
+
+    
+    /**
+     *========================================================== 
+     * DIRECTIVAS COMUNES
+     * =========================================================
+     */
+
+
+
+    //============================END===========================
+
+
+    /**
+    *==========================================================
+    * DIRECTIVAS VENTAS
+    * =========================================================
+    */
+    app.directive('actionInfoAdicionalArticuloVenta', ['nombreModalVenta', 'modalService', function (nombreModalVenta, modalSvc){
+        return {
+            restrict: 'A',
+            scope: {
+                entity: '=',
+                resultModalAdicional: '&',
+                datosAdicionales: '=',
+                historyDatosAdicionales: '='
+            },
+           link
+        }
+
+        function link (scope, element) {
+            element.on('click', async ()=>{
+
+
+                if (!Number.isInteger(scope.entity.cantidad)) {
+                    Swal.fire({
+                        title: 'Datos Adicionales',
+                        icon: 'warning',
+                        html: 'El valor de la cantidad del artículo tiene que ser un número entero!'
+                    })
+                    return
+                }
+
+                let { fileCtrl, controller, template } = nombreModalVenta.INFO_ADICIONAL_ARTICULO;
+                let ctrl = (await import(fileCtrl))[controller]
+
+                let modalRef = modalSvc.open({
+                    controller: ctrl,
+                    template,
+                    size: 'lg',
+                    params: {
+                        entity: scope.entity,
+                        datosAdicionales: scope.datosAdicionales || [],
+                        historyDatosAdicionales: scope.historyDatosAdicionales || [],
+                    },
+                    isRenderRazorPartial: true
+                })
+
+                modalRef.result.then(result => {
+                    scope.resultModalAdicional({
+                        result
+                    })
+                })
+
+
+
+            })  
+        }
+
+      
+
+
+
+    }])
+
+
+
+    //============================END===========================
+    
+    
 
 
 })(window.angular)

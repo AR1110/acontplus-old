@@ -1,6 +1,6 @@
 
  
-
+//@ts-check
 (function () {
     'use strict';
 
@@ -18,9 +18,9 @@
 
     app.controller('facturaCtrl', facturaCtrl)
 
-    facturaCtrl.$inject = ['$scope', '$filter', '$injector', 'nombreModal', 'decodeToken']
+    facturaCtrl.$inject = ['$scope', '$filter', '$injector', 'nombreModal']
 
-    function facturaCtrl($scope, $filter, $injector, _nombreModalConst, decodeToken) {
+    function facturaCtrl($scope, $filter, $injector, _nombreModalConst) {
 
         facturaSvc = $injector.get('facturaService');
         commonSvc = $injector.get('commonService');
@@ -40,10 +40,7 @@
 
 
         $scope.typeSend = 'SRI';
-        const PERMISSION_KEY_ACTIONS = {
-            E: 'E',
-            A: 'A',
-        }
+      
 
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
@@ -64,23 +61,24 @@
 
 
         $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
-        $scope.parametersPrint = {};
-
-        let idUsuarioRol = Number(decodeToken.userRoleId)
+        $scope.parametersPrint = {}; 
 
 
         $scope.permisoEditarDoc = {};
         //Remove Focus new invoice 
         let btnNewInvoice = document.getElementById("btnNewInvoice");
-        btnNewInvoice.addEventListener("click", () => {
-            btnNewInvoice.blur();
-        })
+        if (btnNewInvoice){
+            btnNewInvoice.addEventListener("click", () => {
+                btnNewInvoice.blur();
+            })
+
+        }
 
         //========================Start Filters=================
 
         $scope.resultRangeFilter = function (item) {
-            $scope.dataSearch.fechaInicio = item.startDate,
-                $scope.dataSearch.fechaFin = item.endDate
+            $scope.dataSearch.fechaInicio = item.startDate;
+            $scope.dataSearch.fechaFin = item.endDate
             $scope.getFacturas();
         }
 
@@ -100,8 +98,7 @@
 
         $scope.usuarioSearch = function (textSearch) {
             try {
-                let query = {
-                    idRol: idUsuarioRol,
+                let query = { 
                     busqueda: textSearch
                 }
 
@@ -1287,10 +1284,15 @@
         }
 
         $scope.resultModalAdicional = function (result) {
-            let { historyDatosAdicionales } = result;
+            let { historyDatosAdicionales, infoAdicionalDocumento } = result;
             $scope.historyDatosAdicionales = historyDatosAdicionales;
+            console.log(infoAdicionalDocumento)
+            $scope.infoAdicionalDocumento.push(...infoAdicionalDocumento)
         }
         function setColumnDefs() {
+
+            /**<a btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" class="btn btn-warning btn-xs text-white" title="Agregar dato Adicional" > <i class="fas fa-tags"></i></a >**/
+
             const ventaDetailPermission = $scope.permisoDetalleVenta
             const CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
@@ -1298,7 +1300,7 @@
 
         <view-kardex params="row.entity"></view-kardex>
 
-        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a action-info-adicional-articulo-venta entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
             $scope.gridOptions.columnDefs = [{
                 name: 'Op.',
@@ -1937,6 +1939,7 @@
         //=================================START PRODUCT=======================================
         function addRow() {
             const obj = {
+                uniqueRowId: fS.generateUuidv4(),
                 idFacturaDetalle: 0,
                 n: 1,
                 codigo: "",

@@ -44,6 +44,11 @@ app.constant('nombreModalCommon', {
         fileCtrl: '/js/common/modals/keyRequestCtrl.js' + CHANGE_VERSION(),
         controllers: "keyRequestCtrl",
         template: '~/Pages/Common/_KeyRequestModal.cshtml',        
+    },
+    INFO_ADICIONAL_DOC: {
+        fileCtrl: '/js/common/modals/modalInfoAdicionalTipoDocCtrl.min.js',
+        template: '~/Pages/Common/Shared/_ModalInfoAdicionalTipoDoc.cshtml',
+        controller: 'InfoAdicionalTipoDocCtrl'
     }
 })
 
@@ -249,7 +254,17 @@ app.constant('nombreModalVenta', {
         templates: {
             MSC: '~/Pages/Ventas/Components/_SolicitudCreditoComponent.cshtml',
         }
-    }
+    },
+    /**
+     * NUEVO FORMA DE AGREGAR LOS DATOS ADICIONALES EN VENTA 
+     */
+    INFO_ADICIONAL_ARTICULO: {
+        fileCtrl: '/js/ventas/modals/modalInfoAdicionalArticuloCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'modalInfoAdicionalArticuloCtrl',
+        template: '~/Pages/Ventas/Modals/_ModalInfoAdicionalArticulo.cshtml',
+        
+    },
+
 })
 
 //Compras
