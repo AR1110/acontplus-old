@@ -9,8 +9,7 @@ function modalInfoAdicionalArticuloCtrl($scope, $uibModalInstance,facturaSvc, pa
          infoAdicionalDoc 
         } = params; 
 
-    $scope.articulo = entity;
-    console.log(entity)
+    $scope.articulo = entity; 
     $scope.data = [];
     $scope.etiquetas = []; 
 
@@ -20,21 +19,7 @@ function modalInfoAdicionalArticuloCtrl($scope, $uibModalInstance,facturaSvc, pa
     if (dataInfo) {
         $scope.etiquetas = Object.keys(structuredClone(dataInfo.jsonAdicional))
         $scope.data = entity.datosAdicionalesArticulo;
-    }
-
-    
-    //Verificamos si el articulo tiene datos adicionales ingresados al registrar documento
-    // if (historyDatosAdicionales.some(item => item.uniqueRowId === $scope.articulo.uniqueRowId)) {
-
-    //     let info = historyDatosAdicionales.filter(item => item.uniqueRowId === $scope.articulo.uniqueRowId);
-
-        
-    //     if ($scope.etiquetas.length === 0) {
-    //         $scope.etiquetas = Object.keys(angular.copy(info[0].jsonAdicional))
-    //     }
- 
-    //     $scope.data = $scope.data.concat(info); 
-    // } 
+    } 
 
     $scope.onCheck = function (item) { 
         let cantidad = parseInt($scope.articulo.cantidad);
@@ -60,20 +45,12 @@ function modalInfoAdicionalArticuloCtrl($scope, $uibModalInstance,facturaSvc, pa
                     uniqueRowDetalle: $scope.articulo.uniqueRowDetalle,
                     idInfoAdicional: item.idInfoAdicional
                 }))
-
-              //  infoAdicionalDocumento = [...infoAdicionalDocumento, ...datosAdicionalesResponse]
+ 
                 infoAdicionalDoc = [...infoAdicionalDoc, ...datosAdicionalesResponse]
-
-                params.datosAdicionalesArticulo.push({
-                    uniqueRowDetalle: $scope.articulo.uniqueRowDetalle,
-                    idArticulo: item.idArticulo,
-                    idInfoAdicional: item.idInfoAdicional,
-                    selected: true,
-                }); 
+ 
             }).finally(()=>hideLoader()) 
         }else{
-            infoAdicionalDoc = infoAdicionalDoc.filter(ia=>ia.idInfoAdicional!==item.idInfoAdicional); 
-            params.datosAdicionalesArticulo = params.datosAdicionalesArticulo.filter(ia => ia.idInfoAdicional !== item.idInfoAdicional) 
+            infoAdicionalDoc = infoAdicionalDoc.filter(ia=>ia.idInfoAdicional!==item.idInfoAdicional);  
         }
     }
 
@@ -81,8 +58,7 @@ function modalInfoAdicionalArticuloCtrl($scope, $uibModalInstance,facturaSvc, pa
     
     $scope.closeModal = function () {
         $uibModalInstance.close({
-            entity,
-            datosAdicionalesArticulo: params.datosAdicionalesArticulo,
+            entity, 
             infoAdicionalDoc
         });
     }

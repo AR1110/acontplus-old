@@ -1492,7 +1492,7 @@
                     idArticulo: item.idArticulo,
                     idEtiqueta: item.idEtiqueta,
                     idInfoAdicional: item.idInfoAdicional || 0,
-                    jsonAdicional: item.adicionales
+                    jsonAdicional: JSON.stringify(item.adicionales)
                 }
             });
         }

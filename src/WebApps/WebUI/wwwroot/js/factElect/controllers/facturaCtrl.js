@@ -801,8 +801,7 @@
         $scope.tarifasImpuesto = [];
         $scope.formasPago = [];
         $scope.tiposIdentificacion = [];
-
-        $scope.datosAdicionalesArticulo = [] 
+ 
 
         //Informacion adicional del documento 
         $scope.infoAdicionalDocumento = [];
@@ -1174,8 +1173,7 @@
                     comprobante,
                     cliente,
                     items,
-                    infoAdicionalDocumento,
-                    datosAdicionalesArticulo,
+                    infoAdicionalDocumento, 
                     formasPago,
                     cuotas
                 } = params.data;
@@ -1201,8 +1199,7 @@
                 }
 
                 $scope.cliente = cliente;
-                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
-                $scope.datosAdicionalesArticulo = datosAdicionalesArticulo;
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento; 
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
 
@@ -1280,9 +1277,7 @@
         }
 
         $scope.resultModalAdicional = function (result) {
-            let { datosAdicionalesArticulo, infoAdicionalDoc } = result;
-            $scope.datosAdicionalesArticulo = datosAdicionalesArticulo;
-            //console.log(infoAdicionalDocumento)
+            let { infoAdicionalDoc } = result; 
             $scope.infoAdicionalDocumento = infoAdicionalDoc;
         }
         function setColumnDefs() {
@@ -1299,8 +1294,7 @@
         <a action-info-adicional-articulo-venta 
             entity="row.entity" 
             style="cursor:pointer;" 
-            ng-if='row.entity.datosAdicionales' 
-            datos-adicionales-articulo="grid.appScope.datosAdicionalesArticulo"
+            ng-if='row.entity.datosAdicionales'  
             result-modal-adicional="grid.appScope.resultModalAdicional(result)" 
             info-adicional-doc="grid.appScope.infoAdicionalDocumento"
             class="btn btn-warning btn-xs text-white" 
@@ -1582,8 +1576,9 @@
                 if (isConfirmed) {
                     let index = $scope.gridOptions.data.indexOf(rowEntity);
                     $scope.gridOptions.data.splice(index, 1);
+                    updateStatusDatosAdicionalesArticulo(rowEntity);
 
-                    if (rowEntity.idFacturaDetalle > 0) {
+                    if (rowEntity.idFacturaDetalle > 0) {       
                         $scope.gridOptionsItemsDeleted.push({
                             ...rowEntity,
                             cantidad: rowEntity.cantidadOriginal,
@@ -1597,14 +1592,21 @@
                     $scope.$apply();
                 }
 
-                if (isConfirmed && rowEntity.datosAdicionales) {
-                    $scope.datosAdicionalesArticulo = $scope.datosAdicionalesArticulo.filter(val => val.idArticulo !== rowEntity.idArticulo);
-                    //$scope.infoAdicionalDoc = $scope.infoAdicionalDoc.filter(ia=>ia.) 
+                if (isConfirmed && rowEntity.datosAdicionales) { 
+                    $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(ia=>{
+                        return !(rowEntity.datosAdicionalesArticulo.some(iaa=>iaa.idInfoAdicional===ia.idInfoAdicional))
+                    }); 
                 }
             } catch (error) {
                 console.log(error)
             }
 
+        }
+
+        function updateStatusDatosAdicionalesArticulo(rowEntity){
+            for(let item of rowEntity.datosAdicionalesArticulo){
+                item.selected = false;
+            }
         }
 
 
@@ -1971,7 +1973,8 @@
                 datosAdicionales: false,
                 estado: 1
             }
-            $scope.gridOptions.data.push(obj)
+            $scope.gridOptions.data.push(obj);
+            console.log($scope.gridOptions.data)
         }
 
         $scope.setItemArticuloEnDetalle = function (dataArticulo) {
@@ -2028,7 +2031,7 @@
 
 
                 tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
-
+                console.log(entity)
                 entity.idImpuesto = tarifaImpuesto.idImpuesto;
                 entity.idTipoIva = articulo.idTipoIva;
                 entity.codigoPorcentaje = articulo.codigoPorcentaje;
@@ -2063,7 +2066,7 @@
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
                 entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
-                $scope.indexRow = index;
+                $scope.indexRow = index; 
                 setCalculoTotales('precioUnitario', entity, 0);
                 focusColumnCantidad();
                 //checkNotificationStock("cantidad", entity, cantidad);
@@ -2555,8 +2558,7 @@
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
-                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                    datosAdicionalesArticulo: $scope.datosAdicionalesArticulo,
+                    infoAdicionalDocumento: $scope.infoAdicionalDocumento, 
                     cuotas
                 })
 

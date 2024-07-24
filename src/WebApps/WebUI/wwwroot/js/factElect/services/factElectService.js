@@ -606,9 +606,9 @@
                         }
                     })
 
-                    let datosAdicionalesArticulo = items.flatMap(item => item.datosAdicionalesArticulo)
+                //    let datosAdicionalesArticulo = items.flatMap(item => item.datosAdicionalesArticulo)
                     
-                    console.log(datosAdicionalesArticulo)
+                 
 
                     infoAdicionalDocumento = infoAdicionalDocumento || [];
                     infoAdicionalDocumento = infoAdicionalDocumento.map(item=>{
@@ -631,15 +631,13 @@
                             total: fp.total,
                             plazo: fp.plazo,
                         }
-                    });
-                    console.log(datosAdicionalesArticulo)
+                    }); 
 
                     return {
                         comprobante,
                         cliente,
                         items,
-                        infoAdicionalDocumento,
-                        datosAdicionalesArticulo,
+                        infoAdicionalDocumento,                        
                         formasPago,
                         cuotas
                     }
@@ -790,8 +788,7 @@
                 dataFormaPago,
                 detalles,
                 itemsDeleted,
-                infoAdicionalDocumento,
-                datosAdicionalesArticulo,
+                infoAdicionalDocumento, 
                 cuotas,
                 fromAprobacion = false
             } = params;
@@ -834,7 +831,7 @@
             infoAdicionalDocumento = infoAdicionalDocumento || [];
             let infoAdicionalDocumentoMapped = infoAdicionalDocumento.map(item=>{
                 return {
-                    uuid: item.uniqueRowDetalle, //uid de articulo detalle 
+                   // uuid: item.uniqueRowDetalle, //uid de articulo detalle 
                     idInfoAdicional: item.idInfoAdicional,
                     idInfoAdicionalDoc: item.idInfoAdicionalDoc,
                     nombre: item.nombre,
@@ -855,21 +852,19 @@
                 }
             })
 
-            datosAdicionalesArticulo = datosAdicionalesArticulo || [];
-            let historyDatosAdicionalesMapped = datosAdicionalesArticulo.filter(daa => {
-                return !(daa.idHistoryInfoAdicional > 0 && daa.selected)
-            }).map(item=>{
-
-                return { 
+            let datosAdicionalesArticuloSelected = mergeDetalles.flatMap(md => md.datosAdicionalesArticulo).filter(md => {
+                return !(md.idHistoryInfoAdicional > 0) && (md.selected)
+            }).map(item => {
+                return {
                     uuid: item.uniqueRowDetalle,
-                   // idHistoryInfoAdicional: item.idHistoryInfoAdicional,
+                    // idHistoryInfoAdicional: item.idHistoryInfoAdicional,
                     idArticulo: item.idArticulo,
-                    idInfoAdicional: item.idInfoAdicional, 
+                    idInfoAdicional: item.idInfoAdicional,
                     estado: 2
                 }
-            })
+            }) 
 
-            let mergeDatosAdicionalesArticulo = [...historyDatosAdicionalesMapped, ...datosAdicionalesArticuloDeleted]
+            let mergeDatosAdicionalesArticulo = [...datosAdicionalesArticuloSelected, ...datosAdicionalesArticuloDeleted]
 
 
             return {

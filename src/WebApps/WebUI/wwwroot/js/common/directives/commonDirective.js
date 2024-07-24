@@ -1383,7 +1383,7 @@
                 element.on('click', async function () {
 
                     let { fileCtrl, controller, template } = nombreModalCommon.INFO_ADICIONAL_DOC;
-                    console.log(nombreModalCommon.INFO_ADICIONAL_DOC)
+                 
                     let ctrl = (await import(fileCtrl))[controller]
 
  
@@ -2310,9 +2310,7 @@
             restrict: 'A',
             scope: {
                 entity: '=', //Datos del detalle 
-                resultModalAdicional: '&',
-                datosAdicionales: '=', //Datos adicionales del articulo ingresado en la compra
-                datosAdicionalesArticulo: '=', //Listado general de datos adicionales registrado en el documento
+                resultModalAdicional: '&', 
                 infoAdicionalDoc:"=" //Información Adicional del Documento 
             },
            link
@@ -2339,9 +2337,7 @@
                     template,
                     size: 'lg',
                     params: {
-                        entity: scope.entity,
-                        datosAdicionales: scope.datosAdicionales || [], 
-                        datosAdicionalesArticulo: scope.datosAdicionalesArticulo || [],
+                        entity: scope.entity,  
                         infoAdicionalDoc: scope.infoAdicionalDoc || []
 
                     }, 

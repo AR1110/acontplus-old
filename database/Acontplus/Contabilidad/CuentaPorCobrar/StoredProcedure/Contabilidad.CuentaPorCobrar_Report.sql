@@ -866,7 +866,7 @@ BEGIN
 
 
                      --- Datos Adicionales Products DataSet
-                      SELECT 
+                    /**  SELECT 
 	                    fd.idFacturaDetalle as rowId,
                         ar.codigo,
                         fd.descripcion,
@@ -879,8 +879,23 @@ BEGIN
                     LEFT JOIN dbo.Articulo ar WITH (NOLOCK)                ON ar.idArticulo = fd.idArticulo
                     WHERE fd.idFactura = @idDocumento
                     GROUP BY  fd.idFacturaDetalle,  ar.codigo, fd.descripcion, ja.[key]
-                    ORDER BY ar.codigo, fd.descripcion, ja.[key];
+                    ORDER BY ar.codigo, fd.descripcion, ja.[key]; */
 
+                    SELECT 
+                        t2.idFacturaDetalle as rowId
+                        ,t2.descripcion
+                        ,ar.codigo
+                        ,ja.[key] AS nombre
+                        ,ja.[value] AS descValor
+                       -- STRING_AGG(ja.[value], ', ') WITHIN GROUP (ORDER BY ja.[value]) AS descValor
+                    FROM Ventas.HistoryInfoAdicional       t1
+                    LEFT JOIN FacturaDetalle               t2 WITH (NOLOCK) ON t2.idFacturaDetalle = t1.idFacturaDetalle 
+                    INNER JOIN Compra.InfoAdicional        t3 WITH (NOLOCK) ON t3.idInfoAdicional  = t1.idInfoAdicional
+                    INNER JOIN dbo.Articulo                ar WITH (NOLOCK) ON ar.idArticulo = t2.idArticulo
+                    CROSS APPLY OPENJSON(t3.jsonAdicional) ja
+                    WHERE t2.idFactura = @idDocumento 
+                      AND t2.estado = 1 
+                      AND t3.estado = 2
 
 
                 END 
