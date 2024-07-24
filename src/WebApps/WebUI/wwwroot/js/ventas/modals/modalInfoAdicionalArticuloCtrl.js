@@ -4,47 +4,46 @@ export {
 }
 modalInfoAdicionalArticuloCtrl.$inject = ['$scope', '$uibModalInstance', 'facturaService', 'params'];
 function modalInfoAdicionalArticuloCtrl($scope, $uibModalInstance,facturaSvc, params) {
-    let { entity, datosAdicionales, historyDatosAdicionales } = params;
-    let { datosAdicionalesArticulo } = entity;
+    let {
+         entity,  
+         infoAdicionalDoc 
+        } = params; 
 
     $scope.articulo = entity;
     console.log(entity)
     $scope.data = [];
-    $scope.etiquetas = [];
-    let infoAdicionalDocumento = [];
+    $scope.etiquetas = []; 
 
     //Datos adicionales del articulo desde compra 
-    let dataInfo = datosAdicionalesArticulo.find(item => item.idArticulo === $scope.articulo.idArticulo);
+    let dataInfo = entity.datosAdicionalesArticulo.find(item => item.uniqueRowDetalle === $scope.articulo.uniqueRowDetalle);
 
     if (dataInfo) {
-        $scope.etiquetas = Object.keys(angular.copy(dataInfo.jsonAdicional))
-        $scope.data = datosAdicionalesArticulo;
+        $scope.etiquetas = Object.keys(structuredClone(dataInfo.jsonAdicional))
+        $scope.data = entity.datosAdicionalesArticulo;
     }
 
-    console.log(datosAdicionales)
+    
     //Verificamos si el articulo tiene datos adicionales ingresados al registrar documento
-    if (datosAdicionales.some(item => item.idArticulo === $scope.articulo.idArticulo)) {
+    // if (historyDatosAdicionales.some(item => item.uniqueRowId === $scope.articulo.uniqueRowId)) {
 
-        let info = datosAdicionales.filter(item => item.idArticulo === $scope.articulo.idArticulo);
+    //     let info = historyDatosAdicionales.filter(item => item.uniqueRowId === $scope.articulo.uniqueRowId);
 
-        //Generamos columna de la tabla a partir de key de etiquetas
-        if ($scope.etiquetas.length === 0) {
-            $scope.etiquetas = Object.keys(angular.copy(info[0].jsonAdicional))
-        }
+        
+    //     if ($scope.etiquetas.length === 0) {
+    //         $scope.etiquetas = Object.keys(angular.copy(info[0].jsonAdicional))
+    //     }
+ 
+    //     $scope.data = $scope.data.concat(info); 
+    // } 
 
-
-        //unimos datos adicionales registradas para factura y no registradas
-        $scope.data = $scope.data.concat(info); 
-    } 
-
-    $scope.onCheck = function (item) {
+    $scope.onCheck = function (item) { 
         let cantidad = parseInt($scope.articulo.cantidad);
         
-        historyDatosAdicionales = historyDatosAdicionales.filter(h => h.idInfoAdicional !== item.idInfoAdicional);
-
+        let cantidadAgregada = entity.datosAdicionalesArticulo.filter(h => h.selected && h.uniqueRowDetalle === item.uniqueRowDetalle).length;
+ 
         if (item.selected) {
 
-            if (historyDatosAdicionales.length == cantidad) {
+            if (cantidadAgregada > cantidad) {
                 item.selected = false;
                 Swal.fire({
                     title: 'Datos Adicionales',
@@ -52,27 +51,30 @@ function modalInfoAdicionalArticuloCtrl($scope, $uibModalInstance,facturaSvc, pa
                     html: `El número de datos adicionales proporcionados no debe exceder la cantidad de artículo: <b>${$scope.articulo.descripcion}</b>!`
                 })
                 return
-            }
+            };
 
             showLoader();
             facturaSvc.getGroupInfoAdicionalArticulo(item.idInfoAdicional).then(response=>{
-                let datosAdicionalesResponse = response.map(item=>({
+                let datosAdicionalesResponse = response.map(item=>({ 
                     ...item,
-                    uuid: $scope.articulo.uniqueRowId
+                    uniqueRowDetalle: $scope.articulo.uniqueRowDetalle,
+                    idInfoAdicional: item.idInfoAdicional
                 }))
 
-                infoAdicionalDocumento = [...infoAdicionalDocumento, ...datosAdicionalesResponse]
-                historyDatosAdicionales.push({
-                    uuid: $scope.articulo.uniqueRowId,
+              //  infoAdicionalDocumento = [...infoAdicionalDocumento, ...datosAdicionalesResponse]
+                infoAdicionalDoc = [...infoAdicionalDoc, ...datosAdicionalesResponse]
+
+                params.datosAdicionalesArticulo.push({
+                    uniqueRowDetalle: $scope.articulo.uniqueRowDetalle,
                     idArticulo: item.idArticulo,
                     idInfoAdicional: item.idInfoAdicional,
                     selected: true,
                 }); 
-            }).finally(()=>hideLoader())
-             
-
-
-        } 
+            }).finally(()=>hideLoader()) 
+        }else{
+            infoAdicionalDoc = infoAdicionalDoc.filter(ia=>ia.idInfoAdicional!==item.idInfoAdicional); 
+            params.datosAdicionalesArticulo = params.datosAdicionalesArticulo.filter(ia => ia.idInfoAdicional !== item.idInfoAdicional) 
+        }
     }
 
 
@@ -80,8 +82,8 @@ function modalInfoAdicionalArticuloCtrl($scope, $uibModalInstance,facturaSvc, pa
     $scope.closeModal = function () {
         $uibModalInstance.close({
             entity,
-            historyDatosAdicionales,
-            infoAdicionalDocumento
+            datosAdicionalesArticulo: params.datosAdicionalesArticulo,
+            infoAdicionalDoc
         });
     }
 }

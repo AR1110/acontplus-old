@@ -802,8 +802,7 @@
         $scope.formasPago = [];
         $scope.tiposIdentificacion = [];
 
-        $scope.datosAdicionalesArticulo = []
-        $scope.historyDatosAdicionales = [];
+        $scope.datosAdicionalesArticulo = [] 
 
         //Informacion adicional del documento 
         $scope.infoAdicionalDocumento = [];
@@ -1176,6 +1175,7 @@
                     cliente,
                     items,
                     infoAdicionalDocumento,
+                    datosAdicionalesArticulo,
                     formasPago,
                     cuotas
                 } = params.data;
@@ -1202,11 +1202,7 @@
 
                 $scope.cliente = cliente;
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
-                $scope.historyDatosAdicionales = $scope.datosAdicionalesArticulo.map(item => ({
-                    idArticulo: item.idArticulo,
-                    idInfoAdicional: item.idInfoAdicional,
-                    selected: true,
-                }))
+                $scope.datosAdicionalesArticulo = datosAdicionalesArticulo;
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
 
@@ -1284,14 +1280,14 @@
         }
 
         $scope.resultModalAdicional = function (result) {
-            let { historyDatosAdicionales, infoAdicionalDocumento } = result;
-            $scope.historyDatosAdicionales = historyDatosAdicionales;
-            console.log(infoAdicionalDocumento)
-            $scope.infoAdicionalDocumento.push(...infoAdicionalDocumento)
+            let { datosAdicionalesArticulo, infoAdicionalDoc } = result;
+            $scope.datosAdicionalesArticulo = datosAdicionalesArticulo;
+            //console.log(infoAdicionalDocumento)
+            $scope.infoAdicionalDocumento = infoAdicionalDoc;
         }
         function setColumnDefs() {
 
-            /**<a btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" class="btn btn-warning btn-xs text-white" title="Agregar dato Adicional" > <i class="fas fa-tags"></i></a >**/
+            /**<a btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales'   result-modal-adicional="grid.appScope.resultModalAdicional(result)" class="btn btn-warning btn-xs text-white" title="Agregar dato Adicional" > <i class="fas fa-tags"></i></a >**/
 
             const ventaDetailPermission = $scope.permisoDetalleVenta
             const CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
@@ -1300,7 +1296,17 @@
 
         <view-kardex params="row.entity"></view-kardex>
 
-        <a action-info-adicional-articulo-venta entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a action-info-adicional-articulo-venta 
+            entity="row.entity" 
+            style="cursor:pointer;" 
+            ng-if='row.entity.datosAdicionales' 
+            datos-adicionales-articulo="grid.appScope.datosAdicionalesArticulo"
+            result-modal-adicional="grid.appScope.resultModalAdicional(result)" 
+            info-adicional-doc="grid.appScope.infoAdicionalDocumento"
+            class="btn btn-warning btn-xs text-white" 
+            title = "Agregar dato Adicional"> 
+            <i class="fas fa-tags"></i>
+        </a>`;
 
             $scope.gridOptions.columnDefs = [{
                 name: 'Op.',
@@ -1593,7 +1599,7 @@
 
                 if (isConfirmed && rowEntity.datosAdicionales) {
                     $scope.datosAdicionalesArticulo = $scope.datosAdicionalesArticulo.filter(val => val.idArticulo !== rowEntity.idArticulo);
-                    $scope.historyDatosAdicionales = $scope.historyDatosAdicionales.filter(val => val.idArticulo !== rowEntity.idArticulo);
+                    //$scope.infoAdicionalDoc = $scope.infoAdicionalDoc.filter(ia=>ia.) 
                 }
             } catch (error) {
                 console.log(error)
@@ -1939,7 +1945,7 @@
         //=================================START PRODUCT=======================================
         function addRow() {
             const obj = {
-                uniqueRowId: fS.generateUuidv4(),
+                uniqueRowDetalle: fS.generateUuidv4(),
                 idFacturaDetalle: 0,
                 n: 1,
                 codigo: "",
@@ -2042,7 +2048,12 @@
                 entity.articuloTarifas = dataMedida.tarifas;
 
 
-                entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
+                entity.datosAdicionalesArticulo = datosAdicionalesArticulo.map(daa=>{
+                    return {
+                        ...daa,
+                        uniqueRowDetalle: entity.uniqueRowDetalle
+                    }
+                }); //
                 entity.consolidacionesFecha = consolidacionesFecha;
 
 
@@ -2545,7 +2556,7 @@
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
                     infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                    historyDatosAdicionales: $scope.historyDatosAdicionales,
+                    datosAdicionalesArticulo: $scope.datosAdicionalesArticulo,
                     cuotas
                 })
 

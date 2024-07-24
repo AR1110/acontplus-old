@@ -469,10 +469,11 @@
         service.getId = function (id) {
             return mS.getData('get', `${url}${id}`, null, true).then(response => {
                 if (response.code === "0") {
-                    console.log(response)
+                    throw new Error(response)
                 }
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
+                    console.log(mainDataApi)
                     let [
                         comprobanteApi,
                         clienteTempApi,
@@ -508,25 +509,45 @@
 
                         const medidas = fS.processAndSortMeasures(principal, fraccionado);
 
+                        let uniqueRowDetalle = restItem.uuid;
+
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
+                        let datosAdicionalesArticulo = [];
 
-                        if ('infoDatosAdicionales' in itemPrincipal) {
-                            let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoDatosAdicionales);
-                            restItem.datosAdicionalesArticulo = infoAdicionalArrayTemp.map(dataAdicional => ({
-                                idArticulo: dataAdicional.idArticulo,
-                                idEtiqueta: dataAdicional.idEtiqueta,
+
+                        if (itemPrincipal.infoAdicionalArticulo && typeof itemPrincipal.infoAdicionalArticulo==='string') {
+                            let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoAdicionalArticulo);
+                            datosAdicionalesArticulo = infoAdicionalArrayTemp.map(dataAdicional => ({
+                                uniqueRowDetalle,
+                                idArticulo: restItem.idArticulo, 
                                 idInfoAdicional: dataAdicional.idInfoAdicional,
-                                jsonAdicional: JSON.parse(dataAdicional.jsonAdicional),
-                                uniqueId: dataAdicional.uniqueId,
-                                estado: dataAdicional.estado
+                                jsonAdicional: JSON.parse(dataAdicional.jsonAdicional),  
                             }))
                         }
+
+                        if (Array.isArray(datosAdicionalesArticuloTemp) && datosAdicionalesArticuloTemp.length>0){
+                            let datosAdicionalesFiltered = datosAdicionalesArticuloTemp.filter(daa=>daa.idFacturaDetalle===restItem.idFacturaDetalle)
+                                                                                    .map(daa=>{
+                                                                                        return {
+                                                                                            idHistoryInfoAdicional: daa.idHistoryInfoAdicional,
+                                                                                            uniqueRowDetalle,
+                                                                                            idInfoAdicional: daa.idInfoAdicional,
+                                                                                            jsonAdicional: daa.jsonAdicional && JSON.parse(daa.jsonAdicional) || [],
+                                                                                            selected: daa.selected,
+                                                                                        }
+                                                                                    })
+
+                            datosAdicionalesArticulo = [...datosAdicionalesArticulo, ...datosAdicionalesFiltered]
+                        }
+
+
+
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
                         let obj = {
                             n: index + 1,
-                            uniqueRowId: restItem.uuid,
+                            uniqueRowDetalle,
                             idFacturaDetalle: restItem.idFacturaDetalle,
                             cantidad: restItem.cantidad,
                             cantidadOriginal: restItem.cantidad,
@@ -556,7 +577,7 @@
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
-                            datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || [],
+                            datosAdicionalesArticulo,
                             datosAdicionales: restItem.datosAdicionales
                         }
 
@@ -585,21 +606,15 @@
                         }
                     })
 
-                    let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
-                        idDocumento: item.idDocumento,
-                        idHistoryInfoAdicional: item.idHistoryInfoAdicional,
-                        idArticulo: item.idArticulo,
-                        idEtiqueta: item.idEtiqueta,
-                        idInfoAdicional: item.idInfoAdicional,
-                        jsonAdicional: item.jsonAdicional && JSON.parse(item.jsonAdicional) || [],
-                        selected: item.selected,
-                        estado: item.estado
-                    }))
+                    let datosAdicionalesArticulo = items.flatMap(item => item.datosAdicionalesArticulo)
+                    
+                    console.log(datosAdicionalesArticulo)
 
                     infoAdicionalDocumento = infoAdicionalDocumento || [];
                     infoAdicionalDocumento = infoAdicionalDocumento.map(item=>{
                         return {
-                            uuid: item.uuid,
+                            uniqueRowDetalle: item.uuid,
+                            idInfoAdicional: item.idInfoAdicional,
                             idInfoAdicionalDoc: item.idInfoAdicionalDoc,
                             nombre: item.nombre,
                             valor: item.valor,
@@ -617,6 +632,7 @@
                             plazo: fp.plazo,
                         }
                     });
+                    console.log(datosAdicionalesArticulo)
 
                     return {
                         comprobante,
@@ -775,7 +791,7 @@
                 detalles,
                 itemsDeleted,
                 infoAdicionalDocumento,
-                historyDatosAdicionales,
+                datosAdicionalesArticulo,
                 cuotas,
                 fromAprobacion = false
             } = params;
@@ -800,39 +816,68 @@
             factura.telefono = cliente.telefono;
             factura.recargo = data.recargo || 0;
             factura.propina = data.propina || 0;
-
-            const itemsMainMapper = service.detalleMapperTo(detalles, fromAprobacion);
-            const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted, fromAprobacion)
-            const impuestos = fS.impuestoTarifaMapperTo(detalles);
-            const mergeItems = [
-                ...itemsMainMapper,
-                ...itemsDeletedMapper
+            
+            let mergeDetalles = [
+                ...detalles,
+                ...itemsDeleted
             ]
+
+            const itemsMainMapper = service.detalleMapperTo(mergeDetalles, fromAprobacion);
+           // const itemsMainMapper = service.detalleMapperTo(detalles, fromAprobacion);
+            //const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted, fromAprobacion)
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
+            // const mergeItems = [
+            //     ...itemsMainMapper,
+            //     ...itemsDeletedMapper
+            // ]
 
             infoAdicionalDocumento = infoAdicionalDocumento || [];
             let infoAdicionalDocumentoMapped = infoAdicionalDocumento.map(item=>{
                 return {
-                    uuid: item.uuid,
+                    uuid: item.uniqueRowDetalle, //uid de articulo detalle 
+                    idInfoAdicional: item.idInfoAdicional,
+                    idInfoAdicionalDoc: item.idInfoAdicionalDoc,
                     nombre: item.nombre,
-                    valor: item.valor
+                    valor: item.valor,
+                    estado: item.estado
                 }
             })
 
-            historyDatosAdicionales = historyDatosAdicionales || [];
-            let historyDatosAdicionalesMapped = historyDatosAdicionales.map(item=>{
+            let datosAdicionalesArticuloDeleted = mergeDetalles.flatMap(md => md.datosAdicionalesArticulo).filter(md=>{
+                return (md.idHistoryInfoAdicional > 0 && !md.selected)
+            }).map(item=>{
                 return {
-                    uuid: item.uuid,
+                    uuid: item.uniqueRowDetalle,
+                    idHistoryInfoAdicional: item.idHistoryInfoAdicional,
                     idArticulo: item.idArticulo,
                     idInfoAdicional: item.idInfoAdicional,
+                    estado: 1
                 }
             })
+
+            datosAdicionalesArticulo = datosAdicionalesArticulo || [];
+            let historyDatosAdicionalesMapped = datosAdicionalesArticulo.filter(daa => {
+                return !(daa.idHistoryInfoAdicional > 0 && daa.selected)
+            }).map(item=>{
+
+                return { 
+                    uuid: item.uniqueRowDetalle,
+                   // idHistoryInfoAdicional: item.idHistoryInfoAdicional,
+                    idArticulo: item.idArticulo,
+                    idInfoAdicional: item.idInfoAdicional, 
+                    estado: 2
+                }
+            })
+
+            let mergeDatosAdicionalesArticulo = [...historyDatosAdicionalesMapped, ...datosAdicionalesArticuloDeleted]
+
 
             return {
                 infoFactura: service.infoComprobanteMapperTo(factura),
-                detalles: mergeItems,
+                detalles: itemsMainMapper,
                 impuestos: impuestos,
                 infoAdicional: infoAdicionalDocumentoMapped,
-                infoAdicionalArticulo: historyDatosAdicionalesMapped,
+                infoAdicionalArticulo: mergeDatosAdicionalesArticulo,
                 formaPago: dataFormaPago,
                 cuotas
             }
@@ -880,7 +925,7 @@
             for (let item of detalles) {
                 tempDetails.push({
                     orderIndex: orderIndex++,
-                    uuid: item.uniqueRowId,
+                    uuid: item.uniqueRowDetalle,
                     idFacturaDetalle: item.idFacturaDetalle || 0,
                     idArticulo: item.idArticulo,
                     idTarifa: item.idTarifa,

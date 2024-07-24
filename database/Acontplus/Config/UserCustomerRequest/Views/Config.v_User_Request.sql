@@ -11,8 +11,8 @@ AS(
         ,s.idSolicitud
 	    ,s.idUsuarioRolAprobante
 	    ,s.idUsuarioRolSolicitante 
-        ,u_aprob.nombreCompleto AS usuarioAprobante
-        ,u_soli.nombreCompleto AS usuarioSolicitante
+        ,cc_aprob.BusinessName AS usuarioAprobante
+        ,cc_soli.BusinessName AS usuarioSolicitante
         ,s.codigoAccion
         ,accionDescripcion = CASE s.codigoAccion 
                                 WHEN 'E' THEN 'EDITAR'
@@ -45,9 +45,11 @@ AS(
         INNER JOIN dbo.Entidad e WITH(NOLOCK) ON e.idEntidad = s.idEntidad
         INNER JOIN App.UsuarioRol ura WITH(NOLOCK) ON ura.idUsuarioRol = s.idUsuarioRolAprobante
         INNER JOIN Usuario u_aprob WITH(NOLOCK) ON u_aprob.idUsuario = ura.idUsuario
+        INNER JOIN Customer.Customer cc_aprob WITH(NOLOCK) ON cc_aprob.Id = u_aprob.customerId
         --Datos Solicitante
         INNER JOIN App.UsuarioRol urs WITH(NOLOCK) ON urs.idUsuarioRol = s.idUsuarioRolSolicitante
         INNER JOIN Usuario u_soli WITH(NOLOCK) ON u_soli.idUsuario = urs.idUsuario
+         INNER JOIN Customer.Customer cc_soli WITH(NOLOCK) ON cc_soli.Id = u_soli.customerId
         LEFT JOIN Sri.Establecimiento s_e WITH(NOLOCK) ON s_e.codEstab = jsonData.codEstab 
 
     
