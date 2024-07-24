@@ -99,7 +99,7 @@ BEGIN
 		 idInfoAdicional INT NOT NULL
 		,idArticulo INT  NOT NULL		
 		,idEtiqueta INT  NOT NULL
-		,jsonAdicional NVARCHAR(MAX) NULL
+		,jsonAdicional NVARCHAR(MAX) NOT NULL
 	)
 
     DECLARE @tbCuotas AS TABLE(
@@ -200,7 +200,7 @@ BEGIN
 		     idInfoAdicional INT
 		    ,idArticulo      INT
 		    ,idEtiqueta      INT
-		    ,jsonAdicional   NVARCHAR(max) '$.jsonAdicional' AS JSON		
+		    ,jsonAdicional   NVARCHAR(max)	
 		) 
 
         INSERT INTO @tbCuotas

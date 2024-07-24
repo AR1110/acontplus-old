@@ -95,9 +95,9 @@ BEGIN
 
 	 
 	DECLARE @artInfoAdicional AS TABLE (
-		idArticulo INT  NOT NULL		
+		 idArticulo INT  NOT NULL		
 		,idEtiqueta INT  NOT NULL
-		,jsonAdicional NVARCHAR(MAX)  NULL
+		,jsonAdicional NVARCHAR(MAX) NOT NULL
 		
 	)
 
@@ -204,9 +204,9 @@ BEGIN
 		SELECT idArticulo, idEtiqueta, jsonAdicional
 		FROM OPENJSON(@artInfoAdicionales) WITH 
         (
-		   idArticulo INT
-		  ,idEtiqueta INT
-		  ,jsonAdicional NVARCHAR(max) '$.jsonAdicional' AS JSON		
+		   idArticulo    INT
+		  ,idEtiqueta    INT
+		  ,jsonAdicional NVARCHAR(max) 	
 		) 
 		
 		
@@ -240,7 +240,6 @@ BEGIN
 
 		SELECT @serieComprobante = @estab+'-'+@ptoEmi+'-'+Helper.F_Auto_Sequential(@secuencial) FROM @document
 
-		
 		--> Validacacion de informacion
         IF (SELECT COUNT(*) FROM @document) = 0 
             BEGIN
@@ -300,8 +299,8 @@ BEGIN
                    (DocumentoIngresoId,TaxId,TaxPercentId,TaxBase,[Percent],TaxValue,Discount)
             SELECT @idDocumentoIngreso,TaxId,TaxPercentId,TaxBase,[Percent],TaxValue,Discount FROM @tbTaxes
 
-			--> Datos Adicionales de articulo (etiquetas)
-			IF EXISTS (SELECT 1 FROM @artInfoAdicional WHERE JSON_QUERY(jsonAdicional, '$') IS NOT NULL)
+			
+			IF EXISTS (SELECT 1 FROM @artInfoAdicional)
 				BEGIN
 					INSERT INTO Compra.InfoAdicional WITH (ROWLOCK) 
                            (uniqueId,idArticulo,idEtiqueta,jsonAdicional,fechaRegistro)
