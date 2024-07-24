@@ -861,41 +861,22 @@ BEGIN
                         AND fd.estado = 1  
                         AND fd.envioSri = 1
                     ORDER BY 
-                        fd.idFacturaDetalle ASC;
-
-
-
-                     --- Datos Adicionales Products DataSet
-                    /**  SELECT 
-	                    fd.idFacturaDetalle as rowId,
-                        ar.codigo,
-                        fd.descripcion,
-                        ja.[key] AS nombre,
-                        STRING_AGG(ja.[value], ', ') WITHIN GROUP (ORDER BY ja.[value]) AS descValor
-                    FROM Ventas.HistoryInfoAdicional vhi
-                    LEFT JOIN Compra.InfoAdicional cia WITH (NOLOCK) ON vhi.idInfoAdicional = cia.idInfoAdicional
-                    CROSS APPLY OPENJSON(cia.jsonAdicional)  ja
-                    LEFT JOIN FacturaDetalle fd WITH (NOLOCK)        ON fd.idFacturaDetalle = vhi.idFacturaDetalle
-                    LEFT JOIN dbo.Articulo ar WITH (NOLOCK)                ON ar.idArticulo = fd.idArticulo
-                    WHERE fd.idFactura = @idDocumento
-                    GROUP BY  fd.idFacturaDetalle,  ar.codigo, fd.descripcion, ja.[key]
-                    ORDER BY ar.codigo, fd.descripcion, ja.[key]; */
+                        fd.idFacturaDetalle ASC; 
 
                     SELECT 
                         t2.idFacturaDetalle as rowId
                         ,t2.descripcion
                         ,ar.codigo
                         ,ja.[key] AS nombre
-                        ,ja.[value] AS descValor
-                       -- STRING_AGG(ja.[value], ', ') WITHIN GROUP (ORDER BY ja.[value]) AS descValor
+                        ,ja.[value] AS descValor 
                     FROM Ventas.HistoryInfoAdicional       t1
                     LEFT JOIN FacturaDetalle               t2 WITH (NOLOCK) ON t2.idFacturaDetalle = t1.idFacturaDetalle 
                     INNER JOIN Compra.InfoAdicional        t3 WITH (NOLOCK) ON t3.idInfoAdicional  = t1.idInfoAdicional
                     INNER JOIN dbo.Articulo                ar WITH (NOLOCK) ON ar.idArticulo = t2.idArticulo
                     CROSS APPLY OPENJSON(t3.jsonAdicional) ja
                     WHERE t2.idFactura = @idDocumento 
-                      AND t2.estado = 1 
-                      AND t3.estado = 2
+                      AND t1.estado = 1  
+
 
 
                 END 
@@ -925,7 +906,19 @@ BEGIN
                         nd.idNotaEntregaDetalle ASC;
 
 
-                    SELECT ''
+                     SELECT 
+                        t2.idNotaEntregaDetalle as rowId
+                        ,t2.descripcion
+                        ,ar.codigo
+                        ,ja.[key] AS nombre
+                        ,ja.[value] AS descValor 
+                    FROM Ventas.HistoryInfoAdicional       t1
+                    LEFT JOIN dbo.NotaEntregaDetalle       t2 WITH (NOLOCK) ON t2.idNotaEntregaDetalle = t1.idNotaEntregaDetalle 
+                    INNER JOIN Compra.InfoAdicional        t3 WITH (NOLOCK) ON t3.idInfoAdicional      = t1.idInfoAdicional
+                    INNER JOIN dbo.Articulo                ar WITH (NOLOCK) ON ar.idArticulo           = t2.idArticulo
+                    CROSS APPLY OPENJSON(t3.jsonAdicional) ja
+                    WHERE t2.idNotaEntrega = @idDocumento 
+                      AND t1.estado = 1  
 
                 END 
 

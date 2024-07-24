@@ -472,8 +472,7 @@
                     throw new Error(response)
                 }
                 if (response.code === "1") {
-                    let mainDataApi = JSON.parse(response.payload);
-                    console.log(mainDataApi)
+                    let mainDataApi = JSON.parse(response.payload); 
                     let [
                         comprobanteApi,
                         clienteTempApi,
@@ -604,11 +603,7 @@
                             cuota: item.cuota,
                             entrada: item.entrada,
                         }
-                    })
-
-                //    let datosAdicionalesArticulo = items.flatMap(item => item.datosAdicionalesArticulo)
-                    
-                 
+                    }) 
 
                     infoAdicionalDocumento = infoAdicionalDocumento || [];
                     infoAdicionalDocumento = infoAdicionalDocumento.map(item=>{
@@ -618,7 +613,7 @@
                             idInfoAdicionalDoc: item.idInfoAdicionalDoc,
                             nombre: item.nombre,
                             valor: item.valor,
-                            item: item.estado
+                            estado: item.estado
                         }
                     })
 
@@ -840,33 +835,37 @@
                 }
             })
 
-            let datosAdicionalesArticuloDeleted = mergeDetalles.flatMap(md => md.datosAdicionalesArticulo).filter(md=>{
-                return (md.idHistoryInfoAdicional > 0 && !md.selected)
-            }).map(item=>{
-                return {
-                    uuid: item.uniqueRowDetalle,
-                    idHistoryInfoAdicional: item.idHistoryInfoAdicional,
-                    idArticulo: item.idArticulo,
-                    idInfoAdicional: item.idInfoAdicional,
-                    estado: 1
-                }
-            })
 
-            let datosAdicionalesArticuloSelected = mergeDetalles.flatMap(md => md.datosAdicionalesArticulo).filter(md => {
-                return !(md.idHistoryInfoAdicional > 0) && (md.selected)
-            }).map(item => {
-                return {
-                    uuid: item.uniqueRowDetalle,
-                    // idHistoryInfoAdicional: item.idHistoryInfoAdicional,
-                    idArticulo: item.idArticulo,
-                    idInfoAdicional: item.idInfoAdicional,
-                    estado: 2
-                }
-            }) 
-
-            let mergeDatosAdicionalesArticulo = [...datosAdicionalesArticuloSelected, ...datosAdicionalesArticuloDeleted]
+            const mapItem = (item, estado) => ({
+                uuid: item.uniqueRowDetalle,
+                idHistoryInfoAdicional: item.idHistoryInfoAdicional || 0,
+                idArticulo: item.idArticulo,
+                idInfoAdicional: item.idInfoAdicional,
+                estado: estado
+            });
 
 
+            const datosAdicionalesArticuloDeleted = mergeDetalles
+                .flatMap(md => md.datosAdicionalesArticulo)
+                .filter(md => md.idHistoryInfoAdicional > 0 && !md.selected)
+                .map(item => mapItem(item, 1));
+
+            const datosAdicionalesArticuloSelectedDeleted = mergeDetalles
+                .flatMap(md => md.datosAdicionalesArticulo)
+                .filter(md => md.idHistoryInfoAdicional > 0 && md.selected)
+                .map(item => mapItem(item, 2));
+
+            const datosAdicionalesArticuloSelected = mergeDetalles
+                .flatMap(md => md.datosAdicionalesArticulo)
+                .filter(md => !(md.idHistoryInfoAdicional > 0) && md.selected)
+                .map(item => mapItem(item, 2));
+
+            const mergeDatosAdicionalesArticulo = [
+                ...datosAdicionalesArticuloSelected,
+                ...datosAdicionalesArticuloSelectedDeleted,
+                ...datosAdicionalesArticuloDeleted
+            ]; 
+            
             return {
                 infoFactura: service.infoComprobanteMapperTo(factura),
                 detalles: itemsMainMapper,

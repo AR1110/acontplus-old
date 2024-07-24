@@ -11,7 +11,7 @@ function modalInfoAdicionalArticuloCtrl($scope, $uibModalInstance,facturaSvc, pa
 
     $scope.articulo = entity; 
     $scope.data = [];
-    $scope.etiquetas = []; 
+    $scope.etiquetas = [];  
 
     //Datos adicionales del articulo desde compra 
     let dataInfo = entity.datosAdicionalesArticulo.find(item => item.uniqueRowDetalle === $scope.articulo.uniqueRowDetalle);

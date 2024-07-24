@@ -1,12 +1,5 @@
 //@ts-check
-/**
- * 1. ventaService
- * 2. notaEntregaService
- * 3. proformaService
- * 4. clienteService
- * 5. empleadoService 
- * 6. cargoService
- */
+ 
 (function () {
 
     'use strict';
@@ -426,7 +419,14 @@
         }
 
         service.queryMapper = function (params) {
-            const { data, cliente, detalles, itemsDeleted, historyDatosAdicionales, infoAdicionalDocumento, cuotas } = params;
+            let { 
+                data, 
+                cliente, 
+                detalles, 
+                itemsDeleted,  
+                infoAdicionalDocumento, 
+                cuotas 
+            } = params;
             //data que se usara dentro de la función "getCantidadStock"
             service.data = Object.assign({}, data);
 
@@ -447,21 +447,68 @@
             notaEntrega.email = cliente.email;
             notaEntrega.telefono = cliente.telefono;
 
-            const itemsMainMapper = service.detalleMapperTo(detalles);
-            const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted || [])
-            const impuestos = fS.impuestoTarifaMapperTo(detalles);
-
-            const mergeItems = [
-                ...itemsMainMapper,
-                ...itemsDeletedMapper
+            let mergeDetalles = [
+                ...detalles,
+                ...itemsDeleted
             ]
 
+            const itemsMainMapper = service.detalleMapperTo(mergeDetalles);
+
+          //  const itemsMainMapper = service.detalleMapperTo(detalles);
+           // const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted || [])
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
+
+            infoAdicionalDocumento = infoAdicionalDocumento || [];
+            let infoAdicionalDocumentoMapped = infoAdicionalDocumento.map(item => {
+                return {
+                    // uuid: item.uniqueRowDetalle, //uid de articulo detalle 
+                    idInfoAdicional: item.idInfoAdicional,
+                    idInfoAdicionalDoc: item.idInfoAdicionalDoc,
+                    nombre: item.nombre,
+                    valor: item.valor,
+                    estado: item.estado
+                }
+            })
+
+            const mapItem = (item, estado) => ({
+                uuid: item.uniqueRowDetalle,
+                idHistoryInfoAdicional: item.idHistoryInfoAdicional || 0,
+                idArticulo: item.idArticulo,
+                idInfoAdicional: item.idInfoAdicional,
+                estado: estado
+            });
+            
+
+            const datosAdicionalesArticuloDeleted = mergeDetalles
+                .flatMap(md => md.datosAdicionalesArticulo)
+                .filter(md => md.idHistoryInfoAdicional > 0 && !md.selected)
+                .map(item => mapItem(item, 1));
+
+            const datosAdicionalesArticuloSelectedDeleted = mergeDetalles
+                .flatMap(md => md.datosAdicionalesArticulo)
+                .filter(md => md.idHistoryInfoAdicional > 0 && md.selected)
+                .map(item => mapItem(item, 2));
+
+            const datosAdicionalesArticuloSelected = mergeDetalles
+                .flatMap(md => md.datosAdicionalesArticulo)
+                .filter(md => !(md.idHistoryInfoAdicional > 0) && md.selected)
+                .map(item => mapItem(item, 2));
+
+            const mergeDatosAdicionalesArticulo = [
+                ...datosAdicionalesArticuloSelected,
+                ...datosAdicionalesArticuloSelectedDeleted,
+                ...datosAdicionalesArticuloDeleted
+            ];
+
+
+
+ 
             return {
                 notaEntrega: service.infoComprobanteMapperTo(notaEntrega),
-                detalles: mergeItems,
+                detalles: itemsMainMapper,
                 impuestos: impuestos,
-                infoAdicional: infoAdicionalDocumento || [],
-                infoAdicionalArticulo: historyDatosAdicionales,
+                infoAdicional: infoAdicionalDocumentoMapped,
+                infoAdicionalArticulo: mergeDatosAdicionalesArticulo,
                 cuotas
             }
         }
@@ -507,8 +554,9 @@
 
             for (let item of detalles) {
                 let cantidadTransaccion = item.cantidad * (item.conversion || 1)
-                tempDetails.push({
+                tempDetails.push({                    
                     orderIndex: orderIndex++,
+                    uuid: item.uniqueRowDetalle,
                     idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
                     idFacturaDetalle: item.idFacturaDetalle || 0,
                     idArticulo: item.idArticulo,
@@ -716,18 +764,34 @@
 
                         const medidas = fS.processAndSortMeasures(principal, fraccionado);
 
+                        let uniqueRowDetalle = restItem.uuid;
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
-                        if ('infoDatosAdicionales' in itemPrincipal) {
-                            let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoDatosAdicionales);
-                            restItem.datosAdicionalesArticulo = infoAdicionalArrayTemp.map(dataAdicional => ({
-                                idArticulo: dataAdicional.idArticulo,
-                                idEtiqueta: dataAdicional.idEtiqueta,
+                        let datosAdicionalesArticulo = []; 
+
+                        if (itemPrincipal.infoAdicionalArticulo && typeof itemPrincipal.infoAdicionalArticulo === 'string') {
+                            let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoAdicionalArticulo);
+                            datosAdicionalesArticulo = infoAdicionalArrayTemp.map(dataAdicional => ({
+                                uniqueRowDetalle,
+                                idArticulo: restItem.idArticulo,
                                 idInfoAdicional: dataAdicional.idInfoAdicional,
                                 jsonAdicional: JSON.parse(dataAdicional.jsonAdicional),
-                                uniqueId: dataAdicional.uniqueId,
-                                estado: dataAdicional.estado
                             }))
+                        }
+
+                        if (Array.isArray(datosAdicionalesArticuloTemp) && datosAdicionalesArticuloTemp.length > 0) {
+                            let datosAdicionalesFiltered = datosAdicionalesArticuloTemp.filter(daa => daa.uuid === uniqueRowDetalle)
+                                .map(daa => {
+                                    return {
+                                        idHistoryInfoAdicional: daa.idHistoryInfoAdicional,
+                                        uniqueRowDetalle,
+                                        idInfoAdicional: daa.idInfoAdicional,
+                                        jsonAdicional: daa.jsonAdicional && JSON.parse(daa.jsonAdicional) || [],
+                                        selected: daa.selected,
+                                    }
+                                })
+
+                            datosAdicionalesArticulo = [...datosAdicionalesArticulo, ...datosAdicionalesFiltered]
                         }
 
 
@@ -735,6 +799,7 @@
 
                         let obj = {
                             n: index + 1,
+                            uniqueRowDetalle,
                             idNotaEntregaDetalle: itemPrincipal.idNotaEntregaDetalle,
                             cantidad: itemPrincipal.cantidad,
                             cantidadOriginal: itemPrincipal.cantidad,
@@ -764,7 +829,7 @@
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
-                            datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || [],
+                            datosAdicionalesArticulo,
                             datosAdicionales: restItem.datosAdicionales
                         }
 
@@ -794,23 +859,23 @@
                         }
                     })
 
-                    let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
-                        idDocumento: item.idDocumento,
-                        idHistoryInfoAdicional: item.idHistoryInfoAdicional,
-                        idArticulo: item.idArticulo,
-                        idEtiqueta: item.idEtiqueta,
-                        idInfoAdicional: item.idInfoAdicional,
-                        jsonAdicional: item.jsonAdicional && JSON.parse(item.jsonAdicional) || [],
-                        selected: item.selected,
-                        estado: item.estado
-                    }))
+                    infoAdicionalDocumento = infoAdicionalDocumento || [];
+                    infoAdicionalDocumento = infoAdicionalDocumento.map(item => {
+                        return {
+                            uniqueRowDetalle: item.uuid,
+                            idInfoAdicional: item.idInfoAdicional,
+                            idInfoAdicionalDoc: item.idInfoAdicionalDoc,
+                            nombre: item.nombre,
+                            valor: item.valor,
+                            estado: item.estado
+                        }
+                    })
 
                     return {
                         comprobante,
                         cliente,
                         items,
-                        infoAdicionalDocumento,
-                        datosAdicionalesArticulo,
+                        infoAdicionalDocumento, 
                         cuotas
                     }
                 }
@@ -1040,10 +1105,24 @@
             }
 
 
+            // let datosAdicionalesArticuloSelected = detalles.flatMap(md => md.datosAdicionalesArticulo).filter(md => {
+            //     return !(md.idHistoryInfoAdicional > 0) && (md.selected)
+            // }).map(item => {
+            //     return {
+            //         uuid: item.uniqueRowDetalle,
+            //         idHistoryInfoAdicional: item.idHistoryInfoAdicional || 0,
+            //         idArticulo: item.idArticulo,
+            //         idInfoAdicional: item.idInfoAdicional,
+            //         estado: 2
+            //     }
+            // })
+
+
             const resultDetalles = detalles.map((item, index) => {
                 let cantidadTransaccion = item.cantidad * (item.conversion || 1)
                 return {
                     orderIndex: index++,
+                    uuid: item.uniqueRowDetalle,
                     idArticulo: item.idArticulo,
                     idTarifa: item.idTarifa,
                     idBodega: item.idBodega,
@@ -1075,7 +1154,7 @@
                 comprobante: resultComprobante,
                 detalles: resultDetalles,
                 impuestos: impuestos,
-                infoAdicional: infoAdicionalDocumento || [],
+                infoAdicional: infoAdicionalDocumento || [], 
                 cuotas,
                 formaPago: dataFormaPago,
             }
@@ -1635,6 +1714,7 @@
                 let cantidadTransaccion = item.cantidad * (item.conversion || 1)
                 return {
                     orderIndex: index++,
+                    uuid: item.uniqueRowDetalle || fS.generateUuidv4(),
                     idArticulo: item.idArticulo,
                     idTarifa: item.idTarifa,
                     idBodega: item.idBodega,
