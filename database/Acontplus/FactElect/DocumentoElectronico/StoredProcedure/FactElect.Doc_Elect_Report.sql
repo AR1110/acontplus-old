@@ -108,7 +108,7 @@ BEGIN
                         END 
                     ELSE 
                         BEGIN 
-                            SET @sql = @sql + 'AND f.codEstado != 4 '
+                            SET @sql = @sql + 'AND f.codEstado NOT IN(4,6) '
                         END 
                 END 
 

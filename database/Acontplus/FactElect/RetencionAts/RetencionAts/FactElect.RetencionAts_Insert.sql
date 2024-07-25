@@ -317,15 +317,17 @@ BEGIN
 			END
 
         IF EXISTS (SELECT 1 
-                        FROM FactElect.RetAtsDocSustento  rds WITH(NOLOCK)
-						INNER JOIN @tblDocs                 t              ON LTRIM(RTRIM(rds.numAutDocSustento)) = LTRIM(RTRIM(t.numAutDocSustento)) 
-						INNER JOIN FactElect.RetencionAts ret WITH(NOLOCK) ON rds.idRetencionAts               = ret.idRetencionats 
+                        FROM FactElect.RetAtsDocSustento   rds WITH(NOLOCK)
+						INNER JOIN @tblDocs                 t1             ON LTRIM(RTRIM(rds.numAutDocSustento)) = LTRIM(RTRIM(t1.numAutDocSustento)) 
+						INNER JOIN @tblDocs                 t2             ON LTRIM(RTRIM(rds.numDocSustento))    = LTRIM(RTRIM(t2.numDocSustento))
+						INNER JOIN FactElect.RetencionAts ret WITH(NOLOCK) ON rds.idRetencionAts                  = ret.idRetencionats 
 						WHERE ret.idProveedor = @idProveedor
 						  AND ret.anuladaSri = 0)
 		    BEGIN
 			    SELECT '0' code, 'Este documento de sustento ya pertenece a una retención' as 'message'
 			    RETURN
 		    END
+               
 
         IF @claveAcceso IS NULL
 		    BEGIN

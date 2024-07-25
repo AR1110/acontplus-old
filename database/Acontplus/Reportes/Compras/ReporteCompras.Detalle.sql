@@ -61,8 +61,8 @@ BEGIN
 
 	IF @codDoc = '01' 
 		BEGIN 
-			SELECT 
-								id              = dd.idDocumentoDetalle
+			               SELECT 
+								 id             = dd.idDocumentoDetalle
 								,idArticulo     = dd.idArticulo
 								,codigo         = ar.codigo
 								,descripcion    = ar.descripcion
