@@ -2,79 +2,50 @@ USE ACONTPLUS
 
 --ALTER TABLE Ventas.HistoryInfoAdicional ADD idFacturaDetalle BIGINT CONSTRAINT fk_infoAdicional_Detalle FOREIGN KEY(idFacturaDetalle) REFERENCES dbo.FacturaDetalle(idFacturaDetalle)
 
-SELECT * FROM Ventas.HistoryInfoAdicional  where idFacturaDetalle > 0
+--ALTER TABLE Ventas.HistoryInfoAdicional ADD idNotaEntregaDetalle BIGINT CONSTRAINT fk_infoAdicional_Detalle_Nota FOREIGN KEY(idNotaEntregaDetalle) REFERENCES dbo.NotaEntregaDetalle(idNotaEntregaDetalle)
 
-select * from FacturaDetalle where idFacturaDetalle = 738581
+--ALTER TABLE Ventas.HistoryInfoAdicional DROP COLUMN estab
 
-select * from Compra.InfoAdicional where idInfoAdicional = 1204
+--ALTER TABLE Ventas.HistoryInfoAdicional DROP COLUMN ptoEmi
 
---SELECT top 10 * FROM Ventas.HistoryInfoAdicional
+--ALTER TABLE Ventas.HistoryInfoAdicional DROP COLUMN secuencial
 
---select top 10  * from Compra.InfoAdicional
- 
-/**declare @json NVARCHAR(MAX)='[{"IMEI1":"353691174597004","IMEI2":"353691174597012"},{"IMEI1":"353691174597004","IMEI2":"353691174597012"}]'
---select * from openjson(@json)
- 
+--ALTER TABLE Ventas.HistoryInfoAdicional DROP COLUMN idDocumento
 
-			        SELECT j.[key] as nombre,  STRING_AGG(j.[value], ', ') WITHIN GROUP (ORDER BY j.[value]) AS valor
-			        FROM  OPENJSON(@json) j
-					GROUP BY j.[key]
- 
-select TOP 1  * from FacturaDetalle**/
- 
---select * from v_CuentaPorCobrar where idCuentaPorCobrar = 85957
---select * from v_usuario WHERE idUsuario = 231 and idEntidad = 195
- 
---SELECT ia.*  
---FROM Ventas.HistoryInfoAdicional hi WITH (NOLOCK) 
---inner join Compra.InfoAdicional  ia WITH (NOLOCK) ON ia.idInfoAdicional = hi.idInfoAdicional 
---inner join Articulo               a WITH (NOLOCK) ON a.idArticulo = ia.idArticulo
---CROSS APPLY OPENJSON(ia.jsonAdicional) j
+--ALTER TABLE Ventas.HistoryInfoAdicional DROP COLUMN codDoc
+
+--SELECT * FROM Ventas.HistoryInfoAdicional  where idFacturaDetalle > 0
+
+--ALTER TABLE InfoAdicionalDoc DROP COLUMN idArticuloInfoAdicional
+
+--ALTER TABLE InfoAdicionalDoc DROP CONSTRAINT FK__InfoAdici__idArt__1D5C2FEB
 
 
+--SELECT * FROM Compra.InfoAdicional
 
---DECLARE @tb AS TABLE (
---	idFacturaDetalle INT 
---	,descripcion VARCHAR(500)
---	,cantidad NUMERIC(18,5)
---	,precioUnitario NUMERIC(18,5)
---	,precioTotalSinImpuesto NUMERIC(18,5)
---	,datajson varchar(max)	
---)
+--> InfoAdicional
 
---insert into @tb
+--ALTER TABLE InfoAdicionalDoc ADD idInfoAdicional INT CONSTRAINT fk_InfoAdicional_Compra FOREIGN KEY (idInfoAdicional) REFERENCES  Compra.InfoAdicional(idInfoAdicional)
 
---SELECT idFacturaDetalle
---      ,descripcion
---	  ,cantidad
---	  ,precioUnitario
---	  ,precioTotalSinImpuesto 
---	  ,case when idFacturaDetalle = 161818 THEN '[{"IMEI1":"353691174598580","IMEI2":"353691174598598"},{"IMEI1":"353691174598580","IMEI2":"353691174598598"}]' END 
---FROM FacturaDetalle d WHERE idFactura = 85957 and estado = 1
+--UPDATE FacturaDetalle set uuid = NEWID()
+
+--ALTER TABLE FacturaDetalle ALTER COLUMN uuid UNIQUEIDENTIFIER NOT NULL
+
+--ALTER TABLE FacturaDetalle ADD DEFAULT NEWID() FOR uuid
 
 
---select td.descripcion,td.precioUnitario,sj.[key],sj.[value],cantidad from @tb td
---outer apply openjson(td.datajson) dt
---outer apply openjson(dt.[value]) sj
+--UPDATE NotaEntregaDetalle set uuid = NEWID()
 
+--ALTER TABLE NotaEntregaDetalle ALTER COLUMN uuid UNIQUEIDENTIFIER NOT NULL
 
+--ALTER TABLE NotaEntregaDetalle ADD DEFAULT NEWID() FOR uuid
 
---declare @table as table(
---	descripcion varchar(100)
---	,idInfoAdicional VARCHAR(15)
---)
+--ALTER TABLE Ventas.HistoryInfoAdicional ADD estado BIT 
 
+--UPDATE Ventas.HistoryInfoAdicional SET estado = 0 
 
---insert into @table
+--ALTER TABLE Ventas.HistoryInfoAdicional ALTER COLUMN estado BIT NOT NULL
 
---SELECT top 10 *
---FROM FacturaDetalle d WHERE idFactura = 85957 and estado = 1
+--ALTER TABLE Ventas.HistoryInfoAdicional ADD DEFAULT 1 FOR estado
 
-
-
---SELECT * FROM @table
-
---SELECT d.*
---FROM @table d
---CROSS APPLY dbo.SplitString(idInfoAdicional, ',');
---WHERE ids.Id IS NOT NULL[uuid]
+select Top 10 * from Ventas.HistoryInfoAdicional 
