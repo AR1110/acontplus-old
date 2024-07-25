@@ -1,4 +1,5 @@
 export const enum CONFIG_PATHS {
+  COMPANY_DEMO_STEP = 'CompanyDemoStep/',
   USER_PERMISSION = 'UsuarioPermiso/',
   GENERAL_CONFIG = 'GeneralConfig/',
   DOC_CONFIG = 'DocConfig/',
@@ -10,10 +11,10 @@ export const enum CONFIG_PATHS {
   USER_CUSTOMER_REQUEST = 'UserCustomerRequest/',
   USER_CUSTOMER_PERMISSION = 'UserCustomerPermission/',
   USER_PROFILE = 'UserProfile/',
-  ESTABLISHMENT ='Establishment/',
+  ESTABLISHMENT = 'Establishment/',
   PUNTO_EMISION = 'PtoEmision/',
-  ESTABLISHMENT_LOGO='EstablecimientoLogo/',
+  ESTABLISHMENT_LOGO = 'EstablecimientoLogo/',
   COMPANY = 'Company/',
-  PRINTER='Printer/',
-  PRINTER_DOC = 'PrinterDocument'
+  PRINTER = 'Printer/',
+  PRINTER_DOC = 'PrinterDocument',
 }
