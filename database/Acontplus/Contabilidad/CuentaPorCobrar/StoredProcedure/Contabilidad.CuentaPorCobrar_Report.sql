@@ -735,7 +735,7 @@ BEGIN
             SELECT @id = id,@codEstab =codEstab FROM OPENJSON(@json) WITH (id INT, codEstab VARCHAR(100))
             SELECT @codDoc = codDoc, @idDocumento = idDocumento FROM v_CuentaPorCobrar WHERE idCuentaPorCobrar = @id
 
-            SET @tableNames = 'headerDs,cuentaPorCobrarDs,creditoGaranteDs,productsDs,cuotaDs';
+            SET @tableNames = 'headerDs,cuentaPorCobrarDs,creditoGaranteDs,productsDs,productDatoAdicionalDs,cuotaDs';
 
             -- Header Dataset
             SELECT 
@@ -848,7 +848,7 @@ BEGIN
                         CAST(fd.valorDescuento AS numeric(18, 2)) AS valorDescuento, 
                         CAST(fd.precioTotalSinImpuesto AS numeric(18, 2)) AS precioTotal,
                         IIF(fd.nota = 'S/N', '', fd.nota) AS nota,
-                        descTemplate = '<div><p>'+fd.descripcion+'</p><p>'+fd.nota+'</p></div>',
+                        CONCAT('<div>', fd.descripcion, IIF(fd.nota IS NOT NULL, '<br>' + '<small><em>' +fd.nota+'</em></small>', ''), '</div>') AS descTemplate,
                         CAST(fd.valorImpuesto AS numeric(18, 2)) AS valorImpuesto
                     FROM 
                         dbo.FacturaDetalle fd WITH (NOLOCK)
@@ -861,7 +861,21 @@ BEGIN
                         AND fd.estado = 1  
                         AND fd.envioSri = 1
                     ORDER BY 
-                        fd.idFacturaDetalle ASC;
+                        fd.idFacturaDetalle ASC; 
+
+                    SELECT 
+                        t2.idFacturaDetalle as rowId
+                        ,t2.descripcion
+                        ,ar.codigo
+                        ,ja.[key] AS nombre
+                        ,ja.[value] AS descValor 
+                    FROM Ventas.HistoryInfoAdicional       t1
+                    LEFT JOIN FacturaDetalle               t2 WITH (NOLOCK) ON t2.idFacturaDetalle = t1.idFacturaDetalle 
+                    INNER JOIN Compra.InfoAdicional        t3 WITH (NOLOCK) ON t3.idInfoAdicional  = t1.idInfoAdicional
+                    INNER JOIN dbo.Articulo                ar WITH (NOLOCK) ON ar.idArticulo = t2.idArticulo
+                    CROSS APPLY OPENJSON(t3.jsonAdicional) ja
+                    WHERE t2.idFactura = @idDocumento 
+                      AND t1.estado = 1  
 
 
 
@@ -891,7 +905,24 @@ BEGIN
                     ORDER BY 
                         nd.idNotaEntregaDetalle ASC;
 
+
+                     SELECT 
+                        t2.idNotaEntregaDetalle as rowId
+                        ,t2.descripcion
+                        ,ar.codigo
+                        ,ja.[key] AS nombre
+                        ,ja.[value] AS descValor 
+                    FROM Ventas.HistoryInfoAdicional       t1
+                    LEFT JOIN dbo.NotaEntregaDetalle       t2 WITH (NOLOCK) ON t2.idNotaEntregaDetalle = t1.idNotaEntregaDetalle 
+                    INNER JOIN Compra.InfoAdicional        t3 WITH (NOLOCK) ON t3.idInfoAdicional      = t1.idInfoAdicional
+                    INNER JOIN dbo.Articulo                ar WITH (NOLOCK) ON ar.idArticulo           = t2.idArticulo
+                    CROSS APPLY OPENJSON(t3.jsonAdicional) ja
+                    WHERE t2.idNotaEntrega = @idDocumento 
+                      AND t1.estado = 1  
+
                 END 
+
+           
 
             -- Cuota DataSet
             SELECT cx.nroCuota

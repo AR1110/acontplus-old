@@ -206,10 +206,11 @@ BEGIN
             SELECT 
 				 idUsuarioRol = ur.idUsuarioRol
 				,idUsuario = ur.idUsuario 
-                ,u.nombreCompleto 
-				,u.nroIdentificacion 
+                ,cc.BusinessName as nombreCompleto 
+				,cc.IDCard as nroIdentificacion 
 			FROM App.UsuarioRol ur
-			INNER JOIN dbo.Usuario u on u.idUsuario = ur.idUsuario
+			INNER JOIN dbo.Usuario u WITH(NOLOCK) on u.idUsuario = ur.idUsuario
+            INNER JOIN Customer.Customer cc WITH(NOLOCK) ON cc.Id = u.customerId
             INNER JOIN AcontplusAdmin.Seguridad.[Role] sr WITH(NOLOCK) ON sr.Id = ur.RoleId
 			WHERE ur.idEntidad = @idEntidad AND ur.idUsuarioRol !=@userRoleId 
         END

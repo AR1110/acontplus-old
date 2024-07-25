@@ -765,8 +765,7 @@
         $scope.tiposIdentificacion = [];
 
         $scope.cuotas = [];
-        $scope.datosAdicionalesArticulo = [];
-        $scope.historyDatosAdicionales = [];
+        $scope.datosAdicionalesArticulo = []; 
 
         //Informacion adicional del documento 
         $scope.infoAdicionalDocumento = [];
@@ -1131,12 +1130,7 @@
                 }
 
                 $scope.cliente = cliente;
-                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
-                $scope.historyDatosAdicionales = $scope.datosAdicionalesArticulo.map(item => ({
-                    idArticulo: item.idArticulo,
-                    idInfoAdicional: item.idInfoAdicional,
-                    selected: true,
-                }))
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento; 
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
 
@@ -1217,9 +1211,9 @@
             }
         }
 
-        $scope.resultModalAdicional = function (result) {
-            let { historyDatosAdicionales } = result;
-            $scope.historyDatosAdicionales = historyDatosAdicionales;
+        $scope.resultModalAdicional = function (result) { 
+            let { infoAdicionalDoc } = result;
+            $scope.infoAdicionalDocumento = infoAdicionalDoc;
         }
 
         function setColumnDefs() { 
@@ -1231,7 +1225,16 @@
 
         <view-kardex params="row.entity"></view-kardex>
 
-        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a action-info-adicional-articulo-venta
+            entity="row.entity"
+            style="cursor:pointer;"
+            ng-if='row.entity.datosAdicionales'
+            result-modal-adicional="grid.appScope.resultModalAdicional(result)"
+            info-adicional-doc="grid.appScope.infoAdicionalDocumento"
+            class="btn btn-warning btn-xs text-white"
+            title = "Agregar dato Adicional">
+            <i class="fas fa-tags"></i>
+        </a>`;
 
             $scope.gridOptions.columnDefs = [{
                 name: 'Op.',
@@ -1501,6 +1504,7 @@
                 if (isConfirmed) {
                     let index = $scope.gridOptions.data.indexOf(rowEntity);
                     $scope.gridOptions.data.splice(index, 1);
+                    updateStatusDatosAdicionalesArticulo(rowEntity);
 
                     if (rowEntity.idNotaEntregaDetalle > 0) {
                         $scope.gridOptionsItemsDeleted.push({
@@ -1517,14 +1521,22 @@
                 }
 
                 if (isConfirmed && rowEntity.datosAdicionales) {
-                    $scope.datosAdicionalesArticulo = $scope.datosAdicionalesArticulo.filter(val => val.idArticulo !== rowEntity.idArticulo);
-                    $scope.historyDatosAdicionales = $scope.historyDatosAdicionales.filter(val => val.idArticulo !== rowEntity.idArticulo);
+                    $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(ia => {
+                        return !(rowEntity.datosAdicionalesArticulo.some(iaa => iaa.idInfoAdicional === ia.idInfoAdicional))
+                    }); 
                 }
             } catch (error) {
                 console.log(error)
             }
 
         }
+
+        function updateStatusDatosAdicionalesArticulo(rowEntity) {
+            for (let item of rowEntity.datosAdicionalesArticulo) {
+                item.selected = false;
+            }
+        }
+
 
         $scope.openModalArticle = function (item) {
             if ($scope.config.detailDuplicate) {
@@ -1839,6 +1851,7 @@
         //=================================START PRODUCT=======================================
         function addRow() {
             const obj = {
+                uniqueRowDetalle: fS.generateUuidv4(),
                 idNotaEntregaDetalle: 0,
                 n: 1,
                 codigo: "",
@@ -1943,7 +1956,13 @@
                 entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
 
 
-                entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
+                entity.datosAdicionalesArticulo = datosAdicionalesArticulo.map(daa => {
+                    return {
+                        ...daa,
+                        uniqueRowDetalle: entity.uniqueRowDetalle
+                    }
+                }); 
+                
                 entity.consolidacionesFecha = consolidacionesFecha;
 
                 entity.articuloTarifas = dataMedida.tarifas;
@@ -2398,8 +2417,7 @@
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
-                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                    historyDatosAdicionales: $scope.historyDatosAdicionales,
+                    infoAdicionalDocumento: $scope.infoAdicionalDocumento, 
                     cuotas 
                 })
 
@@ -2583,8 +2601,7 @@
                                 detalles: $scope.gridOptions.data,
                                 dataFormaPago: $scope.dataFormaPago,
                                 itemsDeleted: $scope.gridOptionsItemsDeleted,
-                                infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                                historyDatosAdicionales: $scope.historyDatosAdicionales,
+                                infoAdicionalDocumento: $scope.infoAdicionalDocumento, 
                                 cuotas
                             })
 
