@@ -1973,8 +1973,7 @@
                 datosAdicionales: false,
                 estado: 1
             }
-            $scope.gridOptions.data.push(obj);
-            console.log($scope.gridOptions.data)
+            $scope.gridOptions.data.push(obj); 
         }
 
         $scope.setItemArticuloEnDetalle = function (dataArticulo) {
@@ -2031,7 +2030,7 @@
 
 
                 tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
-                console.log(entity)
+            
                 entity.idImpuesto = tarifaImpuesto.idImpuesto;
                 entity.idTipoIva = articulo.idTipoIva;
                 entity.codigoPorcentaje = articulo.codigoPorcentaje;
