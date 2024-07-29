@@ -326,9 +326,7 @@ app.component("appCuentaPorCobrarComponent", {
 
         async function openModalCobroLote(selectedDocumentos) {
             try {
-                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['CL'];
-                let template = nombreModalContabilidad.COBRO.templates['CL'];
+                const { fileCtrl, ctrl, template} = nombreModalContabilidad.COBRO_LOTE; 
                 let controller = (await import(fileCtrl))[ctrl];
 
                 let modalRef = modalSvc.open({
@@ -337,11 +335,11 @@ app.component("appCuentaPorCobrarComponent", {
                     params: {
                         selectedDocumentos
                     },
-                    size: 'xl',
-                    isRenderRazorPartial: true
+                    size: 'xl', 
+                    windowClass: 'uibModalFullScreen',
                 })
                 modalRef.result.then(result => {
-                    if (typeof result === 'object') {
+                    if (result && typeof result === 'object') {
                         getCuentasPorCobrar();
                     }
                 })

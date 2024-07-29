@@ -15,7 +15,7 @@
             post,
             put,
             getDataFilter,
-            getAll, 
+            getAll,
             getDataFormCuota,
             getHistorialPago,
             getCuotas
@@ -35,7 +35,7 @@
                     console.log(response)
                 }
 
-                
+
                 let results = cuentasPorPagar.map(item => {
                     return {
                         idCuentaPorPagar: item.idCuentaPorPagar,
@@ -86,7 +86,7 @@
                     }
 
                     if (params.tipo === 4) {
-                       
+
                     }
 
                     if (params.tipo === 5) {
@@ -98,11 +98,11 @@
             })
         }
 
-        function post(data){
+        function post(data) {
             return mS.getData('post', `${url}` + JSON.stringify(data), null, true)
         }
-        
-        function put(id, data){
+
+        function put(id, data) {
             return mS.getData('put', `${url}` + id, data, true)
         }
 
@@ -135,26 +135,26 @@
 
             })
         }
- 
 
-        
 
-        function getDataFormCuota(){
+
+
+        function getDataFormCuota() {
             const json = JSON.stringify({
-                tipo: 5, 
+                tipo: 5,
             })
             return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
                 const data = {
                     tiemposCredito: [],
                 }
-                if(response.code==="0"){
+                if (response.code === "0") {
                     console.log(response)
                 }
-                if(response.code==="1"){
-                    const [tiemposCredito] = JSON.parse(response.payload ); 
+                if (response.code === "1") {
+                    const [tiemposCredito] = JSON.parse(response.payload);
                     data.tiemposCredito = tiemposCredito;
                 }
-                return data;                
+                return data;
             })
         }
 
@@ -285,15 +285,15 @@
             })
         }
 
-        function getCuotasByIdCuentaPorPagar(id){
+        function getCuotasByIdCuentaPorPagar(id) {
             let json = JSON.stringify({
-                idCuentaPorPagar: id, 
+                idCuentaPorPagar: id,
                 tipo: 4
             })
             return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
                 let results = [];
-                if (response && typeof response==='object') {
-                    const {cuotas} = response; 
+                if (response && typeof response === 'object') {
+                    const { cuotas } = response;
 
                     results = cuotas.map(item => {
                         return {
@@ -332,14 +332,14 @@
                     docs: [],
                     estadosPago: []
                 }
-                
-                if (response && typeof response==='object') { 
-                    const { 
-                        entidadFinanciera, 
-                        subEntidadFinanciera, 
-                        banco, 
-                        ciudad, 
-                        documentos, 
+
+                if (response && typeof response === 'object') {
+                    const {
+                        entidadFinanciera,
+                        subEntidadFinanciera,
+                        banco,
+                        ciudad,
+                        documentos,
                         estadoPago
                     } = response;
 
@@ -394,14 +394,14 @@
 
         }
 
-        function getDataToDelete(id){
-             const json = JSON.stringify({
+        function getDataToDelete(id) {
+            const json = JSON.stringify({
                 tipo: 5,
                 id
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response=>{
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
                 let resultData = {};
-                if (response && typeof response==='object') {
+                if (response && typeof response === 'object') {
 
                     let { cuentas, cuotas, estadoPago } = response;
 
@@ -425,7 +425,7 @@
                 cuotasPorPagarEstado
             } = obj;
 
-           
+
 
             let comprobanteMappeado = {
                 idProveedor: comprobante.idProveedor,
@@ -434,7 +434,7 @@
                 codEstab: comprobante.codEstab,
                 nroIdentificacion: comprobante.identificacionComprador,
                 nombreFiscal: comprobante.razonSocialComprador,
-                observacion: fS.isValidField(comprobante.observacion) 
+                observacion: fS.isValidField(comprobante.observacion)
             }
 
             let pagosMappeado = pagos.map(item => {
@@ -457,11 +457,11 @@
                     referencia: item.referencia,
                     abono: item.abono,
                     controlCaja: item.controlCaja,
-                    observacion: fS.isValidField(item.observacion) 
+                    observacion: fS.isValidField(item.observacion)
                 }
             })
 
-            const pagosDetalleMappeado = pagosDetalle.map(item => { 
+            const pagosDetalleMappeado = pagosDetalle.map(item => {
                 return {
                     idCuotaPorPagar: item.idCuotaPorPagar,
                     saldo: fS.roundNumber(item.saldoOriginal, 5),
@@ -469,11 +469,11 @@
                     secuencial: item.secuencial
                 }
             })
-        
+
 
             const historialCuentasMappeado = historialCuentas.map(item => {
                 let saldo = fS.roundNumber(item.saldo, 5)
-              
+
                 return {
 
                     idCuentaPorPagar: item.idCuentaPorPagar,
@@ -494,8 +494,8 @@
             return params;
         }
 
-        function post(data) { 
-           return mS.getData('post', url, { data }, true)
+        function post(data) {
+            return mS.getData('post', url, { data }, true)
         }
 
         function update(data) {
@@ -504,7 +504,7 @@
 
 
         function anular(id, data) {
-            return mS.getData('put', `${url}${id}`, {data}, true)
+            return mS.getData('put', `${url}${id}`, { data }, true)
         }
 
     }])
@@ -528,17 +528,40 @@
             getDataToOverride
         }
 
+        function newGenerateQuota(cuotas) {
+            let resultsCuotas = cuotas.map(item => {
+                return {
+                    idCuotaPorCobrar: item.idCuotaPorCobrar,
+                    idCuentaPorCobrar: item.idCuentaPorCobrar,
+                    fechaVencimiento: item.fechaVencimiento,
+                    //fechaVecimientoLectura: fS
+                    nroCuota: item.nroCuota,
+                    cuota: item.cuota,
+                    mora: item.mora,
+                    interes: item.interes,
+                    diasMora: item.diasMora,
+                    abono: item.abono,
+                    saldoCta: item.saldoCta,
+                    saldo: item.saldo,
+                    estado: item.estado,
+                    saldoOriginal: item.saldo,
+                    valorSaldoLectura: item.saldo
+                }
+            })
+            return resultsCuotas;
+        }
+
         function getAll(obj) {
-            
+
             let params = JSON.stringify({
                 ...obj,
                 tipo: 1
             })
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 let results = [];
-                
-                if (response.code === "1") {                    
-                    const { comprobanteIngreso} = JSON.parse(response.payload);
+
+                if (response.code === "1") {
+                    const { comprobanteIngreso } = JSON.parse(response.payload);
                     results = comprobanteIngreso.map(item => {
                         return {
                             codDoc: 'CI',
@@ -567,130 +590,122 @@
             })
         }
 
-        function getDataForm(idCuentaPorCobrar, idCliente){
+        function getDataForm(idCuentaPorCobrar, idCliente) {
+
             const params = JSON.stringify({ idCuentaPorCobrar, idCliente, tipo: 5 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
-                let resultData = {
-                    entidadesFinanciera: [],
-                    bancos: [],
-                    documentos:[],
-                    ciudades:[],
-                    cuentaPorCobrar: [],
-                    estadosPago: []
-                }
-                if (response.code==="1") { 
+            try {
 
-                    const { entidadFinanciera, banco, documentos, subEntidadFinanciera, provincia, cuentaPorCobrar,
-                        estadoPago } = JSON.parse(response.payload);
+                return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+                    // Inicializa el objeto resultante con estructuras vacías
+                    const resultData = {
+                        entidadesFinanciera: [],
+                        bancos: [],
+                        documentos: [],
+                        ciudades: [],
+                        cuentaPorCobrar: [],
+                        estadosPago: [],
+                        configCobro: {}
+                    };
 
-                    const resultEntidadesFinanciera = entidadFinanciera.map(ef => {
-                        let filteredSubEntidadFinanciera = subEntidadFinanciera.filter(sef => sef.idEntidadFinanciera === ef.idEntidadFinanciera)
-                        return {
-                            idEntidadFinanciera: ef.idEntidadFinanciera,
-                            descripcion: ef.descripcion,
-                            detalle: ef.detalle,
-                            codigo: ef.codigo,
-                            subEntidadesFinanciera: filteredSubEntidadFinanciera
-                        }
-                    })
 
-                
-                    //cuando el cobro es por documento 
-                    if (Array.isArray(cuentaPorCobrar)) {
-                      
-                        resultData.cuentaPorCobrar = cuentaPorCobrar.map(cxc => {
-                            let cuotas = JSON.parse(cxc.cuotas);
-                            let resultsCuotas = cuotas.map(cuota => {
-                                return {
-                                    idCuotaPorCobrar: cuota.idCuotaPorCobrar,
-                                    idCuentaPorCobrar: cuota.idCuentaPorCobrar,
-                                    nroCuota: cuota.nroCuota,
-                                    cuota: cuota.cuota,
-                                    mora: cuota.mora,
-                                    interes: cuota.interes,
-                                    diasMora: cuota.diasMora,
-                                    abono: cuota.abono,
-                                    saldoCta: cuota.saldoCta,
-                                    saldo: cuota.saldo,
-                                    estado: cuota.estado,
-                                    saldoOriginal: cuota.saldo,
-                                    valorSaldoLectura: cuota.saldo
-                                }
-                            })
+                    if (response.code === "1") {
+
+                        const {
+                            entidadFinanciera,
+                            banco,
+                            documentos,
+                            subEntidadFinanciera,
+                            provincia,
+                            cuentaPorCobrar,
+                            estadoPago,
+                            config
+                        } = JSON.parse(response.payload);
+                        console.log(JSON.parse(response.payload))
+
+                        const resultEntidadesFinanciera = entidadFinanciera.map(ef => {
+                            let filteredSubEntidadFinanciera = subEntidadFinanciera.filter(sef => sef.idEntidadFinanciera === ef.idEntidadFinanciera)
                             return {
-                                codEstab: cxc.codEstab,
-                                idCliente: cxc.idCliente,
-                                identificacionComprador: cxc.identificacionComprador,
-                                razonSocialComprador: cxc.razonSocialComprador,
-                                idCuentaPorCobrar: cxc.idCuentaPorCobrar,
-                                serieComprobante: cxc.serieComprobante,
-                                codDoc: cxc.codDoc,
-                                fechaEmision: cxc.fechaEmision,
-                                fechaVencimiento: cxc.fechaVencimiento,
-                                importeTotal: cxc.importeTotal,
-                                diasMora: cxc.diasMora,
-                                mora: cxc.mora,
-                                abono: cxc.abono,
-                                saldo: cxc.saldo,
-                                saldoTemporal: cxc.saldo,
-                                valorSaldoLectura: cxc.saldo,
-                                descripcion: cxc.descripcion,
-                                cuotas: structuredClone(resultsCuotas),
-                                cuotasOriginal: structuredClone(resultsCuotas)
+                                idEntidadFinanciera: ef.idEntidadFinanciera,
+                                descripcion: ef.descripcion,
+                                detalle: ef.detalle,
+                                codigo: ef.codigo,
+                                subEntidadesFinanciera: filteredSubEntidadFinanciera
                             }
                         })
-                    } 
-                    resultData.entidadesFinanciera = resultEntidadesFinanciera;
-                    resultData.bancos = banco;
-                    resultData.documentos = documentos;
-                    resultData.ciudades = provincia; 
-                    resultData.estadosPago = estadoPago;
-                }
-                return resultData;
-            })
+
+
+                        //cuando el cobro es por documento 
+                        if (Array.isArray(cuentaPorCobrar)) {
+                            resultData.cuentaPorCobrar = cuentaPorCobrar.map(cxc => {
+                                let cuotas = JSON.parse(cxc.cuotas) || [];
+                                let resultsCuotas = newGenerateQuota(cuotas);
+                                return {
+                                    codEstab: cxc.codEstab,
+                                    idCliente: cxc.idCliente,
+                                    identificacionComprador: cxc.identificacionComprador,
+                                    razonSocialComprador: cxc.razonSocialComprador,
+                                    idCuentaPorCobrar: cxc.idCuentaPorCobrar,
+                                    serieComprobante: cxc.serieComprobante,
+                                    codDoc: cxc.codDoc,
+                                    fechaEmision: cxc.fechaEmision,
+                                    fechaVencimiento: cxc.fechaVencimiento,
+                                    importeTotal: cxc.importeTotal,
+                                    diasMora: cxc.diasMora,
+                                    mora: cxc.mora,
+                                    abono: cxc.abono,
+                                    saldo: cxc.saldo,
+                                    saldoTemporal: cxc.saldo,
+                                    valorSaldoLectura: cxc.saldo,
+                                    descripcion: cxc.descripcion,
+                                    cuotas: structuredClone(resultsCuotas),
+                                    cuotasOriginal: structuredClone(resultsCuotas)
+                                }
+                            })
+                        }
+
+                        let configCobro = config[0];
+
+                        resultData.entidadesFinanciera = resultEntidadesFinanciera;
+                        resultData.bancos = banco;
+                        resultData.documentos = documentos;
+                        resultData.ciudades = provincia;
+                        resultData.estadosPago = estadoPago;
+                        resultData.configCobro = configCobro;
+
+                    }
+                    return resultData;
+                })
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                throw error;
+            }
         }
 
         function getCuotasByIdCuentaPorCobrar(id) {
             const params = JSON.stringify({ idCuentaPorCobrar: id, tipo: 6 });
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
-                if (response.code==="1") {
-                    let {cuotas}= JSON.parse(response.payload)
-
-                    return cuotas.map(cuota => {
-                        return {
-                            idCuotaPorCobrar: cuota.idCuotaPorCobrar,
-                            idCuentaPorCobrar: cuota.idCuentaPorCobrar,
-                            nroCuota: cuota.nroCuota,
-                            cuota: cuota.cuota,
-                            mora: cuota.mora,
-                            interes: cuota.interes,
-                            diasMora: cuota.diasMora,
-                            abono: cuota.abono,
-                            saldoCta: cuota.saldoCta,
-                            saldo: cuota.saldo,
-                            estado: cuota.estado,
-                            saldoOriginal: cuota.saldo,
-                            valorSaldoLectura: cuota.saldo
-                        }
-                    })
+                let results = [];
+                if (response.code === "1") {
+                    let { cuotas } = JSON.parse(response.payload);
+                    results = newGenerateQuota(cuotas);
                 }
-                return []
+                return results;
             })
         }
 
         //obtiene datos para anular el comprobante de ingreso 
-        function getDataToOverride(id){
+        function getDataToOverride(id) {
             const params = JSON.stringify({ id, tipo: 7 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response=>{
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 let resultData = {};
-                if(response.code==="1"){
-                
-                    let {cuentas,cuotas,estadoPago} = JSON.parse(response.payload);
-                    
+                if (response.code === "1") {
+
+                    let { cuentas, cuotas, estadoPago } = JSON.parse(response.payload);
+
                     resultData.cuentasPorCobrar = cuentas;
                     resultData.cuotasPorCobrar = cuotas;
                     resultData.estadosPago = estadoPago;
-                }else{
+                } else {
                     throw new Error('Error en petición')
                 }
                 return resultData
@@ -714,7 +729,7 @@
                 codEstab: comprobante.codEstab,
                 numeroIdentificacion: comprobante.numeroIdentificacion,
                 nombreFiscal: comprobante.nombreFiscal,
-                observacion: fS.isValidField(comprobante.observacion) 
+                observacion: fS.isValidField(comprobante.observacion)
             }
 
             let cobrosMappeado = cobros.map(cobro => {
@@ -733,7 +748,7 @@
                     controlCaja: cobro.controlCaja,
                     idComprobante: fS.isValidField(cobro.idComprobante),
                     idTipoDocumento: fS.isValidField(cobro.idTipoDocumento),
-                    observacion: fS.isValidField(cobro.observacion) 
+                    observacion: fS.isValidField(cobro.observacion)
                 }
             })
 
@@ -770,7 +785,7 @@
                 cuenta: cuentasPorCobrarEstado,
                 cuota: cuotasPorCobrarEstado
             }
-            
+
             return objComprobanteIngreso;
         }
 
@@ -784,10 +799,10 @@
                 let resultData = {
                     comprobante: [],
                     cobros: [],
-                    cobroDetalles:[]
+                    cobroDetalles: []
                 }
                 if (response.code === '1') {
-                    
+
                     let { comprobanteIngreso, cobro, cobroDetalle } = JSON.parse(response.payload);
 
                     let comprobante = comprobanteIngreso[0];
@@ -800,11 +815,11 @@
                         item.showInfoCobro = item.codPago !== 'EFE'
                     }
 
-                   
-                        resultData.comprobante = comprobante;
-                        resultData.cobros = cobros;
-                        resultData.cobroDetalles = cobroDetalles
-                     
+
+                    resultData.comprobante = comprobante;
+                    resultData.cobros = cobros;
+                    resultData.cobroDetalles = cobroDetalles
+
                 }
                 return resultData;
             })
@@ -817,9 +832,9 @@
                     cobroDetalles: [],
                     comprobanteIngresos: []
                 }
-                if (response.code === '1') { 
+                if (response.code === '1') {
 
-                    let { cuentaPorCobrar, comprobanteIngreso , cobro, cobroDetalle} = JSON.parse(response.payload);
+                    let { cuentaPorCobrar, comprobanteIngreso, cobro, cobroDetalle } = JSON.parse(response.payload);
 
                     result.comprobante = cuentaPorCobrar[0];
                     let comprobanteIngresos = comprobanteIngreso;
@@ -855,9 +870,9 @@
             return mS.getData('put', `${url}${comprobanteIngresoId}`, { data }, true)
         }
 
-        
 
-        function cancel( data){
+
+        function cancel(data) {
             return mS.getData('put', `${url}Cancel`, { data }, true)
         }
 
@@ -905,28 +920,30 @@
 
 
                 const { cuentasPorCobrar } = response;
+                console.log(cuentasPorCobrar)
 
 
-                const results = cuentasPorCobrar.map(cxc => {
+                const results = cuentasPorCobrar.map(item => {
                     return {
-                        idCuentaPorCobrar: cxc.idCuentaPorCobrar,
-                        codDoc: cxc.codDoc,
-                        razonSocialComprador: cxc.razonSocialComprador,
-                        serieComprobante: cxc.serieComprobante,
-                        fechaEmision: cxc.fechaEmision,
-                        fechaVencimiento: cxc.fechaVencimiento,
-                        importeTotal: cxc.importeTotal,
-                        abono: cxc.abono,
-                        saldo: cxc.saldo,
-                        tiempoCredito: cxc.tiempoCredito,
-                        estado: cxc.estado,
-                        codEstado: cxc.codEstado,
-                        idCliente: cxc.idCliente,
-                        codEstab: cxc.codEstab,
-                        identificacionComprador: cxc.identificacionComprador,
-                        diasMora: cxc.diasMora,
-                        mora: cxc.mora,
-                        enabledHistorialCobro: cxc.codEstado==='PE'
+                        idCuentaPorCobrar: item.idCuentaPorCobrar,
+                        codDoc: item.codDoc,
+                        razonSocialComprador: item.razonSocialComprador,
+                        serieComprobante: item.serieComprobante,
+                        fechaEmision: item.fechaEmision,
+                        fechaVencimiento: item.fechaVencimiento,
+                        importeTotal: item.importeTotal,
+                        abono: item.abono,
+                        saldo: item.saldo,
+                        tiempoCredito: item.tiempoCredito,
+                        estado: item.estado,
+                        codEstado: item.codEstado,
+                        idCliente: item.idCliente,
+                        codEstab: item.codEstab,
+                        identificacionComprador: item.identificacionComprador,
+                        diasMora: item.diasMora,
+                        mora: item.mora,
+                        enabledHistorialCobro: item.codEstado === 'PE',
+                        tipo: item.tipo //item.tipo? CREDITO: CONTADO
                     }
                 })
 
@@ -948,26 +965,28 @@
         function getCuotasById(id) {
             const params = JSON.stringify({ idCuentaPorCobrar: id, tipo: 8 });
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
-                if (response) {
+                let results = [];
+                if (response && typeof response === 'object') {
 
-                    return response.cuotas.map(cuota => {
+                    results = response.cuotas.map(item => {
                         return {
-                            idCuotaPorCobrar: cuota.idCuotaPorCobrar,
-                            idCuentaPorCobrar: cuota.idCuentaPorCobrar,
-                            nroCuota: cuota.nroCuota,
-                            cuota: cuota.cuota,
-                            mora: cuota.mora,
-                            interes: cuota.interes,
-                            diasMora: cuota.diasMora,
-                            abono: cuota.abono,
-                            saldoCta: cuota.saldoCta,
-                            saldo: cuota.saldo,
-                            estado: cuota.estado,
-                            saldoOriginal: cuota.saldo
+                            idCuotaPorCobrar: item.idCuotaPorCobrar,
+                            idCuentaPorCobrar: item.idCuentaPorCobrar,
+                            fechaVencimiento: item.fechaVencimiento,
+                            nroCuota: item.nroCuota,
+                            cuota: item.cuota,
+                            mora: item.mora,
+                            interes: item.interes,
+                            diasMora: item.diasMora,
+                            abono: item.abono,
+                            saldoCta: item.saldoCta,
+                            saldo: item.saldo,
+                            estado: item.estado,
+                            saldoOriginal: item.saldo
                         }
                     })
                 }
-                return []
+                return results;
             })
         }
 
@@ -1134,7 +1153,7 @@
     }])
 
 
-    app.factory('contabilidadUtils', [function(){
+    app.factory('contabilidadUtils', [function () {
         return {
             generarCuentasPorCobrarEstado,
             generarCuotasPorCobrarEstado
@@ -1170,7 +1189,7 @@
             }
         }
 
-        function generarCuentasPorCobrarEstado({ historialCuentas, cobrosDetalle, estadosPago }){
+        function generarCuentasPorCobrarEstado({ historialCuentas, cobrosDetalle, estadosPago }) {
             let cuentasPorCobrarAgrupado = historialCuentas.reduce((acc, curr) => {
 
                 let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar);
@@ -1204,7 +1223,7 @@
                 let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && !cd.posfechado).reduce((acc, curr) => {
                     acc += curr.abono;
                     return acc;
-                }, 0) 
+                }, 0)
 
                 valorSaldo = item.valorSaldoLectura - totalNoPosfechado;
 
@@ -1234,9 +1253,9 @@
             return cuentasPorCobrarEstado;
 
         }
- 
 
-        function generarCuotasPorCobrarEstado({ cobrosDetalle, estadosPago }){
+
+        function generarCuotasPorCobrarEstado({ cobrosDetalle, estadosPago }) {
 
             let cuotasPorCobrarAgrupado = cobrosDetalle.reduce((acc, curr) => {
 
@@ -1289,4 +1308,505 @@
     }])
 
 
-})(window.angular)
+})();
+
+
+//utils 
+
+(function () {
+    'use strict';
+    app.service('modalCobroService', ['formulario', 'toastService', function (fS, tS) {
+
+        this.selectedDocumentos = [];
+        this.cobrosDetalle = [];
+        this.historialCuentas = [];
+
+        this.cuentasPorCobrarEstado = [];
+        this.cuotasPorCobrarEstado = [];
+
+        this.valorAbono = 0;
+
+        this.esAbonoPosfechado = false;
+        this.uniqueIndex = 0;
+
+        this.MAX_NUMBER_ROUND = 5;
+        this.MAX_NUMBER_ROUND_GENERAL = 3;
+
+        this.estadosPago = [];
+
+        this.configCobro = {};
+
+        this.group = {};
+
+        this.setEstadoPago = function (values) {
+            this.estadosPago = values;
+        }
+
+        this.setConfigCobro = function (value) {
+            this.configCobro = value;
+        }
+
+        this.obtenerDiferenciaDia = function (fechaVencimiento) {
+            const hoy = new Date();
+            const formatearFechaVcto = new Date(fechaVencimiento);
+            const diasMora = Math.floor((hoy.getTime() - formatearFechaVcto.getTime()) / (1000 * 60 * 60 * 24)); // Diferencia en días
+            return diasMora;
+        }
+
+        this.calcularInteresMora = function (docsCuotas) {
+            let results = docsCuotas.map(item => {
+
+                let resultCuotas = item.cuotas.map(rowCuota => {
+
+                    let saldo = rowCuota.saldo;
+                    let diasMoraInteres = 0;
+                    let diasMoraActual = 0;
+                    let interesActual = 0;
+                    let saldoDiaMoraInteres = 0;
+
+                    console.log(rowCuota.fechaVencimiento)
+                    diasMoraActual = this.obtenerDiferenciaDia(rowCuota.fechaVencimiento);
+                    console.log(diasMoraActual)
+                    if (item.tipo && this.configCobro.configDeuda && this.configCobro.tipoConfig === "PI" && diasMoraActual > 0) {
+                        interesActual = fS.div(fS.mul(saldo, this.configCobro.interes, 5), 100, 5);
+                        diasMoraInteres = fS.mul(interesActual, diasMoraActual, 5)
+                        saldoDiaMoraInteres += diasMoraInteres;
+
+                        saldoDiaMoraInteres += saldo;
+                    }
+
+                    return {
+                        idCuotaPorCobrar: rowCuota.idCuotaPorCobrar,
+                        idCuentaPorCobrar: rowCuota.idCuentaPorCobrar,
+                        fechaVencimiento: rowCuota.fechaVencimiento,
+                        nroCuota: rowCuota.nroCuota,
+                        cuota: rowCuota.cuota,
+                        mora: item.mora,
+                        interes: item.interes,
+                        diasMora: item.diasMora,
+                        diasMoraActual,
+                        diasMoraInteres,
+                        interesActual,
+                        abono: rowCuota.abono,
+                        saldoCta: rowCuota.saldoCta,
+                        saldo,
+                        estado: rowCuota.estado,
+                        saldoOriginal: saldo,
+                        valorSaldoLectura: saldo,
+                        saldoDiaMoraInteres: fS.instanceDecimal(saldoDiaMoraInteres, 5)
+                    }
+                })
+
+                return {
+                    ...item,
+                    cuotas: structuredClone(resultCuotas),
+                    cuotasOriginal: structuredClone(resultCuotas),
+                }
+
+            })
+            return results;
+        }
+
+
+        this.isValidForm = function (data, codigoSubentidadFinanciera) {
+            if (!fS.getValidId(data.idSubEntidadFinanciera)) {
+                tS.toastr({
+                    type: 'warning',
+                    message: 'Seleccione la SubEntidad Financiera'
+                })
+                return
+            }
+
+            if (!fS.isValidField(data.fechaEmision)) {
+                tS.toastr({
+                    type: 'warning',
+                    message: 'Ingrese la fecha de emisión'
+                })
+                return
+            }
+            if (!fS.isDateValid(data.fechaEmision)) {
+                tS.toastr({
+                    type: 'warning',
+                    message: 'Ingrese una fecha válida'
+                })
+                return
+            }
+
+            if (!fS.getValidId(data.valorAbono)) {
+                tS.toastr({
+                    type: 'warning',
+                    message: 'Ingrese el valor de abono'
+                })
+                return
+            }
+
+            // =================== TRANSFERENCIAS  =================================== //
+
+            if (codigoSubentidadFinanciera === 'TRA') {
+                if (!fS.getValidId(data.idBanco)) {
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'Ingrese el Banco'
+                    })
+                    return
+                }
+                if (!fS.isValidField(data.nro)) {
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'Ingrese el Número'
+                    })
+                    return
+                }
+            }
+
+            // =================== CHEQUES  =================================== //
+
+            if (codigoSubentidadFinanciera === 'CHE') {
+                if (!fS.getValidId(data.idBanco)) {
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'Ingrese el Banco'
+                    })
+                    return
+                }
+                if (!fS.isValidField(data.nro)) {
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'Ingrese el Número'
+                    })
+                    return
+                }
+
+                if (!fS.getValidId(data.idCiudad)) {
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'Ingrese la Ciudad'
+                    })
+                    return
+                }
+                if (!fS.isValidField(data.referencia)) {
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'Ingrese a quien va dirigido el Cheque'
+                    })
+                    return
+                }
+            }
+
+            return true;
+        }
+
+
+        this.addFormaCobro = () => {
+
+            for (let group of this.selectedDocumentos) {
+
+                this.group = group;
+
+                if (typeof this.valorAbono !== 'number' || this.valorAbono > 0) {
+
+                    let valorMovimientoSaldo = fS.instanceDecimal(0);
+                    let historialAbono = fS.instanceDecimal(0);
+
+                    const cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar)
+
+                    const totalAbonoCuenta = cobrosDetalleFiltered.reduce((acc, curr) => acc.plus(curr.abono), fS.instanceDecimal(0));
+
+
+
+                    if (cobrosDetalleFiltered.length === 0) {
+
+                        let historialCuentasFiltered = this.historialCuentas.filter(cd => (
+                            cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar && cd.secuencial === this.uniqueIndex
+                        ));
+
+                        let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
+
+                        if (dataUltimoCobroDetalle) {
+
+                            valorMovimientoSaldo = fS.minus(dataUltimoCobroDetalle.saldo, dataUltimoCobroDetalle.abono).toNumber();
+                        } else {
+                            // valorMovimientoSaldo = group.saldo;
+                            valorMovimientoSaldo = fS.instanceDecimal(this.group.saldo).toNumber();
+                        }
+
+                        if (this.valorAbono <= this.group.saldo) {
+                            historialAbono = this.valorAbono;
+
+                        } else if (this.valorAbono >= this.group.saldo) {
+                            historialAbono = this.group.saldo;
+                        }
+
+
+
+                        this.historialCuentas.push({
+                            secuencial: this.uniqueIndex,
+                            valorSaldoLectura: this.group.valorSaldoLectura,
+                            idCuentaPorCobrar: this.group.idCuentaPorCobrar,
+                            //  abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                            //  saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                            abono: fS.instanceDecimal(historialAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
+                            saldo: fS.instanceDecimal(valorMovimientoSaldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
+                            diasMora: this.group.diasMora,
+                            mora: this.group.mora,
+                        })
+
+                    }
+                    if (cobrosDetalleFiltered.length > 0) {
+                        if (totalAbonoCuenta !== fS.roundNumber(this.group.saldo, this.MAX_NUMBER_ROUND_GENERAL)) {
+
+                            let historialCuentasFiltered = this.historialCuentas.filter(cd => (
+                                cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar
+                            ));
+
+                            let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
+
+                            if (dataUltimoCobroDetalle) {
+
+                                valorMovimientoSaldo = fS.minus(dataUltimoCobroDetalle.saldo, dataUltimoCobroDetalle.abono).toNumber();
+
+                            } else {
+                                valorMovimientoSaldo = fS.instanceDecimal(this.group.saldo).toNumber();
+                            }
+
+                            if (this.valorAbono <= valorMovimientoSaldo) {
+                                historialAbono = this.valorAbono;
+
+                            } else {
+                                historialAbono = valorMovimientoSaldo
+                            }
+
+
+                            this.historialCuentas.push({
+                                secuencial: this.uniqueIndex,
+                                valorSaldoLectura: this.group.valorSaldoLectura,
+                                idCuentaPorCobrar: this.group.idCuentaPorCobrar,
+
+                                abono: fS.instanceDecimal(historialAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
+                                saldo: fS.instanceDecimal(valorMovimientoSaldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber(),
+                                diasMora: this.group.diasMora,
+                                mora: this.group.mora,
+                            })
+                        }
+                    }
+
+                }
+
+
+
+                for (let item of group.cuotas) {
+
+                    item.abonoPosfechado = 0;
+
+
+                    if (typeof this.valorAbono !== 'number' || this.valorAbono === 0) return;
+
+                    //Si la cuota no tiene ningún abono
+
+                    if (item.abono > 0) {
+                        this.cuotaConAbono(item)
+                    } else {
+                        this.cuotaSinAbono(item)
+                    }
+
+                    item.cuota = fS.instanceDecimal(item.cuota).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+                    item.abono = fS.instanceDecimal(item.abono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+                    item.abonoPosfechado = fS.instanceDecimal(item.abonoPosfechado).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+
+                    let dataEstadoPago = this.getEstadoCuota({
+                        saldo: item.saldo,
+                        abono: item.abono
+                    });
+                    item.estado = dataEstadoPago.descripcion;
+
+
+                    item.esCuotaAfectada = true;
+
+                }
+
+            }
+        }
+
+
+
+
+        /**
+       * 
+       * @param {object} item 
+       */
+        this.cuotaSinAbono = (item) => {
+
+            //Validaciones Saldo Cuota 
+            if (item.saldoCta >= this.valorAbono) {
+
+                item.saldoCta = fS.minus(item.saldoCta, this.valorAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+
+            } else if (item.saldoCta <= this.valorAbono) {
+                item.saldoCta = 0;
+            }
+
+            //Validaciones Saldo 
+            if (item.saldo >= this.valorAbono) {
+
+                //Si el Abono pago no es Posfechado
+                item.abono = this.esAbonoPosfechado ? 0 : this.valorAbono;
+
+                //Si el abono pago es posfechado
+                item.abonoPosfechado = this.esAbonoPosfechado ? this.valorAbono : 0;
+
+                //let valorSaldo = item.saldo - this.valorAbono;
+                item.saldo = fS.minus(item.saldo, this.valorAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+
+                this.addCobroDetalle(item, this.valorAbono, item.saldo)
+                this.valorAbono = 0;
+
+            } else if (item.saldo <= this.valorAbono) {
+
+                //Si el Abono pago no es Posfechado
+                item.abono = this.esAbonoPosfechado ? 0 : fS.instanceDecimal(item.saldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+
+                //Si el abono pago es posfechado
+                item.abonoPosfechado = this.esAbonoPosfechado ? fS.instanceDecimal(item.saldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber() : 0;
+
+                //this.valorAbono = this.valorAbono - item.saldo;
+                this.valorAbono = fS.minus(this.valorAbono, item.saldo).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+
+                this.addCobroDetalle(item, item.saldo, 0)
+                item.saldo = 0;
+            }
+
+        }
+
+        /**
+        * 
+        * @param {object} item 
+        */
+        this.cuotaConAbono = (item) => {
+
+            //Validaciones Saldo Cuota 
+            if (item.saldoCta >= this.valorAbono) {
+
+                item.saldoCta = fS.minus(item.saldoCta, this.valorAbono).toDecimalPlaces(this.MAX_NUMBER_ROUND).toNumber();
+
+            } else if (item.saldoCta <= this.valorAbono) {
+                item.saldoCta = 0;
+            }
+
+            //Validaciones Saldo 
+
+            if (item.saldo >= this.valorAbono) {
+
+                item.abono = this.esAbonoPosfechado ? item.abono : fS.plus(item.abono, this.valorAbono, this.MAX_NUMBER_ROUND);
+                item.abonoPosfechado = this.esAbonoPosfechado ? fS.plus(item.abonoPosfechado, this.valorAbono, this.MAX_NUMBER_ROUND) : item.abonoPosfechado;
+
+                item.saldo = fS.minus(item.saldo, this.valorAbono, this.MAX_NUMBER_ROUND)
+
+
+                this.addCobroDetalle(item, this.valorAbono, item.saldo);
+                this.valorAbono = 0;
+
+
+            } else if (item.saldo <= this.valorAbono) {
+                item.abono = this.esAbonoPosfechado ? item.abono : fS.plus(item.abono, item.saldo, this.MAX_NUMBER_ROUND)
+                item.abonoPosfechado = this.esAbonoPosfechado ? fS.plus(item.abonoPosfechado, item.saldo, this.MAX_NUMBER_ROUND) : item.abonoPosfechado;
+
+                this.addCobroDetalle(item, item.saldo, 0);
+
+                this.valorAbono = fS.minus(this.valorAbono, item.saldo, this.MAX_NUMBER_ROUND)
+                item.saldo = 0;
+            }
+        }
+
+
+        /**
+         * 
+         * @param {object} item 
+         * @param {number} abono 
+         * @returns void
+         */
+        this.addCobroDetalle = (item, abono, saldo) => {
+            if (item.cuota === 0 || abono === 0) return;
+
+            let valorMovimientoSaldo = 0;
+            let cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => (
+                cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar &&
+                cd.idCuotaPorCobrar === item.idCuotaPorCobrar
+            ))
+
+            let dataUltimoCobroDetalle = cobrosDetalleFiltered.pop();
+            if (dataUltimoCobroDetalle) {
+                valorMovimientoSaldo = fS.minus(dataUltimoCobroDetalle.saldoOriginal, dataUltimoCobroDetalle.abono, this.MAX_NUMBER_ROUND)
+            } else {
+                valorMovimientoSaldo = fS.instanceDecimal(item.saldoOriginal, this.MAX_NUMBER_ROUND)
+            }
+
+
+            this.cobrosDetalle.push({
+                idCuentaPorCobrar: this.group.idCuentaPorCobrar,
+                idCuotaPorCobrar: item.idCuotaPorCobrar,
+                abono,
+                //  abono: this.fS.roundNumber(abono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                interes: item.interes,
+                diasMora: item.diasMora,
+                mora: item.mora,
+                cuota: fS.instanceDecimal(item.cuota, this.MAX_NUMBER_ROUND),
+                //  cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                saldo: fS.instanceDecimal(saldo, this.MAX_NUMBER_ROUND),
+                secuencial: this.uniqueIndex,
+                valorSaldoLectura: item.valorSaldoLectura,
+                saldoOriginal: fS.instanceDecimal(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
+                posfechado: this.esAbonoPosfechado
+            })
+            item.saldo = fS.instanceDecimal(item.saldo, this.MAX_NUMBER_ROUND)
+            item.saldoOriginal = fS.minus(item.saldoOriginal, abono, this.MAX_NUMBER_ROUND);
+        }
+
+
+
+
+        /**
+         * 
+         * @param {*} param0 
+         * @returns 
+         */
+        this.getEstadoCuota = ({ saldo, abono, esPosfechado }) => {
+            let estado = '';
+            let dataEstadoPago = {};
+
+            if (esPosfechado) {
+                dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'PFC');
+            } else {
+                if (saldo === 0) {
+                    dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'CBR');
+                    estado = 'COBRADA'
+                }
+                if (saldo > 0) {
+                    dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'PP');
+                    estado = "PENDIENTE PARCIAL";
+                }
+                if (abono === 0) {
+                    dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'PE');
+                    estado = "PENDIENTE";
+                }
+
+            }
+
+
+            return {
+                idEstadoPago: dataEstadoPago.idEstadoPago,
+                descripcion: estado
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+    }]);
+
+})()

@@ -342,6 +342,21 @@ app.constant('nombreModalLogistica', {
 })
 
 app.constant('nombreModalContabilidad', {
+    COBRO_RAPIDO: {
+        fileCtrl: '/js/contabilidad/modals/cobro/modalCobroRapidoCtrl.min.js' + CHANGE_VERSION(),
+        ctrl:'modalCobroRapidoCtrl',
+        template: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCobroRapido.cshtml'
+    },
+    COBRO_LOTE: {
+        fileCtrl: '/js/contabilidad/modals/cobro/modalCobroLoteCtrl.min.js' + CHANGE_VERSION(),
+        ctrl: 'modalCobroLoteCtrl',
+        template: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCobroLote.cshtml'
+    },
+    FORMA_COBRO: {
+        fileCtrl: '/js/contabilidad/modals/cobro/modalFormaCobroCtrl.min.js' + CHANGE_VERSION(),
+        ctrl: 'modalFormaCobroCtrl',
+        template: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalFormaCobro.cshtml'
+    },
     COBRO: {
         fileCtrl: '/js/contabilidad/modals/modalCobroCtrl.min.js' + CHANGE_VERSION(),
         fileCuotaCtrl: '/js/contabilidad/modals/modalCuotaCtrl.min.js' + CHANGE_VERSION(),
