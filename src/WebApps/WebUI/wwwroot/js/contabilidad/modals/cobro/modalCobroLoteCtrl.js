@@ -13,7 +13,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     let { data, selectedDocumentos } = params;
 
     const comprobanteIngresoSvc = $injector.get('comprobanteIngresoService');
-    const modalCobroSvc = $injector.get('modalCobroService');
+    const modalCobroSvc = $injector.get('modalCobroService').get();
     const fS = $injector.get('formulario');
     const nombreModalContabilidad = $injector.get('nombreModalContabilidad');
     const modalSvc = $injector.get('modalService');
@@ -66,7 +66,8 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             comprobanteIngresoSvc.getDataForm(idCuentaPorCobrar, idCliente).then(response => {
 
                 dataFormaCobro = response;
-                modalCobroSvc.setEstadoPago(dataFormaCobro.estadosPago);
+                console.log(modalCobroSvc)
+                modalCobroSvc.setEstadoCobro(dataFormaCobro.estadosPago);
                 modalCobroSvc.setConfigCobro(dataFormaCobro.configCobro);
 
                 //Cuando proviene de Cuentas por Cobrar
@@ -139,32 +140,34 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
     function getTotalesCuota() {
         let importeTotal = fS.instanceDecimal(0),
-            abono = fS.instanceDecimal(0),
-            saldo = fS.instanceDecimal(0),
-            totalMora = fS.instanceDecimal(0),
-            totalSaldoDoc = fS.instanceDecimal(0);
+            abono = fS.instanceDecimal(0), 
+            totalMora = fS.instanceDecimal(0), 
+            saldoActualDoc = fS.instanceDecimal(0)
 
         for (let item of $scope.selectedDocumentos) {
-            importeTotal = importeTotal.plus(item.importeTotal);
-            saldo = saldo.plus(item.saldo);
+            importeTotal = importeTotal.plus(item.importeTotal); 
             abono = abono.plus(item.abono);
-            totalMora = totalMora.plus(item.mora || 0);
-            totalSaldoDoc = totalSaldoDoc.plus(item.saldoDoc || 0);
+
+            for(let dataCuota of item.cuotasCalculadas){
+                totalMora = totalMora.plus(dataCuota.interesPorMoraActual || 0); 
+            }
+            saldoActualDoc = saldoActualDoc.plus(item.saldoActualDoc)
         }
 
         $scope.data.importeTotal = importeTotal.toNumber();
-        $scope.data.totalSaldo = saldo.toNumber();
+        $scope.data.totalSaldo = saldoActualDoc.toNumber();
         $scope.data.totalAbonoAnterior = abono.toNumber();
-        $scope.data.totalMora = totalMora.toNumber();
-        $scope.data.totalSaldoDoc = totalSaldoDoc.toNumber();
+        $scope.data.totalMora = totalMora.toNumber(); 
         $scope.data.totalValorAbono = 0;
         $scope.data.valorCambio = 0;
+        $scope.data.saldoActualDoc = saldoActualDoc.toNumber();
+        $scope.data.totalSaldoDoc = saldoActualDoc.toNumber();
 
         //cuando se realiza cobro desde modulo de comprobante ingreso  
         $scope.dataCuentaPorCobrar.importeTotal = $scope.data.importeTotal
         $scope.dataCuentaPorCobrar.abono = $scope.data.totalAbonoAnterior
         $scope.dataCuentaPorCobrar.saldo = $scope.data.totalSaldo
-        $scope.dataCuentaPorCobrar.totalMora = $scope.data.totalMora;
+        $scope.dataCuentaPorCobrar.totalMora = $scope.data.totalMora; 
 
     }
 
@@ -174,7 +177,8 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     }
 
     function showCobroDetalle(data) {
-        let tempDetails = $scope.cobrosDetalle.filter(item => item.idCuotaPorCobrar === data.idCuotaPorCobrar && item.idCuentaPorCobrar === data.idCuentaPorCobrar);
+        console.log(modalCobroSvc)
+        let tempDetails = modalCobroSvc.getCobrosDetalle().filter(item => item.idCuotaPorCobrar === data.idCuotaPorCobrar && item.idCuentaPorCobrar === data.idCuentaPorCobrar);
         let infoCobrosDetalle = [];
 
         for (let pd of tempDetails) {
@@ -237,7 +241,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                 size: 'lg',
                 params: {
                     dataFormaCobro: structuredClone(dataFormaCobro),
-                    comprobante: $scope.dataCuentaPorCobrar,
+                    dataCuentaPorCobrar: $scope.dataCuentaPorCobrar,
                     saldo: $scope.data.totalSaldo,
                     datosCobro: $scope.datosCobro
                 },
@@ -259,25 +263,19 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         try {
             let { posfechado, valorAbono } = result;
 
-            modalCobroSvc.selectedDocumentos = $scope.selectedDocumentos;
-
-            modalCobroSvc.uniqueIndex = $scope.datosCobro.length + 1;
-            modalCobroSvc.esAbonoPosfechado = posfechado;
-            modalCobroSvc.valorAbono = valorAbono;
+            modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
+            modalCobroSvc.setUniqueIndex ($scope.datosCobro.length + 1)
+            modalCobroSvc.setEsAbonoPosfechado(posfechado);
+            modalCobroSvc.setValorAbono(valorAbono);
 
             //--------agregando abono ---
-            modalCobroSvc.addFormaCobro();
+            modalCobroSvc.aplicarAbono();
 
-            $scope.cobrosDetalle = modalCobroSvc.cobrosDetalle;
-            $scope.selectedDocumentos = modalCobroSvc.selectedDocumentos;
+            $scope.cobrosDetalle = modalCobroSvc.getCobrosDetalle()
+            $scope.selectedDocumentos = modalCobroSvc.getCuentasPorCobrar(); 
 
-            cuentasPorCobrarEstado = modalCobroSvc.cuentasPorCobrarEstado;
-            cuotasPorCobrarEstado = modalCobroSvc.cuotasPorCobrarEstado;
 
-            let abonoCuota = $scope.cobrosDetalle
-                .filter(item => item.secuencial === modalCobroSvc.indexDatoCobro)
-                .reduce((prev, curr) => fS.instanceDecimal(prev).plus(curr.abono), fS.instanceDecimal(0))
-                .toNumber();
+            let abonoCuota = modalCobroSvc.getAbonoCuota();
 
 
 
@@ -296,7 +294,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         $scope.datosCobro.push({
             ...obj,
             abonoCuota: fS.roundNumber(abonoCuota, 2),
-            secuencial: modalCobroSvc.uniqueIndex
+            secuencial: modalCobroSvc.getUniqueIndex()
         })
     }
 
@@ -314,8 +312,8 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             totalValorAbonoEfectivo: 0
         });
 
-        let totalSaldo = $scope.selectedDocumentos.flatMap(item => item.cuotas)
-            .reduce((prev, curr) => fS.plus(prev, curr.saldo).toNumber(), 0);
+        let totalSaldo = $scope.selectedDocumentos.flatMap(item => item.cuotasCalculadas)
+            .reduce((prev, curr) => fS.plus(prev, curr.saldoTotalActual).toNumber(), 0);
         let valorCambio = 0;
 
         $scope.data.totalValorAbono = fS.roundNumber(totalValorAbono, 5);
@@ -346,48 +344,35 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
                 $scope.$apply(() => {
 
-                    modalCobroSvc.cobrosDetalle = [];
-                    modalCobroSvc.historialCuentas = [];
-                    modalCobroSvc.cuotasPorCobrarEstado = [];
-
-                    cuentasPorCobrarEstado = [];
-                    cuotasPorCobrarEstado = [];
-
-                    $scope.cobrosDetalle = [];
-
+                    modalCobroSvc.setCobrosDetalle([]);
+                    modalCobroSvc.setHistorialCuentas([]) ;   
 
                     let index = $scope.datosCobro.indexOf(item);
                     $scope.datosCobro.splice(index, 1);
 
                     //Todas las cuotas en su estado original                     
                     for (let item of $scope.selectedDocumentos) {
-                        item.cuotas = structuredClone(item.cuotasOriginal);
+                        item.cuotasCalculadas = structuredClone(item.cuotasCalculadasClone);
                     }
 
-                    modalCobroSvc.selectedDocumentos = $scope.selectedDocumentos;
+                    modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
 
                     getTotalesCuota();
-
-                    if ($scope.datosCobro.length == 0) return
+ 
 
                     //Recalculamos las cuotas con los abonos restantes   
                     let uniqueIndex = 0;
                     modalCobroSvc.uniqueIndex = uniqueIndex;
                     for (let item of $scope.datosCobro) {
                         uniqueIndex++;
-                        modalCobroSvc.uniqueIndex = uniqueIndex;
+                        modalCobroSvc.setUniqueIndex(uniqueIndex);
 
-                        modalCobroSvc.valorAbono = item.valorAbono;
-                        modalCobroSvc.esAbonoPosfechado = item.posfechado;
+                        modalCobroSvc.setValorAbono(item.valorAbono);
+                        modalCobroSvc.setEsAbonoPosfechado(item.posfechado);
 
                         //--------agregando abono ---
-                        modalCobroSvc.addFormaCobro();
-                    }
-
-                    $scope.cobrosDetalle = modalCobroSvc.cobrosDetalle;
-
-                    cuentasPorCobrarEstado = modalCobroSvc.cuentasPorCobrarEstado;
-                    cuotasPorCobrarEstado = modalCobroSvc.cuotasPorCobrarEstado;
+                        modalCobroSvc.aplicarAbono();
+                    }  
 
                     calculoTotales();
                 })

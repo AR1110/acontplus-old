@@ -186,8 +186,7 @@ class CobroService {
 
     }
 
-    generarHistorialCuentaPorCobrar(){  
-    }
+     
 
     generarCuotasPorCobrarEstado({ cobrosDetalle }){ 
 
