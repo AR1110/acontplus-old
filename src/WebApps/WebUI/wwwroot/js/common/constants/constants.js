@@ -348,7 +348,7 @@ app.constant('nombreModalContabilidad', {
         template: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCobroRapido.cshtml'
     },
     COBRO_LOTE: {
-        fileCtrl: '/js/contabilidad/modals/cobro/modalCobroLoteCtrl.min.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/contabilidad/modals/cobro/modalCobroLoteCtrl.js' + CHANGE_VERSION(),
         ctrl: 'modalCobroLoteCtrl',
         template: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCobroLote.cshtml'
     },
