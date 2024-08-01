@@ -55,7 +55,7 @@ BEGIN
 
 	IF @tipo = 2
 		BEGIN
-            SET @tableNames = 'estabs'
+            SET @tableNames = 'estabs,tiposDoc'
 			 SELECT idEstablecimiento
                       ,nombreComercial
                       ,codEstab
@@ -65,8 +65,8 @@ BEGIN
                       ,defaultPtoEmi 
              FROM v_PtoEmi_Asign WITH(NOLOCK) 
 			 WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
-			 RETURN 
-				
-		END
+
+	        SELECT * FROM Acontplus.dbo.TipoDocumento WITH(NOLOCK) WHERE estado = 1 AND secuencial = 1	
+		END 
 	
 END

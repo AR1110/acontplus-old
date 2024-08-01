@@ -1,16 +1,18 @@
 USE [Acontplus]
 GO
-/****** Object:  StoredProcedure [Sri].[Establecimiento_Insert]    Script Date: 10/5/2024 16:51:28 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER PROCEDURE Sri.Establishment_Insert @userRoleId INT,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Sri.Establishment_Insert @userRoleId INT
+    ,@json VARCHAR(MAX)
+    ,@fromMobile BIT
+    ,@errorCode INT = 0 OUTPUT
+	,@errorMessage NVARCHAR(MAX) = '' OUTPUT
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
     SET LANGUAGE SPANISH;
 
     --> Global
@@ -18,47 +20,64 @@ BEGIN
         @idUsuario INT,
         @demoStepId INT,
         @uuid UNIQUEIDENTIFIER,
-        @companyId INT;
+        @companyId INT,
+        @username VARCHAR(100);
     --> Establecimiento
-	DECLARE @sequencial INT ,@codEstab VARCHAR(150) ,@estab VARCHAR(15)
+	DECLARE @sequencial INT,
+        @codEstab VARCHAR(150),
+        @estab VARCHAR(15),
+        @ptosEmi VARCHAR(1000),
+        @bodegas VARCHAR(MAX),
+        @direccionBodega VARCHAR(300),
+        @telefonoBodega VARCHAR(150),
+        @id INT;
 
     DECLARE @tbEstablecimiento AS TABLE (
-         canton VARCHAR(10) NULL
+         canton VARCHAR(10)
 	    ,actividad VARCHAR(5) NOT NULL 
-	    ,agenteRetencion VARCHAR(150) NULL
+	    ,agenteRetencion VARCHAR(150)
 	    ,contribuyente VARCHAR(5) NOT NULL  
 	    ,estab VARCHAR(5) NOT NULL 
-	    ,contribuyenteEspecial VARCHAR(10) NULL
+	    ,contribuyenteEspecial VARCHAR(10)
 	    ,obligadoContabilidad VARCHAR(5) NOT NULL  
 	    ,nombreComercial VARCHAR(150) NOT NULL
 	    ,dirEstablecimiento VARCHAR(300) NOT NULL
-	    ,telefono VARCHAR(150) NULL
-	    ,contribuyenteRimpe VARCHAR(150) NULL
-	    ,correo VARCHAR(300) NULL
-    )
+	    ,telefono VARCHAR(150)
+	    ,contribuyenteRimpe VARCHAR(150)
+	    ,correo VARCHAR(300)
+        ,demoStepId INT
+        ,ptosEmi VARCHAR(1000)
+        ,bodegas VARCHAR(MAX)
+
+    );
 	
 	BEGIN TRY
         --> Variables Globales
-		SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario, @username = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 		--> Data Json
         INSERT INTO @tbEstablecimiento 
-              (canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,contribuyenteRimpe,correo)
-		SELECT canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,contribuyenteRimpe,correo
+              (canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,
+              dirEstablecimiento,telefono,contribuyenteRimpe,correo, demoStepId, ptosEmi, bodegas)
+		SELECT canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,
+        dirEstablecimiento,telefono,contribuyenteRimpe,correo, demoStepId, ptosEmi, bodegas
 		FROM OPENJSON (@json) WITH 
         (
-			 canton                VARCHAR(10) 
-		    ,actividad             VARCHAR(5)  
-		    ,agenteRetencion       VARCHAR(150)
-		    ,contribuyente         VARCHAR(5)  
-		    ,estab                 VARCHAR(5)  
-		    ,contribuyenteEspecial VARCHAR(10) 
-		    ,obligadoContabilidad  VARCHAR(5)  
-		    ,nombreComercial       VARCHAR(150)
-		    ,dirEstablecimiento    VARCHAR(300)
-		    ,telefono              VARCHAR(150)
-		    ,contribuyenteRimpe    VARCHAR(150)
-		    ,correo                VARCHAR(300)
+			 canton                 VARCHAR(10) 
+		    ,actividad              VARCHAR(5)  
+		    ,agenteRetencion        VARCHAR(150)
+		    ,contribuyente          VARCHAR(5)  
+		    ,estab                  VARCHAR(5)  
+		    ,contribuyenteEspecial  VARCHAR(10) 
+		    ,obligadoContabilidad   VARCHAR(5)  
+		    ,nombreComercial        VARCHAR(150)
+		    ,dirEstablecimiento     VARCHAR(300)
+		    ,telefono               VARCHAR(150)
+		    ,contribuyenteRimpe     VARCHAR(150)
+		    ,correo                 VARCHAR(300)
+            ,demoStepId             INT
+            ,ptosEmi                VARCHAR(1000)
+            ,bodegas                VARCHAR(MAX)
 		)
 
         --> Variables 
@@ -66,7 +85,13 @@ BEGIN
 
 		SELECT @codEstab =  'ESTAB-'+Helper.F_Auto_Sequential(@sequencial)
 
-        SELECT TOP 1 @estab = estab FROM @tbEstablecimiento
+        SELECT TOP 1 @estab = estab
+            ,@demoStepId = demoStepId
+            ,@ptosEmi = ptosEmi
+            ,@bodegas = bodegas
+            ,@direccionBodega = dirEstablecimiento 
+            ,@telefonoBodega = telefono
+        FROM @tbEstablecimiento
 
         --> Validaciones
 		IF NOT EXISTS (SELECT 1 FROM @tbEstablecimiento)
@@ -87,22 +112,201 @@ BEGIN
         SET @companyId = (SELECT Id FROM AcontplusAdmin.Config.Company WITH(NOLOCK) WHERE Uuid = @uuid);
 
 
-		BEGIN TRAN 
+		BEGIN TRAN
 
-           IF (@demoStepId > 0)
+			INSERT INTO Sri.Establecimiento
+				   (codEstab,canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario, fromMobile)
+			SELECT @codEstab,canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile
+            FROM @tbEstablecimiento
+
+            SET @id = (SELECT SCOPE_IDENTITY())
+
+ 
+            DECLARE @estabAsignParams VARCHAR(MAX)
+
+            SET @estabAsignParams = '{"idUsuarioRol": "' + CAST(@userRoleId AS VARCHAR(10)) + '",
+            "codEstab": "' + @codEstab + '"}'
+            
+            EXEC Config.Estab_Asig_Insert @userRoleId, @estabAsignParams, @fromMobile, @errorCode = @errorCode OUT, @errorMessage = @errorMessage OUT
+            
+            IF (@errorCode <> 0)
+                BEGIN
+                    SET @errorMessage = 'sp Acontplus.Config.Estab_Asig_Insert failed: ' + ISNULL(@errorMessage, '')
+				    RAISERROR(@errorMessage,16,1)
+                END
+
+            DECLARE @codEstab_Asig VARCHAR(150)
+                ,@idEstab_Asig INT;
+
+            SELECT @codEstab_Asig = codEstab_Asig
+                ,@idEstab_Asig = idEstab_Asig
+            FROM Acontplus.Config.Estab_Asig ea WITH(NOLOCK) 
+            WHERE idEstablecimiento = @id;
+
+            DECLARE @bodegaParams VARCHAR(300);
+            DECLARE @i INT = 0;
+            DECLARE @count INT; 
+
+            IF (ISJSON(@bodegas) = 1 AND EXISTS (SELECT 1 FROM OPENJSON(@bodegas)))
+                BEGIN
+                   DECLARE @TempBodegas TABLE (
+                        id INT IDENTITY(1,1),
+                        descripcion VARCHAR(300),
+                        direccion VARCHAR(300),
+                        telefono VARCHAR(100)
+                    );
+
+                    INSERT INTO @TempBodegas (descripcion, direccion, telefono)
+                    SELECT descripcion, direccion, telefono
+                    FROM OPENJSON(@bodegas) 
+                    WITH (descripcion VARCHAR(300), direccion VARCHAR(300), telefono VARCHAR(150));
+
+                    SELECT @count = COUNT(*) FROM @TempBodegas;
+
+                    WHILE @i < @count
+                    BEGIN
+                        SET @i = @i + 1;
+
+                        SELECT 
+                            @bodegaParams =  '{ "codEstab": "' + @codEstab + '",
+                            "descripcion": "' + descripcion + '",
+                            "direccion": "' + direccion + '", 
+                            "telefono": "' + telefono + '"}'
+                        FROM @TempBodegas
+                        WHERE id = @i;
+
+                        EXEC Inventario.Bodega_Insert 
+                            @userRoleId, 
+                            @bodegaParams,
+                            @fromMobile, 
+                            @errorCode = @errorCode OUT,
+                            @errorMessage = @errorMessage OUT;
+
+                        IF @errorCode <> 0
+                        BEGIN
+                            SET @errorMessage = 'sp Acontplus.Inventario.Bodega_Insert failed: ' + ISNULL(@errorMessage, '')
+				            RAISERROR(@errorMessage,16,1);
+                            BREAK;
+                        END
+                    END
+                END
+            ELSE
+                BEGIN
+                    SET @bodegaParams =  '{"codEstab": "' + @codEstab + '", "descripcion": "Principal", "direccion": "' + @direccionBodega + '", "telefono": "' + @telefonoBodega + '"}'
+                    EXEC Inventario.Bodega_Insert 
+                            @userRoleId, 
+                            @bodegaParams,
+                            @fromMobile, 
+                            @errorCode = @errorCode OUT,
+                            @errorMessage = @errorMessage OUT;
+
+                    IF @errorCode <> 0
+                        BEGIN
+                            SET @errorMessage = 'sp Acontplus.Inventario.Bodega_Insert failed: ' + ISNULL(@errorMessage, '')
+				            RAISERROR(@errorMessage,16,1)
+                        END
+                END
+
+            IF EXISTS(SELECT TOP 1 1 FROM Acontplus.dbo.Bodega WITH(NOLOCK) WHERE codEstab = @codEstab)
+                BEGIN
+                    SET @i = 0;
+
+                    DECLARE @TempBodegAsig TABLE (
+                        id INT IDENTITY(1,1),
+                        idBodega INT,
+                        codEstabAsig VARCHAR(150)
+                    );
+
+                    INSERT INTO @TempBodegAsig (idBodega, codEstabAsig)
+                    SELECT idBodega, @codEstab_Asig
+                    FROM Acontplus.dbo.Bodega WITH(NOLOCK)
+                    WHERE codEstab = @codEstab
+
+                    SELECT @count = COUNT(*) FROM @TempBodegAsig;
+
+                    WHILE @i < @count
+                    BEGIN
+                        SET @i = @i + 1;
+
+                        SELECT 
+                            @bodegaParams =  '{"idBodega": "' + CAST(idBodega AS varchar(10)) + '", "codEstab_Asig": "' + codEstabAsig + '"}'
+                        FROM @TempBodegAsig
+                        WHERE id = @i;
+
+                        EXEC Config.Bodeg_Asig_Insert 
+                            @userRoleId, 
+                            @bodegaParams,
+                            @fromMobile, 
+                            @errorCode = @errorCode OUT,
+                            @errorMessage = @errorMessage OUT;
+
+                        IF @errorCode <> 0
+                        BEGIN
+                            SET @errorMessage = 'sp Acontplus.Config.Bodeg_Asig_Insert failed: ' + ISNULL(@errorMessage, '')
+				            RAISERROR(@errorMessage,16,1);
+                            BREAK;
+                        END
+                    END
+                END
+
+            IF (ISJSON(@ptosEmi) = 1)
+                BEGIN
+                    INSERT INTO Acontplus.dbo.PuntoEmision(idEstablecimiento, ambiente, ptoEmi, idUsuario)
+                    SELECT @id, ambiente, ptoEmi, @idUsuario FROM OPENJSON(@ptosEmi) WITH (ambiente CHAR, ptoEmi VARCHAR(3))
+                END
+
+
+            IF (@demoStepId > 0)
                 BEGIN
                     IF NOT EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH (NOLOCK) 
                                                     WHERE Uuid = @uuid AND DemoStepId = @demoStepId)
                         BEGIN
-                            INSERT INTO AcontplusAdmin.Config.CompanyDemoStep(DemoStepId, CompanyId, Uuid)
-                            VALUES(@demoStepId, @companyId, @uuid);
+                            INSERT INTO AcontplusAdmin.Config.CompanyDemoStep(DemoStepId, CompanyId, Uuid, FromMobile)
+                            VALUES(@demoStepId, @companyId, @uuid, @fromMobile);
+                        END
+
+                    IF EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.PuntoEmision WITH(NOLOCK) WHERE idEstablecimiento = @id)
+                        BEGIN
+                           SET @i = 0;
+
+                            DECLARE @TempPtoEmiAsig TABLE (
+                                id INT IDENTITY(1,1),
+                                idPuntoEmision INT,
+                                codEstabAsig VARCHAR(150)
+                            );
+
+                            INSERT INTO @TempPtoEmiAsig (idPuntoEmision, codEstabAsig)
+                            SELECT idPuntoEmision, @codEstab_Asig
+                            FROM Acontplus.dbo.PuntoEmision WITH(NOLOCK)
+                            WHERE idEstablecimiento = @id
+
+                            SELECT @count = COUNT(*) FROM @TempPtoEmiAsig;
+
+                            WHILE @i < @count
+                            BEGIN
+                                SET @i = @i + 1;
+
+                                SELECT 
+                                    @bodegaParams =  '{"idPuntoEmision": "' + CAST(idPuntoEmision AS varchar(10)) + '", "codEstab_Asig": "' + codEstabAsig + '"}'
+                                FROM @TempPtoEmiAsig
+                                WHERE id = @i;
+
+                                EXEC Acontplus.Config.PtoEmi_Asig_Insert
+                                    @userRoleId, 
+                                    @bodegaParams,
+                                    @fromMobile, 
+                                    @errorCode = @errorCode OUT,
+                                    @errorMessage = @errorMessage OUT;
+
+                                IF @errorCode <> 0
+                                BEGIN
+                                    SET @errorMessage = 'sp Acontplus.Config.PtoEmi_Asig_Insert failed: ' + ISNULL(@errorMessage, '')
+				                    RAISERROR(@errorMessage,16,1);
+                                    BREAK;
+                                END
+                            END
                         END
                 END
-
-			INSERT INTO Sri.Establecimiento
-				   (codEstab,canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario)
-			SELECT @codEstab,canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario
-            FROM @tbEstablecimiento
             
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' AS 'message'

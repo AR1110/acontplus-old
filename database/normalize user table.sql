@@ -7,8 +7,7 @@ GO
 --WHERE u.nroIdentificacion IS NULL OR LEN(LTRIM(RTRIM(u.nroIdentificacion))) = 0
 --ALTER TABLE Acontplus.App.UsuarioRol ALTER COLUMN nroIdentificacion VARCHAR(25) NULL
 
-GO
-
+GO 
 ALTER TABLE App.UsuarioRol ALTER COLUMN idUsuario INT NOT NULL
 GO
 
@@ -188,3 +187,16 @@ GO
 
 DROP PROC IF EXISTS App.Usuario_Update
 GO
+
+DROP PROC IF EXISTS dbo.ASPTipoDocumentoGetAll
+GO
+
+DROP PROC IF EXISTS ASPGenerarNroDc
+GO
+
+DROP FUNCTION IF EXISTS AFTCodigoTipoDocumento
+GO
+
+DROP FUNCTION IF EXISTS AFTIdTipoDocumento
+GO
+

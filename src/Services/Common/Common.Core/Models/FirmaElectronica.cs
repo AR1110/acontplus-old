@@ -12,4 +12,5 @@ public class FirmaElectronica
     public string dirUrl { get; set; }
     public bool estado { get; set; }
     public DateTime fechaCaducidad { get; set; }
+    public int demoStepId { get; set; }
 }

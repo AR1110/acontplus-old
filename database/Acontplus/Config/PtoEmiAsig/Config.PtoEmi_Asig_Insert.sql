@@ -1,14 +1,6 @@
 USE AcontPlus
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
+GO
+
 -- ================================================
 SET ANSI_NULLS ON
 GO
@@ -19,71 +11,98 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- ============================================= 
-CREATE OR ALTER PROCEDURE Config.PtoEmi_Asig_Insert 
-	@userRoleId INT
-   ,@json VARCHAR(MAX)
-   
+CREATE OR ALTER PROCEDURE Config.PtoEmi_Asig_Insert @userRoleId INT
+    ,@json VARCHAR(MAX)
+    ,@fromMobile BIT
+    ,@errorCode INT = 0 OUTPUT
+    ,@errorMessage NVARCHAR(MAX) = '' OUTPUT
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @idUsuario INT 
-	DECLARE @usuario VARCHAR(150)
-	DECLARE @predeterminado BIT 
-	DECLARE @ptoEmi VARCHAR(5)
-	DECLARE @message VARCHAR(150)
+    SET XACT_ABORT ON;
 
-    DECLARE @id INT 
-    DECLARE @codEstab_Asig VARCHAR(150)
-    DECLARE @idPuntoEmision INT
+	DECLARE @idUsuario INT,
+	    @usuario VARCHAR(150),
+	    @predeterminado BIT, 
+	    @ptoEmi VARCHAR(3),
+        @idEstab_Asig INT;
 
-    SELECT 
-        @codEstab_Asig = codEstab_Asig
-        ,@idPuntoEmision = idPuntoEmision
-        ,@id             = idPtoEmi_Asig
-    FROM OPENJSON(@json)
-    WITH(
-        codEstab_Asig VARCHAR(150)
-        ,idPuntoEmision INT
-        ,idPtoEmi_Asig INT
-    )
+    DECLARE @id INT,
+        @codEstab_Asig VARCHAR(150),
+        @idPuntoEmision INT;
+
+    DECLARE @code CHAR(1),
+		@message VARCHAR(MAX),
+		@trancount BIT = 0;
 
 	BEGIN TRY
+        SELECT @codEstab_Asig = codEstab_Asig
+            ,@idPuntoEmision = idPuntoEmision
+            ,@id             = idPtoEmi_Asig
+        FROM OPENJSON(@json)
+        WITH(
+            codEstab_Asig VARCHAR(150)
+            ,idPuntoEmision INT
+            ,idPtoEmi_Asig INT
+        );
+
 		
-		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
+		SELECT @idUsuario = idUsuario, @usuario = nombreUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId;
 
-		SELECT @usuario = nombreUsuario FROM dbo.Usuario WHERE idUsuario = @idUsuario
+		SELECT @ptoEmi = ptoEmi FROM dbo.PuntoEmision WITH(NOLOCK) WHERE idPuntoEmision = @idPuntoEmision;
 
-		SELECT @ptoEmi = ptoEmi FROM dbo.PuntoEmision WHERE idPuntoEmision = @idPuntoEmision
+        SET @idEstab_Asig = (SELECT TOP 1 idEstab_Asig FROM Config.Estab_Asig WITH(NOLOCK) WHERE codEstab_Asig = @codEstab_Asig);
 
-		SET @predeterminado = IIF ((SELECT COUNT(*) FROM Config.PtoEmi_Asig WHERE codEstab_Asig = @codEstab_Asig ) = 0,1,0)
+		SET @predeterminado = IIF ((SELECT COUNT(*) FROM Config.PtoEmi_Asig WITH(NOLOCK) WHERE codEstab_Asig = @codEstab_Asig ) = 0,1,0);
 
-		BEGIN TRAN 
-			IF @id = 0
+		IF (@@TRANCOUNT = 0)
+			BEGIN
+				BEGIN TRANSACTION;
+				SET @trancount = 1;
+			END
+			IF @id = 0 OR @id IS NULL
 				BEGIN
-					INSERT INTO Config.PtoEmi_Asig(codEstab_Asig,idPuntoEmision,ptoEmi,predeterminado,usuario,fechaRegistro)
-					SELECT @codEstab_Asig,@idPuntoEmision,@ptoEmi,@predeterminado,@usuario,dbo.ufnGetDateEcuador()
+					INSERT INTO Config.PtoEmi_Asig(codEstab_Asig,idPuntoEmision,ptoEmi,predeterminado,usuario, idEstab_Asig, idUsuario, fechaRegistro, fromMobile)
+					SELECT @codEstab_Asig,@idPuntoEmision,@ptoEmi,@predeterminado,@usuario, @idEstab_Asig, @idUsuario, dbo.ufnGetDateEcuador(), @fromMobile
 					SET @message = 'Registrado Correctamente'
-
 				END 
 			IF @id > 0 
 				BEGIN
 					DELETE FROM Config.PtoEmi_Asig WHERE idPtoEmi_Asig = @id
 					SET @message = 'Eliminado Correctamente'
-				END 
-		COMMIT TRAN  
-        SELECT [Common].[ufnSpResponse]('1',@message,DEFAULT)
-		RETURN 
+				END
+
+		IF (@@ROWCOUNT > 0)
+			BEGIN
+				SET @code = '1'; 
+			END
+		ELSE
+			BEGIN
+				SET @code = '0';
+                SET @message = 'No se ejecuto ninguna transacción';
+			END
+
+	  IF (@trancount = 1)
+		BEGIN
+			COMMIT;
+			SELECT @code as code, @message as 'message';
+		 END
 	END TRY 
 
 	BEGIN CATCH	 
-        SELECT [Common].[ufnSpResponse]('0',ERROR_MESSAGE(),DEFAULT)
-
-		IF (@@TRANCOUNT > 0)
+        IF (@trancount = 1)
 			BEGIN
-				ROLLBACK TRAN
-			END
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRAN;  
+
+                INSERT INTO ErroresSistema
+                      (method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,idUsuario)
+		        SELECT '/PtomEmi_Asig/Post',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),@idUsuario
+		        SELECT '0' code, 'Error en el procedimiento' as 'message'
+            END
+		ELSE
+			SET @errorCode = ERROR_NUMBER()
+			SET @errorMessage = ERROR_MESSAGE()
 	END CATCH 
 
 END

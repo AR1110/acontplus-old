@@ -1,8 +1,6 @@
 ﻿namespace Configuracion.API.Controllers;
 
 public class FirmaElectronicaController(
-    IConfiguration configuration,
-    ICustomLogger log,
     IFirmaElectronicaService firmaElectronicaService) : BaseApiController
 {
     [HttpGet("Get")]
@@ -18,136 +16,72 @@ public class FirmaElectronicaController(
     [HttpPost("Post")]
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(configuration);
-        try
+        if (file.ContentType != "application/x-pkcs12")
         {
-            var idRol = User.GetUserRoleId();
-            if (file.ContentType != "application/x-pkcs12")
-            {
-                _response.Create("0", "Formato de archivo no soportado");
-                return Ok(_response);
-            }
+            return Ok(new ApiResponse { Code = "0", Message = "Formato de archivo no soportado" });
+        }
 
-            var signFile = new FileModel
+        var signFile = new FileModel
+        {
+            FileName = FileExtensions.SanitizeFileName(file.FileName),
+            ContentType = file.ContentType,
+            Content = FileData.GetFileByte(file)
+        };
+        var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
+
+        var parameters = new Dictionary<string, object>
             {
-                FileName = FileExtensions.SanitizeFileName(file.FileName),
-                ContentType = file.ContentType,
-                Content = FileData.GetFileByte(file)
+                { "userRoleId", User.GetUserRoleId() },
+                { "contrasenia", data.contrasenia },
+                { "fileName", signFile.FileName },
+                { "firma", signFile.Content },
+                { "contentType", signFile.ContentType },
+                { "fechaCaducidad", data.fechaCaducidad },
+                { "demoStepId", data.demoStepId },
+                { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
             };
-            if (await new FileUpload().Upload(configuration.GetSection("FactElectCerts").Value, signFile.FileName,
-                    signFile.Content))
-            {
-                var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
-                await _db.SpExecuteAsync("Config.FirmaElectronica_Insert");
-                _db.AddDynamicParam("idUsuarioRol",
-                    User.GetUserRoleId());
-                _db.AddDynamicParam("contrasenia", data.contrasenia);
-                _db.AddDynamicParam("fileName", signFile.FileName);
-                _db.AddDynamicParam("firma", signFile.Content);
-                _db.AddDynamicParam("contentType", signFile.ContentType);
-                _db.AddDynamicParam("fechaCaducidad", data.fechaCaducidad);
-                _response = await _db.GetDefaultAsync();
-            }
-            else
-            {
-                _response.Create("0", "Error al subir la firma");
-            }
-        }
-        catch (Exception ex)
-        {
-            log.LogActivity("Error on Insert Firma Electronica: \n" + ex);
-            _response.Create("0", "Error al registrar la firma electronica");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        return Ok(await firmaElectronicaService.AddAsync(parameters));
     }
-
-
-    [HttpPost("UpdateSignature/{id}")]
-    public async Task<IActionResult> UpdateSignature(int id, IFormFile file)
-    {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(configuration);
-        try
-        {
-            var idRol = User.GetUserRoleId();
-            if (file.ContentType != "application/x-pkcs12")
-            {
-                _response.Create("0", "Formato de archivo no soportado");
-                return Ok(_response);
-            }
-
-            var signFile = new FileModel
-            {
-                FileName = FileExtensions.SanitizeFileName(file.FileName),
-                ContentType = file.ContentType,
-                Content = FileData.GetFileByte(file)
-            };
-            if (await new FileUpload().Upload(configuration.GetSection("FactElectCerts").Value, signFile.FileName,
-                    signFile.Content))
-            {
-                await _db.SpExecuteAsync("Config.FirmaElectronica_Update_Signature");
-                _db.AddDynamicParam("idUsuarioRol",
-                    User.GetUserRoleId());
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("fileName", signFile.FileName);
-                _db.AddDynamicParam("firma", signFile.Content);
-                _db.AddDynamicParam("contentType", signFile.ContentType);
-                _response = await _db.GetDefaultAsync();
-            }
-            else
-            {
-                _response.Create("0", "Error al actualizar la firma");
-            }
-        }
-        catch (Exception ex)
-        {
-            log.LogActivity("Error on Update Firma Electronica: \n" + ex);
-            _response.Create("0", "Error al Actualizar la firma electronica");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
-    }
-
 
     [HttpPut("Put")]
     public async Task<IActionResult> Put(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(configuration);
-        try
-        {
-            var idRol = User.GetUserRoleId();
+        var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
 
-            var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
-            await _db.SpExecuteAsync("Config.FirmaElectronica_Update");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("idFirmaElectronica", data.idFirmaElectronica);
-            _db.AddDynamicParam("contrasenia", data.contrasenia);
-            _db.AddDynamicParam("fechaCaducidad", data.fechaCaducidad);
-            _db.AddDynamicParam("estado", data.estado);
-            _response = await _db.GetDefaultAsync();
-        }
-        catch (Exception ex)
-        {
-            log.LogActivity("Error on Update Firma Electronica: \n" + ex);
-            _response.Create("0", "Error al Actualizar la firma electronica");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetUserRoleId() },
+                { "id", data.idFirmaElectronica },
+                { "contrasenia", data.contrasenia },
+                { "fechaCaducidad", data.fechaCaducidad },
+                { "estado", data.estado }
+            };
+        return Ok(await firmaElectronicaService.UpdateAsync(parameters));
     }
+    [HttpPost("UpdateSignature/{id}")]
+    public async Task<IActionResult> UpdateSignature(int id, IFormFile file)
+    {
+        if (file.ContentType != "application/x-pkcs12")
+        {
+            return Ok(new ApiResponse { Code = "0", Message = "Formato de archivo no soportado" });
+        }
+
+        var signFile = new FileModel
+        {
+            FileName = FileExtensions.SanitizeFileName(file.FileName),
+            ContentType = file.ContentType,
+            Content = FileData.GetFileByte(file)
+        };
+
+        var parameters = new Dictionary<string, object>
+        {
+                { "userRoleId", User.GetUserRoleId() },
+                { "id", id },
+                { "fileName", signFile.FileName },
+                { "firma", signFile.Content },
+                { "contentType", signFile.ContentType },
+        };
+        return Ok(await firmaElectronicaService.UpdateFileAsync(parameters));
+    }
+
 }

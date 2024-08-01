@@ -1,4 +1,4 @@
-DECLARE @uuid UNIQUEIDENTIFIER = '4458AD83-6D63-44B1-B54B-DD0B0F970276'
+DECLARE @uuid UNIQUEIDENTIFIER = 'BAD284A0-3F63-485B-A806-E337909C32F4'
 
 DELETE sd FROM AcontplusAdmin.Sales.SuscripcionDetalle sd WITH (ROWLOCK)
 WHERE SuscripcionId in (
@@ -41,6 +41,37 @@ WHERE e.Uuid = @uuid
 DELETE s FROM Acontplus.dbo.Tarifa s WITH (ROWLOCK)
 INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON s.idEntidad = e.idEntidad
 WHERE e.Uuid = @uuid
+
+DELETE pea FROM Acontplus.Config.PtoEmi_Asig pea WITH (ROWLOCK)
+INNER JOIN  Acontplus.dbo.PuntoEmision pe WITH (NOLOCK) ON pea.idPuntoEmision = pe.idPuntoEmision
+INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON pe.idEstablecimiento = e.idEstablecimiento
+INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
+WHERE en.Uuid = @uuid
+
+DELETE pe FROM Acontplus.dbo.PuntoEmision pe WITH (ROWLOCK)
+INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON pe.idEstablecimiento = e.idEstablecimiento
+INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
+WHERE en.Uuid = @uuid
+
+DELETE b FROM Acontplus.dbo.Bodega b WITH (ROWLOCK)
+INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON b.codEstab = e.codEstab
+INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
+WHERE en.Uuid = @uuid
+
+DELETE ea FROM Acontplus.Config.Estab_Asig ea WITH (ROWLOCK)
+INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON ea.codEstab = e.codEstab
+INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
+WHERE en.Uuid = @uuid
+
+DELETE ba FROM Acontplus.Config.Bodeg_Asig ba WITH (ROWLOCK)
+INNER JOIN Acontplus.dbo.Bodega b WITH (NOLOCK) ON ba.idBodega = b.idBodega
+INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON b.codEstab = e.codEstab
+INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
+WHERE en.Uuid = @uuid
+
+DELETE e FROM Acontplus.Sri.Establecimiento e WITH (ROWLOCK)  
+INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
+WHERE en.Uuid = @uuid
 
 DELETE FROM Acontplus.dbo.Entidad WHERE Uuid = @uuid
 
