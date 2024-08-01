@@ -10,6 +10,7 @@ public class CompanyDemoStepController(ICompanyDemoStepService companyDemoStepSe
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() } };
         return Ok(await companyDemoStepService.GetAsync(parameters));
     }
+
     [HttpPost("{demoStepId}")]
     public async Task<IActionResult> Post(int demoStepId)
     {
