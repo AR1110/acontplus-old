@@ -561,8 +561,8 @@ BEGIN
                         INNER JOIN dbo.Bodega               bo WITH (NOLOCK) ON bo.idBodega        = se.BodegaId
                         INNER JOIN dbo.Tarifa               ta WITH (NOLOCK) ON ta.idTarifa        = se.TarifaId
                         INNER JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario       = se.UsuarioId
-                        INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.codEstab        = pe.codEstab
-                         LEFT JOIN dbo.SubFamilia           sf WITH (NOLOCK) ON sf.idSubFamilia    = ar.idSubFamilia
+                        INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimieto  = pe.idEstablecimieto
+                         LEFT JOIN dbo.SubFamilia           sf WITH (NOLOCK) ON sf.idSubFamilia      = ar.idSubFamilia
                         WHERE ar.idEntidad = @idEntidad
                           AND se.Estado = 1  '
 

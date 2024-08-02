@@ -38,12 +38,16 @@ BEGIN
         idCuentaPorCobrar INT NOT NULL UNIQUE
        ,idEstadoPago INT NOT NULL
        ,abono NUMERIC(18,5) NOT NULL
+       ,mora NUMERIC(18,5) NOT NULL
+       ,diasMora INT NOT NULL
     )
 
     DECLARE @tbCuota AS TABLE(
         idCuotaPorCobrar INT NOT NULL UNIQUE
        ,idEstadoPago INT NOT NULL
        ,abono NUMERIC(18,5) NOT NULL
+       ,mora NUMERIC(18,5) NOT NULL
+       ,diasMora INT NOT NULL
     )
 
 	BEGIN TRY 
@@ -63,23 +67,27 @@ BEGIN
 		) as dt
 
         INSERT INTO @tbCuenta
-              (idCuentaPorCobrar,idEstadoPago,abono)
-        SELECT idCuentaPorCobrar,idEstadoPago,abono
+              (idCuentaPorCobrar,idEstadoPago,abono,mora,diasMora)
+        SELECT idCuentaPorCobrar,idEstadoPago,abono,mora,diasMora
         FROM OPENJSON(@cuenta) WITH 
         (
             idCuentaPorCobrar INT
            ,idEstadoPago      INT
            ,abono             NUMERIC(18,5)
+           ,mora              NUMERIC(18,5)
+           ,diasMora          INT
         )
 
         INSERT INTO @tbCuota
-              (idCuotaPorCobrar,idEstadoPago,abono)
-        SELECT idCuotaPorCobrar,idEstadoPago,abono
+              (idCuotaPorCobrar,idEstadoPago,abono,mora,diasMora)
+        SELECT idCuotaPorCobrar,idEstadoPago,abono,mora,diasMora
         FROM OPENJSON(@cuota) WITH 
         (
             idCuotaPorCobrar INT
            ,idEstadoPago     INT
            ,abono            NUMERIC(18,5)
+           ,mora             NUMERIC(18,5)
+           ,diasMora         INT
         )
 
         --> Validaciones
@@ -128,16 +136,20 @@ BEGIN
             IF EXISTS (SELECT 1 FROM ComprobanteIngreso WITH (NOLOCK) WHERE idComprobanteIngreso = @id AND movimiento = 0)
                 BEGIN 
                     --> Editar Estados de las Cuenta
-                    UPDATE cc SET
+                    UPDATE cc WITH (ROWLOCK) SET
                            cc.idEstadoPago = tc.idEstadoPago
                           ,cc.abono        = tc.abono
+                          ,cc.mora         = cc.mora - tc.mora
+                          ,cc.diasMora     = cc.diasMora - tc.diasMora
                     FROM Contabilidad.CuentaPorCobrar cc
                     INNER JOIN @tbCuenta              tc ON tc.idCuentaPorCobrar = cc.idCuentaPorCobrar
 
                     --> Editar Estados de la cuota
-                    UPDATE cx SET 
+                    UPDATE cx WITH (ROWLOCK) SET 
                            cx.idEstadoPago = tc.idEstadoPago
                           ,cx.abono        = tc.abono
+                          ,cx.mora         = tc.mora - tc.mora
+                          ,cx.diasMora     = tc.diasMora - tc.diasMora
                     FROM Contabilidad.CuotaPorCobrar cx
                     INNER JOIN @tbCuota              tc ON tc.idCuotaPorCobrar = cx.idCuotaPorCobrar
                 END
