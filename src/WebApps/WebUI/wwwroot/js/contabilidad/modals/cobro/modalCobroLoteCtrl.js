@@ -17,6 +17,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     const fS = $injector.get('formulario');
     const nombreModalContabilidad = $injector.get('nombreModalContabilidad');
     const modalSvc = $injector.get('modalService');
+    const tS = $injector.get('toastService');
 
 
 
@@ -35,9 +36,6 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.cobros = [];
     $scope.datosCobro = [];
 
-    let cuentasPorCobrarEstado = [];
-    let cuotasPorCobrarEstado = [];
-
 
     $scope.expandShowCuota = expandShowCuota;
     $scope.showCobroDetalle = showCobroDetalle;
@@ -46,8 +44,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.showInfoCobro = showInfoCobro;
     $scope.save = save;
     $scope.closeModal = closeModal;
-
-    console.log(modalCobroSvc)
+ 
     initiateLoad();
     function initiateLoad() {
         try {
@@ -65,16 +62,14 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             showLoader();
             comprobanteIngresoSvc.getDataForm(idCuentaPorCobrar, idCliente).then(response => {
 
-                dataFormaCobro = response;
-                console.log(modalCobroSvc)
+                dataFormaCobro = response; 
                 modalCobroSvc.setEstadoCobro(dataFormaCobro.estadosPago);
                 modalCobroSvc.setConfigCobro(dataFormaCobro.configCobro);
 
                 //Cuando proviene de Cuentas por Cobrar
                 if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
                     let selectedDocsTemp = modalCobroSvc.calcularInteresMora(selectedDocumentos)
-
-                    console.log(selectedDocsTemp)
+ 
                     $scope.selectedDocumentos = structuredClone(selectedDocsTemp);
                     $scope.selectedDocumentosClone = structuredClone(selectedDocsTemp);
 
@@ -95,7 +90,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                     $scope.selectedDocumentos = structuredClone(selectedDocsTemp);
                     $scope.selectedDocumentosClone = structuredClone(selectedDocsTemp);
 
-                    if ($scope.selectedDocumentos.some(item => [null, undefined, []].includes(item.cuotas))) {
+                    if ($scope.selectedDocumentos.some(item => [null, undefined, []].includes(item.cuotasCalculadas))) {
                         fS.sweetAlert('warning', 'No posee cuotas');
                         throw new Error('No posee cuotas');
                     }
@@ -140,16 +135,16 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
     function getTotalesCuota() {
         let importeTotal = fS.instanceDecimal(0),
-            abono = fS.instanceDecimal(0), 
-            totalMora = fS.instanceDecimal(0), 
+            abono = fS.instanceDecimal(0),
+            totalMora = fS.instanceDecimal(0),
             saldoActualDoc = fS.instanceDecimal(0)
 
         for (let item of $scope.selectedDocumentos) {
-            importeTotal = importeTotal.plus(item.importeTotal); 
+            importeTotal = importeTotal.plus(item.importeTotal);
             abono = abono.plus(item.abono);
 
-            for(let dataCuota of item.cuotasCalculadas){
-                totalMora = totalMora.plus(dataCuota.interesPorMoraActual || 0); 
+            for (let dataCuota of item.cuotasCalculadas) {
+                totalMora = totalMora.plus(dataCuota.interesPorMoraActual || 0);
             }
             saldoActualDoc = saldoActualDoc.plus(item.saldoActualDoc)
         }
@@ -157,7 +152,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         $scope.data.importeTotal = importeTotal.toNumber();
         $scope.data.totalSaldo = saldoActualDoc.toNumber();
         $scope.data.totalAbonoAnterior = abono.toNumber();
-        $scope.data.totalMora = totalMora.toNumber(); 
+        $scope.data.totalMora = totalMora.toNumber();
         $scope.data.totalValorAbono = 0;
         $scope.data.valorCambio = 0;
         $scope.data.saldoActualDoc = saldoActualDoc.toNumber();
@@ -167,7 +162,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         $scope.dataCuentaPorCobrar.importeTotal = $scope.data.importeTotal
         $scope.dataCuentaPorCobrar.abono = $scope.data.totalAbonoAnterior
         $scope.dataCuentaPorCobrar.saldo = $scope.data.totalSaldo
-        $scope.dataCuentaPorCobrar.totalMora = $scope.data.totalMora; 
+        $scope.dataCuentaPorCobrar.totalMora = $scope.data.totalMora;
 
     }
 
@@ -176,8 +171,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         item.display = !item.display
     }
 
-    function showCobroDetalle(data) {
-        console.log(modalCobroSvc)
+    function showCobroDetalle(data) { 
         let tempDetails = modalCobroSvc.getCobrosDetalle().filter(item => item.idCuotaPorCobrar === data.idCuotaPorCobrar && item.idCuentaPorCobrar === data.idCuentaPorCobrar);
         let infoCobrosDetalle = [];
 
@@ -264,7 +258,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             let { posfechado, valorAbono } = result;
 
             modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
-            modalCobroSvc.setUniqueIndex ($scope.datosCobro.length + 1)
+            modalCobroSvc.setUniqueIndex($scope.datosCobro.length + 1)
             modalCobroSvc.setEsAbonoPosfechado(posfechado);
             modalCobroSvc.setValorAbono(valorAbono);
 
@@ -272,7 +266,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             modalCobroSvc.aplicarAbono();
 
             $scope.cobrosDetalle = modalCobroSvc.getCobrosDetalle()
-            $scope.selectedDocumentos = modalCobroSvc.getCuentasPorCobrar(); 
+            $scope.selectedDocumentos = modalCobroSvc.getCuentasPorCobrar();
 
 
             let abonoCuota = modalCobroSvc.getAbonoCuota();
@@ -345,7 +339,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                 $scope.$apply(() => {
 
                     modalCobroSvc.setCobrosDetalle([]);
-                    modalCobroSvc.setHistorialCuentas([]) ;   
+                    modalCobroSvc.setHistorialCuentas([]);
 
                     let index = $scope.datosCobro.indexOf(item);
                     $scope.datosCobro.splice(index, 1);
@@ -358,7 +352,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                     modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
 
                     getTotalesCuota();
- 
+
 
                     //Recalculamos las cuotas con los abonos restantes   
                     let uniqueIndex = 0;
@@ -372,7 +366,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
                         //--------agregando abono ---
                         modalCobroSvc.aplicarAbono();
-                    }  
+                    }
 
                     calculoTotales();
                 })
@@ -383,7 +377,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         }
     }
 
-    function showInfoCobro(item) { 
+    function showInfoCobro(item) {
 
         Swal.fire({
             icon: 'info',
@@ -412,7 +406,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                     </tr>   
                     <tr>
                         <td><b>Posfechado:</b></td>
-                        <td>${item.posfechad?'SI':'NO'}</td>
+                        <td>${item.posfechad ? 'SI' : 'NO'}</td>
                     </tr> 
                     <tr>
                         <td><b>Banco:</b></td>
@@ -424,7 +418,138 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         })
     }
 
-    function save() {
+
+    function isValidForm() {
+        if (!fS.getValidId($scope.dataCuentaPorCobrar.idCliente)) {
+            tS.toastr({
+                type: 'warning',
+                message: 'Seleccione el cliente'
+            })
+            return
+        }
+        if ($scope.datosCobro.length === 0) {
+            tS.toastr({
+                type: 'warning',
+                message: 'Ingrese al menos un abono'
+            })
+            return
+        }
+
+        if (modalCobroSvc.getCobrosDetalle().length === 0) {
+            tS.toastr({
+                type: 'warning',
+                message: 'Cobro detalle vacio!'
+            })
+            return
+        }
+
+        return true;
+    }
+
+    function getValorAbono(prop) {
+        let total = $scope.datosCobro.reduce((acc, curr) => fS.instanceDecimal(acc).plus(curr[prop]), fS.instanceDecimal(0));
+
+        return total.toNumber()
+
+    }
+
+    async function save() {
+        if (!isValidForm()) return; 
+
+        let { isConfirmed } = await Swal.fire({
+            title: '<small>Guardar Cobro</small>',
+            html: "<small class='text-muted'>Esta seguro de guardar este cobro ahora?</small>",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, guardar!',
+            cancelButtonText: 'No, cancelar!'
+        })
+
+        if (isConfirmed) {
+
+            let totalValorAbono = getValorAbono("valorAbono");
+            let totalAbonoCuota = getValorAbono("abonoCuota");
+
+            let comprobante = {
+                idCliente: $scope.dataCuentaPorCobrar.idCliente,
+                total: totalValorAbono,
+                abono: totalAbonoCuota,
+                codEstab: $scope.dataCuentaPorCobrar.codEstab,
+                numeroIdentificacion: $scope.dataCuentaPorCobrar.identificacionComprador,
+                nombreFiscal: $scope.dataCuentaPorCobrar.razonSocialComprador,
+                observacion: $scope.dataCuentaPorCobrar.observacion
+            };
+
+
+            let cobros = $scope.datosCobro.map(item => { 
+                let obj = {
+                    idSubEntidadFinanciera: item.idSubEntidadFinanciera,
+                    idEntidadFinanciera: item.idEntidadFinanciera,
+                    idBanco: item.idBanco,
+                    idCuentaBancaria: 0,
+                    fechaEmision: item.fechaEmision,
+                    valor: item.valorAbono,
+                    posfechado: item.posfechado,
+                    cobro: item.cobro,
+                    secuencial: item.secuencial,
+                    infoCobro: item.infoCobro,
+                    abono: item.abonoCuota,
+                    controlCaja: item.controlCaja,
+                    idComprobante: item.idComprobante,
+                    idTipoDocumento: item.idTipoDocumento,
+                    observacion: item.observacion
+                }
+                return obj;
+            })
+
+
+            let cobrosDetalle = $scope.cobrosDetalle.filter(item => (item.abono > 0))
+            let historialCuentas = modalCobroSvc.getHistorialCuentas();
+
+
+
+            let cuentasPorCobrarEstado = modalCobroSvc.generarCuentasPorCobrarEstado({
+                historialCuentas,
+                cobros,
+                cobrosDetalle
+            })
+
+            let cuotasPorCobrarEstado = modalCobroSvc.generarCuotasPorCobrarEstado({
+                cobrosDetalle
+            })
+
+            let data = {
+                comprobante,
+                cobros,
+                cobroDetalle: cobrosDetalle,
+                historialCuentas,
+                cuentasPorCobrarEstado,
+                cuotasPorCobrarEstado
+            } 
+
+
+
+            let params = comprobanteIngresoSvc.mapperTo(data);
+
+            showLoader();
+            comprobanteIngresoSvc.post(params).then((response) => { 
+                hideLoader();
+                if (response.code === '0') {
+                    fS.sweetAlert('warning', response.message)
+                }
+                if (response.code === '1') {
+                    fS.sweetAlert('success', response.message, '', 1000)
+                    $uibModalInstance.close(response)
+                }
+            }).catch(error => {
+                hideLoader();
+                console.log(error)
+            })
+
+
+        }
 
     }
 

@@ -20,31 +20,31 @@
             <div class="card border rounded">
                 <div class="card-body">
                      <div class="row">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <dl class="row">
-                            <dt class="col-sm-8">Total Doc.</dt>
-                            <dd class="col-sm-4">
+                            <dt class="col-sm-7">Total Doc.</dt>
+                            <dd class="col-sm-5">
                                 <h5>{{data.importeTotal}}</h5>
                             </dd> 
 
-                            <dt class="col-sm-8">Abono Anterior:</dt>
-                            <dd class="col-sm-4">
+                            <dt class="col-sm-7">Abono Anterior:</dt>
+                            <dd class="col-sm-5">
                                 <h5 class="text-success">{{data.totalAbonoAnterior}}</h5>
                             </dd>  
 
 
-                            <dt class="col-sm-8">Saldo Doc</dt>
-                            <dd class="col-sm-4">
+                            <dt class="col-sm-7">Saldo Doc</dt>
+                            <dd class="col-sm-5">
                                 <h5>{{data.totalSaldoDoc}}</h5>
                             </dd> 
 
-                            <dt class="col-sm-8" >Mora</dt>
-                            <dd class="col-sm-4" >
+                            <dt class="col-sm-7" >Mora</dt>
+                            <dd class="col-sm-5" >
                                 <h5>{{data.totalMora}}</h5>
                             </dd>
 
-                            <dt class="col-sm-8">Saldo Doc + Mora</dt>
-                            <dd class="col-sm-4">
+                            <dt class="col-sm-7">Saldo Doc + Mora</dt>
+                            <dd class="col-sm-5">
                                 <h5>{{data.saldoActualDoc}}</h5>
                             </dd>   
 
@@ -52,27 +52,27 @@
                         </dl>                
                     
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <dl class="row">
                         
 
-                            <dt class="col-sm-8">Saldo</dt>
-                            <dd class="col-sm-4">
+                            <dt class="col-sm-7">Saldo</dt>
+                            <dd class="col-sm-5">
                                 <h5> {{data.totalSaldo}}</h5> 
                             </dd>
 
-                            <dt class="col-sm-8">Abono</dt>
-                            <dd class="col-sm-4">
+                            <dt class="col-sm-7">Abono</dt>
+                            <dd class="col-sm-5">
                                 <h5> {{data.totalValorAbono}}   </h5> 
                             </dd> 
 
-                            <dt class="col-sm-8" >Cambio</dt>
-                            <dd class="col-sm-4">
+                            <dt class="col-sm-7" >Cambio</dt>
+                            <dd class="col-sm-5">
                                 <h4> {{data.valorCambio | currency}}</h4> 
                             </dd>  
                         </dl>    
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div>
+                    <!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div> -->
                 </div> 
                 </div>
                
@@ -184,7 +184,7 @@
                                 <td md-cell>{{cuota.mora}}</td> 
                                 <td md-cell>{{cuota.abono}}</td> 
                                 <td md-cell>{{cuota.saldo}}</td>
-                                <td md-cell>{{cuota.diasDeMoraActual}}</td>
+                                <td md-cell>{{cuota.diasMoraActual}}</td>
                                 <td md-cell>{{cuota.interesActual}}</td> 
                                 <td md-cell>{{cuota.interesPorMoraActual}}</td> 
                                 <td md-cell class="bg-warning">
@@ -251,7 +251,7 @@
 
             <div class="form-group ">
                 <label for="observacion">Observación: </label>
-                <input type="text" class="form-control border-select" ng-model="comprobante.observacion" placeholder="...">
+                <input type="text" class="form-control border-select" ng-model="dataCuentaPorCobrar.observacion" placeholder="...">
             </div>
 
         </div>

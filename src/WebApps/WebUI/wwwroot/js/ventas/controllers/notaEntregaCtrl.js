@@ -518,9 +518,7 @@
 
         $scope.openModalCobroDocumento = async (params) => {
             try {
-                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['CL'];
-                let template = nombreModalContabilidad.COBRO.templates['CL'];
+                let { fileCtrl, ctrl, template } = nombreModalContabilidad.COBRO_RAPIDO;
                 let controller = (await import(fileCtrl))[ctrl];
 
                 $scope.openModalCobro({
@@ -544,10 +542,8 @@
         $scope.openModalRapido = async (params) => {
 
             try {
-                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['CR'];
-                let template = nombreModalContabilidad.COBRO.templates['CR'];
-                let controller = (await import(fileCtrl))[ctrl];
+                const { fileCtrl, ctrl, template } = nombreModalContabilidad.COBRO_LOTE;
+                let controller = (await import(fileCtrl))[ctrl];  
 
                 $scope.openModalCobro({
                     controller,
