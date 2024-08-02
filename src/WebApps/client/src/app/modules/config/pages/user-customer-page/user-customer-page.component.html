@@ -1,78 +1,84 @@
 <app-breadcrumb>
-  <button class="btn btn-info" (click)="openModalAddEdit()">Nuevo</button>
-  </app-breadcrumb>
+  <button (click)="openModalAddEdit()" class="btn btn-info">
+    <fa-icon [icon]="'plus'"></fa-icon>
+    Nuevo
+  </button>
+</app-breadcrumb>
 
 
-  <div class="card">
-    <div class="card-body">
-      <div class="row">
-        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-          <div class="d-flex justify-content-start">
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="d-flex justify-content-start">
             <span class="form-group pull-left page-size form-inline">
-              <select class="form-select control-color" [(ngModel)]="pagination.pageSize" (change)="changePageSize()">
-                @for(item of pagination.pageSizeOptions; track $index){
-                <option [ngValue]="item">{{ item }}</option>
+              <select (change)="changePageSize()" [(ngModel)]="pagination.pageSize" class="form-select control-color">
+                @for (item of pagination.pageSizeOptions; track $index) {
+                  <option [ngValue]="item">{{ item }}</option>
                 }
               </select>
             </span>
-          </div>
-        </div>
-        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-          <div class="d-flex justify-content-end">
-            <!-- <form class="form-material">
-                  <input
-                    type="text"
-                    class="form-control"
-                    ng-model="buscar"
-                    placeholder="..."
-                  />
-                </form> -->
-          </div>
         </div>
       </div>
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Nro.</th>
-              <th></th>
-              <th>Número Identificación</th>
-              <th>Nombre Completo</th>
-              <th>Usuario</th>
-              <th>Correo</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (item of usersCustomer; track $index) {
-              <tr>
-                <td>{{$index+1}}</td>
-                <td>
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-success btn-sm" (click)="openModalAddEdit(item)">
-                      <fa-icon [icon]="'edit'"></fa-icon>
-                    </button>
-                    <button type="button" class="btn btn-warning btn-sm  " (click)="openModalConfig(item)">
-                      <fa-icon [icon]="'person-chalkboard'"></fa-icon>
-                    </button>
-
-                  </div>
-                </td>
-                <td>{{item.nroIdentificacion}}</td>
-                <td>{{item.nombreCompleto}}</td>
-                <td>{{item.nombreUsuario}}</td>
-                <td>{{item.correo}}</td>
-              </tr>
-            }
-          </tbody>
-          <tfoot>
-            <tr>
-              <td align="center" colspan="6">
-                <ngb-pagination [collectionSize]="pagination.totalRecords" [(page)]="pagination.pageIndex" [maxSize]="pagination.maxSize"
-                  [pageSize]="pagination.pageSize" [rotate]="true" (pageChange)="pageChanged()" [boundaryLinks]="true" />
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="d-flex justify-content-end">
+          <!-- <form class="form-material">
+                <input
+                  type="text"
+                  class="form-control"
+                  ng-model="buscar"
+                  placeholder="..."
+                />
+              </form> -->
+        </div>
       </div>
     </div>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Nro.</th>
+          <th></th>
+          <th>Número Identificación</th>
+          <th>Nombre Completo</th>
+          <th>Usuario</th>
+          <th>Correo</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (item of usersCustomer; track $index) {
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-success btn-sm" (click)="openModalAddEdit(item)">
+                    <fa-icon [icon]="'edit'"></fa-icon>
+                  </button>
+                  <button type="button" class="btn btn-warning btn-sm  " (click)="openModalConfig(item)">
+                    <fa-icon [icon]="'person-chalkboard'"></fa-icon>
+                  </button>
+
+                </div>
+              </td>
+              <td>{{ item.nroIdentificacion }}</td>
+              <td>{{ item.nombreCompleto }}</td>
+              <td>{{ item.nombreUsuario }}</td>
+              <td>{{ item.email }}</td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+        <tr>
+          <td align="center" colspan="6">
+            <ngb-pagination (pageChange)="pageChanged()" [(page)]="pagination.pageIndex"
+                            [boundaryLinks]="true"
+                            [collectionSize]="pagination.totalRecords" [maxSize]="pagination.maxSize"
+                            [pageSize]="pagination.pageSize"
+                            [rotate]="true"/>
+          </td>
+        </tr>
+        </tfoot>
+      </table>
+    </div>
   </div>
+</div>
