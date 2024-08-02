@@ -55,7 +55,7 @@ export class FactElectReportPageComponent {
   empresas:any[]=[]
 
 
-  showField = false;
+  showField = true;
   format:any;
 
   retenciones = [
@@ -93,7 +93,7 @@ export class FactElectReportPageComponent {
     let dataTipoDoc = this.tiposDoc.find(td => td.idTipoDocumento === this.dataSearch.idTipoDocumento);
     this.showField = false;
 
-    if (dataTipoDoc && dataTipoDoc.codDoc === DOC_TYPE_SRI.R) {
+    if (dataTipoDoc && dataTipoDoc.codDoc === DOC_TYPE_SRI.F) {
       this.showField = true;
     }
   }

@@ -3399,6 +3399,81 @@
                     <TablixCell />
                   </TablixCells>
                 </TablixRow>
+                <TablixRow>
+                  <Height>1.52929cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="Rectangle1">
+                          <ReportItems>
+                            <Line Name="Line5">
+                              <Top>0.72292cm</Top>
+                              <Left>7.22061cm</Left>
+                              <Height>0cm</Height>
+                              <Width>5.82372cm</Width>
+                              <Style>
+                                <Border>
+                                  <Style>Solid</Style>
+                                </Border>
+                              </Style>
+                            </Line>
+                            <Textbox Name="Textbox26">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>Firma del garante</Value>
+                                      <Style>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox26</rd:DefaultName>
+                              <Top>0.86403cm</Top>
+                              <Left>7.22061cm</Left>
+                              <Height>0.6cm</Height>
+                              <Width>5.82372cm</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <VerticalAlign>Middle</VerticalAlign>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Rectangle>
+                        <ColSpan>10</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
               </TablixRows>
             </TablixBody>
             <TablixColumnHierarchy>
@@ -3429,14 +3504,15 @@
                     <TablixMember />
                     <TablixMember />
                     <TablixMember />
+                    <TablixMember />
                   </TablixMembers>
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>creditoGaranteDs</DataSetName>
-            <Top>12.50995cm</Top>
+            <Top>12.35649cm</Top>
             <Left>0.10902cm</Left>
-            <Height>4.2cm</Height>
+            <Height>5.72929cm</Height>
             <Width>21.45303cm</Width>
             <ZIndex>3</ZIndex>
             <Style>
@@ -3486,7 +3562,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>PRODUCTOS</Value>
+                                  <Value>ARTÍCULOS</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -4526,7 +4602,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>productsDs</DataSetName>
-            <Top>16.88634cm</Top>
+            <Top>18.18809cm</Top>
             <Left>0.10902cm</Left>
             <Height>2.4cm</Height>
             <Width>21.45303cm</Width>
@@ -4965,7 +5041,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>cuotaDs</DataSetName>
-            <Top>21.43912cm</Top>
+            <Top>22.74087cm</Top>
             <Left>0.10902cm</Left>
             <Height>1.8cm</Height>
             <Width>6.52857cm</Width>
@@ -5821,7 +5897,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>productDatoAdicionalDs</DataSetName>
-            <Top>19.46273cm</Top>
+            <Top>20.76448cm</Top>
             <Left>0.10902cm</Left>
             <Height>1.8cm</Height>
             <Width>21.41457cm</Width>
@@ -6041,7 +6117,7 @@
               </Line>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>25.66856cm</Top>
+            <Top>25.45885cm</Top>
             <Left>0.10902cm</Left>
             <Height>2.30355cm</Height>
             <Width>21.41457cm</Width>
@@ -6053,7 +6129,7 @@
             </Style>
           </Rectangle>
         </ReportItems>
-        <Height>11.0682in</Height>
+        <Height>10.98487in</Height>
         <Style />
       </Body>
       <Width>8.52467in</Width>

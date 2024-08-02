@@ -17,25 +17,67 @@
 <div class="modal-body">  
     <div class="row">
         <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
-            <div class="row">
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                     <dl class="row">
-                        <dt class="col-sm-8">Total</dt>
-                        <dd class="col-sm-4">
-                            <h5>{{data.importeTotal | currency}}</h5>
-                        </dd> 
+            <div class="card border rounded">
+                <div class="card-body">
+                     <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <dl class="row">
+                            <dt class="col-sm-7">Total Doc.</dt>
+                            <dd class="col-sm-5">
+                                <h5>{{data.importeTotal}}</h5>
+                            </dd> 
+
+                            <dt class="col-sm-7">Abono Anterior:</dt>
+                            <dd class="col-sm-5">
+                                <h5 class="text-success">{{data.totalAbonoAnterior}}</h5>
+                            </dd>  
 
 
-                        <dt class="col-sm-8" ng-if="data.totalAbonoAnterior>0">Abono Anterior:</dt>
-                        <dd class="col-sm-4" ng-if="data.totalAbonoAnterior>0">
-                            <h5>{{data.totalAbonoAnterior | currency}}</h5>
-                        </dd>  
-                    </dl>                
-                
+                            <dt class="col-sm-7">Saldo Doc</dt>
+                            <dd class="col-sm-5">
+                                <h5>{{data.totalSaldoDoc}}</h5>
+                            </dd> 
+
+                            <dt class="col-sm-7" >Mora</dt>
+                            <dd class="col-sm-5" >
+                                <h5>{{data.totalMora}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-7">Saldo Doc + Mora</dt>
+                            <dd class="col-sm-5">
+                                <h5>{{data.saldoActualDoc}}</h5>
+                            </dd>   
+
+                              
+                        </dl>                
+                    
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <dl class="row">
+                        
+
+                            <dt class="col-sm-7">Saldo</dt>
+                            <dd class="col-sm-5">
+                                <h5> {{data.totalSaldo}}</h5> 
+                            </dd>
+
+                            <dt class="col-sm-7">Abono</dt>
+                            <dd class="col-sm-5">
+                                <h5> {{data.totalValorAbono}}   </h5> 
+                            </dd> 
+
+                            <dt class="col-sm-7" >Cambio</dt>
+                            <dd class="col-sm-5">
+                                <h4> {{data.valorCambio | currency}}</h4> 
+                            </dd>  
+                        </dl>    
+                    </div>
+                    <!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div> -->
+                </div> 
                 </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div>
+               
             </div>
+            
 
            
             <!-- <div class="d-flex flex-row">
@@ -91,12 +133,11 @@
                         <thead md-head>
                             <tr md-row>
                                 <th md-column></th>
-                                <th md-column>Nro. Cuota</th>
+                                <th md-column>#</th>
                                 <th md-column>Fecha Vcto.</th>
                                 <th md-column>Cuota</th>
                                 <th md-column>Mora</th> 
-                                <th md-column>Abono</th>
-                                <th md-column>Saldo Cta</th>
+                                <th md-column>Abono</th> 
                                 <th md-column>Saldo</th>
                                 <th md-column>Dias Mora</th>
                                 <th md-column>Interes</th>
@@ -111,18 +152,27 @@
                                     <span ng-if="group.display"><i class="fas fa-caret-square-down"></i></span>
                                     <span ng-if="!group.display"><i class="fas fa-caret-square-right"></i></span>
                                 </td>
-                                <td md-cell colspan="2" >
-                                    <span class="font-weight-bold text-uppercase bg-warning rounded">
-                                    {{group.codDoc}} - {{group.serieComprobante}}
-                                    </span>                                
+                                <td md-cell colspan="5" class="align-left">
+                                    <div class="d-flex flex-row">
+                                        <div class="p-1">
+                                            {{group.codDoc}}
+                                        </div>
+                                        <div class="p-1">
+                                           - {{group.serieComprobante}}
+                                        </div>
+                                        <div class="p-1">
+                                           - {{group.fechaEmision}}
+                                        </div>
+                                         <div class="p-1">
+                                            <span class="font-weight-bold">${{group.importeTotal}}</span>
+                                        </div>
+                                    </div>                                   
                                 </td>
                                 <td md-cell colspan="3"></td>
-                                <td md-cell colspan="1">
-                                    <span class="font-weight-bold"><strong>${{group.importeTotal}}</strong></span>
-                                </td>
-                                <td md-cell colspan="6"></td>
+                                <td md-cell colspan="1"></td>
+                                <td md-cell colspan="3"></td>
                             </tr>
-                            <tr md-row ng-repeat-end ng-repeat="cuota in group.cuotas" ng-show="group.display" class="shadow rounded">
+                            <tr md-row ng-repeat-end ng-repeat="cuota in group.cuotasCalculadas" ng-show="group.display" class="shadow rounded">
                                 <td md-cell>
                                     <button class="btn btn-secondary btn-xs" ng-if="cuota.esCuotaAfectada" ng-click="showCobroDetalle(cuota)">
                                         <i class="ti-eye"></i>
@@ -132,13 +182,14 @@
                                 <td md-cell>{{cuota.fechaVencimiento | date:'dd/MM/yyyy'}}</td>
                                 <td md-cell>{{cuota.cuota}}</td>
                                 <td md-cell>{{cuota.mora}}</td> 
-                                <td md-cell>{{cuota.abono}}</td>
-                                <td md-cell>{{cuota.saldoCta}}</td>
+                                <td md-cell>{{cuota.abono}}</td> 
                                 <td md-cell>{{cuota.saldo}}</td>
                                 <td md-cell>{{cuota.diasMoraActual}}</td>
                                 <td md-cell>{{cuota.interesActual}}</td> 
-                                <td md-cell>{{cuota.diasMoraInteres}}</td> 
-                                <td md-cell>{{cuota.saldoDiaMoraInteres}}</td> 
+                                <td md-cell>{{cuota.interesPorMoraActual}}</td> 
+                                <td md-cell class="bg-warning">
+                                     <span class="font-weight-bold">{{cuota.saldoTotalActual}}</span>
+                                </td> 
                                 <td md-cell>{{cuota.estado}}</td>
                             </tr>
                         </tbody>
@@ -200,7 +251,7 @@
 
             <div class="form-group ">
                 <label for="observacion">Observación: </label>
-                <input type="text" class="form-control border-select" ng-model="comprobante.observacion" placeholder="...">
+                <input type="text" class="form-control border-select" ng-model="dataCuentaPorCobrar.observacion" placeholder="...">
             </div>
 
         </div>

@@ -11,7 +11,7 @@ modalFormaCobroCtrl.$inject = [
 function modalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
     let {
         dataFormaCobro,
-        comprobante,
+        dataCuentaPorCobrar,
         saldo,
         datosCobro
     } = params;
@@ -26,7 +26,7 @@ function modalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
     const fS = $injector.get('formulario');
     const tS = $injector.get('toastService');
 
-    const modalCobroSvc = $injector.get('modalCobroService');
+    const modalCobroSvc = $injector.get('modalCobroService').get();
 
     const VALOR_ABONO_ORIGINAL = fS.roundNumber(saldo, 3);
 
@@ -34,7 +34,7 @@ function modalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
         posfechado: false
     }
 
-    $scope.comprobante = comprobante;
+    $scope.dataCuentaPorCobrar = dataCuentaPorCobrar;
 
     $scope.data.fechaEmision = new Date();
     $scope.data.valorAbono = saldo;
@@ -112,7 +112,7 @@ function modalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
             $scope.data.fechaEmision = new Date();
 
             if (codigo === 'CHE') {
-                $scope.data.referencia = $scope.comprobante.razonSocialComprador;
+                $scope.data.referencia = $scope.dataCuentaPorCobrar.razonSocialComprador;
             }
 
         } catch (error) {
@@ -145,6 +145,13 @@ function modalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
 
             let formattedDateTime = fS.formatDateMoment($scope.data.fechaEmision);
 
+            let infoCobro = [{
+                nro: $scope.data.nro,
+                lote: $scope.data.lote,
+                aprobacion: $scope.data.aprobacion,
+                referencia: $scope.data.referencia
+            }]
+
             return {
                 //Info
                 entidadFinanciera: entidadFinanciera.descripcion,
@@ -174,7 +181,9 @@ function modalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
                 tipoDocumento: item.tipoDocumento || item.codDoc,
                 valorAbono: item.saldo || $scope.data.valorAbono,
                 controlCaja: subEntidadFinanciera.controlCaja,
-                observacion: $scope.data.observacion
+                observacion: $scope.data.observacion,
+
+                infoCobro: entidadFinanciera.codigo === 'EFE' ? undefined : JSON.stringify(infoCobro),
             }
         } catch (error) {
             console.log(error);
