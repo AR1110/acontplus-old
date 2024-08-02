@@ -238,7 +238,7 @@ BEGIN
                  END
 
 
-			SET @sql = @sql + ' ORDER BY ar.idArticulo '
+			SET @sql = @sql + ' ORDER BY ar.descripcion '
 
 			SELECT e.ruc
 				,e.razonSocial

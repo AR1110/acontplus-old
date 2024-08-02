@@ -50,7 +50,17 @@ BEGIN
 		,controlCaja BIT NOT NULL
 	)
 
-	DECLARE @paymentDetail AS TABLE(
+
+	DECLARE @history AS TABLE (
+		 idCuentaPorCobrar INT NOT NULL
+        ,secuencial INT NOT NULL
+		,saldo NUMERIC(18,5) NOT NULL
+        ,abono NUMERIC(18,5) NOT NULL
+        ,mora NUMERIC(15,5) NOT NULL
+		,diasMora INT NOT NULL
+	)
+
+    DECLARE @paymentDetail AS TABLE(
 		 idCuotaPorCobrar INT NOT NULL
 		,saldo NUMERIC(15,5) NOT NULL
         ,abono NUMERIC(15,5) NOT NULL
@@ -60,25 +70,20 @@ BEGIN
 		,secuencial INT NOT NULL
 	)
 
-	DECLARE @history AS TABLE (
-		 idCuentaPorCobrar INT NOT NULL
-        ,secuencial INT NOT NULL
-		,saldo NUMERIC(18,5) NOT NULL
-        ,abono NUMERIC(18,5) NOT NULL
-		,mora NUMERIC(18,5) NOT NULL
-		,diasMora INT NOT NULL
-	)
-
     DECLARE @tbCuenta AS TABLE(
         idCuentaPorCobrar INT NOT NULL UNIQUE
        ,idEstadoPago INT NOT NULL
        ,abono NUMERIC(18,5) NOT NULL
+       ,mora NUMERIC(18,5) NOT NULL
+       ,diasMora INT NOT NULL
     )
 
     DECLARE @tbCuota AS TABLE(
         idCuotaPorCobrar INT NOT NULL UNIQUE
        ,idEstadoPago INT NOT NULL
        ,abono NUMERIC(18,5) NOT NULL
+       ,mora NUMERIC(18,5) NOT NULL
+       ,diasMora INT NOT NULL
     )
 
 	BEGIN TRY 
@@ -108,11 +113,11 @@ BEGIN
 		SELECT idCliente,total,abono,codEstab,observacion
 		FROM OPENJSON(@comprobante) WITH 
         (
-             idCliente         INT          
-		    ,total             NUMERIC(18,5) 
-		    ,abono             NUMERIC(18,5) 
-		    ,codEstab          VARCHAR(20) 
-            ,observacion       VARCHAR(300)
+             idCliente   INT          
+		    ,total       NUMERIC(18,5) 
+		    ,abono       NUMERIC(18,5) 
+		    ,codEstab    VARCHAR(20) 
+            ,observacion VARCHAR(300)
 		)
 		
 		INSERT INTO @payment
@@ -154,37 +159,41 @@ BEGIN
 		
 
 		INSERT INTO @history
-              (idCuentaPorCobrar,saldo,abono,diasMora,mora,secuencial)
-		SELECT idCuentaPorCobrar,saldo,abono,diasMora,mora,secuencial 
+              (idCuentaPorCobrar,saldo,abono,secuencial,diasMora,mora)
+		SELECT idCuentaPorCobrar,saldo,abono,secuencial,diasMora,mora 
         FROM OPENJSON(@historial) WITH 
         (                    
              idCuentaPorCobrar INT           
             ,saldo             NUMERIC(18,5) 
             ,abono             NUMERIC(18,5) 
-            ,diasMora          INT           
-            ,mora              NUMERIC(15,5) 
             ,secuencial        INT
+            ,mora              NUMERIC(18,5)
+            ,diasMora          INT
 
         ) AS dt
 
         INSERT INTO @tbCuenta
-              (idCuentaPorCobrar,idEstadoPago,abono)
-        SELECT idCuentaPorCobrar,idEstadoPago,abono
+              (idCuentaPorCobrar,idEstadoPago,abono,mora,diasMora)
+        SELECT idCuentaPorCobrar,idEstadoPago,abono,mora,diasMora
         FROM OPENJSON(@cuenta) WITH 
         (
             idCuentaPorCobrar INT
            ,idEstadoPago      INT
            ,abono             NUMERIC(18,5)
+           ,mora              NUMERIC(18,5)
+           ,diasMora          INT
         )
 
         INSERT INTO @tbCuota
-              (idCuotaPorCobrar,idEstadoPago,abono)
-        SELECT idCuotaPorCobrar,idEstadoPago,abono
+              (idCuotaPorCobrar,idEstadoPago,abono,mora,diasMora)
+        SELECT idCuotaPorCobrar,idEstadoPago,abono,mora,diasMora
         FROM OPENJSON(@cuota) WITH 
         (
             idCuotaPorCobrar INT
            ,idEstadoPago     INT
            ,abono            NUMERIC(18,5)
+           ,mora             NUMERIC(18,5)
+           ,diasMora         INT
         )
 
 		--> Obteniendo variables 
@@ -288,7 +297,7 @@ BEGIN
             --> Detalle de abono por cuentas 
 			INSERT INTO Contabilidad.Historial_Cobro 
                    (idComprobanteIngreso,idCuentaPorCobrar,idCobro,saldo,abono,diasMora,mora) 
-			SELECT @idComprobanteIngreso,h.idCuentaPorCobrar,idCobro,h.saldo,h.abono,diasMora,mora 
+			SELECT @idComprobanteIngreso,h.idCuentaPorCobrar,idCobro,h.saldo,h.abono,diasMora,mora
             FROM @history h 
             INNER JOIN dbo.Cobro c WITH (NOLOCK) ON c.secuencial = h.secuencial 
             WHERE c.idComprobanteIngreso = @idComprobanteIngreso
@@ -309,14 +318,18 @@ BEGIN
 		    --> Editar Estados de las Cuenta
             UPDATE cc SET
                    cc.idEstadoPago = tc.idEstadoPago
-                  ,cc.abono        = cc.abono + tc.abono
+                  ,cc.abono        = cc.abono    + tc.abono
+                  ,cc.diasMora     = cc.diasMora + tc.diasMora
+                  ,cc.mora         = cc.mora     + tc.mora
             FROM Contabilidad.CuentaPorCobrar cc WITH (ROWLOCK)
             INNER JOIN @tbCuenta              tc ON tc.idCuentaPorCobrar = cc.idCuentaPorCobrar
 
             --> Editar Estados de la cuota
             UPDATE cx SET 
                    cx.idEstadoPago = tc.idEstadoPago
-                  ,cx.abono        = cx.abono + tc.abono
+                  ,cx.abono        = cx.abono    + tc.abono
+                  ,cx.diasMora     = cx.diasMora + tc.diasMora
+                  ,cx.mora         = cx.mora     + tc.mora
             FROM Contabilidad.CuotaPorCobrar cx WITH (ROWLOCK)
             INNER JOIN @tbCuota              tc ON tc.idCuotaPorCobrar = cx.idCuotaPorCobrar
 		

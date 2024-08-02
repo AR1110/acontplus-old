@@ -73,7 +73,7 @@ BEGIN
 	                          ,CAST(SUM(fi.TaxValue) as numeric(18,2))		     as iva
 	                          ,CAST(nc.total as numeric(18,2))				     as devolucion
 	                          ,IIF(di.Code = 1,''Renta'',''Iva'')				 as tipoImpuesto
-	                          ,di.TaxValue         							     as valorRetenido
+	                          ,ISNULL(CAST(di.TaxValue as numeric(18,2)),0)      as valorRetenido
 	                          ,CAST(f.totalDescuento as numeric(18,2))           as totalDescuento
                               ,CAST(f.total as numeric(18,2))                    as total
 	                          ,f.estadoSri
@@ -149,7 +149,7 @@ BEGIN
                                        ,nc.total
 		                               ,fi.tax
                                        ,di.Code
-		                               ,di.TaxValue
+                                       ,di.TaxValue
                                ORDER BY f.fechaEmision,f.identificacionComprador DESC '
 
             SELECT entidad as razonSocial 
