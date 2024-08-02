@@ -145,6 +145,13 @@ function modalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
 
             let formattedDateTime = fS.formatDateMoment($scope.data.fechaEmision);
 
+            let infoCobro = [{
+                nro: $scope.data.nro,
+                lote: $scope.data.lote,
+                aprobacion: $scope.data.aprobacion,
+                referencia: $scope.data.referencia
+            }]
+
             return {
                 //Info
                 entidadFinanciera: entidadFinanciera.descripcion,
@@ -174,7 +181,9 @@ function modalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
                 tipoDocumento: item.tipoDocumento || item.codDoc,
                 valorAbono: item.saldo || $scope.data.valorAbono,
                 controlCaja: subEntidadFinanciera.controlCaja,
-                observacion: $scope.data.observacion
+                observacion: $scope.data.observacion,
+
+                infoCobro: entidadFinanciera.codigo === 'EFE' ? undefined : JSON.stringify(infoCobro),
             }
         } catch (error) {
             console.log(error);

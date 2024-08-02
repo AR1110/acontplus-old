@@ -525,7 +525,7 @@
             update,
             cancel,
             getCuotasByIdCuentaPorCobrar,
-            getDataToOverride
+            getDataForDelete
         }
 
         function newGenerateQuota(cuotas) {
@@ -619,7 +619,7 @@
                             cuentaPorCobrar,
                             estadoPago,
                             config
-                        } = JSON.parse(response.payload); 
+                        } = JSON.parse(response.payload);
 
                         const resultEntidadesFinanciera = entidadFinanciera.map(ef => {
                             let filteredSubEntidadFinanciera = subEntidadFinanciera.filter(sef => sef.idEntidadFinanciera === ef.idEntidadFinanciera)
@@ -693,13 +693,13 @@
         }
 
         //obtiene datos para anular el comprobante de ingreso 
-        function getDataToOverride(id) {
+        function getDataForDelete(id) {
             const params = JSON.stringify({ id, tipo: 7 });
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 let resultData = {};
                 if (response.code === "1") {
 
-                    let { cuentas, cuotas, estadoPago } = JSON.parse(response.payload);
+                    let { cuentas, cuotas, estadoPago } = JSON.parse(response.payload); 
 
                     resultData.cuentasPorCobrar = cuentas;
                     resultData.cuotasPorCobrar = cuotas;
@@ -716,7 +716,7 @@
                 comprobante,
                 cobros,
                 cobroDetalle,
-                historialCobros,
+                historialCuentas,
                 cuentasPorCobrarEstado,
                 cuotasPorCobrarEstado
             } = obj;
@@ -726,8 +726,6 @@
                 total: comprobante.total,
                 abono: comprobante.abono,
                 codEstab: comprobante.codEstab,
-                numeroIdentificacion: comprobante.numeroIdentificacion,
-                nombreFiscal: comprobante.nombreFiscal,
                 observacion: fS.isValidField(comprobante.observacion)
             }
 
@@ -756,33 +754,56 @@
                     idCuentaPorCobrar: detalle.idCuentaPorCobrar,
                     idCuotaPorCobrar: detalle.idCuotaPorCobrar,
                     abono: fS.roundNumber(detalle.abono, 5),
-                    interes: detalle.interes,
-                    diasMora: detalle.diasMora,
-                    mora: detalle.mora,
-                    cuota: fS.roundNumber(detalle.cuota, 5),
+                    interes: detalle.interesActual,
+                    diasMora: detalle.diasMoraActual,
+                    mora: detalle.interesPorMoraActual,
                     saldo: fS.roundNumber(detalle.saldoOriginal, 5),
                     secuencial: detalle.secuencial,
                 }
             })
 
-            const historialCobrosMappeado = historialCobros.map(hc => {
+            const historialCobrosMappeado = historialCuentas.map(hc => {
                 return {
                     idCuentaPorCobrar: hc.idCuentaPorCobrar,
                     abono: fS.roundNumber(hc.abono, 5),
-                    diasMora: hc.diasMora,
-                    mora: hc.mora,
+                    diasMora: hc.diasMoraActual,
+                    mora: hc.interesPorMoraActual,
                     saldo: fS.roundNumber(hc.saldo, 5),
                     secuencial: hc.secuencial
                 }
             })
+
+            let cuenta = cuentasPorCobrarEstado.map(item => {
+                return {
+                    idCuentaPorCobrar: item.idCuentaPorCobrar,
+                    idEstadoPago: item.idEstadoPago,
+                    abono: item.abono,
+                    diasMora: item.diasMoraActual,
+                    mora: item.interesPorMoraActual,
+                    interes: item.interesActual,
+                }
+            })
+
+            let cuota = cuotasPorCobrarEstado.map(item => {
+                return {
+                    idEstadoPago: item.idEstadoPago,
+                    abono: item.abono,
+                    idCuotaPorCobrar: item.idCuotaPorCobrar,
+                    diasMora: item.diasMoraActual,
+                    mora: item.interesPorMoraActual,
+                }
+            })
+
+
+
 
             const objComprobanteIngreso = {
                 comprobante: comprobanteMappeado,
                 cobros: cobrosMappeado,
                 cobroDetalle: cobroDetalleMappeado,
                 historial: historialCobrosMappeado,
-                cuenta: cuentasPorCobrarEstado,
-                cuota: cuotasPorCobrarEstado
+                cuenta,
+                cuota
             }
 
             return objComprobanteIngreso;
@@ -918,8 +939,7 @@
                 if (!response) throw response
 
 
-                const { cuentasPorCobrar } = response;
-                console.log(cuentasPorCobrar)
+                const { cuentasPorCobrar } = response; 
 
 
                 const results = cuentasPorCobrar.map(item => {
@@ -942,7 +962,7 @@
                         diasMora: item.diasMora,
                         mora: item.mora,
                         enabledHistorialCobro: item.codEstado === 'PE',
-                        tipo: item.tipo //item.tipo? CREDITO: CONTADO
+                        tipo: item.tipo //item.tipo? CONTADO: CREDITO
                     }
                 })
 
@@ -1316,15 +1336,6 @@
     'use strict';
     app.service('modalCobroService', ['formulario', 'toastService', function (fS, tS) {
         class ModalCobroService {
-            // _cuentasPorCobrar;
-            // _valorAbono;
-            // _esAbonoPosfechado;
-            // _uniqueIndex;
-            // _dataCuentaPorCobrar;
-            // _historialCuentas;
-            // _cobrosDetalle;
-            // _estadosCobro;
-            // _configCobro;
 
             constructor() {
                 this._cuentasPorCobrar = [];
@@ -1360,15 +1371,15 @@
                 this._uniqueIndex = index;
             }
 
-            setCobrosDetalle(values){
-                this._cobrosDetalle=values;
+            setCobrosDetalle(values) {
+                this._cobrosDetalle = values;
             }
             getCobrosDetalle() {
                 return this._cobrosDetalle;
             }
 
-            setHistorialCuentas(values){
-                this._historialCuentas=values;
+            setHistorialCuentas(values) {
+                this._historialCuentas = values;
             }
             getHistorialCuentas() {
                 return this._historialCuentas;
@@ -1400,19 +1411,25 @@
                     let cuotasCalculadas = cuotas.map(cuota => {
                         // Inicialización de variables
                         let interesPorMoraActual = 0;
-                        let diasDeMoraActual = 0;
+                        let diasMoraActual = 0;
                         let interesActual = 0;
                         let saldoTotalActual = cuota.saldo;
-
-                        // Calcular días de mora
-                        diasDeMoraActual = this.obtenerDiferenciaDias(cuota.fechaVencimiento);
-                        console.log(diasDeMoraActual);
-
+ 
+                        
                         // Calcular interés y mora si hay días de mora
-                        if (documento.tipo && this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI" && diasDeMoraActual > 0) {
-                            interesActual = fS.div(fS.mul(cuota.saldo, this._configCobro.interes, 5), 100, 5);
-                            interesPorMoraActual = fS.mul(interesActual, diasDeMoraActual, 5);
-                            saldoTotalActual = fS.plus(saldoTotalActual, interesPorMoraActual, 5)
+                        if (documento.tipo && this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI") {
+                            // Calcular días de mora 
+                            diasMoraActual = this.obtenerDiferenciaDias(cuota.fechaVencimiento); 
+
+                            if (diasMoraActual > 0) {
+
+                                interesActual = fS.div(fS.mul(cuota.saldo, this._configCobro.interes, 5), 100, 5);
+                                interesPorMoraActual = fS.mul(interesActual, diasMoraActual, 5);
+                                saldoTotalActual = fS.plus(saldoTotalActual, interesPorMoraActual, 5)
+
+                            }else{
+                                diasMoraActual = 0;
+                            }
                         }
 
                         return {
@@ -1421,23 +1438,29 @@
                             fechaVencimiento: cuota.fechaVencimiento,
                             nroCuota: cuota.nroCuota,
                             cuota: cuota.cuota,
-                            mora: documento.mora,
-                            interes: documento.interes,
-                            diasDeMora: documento.diasMora,
-                            diasDeMoraActual: diasDeMoraActual,
+                            mora: cuota.mora,
+                            interes: cuota.interes,
+                            diasMora: cuota.diasMora,
+                            diasMoraActual: diasMoraActual,
                             interesPorMoraActual: interesPorMoraActual,
                             interesActual: interesActual,
                             abono: cuota.abono,
                             saldo: cuota.saldo,
                             estado: cuota.estado,
                             saldoTotalActual: fS.instanceDecimal(saldoTotalActual, 5),
-                            saldoTotalOriginal: fS.instanceDecimal(cuota.saldo, 5)
+                            saldoTotalOriginal: fS.instanceDecimal(saldoTotalActual, 5)
                         };
                     });
 
                     let saldoActualDoc = fS.instanceDecimal(0);
+                    let diasMoraActual = 0;
+                    let interesPorMoraActual = fS.instanceDecimal(0);
+                    let interesActual = fS.instanceDecimal(0);
                     for (let cc of cuotasCalculadas) {
                         saldoActualDoc = saldoActualDoc.plus(cc.saldoTotalActual);
+                        diasMoraActual += cc.diasMoraActual;
+                        interesPorMoraActual = interesPorMoraActual.plus(cc.interesPorMoraActual);
+                        interesActual = interesActual.plus(cc.interesActual)
                     }
 
                     return {
@@ -1445,9 +1468,12 @@
                         saldoActualDoc: saldoActualDoc.toNumber(),
                         cuotasCalculadas: structuredClone(cuotasCalculadas),
                         cuotasCalculadasClone: structuredClone(cuotasCalculadas),
+                        diasMoraActual,
+                        interesPorMoraActual: interesPorMoraActual.toNumber(),
+                        interesActual: interesActual.toNumber()
+
                     };
-                });
-                console.log(resultados)
+                }); 
 
                 return resultados;
             }
@@ -1583,8 +1609,8 @@
                     idCuentaPorCobrar: this._dataCuentaPorCobrar.idCuentaPorCobrar,
                     abono: fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND),
                     saldo: fS.roundNumber(saldo, this.MAX_NUMBER_ROUND),
-                    diasMora: this._dataCuentaPorCobrar.diasMora,
-                    mora: this._dataCuentaPorCobrar.mora,
+                    diasMoraActual: this._dataCuentaPorCobrar.diasMoraActual,
+                    interesPorMoraActual: this._dataCuentaPorCobrar.interesPorMoraActual,
                 });
 
             }
@@ -1602,8 +1628,7 @@
             }
 
             aplicarAbonoACuotas(cuotasCalculadas) {
-                for (let dataCuota of cuotasCalculadas) {
-                    console.log(cuotasCalculadas)
+                for (let dataCuota of cuotasCalculadas) { 
 
                     dataCuota.abonoPosfechado = 0;
 
@@ -1649,11 +1674,11 @@
 
             actualizarCuota(dataCuota, abonoAplicable, campoAbono, resetAbono = false) {
                 let valorDinamico = abonoAplicable;
-                if (!resetAbono) { 
+                if (!resetAbono) {
                     valorDinamico = (dataCuota[campoAbono] || 0) + abonoAplicable;
                 }
                 dataCuota[campoAbono] = valorDinamico;
-                
+
                 dataCuota.saldoTotalActual -= abonoAplicable;
 
                 this.setValorAbono(this.getValorAbono() - abonoAplicable)
@@ -1669,9 +1694,9 @@
                     idCuentaPorCobrar: this._dataCuentaPorCobrar.idCuentaPorCobrar,
                     idCuotaPorCobrar: dataCuota.idCuotaPorCobrar,
                     abono: fS.roundNumber(abono, this.MAX_NUMBER_ROUND),
-                    interes: dataCuota.interes,
-                    diasMora: dataCuota.diasMora,
-                    mora: dataCuota.mora,
+                    diasMoraActual: dataCuota.diasMoraActual,
+                    interesPorMoraActual: dataCuota.interesPorMoraActual,
+                    interesActual: dataCuota.interesActual,
                     cuota: dataCuota.cuota,
                     saldo: fS.roundNumber(saldo, this.MAX_NUMBER_ROUND),
                     secuencial: this.getUniqueIndex(),
@@ -1731,6 +1756,127 @@
                     .reduce((prev, curr) => fS.instanceDecimal(prev).plus(curr.abono), fS.instanceDecimal(0))
                     .toNumber();
                 return abonoCuota;
+
+            }
+
+            /**
+             * 
+             * @param {*} param0 
+             * @returns 
+             */
+            generarCuentasPorCobrarEstado({ historialCuentas, cobrosDetalle }) {
+
+                let cuentasPorCobrarAgrupado = historialCuentas.reduce((acc, curr) => {
+                    let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar);
+                    if (!existeDato) {
+                        acc.push({
+                            idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                            valorSaldoLectura: fS.instanceDecimal(curr.valorSaldoLectura),
+                            abono: fS.instanceDecimal(curr.abono),
+                            diasMoraActual: curr.diasMoraActual,
+                            interesPorMoraActual: curr.interesPorMoraActual,
+                            interesActual: curr.interesActual,
+                        });
+                    } else {
+                        existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
+                    }
+                    return acc;
+                }, []);
+
+                let cuentasPorCobrarEstado = [];
+
+                for (let item of cuentasPorCobrarAgrupado) {
+                    let valorSaldo = fS.instanceDecimal(item.valorSaldoLectura);
+                    let totalPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && cd.posfechado)
+                        .reduce((acc, curr) => acc.plus(curr.abono), fS.instanceDecimal(0));
+
+                    let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && !cd.posfechado)
+                        .reduce((acc, curr) => acc.plus(curr.abono), fS.instanceDecimal(0));
+
+
+
+                    valorSaldo = valorSaldo.minus(totalNoPosfechado).toNumber()
+
+                    let dataEstadoPago;
+                    if (totalPosfechado.gt(0)) {
+                        dataEstadoPago = this.getEstadoCuota({
+                            esPosfechado: true,
+                            saldo: 0,
+                            abono: 0
+                        });
+                    } else {
+                        dataEstadoPago = this.getEstadoCuota({
+                            saldo: valorSaldo,
+                            abono: totalNoPosfechado.toNumber(),
+                            esPosfechado: false
+                        });
+                    }
+
+                    cuentasPorCobrarEstado.push({
+                        idCuentaPorCobrar: item.idCuentaPorCobrar,
+                        idEstadoPago: dataEstadoPago.idEstadoPago,
+                        abono: totalNoPosfechado.toNumber(),
+                        diasMoraActual: item.diasMoraActual,
+                        interesPorMoraActual: item.interesPorMoraActual,
+                        interesActual: item.interesActual,
+
+                    });
+                }
+
+                return cuentasPorCobrarEstado;
+
+            }
+
+
+
+            generarCuotasPorCobrarEstado({ cobrosDetalle }) {
+
+                let cuotasPorCobrarAgrupado = cobrosDetalle.reduce((acc, curr) => {
+                    let existeDato = acc.find(dataCxc => (dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar) && (dataCxc.idCuotaPorCobrar === curr.idCuotaPorCobrar));
+                    if (!existeDato) {
+                        acc.push({
+                            idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                            idCuotaPorCobrar: curr.idCuotaPorCobrar,
+                            valorSaldoLectura: curr.valorSaldoLectura,
+                            diasMoraActual: curr.diasMoraActual,
+                            interesPorMoraActual: curr.interesPorMoraActual,
+                            abono: fS.instanceDecimal(curr.abono)
+                        });
+                    } else {
+                        existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
+                    }
+                    return acc;
+                }, []);
+
+                let cuotasPorCobrarEstado = [];
+
+                for (let item of cuotasPorCobrarAgrupado) {
+                    let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuotaPorCobrar === item.idCuotaPorCobrar && !cd.posfechado)
+                        .reduce((acc, curr) => {
+                            return fS.instanceDecimal(acc).plus(curr.abono);
+                        }, fS.instanceDecimal(0));
+
+                    let valorSaldoLectura = fS.roundNumber(item.valorSaldoLectura, 3);
+                    let valorSaldo = fS.instanceDecimal(valorSaldoLectura)
+                        .minus(fS.roundNumber(totalNoPosfechado.toNumber(), 3))
+                        .toNumber();
+
+                    let dataEstadoPago = this.getEstadoCuota({
+                        saldo: valorSaldo,
+                        abono: item.abono.toNumber(),
+                        esPosfechado: false,
+                    });
+
+                    cuotasPorCobrarEstado.push({
+                        idEstadoPago: dataEstadoPago.idEstadoPago,
+                        abono: totalNoPosfechado.toNumber(),
+                        idCuotaPorCobrar: item.idCuotaPorCobrar,
+                        diasMoraActual: item.diasMoraActual,
+                        interesPorMoraActual: item.interesPorMoraActual,
+                    });
+                }
+
+                return cuotasPorCobrarEstado;
 
             }
 
