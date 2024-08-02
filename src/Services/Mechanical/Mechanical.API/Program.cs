@@ -1,11 +1,12 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Common.AppSettings;
 using Common.Core.Utils;
 using Mechanical.API.Extensions;
 using Newtonsoft.Json.Serialization;
-using Services.Common;
-using Services.Common.Logs;
-using Services.Common.Middleware;
+using Services.Common.Extensions;
+
+
 
 internal class Program
 {
@@ -29,18 +30,18 @@ internal class Program
 
         builder.Services.AddCors();
 
-        builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+        builder.Services.AddIdentityService(builder.Configuration);
 
         builder.Services.AddSwaggerDocumentation();
 
-        builder.Services.AddSingleton<LogWriter>();
+        builder.Services.AddScoped<ICustomLogger, CustomLogger>();
 
         builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
         var app = builder.Build();
 
-        app.UseMiddleware<ExceptionMiddleware>();
+        app.UseStatusCodePages();
 
         // Configure the HTTP request pipeline.
         app.UseSwaggerDocumentation();
@@ -55,7 +56,14 @@ internal class Program
             options.WithOrigins("https://localhost:7111");
         });
 
-        app.UseHttpsRedirection();
+        if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+        {
+            app.Urls.Add("http://*:5009"); // Linux Port
+        }
+        else
+        {
+            app.UseHttpsRedirection();
+        }
 
         app.UseAuthentication();
 

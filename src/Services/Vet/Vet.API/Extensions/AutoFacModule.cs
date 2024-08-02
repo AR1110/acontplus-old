@@ -1,28 +1,20 @@
 ﻿using Autofac;
-using Common.Core.Interfaces;
-using Common.Infrastructure.Data;
-using Common.Infrastructure.Repository;
-using Vet.API.Data;
 
+namespace Vet.API.Extensions;
 
-namespace Vet.API.Extensions
+public class AutoFacModule : Module
 {
-    public class AutoFacModule : Module
+    protected override void Load(ContainerBuilder builder)
     {
-        protected override void Load(ContainerBuilder builder)
+        builder.RegisterType<VetContext>().As<BaseContext>();
+        builder.Register(ctx =>
         {
-            builder.RegisterType<VetContext>().As<BaseContext>();
-            builder.Register(ctx =>
+            var allContext = new Dictionary<string, BaseContext>
             {
-                var allContext = new Dictionary<string, BaseContext>
-                {
-                    { "VetContext", ctx.Resolve<VetContext>() }
-                };
-                return new DbContextFactory(allContext);
-
-            });
-            builder.RegisterType<ADORepository>().As<IADORepository>();
-
-        }
+                { "VetContext", ctx.Resolve<VetContext>() }
+            };
+            return new DbContextFactory(allContext);
+        });
+        builder.RegisterType<AdoRepository>().As<IAdoRepository>();
     }
 }

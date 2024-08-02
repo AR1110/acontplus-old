@@ -10,22 +10,48 @@ const CHANGE_VERSION = (largo = 50) => {
 
 const PATH_API_COMPRA = 'Compras/'
 
+app.constant('mainPaths', {
+    cuenta_por_pagar_view: '~/Pages/Contabilidad/CuentaPorPagar/'
+})
+
 app.constant('nombreModalCommon', {
+    //old version
     MAIL: {
         fileCtrl: '/js/common/modals/modalMailCtrl.js' + CHANGE_VERSION(),
         controllers: {
             ME: 'SendMailCtrl'
         },
         templates: {
-            ME: 'Shared/Common/_ModalSendMail.cshtml',
+            ME: '~/Pages/Common/Shared/_ModalSendMail.cshtml',
         },
+    },
+    //new version
+    SEND_MAIL: {
+        fileCtrl: '/js/common/modals/modalSendMailCtrl.min.js' + CHANGE_VERSION(),
+        controllers: {
+            MSM: 'modalSendMailCtrl'
+        },
+        templates:{
+            MSM: '~/Pages/Common/Shared/_ModalSendMail.cshtml',
+        } 
+    },
+    SEND_WHATSAPP: {
+        fileCtrl: '/js/common/modals/modalSendWhatsAppCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'modalSendWhatsAppCtrl',
+        template: '~/Pages/Common/_ModalWhatsApp.cshtml'
     },
     KEY_REQUEST_MODAL: {
         fileCtrl: '/js/common/modals/keyRequestCtrl.js' + CHANGE_VERSION(),
         controllers: "keyRequestCtrl",
         template: '~/Pages/Common/_KeyRequestModal.cshtml',        
+    },
+    INFO_ADICIONAL_DOC: {
+        fileCtrl: '/js/common/modals/modalInfoAdicionalTipoDocCtrl.min.js',
+        template: '~/Pages/Common/Shared/_ModalInfoAdicionalTipoDoc.cshtml',
+        controller: 'InfoAdicionalTipoDocCtrl'
     }
 })
+
 
 
 //Inventario 
@@ -99,7 +125,7 @@ app.constant('nombreModalInventario', {
             D: 'modalConsolidacionDetalleCtrl',
         },
         templates: {
-            D: '~/Areas/Consolidacion/Pages/Shared/_ModalDetalle.cshtml',
+            D: '~/Pages/Consolidacion/Shared/_ModalDetalle.cshtml',
         }
     },
     TRANSFERENCIA_BODEGA: {
@@ -119,7 +145,7 @@ app.constant('nombreModalFactElect', {
     DATO_ADICIONAL_ARTICULO: {
         fileCtrl: '/js/factElect/modals/modalDatoAdicionalArticuloCtrl.min.js' + CHANGE_VERSION(),
         controller: 'ModalDatoAdicionalArticuloCtrl',
-        template: '~/Views/Shared/_ModalDatoAdicionalArticulo.cshtml'
+        template: '~/Pages/Common/_ModalDatoAdicionalVenta.cshtml'
     },
     FACTURA: {
         fileCtrl: '/js/modal/ventas/modalFacturaCtrl.min.js' + CHANGE_VERSION(),
@@ -143,6 +169,19 @@ app.constant('nombreModalFactElect', {
 })
 
 app.constant('nombreModalVenta', {
+    CONVERT_TO_DOC: {
+        fileCtrl: '/js/ventas/modals/modalConvertToDocCtrl.min.js' + CHANGE_VERSION(),
+        controllers: {
+            M: 'convertToDocModalCtrl',
+            MHCD: 'historialConversionDocCtrl'
+        },
+        templates: {
+            M: '~/Pages/Ventas/Shared/_ModalConvertToDoc.cshtml',
+            MHCD: '~/Pages/Ventas/Shared/_ModalHistorialConversionDoc.cshtml', 
+        }
+    }, 
+
+
     DOC_VENTA_DETALLE: {
         fileCtrl: '/js/common/modals/modalDocVentaDetalleCtrl.min.js' + CHANGE_VERSION(),
         controller: 'modalDocVentaDetalleCtrl',
@@ -168,7 +207,7 @@ app.constant('nombreModalVenta', {
     EMPRESA: {
         fileCtrl: '/js/ventas/modals/modalEmpresaCtrl.min.js',
         controller: 'ModalEmpresaCtrl',
-        template: '~/Pages/Empresa/_ModalAddUpdate.cshtml'
+        template: '~/Pages/Ventas/Empresa/_ModalAddEdit.cshtml'
     },
     EMPLEADO: {
         fileCtrl: '/js/ventas/modals/modalEmpleadoCtrl.min.js',
@@ -188,23 +227,7 @@ app.constant('nombreModalVenta', {
         templates: {
             D: 'NotaEntrega/_ModalDetalle.cshtml',
         }
-    },
-    APROB_COMPROBANTE: {
-        fileCtrl: '',
-        controllers: {
-            MSD: ' ',
-            MADE: ' ',
-            MADF: ' ', //Modal Aprobacion Documento Factura
-            MAD: ' ',
-            MFA: '' //Modal Aprob. Comprobante Ctrl    
-        },
-        templates: {
-            MSD: ' ',
-            MADE: ' ',
-            MADF: ' ',
-            MADD: ' '
-        }
-    },
+    }, 
     PROFORMA: {
         fileCtrl: '/js/modal/ventas/modalProformaCtrl.js' + CHANGE_VERSION(),
         controllers: {
@@ -221,7 +244,27 @@ app.constant('nombreModalVenta', {
             MDUPLICATE: '~/Pages/Proforma/_ModalDuplicar.cshtml',
             MF: '~/Pages/Proforma/_ModalFiltro.cshtml'
         }
-    }
+    },
+
+    SOLICITUD_CREDITO: {
+        fileCtrl: '/js/ventas/modals/modalSolicitudCreditoCtrl.min.js' + CHANGE_VERSION(),
+        controllers: {
+            MSC: 'modalSolictudCreditoCtrl'
+        },
+        templates: {
+            MSC: '~/Pages/Ventas/Components/_SolicitudCreditoComponent.cshtml',
+        }
+    },
+    /**
+     * NUEVO FORMA DE AGREGAR LOS DATOS ADICIONALES EN VENTA 
+     */
+    INFO_ADICIONAL_ARTICULO: {
+        fileCtrl: '/js/ventas/modals/modalInfoAdicionalArticuloCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'modalInfoAdicionalArticuloCtrl',
+        template: '~/Pages/Ventas/Modals/_ModalInfoAdicionalArticulo.cshtml',
+        
+    },
+
 })
 
 //Compras
@@ -299,16 +342,34 @@ app.constant('nombreModalLogistica', {
 })
 
 app.constant('nombreModalContabilidad', {
+    COBRO_RAPIDO: {
+        fileCtrl: '/js/contabilidad/modals/cobro/modalCobroRapidoCtrl.min.js' + CHANGE_VERSION(),
+        ctrl:'modalCobroRapidoCtrl',
+        template: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCobroRapido.cshtml'
+    },
+    COBRO_LOTE: {
+        fileCtrl: '/js/contabilidad/modals/cobro/modalCobroLoteCtrl.js' + CHANGE_VERSION(),
+        ctrl: 'modalCobroLoteCtrl',
+        template: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCobroLote.cshtml'
+    },
+    FORMA_COBRO: {
+        fileCtrl: '/js/contabilidad/modals/cobro/modalFormaCobroCtrl.min.js' + CHANGE_VERSION(),
+        ctrl: 'modalFormaCobroCtrl',
+        template: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalFormaCobro.cshtml'
+    },
     COBRO: {
         fileCtrl: '/js/contabilidad/modals/modalCobroCtrl.min.js' + CHANGE_VERSION(),
         fileCuotaCtrl: '/js/contabilidad/modals/modalCuotaCtrl.min.js' + CHANGE_VERSION(),
+        fileHistorialCobro: '/js/contabilidad/modals/modalHistorialCobroCtrl.min.js' + CHANGE_VERSION(),
+      
         controllers: {
             CR: 'ModalCobroRapidoCtrl', //Modal - Cobro Rapido 
             CL: 'ModalCobroLoteCtrl', //Cobro Lote
             MFC: 'ModalFormaCobroCtrl',
             CD: 'ModalCobroDetalleCtrl',
             MC: 'ModalCuotaCtrl',
-            MM: 'ModalMoraCtrl'
+            MM: 'ModalMoraCtrl',
+            MGFP: 'modalGestionFinancieraPersonalCtrl'
         },
         templates: {
             CR: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCobroRapido.cshtml',
@@ -317,6 +378,7 @@ app.constant('nombreModalContabilidad', {
             CD: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCobroDetalle.cshtml',
             MC: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCuota.cshtml',
             MM: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalMora.cshtml',
+            MGFP: '~/Pages/Contabilidad/Components/_GestionFinancieraPersonal.cshtml',
         }
     },
     PAGO: {
@@ -329,28 +391,19 @@ app.constant('nombreModalContabilidad', {
             MPL: '~/Pages/Contabilidad/CuentaPorPagar/Shared/_ModalPagoLote.cshtml',
             MFP: '~/Pages/Contabilidad/CuentaPorPagar/Shared/_ModalFormaPago.cshtml'
         }
-    }
+    }, 
 })
 
-app.constant('nombreModal', {
-
-    caja: {
-        MODAL_CTRL: 'admin/modalCajaCtrl.js' + CHANGE_VERSION(),
-        MODAL_CAJA_CSHTML: 'Caja/_ModalCaja.cshtml',
-        MODAL_APERTURA_CAJA_CSHTML: 'Caja/_ModalAperturaCaja.cshtml',
-        MODAL_ASIGNACION_USUARIO_CAJA_CSHTML: 'Caja/_ModalAsignUsuarioTurno.cshtml',
-        MODAL_MOVIMIENTO_CAJA_CSHTML: 'Caja/_ModalMovimientoCaja.cshtml',
-        MODAL_MOVIMIENTO_CIERRE_CSHTML: 'Caja/_ModalCierreCaja.cshtml'
-    },
+app.constant('nombreModal', { 
     common: {
         MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL: 'common/modalInfoAdicionalTipoDocCtrl.min.js' + CHANGE_VERSION(),
         MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML: '_ModalInfoAdicionalTipoDoc.cshtml',
 
         MODAL_MODULO_IMPORTACION_CTRL: 'common/modalModuloImportacionCtrl.js' + CHANGE_VERSION(),
-        MODAL_MODULO_IMPORTACION_CSHTML: 'Common/_ModalModuloImportacion.cshtml',
+        MODAL_MODULO_IMPORTACION_CSHTML: '~/Pages/Common/Shared/_ModalModuloImportacion.cshtml',
 
         MODAL_COMPROBANTE_ERROR_CTRL: 'common/modalComprobanteErrorCtrl.js' + CHANGE_VERSION(),
-        MODAL_COMPROBANTE_ERROR_CSHTML: 'Common/_ModalComprobanteError.cshtml',
+        MODAL_COMPROBANTE_ERROR_CSHTML: '~/Pages/Common/Shared/_ModalComprobanteError.cshtml',
 
         MODAL_SEND_MAIL_CTRL: '/js/common/modals/modalMailCtrl.js' + CHANGE_VERSION(),
         MODAL_STATUS_MAIL_CSHTML: '~/Pages/FactElect/DocumentoElectronico/Shared/_ModalStatusEmail.cshtml',
@@ -360,490 +413,20 @@ app.constant('nombreModal', {
 
         MODAL_INFO_ADICIONAL_DOC: {
             controller: 'InfoAdicionalTipoDocCtrl',
-            template: 'Shared/Common/_ModalInfoAdicionalTipoDoc.cshtml'
+            template: '~/Pages/Common/Shared/_ModalInfoAdicionalTipoDoc.cshtml'
         }
-    },
-    doc_elect: {
-        MODAL_CTRL: 'factElect/docVentaCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO_PROFORMA_CSHTML: 'Proforma/_ModalNuevoTest.cshtml'
-    },
-    fact_elect: {
-        MODAL_CTRL: 'factElect/modalDocElectronicoVentaCtrl.js' + CHANGE_VERSION(),
-
-    },
-    familia: {
-        MODAL_FAMILIA_CTRL: 'almacen/modalFamiliaCtrl.js' + CHANGE_VERSION(),
-        MODAL_FAMILIA_CSHTML: '_ModalFamilia.cshtml'
-    },
-    financiera: {
-        MODAL_FORMA_COBRO_PAGO_CTRL: 'financiera/modalFormaCobroPagoCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_FORMA_COBRO_PAGO_CSHTML: 'Shared/Financiera/_ModalFormaCobroPago.cshtml'
-    },
-    subFamilia: {
-        MODAL_CTRL: 'modalSubFamiliaCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_CSHTML: '_ModalSubFamilia.cshtml'
-    },
-    medida: {
-        MODAL_CTRL: 'modalMedidaCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_CSHTML: '_ModalMedida.cshtml'
-    },
-    marca: {
-        MODAL_CTRL: 'modalMarcaCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_CSHTML: '_ModalMarca.cshtml'
-    },
-    modelo: {
-        MODAL_CTRL: 'modalModeloCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_CSHTML: '_ModalModelo.cshtml'
-    },
-    articulo: {
-        MODAL_CTRL: 'modalArticuloCtrl.js' + CHANGE_VERSION(),
-        MODAL_ARTICULO_IMAGEN_CTRL: 'modalArticuloImagenCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_IMAGEN_DETALLE_CTRL: 'modalArticuloImagenDetalleCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_NUEVO_CSHTML: '_ModalNuevoArticulo.cshtml',
-        MODAL_EDITAR_CSHTML: '_ModalEditarArticulo.cshtml',
-        MODAL_GENERAL_CSHTML: '_ModalArticuloGeneral.cshtml',
-        MODAL_ARTICULO_IMAGEN_CSHTML: '_ModalArticuloImagen.cshtml',
-        MODAL_IMAGEN_DETALLE_CSHTML: '_ModalArticuloImagenDetalle.cshtml',
-        MODAL_FILTRO_CSHTML: '_ModalArticuloFiltro.cshtml',
-        MODAL_ARTICULO_IMPUESTO_RETENCION_CSHTML: 'Articulo/_ModalArticuloImpuestoRetencion.cshtml',
-        MODAL_DETALLE_CSHTML: 'Articulo/_ModalArticuloDetalle.cshtml',
-        MODAL_ARTICULO_IMPUESTO_CSHTML: 'Articulo/_ModalArticuloImpuesto.cshtml',
-        MODAL_NUEVO: {
-            controller: 'ModalArticuloCtrl',
-            template: 'Articulo/_ModalNuevoArticulo.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalFiltroCtrl',
-            template: 'Articulo/_ModalArticuloFiltro.cshtml'
-        },
-        MODAL_ARTICULO_IMPUESTO: {
-            controller: 'ModalArticuloImpuestoCtrl',
-            template: 'Articulo/_ModalArticuloImpuesto.cshtml'
-        },
-        MODAL_ARTICULO_IMPUESTO_RETENCION: {
-
-        },
-        MODAL_ARTICULO_IMAGEN: {
-            controller: 'ModalArticuloImagenCtrl',
-            template: 'Articulo/_ModalArticuloImagen.cshtml'
-        },
-        MODAL_IMAGEN_DETALLE: {
-            controller: 'ModalArticuloImagenDetalleCtrl',
-            template: 'Articulo/_ModalArticuloImagenDetalle.cshtml'
-        },
-    },
-    articulo_impuesto: {
-        MODAL_CTRL: 'modalArticuloImpuestoCtrl.min.js' + CHANGE_VERSION(),
-
-    },
-    categoria_compra: {
-        MODAL_CTRL: 'modalCategoriaCompraCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_FILE_CTRL: 'modal/compras/modalCategoriaCompraCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_CSHTML: '_ModalCategoriaCompra.cshtml',
-        MODAL_NUEVO: {
-            controller: 'ModalCategoriaCompraCtrl',
-            template: 'CategoriaCompra/_ModalCategoriaCompra.cshtml'
-        }
-    },
+    },  
     compra: {
         MODAL_CUOTA_CTRL: 'modalCompraCuotaCtrl.js' + CHANGE_VERSION(),
         MODAL_CUOTA_CSHTML: '_ModalCompraCuota.cshtml',
         MODAL_DATO_ADICIONAL_ARTICULO: {
             fileCtrl: '/js/compras/modals/modalDatoAdicionalArticulo.js' + CHANGE_VERSION(),
             controller: 'ModalDatoAdicionalArticuloCtrl',
-            template: '~/Areas/Compra/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml'
+            template: '~/Pages/Compras/Shared/_ModalDatoAdicionalArticulo.cshtml'
         }
-    },
-    compra_no_habitual: {
-        MODAL_FILE_PATH: 'modal/compras/modalCompraNoHabitualCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalAddCtrl',
-            template: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalUpdateCtrl',
-            template: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalNuevo.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalDetalleCtrl',
-            template: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalDetalle.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalNuevoCtrl',
-            template: ''
-        }
-    },
-    consolidacion_inv: {
-        MODAL_FILE_CTRL: 'modal/inventario/modalConsolidacionInventarioCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalConsolidacionNuevoCtrl',
-            template: '~/Areas/Consolidacion/Pages/Shared/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalConsolidacionEditarCtrl',
-            template: '~/Areas/Consolidacion/Pages/Shared/_ModalEditar.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalConsolidacionDetalleCtrl',
-            template: '~/Areas/Consolidacion/Pages/Shared/_ModalDetalle.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalConsolidacionFiltroCtrl',
-            template: '~/Areas/Consolidacion/Pages/Shared/_ModalFiltro.cshtml'
-        },
-        MODAL_CONSOL_IMPORT: {
-            controller: 'ModalConsolidacionImportacionCtrl',
-            template: '~/Areas/Consolidacion/Pages/Shared/_ModalConsolidacionImportacion.cshtml'
-        }
-    },
-    cuota_compra: {
-        MODAL_FILE_CTRL: 'modal/compras/modalCuotaCtrl.js',
-        MODAL_NUEVO: {
-            controller: 'ModalCuotaNuevoCtrl',
-            template: 'Shared/Venta/_CuotaDetalle.cshtml',
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalCuotaDetalleCtrl',
-            template: 'Shared/Venta/_CuotaDetalle.cshtml',
-        }
-    },
-    establecimiento: {
-        MODAL_CTRL: 'sri/modalEstablecimientoCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalEstablecimientoCtrl',
-            template: '~/Pages/Establecimiento/Shared/_ModalNuevo.cshtml'
-        },
-        MODAL_EDIT: {
-            controller: 'ModalEstablecimientoCtrl',
-            template: '~/Pages/Establecimiento/Shared/_ModalEditar.cshtml'
-        },
-        MODAL_CONFIG: {
-            controller: 'ModalEstablecimientoConfigCtrl',
-            template: '~/Pages/Establecimiento/Shared/_ModalConfig.cshtml'
-        }
-    },
-    factura_compra: {
-        MODAL_FILE_CTRL: 'modal/compras/modalFacturaCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalFacturaNuevoCtrl',
-            template: '~/Areas/FacturaCompra/Pages/Shared/_ModalNuevo.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalFacturaDetalleCtrl',
-            template: '~/Areas/FacturaCompra/Pages/Shared/_ModalDetalle.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalFacturaEditarCtrl',
-            template: '~/Areas/FacturaCompra/Pages/Shared/_ModalEditar.cshtml'
-        },
-        MODAL_INVOICE_FAST: {
-            controller: 'ModalFacturaSinDetalleCtrl',
-            template: '~/Areas/FacturaCompra/Pages/Shared/_ModalInvoiceFast.cshtml'
-        }
-    },
-    factura_venta: {
-        MODAL_FILE_CTRL: 'modal/ventas/modalFacturaCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalFacturaNuevoCtrl',
-            template: 'FacturaVenta/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalFacturaEditarCtrl',
-            template: 'FacturaVenta/_ModalEditar.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalFacturaDetalleCtrl',
-            template: 'FacturaVenta/_ModalDetalle.cshtml'
-        },
-        MODAL_DUPLICAR: {
-            controller: 'ModalFacturaDuplicarCtrl',
-            template: 'FacturaVenta/_ModalDuplicar.cshtml'
-        },
-        MODAL_DIVIDIR: {
-            controller: 'ModalFacturaNuevoCtrl',
-            template: 'FacturaVenta/_ModalDividir.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalFacturaFiltroCtrl',
-            template: 'FacturaVenta/_ModalFiltro.cshtml'
-        }
-    },
-    impuesto_renta: {
-        MODAL_FILE_CTRL: 'modal/sri/modalImpuestoRentaCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalNuevoCtrl',
-            template: 'ImpuestoRenta/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalEditarCtrl',
-            template: 'ImpuestoRenta/_ModalEditar.cshtml'
-        }
-    },
-
-    ingreso_bodega: {
-        MODAL_FILE_CTRL: 'modal/compras/modalIngresoBodegaCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalIngresoBodegaNuevoCtrl',
-            template: 'IngresoBodega/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalIngresoBodegaEditarCtrl',
-            template: 'IngresoBodega/_ModalEditar.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalIngresoBodegaDetalleCtrl',
-            template: 'IngresoBodega/_ModalDetalle.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalIngresoBodegaFiltroCtrl',
-            template: 'IngresoBodega/_ModalFiltro.cshtml'
-        },
-    },
-    kardex: {
-        MODAL_CTRL: 'inventario/kardexCtrl.js' + CHANGE_VERSION(50),
-        MODAL_CSHTML: '~/Pages/Kardex/Shared/_ModalKardex.cshtml',
-        MODAL_FILTRO_CSHTML: '~/Pages/Kardex/Shared/_ModalFiltroKardex.cshtml'
-    },
-    liquidacion_compra: {
-        MODAL_FILE_CTRL: 'modal/compras/modalLiquidacionCompraCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalLiquidacionNuevoCtrl',
-            template: 'LiquidacionCompra/_ModalNuevo.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalLiquidacionDetalleCtrl',
-            template: 'LiquidacionCompra/_ModalDetalle.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalLiquidacionEditarCtrl',
-            template: 'LiquidacionCompra/_ModalEditar.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalLiquidacionFiltroCtrl',
-            template: 'LiquidacionCompra/_ModalNuevo.cshtml'
-        },
-
-
-    },
-    nota_credito_prov: {
-        MODAL_FILE_CTRL: 'modal/compras/modalNotaCreditoProveedorCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalNotaCreditoNuevoCtrl',
-            template: 'NotaCreditoProveedor/_ModalNuevo.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalNotaCreditoDetalleCtrl',
-            template: 'NotaCreditoProveedor/_ModalDetalle.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalNotaCreditoEditarCtrl',
-            template: 'NotaCreditoProveedor/_ModalEditar.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalNotaCreditoFiltroCtrl',
-            template: 'NotaCreditoProveedor/_ModalFiltro.cshtml'
-        },
-    },
-    nota_credito_cliente: {
-        MODAL_FILE_CTRL: 'modal/ventas/modalNotaCreditoCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalNotaCreditoNuevoCtrl',
-            template: 'NotaCreditoCliente/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalNotaCreditoEditarCtrl',
-            template: 'NotaCreditoCliente/_ModalEditar.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalNotaCreditoDetalleCtrl',
-            template: 'NotaCreditoCliente/_ModalDetalle.cshtml'
-        },
-    },
-    nota_entrega: {
-        MODAL_FILE_CTRL: 'modal/ventas/modalNotaEntregaCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalNotaEntregaNuevoCtrl',
-            template: 'NotaEntrega/_ModalNuevo.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalNotaEntregaDetalleCtrl',
-            template: 'NotaEntrega/_ModalDetalle.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalNotaEntregaEditarCtrl',
-            template: 'NotaEntrega/_ModalEditar.cshtml'
-        },
-        MODAL_DUPLICAR: {
-            controller: 'ModalNotaEntregaDuplicarCtrl',
-            template: 'NotaEntrega/_ModalDuplicar.cshtml'
-        },
-        MODAL_LISTA: {
-            controller: 'ModalNotaEntregaListaCtrl',
-            template: 'NotaEntrega/_ModalLista.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalNotaEntregaFiltroCtrl',
-            template: 'NotaEntrega/_ModalFiltro.cshtml'
-        }
-    },
-    orden_compra: {
-        MODAL_FILE_CTRL: 'modal/compras/modalOrdenCompraCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalOrdenCompraNuevoCtrl',
-            template: 'OrdenCompra/_ModalNuevo.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalOrdenCompraDetalleCtrl',
-            template: 'OrdenCompra/_ModalDetalle.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalOrdenCompraEditarCtrl',
-            template: 'OrdenCompra/_ModalEditar.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalOrdenCompraFiltroCtrl',
-            template: 'OrdenCompra/_ModalFiltro.cshtml'
-        },
-    },
-    pago: {
-        MODAL_FILE_CTRL: 'modal/financiera/pago/modalPagoCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_PAGO_DOCUMENTO_CSHTML: 'Shared/Financiera/_ModalPagoDocumento.cshtml',
-        MODAL_FILE_CUOTA: 'modal/financiera/pago/modalCuotaCtrl.js' + CHANGE_VERSION(),
-        MODAL_FILE_FORMA_PAGO: 'modal/financiera/modalFormaCobroPagoCtrl.js' + CHANGE_VERSION(),
-        MODAL_FILE_HISTORIAL_PAGO: 'modal/financiera/pago/modalPagoHistorialCtrl.js' + CHANGE_VERSION(),
-        MODAL_COMPRA_CUOTA: {
-            controller: 'ModalCompraCuotaCtrl',
-            template: 'Pago/_ModalCompraCuota.cshtml'
-        },
-        MODAL_PAGO_DOCUMENTO: {
-            controller: 'ModalPagoDocumentoCtrl',
-            template: 'Pago/_ModalPagoDocumento.cshtml'
-        },
-        MODAL_FORMA_PAGO: {
-            controller: 'FormaCobroPagoCtrl',
-            template: 'Pago/_ModalFormaPago.cshtml'
-        },
-        MODAL_HISTORIAL_PAGO: {
-            controller: 'ModalPagoHistorialCtrl',
-            template: 'Pago/_ModalPagoHistorial.cshtml'
-        }
-    },
-    proforma: {
-        MODAL_FILE_CTRL: 'modal/ventas/modalProformaCtrl.js' + CHANGE_VERSION(),
-        MODAL_DETALLE: {
-            controller: 'ModalProformaDetalleCtrl',
-            template: 'Proforma/_ModalDetalle.cshtml'
-        }
-    },
-    proveedor: {
-        MODAL_CTRL: 'common/modalClienteProveedorCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO_CSHTML: '_ModalNuevoProveedor.cshtml',
-        MODAL_LISTA_CSHTML: '_ModalProveedorLista.cshtml'
-    },
-    pto_emision: {
-        MODAL_CTRL: 'sri/modalEstablecimientoCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalPtoEmisionCtrl',
-            template: '~/Pages/Establecimiento/PuntoEmision/_ModalNuevo.cshtml'
-        },
-        MODAL_EDIT: {
-            controller: 'ModalPtoEmisionCtrl',
-            template: '~/Pages/Establecimiento/PuntoEmision/_ModalEditar.cshtml'
-        }
-    },
-
-    doc_recibido: {
-        MODAL_FILE_CTRL: '/js/modal/recepcion/modalDocRecibidoCtrl.js',
-        MODAL_HISTORIAL_COMPRA: {
-            controller: 'ModalHistoryComprasCtrl',
-            template: '~/Areas/DocumentoRecibido/Pages/Shared/_HistoryCompras.cshtml'
-        }
-    },
-    retencion_compra: {
-        MODAL_FILE_CTRL: 'modal/common/modalRetencionCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalRetencionCompraNuevoCtrl',
-            template: 'RetencionCompra/_ModalNuevo.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalRetencionCompraDetalleCtrl',
-            template: 'RetencionCompra/_ModalDetalle.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalRetencionCompraEditarCtrl',
-            template: 'RetencionCompra/_ModalEditar.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalRetencionCompraFiltroCtrl',
-            template: 'RetencionCompra/_ModalFiltro.cshtml'
-        },
-        MODAL_RETENCION_AUTOMATICA: {
-            controller: 'ModalRetencionCompraAutomaticaCtrl',
-            template: 'RetencionCompra/_ModalRetencionAutomatica.cshtml'
-        },
-    },
-    retencion_venta: {
-        MODAL_FILE_CTRL: 'modal/common/modalRetencionCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalRetencionVentaNuevoCtrl',
-            template: 'RetencionVenta/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalRetencionVentaEditarCtrl',
-            template: 'RetencionVenta/_ModalEditar.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalRetencionVentaDetalleCtrl',
-            template: 'RetencionVenta/_ModalDetalle.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalRetencionVentaFiltroCtrl',
-            template: 'RetencionVenta/_ModalFiltro.cshtml'
-        }
-    },
-
-    transferencia_bodega: {
-        MODAL_FILE_CTRL: 'modal/inventario/modalTransferenciaBodegaCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalTransferenciaBodegaNuevoCtrl',
-            template: 'TransferenciaBodega/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalTransferenciaBodegaEditarCtrl',
-            template: 'TransferenciaBodega/_ModalEditar.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalTransferenciaBodegaDetalleCtrl',
-            template: '~/Pages/TransferenciaBodega/Shared/_ModalDetalle.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalTransferenciaBodegaFiltroCtrl',
-            template: 'TransferenciaBodega/_ModalFiltro.cshtml'
-        },
-    },
-    user: {
-        MODAL_CTRL: 'modal/admin/modalUserCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalUserCtrl',
-            template: 'Usuario/_ModalNuevo.cshtml'
-        },
-        MODAL_EDIT: {
-            controller: 'ModalUserCtrl',
-            template: 'Usuario/_ModalEditar.cshtml'
-        },
-        MODAL_USER_COMPANY: {
-            controller: 'ModalUserCompanyCtrl',
-            template: 'Usuario/_ModalUserCompany.cshtml'
-        },
-        MODAL_ASIGN_PTOEMISION_BODEGA: {
-            controller: 'ModalAsignPtoEmisionAndBodegaCtrl',
-            template: 'Usuario/_ModalAsignPtoEmisionBodega.cshtml'
-        },
-        MODAL_USER_CONFIG: {
-            controller: 'ModalConfigUserCtrl',
-            template: 'Usuario/_ModalUserConfig.cshtml'
-        }
-    }
+    },  
+    
+    
 })
 
 
@@ -871,7 +454,8 @@ app.constant('DOC_TYPE', {
     CNH: 'CNH',
     OC: 'OC',
     GR_SRI: '06',
-    R_SRI: '07'
+    R_SRI: '07',
+    LC_SRI:'03'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC: "04",
@@ -897,5 +481,8 @@ app.constant('CODE_REPORT', {
     RCNH: 'RCNH', //PDF compra no habitual
     ROC: 'ROC', //Orden Compra 
     RGR: 'RGR', //Reporte Guia Remision 
-    FCRRG: 'FCRRG' //Facturación Retención Reporte General
+    FCRRG: 'FCRRG', //Facturación Retención Reporte General
+    RRC:'RRC',
+    RCINGR: 'RCINGR',
+    VSC : 'VSC' // Venta Solicitud Garante
 })

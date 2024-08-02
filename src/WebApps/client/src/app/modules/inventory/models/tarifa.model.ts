@@ -9,5 +9,15 @@ export interface TarifaProductSearch {
   precio: number
 }
 
+export interface TarifaProducto {
+  idTarifa: number;
+  precioVenta: number;
+  precioConIva: number;
+  descripcion: string;
+  defaultTarifa: boolean;
+}
+
 
 export interface TarifaSelectHtmlOnly extends Pick<Tarifa, 'idTarifa' | 'descripcion' | 'predeterminada'> { }
+
+

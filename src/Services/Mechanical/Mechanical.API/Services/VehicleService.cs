@@ -1,6 +1,7 @@
 ﻿using System.Data;
-using Common.Core.Interfaces;
+using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
 
@@ -8,10 +9,10 @@ namespace Mechanical.API.Services
 {
     public class VehicleService : IVehicleService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly MechanicalContext _context;
 
-        public VehicleService(MechanicalContext context, IADORepository repository)
+        public VehicleService(MechanicalContext context, IAdoRepository repository)
         {
             _context = context;
             _repository = repository;
@@ -31,35 +32,33 @@ namespace Mechanical.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.VehicleCompany_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.VehicleCompany_Insert", parameters);
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.VehicleCompany_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.VehicleCompany_Update", parameters);
         }
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<ApiResponseDeprecated> DeleteAsync(int id)
         {
             var vehicle = await _context.VehicleCompanys.FindAsync(id);
-            if (vehicle == null) return false;
             vehicle.Enabled = false;
             vehicle.Deleted = true;
             _context.Update(vehicle);
             await _context.SaveChangesAsync();
-            return true;
+            return new ApiResponseDeprecated { code = "1", message = "Eliminada Exitosamente" };
         }
-        public async Task<bool> UpdateStateAsync(int id, bool state)
+        public async Task<ApiResponseDeprecated> UpdateStateAsync(int id, bool state)
         {
             var vehicle = await _context.VehicleCompanys.FindAsync(id);
-            if (vehicle == null) return false;
             vehicle.Enabled = state;
             _context.Update(vehicle);
             await _context.SaveChangesAsync();
-            return true;
+            return new ApiResponseDeprecated { code = "1", message = "Actualizado Exitosamente" };
         }
     }
 }

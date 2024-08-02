@@ -1,9 +1,3 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿namespace Common.Infrastructure.Data;
 
-namespace Common.Infrastructure.Data
-{
-    public class BaseContext : DbContext
-    {
-        public BaseContext(DbContextOptions options) : base(options) { }
-    }
-}
+public class BaseContext(DbContextOptions options) : DbContext(options);

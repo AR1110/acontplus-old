@@ -3,7 +3,7 @@
 
     'use strict';
 
-    app.factory('docRecibidoService', function ($injector) {
+    app.factory('docRecibidoService', ['$injector',function ($injector) {
 
 
         const URL = 'Compra/DocumentoRecibido/'
@@ -23,22 +23,23 @@
             deleteStock,
             saveCompraHabitual,
             saveDocumentoDetalle,
-            getDatoAdicionalArticulo, 
+            getDatoAdicionalArticulo,
             postDatoAdicionalArticulo,
             readFileTxt,
             uploadXml,
             checkExistenceXml,
             post,
             putXml,
-            putXmlManual,
             deleteDoc,
             getId,
-            migrate
+            migrate,
+            downloadXml,
+            updateSubcategory,
         }
 
         function getDataFilter() {
             let data = { tipo: 2 }
-            return mS.getData('get', `${URL}?json=${JSON.stringify(data)}`, null, true).then(
+            return mS.getData('get', `${URL}?json=${JSON.stringify(data)}`).then(
                 response => {
                     if (response.code === "0") {
                         throw response;
@@ -47,7 +48,8 @@
                         let mainData = JSON.parse(response.payload);
                         return {
                             establecimientos: mainData.establecimientos,
-                            tipoComprobantes: mainData.tipoComprobantes
+                            tipoComprobantes: mainData.tipoComprobantes,
+                            subcategories: mainData.subcategories
                         }
 
                     }
@@ -60,15 +62,13 @@
             return mS.getData('get', `${URL}?json=${JSON.stringify(data)}`, null, true).then(
                 response => {
                     if (!response) return [];
-
                     if (response.code === "0") {
-                        console.log(response)
                         return [];
                     }
                     if (response.code === "1") {
                         let mainData = JSON.parse(response.payload);
                         let documentos = mainData.documentos || [];
-                        
+
 
                         return documentos.map(doc => {
                             return {
@@ -78,7 +78,7 @@
                                 codDoc: doc.codDoc,
                                 serieComprobante: doc.serieComprobante,
                                 rucEmisor: doc.rucEmisor,
-                                razonSocialEmisior: doc.razonSocialEmisior,
+                                razonSocialEmisor: doc.razonSocialEmisor,
                                 fechaEmision: doc.fechaEmision,
                                 fechaAutorizacion: doc.fechaAutorizacion,
                                 tipoEmision: doc.tipoEmision,
@@ -92,6 +92,8 @@
                                 colorCol: doc.colorCol,
                                 hoverText: doc.hoverText,
                                 totalRecords: doc.totalRecords,
+                                subcategoryName: doc.subcategoryName,
+                                subcategoryId: doc.subcategoryId,
                             }
                         })
 
@@ -109,7 +111,7 @@
                     }
                     if (response.code === "1") {
                         let mainData = JSON.parse(response.payload);
-                        
+
                         // let estabs = fS.groupEstabBodega(mainData.bodega);
 
                         return {
@@ -126,7 +128,7 @@
         }
 
         function getTempDetails(idDocumento) {
-            return mS.getData('get', 'Compra/Doc_Rec_DetailTemp/' + idDocumento, null, true).then(
+            return mS.getData('get', 'Compra/DocRecDetailTemp/' + idDocumento, null, true).then(
                 response => {
                     if (response.code === "0") {
                         throw response;
@@ -164,7 +166,7 @@
         }
 
         function saveArticleTemp(data, method) {
-            return mS.getData(method, "Compra/Doc_Rec_DetailTemp/", { data }, true)
+            return mS.getData(method, "Compra/DocRecDetailTemp/", { data }, true)
         }
 
         function searchArticle(obj) {
@@ -176,7 +178,7 @@
             return mS.getData('post', 'Compra/CompraHabitual/Post', { data }, true);
         }
 
-        function saveDocumentoDetalle(idDocumento){
+        function saveDocumentoDetalle(idDocumento) {
             return mS.getData('post', `Compra/DocumentoDetalle/${idDocumento}/0`, null, true)
         }
 
@@ -203,19 +205,19 @@
 
                 }
             })
-        }  
+        }
 
-        function postDatoAdicionalArticulo(idDocumento, datosAdicionales){
+        function postDatoAdicionalArticulo(idDocumento, datosAdicionales) {
             let data = {
                 datosAdicionales
             }
-            return mS.getData('post', `Compra/DatoAdicionalArticulo/Insert/${idDocumento}`, { data }, true) 
+            return mS.getData('post', `Compra/DatoAdicionalArticulo/Insert/${idDocumento}`, { data }, true)
         }
 
         function getDocRelacionado(query) {
-            let params = {...query, tipo: 4}
+            let params = { ...query, tipo: 4 }
             return mS.getData('get', `${URL}?json=${JSON.stringify(params)}`, null, true).then(response => {
-                if(!response) return [];
+                if (!response) return [];
 
                 if (response.code === '0') {
                     throw response;
@@ -225,16 +227,16 @@
                     let mainData = JSON.parse(response.payload);
 
                     let comprobantes = mainData.comprobante;
-                    return comprobantes;                    
+                    return comprobantes;
                 }
             })
         }
 
-        function addStock(obj){
-            return mS.getData('post', 'Compra/DocumentoDetalle/' + obj.idDocumento + '/' + obj.idArticulo, null, true) 
+        function addStock(obj) {
+            return mS.getData('post', 'Compra/DocumentoDetalle/' + obj.idDocumento + '/' + obj.idArticulo, null, true)
         }
 
-        function deleteStock(idDocumentoDetalle){
+        function deleteStock(idDocumentoDetalle) {
             return mS.getData('delete', 'Compra/DocumentoDetalle/' + idDocumentoDetalle, null, true)
         }
 
@@ -260,10 +262,6 @@
             return mS.getData('put', `${URL}Put/${id}`, null, true)
         }
 
-        function putXmlManual(idDocumento, claveAcceso) {
-            return mS.getDataFile(`${URL}${idDocumento}/${claveAcceso}`, file, null, true)
-        }
-
         function deleteDoc(idDocumento) {
             return mS.getData('delete', `${URL}${idDocumento}`, null, true)
         }
@@ -276,6 +274,14 @@
             return mS.getData('put', `${URL}Migrate`, { data: data }, true)
         }
 
+        function downloadXml(id) {
+            return mS.getFile('get', `${URL}DownloadXml/${id}`, null, true);
+        }
 
-    })
+        function updateSubcategory(data) {
+            return mS.getData('put', `${URL}PutSubcategory`, { data: data }, true);
+        }
+
+
+    }])
 })(window.angular)

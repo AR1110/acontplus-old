@@ -1,151 +1,77 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common;
-using Services.Common.Logs;
+﻿namespace Ventas.API.Controllers;
 
-namespace Ventas.API.Controllers
+public class ProformaController(IProformaService svc) : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProformaController : ControllerBase
+    [HttpGet("Get")]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public ProformaController(IConfiguration configuration, LogWriter log)
-        {
-            _configuration = configuration;
-            _log = log;
-        }
+        var parameters = new Dictionary<string, object>
+            {
+                {"idUsuarioRol" , User.GetUserRoleId()},
+                {"json" , SqlStringParam.Sanitize(json)},
+            };
+        return Ok(await svc.GetAsync(parameters));
+    }
 
-        [HttpGet("Get")]
-        public async Task<IActionResult> Get(string json)
-        {
-            var _response = new ApiResponse();
-            var _db = new DbAccess(_configuration);
-            try
+    [HttpPost("Insert")]
+    public async Task<IActionResult> Insert(ApiRequest request)
+    {
+        var parameters = new Dictionary<string, object>
             {
-                await _db.SPExecute("Ventas.Proforma_Get", true);
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
+                {"userRoleId" , User.GetUserRoleId()},
+                {"json" , SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))},
+            }; 
 
-                _log.LogActivity("Error al listar proformas: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar proformas");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+        return Ok(await svc.AddAsync(parameters));
+    }
 
-        [HttpPost("Insert")]
-        public async Task<IActionResult> Insert(ApiRequest parameters)
-        {
-            var _response = new ApiResponse();
-            var _db = new DbAccess(_configuration);
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Proforma_Insert", true);
-                _db.AddDynamicParam("userRoleId", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
+    [HttpPut("Update/{id}")]
+    public async Task<IActionResult> Update(int id, ApiRequest request)
+    {
 
-                _log.LogActivity("Error al insertar proforma: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar proforma");
-            }
-            finally
+        var parameters = new Dictionary<string, object>
             {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+                {"userRoleId" , User.GetUserRoleId()},
+                {"id",id },
+                {"json" , SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))},
+            }; 
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, ApiRequest parameters)
-        {
-            var _db = new DbAccess(_configuration);
-
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Proforma_Update");
-                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al actualizar nota entrega: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar la nota de entrega");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+        return Ok(await svc.UpdateAsync(parameters));
+    }
 
 
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var _db = new DbAccess(_configuration);
-            var _response = new ApiResponse();
-            try
+    [HttpDelete("Delete/{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var parameters = new Dictionary<string, object>
             {
-                await _db.SPExecute("Ventas.Proforma_Delete", true);
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
+                {"idRol" , User.GetUserRoleId()},
+                {"id",id }, 
+            }; 
 
-                _log.LogActivity("Error al eliminar proforma: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar proforma");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+        return Ok(await svc.DeleteAsync(parameters));
+    }
 
-        [HttpGet("GetId/{id}")]
-        public async Task<IActionResult> GetId(int id)
-        {
-            var _db = new DbAccess(_configuration);
-            var _response = new ApiResponse();
-            try
+    [HttpGet("GetId/{id}")]
+    public async Task<IActionResult> GetId(int id)
+    {
+        var parameters = new Dictionary<string, object>
             {
-                await _db.SPExecute("Ventas.Proforma_GetId");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
+                {"idRol" , User.GetUserRoleId()},
+                {"id" , id},
+            };
+        return Ok(await svc.GetByIdAsync(parameters));
+    }
 
-                _log.LogActivity("Error al obtener datos del doc. proforma: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener datos del doc. proforma");
-            }
-            finally
+    [HttpPost("ConvertToDoc")]
+    public async Task<IActionResult> ConvertToDoc(ApiRequest request)
+    {
+        var parameters = new Dictionary<string, object>
             {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+                {"userRoleId" , User.GetUserRoleId()},
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))},
+            }; 
+
+        return Ok(await svc.ConvertToDoc(parameters));
     }
 }

@@ -11,7 +11,7 @@ namespace WebUI.Pages.Vet.Breed
         }
         public void OnGet()
         {
-            var url = _configuration["UrlApps:SveltekitApp"];
+            var url = _configuration["UrlApps:AngularApp"];
             ViewData["FrontEnd"] = url;
         }
     }

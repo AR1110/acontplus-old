@@ -166,7 +166,8 @@
                     const dataPermission = userCustomerPermissionSvc.userPermissionAdapter();
                     
                     let permission = {
-                        isUpdatePrice: dataPermission.product.precio
+                        isUpdatePrice: dataPermission.product.precio,
+                        gestionUbicacion: dataPermission.product.gestionUbicacion
                     }  
                     const establecimientos = fS.groupEstabBodega(tempEstabs);
                       
@@ -196,12 +197,13 @@
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 return
             }
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true, null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
 
                 if (response.code === "1") {
+                 
                     let dataRepository = JSON.parse(response.payload)[0];
                     return dataRepository.map(item => {
                         let tarifas = item.tarifas && JSON.parse(item.tarifas)
@@ -449,7 +451,7 @@
          * ✅
          */
         service.getForPurchase = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, tipo: 14 }), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, tipo: 9 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -471,6 +473,7 @@
                         tarifa: dataArticulo.tarifa,
                         valorIce: dataArticulo.valorIce,
                     }
+ 
 
                     let medidas = fS.processAndSortMeasures(medidaPrincipal, medidaFraccionado);
 
@@ -782,6 +785,27 @@
             )
         }
 
+
+
+        service.getDataStock = function(id){
+             let json = JSON.stringify({
+                idArticulo: id,
+                tipo: 10,
+             })
+            return mS.getData('get', url + 'Get?json=' + json, null,true,null,true).then(response=>{
+                let estabsStock = [];
+                if(response.code==="1"){
+                    let [estabs] = JSON.parse(response.payload); 
+
+                    estabsStock = estabs.map(val => {
+                        val.warehouses = JSON.parse(val.warehouses);
+                        return val;
+                    });
+                    
+                }
+                return estabsStock;
+            })
+        }
 
 
         return service;

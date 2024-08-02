@@ -2,8 +2,8 @@
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
-using Services.Common;
-using Services.Common.Logs;
+using Services.Common.Extensions;
+
 
 namespace Restaurant.API.Controllers
 {
@@ -11,8 +11,8 @@ namespace Restaurant.API.Controllers
     public class ConsumoAnuladoTpvController : BaseApiController
     {
         private readonly IConsumptionCancelledService _cancelledService;
-        private readonly LogWriter _log;
-        public ConsumoAnuladoTpvController(IConsumptionCancelledService cancelledService, LogWriter log)
+        private readonly ICustomLogger _log;
+        public ConsumoAnuladoTpvController(IConsumptionCancelledService cancelledService, ICustomLogger log)
         {
             _cancelledService = cancelledService;
             _log = log;
@@ -35,7 +35,7 @@ namespace Restaurant.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(string json)
         {
-            var _response = new ApiResponse();
+            var _response = new ApiResponseDeprecated();
             try
             {
                 var response = await _cancelledService.AddAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
@@ -51,7 +51,7 @@ namespace Restaurant.API.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(string json)
         {
-            var _response = new ApiResponse();
+            var _response = new ApiResponseDeprecated();
             try
             {
                 var response = await _cancelledService.UpdateAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
@@ -67,7 +67,7 @@ namespace Restaurant.API.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            var _response = new ApiResponse();
+            var _response = new ApiResponseDeprecated();
             try
             {
                 var response = await _cancelledService.DeleteAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } });

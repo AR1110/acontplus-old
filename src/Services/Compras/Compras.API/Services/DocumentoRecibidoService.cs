@@ -1,63 +1,97 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Compras.API.Interfaces;
+﻿using System.Web;
 
-namespace Compras.API.Services
+namespace Compras.API.Services;
+
+public class DocumentoRecibidoService(IAdoRepository repository) : IDocumentoRecibidoService
 {
-    public class DocumentoRecibidoService : IDocumentoRecibidoService
+    public async Task<ApiResponse> AddAsync(ApiRequest request)
     {
-        private readonly IADORepository _repository;
-        public DocumentoRecibidoService(IADORepository repository)
+        var parameters = new Dictionary<string, object>
         {
-            _repository = repository;
+            { "userRoleId", request.UserRoleId },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
+        return await repository.SpExecuteAsync<ApiResponse>("Recepcion.Documento_Insert", parameters);
+    }
+
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    {
+        return await repository.SpExecuteAsync<ApiResponse>("Recepcion.Documento_Delete", parameters);
+    }
+
+    public async Task<byte[]> DownloadAsync(Dictionary<string, object> parameters)
+    {
+        var dt = await repository.GetDataTableAsync("Recepcion.Documento_Get_Id", parameters);
+        if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
+        {
+            var xmlDoc = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlDoc"));
+            return Encoding.UTF8.GetBytes(xmlDoc);
         }
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        else
         {
-            var ds = await _repository.GetDataSetAsync("Recepcion.Documento_Get", parameters);
-            if (ds.Tables[0].Rows.Count == 0) { return null; }
-            return DataConverters.DataSetToJSON(ds);
+            return null;
         }
+    }
 
-        public async Task<string> AddAsync(ApiRequest request)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await repository.GetDataSetAsync("Recepcion.Documento_Get", parameters);
+        if (DataValidation.DataSetIsNull(ds, true))
         {
-            var parameters = new Dictionary<string, object>{
-                {"userRoleId", request.UserRoleId},
-                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
-            };
-            return await _repository.SPExecuteDeprecatedAsync("Recepcion.Documento_Insert", parameters);
-
-        }
-
-        //public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
-        //{
-        //    var ds = await _repository.GetDataSetAsync("Compra.Liquidacion_Get_Id", parameters, true);
-        //    if (ds.Tables[0].Rows.Count == 0) { return null; }
-        //    return DataConverters.DataSetToJSON(ds, true);
-        //}
-
-        public async Task<string> UpdateAsync(int id, ApiRequest request)
-        {
-            var parameters = new Dictionary<string, object>{
-                {"userRoleId", request.UserRoleId},
-                {"id", id},
-                {"json", DataConverters.SerializeDictionary(request.Data)}
-            };
-            return await _repository.SPExecuteDeprecatedAsync("Compra.Documento_Ingreso_Update", parameters);
-
+            return new ApiResponse { Code = "0", Message = "Data not found" };
         }
 
-        public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+    }
+
+    public async Task<XmlDocument> GetById(Dictionary<string, object> parameters)
+    {
+        var xdoc = new XmlDocument();
+        var dt = await repository.GetDataTableAsync("Recepcion.Documento_Get_Id", parameters);
+        switch (dt.Rows.Count)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Compra.Documento_Ingreso_Delete", parameters);
+            case > 0 when dt.Columns.Contains("xmlDoc"):
+                {
+                    var xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
+                    if (xmlDoc != null)
+                    {
+                        xdoc.LoadXml(xmlDoc);
+                    }
 
+                    return xdoc;
+                }
+            default:
+                return new XmlDocument();
         }
+    }
 
-        //public async Task<string> DocumentoCheckExistence(Dictionary<string, object> parameters)
-        //{
-        //    return await _repository.SPExecuteAsync("Recepcion.Documento_Check_Existence", parameters);
+    public async Task<ApiResponse> MigrateAsync(Dictionary<string, object> parameters)
+    {
+        return await repository.SpExecuteAsync<ApiResponse>("Recepcion.Documento_Migrate", parameters);
+    }
+    public async Task<ApiResponse> UpdateAsync(int id, ApiRequest request)
+    {
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", request.UserRoleId },
+            { "id", id },
+            { "json", DataConverters.SerializeDictionary(request.Data) }
+        };
+        return await repository.SpExecuteAsync<ApiResponse>("Recepcion.Documento_Update", parameters);
+    }
 
-        //}
+    public async Task<ApiResponse> UploadXmlAsync(Dictionary<string, object> parameters)
+    {
+        return await repository.SpExecuteAsync<ApiResponse>("Recepcion.Documento_Upload_Xml", parameters);
+    }
 
+
+    public async Task<ApiResponse> UpdateSubcategoryAsync(ApiRequest request)
+    {
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
+        };
+        return await repository.SpExecuteAsync<ApiResponse>("Recepcion.Documento_Update_Subcategory", parameters);
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace Configuracion.API.Interfaces
+﻿namespace Configuracion.API.Interfaces;
+
+public interface IPrintService
 {
-    public interface IPrintService
-    {
-        Task<string> GetAsync(Dictionary<string, object> parameters);
-    }
+    Task<string> GetAsync(Dictionary<string, object> parameters);
 }

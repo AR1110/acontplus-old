@@ -1,14 +1,15 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services
 {
     public class MenuService : IMenuService
     {
-        private readonly IADORepository _repository;
-        public MenuService(IADORepository repository)
+        private readonly IAdoRepository _repository;
+        public MenuService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -21,7 +22,7 @@ namespace Restaurant.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
 
@@ -32,7 +33,7 @@ namespace Restaurant.API.Services
                 {"id", id},
                 {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
             };
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Menu_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Menu_Update", parameters);
         }
     }
 }

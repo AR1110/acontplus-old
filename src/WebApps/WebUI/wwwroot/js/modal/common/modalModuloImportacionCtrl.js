@@ -29,7 +29,7 @@ export class ModalModuloImportacionCrtl{
     }
 
     $onInit(){
-        this._mSvc.getData('get', '/Importacion/Get?json=' + JSON.stringify({})).then(
+        this._mSvc.getData('get', 'Config/Importacion/?json=' + JSON.stringify({})).then(
             response=>{
                 this.importacionModulos = JSON.parse(response.payload) || [];                                       
             }
@@ -192,7 +192,7 @@ export class ModalModuloImportacionCrtl{
                 }
             })
 
-            await this._mSvc.getData('post', '/Importacion/GetValidation?codImportacion=' + obj.dataModulo.codigo, data).then(response => {
+            await this._mSvc.getData('post', 'Config/Importacion/GetValidation/' + obj.dataModulo.codigo, data).then(response => {
                 
                 if(response.code==="0"){
                     Swal.fire({

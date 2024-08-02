@@ -1,3 +1,6 @@
+
+ 
+//@ts-check
 (function () {
     'use strict';
 
@@ -15,9 +18,9 @@
 
     app.controller('facturaCtrl', facturaCtrl)
 
-    facturaCtrl.$inject = ['$scope', '$filter', '$injector', 'nombreModal', 'decodeToken']
+    facturaCtrl.$inject = ['$scope', '$filter', '$injector', 'nombreModal']
 
-    function facturaCtrl($scope, $filter, $injector, _nombreModalConst, decodeToken) {
+    function facturaCtrl($scope, $filter, $injector, _nombreModalConst) {
 
         facturaSvc = $injector.get('facturaService');
         commonSvc = $injector.get('commonService');
@@ -25,7 +28,7 @@
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
-        nombreModalVenta = $injector.get('nombreModalVenta'); 
+        nombreModalVenta = $injector.get('nombreModalVenta');
         let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
 
         let DOC_TYPE = $injector.get('DOC_TYPE');
@@ -37,10 +40,7 @@
 
 
         $scope.typeSend = 'SRI';
-        const PERMISSION_KEY_ACTIONS = {
-            E: 'E',
-            A: 'A',
-        }
+      
 
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
@@ -61,23 +61,24 @@
 
 
         $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
-        $scope.parametersPrint = {};
-
-        let idUsuarioRol = Number(decodeToken.idUsuarioRol)
+        $scope.parametersPrint = {}; 
 
 
         $scope.permisoEditarDoc = {};
         //Remove Focus new invoice 
         let btnNewInvoice = document.getElementById("btnNewInvoice");
-        btnNewInvoice.addEventListener("click", () => {
-            btnNewInvoice.blur();
-        })
+        if (btnNewInvoice){
+            btnNewInvoice.addEventListener("click", () => {
+                btnNewInvoice.blur();
+            })
+
+        }
 
         //========================Start Filters=================
 
         $scope.resultRangeFilter = function (item) {
-            $scope.dataSearch.fechaInicio = item.startDate,
-                $scope.dataSearch.fechaFin = item.endDate
+            $scope.dataSearch.fechaInicio = item.startDate;
+            $scope.dataSearch.fechaFin = item.endDate
             $scope.getFacturas();
         }
 
@@ -97,8 +98,7 @@
 
         $scope.usuarioSearch = function (textSearch) {
             try {
-                let query = {
-                    idRol: idUsuarioRol,
+                let query = { 
                     busqueda: textSearch
                 }
 
@@ -159,6 +159,9 @@
         }
 
 
+        $scope.refresh = function () {
+            $scope.getFacturas();
+        }
 
         $scope.getFacturas = function () {
 
@@ -167,12 +170,19 @@
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         $scope.dataSearch.checkBoxFecha = true;
-                        tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
+                        tS.toastr({
+                            type: 'warning',
+                            message: 'Define correctamente el número de secuencial o el rango de número secuencial!'
+                        })
                         return
                     }
                     if (!($scope.dataSearch.idCliente > 0)) {
                         $scope.dataSearch.checkBoxFecha = false;
                     }
+                    tS.toastr({
+                        type:'info',
+                        message: 'Buscando por número secuencial'
+                    })
                 }
                 if ($scope.dataSearch.infoAdicional) {
                     $scope.dataSearch.checkBoxFecha = false;
@@ -198,15 +208,13 @@
                 $scope.facturas = [];
                 $scope.getTotales();
                 facturaSvc.getAll(dataSearch).then(response => {
+              
                     let { facturas, dataTotals } = response;
                     $scope.facturas = facturas;
-                    $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
-
-                    //Totales
-                    $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                    $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
-                    $scope.totalAbono = fS.roundNumber(dataTotals.totalAbono, 5);
-                    $scope.totalSaldo = fS.roundNumber(dataTotals.totalSaldo, 5);
+                    $scope.cloneFacturas = structuredClone($scope.facturas);
+ 
+                    $scope.dataSearch.totalRecords = dataTotals.totalRecords; 
+                    $scope.getTotales();
                     hideLoader();
                 }).catch(error => {
                     $scope.dataSearch.totalRecords = 0;
@@ -330,8 +338,7 @@
 
         /**
          * 
-         * @param {*} id 
-         * @returns 
+         * @param {*} params 
          */
         $scope.openModalDetalle = async (params) => {
             try {
@@ -353,9 +360,9 @@
                 console.log(error)
             }
         }
- 
-        function getParamsPermission(item, codigoAccion){
-             let paramsPermission = {
+
+        function getParamsPermission(item, codigoAccion) {
+            let paramsPermission = {
                 idDocumento: item.idDocumento,
                 codDoc: item.codDoc,
                 codigoAccion,
@@ -372,17 +379,17 @@
             return paramsPermission;
         }
         $scope.openModalInvoiceEdit = async (item) => {
-            try { 
+            try {
                 if (item.disabledActionUpdate) {
                     fS.sweetAlert('warning', 'Este documento ya no se puede editar');
                     return
                 }
- 
+
                 let paramsPermission = getParamsPermission(item, 'E');
                 let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
-    
-                if(!response) return
-               
+
+                if (!response) return
+
                 if (response && response.code === "2") {
                     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
@@ -401,12 +408,12 @@
                         windowClass: 'uibModalFullScreen',
                         isRenderRazorPartial: true
                     })
-                    modalRef.result.then(result => {                           
+                    modalRef.result.then(result => {
 
                         if (typeof result === 'object' && result.isUpdate) {
                             //Actualizar el estado de solicitud en caso de tener 
-                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {      
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)                                
+                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
                             }
 
                             $scope.getFacturas();
@@ -497,7 +504,7 @@
                 if (response && response.code === "2") {
                     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
-                } 
+                }
 
                 let { isConfirmed } = await Swal.fire({
                     title: '<small>Anular Factura?</small>',
@@ -522,7 +529,7 @@
 
                             //Una vez actualizado el documento 
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)    
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
                             }
                             $scope.getFacturas();
                         }
@@ -568,7 +575,7 @@
         //--------------------------------------------------COBROS----------
 
         $scope.opcionCobro = (item) => {
-            if (item.codEstado === "CBR") {
+            if (item.esCobrado) {
                 fS.sweetAlert('warning', '<small>Este documento ya se encuentra cobrada!</small>')
                 return
             }
@@ -579,7 +586,7 @@
                 }
             }
 
-            if (item.tiempoCredito) {
+            if (item.esContado) {
                 $scope.openModalRapido(params);
             } else {
                 $scope.openModalCobroDocumento(params)
@@ -591,10 +598,9 @@
 
         $scope.openModalCobroDocumento = async (params) => {
             try {
-                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['CL'];
-                let template = nombreModalContabilidad.COBRO.templates['CL'];
-                let controller = (await import(fileCtrl))[ctrl];
+
+                const { fileCtrl, ctrl, template} = nombreModalContabilidad.COBRO_LOTE; 
+                let controller = (await import(fileCtrl))[ctrl]; 
 
                 $scope.openModalCobro({
                     controller,
@@ -616,9 +622,7 @@
          */
         $scope.openModalRapido = async (params) => {
             try {
-                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['CR'];
-                let template = nombreModalContabilidad.COBRO.templates['CR'];
+                let {fileCtrl, ctrl, template} = nombreModalContabilidad.COBRO_RAPIDO; 
                 let controller = (await import(fileCtrl))[ctrl];
 
                 $scope.openModalCobro({
@@ -669,7 +673,9 @@
                 }
 
                 //Focus New Invoice
-                btnNewInvoice.focus();
+                if (btnNewInvoice){
+                    btnNewInvoice.focus();
+                }
                 $scope.isRegister = null;
                 $scope.isPrintDocument = null;
             })
@@ -700,34 +706,7 @@
                 console.log(error)
             }
         }
-
-
-        //----------------------------Detalle Comprobante Ingreso ---------------------
-        $scope.openModalHistorialCobro = async (ev, item) => {
-            try {
-                if (['PE'].includes(item.codEstado)) return
-
-                // showLoader();
-                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['CD'];
-                let templateUrl = nombreModalContabilidad.COBRO.templates['CD'];
-                let controller = (await import(fileCtrl))[ctrl];
-
-
-                let config = {
-                    controller,
-                    template: templateUrl,
-                    size: 'lg',
-                    params: Object.assign({}, item),
-                    isRenderRazorPartial: true
-                }
-
-                modalSvc.openModalCustom(config)
-            } catch (error) {
-                hideLoader();
-                console.log(error)
-            }
-        }
+ 
 
         $scope.print = function (item) {
             let parameters = {
@@ -820,9 +799,7 @@
         $scope.tarifasImpuesto = [];
         $scope.formasPago = [];
         $scope.tiposIdentificacion = [];
-
-        $scope.datosAdicionalesArticulo = []
-        $scope.historyDatosAdicionales = [];
+ 
 
         //Informacion adicional del documento 
         $scope.infoAdicionalDocumento = [];
@@ -1194,11 +1171,11 @@
                     comprobante,
                     cliente,
                     items,
-                    infoAdicionalDocumento,
+                    infoAdicionalDocumento, 
                     formasPago,
                     cuotas
                 } = params.data;
-          
+
                 $scope.data = {
                     ...$scope.data,
                     ...structuredClone(comprobante)
@@ -1220,12 +1197,7 @@
                 }
 
                 $scope.cliente = cliente;
-                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
-                $scope.historyDatosAdicionales = $scope.datosAdicionalesArticulo.map(item => ({
-                    idArticulo: item.idArticulo,
-                    idInfoAdicional: item.idInfoAdicional,
-                    selected: true,
-                }))
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento; 
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
 
@@ -1303,10 +1275,13 @@
         }
 
         $scope.resultModalAdicional = function (result) {
-            let { historyDatosAdicionales } = result;
-            $scope.historyDatosAdicionales = historyDatosAdicionales;
+            let { infoAdicionalDoc } = result; 
+            $scope.infoAdicionalDocumento = infoAdicionalDoc;
         }
         function setColumnDefs() {
+
+            /**<a btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales'   result-modal-adicional="grid.appScope.resultModalAdicional(result)" class="btn btn-warning btn-xs text-white" title="Agregar dato Adicional" > <i class="fas fa-tags"></i></a >**/
+
             const ventaDetailPermission = $scope.permisoDetalleVenta
             const CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
@@ -1314,7 +1289,16 @@
 
         <view-kardex params="row.entity"></view-kardex>
 
-        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a action-info-adicional-articulo-venta 
+            entity="row.entity" 
+            style="cursor:pointer;" 
+            ng-if='row.entity.datosAdicionales'  
+            result-modal-adicional="grid.appScope.resultModalAdicional(result)" 
+            info-adicional-doc="grid.appScope.infoAdicionalDocumento"
+            class="btn btn-warning btn-xs text-white" 
+            title = "Agregar dato Adicional"> 
+            <i class="fas fa-tags"></i>
+        </a>`;
 
             $scope.gridOptions.columnDefs = [{
                 name: 'Op.',
@@ -1590,8 +1574,9 @@
                 if (isConfirmed) {
                     let index = $scope.gridOptions.data.indexOf(rowEntity);
                     $scope.gridOptions.data.splice(index, 1);
+                    updateStatusDatosAdicionalesArticulo(rowEntity);
 
-                    if (rowEntity.idFacturaDetalle > 0) {
+                    if (rowEntity.idFacturaDetalle > 0) {       
                         $scope.gridOptionsItemsDeleted.push({
                             ...rowEntity,
                             cantidad: rowEntity.cantidadOriginal,
@@ -1605,14 +1590,21 @@
                     $scope.$apply();
                 }
 
-                if (isConfirmed && rowEntity.datosAdicionales) {
-                    $scope.datosAdicionalesArticulo = $scope.datosAdicionalesArticulo.filter(val => val.idArticulo !== rowEntity.idArticulo);
-                    $scope.historyDatosAdicionales = $scope.historyDatosAdicionales.filter(val => val.idArticulo !== rowEntity.idArticulo);
+                if (isConfirmed && rowEntity.datosAdicionales) { 
+                    $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(ia=>{
+                        return !(rowEntity.datosAdicionalesArticulo.some(iaa=>iaa.idInfoAdicional===ia.idInfoAdicional))
+                    }); 
                 }
             } catch (error) {
                 console.log(error)
             }
 
+        }
+
+        function updateStatusDatosAdicionalesArticulo(rowEntity){
+            for(let item of rowEntity.datosAdicionalesArticulo){
+                item.selected = false;
+            }
         }
 
 
@@ -1953,6 +1945,7 @@
         //=================================START PRODUCT=======================================
         function addRow() {
             const obj = {
+                uniqueRowDetalle: fS.generateUuidv4(),
                 idFacturaDetalle: 0,
                 n: 1,
                 codigo: "",
@@ -1978,7 +1971,7 @@
                 datosAdicionales: false,
                 estado: 1
             }
-            $scope.gridOptions.data.push(obj)
+            $scope.gridOptions.data.push(obj); 
         }
 
         $scope.setItemArticuloEnDetalle = function (dataArticulo) {
@@ -2033,9 +2026,9 @@
                 entity.codigo = articulo.codigoArticulo;
                 entity.descripcion = articulo.descripcion;
 
-               
-                tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
+                tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
+            
                 entity.idImpuesto = tarifaImpuesto.idImpuesto;
                 entity.idTipoIva = articulo.idTipoIva;
                 entity.codigoPorcentaje = articulo.codigoPorcentaje;
@@ -2055,7 +2048,12 @@
                 entity.articuloTarifas = dataMedida.tarifas;
 
 
-                entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
+                entity.datosAdicionalesArticulo = datosAdicionalesArticulo.map(daa=>{
+                    return {
+                        ...daa,
+                        uniqueRowDetalle: entity.uniqueRowDetalle
+                    }
+                }); //
                 entity.consolidacionesFecha = consolidacionesFecha;
 
 
@@ -2065,7 +2063,7 @@
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
                 entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
-                $scope.indexRow = index;
+                $scope.indexRow = index; 
                 setCalculoTotales('precioUnitario', entity, 0);
                 focusColumnCantidad();
                 //checkNotificationStock("cantidad", entity, cantidad);
@@ -2131,7 +2129,7 @@
         /**
          * Calculamos todos los totales y subtotales del comprobantes 
          */
-        function recalculateTotalsSimple() { 
+        function recalculateTotalsSimple() {
             drawImpuestoTotales();
         }
 
@@ -2456,6 +2454,37 @@
             return cuotas;
         }
 
+        function isValidTotals(){
+            let {
+                subTotalSinImpuestos, 
+                importeTotal,
+                totalDescuento, 
+            } = gridOptionsSvc.getImpuestoTotales({
+                items: $scope.gridOptions.data,
+                decimal: $scope.decimal,
+                tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+                TAX_RATE_CODE
+            })
+
+            if ($scope.data.subTotalSinImpuestos !== subTotalSinImpuestos) {
+                tS.toastr('warning', `El valor del Subtotal sin impuestos: ${$scope.data.subTotalSinImpuestos} difiere del valor del Subtotal sin impuestos en el detalle: ${subTotalSinImpuestos}`);
+                return;
+            }
+
+            if ($scope.data.totalDescuento !== totalDescuento) {
+                tS.toastr('warning', `El valor total del descuento: ${$scope.data.totalDescuento} no coincide con el descuento total calculado en el detalle: ${totalDescuento}`);
+                return;
+            }
+
+            if ($scope.data.total !== importeTotal) {
+                tS.toastr('warning', `El valor del importe total: ${$scope.data.total} difiere del importe total calculado en el detalle: ${importeTotal}`);
+                return;
+            }
+ 
+            return true; 
+        }
+
+
         $scope.onSave = async function () {
             try {
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
@@ -2464,9 +2493,13 @@
                     throw "Invalid form!";
                 }
 
-                // let cuotas = validateCuota();
+                if (!isValidTotals()) return 
 
-                // if (cuotas && cuotas.length === 0) return
+                let cuotas = validateCuota();
+
+                if (cuotas && cuotas.length === 0) return
+
+
 
                 if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL && $scope.data.total > 50) {
                     fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');
@@ -2522,9 +2555,8 @@
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
-                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                    historyDatosAdicionales: $scope.historyDatosAdicionales,
-                    cuotas: []
+                    infoAdicionalDocumento: $scope.infoAdicionalDocumento, 
+                    cuotas
                 })
 
 

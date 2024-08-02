@@ -6,12 +6,11 @@
     layoutCtrl.$inject = [
         "$scope",
         "$rootScope",
-        "$window",
-        "decodeToken",
+        "$window", 
         "userCustomerPermissionService"
     ];
 
-    function layoutCtrl($scope, $rootScope, $window, decodeToken, userCustomerPermissionSvc) {
+    function layoutCtrl($scope, $rootScope, $window, userCustomerPermissionSvc) {
         "use strict";
 
         $scope.userData = {};
@@ -21,7 +20,7 @@
             textHtml += `<li class="user-pro">
                 <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                     <img src="/assets/images/user/user.png" alt="" class="img-circle">
-                    <span class="hide-menu">${$scope.userData.fullname}</span>
+                    <span class="hide-menu">${$scope.userData.username}</span>
                 </a>
                 <ul aria-expanded="false" class="collapse">
                     <li><a href="/Config/UserProfile/Index"><i class="ti-user"></i> Mi Perfil</a></li>
@@ -50,6 +49,9 @@
             Object.keys(localStorage).forEach(function (key) {
                 localStorage.removeItem(key);
             });
+            Object.keys(sessionStorage).forEach(function (key) {
+                sessionStorage.removeItem(key);
+            });
             location.href = "/Login";
         };
 
@@ -68,7 +70,7 @@
 
             let { latestVersion } = $scope.userData;
 
-            if (latestVersion != '20240401') {
+            if (latestVersion != '20240430') {
                 // $scope.logout();
             } else {
                 //consume from bd
@@ -102,9 +104,11 @@
 
 
         const pathname = $window.location.pathname;
+        if (/\/Config\/UserProfile\/Index/.test(pathname)) return;
+
         if (pathname) {
             if (pathname === "/") {
-                location.href = "/Home/Index";
+                location.href = "/Index";
             }
             if (pathname.indexOf("/Home") == -1) {
                 let lengthPath = pathname.split("/").splice(1).length;
@@ -121,9 +125,10 @@
                             return obj;
                         }, {});
                         $scope.accion = namesObject; 
+                        $rootScope.accion = structuredClone(namesObject)
                         $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
                     } else {
-                        //location.href = "/Home/Index";
+                        //location.href = "/";
                     }
                 }
             }

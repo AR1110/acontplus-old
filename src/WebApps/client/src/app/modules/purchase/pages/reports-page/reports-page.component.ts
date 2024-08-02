@@ -1,37 +1,47 @@
 import { Component, inject } from '@angular/core';
-import { AppModule } from 'src/app/app.module';
-import { PurchaseModule } from '@modules/purchase/purchase.module';
 import { HttpClient } from '@angular/common/http';
-import { CODE_REPORT, DOC_TYPE, DOC_TYPE_SRI, PATHS_API } from '@core/constants/global.constants';
-import { ACCOUNTING_PATHS } from '@modules/accounting/constants/accounting.constants';
+import {
+  CODE_REPORT,
+  DOC_TYPE,
+  PATHS_API,
+} from '@core/constants/global.constants';
+import { ACCOUNTING_PATHS } from '@modules/accounting/enums/accounting.constants';
 import { isApiResponse } from '@core/models/api-response';
-import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import {
+  GroupedEstab,
+  GroupedEstabPuntoEmision,
+} from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { formatDateMoment } from '@core/utils/format-date-moment';
+import { FormsModule } from '@angular/forms';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { SupplierSearchComponent } from '@purchase/components/supplier-search/supplier-search.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { Subcategory } from '@modules/accounting/models/subcategory';
 
 @Component({
   selector: 'app-reports-page',
   standalone: true,
-  imports: [AppModule, PurchaseModule],
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    SupplierSearchComponent,
+    DateRangeSelectionComponent,
+  ],
   templateUrl: './reports-page.component.html',
-  styleUrl: './reports-page.component.scss'
+  styles: ``,
 })
 export class ReportsPageComponent {
   http = inject(HttpClient);
-  private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService)
-  private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
-
   establecimientos: Array<GroupedEstab> = [];
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];
   tiposDoc: Array<Pick<TipoDoc, 'descripcion'> & { codDoc: string }> = [];
-  estadosDoc: Array<{ codigo: string, descripcion: string }> = [];
-
+  estadosDoc: Array<{ codigo: string; descripcion: string }> = [];
+  subcategories: Subcategory[] = [];
   dataSearch = {
     codEstab: '',
     idPuntoEmision: 0,
@@ -41,58 +51,16 @@ export class ReportsPageComponent {
     fromDate: formatDateMoment(new Date()),
     toDate: formatDateMoment(new Date()),
     supplierChecked: false,
-    supplierName: ''
-  }
-
+    supplierName: '',
+    subcategoryId: 0,
+  };
   isSearchSupplierSimple = true;
-
-  private initialed() {
-
-    showLoader();
-    this.http.get(this.url, {
-      params: {
-        json: JSON.stringify({ tipo: 6 })
-      }
-    }).subscribe({
-      next: (response) => {
-        hideLoader();
-        if (isApiResponse(response)) {
-          if (response.code === "0") {
-            console.log(response)
-          }
-          if (response.code === "1") {
-            const [estabs, estadosDoc, tiposDoc] = JSON.parse(response.payload as string);
-
-            this.establecimientos = groupEstabUtil({
-              estabs,
-              isGroupPuntoEmision: true
-            })
-            const dataEstab = this.establecimientos.find(estab => estab.defaultEstab);
-            if (dataEstab) {
-              this.dataSearch.codEstab = dataEstab.codEstab;
-              this.puntosEmision = dataEstab.puntosEmision;
-              const dataPuntoEmision = this.puntosEmision.find(ptoEmi => ptoEmi.defaultPtoEmi);
-              if (dataPuntoEmision) {
-                this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
-              }
-            }
-            this.tiposDoc = tiposDoc;
-            this.dataSearch.codDoc = this.tiposDoc.find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FC)?.codDoc || '';
-            //console.log(this.tiposDoc)
-            this.estadosDoc = estadosDoc;
-          }
-        }
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
-    })
-  }
-
+  private sharedSvc = inject(SharedService);
+  private tS = inject(ToasterService);
+  private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
 
   ngOnInit() {
-     this.initialed()
+    this.initialed();
   }
 
   onSupplierSelected<T extends { data: any }>($event: T) {
@@ -102,26 +70,85 @@ export class ReportsPageComponent {
   }
 
   supplierResultEmptyInput($event: any) {
-    this.dataSearch.idProveedor = 0
+    this.dataSearch.idProveedor = 0;
   }
 
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
-      let dataEstab = this.establecimientos.find(estab => estab.codEstab === this.dataSearch.codEstab);
+      let dataEstab = this.establecimientos.find(
+        (estab) => estab.codEstab === this.dataSearch.codEstab,
+      );
       if (dataEstab) {
         this.puntosEmision = dataEstab.puntosEmision;
 
-        this.dataSearch.idPuntoEmision = this.puntosEmision.find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
-        return
+        this.dataSearch.idPuntoEmision =
+          this.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi)
+            ?.idPuntoEmision || 0;
+        return;
       }
     }
     this.dataSearch.idPuntoEmision = 0;
   }
 
-
-  onDateRangeSelection(range: { from: string, to: string }) {
+  onDateRangeSelection(range: { from: string; to: string }) {
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
+  }
+
+  getReport(format: 'pdf' | 'excel') {
+    if (!isValidField(this.dataSearch.fromDate)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese fecha inicio',
+      });
+      return;
+    }
+
+    if (!isValidField(this.dataSearch.toDate)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese fecha fin',
+      });
+      return;
+    }
+
+    if (this.dataSearch.supplierChecked) {
+      if (!isValidField(this.dataSearch.idProveedor)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Seleccione el proveedor',
+        });
+        return;
+      }
+    }
+
+    const dataParms = {
+      tipo: 1,
+      format,
+      ckFecha: true,
+      codEstab: isValidField(this.dataSearch.codEstab),
+      codDoc: isValidField(this.dataSearch.codDoc),
+      idProveedor:
+        (this.dataSearch.supplierChecked &&
+          isValidField(this.dataSearch.idProveedor)) ||
+        null,
+      codEstado: isValidField(this.dataSearch.codEstado),
+      fechaInicio: this.dataSearch.fromDate,
+      fechaFin: this.dataSearch.toDate,
+      subcategoryId: this.dataSearch.subcategoryId,
+    };
+
+    const parameters = {
+      reportParams: JSON.stringify({
+        hasParams: false,
+        codigo: CODE_REPORT.RCP,
+        format,
+        aditionalParams: [],
+      }),
+      dataParams: JSON.stringify(dataParms),
+    };
+
+    this.sharedSvc.getReport({ data: parameters, format: format });
   }
 
   // getCodDoc() {
@@ -131,64 +158,50 @@ export class ReportsPageComponent {
   //   return DOC_TYPE.FC;
   // }
 
-
-
-  getReport(format: 'pdf' | 'excel') {
-
-    if (!isValidField(this.dataSearch.fromDate)) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Ingrese fecha inicio'
+  private initialed() {
+    this.http
+      .get(this.url, {
+        params: {
+          json: JSON.stringify({ tipo: 6 }),
+        },
       })
-      return
-    }
+      .subscribe((response) => {
+        if (isApiResponse(response)) {
+          if (response.code === '0') {
+            console.log(response);
+          }
+          if (response.code === '1') {
+            const [estabs, estadosDoc, tiposDoc, subcategories] = JSON.parse(
+              response.payload as string,
+            );
 
-    if (!isValidField(this.dataSearch.toDate)) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Ingrese fecha fin'
-      })
-      return
-    }
-
-    if (this.dataSearch.supplierChecked) {
-      if (!isValidField(this.dataSearch.idProveedor)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione el proveedor'
-        })
-        return
-      }
-    }
-
-
-
-
-
-
-    const dataParms = {
-      tipo: 1,
-      format,
-      ckFecha: true,
-      codEstab: isValidField(this.dataSearch.codEstab),
-      codDoc: isValidField(this.dataSearch.codDoc),
-      idProveedor: this.dataSearch.supplierChecked && isValidField(this.dataSearch.idProveedor) || null,
-      codEstado: isValidField(this.dataSearch.codEstado),
-      fechaInicio: this.dataSearch.fromDate,
-      fechaFin: this.dataSearch.toDate
-    }
-
-    const parameters = {
-      reportParams: JSON.stringify({
-        hasParams: false,
-        codigo: CODE_REPORT.RCP,
-        format,
-        aditionalParams: []
-      }),
-      dataParams: JSON.stringify(dataParms)
-    }
-
-    this.sharedSvc.getReport(parameters, format)
+            this.establecimientos = groupEstabUtil({
+              estabs,
+              isGroupPuntoEmision: true,
+            });
+            const dataEstab = this.establecimientos.find(
+              (estab) => estab.defaultEstab,
+            );
+            if (dataEstab) {
+              this.dataSearch.codEstab = dataEstab.codEstab;
+              this.puntosEmision = dataEstab.puntosEmision;
+              const dataPuntoEmision = this.puntosEmision.find(
+                (ptoEmi) => ptoEmi.defaultPtoEmi,
+              );
+              if (dataPuntoEmision) {
+                this.dataSearch.idPuntoEmision =
+                  dataPuntoEmision.idPuntoEmision;
+              }
+            }
+            this.tiposDoc = tiposDoc;
+            this.dataSearch.codDoc =
+              this.tiposDoc.find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FC)
+                ?.codDoc || '';
+            //console.log(this.tiposDoc)
+            this.estadosDoc = estadosDoc;
+            this.subcategories = subcategories;
+          }
+        }
+      });
   }
-
 }

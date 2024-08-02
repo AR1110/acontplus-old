@@ -1,9 +1,11 @@
 import { Injectable, inject } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
-import { ACCOUNTING_PATHS } from "../constants/accounting.constants";
+import { ACCOUNTING_PATHS } from "../enums/accounting.constants";
 import { map } from "rxjs";
-import { isApiResponse } from "@core/models/api-response";
+import { ApiResponse, isApiResponse } from "@core/models/api-response";
 import { HttpClient } from "@angular/common/http";
+import { groupEstabUtil } from "@core/utils/group-estab.util";
+import { GroupedEstab } from "@core/models/estab.model";
 
 @Injectable({
   providedIn: 'root'
@@ -51,6 +53,41 @@ export class ComprobanteIngresoService {
           return []
         })
       )
+  }
+
+  getDataFilter(){
+    let json = JSON.stringify({ tipo: 4 })
+    return this.http.get<ApiResponse>(`${this.url}?json=${json}`)
+      .pipe(
+        map(response => {
+          let result = {
+            establecimientos: [] as GroupedEstab[],
+            tiposDoc :[],
+            subEntidadesFinanciera:[],
+            bancos :[]
+          }
+          if(response.code==="0") {
+            return result;
+          }
+
+          const { ptoEmision, tipoDocumento, subEntidadFinanciera, banco } = JSON.parse(response.payload as string);
+
+          result.establecimientos = groupEstabUtil({
+            estabs: ptoEmision,
+            isGroupPuntoEmision: true,
+          });
+
+
+          result.tiposDoc = tipoDocumento;
+          result.subEntidadesFinanciera = subEntidadFinanciera;
+          result.bancos = banco;
+          return result;
+        })
+      )
+  }
+
+  post<T>(data: T){
+    return this.http.post(`${this.url}Insert`, {data})
   }
 
 }

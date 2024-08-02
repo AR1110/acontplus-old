@@ -1,9 +1,10 @@
+//@ts-check
 (function () {
 
     'use strict';
 
 
-    app.directive('shouldFocus', function () {
+    app.directive('shouldFocus', [function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -25,9 +26,9 @@
                 });
             }
         }
-    })
+    }])
     //Para Doble scroll en los documentos
-    app.directive('master', function () { //declaration
+    app.directive('master', [function () { //declaration
         function link(scope, element) {
             scope.$watch(function () {
                 scope.duelScroll = {
@@ -39,12 +40,12 @@
             restrict: 'AE',
             link: link
         };
-    })
+    }])
 
 
 
 
-    app.directive('decimal', function () {
+    app.directive('decimal', [function () {
         return {
             require: 'ngModel',
             restrict: 'A',
@@ -67,10 +68,10 @@
                 ctrl.$parsers.push(inputValue);
             }
         };
-    });
+    }]);
 
     //Directiva para numeros enteros y decimales 
-    app.directive('validNumber', function () {
+    app.directive('validNumber', [function () {
         return {
             require: '?ngModel',
             link: function (scope, element, attrs, ngModelCtrl) {
@@ -114,10 +115,10 @@
                 });
             }
         };
-    });
+    }]);
 
     //DIRECTIVA PARA ENTRADA DE LETRAS MAYUSCULAS
-    app.directive('touppercase', function () {
+    app.directive('touppercase', [function () {
         let teclaAnterior = "";
         return {
             require: 'ngModel',
@@ -148,10 +149,10 @@
                 element.css("text-transform", "uppercase");
             }
         };
-    });
+    }]);
 
     //DIRECTIVA PARA ENTRADA DE LETRAS MINUSCULAS
-    app.directive('tolowercase', function () {
+    app.directive('tolowercase', [function () {
         return {
             require: 'ngModel',
             link: function (scope, element, attrs, modelCtrl) {
@@ -161,10 +162,10 @@
                 element.css("text-transform", "lowercase");
             }
         };
-    });
+    }]);
 
     //Directiva que permite entrada de solo Letras en input 
-    app.directive('validLetra', function () {
+    app.directive('validLetra', [function () {
         return {
             require: 'ngModel',
             link: function (scope, element,) {
@@ -189,10 +190,10 @@
 
             }
         };
-    })
+    }])
 
     //Validar Email
-    app.directive('validateEmail', function () {
+    app.directive('validateEmail', [function () {
         let EMAIL_REGEXP = /^[a-z0-9]+(\.[a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9]+)*(\.[a-z]{2,4})$/;
         return {
             link: function (scope, elem) {
@@ -214,20 +215,20 @@
                 });
             }
         }
-    });
+    }]);
 
 
     //Focus Input
-    app.directive('autoFocus', function () {
+    app.directive('autoFocus', [function () {
         return {
             restrict: 'A',
             link: function (scope, element,) {
                 element.focus();
             }
         };
-    });
+    }]);
 
-    app.directive('focusSearchArticulo', function ($timeout,) {
+    app.directive('focusSearchArticulo', ['$timeout', function ($timeout) {
         return {
             link: function (scope, element,) {
                 element.bind('click', function () {
@@ -237,9 +238,9 @@
                 })
             }
         }
-    })
+    }])
 
-    app.directive('tooltip', function () {
+    app.directive('tooltip', [function () {
         return {
             restrict: 'A',
             link: function (scope, element,) {
@@ -252,10 +253,10 @@
                 });
             }
         };
-    });
+    }]);
 
     //keyboard disable
-    app.directive('keyboardDisable', function () {
+    app.directive('keyboardDisable', [function () {
         return function (scope, elem,) {
             elem.on('keydown', function (e) {
                 if (e.which === 9) {
@@ -263,9 +264,9 @@
                 }
             })
         }
-    })
+    }])
 
-    app.directive('inputFocus', function ($timeout) {
+    app.directive('inputFocus', ['$timeout',function ($timeout) {
         return {
             restrict: 'AC',
             link: function (_scope, _element) {
@@ -274,9 +275,9 @@
                 }, 0);
             }
         }
-    });
+    }]);
 
-    app.directive('ngEnter', function () {
+    app.directive('ngEnter', [function () {
         return function (scope, element, attrs) {
             element.bind("keydown keypress", function (event) {
                 if (event.which === 13) {
@@ -288,9 +289,9 @@
                 }
             })
         }
-    })
+    }])
 
-    app.directive('stopEvent', function () {
+    app.directive('stopEvent', [function () {
         return {
             restrict: 'A',
             link: function (scope, element) {
@@ -299,11 +300,11 @@
                 });
             }
         };
-    });
+    }]);
 
 
     //Permiso Update Artcicle
-    app.directive('updateArticle', function ($rootScope) {
+    app.directive('updateArticle', ['$rootScope',function ($rootScope) {
         return {
 
             link: function (scope, element) {
@@ -317,9 +318,9 @@
                 }
             },
         }
-    })
+    }])
 
-    app.directive('estabStock', function (mainService, $compile, $timeout, articuloService) {
+    app.directive('estabStock', ['$compile','articuloService', function ( $compile, articuloSvc) {
         return {
             restrict: 'A',
             scope: {
@@ -327,9 +328,11 @@
                 placement: "@"
             },
             link: function (scope, element) {
+                let isPopoverInitialized = false;
                 var popoverOptions = {
                     title: '<i class="mdi mdi-information-outline"></i> Bodega-Stock',
                     content: function () {
+                        isPopoverInitialized = true;
                         var popoverContent = ` <div class="table-responsive">
                                                 <table class="table table-sm">
                                                     <thead>
@@ -353,13 +356,10 @@
                                             </div>   
                                              `;
 
-                        articuloService.getId(scope.article.idArticulo).then(response => {
-                            const results = JSON.parse(response.payload) || [];
+                        articuloSvc.getDataStock(scope.article.idArticulo).then(response => {
+                            
 
-                            scope.branchs = results[4].map(val => {
-                                val.warehouses = JSON.parse(val.warehouses)
-                                return val;
-                            })
+                            scope.branchs = response;
 
                         })
 
@@ -376,49 +376,45 @@
                     // container: 'body'
                 };
 
-
-                // // Initialize the popover using element.popover()
+ 
                 $(element).popover(popoverOptions);
 
-                // // Open popover on element click
+           
                 element.on('mouseover', function () {
-                    $(element).popover('show');
-                });
-
-                // // Close popover on outside click
-                $(document).on('mouseover', function (event) {
-                    if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
-                        $(element).popover('hide');
+                    if (!isPopoverInitialized){
+                        $(element).popover('show');
                     }
                 });
 
-                // Clean up the popover when the directive is destroyed
-                // scope.$on('$destroy', function () {
-                //     $(element).popover('destroy');
-                // });
+             
+                $(document).on('mouseover', function (event) {
+                    isPopoverInitialized = false;
+                    if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
+                        $(element).popover('hide');
+                    }
+                }); 
             }
         };
-    })
+    }])
 
 
 
 
-    app.directive('totalesVentaView', function () {
+    app.directive('totalesVentaView', ['$rootScope',function ($rootScope) {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
                 scope.$watch(attrs.totalesVentaView, function (obj) {
-                    if (typeof obj === 'object' && !obj.additional.totalesVenta.view) {
-                        // Aquí puedes aplicar la lógica de la directiva cuando el objeto tenga un valor
-                        // Por ejemplo, mostrar el elemento, modificar su estilo, etc.
-                        element.remove();
+                    if ($rootScope.usuarioPermiso !== null && typeof $rootScope.usuarioPermiso === 'object') {
+                        let { sales } = $rootScope.usuarioPermiso;
+                        if (sales.adicionales && !sales.adicionales.totalesVenta) {
+                            element.remove();
+                        }
                     }
                 });
-
-                // element.remove();
             }
         };
-    })
+    }])
 
 
 
@@ -426,7 +422,7 @@
     /**
      * ====================================START DIRECTIVES SALES=============================
      */
-    app.directive('btnCliente', function (modalService, nombreModalVenta, toastService) {
+    app.directive('btnCliente', ['modalService', 'nombreModalVenta', 'toastService', function (modalSvc, nombreModalVenta, tS) {
         return {
             restrict: 'A',
             scope: {
@@ -436,7 +432,7 @@
             link: function (scope, element) {
                 element.on('click', async function () {
                     if (typeof scope.params === 'object' && /^9{13}$/.test(scope.params.numeroIdentificacion)) {
-                        toastService.toastr('warning', 'Consumir Final no puede ser editada.');
+                        tS.toastr('warning', 'Consumir Final no puede ser editada.');
                         return
                     }
 
@@ -444,7 +440,7 @@
                     let ctrl = (await import(fileCtrl))[controllers['M']];
                     let template = templates['M'];
 
-                    let modalRef = modalService.openModalCustom({
+                    let modalRef = modalSvc.openModalCustom({
                         controller: ctrl,
                         template,
                         size: 'xl',
@@ -463,9 +459,9 @@
                 })
             }
         }
-    })
+    }])
 
-    app.directive('btnClienteLista', function (modalService, nombreModalVenta) {
+    app.directive('btnClienteLista', ['modalService', 'nombreModalVenta', function (modalSvc, nombreModalVenta) {
         return {
             restrict: 'A',
             scope: {
@@ -479,7 +475,7 @@
                     let ctrl = (await import(fileCtrl))[controllers['ML']];
                     let template = templates['ML'];
 
-                    let modalRef = modalService.openModalCustom({
+                    let modalRef = modalSvc.openModalCustom({
                         controller: ctrl,
                         template,
                         size: 'xl',
@@ -498,34 +494,120 @@
                 })
             }
         }
-    })
+    }])
 
-    app.directive('clienteInfoPopover', function () {
+    app.directive('clienteInfoPopover', ['toastService', function (tS) {
         return {
             restrict: 'A',
             scope: {
                 customer: '=',
-                popoverPlacement: '@'
+                popoverPlacement: '@',
+                infoAdicionalDocumento: '='
             },
             link: function (scope, element) {
-                element.popover({
-                    title: '<i class="text-info fas fa-info"></i> Información Cliente',
-                    content: `<div>
-                                <span><b>Nombre Fiscal:</b> ${scope.customer.nombreFiscal}</span><br>
-                                <span><b>Nombre Comercial:</b> ${scope.customer.nombreComercial}</span><br>
-                                <span><b>Correo:</b> ${scope.customer.correo || ''}</span><br>
-                                <span><b>Teléfono:</b> ${scope.customer.telefono || ''}</span><br>
+
+                $(element).popover({
+                    content: function () {
+                 
+                        let placas = scope.customer.placas || [];
+                        let infoAdicionalDocumento = scope.infoAdicionalDocumento || [];
+                        let placasSeleccionadas = infoAdicionalDocumento.map(v=>v.valor);
+                     
+                        // Crear una cadena para almacenar el contenido HTML de las casillas de verificación
+                        let checkboxesHTML = '';
+
+                        // Iterar sobre la matriz "placas" y generar una casilla de verificación para cada elemento
+                        placas.forEach(function (placa) {
+                            let isChecked = placasSeleccionadas.includes(placa); // Verificar si la placa está en el array de placas seleccionadas
+
+                            checkboxesHTML += `
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="checkbox_${placa}" value="${placa}" ${isChecked ? 'checked' : ''}>
+                                    <label class="form-check-label" for="checkbox_${placa}">
+                                        ${placa}
+                                    </label>
+                                </div>
+                            `;
+                        });
+
+                        let popoverContentHTML = `
+                        <div class="d-flex flex-column">
+                            <div class="p-0">
+                                <span><b>Nombre Fiscal:</b> ${scope.customer.nombreFiscal}</span>
+                            </div>
+                            <div class="p-0">
+                                <span><b>Nombre Comercial:</b> ${scope.customer.nombreComercial}</span>
+                            </div>
+                            <div class="p-0">
+                                <span><b>Correo:</b> ${scope.customer.correo || ''}</span>
+                            </div>
+                            <div class="p-0">
+                                <span><b>Teléfono:</b> ${scope.customer.telefono || ''}</span>
+                            </div>
+                            <div class="p-0">
                                 <span><b>Dirección:</b> ${scope.customer.direccion || ''}</span>
-                            </div>`,
+                            </div>
+                            <div class="p-0">
+                                <span><b>Placa:</b> </span>
+                                 ${checkboxesHTML}
+                            </div>
+                        `;
+
+                        // Convert the HTML string to a jQuery object
+                        let $popoverContent = $(popoverContentHTML);
+
+                        $popoverContent.find('.form-check-input').change(function () {
+                            let valor = $(this).val();
+                            let isChecked = $(this).is(':checked');
+
+                            if (!scope.infoAdicionalDocumento) return 
+
+                      
+                            let index = scope.infoAdicionalDocumento.findIndex(function (item) {
+                                return  item.valor === valor;
+                            });
+
+                            if (isChecked) { 
+                                if (index === -1) {
+                                    scope.infoAdicionalDocumento.push({
+                                        nombre: 'Placa',
+                                        valor: valor
+                                    });
+                                    tS.toastr('success', 'Agregado en información adicional del documento')
+                                }
+                            } else { 
+                                if (index !== -1) {
+                                    scope.infoAdicionalDocumento.splice(index, 1);
+                                }
+                            }
+                             
+                        });
+
+                        return $popoverContent;
+                    },
+                    html: true,
+                    trigger: 'manual',
                     placement: scope.popoverPlacement,
-                    trigger: 'outisideclick',
-                    html: true
                 });
+
+
+                // Toggle popover on click
+                element.on('click', function () {
+                    $(this).popover('toggle');
+                });
+
+                // Hide popover when clicking outside
+                $(document).on('click', function (event) {
+                    if (!$(element).is(event.target) && $(element).has(event.target).length === 0 && $('.popover').has(event.target).length === 0) {
+                        $(element).popover('hide');
+                    }
+                });
+
             }
         };
-    });
+    }]);
 
-    app.directive('clienteSearchDrtv', function ($compile, clienteService) {
+    app.directive('clienteSearchDrtv', ['$compile','clienteService',function ($compile, clienteSvc) {
         return {
             restrict: 'A',
             scope: {
@@ -539,7 +621,7 @@
                 }
                 scope.searchCustomer = function (textSearch) {
                     if (textSearch.length > 1) {
-                        return clienteService.search({ textSearch })
+                        return clienteSvc.search({ textSearch })
                             .catch(error => {
                                 console.log(error);
                             })
@@ -579,13 +661,13 @@
                 $compile(element)(scope);
             }
         };
-    });
+    }]);
 
 
     /**
      * Buscador de cliente para venta en donde incluye a mas del buscador consultar datos del cliente al SRI en caso de no encontrar datos en la base de datos AcontPlus
      */
-    app.directive('customerSearchSaleDrtv', function ($compile, clienteService, commonService, toastService) {
+    app.directive('customerSearchSaleDrtv', ['$compile', 'clienteService','toastService', function ($compile, clienteSvc, tS) {
         return {
             restrict: 'A',
             scope: {
@@ -619,7 +701,7 @@
                     let idTipoIdentificacion = 0;
                     if (Array.isArray(scope.tiposIdentificacion)) {
                         let dataTipoIdentificacion = scope.tiposIdentificacion.find(ti => ti.codigoSri === codigo);
-                        if (dataTipoIdentificacion){
+                        if (dataTipoIdentificacion) {
                             idTipoIdentificacion = dataTipoIdentificacion.idTipoIdentificacion;
                         }
                     }
@@ -647,10 +729,10 @@
                         try {
                             showLoader();
 
-                            let { numeroRuc, razonSocial, direccion, telefono, email, error } = await clienteService.checkClientSRIByRUC(textSearch);
+                            let { numeroRuc, razonSocial, direccion, telefono, email, error } = await clienteSvc.checkClientSRIByRUC(textSearch);
                             hideLoader();
                             if (!numeroRuc) {
-                                toastService.toastr('warning', error)
+                                tS.toastr('warning', error)
                                 return
                             }
 
@@ -688,10 +770,10 @@
                     if (textSearch.length === 10) {
                         try {
                             showLoader();
-                            let { identificacion, nombreCompleto, direccion, telefono, email, error } = await clienteService.checkClientSRIByCedula(textSearch)
+                            let { identificacion, nombreCompleto, direccion, telefono, email, error } = await clienteSvc.checkClientSRIByCedula(textSearch)
                             hideLoader();
                             if (!identificacion || !nombreCompleto) {
-                                toastService.toastr('warning', error)
+                                tS.toastr('warning', error)
                                 return
                             }
 
@@ -731,14 +813,9 @@
                     validationSearchCustomerExternal = false;
                     if (textSearch.length < 2) return;
 
-                    return clienteService.search({ textSearch }).then(response => {
+                    return clienteSvc.search({ textSearch }).then(response => {
                         if (response.code === "0") {
-                            validationSearchCustomerExternal = true;
-                            // scope.functionTrigger({
-                            //     result: {
-                            //         nombreFiscal: textSearch,
-                            //     }
-                            // })
+                            validationSearchCustomerExternal = true; 
                         }
                         return response;
                     })
@@ -780,7 +857,7 @@
                 $compile(element)(scope);
             }
         };
-    });
+    }]);
 
 
 
@@ -788,7 +865,7 @@
 
 
 
-    app.directive('btnEmpresa', function (modalService, nombreModalVenta) {
+    app.directive('btnEmpresa', ['modalService','nombreModalVenta', function (modalSvc, nombreModalVenta) {
         return {
             restrict: 'A',
             scope: {
@@ -802,15 +879,17 @@
                     let ctrl = nombreModalVenta.EMPRESA.controller
                     let template = nombreModalVenta.EMPRESA.template
                     let controller = (await import(fileCtrl))[ctrl];
+                    let id = typeof scope.params==='object'? scope.params.idEmpresa : 0
 
 
-
-                    const modalDialogRef = modalService.openModalCustom({
+                    const modalDialogRef = modalSvc.openModalCustom({
                         controller,
                         template,
                         size: 'md',
                         isRenderRazorPartial: true,
-                        params: Object.assign({}, scope.params) || {},
+                        params: {
+                            id
+                        },
                     })
 
                     modalDialogRef.result.then(result => {
@@ -824,7 +903,7 @@
 
             }
         }
-    })
+    }])
 
 
     app.directive('btnEmpleado', function (modalService, nombreModalVenta) {
@@ -969,58 +1048,7 @@
                 options="dateRangePicker.options" options="{locale: {separator: " :"}}" />`;
                 var e = $compile(html)(scope);
                 element.replaceWith(e);
-            }
-            // link: function (scope) {
-            //     let thisMoment = moment(new Date())
-            //     scope.startDate = thisMoment;
-            //     scope.endDate = thisMoment;
-            //     scope.dateRangePicker = {
-            //         date: {
-            //             startDate: thisMoment,
-            //             endDate: thisMoment,
-            //         },
-            //         picker: null,
-            //         options: {
-            //             pickerClasses: 'custom-display', //angular-daterangepicker extra
-            //             buttonClasses: 'btn',
-            //             applyButtonClasses: 'btn-success',
-            //             cancelButtonClasses: 'btn-danger',
-            //             locale: {
-            //                 applyLabel: "Aplicar",
-            //                 cancelLabel: 'Cancelar',
-            //                 customRangeLabel: 'Rango Personalizado',
-            //                 separator: ' - ',
-            //                 format: "YYYY-MM-DD", //will give you 2017-01-06
-            //                 //format: "D-MMM-YY", //will give you 6-Jan-17
-            //                 //format: "D-MMMM-YY", //will give you 6-January-17
-            //             },
-            //             ranges: {
-            //                 'Hoy': [moment(), moment()],
-            //                 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            //                 'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
-            //                 'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
-            //                 'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
-            //                 'Este Mes': [moment().startOf('month'), moment().endOf('month')],
-            //             },
-            //             eventHandlers: {
-            //                 'apply.daterangepicker': function (event, picker) {
-
-            //                     scope.startDate = scope.dateRangePicker.date.startDate
-            //                     scope.endDate = scope.dateRangePicker.date.endDate;
-
-            //                     scope.resultRangeDate({
-            //                         result: {
-            //                             startDate: scope.startDate,
-            //                             endDate: scope.endDate
-            //                         }
-            //                     })
-            //                     // $scope.getComprobantes()
-            //                     // console.log('applied')
-            //                 }
-            //             }
-            //         }
-            //     };
-            // }
+            } 
         };
 
     })
@@ -1105,7 +1133,7 @@
     /**
      * 
      * ==========================SEND DOCS. BY EMAIL ========================= 
-     * 
+     * @warning OldVersion
      * 
      */
     app.directive('btnSendToEmail', function (modalService, nombreModalCommon) {
@@ -1143,6 +1171,51 @@
             }
         }
     })
+
+
+    /**
+     * @description Nueva Version usar esta en proximos modulos
+     */
+    app.directive('actionSendMail', ['modalService','nombreModalCommon', function (modalSvc, nombreModalCommon) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+                typeSend: '=',
+                getParamToSendMail: '&' //funcion que arma parametro necesario para el envio de correo
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+
+                    let fileCtrl = nombreModalCommon.SEND_MAIL.fileCtrl;
+                    let ctrl = nombreModalCommon.SEND_MAIL.controllers['MSM'];
+                    let template = nombreModalCommon.SEND_MAIL.templates['MSM'];
+                    let controller = (await import(fileCtrl))[ctrl];
+                    
+                     
+                    let params = scope.getParamToSendMail({
+                            params: scope.params
+                        }) || scope.params;
+                      
+
+                    modalSvc.open({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: {
+                            data: structuredClone(params)
+                            //...params,
+                           // typeSend: scope.typeSend
+                        }
+                    })
+
+                })
+            }
+        }
+    }])
+
+
 
     /**
      * -------------------------------SEND DOCS. BY WHATSAPP-----------------------
@@ -1226,8 +1299,78 @@
         }
     }])
 
+    //Nueva Version usar esta en proximos modulos
 
-    app.directive('openModalAdditionalDataDocument', function (modalService, nombreModal) {
+    app.directive('actionSendToWhatsApp', ['modalService', 'nombreModalCommon', 'mainService', 'toastService', function (modalSvc, nombreModalCommon, mS, tS) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+                hasPermission: '=',
+                typeSend: '=',
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+                   
+                    showLoader();
+                    let json = JSON.stringify({ tipo: 2, idEntidad: 0 });
+                    let url = `Config/WhatsappUsage/?json=${json}`;
+                    
+                    showLoader();
+                    let response =  await  mS.getData('get', url, null, true).finally(()=>hideLoader());
+
+                    if(response.code==="0"){
+                        tS.toastr({
+                            type: 'warning',
+                            message: response.message
+                        })
+                        return 
+                    }
+
+                    let [tempArray] = JSON.parse(response.payload);
+                    let tempResponse = tempArray[0];
+
+                    if (tempResponse.code == '0') {
+                        Swal.fire({ title: 'Aviso', text: tempResponse.message, icon: 'warning' })
+                        return 
+                    }
+
+                    
+                    if (tempResponse.message) {
+                        Swal.fire({ title: 'Aviso', text: tempResponse.message, icon: 'info' })
+                        return
+                    }
+
+                    let { fileCtrl, template, controller } = nombreModalCommon.SEND_WHATSAPP;
+                    let ctrl = (await import(fileCtrl))[controller];
+ 
+                   
+
+                    const modalRef = modalSvc.open({
+                        controller: ctrl,
+                        template,
+                        size: 'md',
+                        params: {
+                            data: structuredClone(scope.params) || {},
+                        }
+                    })
+
+                    modalRef.result.then(result => {
+                        if (typeof result === "object") {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                    
+ 
+                });
+            }
+        }
+    }])
+
+    app.directive('openModalAdditionalDataDocument', function (modalService, nombreModalCommon) {
         return {
             restrict: 'A',
             scope: {
@@ -1238,23 +1381,23 @@
             link: function (scope, element) {
 
                 element.on('click', async function () {
-                    let {
-                        MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL,
-                        MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML
-                    } = nombreModal.common;
-                    let {
-                        InfoAdicionalTipoDocCtrl
-                    } = await import('./../../modal/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL);
+
+                    let { fileCtrl, controller, template } = nombreModalCommon.INFO_ADICIONAL_DOC;
+                 
+                    let ctrl = (await import(fileCtrl))[controller]
+
+ 
 
                     let params = {
                         isView: scope.isView,
                         infoAdicionalDocumento: scope.datosAdicionales
                     }
+             
                     let modalRef = modalService.openModalCustom({
-                        controller: InfoAdicionalTipoDocCtrl,
-                        template: 'Shared/Common/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML,
-                        size: 'md',
-                        params
+                        controller: ctrl,
+                        template,
+                        size: 'lg',
+                        params,
                     })
 
                     modalRef.result.then(function (result) {
@@ -1351,7 +1494,7 @@
                     if (textSearch.length > 1) {
                         let json = {
                             busqueda: textSearch,
-                            idRol: decodeToken.idUsuarioRol
+                            idRol: decodeToken.userRoleId
                         }
                         return commonService.usuarioSearch(json).then(response => {
                             let usuarios = response;
@@ -1566,9 +1709,11 @@
                 placement: "@"
             },
             link: function (scope, element) {
+                let isPopoverInitialized = false;
                 var popoverOptions = {
                     title: '<i class="mdi mdi-information-outline"></i> Artículo Fraccionado',
                     content: function () {
+                        isPopoverInitialized = true;
                         var popoverContent = ` <div class="table-responsive">
                                                 <table class="table table-sm">
                                                     <thead>
@@ -1619,22 +1764,24 @@
                     customClass: 'contentArticlePopover',
                     container: 'body'
                 };
+ 
 
-
-                // // Initialize the popover using element.popover()
                 $(element).popover(popoverOptions);
 
-                // // Open popover on element click
+
                 element.on('mouseover', function () {
-                    $(element).popover('show');
+                    if (!isPopoverInitialized) {
+                        $(element).popover('show');
+                    }
                 });
 
-                // // Close popover on outside click
+
                 $(document).on('mouseover', function (event) {
+                    isPopoverInitialized = false;
                     if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
                         $(element).popover('hide');
                     }
-                });
+                }); 
 
                 // Clean up the popover when the directive is destroyed
                 // scope.$on('$destroy', function () {
@@ -1742,5 +1889,490 @@
             }
         }
     })
+
+
+    //Convertir documento proforma 
+    /**
+     * 1. Transformar datos de proforma pendiente a nota entrega o factura
+     * 2. Transformar datos de nota entrega a factura
+     */
+
+    app.directive('btnConvertToDoc', function (modalService, nombreModalVenta) {
+        return {
+            restrict: 'A',
+            scope: {
+                codDoc:'=',
+                id:'=',
+                params: '=',
+                onResult: '&'               
+            },
+            link: function (scope, element) {
+                element.on('click', async function () { 
+                    let fileCtrl = nombreModalVenta.CONVERT_TO_DOC.fileCtrl;
+                    let ctrl = nombreModalVenta.CONVERT_TO_DOC.controllers["M"];
+                    let template = nombreModalVenta.CONVERT_TO_DOC.templates['M'];
+                    let controller = (await import(fileCtrl))[ctrl];
+  
+                    let modalRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: {
+                            codDoc: scope.codDoc,
+                            id: scope.id,
+                            
+                        },
+                        isRenderRazorPartial: true
+                    })
+
+                    modalRef.result.then(result=>{
+                        if (result !== null && typeof result === 'object' && typeof scope.onResult==='function'){
+                            scope.onResult(result)
+                        }
+                    })
+
+                })
+            }
+        }
+    })
+
+    //HISTORIAL CONVERSIÓN DOCUMENTO  
+    app.directive('btnHistorialConversionDoc', function (modalService, nombreModalVenta) {
+        return {
+            restrict: 'A',
+            scope: {
+                codDoc: '=',
+                id: '=',
+                params: '=',
+                onResult: '&'
+            },
+            link: function (scope, element) {
+                element.on('click', async function () { 
+                    let fileCtrl = nombreModalVenta.CONVERT_TO_DOC.fileCtrl;
+                    let ctrl = nombreModalVenta.CONVERT_TO_DOC.controllers["MHCD"];
+                    let template = nombreModalVenta.CONVERT_TO_DOC.templates['MHCD'];
+                    let controller = (await import(fileCtrl))[ctrl];
+
+                    let modalRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'lg',
+                        params: {
+                            codDoc: scope.codDoc,
+                            id: scope.id,
+
+                        },
+                        isRenderRazorPartial: true
+                    }) 
+
+                })
+            }
+        }
+    })
+
+
+    //HISTORIAL COBRO DOCUMENTO 
+    app.directive('btnHistorialCobro', function (modalService, nombreModalContabilidad) {
+        return {
+            restrict: 'A',
+            scope: { 
+                params: '=',
+                onResult: '&'
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+                    let fileCtrl = nombreModalContabilidad.COBRO.fileHistorialCobro;
+                    let ctrl = nombreModalContabilidad.COBRO.controllers["CD"];
+                    let template = nombreModalContabilidad.COBRO.templates['CD'];
+                    let controller = (await import(fileCtrl))[ctrl];
+
+                    let modalRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'xl',
+                        params: {
+                            idComprobanteIngreso: scope.params.idComprobanteIngreso,
+                            idCuentaPorCobrar: scope.params.idCuentaPorCobrar,                            
+
+                        },
+                        isRenderRazorPartial: true
+                    })
+
+                    modalRef.result.then(result=>{
+                        if(result!==null && typeof result==='object' && typeof scope.onResult==='function'){
+                            scope.onResult(result)
+                        }
+                    })
+
+                })
+            }
+        }
+    })
+
+
+    //Reporte Comprobante Ingreso 
+    app.directive('btnComprobanteIngresoReport', ['commonService', function (commonSvc) {
+        return {
+            restrict: 'A',
+            scope: { 
+                unique: '=',
+                codEstab:'='
+            },
+            link: function (scope, element) {
+                element.on('click',  function () {
+
+                    let format = 'pdf';
+
+                    let dataParms = {
+                        tipo: 3,
+                        id: scope.unique,
+                    }
+                    const parameters = {
+                        reportParams: JSON.stringify({
+                            hasParams: true,
+                            codigo: 'RCINGR',
+                            format,
+                            codEstab: scope.codEstab,
+                            aditionalParams: []
+                        }),
+                        dataParams: JSON.stringify(dataParms)
+                    }
+
+
+                    commonSvc.getReport({
+                        parameters,
+                        formatType: format,
+                        v2: true
+                    })
+
+                })
+            }
+        }
+    }])
+
+
+
+    /***
+     * @description Modal component cuenta por pagar
+     * 
+     */
+    app.directive('btnCuentaPorPagar', ['modalService', function (modalSvc) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                onResult: '&'
+            },
+            link: function (scope, element) {
+                element.on('click', async function () { 
+
+                    let modalRef = modalSvc.openWithComponent({
+                        component: 'appCuentaPorPagarComponent',
+                        size: 'xl',
+                        windowClass: 'uibModalFullScreen',                         
+                    })
+
+                    modalRef.result.then(result => {
+                        if (result && typeof result === 'object' && typeof scope.onResult === 'function') {
+                          //  scope.onResult(result)
+                        }
+                    })
+
+                })
+            }
+        }
+    }])
+
+
+    /***
+     * @description Modal component cuenta por pagar
+     * 
+     */
+    app.directive('btnCuentaPorCobrar', ['modalService', function (modalSvc) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                onResult: '&'
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+                    let params = scope.params || {}
+
+                    let modalRef = modalSvc.openWithComponent({
+                        component: 'appCuentaPorCobrarComponent',
+                        size: 'xl',
+                        windowClass: 'uibModalFullScreen', 
+                        params: {
+                            idCuentaPorCobrar: params.idCuentaPorCobrar
+                        }                       
+                    })
+
+                    modalRef.result.then(result => {
+                        if (result && typeof result === 'object' && typeof scope.onResult === 'function') {
+                            //  scope.onResult(result)
+                        }
+                    })
+
+                })
+            }
+        }
+    }])
+
+
+
+     /***
+     * @description anular comprobante ingreso 
+     * 
+     */
+    app.directive('btnAnularComprobanteIngreso', ['comprobanteIngresoService','toastService', 'formulario',function (compIngresoSvc,tS,fS) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                onResult: '&'
+            },
+            link: async function (scope, element) {
+                let cuentasPorCobrar = [], cuotasPorCobrar = [], estadosPago = [];
+
+                async function messageQtyDoc() {
+                    let isConfirmed = await Swal.fire({
+                        icon: 'warning',
+                        text: 'Este anulación de comprobante afectará mas de un doc. porque se ha realizado cobro por lote ¿Desea continuar? '
+                    })
+                    return isConfirmed;
+                }
+
+                element.on('click', async function () {
+                    const { idComprobanteIngreso } = scope.params;
+
+                    try {
+
+                        let isContinue = true;
+
+                        if (scope.params.cantDocs > 1) {
+                            isContinue = await messageQtyDoc();
+                        }
+
+                        if (!isContinue) return
+
+                        const response = await compIngresoSvc.getDataForDelete(idComprobanteIngreso); 
+
+                        cuentasPorCobrar = response.cuentasPorCobrar;
+                        cuotasPorCobrar = response.cuotasPorCobrar;
+                        estadosPago = response.estadosPago;
+
+                        if (cuentasPorCobrar.length === 0 || cuotasPorCobrar.length === 0) {
+
+                            console.log("cuentasPorCobrar", cuentasPorCobrar);
+                            console.log("cuotasPorCobrar", cuotasPorCobrar);
+                            return;
+                        }
+
+                        const { isConfirmed, value } = await Swal.fire({
+                            icon: 'warning',
+                            html: '<small>¿Está seguro/a de anular este registro ahora?</small>',
+                            input: 'text',
+                            inputPlaceholder: 'Ingrese la observación',
+                            showConfirmButton: true,
+                            confirmButtonText: 'Sí, anular',
+                            showCancelButton: true,
+                            cancelButtonText: 'No, cancelar',
+                            allowOutsideClick: false,
+                            inputValidator: value => !value && '¡Ingrese la observación!'
+                        });
+
+                        if (!isConfirmed) return;
+
+                        const dataParams = getDataParams();
+                        const data = {
+                            observacion: value,
+                            ...dataParams
+                        }; 
+
+                        showLoader();
+                        const updateResponse = await compIngresoSvc.update(idComprobanteIngreso, data);
+
+                        if (updateResponse.code === "0") {
+                            tS.toastr({
+                                type: 'warning',
+                                message: updateResponse.message
+                            });
+                        } else if (updateResponse.code === "1") {
+                            tS.toastr({
+                                type: 'success',
+                                message: updateResponse.message
+                            });
+
+                            scope.onResult(updateResponse);
+                        }
+
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        hideLoader();
+                    }
+                });
+
+                function getDataIdEstadoPago(codigoEstadoPago) {
+                    const dataEstadoPago = estadosPago.find(ep => ep.codigo === codigoEstadoPago);
+                    return dataEstadoPago ? dataEstadoPago.idEstadoPago : 0;
+                }
+
+                function getDataParams() {
+                    // Agrupa cuentas por cobrar
+                    const cuentasPorCobrarAgrupado = cuentasPorCobrar.reduce((acc, curr) => {
+                        let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar);
+                        let abono = curr.cobro ? curr.abono : 0;
+
+                        if (!existeDato) {
+                            acc.push({
+                                idCuentaPorCobrar: curr.idCuentaPorCobrar,
+                                abonoDoc: fS.instanceDecimal(curr.abonoDoc).toNumber(),
+                                abono,
+                                diasMora: curr.diasMora,
+                                mora: curr.mora 
+                            });
+                        } else { 
+                             existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
+                        }
+                        return acc;
+                    }, []);
+
+                    // Agrupa cuotas por cobrar
+                    const cuotasPorCobrarAgrupado = cuotasPorCobrar.reduce((acc, curr) => {
+                        let existeDato = acc.find(dataCxc => dataCxc.idCuotaPorCobrar === curr.idCuotaPorCobrar);
+                      //  let abono = curr.cobro ? curr.abono : 0;
+                      let abono = curr.abono
+
+                        if (!existeDato) {
+                            acc.push({
+                                idCuotaPorCobrar: curr.idCuotaPorCobrar,
+                                abonoCuota: curr.abonoCuota,
+                                abono,
+                                diasMora: curr.diasMora,
+                                mora: curr.mora
+                            });
+                        } else { 
+                             existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
+                        }
+                        return acc;
+                    }, []);
+
+                    // Calcula los valores residuales y el estado de pago para cuentas por cobrar
+                    const tempCuentasPorCobrar = cuentasPorCobrarAgrupado.map(item => { 
+                        let valorResiduo = fS.instanceDecimal(item.abonoDoc).minus(item.abono).toNumber()
+                        return {
+                            idCuentaPorCobrar: item.idCuentaPorCobrar,
+                            abono: valorResiduo,
+                            idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP'),
+                            diasMora: item.diasMora,
+                            mora: item.mora
+                        };
+                    });
+
+                    // Calcula los valores residuales y el estado de pago para cuotas por cobrar
+                    const tempCuotasPorCobrar = cuotasPorCobrarAgrupado.map(item => { 
+                        let valorResiduo = fS.instanceDecimal(item.abonoCuota).minus(item.abono).toNumber()
+                        return {
+                            idCuotaPorCobrar: item.idCuotaPorCobrar,
+                            abono:  valorResiduo ,
+                            idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP'),
+                            mora: item.mora,
+                            diasMora: item.diasMora                            
+                        };
+                    });
+
+                    // Retorna los datos agrupados y calculados
+                    return {
+                        cuenta: tempCuentasPorCobrar,
+                        cuota: tempCuotasPorCobrar
+                    };
+                }
+
+            }
+
+        }
+    }])
+
+
+    
+    /**
+     *========================================================== 
+     * DIRECTIVAS COMUNES
+     * =========================================================
+     */
+
+
+
+    //============================END===========================
+
+
+    /**
+    *==========================================================
+    * DIRECTIVAS VENTAS
+    * =========================================================
+    */
+    app.directive('actionInfoAdicionalArticuloVenta', ['nombreModalVenta', 'modalService', function (nombreModalVenta, modalSvc){
+        return {
+            restrict: 'A',
+            scope: {
+                entity: '=', //Datos del detalle 
+                resultModalAdicional: '&', 
+                infoAdicionalDoc:"=" //Información Adicional del Documento 
+            },
+           link
+        }
+
+        function link (scope, element) {
+            element.on('click', async ()=>{
+
+
+                if (!Number.isInteger(scope.entity.cantidad)) {
+                    Swal.fire({
+                        title: 'Datos Adicionales',
+                        icon: 'warning',
+                        html: 'El valor de la cantidad del artículo tiene que ser un número entero!'
+                    })
+                    return
+                }
+
+                let { fileCtrl, controller, template } = nombreModalVenta.INFO_ADICIONAL_ARTICULO;
+                let ctrl = (await import(fileCtrl))[controller]
+
+                let modalRef = modalSvc.open({
+                    controller: ctrl,
+                    template,
+                    size: 'lg',
+                    params: {
+                        entity: scope.entity,  
+                        infoAdicionalDoc: scope.infoAdicionalDoc || []
+
+                    }, 
+                })
+
+                modalRef.result.then(result => {
+                    scope.resultModalAdicional({
+                        result
+                    })
+                })
+
+
+
+            })  
+        }
+
+      
+
+
+
+    }])
+
+
+
+    //============================END===========================
+    
+    
+
 
 })(window.angular)

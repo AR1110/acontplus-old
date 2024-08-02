@@ -1,104 +1,66 @@
-﻿using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Common.Core.Utils;
+﻿using Autofac.Extensions.DependencyInjection;
+using Common.AppSettings;
 using Inventario.API.Extensions;
-using Newtonsoft.Json.Serialization;
-using Services.Common;
+using Services.Common.Middleware;
 
-internal class Program
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    private static void Main(string[] args)
-    {
-        var builder = WebApplication.CreateBuilder(args);
+    serverOptions.Limits.MaxRequestBufferSize = 1048576;
+    serverOptions.Limits.MaxRequestLineSize = 1048576;
+});
 
-        // Add services to the container.
+builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+ConfigHelper.AddJsonFiles(builder.Configuration);
 
-        builder.WebHost.ConfigureKestrel(serverOptions =>
-        {
-            serverOptions.Limits.MaxRequestBufferSize = 1048576;
-            serverOptions.Limits.MaxRequestLineSize = 1048576;
-        });
+builder.Services.AddApplicationServices(builder.Configuration);
 
-        builder.Services.AddControllers()
-                        .AddNewtonsoftJson(x =>
-                        {
-                            x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                            x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-                        });
+builder.Services.AddIdentityService(builder.Configuration);
 
-        builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
-        ConfigHelper.AddJsonFiles(builder.Configuration);
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddSwaggerDocumentation();
 
-        builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddApiVersioningConfig();
 
-        builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddSwaggerDocumentation();
+var app = builder.Build();
 
-        builder.Services.AddApiVersioning(opt =>
-        {
-            opt.DefaultApiVersion = new ApiVersion(1, 0);
-            opt.AssumeDefaultVersionWhenUnspecified = true;
-            opt.ReportApiVersions = true;
-            opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
-                                                            new QueryStringApiVersionReader("api-version"),
-                                                            new HeaderApiVersionReader("x-api-version"),
-                                                            new MediaTypeApiVersionReader("x-api-version"));
-        }).AddApiExplorer(setup =>
-        {
-            setup.GroupNameFormat = "'v'VVV";
-            setup.SubstituteApiVersionInUrl = true;
-        });
+app.UseMiddleware<ExceptionMiddleware>();
 
-        builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+app.UseMiddleware<MobileRequestMiddleware>();
 
-        builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-        builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
+app.UseSwaggerVersionedDocumentation();
 
-        var app = builder.Build();
+app.UseRouting();
 
-        var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-
-        app.UseSwagger();
-        app.UseSwaggerUI(options =>
-        {
-            foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
-            {
-                options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
-                    description.GroupName.ToUpperInvariant());
-            }
-        });
-
-        app.UseRouting();
-
-        if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-        {
-            app.Urls.Add("http://*:5008"); // 👈 Add the URL
-        }
-        else
-        {
-            app.UseHttpsRedirection();
-        }
-
-        app.UseAuthentication();
-
-        app.UseAuthorization();
-
-        app.MapControllers().RequireAuthorization();
-
-        app.UseEndpoints(endpoints =>
-        {
-            _ = endpoints.MapGet("/", context =>
-            {
-                context.Response.Redirect("swagger");
-                return Task.CompletedTask;
-            });
-        });
-
-
-        app.Run();
-    }
+if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+{
+    app.Urls.Add("http://*:5008"); // Linux Port
 }
+else
+{
+    app.UseHttpsRedirection();
+}
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.MapControllers().RequireAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    _ = endpoints.MapGet("/", context =>
+    {
+        context.Response.Redirect("swagger");
+        return Task.CompletedTask;
+    });
+});
+
+
+app.Run();

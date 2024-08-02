@@ -1,4 +1,6 @@
 export interface OrderDetail {
+  id: number;
+  deviceCustomerId?: number;
   deviceId: number;
   deviceName: string;
   deviceSerie: string;
@@ -6,4 +8,5 @@ export interface OrderDetail {
   obs?: string;
   orderId?: number;
   uuid: string;
+  assignedUserId?: number;
 }

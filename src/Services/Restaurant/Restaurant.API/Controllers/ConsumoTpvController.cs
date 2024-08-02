@@ -1,16 +1,16 @@
 ﻿using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
-using Services.Common;
-using Services.Common.Logs;
+using Services.Common.Extensions;
+
 
 namespace Restaurant.API.Controllers
 {
     public class ConsumoTpvController : BaseApiController
     {
         private readonly IConsumptionService _consumption;
-        private readonly LogWriter _log;
-        public ConsumoTpvController(IConsumptionService consumption, LogWriter log)
+        private readonly ICustomLogger _log;
+        public ConsumoTpvController(IConsumptionService consumption, ICustomLogger log)
         {
             _consumption = consumption;
             _log = log;

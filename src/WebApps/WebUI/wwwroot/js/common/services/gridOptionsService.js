@@ -542,7 +542,9 @@
 
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
                     rowEntity.conversion = dataMedida.conversion;
-                    rowEntity.precioUnitario = fS.roundNumber(dataMedida.precioCosto, decimal.nroPrecio)
+                    rowEntity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, decimal.nroPrecio)
+                    rowEntity.precioCosto = fS.roundNumber(dataMedida.precioCosto, decimal.nroPrecio)
+                    rowEntity.precioCostoFraccionado = fS.roundNumber(dataMedida.precioCostoFraccionado, decimal.nroPrecio)
                 },
                 'idTipoIva': function () {
                     try {

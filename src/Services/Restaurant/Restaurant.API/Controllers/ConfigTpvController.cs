@@ -1,8 +1,8 @@
 ﻿using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
-using Services.Common;
-using Services.Common.Logs;
+using Services.Common.Extensions;
+
 
 namespace Restaurant.API.Controllers
 {
@@ -11,8 +11,8 @@ namespace Restaurant.API.Controllers
     {
         private readonly IConsumptionConfigService _configService;
 
-        private readonly LogWriter _log;
-        public ConfigTpvController(IConsumptionConfigService configService, LogWriter log)
+        private readonly ICustomLogger _log;
+        public ConfigTpvController(IConsumptionConfigService configService, ICustomLogger log)
         {
             _configService = configService;
             _log = log;

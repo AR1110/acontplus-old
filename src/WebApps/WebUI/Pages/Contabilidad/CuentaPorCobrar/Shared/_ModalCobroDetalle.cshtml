@@ -5,6 +5,7 @@
     </button>
 </div>
 <div class="modal-body">
+  
     <div ng-if="showDetalleCompIngreso">
         <div class="row justify-content-between align-items-center">
             <div class="col-xl-8 col-lg-8 col-md-12 col-12">
@@ -36,11 +37,23 @@
                 <tbody md-body>
                     <tr md-row ng-repeat-start="item in cobros">
                         <td md-cell>
+                            <div class="d-flex flex-column">
+                        
+                                <i ng-if="!item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-right "></i>
+                                <i ng-if="item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-down"></i>
 
-                            <i ng-if="!item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-right "></i>
-                            <i ng-if="item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-down"></i>
+                                <i ng-if="item.showInfoCobro" ng-click="showInfo(item)" class="ml-2 fas fa-info-circle text-info"></i>
 
-                            <i ng-if="item.showInfoCobro" ng-click="showInfo(item)" class="ml-2 fas fa-info-circle text-info"></i>
+                                <button 
+                                type="button"  
+                                ng-if="accion.anularComprobanteIngresoDoc && item.status" 
+                                class="btn btn-danger btn-sm"  
+                                btn-anular-comprobante-ingreso params="item" on-result="refresh()"
+                                
+                                >
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
                         </td>
                         <td md-cell>{{$index+1}}</td>
                         <td md-cell>{{item.fechaEmision}}</td>
@@ -126,12 +139,42 @@
                 </thead>
                 <tbody md-body>
                     <tr md-row ng-repeat-start="item in comprobanteIngresos">
-                        <td md-cell>
+                        <td md-cell> 
+                            <div class="d-flex flex-row">
+                                <div class="p-1">    
+                                        <i  class=" fas fa-arrow-right " ng-if="!item.showDetalle" ng-click="expandDetalle(item)"></i> 
+                                     
+                                        <i ng-if="item.showDetalle" ng-click="expandDetalle(item)"  class=" fas fa-arrow-down "></i>
+                                    
 
-                            <icon ng-if="!item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-right "></icon>
-                            <icon ng-if="item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-down"></icon>
+                                </div>
+                                <div class="p-1">
+                                    <button type="button" ng-if="item.showInfoCobro" uib-tooltip="Información" ng-click="showInfo(item)" class="btn btn-info btn-sm">
+                                        <i  class="fas fa-info-circle"></i>
+                                    </button>
 
-                            <icon ng-if="item.showInfoCobro" uib-tooltip="Información" ng-click="showInfo(item)" class="ml-2 fas fa-info-circle text-info"></icon>
+                                </div>
+                                <div class="p-1" ng-if="accion.anularComprobanteIngresoDoc && item.status">
+                                    <button 
+                                    type="button" 
+                                    class="btn btn-danger btn-sm" 
+                                    btn-anular-comprobante-ingreso params="item" on-result="refresh()"
+                                    >
+                                        <i class="fas fa-trash-alt fa-xs"></i>
+                                    </button>
+                                </div>
+
+                                <div class="p-1">
+                                    <button type="button" 
+                                    btn-comprobante-ingreso-report 
+                                    unique="item.idComprobanteIngreso" 
+                                    cod-estab="item.codEstab"
+                                    class="btn btn-secondary btn-sm" >
+                                        <i class="fa fa-file-pdf"></i>
+                                    </button>
+                                </div>
+
+                            </div>
                         </td>
                         <td md-cell>{{$index+1}}</td>
                         <td md-cell>{{item.serieComprobante}}</td>
@@ -162,8 +205,8 @@
                                         <tbody>
                                             <tr ng-repeat="itemCobro in item.cobros">
                                                 <td>
-                                                    <icon uib-tooltip="Información" ng-if="itemCobro.showInfoCobro" ng-click="showInfo(itemCobro)" class="fas fa-info-circle text-info"></icon>
-                                                    <icon uib-tooltip="Cuotas" ng-click="showCuotas(itemCobro)" class="ml-2 fas fa-eye"></icon>
+                                                    <i uib-tooltip="Información" ng-if="itemCobro.showInfoCobro" ng-click="showInfo(itemCobro)" class="fas fa-info-circle text-info"></i>
+                                                    <i uib-tooltip="Cuotas" ng-click="showCuotas(itemCobro)" class="ml-2 fas fa-eye"></i>
                                                 </td>
                                                 <td>{{$index+1}}</td>
                                                 <td>{{itemCobro.fechaEmision}}</td>

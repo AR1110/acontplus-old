@@ -1,55 +1,42 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Identity.API.Interfaces;
-using Identity.API.Models;
-using Microsoft.IdentityModel.Tokens;
+﻿namespace Identity.API.Services;
 
-namespace Identity.API.Services
+public class TokenService(IConfiguration configuration) : ITokenService
 {
-    public class TokenService : ITokenService
+    private readonly int _exp = Convert.ToInt32(configuration["Token:Exp"]);
+    private readonly bool _expInDays = Convert.ToBoolean(configuration["Token:ExpInDays"]);
+
+    private readonly SymmetricSecurityKey _key = new(
+        Encoding.UTF8.GetBytes(configuration["Token:Key"] ?? throw new InvalidOperationException()));
+
+    public JwtResponse CreateToken(UserData data)
     {
-        private readonly SymmetricSecurityKey _key;
-        public readonly bool _expInDays;
-        public readonly int _tokenExp;
-        public TokenService(IConfiguration configuration)
+        var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
+        var expires = _expInDays ? DateTime.UtcNow.AddDays(_exp) : DateTime.UtcNow.AddMinutes(_exp);
+        var claims = new List<Claim>
         {
-            //var tokenKey = Encoding.UTF8.GetBytes((_configuration["Token:Key"]).PadRight((512 / 8), '\0'));
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:Key"]));
-            _tokenExp = Convert.ToInt32(configuration["Token:Exp"]);
-            _expInDays = Convert.ToBoolean(configuration["Token:ExpInDays"]);
-        }
-        public string CreateToken(UserData data)
-        {
-            var signingCredentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
-            var claimsIdentiy = new ClaimsIdentity(new List<Claim>
-                {
-                    new Claim(JwtRegisteredClaimNames.Name, data.Fullname),
-                    new Claim(JwtRegisteredClaimNames.GivenName, data.Fullname),
-                    new Claim(JwtRegisteredClaimNames.UniqueName, data.Username),
-                    new Claim(ClaimTypes.NameIdentifier, Convert.ToString(data.UserId)),
-                    new Claim(ClaimTypes.Role, data.Role),
-                    new Claim("userRoleId", Convert.ToString(data.UserRoleId)),
-                    new Claim("idCardUser", data.IDCardUser),
-                    new Claim("idCardCompany", data.IDCardCompany),
-                    new Claim("companyId", Convert.ToString(data.CompanyId)),
-                    new Claim("tradeName", data.TradeName),
-                    new Claim("businessName", data.BusinessName),
-                    new Claim("urlGateway", data.UrlGateway),
-                    //Legacy
-                    new Claim("idUsuarioRol", Convert.ToString(data.UserRoleId)),
-                    new Claim("nroIdentificacion", data.IDCardUser),
-                    new Claim("razonSocial", data.TradeName)
-                });
-            var securityTokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = claimsIdentiy,
-                Expires = _expInDays ? DateTime.UtcNow.AddDays(_tokenExp) : DateTime.UtcNow.AddHours(_tokenExp),
-                SigningCredentials = signingCredentials
-            };
-            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-            var securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
-            return jwtSecurityTokenHandler.WriteToken(securityToken);
-        }
+            new(JwtRegisteredClaimNames.Email, data.Email ?? ""),
+            new(JwtRegisteredClaimNames.GivenName, data.Fullname ?? ""),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Name, data.Fullname ?? ""),
+            new(ClaimTypes.NameIdentifier, Convert.ToString(data.UserId)),
+            new(ClaimTypes.Role, data.Role),
+            new(JwtRegisteredClaimNames.Sub, Convert.ToString(data.UserId)),
+            new(JwtRegisteredClaimNames.UniqueName, data.Username),
+            new("userRoleId", Convert.ToString(data.UserRoleId)),
+            new("idCardCompany", data.IDCardCompany),
+            new("companyId", Convert.ToString(data.CompanyId)),
+            new("tradeName", data.TradeName),
+            new("businessName", data.BusinessName),
+            new("urlGateway", data.UrlGateway)
+        };
+
+        var jwtOptions = new JwtSecurityToken(
+            claims: claims,
+            expires: expires,
+            signingCredentials: credentials);
+
+
+        var token = new JwtSecurityTokenHandler().WriteToken(jwtOptions);
+        return new JwtResponse { Expires = expires, Token = token };
     }
 }

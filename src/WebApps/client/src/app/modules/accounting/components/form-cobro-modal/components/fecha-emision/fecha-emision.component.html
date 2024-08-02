@@ -1,0 +1,5 @@
+<div class="form-group">
+  <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
+  <input type="date" name="fechaEmision" id="fechaEmision" [ngModel]="value | date:'yyyy-MM-dd'"
+    class="form-control" (change)="onChange($event)">
+</div>

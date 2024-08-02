@@ -1,48 +1,45 @@
-﻿using Common.Core.Utils;
+﻿using Autofac.Extensions.DependencyInjection;
+using Common.AppSettings;
+using Common.Core.Utils;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Services.Common;
+using Services.Common.Extensions;
+using Services.Common.Middleware;
 
-internal class Program
+var builder = WebApplication.CreateBuilder(args);
+
+// Environment and Configuration Setup
+builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    private static void Main(string[] args)
+    serverOptions.Limits.MaxRequestBufferSize = 1048576;
+    serverOptions.Limits.MaxRequestLineSize = 1048576;
+});
+
+builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+ConfigHelper.AddJsonFiles(builder.Configuration);
+
+// Secure Environment Variable Retrieval (consider secret management for sensitive data)
+var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().Split(",")
+                   ?? throw new ArgumentException("SafeOrigins configuration is missing.");
+
+// Ocelot Configuration (consider using environment variables for dynamic configuration)
+builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+builder.Services.AddOcelot(builder.Configuration);
+
+// Identity Services (adapt to your specific authentication mechanism)
+builder.Services.AddIdentityService(builder.Configuration);
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+
+// CORS Configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
     {
-        var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
-
-        builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
-        ConfigHelper.AddJsonFiles(builder.Configuration);
-
-        var origins = builder.Configuration.GetSection("SafeOrigins").Value.Split(',');
-
-        builder.Services.AddCors();
-        builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-
-        builder.Services.AddSwaggerDocumentation();
-
-        builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-        builder.Services.AddOcelot(builder.Configuration);
-
-        builder.Services.AddCustomJwtAuthentication(builder.Configuration);
-
-        var app = builder.Build();
-
-        app.UseRouting();
-
-        if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-        {
-            app.Urls.Add("http://*:5001"); // 👈 Add the URL
-        }
-        else
-        {
-            app.UseHttpsRedirection();
-        }
-        app.UseCors(builder =>
-        {
-            builder.WithOrigins(origins)
+        policy.WithOrigins(safeOrigins)
             .SetIsOriginAllowed(isOriginAllowed: _ => true)
             .SetIsOriginAllowedToAllowWildcardSubdomains()
             .AllowCredentials()
@@ -50,38 +47,56 @@ internal class Program
             .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
             .WithExposedHeaders("Content-Disposition")
             .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
-        });
+    });
+});
 
-        app.UseSwaggerDocumentation();
+builder.Services
+               .AddHealthChecks()
+               .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
-        app.UseSwaggerUI();
+builder.Services.AddScoped<ICustomLogger, CustomLogger>();
 
-        app.UseAuthentication();
+var app = builder.Build();
 
-        app.UseAuthorization();
+app.UseMiddleware<ExceptionMiddleware>();
 
-        //app.UseEndpoints(endpoints =>
-        //{
-        //    endpoints.MapGet("/", async context =>
-        //    {
-        //        string projectName = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        //        await context.Response.WriteAsync($"{projectName} is running at {string.Join(", ", app.Urls)}");
-        //    });
-        //});
+app.UseRouting();
 
-        app.UseEndpoints(endpoints =>
-        {
-            _ = endpoints.MapGet("/", context =>
-            {
-                context.Response.Redirect("swagger");
-                return Task.CompletedTask;
-            });
-        });
-
-        app.MapControllers();
-
-        app.UseOcelot().Wait();
-
-        app.Run();
-    }
+// Handle Port Configuration for Different Environments (consider a configuration or environment variable)
+if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+{
+    app.Urls.Add("http://*:5001"); // Linux Port
 }
+else
+{
+    // Consider configuring HTTPS redirection conditionally based on environment
+    // or using a more robust certificate management strategy.
+    app.UseHttpsRedirection();
+}
+
+// Improved CORS Configuration
+app.UseCors("AllowAll"); // Use the configured policy
+
+// Authentication and Authorization (adapt to your specific needs)
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Default Route Redirect (consider a more elegant solution)
+app.UseEndpoints(_ => { });
+
+// Map health check endpoints
+app.MapHealthChecks("/hc", new HealthCheckOptions()
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+});
+
+app.MapHealthChecks("/liveness", new HealthCheckOptions
+{
+    Predicate = r => r.Name.Contains("self")
+});
+
+// Ocelot Integration
+app.UseOcelot().Wait();
+
+await app.RunAsync();

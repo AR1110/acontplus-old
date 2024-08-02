@@ -1,6 +1,5 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerCustomerRoleEstab } from "@modules/config/models/user-customer/user-customer-role-estab.model";
 import { UserCustomerRoleEstabService } from "@modules/config/services/user-customer/user-customer-role-estab.service";
@@ -10,6 +9,7 @@ import { isApiResponse } from "@core/models/api-response";
 import Swal from "sweetalert2";
 import { ModalService } from "@core/services/modal.service";
 import { UserBodegaPuntoEmisionModalComponent } from "../user-bodega-punto-emision-modal/user-bodega-punto-emision-modal.component";
+import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/user-customer-role-state.service";
 
 @Component({
   selector: 'app-user-customer-role-estab',
@@ -23,38 +23,33 @@ import { UserBodegaPuntoEmisionModalComponent } from "../user-bodega-punto-emisi
 })
 export class UserCustomerRoleEstabComponent {
 
+  state = inject(UserCustomerRoleStateService)
+  userRoleId = this.state.select("userRoleId")
   private readonly userCustomerRoleEstabSvc = inject(UserCustomerRoleEstabService)
   private readonly tS = inject(ToasterService);
   private modalSvc = inject(ModalService)
 
   userCustomerRoleEstabs: Array<UserCustomerCustomerRoleEstab> = [];
 
-  idUsuarioRol = 0;
-
-  getUserCustomerRoleEstabs(idUsuarioRol: number) {
-    this.idUsuarioRol = idUsuarioRol;
+  getUserCustomerRoleEstabs() {
     let obj = {
-      idUsuarioRol
+      idUsuarioRol: this.userRoleId()
     }
-    showLoader()
-    this.userCustomerRoleEstabSvc.getAll(obj).subscribe({
-      next: (response) => {
-        hideLoader();
+    this.userCustomerRoleEstabSvc.getAll(obj).subscribe( (response) => {
         this.userCustomerRoleEstabs = response;
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
+
     })
   }
 
 
+
+  ngOnInit(){
+    this.getUserCustomerRoleEstabs()
+  }
+
+
   onChangeDefault(data: UserCustomerCustomerRoleEstab) {
-    showLoader();
-    this.userCustomerRoleEstabSvc.put(data.idEstab_Asig).subscribe({
-      next: (response) => {
-        hideLoader();
+    this.userCustomerRoleEstabSvc.put(data.idEstab_Asig).subscribe((response) => {
         if (isApiResponse(response)) {
           if (response.code === "0") {
             this.tS.toastr({
@@ -67,14 +62,9 @@ export class UserCustomerRoleEstabComponent {
               type: 'success',
               message: response.message
             })
-            this.getUserCustomerRoleEstabs(this.idUsuarioRol)
+            this.getUserCustomerRoleEstabs()
           }
         }
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
   }
 
@@ -105,12 +95,10 @@ export class UserCustomerRoleEstabComponent {
     if (isConfirmed) {
       let params = {
         id: data.idEstab_Asig,
-        idUsuarioRol: this.idUsuarioRol,
+        idUsuarioRol: this.userRoleId(),
         codEstab: data.codEstab
       }
-      this.userCustomerRoleEstabSvc.post(params).subscribe({
-        next: (response) => {
-          hideLoader();
+      this.userCustomerRoleEstabSvc.post(params).subscribe((response) => {
           if (isApiResponse(response)) {
             if (response.code === "0") {
               this.tS.toastr({
@@ -123,14 +111,9 @@ export class UserCustomerRoleEstabComponent {
                 type: 'success',
                 message: response.message
               })
-              this.getUserCustomerRoleEstabs(this.idUsuarioRol)
+              this.getUserCustomerRoleEstabs()
             }
           }
-        },
-        error(err) {
-          hideLoader();
-          console.log(err)
-        },
       })
 
     }

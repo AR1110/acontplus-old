@@ -1,10 +1,15 @@
-<app-breadcrumb [crear]="true" (clicked)="openDialog()" />
+<app-breadcrumb [crear]="true">
+  <button
+  type="button"
+  class="btn btn-primary d-none d-lg-block m-l-15"
+  (click)="onModalOpen()"
+>
+  <fa-icon [icon]="'plus'"></fa-icon> Nuevo
+</button>
+</app-breadcrumb>
 
 <div class="card">
-   <div class="card-body">
-      <app-device-list />
-   </div>
+  <div class="card-body">
+    <app-device-list />
+  </div>
 </div>
-
-
-

@@ -1,0 +1,16 @@
+﻿global using System.ComponentModel.DataAnnotations;
+global using System.ComponentModel.DataAnnotations.Schema;
+global using Common.Core.Entities;
+global using Common.Core.Models;
+global using Common.Core.Utils;
+global using Common.Infrastructure.Data;
+global using Common.Infrastructure.Repository;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using Newtonsoft.Json.Serialization;
+global using Services.Common.Extensions;
+global using Vet.API.Data;
+global using Vet.API.Entities;
+global using Vet.API.Extensions;
+global using Vet.API.Interfaces;
+global using Vet.API.Services;

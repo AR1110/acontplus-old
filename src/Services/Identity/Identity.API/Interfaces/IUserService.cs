@@ -1,9 +1,6 @@
-﻿using Common.Core.Models;
+﻿namespace Identity.API.Interfaces;
 
-namespace Identity.API.Interfaces
+public interface IUserService
 {
-    public interface IUserService
-    {
-        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    }
+    Task<ApiResponseDeprecated> GetAsync(Dictionary<string, object> parameters);
 }

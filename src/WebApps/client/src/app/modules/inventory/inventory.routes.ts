@@ -1,10 +1,12 @@
 import { Route } from "@angular/router";
-import { CategoryPageComponent } from "./pages/category-page/category-page.component";
-import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
-import { ProductPageComponent } from "./pages/product-page/product-page.component";
-import { MassiveTaxPageComponent } from "./pages/massive-tax-page/massive-tax-page.component";
-import { LotPricePageComponent } from "./pages/lot-price-page/lot-price-page.component";
 
+import { CategoryPageComponent } from "./pages/category-page/category-page.component";
+import { LotPricePageComponent } from "./pages/lot-price-page/lot-price-page.component";
+import { MassiveTaxPageComponent } from "./pages/massive-tax-page/massive-tax-page.component";
+import { MeasurePageComponent } from "./pages/measure-page/measure-page.component";
+import { ProductPageComponent } from "./pages/product-page/product-page.component";
+import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
+import {InventoryReportPageComponent} from "@inventory/reports/inventory-report-page/inventory-report-page.component";
 
 export const routes: Route[] = [
   {
@@ -48,6 +50,23 @@ export const routes: Route[] = [
       breadcrumb: 'Precio por Lote'
     },
   },
+
+  {
+    path: 'measure',
+    title: 'Medida',
+    component: MeasurePageComponent,
+    data: {
+      breadcrumb: 'Medida'
+    },
+  },
+  {
+    path: 'report',
+    title: 'Reporte Inventario',
+    component: InventoryReportPageComponent,
+    data: {
+      breadcrumb:  'Reporte Inventario'
+    }
+  }
 
 
 ]

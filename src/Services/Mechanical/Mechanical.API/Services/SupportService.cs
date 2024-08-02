@@ -1,6 +1,7 @@
 ﻿using System.Data;
-using Common.Core.Interfaces;
+using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
 
@@ -8,11 +9,11 @@ namespace Mechanical.API.Services
 {
     public class SupportService : ISupportService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly MechanicalContext _context;
 
 
-        public SupportService(MechanicalContext context, IADORepository repository)
+        public SupportService(MechanicalContext context, IAdoRepository repository)
         {
             _context = context;
             _repository = repository;
@@ -31,28 +32,29 @@ namespace Mechanical.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.Support_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.Support_Insert", parameters);
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Mechanical.Support_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.Support_Update", parameters);
         }
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+        {
+            return await _repository.SpExecuteDeprecatedAsync("Mechanical.Support_Delete", parameters);
+        }
+
+        public async Task<ApiResponseDeprecated> UpdateStateAsync(int id, int SupportStatusId)
         {
             var support = await _context.Supports.FindAsync(id);
-            if (support == null) return false;
-            support.Enabled = false;
-            support.Deleted = true;
-            support.UpdatedAt = DateTime.Now;
-            support.Status = 5;
+            support.SupportStatusId = SupportStatusId;
             _context.Update(support);
             await _context.SaveChangesAsync();
-            return true;
+            return new ApiResponseDeprecated { code = "1", message = "Actualizado Exitosamente" };
         }
     }
 }

@@ -16,7 +16,7 @@ export class CommonService {
         "empleadoService",
         "ventaService",
         "clienteService"
-    ]; 
+    ];
     constructor(
         $rootScope,
         $http,
@@ -180,23 +180,12 @@ export class CommonService {
         })
     }
 
-    //En uso en Aprob. Documento 
-    getDataFormEstabAsig(json = {}) {
-        return this.mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response => {
-
-            if (response.code === '0') {
-                throw response
-            }
-            return JSON.parse(response.payload)
-        })
-    }
-
     removeAccents(str) {
         str = str || '';
         //return str.replace(/[^a-z0-9]/gi, '');
         return str.replace(/^-+|-+$| [^A-Za-z0-9.-]+/g, "");
     }
- 
+
 
     getEstadoDocByCodDoc(codDoc) {
         return this.mS.getData("get", "Config/EstadoDocumento/?json=" + JSON.stringify({
@@ -205,7 +194,7 @@ export class CommonService {
             .then(({
                 data: response
             }) => response || []);
-    } 
+    }
     //Buscador Empleado 
     querySearchEmpleado(textSearch) {
         if (!textSearch && textSearch.length < 2) return []
@@ -214,7 +203,7 @@ export class CommonService {
             textSearch
         })
     }
- 
+
     //-------------------------------------Usuario--------------------------------
     /***
      *  json = {busqueda, idRol}
@@ -256,63 +245,7 @@ export class CommonService {
     }
 
 
-    /**
-     * 
-     * @param {*} param0 
-     * @returns 
-     * Médodos relacionados a los tipos de documentos 
-     * 1. generarNroDocumento
-     * 2. Compras 
-     * 3. Ventas 
-     */
 
-    async generarNroDocumentoVenta({
-        puntoEmision,
-        idPuntoEmision,
-        nroDocumento,
-        codigoDocumento
-    }) {
-        let nroDocumentoSecuencial = null;
-        return await this.mS.getData('get', `/GenerarNroDoc/GenerarNroDocVenta?puntoEmision=${puntoEmision}&idPuntoEmision=${idPuntoEmision}&nroDocumento=${nroDocumento}&codigoDocumento=${codigoDocumento}`)
-            .then(response => {
-                if (response.id === "0") {
-                    Swal.fire({
-                        title: `<small>${response.titleSms}</small>`,
-                        icon: "warning",
-                        html: `<small>${response.message}</small>`,
-                        allowOutsideClick: false,
-                    });
-                    return nroDocumentoSecuencial;
-                }
-                if (response.id === "1") {
-                    return (nroDocumentoSecuencial = response.data);
-                }
-            })
-    }
-
-    async generarNroDocumentoCompra({
-        puntoEmision,
-        idPuntoEmision,
-        nroDocumento,
-        codigoDocumento
-    }) {
-        let nroDocumentoSecuencial = null;
-        return await this.mS.getData('get', `/GenerarNroDoc/GenerarNroDocCompra?puntoEmision=${puntoEmision}&idPuntoEmision=${idPuntoEmision}&nroDocumento=${nroDocumento}&codigoDocumento=${codigoDocumento}`)
-            .then(response => {
-                if (response.id === "0") {
-                    Swal.fire({
-                        title: `<small>${response.titleSms}</small>`,
-                        icon: "warning",
-                        html: `<small>${response.message}</small>`,
-                        allowOutsideClick: false,
-                    });
-                    return nroDocumentoSecuencial;
-                }
-                if (response.id === "1") {
-                    return (nroDocumentoSecuencial = response.data);
-                }
-            })
-    } 
     //-----------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
 
     //Eliminar mas Adelante en depuracion co
@@ -323,32 +256,6 @@ export class CommonService {
             }
             return JSON.parse(response.payload)
         })
-    } 
-    //por mejorar mas adelante 
-    async generarNroDocumento({
-        puntoEmision,
-        idPuntoEmision,
-        nroDocumento,
-        codigoDocumento,
-        tipoDoc = 'C'
-    }) {
-        let nroDocumentoSecuencial = null;
-        let url = tipoDoc === 'C' ? 'GenerarNroDocCompra' : 'GenerarNroDocVenta';
-        return await this.mS.getData('get', `/GenerarNroDoc/${url}?puntoEmision=${puntoEmision}&idPuntoEmision=${idPuntoEmision}&nroDocumento=${nroDocumento}&codigoDocumento=${codigoDocumento}`)
-            .then(response => {
-                if (response.id === "0") {
-                    Swal.fire({
-                        title: `<small>${response.titleSms}</small>`,
-                        icon: "warning",
-                        html: `<small>${response.message}</small>`,
-                        allowOutsideClick: false,
-                    });
-                    return nroDocumentoSecuencial;
-                }
-                if (response.id === "1") {
-                    return (nroDocumentoSecuencial = response.data);
-                }
-            })
     }
 
     //-------------------------------------------------GET DATA TIPO DOCUMENTO COMPRA ---------------------
@@ -380,7 +287,7 @@ export class CommonService {
         })
 
     }
- 
+
     /*  
     -------------------------------------------------START GET DATA TIPO DOCUMENTO VENTA-------------------
     */
@@ -638,7 +545,7 @@ export class CommonService {
         };
     }
     /**--------------------------------------------------END GET DATA TIPO DOCUMENTO VENTA  */
- 
+
     /**------------------------------------------------- OTROS DOCUMENTOS-------------------*/
 
     async getDataGuiaRemision(id) {
@@ -793,8 +700,14 @@ export class CommonService {
             let url = params.v2 ? 'Reports/v2/Reporte/Download' : params.url || 'Reports/Reporte/Download';
             let parameters = params.parameters;
             let formatType = params.formatType || "pdf";
+            let downloadOnly = params.downloadOnly || false;
+            let returnFile = params.returnFile;
             showLoader();
+            if(returnFile){
+                return this.mS.getFile(method, url, parameters, true);
+            }
             await this.mS.getFile(method, url, parameters, true).then(response => {
+ 
 
                 if (formatType === "pdf") {
                     let fileName = '';
@@ -812,44 +725,51 @@ export class CommonService {
 
                     let objectUrl = window.URL || window.webkitURL;
                     let urlFile = objectUrl.createObjectURL(fileBlob);
-                    // Ajuste horizontal
-                    let x = parseInt((screen.width - 1200) / 2);
-                    // Ajustae vertical
-                    let y = parseInt((screen.height - 650) / 4);
-                    // var link = document.createElement('a');
-                    // link.href = window.URL.createObjectURL(fileBlob);
-                    // link.setAttribute('download', fileName);
-                    // document.body.appendChild(link);
-                    // link.click();
-                    // document.body.removeChild(link);    
 
-                    let newWindow = window.open(
-                        urlFile,
-                        "_blank",
-                        `resizable=yes
+                    if (downloadOnly) {
+                         var link = document.createElement('a');
+                         link.href = urlFile
+                         link.setAttribute('download', fileName);
+                         document.body.appendChild(link);
+                         link.click();
+                         document.body.removeChild(link);    
+                    } else {
+                        // Ajuste horizontal
+                        let x = parseInt((screen.width - 1200) / 2);
+                        // Ajustae vertical
+                        let y = parseInt((screen.height - 650) / 4);
+
+                        let newWindow = window.open(
+                            urlFile,
+                            "_blank",
+                            `resizable=yes
                     width=1200
                     height=650
                     screenY=${y}
                     screenX=${x}`
-                    )
-
-                    setTimeout(function () { newWindow.document.title = fileName; }, 1000);
-
-                    //newWindow.document.title = "YOUR PDF NAME HERE!";
+                        )
+                        setTimeout(function () { newWindow.document.title = fileName; }, 1000);
+                    }
                 } else {
                     let serverData = new Blob([response.data], {
                         type: response.headers()["content-type"],
                     });
-                    // let fileName = response
-                    //     .headers()["content-disposition"].split(";")[1]
-                    //     .split("=")[1];
                     let filename = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
                     filename = filename.replace('"', "")
                     this.FileSaver.saveAs(serverData, decodeURIComponent(filename));
                 }
             }).catch(error => {
                 hideLoader();
-                console.log(error)
+                if (error.status === 400) {
+                    toastr.warning("No se pudo obtener el reporte", "Aviso", {
+                        positionClass: "toast-bottom-center",
+                        closeButton: true,
+                        preventDuplicates: true,
+                        progressBar: true,
+                    });
+                } else {
+                    console.error("An error occurred:", error);
+                }
             })
         } catch (error) {
             hideLoader();
@@ -927,38 +847,39 @@ export class CommonService {
             //    .catch((error) => {
             //        console.log(error);
             //    });
-            //this.getPrinter(parameters)
-            this.print(parameters);
+            this.getPrinter(parameters)
+            //this.print(parameters);
         }
     }
 
     getPrinter(parameters) {
         try {
-            //let url = `Config/Print/?json=${parameters}`
-            //this.mS.getData('get', url, null, true).then(
-            //    response => {
-            //        if (response.code === '0') {
-            //            toastr.warning(response.message)
-            //        }
-            //        if (response.code === '1') {
-            //            this.print(JSON.parse(response.payload))
-            //        }
-            //    }
-            //).catch(error => {
-            //    console.log(error)
-            //})
-            this.print(parameters);
+            console.log(parameters)
+            let newParams = Object.assign(JSON.parse(parameters), { tipo: 2 });
+            let url = `Config/Print/?json=${JSON.stringify(newParams)}`
+            this.mS.getData('get', url, null, true).then(
+                response => {
+                    if (response.code === '0') {
+                        toastr.warning(response.message)
+                    }
+                    if (response.code === '1') {
+                        //this.print(JSON.parse(response.payload))
+                        this.print(response.payload, parameters);
+                    }
+                }
+            ).catch(error => {
+                console.log(error)
+            })
         } catch (error) {
             console.log(error)
             toastr.error(error)
         }
     }
 
-    async print(parameters) {
+    async print(url, parameters) {
         try {
-
             this.mS
-                .getData("POST", "https://acontplusprint.com/Print", parameters)
+                .print("POST", `${url}/Print`, parameters)
                 .then((response) => {
                     if (response.code === "0") {
                         toastr.warning(response.message, "", {
@@ -1157,7 +1078,7 @@ export class CommonService {
                         data: response,
                     }
 
-                    break 
+                    break
 
 
                 case "CI":
@@ -1557,4 +1478,4 @@ function storageService($window) {
 
 
 
- 
+

@@ -1,109 +1,91 @@
-﻿using AutoMapper;
-using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Services.Common;
-using Services.Common.Logs;
-using TechnicalSupport.API.Dtos;
-using TechnicalSupport.API.Entities;
-using TechnicalSupport.API.Interfaces;
+﻿namespace TechnicalSupport.API.Controllers;
 
-namespace TechnicalSupport.API.Controllers
+public class OrderController : BaseApiController
 {
-    public class OrderController : BaseApiController
+    private readonly IMapper _mapper;
+    private readonly IOrderService _orderService;
+
+    public OrderController(IOrderService orderService, IMapper mapper)
     {
-        private readonly IMapper _mapper;
-        private readonly IOrderService _orderService;
-        private readonly LogWriter _log;
-        public OrderController(IOrderService orderService, LogWriter log, IMapper mapper)
+        _mapper = mapper;
+        _orderService = orderService;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var response = await _orderService.GetAsync(new Dictionary<string, object>
         {
-            _mapper = mapper;
-            _orderService = orderService;
-            _log = log;
-        }
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        });
+        if (response == null) { return BadRequest("Cant get Data"); }
+
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] OrderDto orderDto)
+    {
+        //var order = _mapper.Map<Order>(orderDto);
+        var response = await _orderService.AddAsync(new Dictionary<string, object>
         {
-            try
+            { "userRoleId", User.GetUserRoleId() },
             {
-                var response = await _orderService.GetAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
-                if (response == null) { return BadRequest("Cant get Data"); }
-                return Ok(response);
+                "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(orderDto,
+                    new JsonSerializerSettings
+                    {
+                        ContractResolver =
+                            new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                        Formatting = Formatting.Indented
+                    })
+                )
             }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on get: {json} \n {ex}");
-                return BadRequest(ex.Message);
-            }
-        }
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] OrderDto orderDto)
+        });
+        if (response == null) { return BadRequest("No response"); }
+
+        return Ok(response);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] OrderDto order)
+    {
+        var response = await _orderService.UpdateAsync(new Dictionary<string, object>
         {
-            try
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
             {
-                //var order = _mapper.Map<Order>(orderDto);
-                var response = await _orderService.AddAsync(new Dictionary<string, object>
-                {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(orderDto,
-                                                                                        new JsonSerializerSettings
-                                                                                        {
-                                                                                            ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy () },
-                                                                                            Formatting = Formatting.Indented
-                                                                                        })
-                                                                                    )
-                    }
-                });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("No response"); }
-                return Ok(response);
+                "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(order,
+                    new JsonSerializerSettings
+                    {
+                        ContractResolver =
+                            new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                        Formatting = Formatting.Indented
+                    })
+                )
             }
-            catch (Exception ex)
+        });
+        if (response == null) { return BadRequest("No response"); }
+
+        return Ok(response);
+    }
+
+    [HttpPut("Delivery/{id}")]
+    public async Task<IActionResult> Delivery(int id, [FromBody] OrderDeliveryDto deliveryDto)
+    {
+        deliveryDto.UserId = User.GetUserId();
+
+        var response = await _orderService.DeliveryAsync(deliveryDto, id);
+        return Ok(response);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var response =
+            await _orderService.DeleteAsync(new Dictionary<string, object>
             {
-                _log.LogActivity("Error on post: " + ex.ToString());
-                return BadRequest("Error on post");
-            }
-        }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Order order)
-        {
-            try
-            {
-                var response = await _orderService.UpdateAsync(new Dictionary<string, object>
-                {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "id", id },
-                    { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(order,
-                                                                                        new JsonSerializerSettings
-                                                                                        {
-                                                                                            ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy () },
-                                                                                            Formatting = Formatting.Indented
-                                                                                        })
-                                                                                    )
-                    }
-                });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("No response"); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on put: " + ex.ToString());
-                return BadRequest("Error on put");
-            }
-        }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var response = await _orderService.DeleteAsync(id);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on delete: " + ex.ToString());
-                return BadRequest("Error on delete");
-            }
-        }
+                { "userRoleId", User.GetUserRoleId() }, { "id", id }
+            });
+        return Ok(response);
     }
 }

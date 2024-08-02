@@ -1,23 +1,30 @@
-﻿
-using Common.Application.Services;
-using Common.Core.Interfaces;
-using Common.Infrastructure.Data;
+﻿using Common.API.Data;
+using Common.API.Services;
 using Microsoft.EntityFrameworkCore;
-using Services.Common.Logs;
 
-namespace Common.API.Extensions
+namespace Common.API.Extensions;
+
+public static class ApplicationServicesExtensions
 {
-    public static class ApplicationServicesExtensions
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services,
-            IConfiguration configuration)
-        {
-            services.AddDbContextPool<CommonContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<IDashboardService, DashboardService>();
-            services.AddScoped<INotificacionService, NotificacionService>();
-            services.AddSingleton<LogWriter>();
-            return services;
-        }
+        services.AddDbContextPool<CommonContext>(options =>
+           options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddControllers()
+            .AddNewtonsoftJson(x =>
+            {
+                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                x.SerializerSettings.ContractResolver =
+                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+            });
+
+        services.AddScoped<IAdoSqlServer, AdoSqlServer>();
+        services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<INotificacionService, NotificacionService>();
+        services.AddScoped<ICustomLogger, CustomLogger>();
+        services.AddScoped<IUserReleaseReadService, UserReleaseReadService>();
+        return services;
     }
 }

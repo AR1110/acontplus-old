@@ -1822,7 +1822,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Fields!ingreso.Value-Fields!egreso.Value</Value>
+                                      <Value>=Fields!total.Value</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
                                       </Style>
@@ -2042,7 +2042,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Sum(Fields!ingreso.Value - Fields!egreso.Value, "PayDocumentDs")</Value>
+                                      <Value>=Sum(Fields!ingreso.Value - (Fields!egreso.Value * -1), "PayDocumentDs")</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
                                         <FontWeight>Bold</FontWeight>

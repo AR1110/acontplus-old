@@ -1,8 +1,9 @@
 ﻿using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
-using Services.Common;
-using Services.Common.Logs;
+using Services.Common.Extensions;
+
 
 namespace Restaurant.API.Controllers
 {
@@ -11,9 +12,9 @@ namespace Restaurant.API.Controllers
     public class ItemController : ControllerBase
     {
         private readonly IItemService _item;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public ItemController(IItemService item, LogWriter log)
+        public ItemController(IItemService item, ICustomLogger log)
         {
             _item = item;
             _log = log;

@@ -1,12 +1,11 @@
-﻿namespace Common.Core.Models
+﻿namespace Common.Core.Models;
+
+public class Horario
 {
-    public class Horario
-    {
-        public int idHorario { get; set; }
-        public int idTurno { get; set; }
-        public int idDia { get; set; }
-        public string apertura { get; set; }
-        public string cierre { get; set; }
-        public bool estado { get; set; }
-    }
+    public int idHorario { get; set; }
+    public int idTurno { get; set; }
+    public int idDia { get; set; }
+    public string apertura { get; set; }
+    public string cierre { get; set; }
+    public bool estado { get; set; }
 }

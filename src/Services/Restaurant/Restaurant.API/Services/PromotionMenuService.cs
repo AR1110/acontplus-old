@@ -1,14 +1,15 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services
 {
     public class PromotionMenuService : IPromotionMenuService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
 
-        public PromotionMenuService(IADORepository repository)
+        public PromotionMenuService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -23,7 +24,7 @@ namespace Restaurant.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
     }

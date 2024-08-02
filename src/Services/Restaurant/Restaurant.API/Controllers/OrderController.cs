@@ -1,16 +1,17 @@
 ﻿using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
-using Services.Common;
-using Services.Common.Logs;
+using Services.Common.Extensions;
+
 
 namespace Restaurant.API.Controllers
 {
     public class OrderController : BaseApiController
     {
         private readonly IOrderService _orderService;
-        private readonly LogWriter _log;
-        public OrderController(IOrderService orderService, LogWriter log)
+        private readonly ICustomLogger _log;
+        public OrderController(IOrderService orderService, ICustomLogger log)
         {
             _orderService = orderService;
             _log = log;

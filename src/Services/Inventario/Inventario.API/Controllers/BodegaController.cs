@@ -1,116 +1,66 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
+﻿namespace Inventario.API.Controllers;
 
-namespace Inventario.API.Controllers
+public class BodegaController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BodegaController : ControllerBase
+    private readonly IBodegaService _service;
+
+    public BodegaController(IBodegaService service)
     {
-        private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        private readonly DbAccess _db;
-        public BodegaController(IConfiguration configuration, LogWriter log)
-        {
-            _configuration = configuration;
-            _log = log;
-            _db = new DbAccess(_configuration);
-        }
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            ApiResponse _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Inventario.Bodega_Get");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
-            }
-            catch (Exception ex)
-            {
+        _service = service;
+    }
 
-                _log.LogActivity("Error on Get: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener las bodegas");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-        [HttpPost]
-        public async Task<IActionResult> Post(string json)
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            ApiResponse _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Inventario.Bodega_Insert");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
-            }
-            catch (Exception ex)
-            {
+            { "idUsuarioRol", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(json) }
+        };
 
-                _log.LogActivity("Error on Post: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al guardar la bodega");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, string json)
+        var response = await _service.GetAsync(parameters);
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post(string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            ApiResponse _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Inventario.Bodega_Update");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
+            { "userRoleId", User.GetUserRoleId() },
+            { "json",  SqlStringParam.Sanitize(json) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+        };
 
-                _log.LogActivity("Error on Put: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar la bodega");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        var response = await _service.AddAsync(parameters);
+
+        return Ok(response);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            ApiResponse _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Inventario.Bodega_Delete");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
+            { "idUsuarioRol", User.GetUserRoleId() },
+            { "id", id },
+            { "json",  SqlStringParam.Sanitize(json) }
+        };
 
-                _log.LogActivity("Error on Delete: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al elimianr la bodega");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+        var response = await _service.UpdateAsync(parameters);
+        return Ok(response);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var parameters = new Dictionary<string, object>
+        {
+            { "idUsuarioRol", User.GetUserRoleId() },
+            { "id", id },
+        };
+
+        var response = await _service.DeleteAsync(parameters);
+        return Ok(response);
     }
 }

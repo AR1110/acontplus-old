@@ -3,7 +3,6 @@ import { FormsModule } from "@angular/forms";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { isApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
-import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerCustomerRoleBodega } from "@modules/config/models/user-customer/user-customer-role-bodega.model";
 import { UserCustomerCustomerRoleEstab } from "@modules/config/models/user-customer/user-customer-role-estab.model";
@@ -11,7 +10,7 @@ import { UserCustomerCustomerRolePtoEmision } from "@modules/config/models/user-
 import { UserCustomerRoleBodegaService } from "@modules/config/services/user-customer/user-customer-role-bodega.service";
 import { UserCustomerRolePuntoEmisionService } from "@modules/config/services/user-customer/user-customer-role-punto-emision.service";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { forkJoin, Observable } from "rxjs";
+import { forkJoin } from "rxjs";
 import Swal from "sweetalert2";
 
 
@@ -45,21 +44,13 @@ export class UserBodegaPuntoEmisionModalComponent {
   userCustomerRolePuntosEmision: UserCustomerCustomerRolePtoEmision[] = []
 
   fetchAllData() {
-    showLoader();
     forkJoin([
       this.userCustomerRoleBodegaSvc.getAll(this.params.codEstab_Asig),
       this.userCustomerRolePtoEmisionSvc.getAll(this.params.codEstab_Asig)
-    ]).subscribe({
-      next: (response) => {
-        hideLoader()
+    ]).subscribe( (response) => {
         const [bodegas, puntosEmision] = response;
         this.userCustomerRoleBodegas = bodegas;
         this.userCustomerRolePuntosEmision = puntosEmision;
-
-      },
-      error(err) {
-        hideLoader();
-      },
     })
   }
 
@@ -71,10 +62,7 @@ export class UserBodegaPuntoEmisionModalComponent {
 
   onChangePuntoEmisionDefault(item: UserCustomerCustomerRolePtoEmision) {
     try {
-      showLoader();
-      this.userCustomerRolePtoEmisionSvc.put(item.idPtoEmi_Asig).subscribe({
-        next: (response) => {
-          hideLoader();
+      this.userCustomerRolePtoEmisionSvc.put(item.idPtoEmi_Asig).subscribe((response) => {
           if (isApiResponse(response)) {
             if (response.code === "0") {
               this.tS.toastr({
@@ -90,13 +78,8 @@ export class UserBodegaPuntoEmisionModalComponent {
               this.fetchAllData()
             }
           }
-        },
-        error(err) {
-          hideLoader()
-        },
       })
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
   }
@@ -129,10 +112,7 @@ export class UserBodegaPuntoEmisionModalComponent {
           codEstab_Asig: this.params.codEstab_Asig
 
         }
-        showLoader();
-        this.userCustomerRolePtoEmisionSvc.post(params).subscribe({
-          next: (response) => {
-            hideLoader();
+        this.userCustomerRolePtoEmisionSvc.post(params).subscribe((response) => {
             if (isApiResponse(response)) {
               if (response.code === "0") {
                 this.tS.toastr({
@@ -147,15 +127,10 @@ export class UserBodegaPuntoEmisionModalComponent {
                 })
                 this.fetchAllData()
               }
-            }
-          },
-          error(err) {
-            hideLoader();
-          },
+          }
         })
       }
     } catch (error) {
-      hideLoader();
     }
   }
 
@@ -164,10 +139,7 @@ export class UserBodegaPuntoEmisionModalComponent {
   //Bodegas
   onChangeBodegaDefault(item: UserCustomerCustomerRoleBodega) {
     try {
-      showLoader();
-      this.userCustomerRoleBodegaSvc.put(item.idBodeg_Asig).subscribe({
-        next: (response) => {
-          hideLoader();
+      this.userCustomerRoleBodegaSvc.put(item.idBodeg_Asig).subscribe((response) => {
           if (isApiResponse(response)) {
             if (response.code === "0") {
               this.tS.toastr({
@@ -183,13 +155,8 @@ export class UserBodegaPuntoEmisionModalComponent {
               this.fetchAllData()
             }
           }
-        },
-        error(err) {
-          hideLoader()
-        },
       })
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
   }
@@ -217,15 +184,12 @@ export class UserBodegaPuntoEmisionModalComponent {
       })
 
       if (isConfirmed) {
-        showLoader();
         const params = {
           ...item,
           codEstab_Asig: this.params.codEstab_Asig
 
         }
-        this.userCustomerRoleBodegaSvc.post(params).subscribe({
-          next: (response) => {
-            hideLoader();
+        this.userCustomerRoleBodegaSvc.post(params).subscribe((response) => {
             if (isApiResponse(response)) {
               if (response.code === "0") {
                 this.tS.toastr({
@@ -241,14 +205,9 @@ export class UserBodegaPuntoEmisionModalComponent {
                 this.fetchAllData()
               }
             }
-          },
-          error(err) {
-            hideLoader()
-          },
         })
       }
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
   }

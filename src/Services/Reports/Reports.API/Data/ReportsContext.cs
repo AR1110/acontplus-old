@@ -3,11 +3,5 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Reports.API.Data
 {
-    public class ReportsContext : BaseContext
-    {
-        public ReportsContext(DbContextOptions<ReportsContext> options) : base(options)
-        {
-
-        }
-    }
+    public class ReportsContext(DbContextOptions<ReportsContext> options) : BaseContext(options);
 }

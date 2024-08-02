@@ -7,14 +7,21 @@
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Core" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="Ocelot" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Services\Common\Common.Core\Common.Core.csproj" />
+    <ProjectReference Include="..\..\Services\Common\Common.AppSettings\Common.AppSettings.csproj" />
     <ProjectReference Include="..\..\Services\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
-  <ProjectExtensions><VisualStudio><UserProperties ocelot_1development_1json__JsonSchema="https://api.airplane.dev/v0/schemas/task.json" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties ocelot_1development_1json__JsonSchema="https://api.airplane.dev/v0/schemas/task.json" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

@@ -1,12 +1,10 @@
-﻿using Common.Core.Models;
+﻿namespace TechnicalSupport.API.Interfaces;
 
-namespace TechnicalSupport.API.Interfaces
+public interface IOrderService
 {
-    public interface IOrderService
-    {
-        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-        Task<string> AddAsync(Dictionary<string, object> parameters);
-        Task<string> UpdateAsync(Dictionary<string, object> parameters);
-        Task<bool> DeleteAsync(int id);
-    }
+    Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> DeliveryAsync(OrderDeliveryDto deliveryDto, int id);
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
 }

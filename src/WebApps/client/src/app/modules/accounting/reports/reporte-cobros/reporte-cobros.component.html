@@ -1,0 +1,209 @@
+<app-breadcrumb />
+
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+                <div class="mb-3">
+                    <div class="icheck-primary">
+                        <input type="radio" id="pxDocumento" [(ngModel)]="dataSearch.documentoChecked" [value]="true"
+                            name="pxDocumento" />
+                        <label for="pxDocumento">Documento</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+                <div class="mb-3">
+                    <div class="icheck-primary">
+                        <input type="radio" id="pxCuotas" [(ngModel)]="dataSearch.documentoChecked" [value]="false"
+                            name="pxCuotas" />
+                        <label for="pxCuotas">Cuotas</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+                <div class="mb-3">
+                    <div class="icheck-primary">
+                        <input type="checkbox" id="isUseDate" [(ngModel)]="dataSearch.dateChecked" name="isUseDate" />
+                        <label for="isUseDate">Rango de Fechas</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+                <div class="mb-3">
+                    <div class="icheck-primary">
+                        <input type="checkbox" id="isClient" [(ngModel)]="dataSearch.supplierChecked" name="isClient" />
+                        <label for="isClient">Cliente</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6">
+                <div class="mb-3">
+                    <label class="form-label">Tipo Documento: </label>
+                    <select name="tipoDoc" id="tipoDoc" class="form-select form-control-border"
+                        [(ngModel)]="dataSearch.codDoc">
+                        <option value="">Todos</option>
+                        @for (item of tiposDoc; track $index) {
+                        <option [ngValue]="item.codDoc">{{ item.descripcion }}</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6">
+                <div class="mb-3">
+                    <label class="form-label">Establecimiento: </label>
+                    <select class="form-select form-control-border" [(ngModel)]="dataSearch.codEstab"
+                        (change)="onChangeEstab()">
+                        @for(estab of establecimientos; track $index ){
+                        <option [ngValue]="estab.codEstab">
+                            {{ estab.nombreComercial }}
+                        </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6">
+                <div class="mb-3">
+                    <label class="form-label">Punto Emisión: </label>
+                    <select class="form-select form-control-border" [(ngModel)]="dataSearch.idPuntoEmision">
+                        <option [ngValue]="0">Todos</option>
+                        @for(ptoEmi of puntosEmision; track $index ){
+                        <option [ngValue]="ptoEmi.idPuntoEmision">
+                            {{ ptoEmi.ptoEmi }}
+                        </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6">
+                <div class="mb-3">
+                    <label class="form-label">Formas de cobros: </label>
+                    <select class="form-select form-control-border" [(ngModel)]="dataSearch.idSubEntidadFinanciera">
+                        <option [ngValue]="0">Todos</option>
+                        @for(estab of subEntidadFinanciera; track $index ){
+                        <option [ngValue]="estab.idSubEntidadFinanciera">
+                            {{ estab.descripcion }}
+                        </option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6">
+                <div class="mb-3">
+                    <label class="form-label">Bancos: </label>
+                    <select class="form-select form-control-border" [(ngModel)]="dataSearch.idBanco">
+                        <option [ngValue]="0">Todos</option>
+                        @for(estab of bancos; track $index ){
+                        <option [ngValue]="estab.idBanco">
+                            {{ estab.descripcion }}
+                        </option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            @if (dataSearch.dateChecked) {
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6">
+                <div class="mb-3">
+                    <label class="form-label">Rango de Fechas:</label>
+                    <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" />
+                </div>
+            </div>
+            }
+
+            @if(dataSearch.supplierChecked) {
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6">
+                <div class="mb-3">
+                    <label class="form-label">Cliente: </label>
+                    <app-company-customer-search [isSearchSimple]="isCustomerSearchSimple"
+                        (onCustomerSelected)="onCustomerSelected($event)"
+                        (resultEmptyInput)="resultCustomerEmptyInput($event)" />
+                </div>
+            </div>
+            }
+
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6">
+                <div class="mb-3">
+                    <label class="form-label">Nro Documento: </label>
+                    <div class="input-group">
+                        <div class="input-group-text">
+                            <div class="form-check mr-sm-2">
+                                <input type="checkbox"
+                                    class="form-check-input"
+                                    id="nroDocChecked"
+                                    value="check"
+                                    [(ngModel)]="dataSearch.nroDocChecked">
+                                <label class="form-check-label" for="nroDocChecked"></label>
+                            </div>
+                        </div>
+                        <input [(ngModel)]="dataSearch.nroDocument"
+                            type="text"
+                            class="form-control"
+                            placeholder="...">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6">
+                <div class="mb-3">
+                    <label class="form-label">Referencia: </label>
+                    <div class="input-group">
+                        <div class="input-group-text">
+                            <div class="form-check mr-sm-2">
+                                <input type="checkbox"
+                                    class="form-check-input"
+                                    id="referenceChecked"
+                                    value="check"
+                                    [(ngModel)]="dataSearch.referenceChecked"
+                                >
+                                <label class="form-check-label" for="referenceChecked"></label>
+                            </div>
+                        </div>
+                        <input [(ngModel)]="dataSearch.reference"
+                            type="text"
+                            class="form-control"
+                            placeholder="...">
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6">
+                <div class="mb-3">
+                    <label class="form-label">Lote: </label>
+                    <div class="input-group">
+                        <div class="input-group-text">
+                            <div class="form-check mr-sm-2">
+                                <input type="checkbox"
+                                    class="form-check-input"
+                                    id="loteChecked"
+                                    value="check"
+                                    [(ngModel)]="dataSearch.loteChecked"
+                                >
+                                <label class="form-check-label" for="loteChecked"> </label>
+                            </div>
+                        </div>
+                        <input [(ngModel)]="dataSearch.lote"
+                            type="text"
+                            class="form-control"
+                            placeholder="...">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-12">
+                <button type="button" class="btn btn-success m-r-10" (click)="getReport('pdf')">PDF</button>
+                <button type="button" class="btn btn-info" (click)="getReport('excel')">EXCEL</button>
+            </div>
+        </div>
+    </div>
+</div>

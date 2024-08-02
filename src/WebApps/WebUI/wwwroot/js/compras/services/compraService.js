@@ -240,7 +240,7 @@
                 }
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload) || [];
-                    const { configDecimales, estab, impuestos, ptoEmi, tiempoCredito } = results;
+                    const { configDecimales, estab, impuestos, ptoEmi, tiempoCredito, subcategories } = results;
 
 
                     let dataToGroup = {
@@ -256,7 +256,8 @@
                         estabs,
                         decimal,
                         tarifasImpuesto,
-                        tiemposCredito: tiempoCredito
+                        tiemposCredito: tiempoCredito,
+                        subcategories,
                     }
                 }
             })
@@ -269,7 +270,7 @@
                 }
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload) || [];
-                    const { ptoEmision, estadoDocumento } = results;
+                    const { ptoEmision, estadoDocumento, subcategories } = results;
 
                     let dataToGroup = {
                         estabs: ptoEmision, //Establecimientos con puntos de emision 
@@ -278,7 +279,8 @@
 
                     return {
                         estabs,
-                        estadosDoc: estadoDocumento
+                        estadosDoc: estadoDocumento,
+                        subcategories,
                     }
 
                 }
@@ -363,6 +365,7 @@
                 transporte: data.transporte || 0,
                 total: data.total,
                 observacion: data.observacion || null,
+                subcategoryId: data.subcategoryId || null
             }
             return result;
         }
@@ -392,6 +395,9 @@
                     descripcion: item.descripcion,
                     llevaInventario: item.llevaInventario,
                     cantidadTransaccion: cantidadTransaccion,
+                    precioCosto : item.precioCosto,
+                    precioCostoFraccionado : item.precioCostoFraccionado,
+                    conversion : item.conversion,
                     estado: item.estado
                 }
 
@@ -437,6 +443,7 @@
                             total: comprobante.total,
                             observacion: comprobante.observacion,
                             irbpnr: comprobante.irbpnr,
+                            subcategoryId: comprobante.subcategoryId,
                         }
 
 
@@ -471,6 +478,8 @@
                                 datosAdicionales: item.datosAdicionales,
                                 medidas,
                                 conversion: dataMedida.conversion,
+                                precioCosto : dataMedida.precioCosto,
+                                precioCostoFraccionado : dataMedida.precioCostoFraccionado,
                                 ice: item.ice,
                                 estado: item.estado
                             }
@@ -546,7 +555,7 @@
                         total: comprobante.total,
                         observacion: comprobante.observacion,
                         irbpnr: comprobante.irbpnr,
-                        fechaEmisionEscrita: fS.getFechaEscrita(fechaEmision),
+                        fechaEmisionEscrita:  fS.getFechaEscrita(fechaEmision),
                         fechaVencimientoEscrita: fS.getFechaEscrita(fechaVencimiento),
                     }
 
@@ -615,7 +624,7 @@
                 response => {
                     if (response.code == "1") {
                         const mainData = JSON.parse(response.payload);
-                        const { bodegas, configDecimales, impuestos, tiempoCredito, categoriasCompra, sustentosTributario } = mainData;
+                        const { bodegas, configDecimales, impuestos, tiempoCredito, categoriasCompra, sustentosTributario, subcategories } = mainData;
 
                         const estabs = fS.groupEstabBodega(bodegas);
                         const decimal = configDecimales[0];
@@ -627,7 +636,8 @@
                             tarifasImpuesto,
                             tiemposCredito,
                             categoriasCompra,
-                            sustentosTributario
+                            sustentosTributario,
+                            subcategories,
                         }
 
                     } else {
@@ -644,7 +654,7 @@
                     }
                     if (response.code === "1") {
                         let mainData = JSON.parse(response.payload);
-                        const { ptoEmision, estadoDocumento } = mainData;
+                        const { ptoEmision, estadoDocumento, subcategories } = mainData;
 
 
                         let dataToGroup = {
@@ -658,7 +668,8 @@
                                 idEstado: estado.idEstadoPago,
                                 descripcion: estado.descripcion,
                                 codigo: estado.codigo
-                            }))
+                            })),
+                            subcategories,
                         }
                     }
                 }
@@ -685,7 +696,8 @@
                             estado: item.estado,
                             usuario: item.usuario,
                             totalRecords: item.totalRecords,
-                            style: item.style
+                            style: item.style,
+                            subcategoryId: item.subcategoryId,
                         }
                     ))
                 } else {
@@ -818,6 +830,7 @@
                             total: restComprobante.total,
                             observacion: restComprobante.observacion,
                             puntoEmision: restComprobante.puntoEmision,
+                            subcategoryId: restComprobante.subcategoryId,
                         }
 
                         const detalles = detallesApi.map((item, index) => {
@@ -859,6 +872,7 @@
                                 estado: restItem.estado,
                                 conversion: dataMedida.conversion,
                                 precioCosto: dataMedida.precioCosto,
+                                precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                                 medidas,
                                 etiquetas: etiquetasMapper
                             }
@@ -955,6 +969,7 @@
                 transporte: data.transporte || 0,
                 total: data.total,
                 observacion: data.observacion || null,
+                subcategoryId: data.subcategoryId || null
             }
             return result;
         }
@@ -983,6 +998,9 @@
                     nota: item.nota,
                     descripcion: item.descripcion,
                     llevaInventario: item.llevaInventario,
+                    precioCosto : item.precioCosto,
+                    precioCostoFraccionado : item.precioCostoFraccionado,
+                    conversion : item.conversion,
                     cantidadTransaccion: cantidadTransaccion,
                     estado: item.estado
                 }
@@ -1107,7 +1125,7 @@
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload) || [];
 
-                    const { configDecimales, estab, impuestos, ptoEmi, tiempoCredito } = results;
+                    const { configDecimales, estab, impuestos, ptoEmi, tiempoCredito, subcategories } = results;
 
 
                     let dataToGroup = {
@@ -1123,7 +1141,8 @@
                         estabs,
                         decimal,
                         tarifasImpuesto,
-                        tiemposCredito: tiempoCredito
+                        tiemposCredito: tiempoCredito,
+                        subcategories,
                     }
                 }
             })
@@ -1137,7 +1156,7 @@
                 }
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload) || [];
-                    const { ptoEmision, estadoDocumento } = results;
+                    const { ptoEmision, estadoDocumento, subcategories } = results;
 
                     let dataToGroup = {
                         estabs: ptoEmision, //Establecimientos con puntos de emision 
@@ -1146,7 +1165,8 @@
 
                     return {
                         estabs,
-                        estadosDoc: estadoDocumento
+                        estadosDoc: estadoDocumento,
+                        subcategories,
                     }
 
                 }
@@ -1172,7 +1192,9 @@
                         codEstado: item.codEstado,
                         isUpdate: item.codEstado === 'PE',
                         isDelete: item.codEstado === 'PE',
-                        totalRecords: item.totalRecords
+                        totalRecords: item.totalRecords,
+                        subcategoryId: item.subcategoryId,
+                        subcategoryName: item.subcategoryName,
                     }))
                 }
                 return [];
@@ -1226,7 +1248,8 @@
                 porcentajeDescuento: data.porcentajeDescuento,
                 descuento: data.totalDescuento,
                 importeTotal: data.total,
-                observacion: fS.isValidField(data.observacion)
+                observacion: fS.isValidField(data.observacion),
+                subcategoryId: data.subcategoryId || null
             }
             return result;
         }
@@ -1256,6 +1279,9 @@
                     descripcion: item.descripcion,
                     llevaInventario: item.llevaInventario,
                     cantidadTransaccion: cantidadTransaccion,
+                    precioCosto : item.precioCosto,
+                    precioCostoFraccionado : item.precioCostoFraccionado,
+                    conversion : item.conversion,
                     estado: item.estado
                 }
 
@@ -1302,6 +1328,7 @@
                             porcentajeDescuento: comprobante.porcentajeDescuento || 0,
                             total: comprobante.total,
                             observacion: comprobante.observacion,
+                            subcategoryId: comprobante.subcategoryId,
                         }
 
 
@@ -1347,7 +1374,9 @@
                                 estado: restItem.estado,
                                 ice: restItem.ice || 0,
                                 medidas,
-                                conversion: dataMedida.conversion | 1,
+                                conversion : dataMedida.conversion | 1,
+                                precioCosto : dataMedida.precioCosto ,
+                                precioCostoFraccionado : dataMedida.precioCostoFraccionado,
                                 etiquetas: etiquetasMapper,
                             }
                         })
@@ -1463,7 +1492,7 @@
                     idArticulo: item.idArticulo,
                     idEtiqueta: item.idEtiqueta,
                     idInfoAdicional: item.idInfoAdicional || 0,
-                    jsonAdicional: item.adicionales
+                    jsonAdicional: JSON.stringify(item.adicionales)
                 }
             });
         }

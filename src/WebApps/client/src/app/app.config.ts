@@ -1,23 +1,27 @@
-import { ApplicationConfig } from '@angular/core';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { routes } from './app.routes';
-import { provideAnimations } from '@angular/platform-browser/animations'
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { errorInterceptor } from '@core/interceptors/error.interceptor';
+import { injectSessionInterceptor } from '@core/interceptors/inject-session.interceptor';
+import { loaderInterceptor } from '@core/interceptors/loader.interceptor';
 import { provideToastr } from 'ngx-toastr';
-import { InjectSessionInterceptor } from '@core/interceptors/inject-session.interceptor';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: InjectSessionInterceptor,
-      multi: true
-    },
-    provideHttpClient(withInterceptorsFromDi()),
-    provideAnimations(),
+    provideHttpClient(
+      withInterceptors([
+        injectSessionInterceptor,
+        loaderInterceptor,
+        errorInterceptor,
+      ]),
+    ),
+    provideAnimationsAsync(),
     provideToastr({
-      preventDuplicates: true
-    }), 
-  ]
+      preventDuplicates: true,
+    }),
+  ],
 };

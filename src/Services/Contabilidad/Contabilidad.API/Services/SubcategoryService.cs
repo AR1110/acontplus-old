@@ -1,0 +1,59 @@
+﻿namespace Contabilidad.API.Services;
+
+public class SubcategoryService(ContabilidadContext context, IAdoRepository repository) : ISubcategoryService
+{
+    public async Task<ApiResponseDeprecated> AddAsync(Subcategory subcategory)
+    {
+        if (await context.Subcategories.AnyAsync(x =>
+                (x.CompanyId == subcategory.CompanyId) & (x.Code == subcategory.Code)))
+        {
+            return new ApiResponseDeprecated { code = "0", message = "Código ya existe" };
+        }
+
+        context.Subcategories.Add(subcategory);
+        await context.SaveChangesAsync();
+        return new ApiResponseDeprecated { code = "1", message = "Registrada exitosamente" };
+    }
+
+    public async Task<ApiResponseDeprecated> DeleteAsync(int userId, int id)
+    {
+        var subcategory = await context.Subcategories.FirstOrDefaultAsync(x => x.Id == id);
+        if (subcategory == null) { return new ApiResponseDeprecated { code = "0", message = "Subcategoría no encontrada" }; }
+
+        subcategory.Enabled = false;
+        subcategory.Deleted = true;
+        subcategory.UserId = userId;
+        context.Update(subcategory);
+        await context.SaveChangesAsync();
+        return new ApiResponseDeprecated { code = "1", message = "Eliminada exitosamente" };
+    }
+
+    public async Task<ApiResponseDeprecated> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await repository.GetDataSetAsync("Contabilidad.Subcategory_Get", parameters);
+        if (DataValidation.DataSetIsNull(ds, true))
+        {
+            return new ApiResponseDeprecated { code = "0", message = "Data not found" };
+        }
+
+        return new ApiResponseDeprecated { code = "1", payload = DataConverters.DataSetToJson(ds) };
+    }
+
+    public async Task<ApiResponseDeprecated> UpdateAsync(int id, Subcategory subcategory)
+    {
+        var subcategoryFound = await context.Subcategories.FindAsync(id);
+        if (subcategoryFound == null)
+        {
+            return new ApiResponseDeprecated { code = "0", message = "Subcategoría no encontrada" };
+        }
+
+        subcategoryFound.CategoryId = subcategory.CategoryId;
+        subcategoryFound.Code = subcategory.Code;
+        subcategoryFound.Name = subcategory.Name;
+        subcategoryFound.Enabled = subcategory.Enabled;
+        subcategoryFound.UserId = subcategory.UserId;
+        context.Update(subcategoryFound);
+        await context.SaveChangesAsync();
+        return new ApiResponseDeprecated { code = "1", message = "Actualizada exitosamente" };
+    }
+}

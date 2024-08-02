@@ -1,9 +1,9 @@
 ﻿@page
 @model WebUI.Pages.Empresa.IndexModel
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 @{
-    ViewData["Title"] = "Cargo";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Empresa";
+    
 }
 
 <div ng-controller="empresaCtrl as $ctrl">
@@ -13,77 +13,78 @@
         </div>
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
+                <button type="button" btn-empresa result-modal="resultModal(result)" class="btn btn-info  m-l-15">
+                    <i class="fa fa-plus-circle"></i> Nuevo
+                </button>
             </div>
         </div>
     </div>
 
-    <div layout="column" flex="100">
-        <md-card>
-            <md-card-content>
-                <md-toolbar class="md-table-toolbar md-default">
-                    <div class="md-toolbar-tools">
-                        <div class="col-lg-9 col-md-9 col-sm-1">
-                            <button type="button" btn-empresa result-modal="resultModal(result)"
-                                    class="btn btn-info d-lg-block m-l-15">
-                                <i class="fa fa-plus-circle"></i> Nuevo
-                            </button>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                            <form class="form-material">
-                                <input type="text" class="form-control" ng-model="txtFilter"
-                                       placeholder="Buscar Empresa" />
-                            </form>
-                        </div>
-                    </div>
-                </md-toolbar>
-                <md-divider></md-divider>
-                <md-table-container>
-                    <table md-table>
-                        <thead md-head>
-                            <tr md-row>
-                                <th md-column>N°</th>
-                                <th md-column ng-if="accion.editar || accion.eliminar"></th>
-                                <th md-column>Ruc</th>
-                                <th md-column>Razon Social</th>
-                                <th md-column>Nombre Comercial</th>
-                                <th md-column>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody md-body>
-                            <tr md-row ng-repeat="item in empresas | filter: txtFilter">
-                                <td md-cell>{{$index+1}}</td>
-                                <td md-cell ng-if="accion.editar || accion.eliminar">
-                                    <div class="justify-content-center">
-                                        <a href="javascript:void(0)" ng-if="accion.editar" btn-empresa
-                                           result-modal="resultModal(result)" params="item"
-                                           class="btn btn-info btn-xs"><i class="ti-pencil"></i></a>
-                                        <a href="javascript:void(0)" ng-if="accion.eliminar"
-                                           ng-click="askToDelete(item)" class="btn btn-danger btn-xs">
-                                            <i class="ti-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                                <td md-cell>{{item.ruc}}</td>
-                                <td md-cell>{{item.razonSocial}}</td>
-                                <td md-cell>{{item.nombreComercial}}</td>
-                                <td md-cell ng-bind-html="item.estado | estadoPrimario"></td>
+    <div class="card">
+        <div class="card-body">
 
-                            </tr>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <span class="form-group pull-left page-size form-inline">
+                        <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                        </select>
+                    </span>
+                </div>
+                <div>
+                   <button type="button" class="btn btn-secondary btn-sm" ng-click="refresh()">
+                        <i class="fas fa-refresh"></i>
+                   </button>
+                </div>
+            </div>
 
-                        </tbody>
-                    </table>
-                </md-table-container>
-                <md-table-pagination md-limit="query.limit" md-limit-options="recordsQuantity" md-page="query.page"
-                                     md-total="{{totalRecords}}" md-page-select="options.pageSelect"
-                                     md-boundary-links="options.boundaryLinks" md-on-paginate="logPagination"></md-table-pagination>
-            </md-card-content>
-        </md-card>
+            <md-table-container>
+                <table md-table>
+                    <thead md-head>
+                        <tr md-row>
+                            <th md-column>N°</th>
+                            <th md-column ></th>
+                            <th md-column>Ruc</th>
+                            <th md-column>Razon Social</th>
+                            <th md-column>Nombre Comercial</th>
+                            <th md-column>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row ng-repeat="item in empresas | filter: txtFilter">
+                            <td md-cell>{{$index+1}}</td>
+                            <td md-cell >
+                                <div class="justify-content-center">
+                                    <a href="javascript:void(0)" ng-if="accion.editar" btn-empresa
+                                        result-modal="resultModal(result)" params="item"
+                                        class="btn btn-info btn-xs"><i class="ti-pencil"></i></a>
+                                    <a href="javascript:void(0)" ng-if="accion.eliminar"
+                                        ng-click="askToDelete(item)" class="btn btn-danger btn-xs">
+                                        <i class="ti-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                            <td md-cell>{{item.ruc}}</td>
+                            <td md-cell>{{item.razonSocial}}</td>
+                            <td md-cell>{{item.nombreComercial}}</td>
+                            <td md-cell ng-bind-html="item.estado | estadoPrimario"></td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+            </md-table-container>        
+            <div class="card-body">
+                <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                    ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                    class="pagination" boundary-links="true" rotate="false">
+                </ul>
+            </div>
+        
+        </div>
     </div>
 
-
-
-
-
+    
 </div>
 
 @section Scripts{

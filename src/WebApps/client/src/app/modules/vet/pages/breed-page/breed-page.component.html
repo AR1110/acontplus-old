@@ -1,0 +1,64 @@
+<app-breadcrumb>
+  <button
+    (click)="onModalOpen()"
+    class="btn btn-info d-block d-lg-inline-block m-l-15"
+    type="button"
+  >
+    <fa-icon [icon]="'plus-circle'"></fa-icon>
+    Nueva
+  </button>
+</app-breadcrumb>
+@if (breeds.length > 0) {
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th class="text-center">Opciones</th>
+            <th class="text-center">#</th>
+            <th>Especie</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (item of breeds; track $index) {
+              <tr>
+                <td class="text-center">
+                  <div ngbDropdown class="d-inline-block">
+                    <button type="button" class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
+                      <fa-icon [icon]="'list'"></fa-icon>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                      <button ngbDropdownItem (click)="onEdit(item)">
+                        <fa-icon [icon]="'edit'"></fa-icon>
+                        Editar
+                      </button>
+                      <button ngbDropdownItem (click)="onDelete(item)">
+                        <fa-icon [icon]="'trash'"></fa-icon>
+                        Editar
+                      </button>
+                    </div>
+                  </div>
+                </td>
+                <td class="text-center">{{ $index + 1 }}</td>
+                <td>{{ item.petType?.name }}</td>
+                <td>{{ item.code }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.description }}</td>
+                <td>
+                  <div [innerHTML]="item.enabled | secondaryStatus"></div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+} @else {
+  <h5>No se encontraron registros de razas</h5>
+}

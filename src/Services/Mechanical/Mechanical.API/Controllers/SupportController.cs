@@ -1,9 +1,11 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Mechanical.API.Interfaces;
+using Mechanical.API.Services;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common;
-using Services.Common.Logs;
+using Services.Common.Extensions;
+
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Mechanical.API.Controllers
 {
@@ -12,8 +14,8 @@ namespace Mechanical.API.Controllers
     public class SupportController : BaseApiController
     {
         public readonly ISupportService _supportService;
-        public readonly LogWriter _log;
-        public SupportController(ISupportService supportService, LogWriter log)
+        public readonly ICustomLogger _log;
+        public SupportController(ISupportService supportService, ICustomLogger log)
         {
             _supportService = supportService;
             _log = log;
@@ -73,13 +75,13 @@ namespace Mechanical.API.Controllers
                     { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
                 };
                 var response = await _supportService.UpdateAsync(parameters);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
+                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo Editar"); }
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on Post: \n" + ex.ToString());
-                return BadRequest("Error On Save");
+                _log.LogActivity("Error on Put: \n" + ex.ToString());
+                return BadRequest("Error On Update");
             }
         }
 
@@ -88,14 +90,33 @@ namespace Mechanical.API.Controllers
         {
             try
             {
-                bool response = await _supportService.DeleteAsync(id);
-                if (!response) { return BadRequest("No se pudo Eliminar"); }
+                var parameters = new Dictionary<string, object> {
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "id", id },
+                };
+                var response = await _supportService.DeleteAsync(parameters);
+                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo Eliminar"); }
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 _log.LogActivity("Error on Delete: \n" + ex.ToString());
-                return BadRequest("Error on Delete");
+                return BadRequest("Error On Delete");
+            }
+        }
+
+        [HttpPut("PutState/{id}/{SupportStatusId}")]
+        public async Task<IActionResult> PutState(int id, int SupportStatusId)
+        {
+            try
+            {
+                var response = await _supportService.UpdateStateAsync(id, SupportStatusId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on PutState: \n" + ex.ToString());
+                return BadRequest("Error On PutState");
             }
         }
     }

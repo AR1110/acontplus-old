@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Common.Core.Interfaces;
 using Common.Infrastructure.Data;
 using Common.Infrastructure.Repository;
 using Mechanical.API.Data;
@@ -20,7 +19,7 @@ namespace Mechanical.API.Extensions
                 return new DbContextFactory(allContext);
 
             });
-            builder.RegisterType<ADORepository>().As<IADORepository>();
+            builder.RegisterType<AdoRepository>().As<IAdoRepository>();
 
         }
     }

@@ -1,9 +1,9 @@
-<form [formGroup]="customerForm" (ngSubmit)="save()">
+<form [formGroup]="customerForm" (ngSubmit)="onSave()" autocomplete="off">
   <div class="modal-header">
     <h5 class="modal-title">
       <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
     </h5>
-    <button type="button" class="btn-close" (click)="closeModal()"></button>
+    <button type="button" class="btn-close" (click)="onModalClose()"></button>
   </div>
   <div class="modal-body">
     <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs">
@@ -13,7 +13,7 @@
           <div class="row">
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
               <div class="form-group">
-                <label for=""
+                <label
                   >Tipo Identificación: <span class="text-danger">*</span>
                 </label>
                 <select
@@ -40,7 +40,7 @@
                   class="form-control border-select"
                   id="numeroIdentificacion"
                   formControlName="numeroIdentificacion"
-                  (keydown.enter)="validarNumeroIdentificacion()"
+                  (keydown.enter)="onKeyDownGovernmentId()"
                   maxlength="15"
                   placeholder="Ej: 2105234568"
                 />
@@ -215,7 +215,7 @@
                     formControlName="idTiempoCredito"
                     class="form-select border-select"
                   >
-                    @for (item of tiempoCreditos; track $index) {
+                    @for (item of tiemposCredito; track $index) {
                     <option [ngValue]="item.idTiempoCredito">
                       {{ item.descripcion }}
                     </option>
@@ -301,7 +301,7 @@
                 <div class="input-group">
                   <input
                     type="text"
-                    id="clienteAutocomplete"
+                    id="empleado"
                     autocomplete="off"
                     name="empleadoAutocomplete"
                     class="form-control border-select"
@@ -373,8 +373,9 @@
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
               <div class="form-group">
-                <label for="">Observación</label>
+                <label for="observacion">Observación</label>
                 <textarea
+                  id="observacion"
                   class="form-control border-select"
                   touppercase
                   ng-model="data.nota"
@@ -388,7 +389,7 @@
           <div class="row justify-content-between">
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
               <div class="form-group">
-                <label for="Placa"
+                <label
                   >Placa
                   <span
                     tooltip-placement="top"
@@ -418,7 +419,7 @@
                 >
                   <i class="fa fa-barcode"></i> Generar
                 </button>
-                <img id="barcode" src="" alt="" style="display: none" />
+                <img   src="" alt="" style="display: none" />
               </div>
               <div
                 class="card border border-success"
@@ -427,7 +428,7 @@
               >
                 <div class="card-body">
                   <h5 class="card-title text-center">
-                    {{ data.nombreFiscal }}
+                    {{customerForm.get('nombreFiscal')?.value}}
                   </h5>
                   <div class="row">
                     <div class="col-md-12"></div>
@@ -435,9 +436,9 @@
                   <div class="row">
                     <div class="col-md-12 text-center">
                       <h5 style="align-content: center">
-                        {{ data.numeroIdentificacion }}
+                        {{customerForm.get('numeroIdentificacion')?.value}}
                       </h5>
-                      <img id="barcode" src="{{ data.barcodeCard }}" alt="" />
+                      <img id="barcode" src="{{ barcodeCard }}" alt="" />
                       <br />
                       <h6><small>&copy; Acontplus</small></h6>
                     </div>
@@ -461,15 +462,15 @@
   <div class="modal-footer">
     <button
       type="submit"
-      class="btn btn-outline-success btn-sm"
+      class="btn btn-outline-success"
       [disabled]="!customerForm.valid"
     >
       <fa-icon [icon]="'save'"></fa-icon> Guardar
     </button>
     <button
       type="button"
-      class="btn btn-outline-dark btn-sm"
-      (click)="closeModal()"
+      class="btn btn-outline-dark"
+      (click)="onModalClose()"
     >
       &times; Cancelar
     </button>

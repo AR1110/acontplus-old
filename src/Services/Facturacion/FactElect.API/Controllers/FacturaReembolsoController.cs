@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace FactElect.API.Controllers;
 
-namespace FactElect.API.Controllers
+public class FacturaReembolsoController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class FacturaReembolsoController : ControllerBase
-    {
-    }
 }

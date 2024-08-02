@@ -6,6 +6,7 @@ import { isApiResponse } from '@core/models/api-response'
 import { PURCHASE_PATHS } from '@modules/purchase/constants/purchase.constants'
 import { Observable, map } from 'rxjs'
 import { SupplierSearch } from '../models/supplier.model'
+import {getNoLoader} from "@core/interceptors/loader.interceptor";
 @Injectable({
   providedIn: 'root'
 })
@@ -22,7 +23,9 @@ export class SupplierService {
       textSearch: data.textSearch,
       tipo: 5
     }
-    return this.http.get(`${this.url}?json=${JSON.stringify(query)}`)
+    return this.http.get(`${this.url}?json=${JSON.stringify(query)}`, {
+      context: getNoLoader()
+    })
       .pipe(
         map(response => {
           if (isApiResponse(response)) {

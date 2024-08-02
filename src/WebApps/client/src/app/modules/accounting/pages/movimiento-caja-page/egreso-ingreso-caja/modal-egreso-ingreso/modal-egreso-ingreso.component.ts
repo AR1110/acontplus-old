@@ -1,25 +1,37 @@
-
-import { Component, inject } from '@angular/core';
-import { AppModule } from 'src/app/app.module';
-import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { TipoDoc } from '@core/models/tipo-doc.model';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { CashboxSelectHtmlOnly } from '@modules/accounting/models/cashbox.model';
-import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
-import { SubEntidadFinanciera } from '@modules/accounting/models/subentidad-financiera.model';
-import { MovimientoCajaService } from '@modules/accounting/services/movimiento-caja.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { Observable, OperatorFunction, catchError, debounceTime, switchMap } from 'rxjs';
-import { EmployeeSearchDto } from '@modules/sale/models/employee.model';
-import { EmployeeService } from '@modules/sale/services/employee.service';
-import { ToasterService } from '@core/services/toaster.service';
-import { isApiResponse } from '@core/models/api-response';
+import {Component, inject} from '@angular/core';
+import {EstablecimientoSelectHtmlOnly} from '@core/models/estab.model';
+import {TipoDoc} from '@core/models/tipo-doc.model';
+import {CashboxSelectHtmlOnly} from '@modules/accounting/models/cashbox.model';
+import {EntidadFinanciera} from '@modules/accounting/models/entidad-financiera.model';
+import {SubEntidadFinanciera} from '@modules/accounting/models/subentidad-financiera.model';
+import {MovimientoCajaService} from '@modules/accounting/services/movimiento-caja.service';
+import {NgbActiveModal, NgbTypeaheadModule} from '@ng-bootstrap/ng-bootstrap';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
+import {EmployeeService} from '@modules/sale/services/employee.service';
+import {ToasterService} from '@core/services/toaster.service';
+import {isApiResponse} from '@core/models/api-response';
+import {
+  CompanyCustomerSearchComponent
+} from "@company-customer/components/company-customer-search/company-customer-search.component";
+import {SupplierSearchComponent} from "@customer/supplier/components/supplier-search/supplier-search.component";
+import {DOC_TYPE} from "@core/constants/global.constants";
 
 @Component({
   selector: 'app-modal-egreso-ingreso',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+    ReactiveFormsModule,
+    NgbTypeaheadModule,
+    CompanyCustomerSearchComponent,
+    SupplierSearchComponent
+  ],
   templateUrl: './modal-egreso-ingreso.component.html',
 })
 export class ModalEgresoIngresoComponent {
@@ -36,6 +48,9 @@ export class ModalEgresoIngresoComponent {
   subEntidadesFinanciera: Array<SubEntidadFinanciera> = [];
   tiposDocumento: Array<TipoDoc> = [];
 
+  esTipoDocIngreso = false;
+  esTipoDocGasto = false;
+
 
   dataForm = new FormGroup({
     codEstab: new FormControl('', Validators.required),
@@ -43,11 +58,14 @@ export class ModalEgresoIngresoComponent {
     idTipoDocumento: new FormControl(0, [Validators.required, this.greaterThanZeroValidator]),
     idEntidadFinanciera: new FormControl(0, [Validators.required, this.greaterThanZeroValidator]),
     idSubEntidadFinanciera: new FormControl(0, [Validators.required, this.greaterThanZeroValidator]),
-    idEmpleado: new FormControl(0, [Validators.required, this.greaterThanZeroValidator]),
+   // idEmpleado: new FormControl(0, [Validators.required, this.greaterThanZeroValidator]),
+     customerId: new FormControl(0, [Validators.required, this.greaterThanZeroValidator]),
+
     valor: new FormControl(0, Validators.required),
     observaciones: new FormControl('', Validators.required),
-    employeeName: new FormControl('')
+    customerName: new FormControl('')
   });
+
 
   greaterThanZeroValidator(control: AbstractControl<number>): ValidationErrors | null {
     const value = control.value;
@@ -60,10 +78,8 @@ export class ModalEgresoIngresoComponent {
 
   ngOnInit() {
 
-    showLoader();
-    this.movimientoCajaSvc.getDataForm().subscribe({
-      next: (response) => {
-        hideLoader();
+    this.movimientoCajaSvc.getDataForm().subscribe( (response) => {
+
         let { establecimientos, cajas, entidadesFinanciera, subEntidadesFinanciera, tiposDocumento } = response;
 
         this.establecimientos = establecimientos;
@@ -75,12 +91,17 @@ export class ModalEgresoIngresoComponent {
         this.entidadesFinanciera = entidadesFinanciera;
         this.tempSubEntidadesFinanciera = subEntidadesFinanciera;
         this.tiposDocumento = tiposDocumento;
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
+  }
+
+  onChangeTipoDoc(){
+    let dataForm = this.dataForm.value;
+    let dataTipoDoc = this.tiposDocumento.find(t=>t.idTipoDocumento===dataForm.idTipoDocumento);
+    if(!dataTipoDoc)  return
+
+
+   this.esTipoDocIngreso = dataTipoDoc.codigo === DOC_TYPE.IC;
+    this.esTipoDocGasto = dataTipoDoc.codigo===DOC_TYPE.EC;
   }
 
   onChangeEntidadFinanciera() {
@@ -90,7 +111,19 @@ export class ModalEgresoIngresoComponent {
     }
   }
 
-  searchEmployee: OperatorFunction<string, Array<EmployeeSearchDto>> = (text$: Observable<string>) =>
+  onSelectCustomer(params:any){
+    if("data" in params){
+      this.dataForm.get("customerId")?.setValue(params.data.customerId);
+    }
+
+  }
+  onEmptyCustomer(){
+    this.dataForm.get("customerId")?.setValue(0);
+    this.dataForm.get("customerName")?.setValue("");
+
+  }
+
+/**  searchEmployee: OperatorFunction<string, Array<EmployeeSearchDto>> = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
       switchMap((term) => {
@@ -105,15 +138,15 @@ export class ModalEgresoIngresoComponent {
           })
         );
       })
-    );
+    );**/
 
-  selectEmployee($event: any) {
+  /**selectEmployee($event: any) {
     let employee: EmployeeSearchDto = $event.item;
     setTimeout(() => {
       this.dataForm.get('employeeName')?.setValue(employee.nombreCompleto)
       this.dataForm.get('idEmpleado')?.setValue(employee.idEmpleado)
     })
-  }
+  }**/
 
   save() {
     try {
@@ -136,10 +169,9 @@ export class ModalEgresoIngresoComponent {
       }
 
 
-      showLoader();
-      this.movimientoCajaSvc.post(params).subscribe({
-        next: (response) => {
-          hideLoader();
+
+      this.movimientoCajaSvc.post(params).subscribe(  (response) => {
+
           if (isApiResponse(response)) {
             if (response.code === "0") {
               this.tS.toastr({
@@ -155,14 +187,8 @@ export class ModalEgresoIngresoComponent {
               this.activeModal.close(response)
             }
           }
-        },
-        error(err) {
-          hideLoader();
-          console.log(err)
-        },
       })
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
   }

@@ -1,6 +1,7 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Restaurant.API.Data;
 using Restaurant.API.Interfaces;
 
@@ -8,9 +9,9 @@ namespace Restaurant.API.Services
 {
     public class IngredientService : IIngredientService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly RestaurantContext _context;
-        public IngredientService(IADORepository repository, RestaurantContext context)
+        public IngredientService(IAdoRepository repository, RestaurantContext context)
         {
             _repository = repository;
             _context = context;
@@ -24,7 +25,7 @@ namespace Restaurant.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
         public async Task<object> GetByIdAsync(int id)
@@ -39,7 +40,7 @@ namespace Restaurant.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
         public async Task<string> AddAsync(ApiRequest data)
@@ -48,7 +49,7 @@ namespace Restaurant.API.Services
                     {"userRoleId", data.UserRoleId},
                     {"json", DataConverters.SerializeDictionary(data.Data)}
                 };
-            var response = await _repository.SPExecuteDeprecatedAsync("Restaurant.Ingredient_Insert", parameters);
+            var response = await _repository.SpExecuteDeprecatedAsync("Restaurant.Ingredient_Insert", parameters);
             return response;
         }
         public async Task<string> UpdateAsync(int id, ApiRequest data)
@@ -58,7 +59,7 @@ namespace Restaurant.API.Services
                 {"id", id},
                 {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
             };
-            var response = await _repository.SPExecuteDeprecatedAsync("Restaurant.Ingredient_Update", parameters);
+            var response = await _repository.SpExecuteDeprecatedAsync("Restaurant.Ingredient_Update", parameters);
             return response;
         }
 
@@ -74,7 +75,7 @@ namespace Restaurant.API.Services
             // var parameters = new Dictionary<string, object>{
             //     {"id", id}
             // };
-            // var response = await _repository.SPExecuteAsync("Restaurant.Ingredient_Delete", parameters);
+            // var response = await _repository.SpExecuteAsync<ApiResponse>("Restaurant.Ingredient_Delete", parameters);
             // return response;
         }
     }

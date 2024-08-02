@@ -1,115 +1,74 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using TechnicalSupport.API.Data;
-using TechnicalSupport.API.Entities;
-using TechnicalSupport.API.Interfaces;
+﻿namespace TechnicalSupport.API.Services;
 
-namespace TechnicalSupport.API.Services
+public class DeviceService : IDeviceService
 {
-    public class DeviceService : IDeviceService
+    private readonly TechnicalSupportContext _context;
+    private readonly IAdoRepository _adoRepository;
+
+    public DeviceService(IAdoRepository adoRepository, TechnicalSupportContext context)
     {
-        private readonly IADORepository _repository;
-        private readonly TechnicalSupportContext _context;
-        public DeviceService(IADORepository repository, TechnicalSupportContext context)
+        _context = context;
+        _adoRepository = adoRepository;
+    }
+
+    public async Task<ApiResponse> AddAsync(Device device)
+    {
+        if (device.Customers.Count > 0)
         {
-            _context = context;
-            _repository = repository;
+            foreach (var product in device.Customers) { product.UserId = device.UserId; }
+
+            ;
         }
 
-        public async Task<ApiResponse> AddAsync(Device device)
-        {
-            try
-            {
-                if (_context.Products.Any(p => p.Name == device.Name && p.Model == device.Model))
-                {
-                    return new ApiResponse { code = "0", message = "El equipo ya existe en la base de datos" };
-                }
-                if (device.Customers.Count > 0)
-                {
-                    foreach (var product in device.Customers) { product.UserId = device.UserId; };
-                }
-                device.Specs.UserId = device.UserId;
-                _context.Products.Add(device);
-                await _context.SaveChangesAsync();
-                device.Id = device.Id;
-                return new ApiResponse { code = "1", message = "Registrado exitosamente", payload = device };
-            }
-            catch (Exception)
-            {
+        device.Specs.UserId = device.UserId;
+        _context.Devices.Add(device);
+        await _context.SaveChangesAsync();
+        device.Id = device.Id;
+        return new ApiResponse { Code = "1", Message = "Registrado exitosamente", Payload = device };
+    }
 
-                throw;
-            }
+    public async Task<ApiResponse> DeleteAsync(int id, int userId)
+    {
+        var device = await _context.Devices.FindAsync(id);
+        if (device == null)
+        {
+            return new ApiResponse { Code = "0", Message = "No existe el equipo" };
         }
 
-        public async Task<ApiResponse> DeleteAsync(int id, int userId)
-        {
-            try
-            {
-                var device = await _context.Products.FindAsync(id);
-                if (device == null)
-                {
-                    return new ApiResponse { code = "0", message = "No existe el equipo" };
-                }
-                device.Enabled = false;
-                device.Deleted = true;
-                _context.Update(device);
-                await _context.SaveChangesAsync();
-                return new ApiResponse { code = "1", message = "Eliminado Exitosamente" };
-            }
-            catch (Exception)
-            {
+        device.Enabled = false;
+        device.Deleted = true;
+        device.UserId = userId;
+        _context.Update(device);
+        await _context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Eliminado Exitosamente" };
+    }
 
-                throw;
-            }
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await _adoRepository.GetDataSetAsync("TechnicalSupport.Device_Get", parameters);
+        if (DataValidation.DataSetIsNull(ds, true))
+        {
+            return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
         }
 
-        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
-        {
-            try
-            {
-                var ds = await _repository.GetDataSetAsync("TechnicalSupport.Device_Get", parameters);
-                if (DataValidation.DataSetIsNull(ds))
-                {
-                    return new ApiResponse { code = "1", message = "No se encontraron datos" };
-                }
-                else
-                {
-                    return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
-                }
-            }
-            catch (Exception)
-            {
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+    }
 
-                throw;
-            }
+    public async Task<ApiResponse> UpdateAsync(int id, Device device)
+    {
+        if (id != device.Id)
+        {
+            return new ApiResponse { Code = "0", Message = "El id no coincide" };
         }
 
-        public async Task<ApiResponse> UpdateAsync(int id, Device device)
-        {
-            try
-            {
-                if (id != device.Id)
-                {
-                    return new ApiResponse { code = "0", message = "El id no coincide" };
-                }
-                var productFounded = await _context.Products.FindAsync(id);
-                productFounded.CategoryId = device.CategoryId;
-                productFounded.Brand = device.Brand;
-                productFounded.Color = device.Color;
-                productFounded.Enabled = device.Enabled;
-                productFounded.Model = device.Model;
-                productFounded.Name = device.Name;
-                productFounded.Year = device.Year;
-                _context.Update(productFounded);
-                await _context.SaveChangesAsync();
-                return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
+        var productFounded = await _context.Devices.FindAsync(id);
+        productFounded.ModeloId = device.ModeloId;
+        productFounded.Color = device.Color;
+        productFounded.Enabled = device.Enabled;
+        productFounded.Name = device.Name;
+        productFounded.UserId = device.UserId;
+        _context.Update(productFounded);
+        await _context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente" };
     }
 }

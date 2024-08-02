@@ -1,68 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Common.Core.Utils;
-using Configuracion.API.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
-using Services.Common;
-using Common.Core.Models;
+﻿namespace Configuracion.API.Controllers;
 
-namespace Configuracion.API.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class UserCustomerPermissionController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class UserCustomerPermissionController : ControllerBase
+    private readonly ICustomLogger _log;
+    private readonly IUserCustomerPermissionService _service;
+
+    public UserCustomerPermissionController(IUserCustomerPermissionService service, ICustomLogger log)
     {
-        private readonly IUserCustomerPermissionService _service;
-        private readonly LogWriter _log;
+        _service = service;
+        _log = log;
+    }
 
-        public UserCustomerPermissionController(IUserCustomerPermissionService service, LogWriter log)
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        try
         {
-            _service = service;
-            _log = log;
+            var parameters = new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            };
+            var response = await _service.GetAsync(parameters);
+            if (response == null) { return NoContent(); }
+
+            ;
+            return Ok(response);
         }
-
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+        catch (Exception ex)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _service.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en get user customer permission " + ex.Message + "\n" + json);
-                return BadRequest("Error en get en get user customer permission" + ex.Message);
-            }
+            _log.LogActivity("Error en get user customer permission " + ex.Message + "\n" + json);
+            return BadRequest("Error en get en get user customer permission" + ex.Message);
         }
+    }
 
-        [HttpPut]
-        public async Task<IActionResult> Put(ApiRequest data)
+    [HttpPut]
+    public async Task<IActionResult> Put(ApiRequest data)
+    {
+        try
         {
-            try
+            var parameters = new Dictionary<string, object>
             {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _service.UpdateAsync(parameters); 
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Put User Customer Permisison " + ex.Message);
-                return BadRequest("Error en Put User Customer Permisison " + ex.Message);
-            }
+                { "userRoleId", User.GetUserRoleId() },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            };
+            var response = await _service.UpdateAsync(parameters);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _log.LogActivity("Error en Put User Customer Permisison " + ex.Message);
+            return BadRequest("Error en Put User Customer Permisison " + ex.Message);
         }
     }
 }

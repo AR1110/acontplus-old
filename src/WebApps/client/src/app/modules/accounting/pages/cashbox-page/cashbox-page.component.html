@@ -1,14 +1,13 @@
 <app-breadcrumb >
 
-  @if (acciones.crear) {
     <button
       type="button"
       class="btn btn-info d-none d-lg-block m-l-15 text-white"
       (click)="openModalAddUpdate()"
+      appActionAdd
     >
       <fa-icon [icon]="'plus'"></fa-icon> Nuevo
     </button>
-  }
 </app-breadcrumb>
 
 <div class="card">
@@ -69,22 +68,21 @@
                   Acciones
                 </button>
                 <div ngbDropdownMenu>
-                  @if (acciones.editar) {
-                  <button ngbDropdownItem (click)="openModalAddUpdate(item)">
+                  <button ngbDropdownItem (click)="openModalAddUpdate(item)" appActionEdit>
                     <fa-icon [icon]="'edit'"></fa-icon>
                     Editar
                   </button>
-                  } @if (acciones.eliminar) {
-                  <button ngbDropdownItem (click)="askToDelete(item.idCaja)">
+
+                  <button ngbDropdownItem (click)="askToDelete(item.idCaja)" appActionDelete>
                     <fa-icon [icon]="'trash'"></fa-icon>
                     Eliminar
                   </button>
-                  }
-                  <button ngbDropdownItem (click)="openModalAperturar(item)">
+
+                  <button ngbDropdownItem (click)="openModalAperturar(item)" appActionAperturaCaja>
                     <fa-icon [icon]="'briefcase'"></fa-icon>
                     Aperturar
                   </button>
-                  <button ngbDropdownItem (click)="openModalMovimiento(item)">
+                  <button ngbDropdownItem (click)="openModalMovimiento(item)" appActionMovCaja>
                     <fa-icon [icon]="'wallet'"></fa-icon>
                     Movimientos
                   </button>
@@ -107,7 +105,7 @@
         </tbody>
         <tfoot>
           <tr>
-            <td align="center" colspan="6">
+            <td align="center" colspan="7">
               <ngb-pagination
                 [collectionSize]="totalRecords"
                 [(page)]="dataSearch.pageIndex"

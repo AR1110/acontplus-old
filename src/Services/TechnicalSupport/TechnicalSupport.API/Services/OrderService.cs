@@ -1,57 +1,59 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using TechnicalSupport.API.Data;
-using TechnicalSupport.API.Interfaces;
-namespace TechnicalSupport.API.Services
+﻿namespace TechnicalSupport.API.Services;
+
+public class OrderService : IOrderService
 {
-    public class OrderService : IOrderService
+    private readonly TechnicalSupportContext _context;
+    private readonly string _module = "TechnicalSupport.Order_";
+    private readonly IAdoRepository _adoRepository;
+
+    public OrderService(TechnicalSupportContext context, IAdoRepository adoRepository)
     {
-        private readonly TechnicalSupportContext _context;
-        private readonly IADORepository _repository;
-        public OrderService(TechnicalSupportContext context, IADORepository repository)
-        {
-            _context = context;
-            _repository = repository;
-        }
-        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync("TechnicalSupport.Order_Get", parameters);
-            if (DataValidation.DataSetIsNull(ds))
-            {
-                return new ApiResponse { code = "0", message = "No se encontraron datos" };
-            }
-            else
-            {
-                return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
-            }
-        }
-        public async Task<string> AddAsync(Dictionary<string, object> parameters)
-        {
-            try
-            {
-                return await _repository.SPExecuteDeprecatedAsync("TechnicalSupport.Order_Insert", parameters);
-            }
-            catch (Exception)
-            {
+        _context = context;
+        _adoRepository = adoRepository;
+    }
 
-                throw;
-            }
-        }
-        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteDeprecatedAsync("TechnicalSupport.Order_Update", parameters);
-        }
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null) return false;
-            order.Enabled = false;
-            order.Deleted = true;
+    public async Task<ApiResponse> DeliveryAsync(OrderDeliveryDto deliveryDto, int id)
+    {
+        var statuses = await _context.OrderStatuses.Where(x => x.Code == "E").ToListAsync();
+        var orderFound = await _context.Orders.FindAsync(id);
+        orderFound.OrderStatusId = statuses.FirstOrDefault().Id;
+        orderFound.UserId = deliveryDto.UserId;
 
-            _context.Orders.Update(order);
-            await _context.SaveChangesAsync();
-            return true;
+        // Verification for update
+        if (deliveryDto.IsOtherReceiver)
+        {
+            orderFound.ReceiverGovernmentId = deliveryDto.ReceiverGovernmentId;
+            orderFound.Receiver = deliveryDto.Receiver;
         }
+
+        _context.Update(orderFound);
+        await _context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Entregada correctamente" };
+    }
+
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await _adoRepository.GetDataSetAsync($"{_module}Get", parameters);
+        if (DataValidation.DataSetIsNull(ds, true))
+        {
+            return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
+        }
+
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+    }
+
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    {
+        return await _adoRepository.SpExecuteAsync<ApiResponse>($"{_module}Insert", parameters);
+    }
+
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await _adoRepository.SpExecuteAsync<ApiResponse>($"{_module}Update", parameters);
+    }
+
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    {
+        return await _adoRepository.SpExecuteAsync<ApiResponse>($"{_module}Delete", parameters);
     }
 }

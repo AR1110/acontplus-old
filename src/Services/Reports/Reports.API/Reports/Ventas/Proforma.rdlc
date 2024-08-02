@@ -200,6 +200,22 @@
         </Field>
       </Fields>
     </DataSet>
+    <DataSet Name="infoAdicionalDs">
+      <Query>
+        <DataSourceName>mainDs</DataSourceName>
+        <CommandText />
+      </Query>
+      <Fields>
+        <Field Name="nombre">
+          <DataField>nombre</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="valor">
+          <DataField>valor</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+      </Fields>
+    </DataSet>
   </DataSets>
   <ReportSections>
     <ReportSection>
@@ -922,7 +938,7 @@
                 <Top>0.25123cm</Top>
                 <Left>0.42386cm</Left>
                 <Height>0.54227cm</Height>
-                <Width>4.24625cm</Width>
+                <Width>3.77cm</Width>
                 <Style>
                   <Border>
                     <Style>None</Style>
@@ -951,9 +967,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox77</rd:DefaultName>
                 <Top>0.25123cm</Top>
-                <Left>4.74067cm</Left>
+                <Left>4.19386cm</Left>
                 <Height>0.54227cm</Height>
-                <Width>7.2625cm</Width>
+                <Width>7.80931cm</Width>
                 <ZIndex>1</ZIndex>
                 <Style>
                   <Border>
@@ -965,11 +981,127 @@
                   <PaddingBottom>2pt</PaddingBottom>
                 </Style>
               </Textbox>
+              <Tablix Name="Tablix4">
+                <TablixBody>
+                  <TablixColumns>
+                    <TablixColumn>
+                      <Width>3.23663cm</Width>
+                    </TablixColumn>
+                    <TablixColumn>
+                      <Width>8.34269cm</Width>
+                    </TablixColumn>
+                  </TablixColumns>
+                  <TablixRows>
+                    <TablixRow>
+                      <Height>0.6cm</Height>
+                      <TablixCells>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="nombre">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!nombre.Value</Value>
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                    <TextRun>
+                                      <Value>:</Value>
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>nombre</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="valor1">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!valor.Value</Value>
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>valor1</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                      </TablixCells>
+                    </TablixRow>
+                  </TablixRows>
+                </TablixBody>
+                <TablixColumnHierarchy>
+                  <TablixMembers>
+                    <TablixMember />
+                    <TablixMember />
+                  </TablixMembers>
+                </TablixColumnHierarchy>
+                <TablixRowHierarchy>
+                  <TablixMembers>
+                    <TablixMember>
+                      <Group Name="Details3" />
+                      <TablixMembers>
+                        <TablixMember />
+                      </TablixMembers>
+                    </TablixMember>
+                  </TablixMembers>
+                </TablixRowHierarchy>
+                <DataSetName>infoAdicionalDs</DataSetName>
+                <Top>0.82878cm</Top>
+                <Left>0.42386cm</Left>
+                <Height>0.6cm</Height>
+                <Width>11.57931cm</Width>
+                <ZIndex>2</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                </Style>
+              </Tablix>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>8.49273cm</Top>
             <Left>0.18208cm</Left>
-            <Height>1.2cm</Height>
+            <Height>1.8cm</Height>
             <Width>12.35934cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
@@ -2327,17 +2459,7 @@
             <TablixRowHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="Details5">
-                    <Filters>
-                      <Filter>
-                        <FilterExpression>=Fields!subTotal.Value</FilterExpression>
-                        <Operator>NotEqual</Operator>
-                        <FilterValues>
-                          <FilterValue DataType="Integer">0</FilterValue>
-                        </FilterValues>
-                      </Filter>
-                    </Filters>
-                  </Group>
+                  <Group Name="Details5" />
                   <TablixMembers>
                     <TablixMember />
                   </TablixMembers>
@@ -2856,17 +2978,7 @@
             <TablixRowHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="Details6">
-                    <Filters>
-                      <Filter>
-                        <FilterExpression>=Fields!iva.Value</FilterExpression>
-                        <Operator>NotEqual</Operator>
-                        <FilterValues>
-                          <FilterValue DataType="Integer">0</FilterValue>
-                        </FilterValues>
-                      </Filter>
-                    </Filters>
-                  </Group>
+                  <Group Name="Details6" />
                 </TablixMember>
                 <TablixMember>
                   <KeepWithGroup>Before</KeepWithGroup>

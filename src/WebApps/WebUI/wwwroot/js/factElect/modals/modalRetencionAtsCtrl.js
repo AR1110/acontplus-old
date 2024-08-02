@@ -1,3 +1,4 @@
+//@ts-check
 export {
     modalRetencionAtsCtrl
 }
@@ -29,6 +30,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
     const modalSvc = $injector.get('modalService');
     const PATH_FACT_ELECT = 'FactElect/'
     const url = 'RetencionAts/'
+    let fS = $injector.get('formulario');
 
     /**Initial Load */
     $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
@@ -140,7 +142,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                     $scope.initialLoad()
                     setTimeout(() => {
                         $scope.infoCompRet = tempArray[0][0]
-                        $scope.infoCompRet.fechaEmision = formatDate(tempArray[0][0].fechaEmision)
+                        $scope.infoCompRet.fechaEmision = fS.formatDate(tempArray[0][0].fechaEmision)
                         $scope.infoCompRet.codEstab_Asig = $scope.establecimientos.find(item => (item.codEstab == $scope.infoCompRet.codEstab)).codEstab_Asig
                         $scope.onChangeEstablecimiento()
                         $scope.subContribuyente = tempArray[0].subContribuyente
@@ -683,7 +685,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
             }
             if (toBd && idDocumentoElectronico > 0) {
                 setTimeout(() => {
-                    $window.location.reload()
+                    $scope.initialLoad();
                 }, 2200)
             }
             $scope.docSustento = {}
@@ -1002,7 +1004,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
             tS.toastr('warning', 'Debe agregar al menos un impuesto al documento de sustento')
             return false
         }
-        if (!$scope.retencion.codigo) {
+        if (!$scope.retencion.codigo || Number($scope.retencion.codigo) == 0) {
             tS.toastr('warning', 'Debe seleccionar un impuesto')
             return false
         }
@@ -1045,7 +1047,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                 uniqueIdDoc: uniqueIdDoc,
                 idRetencionAtsRet: (idDocumentoElectronico) ? $scope.retencion.idRetencionAtsRet : 0,
                 codigo: $scope.retencion.codigo,
-                impuesto: $scope.impuestosRet.find(item => item.codigo == $scope.retencion.codigo).descripcion,
+                impuesto: Number($scope.retencion.codigo) == 0 ? 'Necesita Revisión' : $scope.impuestosRet.find(item => item.codigo == $scope.retencion.codigo).descripcion,
                 codigoRetencion: $scope.retencion.codigoRetencion,
                 codRet: $scope.retencion.codigoRetencion + ' - ' + $scope.porcentajeRetener.find(item => item.codigo == $scope.retencion.codigoRetencion).descripcion,
                 baseImponible: $scope.retencion.baseImponible,
@@ -1397,7 +1399,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                             document.getElementById('btnEditDocSust').style.display = 'none'
                             tS.toastr('success', response.message)
                             setTimeout(() => {
-                                $window.location.reload()
+                                $scope.initialLoad();
                             }, 2200)
                         }
                     }
@@ -1436,7 +1438,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
         }
     }
 
-    $scope.deleteDocSust = (item) => {
+    $scope.removeDocSust = (item) => {
         let uniqueIdDoc = $scope.docsAdded[item].uniqueIdDoc
         if ($scope.taxesAdded.length > 0) {
             for (let t = 0; t < $scope.taxesAdded.length; t++) {
@@ -1460,6 +1462,26 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
             }
         }
         $scope.docsAdded.splice(item, 1)
+    }
+
+    $scope.deleteDocSust = (item) => {
+        $scope.docSustento = $scope.docsAdded[item];
+        if ($scope.docSustento.idRetAtsDocSustento > 0) {
+            mS.getData('delete', `${PATH_FACT_ELECT}` + 'DocSustento/' + $scope.docSustento.idRetAtsDocSustento).then(
+                response => {
+                    if (response.code == '0') {
+                        tS.toastr('warning', response.message);
+                    }
+                    if (response.code == '1') {
+                        tS.toastr('success', response.message);
+                        $scope.removeDocSust(item);
+                    }
+                }
+            ).catch(error => { console.log(error) })
+        } else {
+            $scope.removeDocSust(item);
+        }
+        
     }
 
     /**************************************************************************************** */

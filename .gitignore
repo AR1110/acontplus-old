@@ -89,3 +89,9 @@ bin-release/
 /src/WebApps/RestaurantUI/dev-dist/sw.js
 /src/WebApps/RestaurantUI/dev-dist/workbox-5357ef54.js
 /src/Services/Customer/Customer.API/Customer.API.csproj.user
+/src/WebApps/WebUI/dist
+/src/.idea/.idea.AcontPlus/.idea
+/src/WebApps/client-sveltekit/.idea
+/src/WebApps/WebUI/.vscode
+/src/AcontPlus.sln.DotSettings
+/src/WebApps/client/.fleet

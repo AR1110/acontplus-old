@@ -2,8 +2,8 @@
 using Common.Core.Utils;
 using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common;
-using Services.Common.Logs;
+using Services.Common.Extensions;
+
 
 namespace Mechanical.API.Controllers
 {
@@ -12,9 +12,9 @@ namespace Mechanical.API.Controllers
     public class VehicleController : BaseApiController
     {
         private readonly IVehicleService _vehicleService;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public VehicleController(IVehicleService vehicleService, LogWriter log)
+        public VehicleController(IVehicleService vehicleService, ICustomLogger log)
         {
             _vehicleService = vehicleService;
             _log = log;
@@ -91,8 +91,7 @@ namespace Mechanical.API.Controllers
         {
             try
             {
-                bool response = await _vehicleService.DeleteAsync(id);
-                if (!response) { return BadRequest("No se pudo Eliminar"); }
+                var response = await _vehicleService.DeleteAsync(id);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -107,8 +106,7 @@ namespace Mechanical.API.Controllers
         {
             try
             {
-                bool response = await _vehicleService.UpdateStateAsync(id, state);
-                if (!response) { return BadRequest("No se pudo Actualizar"); }
+                var response = await _vehicleService.UpdateStateAsync(id, state);
                 return Ok(response);
             }
             catch (Exception ex)

@@ -55,7 +55,7 @@
             // fechaInicio: new Date(),
             // fechaFin: new Date()
         };
-
+        $scope.subcategories = [];
         $scope.estadoDocs = [{
             estado: 'AC',
             descripcion: 'Activo'
@@ -92,6 +92,7 @@
             })
         }
 
+    
 
         //Formulario Nuevo
         $scope.openModalNew = async () => {
@@ -180,6 +181,9 @@
         }
 
 
+        $scope.refresh = function(){
+            $scope.getComprasNoHabitual()
+        }
 
         //Obtenemos Datos 
         $scope.getComprasNoHabitual = () => {
@@ -208,6 +212,7 @@
                     ckFecha: $scope.dataSearch.checkBoxFecha,
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
+                    subcategoryId: $scope.dataSearch.subcategoryId,
                 }
                 $scope.documentoIngreso = [];
                 sumImporteTotal();
@@ -232,10 +237,10 @@
             try {
                 compraNoHabSvc.getDataFilter().then(
                     response => {
-                        const { estabs, estadosDoc } = response;
+                        const { estabs, estadosDoc, subcategories } = response;
                         $scope.establecimientos = estabs;
                         $scope.estadosDoc = estadosDoc;
-
+                        $scope.subcategories = subcategories;
                         if ($scope.establecimientos.length > 0) {
                             let dataEstab = $scope.establecimientos.find(estab => estab.defaultEstab);
                             if (dataEstab) {
@@ -416,6 +421,7 @@
         $scope.puntosEmision = [];
         $scope.tiemposCredito = [];
         $scope.datosAdicionalesArticulo = [];
+        $scope.subcategories = []
 
         $scope.cuotas = [];
 
@@ -501,7 +507,8 @@
                     estabs,
                     decimal,
                     tarifasImpuesto,
-                    tiemposCredito
+                    tiemposCredito,
+                    subcategories,
                 } = mainDataForm;
 
                 $scope.establecimientos = estabs;
@@ -509,6 +516,7 @@
                 $scope.decimal = decimal;
                 $scope.tarifasImpuesto = tarifasImpuesto;
                 $scope.tiemposCredito = tiemposCredito;
+                $scope.subcategories = subcategories;
 
                 if (!("comprobante" in params && params.comprobante.idDocumentoIngreso > 0)) {
                     if ($scope.establecimientos.length > 0) {
@@ -1152,23 +1160,24 @@
                 let dataMedida = medidas.find((medida) => medida.defaultMedida);
                 let dataTarifaImpuesto = $scope.tarifasImpuesto.find(
                     (ti) => ti.codigoPorcentaje === articulo.codigoPorcentaje
-                );
-
-                let precioCosto = dataMedida.precioCosto;
+                ); 
 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
                 entity.descripcion = articulo.descripcion;
-                entity.precioUnitario = fS.roundNumber(
-                    precioCosto,
-                    $scope.decimal.nroPrecio
-                );
+                entity.precioUnitario = 
                 entity.etiquetas = etiquetas;
 
                 //Medidas
                 entity.medidas = medidas;
                 entity.idMedida = dataMedida.idMedida;
                 entity.conversion = dataMedida.conversion;
+                entity.precioCosto = dataMedida.precioCosto;
+                entity.precioUnitario = fS.roundNumber(
+                    dataMedida.precioUnitario,
+                    $scope.decimal.nroPrecio
+                );
+                entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
 
                 //IVA
                 entity.idImpuesto = dataTarifaImpuesto.idImpuesto;

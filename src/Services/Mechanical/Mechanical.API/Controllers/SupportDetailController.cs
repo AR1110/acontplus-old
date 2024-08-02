@@ -2,8 +2,8 @@
 using Common.Core.Utils;
 using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common;
-using Services.Common.Logs;
+using Services.Common.Extensions;
+
 
 namespace Mechanical.API.Controllers
 {
@@ -12,9 +12,9 @@ namespace Mechanical.API.Controllers
     public class SupportDetailController : ControllerBase
     {
         public readonly ISupportDetailService _supportDetailService;
-        public readonly LogWriter _log;
+        public readonly ICustomLogger _log;
 
-        public SupportDetailController(ISupportDetailService supportDetailService, LogWriter log)
+        public SupportDetailController(ISupportDetailService supportDetailService, ICustomLogger log)
         {
             _supportDetailService = supportDetailService;
             _log = log;

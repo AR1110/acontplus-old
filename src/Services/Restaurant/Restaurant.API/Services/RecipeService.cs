@@ -1,5 +1,6 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.API.Data;
 using Restaurant.API.Entities;
@@ -9,10 +10,10 @@ namespace Restaurant.API.Services
 {
     public class RecipeService : IRecipe
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
         private readonly RestaurantContext _context;
 
-        public RecipeService(IADORepository repository, RestaurantContext context)
+        public RecipeService(IAdoRepository repository, RestaurantContext context)
         {
             _context = context;
             _repository = repository;
@@ -56,7 +57,7 @@ namespace Restaurant.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
 

@@ -2,13 +2,13 @@
 (function () {
     'use strict'
 
-    const URL_TEMPLATE = '~/Areas/Consolidacion/Pages/Shared/'
+    const URL_TEMPLATE = '~/Pages/Inventario/Consolidacion/Shared/'
 
     let modalSvc = {};
     let commonSvc = {};
     let mS = {};
     let tS = {};
-    let fS = {}
+    let fS = {};
 
     let establecimientos = [];
     let bodegas = [];
@@ -29,7 +29,6 @@
         $injector,
         $filter
     ) {
-
         modalSvc = $injector.get("modalService");
         commonSvc = $injector.get("commonService");
         mS = $injector.get("mainService");
@@ -182,7 +181,7 @@
             try { 
                 let fileCtrl = nombreModalInventario.CONSOLIDACION.fileCtrl;
                 let ctrl = nombreModalInventario.CONSOLIDACION.controllers['D'];
-                let template = nombreModalInventario.CONSOLIDACION.templates['D'];
+                let template = URL_TEMPLATE + '_ModalDetalle.cshtml';
        
                 let controller = (await import(fileCtrl))[ctrl];
                 modalSvc.openModalCustom({
@@ -219,6 +218,40 @@
                             windowClass: 'uibModalFullScreen'
                         }).result.then(result => {
                             
+                            if (result !== null && typeof result === 'object') {
+                                $scope.getConsolidaciones()
+                            }
+                        })
+
+                    }
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader());
+            } catch (error) {
+                hideLoader();
+                console.log(error)
+            }
+        }
+
+
+        $scope.openModalDuplicar = async (item) => {
+            try {
+
+                showLoader();
+                consolidacionInvSvc.getId(item.idConsolidacionInventario).then(response => {
+                    if (Object.keys(response.comprobante).length > 0 && response.detalles.length > 0) {
+                        modalSvc.openModalCustom({
+                            controller: modalConsolidacionAddEditCtrl,
+                            template: URL_TEMPLATE + '_ModalNuevo.cshtml',
+                            size: 'xl',
+                            params: {
+                                data: response,
+                                tipoRegistro: 3
+                            },
+                            isRenderRazorPartial: true,
+                            windowClass: 'uibModalFullScreen'
+                        }).result.then(result => {
+
                             if (result !== null && typeof result === 'object') {
                                 $scope.getConsolidaciones()
                             }
@@ -321,7 +354,8 @@
         $scope.puntosEmision = [];
         $scope.bodegas = [];
         $scope.data = {
-            fechaEmision: new Date()
+            fechaEmision: new Date(),
+            total: 0
         };
         $scope.dataClone = {};
         $scope.decimal = {};
@@ -356,16 +390,14 @@
                     return
                 }
 
-                if (colDef.field === "precioActual") {
-                    rowEntity.precioCosto = fS.roundNumber(rowEntity.precioCosto, $scope.decimal.nroPrecio)
-                    rowEntity.precioActual = fS.roundNumber(rowEntity.precioActual, $scope.decimal.nroPrecio)
+                if (colDef.field === "precioUnitario") {
+                    rowEntity.precioUnitario = fS.roundNumber(rowEntity.precioUnitario, $scope.decimal.nroPrecio) 
                 }
 
                 if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
 
-                    rowEntity.precioCosto = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio);
-                    rowEntity.precioActual = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio);
+                    rowEntity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio); 
                     rowEntity.conversion = dataMedida.conversion;
                 }
 
@@ -438,6 +470,30 @@
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     $scope.bodegas = dataEstab.bodegas;
 
+                    $scope.data = structuredClone(comprobante);
+                    $scope.data.codEstab = dataPuntoEmision.codEstab;
+                    $scope.dataClone.codEstab = $scope.data.codEstab;
+
+                    const dataBodega = $scope.bodegas.find(b => b.defaultBodega);
+                    if (dataBodega) {
+                        $scope.data.idBodega = dataBodega.idBodega;
+                        $scope.dataClone.idBodega = $scope.data.idBodega;
+                    }
+                    $scope.gridOptions.data = detalles;
+                    setCountIndex();
+                }
+
+                if(params.tipoRegistro===3){
+                    const { comprobante, detalles } = params.data;
+                    let dataPuntoEmision = $scope.establecimientos.flatMap(e => e.puntosEmision).find(p => p.idPuntoEmision === comprobante.idPuntoEmision);
+                    let dataEstab = $scope.establecimientos.find(e => e.codEstab === dataPuntoEmision.codEstab);
+
+                    $scope.puntosEmision = dataEstab.puntosEmision;
+                    $scope.bodegas = dataEstab.bodegas;
+
+                    comprobante.idConsolidacionInventario = 0;
+                    comprobante.fechaEmisionDocCreado= null;
+                    comprobante.fechaEmision = new Date()
                     $scope.data = structuredClone(comprobante);
                     $scope.data.codEstab = dataPuntoEmision.codEstab;
                     $scope.dataClone.codEstab = $scope.data.codEstab;
@@ -576,8 +632,8 @@
                 aggregationLabel: "$",
             },
             {
-                name: 'P. Costo Actual',
-                field: 'precioActual',
+                name: 'P. Costo Unitario',
+                field: 'precioUnitario',
                 min: 0,
                 type: 'number',
                 enableCellEdit: true,
@@ -649,7 +705,7 @@
                     //windowClass: 'uibModalFullScreen'
                 }).result.then((result) => {
                 
-                    if (result !== null && Array.isArray(result.articlesSelected)) {
+                    if (result && Array.isArray(result.articlesSelected)) {
                         const {
                             articlesSelected,
                             opcion
@@ -657,11 +713,13 @@
                         for (const a of articlesSelected) {
                             if (!$scope.gridOptions.data.some(x => x.idArticulo == a.idArticulo)) {
                                 let obj = structuredClone(a);
-                                obj.precioActual = obj.precioCosto;
+                                obj.precioUnitario = obj.precioUnitario;
+                                obj.precioCosto = obj.precioCosto;
+                                obj.precioCostoFraccionado = obj.precioCostoFraccionado;
                                 console.log(opcion)
                                 obj.cantidad = opcion && opcion===6? obj.cantidad : 1;
                                 obj.idBodega = $scope.data.idBodega;
-                                let total = obj.cantidad * obj.precioActual;
+                                let total = obj.cantidad * obj.precioUnitario;
                                 obj.total = fS.roundNumber(total, $scope.decimal.nroPrecio); //Total Precio Venta
                                 $scope.gridOptions.data.push(obj)
                             }
@@ -827,14 +885,19 @@
             entity.porcentajeTipoIva = articulo.tarifa;
             entity.nombreTipoIva = articulo.tarifa;
             entity.stock = articulo.stock;
-            entity.precioCosto = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
-            entity.precioActual = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
-            entity.total = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
             entity.idBodega = $scope.data.idBodega;
             entity.llevaInventario = articulo.llevaInventario;
+
             entity.medidas = medidas; //Lista Medida 
             entity.idMedida = dataMedida.idMedida; //Medida por defecto  
             entity.conversion = dataMedida.conversion;
+            entity.precioCosto = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
+            entity.precioUnitario = dataMedida.precioUnitario;
+            entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
+          //  entity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio)
+
+            entity.total = fS.roundNumber(entity.cantidad * dataMedida.precioUnitario, $scope.decimal.nroPrecio)
+
             
         }
 
@@ -844,7 +907,7 @@
         }
 
         function setTotalColumn(rowEntity) {
-            let total = rowEntity.cantidad * rowEntity.precioActual;
+            let total = rowEntity.cantidad * rowEntity.precioUnitario;
             rowEntity.total = fS.roundNumber(total, $scope.decimal.nroPrecio); //Total Precio Venta
         }
 
@@ -870,6 +933,7 @@
 
         $scope.setItemArticuloEnDetalle = async function (item) {
             try {
+              
                 const { articulo, medidas } = item;
                 if (!articulo.llevaInventario) {
                     Swal.fire({

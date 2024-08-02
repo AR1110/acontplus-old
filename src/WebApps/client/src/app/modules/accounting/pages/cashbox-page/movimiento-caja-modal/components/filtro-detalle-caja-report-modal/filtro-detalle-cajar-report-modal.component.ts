@@ -1,79 +1,90 @@
-import { Component, Input, inject } from "@angular/core";
-import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
-import { CODE_REPORT } from "@core/constants/global.constants";
-import { TipoDoc } from "@core/models/tipo-doc.model";
-import { SharedService } from "@core/services/shared.service";
-import { ToasterService } from "@core/services/toaster.service";
-import { formatDateMoment } from "@core/utils/format-date-moment";
-import { hideLoader } from "@core/utils/loader";
-import { stringToDate } from "@core/utils/string-to-date";
-import { isValidField } from "@core/utils/utils";
-import { AccountingModule } from "@modules/accounting/accounting.module";
-import { EntidadFinanciera } from "@modules/accounting/models/entidad-financiera.model";
-import { ControlCajaService } from "@modules/accounting/services/control-caja.service";
-import { NgbActiveModal, NgbTimepickerModule } from "@ng-bootstrap/ng-bootstrap";
-import { AppModule } from "src/app/app.module";
+import { CommonModule } from '@angular/common';
+import { Component, inject, Input } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { CODE_REPORT } from '@core/constants/global.constants';
+import { TipoDoc } from '@core/models/tipo-doc.model';
+import { SharedService } from '@core/services/shared.service';
+import { ToasterService } from '@core/services/toaster.service';
+import { formatDateMoment } from '@core/utils/format-date-moment';
+import { hideLoader } from '@core/utils/loader';
+import { stringToDate } from '@core/utils/string-to-date';
+import { isValidField } from '@core/utils/utils';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
+import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
+import {
+  NgbActiveModal,
+  NgbTimepickerModule,
+} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-filtro-detalle-caja-report-modal',
   standalone: true,
-  imports: [AppModule, AccountingModule, NgbTimepickerModule, DateRangeSelectionComponent],
-  templateUrl: './filtro-detalle-cajar-report-modal.component.html'
+  imports: [
+    CommonModule,
+    FormsModule,
+    FontAwesomeModule,
+    NgbTimepickerModule,
+    DateRangeSelectionComponent,
+  ],
+  templateUrl: './filtro-detalle-cajar-report-modal.component.html',
 })
 export class FiltroDetalleCajaReportModal {
-  @Input("params") params = {
+  @Input('params') params = {
     id: 0,
     fechaApertura: '',
-    fechaCierre: ''
-  }
-
-
+    fechaCierre: '',
+  };
+  activeModal = inject(NgbActiveModal);
+  dataSearch = {
+    idEntidadFinanciera: '',
+    codDoc: '',
+    fromDate: new Date(),
+    toDate: new Date(),
+    ckHora: true,
+  };
+  entidadesFinanciera: Array<EntidadFinanciera> = [];
+  tipoDocumentos: Array<TipoDoc> = [];
+  dateRangeOptions = {
+    timePicker: true,
+    format: 'YYYY-MM-DD HH:mm',
+  };
   private controlCajaSvc = inject(ControlCajaService);
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
 
-
-  activeModal = inject(NgbActiveModal);
-
-  dataSearch = {
-    idEntidadFinanciera: "",
-    codDoc: "",
-    fromDate: new Date(),
-    toDate: new Date(),
-    ckHora: true
-  }
-
-  entidadesFinanciera: Array<EntidadFinanciera> = [];
-  tipoDocumentos: Array<TipoDoc> = [];
-
-  dateRangeOptions = {
-    timePicker: true,
-    format: 'YYYY-MM-DD HH:mm'
-  }
-
-
   ngOnInit() {
-    let fromDate = stringToDate(this.params.fechaApertura, "dd/MM/yyyy HH:ii", "/");
-    let toDate = this.params.fechaCierre && stringToDate(this.params.fechaCierre, "dd/MM/yyyy HH:ii", "/");
+    let fromDate = stringToDate(
+      this.params.fechaApertura,
+      'dd/MM/yyyy HH:ii',
+      '/',
+    );
+    let toDate =
+      this.params.fechaCierre &&
+      stringToDate(this.params.fechaCierre, 'dd/MM/yyyy HH:ii', '/');
 
-    this.dataSearch.fromDate = fromDate || new Date()
+    this.dataSearch.fromDate = fromDate || new Date();
     this.dataSearch.toDate = toDate || new Date();
 
     try {
       this.controlCajaSvc.getDataForm().subscribe({
         next: (response) => {
           hideLoader();
-          let { formaPagos, tipoDocumento } = response as { formaPagos: any, tipoDocumento: any }
+          let { formaPagos, tipoDocumento } = response as {
+            formaPagos: any;
+            tipoDocumento: any;
+          };
           this.entidadesFinanciera = formaPagos;
           this.tipoDocumentos = tipoDocumento;
         },
         error(err) {
           hideLoader();
-          console.log(err)
+          console.log(err);
         },
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -100,15 +111,13 @@ export class FiltroDetalleCajaReportModal {
 
   getReport(format: 'pdf' | 'excel') {
     try {
-
       if (!(this.params.id > 0)) {
         this.tS.toastr({
           type: 'warning',
-          message: 'id no proporcionado!'
-        })
-        return
+          message: 'id no proporcionado!',
+        });
+        return;
       }
-
 
       let dataParams = {
         tipo: 2,
@@ -117,25 +126,28 @@ export class FiltroDetalleCajaReportModal {
         id: this.params.id,
         horaInicio: formatDateMoment(this.dataSearch.fromDate),
         horaFin: formatDateMoment(this.dataSearch.toDate),
-        ckHora: this.dataSearch.ckHora
-      }
+        ckHora: this.dataSearch.ckHora,
+      };
 
-      console.log(dataParams)
+      console.log(dataParams);
 
       const parameters = {
         hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
         reportParams: JSON.stringify({
           codigo: CODE_REPORT.CDCC,
           format,
-          aditionalParams: []
+          aditionalParams: [],
         }),
-        dataParams: JSON.stringify(dataParams)
-      }
+        dataParams: JSON.stringify(dataParams),
+      };
 
-      this.sharedSvc.getReport(parameters, format, true)
+      this.sharedSvc.getReport({
+        data: parameters,
+        format: format,
+        isOldVersion: true,
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-
 }

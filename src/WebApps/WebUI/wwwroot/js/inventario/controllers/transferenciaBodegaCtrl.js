@@ -185,24 +185,22 @@
                 let template = nombreModalInventario.TRANSFERENCIA_BODEGA.templates['D'];
                 let controller = (await import(fileCtrl))[ctrl];
 
-                transBodegaSvc.getIdDetalle(item.idTransferenciaBodega).then(response => {
-                    let modalRef = modalSvc.openModalCustom({
-                        controller,
-                        template,
-                        isRenderRazorPartial: true,
-                        size: 'xl',
-                        params: {
-                            data: response,
-                        }
-                    })
-                    modalRef.result.then(result => {
-                        if (typeof result === 'object') {
-                            $scope.getTransferenciasBodega();
-                        }
-                    })
-                }).catch(error => {
-                    console.log(error)
-                }).finally(() => hideLoader())
+                let modalRef = modalSvc.openModalCustom({
+                    controller,
+                    template,
+                    isRenderRazorPartial: true,
+                    size: 'xl',
+                    params: {
+                        data: response,
+                    }
+                })
+                modalRef.result.then(result => {
+                    if (typeof result === 'object') {
+                        $scope.getTransferenciasBodega();
+                    }
+                })
+
+               
             } catch (error) {
                 console.log(error)
             } finally {
@@ -281,9 +279,9 @@
 
     app.controller('ModalTransferenciaBodegaCtrl', ModalTransferenciaBodegaCtrl);
 
-    ModalTransferenciaBodegaCtrl.$inject = ["$scope", "$timeout", "$uibModalInstance", "params"];
+    ModalTransferenciaBodegaCtrl.$inject = ["$scope", "$timeout", "$uibModalInstance",'articuloService', "params"];
 
-    function ModalTransferenciaBodegaCtrl($scope, $timeout, $uibModalInstance, params) {
+    function ModalTransferenciaBodegaCtrl($scope, $timeout, $uibModalInstance, articuloSvc, params) {
         let { data } = params;
 
         $scope.tipoDoc = {
@@ -294,7 +292,7 @@
         };
         $scope.puntosEmision = [];
         $scope.tiposTransaccion = [];
-
+        $scope.tipoDocumento = [];
         let itemsDeleted = [];
 
         $scope.gridOptions = {
@@ -331,16 +329,100 @@
                     rowEntity[colDef.field] = oldValue;
                 }
 
-                if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
-                    let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
-                    rowEntity.precioCosto = dataMedida.precioCosto;
-                    rowEntity.conversion = dataMedida.conversion;
+                if (colDef.field === "idMedida" && rowEntity.idMedida == oldValue) return
+                if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue) return
+
+               
+
+                //Verificacion del stock
+                if (["idMedida", "cantidad"].includes(colDef.field)) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
                 }
 
                 $scope.setTotal(rowEntity);
 
 
             })
+        }
+
+        /**
+         * Comprueba la notificación de stock al modificar un campo en una fila de la cuadrícula.
+         * @param {string} field - Campo modificado.
+         * @param {*} rowEntity - Objeto de fila actual.
+         * @param {*} oldValue - Valor anterior del campo modificado.
+         */
+        function checkNotificationStock(field, rowEntity, oldValue) {
+            try {
+                rowEntity.idBodega = $scope.data.idBodegaOrigen;
+
+                // Clona el objeto de la fila y la lista de artículos para evitar modificaciones directas.
+                let rowItemClone = structuredClone(rowEntity);
+                let gridOptionsClone = structuredClone($scope.gridOptions.data);
+
+                // Realiza la fusión de elementos en la lista de artículos clonada.
+                let dataItemMerge = fS.mergeItemStock(gridOptionsClone, rowItemClone);
+
+                // Si la cantidad no ha cambiado, no realizar más acciones.
+                if (dataItemMerge.cantidad == oldValue) return;
+
+ 
+                showLoader();
+
+                articuloSvc.checkNotificationStock({
+                    idArticulo: rowEntity.idArticulo,
+                    cantidad: -dataItemMerge.cantidadStock,
+                    idBodega: rowEntity.idBodega,
+                    idMedida: rowEntity.idMedida
+                }).then(async responseApi => {
+                    // Oculta el indicador de carga después de recibir la respuesta del servicio.
+                    hideLoader();
+
+                    let { code, message, titleSms } = responseApi;
+
+                    // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
+                    if (code === "1") {
+                        if (field === "idMedida" && rowEntity.idMedida !== oldValue) {
+                            let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
+                            rowEntity.precioCosto = dataMedida.precioCosto;
+                            rowEntity.precioUnitario = dataMedida.precioUnitario;
+                            rowEntity.conversion = dataMedida.conversion;
+                        }
+                        return;
+                    }
+
+                    // Muestra un mensaje de advertencia y espera la confirmación del usuario.
+                    let { isConfirmed } = await Swal.fire({
+                        title: `<small>${titleSms}</small>`,
+                        icon: 'warning',
+                        html: `<small>${message}</small>`,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    });
+
+                    // Según la confirmación, realiza acciones adicionales.
+                    if (isConfirmed) {
+                        if (code === "0") {
+                            // Si el código es "0", restaura el valor anterior y realiza cálculos totales.
+                            rowEntity[field] = oldValue;
+                            $scope.setTotal(rowEntity);
+                            $("#custom-template-md-autocomplete-articulo").focus();
+                        }
+                        if (code === "2") {
+                            // Si el código es "2", solo realiza cálculos totales.
+                            $scope.setTotal(rowEntity);
+                        }
+                    }
+                }).catch(error => {
+                    // Maneja errores en la llamada al servicio.
+                    hideLoader();
+                    console.log(error);
+                });
+            } catch (error) {
+                // Maneja errores generales en el bloque try-catch.
+                hideLoader();
+                console.log(error);
+            }
         }
 
         $scope.setFocusArticulo = function () {
@@ -351,7 +433,7 @@
 
         //Set Total Row 
         $scope.setTotal = function (rowEntity) {
-            let total = rowEntity.cantidad * rowEntity.precioCosto;
+            let total = rowEntity.cantidad * rowEntity.precioUnitario;
             rowEntity.total = fS.roundNumber(total, 5); //Total Precio Venta
         }
 
@@ -462,12 +544,12 @@
             //      }, aggregationLabel: "$",  
             // },
             {
-                name: 'P. Costo',
-                field: 'precioCosto',
+                name: 'P. Costo Unitario',
+                field: 'precioUnitario',
                 enableCellEditOnFocus: true,
                 enableColumnMenu: false,
                 type: 'number',
-                width: '8%',
+                width: '9%',
                 minWidth: '100',
                 // aggregationType: uiGridConstants.aggregationTypes.sum,
                 // footerCellFilter: 'number:2',
@@ -497,6 +579,7 @@
                 $scope.establecimientosOrigen = structuredClone(mainDataForm.estabs);
                 $scope.establecimientosDestino = structuredClone(mainDataForm.estabs);
                 $scope.tiposTransaccion = mainDataForm.tiposTransaccion;
+                $scope.tipoDocumento = mainDataForm.tipoDocumento;
 
                 if ($scope.establecimientosOrigen.length === 0) {
                     tS.toastr('info', 'No tienes asignado ningún Establecimiento');
@@ -532,6 +615,7 @@
                     //Bodega Destino 
                     $scope.bodegasDestino = dataEstabDestino.bodegas;
                     $scope.gridOptions.data = detalles;
+                    console.log(detalles)
                     enumGridOptions();
                     $scope.tituloModal = 'Editar';
                     $scope.btnText = 'Actualizar';
@@ -610,6 +694,9 @@
                     }
                     $scope.data.codEstabDestino = null;
                     $scope.data.idBodegaDestino = 0;
+                    for(let item of $scope.gridOptions.data){
+                        item.cantidad = 0;
+                    }
                     $scope.$apply();
                 } else {
                     $scope.data.codEstabOrigen = $scope.cloneCodEstabOrigen;
@@ -701,6 +788,7 @@
                 medidas: [],
                 stock: 0,
                 precioCosto: 0,
+                precioUnitario: 0,
                 total: 0,
                 estado: true,
                 conversion: 1,
@@ -708,18 +796,22 @@
         }
 
         $scope.addItem = function (entity, item, medidas) {
-            let dataMedida = medidas[0];
+            
+            let dataMedida = medidas.find(m=>m.defaultMedida);
+
             entity.codigo = item.codigoArticulo;
             entity.idArticulo = item.idArticulo;
             entity.descripcion = item.descripcion;
             entity.stock = item.stock;
-            entity.precioCosto = dataMedida.precioCosto;
-            entity.precioActual = dataMedida.precioCosto;
+            entity.precioActual = dataMedida.precioCostoFraccionado;
             entity.total = dataMedida.precioCosto;
             entity.llevaInventario = item.llevaInventario;
             entity.medidas = medidas; //Lista Medida 
             entity.idMedida = dataMedida.idMedida; //Medida por defecto    
             entity.conversion = dataMedida.conversion;
+            entity.precioCosto = dataMedida.precioCosto;
+            entity.precioUnitario = dataMedida.precioUnitario;
+            entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
         }
 
 
@@ -878,6 +970,7 @@
                     data: $scope.data,
                     detalles: $scope.gridOptions.data,
                     tiposTransaccion: $scope.tiposTransaccion,
+                    tipoDocumento : $scope.tipoDocumento,
                     itemsDeleted
                 })
                 showLoader();

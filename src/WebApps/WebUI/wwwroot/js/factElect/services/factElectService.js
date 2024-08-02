@@ -1,15 +1,14 @@
-
-/**
- * - Documento Electronico
- * - Factura 
- * - Nota Credito
- */
+//@ts-check
 (function () {
 
     'use strict';
     const URL_API = 'FactElect/'
 
-    app.factory('docElectService', function ($injector) {
+    app.factory('docElectService', docElectService)
+
+    docElectService.$inject = ['$injector']
+
+    function docElectService($injector) {
         let URL = `${URL_API}DocumentoElectronico/`
         let URL_RETENCION_ATS = 'FactElect/RetencionAts/'
         let mS = $injector.get('mainService');
@@ -66,11 +65,52 @@
             })
         }
 
+        service.getAll = function (obj) {
+            let pageIndex = obj.pageIndex || 1;
+            let pageSize = obj.pageSize || 25;
+
+            let json = JSON.stringify({
+                tipo: 1,
+                ...obj,
+                pageIndex,
+                pageSize
+            })
+            return mS.getData('get', `${URL}?json=${json}`, null, true).then(response => {
+                let results = [];
+                if (response.code === "1") {
+                    let [comprobantesElectronicos] = JSON.parse(response.payload)
+
+                    comprobantesElectronicos = comprobantesElectronicos || [];
+                    results = comprobantesElectronicos.map(item => {
+                        return {
+                            idDocumentoElectronico: item.idDocumentoElectronico,
+                            idDocumento: item.idDocumento,
+                            codDoc: item.codDoc,
+                            comprobante: item.comprobante,
+                            comprobanteVersion: `${item.comprobante}-${item.versionComp}`,
+                            serieComprobante: item.serieComprobante,
+                            rucReceptor: item.rucReceptor,
+                            razonSocial: item.razonSocial,
+                            fechaEmision: item.fechaEmision,
+                            claveAcceso: item.claveAcceso,
+                            fechaAutorizacion: item.fechaAutorizacion,
+                            estado: item.estado,
+                            codEstado: item.codEstado,
+                            versionComp: item.versionComp,
+                            usuario: item.usuario,
+                            codEstab: item.codEstab,
+                            totalRecords: item.totalRecords,
+                        }
+                    })
+                }
+                return results;
+            })
+        }
+
+
+
         service.getByStatus = (params) => {
             return mS.getData('get', `${URL}GetByStatus/?json=${JSON.stringify(params)}`, null, true).then(response => {
-                if (response.code === "0") {
-                    throw response;
-                }
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload)[0]
                     return mainData;
@@ -106,10 +146,14 @@
 
         return service;
 
-    })
+    }
 
 
-    app.factory('facturaService', ['$injector', function ($injector) {
+    app.factory('facturaService', facturaService)
+
+    facturaService.$inject = ['$injector'];
+
+    function facturaService($injector) {
         let url = `${URL_API}Factura/`
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
@@ -122,7 +166,7 @@
 
 
         service.getDataForm = () => {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -147,7 +191,14 @@
                     let clienteDefault = {};
                     if (clienteDefaultTemp && clienteDefaultTemp.length > 0) {
                         clienteDefault = clienteDefaultTemp[0];
+
+                        clienteDefault = {
+                            ...clienteDefault,
+                            placas: clienteDefault.placa ? clienteDefault.placa.split(/[\|;]/) : []
+                        }
                     }
+
+
 
                     let config = mainData[6][0];
                     let vendedores = mainData[7];
@@ -165,7 +216,7 @@
 
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
                     let { sales, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
-                
+
 
                     // Transforma datos temporales en un formato estructurado para establecimientos y puntos de emisión
                     let dataToGroup = {
@@ -175,9 +226,10 @@
                     }
                     let estabs = fS.groupingEstab(dataToGroup);
 
-                    let formasPago = mainData[11]; 
+                    let formasPago = mainData[11];
                     let tiposIdentificacion = mainData[12]
                     // Devuelve los datos finales estructurados
+
                     return {
                         estabs,
                         tarifasImpuesto,
@@ -200,7 +252,7 @@
         }
 
         service.getDataFilter = () => {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 4 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 4 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -228,7 +280,11 @@
          * @returns 
          */
         service.getAll = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
+                let data = {
+                    facturas: [],
+                    dataTotals: {}
+                }
                 if (response.code === "0") {
                     throw response;
                 }
@@ -237,36 +293,47 @@
 
                     let mainData = JSON.parse(response.payload);
                     let facturasRepository = mainData[0];
-                    let { totalRecords, totalDocument, totalAbono, totalSaldo } = facturasRepository[0];
+                    let totalRecords = 0, totalDocument = 0, totalAbono = 0, totalSaldo = 0;
+                    if (facturasRepository.length > 0) {
+                        let data = facturasRepository[0];
+
+                        totalRecords = data.totalRecords;
+                        totalDocument = data.totalDocument;
+                        totalAbono = data.totalAbono;
+                        totalSaldo = data.totalSaldo
+                    }
 
                     let facturas = facturasRepository.map(item => {
+                        let colorRow = '';
+                        if (item.estadoSri === 6) {
+                            colorRow = 'table-danger';
+                        }
+                        if (item.estadoSri === 4) {
+                            colorRow = 'table-success'
+                        }
+
                         return {
-                            codigoTipoDoc: 'FV',//📛
                             comprobante: 'Factura',
                             idCliente: item.idCliente,
                             idDocumento: item.idDocumento,
                             idCuentaPorCobrar: item.idCuentaPorCobrar,
+                            idDocumentoElectronico: item.idDocumentoElectronico,
                             codEstab: item.codEstab,
-                            telefonoEstablecimiento: item.telefonoEstablecimiento,
-                            nombreComercial: item.nombreComercial,
+                            razonSocialComprador: item.nombreFiscal,
                             fechaEmision: item.fechaEmision,
                             fechaVencimiento: item.fechaVencimiento,
                             total: item.total,
-                            nroFactura: item.nroFactura, //📛
-                            serieComprobante: item.nroFactura,
-                            telefono: item.telefono,
-                            nombreFiscal: item.nombreFiscal,
-                            correos: item.correos,
-                            identificacionComprador: item.identificacionComprador,
+                            serieComprobante: item.serieComprobante,
                             estadoFinanciero: item.estadoFinanciero,
-                            codDoc: item.codDoc,
+                            codDoc: "01",
                             abono: item.abono,
                             saldo: item.saldo,
                             tiempoCredito: item.tiempoCredito,
-                            style: item.style,
                             usuario: item.usuario,
                             codEstado: item.codEstado,
                             esContado: item.tiempoCredito,
+                            estadoSri: item.estadoSri,
+                            colorRow,
                             totalRecords: item.totalRecords,
                             esCobrado: item.codEstado === 'CBR',
                             disabledActionUpdate: item.codEstado === 'CBR' || item.codEstado === 'PP' || item.codEstado === 'A',
@@ -278,12 +345,11 @@
                     })
 
 
-                    return {
-                        facturas,
-                        dataTotals: { totalRecords, totalDocument, totalAbono, totalSaldo }
-                    }
 
+                    data.facturas = facturas,
+                        data.dataTotals = { totalRecords, totalDocument, totalAbono, totalSaldo }
                 }
+                return data;
             })
         }
 
@@ -297,7 +363,7 @@
                 throw ''
             }
             query.tipo = 2;
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -319,18 +385,19 @@
             })
         }
 
-        service.getIdForInfo = function (id) {
+        service.getIdForInfo = function (id, idDocumentoElectronico) {
             let spParams = {
                 tipo: 8,
-                id
+                id,
+                idDocumentoElectronico //solo se envia cuando proviene de doc. electronico 
             }
-            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify(spParams)}`, null, true).then(response => {
                 if (response.code === "0") {
                     console.log("Get Data Info", response)
                     throw response;
                 }
                 if (response.code === "1") {
-                    let mainDataApi = JSON.parse(response.payload); 
+                    let mainDataApi = JSON.parse(response.payload);
 
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
@@ -370,8 +437,23 @@
             })
         }
 
+        service.getGroupInfoAdicionalArticulo = function(idInfoAdicional){
+            let json = JSON.stringify({
+                tipo: 6,
+                idInfoAdicional
+            })
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response=>{
+                let results = [];
+                if(response.code==="1"){
+                    let [mainData] = JSON.parse(response.payload);
+                    results = mainData;
+                }
+                return results;
+            })
+        }
+
         service.generateSerieComprobante = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 7 })), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 7 })), null, true).then(response => {
                 if (response.code === "0") {
                     console.warn(response)
                     throw null;
@@ -385,12 +467,12 @@
         }
 
         service.getId = function (id) {
-            return mS.getData('get', `${url}GetId/${id}`, null, true).then(response => {
+            return mS.getData('get', `${url}${id}`, null, true).then(response => {
                 if (response.code === "0") {
-                    console.log(response)
+                    throw new Error(response)
                 }
                 if (response.code === "1") {
-                    let mainDataApi = JSON.parse(response.payload);
+                    let mainDataApi = JSON.parse(response.payload); 
                     let [
                         comprobanteApi,
                         clienteTempApi,
@@ -398,17 +480,19 @@
                         infoAdicionalDocumento,
                         datosAdicionalesArticuloTemp,
                         formasPagoTemp,
-                       // cuenta,
-                      //  cuotas
+                        cuenta,
+                        cuotas
                     ] = mainDataApi;
-                     
+
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
                     cliente = {
                         ...cliente,
                         identificacionComprador: cliente.numeroIdentificacion,
-                        razonSocialComprador: cliente.nombreFiscal
+                        razonSocialComprador: cliente.nombreFiscal,
+                        placas: cliente.placa ? cliente.placa.split(/[\|;]/) : []
                     }
+
 
 
                     let items = itemsApi.map((itemPrincipal, index) => {
@@ -424,24 +508,45 @@
 
                         const medidas = fS.processAndSortMeasures(principal, fraccionado);
 
+                        let uniqueRowDetalle = restItem.uuid;
+
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
+                        let datosAdicionalesArticulo = [];
 
-                        if ('infoDatosAdicionales' in itemPrincipal) {
-                            let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoDatosAdicionales);
-                            restItem.datosAdicionalesArticulo = infoAdicionalArrayTemp.map(dataAdicional => ({
-                                idArticulo: dataAdicional.idArticulo,
-                                idEtiqueta: dataAdicional.idEtiqueta,
+
+                        if (itemPrincipal.infoAdicionalArticulo && typeof itemPrincipal.infoAdicionalArticulo==='string') {
+                            let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoAdicionalArticulo);
+                            datosAdicionalesArticulo = infoAdicionalArrayTemp.map(dataAdicional => ({
+                                uniqueRowDetalle,
+                                idArticulo: restItem.idArticulo, 
                                 idInfoAdicional: dataAdicional.idInfoAdicional,
-                                jsonAdicional: JSON.parse(dataAdicional.jsonAdicional),
-                                uniqueId: dataAdicional.uniqueId,
-                                estado: dataAdicional.estado
+                                jsonAdicional: JSON.parse(dataAdicional.jsonAdicional),  
                             }))
                         }
+
+                        if (Array.isArray(datosAdicionalesArticuloTemp) && datosAdicionalesArticuloTemp.length>0){
+                            let datosAdicionalesFiltered = datosAdicionalesArticuloTemp.filter(daa=>daa.idFacturaDetalle===restItem.idFacturaDetalle)
+                                                                                    .map(daa=>{
+                                                                                        return {
+                                                                                            idHistoryInfoAdicional: daa.idHistoryInfoAdicional,
+                                                                                            uniqueRowDetalle,
+                                                                                            idInfoAdicional: daa.idInfoAdicional,
+                                                                                            jsonAdicional: daa.jsonAdicional && JSON.parse(daa.jsonAdicional) || [],
+                                                                                            selected: daa.selected,
+                                                                                        }
+                                                                                    })
+
+                            datosAdicionalesArticulo = [...datosAdicionalesArticulo, ...datosAdicionalesFiltered]
+                        }
+
+
+
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
                         let obj = {
                             n: index + 1,
+                            uniqueRowDetalle,
                             idFacturaDetalle: restItem.idFacturaDetalle,
                             cantidad: restItem.cantidad,
                             cantidadOriginal: restItem.cantidad,
@@ -471,7 +576,7 @@
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
-                            datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || [],
+                            datosAdicionalesArticulo,
                             datosAdicionales: restItem.datosAdicionales
                         }
 
@@ -485,31 +590,32 @@
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
                         fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
                         irbpnr: comprobanteTemp.irbpnr || 0,
-                       // idTiempoCredito : cuenta[0].idTiempoCredito,
-                        //    fechaVencimiento: fS.formatDate(cuenta[0].fechaVencimiento),
-                        fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
+                        idTiempoCredito: cuenta[0].idTiempoCredito,
+                        fechaVencimiento: fS.formatDate(cuenta[0].fechaVencimiento),
+
                     }
 
-                    // cuotas = cuotas.map(item => {
-                    //     return {
-                    //         idCuotaPorCobrar: item.idCuotaPorCobrar,
-                    //         nroCuota: item.nroCuota,
-                    //         fechaVencimiento: fS.formatDate(item.fechaVencimiento),
-                    //         cuota: item.cuota,
-                    //         entrada: item.entrada,
-                    //     }
-                    // })
+                    cuotas = cuotas.map(item => {
+                        return {
+                            idCuotaPorCobrar: item.idCuotaPorCobrar,
+                            nroCuota: item.nroCuota,
+                            fechaVencimiento: fS.formatDate(item.fechaVencimiento),
+                            cuota: item.cuota,
+                            entrada: item.entrada,
+                        }
+                    }) 
 
-                    let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
-                        idDocumento: item.idDocumento,
-                        idHistoryInfoAdicional: item.idHistoryInfoAdicional,
-                        idArticulo: item.idArticulo,
-                        idEtiqueta: item.idEtiqueta,
-                        idInfoAdicional: item.idInfoAdicional,
-                        jsonAdicional: item.jsonAdicional && JSON.parse(item.jsonAdicional) || [],
-                        selected: item.selected,
-                        estado: item.estado
-                    }))
+                    infoAdicionalDocumento = infoAdicionalDocumento || [];
+                    infoAdicionalDocumento = infoAdicionalDocumento.map(item=>{
+                        return {
+                            uniqueRowDetalle: item.uuid,
+                            idInfoAdicional: item.idInfoAdicional,
+                            idInfoAdicionalDoc: item.idInfoAdicionalDoc,
+                            nombre: item.nombre,
+                            valor: item.valor,
+                            estado: item.estado
+                        }
+                    })
 
                     let formasPago = formasPagoTemp.map(fp => {
                         return {
@@ -520,16 +626,15 @@
                             total: fp.total,
                             plazo: fp.plazo,
                         }
-                    });
+                    }); 
 
                     return {
                         comprobante,
                         cliente,
                         items,
-                        infoAdicionalDocumento,
-                        datosAdicionalesArticulo,
+                        infoAdicionalDocumento,                        
                         formasPago,
-                        cuotas: []
+                        cuotas
                     }
                 }
             })
@@ -540,7 +645,7 @@
                 tipo: 9,
                 id
             }
-            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify(spParams)}`, null, true).then(response => {
                 if (response.code === "0") {
                     console.log("Get Data Info", response)
                     throw response;
@@ -607,6 +712,7 @@
                             valorImpuesto: itemPrincipal.valorImpuesto,//✅
                             medidas,
                             conversion: dataMedida.conversion,
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
@@ -626,7 +732,7 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url + 'Insert', { data }, true).then(response => {
+            return mS.getData('post', url, { data }, true).then(response => {
                 if (response.code === "0") {
                     service.data = {};
                     return response;
@@ -651,7 +757,7 @@
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, { data }, true).then(response => {
+            return mS.getData('put', url + id, { data }, true).then(response => {
                 if (response.code === "0") {
                     service.data = {}
                     return response;
@@ -667,20 +773,17 @@
 
 
         service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
-                return response;
-            })
+            return mS.getData('delete', `${url}${id}`, null, true) 
         }
 
         service.queryMapper = function (params) {
-            const {
+            let {
                 data,
                 cliente,
                 dataFormaPago,
                 detalles,
                 itemsDeleted,
-                infoAdicionalDocumento,
-                historyDatosAdicionales,
+                infoAdicionalDocumento, 
                 cuotas,
                 fromAprobacion = false
             } = params;
@@ -705,21 +808,70 @@
             factura.telefono = cliente.telefono;
             factura.recargo = data.recargo || 0;
             factura.propina = data.propina || 0;
-
-            const itemsMainMapper = service.detalleMapperTo(detalles, fromAprobacion);
-            const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted, fromAprobacion)
-            const impuestos = fS.impuestoTarifaMapperTo(detalles);
-            const mergeItems = [
-                ...itemsMainMapper,
-                ...itemsDeletedMapper
+            
+            let mergeDetalles = [
+                ...detalles,
+                ...itemsDeleted
             ]
 
+            const itemsMainMapper = service.detalleMapperTo(mergeDetalles, fromAprobacion);
+           // const itemsMainMapper = service.detalleMapperTo(detalles, fromAprobacion);
+            //const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted, fromAprobacion)
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
+            // const mergeItems = [
+            //     ...itemsMainMapper,
+            //     ...itemsDeletedMapper
+            // ]
+
+            infoAdicionalDocumento = infoAdicionalDocumento || [];
+            let infoAdicionalDocumentoMapped = infoAdicionalDocumento.map(item=>{
+                return {
+                   // uuid: item.uniqueRowDetalle, //uid de articulo detalle 
+                    idInfoAdicional: item.idInfoAdicional,
+                    idInfoAdicionalDoc: item.idInfoAdicionalDoc,
+                    nombre: item.nombre,
+                    valor: item.valor,
+                    estado: item.estado
+                }
+            })
+
+
+            const mapItem = (item, estado) => ({
+                uuid: item.uniqueRowDetalle,
+                idHistoryInfoAdicional: item.idHistoryInfoAdicional || 0,
+                idArticulo: item.idArticulo,
+                idInfoAdicional: item.idInfoAdicional,
+                estado: estado
+            });
+
+
+            const datosAdicionalesArticuloDeleted = mergeDetalles
+                .flatMap(md => md.datosAdicionalesArticulo)
+                .filter(md => md.idHistoryInfoAdicional > 0 && !md.selected)
+                .map(item => mapItem(item, 1));
+
+            const datosAdicionalesArticuloSelectedDeleted = mergeDetalles
+                .flatMap(md => md.datosAdicionalesArticulo)
+                .filter(md => md.idHistoryInfoAdicional > 0 && md.selected)
+                .map(item => mapItem(item, 2));
+
+            const datosAdicionalesArticuloSelected = mergeDetalles
+                .flatMap(md => md.datosAdicionalesArticulo)
+                .filter(md => !(md.idHistoryInfoAdicional > 0) && md.selected)
+                .map(item => mapItem(item, 2));
+
+            const mergeDatosAdicionalesArticulo = [
+                ...datosAdicionalesArticuloSelected,
+                ...datosAdicionalesArticuloSelectedDeleted,
+                ...datosAdicionalesArticuloDeleted
+            ]; 
+            
             return {
                 infoFactura: service.infoComprobanteMapperTo(factura),
-                detalles: mergeItems,
+                detalles: itemsMainMapper,
                 impuestos: impuestos,
-                infoAdicional: infoAdicionalDocumento || [],
-                infoAdicionalArticulo: historyDatosAdicionales,
+                infoAdicional: infoAdicionalDocumentoMapped,
+                infoAdicionalArticulo: mergeDatosAdicionalesArticulo,
                 formaPago: dataFormaPago,
                 cuotas
             }
@@ -765,9 +917,9 @@
             let orderIndex = 1;
 
             for (let item of detalles) {
-
                 tempDetails.push({
                     orderIndex: orderIndex++,
+                    uuid: item.uniqueRowDetalle,
                     idFacturaDetalle: item.idFacturaDetalle || 0,
                     idArticulo: item.idArticulo,
                     idTarifa: item.idTarifa,
@@ -787,8 +939,8 @@
                     nota: item.nota,
                     llevaInventario: item.llevaInventario,
                     precioCosto: item.precioCosto,
-                    precioCostoFraccionado : item.precioCostoFraccionado,
-                    conversion : item.conversion,
+                    precioCostoFraccionado: item.precioCostoFraccionado,
+                    conversion: item.conversion,
                     cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : item.cantidad * item.conversion,
                     estado: item.estado,
                     valorImpuesto: item.valorImpuesto //✅
@@ -800,39 +952,13 @@
 
         return service;
 
-    }])
-
-
-
-    function groupEstab(estabsAndPuntosEmision) {
-        const estabs = estabsAndPuntosEmision.reduce((acc, item) => {
-            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-            if (!existingItem) {
-                acc.push({
-                    idEstablecimiento: item.idEstablecimiento,
-                    nombreComercial: item.nombreComercial,
-                    codEstab: item.codEstab,
-                    defaultEstab: item.defaultEstab,
-                    puntosEmision: [{
-                        idPuntoEmision: item.idPuntoEmision,
-                        ptoEmi: item.ptoEmi,
-                        defaultPtoEmi: item.defaultPtoEmi
-                    }]
-                });
-            } else {
-                existingItem.puntosEmision.push({
-                    idPuntoEmision: item.idPuntoEmision,
-                    ptoEmi: item.ptoEmi,
-                    defaultPtoEmi: item.defaultPtoEmi
-                });
-            }
-            return acc;
-        }, []);
-        return estabs;
     }
 
-    app.factory('notaCreditoService',['$injector', function ($injector) {
+
+    app.factory('notaCreditoService', notaCreditoService)
+
+    notaCreditoService.$inject = ['$injector']
+    function notaCreditoService($injector) {
         const mS = $injector.get('mainService');
         const fS = $injector.get('formulario');
         const pricingUtils = $injector.get('pricingUtils')
@@ -912,7 +1038,12 @@
                     if (params.tipo === 3) {
                         let tempEstabsAndPtosEmision = mainData[0];
                         let estadosDoc = mainData[1];
-                        let estabs = groupEstab(tempEstabsAndPtosEmision);
+
+                        let dataToGroup = {
+                            estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
+                            bodegas: [], // Establecimientos con bodegas 
+                        }
+                        let estabs = fS.groupingEstab(dataToGroup);
                         return {
                             estabs,
                             estadosDoc
@@ -1074,6 +1205,7 @@
                             precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
                             medidas,
                             conversion: dataMedida.conversion,
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
@@ -1125,9 +1257,6 @@
 
         }
 
-
-
-
         service.infoComprobanteMapperTo = function (data) {
             let comprobante = {
                 idCliente: data.idCliente,
@@ -1173,7 +1302,9 @@
                     descripcion: orderItem.descripcion,
                     idTipoIva: orderItem.idTipoIva,
                     llevaInventario: orderItem.llevaInventario,
-                    cantidadTransaccion: cantidadTransaccion,
+                    cantidadTransaccion: cantidadTransaccion * -1,
+                    conversion: orderItem.conversion,
+                    precioCostoFraccionado: orderItem.precioCostoFraccionado,
                     precioCosto: orderItem.precioCosto,
                     valorImpuesto: orderItem.valorImpuesto,
                     estado: orderItem.estado
@@ -1187,7 +1318,7 @@
 
 
 
-    }]);
+    };
 
 
 
@@ -1195,7 +1326,11 @@
      * Retencion ATS version 2.0.0
      */
 
-    app.factory('retencionAtsService', function ($injector) {
+    app.factory('retencionAtsService', retencionAtsService)
+
+    retencionAtsService.$inject = ['$injector']
+
+    function retencionAtsService($injector) {
         let url = 'FactElect/RetencionAts/';
         let mS = $injector.get('mainService');
         return {
@@ -1250,6 +1385,6 @@
                 }
             )
         }
-    })
+    }
 
 })(window.angular);

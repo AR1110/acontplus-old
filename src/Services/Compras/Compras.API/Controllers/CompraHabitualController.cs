@@ -1,118 +1,43 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
+﻿namespace Compras.API.Controllers;
 
-namespace Compras.API.Controllers
+public class CompraHabitualController(
+    ICompraHabitualService compraHabitualService) : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CompraHabitualController : ControllerBase
+    [HttpGet("Get")]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public CompraHabitualController(IConfiguration configuration, LogWriter log)
+        var parameters = new Dictionary<string, object>
         {
-            _configuration = configuration;
-            _log = log;
-        }
-        [HttpGet("Get")]
-        public async Task<IActionResult> Get(string json)
-        {
-            DbAccess _db = new DbAccess(_configuration);
-            ApiResponse _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Recepcion.CompraHabitual_Get");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", json);
-                _response = _db.GetDataTableAsync();
-            }
-            catch (Exception ex)
-            {
-                _response.Create(code: "0", message: "Error al guardar");
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await compraHabitualService.GetAsync(parameters));
+    }
 
-                _log.LogActivity("Error on Get compra habitual: \n" + ex.ToString());
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-        [HttpPost("Post")]
-        public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
+    [HttpPost("Post")]
+    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            DbAccess _db = new DbAccess(_configuration);
-            ApiResponse _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Recepcion.CompraHabitual_Insert");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _response.Create(code: "0", message: "Error al guardar");
+            { "idUsuarioRol", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        return Ok(await compraHabitualService.AddAsync(parameters));
+    }
 
-                _log.LogActivity("Error on Post compra habitual: \n" + ex.ToString());
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-        [HttpPut("Put")]
-        public async Task<IActionResult> Put(int id, string json)
+    [HttpPut("Put")]
+    public async Task<IActionResult> Put(int id, string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            DbAccess _db = new DbAccess(_configuration);
-            ApiResponse _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Recepcion.CompraHabitual_Update");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", json);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _response.Create(code: "0", message: "Error al guardar");
+            { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await compraHabitualService.UpdateAsync(parameters));
+    }
 
-                _log.LogActivity("Error on Put compra habitual: \n" + ex.ToString());
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-        [HttpDelete("Delete")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            DbAccess _db = new DbAccess(_configuration);
-            ApiResponse _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Recepcion.CompraHabitual_Delete");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _response.Create(code: "0", message: "Error al guardar");
-
-                _log.LogActivity("Error on Delete compra habitual: \n" + ex.ToString());
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
+    [HttpDelete("Delete")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        return Ok(await compraHabitualService.DeleteAsync(parameters));
     }
 }

@@ -1,10 +1,10 @@
 use acontplus
 go
 
-
+--DROP VIEW IF EXISTS TechnicalSupport.v_OrderMantenaince
 
 DECLARE @dbSchema NVARCHAR(200);
-SET @dbSchema = 'TechnicalSupport'  -- CHANGE TO YOUR SCHEMA
+SET @dbSchema = 'Pet'  -- CHANGE TO YOUR SCHEMA
 
 
 DECLARE @SqlStatement NVARCHAR(MAX)
@@ -15,3 +15,5 @@ WHERE TABLE_SCHEMA = @dbSchema and TABLE_TYPE = 'BASE TABLE'
 
 
 EXEC sp_executesql @SqlStatement
+
+DROP SCHEMA I

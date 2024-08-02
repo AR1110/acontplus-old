@@ -1,152 +1,69 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
+﻿namespace Ventas.API.Controllers;
 
-namespace Ventas.API.Controllers
+public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiController
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AprobacionDocumentoController : ControllerBase
+    [HttpGet("Get")]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public AprobacionDocumentoController(IConfiguration configuration, LogWriter log)
+        var parameters = new Dictionary<string, object>{
+            {"idUsuarioRol", User.GetUserRoleId()},
+            {"json", SqlStringParam.Sanitize(json)},
+        };
+        return Ok(await svc.GetAsync(parameters));
+    }
+
+    [HttpPost("Insert")]
+    public async Task<IActionResult> Insert(ApiRequest request)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            _configuration = configuration;
-            _log = log;
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
+        var response = await svc.AddAsync(parameters);
+        return Ok(response);
+    }
 
-        [HttpGet("Get")]
-        public async Task<IActionResult> Get(string json)
+    [HttpPut("Update/{id}")]
+    public async Task<IActionResult> Update(int id, ApiRequest request)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            var _response = new ApiResponse();
-            var _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Ventas.Aprob_Document_Get", true);
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
+        var response = await svc.UpdateAsync(parameters);
+        return Ok(response);
+    }
 
-                _log.LogActivity("Error al listar aprob. docs: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar aprob. docs.");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
 
-        [HttpPost("Insert")]
-        public async Task<IActionResult> Insert(ApiRequest parameters)
+    [HttpDelete("Delete/{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        var response = await svc.DeleteAsync(parameters);
+        return Ok(response);
+    }
+
+    [HttpGet("GetId/{id}")]
+    public async Task<IActionResult> GetId(int id)
+    {
+        var parameters = new Dictionary<string, object>{
+            {"id", id},
+        };
+        return Ok(await svc.GetByIdAsync(parameters));
+    }
+
+    [HttpPost("ConvertToDoc")]
+    public async Task<IActionResult> ConvertToDoc(ApiRequest request)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            var _response = new ApiResponse();
-            var _db = new DbAccess(_configuration);
-            try
-            {
-                var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Aprob_Document_Insert");
-                _db.AddDynamicParam("userRoleId", userRoleId);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al insertar aprob. doc.: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar aprob. doc.");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, ApiRequest parameters)
-        {
-            var _db = new DbAccess(_configuration);
-            var _response = new ApiResponse();
-            try
-            {
-                var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Aprob_Document_Update");
-                _db.AddDynamicParam("userRoleId", userRoleId);
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al actualizar aprob. doc: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar aprob. doc");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-
-
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var _db = new DbAccess(_configuration);
-            var _response = new ApiResponse();
-            try
-            {
-                var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Aprob_Document_Delete");
-                _db.AddDynamicParam("idUsuarioRol", userRoleId);
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al eliminar la aprob. doc: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar aprob. doc");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-
-        [HttpGet("GetId/{id}")]
-        public async Task<IActionResult> GetId(int id)
-        {
-            var _db = new DbAccess(_configuration);
-            var _response = new ApiResponse();
-            try
-            {
-                await _db.SPExecute("Ventas.Aprob_Document_Get_Id");
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error in GetId: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al Obtener los datos");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-
-
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
+        var response = await svc.ConvertToDocAsync(parameters);
+        return Ok(response);
     }
 }

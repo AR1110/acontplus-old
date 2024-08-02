@@ -1,51 +1,34 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Common.Core.Utils;
-using Newtonsoft.Json.Serialization;
-using Services.Common;
-using Services.Common.Logs;
+using Common.AppSettings;
 using Services.Common.Middleware;
-using Vet.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers()
-                .AddNewtonsoftJson(x =>
-                {
-                    x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                    x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-                }
-                 );
 
 builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
 builder.Services.AddApplicationServices(builder.Configuration);
-builder.Services.AddCustomJwtAuthentication(builder.Configuration);
-builder.Services.AddSwaggerDocumentation();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<LogWriter>();
+builder.Services.AddIdentityService(builder.Configuration);
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionMiddleware>();
+
 if (Environment.OSVersion.Platform != PlatformID.Win32NT)
 {
-    app.Urls.Add("http://*:5014"); // 👈 Add the URL
+    app.Urls.Add("http://*:5014"); // Linux Port
 }
 else
 {
     app.UseHttpsRedirection();
 }
 
-app.UseMiddleware<ExceptionMiddleware>();
+app.UseStatusCodePages();
 
 // Configure the HTTP request pipeline.
 app.UseSwaggerDocumentation();
@@ -57,13 +40,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
-           {
-               _ = endpoints.MapGet("/", context =>
-               {
-                   context.Response.Redirect("swagger");
-                   return Task.CompletedTask;
-               });
-           });
+{
+    _ = endpoints.MapGet("/", context =>
+    {
+        context.Response.Redirect("swagger");
+        return Task.CompletedTask;
+    });
+});
 
 app.MapControllers().RequireAuthorization();
 

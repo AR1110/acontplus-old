@@ -1,78 +1,63 @@
-﻿using System.Data;
-using Asp.Versioning;
-using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
-using Reports.API.Dtos;
-using Reports.Core.Interfaces;
-using Services.Common;
-using Services.Common.Logs;
+﻿using Reports.API.Interfaces;
+using Reports.Application.Interfaces;
 
 namespace Reports.API.Controllers.v2
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("2.0")]
-    public class ReporteController : ControllerBase
+
+    public class ReporteController(IReportService reportService, IRdlcReportService rdlcReportService)
+        : ControllerBase
     {
-        private readonly IReportService _reportService;
-        private readonly IRdlcReportService _rdlcreport;
-        private readonly LogWriter _log;
-        public ReporteController(IReportService reportService, IRdlcReportService report, LogWriter log)
-        {
-            _reportService = reportService;
-            _rdlcreport = report;
-            _log = log;
-        }
         [HttpPost("Download")]
         public async Task<IActionResult> Download(ApiReportParamsDto data)
         {
-            try
+            // Validate input parameters
+            if (data == null || string.IsNullOrWhiteSpace(data.reportParams) || string.IsNullOrWhiteSpace(data.dataParams))
             {
-                string storedProcedure = "";
-                var userRoleId = User.GetUserRoleId();
-
-                var dsParams = await _reportService.GetParamsAsync(new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(data.reportParams) } });
-
-                if (dsParams.Tables["ReportProps"].Rows.Count == 0)
-                {
-                    _log.LogActivity($"Can't get report params \n ReportProps: {data.reportParams}");
-                    return BadRequest("Can't get report params");
-                }
-
-                storedProcedure = dsParams.Tables["ReportProps"].Rows[0].Field<string>("storedProcedure");
-
-                var dataParams = new Dictionary<string, object>();
-                if (!data.hasService)
-                {
-                    dataParams["userRoleId"] = userRoleId;
-                }
-
-                dataParams["json"] = SqlStringParam.Sanitize(data.dataParams);
-
-                using var ds = await _reportService.GetDataAsync(storedProcedure, dataParams, false);
-
-                if (ds.Tables[0].Rows.Count == 0)
-                {
-                    _log.LogActivity($"Can't get report data \n ReportProps: {data.reportParams}");
-                    return BadRequest("Can't get report data");
-                }
-
-                var response = _rdlcreport.GetReport(dsParams, ds);
-
-                switch (response)
-                {
-                    case null:
-                        _log.LogActivity($"Error in rdlc generation \n ReportProps: {data.reportParams}");
-                        return BadRequest($"Error in rdlc generation");
-                    default:
-                        return File(response.FileContents, response.ContentType, response.FileDownloadName);
-                }
+                return BadRequest("Invalid input parameters.");
             }
-            catch (Exception ex)
+
+            // Sanitize inputs to prevent SQL injection
+            string sanitizedReportParams = SqlStringParam.Sanitize(data.reportParams);
+            string sanitizedDataParams = SqlStringParam.Sanitize(data.dataParams);
+
+            var dsParams = await reportService.GetParamsAsync(new Dictionary<string, object> { { "json", sanitizedReportParams } });
+
+            if (dsParams.Tables["ReportProps"].Rows.Count == 0)
             {
-                _log.LogActivity($"Error in Download: \n {ex} \n ReportProps: {data.reportParams}");
-                return BadRequest($"Error in Download: {ex.Message}");
+                return BadRequest("Can't get report params.");
             }
+
+            string storedProcedure = dsParams.Tables["ReportProps"].Rows[0].Field<string>("storedProcedure");
+
+            var dataParams = new Dictionary<string, object>();
+
+            // Determine user role ID
+            var userRoleId = User.GetUserRoleId();
+
+            if (!data.hasService)
+            {
+                dataParams["userRoleId"] = userRoleId;
+            }
+
+            dataParams["json"] = sanitizedDataParams;
+
+            using var ds = await reportService.GetDataAsync(storedProcedure, dataParams, false);
+
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                return BadRequest("Can't get report data.");
+            }
+
+            using var response = rdlcReportService.GetReport(dsParams, ds);
+
+            return response switch
+            {
+                null => BadRequest("Error in RDLC generation."),
+                _ => File(response.FileContents, response.ContentType, response.FileDownloadName)
+            };
         }
     }
 }

@@ -1,16 +1,17 @@
 ﻿using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
-using Services.Common;
-using Services.Common.Logs;
+using Services.Common.Extensions;
+
 
 namespace Restaurant.API.Controllers
 {
     public class IngredientController : BaseApiController
     {
         private readonly IIngredientService _ingredient;
-        private readonly LogWriter _log;
-        public IngredientController(IIngredientService ingredient, LogWriter log)
+        private readonly ICustomLogger _log;
+        public IngredientController(IIngredientService ingredient, ICustomLogger log)
         {
             _ingredient = ingredient;
             _log = log;

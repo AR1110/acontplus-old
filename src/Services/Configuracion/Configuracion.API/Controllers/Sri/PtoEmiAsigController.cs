@@ -1,90 +1,37 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Configuracion.API.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common;
-using Services.Common.Logs;
+﻿namespace Configuracion.API.Controllers.Sri;
 
-namespace Configuracion.API.Controllers.Sri
+public class PtoEmiAsigController(IPuntoEmisionAsignacionService puntoEmisionAsignacionService) : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PtoEmiAsigController : ControllerBase
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IPuntoEmisionAsignacionService _service;
-        private readonly LogWriter _log;
-
-        public PtoEmiAsigController(IPuntoEmisionAsignacionService service, LogWriter log)
+        var parameters = new Dictionary<string, object>
         {
-            _service = service;
-            _log = log;
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await puntoEmisionAsignacionService.GetAsync(parameters);
+        return Ok(response);
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _service.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en get punto Emision Asignacion" + ex.Message);
-                return BadRequest("Error en get " + ex.Message);
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ApiRequest data)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _service.AddAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Post Emision Asignacion" + ex.Message);
-                return BadRequest("Error en Post Emision Asignacion" + ex.Message);
-            }
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+        };
+        var response = await puntoEmisionAsignacionService.AddAsync(parameters);
+        return Ok(response);
+    }
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                     { "id", id },
-                };
-                var response = await _service.UpdateAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Put Emision Asignacion" + ex.Message);
-                return BadRequest("Error en Actualizar Emision Asignacion" + ex.Message);
-            }
-        }
-
-
-
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var response = await puntoEmisionAsignacionService.UpdateAsync(parameters);
+        return Ok(response);
     }
 }

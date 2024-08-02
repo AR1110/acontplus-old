@@ -1,47 +1,67 @@
 ﻿using System.Net;
-using System.Text.Json;
+using System.Text;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Services.Common.Errors;
 
-namespace Services.Common.Middleware
+namespace Services.Common.Middleware;
+
+public class ExceptionMiddleware(
+    RequestDelegate next,
+    ILogger<ExceptionMiddleware> logger,
+    IHostEnvironment env)
 {
-    public class ExceptionMiddleware
+    public async Task InvokeAsync(HttpContext context)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddleware> _logger;
-        private readonly IHostEnvironment _env;
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger,
-            IHostEnvironment env)
+        string requestBody = string.Empty;
+
+        try
         {
-            _env = env;
-            _logger = logger;
-            _next = next;
+            if (context.Request.Method == HttpMethods.Post || context.Request.Method == HttpMethods.Put)
+            {
+                requestBody = await ReadRequestBodyAsync(context);
+            }
+            await next(context);
         }
-
-        public async Task InvokeAsync(HttpContext context)
+        catch (Exception ex)
         {
-            try
-            {
-                await _next(context);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            var queryString = context.Request.QueryString.ToString();
 
-                var response = _env.IsDevelopment()
-                    ? new ApiException(context.Response.StatusCode, ex.Message, ex.StackTrace?.ToString())
-                    : new ApiException(context.Response.StatusCode, "Internal Server Error");
+            logger.LogError(ex, "Exception caught: {Message}. Request Body: {RequestBody}. Query String: {QueryString}",
+                ex.Message, requestBody, queryString);
 
-                var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-                var json = JsonSerializer.Serialize(response, options);
+            var stackTrace = ex.StackTrace?.Replace(Environment.NewLine, "\n");
 
-                await context.Response.WriteAsync(json);
-            }
+            var problemDetails = env.IsDevelopment()
+                ? new ProblemDetails
+                {
+                    Status = context.Response.StatusCode,
+                    Title = "Server Error: " + ex.Message,
+                    Detail = stackTrace
+                } : new ProblemDetails
+                {
+                    Status = context.Response.StatusCode,
+                    Title = "Server Error" + ex.Message,
+                };
+
+            await context.Response.WriteAsJsonAsync(problemDetails);
         }
+    }
+    private async Task<string> ReadRequestBodyAsync(HttpContext context)
+    {
+        var request = context.Request;
+        var requestContent = "";
+        request.EnableBuffering();
+        using (var reader = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
+        {
+            requestContent = await reader.ReadToEndAsync();
+        }
+        request.Body.Position = 0; // Rewind the stream to 0
+
+        return requestContent;
     }
 }

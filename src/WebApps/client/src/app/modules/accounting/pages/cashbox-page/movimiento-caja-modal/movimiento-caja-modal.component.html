@@ -17,14 +17,14 @@
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
 
       <div class="form-group">
-        <label for="dateRangeSelection">Rango Fechas: </label>
+        <label >Rango Fechas: </label>
         <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" />
       </div>
     </div>
 
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
       <div class="form-group">
-        <label for="estado">Estado: </label>
+        <label  >Estado: </label>
         <select class="form-select" [(ngModel)]="dataSearch.statusMovement" (change)="getMovimientosCaja()">
           <option value="">Todos</option>
           @for (item of estadosMovimiento; track $index) {
@@ -99,14 +99,31 @@
                 </button>
                 }
 
+                @if (dataPermisosCaja.reporteTransaccionPendiente) {
+                  <button ngbDropdownItem (click)="askToReportType(item, BUTTON_TRANSACTION_PENDING)">
+                    <fa-icon [icon]="['fas', 'money-bill-transfer']"></fa-icon> Reporte Transacciones pendientes
+                  </button>
+                }
 
-                <button ngbDropdownItem (click)="askToReportType(item, BUTTON_TRANSACTION_PENDING)">
-                  <fa-icon [icon]="['fas', 'money-bill-transfer']"></fa-icon> Reporte Transacciones pendientes
-                </button>
+                @if (dataPermisosCaja.reporteDetalleControlCaja) {
+                  <button ngbDropdownItem (click)="openModalReporteFiltroDetalleCaja(item)">
+                    <fa-icon [icon]="['fas', 'table-list']"></fa-icon> Reporte Detalle Control Caja
+                  </button>
+                }
 
-                <button ngbDropdownItem (click)="openModalReporteFiltroDetalleCaja(item)">
-                  <fa-icon [icon]="['fas', 'table-list']"></fa-icon> Reporte Detalle Control Caja
-                </button>
+
+                @if (!item.estado){
+                  <button
+                      ngbDropdownItem
+                      appSendMailModal
+                      [data]="item"
+                      [getDataSendMail]="getDataSendMail"
+                      [notificationAcontPlus]="true"
+                  >
+                    <fa-icon [icon]="['fas','envelope']"></fa-icon> Enviar correo
+                  </button>
+                }
+
               </div>
             </div>
           </td>

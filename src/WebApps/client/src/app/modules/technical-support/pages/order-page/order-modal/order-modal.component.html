@@ -50,25 +50,30 @@
       <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="form-group">
           <label for="fechaEmision">Fecha Emisión: </label>
+
           <input
             type="date"
+            id="fechaEmision"
             class="form-control border-select"
             formControlName="fechaEmision"
+            (change)="onChangeDate($event)"
+            [value]="orderForm.get('fechaEmision')?.value | date : 'yyyy-MM-dd'"
             required
           />
         </div>
       </div>
       <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="form-group">
-          <label for="userId">
+          <label for="assignedUserId">
             Responsable: <span class="text-danger">*</span>
           </label>
           <select
-            formControlName="userId"
-            id="userId"
+            formControlName="assignedUserId"
+            id="assignedUserId"
             class="form-select border-select"
             required
           >
+            <option [value]="0">Pendiente</option>
             @for (item of users; track $index) {
             <option [ngValue]="item.idUsuario">{{ item.nombreUsuario }}</option>
             }
@@ -79,8 +84,9 @@
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label for="customerSearch">Cliente: </label>
+          <label  >Cliente: </label>
           <app-company-customer-search
+            [textSearch]="customerBusinessName"
             (onCustomerSelected)="onCustomerSelected($event)"
           ></app-company-customer-search>
         </div>
@@ -92,7 +98,10 @@
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
         <div class="form-group">
-          <app-device-search (onDeviceSelected)="onDeviceSelected($event)" />
+          <app-device-search
+            [clearInput]="clearInput"
+            (deviceSelected)="onDeviceSelected($event)"
+          />
         </div>
       </div>
       <div class="col">
@@ -107,21 +116,18 @@
       </div>
     </div>
     } @if (orderDetails.length > 0) {
-    <div class="row">
-      <div class="col">
-        <app-tabulator
-          [columnNames]="columnNames"
-          [tableData]="orderDetails"
-        ></app-tabulator>
-      </div>
-    </div>
+    <app-tabulator
+      [columnNames]="columnNames"
+      [tableData]="orderDetails"
+    ></app-tabulator>
     }
+
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label for="observación">Observación:</label>
+          <label for="observación">Observación General:</label>
           <textarea
-            id="obs"
+            id="observación"
             formControlName="obs"
             class="form-control border-select"
             aria-label="obs"
@@ -131,7 +137,12 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-outline-success" title="Guardar Orden">
+    <button
+      type="submit"
+      class="btn btn-outline-success"
+      title="Guardar Orden"
+      [disabled]="orderForm.invalid"
+    >
       <fa-icon [icon]="'save'"></fa-icon> Guardar
     </button>
     <button

@@ -3,7 +3,7 @@
     'use strict';
 
     app.factory('guiaRemisionService', ['$injector', function ($injector) {
-        let url = 'Logistica/GuiaRemision/';
+        let url = 'FactElect/GuiaRemision/';
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
 
@@ -60,6 +60,7 @@
 
                 return guiasRemision.map(item => {
                     return {
+                        idDocumento: item.idDocumento,
                         idGuiaRemision: item.idGuiaRemision,
                         codEstab: item.codEstab,
                         fechaEmision: item.fechaEmision,
@@ -250,7 +251,7 @@
 
 
     app.factory('transportistaService', ["$injector", function ($injector) {
-        let url = 'Logistica/Transportista/';
+        let url = 'FactElect/Transportista/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -356,7 +357,7 @@
 
 
     app.factory('vehiculoService', ["$injector", function ($injector) {
-        let url = 'Logistica/Vehiculo/';
+        let url = 'FactElect/Vehiculo/';
         let mS = $injector.get('mainService');
         let service = {};
 

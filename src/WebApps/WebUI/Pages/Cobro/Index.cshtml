@@ -1,0 +1,294 @@
+﻿@page
+@model WebUI.Pages.Cobro.IndexModel
+
+@{
+    ViewData["title"] = "Cobro";
+    
+}
+<div ng-controller="comprobanteIngresoCtrl">
+    <div>
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h5 class="text-themecolor">Gestión de Cobros</h5>
+            </div>
+            <div class="col-md-7 align-self-center text-right">
+                <div class="d-flex justify-content-end align-self-center">
+                    <!-- <button class="btn btn-info m-l-15" ng-if="accion.leer && accion.crear"
+                        ng-click="openModalCobroLote()"><i class="fa fa-plus-circle"></i> Nuevo</button> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-10 col-lg-10 col-md-6 col-sm-12 col-12">
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                                <div class="form-gorup">
+                                    <span for="establecimiento">Establecimiento</span>
+                                    <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
+                                        class="form-control  border-select" ng-change="filterValidation()">
+                                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                            {{item.nombreComercial}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <span for="">Rango de Fechas</span>
+                                    <date-range-filter current-date="dataSearch.fechaInicio"
+                                        start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                        result-range-date="resultRangeFilter(result)"></date-range-filter>
+                                </div>
+                            </div> 
+                            <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
+                                <div class="form-group"  >
+                                    <span>Cliente</span>
+                                    <input type="text" id="customerInputSearchCliente"
+                                        class="form-control border-select" ng-model="searchCliente.nombreCliente"
+                                        cliente-search-drtv on-select="onSelectCliente(result)"
+                                        on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
+                                        onclick="select();" ng-disabled="disabledTempInputPersona">
+
+                                    <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                                        <div class="autocomplete-suggestion-uib-typeahead">
+                                            <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                                        </div>
+                                    </script>
+                                </div>
+
+                                 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <button type="button" class="btn btn-info btn-sm" data-toggle="button" data-more="#sh"
+                                    aria-pressed="false" ng-click="onClickBtnMore()">
+                                    <span class="text">
+                                        <i class="mdi mdi-eye" aria-hidden="true" uib-tooltip="Más opciones"></i>
+                                    </span>
+                                    <span class="text-active">
+                                        <i class="mdi mdi-eye-off" aria-hidden="true"
+                                            uib-tooltip="Ocultar opciones"></i>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm" ng-click="filterValidation()"
+                                    uib-tooltip="Recargar">
+                                    <i class="mdi mdi-refresh"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" ng-if="moreSearchOptions">
+                    <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12 col-12">
+                        <div class="row">
+                            <div class="col-xl-8 col-lg-8 col-md-12 col-12">
+                                <div class="form-group">
+                                    <span for="usuarioFiltro">Usuario</span>
+                                    <input type="text" id="customerInputSearchUser" class="form-control border-select"
+                                        ng-model="searchUser.nombreCompleto" user-search-drtv
+                                        on-select="onSelectUser(result)" on-keyup="onKeyupUser()" placeholder="..."
+                                        onclick="select();">
+
+                                    <script type="text/ng-template" id="autocompleteUserTemplate.html">
+                                        <div class="autocomplete-suggestion-uib-typeahead">
+                                            <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
+                                        </div>
+                                    </script>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+                                <div class="form-group">
+                                    <span>Estado</span>
+                                    <select name="estado" id="estado" class="form-control border-select"
+                                        ng-model="dataSearch.byEstado" ng-change="filterValidation()">
+                                        <option value="">Todos</option>
+                                        <option ng-value="1">Activo</option>
+                                        <option ng-value="0">Anulado</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
+                        <div class="row">
+                            @* <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+                            <div class="form-group">
+                            <div class="form-group">
+                            <span>Tipo Doc.</span>
+                            <select name="tipos-doc" id="tipos-doc" class="form-control border-select"
+                            ng-model="dataSearch.codTipoDoc" ng-change="onChangeTipoDoc()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.codigo" ng-repeat="item in tiposDoc">{{item.descripcion}}</option>
+                            </select>
+                            </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+                            <div class="form-group">
+                            <span>Nro. Doc:</span>
+                            <input type="text" class="form-control border-select"
+                            ng-model="dataSearch.nroSecuencialTipoDoc" uib-popover="Ingrese Número de Documento de
+                            Factura o Nota de Entrega!" popover-trigger="'focus'" placeholder="Ej: 123"/>
+                            </div>
+                            </div> *@
+                            <div class="col-xl-7 col-lg-7 col-md-12 col-12">
+                                <div class="form-group">
+                                    <span>Nro. Doc. Ingreso:</span>
+                                    <input type="text" class="form-control border-select"
+                                        ng-model="dataSearch.nroSecuencialDoc"
+                                        uib-popover="Ingrese Número de Documento del cobro!" popover-trigger="'focus'"
+                                        placeholder="Ej: 123" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body"> 
+                <div class="row">
+                    <div class="col-6 d-flex justify-content-start">
+                        <span class="form-group pull-left page-size form-inline">
+                            <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                            </select>
+                        </span>
+                    </div>
+
+                    <div class="col-6 d-flex justify-content-end">
+                        
+                    </div>
+                </div>
+                <md-table-container style="max-height: 400px;">
+                    <table resize md-table>
+                        <thead fix-head md-head>
+                            <tr class="border-bottom">
+                                <th md-column colspan="3"><i></i></th>
+                                <th md-column><i>Total:</i></th>
+                                <th md-column md-numeric><i>{{total}}</i></th>
+                                <th md-column md-numeric><i>{{abono}}</i></th>
+                                <th md-column md-numeric><i>{{cambio}}</i></th>
+                                <th md-column md-numeric><i></i></th>
+                                <th md-column md-numeric><span></span></th>
+                            </tr>
+                            <tr md-row>
+                                <th md-column>Op.</th>
+                                @* <th md-column>N°</th> *@
+                                <th md-column>N°. Doc. </th>
+                                <th md-column md-order-by="fechaEmision">F. Emision</th>
+                                @* <th md-column>N°. Identificación</th> *@
+                                <th md-column>Cliente</th>
+                                <th md-column>Total</th>
+                                <th md-column>Abono</th>
+                                <th md-column>Cambio</th>
+                                <th md-column>Estado</th>
+                                <th md-column>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat="c in cobros" ng-class="c.style">
+                                <td md-cell>
+                                    <md-menu>
+                                        <md-button aria-label="Open demo menu" class="md-icon-button"
+                                            ng-click="$mdMenu.open($event)">
+                                            <i class="mdi mdi-menu"></i>
+                                        </md-button>
+                                        <md-menu-content class="md-dense">
+                                            <md-menu-item>
+                                                <md-button btn-historial-cobro params="c"  on-result="refresh()">
+                                                    <span md-menu-align-target><i class="ti-menu"></i>
+                                                        Detalle</span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                           <!-- ng-if="accion.anular && !c.esAnulado"-->
+                                            <md-menu-item >
+                                                <md-button btn-anular-comprobante-ingreso params="c" on-result="refresh()">
+                                                    <span md-menu-align-target>
+                                                        <i class="ti-na"></i> Anular
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                 
+                                            <md-menu-item ng-if="accion.reporte">
+                                                <md-button  
+                                                btn-comprobante-ingreso-report 
+                                                unique="c.idComprobanteIngreso" 
+                                                cod-estab="c.codEstab"   >
+                                                    <span md-menu-align-target>
+                                                        <i class="fa fa-file-pdf"></i> Reporte
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            <md-menu-item ng-if="accion.enviarCorreo">
+                                                <md-button btn-send-to-email params="c" type-send="typeSendMail"
+                                                    get-param-to-send-mail="getParamToSendMail(params)">
+                                                    <span md-menu-align-target><i class="far fa-envelope"></i>
+                                                        Enviar Correo</span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            <md-menu-item>
+                                                <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
+                                                    btn-send-to-whats-app params="c" has-permission="hasPermissions"
+                                                    type-send="typeSend">
+                                                    <span md-menu-align-target>
+                                                        <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                        </md-menu-content>
+                                    </md-menu>
+                                </td>
+                                @* <td md-cell>{{$index+1}}</td> *@
+                                <td md-cell>{{c.nroDoc}}</td>
+                                <td md-cell>{{c.fechaRegistro}}</td>
+                                @* <td md-cell>{{c.nroIdentificacion}}</td> *@
+                                <td md-cell>{{c.cliente|uppercase}}</td>
+                                <td md-cell>${{c.total}}</td>
+                                <td md-cell>${{c.abono}}</td>
+                                <td md-cell>${{c.cambio}}</td>
+                                <td md-cell>{{c.estado}}</td>
+                                <td md-cell>{{c.usuario}}</td>
+                            </tr>
+                            <tr ng-show="cobros.length==0" class="text-center">
+                                <td colspan="8">
+                                    <span>No hay registros en esta tabla:)</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
+            </div>
+            <div class="card-body">
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
+        </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <environment include="Development">
+        <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script> 
+    </environment>
+    <environment include="Staging,Production">
+    <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script>
+    </environment>
+}

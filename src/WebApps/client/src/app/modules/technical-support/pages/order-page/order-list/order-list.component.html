@@ -1,118 +1,196 @@
-<!-- <div class="row mt-2">
-  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-    <div class="d-flex justify-content-start">
-      <span class="form-group">
-        <select
-          class="form-select"
-          [(ngModel)]="dataSearch.pageSize"
-          (change)="onChangePageSize()"
-        >
-          @for(item of recordsQuantity; track $index){
-          <option [ngValue]="item">{{ item }}</option>
-          }
-        </select>
-      </span>
+<div class="row mt-2">
+  @if (orderStatusCode == 2) {
+  <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
+    <div class="form-group">
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        (click)="onModalOpen()"
+      >
+        <fa-icon [icon]="'plus'"></fa-icon>
+        Nueva
+      </button>
     </div>
   </div>
+  }
+  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+    <div class="form-group">
+      <label for="dateRangeSelection">Rango de Fechas: </label>
+      <app-date-range-selection
+        (onChangeDateRange)="onDateRangeSelection($event)"
+      />
+    </div>
+  </div>
+  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+    <div class="form-group">
+      <label for="assignedUsers">Usuarios Asignados:</label>
+      <select
+        name="assignedUsers"
+        id="assignedUsers"
+        class="form-select"
+        [(ngModel)]="dataSearch.assignedUserId"
+        (change)="get()"
+      >
+        <option [ngValue]="0" selected>Todos</option>
+        @for (item of users; track $index) {
+        <option [ngValue]="item.idUsuario">{{ item.nombreUsuario }}</option>
+        }
+      </select>
+    </div>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+    <div class="form-group">
+      <label for="customer">Cliente:</label>
+      <input
+        type="text"
+        id="customer"
+        name="customer"
+        class="form-control"
+        (keyup)="dataSearch.customer.length > 3 ? get() : null"
+        [(ngModel)]="dataSearch.customer"
+      />
+    </div>
+  </div>
+</div>
+<section class="section-container-table">
+  <table mat-table [dataSource]="orders" class="mat-elevation-z1">
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef>No.</th>
+      <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+    </ng-container>
 
-</div> -->
-<div class="table-responsive mt-2">
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th scope="col" class="text-center">#</th>
-        <th scope="col">Opciones</th>
-        <th scope="col">Cliente</th>
-        <th scope="col">Secuencia</th>
-        <th scope="col">Serie</th>
-        <th scope="col">Tax</th>
-        <th scope="col">Descuento</th>
-        <th scope="col">Total</th>
-        <th scope="col">Observaciones</th>
-        <th scope="col">Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (item of orders; track $index) {
-      <tr>
-        <td scope="row" class="text-center">{{ $index + 1 }}</td>
-        <td>
+    <!-- Name Column -->
+    <ng-container matColumnDef="op">
+      <th mat-header-cell *matHeaderCellDef>Op.</th>
+      <td mat-cell *matCellDef="let element">
+        <div ngbDropdown container="body">
           <button
             type="button"
-            class="btn btn-outline-success btn-sm mx-1"
-            title="Editar"
-            (click)="edit(item)"
+            class="btn btn-outline-primary btn-sm"
+            ngbDropdownToggle
           >
-            <fa-icon [icon]="'edit'"></fa-icon>
+            <fa-icon [icon]="'bars'"></fa-icon>
           </button>
+          <div ngbDropdownMenu>
+            @if (orderStatusCode==2 || orderStatusCode == 3) {
+            <button
+              ngbDropdownItem
+              (click)="openModalMaintenance(element)"
+              title="Iniciar Reparaciones"
+            >
+              <fa-icon [icon]="'cogs'"></fa-icon> Mantenimiento
+            </button>
+            } @if (orderStatusCode==2 || orderStatusCode == 3) {
+            <button ngbDropdownItem (click)="onEdit(element)" title="Editar">
+              <fa-icon [icon]="'edit'"></fa-icon> Editar
+            </button>
+            } @if (orderStatusCode==2) {
+            <button
+              ngbDropdownItem
+              (click)="askToCancel(element)"
+              title="Anular"
+            >
+              <fa-icon [icon]="'lock'"></fa-icon> Anular
+            </button>
+            }
+            <button
+              ngbDropdownItem
+              (click)="getReport(element)"
+              title="Reporte"
+            >
+              <fa-icon [icon]="'file-pdf'"></fa-icon> Reporte
+            </button>
 
-          <button
-            type="button"
-            class="btn btn-outline-danger btn-sm mx-1"
-            title="Eliminar"
-            (click)="askToDelete(item)"
-          >
-            <fa-icon [icon]="'trash'"></fa-icon>
-          </button>
-          <button
-            type="button"
-            class="btn btn-outline-danger btn-sm mx-1"
-            title="Reporte"
-            (click)="getReport(item)"
-          >
-            <fa-icon [icon]="'file-pdf'"></fa-icon>
-          </button>
+            @if (orderStatusCode == 4 ) {
+            <button
+              ngbDropdownItem
+              (click)="askToDelivery(element)"
+              title="Entregar"
+            >
+              <fa-icon [icon]="'sign-out'"></fa-icon> Entregar
+            </button>
+            } @if(orderStatusCode == 4 || orderStatusCode == 5) {
+            <button
+              ngbDropdownItem
+              (click)="onOpenDocument(element)"
+              title="Documento"
+            >
+              <fa-icon [icon]="'cogs'"></fa-icon> Documento vinculado
+            </button>
+            }
+          </div>
+        </div>
+      </td>
+    </ng-container>
 
-          <button
-            type="button"
-            class="btn btn-outline-primary btn-sm mx-1"
-            title="Iniciar Reparaciones"
-            (click)="openModalMaintenance(item.id)"
-          >
-            <fa-icon [icon]="'cogs'"></fa-icon>
-          </button>
-        </td>
-        <td>{{ item.nombreFiscal }}</td>
-        <td>{{ item.sequence }}</td>
-        <td>{{ item.serie }}</td>
-        <td class="text-end">$ {{ item.tax }}</td>
-        <td class="text-end">$ {{ item.discount }}</td>
-        <td class="text-end">$ {{ item.total }}</td>
-        <td>{{ item.obs }}</td>
-        <td>
-          <span
-            [ngClass]="{
-              badge: true,
-              'bg-success': item.enabled == 1,
-              'bg-danger': item.enabled == 0
-            }"
-          >
-            {{ item.enabled == 1 ? "Activo" : "Inactivo" }}
-          </span>
-        </td>
-      </tr>
-      } @empty {
-      <tr>
-        <td colspan="10">No se encontraron registros</td>
-      </tr>
-      }
-    </tbody>
-    @if (orders.length > 0) {
-    <tfoot>
-      <tr>
-        <td align="center" colspan="10">
-          <ngb-pagination
-            [collectionSize]="dataSearch.totalRecords"
-            [(page)]="dataSearch.pageIndex"
-            [maxSize]="dataSearch.maxSize"
-            [pageSize]="dataSearch.pageSize"
-            [rotate]="true"
-            (pageChange)="onPageChanged()"
-            [boundaryLinks]="true"
-          />
-        </td>
-      </tr>
-    </tfoot>
-    }
+    <!-- Weight Column -->
+    <ng-container matColumnDef="fechaEmision">
+      <th mat-header-cell *matHeaderCellDef>Fecha Emisión</th>
+      <td mat-cell *matCellDef="let element">{{ element.fechaEmision }}</td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="serieComprobante">
+      <th mat-header-cell *matHeaderCellDef>Serie Comprobante</th>
+      <td mat-cell *matCellDef="let element">{{ element.serie }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="razonSocialComprador">
+      <th mat-header-cell *matHeaderCellDef>Cliente</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.razonSocialComprador }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="discount">
+      <th mat-header-cell *matHeaderCellDef>Descuento</th>
+      <td mat-cell *matCellDef="let element">{{ element.discount }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="total">
+      <th mat-header-cell *matHeaderCellDef>Total</th>
+      <td mat-cell *matCellDef="let element">{{ element.total }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="obs">
+      <th mat-header-cell *matHeaderCellDef>Obs.</th>
+      <td mat-cell *matCellDef="let element">{{ element.obs }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="user">
+      <th mat-header-cell *matHeaderCellDef>Usuario Asignado</th>
+      <td mat-cell *matCellDef="let element">{{ element.userName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="orderStatusName">
+      <th mat-header-cell *matHeaderCellDef>Estado Orden</th>
+      <td mat-cell *matCellDef="let element">{{ element.orderStatusName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Estado</th>
+      <td mat-cell *matCellDef="let element">
+        <div [innerHTML]="element.enabled | primaryStatus"></div>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center" colspan="10">Sin registro</td>
+    </tr>
   </table>
+</section>
+
+<div class="card-body">
+  <ngb-pagination
+    [collectionSize]="pagination.totalRecords"
+    [(page)]="pagination.pageIndex"
+    [maxSize]="pagination.maxSize"
+    [pageSize]="pagination.pageSize"
+    [rotate]="true"
+    (pageChange)="onPageChanged()"
+    [boundaryLinks]="true"
+  />
 </div>

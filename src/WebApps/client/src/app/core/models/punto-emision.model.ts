@@ -1,4 +1,5 @@
 
+
 export interface PuntoEmision {
     idPuntoEmision: number,
     ptoEmi: string,
@@ -15,4 +16,12 @@ export interface PuntoEmisionEstablecimiento {
     ptoEmi: string
     defaultEstab: boolean
     defaultPtoEmi: boolean
+}
+
+export interface PuntoEmisionRead{
+  idPuntoEmision: number;
+  ambiente: string;
+  ptoEmi: string;
+  descripcion: string;
+  estado: boolean;
 }

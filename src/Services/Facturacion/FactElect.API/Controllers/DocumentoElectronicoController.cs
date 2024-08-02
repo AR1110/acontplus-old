@@ -1,156 +1,52 @@
-﻿using System.Data;
-using System.Text;
-using System.Web;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
+﻿namespace FactElect.API.Controllers;
 
-namespace FactElect.API.Controllers
+public class DocumentoElectronicoController(IDocumentoElectronicoService documentoElectronicoService)
+    : BaseApiController
 {
-
-    [Route("api/[controller]")]
-    [ApiController]
-    public class DocumentoElectronicoController : ControllerBase
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IConfiguration _configuration;
-        private readonly DbAccess _db;
-        private readonly LogWriter _log;
-        public DocumentoElectronicoController(IConfiguration configuration, LogWriter log)
+        var parameters = new Dictionary<string, object>
         {
-            _configuration = configuration;
-            _db = new DbAccess(_configuration);
-            _log = log;
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await documentoElectronicoService.GetAsync(parameters));
+    }
+
+    [HttpGet("GetByStatus")]
+    public async Task<IActionResult> GetByStatus(string json)
+    {
+        var parameters = new Dictionary<string, object>
+        {
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await documentoElectronicoService.GetByStatusAsync(parameters));
+    }
+
+    [HttpGet("GetDataForm")]
+    public async Task<IActionResult> GetDataForm()
+    {
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() } };
+        return Ok(await documentoElectronicoService.GetDataFormAsync(parameters));
+    }
+
+    [HttpGet("GetXmlSri/{id}")]
+    public async Task<IActionResult> GetXmlSri(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        var response = await documentoElectronicoService.GetXmlSriAsync(parameters);
+        if (response == null)
+        {
+            return BadRequest("No se encontro xml");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
+        return File(response.Content, "text/xml", response.FileName);
+    }
 
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("FactElect.Doc_Elect_Get", true);
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al obtener la solicitud: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener la solicitud");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-
-        [HttpGet("GetByStatus")]
-        public async Task<IActionResult> GetByStatus(string json)
-        {
-
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("FactElect.Doc_Elect_GetByStatus", true);
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al obtener la solicitud: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener la solicitud");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-
-        [HttpGet("GetDataForm")]
-        public async Task<IActionResult> GetDataForm()
-        {
-
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                await _db.SPExecute("FactElect.Doc_Elect_Get_Data_Form");
-                _db.AddDynamicParam("idUsuarioRol ", idUsuarioRol);
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error while getting data form: " + ex.ToString());
-                _response.Create(code: "0", message: "Error while getting data form");
-            }
-            finally { _db.Close(); }
-            return Ok(_response);
-        }
-        [HttpGet("GetXmlSri/{id}")]
-        public async Task<IActionResult> GetXmlSri(int id)
-        {
-
-            var _response = new FileModel();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                await _db.SPExecute("FactElect.Doc_Elect_Get_Xml");
-                _db.AddDynamicParam("idUsuarioRol ", idUsuarioRol);
-                _db.AddDynamicParam("id", id);
-                DataTable dt = _db.GetDataTable();
-                if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlSri"))
-                {
-                    var xmlSri = string.Empty;
-                    xmlSri = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlSri"));
-                    var byteXml = Encoding.UTF8.GetBytes(xmlSri);
-                    _response.CreateBase64(byteXml, "text/xml", dt.Rows[0].Field<string>("filename") + ".xml");
-                    //var sms = "";
-                    //await new FileUpload().Upload(_configuration.GetSection("WhatsAppFiles").Value, _response.FileName, _response.Content);
-                    return File(_response.Content, _response.ContentType, _response.FileName);
-                }
-                return BadRequest("No se encontro xml");
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error while getting data form: " + ex.ToString());
-                return BadRequest("Error al obtener el xml");
-            }
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id)
-        {
-
-            var _response = new ApiResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("FactElect.Doc_Elect_Update");
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error while updating doc: \n " + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar el documento");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } };
+        return Ok(await documentoElectronicoService.UpdateAsync(parameters));
     }
 }

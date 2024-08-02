@@ -2,17 +2,24 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { EmployeeSearchDto } from '@modules/sale/models/employee.model';
 import { EmployeeService } from '@modules/sale/services/employee.service';
 import { Observable, OperatorFunction, catchError, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
-import { AppModule } from 'src/app/app.module';
+import {FormsModule} from "@angular/forms";
+import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
+
 
 @Component({
   selector: 'app-employee-search',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+    FormsModule,
+    NgbTypeaheadModule
+  ],
   templateUrl: './employee-search.component.html',
   styles: ``
 })
 export class EmployeeSearchComponent {
   @Output() onSupplierSelected = new EventEmitter<{ data: any }>();
+  @Output() onEmployeeSelected = new EventEmitter<{ data: any }>();
+
   @Output() emptyInput = new EventEmitter();
   @Input() isSearchSimple = false;
   @Input() textSearch = ''
@@ -51,6 +58,7 @@ export class EmployeeSearchComponent {
   onSelect($event: any) {
     let employee: EmployeeSearchDto = $event.item;
     this.onSupplierSelected.emit({ data: employee });
+    this.onEmployeeSelected.emit({data:employee})
     setTimeout(() => {
       this.textSearch = employee.nombreCompleto;
     });

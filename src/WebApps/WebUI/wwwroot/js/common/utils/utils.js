@@ -106,9 +106,9 @@
     angular.module('acontPlusApp')
         .factory('formulario', formulario);
 
-    formulario.$inject = ['pricingUtils'];
+    formulario.$inject = ['pricingUtils','uuid2'];
 
-    function formulario(pricingUtils) {
+    function formulario(pricingUtils, uuid2) {
         let formSvc = {};
 
         formSvc.dataDocumento = {};
@@ -277,6 +277,8 @@
         }
 
         formSvc.getFechaEscrita = function (fecha) {
+            if (!formSvc.isDateValid(fecha)) return '';
+
             let mes = this.meses();
             let diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
 
@@ -387,6 +389,11 @@
                 date.getFullYear().toString().length === 4
             );
         };
+
+        formSvc.parseDate = function(dateString) {
+            const [day, month, year] = dateString.split('/');
+            return new Date(year, month - 1, day);
+        }
 
         formSvc.isEmail = function (value) {
             return /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i.test(value);
@@ -570,6 +577,11 @@
             return field;
         }
 
+        formSvc.getValidId = (id)=>{
+            let valid = id > 0 ? id : null;
+            return valid;            
+        }
+
         /**
          * 
          * @param {*} items  (items de factura, nota entrega)
@@ -711,12 +723,14 @@
                 ...medidaPrincipal,
                 precioCosto: medidaPrincipal.precioCosto || 0,
                 precioCostoFraccionado: medidaPrincipal.precioCostoFraccionado || 0,
+                precioUnitario: medidaPrincipal.precioUnitario || 0,
                 tipo: 'PRINCIPAL'
             }))
             const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medidaFraccionado => ({
                 ...medidaFraccionado,
                 precioCosto: medidaFraccionado.precioCosto || 0,
                 precioCostoFraccionado : medidaFraccionado.precioCostoFraccionado || 0,
+                precioUnitario: medidaFraccionado.precioUnitario || 0,
                 tipo: 'FRACCIONADO'
             }))
 
@@ -758,6 +772,7 @@
                 tipo: item.tipo,
                 precioCosto: item.precioCosto,
                 precioCostoFraccionado: item.precioCostoFraccionado,
+                precioUnitario: item.precioUnitario,
                 tarifas: (typeof item.tarifas === "string" ? JSON.parse(item.tarifas) : item.tarifas) || []
             }))
 
@@ -984,10 +999,89 @@
             return results;
         }
 
+        //sacamos numero decimal del saldo
+        formSvc.contarDecimales = function(input) { 
+            const partes = input.toString().split(".");
+            return partes.length > 1 ? partes[1].length : 3;
+             
+        }
+
+        formSvc.generateUuidv4 = () => uuid2.newguid()
+
+        formSvc.isNumber = function (value) {
+            var regex = /^\d+$/;
+            return regex.test(value);
+        };
+
+ 
+        formSvc.instanceDecimal = function(num, max = 0) {
+            if (max > 0) {
+                return new Decimal(num).toDecimalPlaces(max).toNumber()
+            }
+            return new Decimal(num);
+        }
+
+        /**
+         * 
+         * @param {*} num1 
+         * @param {*} num2 
+         * @param {*} max 
+         * @returns 
+         */
+        formSvc.plus = function(num1, num2, max = 0) {
+            let instanceDecimal = new Decimal(num1).plus(num2)
+            if (max > 0) {
+                return instanceDecimal.toDecimalPlaces(max).toNumber()
+            }
+
+            return instanceDecimal;
+
+        }
+         
+        /**
+         * 
+         * @param {*} num1 
+         * @param {*} num2 
+         * @param {*} max 
+         * @returns 
+         */
+
+        formSvc.minus = function(num1, num2, max = 0) {
+            let instanceDecimal = new Decimal(num1).minus(num2)
+            if (max > 0) {
+                return instanceDecimal.toDecimalPlaces(max).toNumber()
+            }
+
+            return instanceDecimal;
+
+        } 
 
 
+        formSvc.mul = function(num1, num2, max = 0) {
+            let instanceDecimal = new Decimal(num1).mul(num2)
+            if (max > 0) {
+                return instanceDecimal.toDecimalPlaces(max).toNumber()
+            }
 
-        return formSvc;
+            return instanceDecimal;
+
+        }
+
+
+        formSvc.div = function(num1, num2, max = 0) {
+            let instanceDecimal = new Decimal(num1).div(num2)
+            if (max > 0) {
+                return instanceDecimal.toDecimalPlaces(max).toNumber()
+            }
+
+            return instanceDecimal;
+
+        }
+
+         
+
+        return formSvc;        
+
     }
 
 })(window.angular)

@@ -1,27 +1,18 @@
-﻿using Autofac;
-using Common.Core.Interfaces;
-using Common.Infrastructure.Data;
-using Common.Infrastructure.Repository;
-using TechnicalSupport.API.Data;
+﻿namespace TechnicalSupport.API.Extensions;
 
-namespace TechnicalSupport.API.Extensions
+public class AutoFacModule : Module
 {
-    public class AutoFacModule : Module
+    protected override void Load(ContainerBuilder builder)
     {
-        protected override void Load(ContainerBuilder builder)
+        builder.RegisterType<TechnicalSupportContext>().As<BaseContext>();
+        builder.Register(ctx =>
         {
-            builder.RegisterType<TechnicalSupportContext>().As<BaseContext>();
-            builder.Register(ctx =>
+            var allContext = new Dictionary<string, BaseContext>
             {
-                var allContext = new Dictionary<string, BaseContext>
-                {
-                    { "TechnicalSupportContext", ctx.Resolve<TechnicalSupportContext>() }
-                };
-                return new DbContextFactory(allContext);
-
-            });
-            builder.RegisterType<ADORepository>().As<IADORepository>();
-
-        }
+                { "TechnicalSupportContext", ctx.Resolve<TechnicalSupportContext>() }
+            };
+            return new DbContextFactory(allContext);
+        });
+        builder.RegisterType<AdoRepository>().As<IAdoRepository>();
     }
 }

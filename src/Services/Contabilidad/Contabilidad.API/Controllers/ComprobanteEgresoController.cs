@@ -1,108 +1,61 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Contabilidad.Core.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common;
-using Services.Common.Logs;
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Contabilidad.API.Controllers
+namespace Contabilidad.API.Controllers;
+
+public class ComprobanteEgresoController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ComprobanteEgresoController : ControllerBase
+    private readonly IComprobanteEgresoService _svc;
+
+    public ComprobanteEgresoController(IComprobanteEgresoService service)
     {
-        private readonly IComprobanteEgresoService _svc;
-        private readonly LogWriter _log;
+        _svc = service;
+    }
 
-        public ComprobanteEgresoController(IComprobanteEgresoService service, LogWriter log)
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            _svc = service;
-            _log = log;
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        }; 
+        return Ok(await _svc.GetAsync(parameters));
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _svc.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en get comprobantes egreso" + ex.Message);
-                return BadRequest("Error en get comprobantes egreso" + ex.Message);
-            }
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };  
+        return Ok(await _svc.AddAsync(parameters));
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Cancel(int id, string observacion)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _svc.AddAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Post comprobantes egreso" + ex.Message);
-                return BadRequest("Error en Post comprobantes egreso" + ex.Message);
-            }
-        }
+            { "userRoleId",   User.GetUserRoleId() }, 
+            { "id", id }, 
+            { "observacion", observacion }
+        };
+        var response = await _svc.DeleteAsync(parameters);
+        return Ok(response);
+    }
 
-
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Cancel(int id, string observacion)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, ApiRequest request)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"id", id},
-                    {"observacion", observacion}
-                };
-                var response = await _svc.DeleteAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al anular comprobantes egreso: " + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            {"id", id },
+           { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
 
-        //===========SE USA EN CHEQUE============
-        [HttpPut]
-        public async Task<IActionResult> Put(ApiRequest request)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                {"userRoleId", User.GetUserRoleId()},
-                {"json", DataConverters.SerializeDictionary(request.Data)}
-            };
-
-                var response = await _svc.UpdateAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al actualizar comprobante ingreso desde cheque: " + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
+        var response = await _svc.UpdateAsync(parameters);
+        return Ok(response);
     }
 }

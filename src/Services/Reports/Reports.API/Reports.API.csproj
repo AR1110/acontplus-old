@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Reports\GestionReporte\ArticuloTarifa - Copy.rdl" />
+    <None Remove="Reports\TechnicalSupport\Order.rdl" />
     <None Remove="Reports\Ventas\AprobHistorial.rdl" />
     <None Remove="Reports\Ventas\Factura.rdlc" />
     <None Remove="Reports\Ventas\FacturaGeneral.rdl" />
@@ -41,9 +41,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\FactElect\ComprobanteRetencionRG.rdl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GestionReporte\ArticuloTarifa - Copy.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Inventario\ConsumoDiarioArticuloAgrupado.rdl">
@@ -152,6 +149,9 @@
     <Content Include="Reports\Retencion.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\TechnicalSupport\Order.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\Ventas\Clientes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -191,17 +191,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
+    <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
     <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
     <ProjectReference Include="..\Reports.Application\Reports.Application.csproj" />
-    <ProjectReference Include="..\Reports.Core\Reports.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Asp.Versioning.Mvc" />
-    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
   </ItemGroup>
 
 </Project>

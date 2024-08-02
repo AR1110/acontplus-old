@@ -1,42 +1,29 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Utils;
-using Common.Core.Models;
-using Configuracion.API.Interfaces;
+﻿namespace Configuracion.API.Services;
 
-namespace Configuracion.API.Services
+public class UserProfileService : IUserProfileService
 {
-    public class UserProfileService : IUserProfileService
+    private readonly IAdoRepository _repository;
+    private readonly string nameSchema = "Config.UserProfile";
+
+    public UserProfileService(IAdoRepository repository)
     {
-        private readonly IADORepository _repository;
-        private readonly string nameSchema = "Config.UserProfile";
+        _repository = repository;
+    }
 
-        public UserProfileService(IADORepository repository)
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Update", parameters);
+    }
+
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
+
+        if (ds == null)
         {
-            _repository = repository;
+            return new ApiResponse { Code = "0", Message = "No se pudo obtener los datos" };
         }
 
-        public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteAsync(nameSchema + "_Update", parameters);
-        }
-
-        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
-        {
-            try
-            {
-                var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
-
-                if (ds == null)
-                {
-                    return new ApiResponse { code = "0", message = "No se pudo obtener los datos" };
-                }
-
-                return new ApiResponse { code = "0", message = "Ok", payload = DataConverters.DataSetToJSON(ds) };
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
+        return new ApiResponse { Code = "0", Message = "Ok", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

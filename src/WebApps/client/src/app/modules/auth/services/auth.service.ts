@@ -1,58 +1,91 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, catchError, throwError } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.model';
-import { hideLoader, showLoader } from '@core/utils/loader';
+import { jwtDecode } from 'jwt-decode';
+
+export interface UserData {
+  userId: number;
+  email: string;
+  name: string;
+  username: string;
+}
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
-  private URL = environment.API_URL + "Account/"
-
   headers = new HttpHeaders().set('Content-Type', 'application/json');
-  currentUser = {};
+  #url = environment.API_URL + 'Account/';
 
-  constructor(private http: HttpClient, public router: Router) { }
+  constructor(
+    private http: HttpClient,
+    public router: Router,
+  ) {}
+
+  getDecodedToken(): UserData | null {
+    const jwt = this.getToken();
+    if (jwt) {
+      const token = jwtDecode<any>(jwt);
+      const name =
+        token[
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'
+        ] || token.name;
+      const userId =
+        token[
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+        ] || token.userId;
+
+      return {
+        email: token.email || '',
+        name: name,
+        userId: userId,
+        username: token.unique_name || '',
+      };
+    }
+    return null; // Return null if no JWT or something goes wrong
+  }
+
+  getToken() {
+    return localStorage.getItem('access_token');
+  }
+
+  isAuthenticated: () => boolean = () => {
+    const authToken = this.getToken();
+    let expired = false;
+    if (authToken !== null) {
+      const decodedJwt = jwtDecode(authToken);
+      const expiration = Number(decodedJwt.exp);
+      const now = new Date();
+      const currentTimeUTC = Math.floor(now.getTime() / 1000);
+      if (expiration < currentTimeUTC) {
+        expired = true;
+      }
+    } else {
+      expired = true;
+    }
+    return !expired;
+  };
 
   // Sign-up
   signUp(user: User): Observable<any> {
-    let api = `${this.URL}register`;
+    let api = `${this.#url}register`;
     return this.http.post(api, user).pipe(catchError(this.handleError));
   }
 
   // Sign-in
   signIn(user: User) {
-    console.log(user)
     const self = this;
-    showLoader();
-    return this.http
-      .post<any>(`${this.URL}login`, user).subscribe({
-        next(res) {
-          hideLoader();
-          console.log(res)
-          localStorage.setItem('access_token', res.token);
-          // self.getUserProfile(res._id).subscribe((res) => {
-          //   self.currentUser = res;
-          self.router.navigate(['/', 'home']);
-          // });
-        },
-        error(err) {
-          hideLoader();
-          if (err.error.statusCode === 401) {
-          }
-        },
-        complete() {
-          hideLoader()
-        },
-      })
-  }
-
-  getToken() {
-    return localStorage.getItem('access_token');
+    return this.http.post<any>(`${this.#url}login`, user).subscribe((res) => {
+      localStorage.setItem('access_token', res.token);
+      self.router.navigate(['/', 'home']);
+    });
   }
 
   parseJwt() {
@@ -64,17 +97,12 @@ export class AuthService {
     } catch (e) {
       return null;
     }
-  };
-
-  get isLoggedIn(): boolean {
-    let authToken = localStorage.getItem('access_token');
-    return authToken !== null ? true : false;
   }
 
-  doLogout() {
+  logout() {
     let removeToken = localStorage.removeItem('access_token');
     if (removeToken == null) {
-      this.router.navigate(['/', 'auth'])
+      this.router.navigate(['/', 'auth']);
     }
   }
 
@@ -91,15 +119,14 @@ export class AuthService {
 
   // Error
   handleError(error: HttpErrorResponse) {
-
     let msg = '';
     if (error.error instanceof ErrorEvent) {
       // client-side error
-      console.log('client error')
+      console.log('client error');
       msg = error.error.message;
     } else {
       // server-side error
-      console.log('server error', error.error)
+      console.log('server error', error.error);
       msg = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
     return throwError(() => new Error(msg));

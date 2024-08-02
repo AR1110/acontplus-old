@@ -1,107 +1,60 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Contabilidad.Core.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common;
-using Services.Common.Logs;
+﻿namespace Contabilidad.API.Controllers;
 
-namespace Contabilidad.API.Controllers
+public class AnticipoController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AnticipoController : ControllerBase
+    private readonly IAnticipoService _anticipoSvc;
+
+    public AnticipoController(IAnticipoService anticipoSvc)
     {
+        _anticipoSvc = anticipoSvc;
+    }
 
-        private IAnticipoService _anticipoSvc;
-        private LogWriter _log;
-
-        public AnticipoController(IAnticipoService anticipoSvc, LogWriter log)
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var response = await _anticipoSvc.GetAsync(new Dictionary<string, object>
         {
-            _anticipoSvc = anticipoSvc;
-            _log = log;
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        });
+        if (response == null) { return NoContent(); }
 
-        }
+        ;
+        return Ok(new { code = "1", payload = response });
+    }
 
-        [HttpGet()]
-        public async Task<IActionResult> Get(string json)
+    [HttpPost]
+    public async Task<IActionResult> Post(ApiRequest request)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            try
-            {
-                var response = await _anticipoSvc.GetAsync(new Dictionary<string, object> {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "json", SqlStringParam.Sanitize(json) }
-                });
-                if (response == null) { return NoContent(); };
-                return Ok(new { code = "1", payload = response });
-            }
-            catch (Exception ex)
-            {
+            { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(request.Data) }
+        };
 
-                _log.LogActivity("Error al listar Anticipo: \n" + ex.ToString());
-                return BadRequest("Error on get Anticipo: " + ex.Message);
-            }
-        }
+        var response = await _anticipoSvc.AddAsync(parameters);
+        return Ok(response);
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> Post(ApiRequest request)
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, ApiRequest request)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                {"userRoleId", User.GetUserRoleId()},
-                {"json", DataConverters.SerializeDictionary(request.Data)}
-            };
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", DataConverters.SerializeDictionary(request.Data) }
+        };
 
-                var response = await _anticipoSvc.AddAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al crear Anticipo: " + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
+        var response = await _anticipoSvc.UpdateAsync(parameters);
+        return Ok(response);
+    }
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, ApiRequest request)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                {"userRoleId", User.GetUserRoleId()},
-                    {"id", id },
-                {"json", DataConverters.SerializeDictionary(request.Data)}
-            };
-
-                var response = await _anticipoSvc.UpdateAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al actualizar Anticipo: " + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
-
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"id", id}
-                };
-                var response = await _anticipoSvc.DeleteAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al eliminar Anticipo: " + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var response = await _anticipoSvc.DeleteAsync(parameters);
+        return Ok(response);
     }
 }

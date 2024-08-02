@@ -1,67 +1,42 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
-using Services.Common;
-using Inventario.Core.Interfaces;
+﻿namespace Inventario.API.Controllers;
 
-namespace Inventario.API.Controllers
+public class MassiveTaxController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class MassiveTaxController : ControllerBase
+
+    private readonly IMassiveTaxService _service;
+
+    public MassiveTaxController(IMassiveTaxService service)
     {
-        private readonly IMassiveTaxService _service;
-        private readonly LogWriter _log;
+        _service = service;
 
-        public MassiveTaxController(IMassiveTaxService service, LogWriter log)
-        {
-            _service = service;
-            _log = log;
-        }
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            try
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
             {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _service.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Obtener Cambios Masivos de Iva" + ex.Message);
-                return BadRequest("Error en get Massive Tax Change " + ex.Message);
-            }
-        }
+                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            };
+        var response = await _service.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
 
-        [HttpPut]
-        public async Task<IActionResult> Put([FromBody] ApiRequest data)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _service.UpdateAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Actualizar CAMBIOS MASIVOS DE IVA " + ex.Message);
-                return BadRequest("Error en Put     MASSIVE TAX CHANGE " + ex.Message);
-            }
-        }
+            ;
+        return Ok(response);
+    }
 
+    [HttpPut]
+    public async Task<IActionResult> Put([FromBody] ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetUserRoleId() },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            };
+        var response = await _service.UpdateAsync(parameters);
+        if (response == null) { return NoContent(); }
+
+            ;
+        return Ok(response);
     }
 }

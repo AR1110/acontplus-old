@@ -1,15 +1,16 @@
 ﻿using System.Data;
 using Common.Core.Interfaces;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services
 {
     public class ConfigurationService : IConfigurationService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
 
-        public ConfigurationService(IADORepository repository)
+        public ConfigurationService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -28,7 +29,7 @@ namespace Restaurant.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
     }

@@ -1,18 +1,16 @@
-﻿using Common.Core.Interfaces;
-using Configuracion.API.Interfaces;
+﻿namespace Configuracion.API.Services;
 
-namespace Configuracion.API.Services
+public class PrintService : IPrintService
 {
-    public class PrintService : IPrintService
+    private readonly IAdoRepository _repository;
+
+    public PrintService(IAdoRepository repository)
     {
-        private readonly IADORepository _repository;
-        public PrintService(IADORepository repository)
-        {
-            _repository = repository;
-        }
-        public async Task<string> GetAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteDeprecatedAsync("Config.Print_Get", parameters);
-        }
+        _repository = repository;
+    }
+
+    public async Task<string> GetAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SpExecuteDeprecatedAsync("Config.Print_Get", parameters);
     }
 }

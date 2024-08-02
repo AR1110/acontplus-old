@@ -1,87 +1,65 @@
-﻿using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common;
-using Services.Common.Logs;
-using TechnicalSupport.API.Entities;
-using TechnicalSupport.API.Interfaces;
+﻿namespace TechnicalSupport.API.Controllers;
 
-namespace TechnicalSupport.API.Controllers
+public class DeviceController : BaseApiController
 {
-    public class DeviceController : BaseApiController
+    private readonly IDeviceService _deviceService;
+
+    public DeviceController(IDeviceService deviceService)
     {
-        private IDeviceService _deviceService;
-        private readonly LogWriter _log;
-        public DeviceController(LogWriter log, IDeviceService deviceService)
+        _deviceService = deviceService;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            _log = log;
-            _deviceService = deviceService;
-        }
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await _deviceService.GetAsync(parameters);
+        if (response == null)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _deviceService.GetAsync(parameters);
-                if (response == null) { return BadRequest("Can't Get Data"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on Get: {json}" + ex.Message);
-                return BadRequest("Error on get");
-            }
+            return BadRequest("Can't Get Data");
         }
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Device device)
+
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] Device device)
+    {
+        device.UserId = User.GetUserId();
+        var response = await _deviceService.AddAsync(device);
+        if (response == null)
         {
-            try
-            {
-                device.UserId = User.GetUserId();
-                var response = await _deviceService.AddAsync(device);
-                if (response == null) { return BadRequest("Cant Save"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Post: " + ex.Message);
-                return BadRequest("Error on post");
-            }
+            return BadRequest("Cant Save");
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Device device)
+
+        return Ok(response);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] Device device)
+    {
+        device.UserId = User.GetUserId();
+        var response = await _deviceService.UpdateAsync(id, device);
+        if (response == null)
         {
-            try
-            {
-                device.UserId = User.GetUserId();
-                var response = await _deviceService.UpdateAsync(id, device);
-                if (response == null) { return BadRequest("Cant Update"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Put: " + ex.Message);
-                return BadRequest("Error on Put");
-            }
+            return BadRequest("Cant Update");
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+
+        return Ok(response);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var response = await _deviceService.DeleteAsync(id, User.GetUserId());
+        if (response == null)
         {
-            try
-            {
-                var response = await _deviceService.DeleteAsync(id, User.GetUserId());
-                if (response == null) { return BadRequest("Cant Delete"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Delete: " + ex.Message);
-                return BadRequest("Error on Delete");
-            }
+            return BadRequest("Cant Delete");
         }
+
+        return Ok(response);
     }
 }

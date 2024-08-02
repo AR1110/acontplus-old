@@ -1,0 +1,158 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">
+    {{titleModal}}
+  </h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="establecimiento">Establecimiento: <span class="text-danger">*</span></label>
+        @if (params.id>0) {
+            <select name="establecimiento" id="establecimiento" class="form-select" [(ngModel)]="data.establecimientoId" disabled="">
+              @for (item of establishments; track $index) {
+              <option [ngValue]="item.establecimientoId">{{item.nombreComercial}}</option>
+              }
+            </select>
+        }@else {
+          <select name="establecimiento" id="establecimiento" class="form-select" [(ngModel)]="data.establecimientoId" (change)="onChangeEstab()">
+            @for (item of establishments; track $index) {
+              <option [ngValue]="item.establecimientoId">{{item.nombreComercial}}</option>
+            }
+          </select>
+
+        }
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
+        @if (params.id>0) {
+          <select name="puntoEmision" id="puntoEmision" class="form-select" [(ngModel)]="data.puntoEmisionId" disabled>
+            @for (item of emissionPoints; track $index) {
+              <option [ngValue]="item.puntoEmisionId">{{item.ptoEmi}}</option>
+            }
+          </select>
+        }@else {
+          <select name="puntoEmision" id="puntoEmision" class="form-select" [(ngModel)]="data.puntoEmisionId" (change)="generateSequence()">
+            @for (item of emissionPoints; track $index) {
+            <option [ngValue]="item.puntoEmisionId">{{item.ptoEmi}}</option>
+            }
+          </select>
+        }
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
+         <app-input-date [(value)]="data.fechaEmision" />
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="secuencia">Secuencia: <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="secuencia" id="secuencia" [value]="data.sequence" readonly>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="searchClienteVehiculo">Cliente/Vehiculo: <span class="text-danger">*</span></label>
+        <div class="input-group">
+          <input
+          type="text"
+          id="searchClienteVehiculo"
+          class="form-control"
+          placeholder="Buscar Cliente o Vehículo"
+          [(ngModel)]="dataSearchVehicle.model"
+        [ngbTypeahead]="search"
+        [resultTemplate]="rt"
+        [inputFormatter]="formatter"
+         (selectItem)="onSelectCustomerVehicle($event)"
+        (keyup)="onKeyupSearchCustomerVehicle()"
+        onclick="select()"
+          >
+          <ng-template #rt let-r="result" let-t="term">
+            <div class="d-flex flex-column  ">
+              <div>
+                {{r.tradeName}}
+              </div>
+              <div  >
+                Marca: {{r.brand}}
+              </div>
+              <div  >
+                Placa: {{r.licensePlate}}
+              </div>
+            </div>
+          </ng-template>
+
+          <button type="button" class="btn btn-secondary btn-sm" appVehicleAddEdit (resultModalHandler)="resultModalVehicle($event)">
+            <fa-icon [icon]="'plus'"></fa-icon>
+          </button>
+          @if (data.vehicleCompanyId>0) {
+            <button type="button" class="btn btn-secondary btn-sm" appVehicleAddEdit [params]="{id: data.vehicleCompanyId}" (resultModalHandler)="resultModalVehicle($event)">
+              <fa-icon [icon]="'pencil'"></fa-icon>
+            </button>
+          }
+        </div>
+        @if (this.dataSearchVehicle.searching) {
+        <small class="form-text text-muted">Buscando...</small>
+        } @if (dataSearchVehicle.searchFailed) {
+        <div class="invalid-feedback">
+          Lo sentimos, no se han podido cargar las sugerencias.
+        </div>
+        }
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="tecnicoEncargado">Técnico Encargado: <span class="text-danger">*</span></label>
+        <select name="tecnicoEncargado" id="tecnicoEncargado" class="form-select" [(ngModel)]="data.userAssignedId">
+          @for (item of users; track $index) {
+            <option [ngValue]="item.userAssignedId">{{item.userName}}</option>
+          }
+
+        </select>
+      </div>
+    </div>
+  </div>
+
+  @if (data.vehicleCompanyId>0) {
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="marca">Marca: </label>
+          <input type="text" class="form-control" [value]="vehicle.brand" disabled>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="marca">Modelo: </label>
+          <input type="text" class="form-control" [value]="vehicle.model" disabled>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="marca">Placa: </label>
+          <input type="text" class="form-control" [value]="vehicle.licensePlate" disabled>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="form-group">
+    <label for="soporteRealizar">Soporte a realizar: <span class="text-danger">*</span></label>
+    <textarea name="soporteRealizar" id="soporteRealizar" class="form-control" [(ngModel)]="data.obs"></textarea>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" (click)="save()">
+    {{btnText}}
+  </button>
+  <button type="button" class="btn btn-dark" (click)="modal.close()">
+    &times; Cerrar
+  </button>
+</div>

@@ -15,7 +15,7 @@
             </div>
         </div>
 
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label>Punto Emisión: <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" ng-value="data.ptoEmi" disabled>
@@ -26,11 +26,23 @@
             </div>
         </div>
 
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label>Fecha Emisión: <span class="text-danger">*</span> </label>
                 <input type="date" name="fechaEmision" class="form-control" ng-model="data.fechaEmision">
                 <small class="text-info">{{fechaEmisionEscrita}}</small>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" ng-if="config.multipleVendedor">
+            <div class="form-group">
+                <label for="vendedor">Vendedor: <span class="text-danger">*</span></label>
+                <select name="vendedor" id="vendedor" class="form-control border-select"
+                    ng-model="data.idUsuario">
+                    <option ng-value="item.idUsuario" ng-repeat="item in vendedores">
+                        {{item.nombreCompleto}}
+                    </option>
+                </select>
             </div>
         </div>
     </div>

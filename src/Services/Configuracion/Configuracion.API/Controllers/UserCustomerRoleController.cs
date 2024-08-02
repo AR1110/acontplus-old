@@ -1,48 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Common.Core.Utils;
-using Configuracion.API.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
-using Services.Common;
+﻿namespace Configuracion.API.Controllers;
 
-namespace Configuracion.API.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class UserCustomerRoleController(IUserCustomerRoleService service) : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class UserCustomerRoleController : ControllerBase
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IUserCustomerRoleService _service;
-        private readonly LogWriter _log;
-
-        public UserCustomerRoleController(IUserCustomerRoleService service, LogWriter log)
+        var parameters = new Dictionary<string, object>
         {
-            _service = service;
-            _log = log;
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await service.GetAsync(parameters);
+        return Ok(response);
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, ApiRequest request)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _service.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en get " + ex.Message);
-                return BadRequest("Error en get " + ex.Message);
-            }
-        }
-
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
+        var response = await service.UpdateAsync(parameters);
+        return Ok(response);
     }
 }

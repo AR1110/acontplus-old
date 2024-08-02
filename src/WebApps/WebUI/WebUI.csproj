@@ -9,28 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Pages\Config\User\**" />
-    <Content Remove="Pages\Config\User\**" />
-    <EmbeddedResource Remove="Pages\Config\User\**" />
-    <None Remove="Pages\Config\User\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Services\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Services\Common\Services.Common\Services.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\Compras\DocumentoRecibido\Shared\" />
-    <Folder Include="Pages\Inventario\Product\" />
-  </ItemGroup>
+  <!--<ItemGroup>
+    <Content Update="wwwroot\**\*.css" CopyToPublishDirectory="never" />
+    <Content Update="wwwroot\**\*.min.css" CopyToPublishDirectory="always" />
+    <Content Update="wwwroot\**\*.js" CopyToPublishDirectory="never" />
+    <Content Update="wwwroot\**\*.min.js" CopyToPublishDirectory="always" />
+  </ItemGroup>-->
 
 </Project>

@@ -1,12 +1,6 @@
-import { Component, ViewChild, ViewEncapsulation, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { IForm } from '@core/Types/form-types';
-import { CompanyCustomerSearchComponent } from '@core/components/company-customer-search/company-customer-search.component';
+import {Component, inject,  ViewChild, ViewEncapsulation} from '@angular/core';
+import {FormControl, FormGroup,  ReactiveFormsModule, Validators} from '@angular/forms';
+import { CompanyCustomerSearchComponent } from '@modules/customer/company-customer/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import {
@@ -16,46 +10,59 @@ import {
 import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
-import { IconProp, icon } from '@fortawesome/fontawesome-svg-core';
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
 import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
 import { DeviceSearchComponent } from '@modules/technical-support/components/device-search/device-search.component';
-import {
-  Device,
-  DeviceSpecs,
-} from '@modules/technical-support/models/device.model';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
-import { DeviceService } from '@modules/technical-support/services/device.service';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppModule } from 'src/app/app.module';
 import { v4 as uuidv4 } from 'uuid';
+import Swal from 'sweetalert2';
+import { OrderDetailService } from '@modules/technical-support/services/order-detail.service';
+import {
+  faSave,
+  faTrashAlt,
+} from '@fortawesome/free-regular-svg-icons';
+import { InputDateComponent } from '@shared/components/input-date/input-date.component';
+import { formatDateMoment, isDateValid } from '@core/utils/format-date-moment';
+import {
+  ajustarFechaEmisionModificada,
+  dateIsAfterCurrentDate,
+  formatDate,
+} from '@core/utils/date.util';
+import { CommonModule, DatePipe} from '@angular/common';
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: 'app-order-modal',
   standalone: true,
   imports: [
-    AppModule,
+    CommonModule,
+    ReactiveFormsModule,
+    FontAwesomeModule,
     CompanyCustomerSearchComponent,
     DeviceSearchComponent,
     NgbAccordionModule,
     TabulatorComponent,
+    InputDateComponent,
   ],
   templateUrl: './order-modal.component.html',
   styles: ``,
   encapsulation: ViewEncapsulation.None,
+  providers: [DatePipe],
 })
 export class OrderModalComponent {
   @ViewChild('inputNameSpec') inputNameSpec: any;
-  private fb = inject(FormBuilder);
+  private datePipe = inject(DatePipe);
   private modalRef = inject(NgbActiveModal);
   private modalService = inject(ModalService);
+  private oDS = inject(OrderDetailService);
   private orderService = inject(OrderService);
   private tS = inject(ToasterService);
 
-  columnNames: any[] = [
+  columnNames = [
+    { title: 'id', field: 'id', width: 150, visible: false },
     { title: 'deviceId', field: 'deviceId', width: 150, visible: false },
     {
       title: 'deviceCustomerId',
@@ -63,32 +70,81 @@ export class OrderModalComponent {
       width: 150,
       visible: false,
     },
-    { title: 'Equipo', field: 'deviceName', width: 200 },
-    { title: 'Serie', field: 'deviceSerie', width: 180, editor: true },
+    { title: 'Equipo', field: 'deviceName', width: 225 },
+    { title: 'Serie (IMEI)', field: 'deviceSerie', width: 200, editor: true },
     {
-      title: 'Garantia',
+      title: 'Garantia (si aplica)',
       field: 'deviceWarranty',
-      width: 150,
-      validator: ['numeric', 'min:0'],
+      width: 130,
+      editor: 'date',
+      formatter: 'date',
+      placeholder: 'dd/mm/yyyy',
+      formatterParams: {
+        inputFormat: 'yyyy-MM-dd',
+        outputFormat: 'dd/MM/yyyy',
+        invalidPlaceholder: '(invalid date)',
+        timezone: 'America/Guayaquil',
+      },
+    },
+    {
+      title: 'Reparaciones Requeridas',
+      field: 'obs',
+      width: 450,
       editor: true,
     },
-    { title: 'Obs.', field: 'obs', width: 300, editor: true },
     {
-      cellClick: (e: any, cell: any) => {
-        this.removeFromList(cell.getData().deviceId);
-        cell.getRow().delete();
+      formatter: (cell: any) => {
+        //let cellEl = cell.getElement();
+        let rowDataMain = cell.getRow().getData();
+
+        //create edit button
+        let editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.innerHTML = `${icon(faSave).html.join('')}`;
+        editBtn.classList.add('btn', 'btn-success', 'btn-sm');
+        editBtn.title = 'Guardar Detalle';
+        editBtn.addEventListener('click', () => {
+          let rowData = cell.getRow().getData();
+          this.editDetail(rowData);
+        });
+
+        //create delete button
+        let delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
+        delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
+        delBtn.title = 'Eliminar detalle';
+        delBtn.addEventListener('click', () => {
+          let rowData = cell.getRow().getData();
+          console.log(rowData);
+          if (rowData.id > 0) {
+            this.askToDeleteDetail(rowData);
+          } else {
+            this.removeFromList(rowData.deviceId);
+          }
+        });
+
+        let buttonHolder = document.createElement('span');
+        buttonHolder.appendChild(delBtn);
+        if (rowDataMain.id > 0) {
+          buttonHolder.appendChild(editBtn);
+        }
+        return buttonHolder;
       },
-      formatter: this.deleteButton,
       hozAlign: 'center',
       resizable: false,
       title: 'Opción',
       width: 100,
     },
   ];
+  clearInput = true;
+  currentDate = new Date();
+  customerBusinessName = '';
   data: any = {};
   deviceFound: any = {};
   devices: any = [];
   establecimientos: Array<GroupedEstab> = [];
+  formatedDate: any = this.datePipe.transform(this.currentDate, 'yyyy-MM-dd');
   modalIcon: IconProp = 'plus';
   modalTitle = 'Nueva Orden';
   order: any = {};
@@ -96,62 +152,118 @@ export class OrderModalComponent {
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];
   users: any = [];
 
-  orderForm = this.fb.group({
-    uuid: uuidv4(),
-    establecimientoId: [0, Validators.required],
-    puntoEmisionId: [0, Validators.required],
-    customerCompanyId: [0, Validators.required],
-    fechaEmision: '',
-    userId: 0,
-    obs: [''],
-    orderStatusId: 1,
-    orderDetails: [],
+  orderForm = new FormGroup({
+    id: new FormControl(0),
+    assignedUserId: new FormControl(0, Validators.required),
+    uuid: new FormControl(uuidv4()),
+    establecimientoId: new FormControl(0, Validators.required),
+    puntoEmisionId: new FormControl(0, Validators.required),
+    customerCompanyId: new FormControl(0, Validators.required),
+    fechaEmision: new FormControl(this.formatedDate, Validators.required),
+    obs: new FormControl(''),
+    orderStatusId: new FormControl(0),
   });
 
   addDetail(device: any) {
-    (device.deviceId = device.id),
-      (device.deviceCustomerId = device.deviceCustomerId);
-    device.deviceName = !device.deviceName ? device.name : device.deviceName;
-    device.deviceSerie = !device.deviceSerie
+    if (this.orderDetails.some((x) => x.deviceId == device.id)) {
+      return this.tS.toastr({
+        type: 'warning',
+        message: 'Este equipo ya se encuentra agregado en el detalle',
+      });
+    }
+    let deviceToAdd: OrderDetail = {
+      id: 0,
+      deviceId: 0,
+      deviceName: '',
+      deviceSerie: '',
+      deviceWarranty: '',
+      uuid: '',
+    };
+    deviceToAdd.deviceId = device.id;
+    deviceToAdd.deviceCustomerId = device.deviceCustomerId;
+    deviceToAdd.deviceName = !device.deviceName
+      ? device.name
+      : device.deviceName;
+    deviceToAdd.deviceSerie = !device.deviceSerie
       ? device.serie
       : device.deviceSerie;
-    device.deviceWarranty = !device.deviceWarranty
+    deviceToAdd.deviceWarranty = !device.deviceWarranty
       ? device.warranty
       : device.deviceWarranty;
-    device.obs = '';
-    device.uuid = uuidv4();
-    this.orderDetails.push(device);
+    deviceToAdd.obs = '';
+    deviceToAdd.uuid = uuidv4();
+    deviceToAdd.assignedUserId = 0;
+    deviceToAdd.deviceCustomerId = !device.deviceCustomerId
+      ? 0
+      : device.deviceCustomerId;
+    deviceToAdd.deviceCustomerId = !device.deviceCustomerId
+      ? 0
+      : device.deviceCustomerId;
+    deviceToAdd.deviceSerie = !device.deviceSerie ? 0 : device.deviceSerie;
+    deviceToAdd.deviceWarranty = !device.deviceWarranty
+      ? ''
+      : device.deviceWarranty;
+    this.orderDetails.push(deviceToAdd);
+    console.log(this.orderDetails);
+  }
+
+  askToDeleteDetail(detail: OrderDetail) {
+    Swal.fire({
+      icon: 'warning',
+      text: `Esta seguro de eliminar este detalle?`,
+      showCancelButton: true,
+      confirmButtonText: 'Si',
+      cancelButtonText: 'No',
+    }).then((response) => {
+      if (response.isConfirmed) {
+        this.oDS.delete(detail.id).subscribe( (response) => {
+            if (isApiResponse(response)) {
+              this.tS.toastr({
+                type: response.code == '1' ? 'success' : 'warning',
+                message: response.message,
+              });
+              if (response.code == '1') {
+                this.orderDetails = this.orderDetails.filter(
+                  (x) => x.id != detail.id
+                );
+              }
+            }
+        });
+      }
+    });
   }
 
   closeModal() {
     this.modalRef.close();
   }
 
-  deleteButton(cell: any, formatterParams: any) {
-    //cell - the cell component
-    //formatterParams - parameters set for the column
+  editDetail(detail: any) {
 
-    //get the row data
-    let data = cell.getRow().getData();
-
-    //return the HTML code for the button, using Bootstrap classes and Angular routerLink
-    return `<button class='btn btn-danger'>${icon(faTrashAlt).html.join(
-      ''
-    )}</button>`;
+    this.oDS.put(detail.id, detail).subscribe(  (response) => {
+        if (isApiResponse(response)) {
+          this.tS.toastr({
+            type: response.code == '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+        }
+    });
   }
 
   get() {
-    showLoader();
-    this.orderService.get(JSON.stringify({ tipo: 1 })).subscribe({
-      next: (response) => {
+
+    let parameters = { tipo: 1, id: this.data.id };
+    if (this.data.id > 0) {
+      this.modalTitle = 'Editar Orden';
+      this.modalIcon = 'edit';
+    }
+    this.orderService.get(parameters).subscribe( (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {
-            let { puntosEmision, categories, users } = JSON.parse(
-              response.payload as string
-            );
+            let parsedResponse = JSON.parse(response.payload as string);
+            let { puntosEmision, users } = parsedResponse;
             this.establecimientos = groupEstabUtil({
               estabs: puntosEmision,
-              isGroupPuntoEmision: true
+              isGroupPuntoEmision: true,
             });
             const dataEstab = this.establecimientos.find(
               (estab) => estab.defaultEstab
@@ -172,16 +284,15 @@ export class OrderModalComponent {
               }
             }
             this.users = users;
+            if (this.data.id > 0) {
+              let { order, orderDetails } = parsedResponse;
+              this.order = order[0];
+              this.customerBusinessName = this.order.businessName;
+              this.orderDetails = orderDetails || [];
+              this.orderForm.patchValue(this.order);
+            }
           }
         }
-      },
-      complete() {
-        hideLoader();
-      },
-      error(error) {
-        console.log(error);
-        hideLoader();
-      },
     });
   }
 
@@ -234,8 +345,8 @@ export class OrderModalComponent {
     this.orderForm.patchValue({ customerCompanyId: data.idCliente });
   }
   onDeviceSelected($event: any) {
-    console.log($event);
     this.addDetail($event.data);
+    this.clearInput = true;
   }
 
   removeFromList(deviceId: number) {
@@ -243,48 +354,89 @@ export class OrderModalComponent {
     this.orderDetails = newArray;
   }
 
-  save() {
-    showLoader();
-    const data = {
-      ...this.orderForm.value,
-      orderDetails: this.orderDetails,
-    };
+  onChangeDate(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const timeString = inputElement.value;
+    console.log(inputElement.value);
 
+    let dateObject: any = timeString;
+
+    this.orderForm.patchValue({ fechaEmision: dateObject }); // Emitir el nuevo valor al componente padre
+  }
+
+  save() {
     if (this.orderDetails.length == 0) {
       this.tS.toastr({
         type: 'warning',
         message: 'Debe de añadir los detalles a la orden',
       });
     }
-    console.log(data);
-    this.orderService.post(data).subscribe({
-      next: (response) => {
-        if (isApiResponse(response)) {
-          if (response.code === '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message!,
-            });
-          }
-          if (response.code === '1') {
-            this.orderForm.patchValue({});
-            this.orderDetails = [];
-            this.order = {};
-            this.tS.toastr({
-              type: 'success',
-              message: response.message!,
-            });
-            this.modalRef.close();
-          }
-        }
-      },
-      complete() {
-        hideLoader();
-      },
-      error(err) {
-        console.log(err);
-        hideLoader();
-      },
+
+    let fechaEmision: any = this.orderForm.value.fechaEmision;
+    fechaEmision = formatDate(fechaEmision);
+
+    if (!fechaEmision) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione le fecha',
+      });
+      return;
+    }
+
+    if (!isDateValid(fechaEmision)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese una fecha válida',
+      });
+      return;
+    }
+
+    if (dateIsAfterCurrentDate(fechaEmision)) {
+      this.tS.toastr({
+        type: 'warning',
+        message:
+          'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
+      });
+      return;
+    }
+
+    let ajusteFechaEmision = ajustarFechaEmisionModificada({
+      fechaEmision: fechaEmision,
+      setHoursZero: true,
     });
+    console.log(ajusteFechaEmision);
+
+    const dataToSave = {
+      ...this.orderForm.value,
+      orderDetails: this.orderDetails,
+      fechaEmision: formatDateMoment(ajusteFechaEmision),
+    };
+    if (this.data.id > 0) {
+
+      this.orderService.put(this.data.id, dataToSave).subscribe({
+        next: this.successResponse,
+
+      });
+    } else {
+
+      this.orderService.post(dataToSave).subscribe({
+        next: this.successResponse,
+      });
+    }
   }
+  successResponse = (response: object) => {
+
+    if (isApiResponse(response)) {
+      this.tS.toastr({
+        type: response.code == '1' ? 'success' : 'warning',
+        message: response.message!,
+      });
+      if (response.code === '1') {
+        this.orderForm.patchValue({});
+        this.orderDetails = [];
+        this.order = {};
+        this.modalRef.close(response);
+      }
+    }
+  };
 }

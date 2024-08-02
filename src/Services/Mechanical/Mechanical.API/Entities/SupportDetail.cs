@@ -13,31 +13,38 @@ namespace Mechanical.API.Entities
         public int TarifaId { get; set; }
         public int BodegaId { get; set; }
         public int MedidaId { get; set; }
+        public int TaxId { get; set; }
+        public int TaxPercentId { get; set; }
 
         [Required]
         [MaxLength(300)]
         public string Description { get; set; }
 
-        [Column(TypeName = "numeric(18,5), not null")]
+        [Required]
+        [Column(TypeName = "numeric(18,5), null")]
         public decimal Quantity { get; set; }
 
-        [Column(TypeName = "numeric(18,5), not null")]
-        public decimal Price { get; set; }
-
-        [Column(TypeName = "numeric(18,5), not null")]
+        [Required]
+        [Column(TypeName = "numeric(18,5), null")]
         public decimal Cost { get; set; }
 
-        [Column(TypeName = "numeric(18,5), not null")]
-        public decimal Total { get; set; }
+        [Required]
+        [Column(TypeName = "numeric(18,5), null")]
+        public decimal TaxValue { get; set; }
 
         [Required]
-        [MaxLength(10)]
-        public string CodePercentage { get; set; }
+        [Column(TypeName = "numeric(18,5), null")]
+        public decimal Price { get; set; }
 
-        [Column(TypeName = "numeric(18,5), not null")]
-        public decimal Percentage { get; set; }
+        [Required]
+        [Column(TypeName = "numeric(18,5), null")]
+        public decimal Discount { get; set; }
+        
+        [Required]
+        [Column(TypeName = "numeric(18,5), null")]
+        public decimal Total { get; set; }
 
-        [MaxLength(250)]
+        [MaxLength(300)]
         public string Obs { get; set; }
 
 

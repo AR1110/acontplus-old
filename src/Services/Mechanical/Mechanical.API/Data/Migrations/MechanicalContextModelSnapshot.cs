@@ -17,12 +17,12 @@ namespace Mechanical.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Mechanical.Core.Entities.Inspection", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.Inspection", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -60,7 +60,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Engine")
                         .IsRequired()
@@ -110,7 +112,7 @@ namespace Mechanical.API.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -120,7 +122,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("Inspection", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.Support", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.Support", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -145,8 +147,13 @@ namespace Mechanical.API.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("numeric(18,5), null");
+
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Obs")
                         .HasMaxLength(500)
@@ -159,8 +166,11 @@ namespace Mechanical.API.Data.Migrations
                     b.Property<int>("Sequence")
                         .HasColumnType("int");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("SupportStatusId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric(18,5), null");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -176,12 +186,14 @@ namespace Mechanical.API.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("SupportStatusId");
+
                     b.HasIndex("VehicleCompanyId");
 
                     b.ToTable("Support", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.SupportDetail", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.SupportDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -195,14 +207,8 @@ namespace Mechanical.API.Data.Migrations
                     b.Property<int>("BodegaId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CodePercentage")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(10)");
-
                     b.Property<decimal>("Cost")
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("numeric(18,5), null");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -218,25 +224,27 @@ namespace Mechanical.API.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
 
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("numeric(18,5), null");
+
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("MedidaId")
                         .HasColumnType("int");
 
                     b.Property<string>("Obs")
-                        .HasMaxLength(250)
+                        .HasMaxLength(300)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)");
-
-                    b.Property<decimal>("Percentage")
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("varchar(300)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("numeric(18,5), null");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("numeric(18,5), null");
 
                     b.Property<int>("SupportId")
                         .HasColumnType("int");
@@ -244,8 +252,17 @@ namespace Mechanical.API.Data.Migrations
                     b.Property<int>("TarifaId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TaxId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaxPercentId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TaxValue")
+                        .HasColumnType("numeric(18,5), null");
+
                     b.Property<decimal>("Total")
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("numeric(18,5), null");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -260,7 +277,107 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("SupportDetail", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.Vehicle", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.SupportDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("DocumentoId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("SeriesVoucher")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<int>("SupportId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TipoDocumentoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SupportId");
+
+                    b.ToTable("SupportDocument", "Mechanical");
+                });
+
+            modelBuilder.Entity("Mechanical.API.Entities.SupportStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(5)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UXC_SupportStatus_Code");
+
+                    b.ToTable("SupportStatus", "Mechanical");
+                });
+
+            modelBuilder.Entity("Mechanical.API.Entities.Vehicle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -303,7 +420,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Engine")
                         .IsRequired()
@@ -345,7 +464,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("Vehicle", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.VehicleCompany", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.VehicleCompany", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -368,7 +487,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Observation")
                         .HasMaxLength(300)
@@ -391,7 +512,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("VehicleCompany", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.VehiclePart", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.VehiclePart", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -420,7 +541,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -442,7 +565,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("VehiclePart", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.VehiclePartType", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.VehiclePartType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -471,7 +594,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("varchar(150)");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -488,7 +613,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("VehiclePartType", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.VehicleType", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.VehicleType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -517,7 +642,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -534,9 +661,9 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("VehicleType", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.Inspection", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.Inspection", b =>
                 {
-                    b.HasOne("Mechanical.Core.Entities.Support", "support")
+                    b.HasOne("Mechanical.API.Entities.Support", "support")
                         .WithMany()
                         .HasForeignKey("SupportId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -545,20 +672,28 @@ namespace Mechanical.API.Data.Migrations
                     b.Navigation("support");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.Support", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.Support", b =>
                 {
-                    b.HasOne("Mechanical.Core.Entities.VehicleCompany", "VehicleCompany")
+                    b.HasOne("Mechanical.API.Entities.SupportStatus", "SupportStatus")
+                        .WithMany()
+                        .HasForeignKey("SupportStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mechanical.API.Entities.VehicleCompany", "VehicleCompany")
                         .WithMany()
                         .HasForeignKey("VehicleCompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("SupportStatus");
+
                     b.Navigation("VehicleCompany");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.SupportDetail", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.SupportDetail", b =>
                 {
-                    b.HasOne("Mechanical.Core.Entities.Support", "support")
+                    b.HasOne("Mechanical.API.Entities.Support", "support")
                         .WithMany()
                         .HasForeignKey("SupportId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -567,9 +702,20 @@ namespace Mechanical.API.Data.Migrations
                     b.Navigation("support");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.Vehicle", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.SupportDocument", b =>
                 {
-                    b.HasOne("Mechanical.Core.Entities.VehicleType", "VehicleType")
+                    b.HasOne("Mechanical.API.Entities.Support", "Support")
+                        .WithMany()
+                        .HasForeignKey("SupportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Support");
+                });
+
+            modelBuilder.Entity("Mechanical.API.Entities.Vehicle", b =>
+                {
+                    b.HasOne("Mechanical.API.Entities.VehicleType", "VehicleType")
                         .WithMany()
                         .HasForeignKey("VehicleTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -578,9 +724,9 @@ namespace Mechanical.API.Data.Migrations
                     b.Navigation("VehicleType");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.VehicleCompany", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.VehicleCompany", b =>
                 {
-                    b.HasOne("Mechanical.Core.Entities.Vehicle", "Vehicle")
+                    b.HasOne("Mechanical.API.Entities.Vehicle", "Vehicle")
                         .WithMany()
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -589,9 +735,9 @@ namespace Mechanical.API.Data.Migrations
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.VehiclePart", b =>
+            modelBuilder.Entity("Mechanical.API.Entities.VehiclePart", b =>
                 {
-                    b.HasOne("Mechanical.Core.Entities.VehiclePartType", "vehiclePartType")
+                    b.HasOne("Mechanical.API.Entities.VehiclePartType", "vehiclePartType")
                         .WithMany()
                         .HasForeignKey("VehiclePartTypeId")
                         .OnDelete(DeleteBehavior.Cascade)

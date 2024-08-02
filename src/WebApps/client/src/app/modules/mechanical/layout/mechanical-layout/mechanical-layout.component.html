@@ -1,0 +1,76 @@
+<app-breadcrumb></app-breadcrumb>
+
+<div class="card">
+  <div class="card-body">
+    <ul ngbNav #nav="ngbNav" [(activeId)]="valueStatus" (shown)="onShown($event)" class="nav-tabs">
+      <li [ngbNavItem]="statusTab.DASHBOARD">
+        <button ngbNavLink>Dashboard</button>
+        <ng-template ngbNavContent>
+          <app-mechanical-dashboard [valueStatus]="valueStatus" [supportStatus]="supportStatus" />
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="statusTab.PENDIENTE">
+        <button ngbNavLink>Pendiente</button>
+        <ng-template ngbNavContent>
+          @if (supportStatus.length>0) {
+            <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus" />
+
+          }
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="statusTab.EN_PROCESO">
+        <button ngbNavLink>En proceso</button>
+        <ng-template ngbNavContent>
+          @if (supportStatus.length>0) {
+          <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus" />
+
+          }
+          <!-- <app-inspection-page /> -->
+        </ng-template>
+      </li>
+
+
+      <li [ngbNavItem]="statusTab.POR_ENTREGAR">
+        <button ngbNavLink>Por entregar</button>
+        <ng-template ngbNavContent>
+          @if (supportStatus.length>0) {
+          <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus" />
+
+          }
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="statusTab.INSPECCION">
+        <button ngbNavLink>Inspección</button>
+        <ng-template ngbNavContent>
+
+          <app-inspection-page />
+        </ng-template>
+      </li>
+
+      <li [ngbNavItem]="statusTab.APROBADO">
+        <button ngbNavLink>Aprobado</button>
+        <ng-template ngbNavContent>
+          @if (supportStatus.length>0) {
+          <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus" />
+
+          }
+          <!-- <app-inspection-page /> -->
+        </ng-template>
+      </li>
+
+      <li [ngbNavItem]="statusTab.ANULADO">
+        <button ngbNavLink>Anulado</button>
+        <ng-template ngbNavContent>
+          @if (supportStatus.length>0) {
+          <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus" />
+
+          }
+          <!-- <app-inspection-page /> -->
+        </ng-template>
+      </li>
+
+    </ul>
+
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  </div>
+</div>

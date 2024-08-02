@@ -12,12 +12,12 @@
     <div class="row justify-content-between">
       <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
         <div class="form-group">
-          <label for="exstablecimiento"
+          <label for="establecimiento"
             >Establecimiento: <span class="text-danger">*</span></label
           >
           <select
             name="establecimiento"
-            id="onChangeEntidadFinanciera"
+            id="establecimiento"
             class="form-select form-control-border"
             formControlName="codEstab"
             required
@@ -37,6 +37,7 @@
             class="form-select form-control-border"
             formControlName="idCaja"
             name="idCaja"
+            id="caja"
             required          >
             @for (item of cajas; track $index) {
             <option [ngValue]="item.idCaja">{{ item.descripcion }}</option>
@@ -56,7 +57,9 @@
             class="form-select form-control-border"
             formControlName="idTipoDocumento"
             required
+            (change)="onChangeTipoDoc()"
           >
+            <option value="0"  selected disabled>Seleccione::</option>
             @for (item of tiposDocumento; track $index) {
             <option [ngValue]="item.idTipoDocumento">
               {{ item.descripcion }}
@@ -75,6 +78,7 @@
           >
           <select
           name="idEntidadFinanciera"
+          id="entidadFinanciera"
             class="form-select form-control-border"
             (change)="onChangeEntidadFinanciera()"
             formControlName="idEntidadFinanciera"
@@ -92,11 +96,12 @@
 
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label for="">Sub Entidad Financiera</label>
+          <label for="idSubEntidadFinanciera">Sub Entidad Financiera</label>
           <select
             class="form-select form-control-border"
             formControlName="idSubEntidadFinanciera"
             name="idSubEntidadFinanciera"
+            id="idSubEntidadFinanciera"
             required
           >
             @for (item of subEntidadesFinanciera; track $index) {
@@ -110,36 +115,12 @@
     </div>
 
     <div class="row">
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="employee"
-            >Empleado: <span class="text-danger">*</span></label
-          >
-          <div class="input-group">
-            <input
-              id="typeahead-supplier"
-              type="text"
-              formControlName="employeeName"
-              class="form-control form-control-border"
-              [ngbTypeahead]="searchEmployee"
-              [resultTemplate]="rt"
-              onclick="select();"
-              (selectItem)="selectEmployee($event)"
-            />
-          </div>
 
-          <ng-template #rt let-r="result" let-t="term">
-            <ngb-highlight
-              [result]="r.nroIdentificacion + ' - ' + r.nombreCompleto"
-              [term]="t"
-            />
-          </ng-template>
-        </div>
-      </div>
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label for="">Valor <span class="text-danger">*</span></label>
+          <label for="valor">Valor <span class="text-danger">*</span></label>
           <input
+            id="valor"
             type="number"
             class="form-control form-control-border"
             placeholder="0.00"
@@ -149,13 +130,38 @@
           />
         </div>
       </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+
+          <div class="form-group">
+            <label>Cliente: <span class="text-danger">*</span></label>
+            <app-company-customer-search
+              [isSearchSimple]="true"
+              (onCustomerSelected)="onSelectCustomer($event)"
+              (resultEmptyInput)="onEmptyCustomer()"
+            />
+          </div>
+
+
+        <!--@if(esTipoDocGasto){
+          <div class="form-group">
+            <label>Proveedor: <span class="text-danger">*</span></label>
+            <app-supplier-search
+            (onInputEmpty)="onEmptyCustomer()"
+            (onSelected)="onSelectCustomer($event)"
+            />
+          </div>
+        }-->
+
+      </div>
+
     </div>
 
     <div class="row">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm 12 col-12">
         <div class="form-group">
-          <label for="">Observación <span class="text-danger">*</span></label>
+          <label for="observaciones">Observación <span class="text-danger">*</span></label>
           <textarea
+            id="observaciones"
             name="observaciones"
             class="form-control form-control-border"
             formControlName="observaciones"

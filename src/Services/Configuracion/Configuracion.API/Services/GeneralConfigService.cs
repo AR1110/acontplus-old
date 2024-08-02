@@ -1,38 +1,29 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Configuracion.API.Data;
-using Configuracion.API.Interfaces;
+﻿namespace Configuracion.API.Services;
 
-namespace Configuracion.API.Services
+public class GeneralConfigService : IGeneralConfigService
 {
-    public class GeneralConfigService: IGeneralConfigService
+    private readonly IAdoRepository _repository;
+    private readonly string nameSchema = "Config.Sistema";
+
+    public GeneralConfigService(IAdoRepository repository)
     {
-        private readonly IADORepository _repository; 
-        private readonly string nameSchema = "Config.Sistema";
+        _repository = repository;
+    }
 
-        public GeneralConfigService(IADORepository repository)
+    public async Task<object> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
+        if (ds.Tables.Count == 0)
         {
-            _repository = repository;
+            return null;
         }
 
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
-            if (ds.Tables.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJSON(ds);
-            }
-        }
-         
+        return DataConverters.DataSetToJson(ds);
+    }
 
-        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
-        } 
+
+    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
     }
 }

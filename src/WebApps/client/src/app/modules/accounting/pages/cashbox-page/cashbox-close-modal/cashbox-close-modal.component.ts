@@ -2,12 +2,13 @@ import { Component, Input, ViewEncapsulation, inject } from '@angular/core';
 import { CODE_REPORT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppModule } from 'src/app/app.module';
 import Swal from 'sweetalert2';
+import {FormsModule} from "@angular/forms";
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import {CommonModule} from "@angular/common";
 
 type Modeda = {
   idMoneda: number
@@ -19,8 +20,12 @@ type Modeda = {
 @Component({
   selector: 'app-cashbox-close-modal',
   standalone: true,
-  imports: [AppModule],
-  templateUrl: './cashbox-close-modal.component.html', 
+  imports: [
+    CommonModule,
+    FormsModule,
+    FontAwesomeModule
+  ],
+  templateUrl: './cashbox-close-modal.component.html',
   encapsulation: ViewEncapsulation.None,
 })
 export class CashboxCloseModalComponent {
@@ -38,18 +43,11 @@ export class CashboxCloseModalComponent {
 
   ngOnInit() {
 
-    showLoader();
-    this.controlCajaSvc.getDataFormCashboxClose().subscribe({
-      next: (response) => {
-        hideLoader();
+    this.controlCajaSvc.getDataFormCashboxClose().subscribe(  (response) => {
+
 
         const { monedas } = response as { monedas: Array<Modeda> }
         this.monedas = monedas
-      },
-      error(err) {
-        console.log(err)
-        hideLoader()
-      },
     })
   }
 
@@ -94,10 +92,9 @@ export class CashboxCloseModalComponent {
 
         }
 
-        showLoader();
-        this.controlCajaSvc.put(this.params.id, data).subscribe({
-          next: (response) => {
-            hideLoader();
+
+        this.controlCajaSvc.put(this.params.id, data).subscribe(  (response) => {
+
             if (isApiResponse(response)) {
               if (response.code === "0") {
                 Swal.fire({
@@ -119,11 +116,6 @@ export class CashboxCloseModalComponent {
                 this.activeModal.close(response)
               }
             }
-          },
-          error(err) {
-            hideLoader();
-            console.log(err)
-          },
         })
 
       }
@@ -155,20 +147,11 @@ export class CashboxCloseModalComponent {
         }
       }
 
-      showLoader();
-      this.sharedSvc.appNotificacionInsert(data).subscribe({
-        next(value) {
-          console.log(value)
-          hideLoader();
 
-        },
-        error(err) {
-          hideLoader();
-          console.log(err)
-        },
+      this.sharedSvc.appNotificacionInsert(data).subscribe( (value) =>{
+          console.log(value)
       })
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
 

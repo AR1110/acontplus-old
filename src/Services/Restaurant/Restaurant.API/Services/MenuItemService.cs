@@ -1,14 +1,15 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services
 {
     public class MenuItemService : IMenuItemService
     {
-        private readonly IADORepository _repository;
+        private readonly IAdoRepository _repository;
 
-        public MenuItemService(IADORepository repository)
+        public MenuItemService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -22,7 +23,7 @@ namespace Restaurant.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
 
@@ -35,7 +36,7 @@ namespace Restaurant.API.Services
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJson(ds);
             }
         }
     }

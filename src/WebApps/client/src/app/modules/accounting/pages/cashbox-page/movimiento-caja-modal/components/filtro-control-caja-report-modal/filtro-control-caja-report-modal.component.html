@@ -7,7 +7,7 @@
     <div class="col-12">
       <div class="form-group">
         <label for="sortByDefault">Ordenar por defecto:</label>
-        <select name="" id="" class="form-select" [(ngModel)]="dataSearch.sortByDefault">
+        <select name="sortByDefault" id="sortByDefault" class="form-select" [(ngModel)]="dataSearch.sortByDefault">
           @for (item of sortByDefaults; track $index) {
           <option [ngValue]="item.id">{{item.description}}</option>
           }
@@ -17,7 +17,7 @@
     <div class="col-12">
       <div class="form-group">
         <label for="sortOrder">Criterio de clasificación:</label>
-        <select name="" id="" class="form-select" [(ngModel)]="dataSearch.sortOrder">
+        <select name="sortOrder" id="sortOrder" class="form-select" [(ngModel)]="dataSearch.sortOrder">
           @for (item of sortOrders; track $index) {
           <option [ngValue]="item.codigo">{{item.description}}</option>
           }

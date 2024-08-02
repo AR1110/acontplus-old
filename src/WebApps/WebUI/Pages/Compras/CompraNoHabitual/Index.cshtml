@@ -1,9 +1,9 @@
 ﻿@page
 @model IndexModel
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    
 }
 
 <div ng-controller="compraNoHabitualCtrl">
@@ -42,7 +42,7 @@
                             <div class="input-group-text">
                                 <div class="custom-control custom-checkbox mr-sm-2">
                                     <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
-                                        class="custom-control-input" id="checkBoxFecha">
+                                        class="custom-control-input" id="checkBoxFecha" ng-change="refresh()">
                                     <label class="custom-control-label" for="checkBoxFecha"></label>
                                 </div>
                             </div>
@@ -95,7 +95,7 @@
                     <div class="form-gorup">
                         <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
                         <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
-                            class="form-control  border-select" ng-change="getComprasNoHabitual()">
+                                class="form-control  border-select" ng-change="getComprasNoHabitual()">
                             <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                 {{item.ptoEmi}}
                             </option>
@@ -103,20 +103,20 @@
                     </div>
                 </div>
                 @* <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                <div class="form-group">
-                <span for="usuarioFiltro">Usuario</span>
-                <input type="text" id="customerInputSearchUser" class="form-control border-select"
-                ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
-                on-keyup="onKeyupUser()" placeholder="..."
-                onclick="select();" >
+        <div class="form-group">
+        <span for="usuarioFiltro">Usuario</span>
+        <input type="text" id="customerInputSearchUser" class="form-control border-select"
+        ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
+        on-keyup="onKeyupUser()" placeholder="..."
+        onclick="select();" >
 
-                <script type="text/ng-template" id="autocompleteUserTemplate.html">
-                <div class="autocomplete-suggestion-uib-typeahead">
-                <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
-                </div>
-                </script>
-                </div>
-                </div> *@
+        <script type="text/ng-template" id="autocompleteUserTemplate.html">
+        <div class="autocomplete-suggestion-uib-typeahead">
+        <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
+        </div>
+        </script>
+        </div>
+        </div> *@
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Estado:</span>
@@ -132,7 +132,19 @@
                     <div class="form-group">
                         <span>Nro. Documento</span>
                         <input type="text" class="form-control border-select" ng-model="dataSearch.secuencial"
-                            placeholder="Ej: 23">
+                               placeholder="Ej: 23">
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+                    <div class="form-group">
+                        <span  >Subcategoría:</span>
+                        <select class="form-control border-select" id="" ng-model="dataSearch.subcategoryId"
+                                ng-change="getComprasNoHabitual()">
+                            <option ng-value="">Todos</option>
+                            <option ng-value="item.id" ng-repeat="item in subcategories">
+                                {{item.name}}
+                            </option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -176,7 +188,7 @@
                                 <md-menu>
                                     <md-button aria-label="Open demo menu" class="md-icon-button"
                                                ng-click="$mdMenu.open($event)">
-                                        <icon class="mdi mdi-menu"></icon>
+                                        <i class="mdi mdi-menu"></i>
                                     </md-button>
                                     <md-menu-content class="md-dense">
                                         <md-menu-item>
@@ -200,7 +212,7 @@
                                         <md-menu-item>
                                             <md-button ng-disabled="!(accion.anular && item.isDelete)" ng-click="askToDelete(item)">
                                                 <span md-menu-align-target>
-                                                    <icon class="ti-na"></icon> Anular
+                                                    <i class="ti-na"></i> Anular
                                                 </span>
                                             </md-button>
                                         </md-menu-item>
@@ -210,6 +222,15 @@
                                                 <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
                                             </md-button>
                                         </md-menu-item>
+
+                                         <md-menu-item  >
+                                            <md-button  btn-cuenta-por-pagar>
+                                                <span md-menu-align-target>
+                                                    <i class=" far fa-money-bill-alt"></i>                                                    
+                                                    Cuenta por pagar
+                                                </span>
+                                            </md-button>
+                                        </md-menu-item> 
 
                                     </md-menu-content>
                                 </md-menu>
@@ -248,7 +269,14 @@
 
 </div>
 
-@section Scripts { 
-    <script src="~/js/compras/controllers/compraNoHabitualCtrl.min.js" asp-append-version="true"></script>
+@section Scripts {
+    <environment include="Development">
+        <script src="~/js/compras/controllers/compraNoHabitualCtrl.js" asp-append-version="true"></script>
+        <script src="~/js/contabilidad/components/cuentaPorPagarComponent.min.js" asp-append-version="true"></script>
+    </environment>
+    <environment include="Staging,Production">
+        <script src="~/js/compras/controllers/compraNoHabitualCtrl.min.js" asp-append-version="true"></script>
+        <script src="~/js/contabilidad/components/cuentaPorPagarComponent.min.js" asp-append-version="true"></script>
+    </environment>
 
 }

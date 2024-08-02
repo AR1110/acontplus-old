@@ -11,7 +11,10 @@ export const enum PATHS_API {
   SALES = 'Venta/',
   TECHSUPPORT = 'TechnicalSupport/',
   INVENTORY = 'Inventario/',
-  RESTAURANT = 'Restaurant/'
+  RESTAURANT = 'Restaurant/',
+  BILLING = 'FactElect/',
+  MECHANICAL = 'Mechanical/',
+  VET = 'Vet/',
 }
 
 export const enum PATHS {
@@ -20,20 +23,22 @@ export const enum PATHS {
   APP_NOTIFICATION = 'Notificacion/',
   PRINT = 'Print',
   USER = 'Usuario/',
-  ESTAB_ASIGN = 'EstabAsig/'
+  ESTAB_ASIGN = 'EstabAsig/',
+  NOTIFICACION = 'Notificacion/',
 }
 
 export const enum DOC_TYPE {
   FC = 'FC',
   DNH = 'DH',
   LC = 'LC',
-  IC = 'IC',
-  EC = 'EC',
+  IC = 'IC', //Ingreso Caja(Ingresos)
+  EC = 'EC',//Egreso Caja (Gastos)
   FV = 'FV',
   FE = 'FE', //Factura Electrónica
   FF = 'FF', // Factura Fisica
   IV = 'IV', //Ingresos Varios (Compras No Habituales)
-  NE = 'NE' //Nota Entrega
+  NE = 'NE', //Nota Entrega
+  CDV ='CDV' //Consolidao diario venta
 }
 
 export const enum DOC_TYPE_SRI {
@@ -76,12 +81,112 @@ export enum CODE_REPORT {
   CCP = 'CCP', //Contabilidad Cartera Proveedor
   CCPC = 'CCPC', //Contabilidad Cartera Proveedor Cuota
   CDCC = 'CDCC', //Contabilidad Detalle Control Caja
-  RTS = 'RTS',
+  RTS = 'RTS', // Technical Support Report
+  RCXC = 'RCXC', // Contabilidad Cobros por Cuotas.
+  RCXD = 'RCXD', // Contabilidad Cobros por Documentos
 }
 
 export enum CODE_ESTADO {
   NCBR = 'NCBR',
+
 }
-// Example usage:
-// const reportType: CODE_REPORT = CODE_REPORT.RF;
-// console.log(reportType);
+
+export enum TAX_RATE_CODE {
+  ZERO_PERCENT = '0',
+  TWELVE_PERCENT = '2',
+  FOURTEEN_PERCENT = '3',
+  FIFTEEN_PERCENT = '4',
+  FIVE_PERCENT = '5',
+  NOT_SUBJECT_TO_TAX = '6',
+  TAX_EXEMPT = '7',
+  DIFFERENTIATED_TAX = '8',
+}
+
+export enum TAX_CODE {
+  IVA = '2',
+  ICE = '3',
+  IRBPNR = '5',
+}
+
+export enum MODAL_SIZE {
+  XL = 'xl',
+  LG = 'lg',
+  SM = 'sm',
+}
+
+export enum FORMA_PAGO_SRI_CODE {
+  /**
+   * SIN UTILIZACION DEL SISTEMA FINANCIERO
+   * @type {string}
+   */
+  SUSF = '01',
+
+  /**
+   * COMPENSACIÓN DE DEUDAS
+   * @type {string}
+   */
+  CD = '15',
+
+  /**
+   * TARJETA DE DÉBITO
+   * @type {string}
+   */
+  TB = '16',
+
+  /**
+   * DINERO ELECTRÓNICO
+   * @type {string}
+   */
+  DE = '17',
+
+  /**
+   * TARJETA PREPAGO
+   * @type {string}
+   */
+  TPP = '18',
+
+  /**
+   * TARJETA DE CRÉDITO
+   * @type {string}
+   */
+  TC = '19',
+
+  /**
+   * OTROS CON UTILIZACION DEL SISTEMA FINANCIERO
+   * @type {string}
+   */
+  OCUSF = '20',
+
+  /**
+   * ENDOSO DE TÍTULOS
+   * @type {string}
+   */
+  ET = '21',
+}
+
+export enum SRI_IDENTIFICATION_CODE {
+  RUC = '04',
+  CEDULA = '05',
+  PASSPORT = '06',
+}
+
+export enum IDENTIFICATION_CODE {
+  RUC = 'R',
+  CEDULA = 'C',
+  PASSPORT = 'P',
+}
+
+export enum SEPARATOR_KEY_CODE {
+  SLASH = '|',
+  PUNTO_COMA = ';',
+}
+
+export enum CODE_ROLE {
+  ADM = 'ADM',
+}
+
+
+export enum TIPO_TRANSACCION {
+  C='C',
+  V='V'
+}

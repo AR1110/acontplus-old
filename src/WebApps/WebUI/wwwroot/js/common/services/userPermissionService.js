@@ -112,9 +112,20 @@ angular.module('acontPlusApp')
             }
           
             let accionesProduct = submenus.find(sm => sm.code === 'ART');
+            if (!accionesProduct){
+                return {
+                    accionesProduct: accionesDefault 
+                }
+            }
+            let tempArray = typeof accionesProduct.actions==='string'? JSON.parse(accionesProduct.actions) : []
+            let newArr = tempArray.map(x => x.name);
+            const namesObject = newArr.reduce((obj, name) => {
+                obj[name] = true;
+                return obj;
+            }, {});
 
             return {
-                accionesProduct: accionesProduct || accionesDefault
+                accionesProduct: namesObject || accionesDefault
             }
         }
 

@@ -1,396 +1,174 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Web;
-using FactElect.Core.Models;
 using Newtonsoft.Json;
 
-namespace FactElect.Application.Services
+namespace FactElect.Application.Services;
+
+public interface IRucService
 {
-    public class RucService
+    Task<RucModel> GetRucSriAsync(string ruc);
+}
+
+public class RucService(IServiceProvider serviceProvider) : IRucService
+{
+    private async Task<bool> CheckExistenceAsync(string ruc)
     {
-        public string ConexionAInternet()
+        using var client =
+            new HttpClient(new HttpClientHandler { Credentials = CredentialCache.DefaultNetworkCredentials });
+        var request = new HttpRequestMessage
         {
-            var Estado = "";
-            var Url = new Uri("https://www.google.com/");
-
-            WebRequest WebRequest;
-            WebRequest = System.Net.WebRequest.Create(Url);
-            WebResponse objetoResp;
-
-            try
-            {
-                objetoResp = WebRequest.GetResponse();
-                Estado = "Con Coneccion";
-                objetoResp.Close();
-
-                return Estado;
-            }
-            catch (Exception e)
-            {
-                Estado = "No se pudo conectar a Internet " + e.Message;
-                return Estado;
-            }
-
+            RequestUri =
+                new Uri(
+                    "https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=" +
+                    ruc),
+            Method = HttpMethod.Get
+        };
+        client.DefaultRequestHeaders.Add("User-Agent",
+            "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
+        var response = await client.SendAsync(request);
+        if (!response.IsSuccessStatusCode)
+        {
+            return false;
         }
-        public bool CheckExistence(string ruc)
-        {
-            using (var client = new HttpClient(new HttpClientHandler() { Credentials = CredentialCache.DefaultNetworkCredentials }))
-            {
-                var request = new HttpRequestMessage()
-                {
-                    RequestUri = new Uri("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=" + ruc),
-                    Method = HttpMethod.Get
-                };
-                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
-                var response = client.SendAsync(request).Result;
-                if (!response.IsSuccessStatusCode)
-                {
-                    return false;
-                }
 
-                var streamTask = response.Content.ReadAsStreamAsync();
-                var stream = streamTask.Result;
-                var sr = new StreamReader(stream);
-                var Html = HttpUtility.HtmlDecode(sr.ReadToEnd());
-                if (Html == "true")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+        var stream = await response.Content.ReadAsStreamAsync();
+        using var sr = new StreamReader(stream);
+        var html = HttpUtility.HtmlDecode(await sr.ReadToEndAsync());
+        return html == "true";
+    }
+    private async Task<RucModel> GetRucSriAsync(string numeroRuc, CookieContainer cookies, string html)
+    {
+        var personaDatosError = new RucModel();
+        var objToken = JsonConvert.DeserializeObject<TokenSri>(html);
+
+        var strtoken = objToken.mensaje;
+        if (string.IsNullOrEmpty(html))
+        {
+            personaDatosError.Error = " No existe contribuyente con ese Ruc";
+            return personaDatosError;
         }
-        public CookieContainer GetCookie(ref string Html)
+
+        using (var client = new HttpClient(new HttpClientHandler
         {
-            var cookies = new CookieContainer();
-
-            cookies = new CookieContainer();
-            var generator = new Random();
-            var numeroGenerado = generator.Next(0, 100000000).ToString("D6");
-            using (var client = new HttpClient(handler: new HttpClientHandler()
+            Credentials = CredentialCache.DefaultNetworkCredentials,
+            UseCookies = true,
+            CookieContainer = cookies
+        }))
+        {
+            var request = new HttpRequestMessage
             {
-                Credentials = CredentialCache.DefaultNetworkCredentials,
-                UseCookies = true,
-                CookieContainer = cookies
-            }))
+                RequestUri =
+                    new Uri(
+                        "https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/obtenerPorNumerosRuc?&ruc=" +
+                        numeroRuc),
+                Method = HttpMethod.Get
+            };
+            client.DefaultRequestHeaders.Add("User-Agent",
+                "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
+            const string contentType = "application/json";
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(contentType));
+            client.DefaultRequestHeaders.Add("Authorization", strtoken);
+            var response = await client.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
             {
-                var request = new HttpRequestMessage()
-                {
-                    RequestUri = new Uri("https://srienlinea.sri.gob.ec/sri-captcha-servicio-internet/captcha/start/1?r=" + numeroGenerado),
+                throw new Exception();
+            }
 
-                    Method = HttpMethod.Get
-                };
-                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
 
-                var response = client.SendAsync(request).Result;
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    return null;
-                }
-
-                var streamTask = response.Content.ReadAsStreamAsync();
-                var stream = streamTask.Result;
-                var sr = new StreamReader(stream);
-                Html = HttpUtility.HtmlDecode(sr.ReadToEnd());
-                return cookies;
+            var stream = await response.Content.ReadAsStreamAsync();
+            using var sr = new StreamReader(stream);
+            html = HttpUtility.HtmlDecode(await sr.ReadToEndAsync());
+            var respSri = JsonConvert.DeserializeObject<List<RucModel>>(html);
+            personaDatosError = respSri[0];
+            if (personaDatosError == null)
+            {
+                personaDatosError = new RucModel { Error = " No existe contribuyente con ese Ruc" };
+                return personaDatosError;
             }
         }
-        public string ValidateCaptcha(string Html, CookieContainer cookies)
+
+        using (var client = new HttpClient(new HttpClientHandler
         {
-            CaptchaImage captchaImage;
-            captchaImage = JsonConvert.DeserializeObject<CaptchaImage>(Html);
-            string captcha = captchaImage.values[0].ToString();
-            using (var client = new HttpClient(handler: new HttpClientHandler()
+            Credentials = CredentialCache.DefaultNetworkCredentials,
+            UseCookies = true,
+            CookieContainer = cookies
+        }))
+        {
+            var request = new HttpRequestMessage
             {
-                Credentials = CredentialCache.DefaultNetworkCredentials,
-                UseCookies = true,
-                CookieContainer = cookies
-
-            }))
+                RequestUri =
+                    new Uri(
+                        "https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/Establecimiento/consultarPorNumeroRuc?numeroRuc=" +
+                        numeroRuc),
+                Method = HttpMethod.Get
+            };
+            client.DefaultRequestHeaders.Add("User-Agent",
+                "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
+            const string contentType = "application/json";
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(contentType));
+            client.DefaultRequestHeaders.Add("Authorization", strtoken);
+            var response = client.SendAsync(request).Result;
+            if (!response.IsSuccessStatusCode)
             {
-                var request = new HttpRequestMessage()
-                {
-                    RequestUri = new Uri("https://srienlinea.sri.gob.ec/sri-captcha-servicio-internet/rest/ValidacionCaptcha/validarCaptcha/" + captcha + "?emitirToken=true"),
-                    Method = HttpMethod.Get
-                };
-                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
-                var response = client.SendAsync(request).Result;
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception();
-                }
+                throw new Exception();
+            }
 
-                var streamTask = response.Content.ReadAsStreamAsync();
-                var stream = streamTask.Result;
-                var sr = new StreamReader(stream);
-                return HttpUtility.HtmlDecode(sr.ReadToEnd());
+            var streamTask = response.Content.ReadAsStreamAsync();
+            var stream = streamTask.Result;
+            var sr = new StreamReader(stream);
+            html = HttpUtility.HtmlDecode(await sr.ReadToEndAsync());
+            var personaEstablecimientos = JsonConvert.DeserializeObject<List<Establecimiento>>(html);
 
+            if (personaEstablecimientos.Count > 0)
+            {
+                personaDatosError.Establecimientos = personaEstablecimientos;
             }
         }
-        public DatosPersonaSriUpdate GetRucSri(string numeroRuc, CookieContainer cookies, string Html)
+
+        return personaDatosError;
+    }
+
+    public async Task<RucModel> GetRucSriAsync(string ruc)
+    {
+        if (!await CheckExistenceAsync(ruc))
         {
-            var PersonaDatosError = new DatosPersonaSriUpdate();
-            //var estado = ConexionAInternet();
-            //if (!estado.Equals("Con Coneccion"))
-            //{
-            //    PersonaDatosError.Error = "Sin Coneccion";
-            //    return PersonaDatosError;
-            //}
-
-            //try
-            //{
-            //    using (var client = new HttpClient(new HttpClientHandler() { Credentials = CredentialCache.DefaultNetworkCredentials }))
-            //    {
-            //        var request = new HttpRequestMessage()
-            //        {
-            //            RequestUri = new Uri("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=" + numeroRuc),
-            //            Method = HttpMethod.Get
-            //        };
-
-            //        HttpResponseMessage response = client.SendAsync(request).Result;
-            //        if (!response.IsSuccessStatusCode)
-            //        {
-            //            throw new Exception();
-            //        }
-
-            //        Task<Stream> streamTask = response.Content.ReadAsStreamAsync();
-            //        Stream stream = streamTask.Result;
-            //        var sr = new StreamReader(stream);
-            //        Html = HttpUtility.HtmlDecode(sr.ReadToEnd());
-            //    }
-
-            //}
-            //catch (Exception ex)
-            //{
-
-            //    PersonaDatosError.Error = ex.ToString();
-            //    return PersonaDatosError;
-            //}
-
-            //if (Html == "false")
-            //{
-            //    respuesta = "No existe Ruc";
-
-            //}
-
-
-
-            //try
-            //{
-            //    cookies = new CookieContainer();
-            //    Random generator = new Random();
-            //    String numeroGenerado = generator.Next(0, 100000000).ToString("D6");
-            //    using (var client = new HttpClient(handler: new HttpClientHandler()
-            //    {
-            //        Credentials = CredentialCache.DefaultNetworkCredentials,
-            //        UseCookies = true,
-            //        CookieContainer = cookies
-            //    }))
-            //    {
-            //        var request = new HttpRequestMessage()
-            //        {
-            //            RequestUri = new Uri("https://srienlinea.sri.gob.ec/sri-captcha-servicio-internet/captcha/start/1?r=" + numeroGenerado),
-
-            //            Method = HttpMethod.Get
-            //        };
-            //        client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
-
-            //        HttpResponseMessage response = client.SendAsync(request).Result;
-
-            //        if (!response.IsSuccessStatusCode)
-            //        {
-            //            throw new Exception();
-            //        }
-
-            //        Task<Stream> streamTask = response.Content.ReadAsStreamAsync();
-            //        Stream stream = streamTask.Result;
-            //        var sr = new StreamReader(stream);
-            //        Html = HttpUtility.HtmlDecode(sr.ReadToEnd());
-            //    }
-            //}
-            //catch (AggregateException ex)
-            //{
-            //    if (ex.InnerException is TaskCanceledException)
-            //    {
-            //        throw ex.InnerException;
-            //    }
-            //    else
-            //    {
-            //        throw ex;
-            //    }
-            //}
-
-
-            //if (string.IsNullOrEmpty(Html))
-            //{
-            //    PersonaDatosError.Error = "Sin respuesta Catcha";
-            //}
-            //CaptchaImage captchaImage;
-            //captchaImage = JsonConvert.DeserializeObject<CaptchaImage>(Html);
-            //string captcha = captchaImage.values[0].ToString();
-
-            //try
-            //{
-            //    using (var client = new HttpClient(handler: new HttpClientHandler()
-            //    {
-            //        Credentials = CredentialCache.DefaultNetworkCredentials,
-            //        UseCookies = true,
-            //        CookieContainer = cookies
-
-            //    }))
-            //    {
-            //        var request = new HttpRequestMessage()
-            //        {
-            //            RequestUri = new Uri("https://srienlinea.sri.gob.ec/sri-captcha-servicio-internet/rest/ValidacionCaptcha/validarCaptcha/" + captcha + "?emitirToken=true"),
-            //            Method = HttpMethod.Get
-            //        };
-            //        client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
-            //        HttpResponseMessage response = client.SendAsync(request).Result;
-            //        if (!response.IsSuccessStatusCode)
-            //        {
-            //            throw new Exception();
-            //        }
-
-            //        Task<Stream> streamTask = response.Content.ReadAsStreamAsync();
-            //        Stream stream = streamTask.Result;
-            //        var sr = new StreamReader(stream);
-            //        Html = HttpUtility.HtmlDecode(sr.ReadToEnd());
-
-            //    }
-
-            //}
-
-            //catch (Exception ex)
-            //{
-
-            //    respuesta = ex.ToString();
-            //}
-
-            Token objToken;
-
-            objToken = JsonConvert.DeserializeObject<Token>(Html);
-
-            string strtoken = objToken.mensaje.ToString();
-            if (string.IsNullOrEmpty(Html))
-            {
-                PersonaDatosError.Error = " No existe contribuyente con ese Ruc";
-                return PersonaDatosError;
-            }
-
-
-            //try
-            //{
-            using (var client = new HttpClient(handler: new HttpClientHandler()
-            {
-                Credentials = CredentialCache.DefaultNetworkCredentials,
-                UseCookies = true,
-                CookieContainer = cookies
-
-            }))
-            {
-                var request = new HttpRequestMessage()
-                {
-                    RequestUri = new Uri("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/obtenerPorNumerosRuc?&ruc=" + numeroRuc),
-                    Method = HttpMethod.Get,
-
-                };
-                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
-                var _ContentType = "application/json";
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(_ContentType));
-                client.DefaultRequestHeaders.Add("Authorization", strtoken);
-                var response = client.SendAsync(request).Result;
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception();
-                }
-
-                var streamTask = response.Content.ReadAsStreamAsync();
-                var stream = streamTask.Result;
-                var sr = new StreamReader(stream);
-                Html = HttpUtility.HtmlDecode(sr.ReadToEnd());
-                //Html = Html.Replace("[", "");
-                //Html = Html.Replace("]", "");
-                var respSri = JsonConvert.DeserializeObject<List<DatosPersonaSriUpdate>>(Html);
-                PersonaDatosError = respSri[0];
-                if (PersonaDatosError == null)
-                {
-                    PersonaDatosError = new DatosPersonaSriUpdate();
-                    PersonaDatosError.Error = " No existe contribuyente con ese Ruc";
-                    return PersonaDatosError;
-
-
-                }
-            }
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    PersonaDatosError = new DatosPersonaSriUpdate();
-            //    PersonaDatosError.Error = ex.ToString();
-            //    return PersonaDatosError;
-            //}
-
-
-
-            //try
-            //{
-            using (var client = new HttpClient(handler: new HttpClientHandler()
-            {
-                Credentials = CredentialCache.DefaultNetworkCredentials,
-                UseCookies = true,
-                CookieContainer = cookies
-
-            }))
-            {
-                var request = new HttpRequestMessage()
-                {
-                    RequestUri = new Uri("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/Establecimiento/consultarPorNumeroRuc?numeroRuc=" + numeroRuc),
-                    Method = HttpMethod.Get,
-
-                };
-                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
-                var _ContentType = "application/json";
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(_ContentType));
-                client.DefaultRequestHeaders.Add("Authorization", strtoken);
-                var response = client.SendAsync(request).Result;
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception();
-                }
-
-                var streamTask = response.Content.ReadAsStreamAsync();
-                var stream = streamTask.Result;
-                var sr = new StreamReader(stream);
-                Html = HttpUtility.HtmlDecode(sr.ReadToEnd());
-                var personaEstablecimientos = JsonConvert.DeserializeObject<List<Establecimiento>>(Html);
-                if (PersonaDatosError == null)
-                {
-                    PersonaDatosError = new DatosPersonaSriUpdate();
-
-                    PersonaDatosError.Error = " No existe contribuyente con ese Ruc";
-                    return PersonaDatosError;
-
-
-                }
-                if (personaEstablecimientos.Count > 0)
-                {
-                    PersonaDatosError.Establecimientos = personaEstablecimientos;
-                }
-            }
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    PersonaDatosError = new DatosPersonaSriUpdate();
-
-            //    PersonaDatosError.Error = ex.ToString();
-            //    return PersonaDatosError;
-            //}
-
-            return PersonaDatosError;
+            return new RucModel { Error = "Ruc no exist" };
         }
+        using var scope = serviceProvider.CreateScope();
+        var cookieService = scope.ServiceProvider.GetRequiredService<ICookieService>();
+
+        var cookieContainer = await cookieService.GetAsync();
+
+        if (cookieContainer == null)
+        {
+            return new RucModel { Error = "No se pudo consultar la pagina" };
+        }
+
+        var captchaService = scope.ServiceProvider.GetRequiredService<ICaptchaService>();
+
+        var htmlResponse = await captchaService.ValidateAsync(cookieContainer.Html, cookieContainer.Cookie);
+
+        if (htmlResponse == null)
+        {
+            return new RucModel { Error = "No se pudo validar el captcha" };
+        }
+
+        var response = await GetRucSriAsync(ruc, cookieContainer.Cookie, htmlResponse);
+
+        if (response.Establecimientos.Count <= 0)
+        {
+            return response;
+        }
+
+        response.direccion = response.Establecimientos[0].direccionCompleta;
+        if (response.Establecimientos[0].nombreFantasiaComercial != null)
+        {
+            response.nombreComercial = response.Establecimientos[0].nombreFantasiaComercial.ToString();
+        }
+        //_response.email = "";
+        //_response.telefono = "";
+
+        return response;
     }
 }

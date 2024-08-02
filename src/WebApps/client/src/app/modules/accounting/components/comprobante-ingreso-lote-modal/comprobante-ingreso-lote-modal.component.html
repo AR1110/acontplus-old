@@ -1,0 +1,260 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Nuevo cobro</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+
+
+  <div class="row">
+    <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+      <div ngbAccordion #accordion="ngbAccordion">
+        <div ngbAccordionItem="quotas" [collapsed]="false">
+          <h2 ngbAccordionHeader>
+            <button ngbAccordionButton>Cuotas</button>
+          </h2>
+          <div ngbAccordionCollapse>
+            <div ngbAccordionBody>
+              <ng-template>
+                <table mat-table [dataSource]="selectedDocumentos" multiTemplateDataRows class="mat-elevation-z1">
+
+                  <ng-container matColumnDef="expand">
+                    <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+                    <td mat-cell *matCellDef="let element">
+                      <div mat-icon-button aria-label="expand row"
+                        (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+                        @if (expandedElement === element) {
+                        <mat-icon>keyboard_arrow_up</mat-icon>
+                        } @else {
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                        }
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="tipoDoc">
+                    <th mat-header-cell *matHeaderCellDef> Tipo Doc. </th>
+                    <td mat-cell *matCellDef="let element"> {{element.codDoc}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="serieComprobante">
+                    <th mat-header-cell *matHeaderCellDef> Serie Comprobante. </th>
+                    <td mat-cell *matCellDef="let element"> {{element.serieComprobante}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="identificacionComprador">
+                    <th mat-header-cell *matHeaderCellDef> Ruc/Cédula </th>
+                    <td mat-cell *matCellDef="let element"> {{element.identificacionComprador}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="razonSocialComprador">
+                    <th mat-header-cell *matHeaderCellDef> Razon Social Comprador. </th>
+                    <td mat-cell *matCellDef="let element"> {{element.razonSocialComprador}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="total">
+                    <th mat-header-cell *matHeaderCellDef> Saldo. </th>
+                    <td mat-cell *matCellDef="let element"> {{element.saldo}} </td>
+                  </ng-container>
+
+
+
+                  <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+                  <ng-container matColumnDef="expandedDetail">
+                    <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+                      <div class="example-element-detail"
+                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                        <div class="card-body shadow p-3 mb-5 bg-body rounded">
+                          <table class="table table-condensed table-sm">
+                            <thead>
+                              <tr>
+                                <th>Op.</th>
+                                <th>Nro.Cuota</th>
+                                <th>Cuota</th>
+                                <th>Mora</th>
+                                <th>Diás Mora</th>
+                                <th>Abono</th>
+                                <!-- <th>Saldo Cta</th> -->
+                                <th>Saldo</th>
+                                <th>Estado</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              @for (cuota of element.cuotas; track $index) {
+                              <tr>
+                                <td>
+                                  @if (cuota.esCuotaAfectada) {
+                                  <button class="btn btn-primary btn-sm" type="button"
+                                    (click)="showCobroDetalle(cuota)">
+                                    <fa-icon [icon]="'eye'"></fa-icon>
+                                  </button>
+                                  }
+                                </td>
+                                <td>{{cuota.nroCuota}}</td>
+                                <td>{{cuota.cuota}}</td>
+                                <td>{{cuota.mora}}</td>
+                                <td>{{cuota.diasMora}}</td>
+                                <td>{{cuota.abono}}</td>
+                                <!-- <td>{{cuota.saldoCta}}</td> -->
+                                <td>{{cuota.saldo}}</td>
+                                <td>{{cuota.estado}}</td>
+                              </tr>
+
+                              }
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+                  <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
+                    [class.example-expanded-row]="expandedElement === element"
+                    (click)="expandedElement = expandedElement === element ? null : element">
+                  </tr>
+                  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+                </table>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+        <div ngbAccordionItem="datosCobro">
+          <h2 ngbAccordionHeader>
+            <button ngbAccordionButton>Datos de cobro</button>
+          </h2>
+          <div ngbAccordionCollapse>
+            <div ngbAccordionBody>
+              <ng-template>
+                <table mat-table [dataSource]="multiplesPaymentType" class="mat-elevation-z1">
+
+                  <!-- Name Column -->
+                  <ng-container matColumnDef="index">
+                    <th mat-header-cell *matHeaderCellDef>No.</th>
+                    <td mat-cell *matCellDef="let element;">
+                      {{element.secuencial}}
+                    </td>
+                  </ng-container>
+
+                  <!-- Weight Column -->
+                  <ng-container matColumnDef="op">
+                    <th mat-header-cell *matHeaderCellDef> Op. </th>
+                    <td mat-cell *matCellDef="let element">
+                      <div class="btn-group">
+                        <button class="btn btn-danger btn-sm" type="button"
+                          (click)="removePaymentType(element.secuencial)">
+                          <fa-icon [icon]="'trash'"></fa-icon>
+                        </button>
+                        <button class="btn btn-primary btn-sm" type="button" (click)="showInfo(element)">
+                          <fa-icon [icon]="'eye'"></fa-icon>
+                        </button>
+
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <!-- Symbol Column -->
+                  <ng-container matColumnDef="fechaEmision">
+                    <th mat-header-cell *matHeaderCellDef> Fecha Emisión </th>
+                    <td mat-cell *matCellDef="let element"> {{element.fechaEmision | date:'yy-MM-yyyy'}}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="subEntidadFinanciera">
+                    <th mat-header-cell *matHeaderCellDef> SubEntidad Financiera </th>
+                    <td mat-cell *matCellDef="let element"> {{element.paymentSubTypeName}} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="valorAbono">
+                    <th mat-header-cell *matHeaderCellDef> Valor Abono </th>
+                    <td mat-cell *matCellDef="let element"> {{element.valorAbono}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="valorAbonoCuota">
+                    <th mat-header-cell *matHeaderCellDef> Abono Cuota </th>
+                    <td mat-cell *matCellDef="let element"> {{element.abonoCuota}} </td>
+                  </ng-container>
+
+
+                  <tr mat-header-row *matHeaderRowDef="columnsMultiplesPaymentType"></tr>
+                  <tr mat-row *matRowDef="let row; columns: columnsMultiplesPaymentType;"></tr>
+
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell text-center" colspan="6">
+                      Sin registro
+                    </td>
+                  </tr>
+                </table>
+
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+      <div class="card">
+        <button type="button" class="btn btn-info btn-block" (click)="openModalFormaCobro()">
+          <i class="ti-plus"></i> Nuevo Abono
+        </button>
+
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Total:
+            <span>
+              <h5>
+                {{data.importeTotal }}
+              </h5>
+            </span>
+          </li>
+          @if (data.totalAbonoAnterior>0) {
+          <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-info">
+            Abono Anterior:
+            <span>
+              {{data.totalAbonoAnterior }}
+            </span>
+          </li>
+          }
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Abono
+            <span>
+              {{data.totalValorAbono }}
+            </span>
+          </li>
+
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Saldo Doc
+            <span>
+              {{data.totalSaldoDoc }}
+            </span>
+
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Mora
+            <span>
+              {{data.totalMora }}
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Saldo:
+            <span>
+              {{data.totalSaldo }}
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-danger">
+            Cambio:
+            <span>
+              {{data.valorCambio }}
+            </span>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+
+
+  </div>
+
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" (click)="save()">Guardar</button>
+  <button type="button" class="btn btn-dark" (click)="modal.close('Save click')">Cerrar</button>
+</div>

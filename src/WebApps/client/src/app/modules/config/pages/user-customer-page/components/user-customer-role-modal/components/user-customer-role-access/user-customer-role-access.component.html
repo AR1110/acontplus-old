@@ -1,0 +1,70 @@
+
+<div class="d-flex flex-row gap-1">
+  <button class="btn btn-success" (click)="onSave()">
+    <fa-icon [icon]="'save'"></fa-icon> Guardar
+  </button>
+  <button class="btn btn-danger" (click)="onDelete()">
+    <fa-icon [icon]="'trash-can'"></fa-icon> Eliminar acceso
+  </button>
+</div>
+
+<hr>
+<mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+  <!-- This is the tree node template for leaf nodes -->
+  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+
+    <div class="d-flex flex-row gap-1 justify-content-center align-items-center" style="width: 310px">
+      <button mat-icon-button disabled></button>
+      <mat-checkbox
+        (change)="todoItemSelectionToggle(node)"
+        [checked]="checklistSelection.isSelected(node)"
+        [indeterminate]="isNodeIndeterminate(node)"
+      >
+      </mat-checkbox>
+      <span class="flex-grow-1" >{{node.name}}</span>
+      <!--@if (checklistSelection.isSelected(node)){
+        <button type="button"
+                class="btn btn-success btn-sm justify-content-end"
+                (click)="onClickActions(node)"
+                [ngbPopover]="popContentActions"
+                [autoClose]="'outside'"
+                (hidden)="actionHidden()"
+        >
+          <fa-icon [icon]="'key'" size="1x"></fa-icon>
+        </button>
+        <ng-template #popContentActions>
+          @for (action of actions; track  $index){
+            <div class="d-flex flex-column bd-highlight">
+              <mat-slide-toggle class="p-2" [(ngModel)]="action.checked" (change)="toggleAction(action)">{{action.name}}</mat-slide-toggle>
+
+            </div>
+
+          }
+        </ng-template>
+      }-->
+
+    </div>
+
+  </mat-tree-node>
+  <!-- This is the tree node template for expandable nodes -->
+  <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding >
+    <div class="d-flex flex-row gap-1 align-items-center">
+      <button mat-icon-button matTreeNodeToggle
+              [attr.aria-label]="'Toggle ' + node.name">
+        <mat-icon class="mat-icon-rtl-mirror">
+          {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+        </mat-icon>
+      </button>
+      <mat-checkbox
+        (change)="todoItemSelectionToggle(node)"
+        [checked]="checklistSelection.isSelected(node)"
+        [indeterminate]="isNodeIndeterminate(node)"
+
+      >
+      </mat-checkbox>
+      <span>{{node.name}}</span>
+
+    </div>
+
+  </mat-tree-node>
+</mat-tree>

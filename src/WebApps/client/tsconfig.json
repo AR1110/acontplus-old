@@ -10,7 +10,6 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
@@ -28,8 +27,17 @@
       "@core/*": [
         "src/app/core/*"
       ],
+      "@company-customer/*": [
+        "src/app/modules/customer/company-customer/*"
+      ],
       "@modules/*": [
         "src/app/modules/*"
+      ],
+      "@accounting/*": [
+        "src/app/modules/accounting/*",
+      ],
+      "@technical-support/*": [
+        "src/app/modules/technical-support/*",
       ],
       "@inventory/*": [
         "src/app/modules/inventory/*",
@@ -44,6 +52,15 @@
       ],
       "@restaurant/*": [
         "src/app/modules/restaurant/*",
+      ],
+      "@billing/*": [
+        "src/app/modules/billing/*",
+      ],
+      "@mechanical/*": [
+        "src/app/modules/mechanical/*",
+      ],
+      "@customer/*": [
+        "src/app/modules/customer/*"
       ],
       "@shared/*": [
         "src/app/shared/*"

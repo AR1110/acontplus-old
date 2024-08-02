@@ -1,29 +1,42 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 
-namespace Common.Core.Utils
+namespace Common.Core.Utils;
+
+public static class FileExtensions
 {
-    public static class FileExtensions
+    public static string SanitizeFileName(string fileName)
     {
-        public static string SanitizeFileName(string fileName)
+        var response = Regex.Replace(fileName.Trim(), "[^A-Za-z0-9_. ]+", "");
+        return response.Replace(" ", string.Empty);
+    }
+    public static string GetBase64FromByte(byte[] valueByte)
+    {
+        if (valueByte == null)
         {
-            var response = Regex.Replace(fileName.Trim(), "[^A-Za-z0-9_. ]+", "");
-            return response.Replace(" ", string.Empty);
+            throw new ArgumentNullException(nameof(valueByte));
         }
-        public static string GetBase64FromByte(byte[] valueByte)
+
+        // Using MemoryStream to avoid unnecessary allocations
+        using (var memoryStream = new MemoryStream())
         {
-            var base64String = Convert.ToBase64String(valueByte, 0, valueByte.Length);
-            return base64String;
+            // Write the byte array to the MemoryStream
+            memoryStream.Write(valueByte, 0, valueByte.Length);
+            memoryStream.Seek(0, SeekOrigin.Begin);
+
+            // Convert to Base64 string
+            return Convert.ToBase64String(memoryStream.ToArray());
         }
-        public static byte[] GetBytes(IFormFile file)
+    }
+
+    public static byte[] GetBytes(IFormFile file)
+    {
+        byte[] fileBytes = null;
+        using (var ms = new MemoryStream())
         {
-            byte[] fileBytes = null;
-            using (var ms = new MemoryStream())
-            {
-                file.CopyTo(ms);
-                fileBytes = ms.ToArray();
-            }
-            return fileBytes;
+            file.CopyTo(ms);
+            fileBytes = ms.ToArray();
         }
+        return fileBytes;
     }
 }

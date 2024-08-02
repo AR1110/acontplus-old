@@ -1,8 +1,8 @@
-﻿namespace Common.Core.Models
+﻿namespace Common.Core.Models;
+
+public class ApiRequest
 {
-    public class ApiRequest
-    {
-        public int UserRoleId { get; set; }
-        public Dictionary<string, object> Data { get; set; }
-    }
+    public int UserRoleId { get; set; }
+    public bool FromMobile { get; set; }
+    public Dictionary<string, object> Data { get; set; }
 }

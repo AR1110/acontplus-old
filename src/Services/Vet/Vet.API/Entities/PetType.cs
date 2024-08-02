@@ -1,19 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
+﻿namespace Vet.API.Entities;
 
-namespace Vet.API.Entities
+[Table("PetType", Schema = "Vet")]
+public class PetType : BaseEntity
 {
-    [Table("PetType", Schema = "Pet")]
-    public class PetType : BaseEntity
-    {
-        [Required]
-        [MaxLength(2)]
-        public string Code { get; set; }
-        [Required]
-        [MaxLength(100)]
-        public string Name { get; set; }
-        [MaxLength(300)]
-        public string Description { get; set; }
-    }
+    [Required] [MaxLength(2)] public string Code { get; set; }
+
+    [Required] [MaxLength(100)] public string Name { get; set; }
+
+    [MaxLength(300)] public string Description { get; set; }
 }

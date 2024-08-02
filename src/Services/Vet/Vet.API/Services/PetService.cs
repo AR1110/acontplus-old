@@ -1,71 +1,77 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Microsoft.EntityFrameworkCore;
-using Vet.API.Data;
-using Vet.API.Entities;
-using Vet.API.Interfaces;
-namespace Vet.API.Services
+﻿namespace Vet.API.Services;
+
+public class PetService(VetContext context, IAdoRepository repository) : IPetService
 {
-    public class PetService : IPetService
+    public async Task<ApiResponse> AddAsync(Pet pet)
     {
-        private readonly VetContext _context;
-        private readonly IADORepository _repository;
-        private readonly ApiResponse _response;
-        public PetService(VetContext context, IADORepository repository)
+        await context.Pets.AddAsync(pet);
+        await context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Guardada exitosamente", Payload = pet };
+    }
+
+    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    {
+        var pet = await context.Pets.FindAsync(id);
+        if (pet == null)
         {
-            _context = context;
-            _repository = repository;
-            _response = new ApiResponse();
-        }
-        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync("Pet.Pet_Get", parameters);
-            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-            {
-                _response.Create(code: "0", "La transacción no devolvio respuesta");
-            }
-            else
-            {
-                _response.Create(code: "1", payload: DataConverters.DataSetToJSON(ds));
-            }
-            return _response;
-        }
-        public async Task<Pet> GetByIdAsync(int id)
-        {
-            var response = await _context.Pets.SingleOrDefaultAsync(x => x.Id == id);
-            return response;
-        }
-        public async Task<Pet> AddAsync(Pet recipe)
-        {
-            await _context.Pets.AddAsync(recipe);
-            _context.SaveChanges();
-            return recipe;
-        }
-        public Pet UpdateAsync(Pet recipe)
-        {
-            _context.Pets.Update(recipe);
-            _context.SaveChanges();
-            return recipe;
-        }
-        public void RemoveAsync(Pet recipe)
-        {
-            _context.Pets.Remove(recipe);
-            _context.SaveChanges();
+            return new ApiResponse { Code = "0", Message = "No se encontro raza para eliminar" };
         }
 
-        public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
+        pet.UserId = userId;
+        pet.Deleted = true;
+        pet.Enabled = false;
+        context.Update(pet);
+        await context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
+    }
+
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await repository.GetDataSetAsync("Vet.Pet_Get", parameters);
+        if (DataValidation.DataSetIsNull(ds, true))
         {
-            var ds = await _repository.GetDataSetAsync("Pet.Pet_Get", parameters);
-            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-            {
-                _response.Create(code: "0", "La transacción no devolvio respuesta");
-            }
-            else
-            {
-                _response.Create(code: "1", payload: DataConverters.DataSetToJSON(ds));
-            }
-            return _response;
+            return new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" };
         }
+
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+    }
+
+    public async Task<ApiResponse> GetByIdAsync(int id)
+    {
+        var pet = await context.Pets.SingleOrDefaultAsync(x => x.Id == id);
+        return new ApiResponse { Code = "1", Payload = pet };
+    }
+
+
+    public async Task<ApiResponse> UpdateAsync(int id, Pet pet)
+    {
+        var petFound = await context.Pets.SingleOrDefaultAsync(x => x.Id == id);
+        if (petFound == null)
+        {
+            return new ApiResponse { Code = "0", Message = "No se encontro mascota para editar" };
+        }
+
+        petFound.UserId = pet.UserId;
+        petFound.Name = pet.Name;
+        petFound.BreedId = pet.BreedId;
+        petFound.GenderId = pet.GenderId;
+        petFound.Color = pet.Color;
+        petFound.Enabled = pet.Enabled;
+        petFound.Birthdate = pet.Birthdate;
+        context.Pets.Update(petFound);
+        await context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Actualizada exitosamente", Payload = pet };
+    }
+
+
+    public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await repository.GetDataSetAsync("Vet.Pet_Get", parameters);
+        if (DataValidation.DataSetIsNull(ds, true))
+        {
+            return new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" };
+        }
+
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

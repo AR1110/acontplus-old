@@ -1,10 +1,7 @@
-﻿using Identity.API.Entities;
+﻿namespace Identity.API.Interfaces;
 
-namespace Identity.API.Interfaces
+public interface IForgotPasswordService
 {
-    public interface IForgotPasswordService
-    {
-        Task<string> GetAsync(string email);
-        Task<string> AddAsync(ForgotPassword data);
-    }
+    Task<string> GetAsync(string email);
+    Task<string> AddAsync(ForgotPassword data);
 }

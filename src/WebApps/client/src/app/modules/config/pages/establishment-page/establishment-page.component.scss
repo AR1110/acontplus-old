@@ -1,1 +1,10 @@
-@import "tabulator-tables/dist/css/tabulator.min.css";
+.custom-header::after {
+  content: none;
+}
+
+
+
+.img-thumbnail {
+  max-width: 100%;
+  height: auto;
+}

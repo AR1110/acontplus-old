@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Core.Utils;
+using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
-using Services.Common;
-using Services.Common.Logs;
+using Services.Common.Extensions;
+
 
 namespace Restaurant.API.Controllers
 {
     public class ConfigPrinterController : BaseApiController
     {
         private readonly IConsumptionConfigService _configService;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public ConfigPrinterController(IConsumptionConfigService configService, LogWriter log)
+        public ConfigPrinterController(IConsumptionConfigService configService, ICustomLogger log)
         {
             _configService = configService;
             _log = log;

@@ -82,7 +82,7 @@
     <div class="row">
         <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
             <div class="row">
-                <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                     <span for="">Buscar Articulo</span>
                     <md-autocomplete-articulo-component tipo-doc="tipoDoc" id-bodega="data.idBodega"
                         set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)">
@@ -99,6 +99,17 @@
                         <select id="idTarifa" class="form-control border-select" ng-model="data.idTarifa"
                             ng-change="onChangeTarifaGeneral()">
                             <option ng-value="item.idTarifa" ng-repeat="item in tarifas">{{item.descripcion}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="config.multipleVendedor">
+                    <div class="form-group">
+                        <span for="vendedor">Vendedor: <span class="text-danger">*</span></span>
+                        <select name="vendedor" id="vendedor" class="form-control border-select"
+                            ng-model="data.idUsuario">
+                            <option ng-value="item.idUsuario" ng-repeat="item in vendedores">
+                                {{item.nombreCompleto}}
+                            </option>
                         </select>
                     </div>
                 </div>

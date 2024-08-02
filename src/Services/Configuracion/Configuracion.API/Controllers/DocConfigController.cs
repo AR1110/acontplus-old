@@ -1,66 +1,29 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Configuracion.API.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
-using Services.Common;
+﻿namespace Configuracion.API.Controllers;
 
-namespace Configuracion.API.Controllers
+public class DocConfigController(IDocConfigService docConfigService) : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class DocConfigController : ControllerBase
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IDocConfigService _service;
-        private readonly LogWriter _log;
-
-        public DocConfigController(IDocConfigService service, LogWriter log)
+        var parameters = new Dictionary<string, object>
         {
-            _service = service;
-            _log = log;
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await docConfigService.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _service.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en get " + ex.Message);
-                return BadRequest("Error en get " + ex.Message);
-            }
-        }
+        return Ok(response);
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> Post(ApiRequest data)
+    [HttpPost]
+    public async Task<IActionResult> Post(ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _service.UpdateAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Post " + ex.Message);
-                return BadRequest("Error en Post " + ex.Message);
-            }
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+        };
+        return Ok(await docConfigService.AddAsync(parameters));
     }
 }

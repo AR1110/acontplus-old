@@ -139,6 +139,33 @@
                         }
                       </td>
                     </tr>
+
+                    <tr>
+                      <td>
+                        <div class="icheck-primary">
+                          <input type="checkbox" name="configCc" id="configCc" [(ngModel)]="configVenta.configCc">
+                          <label for="configCc">Envio de copia de comprobates</label>
+                        </div>
+                      </td>
+                      <td>
+                        @if (configVenta.configCc) {
+                          <div class="form-group">
+                            <label
+                              >Email:
+                              <span
+                                tooltip-placement="top"
+                                ngbTooltip="Haz doble 'Click' sobre el correo para editar"
+                              >
+                                <fa-icon [icon]="'info-circle'"></fa-icon>
+                              </span>
+                            </label>
+                            <app-input-chip [chips]="emails"/>
+
+                          </div>
+                        }
+                      </td>
+                    </tr>
+
                     <!--Configuracion Forma Pago-->
                     <tr>
                       <td [width]="500">

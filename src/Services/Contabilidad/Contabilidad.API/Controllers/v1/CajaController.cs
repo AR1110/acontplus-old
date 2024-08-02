@@ -1,108 +1,68 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Contabilidad.Core.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common;
-using Services.Common.Logs;
+﻿namespace Contabilidad.API.Controllers.v1;
 
-namespace Contabilidad.API.Controllers.v1
+[Route("api/[controller]")]
+[ApiController]
+public class CajaController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CajaController : ControllerBase
+    private readonly ICajaService _service;
+
+    public CajaController(ICajaService service)
     {
-        private readonly ICajaService _service;
-        private readonly LogWriter _log;
+        _service = service;
+    }
 
-        public CajaController(ICajaService service, LogWriter log)
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            _service = service;
-            _log = log;
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await _service.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+        ;
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _service.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en get " + ex.Message);
-                return BadRequest("Error en get " + ex.Message);
-            }
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        var response = await _service.AddAsync(parameters);
+        if (response == null) { return NoContent(); }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ApiRequest data)
+        ;
+        return Ok(response);
+    }
+
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _service.AddAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Post " + ex.Message);
-                return BadRequest("Error en Post " + ex.Message);
-            }
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        var response = await _service.UpdateAsync(parameters);
+        if (response == null) { return NoContent(); }
+
+        ;
+        return Ok(response);
+    }
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                     { "id", id },
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _service.UpdateAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Put " + ex.Message);
-                return BadRequest("Error en Actualizar " + ex.Message);
-            }
-        }
-
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"id", id}
-                };
-                var response = await _service.DeleteAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al anular caja: " + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var response = await _service.DeleteAsync(parameters);
+        return Ok(response);
     }
 }

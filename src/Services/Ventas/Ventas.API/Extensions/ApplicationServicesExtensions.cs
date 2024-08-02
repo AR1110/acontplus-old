@@ -1,22 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Services.Common.Logs;
-using Ventas.API.Data;
-using Ventas.API.Interfaces;
-using Ventas.API.Services;
+﻿using Newtonsoft.Json.Serialization;
 
-namespace Ventas.API.Extensions
+namespace Ventas.API.Extensions;
+
+public static class ApplicationServicesExtensions
 {
-    public static class ApplicationServicesExtensions
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddDbContextPool<VentasContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddScoped<INotaEntregaService, NotaEntregaService>();
-
-            services.AddSingleton<LogWriter>();
-            return services;
-        }
+        services.AddControllers()
+                .AddNewtonsoftJson(x =>
+                {
+                    x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    x.SerializerSettings.ContractResolver =
+                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+                });
+        services.AddScoped<IAdoSqlServer, AdoSqlServer>();
+        services.AddScoped<IAprobacionDocService, AprobacionDocService>();
+        services.AddScoped<IClienteService, ClienteService>();
+        services.AddScoped<INotaEntregaService, NotaEntregaService>();
+        services.AddScoped<IProformaService, ProformaService>();
+        services.AddScoped<IEmpresaService, EmpresaService>();
+        services.AddScoped<ICreditoGaranteService, CreditoGaranteService>();
+       
+        return services;
     }
 }

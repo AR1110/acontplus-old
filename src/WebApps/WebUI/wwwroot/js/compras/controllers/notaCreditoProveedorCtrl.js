@@ -18,14 +18,14 @@ function notaCreditoProvCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalCon
 
     // let accion = JSON.parse(localStorage.getItem("accion"));  
     // if(accion===null){
-    //     location.href ="/Home/Index";
+    //     location.href ="/Index";
     //     return
     // }else{
     //     $scope.accion = accion[0];
     // }
 
     const TIPO_DOC = _commonSvc.tipoDoc['NCP'];
-    let idUsuarioRol= parseInt(decodeToken.idUsuarioRol);
+    let idUsuarioRol= parseInt(decodeToken.userRoleId);
 
     $scope.dataSearch = {
         pageIndex: 1,

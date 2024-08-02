@@ -5,8 +5,8 @@ import { AuthService } from '@modules/auth/services/auth.service';
 export const sessionGuard: CanActivateFn = (route, state) => {
   const router: Router = inject(Router);
   const authSvc = inject(AuthService);
-  if (authSvc.isLoggedIn !== true) {
-    console.log('no auth')
+  if (!authSvc.isAuthenticated()) {
+    console.log('no auth');
     //router.navigate(['/', 'auth'])
   }
   return true;

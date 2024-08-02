@@ -1,87 +1,57 @@
-﻿using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
-using Common.Core.Utils;
+﻿using Autofac.Extensions.DependencyInjection;
+using Common.AppSettings;
 using Reports.API.Extensions;
-using Services.Common;
-using Services.Common.Logs;
+using Services.Common.Middleware;
 
-namespace Reports.API
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+ConfigHelper.AddJsonFiles(builder.Configuration);
+
+builder.Services.AddApplicationServices(builder.Configuration);
+
+builder.Services.AddControllers();
+
+builder.Services.AddIdentityService(builder.Configuration);
+
+builder.Services.AddSwaggerDocumentation();
+
+builder.Services.AddApiVersioningConfig();
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+
+var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseSwaggerVersionedDocumentation();
+
+app.UseRouting();
+
+
+if (Environment.OSVersion.Platform != PlatformID.Win32NT)
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-            builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
-            ConfigHelper.AddJsonFiles(builder.Configuration);
-
-            builder.Services.AddApplicationServices(builder.Configuration);
-
-            builder.Services.AddControllers();
-            builder.Services.AddCustomJwtAuthentication(builder.Configuration);
-
-            builder.Services.AddSwaggerDocumentation();
-
-            builder.Services.AddApiVersioning(opt =>
-            {
-                opt.DefaultApiVersion = new ApiVersion(1, 0);
-                opt.AssumeDefaultVersionWhenUnspecified = true;
-                opt.ReportApiVersions = true;
-                opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
-                                                                new QueryStringApiVersionReader("api-version"),
-                                                                new HeaderApiVersionReader("x-api-version"),
-                                                                new MediaTypeApiVersionReader("x-api-version"));
-            }).AddApiExplorer(setup =>
-            {
-                setup.GroupNameFormat = "'v'VVV";
-                setup.SubstituteApiVersionInUrl = true;
-            });
-
-            builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
-
-            var app = builder.Build();
-
-            var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
-                {
-                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
-                        description.GroupName.ToUpperInvariant());
-                }
-            });
-
-            app.UseRouting();
-
-
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-            {
-                app.Urls.Add("http://*:5010"); // 👈 Add the URL
-            }
-            else
-            {
-                app.UseHttpsRedirection();
-            }
-            app.UseAuthentication();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                _ = endpoints.MapGet("/", context =>
-                {
-                    context.Response.Redirect("swagger");
-                    return Task.CompletedTask;
-                });
-            });
-
-            app.MapControllers().RequireAuthorization();
-
-            app.Run();
-        }
-    }
+    app.Urls.Add("http://*:5010"); // Linux Port
 }
+else
+{
+    app.UseHttpsRedirection();
+}
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    _ = endpoints.MapGet("/", context =>
+    {
+        context.Response.Redirect("swagger");
+        return Task.CompletedTask;
+    });
+});
+
+app.MapControllers().RequireAuthorization();
+
+await app.RunAsync();

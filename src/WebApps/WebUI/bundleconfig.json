@@ -658,5 +658,95 @@
     "inputFiles": [
       "wwwroot/js/common/utils/utils.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/contabilidad/controllers/reporteContabilidadCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/contabilidad/controllers/reporteContabilidadCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/contabilidad/services/contabilidadService.min.js",
+    "inputFiles": [
+      "wwwroot/js/contabilidad/services/contabilidadService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/modals/modalRetencionAtsCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/modals/modalRetencionAtsCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/services/docRecibidoService.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/services/docRecibidoService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/contabilidad/services/subcategoryService.min.js",
+    "inputFiles": [
+      "wwwroot/js/contabilidad/services/subcategoryService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/services/compraService.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/services/compraService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/controllers/facturaCompraCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/controllers/facturaCompraCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/controllers/liquidacionCompraCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/controllers/liquidacionCompraCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/controllers/compraNoHabitualCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/controllers/compraNoHabitualCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/admin/turnoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/admin/turnoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/common/modalModuloImportacionCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/common/modalModuloImportacionCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/services/factElectService.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/services/factElectService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/common/modalComprobanteErrorCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/common/modalComprobanteErrorCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/controllers/facturaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/controllers/facturaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/controllers/notaCreditoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/controllers/notaCreditoCtrl.js"
+    ]
   }
 ]

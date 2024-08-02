@@ -5,10 +5,17 @@ export enum TYPE_CATEGORY {
 }
 
 export enum TECH_SUPPORT_PATHS {
+  BRAND = 'Brand/',
+  CATEGORY = 'Category/',
   DEVICE = 'Device/',
   DEVICE_CUSTOMER = 'DeviceCustomer/',
   DEVICE_SPEC = 'DeviceSpec/',
+  MODELO = 'Modelo/',
   ORDER = 'Order/',
+  ORDER_DETAIL = 'OrderDetail/',
+  ORDER_MAINTENANCE = 'OrderMaintenance/',
+  SERIE = 'Serie/',
+  STATS = 'Stats/',
 }
 
 export enum ORDER_STATUS_CODE {
@@ -20,4 +27,3 @@ export enum ORDER_STATUS_CODE {
   SS = 7,
   G = 8,
 }
-

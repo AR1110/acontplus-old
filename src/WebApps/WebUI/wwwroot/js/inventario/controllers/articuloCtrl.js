@@ -96,6 +96,10 @@
             }
         }
 
+        $scope.refresh = function(){
+            $scope.getArticulos();
+        }
+
         initiload();
         function initiload() {
             articuloSvc.getDataFilter().then(response => {
@@ -237,7 +241,12 @@
                     reload: true,
                     isRenderRazorPartial: true,
                 }
-                modalSvc.openModalCustom(modalParams)
+                let modalRef = modalSvc.openModalCustom(modalParams)
+                modalRef.result.then(response=>{
+                    if(response && typeof response==='object'){
+                        $scope.refresh();
+                    }
+                })
             } catch (error) {
                 console.log(error)
             }

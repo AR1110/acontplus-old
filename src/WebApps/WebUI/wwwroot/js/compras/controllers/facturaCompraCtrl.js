@@ -44,6 +44,7 @@
 
         $scope.establecimientos = [];
         $scope.estadosDoc = [];
+        $scope.subcategories = [];
         $scope.recordsQuantity = [25, 50, 100]
         $scope.dataSearch = {
             pageIndex: 1,
@@ -72,8 +73,13 @@
             $scope.saldo = fS.roundNumber(saldo, 5);
         };
 
+        $scope.refresh = function(){
+            $scope.getFacturas();
+        }
+
         $scope.getFacturas = function () {
             try {
+                 
                 const dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
                     checkBoxFecha: $scope.dataSearch.checkBoxFecha,
@@ -84,8 +90,7 @@
                     idUsuario: fS.isValidField($scope.dataSearch.idUsuario),
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
-                    //  isSearchNroDoc: $scope.dataSearch.nroSecuencial ? true : false,
-                    //  nroSecuencial: $scope.dataSearch.nroSecuencial,
+                    subcategoryId: $scope.dataSearch.subcategoryId,
                 }
                 $scope.cloneFacturas = [];
                 $scope.facturas = [];
@@ -112,9 +117,10 @@
         $scope.initiload = () => {
             showLoader();
             facturaCompraSvc.getDataFilter().then(response => {
-                let { estabs, estadosDoc } = response;
+                let { estabs, estadosDoc, subcategories } = response;
                 $scope.estadosDoc = estadosDoc;
                 $scope.establecimientos = estabs;
+                $scope.subcategories = subcategories;
                 if ($scope.establecimientos.length > 0) {
                     let dataEstab = $scope.establecimientos.find(estab => estab.defaultEstab);
                     if (dataEstab) {
@@ -145,8 +151,8 @@
 
         //----------------------------------------------FILTROS ----------------------------------------
         $scope.resultRangeFilter = function (item) {
-            ($scope.dataSearch.fechaInicio = item.startDate),
-                ($scope.dataSearch.fechaFin = item.endDate);
+            $scope.dataSearch.fechaInicio = item.startDate;
+            $scope.dataSearch.fechaFin = item.endDate;
             $scope.getFacturas();
         };
 
@@ -220,7 +226,7 @@
             try {
                 showLoader();
                 facturaCompraSvc.getId(item.id).then(
-                    response => {
+                    response => { 
                         modalSvc.openModalCustom({
                             controller: 'modalFacturaCompraCtrl',
                             template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
@@ -345,6 +351,7 @@
         $scope.tiemposCredito = [];
         $scope.categoriasCompra = [];
         $scope.sustentosTributario = [];
+        $scope.subcategories = []
 
         $scope.data = {
             idBodega: 0,
@@ -438,7 +445,8 @@
                     tarifasImpuesto,
                     tiemposCredito,
                     categoriasCompra,
-                    sustentosTributario
+                    sustentosTributario,
+                    subcategories,
                 } =
                     mainDataForm;
 
@@ -450,6 +458,7 @@
                 $scope.tiemposCredito = tiemposCredito;
                 $scope.categoriasCompra = categoriasCompra;
                 $scope.sustentosTributario = sustentosTributario;
+                $scope.subcategories = subcategories
 
                 if (
                     !(
@@ -1090,22 +1099,26 @@
                 let dataTarifaImpuesto = $scope.tarifasImpuesto.find(
                     (ti) => ti.codigoPorcentaje === articulo.codigoPorcentaje
                 );
-
-                let precioCosto = dataMedida.precioCosto;
+ 
 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
                 entity.descripcion = articulo.descripcion;
-                entity.precioUnitario = fS.roundNumber(
-                    precioCosto,
-                    $scope.decimal.nroPrecio
-                );
+               
                 entity.etiquetas = etiquetas;
 
                 //Medidas
                 entity.medidas = medidas;
                 entity.idMedida = dataMedida.idMedida;
                 entity.conversion = dataMedida.conversion;
+                entity.precioCosto = dataMedida.precioCosto;
+                 
+                entity.precioUnitario = fS.roundNumber(
+                    dataMedida.precioUnitario,
+                    $scope.decimal.nroPrecio
+                );
+                entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
+
 
                 //IVA
                 entity.idImpuesto = dataTarifaImpuesto.idImpuesto;
@@ -1312,11 +1325,10 @@
                 return;
             }
 
-            if (!fS.isValidField($scope.data.idCategoriaCompra)) {
-                tS.toastr("warning", "Seleccione la Categoria!");
+            if (!fS.isValidField($scope.data.subcategoryId)) {
+                tS.toastr("warning", "Seleccione la subcategoría!");
                 return;
             }
-
 
 
             if (!fS.isValidField($scope.proveedor.idProveedor)) {

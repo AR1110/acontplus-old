@@ -256,7 +256,7 @@
                 btnTitle: "=",
                 sizeBtn: "="
             },
-            template: ' <a style="cursor:pointer;" ng-if="kardex.view" class= "btn btn-info btn-xs text-white" title="Ver Kardex de Artículo"> <i class="mdi mdi-timetable"></i></a >',
+            template: ' <a style="cursor:pointer;" ng-if="kardex" class= "btn btn-info btn-xs text-white" title="Ver Kardex de Artículo"> <i class="mdi mdi-timetable"></i></a >',
             link: function (scope, element) {
                 let {
                     sales

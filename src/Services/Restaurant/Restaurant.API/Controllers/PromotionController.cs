@@ -4,7 +4,7 @@ using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Restaurant.API.Interfaces;
-using Services.Common;
+using Services.Common.Extensions;
 
 namespace Restaurant.API.Controllers
 {
@@ -54,7 +54,7 @@ namespace Restaurant.API.Controllers
             {
                 if (file != null)
                 {
-                    await _s3ObjectCustom.Add($"{User.GetIDCardCompany}/promociones/", file);
+                    await _s3ObjectCustom.Add($"{User.GetIdCardCompany}/promociones/", file);
                 }
 
                 var parameters = new Dictionary<string, object> {
@@ -95,7 +95,7 @@ namespace Restaurant.API.Controllers
             {
                 if (file != null)
                 {
-                    await _s3ObjectCustom.Add($"{User.GetIDCardCompany}/promociones/", file);
+                    await _s3ObjectCustom.Add($"{User.GetIdCardCompany}/promociones/", file);
                 }
 
                 var parameters = new Dictionary<string, object> {

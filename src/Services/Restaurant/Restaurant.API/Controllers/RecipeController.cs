@@ -1,27 +1,28 @@
 ﻿using System.Security.Claims;
 using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
-using Services.Common;
-using Services.Common.Logs;
+using Services.Common.Extensions;
+
 
 namespace Restaurant.API.Controllers
 {
     public class RecipeController : BaseApiController
     {
         private readonly IRecipe _recipe;
-        private LogWriter _log;
+        private ICustomLogger _log;
 
-        public RecipeController(IRecipe recipe, LogWriter log)
+        public RecipeController(IRecipe recipe, ICustomLogger log)
         {
             _recipe = recipe;
             _log = log;
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> Get()
+        public async Task<ActionResult<ApiResponseDeprecated>> Get()
         {
-            var _response = new ApiResponse();
+            var _response = new ApiResponseDeprecated();
             try
             {
                 _response.payload = await _recipe.GetAsync();
@@ -40,8 +41,6 @@ namespace Restaurant.API.Controllers
         {
             try
             {
-                var userId = HttpContext.User.FindFirstValue("userId");
-                Console.WriteLine(userId);
                 var result = await _recipe.GetByIdAsync(id);
                 return Ok(result);
             }

@@ -17,7 +17,7 @@ namespace Identity.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.3")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -45,6 +45,9 @@ namespace Identity.API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ReceiverId")
                         .HasColumnType("int");
@@ -94,6 +97,9 @@ namespace Identity.API.Data.Migrations
                     b.Property<DateTime>("Expiration")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<Guid>("Token")
                         .HasColumnType("uniqueidentifier");
 
@@ -120,6 +126,9 @@ namespace Identity.API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<string>("IpAddress")
                         .HasMaxLength(15)
@@ -153,6 +162,9 @@ namespace Identity.API.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<string>("IpAddress")
                         .HasMaxLength(15)
                         .IsUnicode(false)
@@ -174,6 +186,9 @@ namespace Identity.API.Data.Migrations
                     b.Property<string>("Token")
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
+
+                    b.Property<DateTime?>("TokenExpiration")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserAgent")
                         .IsUnicode(false)

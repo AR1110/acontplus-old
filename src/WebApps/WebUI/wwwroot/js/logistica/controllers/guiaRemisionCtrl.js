@@ -141,13 +141,13 @@
                 showLoader();
                 guiaRemisionSvc.getAll(query).then(response => {
                     $scope.guiasRemision = response;
-                    $scope.cloneGuiasRemision = JSON.parse(JSON.stringify($scope.guiasRemision));
+                    $scope.cloneGuiasRemision = structuredClone($scope.guiasRemision);
                     $scope.dataSearch.totalRecords = $scope.guiasRemision.length > 0 ? $scope.guiasRemision[0].totalRecords : 0;
                 }).catch(error => {
                     console.log(error)
                 }).finally(() => hideLoader())
 
-                guiaRemisionSvc.generateSerieComprobante({ idPuntoEmision: 1 })
+              
             } catch (error) {
                 hideLoader();
                 console.log(error);
@@ -173,6 +173,20 @@
                 .finally(() => hideLoader())
         }
         $scope.initiload();
+
+        $scope.refresh = function(){
+            $scope.getGuiasRemision();
+        }
+
+        $scope.pagechanged = function () {
+            $scope.refresh()
+        };
+
+        $scope.changePageSize = function () {
+            $scope.dataSearch.pageIndex = 1;
+            $scope.refresh()
+        };
+
 
         $scope.estabFilter = function () {
             let dataEstab = $scope.establecimientos.find(estab => estab.codEstab === $scope.dataSearch.codEstab);
@@ -374,7 +388,7 @@
                 }
             })
 
-            gridApi.edit.on.afterCellEdit($scope, (rowEntity, colDef, newValue, oldValue) => {
+            gridApi.edit && gridApi.edit.on.afterCellEdit($scope, (rowEntity, colDef, newValue, oldValue) => {
 
                 if ([undefined, null, ""].includes(rowEntity[colDef.field])) {
                     rowEntity[colDef.field] = oldValue;

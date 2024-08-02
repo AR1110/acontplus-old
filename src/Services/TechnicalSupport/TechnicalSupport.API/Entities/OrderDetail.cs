@@ -1,20 +1,19 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
 
-namespace TechnicalSupport.API.Entities
+namespace TechnicalSupport.API.Entities;
+
+[Table("OrderDetail", Schema = "TechnicalSupport")]
+public class OrderDetail : BaseEntity
 {
-    [Table("OrderDetail", Schema = "TechnicalSupport")]
-    public class OrderDetail : BaseEntity
-    {
-        public Guid Uuid { get; set; }
-        public Order Order { get; set; }
-        public int OrderId { get; set; }
-        public Device Device { get; set; }
-        public int DeviceId { get; set; }
-        [MaxLength(500)]
-        public string Obs { get; set; }
-        public List<OrderMaintenance> OrderMaintenances { get; set; }
-    }
+    public int? AssignedUserId { get; set; }
+    public Guid Uuid { get; set; }
+    public Order Order { get; set; }
+    public int OrderId { get; set; }
+    public Device Device { get; set; }
+    public int DeviceId { get; set; }
+
+    [MaxLength(500)] public string Obs { get; set; }
+
+    public List<OrderMaintenance> OrderMaintenances { get; set; }
 }

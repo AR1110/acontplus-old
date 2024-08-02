@@ -350,6 +350,7 @@ function modalArticuloCtrl(
                     let dataEstab = $scope.establecimientos.find(
                         (estab) => estab.defaultEstab === true
                     );
+                    console.log($scope.establecimientos)
                     $scope.bodegas = dataEstab.bodegas;
                     $scope.dataUbicacion.idEstablecimiento = dataEstab.idEstablecimiento;
                     if ($scope.bodegas.length > 0) {
@@ -1057,7 +1058,7 @@ function modalArticuloCtrl(
     $scope.uploadFile = () => {
         if ($scope.data.productPhotoId > 0 && $scope.image.selectedFile != null) {
             showLoader();
-            productPhotoService.update({ id: $scope.data.productPhotoId, data: JSON.stringify({ id: $scope.data.productPhotoId, s3ObjectKey: $scope.data.s3ObjectKey, s3ObjectUrl: $scope.data.s3ObjectUrl }), file: $scope.image.selectedFile, }).then(response => {
+            productPhotoService.update({ id: $scope.data.productPhotoId, data: JSON.stringify({ id: $scope.data.productPhotoId, s3ObjectKey: null, s3ObjectUrl: null }), file: $scope.image.selectedFile, }).then(response => {
                 if (response.code == "0") {
                     tS.toastr("warning", response.message)
                 }
@@ -2084,7 +2085,10 @@ function modalProductPhotoCtrl($scope, mS, tS, $uibModalInstance, params, produc
     $scope.product = params;
     $scope.productPhoto = {}
     $scope.photoSelected = {}
-    const url = 'Inventario/ProductPhoto/'
+    const url = 'Inventario/ProductPhoto/';
+
+    let responseRef = null;
+
     function init() {
         showLoader();
         mS.getData('GET', `${url}${params.idArticulo}`, null, true).then(
@@ -2140,6 +2144,7 @@ function modalProductPhotoCtrl($scope, mS, tS, $uibModalInstance, params, produc
                 if (response.code == "1") {
                     init();
                     tS.toastr("success", response.message)
+                    responseRef = response;
                 }
                 hideLoader()
             }).catch(error => {
@@ -2171,6 +2176,7 @@ function modalProductPhotoCtrl($scope, mS, tS, $uibModalInstance, params, produc
                 if (response.code == "1") {
                     init();
                     tS.toastr("success", response.message)
+                    responseRef = response;
                 }
                 hideLoader()
             }).catch(error => {
@@ -2205,6 +2211,7 @@ function modalProductPhotoCtrl($scope, mS, tS, $uibModalInstance, params, produc
                     if (response.code == "1") {
                         init();
                         tS.toastr("success", response.message)
+                        responseRef = response;
                     }
                     hideLoader()
                 }).catch(error => {
@@ -2221,6 +2228,7 @@ function modalProductPhotoCtrl($scope, mS, tS, $uibModalInstance, params, produc
                         $scope.productPhoto = {}
                         init()
                         tS.toastr("success", response.message)
+                        responseRef = response;
                     }
                     hideLoader()
                 }).catch(error => {
@@ -2232,7 +2240,7 @@ function modalProductPhotoCtrl($scope, mS, tS, $uibModalInstance, params, produc
     }
 
     $scope.closeModal = function () {
-        $uibModalInstance.close({ test: 'closing' });
+        $uibModalInstance.close(responseRef);
     }
 }
 /**END PRODUCT PHOTO*/

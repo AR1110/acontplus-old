@@ -8,11 +8,13 @@ import {
   SimpleChanges,
   ViewEncapsulation,
 } from '@angular/core';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import {
-  TabulatorFull as Tabulator,
   PageModule,
   ReactiveDataModule,
+  TabulatorFull as Tabulator,
 } from 'tabulator-tables';
+
 Tabulator.registerModule([PageModule, ReactiveDataModule]);
 
 @Component({
@@ -23,7 +25,7 @@ Tabulator.registerModule([PageModule, ReactiveDataModule]);
   styleUrls: ['./tabulator.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class TabulatorComponent implements OnChanges, OnInit {
+export class TabulatorComponent implements OnChanges {
   @Input() tableData: any[] = [];
   @Input() columnNames: any[] = [];
   @Input() height: string = '311px';
@@ -31,25 +33,28 @@ export class TabulatorComponent implements OnChanges, OnInit {
   @Input() dataTreeChildField: string = 'childRows';
   @Input() dataTreeStartExpanded: boolean = false;
 
+  @Input() options = {};
+
   @Output() cellEdited = new EventEmitter();
   @Output() cellClick = new EventEmitter();
 
-
+  uniqueIdTabulator = generateUuidv4();
   tab = document.createElement('div');
 
-  refTabulator!: Tabulator
+  refTabulator!: Tabulator;
 
-  ngOnInit(): void {
-    this.drawTable();
-  }
+  // ngOnInit(): void {
+  //   this.drawTable();
+  // }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('drawign');
     if (changes['tableData']) {
       this.drawTable();
     }
   }
 
-  ngOnit() {
+  ngAfterViewInit() {
     this.drawTable();
   }
 
@@ -65,34 +70,34 @@ export class TabulatorComponent implements OnChanges, OnInit {
       dataTreeStartExpanded: this.dataTreeStartExpanded,
       height: this.height,
       layout: 'fitData',
-      // reactiveData: true,
+      reactiveData: true,
       //responsiveLayout: true,
       autoResize: true, // prevent auto resizing of table
-      placeholder: "No Data Set",
+      // placeholder: 'Sin registro',
 
-       selectable: true,
+      selectable: true,
       // selectableRangeMode: "click",
       // selectableRollingSelection: true,
+      ...this.options,
     });
-    let table = document.getElementById('tabulatorTable');
+    let table = document.getElementById(`${this.uniqueIdTabulator}`);
     if (table) {
       table.appendChild(this.tab);
-      if(this.cellEdited){
-        this.refTabulator.on("cellEdited", (cell)=>{
-          this.cellEdited.emit(cell)
-        })
+      if (this.cellEdited) {
+        this.refTabulator.on('cellEdited', (cell) => {
+          this.cellEdited.emit(cell);
+        });
       }
 
-      if (this.cellClick){
-        this.refTabulator.on("rowClick",(cell, row)=>{
-          this.cellClick.emit(row)
-        })
+      if (this.cellClick) {
+        this.refTabulator.on('rowClick', (cell, row) => {
+          this.cellClick.emit(row);
+        });
       }
     }
   }
 
-  updateData(){
+  updateData() {
     // this.refTabulator.updateData(this.tableData)
   }
-
 }

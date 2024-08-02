@@ -1,15 +1,18 @@
+
 import { Component, inject } from "@angular/core";
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
-import { NgbAccordionModule } from "@ng-bootstrap/ng-bootstrap";
+import {NgbAccordionModule, NgbTooltipModule} from "@ng-bootstrap/ng-bootstrap";
 import { DecimalSelectComponent } from "./components/decimal-select/decimal-select.component";
 import { GeneralConfigService } from "@modules/config/services/general-config.service";
-import { hideLoader, showLoader } from "@core/utils/loader";
 import { FormsModule } from "@angular/forms";
 import { ToasterService } from "@core/services/toaster.service";
 import { isApiResponse } from "@core/models/api-response";
-import { ProductSearchComponent } from '@inventory/shared/components/product/product-search/product-search.component';
-import { CompanyCustomerSearchComponent } from "@core/components/company-customer-search/company-customer-search.component";
-import { isValidField } from "@core/utils/utils";
+import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
+import { CompanyCustomerSearchComponent } from "@modules/customer/company-customer/components/company-customer-search/company-customer-search.component";
+import {isValidEmail, isValidField} from "@core/utils/utils";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {InputChipComponent} from "@shared/components/input-chip/input-chip.component";
+import {SEPARATOR_KEY_CODE} from "@core/constants/global.constants";
 
 @Component({
   selector: 'app-general-config',
@@ -17,10 +20,13 @@ import { isValidField } from "@core/utils/utils";
   imports: [
     FormsModule,
     NgbAccordionModule,
+    NgbTooltipModule,
     BreadcrumbComponent,
     DecimalSelectComponent,
+    FontAwesomeModule,
     ProductSearchComponent,
-    CompanyCustomerSearchComponent
+    CompanyCustomerSearchComponent,
+    InputChipComponent,
   ],
   templateUrl: './general-config.component.html'
 })
@@ -75,12 +81,15 @@ export class GeneralConfigComponent {
     idCliente: 0,
     idArticulo: 0,
     configDeuda: false,
+    configCc : false,
+    cc : undefined as  any,
     tipoConfig: "" as any,
     interes: 0 as any,
     idSistema: 0,
     razonSocialComprador: '',
     nombreArticulo: ''
   }
+  emails: string[] = []
 
   //Inventario
   configInventario = {
@@ -97,17 +106,15 @@ export class GeneralConfigComponent {
   //Notificaciones
   notificaciones: Array<any> = [];
 
-
-
   getDataTabs() {
-    showLoader();
-    this.generalConfigSvc.getData(this.mainDataForm.codeTab).subscribe({
-      next: (response) => {
-        hideLoader();
+    this.emails = []
+    this.generalConfigSvc.getData(this.mainDataForm.codeTab).subscribe( (response) => {
+
         switch (this.mainDataForm.codeTab) {
           case this.CODE_TABS.CV:
             this.configVenta = response.configVenta;
             this.formasPagoSri = response.formasPagoSri;
+            this.emails = this.configVenta.cc;
             break;
 
           case this.CODE_TABS.CI:
@@ -116,6 +123,7 @@ export class GeneralConfigComponent {
             break;
 
           case this.CODE_TABS.CD:
+            console.log(response)
             this.decimalAlmacen = response.decimalAlmacen;
             this.decimalVenta = response.decimalVenta;
             this.decimalCompra = response.decimalCompra;
@@ -127,11 +135,6 @@ export class GeneralConfigComponent {
           default:
             break;
         }
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
   }
 
@@ -234,12 +237,29 @@ export class GeneralConfigComponent {
         this.configVenta.interes = undefined;
       }
 
+      if(this.configVenta.configCc){
+        if(this.emails.length===0){
+          this.tS.toastr({
+            type: 'warning',
+            message: 'Ingrese al menos un correo!'
+          })
+          return
+        }
+        if(!this.emails.every(e=>isValidEmail(e))){
+          this.tS.toastr({
+            type: 'warning',
+            message: 'Verifique que los correos esten en formato correcto'
+          })
+          return
+        }
+      }
 
 
       jsonConfig.searchCode = this.configVenta.searchCode;
       jsonConfig.printerAutomatic = this.configVenta.printerAutomatic;
       jsonConfig.payAutomatic = this.configVenta.payAutomatic;
       jsonConfig.configInteres = this.configVenta.configDeuda;
+      jsonConfig.cc            = this.configVenta.configCc? this.emails.join(SEPARATOR_KEY_CODE.SLASH) : null;
       jsonConfig.multipleVendedor = this.configVenta.multipleVendedor;
       jsonConfig.detailDuplicate = this.configVenta.detailDuplicate;
       jsonConfig.idFormaPagoSri = this.configVenta.idFormaPagoSri > 0 ? this.configVenta.idFormaPagoSri : undefined
@@ -306,10 +326,7 @@ export class GeneralConfigComponent {
 
 
 
-    showLoader();
-    this.generalConfigSvc.put(data).subscribe({
-      next: (response) => {
-        hideLoader();
+    this.generalConfigSvc.put(data).subscribe( (response) => {
         if (isApiResponse(response)) {
           if (response.code === "0") {
             this.tS.toastr({
@@ -322,15 +339,13 @@ export class GeneralConfigComponent {
               type: 'success',
               message: response.message
             })
+
             this.getDataTabs();
           }
         }
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
+
+
 
 
   }

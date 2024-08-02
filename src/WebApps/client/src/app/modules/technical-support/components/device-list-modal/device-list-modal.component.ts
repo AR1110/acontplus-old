@@ -3,12 +3,14 @@ import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { DeviceService } from '@modules/technical-support/services/device.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppModule } from 'src/app/app.module';
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: 'app-device-list-modal',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+    FontAwesomeModule
+  ],
   templateUrl: './device-list-modal.component.html',
   styles: ``,
 })
@@ -25,12 +27,10 @@ export class DeviceListModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.deviceService
-      .get(
-        JSON.stringify({
-          tipo: 4,
-          customerCompanyId: this.data.customerCompanyId,
-        })
-      )
+      .get({
+        tipo: 4,
+        customerCompanyId: this.data.customerCompanyId,
+      })
       .subscribe({
         next: (response) => {
           if (isApiResponse(response)) {

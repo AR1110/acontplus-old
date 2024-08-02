@@ -1,12 +1,13 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Common.AppSettings;
 using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Restaurant.API.Data;
 using Restaurant.API.Extensions;
-using Services.Common;
-using Services.Common.Middleware;
+using Services.Common.Extensions;
+
 
 internal class Program
 {
@@ -29,7 +30,7 @@ internal class Program
                            x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
                        });
 
-        builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+        builder.Services.AddIdentityService(builder.Configuration);
 
         builder.Services.AddSwaggerDocumentation();
 
@@ -41,14 +42,14 @@ internal class Program
 
         if (Environment.OSVersion.Platform != PlatformID.Win32NT)
         {
-            app.Urls.Add("http://*:5011"); // 👈 Add the URL
+            app.Urls.Add("http://*:5011"); // Linux Port
         }
         else
         {
             app.UseHttpsRedirection();
         }
 
-        app.UseMiddleware<ExceptionMiddleware>();
+        app.UseStatusCodePages();
 
         // Configure the HTTP request pipeline.
         app.UseSwaggerDocumentation();

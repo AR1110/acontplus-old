@@ -10,7 +10,7 @@
                 <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="icheck-info">
                         <input type="checkbox" ng-change="onChangeFechaFiltro()" ng-model="dataSearch.checkBoxFecha"
-                             id="checkBoxFechaFiltro">
+                               id="checkBoxFechaFiltro">
                         <label for="checkBoxFechaFiltro">Fecha</label>
                     </div>
                 </div>
@@ -22,32 +22,33 @@
                 </div>
             </div>
         </div>
-         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                     <div class="icheck-info">
                         <input type="checkbox" ng-model="dataSearch.checkBoxConsolidacion"
-                            ng-change="onChangecheckBoxConsolidacionInventario()" id="checkBoxConsolidacionInventario">
+                               ng-change="onChangecheckBoxConsolidacionInventario()" id="checkBoxConsolidacionInventario">
                         <label for="checkBoxConsolidacionInventario">Buscar consolidaciones de Inventario </label>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                     <div class="icheck-info">
                         <input type="checkbox" ng-model="dataSearch.checkBoxUltimaConsolidacion"
-                            ng-change="onChangeUltimaConsolidacion()" id="checkBoxUltimaConsolidacion">
+                               ng-change="onChangeUltimaConsolidacion()" id="checkBoxUltimaConsolidacion">
                         <label for="checkBoxUltimaConsolidacion">Buscar a partir de la ultima consolidación </label>
                     </div>
                 </div>
             </div>
-         </div> 
-    </div> 
+        </div>
+    </div>
     <hr>
     <div class="row">
         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
             <div class="form-group">
                 <label for="">Establecimiento</label>
                 <select class="form-control border-select" ng-model="dataSearch.codEstab" ng-change="getBodegas()">
-                    <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}
+                    <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                        {{item.nombreComercial}}
                     </option>
                 </select>
             </div>
@@ -56,7 +57,7 @@
         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
             <div class="form-group">
                 <label for="bodega">Bodega</label>
-                <select class="form-control border-select" ng-model="dataSearch.byBodega"> 
+                <select class="form-control border-select" ng-model="dataSearch.byBodega">
                     <option ng-value="b.idBodega" ng-repeat="b in bodegas">{{b.descripcion}}</option>
                 </select>
             </div>
@@ -64,7 +65,7 @@
         <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
             <div class="form-group">
                 <label for="bodega">Codigo</label>
-                <input type="text" class="form-control" ng-model="articulo.codigo" disabled />
+                <input type="text" class="form-control" ng-model="articulo.codigo" disabled/>
             </div>
         </div>
 
@@ -72,12 +73,12 @@
             <div class="form-group">
                 <label for="articuloFiltro">Articulo</label>
                 <input type="text" id="articuloSearchFiltro" autocomplete="off" name="articuloSearchFiltro"
-                    class="form-control border-select" placeholder="Ingrese Descripción del Articulo"
-                    ng-model="articuloFiltro.descripcion" ng-keyup="onKeyupArticuloSearchFiltro()"
-                    uib-typeahead="a as a.descripcion for a in articuloSearch($viewValue)"
-                    typeahead-loading="articuloFiltro.loading" typeahead-no-results="articuloFiltro.noResults"
-                    typeahead-template-url="articuloSearchFiltroTemplate.html" typeahead-editable="false"
-                    typeahead-on-select="selectedArticuloSearchFiltro($item)" onClick="this.select()" />
+                       class="form-control border-select" placeholder="Ingrese Descripción del Articulo"
+                       ng-model="articuloFiltro.descripcion" ng-keyup="onKeyupArticuloSearchFiltro()"
+                       uib-typeahead="a as a.descripcion for a in articuloSearch($viewValue)"
+                       typeahead-loading="articuloFiltro.loading" typeahead-no-results="articuloFiltro.noResults"
+                       typeahead-template-url="articuloSearchFiltroTemplate.html" typeahead-editable="false"
+                       typeahead-on-select="selectedArticuloSearchFiltro($item)" onClick="this.select()"/>
 
                 <script type="text/ng-template" id="articuloSearchFiltroTemplate.html">
                     <div class="autocomplete-suggestion-uib-typeahead">
@@ -88,10 +89,14 @@
                     </div>
                 </script>
 
-                <span class="ml-5" ng-if="articuloFiltro.loading"> <i class="fas fa-sync-alt fa-xs"></i>
-                    Loading...</span>
-                <small class="text-danger ml-5" ng-if="articuloFiltro.noResults">No se encontraron
-                    resultados</small>
+                <span class="ml-5" ng-if="articuloFiltro.loading">
+                    <i class="fas fa-sync-alt fa-xs"></i>
+                    Loading...
+                </span>
+                <small class="text-danger ml-5" ng-if="articuloFiltro.noResults">
+                    No se encontraron
+                    resultados
+                </small>
             </div>
         </div>
     </div>
@@ -103,16 +108,16 @@
                     <div class="form-group">
                         <label for="dateRange">Rango de Fechas: </label>
                         <input date-range-picker class="form-control date-picker" type="text" ng-model="dateRangePicker.date"
-                            picker="dateRangePicker.picker" picker-classes="extra-class-names" min="'2014-02-23'"
-                            max="dateRangePicker.maxDate" options="dateRangePicker.options" options="{locale: {separator: "
-                            :"}}" />
+                               picker="dateRangePicker.picker" picker-classes="extra-class-names" min="'2014-02-23'"
+                               max="dateRangePicker.maxDate" options="dateRangePicker.options" options="{locale: {separator: '
+                               :'}}"/>
                     </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-                    <div class="form-group"
-                        <label for="estadoMovimiento">Movimiento</label> 
-                        <select name="estadoMovimiento" di="estadoMovimiento"  class="form form-control border-select"
-                            ng-model="dataSearch.movement">
+                    <div class="form-group">
+                        <label for="estadoMovimiento">Movimiento</label>
+                        <select name="estadoMovimiento" di="estadoMovimiento" class="form form-control border-select"
+                                ng-model="dataSearch.movement">
                             <option value="">Todos</option>
                             <option ng-value="item.codigo" ng-repeat="item in estadoMovimientos">
                                 {{item.descripcion}}
@@ -121,28 +126,28 @@
                     </div>
                 </div>
                 <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
-                    <div class="form-group"
-                        <label for="estadoMovimiento">Stock Anterior</label> 
-                        <input type="text" class="form-control" disabled ng-value = "dataArticulo.stock">
+                    <div class="form-group">
+                        <label for="estadoMovimiento">Stock Anterior</label>
+                        <input type="text" class="form-control" disabled ng-value="dataArticulo.stock">
                     </div>
                 </div>
                 <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
-                    <div class="form-group"
-                        <label for="estadoMovimiento">Medida</label> 
-                        <input type="text" class="form-control" disabled ng-value = "dataArticulo.medida">
+                    <div class="form-group">
+                        <label for="estadoMovimiento">Medida</label>
+                        <input type="text" class="form-control" disabled ng-value="dataArticulo.medida">
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-12 col-12">
-            <div class="row justify-content-end mt-3">
-                <div class="col-lg-6 col-md-6 col-sm-12"> 
-                     <button type="button" class="btn btn-info" ng-click="searchKardex()">
+            <div class="d-flex justify-content-end">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <button type="button" class="btn btn-info" ng-click="searchKardex()">
                         <i class="ti-search"></i> Buscar
-                    </button> 
+                    </button>
                     <button type="button" class="btn btn-secondary" ng-click="getReport()">
                         <i class="mdi mdi-file"></i> Reporte
-                    </button> 
+                    </button>
                 </div>
             </div>
         </div>
@@ -158,4 +163,4 @@
 
 <div class="modal-footer">
     <button class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
-</div> 
+</div>

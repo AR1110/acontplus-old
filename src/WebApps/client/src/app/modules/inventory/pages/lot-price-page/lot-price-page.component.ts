@@ -1,11 +1,11 @@
 import { Component, inject, ViewChild } from "@angular/core";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
-import { ProductSearchComponent } from '@inventory/shared/components/product/product-search/product-search.component';
+import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
 import { TabulatorComponent } from "@core/components/tabulator/tabulator.component";
 import { hideLoader, showLoader } from "@core/utils/loader";
 import { LotPriceService } from "@modules/inventory/services/lot-price.service";
-import { SubCategorySelectMultipleComponent } from "@modules/inventory/shared/components/sub-category/sub-category-select-multiple/sub-category-select-multiple.component";
+import { SubCategorySelectMultipleComponent } from "@modules/inventory/components/sub-category/sub-category-select-multiple/sub-category-select-multiple.component";
 import { SupplierSearchComponent } from "@modules/purchase/components/supplier-search/supplier-search.component";
 import { TarifaSelectHtmlOnly } from "@modules/inventory/models/tarifa.model";
 import { MatFormFieldModule } from "@angular/material/form-field";

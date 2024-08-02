@@ -1,4 +1,8 @@
-<form [formGroup]="deviceForm" (ngSubmit)="isUpdate ? onUpdate() : onSave()">
+<form
+  [formGroup]="deviceForm"
+  (ngSubmit)="isUpdate ? onUpdate() : onSave()"
+  autocomplete="off"
+>
   <div class="modal-header">
     <h4 class="modal-title">
       <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
@@ -19,17 +23,90 @@
             >Categoria:
             <span class="text-danger">*</span>
           </label>
-          <select
-            formControlName="categoryId"
-            id="categoryId"
-            class="form-select"
-          >
-            @for (item of categories; track $index) {
-            <option [ngValue]="item.id">{{ item.name }}</option>
-            }
-          </select>
+          <div class="input-group">
+            <select
+              formControlName="categoryId"
+              id="categoryId"
+              class="form-select"
+              (change)="onCategoryChange($event)"
+            >
+              <option [value]="0">Seleccione una categoría</option>
+              @for (item of categories; track $index) {
+              <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              title="Añadir Categoría"
+              (click)="addCategory()"
+            >
+              <fa-icon [icon]="'plus'"></fa-icon>
+            </button>
+          </div>
         </div>
       </div>
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="brandId"
+            >Marca:
+            <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <select
+              formControlName="brandId"
+              id="brandId"
+              class="form-select"
+              (change)="onBrandChange($event)"
+            >
+              <option [value]="0">Seleccione una marca</option>
+              @for (item of brands; track $index) {
+              <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              title="Añadir Marca"
+              [disabled]="unselectedCategory"
+              (click)="addBrand()"
+            >
+              <fa-icon [icon]="'plus'"></fa-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="modeloId"
+            >Modelo:
+            <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <select
+              formControlName="modeloId"
+              id="modeloId"
+              class="form-select"
+              (change)="onModeloChange($event)"
+            >
+              @for (item of modelos; track $index) {
+              <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              title="Añadir Modelo"
+              [disabled]="unseletedBrand"
+              (click)="addModelo()"
+            >
+              <fa-icon [icon]="'plus'"></fa-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
         <div class="form-group">
           <label for="productName"
@@ -41,47 +118,6 @@
             id="productName"
             formControlName="name"
             class="form-control border-select"
-          />
-        </div>
-      </div>
-
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
-        <div class="form-group">
-          <label for="brand"
-            >Marca:
-            <span class="text-danger">*</span>
-          </label>
-          <input
-            type="text"
-            formControlName="brand"
-            id="brand"
-            class="form-control border-select"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12 col-12">
-        <div class="form-group">
-          <label for="model">Modelo: </label>
-          <input
-            type="text"
-            formControlName="model"
-            id="model"
-            class="form-control border-select"
-          />
-        </div>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12 col-12">
-        <div class="form-group">
-          <label for="year">Año: </label>
-          <input
-            type="number"
-            formControlName="year"
-            id="year"
-            class="form-control border-select"
-            maxlength="4"
           />
         </div>
       </div>
@@ -99,7 +135,7 @@
     </div>
     <div class="row">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-        <form [formGroup]="specForm">
+        <form [formGroup]="specForm" autocomplete="off">
           <div class="card rounded border border-success">
             <div class="card-header">
               <h5 class="card-title">Especificaciones</h5>
@@ -107,9 +143,11 @@
             <div class="card-body">
               <div class="row">
                 <div class="col">
-                  <form [formGroup]="specTypeForm">
+                  <form [formGroup]="specTypeForm" autocomplete="off">
                     <div class="form-group">
-                      <label for="specName">Categoría:</label>
+                      <label for="specName"
+                        >Categoría: <small>(Tres digítos minimo)</small></label
+                      >
                       <div class="input-group">
                         <input
                           type="text"
@@ -146,6 +184,19 @@
                   <div ngbAccordionCollapse>
                     <div ngbAccordionBody>
                       <ng-template>
+                        <div class="row mb-2">
+                          <div class="col-12">
+                            <button
+                              type="button"
+                              class="btn btn-outline-danger btn-sm"
+                              (click)="removeSpecCategory(item.uuid)"
+                            >
+                              <fa-icon [icon]="'trash'"></fa-icon> Eliminar
+                              Categoría
+                              <fa-icon [icon]="'angle-up'"></fa-icon>
+                            </button>
+                          </div>
+                        </div>
                         <div class="row">
                           <div class="col-md-6 col-12">
                             <div class="form-group">
@@ -205,9 +256,7 @@
                                         class="btn btn-outline-danger btn-sm"
                                         (click)="removeSpec($index, item.uuid)"
                                       >
-                                        <fa-icon
-                                          [icon]="'trash'"
-                                        ></fa-icon>
+                                        <fa-icon [icon]="'trash'"></fa-icon>
                                       </button>
                                     </th>
                                   </tr>
@@ -232,7 +281,11 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-outline-success btn-lg">
+    <button
+      type="submit"
+      class="btn btn-outline-success btn-lg"
+      [disabled]="deviceForm.invalid"
+    >
       <fa-icon [icon]="'save'"></fa-icon> Guardar
     </button>
     <button

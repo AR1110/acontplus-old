@@ -1,87 +1,43 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Configuracion.API.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common;
-using Services.Common.Logs;
+﻿namespace Configuracion.API.Controllers;
 
-namespace Configuracion.API.Controllers
+public class BodegaAsignacionController(IBodegaAsignacionService bodegaAsignacionService) : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BodegaAsignacionController : ControllerBase
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IBodegaAsignacionService _service;
-        private readonly LogWriter _log;
-
-        public BodegaAsignacionController(IBodegaAsignacionService service, LogWriter log)
+        var parameters = new Dictionary<string, object>
         {
-            _service = service;
-            _log = log;
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await bodegaAsignacionService.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _service.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en get Bodega Asignacion" + ex.Message);
-                return BadRequest("Error en get " + ex.Message);
-            }
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+        };
+        var response = await bodegaAsignacionService.AddAsync(parameters);
+        if (response == null) { return NoContent(); }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ApiRequest data)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _service.AddAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Post Bodega Asignacion" + ex.Message);
-                return BadRequest("Error en Post Bodega Asignacion" + ex.Message);
-            }
-        }
+        return Ok(response);
+    }
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                     { "id", id },
-                };
-                var response = await _service.UpdateAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Put Bodega Asignacion" + ex.Message);
-                return BadRequest("Error en Actualizar Bodega Asignacion" + ex.Message);
-            }
-        }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var response = await bodegaAsignacionService.UpdateAsync(parameters);
+        if (response == null) { return NoContent(); }
+
+        return Ok(response);
     }
 }

@@ -1,13 +1,14 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services
 {
     public class ConsumptionCancelledService : IConsumptionCancelledService
     {
-        private readonly IADORepository _repository;
-        public ConsumptionCancelledService(IADORepository repository)
+        private readonly IAdoRepository _repository;
+        public ConsumptionCancelledService(IAdoRepository repository)
         {
             _repository = repository;
         }
@@ -15,19 +16,19 @@ namespace Restaurant.API.Services
         {
             var dt = await _repository.GetDataTableAsync("Restaurant.ConsumoAnuladoTpv_Get", parameters);
             if (dt.Rows.Count == 0) { return null; }
-            return DataConverters.DataTableToJSON(dt);
+            return DataConverters.DataTableToJson(dt);
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ConsumoAnuladoTpv_Insert", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ConsumoAnuladoTpv_Insert", parameters);
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ConsumoAnuladoTpv_Update", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ConsumoAnuladoTpv_Update", parameters);
         }
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ConsumoAnuladoTpv_Delete", parameters);
+            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ConsumoAnuladoTpv_Delete", parameters);
         }
     }
 }

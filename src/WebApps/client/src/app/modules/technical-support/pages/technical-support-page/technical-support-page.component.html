@@ -1,9 +1,6 @@
 <app-breadcrumb />
 <div class="card">
   <div class="card-body">
-
-    <a [routerLink]="['/inventory/product-page']"   >to produc</a>
-
     <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
       <li [ngbNavItem]="1">
         <button ngbNavLink>Dashboard</button>
@@ -14,14 +11,7 @@
       <li [ngbNavItem]="2">
         <button ngbNavLink>Por Asignar</button>
         <ng-template ngbNavContent>
-          <button
-            type="button"
-            class="btn btn-outline-primary btn-sm"
-            (click)="openOrderModal()"
-          >
-            <fa-icon [icon]="'plus'"></fa-icon>
-            Nueva
-          </button>
+          
           <app-order-list [orderStatusCode]="active" />
         </ng-template>
       </li>

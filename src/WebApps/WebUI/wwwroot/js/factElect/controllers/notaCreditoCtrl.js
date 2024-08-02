@@ -50,7 +50,7 @@
         $scope.cliente = {
 
         }
-        let idUsuarioRol = Number(decodeToken.idUsuarioRol)
+        let idUsuarioRol = Number(decodeToken.userRoleId)
 
         //---------------------------------Busqueda Avanzada ----------------------------------
         //========================Start Filters=================
@@ -1215,6 +1215,7 @@
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto 
                 entity.conversion = dataMedida.conversion;
                 entity.precioCosto = dataMedida.precioCosto;
+                entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
 
                 entity.adicional = datosAdicionales; //
 
@@ -1407,16 +1408,7 @@
                 $scope.data.totalDescuento = totalDescuento;
                 $scope.data.porcentajeDescuento = porcentajeDescuento;
                 $scope.data.irbpnr = irbpnr
-                $scope.data.propina = propina;
-                // <tr>
-                //     <td class="left">
-                //         <div class="custom-control custom-switch">
-                //             <input type="checkbox" class="custom-control-input" id="switchPropina">
-                //                 <label class="custom-control-label" for="switchPropina">Propina 10%</label>
-                //         </div>
-                //     </td>
-                //     <td class="right">$${importeTotal}</td>
-                // </tr>
+                $scope.data.propina = propina; 
             } catch (error) {
                 console.log(error);
             }
@@ -1493,12 +1485,45 @@
             return true;
         }
 
+        function isValidTotals() {
+            let {
+                subTotalSinImpuestos, 
+                importeTotal,
+                totalDescuento, 
+            } = gridOptionsSvc.getImpuestoTotales({
+                items: $scope.gridOptions.data,
+                decimal: $scope.decimal,
+                tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+            })
+
+ 
+
+            if ($scope.data.subTotalSinImpuestos !== subTotalSinImpuestos) {
+                tS.toastr('warning', `El valor del Subtotal sin impuestos: ${$scope.data.subTotalSinImpuestos} difiere del valor del Subtotal sin impuestos en el detalle: ${subTotalSinImpuestos}`);
+                return;
+            }
+
+            if ($scope.data.totalDescuento !== totalDescuento) {
+                tS.toastr('warning', `El valor total del descuento: ${$scope.data.totalDescuento} no coincide con el descuento total calculado en el detalle: ${totalDescuento}`);
+                return;
+            }
+
+            if ($scope.data.total !== importeTotal) {
+                tS.toastr('warning', `El valor del importe total: ${$scope.data.total} difiere del importe total calculado en el detalle: ${importeTotal}`);
+                return;
+            }
+
+            return true;
+        }
+
         $scope.onSave = async function () {
             try {
 
                 let nroDocumentoSecuencial = null;
 
-                if (!isValidForm()) return
+                if (!isValidForm()) return;
+
+                if (!isValidTotals()) return;
 
                 if (isRegister()) {
                     showLoader();

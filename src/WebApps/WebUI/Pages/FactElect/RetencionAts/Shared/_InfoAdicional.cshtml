@@ -37,9 +37,9 @@
                         <td>{{item.nombre}}</td>
                         <td>{{item.valor}}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm" ng-click="editAdditionalInfo($index)"
+                            <button type="button" class="btn btn-warning btn-sm" ng-click="editAdditionalInfo($index)"
                                 ng-if="item.idRetAtsInfoAdicional > 0"><i class="ti-pencil"></i></button>
-                            <button class="btn btn-danger btn-sm" ng-click="askToDeleteAdditionalInfo($index, item)"><i
+                            <button type="button" class="btn btn-danger btn-sm" ng-click="askToDeleteAdditionalInfo($index, item)"><i
                                     class="ti-trash"></i></button>
                         </td>
                     </tr>

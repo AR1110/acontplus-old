@@ -53,8 +53,18 @@
                         </md-radio-group>
                     </div>
                 </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="subcategoryId">Subcategoría:</label>
+                        <select id="subcategoryId" name="subcategoryId" class="form-control" ng-model="mainform.subcategoryId" required>
+                            <option>Seleccione una subcategoría</option>
+                            <option ng-repeat="item in subcategories" ng-value="item.id">{{item.name}}</option>
+                        </select>
+                    </div>
+                </div>
+
             </div>
-            <div class="row" ng-show="mainform.option">
+            <div class="row" ng-show="(mainform.option && mainform.subcategoryId > 0)">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <label for="claveAcceso">Clave Acceso:</label>
@@ -74,7 +84,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row" ng-show="!mainform.option">
+            <div class="row" ng-show="(!mainform.option && mainform.subcategoryId > 0)">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div ngf-drop ngf-select ng-model="files" class="drop-box" ngf-drag-over-class="'dragover'"
                          ngf-multiple="true" ngf-allow-dir="true" accept="text/xml" ngf-pattern="'text/xml'">
@@ -109,14 +119,8 @@
                             </div>
                         </div>
                     </div>
-
-
-                    @* Upload Log:
-                    <pre>{{log}}</pre> *@
                 </div>
             </div>
-
-
 
             <div class="table-responsive" ng-if="compToImport.length > 0">
                 <table class="table">

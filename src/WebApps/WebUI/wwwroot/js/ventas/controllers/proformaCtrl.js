@@ -33,6 +33,8 @@
         tipoDoc = {
             codigo: DOC_TYPE['PR']
         }
+        $scope.codDoc = DOC_TYPE['PR'];
+      //  $scope.docDestino = DOC_TYPE['NE']
 
         $scope.typeSend = 'GenericFile';
         $scope.typeSendToMail = 'N';
@@ -130,6 +132,10 @@
             $scope.calculoColumnTotal();
         }
 
+        $scope.refresh = function(){
+            $scope.getProformas();
+        }
+
         //=====================Eend Filters=======================
 
 
@@ -171,8 +177,8 @@
                     idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                     byCliente: $scope.dataSearch.idCliente,
                     byUsuario: $scope.dataSearch.byUsuario,
-                    fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                    fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                    fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                    fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
@@ -180,8 +186,9 @@
 
                 proformaSvc.getAll(dataSearch).then(response => {
                     let { proformas, dataTotals } = response;
+                    console.log(response)
                     $scope.proformas = proformas;
-                    $scope.cloneProformas = JSON.parse(JSON.stringify($scope.proformas));
+                    $scope.cloneProformas = structuredClone($scope.proformas);
                     $scope.dataSearch.totalRecords = dataTotals.totalRecords;
                     //  $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
                     $scope.total = $scope.sumarColumnaTotal();
@@ -575,6 +582,7 @@
         $scope.puntosEmision = [];
         $scope.bodegas = [];
         $scope.tarifasImpuesto = [];
+        $scope.vendedores = [];
 
         $scope.datosAdicionalesArticulo = []
         $scope.historyDatosAdicionales = [];
@@ -754,8 +762,9 @@
                     $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
                 }
 
-                if ($scope.vendedores.length > 0) {
-                    $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
+                let dataUsuario = $scope.vendedores.find(item => (item.predeterminado));
+                if ($scope.vendedores.length > 0 && !$scope.config.multipleVendedor) {
+                    $scope.data.idUsuario = dataUsuario.idUsuario
                 } else {
                     $scope.data.idUsuario = 0;
                 }
@@ -783,6 +792,7 @@
                 const {
                     comprobante,
                     cliente,
+                    infoAdicionalDocumento,
                     items,
                 } = params.data;
 
@@ -792,6 +802,8 @@
                 }
                 $scope.data.fechaEmision = new Date();
                 $scope.data.idProforma = 0;
+
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
 
                 $scope.dataClone.codEstab = $scope.data.codEstab;
                 $scope.gridOptions.data = calculateTotalItems(items);
@@ -814,6 +826,7 @@
                 const {
                     comprobante,
                     cliente,
+                    infoAdicionalDocumento,
                     items,
                 } = params.data;
 
@@ -828,15 +841,17 @@
 
                 $scope.data.fechaEmisionEscrita = fS.getFechaEscrita($scope.data.fechaEmision);
 
-                if ($scope.vendedores.length > 0) {
-                    $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
-                } else {
-                    $scope.data.idUsuario = 0;
-                }
+                // if ($scope.vendedores.length > 0) {
+                //     $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
+                // } else {
+                //     $scope.data.idUsuario = 0;
+                // }
 
                 $scope.cliente = cliente;
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
+
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
             }
 
             $uibModalInstance.rendered.then(() => {
@@ -1294,6 +1309,7 @@
         async function setCustomerData(item) {
             let dataCliente = await clienteSvc.findById(item.idCliente);
             $scope.cliente = dataCliente;
+      
             $scope.data.fechaEmision = new Date();
             $scope.$apply();
         }
@@ -1465,43 +1481,49 @@
                     consolidacionesFecha
                 } = $scope.dataArticulo;
 
-                let index = 0, entity = {}, tarifaImpuesto = {};
+                let index = 0, entity = {}, tarifaImpuesto = {}, cantidad = 0; 
 
-                let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
+                //verificar si hay un articulo que lleva inventario mas de uno 
+                let itemsDuplicated = $scope.gridOptions.data.filter(item => (
+                    item.llevaInventario && item.idArticulo === articulo.idArticulo
+                ))
 
-                if (findIndexById === -1) {
+
+                let findIndexById = $scope.gridOptions.data.findIndex(
+                    item => item.llevaInventario && item.idArticulo === articulo.idArticulo
+                );
+
+                if ($scope.config.detailDuplicate) {
                     addRow();
                     index = $scope.gridOptions.data.length - 1;
                     entity = $scope.gridOptions.data[index];
+                    entity.cantidad = 1;
                 } else {
-                    index = findIndexById;
-                    entity = $scope.gridOptions.data[index];
-                    entity.cantidad = entity.cantidad + 1;
-                }
+
+                    if (itemsDuplicated.length > 1) {
+                        fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+                        return
+                    }
+
+                    if (findIndexById === -1) {
+                        addRow();
+                        index = $scope.gridOptions.data.length - 1;
+                        entity = $scope.gridOptions.data[index];
+                        entity.cantidad = 1;
+                    } else {
+                        index = findIndexById;
+                        entity = $scope.gridOptions.data[index];
+                        cantidad = entity.cantidad;
+                        entity.cantidad = cantidad + 1;
+                    }
+                } 
 
                 let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
-
-
+ 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
-                entity.descripcion = articulo.descripcion;
-
-                //Aplica a establecimiento que llevan actividad de Tipo Alojamiento
-                // if (
-                //     $scope.tarifaImpuestoVigente.codigoPorcentaje === TAX_RATE_CODE.DIFFERENTIATED_TAX
-                //     && articulo.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT
-                // ) {
-                //     let dataImpuestoTarifa = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.tarifaImpuestoVigente.codigoPorcentaje);
-                //     entity.idTipoIva = dataImpuestoTarifa.idTipoIva;
-                //     entity.codigoPorcentaje = dataImpuestoTarifa.codigoPorcentaje;
-                //     entity.tarifa = dataImpuestoTarifa.tarifa;
-
-                // } else {
-                //     entity.idTipoIva = articulo.idTipoIva;
-                //     entity.codigoPorcentaje = articulo.codigoPorcentaje;
-                //     entity.tarifa = articulo.tarifa;
-                // }
+                entity.descripcion = articulo.descripcion; 
                 tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
                 entity.idImpuesto = tarifaImpuesto.idImpuesto;
@@ -1744,16 +1766,7 @@
                 $scope.data.totalDescuento = totalDescuento;
                 $scope.data.porcentajeDescuento = porcentajeDescuento;
                 $scope.data.irbpnr = irbpnr
-                $scope.data.propina = propina;
-                // <tr>
-                //     <td class="left">
-                //         <div class="custom-control custom-switch">
-                //             <input type="checkbox" class="custom-control-input" id="switchPropina">
-                //                 <label class="custom-control-label" for="switchPropina">Propina 10%</label>
-                //         </div>
-                //     </td>
-                //     <td class="right">$${importeTotal}</td>
-                // </tr>
+                $scope.data.propina = propina; 
             } catch (error) {
                 console.log(error);
             }
@@ -1778,6 +1791,11 @@
             }
             if (!($scope.data.idPuntoEmision > 0)) {
                 tS.toastr('warning', 'Seleccione el Punto de Emisión');
+                return
+            }
+
+            if(!($scope.data.idUsuario>0)){
+                tS.toastr('warning', 'Seleccione el Usuario');
                 return
             }
 
@@ -1833,6 +1851,36 @@
             return true;
         }
 
+        function isValidTotals() {
+            let {
+                subTotalSinImpuestos, 
+                importeTotal,
+                totalDescuento, 
+            } = gridOptionsSvc.getImpuestoTotales({
+                items: $scope.gridOptions.data,
+                decimal: $scope.decimal,
+                tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+                TAX_RATE_CODE
+            })
+
+
+            if ($scope.data.subTotalSinImpuestos !== subTotalSinImpuestos) {
+                tS.toastr('warning', `El valor del Subtotal sin impuestos: ${$scope.data.subTotalSinImpuestos} difiere del valor del Subtotal sin impuestos en el detalle: ${subTotalSinImpuestos}`);
+                return;
+            }
+
+            if ($scope.data.totalDescuento !== totalDescuento) {
+                tS.toastr('warning', `El valor total del descuento: ${$scope.data.totalDescuento} no coincide con el descuento total calculado en el detalle: ${totalDescuento}`);
+                return;
+            }
+
+            if ($scope.data.total !== importeTotal) {
+                tS.toastr('warning', `El valor del importe total: ${$scope.data.total} difiere del importe total calculado en el detalle: ${importeTotal}`);
+                return;
+            }
+
+            return true;
+        }
 
         function isRegister() {
             return (params.action === 'NUEVO' || params.action === 'DUPLICAR');
@@ -1850,6 +1898,7 @@
                 if (!validateForm) {
                     throw "Invalid form!";
                 }
+                if (!isValidTotals()) return 
 
                 // if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL && $scope.data.total > 50) {
                 //     fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');
@@ -1903,6 +1952,7 @@
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
+                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                 })
 
                 //Registar Doc 

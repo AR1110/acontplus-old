@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Login.Pages
+namespace WebUI.Pages.Login
 {
     public class IndexModel : PageModel
     {
@@ -18,7 +18,7 @@ namespace WebUI.Login.Pages
         public IActionResult OnPost()
         {
             //put logout code here
-            return Redirect("/Login/Index");
+            return Redirect("/Pages/Login/Index");
         }
     }
 }

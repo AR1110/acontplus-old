@@ -1,44 +1,25 @@
-﻿
-using Common.Core.Utils;
-using Contabilidad.Core.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common;
-using Services.Common.Logs;
+﻿namespace Contabilidad.API.Controllers;
 
-namespace Contabilidad.API.Controllers
+public class ChequeController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ChequeController : ControllerBase
+    private readonly IChequeService _service;
+
+    public ChequeController(IChequeService service)
     {
-        private readonly IChequeService _service;
-        private readonly LogWriter _log;
+        _service = service;
+    }
 
-        public ChequeController(IChequeService service, LogWriter log)
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            _service = service;
-            _log = log;
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await _service.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _service.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en get Cheque " + ex.Message);
-                return BadRequest("Error en get Cheque " + ex.Message);
-            }
-        }
+        ;
+        return Ok(response);
     }
 }

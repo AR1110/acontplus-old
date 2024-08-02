@@ -45,6 +45,7 @@
             maxSize: 5,
             checkBoxFecha: true
         }
+        $scope.subcategories = [];
 
         //primero tu me fallaste cuando hiciste esa cosa, de ahi juu ya no baje a shimpim
         $scope.sumTotalColumna = function () {
@@ -61,6 +62,9 @@
             $scope.totalSaldo = fS.roundNumber(totalSaldo, 5);
         }
 
+        $scope.refresh = function(){
+            $scope.getLiquidacionesCompra();
+        }
 
         $scope.getLiquidacionesCompra = function () {
             try {
@@ -70,6 +74,7 @@
                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                         return
                     }
+                    tS.toastr('info', 'Buscando por número secuencial!')
                 }
 
                 $scope.liquidacionesCompra = [];
@@ -88,7 +93,8 @@
                     secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
                     idUsuario: fS.isValidField($scope.dataSearch.idUsuario),
                     pageIndex: $scope.dataSearch.pageIndex,
-                    pageSize: $scope.dataSearch.pageSize
+                    pageSize: $scope.dataSearch.pageSize,
+                    subcategoryId: $scope.dataSearch.subcategoryId,
                 }
                 showLoader();
                 liquidacionCompraSvc.getAll(dataSearch).then(response => {
@@ -112,10 +118,10 @@
         $scope.initiload = () => {
             showLoader();
             liquidacionCompraSvc.getDataFilter().then(response => {
-                let { estabs, estadosDoc } = response;
+                let { estabs, estadosDoc, subcategories } = response;
                 $scope.establecimientos = estabs;
                 $scope.estadosDoc = estadosDoc;
-
+                $scope.subcategories = subcategories;
                 if ($scope.establecimientos.length > 0) {
                     let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
                     $scope.puntosEmision = dataEstab.puntosEmision;
@@ -362,6 +368,7 @@
         $scope.puntosEmision = [];
         $scope.bodegas = [];
         $scope.tiemposCredito = [];
+        $scope.subcategories = [];
 
         $scope.data = {
             idBodega: 0,
@@ -444,7 +451,8 @@
                     estabs,
                     decimal,
                     tarifasImpuesto,
-                    tiemposCredito
+                    tiemposCredito,
+                    subcategories,
                 } = mainDataForm;
 
                 $scope.establecimientos = estabs;
@@ -453,6 +461,7 @@
                 $scope.decimal = decimal;
                 $scope.tarifasImpuesto = tarifasImpuesto;
                 $scope.tiemposCredito = tiemposCredito;
+                $scope.subcategories = subcategories;
 
 
                 if (!("comprobante" in params && params.comprobante.idLiquidacionCompra > 0)) {
@@ -1056,19 +1065,20 @@
                 let dataMedida = medidas.find(medida => medida.defaultMedida);
                 let dataTarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
-
-                let precioCosto = dataMedida.precioCosto;
+ 
 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
-                entity.descripcion = articulo.descripcion;
-                entity.precioUnitario = fS.roundNumber(precioCosto, $scope.decimal.nroPrecio)
+                entity.descripcion = articulo.descripcion; 
                 entity.etiquetas = etiquetas;
 
                 //Medidas
                 entity.medidas = medidas;
                 entity.idMedida = dataMedida.idMedida;
                 entity.conversion = dataMedida.conversion;
+                entity.precioCosto = dataMedida.precioCosto;
+                entity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio)
+                entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
 
                 //IVA 
                 entity.idImpuesto = dataTarifaImpuesto.idImpuesto;

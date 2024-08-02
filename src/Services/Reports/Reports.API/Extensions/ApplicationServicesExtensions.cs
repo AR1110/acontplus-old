@@ -1,8 +1,6 @@
-﻿using Common.Core.Interfaces;
-using Common.Infrastructure.Repository;
-using Reports.Application.Services;
-using Reports.Core.Interfaces;
-using Services.Common.Logs;
+﻿using Reports.API.Interfaces;
+using Reports.API.Services;
+using Reports.Application.Interfaces;
 
 namespace Reports.API.Extensions
 {
@@ -10,10 +8,10 @@ namespace Reports.API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IADOSqlServer, ADOSqlServer>();
+            services.AddScoped<IAdoSqlServer, AdoSqlServer>();
+            services.AddScoped<ICustomLogger, CustomLogger>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IRdlcReportService, RdlcReportService>();
-            services.AddSingleton<LogWriter>();
             return services;
         }
     }

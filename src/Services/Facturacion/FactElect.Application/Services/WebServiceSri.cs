@@ -1,300 +1,338 @@
 ﻿using System.Text;
-using System.Xml;
 using Common.Core.Utils;
-using FactElect.Core.Models;
-using Microsoft.Extensions.Configuration;
 
-namespace FactElect.Application.Services
+namespace FactElect.Application.Services;
+
+public interface IWebServiceSri
 {
-    public sealed class WebServiceSri
+    public Task<ResponseSri> CheckExistenceAsync(string claveAcceso, string url);
+    public Task<ResponseSri> ReceptionAsync(string xmlSigned, string url);
+    public Task<ResponseSri> AuthorizationAsync(string claveAcceso, string url);
+    public Task<ResponseSri> AuthorizationLoteAsync(string claveAcceso, string url);
+    public Task<string> GetXmlAsync(string claveAcceso, string url);
+}
+
+public class WebServiceSri : IWebServiceSri
+{
+    public async Task<ResponseSri> CheckExistenceAsync(string claveAcceso, string url)
     {
-        private readonly IConfiguration _configuration;
-        public WebServiceSri(IConfiguration configuration)
+        var ResponseSri = new ResponseSri();
+        try
         {
-            _configuration = configuration;
-        }
-        public async Task<ResponseSri> CheckExistence(string claveAcceso, string url)
-        {
-            var _response = new ResponseSri();
-            try
-            {
-                var xml = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ec=""http://ec.gob.sri.ws.autorizacion"">                         
+            var xml =
+                $@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ec=""http://ec.gob.sri.ws.autorizacion"">                         
                             <soapenv:Body>
                                 <ec:autorizacionComprobante>
-                                   <claveAccesoComprobante>{0}</claveAccesoComprobante>
+                                   <claveAccesoComprobante>{claveAcceso}</claveAccesoComprobante>
                                 </ec:autorizacionComprobante>
                              </soapenv:Body>
-                             </soapenv:Envelope>", claveAcceso);
+                             </soapenv:Envelope>";
 
-                using (var sriService = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
-                {
-                    using (var response = await sriService.PostAsync(url, new StringContent(xml, Encoding.UTF8, "text/xml")))
-                    {
-                        using (var streamResponse = await response.Content.ReadAsStreamAsync())
-                        {
-                            using (var streamReader = new StreamReader(streamResponse))
-                            {
-                                _response.xmlSri = streamReader.ReadToEnd();
-                            }
-                        }
-                    }
-                }
+            using var sriService = new HttpClient(new HttpClientHandler { UseDefaultCredentials = true });
+            using var response =
+                await sriService.PostAsync(url, new StringContent(xml, Encoding.UTF8, "text/xml"));
+            await using var streamResponse = await response.Content.ReadAsStreamAsync();
+            using var streamReader = new StreamReader(streamResponse);
+            ResponseSri.xmlSri = await streamReader.ReadToEndAsync();
 
-                var doc = new XmlDocument();
-                doc.LoadXml(_response.xmlSri);
+            var doc = new XmlDocument();
+            doc.LoadXml(ResponseSri.xmlSri);
 
-                var numeroComprobantes = doc.GetElementsByTagName("numeroComprobantes");
-                if (numeroComprobantes[0].InnerText == "1")
+            var numeroComprobantes = doc.GetElementsByTagName("numeroComprobantes");
+            if (numeroComprobantes.Count > 0)
+            {
+                if (numeroComprobantes[0]?.InnerText == "1")
                 {
                     var xEstado = doc.GetElementsByTagName("estado");
 
-                    switch (xEstado[0].InnerText)
+                    switch (xEstado[0]?.InnerText)
                     {
                         case "AUTORIZADO":
                             {
-                                _response.estado = xEstado[0].InnerText;
-                                _response.message = "EL COMPROBANTE  YA FUE AUTORIZADO";
+                                ResponseSri.estado = xEstado[0].InnerText;
+                                ResponseSri.message = "EL COMPROBANTE  YA FUE AUTORIZADO";
                                 var xNumAuto = doc.GetElementsByTagName("numeroAutorizacion");
-                                _response.codigoAutorizacion = xNumAuto[0].InnerText;
+                                ResponseSri.codigoAutorizacion = xNumAuto[0]?.InnerText;
                                 var xFecha = doc.GetElementsByTagName("fechaAutorizacion");
-                                _response.fechaAutorizacion = xFecha[0].InnerText;
+                                ResponseSri.fechaAutorizacion = xFecha[0]?.InnerText;
                                 break;
                             }
                         default:
                             {
-                                _response.estado = xEstado[0].InnerText;
+                                ResponseSri.estado = xEstado[0]?.InnerText;
                                 var xmessage = doc.GetElementsByTagName("mensaje");
                                 if (xmessage.Count > 0)
                                 {
-                                    var nodos = ((XmlElement)xmessage[0]).ChildNodes;
-                                    foreach (XmlElement nodo in nodos)
+                                    var nodos = ((XmlElement)xmessage[0])?.ChildNodes;
+                                    if (nodos != null)
                                     {
-                                        if (nodo.Name == "identificador") { _response.identificador = nodo.InnerText; }
-                                        if (nodo.Name == "mensaje") { _response.message = nodo.InnerText; }
-                                        if (nodo.Name == "informacionAdicional") { _response.informacionAdicional = nodo.InnerText; }
-                                        if (nodo.Name == "tipo") { _response.tipo = nodo.InnerText; }
+                                        foreach (XmlElement nodo in nodos)
+                                        {
+                                            switch (nodo.Name)
+                                            {
+                                                case "identificador":
+                                                    ResponseSri.identificador = nodo.InnerText;
+                                                    break;
+                                                case "mensaje":
+                                                    ResponseSri.message = nodo.InnerText;
+                                                    break;
+                                                case "informacionAdicional":
+                                                    ResponseSri.informacionAdicional = nodo.InnerText;
+                                                    break;
+                                                case "tipo":
+                                                    ResponseSri.tipo = nodo.InnerText;
+                                                    break;
+                                            }
+                                        }
                                     }
                                 }
+
                                 break;
                             }
                     }
                 }
                 else
                 {
-                    _response.estado = "NO EXISTE";
+                    ResponseSri.estado = "NO EXISTE";
                 }
             }
-            catch (Exception ex)
+            else
             {
-                _response.estado = "ERROR";
-                _response.message = "No se pudo verificar la existencia del comprobante" + ex.ToString();
+                var estadoNoAuth = doc.GetElementsByTagName("estado");
+                if (estadoNoAuth.Count > 0)
+                {
+                    ResponseSri.estado = estadoNoAuth[0]?.InnerText;
+                }
             }
-            return _response;
+        }
+        catch (Exception ex)
+        {
+            ResponseSri.estado = "ERROR";
+            ResponseSri.message = "No se pudo verificar la existencia del comprobante: " + ex;
         }
 
-        //SRI RECEPCIONA LOS XML DE LOS COMPROBANTES 
-        public async Task<ResponseSri> Reception(string xmlSigned, string url)
+        return ResponseSri;
+    }
+
+    //SRI RECEPCIONA LOS XML DE LOS COMPROBANTES 
+    public async Task<ResponseSri> ReceptionAsync(string xmlSigned, string url)
+    {
+        var ResponseSri = new ResponseSri();
+        try
         {
-            var _response = new ResponseSri();
-            try
-            {
-                var xml = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ec=""http://ec.gob.sri.ws.recepcion"">                         
+            var xml =
+                $@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ec=""http://ec.gob.sri.ws.recepcion"">                         
                             <soapenv:Header/>                            
                             <soapenv:Body>
                                <ec:validarComprobante>
-                                   <xml>{0}</xml>
+                                   <xml>{Convert.ToBase64String(Encoding.UTF8.GetBytes(xmlSigned))}</xml>
                                 </ec:validarComprobante>
                              </soapenv:Body>
-                             </soapenv:Envelope>", Convert.ToBase64String(Encoding.UTF8.GetBytes(xmlSigned)));
+                             </soapenv:Envelope>";
 
 
-                using (var sriService = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
+            using var sriService = new HttpClient(new HttpClientHandler { UseDefaultCredentials = true });
+            using var response =
+                await sriService.PostAsync(url, new StringContent(xml, Encoding.UTF8, "text/xml"));
+            await using var streamResponse = await response.Content.ReadAsStreamAsync();
+            using var streamReader = new StreamReader(streamResponse);
+            ResponseSri.xmlSri = await streamReader.ReadToEndAsync();
+
+            if (DataValidation.IsXml(ResponseSri.xmlSri))
+            {
+                //OBTIENE DATO DEL XML RESPONSE                    
+                var xdoc = new XmlDocument();
+                xdoc.LoadXml(ResponseSri.xmlSri);
+
+                var xEstado = xdoc.GetElementsByTagName("estado");
+                ResponseSri.estado = xEstado[0] != null ? xEstado[0].InnerText : string.Empty;
+
+                var identificador = xdoc.GetElementsByTagName("identificador");
+                ResponseSri.identificador = identificador[0] != null ? identificador[0].InnerText : string.Empty;
+
+                if (ResponseSri.estado == "DEVUELTA")
                 {
-                    using (var response = await sriService.PostAsync(url, new StringContent(xml, Encoding.UTF8, "text/xml")))
+                    xEstado = xdoc.GetElementsByTagName("mensaje");
+                    var nodos = ((XmlElement)xEstado[0])?.ChildNodes;
+                    if (nodos != null)
                     {
-                        using (var streamResponse = await response.Content.ReadAsStreamAsync())
-                        {
-                            using (var streamReader = new StreamReader(streamResponse))
-                            {
-                                _response.xmlSri = streamReader.ReadToEnd();
-                            }
-                        }
-                    }
-                }
-                if (DataValidation.IsXml(_response.xmlSri))
-                {
-                    //OBTIENE DATO DEL XML RESPONSE                    
-                    var xdoc = new XmlDocument();
-                    xdoc.LoadXml(_response.xmlSri);
-
-                    var xEstado = xdoc.GetElementsByTagName("estado");
-                    _response.estado = xEstado[0] != null ? xEstado[0].InnerText : string.Empty;
-
-                    var identificador = xdoc.GetElementsByTagName("identificador");
-                    _response.identificador = identificador[0] != null ? identificador[0].InnerText : string.Empty;
-
-                    if (_response.estado == "DEVUELTA")
-                    {
-                        xEstado = xdoc.GetElementsByTagName("mensaje");
-                        var nodos = ((XmlElement)xEstado[0]).ChildNodes;
                         foreach (XmlElement nodo in nodos)
                         {
-                            if (nodo.Name == "identificador") { _response.identificador = nodo.InnerText; }
-                            if (nodo.Name == "mensaje") { _response.message = nodo.InnerText; }
-                            if (nodo.Name == "informacionAdicional") { _response.informacionAdicional = nodo.InnerText; }
-                            if (nodo.Name == "tipo") { _response.tipo = nodo.InnerText; }
-                        }
-                    }
-                }
-                else
-                {
-                    _response.estado = "ERROR";
-                    _response.message = "SRI no se encuentra en línea";
-                }
-
-            }
-            catch (Exception)
-            {
-                _response.estado = "ERROR";
-                _response.message = "SRI no se encuentra en línea";
-            }
-            return _response;
-        }
-
-        //SRI AUTORIZA COMPROBANTE
-        public async Task<ResponseSri> Authorization(string claveAcceso, string url)
-        {
-            var _response = new ResponseSri();
-            try
-            {
-                var xml = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ec=""http://ec.gob.sri.ws.autorizacion"">                         
-                            <soapenv:Body>
-                                <ec:autorizacionComprobante>
-                                   <claveAccesoComprobante>{0}</claveAccesoComprobante>
-                                </ec:autorizacionComprobante>
-                             </soapenv:Body>
-                             </soapenv:Envelope>", claveAcceso);
-
-                using (var sriService = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
-                {
-                    using (var response = await sriService.PostAsync(url, new StringContent(xml, Encoding.UTF8, "text/xml")))
-                    {
-                        using (var streamResponse = await response.Content.ReadAsStreamAsync())
-                        {
-                            using (var streamReader = new StreamReader(streamResponse))
+                            switch (nodo.Name)
                             {
-                                _response.xmlSri = streamReader.ReadToEnd();
+                                case "identificador":
+                                    ResponseSri.identificador = nodo.InnerText;
+                                    break;
+                                case "mensaje":
+                                    ResponseSri.message = nodo.InnerText;
+                                    break;
+                                case "informacionAdicional":
+                                    ResponseSri.informacionAdicional = nodo.InnerText;
+                                    break;
+                                case "tipo":
+                                    ResponseSri.tipo = nodo.InnerText;
+                                    break;
                             }
                         }
                     }
                 }
-                var doc = new XmlDocument();
-                doc.LoadXml(_response.xmlSri);
-                var estadoComp = doc.GetElementsByTagName("estado");
+            }
+            else
+            {
+                ResponseSri.estado = "ERROR";
+                ResponseSri.message = "SRI no se encuentra en línea";
+            }
+        }
+        catch (Exception)
+        {
+            ResponseSri.estado = "ERROR";
+            ResponseSri.message = "SRI no se encuentra en línea";
+        }
 
-                var nlNroCompAuth = doc.GetElementsByTagName("numeroComprobantes");
+        return ResponseSri;
+    }
 
-                var nroComp = string.Empty;
-                nroComp = nlNroCompAuth[0] != null ? nlNroCompAuth[0].InnerText : string.Empty;
+    //SRI AUTORIZA COMPROBANTE
+    public async Task<ResponseSri> AuthorizationAsync(string claveAcceso, string url)
+    {
+        var ResponseSri = new ResponseSri();
+        try
+        {
+            var xml =
+                $@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ec=""http://ec.gob.sri.ws.autorizacion"">                         
+                            <soapenv:Body>
+                                <ec:autorizacionComprobante>
+                                   <claveAccesoComprobante>{claveAcceso}</claveAccesoComprobante>
+                                </ec:autorizacionComprobante>
+                             </soapenv:Body>
+                             </soapenv:Envelope>";
 
-                if (nroComp == "0")
-                {
-                    _response.estado = "NO AUTORIZADO";
-                }
-                else
-                {
-                    _response.estado = estadoComp[0] != null ? estadoComp[0].InnerText : string.Empty;
-                }
+            using var sriService = new HttpClient(new HttpClientHandler { UseDefaultCredentials = true });
+            using var response =
+                await sriService.PostAsync(url, new StringContent(xml, Encoding.UTF8, "text/xml"));
+            await using var streamResponse = await response.Content.ReadAsStreamAsync();
+            using var streamReader = new StreamReader(streamResponse);
+            ResponseSri.xmlSri = await streamReader.ReadToEndAsync();
 
-                switch (_response.estado)
-                {
-                    case "AUTORIZADO":
+            var doc = new XmlDocument();
+            doc.LoadXml(ResponseSri.xmlSri);
+            var estadoComp = doc.GetElementsByTagName("estado");
+
+            var nlNroCompAuth = doc.GetElementsByTagName("numeroComprobantes");
+
+            var nroComp = nlNroCompAuth[0] != null ? nlNroCompAuth[0].InnerText : string.Empty;
+
+            if (nroComp == "0")
+            {
+                ResponseSri.estado = "NO AUTORIZADO";
+            }
+            else
+            {
+                ResponseSri.estado = estadoComp[0] != null ? estadoComp[0].InnerText : string.Empty;
+            }
+
+            switch (ResponseSri.estado)
+            {
+                case "AUTORIZADO":
+                    {
+                        var codAutorizacion = doc.GetElementsByTagName("numeroAutorizacion");
+                        ResponseSri.codigoAutorizacion = codAutorizacion[0]?.InnerText;
+                        var xFecha = doc.GetElementsByTagName("fechaAutorizacion");
+                        ResponseSri.fechaAutorizacion = xFecha[0]?.InnerText;
+                        ResponseSri.message = "EL COMPROBANTE FUE AUTORIZADO CON ÉXITO";
+                        break;
+                    }
+
+                case "EN PROCESO":
+                    {
+                        ResponseSri.message = "EL COMPROBANTE ESTA EN PROCESO";
+                        break;
+                    }
+
+                default:
+                    {
+                        var xmessage = doc.GetElementsByTagName("mensaje");
+                        if (xmessage.Count > 0)
                         {
-                            var codAutorizacion = doc.GetElementsByTagName("numeroAutorizacion");
-                            _response.codigoAutorizacion = codAutorizacion[0].InnerText;
-                            var xFecha = doc.GetElementsByTagName("fechaAutorizacion");
-                            _response.fechaAutorizacion = xFecha[0].InnerText;
-                            _response.message = "EL COMPROBANTE FUE AUTORIZADO CON ÉXITO";
-                            break;
-                        }
-
-                    case "EN PROCESO":
-                        {
-                            _response.message = "EL COMPROBANTE ESTA EN PROCESO";
-                            break;
-                        }
-
-                    default:
-                        {
-                            var xmessage = doc.GetElementsByTagName("mensaje");
-                            if (xmessage.Count > 0)
+                            var nodos = ((XmlElement)xmessage[0])?.ChildNodes;
+                            if (nodos != null)
                             {
-                                var nodos = ((XmlElement)xmessage[0]).ChildNodes;
                                 foreach (XmlElement nodo in nodos)
                                 {
-                                    if (nodo.Name == "identificador") { _response.identificador = nodo.InnerText; }
-                                    if (nodo.Name == "mensaje") { _response.message = nodo.InnerText; }
-                                    if (nodo.Name == "informacionAdicional") { _response.informacionAdicional = nodo.InnerText; }
-                                    if (nodo.Name == "tipo") { _response.tipo = nodo.InnerText; }
+                                    switch (nodo.Name)
+                                    {
+                                        case "identificador":
+                                            ResponseSri.identificador = nodo.InnerText;
+                                            break;
+                                        case "mensaje":
+                                            ResponseSri.message = nodo.InnerText;
+                                            break;
+                                        case "informacionAdicional":
+                                            ResponseSri.informacionAdicional = nodo.InnerText;
+                                            break;
+                                        case "tipo":
+                                            ResponseSri.tipo = nodo.InnerText;
+                                            break;
+                                    }
                                 }
                             }
-
-                            break;
                         }
-                }
+
+                        break;
+                    }
             }
-            catch (Exception ex)
-            {
-                _ = ex.Message;
-                _response.estado = "ERROR";
-                _response.message = "No se pudo autorizar el comprabante";
-            }
-            return _response;
         }
-        //SRI AUTORIZA LOTE
-        public async Task<ResponseSri> AuthorizationLote(string claveAcceso, string url)
+        catch (Exception ex)
         {
-            var _response = new ResponseSri();
-            try
-            {
-                var xml = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ec=""http://ec.gob.sri.ws.autorizacion"">                         
+            _ = ex.Message;
+            ResponseSri.estado = "ERROR";
+            ResponseSri.message = "No se pudo autorizar el comprobante";
+        }
+
+        return ResponseSri;
+    }
+
+    //SRI AUTORIZA LOTE
+    public async Task<ResponseSri> AuthorizationLoteAsync(string claveAcceso, string url)
+    {
+        var ResponseSri = new ResponseSri();
+        try
+        {
+            var xml =
+                $@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ec=""http://ec.gob.sri.ws.autorizacion"">                         
                             <soapenv:Body>
                                 <ec:autorizacionComprobanteLote>
-                                   <claveAccesoLote>{0}</claveAccesoLote>
+                                   <claveAccesoLote>{claveAcceso}</claveAccesoLote>
                                 </ec:autorizacionComprobanteLote>
                              </soapenv:Body>
-                             </soapenv:Envelope>", claveAcceso);
+                             </soapenv:Envelope>";
 
-                using (var sriService = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
-                {
-                    using (var response = await sriService.PostAsync(url, new StringContent(xml, Encoding.UTF8, "text/xml")))
-                    {
-                        using (var streamResponse = await response.Content.ReadAsStreamAsync())
-                        {
-                            using (var streamReader = new StreamReader(streamResponse))
-                            {
-                                _response.xmlSri = streamReader.ReadToEnd();
-                            }
-                        }
-                    }
-                }
-                var doc = new XmlDocument();
-                doc.LoadXml(_response.xmlSri);
-            }
-            catch (Exception ex)
-            {
-                _ = ex.Message;
-                _response.estado = "ERROR";
-                _response.message = "No se pudo al autorizar el lote";
-            }
-            return _response;
+            using var sriService = new HttpClient(new HttpClientHandler { UseDefaultCredentials = true });
+            using var response = await sriService.PostAsync(url, new StringContent(xml, Encoding.UTF8, "text/xml"));
+            await using var streamResponse = await response.Content.ReadAsStreamAsync();
+            using var streamReader = new StreamReader(streamResponse);
+            ResponseSri.xmlSri = await streamReader.ReadToEndAsync();
+
+            var doc = new XmlDocument();
+            doc.LoadXml(ResponseSri.xmlSri);
         }
-        public async Task<string> GetXmlAsync(string claveAcceso, string url)
+        catch (Exception ex)
         {
-            var xmlSri = string.Empty;
-            try
-            {
-                var xmlRequest = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ec=""http://ec.gob.sri.ws.autorizacion"">                         
+            _ = ex.Message;
+            ResponseSri.estado = "ERROR";
+            ResponseSri.message = "No se pudo al autorizar el lote";
+        }
+
+        return ResponseSri;
+    }
+
+    public async Task<string> GetXmlAsync(string claveAcceso, string url)
+    {
+        var xmlSri = string.Empty;
+        try
+        {
+            var xmlRequest = string.Format(
+                @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ec=""http://ec.gob.sri.ws.autorizacion"">                         
                             <soapenv:Body>
                                 <ec:autorizacionComprobante>
                                    <claveAccesoComprobante>{0}</claveAccesoComprobante>
@@ -302,25 +340,18 @@ namespace FactElect.Application.Services
                              </soapenv:Body>
                              </soapenv:Envelope>", claveAcceso);
 
-                using (var sriLClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
-                {
-                    using (var response = await sriLClient.PostAsync(url, new StringContent(xmlRequest, Encoding.UTF8, "text/xml")))
-                    {
-                        using (var streamResponse = await response.Content.ReadAsStreamAsync())
-                        {
-                            using (var streamReader = new StreamReader(streamResponse))
-                            {
-                                xmlSri = streamReader.ReadToEnd();
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _ = ex.Message;
-            }
-            return xmlSri;
+            using var sriLClient = new HttpClient(new HttpClientHandler { UseDefaultCredentials = true });
+            using var response =
+                await sriLClient.PostAsync(url, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+            await using var streamResponse = await response.Content.ReadAsStreamAsync();
+            using var streamReader = new StreamReader(streamResponse);
+            xmlSri = await streamReader.ReadToEndAsync();
         }
+        catch (Exception ex)
+        {
+            _ = ex.Message;
+        }
+
+        return xmlSri;
     }
 }

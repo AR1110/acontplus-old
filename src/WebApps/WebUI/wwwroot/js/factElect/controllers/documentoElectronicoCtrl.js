@@ -1,3 +1,4 @@
+//@ts-check
 (function () {
 
     'use strict';
@@ -5,29 +6,30 @@
     app.controller('documentoElectronicoCtrl', documentoElectronicoCtrl)
     documentoElectronicoCtrl.$inject = [
         '$scope',
-        'mainService',
-        'commonService',
-        'docElectService',
-        'modalService',
-        'nombreModal',
-        'formulario',
-        'toastService',
-        'decodeToken',
+        '$injector',    
         'proveedorService'
     ]
 
     function documentoElectronicoCtrl(
         $scope,
-        mS,
-        commonSvc,
-        docElectSvc,
-        modalSvc,
-        nombreModalConst,
-        fS,
-        tS,
-        decodeToken,
+        $injector,    
         proveedorSvc
     ) {
+
+        let CODE_REPORT = $injector.get('CODE_REPORT');
+        let mS = $injector.get('mainService');
+        let commonSvc = $injector.get('commonService');
+        let docElectSvc = $injector.get('docElectService');
+        let modalSvc = $injector.get('modalService');
+        let nombreModalConst = $injector.get('nombreModal');
+        let fS = $injector.get('formulario');
+        let tS = $injector.get('toastService');
+        let nombreModalVenta = $injector.get('nombreModalVenta');
+
+
+
+
+
 
         $scope.comprobantes = [];
         $scope.selectedComprobantes = [];
@@ -36,6 +38,10 @@
         $scope.puntosEmision = [];
         $scope.tempPuntosEmision = [];
         $scope.codEstab_Asig = null;
+
+        $scope.dataCustomerSearch = {
+            
+        }
 
         //DETECT MOBILE DEVICE
         mS.detectDevice()
@@ -53,7 +59,9 @@
             pageSize: 50,
             pageIndex: 1,
             maxSize: 5,
-            totalRecords: 0
+            totalRecords: 0,
+            codEstado: null ,
+            codDoc: null
         };
 
         $scope.dataSearch.isCurrentDate = false;
@@ -65,93 +73,71 @@
         // Imprime el valor
         $scope.tipo = params.get("tipo");
 
-        $scope.getComprobantes = () => {
+        function getComprobantes () {
             try {
 
                 $scope.comprobantes = [];
+                let codEstado = $scope.dataSearch.codEstado;
+                let checkBoxDate = $scope.dataSearch.checkBoxDate = true;
 
                 if ($scope.dataSearch.nroSecuencial) {
-                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
-                        $scope.dataSearch.checkBoxDate = true;
+                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) { 
                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                         return
-                    }
-                    if (!($scope.dataSearch.identificacionReceptor)) {
-                        $scope.dataSearch.checkBoxDate = false;
-                    }
+                    } 
+
+                    checkBoxDate = false;
+                    tS.toastr({
+                        type: 'info',
+                        message: 'Buscando por número documento'
+                    })
                 }
 
 
-                if ($scope.tipo > 0) {
-                    showLoader();
-                    let dataSearch = {
-                        tipo: Number($scope.tipo),
-                        codDoc: $scope.dataSearch.codDoc,
-                        codEstado: $scope.dataSearch.codEstado,
-                        checkBoxDate: $scope.dataSearch.checkBoxDate,
-                        dateStart: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                        dateEnd: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                        codEstab: $scope.dataSearch.codEstab,
-                        idPuntoEmision: $scope.dataSearch.idPuntoEmision,
-                        identificacionReceptor: $scope.dataSearch.identificacionReceptor,
-                        idUsuario: $scope.dataSearch.idUsuario,
-                        pageIndex: $scope.dataSearch.pageIndex,
-                        pageSize: $scope.dataSearch.pageSize,
-                        nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
-                    }
-                    docElectSvc.getByStatus(dataSearch).then(response => {
-                        if (!$scope.isMobile) {
-                            document.getElementById('menu_toggle').click();
-                        }
-                        $scope.comprobantes = response;
-                        $scope.dataSearch.totalRecords = $scope.comprobantes.length > 0 ? $scope.comprobantes[0].totalRecords : 0
-                    })
-                        .finally(() => hideLoader())
-                        .catch(error => {
-                            $scope.dataSearch.totalRecords = 0;
-                            console.log(error)
-                        })
-                } else {
-                    showLoader();
-                    let dataSearch = {
-                        tipo: 1,
-                        codDoc: $scope.dataSearch.codDoc,
-                        codEstado: $scope.dataSearch.codEstado,
-                        checkBoxDate: $scope.dataSearch.checkBoxDate,
-                        dateStart: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                        dateEnd: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                        codEstab: $scope.dataSearch.codEstab,
-                        idPuntoEmision: $scope.dataSearch.idPuntoEmision,
-                        identificacionReceptor: $scope.dataSearch.identificacionReceptor,
-                        idUsuario: $scope.dataSearch.idUsuario,
-                        pageIndex: $scope.dataSearch.pageIndex,
-                        pageSize: $scope.dataSearch.pageSize,
-                        nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
-                    }
+                if ($scope.tipo > 0) {  
+                    codEstado = 8; 
+                    checkBoxDate = false;
+                } 
 
-                    docElectSvc.get(dataSearch).then(response => {
-                        if (!$scope.isMobile) {
-                            document.getElementById('menu_toggle').click();
-                        }
-                     
-                        $scope.comprobantes = response;
-                        $scope.dataSearch.totalRecords = $scope.comprobantes.length > 0 ? $scope.comprobantes[0].totalRecords : 0
-                    })
-                        .finally(() => hideLoader())
-                        .catch(error => {
-                            $scope.dataSearch.totalRecords = 0;
-                            console.log(error)
-                        })
+
+                showLoader();
+                let dataSearch = {
+                    tipo: 1,
+                    codDoc: $scope.dataSearch.codDoc,
+                    codEstado,
+                    checkBoxDate,
+                    dateStart: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                    dateEnd: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                    codEstab: $scope.dataSearch.codEstab,
+                    idPuntoEmision: $scope.dataSearch.idPuntoEmision,
+                    identificacionReceptor: $scope.dataSearch.identificacionReceptor,
+                    idUsuario: $scope.dataSearch.idUsuario,
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize,
+                    nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
                 }
+
+                docElectSvc.getAll(dataSearch).then(response => {
+                    if (!$scope.isMobile) {
+                        document.getElementById('menu_toggle').click();
+                    } 
+                    
+                    $scope.comprobantes = response;
+                    $scope.dataSearch.totalRecords = $scope.comprobantes.length > 0 ? $scope.comprobantes[0].totalRecords : 0
+                })
+                    .finally(() => hideLoader())
+                    .catch(error => {
+                        $scope.dataSearch.totalRecords = 0;
+                        console.log(error)
+                    })
+                 
             } catch (error) {
                 console.log(error)
             }
-        }
+        } 
 
-        //$scope.getComprobantes();
-
-
-        $scope.initiload = () => {
+        initiload()
+        function initiload () {
             showLoader();
             docElectSvc.getDataFilter().then(response => {
                 let {
@@ -173,17 +159,39 @@
                     } else {
                         tS.toastr('warning', 'No tienes asigando Puntos de Emisión')
                     }
-                    $scope.getComprobantes();
+                    getComprobantes();
                 }
             }).finally(() => hideLoader())
+        } 
+
+        $scope.getClass = function (item) {
+            return {
+                'table-success': item.codEstado == 4,
+                'table-danger': item.codEstado == 6, 
+                'table-warning': item.codEstado===5
+            };
+        };
+
+
+        $scope.refresh = function(){
+            getComprobantes()
         }
-        $scope.initiload()
+
+        $scope.isDisabledRow = function(item){
+            return !(item.codEstado === 0 || item.codEstado === 2 || item.codEstado === 5)
+        }
+
+        $scope.validateRowAction = function(item){
+           return {
+               authorized: item.codEstado ===4
+           }
+        }
 
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate;
             $scope.dataSearch.fechaFin = item.endDate;
-            $scope.getComprobantes();
+            getComprobantes();
         }
 
         $scope.onchangeEstablecimiento = () => {
@@ -193,7 +201,7 @@
 
                 if ($scope.puntosEmision.length > 0) {
                     $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
-                    $scope.getComprobantes();
+                    getComprobantes();
                 } else {
                     tS.toastr('warning', 'No tiene puntos de emisión asignados')
                 }
@@ -204,10 +212,10 @@
 
         $scope.onSelectTipoDoc = () => {
             if ([null, undefined, ""].includes($scope.dataSearch.codDoc)) {
-                $scope.modelCustomerProvider = null;
+                $scope.dataCustomerSearch.name = null;
                 $scope.dataSearch.identificacionReceptor = null;
             }
-            $scope.getComprobantes();
+            getComprobantes();
         }
 
 
@@ -239,23 +247,31 @@
             }
         }
 
+        $scope.onKeyupCustomerSupplier= function(){
+      
+            if (!fS.isValidField($scope.dataCustomerSearch.name)){
+             //   $scope.dataCustomerSearch.name = null;
+                $scope.dataSearch.isSearchCustomerProvider = false;
+                $scope.dataSearch.identificacionReceptor = null;
+            }
+        }
+
         $scope.onSelectedCustomerProvider = function (item) {
             $scope.dataSearch.isSearchCustomerProvider = true;
             $scope.dataSearch.identificacionReceptor = item.identificacionReceptor;
-            $scope.getComprobantes();
+            getComprobantes();
         }
 
         $scope.clearSearchCustomer = function () {
-            $scope.modelCustomerProvider = null;
+            $scope.dataCustomerSearch.name = null;
             $scope.dataSearch.identificacionReceptor = null;
-            $scope.getComprobantes();
+            getComprobantes();
         }
 
         $scope.searchUser = function (textSearch) {
             try {
                 let query = {
-                    busqueda: textSearch,
-                    idRol: decodeToken.idUsuarioRol
+                    busqueda: textSearch, 
                 }
                 return commonSvc.usuarioSearch(query)
             } catch (error) {
@@ -266,22 +282,22 @@
         $scope.onSelectedUser = function (user) {
             $scope.modelUser = user.nombreCompleto;
             $scope.dataSearch.idUsuario = user.idUsuario;
-            $scope.getComprobantes();
+            getComprobantes();
         }
 
         $scope.clearUserSearch = function () {
             $scope.modelUser = null;
             $scope.dataSearch.idUsuario = 0;
-            $scope.getComprobantes();
+             getComprobantes();
         }
 
         $scope.pagechanged = function () {
-            $scope.getComprobantes();
+             getComprobantes();
         }
 
         $scope.changePageSize = function () {
             $scope.dataSearch.pageIndex = 1;
-            $scope.getComprobantes();
+            getComprobantes();
         }
 
         $scope.onSelectComprobante = (item) => {
@@ -289,16 +305,16 @@
         }
         //=====================================================END FILTER===============================================
         const REPORT_CODES = Object.freeze({
-            '01': 'RF',
-            '03': 'RLC',
-            '04': 'RNCC',
-            '06': 'RGR',
-            '07': 'RRC',
+            '01': CODE_REPORT.RF,
+            '03': CODE_REPORT.RLC,
+            '04': CODE_REPORT.RNC,
+            '06': CODE_REPORT.RGR,
+            '07': CODE_REPORT.RRC,
         })
 
         //Get Report 
         $scope.getReport = (item) => {
-            try {
+            try { 
 
                 if (!(Object.keys(REPORT_CODES).includes(item.codDoc))) {
                     tS.toastr('warning', 'No Disponible')
@@ -307,10 +323,11 @@
 
                 let format = 'pdf';
 
+
                 const parameters = {
                     dataParams: JSON.stringify({
                         versionComp: item.versionComp,
-                        id: item.idDocumento,
+                        idDocumentoElectronico: item.idDocumentoElectronico,
                         normalMethod: true,
                     }),
                     reportParams: JSON.stringify({
@@ -339,16 +356,19 @@
 
         $scope.getDetalleDoc = async (item) => {
             try {
+
                 const tipoDoc = $scope.tiposDocumento.find(doc => doc.codDoc === item.codDoc);
+              
                 let codigo = '';
                 if (tipoDoc.codDoc === "01") {
-                    codigo = 'FV'
+                    loadDetalleInvoice(item.idDocumentoElectronico, tipoDoc.codDoc)
+                    return
                 }
                 if (tipoDoc.codDoc === "06") {
                     codigo = 'GR'
                 }
-                commonSvc.viewDetailDocument({
-                    id: item.idDocumento,
+                commonSvc.viewDetailDocument({                    
+                    idDocumentoElectronico: item.idDocumentoElectronico,
                     codigoDocumento: codigo,
                     size: 'xl',
                     windowClass: 'uibModalFullScreen'
@@ -358,6 +378,25 @@
                 console.error(error)
             }
         }
+
+        async function loadDetalleInvoice(idDocumentoElectronico, codDoc){
+            let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
+            let ctrl = (await import(fileCtrl))[controller];
+            let template = templates['FV_SRI'];
+            modalSvc.openModalCustom({
+                controller: ctrl,
+                template: template,
+                size: 'xl',
+                params: {
+                    codDoc,                    
+                    idDocumentoElectronico,
+                },
+                windowClass: 'uibModalFullScreen',
+                isRenderRazorPartial: true
+            })
+        }
+
+
 
         $scope.getAuthorizate = async () => {
             try {
@@ -378,19 +417,34 @@
                 })
 
                 if (isConfirmed) {
+                    
+                    let updatePromises = $scope.selectedComprobantes.map(item =>
+                        docElectSvc.updateXml(item.idDocumentoElectronico)
+                    );
+                    
                     showLoader();
-                    for (let item of $scope.selectedComprobantes) {
-                        docElectSvc.updateXml(item.idDocumentoElectronico).then(() => {
-                            let index = $scope.selectedComprobantes.indexOf(item);
-                            $scope.selectedComprobantes.splice(index, 1);
+                    await Promise.all(updatePromises).then(() => {
+                        // Vaciar el array selectedComprobantes después de la actualización
+                        Swal.fire({
+                            icon: 'success',
+                            html: `<small>Autorizando...</small>`,
+                            timer: 1000
                         })
-                    }
-                    Swal.fire({
-                        icon: 'success',
-                        html: `<small>Autorizando...</small>`,
-                        timer: 1000
+                        $scope.selectedComprobantes = [];
+                        $scope.refresh();
+                    }).catch((error) => {                        
+                        console.error("Failed to update one or more items:", error);
+                    }).finally(()=>{
+                        hideLoader();
                     })
-                    hideLoader();
+
+
+                    // for (let item of $scope.selectedComprobantes) {
+                    //     docElectSvc.updateXml(item.idDocumentoElectronico).then(() => {
+                    //         let index = $scope.selectedComprobantes.indexOf(item);
+                    //         $scope.selectedComprobantes.splice(index, 1);
+                    //     })
+                    // } 
                 }
             } catch (error) {
                 console.log(error)
@@ -410,7 +464,7 @@
 
                 modalSvc.openModalCustom({
                     controller: ComprobanteErrorCtrl,
-                    template: 'Shared/' + MODAL_COMPROBANTE_ERROR_CSHTML,
+                    template: MODAL_COMPROBANTE_ERROR_CSHTML,
                     params,
                     size: 'lg',
                     keyboard: true
@@ -451,16 +505,7 @@
                 console.log(error)
             }
         }
-
-        $scope.typeSendMail = 'SRI';
-
-        //------------------SEND WHATSAPP
-        $scope.typeSend = 'SRI';
-        $scope.hasPermissions = decodeToken.role == 'RT' ? true : false
-
-        $scope.paramsToWhatsapp = {
-            loginOnly: true
-        }
+  
 
         $scope.showBtnUpdateXml = (item) => {
             return [2, 0, 5].includes(item.codEstado)
@@ -484,7 +529,7 @@
                 docElectSvc.updateXml(item.idDocumentoElectronico).then(response => {
                     if((response)){
                         tS.toastr('success', response.message, response.titleSms);
-                        $scope.getComprobantes(); 
+                         $scope.refresh(); 
                     }
                       
                 })
@@ -499,7 +544,7 @@
 
         $scope.updateComprobanteResult = function(result){
             if(typeof result==='object'){
-                $scope.getComprobantes();
+                $scope.refresh(); 
             }
         }
 
@@ -540,7 +585,7 @@
             docElectSvc.retencionAtsCancel(item.idDocumentoElectronico).then(response => {
                 if (response.code == '1') {
                     tS.toastr('success', response.message)
-                    $scope.getComprobantes()
+                    $scope.refresh(); 
                 }
                 if (response.code == '0') {
                     tS.toastr('warning', response.message)
@@ -549,8 +594,8 @@
         }
 
 
-        $scope.refresh = () => {
-            location.href = '/DocumentoElectronico/Index';
+        $scope.refreshReload = () => {
+            location.href = '/FactElect/DocumentoElectronico/Index';
         }
     }
 })(window.angular)

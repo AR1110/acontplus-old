@@ -1,44 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Configuracion.API.Interfaces;
+﻿namespace Configuracion.API.Services;
 
-namespace Configuracion.API.Services
+public class UserCustomerRequestService : IUserCustomerRequestService
 {
-    public class UserCustomerRequestService: IUserCustomerRequestService
+    private readonly IAdoRepository _repository;
+    private readonly string nameSchema = "Config.UserCustomerRequest_";
+
+    public UserCustomerRequestService(IAdoRepository repository)
     {
-         private readonly IADORepository _repository;
-        private readonly string nameSchema = "Config.UserCustomerRequest_";
+        _repository = repository;
+    }
 
-        public UserCustomerRequestService(IADORepository repository)
+    public async Task<object> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters);
+        if (ds.Tables.Count == 0)
         {
-            _repository = repository;
-        }
-
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters);
-            if (ds.Tables.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJSON(ds);
-            }
+            return null;
         }
 
-        public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteAsync(nameSchema + "Insert", parameters);
-        }
-        public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteAsync(nameSchema + "Update", parameters); 
-        }
+        return DataConverters.DataSetToJson(ds);
+    }
+
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Insert", parameters);
+    }
+
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Update", parameters);
     }
 }
