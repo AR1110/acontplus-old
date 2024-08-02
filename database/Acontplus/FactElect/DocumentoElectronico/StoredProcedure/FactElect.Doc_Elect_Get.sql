@@ -60,7 +60,7 @@ BEGIN
 							  ,ISNULL(de.codEstab, '''')                 as codEstab
                               ,COUNT(*) OVER()                           as totalRecords
 						FROM FactElect.v_DocElectronico de WITH (NOLOCK)
-						WHERE de.idEntidad = @idEntidad  '
+						WHERE de.idEntidad = @idEntidad '
 
 	        SELECT @codDoc                   = codDoc
 	              ,@codEstado                = codEstado
@@ -101,6 +101,10 @@ BEGIN
 		        BEGIN 
 			        SET @sql = @sql + 'AND de.codEstab = @codEstab '
 		        END 
+            ELSE 
+                BEGIN
+                    SET @sql = @sql + 'AND de.estadoEstablecimiento = 1 '
+                END 
 
 	        IF @idPuntoEmision > 0
 		        BEGIN 

@@ -696,7 +696,7 @@ BEGIN
 			                        SELECT CAST(SUM(di.TaxValue) as numeric(18,2)) 
 			                        FROM Recepcion.DocumentoImpuesto di 
 			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
-			                          AND di.Code = ''2''
+			                          AND di.Code = ''1''
 	  
 	                          ),0) as retRenta
 	                          ,ISNULL
@@ -704,7 +704,7 @@ BEGIN
 			                        SELECT CAST(SUM(di.TaxValue) as numeric(18,2)) 
 			                        FROM Recepcion.DocumentoImpuesto di 
 			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
-			                          AND di.Code = ''1''
+			                          AND di.Code = ''2''
 	  
 	                          ),0) as retIva
 	                           ,ISNULL

@@ -54,28 +54,29 @@ BEGIN
                           ,@pageSize  INT
                           ,@pageIndex INT'
             
-            SET @sql = 'SELECT c.idCaja
-		                      ,c.descripcion 
-		                      ,c.estado 
-		                      ,IIF(c.actividad = 1,''APERTURADA'',''CERRADA'') as actividad
-                              ,ISNULL(UPPER(u.nombreCompleto),'''')            as usuario
-		                      ,ISNULL(UPPER(t.descripcion),'''')               as turno
-		                      ,ISNULL(t.idTurno,0)                             as idTurno
-		                      ,u.idUsuario
-                              ,COUNT(*) OVER()                                 as totalRecords
-	                    FROM Caja                 c WITH (NOLOCK)
-	                    LEFT JOIN AsignacionCaja ac WITH (NOLOCK) ON ac.idCaja   = c.idCaja
-	                    LEFT JOIN Usuario         u WITH (NOLOCK) ON u.idUsuario = ac.idUsuario
-	                    LEFT JOIN Turno           t WITH (NOLOCK) ON t.idTurno   = ac.idTurno
-	                    WHERE c.idEntidad = @idEntidad 
-                          AND c.estado = 1 '
+            SET @sql = 'SELECT ca.idCaja
+		                      ,ca.descripcion 
+		                      ,ca.estado 
+		                      ,IIF(ca.actividad = 1,''APERTURADA'',''CERRADA'') as actividad
+                              ,ISNULL(UPPER(cu.BusinessName),'''')              as usuario
+		                      ,ISNULL(UPPER(tu.descripcion),'''')               as turno
+		                      ,ISNULL(tu.idTurno,0)                             as idTurno
+		                      ,us.idUsuario
+                              ,COUNT(*) OVER()                                  as totalRecords
+	                    FROM Caja                    ca WITH (NOLOCK)
+	                    LEFT JOIN dbo.AsignacionCaja ac WITH (NOLOCK) ON ac.idCaja    = ca.idCaja
+	                    LEFT JOIN dbo.Usuario        us WITH (NOLOCK) ON us.idUsuario = ac.idUsuario
+	                    LEFT JOIN Turno              tu WITH (NOLOCK) ON tu.idTurno   = ac.idTurno
+						LEFT JOIN Customer.Customer  cu WITH (NOLOCK) ON cu.Id        = us.customerId
+	                    WHERE ca.idEntidad = @idEntidad 
+                          AND ca.estado = 1 '
 
             IF @verOtrasCajas = 0
                 BEGIN
-                    SET @sql = @sql + 'AND u.idUsuario = @idUsuario '
+                    SET @sql = @sql + 'AND us.idUsuario = @idUsuario '
                 END 
 
-            SET @sql = @sql + 'ORDER BY c.idCaja DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
+            SET @sql = @sql + 'ORDER BY ca.idCaja DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
             EXEC sp_executesql @sql
 			                  ,@params 
