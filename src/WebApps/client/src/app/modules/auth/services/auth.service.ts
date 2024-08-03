@@ -10,18 +10,51 @@ import { environment } from 'src/environments/environment';
 import { User } from '../models/user.model';
 import { jwtDecode } from 'jwt-decode';
 
+export interface UserData {
+  userId: number;
+  email: string;
+  name: string;
+  username: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   headers = new HttpHeaders().set('Content-Type', 'application/json');
-  currentUser = {};
-  private URL = environment.API_URL + 'Account/';
+  #url = environment.API_URL + 'Account/';
 
   constructor(
     private http: HttpClient,
     public router: Router,
   ) {}
+
+  getDecodedToken(): UserData | null {
+    const jwt = this.getToken();
+    if (jwt) {
+      const token = jwtDecode<any>(jwt);
+      const name =
+        token[
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'
+        ] || token.name;
+      const userId =
+        token[
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+        ] || token.userId;
+
+      return {
+        email: token.email || '',
+        name: name,
+        userId: userId,
+        username: token.unique_name || '',
+      };
+    }
+    return null; // Return null if no JWT or something goes wrong
+  }
+
+  getToken() {
+    return localStorage.getItem('access_token');
+  }
 
   isAuthenticated: () => boolean = () => {
     const authToken = this.getToken();
@@ -42,21 +75,17 @@ export class AuthService {
 
   // Sign-up
   signUp(user: User): Observable<any> {
-    let api = `${this.URL}register`;
+    let api = `${this.#url}register`;
     return this.http.post(api, user).pipe(catchError(this.handleError));
   }
 
   // Sign-in
   signIn(user: User) {
     const self = this;
-    return this.http.post<any>(`${this.URL}login`, user).subscribe((res)=> {
-        localStorage.setItem('access_token', res.token);
-        self.router.navigate(['/', 'home']);
+    return this.http.post<any>(`${this.#url}login`, user).subscribe((res) => {
+      localStorage.setItem('access_token', res.token);
+      self.router.navigate(['/', 'home']);
     });
-  }
-
-  getToken() {
-    return localStorage.getItem('access_token');
   }
 
   parseJwt() {

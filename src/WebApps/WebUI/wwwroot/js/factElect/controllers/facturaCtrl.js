@@ -338,8 +338,7 @@
 
         /**
          * 
-         * @param {*} id 
-         * @returns 
+         * @param {*} params 
          */
         $scope.openModalDetalle = async (params) => {
             try {
@@ -576,7 +575,7 @@
         //--------------------------------------------------COBROS----------
 
         $scope.opcionCobro = (item) => {
-            if (item.codEstado === "CBR") {
+            if (item.esCobrado) {
                 fS.sweetAlert('warning', '<small>Este documento ya se encuentra cobrada!</small>')
                 return
             }
@@ -587,7 +586,7 @@
                 }
             }
 
-            if (item.tiempoCredito) {
+            if (item.esContado) {
                 $scope.openModalRapido(params);
             } else {
                 $scope.openModalCobroDocumento(params)
@@ -599,10 +598,9 @@
 
         $scope.openModalCobroDocumento = async (params) => {
             try {
-                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['CL'];
-                let template = nombreModalContabilidad.COBRO.templates['CL'];
-                let controller = (await import(fileCtrl))[ctrl];
+
+                const { fileCtrl, ctrl, template} = nombreModalContabilidad.COBRO_LOTE; 
+                let controller = (await import(fileCtrl))[ctrl]; 
 
                 $scope.openModalCobro({
                     controller,
@@ -624,9 +622,7 @@
          */
         $scope.openModalRapido = async (params) => {
             try {
-                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['CR'];
-                let template = nombreModalContabilidad.COBRO.templates['CR'];
+                let {fileCtrl, ctrl, template} = nombreModalContabilidad.COBRO_RAPIDO; 
                 let controller = (await import(fileCtrl))[ctrl];
 
                 $scope.openModalCobro({
@@ -677,7 +673,9 @@
                 }
 
                 //Focus New Invoice
-                btnNewInvoice.focus();
+                if (btnNewInvoice){
+                    btnNewInvoice.focus();
+                }
                 $scope.isRegister = null;
                 $scope.isPrintDocument = null;
             })
@@ -801,9 +799,7 @@
         $scope.tarifasImpuesto = [];
         $scope.formasPago = [];
         $scope.tiposIdentificacion = [];
-
-        $scope.datosAdicionalesArticulo = []
-        $scope.historyDatosAdicionales = [];
+ 
 
         //Informacion adicional del documento 
         $scope.infoAdicionalDocumento = [];
@@ -1175,7 +1171,7 @@
                     comprobante,
                     cliente,
                     items,
-                    infoAdicionalDocumento,
+                    infoAdicionalDocumento, 
                     formasPago,
                     cuotas
                 } = params.data;
@@ -1201,12 +1197,7 @@
                 }
 
                 $scope.cliente = cliente;
-                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
-                $scope.historyDatosAdicionales = $scope.datosAdicionalesArticulo.map(item => ({
-                    idArticulo: item.idArticulo,
-                    idInfoAdicional: item.idInfoAdicional,
-                    selected: true,
-                }))
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento; 
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
 
@@ -1284,14 +1275,12 @@
         }
 
         $scope.resultModalAdicional = function (result) {
-            let { historyDatosAdicionales, infoAdicionalDocumento } = result;
-            $scope.historyDatosAdicionales = historyDatosAdicionales;
-            console.log(infoAdicionalDocumento)
-            $scope.infoAdicionalDocumento.push(...infoAdicionalDocumento)
+            let { infoAdicionalDoc } = result; 
+            $scope.infoAdicionalDocumento = infoAdicionalDoc;
         }
         function setColumnDefs() {
 
-            /**<a btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" class="btn btn-warning btn-xs text-white" title="Agregar dato Adicional" > <i class="fas fa-tags"></i></a >**/
+            /**<a btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales'   result-modal-adicional="grid.appScope.resultModalAdicional(result)" class="btn btn-warning btn-xs text-white" title="Agregar dato Adicional" > <i class="fas fa-tags"></i></a >**/
 
             const ventaDetailPermission = $scope.permisoDetalleVenta
             const CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
@@ -1300,7 +1289,16 @@
 
         <view-kardex params="row.entity"></view-kardex>
 
-        <a action-info-adicional-articulo-venta entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a action-info-adicional-articulo-venta 
+            entity="row.entity" 
+            style="cursor:pointer;" 
+            ng-if='row.entity.datosAdicionales'  
+            result-modal-adicional="grid.appScope.resultModalAdicional(result)" 
+            info-adicional-doc="grid.appScope.infoAdicionalDocumento"
+            class="btn btn-warning btn-xs text-white" 
+            title = "Agregar dato Adicional"> 
+            <i class="fas fa-tags"></i>
+        </a>`;
 
             $scope.gridOptions.columnDefs = [{
                 name: 'Op.',
@@ -1576,8 +1574,9 @@
                 if (isConfirmed) {
                     let index = $scope.gridOptions.data.indexOf(rowEntity);
                     $scope.gridOptions.data.splice(index, 1);
+                    updateStatusDatosAdicionalesArticulo(rowEntity);
 
-                    if (rowEntity.idFacturaDetalle > 0) {
+                    if (rowEntity.idFacturaDetalle > 0) {       
                         $scope.gridOptionsItemsDeleted.push({
                             ...rowEntity,
                             cantidad: rowEntity.cantidadOriginal,
@@ -1591,14 +1590,21 @@
                     $scope.$apply();
                 }
 
-                if (isConfirmed && rowEntity.datosAdicionales) {
-                    $scope.datosAdicionalesArticulo = $scope.datosAdicionalesArticulo.filter(val => val.idArticulo !== rowEntity.idArticulo);
-                    $scope.historyDatosAdicionales = $scope.historyDatosAdicionales.filter(val => val.idArticulo !== rowEntity.idArticulo);
+                if (isConfirmed && rowEntity.datosAdicionales) { 
+                    $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(ia=>{
+                        return !(rowEntity.datosAdicionalesArticulo.some(iaa=>iaa.idInfoAdicional===ia.idInfoAdicional))
+                    }); 
                 }
             } catch (error) {
                 console.log(error)
             }
 
+        }
+
+        function updateStatusDatosAdicionalesArticulo(rowEntity){
+            for(let item of rowEntity.datosAdicionalesArticulo){
+                item.selected = false;
+            }
         }
 
 
@@ -1939,7 +1945,7 @@
         //=================================START PRODUCT=======================================
         function addRow() {
             const obj = {
-                uniqueRowId: fS.generateUuidv4(),
+                uniqueRowDetalle: fS.generateUuidv4(),
                 idFacturaDetalle: 0,
                 n: 1,
                 codigo: "",
@@ -1965,7 +1971,7 @@
                 datosAdicionales: false,
                 estado: 1
             }
-            $scope.gridOptions.data.push(obj)
+            $scope.gridOptions.data.push(obj); 
         }
 
         $scope.setItemArticuloEnDetalle = function (dataArticulo) {
@@ -2022,7 +2028,7 @@
 
 
                 tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
-
+            
                 entity.idImpuesto = tarifaImpuesto.idImpuesto;
                 entity.idTipoIva = articulo.idTipoIva;
                 entity.codigoPorcentaje = articulo.codigoPorcentaje;
@@ -2042,7 +2048,12 @@
                 entity.articuloTarifas = dataMedida.tarifas;
 
 
-                entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
+                entity.datosAdicionalesArticulo = datosAdicionalesArticulo.map(daa=>{
+                    return {
+                        ...daa,
+                        uniqueRowDetalle: entity.uniqueRowDetalle
+                    }
+                }); //
                 entity.consolidacionesFecha = consolidacionesFecha;
 
 
@@ -2052,7 +2063,7 @@
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
                 entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
-                $scope.indexRow = index;
+                $scope.indexRow = index; 
                 setCalculoTotales('precioUnitario', entity, 0);
                 focusColumnCantidad();
                 //checkNotificationStock("cantidad", entity, cantidad);
@@ -2544,8 +2555,7 @@
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
-                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                    historyDatosAdicionales: $scope.historyDatosAdicionales,
+                    infoAdicionalDocumento: $scope.infoAdicionalDocumento, 
                     cuotas
                 })
 

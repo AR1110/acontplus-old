@@ -1383,6 +1383,7 @@
                 element.on('click', async function () {
 
                     let { fileCtrl, controller, template } = nombreModalCommon.INFO_ADICIONAL_DOC;
+                 
                     let ctrl = (await import(fileCtrl))[controller]
 
  
@@ -2155,7 +2156,7 @@
 
                         if (!isContinue) return
 
-                        const response = await compIngresoSvc.getDataToOverride(idComprobanteIngreso); 
+                        const response = await compIngresoSvc.getDataForDelete(idComprobanteIngreso); 
 
                         cuentasPorCobrar = response.cuentasPorCobrar;
                         cuotasPorCobrar = response.cuotasPorCobrar;
@@ -2227,11 +2228,13 @@
                         if (!existeDato) {
                             acc.push({
                                 idCuentaPorCobrar: curr.idCuentaPorCobrar,
-                                abonoDoc: new Decimal(curr.abonoDoc).toNumber(),
+                                abonoDoc: fS.instanceDecimal(curr.abonoDoc).toNumber(),
                                 abono,
+                                diasMora: curr.diasMora,
+                                mora: curr.mora 
                             });
                         } else { 
-                             existeDato.abono = new Decimal(existeDato.abono).plus(curr.abono);
+                             existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
                         }
                         return acc;
                     }, []);
@@ -2247,30 +2250,36 @@
                                 idCuotaPorCobrar: curr.idCuotaPorCobrar,
                                 abonoCuota: curr.abonoCuota,
                                 abono,
+                                diasMora: curr.diasMora,
+                                mora: curr.mora
                             });
                         } else { 
-                             existeDato.abono = new Decimal(existeDato.abono).plus(curr.abono);
+                             existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
                         }
                         return acc;
                     }, []);
 
                     // Calcula los valores residuales y el estado de pago para cuentas por cobrar
                     const tempCuentasPorCobrar = cuentasPorCobrarAgrupado.map(item => { 
-                        let valorResiduo = new Decimal(item.abonoDoc).minus(item.abono).toNumber()
+                        let valorResiduo = fS.instanceDecimal(item.abonoDoc).minus(item.abono).toNumber()
                         return {
                             idCuentaPorCobrar: item.idCuentaPorCobrar,
                             abono: valorResiduo,
-                            idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP')
+                            idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP'),
+                            diasMora: item.diasMora,
+                            mora: item.mora
                         };
                     });
 
                     // Calcula los valores residuales y el estado de pago para cuotas por cobrar
                     const tempCuotasPorCobrar = cuotasPorCobrarAgrupado.map(item => { 
-                        let valorResiduo = new Decimal(item.abonoCuota).minus(item.abono).toNumber()
+                        let valorResiduo = fS.instanceDecimal(item.abonoCuota).minus(item.abono).toNumber()
                         return {
                             idCuotaPorCobrar: item.idCuotaPorCobrar,
                             abono:  valorResiduo ,
-                            idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP')
+                            idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP'),
+                            mora: item.mora,
+                            diasMora: item.diasMora                            
                         };
                     });
 
@@ -2308,10 +2317,9 @@
         return {
             restrict: 'A',
             scope: {
-                entity: '=',
-                resultModalAdicional: '&',
-                datosAdicionales: '=',
-                historyDatosAdicionales: '='
+                entity: '=', //Datos del detalle 
+                resultModalAdicional: '&', 
+                infoAdicionalDoc:"=" //Información Adicional del Documento 
             },
            link
         }
@@ -2337,11 +2345,10 @@
                     template,
                     size: 'lg',
                     params: {
-                        entity: scope.entity,
-                        datosAdicionales: scope.datosAdicionales || [],
-                        historyDatosAdicionales: scope.historyDatosAdicionales || [],
-                    },
-                    isRenderRazorPartial: true
+                        entity: scope.entity,  
+                        infoAdicionalDoc: scope.infoAdicionalDoc || []
+
+                    }, 
                 })
 
                 modalRef.result.then(result => {

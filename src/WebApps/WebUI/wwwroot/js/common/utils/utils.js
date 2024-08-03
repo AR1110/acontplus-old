@@ -390,6 +390,11 @@
             );
         };
 
+        formSvc.parseDate = function(dateString) {
+            const [day, month, year] = dateString.split('/');
+            return new Date(year, month - 1, day);
+        }
+
         formSvc.isEmail = function (value) {
             return /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i.test(value);
         };
@@ -570,6 +575,11 @@
                 return null;
             }
             return field;
+        }
+
+        formSvc.getValidId = (id)=>{
+            let valid = id > 0 ? id : null;
+            return valid;            
         }
 
         /**
@@ -1044,11 +1054,34 @@
 
             return instanceDecimal;
 
+        } 
+
+
+        formSvc.mul = function(num1, num2, max = 0) {
+            let instanceDecimal = new Decimal(num1).mul(num2)
+            if (max > 0) {
+                return instanceDecimal.toDecimalPlaces(max).toNumber()
+            }
+
+            return instanceDecimal;
+
         }
 
 
+        formSvc.div = function(num1, num2, max = 0) {
+            let instanceDecimal = new Decimal(num1).div(num2)
+            if (max > 0) {
+                return instanceDecimal.toDecimalPlaces(max).toNumber()
+            }
 
-        return formSvc;
+            return instanceDecimal;
+
+        }
+
+         
+
+        return formSvc;        
+
     }
 
 })(window.angular)
