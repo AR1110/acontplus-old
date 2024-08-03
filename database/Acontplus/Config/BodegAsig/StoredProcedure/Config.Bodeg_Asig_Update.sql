@@ -1,16 +1,6 @@
 USE [AcontPlus]
 GO
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -23,29 +13,35 @@ GO
 CREATE  OR ALTER PROCEDURE Config.Bodeg_Asig_Update @userRoleId INT,@id INT
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @codEstab_Asig VARCHAR(150)
+    SET XACT_ABORT ON;
+
+	DECLARE @codEstab_Asig VARCHAR(150),
+        @userId INT;
 
 	BEGIN TRY 
 
-		SELECT @codEstab_Asig = codEstab_Asig FROM Config.Bodeg_Asig WHERE idBodeg_Asig = @id
+		SELECT @codEstab_Asig = codEstab_Asig FROM Config.Bodeg_Asig WITH(NOLOCK) WHERE idBodeg_Asig = @id
+
+        SET @userId = (SELECT TOP 1 idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 
 		BEGIN TRAN 
 			UPDATE Config.Bodeg_Asig SET predeterminado = 0 WHERE codEstab_Asig = @codEstab_Asig
 			UPDATE Config.Bodeg_Asig SET predeterminado = 1 WHERE idBodeg_Asig = @id
 		COMMIT TRAN  
-        SELECT [Common].[ufnSpResponse]('1','Actualizado Correctamente',DEFAULT)
-		RETURN 
+        SELECT '1' code,'Actualizada Correctamente' as 'message'
 	END TRY 
 
 	BEGIN CATCH 
 		IF @@TRANCOUNT > 0 
-		BEGIN
-			ROLLBACK TRAN; 
-		END
-        SELECT [Common].[ufnSpResponse]('1','Info: Error en el procedimiento ' + ERROR_MESSAGE(),DEFAULT) 
+		    BEGIN
+			    ROLLBACK TRAN; 
+		    END
+
+          INSERT INTO ErroresSistema
+                      (method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,idUsuario)
+		  SELECT '/Bodeg_Asig/Put',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),@userId
+		  SELECT '0' code, 'Error en el procedimiento' as 'message'
 	END CATCH
 END
 GO

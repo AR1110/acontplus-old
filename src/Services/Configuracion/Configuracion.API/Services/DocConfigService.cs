@@ -1,29 +1,17 @@
 ﻿namespace Configuracion.API.Services;
 
-public class DocConfigService : IDocConfigService
+public class DocConfigService(IAdoRepository adoRepository) : IDocConfigService
 {
-    private readonly IAdoRepository _repository;
-    private readonly string nameSchema = "Config.DocConfig";
+    private const string NameSchema = "Config.DocConfig_";
 
-    public DocConfigService(IAdoRepository repository)
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        _repository = repository;
+        return await adoRepository.SpExecuteAsync<ApiResponse>(NameSchema + "Insert", parameters);
     }
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
-        if (ds.Tables.Count == 0)
-        {
-            return null;
-        }
-
-        return DataConverters.DataSetToJson(ds);
-    }
-
-
-    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
-    {
-        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
+        var ds = await adoRepository.GetDataSetAsync(NameSchema + "Get", parameters);
+        return DataValidation.DataSetIsNull(ds) ? null : DataConverters.DataSetToJson(ds);
     }
 }

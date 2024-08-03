@@ -1,16 +1,6 @@
 use [AcontPlus]
 GO
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20,10 +10,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Config.Estab_Asig_Get_Data_Form', N'P') IS NOT NULL
-DROP PROCEDURE Config.Estab_Asig_Get_Data_Form 
-GO
-CREATE PROCEDURE Config.Estab_Asig_Get_Data_Form @idRol INT,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Config.Estab_Asig_Get_Data_Form @idRol INT,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

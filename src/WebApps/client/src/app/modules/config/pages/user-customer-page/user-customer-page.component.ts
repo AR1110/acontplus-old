@@ -1,16 +1,16 @@
-import { Component, inject } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { Router } from "@angular/router";
-import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
-import { ModalService } from "@core/services/modal.service";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { UserCustomerRead } from "@modules/config/models/user-customer/user-customer.model";
-import { UserCustomerService } from "@modules/config/services/user-customer/user-customer.service";
-import { NgbPaginationModule } from "@ng-bootstrap/ng-bootstrap";
-import { Pagination } from "@shared/models/pagination.model";
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { ModalService } from '@core/services/modal.service';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { UserCustomerRead } from '@modules/config/models/user-customer/user-customer.model';
+import { UserCustomerService } from '@modules/config/services/user-customer/user-customer.service';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { Pagination } from '@shared/models/pagination.model';
 
-import { UserCustomerAddEditModalComponent } from "./components/user-customer-add-edit-modal/user-customer-add-edit-modal.component";
-import { UserCustomerRoleModalComponent } from "./components/user-customer-role-modal/user-customer-role-modal.component";
+import { UserCustomerAddEditModalComponent } from './components/user-customer-add-edit-modal/user-customer-add-edit-modal.component';
+import { UserCustomerRoleModalComponent } from './components/user-customer-role-modal/user-customer-role-modal.component';
 
 @Component({
   selector: 'app-user-customer-apge',
@@ -19,14 +19,13 @@ import { UserCustomerRoleModalComponent } from "./components/user-customer-role-
     FormsModule,
     FontAwesomeModule,
     NgbPaginationModule,
-    BreadcrumbComponent
+    BreadcrumbComponent,
   ],
-  templateUrl: './user-customer-page.component.html'
+  templateUrl: './user-customer-page.component.html',
 })
 export class UserCustomerPageComponent {
   private readonly userCustomerSvc = inject(UserCustomerService);
-  private readonly modalSvc = inject(ModalService)
-
+  private readonly modalSvc = inject(ModalService);
 
   pagination = new Pagination();
   usersCustomer: Array<UserCustomerRead> = [];
@@ -34,26 +33,25 @@ export class UserCustomerPageComponent {
   getUsersCustomer() {
     let obj = {
       pageIndex: this.pagination.pageIndex,
-      pageSize: this.pagination.pageSize
-    }
+      pageSize: this.pagination.pageSize,
+    };
     this.userCustomerSvc.getAll(obj).subscribe({
       next: (response: any) => {
         this.usersCustomer = response.userCustomers;
-        if(this.usersCustomer.length>0){
-          this.pagination.totalRecords= this.usersCustomer[0].totalRecords;
+        if (this.usersCustomer.length > 0) {
+          this.pagination.totalRecords = this.usersCustomer[0].totalRecords;
         }
-      }
-    })
+      },
+    });
   }
 
   ngOnInit() {
-     //  this.router.navigate(['/', 'accounting', 'cuenta-por-cobrar-page'])
- // this.router.navigate(['/', 'inventory', 'measure-page'])
-  //  this.router.navigate(['/', 'inventory', 'product-page'])
+    //  this.router.navigate(['/', 'accounting', 'cuenta-por-cobrar-page'])
+    // this.router.navigate(['/', 'inventory', 'measure-page'])
+    //  this.router.navigate(['/', 'inventory', 'product-page'])
     //this.router.navigate(['/', 'customer', 'company-customer'])
-   this.getUsersCustomer()
+    this.getUsersCustomer();
   }
-
 
   pageChanged(): void {
     this.getUsersCustomer();
@@ -64,27 +62,30 @@ export class UserCustomerPageComponent {
     this.getUsersCustomer();
   }
 
+  openModalAddEdit(data?: UserCustomerRead) {
+    let modalRef = this.modalSvc.openModalCustom(
+      UserCustomerAddEditModalComponent,
+    );
 
-  openModalAddEdit(data?: UserCustomerRead){
-    let modalRef = this.modalSvc.openModalCustom(UserCustomerAddEditModalComponent, )
+    modalRef.componentInstance.params = data ? data : {};
 
-    modalRef.componentInstance.params = data? data: {}
-
-    modalRef.result.then(result=>{
-      if(result!==null && typeof result==='object'){
+    modalRef.result.then((result) => {
+      if (result !== null && typeof result === 'object') {
         this.getUsersCustomer();
       }
-    })
+    });
   }
 
-  openModalConfig(data: UserCustomerRead){
-    let modalRef = this.modalSvc.openModalCustom(UserCustomerRoleModalComponent, {
-      size: 'xl'
-    })
+  openModalConfig(data: UserCustomerRead) {
+    let modalRef = this.modalSvc.openModalCustom(
+      UserCustomerRoleModalComponent,
+      {
+        size: 'xl',
+      },
+    );
     modalRef.componentInstance.params = {
       idUsuario: data.idUsuario,
-      nombreCompleto: data.nombreCompleto
-    }
+      nombreCompleto: data.nombreCompleto,
+    };
   }
-
 }

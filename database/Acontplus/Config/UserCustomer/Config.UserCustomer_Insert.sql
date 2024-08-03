@@ -13,7 +13,8 @@ GO
 CREATE OR ALTER PROCEDURE Config.UserCustomer_Insert @userRoleId INT
     ,@json NVARCHAR(MAX)
     ,@fromMobile BIT
-    ,@errorCode INT = 0 OUTPUT --0-OK, 1-ERROR
+    ,@errorCode INT = 0 OUTPUT
+    ,@errorMessage NVARCHAR(MAX) = '' OUT
 AS
 BEGIN
 
@@ -95,9 +96,13 @@ BEGIN
 				', "fromMobile": "' + CONVERT(VARCHAR(5), @fromMobile) + '"}'
 				)
 			
- 			EXEC AcontplusAdmin.Config.UserCustomerRole_Insert 0, @userRoleParams, @errorCode = @errorCode OUTPUT
-			IF (@errorCode = 1)
-				RAISERROR('sp AcontplusAdmin.Config.UserCustomerRole_Insert failed',16,1)
+ 			EXEC AcontplusAdmin.Config.UserCustomerRole_Insert 0, @userRoleParams, @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
+
+            IF (@errorCode <> 0)
+                BEGIN
+                    SET @errorMessage = 'sp AcontplusAdmin.Config.UserCustomerRole_Insert failed: ' + ISNULL(@errorMessage, '')
+				    RAISERROR(@errorMessage,16,1)
+                END
 
 		COMMIT TRAN 
 		SELECT '1' as code,'Registrado Exitosamente' as [message]   

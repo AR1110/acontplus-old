@@ -36,7 +36,8 @@ public class UserCustomerController(IUserCustomerService service) : BaseApiContr
         {
             { "userRoleId", User.GetUserRoleId() },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
         var response = await service.UpdateAsync(parameters);
         return Ok(response);

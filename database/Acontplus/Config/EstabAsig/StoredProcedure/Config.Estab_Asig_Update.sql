@@ -1,16 +1,6 @@
 USE [Acontplus]
 GO 
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -24,30 +14,32 @@ CREATE OR ALTER PROCEDURE Config.Estab_Asig_Update @userRoleId INT,@id INT
 	
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	SET NOCOUNT ON;
-	DECLARE @idUsuarioRol INT
+	DECLARE @idUsuarioRol INT,
+        @idUsuario INT
 
 	BEGIN TRY
 		SELECT @idUsuarioRol = idUsuarioRol FROM Config.Estab_Asig WHERE idEstab_Asig = @id
+
+        SET @idUsuario = (SELECT TOP 1 idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 
 		BEGIN TRAN 
 			UPDATE Config.Estab_Asig SET predeterminado = 0 WHERE idUsuarioRol = @idUsuarioRol
 
 			UPDATE Config.Estab_Asig SET predeterminado = 1 WHERE idEstab_Asig = @id
 		COMMIT TRAN 
-		SELECT Common.ufnSpResponse('1','Actualizado Correctamente',NULL)
-		RETURN 
+		SELECT '1' code, 'Actualizado Correctamente' as 'message' 
 	END TRY 
 
 	BEGIN CATCH 
 		IF @@TRANCOUNT > 0 
-		BEGIN
-			ROLLBACK TRAN; 
-		END
-		SELECT Common.ufnSpResponse('0','Info: Error en el procedimiento',NULL)
-	END CATCH
+		    BEGIN
+			    ROLLBACK TRAN; 
+		    END
+        INSERT INTO ErroresSistema
+              (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'/EstabAsign/Put',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+		SELECT '0' code, 'Info: Error en el procedimiento' as 'message'
+    END CATCH
 END
 GO

@@ -4,7 +4,8 @@
 @import "assets/template/css/style.css";
 @import "assets/css/forms.css";
 @import "perfect-scrollbar";
-@import "theme";
+// @import "theme";
+@import "@angular/material/prebuilt-themes/azure-blue.css";
 
 html,
 body {
@@ -16,7 +17,10 @@ html,
 input,
 select,
 textarea {
-  font-family: Roboto, Helvetica Neue, sans-serif !important;
+  font-family:
+    Roboto,
+    Helvetica Neue,
+    sans-serif !important;
 }
 
 table {
