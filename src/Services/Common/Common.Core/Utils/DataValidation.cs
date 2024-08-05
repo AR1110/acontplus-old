@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Net;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Newtonsoft.Json.Linq;
 
@@ -69,6 +70,21 @@ public static class DataValidation
         catch (JsonReaderException)
         {
             return false;
+        }
+    }
+    public static string ValidateIpAddress(string ipAddress)
+    {
+        // Extract the relevant part of the IP address if necessary
+        var extractedIpAddress = ipAddress.Substring(13);
+
+        // Check if the extracted part is a valid IP address
+        if (IPAddress.TryParse(extractedIpAddress, out _))
+        {
+            return extractedIpAddress;
+        }
+        else
+        {
+           return "0.0.0.0";
         }
     }
 }

@@ -148,11 +148,12 @@ BEGIN
 
         IF EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH(NOLOCK) WHERE uuid = @uuid)
             BEGIN
+            print @uuid
                 SET @stepsConfig = (
-                    SELECT cds.Id, cds.DemoStepId, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
-                    FROM AcontplusAdmin.Config.CompanyDemoStep cds WITH(NOLOCK)
-                        INNER JOIN AcontplusAdmin.Config.DemoStep ds ON cds.DemoStepId = ds.Id
-                    WHERE uuid = @uuid FOR JSON PATH
+                    SELECT ds.Id, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
+                    FROM  AcontplusAdmin.Config.DemoStep ds 
+                    WHERE ds.Id NOT IN (SELECT DemoStepId FROM AcontplusAdmin.Config.CompanyDemoStep WITH(NOLOCK) WHERE Uuid = @uuid)
+                    FOR JSON PATH
                 )
             END
 

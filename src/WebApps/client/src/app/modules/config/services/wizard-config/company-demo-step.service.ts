@@ -17,4 +17,10 @@ export class CompanyDemoStepService {
       .get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`)
       .pipe(map((response) => response));
   }
+
+  post(id: number) {
+    return this.#http
+      .post<ApiResponse>(`${this.#url}${id}`, null)
+      .pipe(map((response) => response));
+  }
 }
