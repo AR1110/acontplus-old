@@ -1611,6 +1611,7 @@
                     saldo: fS.roundNumber(saldo, this.MAX_NUMBER_ROUND),
                     diasMoraActual: this._dataCuentaPorCobrar.diasMoraActual,
                     interesPorMoraActual: this._dataCuentaPorCobrar.interesPorMoraActual,
+                    interesActual: this._dataCuentaPorCobrar.interesActual
                 });
 
             }
@@ -1675,11 +1676,11 @@
             actualizarCuota(dataCuota, abonoAplicable, campoAbono, resetAbono = false) {
                 let valorDinamico = abonoAplicable;
                 if (!resetAbono) {
-                    valorDinamico = (dataCuota[campoAbono] || 0) + abonoAplicable;
+                    valorDinamico = fS.plus((dataCuota[campoAbono] || 0), abonoAplicable, this.MAX_NUMBER_ROUND)
                 }
                 dataCuota[campoAbono] = valorDinamico;
 
-                dataCuota.saldoTotalActual -= abonoAplicable;
+                dataCuota.saldoTotalActual = fS.minus(dataCuota.saldoTotalActual, abonoAplicable, this.MAX_NUMBER_ROUND);                
 
                 this.setValorAbono(this.getValorAbono() - abonoAplicable)
                 this.addCobroDetalle(dataCuota, abonoAplicable, dataCuota.saldoTotalActual);
