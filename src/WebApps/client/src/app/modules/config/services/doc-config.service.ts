@@ -49,6 +49,8 @@ export class DocConfigService {
   }
 
   post<T>(data: T) {
-    return this.#http.post(`${this.#url}`, { data });
+    return this.#http
+      .post(`${this.#url}`, { data })
+      .pipe(map((response) => response));
   }
 }

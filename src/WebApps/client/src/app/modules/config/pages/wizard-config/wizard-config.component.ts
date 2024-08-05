@@ -50,6 +50,9 @@ import {
 } from '@core/models/estab.model';
 import { DocConfig } from '@modules/config/models/doc-config.model';
 import { TabulatorSemanticUiComponent } from '../../../../core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
+import { FirmaElectronicaService } from '@modules/config/services/firma-electronica.service';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { faYoutube } from '@fortawesome/free-brands-svg-icons';
 
 @Component({
   selector: 'app-wizard-config',
@@ -89,10 +92,39 @@ export class WizardConfigComponent {
     { title: 'idPuntoEmision', field: 'idPuntoEmision', visible: false },
     { title: 'Pto. Emi', field: 'ptoEmi' },
     { title: 'idTipoDocumento', field: 'idTipoDocumento', visible: false },
-    { title: 'descripcion', field: 'descripcion', width: 200 },
-    { title: 'ultimaSecuencia', field: 'ultimaSecuencia', editor: true },
+    { title: 'Documento', field: 'descripcion', width: 200 },
+    {
+      title: 'Ultima Secuencia',
+      field: 'ultimaSecuencia',
+      editor: 'number',
+      editorParams: {
+        min: 0,
+        step: 1,
+      },
+      editable: function (cell: any) {
+        return cell.getRow().getTreeParent() ? true : false;
+      },
+      validator: function (cell: any, value: any) {
+        if (cell.getRow().getTreeParent()) {
+          if (value === '' || value === null) {
+            return { valid: false, message: 'Este campo es requerido' };
+          } else if (!Number.isInteger(Number(value)) || Number(value) < 0) {
+            return {
+              valid: false,
+              message: 'Debe ser un número entero positivo',
+            };
+          }
+        }
+        return true;
+      },
+    },
   ];
+  faYoutube: IconProp = faYoutube;
+  fileError: boolean = false;
+  selectedFile: File | null = null;
+  certificateUpdated: boolean = false;
   docsConfig = [];
+  docsUpdated: boolean = false;
   actividadesEconomica: any[] = [];
   agentesRetencion: any[] = [];
   contribuyentes: any[] = [];
@@ -102,8 +134,14 @@ export class WizardConfigComponent {
   emails: string[] = [];
   telephones: string[] = [];
   establecimientos: Array<GroupedEstab> = [];
+  currentEstab: string = '';
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];
   docs: Array<DocConfig> = [];
+  certificateForm = new FormGroup({
+    contrasenia: new FormControl('', [Validators.required]),
+    fechaCaducidad: new FormControl('', [Validators.required]),
+    fileSign: new FormControl(null, [Validators.required]),
+  });
   userForm = new FormGroup({
     nroIdentificacion: new FormControl(''),
     firstName: new FormControl('', [
@@ -152,6 +190,7 @@ export class WizardConfigComponent {
     hasInventory: [false],
     bodegas: this.#fb.array([]),
   });
+  #firmaElectronicaService = inject(FirmaElectronicaService);
   #docConfigSvc = inject(DocConfigService);
   #companyDemoStepService = inject(CompanyDemoStepService);
 
@@ -232,19 +271,32 @@ export class WizardConfigComponent {
           this.demoSteps.find((step) => step.code === 'IV')?.completed ?? false;
         this.estabRegistered =
           this.demoSteps.find((step) => step.code === 'V')?.completed ?? false;
+        this.docsUpdated =
+          this.demoSteps.find((step) => step.code === 'VI')?.completed ?? false;
+        this.certificateUpdated =
+          this.demoSteps.find((step) => step.code === 'VII')?.completed ??
+          false;
+
+        console.log(this.certificateUpdated);
 
         const incompleteStep = this.demoSteps.find((step) => !step.completed);
-        const stepIndex = incompleteStep
-          ? romanToInt(incompleteStep.code)
-          : null;
-        if (stepIndex !== null) {
-          if (incompleteStep?.code === 'V') {
-            this.fetchEstabData();
+
+        if (incompleteStep) {
+          const stepIndex = incompleteStep
+            ? romanToInt(incompleteStep.code)
+            : null;
+          if (stepIndex !== null) {
+            if (incompleteStep?.code === 'V') {
+              this.fetchEstabData();
+            }
+            if (incompleteStep?.code === 'VI') {
+              this.fetchDocConfig();
+            }
+            this.stepper.selectedIndex = stepIndex - 1; // Adjust for zero-based index
           }
-          if (incompleteStep?.code === 'VI') {
-            this.fetchDocConfig();
-          }
-          this.stepper.selectedIndex = stepIndex - 1; // Adjust for zero-based index
+        } else {
+          this.isLinear = true;
+          this.stepper.selectedIndex = 4;
         }
       }
     });
@@ -252,28 +304,19 @@ export class WizardConfigComponent {
 
   fetchDocConfig() {
     this.#docConfigSvc.getDataForm().subscribe((response) => {
-      console.log(response);
       this.establecimientos = response.establecimientos;
+      this.currentEstab = this.establecimientos[0].nombreComercial;
       const combinedData = this.establecimientos[0].puntosEmision.map(
         (pto) => ({
           ...pto,
-          children: response.tiposDoc.map((doc: any) => ({
+          _children: response.tiposDoc.map((doc: any) => ({
             ...doc,
             parentId: pto.idPuntoEmision,
+            ultimaSecuencia: 0,
           })),
         }),
       );
       this.docsConfig = combinedData as [];
-      // let dataEstab = this.establecimientos.find((e) => e.defaultEstab);
-      // if (dataEstab) {
-      //   this.puntosEmision = dataEstab?.puntosEmision;
-      //   // let dataPuntoEmision = this.puntosEmision.find((p) => p.defaultPtoEmi);
-      //   // if (dataPuntoEmision) {
-      //   //   this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
-      //   //   this.getDocs();
-      //   // }
-      //   // this.dataSearch.codEstab = dataEstab?.codEstab;
-      // }
     });
   }
 
@@ -459,5 +502,104 @@ export class WizardConfigComponent {
     }
   }
 
-  saveDocs() {}
+  saveDocs() {
+    const docs = this.docsConfig.flatMap((pto: any) =>
+      pto._children
+        .filter((doc: any) => doc.ultimaSecuencia > 0)
+        .map((doc: any) => ({
+          idPuntoEmision: pto.idPuntoEmision,
+          idTipoDocumento: doc.idTipoDocumento,
+          ultimaSecuencia: doc.ultimaSecuencia,
+        })),
+    );
+
+    if (docs.length == 0) {
+      this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
+      return this.#toasterService.toastr({
+        type: 'warning',
+        message: 'Debe ingresar al menos una secuencial de los documentos',
+      });
+    }
+
+    const dataToSave = {
+      docs: JSON.stringify(docs),
+      demoStepId: this.demoSteps.find((step) => step.code === 'VI')?.id,
+    };
+    this.#docConfigSvc.post(dataToSave).subscribe((response) => {
+      if (isApiResponse(response)) {
+        if (response.code === '0' && this.stepper) {
+          this.stepper.previous();
+        }
+        if (response.code === '1') {
+          this.docsUpdated = true;
+          this.fetchCompanyDemoSteps();
+        }
+        this.#toasterService.toastr({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+      }
+    });
+  }
+
+  onFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file && file.name.endsWith('.p12')) {
+      this.selectedFile = file;
+      this.fileError = false;
+    } else {
+      this.fileError = true;
+    }
+  }
+
+  saveCertificate() {
+    if (this.certificateForm.valid && this.selectedFile) {
+      const formData = {
+        contrasenia: this.certificateForm.get('contrasenia')?.value,
+        fechaCaducidad: this.certificateForm.get('fechaCaducidad')?.value,
+        demoStepId: this.demoSteps.find((step) => step.code === 'VII')?.id,
+      };
+
+      this.#firmaElectronicaService
+        .post(formData, this.selectedFile)
+        .subscribe((response) => {
+          if (isApiResponse(response)) {
+            if (response.code === '0' && this.stepper) {
+              this.stepper.previous();
+            }
+            if (response.code === '1') {
+              this.fetchCompanyDemoSteps();
+            }
+            this.#toasterService.toastr({
+              type: response.code === '1' ? 'success' : 'warning',
+              message: response.message,
+            });
+          }
+        });
+    }
+  }
+
+  skipAndFinish() {
+    this.stepper.previous();
+    Swal.fire({
+      title: 'Info',
+      icon: 'info',
+      text: `Esta seguro de saltar este paso?, recuerde que si va a usar el módulo de facturación electrónica,
+       debe de subir una firma electrónica!`,
+    }).then((response) => {
+      if (response.isConfirmed) {
+        const id = this.demoSteps.find((step) => step.code === 'VII')?.id;
+        this.#companyDemoStepService.post(Number(id)).subscribe((response) => {
+          if (response.code === '1') {
+            this.fetchCompanyDemoSteps();
+            this.stepper.next();
+          }
+          this.#toasterService.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+        });
+      }
+    });
+  }
 }
