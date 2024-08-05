@@ -44,7 +44,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.showInfoCobro = showInfoCobro;
     $scope.save = save;
     $scope.closeModal = closeModal;
- 
+
     initiateLoad();
     function initiateLoad() {
         try {
@@ -62,14 +62,14 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             showLoader();
             comprobanteIngresoSvc.getDataForm(idCuentaPorCobrar, idCliente).then(response => {
 
-                dataFormaCobro = response; 
+                dataFormaCobro = response;
                 modalCobroSvc.setEstadoCobro(dataFormaCobro.estadosPago);
                 modalCobroSvc.setConfigCobro(dataFormaCobro.configCobro);
 
                 //Cuando proviene de Cuentas por Cobrar
                 if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
                     let selectedDocsTemp = modalCobroSvc.calcularInteresMora(selectedDocumentos)
- 
+
                     $scope.selectedDocumentos = structuredClone(selectedDocsTemp);
                     $scope.selectedDocumentosClone = structuredClone(selectedDocsTemp);
 
@@ -171,7 +171,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         item.display = !item.display
     }
 
-    function showCobroDetalle(data) { 
+    function showCobroDetalle(data) {
         let tempDetails = modalCobroSvc.getCobrosDetalle().filter(item => item.idCuotaPorCobrar === data.idCuotaPorCobrar && item.idCuentaPorCobrar === data.idCuentaPorCobrar);
         let infoCobrosDetalle = [];
 
@@ -454,101 +454,106 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     }
 
     async function save() {
-        if (!isValidForm()) return; 
+        try {
+            if (!isValidForm()) return;
 
-        let { isConfirmed } = await Swal.fire({
-            title: '<small>Guardar Cobro</small>',
-            html: "<small class='text-muted'>Esta seguro de guardar este cobro ahora?</small>",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Si, guardar!',
-            cancelButtonText: 'No, cancelar!'
-        })
+            let { isConfirmed } = await Swal.fire({
+                title: '<small>Guardar Cobro</small>',
+                html: "<small class='text-muted'>Esta seguro de guardar este cobro ahora?</small>",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, guardar!',
+                cancelButtonText: 'No, cancelar!'
+            })
 
-        if (isConfirmed) {
+            if (isConfirmed) {
 
-            let totalValorAbono = getValorAbono("valorAbono");
-            let totalAbonoCuota = getValorAbono("abonoCuota");
+                let totalValorAbono = getValorAbono("valorAbono");
+                let totalAbonoCuota = getValorAbono("abonoCuota");
 
-            let comprobante = {
-                idCliente: $scope.dataCuentaPorCobrar.idCliente,
-                total: totalValorAbono,
-                abono: totalAbonoCuota,
-                codEstab: $scope.dataCuentaPorCobrar.codEstab,
-                numeroIdentificacion: $scope.dataCuentaPorCobrar.identificacionComprador,
-                nombreFiscal: $scope.dataCuentaPorCobrar.razonSocialComprador,
-                observacion: $scope.dataCuentaPorCobrar.observacion
-            };
+                let comprobante = {
+                    idCliente: $scope.dataCuentaPorCobrar.idCliente,
+                    total: totalValorAbono,
+                    abono: totalAbonoCuota,
+                    codEstab: $scope.dataCuentaPorCobrar.codEstab,
+                    numeroIdentificacion: $scope.dataCuentaPorCobrar.identificacionComprador,
+                    nombreFiscal: $scope.dataCuentaPorCobrar.razonSocialComprador,
+                    observacion: $scope.dataCuentaPorCobrar.observacion
+                };
 
 
-            let cobros = $scope.datosCobro.map(item => { 
-                let obj = {
-                    idSubEntidadFinanciera: item.idSubEntidadFinanciera,
-                    idEntidadFinanciera: item.idEntidadFinanciera,
-                    idBanco: item.idBanco,
-                    idCuentaBancaria: 0,
-                    fechaEmision: item.fechaEmision,
-                    valor: item.valorAbono,
-                    posfechado: item.posfechado,
-                    cobro: item.cobro,
-                    secuencial: item.secuencial,
-                    infoCobro: item.infoCobro,
-                    abono: item.abonoCuota,
-                    controlCaja: item.controlCaja,
-                    idComprobante: item.idComprobante,
-                    idTipoDocumento: item.idTipoDocumento,
-                    observacion: item.observacion
+                let cobros = $scope.datosCobro.map(item => {
+                    let obj = {
+                        idSubEntidadFinanciera: item.idSubEntidadFinanciera,
+                        idEntidadFinanciera: item.idEntidadFinanciera,
+                        idBanco: item.idBanco,
+                        idCuentaBancaria: 0,
+                        fechaEmision: item.fechaEmision,
+                        valor: item.valorAbono,
+                        posfechado: item.posfechado,
+                        cobro: item.cobro,
+                        secuencial: item.secuencial,
+                        infoCobro: item.infoCobro,
+                        abono: item.abonoCuota,
+                        controlCaja: item.controlCaja,
+                        idComprobante: item.idComprobante,
+                        idTipoDocumento: item.idTipoDocumento,
+                        observacion: item.observacion
+                    }
+                    return obj;
+                })
+
+
+                let cobrosDetalle = $scope.cobrosDetalle.filter(item => (item.abono > 0))
+                let historialCuentas = modalCobroSvc.getHistorialCuentas();
+
+
+
+                let cuentasPorCobrarEstado = modalCobroSvc.generarCuentasPorCobrarEstado({
+                    historialCuentas,
+                    cobros,
+                    cobrosDetalle
+                })
+
+                let cuotasPorCobrarEstado = modalCobroSvc.generarCuotasPorCobrarEstado({
+                    cobrosDetalle
+                })
+
+                let data = {
+                    comprobante,
+                    cobros,
+                    cobroDetalle: cobrosDetalle,
+                    historialCuentas,
+                    cuentasPorCobrarEstado,
+                    cuotasPorCobrarEstado
                 }
-                return obj;
-            })
-
-
-            let cobrosDetalle = $scope.cobrosDetalle.filter(item => (item.abono > 0))
-            let historialCuentas = modalCobroSvc.getHistorialCuentas();
 
 
 
-            let cuentasPorCobrarEstado = modalCobroSvc.generarCuentasPorCobrarEstado({
-                historialCuentas,
-                cobros,
-                cobrosDetalle
-            })
+                let params = comprobanteIngresoSvc.mapperTo(data);
 
-            let cuotasPorCobrarEstado = modalCobroSvc.generarCuotasPorCobrarEstado({
-                cobrosDetalle
-            })
-
-            let data = {
-                comprobante,
-                cobros,
-                cobroDetalle: cobrosDetalle,
-                historialCuentas,
-                cuentasPorCobrarEstado,
-                cuotasPorCobrarEstado
-            } 
+                showLoader();
+                comprobanteIngresoSvc.post(params).then((response) => {
+                    hideLoader();
+                    if (response.code === '0') {
+                        fS.sweetAlert('warning', response.message)
+                    }
+                    if (response.code === '1') {
+                        fS.sweetAlert('success', response.message, '', 1000)
+                        $uibModalInstance.close(response)
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error)
+                })
 
 
-
-            let params = comprobanteIngresoSvc.mapperTo(data);
-
-            showLoader();
-            comprobanteIngresoSvc.post(params).then((response) => { 
-                hideLoader();
-                if (response.code === '0') {
-                    fS.sweetAlert('warning', response.message)
-                }
-                if (response.code === '1') {
-                    fS.sweetAlert('success', response.message, '', 1000)
-                    $uibModalInstance.close(response)
-                }
-            }).catch(error => {
-                hideLoader();
-                console.log(error)
-            })
-
-
+            }
+        } catch (error) {
+            console.log(error)
+            hideLoader();
         }
 
     }

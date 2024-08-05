@@ -257,7 +257,7 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                     modalCobroSvc.setValorAbono($scope.cobro.valorAbono);
 
                     for (let item of $scope.selectedDocumentos) {
-                        item.cuotas = JSON.parse(JSON.stringify(item.cuotasCalculadasClone))
+                        item.cuotasCalculadas = JSON.parse(JSON.stringify(item.cuotasCalculadasClone))
                     }
 
                     modalCobroSvc.setCobrosDetalle([]);
@@ -297,21 +297,22 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                     }
 
                     const params = comprobanteIngresoSvc.mapperTo(data);
+                    console.log(params)
 
-                    showLoader(); 
-                    comprobanteIngresoSvc.post(params).then(response => {
-                        hideLoader();
-                        if (response.code === '0') {
-                            fS.sweetAlert('warning', response.message)
-                        }
-                        if (response.code === '1') {
-                            fS.sweetAlert('success', response.message, '', 1000)
-                            $uibModalInstance.close(response)
-                        }
-                    }).catch(error => {
-                        hideLoader();
-                        console.log(error)
-                    })
+                    // showLoader(); 
+                    // comprobanteIngresoSvc.post(params).then(response => {
+                    //     hideLoader();
+                    //     if (response.code === '0') {
+                    //         fS.sweetAlert('warning', response.message)
+                    //     }
+                    //     if (response.code === '1') {
+                    //         fS.sweetAlert('success', response.message, '', 1000)
+                    //         $uibModalInstance.close(response)
+                    //     }
+                    // }).catch(error => {
+                    //     hideLoader();
+                    //     console.log(error)
+                    // })
                 } catch (error) {
                     hideLoader();
                     console.log(error)

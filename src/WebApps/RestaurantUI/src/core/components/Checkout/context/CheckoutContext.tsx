@@ -528,9 +528,9 @@ export const CheckoutProvider = ({ children }: Props) => {
                     idCuentaPorCobrar: detalle.idCuentaPorCobrar,
                     idCuotaPorCobrar: detalle.idCuotaPorCobrar,
                     abono: detalle.abono,
-                    interes: detalle.interes,
-                    diasMora: detalle.diasMora,
-                    mora: detalle.mora,
+                    interes: detalle.interes || 0,
+                    diasMora: detalle.diasMora || 0,
+                    mora: detalle.mora || 0,
                     cuota: detalle.cuota,
                     saldo: detalle.saldoOriginal,
                     secuencial: detalle.secuencial,
@@ -543,8 +543,8 @@ export const CheckoutProvider = ({ children }: Props) => {
                 return {
                     idCuentaPorCobrar: hc.idCuentaPorCobrar,
                     abono: RoundNumber(hc.abono, 5),
-                    diasMora: hc.diasMora,
-                    mora: hc.mora,
+                    diasMora: hc.diasMora || 0,
+                    mora: hc.mora || 0,
                     saldo: RoundNumber(hc.saldo, 5),
                     secuencial: hc.secuencial
                 }
@@ -559,13 +559,33 @@ export const CheckoutProvider = ({ children }: Props) => {
                 cobrosDetalle: paymentDetails
             })
 
+            const cuenta = cuentasPorCobrarEstado.map(item=>{
+                return {
+                    idCuentaPorCobrar: item.idCuentaPorCobrar,
+                    idEstadoPago: item.idEstadoPago,
+                    abono: item.abono,
+                    diasMora: 0,
+                    mora: 0,
+                    interes: 0,
+                }
+            })
+            const cuota = cuotasPorCobrarEstado.map(item=>{
+                return {
+                    idEstadoPago: item.idEstadoPago,
+                    abono: item.abono,
+                    idCuotaPorCobrar: item.idCuotaPorCobrar,
+                    diasMora: 0,
+                    mora: 0
+                }
+            })
+
             const data = {
                 comprobante,
                 cobros,
                 cobroDetalle: cobroDetalleMappeado,
                 historial: historialCobrosMappeado,
-                cuenta: cuentasPorCobrarEstado,
-                cuota: cuotasPorCobrarEstado
+                cuenta,
+                cuota
             }
             if (cuentasPorCobrarEstado.length === 0 || cuotasPorCobrarEstado.length===0){
                 console.log('cuentasPorCobrarEstado', cuentasPorCobrarEstado)

@@ -269,8 +269,7 @@ app.component("appCuentaPorCobrarComponent", {
             Promise.all(promises)
                 .then(results => {
                     hideLoader();
-                    let mergeWithCuotas = mergeCuotas(selectedDocumentos, results);
-                    console.log(mergeWithCuotas)
+                    let mergeWithCuotas = mergeCuotas(selectedDocumentos, results); 
                     openModalCobroLote(mergeWithCuotas);
                 })
                 .catch(error => {
