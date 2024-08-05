@@ -1,36 +1,43 @@
 USE Acontplus
 GO
+----ANALIZAR BIEN EN PRODUCCION ANTES DE EJECUTAR
+---*****
+--select * from dbo.usuario where nombrecompleto is null
+--select * from dbo.usuario where nroIdentificacion is null
+--delete indexes usuario/indexes and views
 
---update u SET u.nroIdentificacion = ur.nroIdentificacion 
---FROM dbo.usuario u
---	INNER JOIN App.UsuarioRol ur ON u.idUsuario = ur.idUsuario
---WHERE u.nroIdentificacion IS NULL OR LEN(LTRIM(RTRIM(u.nroIdentificacion))) = 0
---ALTER TABLE Acontplus.App.UsuarioRol ALTER COLUMN nroIdentificacion VARCHAR(25) NULL
+IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Usuario_Rol')   
+    DROP INDEX IX_Usuario_Rol ON App.UsuarioRol;  
+GO
 
-GO 
+IF EXISTS (SELECT 1 
+           FROM sys.columns 
+           WHERE Name = N'nroIdentificacion' AND Object_ID = Object_ID(N'dbo.Usuario'))
+BEGIN
+    update u SET u.nroIdentificacion = ur.nroIdentificacion 
+    FROM dbo.usuario u WITH(ROWLOCK)
+	    INNER JOIN App.UsuarioRol ur WITH(NOLOCK) ON u.idUsuario = ur.idUsuario
+    WHERE u.nroIdentificacion IS NULL OR LEN(LTRIM(RTRIM(u.nroIdentificacion))) = 0
+end
+GO
+
+UPDATE u SET u.fechaRegistro = ur.fechaRegistro
+FROM Acontplus.dbo.Usuario u WITH(ROWLOCK)
+INNER JOIN Acontplus.App.UsuarioRol ur ON u.idUsuario = ur.idUsuario
+WHERE u.fechaRegistro IS NULL
+GO
+
 ALTER TABLE App.UsuarioRol ALTER COLUMN idUsuario INT NOT NULL
 GO
 
 ALTER TABLE App.UsuarioRol ALTER COLUMN idEntidad INT NOT NULL
 GO
-
-ALTER TABLE Acontplus.App.UsuarioRol ADD fromMobile BIT NULL
-GO
-
-IF EXISTS (SELECT 1 
+IF NOT EXISTS (SELECT 1 
            FROM sys.columns 
-           WHERE Name = N'nroIdentificacion' AND Object_ID = Object_ID(N'App.UsuarioRol'))
-BEGIN
-	ALTER TABLE Acontplus.App.UsuarioRol alter column nroIdentificacion VARCHAR(25) NULL
-END
-GO
-
-IF EXISTS (SELECT 1 
-           FROM sys.columns 
-           WHERE Name = N'ruc' AND Object_ID = Object_ID(N'App.UsuarioRol'))
-BEGIN
-	ALTER TABLE Acontplus.App.UsuarioRol alter column ruc VARCHAR(25) NULL
-END
+           WHERE Name = N'fromMobile' AND Object_ID = Object_ID(N'App.UsuarioRol'))
+	BEGIN
+        ALTER TABLE Acontplus.App.UsuarioRol ADD fromMobile BIT NULL
+    END
 GO
 
 DECLARE @sql NVARCHAR(MAX);
@@ -42,8 +49,6 @@ BEGIN
     SET @sql = 'ALTER TABLE Acontplus.App.UsuarioRol DROP COLUMN codigo';
     EXEC sp_executesql @sql;
 END
-
-
 GO
 
 IF NOT EXISTS (SELECT 1 
@@ -77,37 +82,41 @@ IF NOT EXISTS (SELECT 1
 		ALTER TABLE Acontplus.dbo.Usuario ADD customerId INT NULL; 
 	END
 GO
-
-UPDATE u SET u.customerId = c.Id
-FROM Acontplus.dbo.Usuario u WITH(ROWLOCK)
-INNER JOIN Acontplus.Customer.Customer c WITH(NOLOCK) ON LTRIM(RTRIM(u.nroIdentificacion)) = c.IDCard
-WHERE customerId IS NULL
+IF EXISTS (SELECT 1 
+           FROM sys.columns 
+           WHERE Name = N'nroIdentificacion' AND Object_ID = Object_ID(N'dbo.Usuario'))
+BEGIN
+    UPDATE u SET u.customerId = c.Id
+    FROM Acontplus.dbo.Usuario u WITH(ROWLOCK)
+    INNER JOIN Acontplus.Customer.Customer c WITH(NOLOCK) ON LTRIM(RTRIM(u.nroIdentificacion)) = c.IDCard
+    WHERE customerId IS NULL
+END
 GO
 
 IF EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.Usuario  WHERE customerId IS NULL)
 	BEGIN
-
-INSERT INTO Acontplus.Customer.Customer([IDType], [IDCard], [BusinessName], [Email], [CreatedAt])
-	SELECT CASE WHEN LEN(LTRIM(RTRIM(u.nroIdentificacion))) = 10 THEN '05'
-			WHEN LEN(LTRIM(RTRIM(u.nroIdentificacion))) = 13 THEN '04'
-			ELSE '06'
-			END,
-			nroIdentificacion,
-			nombreCompleto,
-			correo,
-			fechaRegistro
-	FROM Acontplus.dbo.Usuario u 
-	WHERE customerId IS NULL
-END
+    INSERT INTO Acontplus.Customer.Customer([IDType], [IDCard], [BusinessName], [Email], [CreatedAt])
+	    SELECT CASE WHEN LEN(LTRIM(RTRIM(u.nroIdentificacion))) = 10 THEN '05'
+			    WHEN LEN(LTRIM(RTRIM(u.nroIdentificacion))) = 13 THEN '04'
+			    ELSE '06'
+			    END,
+			    nroIdentificacion,
+			    nombreCompleto,
+			    correo,
+			    fechaRegistro
+	    FROM Acontplus.dbo.Usuario u 
+	    WHERE customerId IS NULL
+    END
 GO
-
-
-
-
-UPDATE u SET u.customerId = c.Id
-FROM Acontplus.dbo.Usuario u WITH(ROWLOCK)
-INNER JOIN Acontplus.Customer.Customer c WITH(NOLOCK) ON LTRIM(RTRIM(u.nroIdentificacion)) = c.IDCard
-WHERE customerId IS NULL
+IF EXISTS (SELECT 1 
+           FROM sys.columns 
+           WHERE Name = N'nroIdentificacion' AND Object_ID = Object_ID(N'dbo.Usuario'))
+BEGIN
+    UPDATE u SET u.customerId = c.Id
+    FROM Acontplus.dbo.Usuario u WITH(ROWLOCK)
+    INNER JOIN Acontplus.Customer.Customer c WITH(NOLOCK) ON LTRIM(RTRIM(u.nroIdentificacion)) = c.IDCard
+    WHERE customerId IS NULL
+END
 GO
 
 IF NOT EXISTS (
@@ -123,34 +132,40 @@ BEGIN
 END
 GO
 
---ALTER TABLE Acontplus.dbo.Usuario ALTER COLUMN customerId INT NULL
---GO
+IF NOT EXISTS (SELECT 1 FROM Acontplus.dbo.usuario WHERE customerId IS NULL)
+    BEGIN
+        IF EXISTS (SELECT 1 
+                   FROM sys.columns 
+                   WHERE Name = N'nombreCompleto' AND Object_ID = Object_ID(N'dbo.Usuario'))
+        BEGIN
+             ALTER TABLE Acontplus.dbo.Usuario DROP COLUMN nombreCompleto;
+        END
+        IF EXISTS (SELECT 1 
+                   FROM sys.columns 
+                   WHERE Name = N'nroIdentificacion' AND Object_ID = Object_ID(N'dbo.Usuario'))
+        BEGIN
+             ALTER TABLE Acontplus.dbo.Usuario DROP COLUMN nroIdentificacion;
+        END
+    END
+GO
 
---IF NOT EXISTS (
---    SELECT 1
---    FROM sys.indexes
---    WHERE name = 'IX_Users_CustomerId'
---)
---BEGIN
---    CREATE UNIQUE INDEX IX_Users_CustomerId
---    ON Acontplus.dbo.Usuario(customerId);
---END
+IF EXISTS (SELECT 1 
+           FROM sys.columns 
+           WHERE Name = N'ruc' AND Object_ID = Object_ID(N'App.UsuarioRol'))
+BEGIN
+	ALTER TABLE Acontplus.App.UsuarioRol DROP column ruc
+END
+GO
 
 
 IF EXISTS (SELECT 1 
            FROM sys.columns 
-           WHERE Name = N'nombreCompleto' AND Object_ID = Object_ID(N'dbo.Usuario'))
+           WHERE Name = N'nroIdentificacion' AND Object_ID = Object_ID(N'App.UsuarioRol'))
 BEGIN
-     ALTER TABLE Acontplus.dbo.Usuario DROP COLUMN nombreCompleto;
+	ALTER TABLE Acontplus.App.UsuarioRol DROP column nroIdentificacion
 END
 GO
-IF EXISTS (SELECT 1 
-           FROM sys.columns 
-           WHERE Name = N'nroIdentificacion' AND Object_ID = Object_ID(N'dbo.Usuario'))
-BEGIN
-     ALTER TABLE Acontplus.dbo.Usuario DROP COLUMN nroIdentificacion;
-END
-GO
+
 
 IF EXISTS (
     SELECT 1 FROM sys.default_constraints
@@ -164,12 +179,6 @@ BEGIN
 	DEFAULT GETDATE() 
 	FOR fechaRegistro
 END
-GO
-
-UPDATE u SET u.fechaRegistro = ur.fechaRegistro
-FROM Acontplus.dbo.Usuario u WITH(ROWLOCK)
-INNER JOIN Acontplus.App.UsuarioRol ur ON u.idUsuario = ur.idUsuario
-WHERE u.fechaRegistro IS NULL
 GO
 
 DROP PROC IF EXISTS App.Usuario_Get

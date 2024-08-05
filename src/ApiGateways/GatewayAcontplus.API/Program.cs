@@ -1,8 +1,8 @@
 ﻿using Autofac.Extensions.DependencyInjection;
 using Common.AppSettings;
-using Common.Core.Utils;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -54,9 +54,25 @@ builder.Services
                .AddHealthChecks()
                .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
-builder.Services.AddScoped<ICustomLogger, CustomLogger>();
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+});
+
+builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+{
+    options.Level = System.IO.Compression.CompressionLevel.Fastest;
+});
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+    options.Level = System.IO.Compression.CompressionLevel.SmallestSize;
+});
 
 var app = builder.Build();
+
+app.UseResponseCompression();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
