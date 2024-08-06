@@ -78,4 +78,20 @@ public class ConsolidacionController : BaseApiController
             ;
         return Ok(response);
     }
+
+
+    [HttpPost("Importacion")]
+    public async Task<IActionResult> Importacion(ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetUserRoleId() }, 
+                { "json", DataConverters.SerializeDictionary(data.Data) }
+            };
+
+        var response = await _service.GetAsync(parameters); 
+        return Ok(response);
+    }
+
+
 }
