@@ -53,6 +53,8 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.save = save;
 
 
+    modalCobroSvc.clearData();
+
 
     function resetData() {
         $scope.cobro.valorAbono = $scope.comprobante.saldo;
@@ -296,23 +298,23 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                         cuotasPorCobrarEstado
                     }
 
-                    const params = comprobanteIngresoSvc.mapperTo(data);
+                    const params = comprobanteIngresoSvc.mapperTo(data); 
                     console.log(params)
 
-                    // showLoader(); 
-                    // comprobanteIngresoSvc.post(params).then(response => {
-                    //     hideLoader();
-                    //     if (response.code === '0') {
-                    //         fS.sweetAlert('warning', response.message)
-                    //     }
-                    //     if (response.code === '1') {
-                    //         fS.sweetAlert('success', response.message, '', 1000)
-                    //         $uibModalInstance.close(response)
-                    //     }
-                    // }).catch(error => {
-                    //     hideLoader();
-                    //     console.log(error)
-                    // })
+                    showLoader(); 
+                    comprobanteIngresoSvc.post(params).then(response => {
+                        hideLoader();
+                        if (response.code === '0') {
+                            fS.sweetAlert('warning', response.message)
+                        }
+                        if (response.code === '1') {
+                            fS.sweetAlert('success', response.message, '', 1000)
+                            $uibModalInstance.close(response)
+                        }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error)
+                    })
                 } catch (error) {
                     hideLoader();
                     console.log(error)
