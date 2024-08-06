@@ -58,7 +58,7 @@ public class AccountController(
                             Username = userData[0].Username,
                             UserRoleId = userData[0].UserRoleId,
                             UserAgent = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).userAgent,
-                            IpAddress = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).ipAddress,
+                            IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).ipAddress),
                             Token = token.Token,
                             TokenExpiration = token.Expires
                         };
@@ -121,7 +121,7 @@ public class AccountController(
             var loginFailed = new LoginFailed
             {
                 UserAgent = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).userAgent,
-                IpAddress = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).ipAddress,
+                IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).ipAddress),
                 Username = authRequest.Username,
                 Password = authRequest.Password
             };
@@ -148,7 +148,7 @@ public class AccountController(
             Username = userData.Username,
             UserRoleId = userData.UserRoleId,
             UserAgent = UserAgentHelper.SummarizeUserAgent(userData.UserAgent).userAgent,
-            IpAddress = UserAgentHelper.SummarizeUserAgent(userData.UserAgent).ipAddress,
+            IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper.SummarizeUserAgent(userData.UserAgent).ipAddress),
             Token = token.Token,
             TokenExpiration = token.Expires
         };

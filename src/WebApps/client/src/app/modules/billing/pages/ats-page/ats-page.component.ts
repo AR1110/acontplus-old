@@ -1,53 +1,42 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
-import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
-import { formatDateMoment } from "@core/utils/format-date-moment";
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { formatDateMoment } from '@core/utils/format-date-moment';
 import { AtsService } from '@modules/billing/services/ats.service';
 import moment from 'moment';
 
 @Component({
   selector: 'app-ats-page',
   standalone: true,
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-     DateRangeSelectionComponent
-  ],
+  imports: [FormsModule, BreadcrumbComponent, DateRangeSelectionComponent],
   templateUrl: './ats-page.component.html',
-  styles: ``
+  styles: ``,
 })
 export class AtsPageComponent {
-
   atsSvc = inject(AtsService);
 
-  fromDate: any = moment().subtract(1, 'month').startOf('month')
-  toDate: any = moment().subtract(1, 'month').endOf('month')
+  fromDate: any = moment().subtract(1, 'month').startOf('month');
+  toDate: any = moment().subtract(1, 'month').endOf('month');
   dataSearch = {
     fromDate: formatDateMoment(this.fromDate),
     toDate: formatDateMoment(this.toDate),
-    semiannual: false
-  }
+    semiannual: false,
+  };
 
-  ngOnInit() { }
+  ngOnInit() {}
 
-
-   onDateRangeSelection(range: { from: string, to: string }) {
+  onDateRangeSelection(range: { from: string; to: string }) {
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
   }
+
   getAts() {
-    try {
-      let json = {
-        fromDate: this.dataSearch.fromDate,
-        toDate: this.dataSearch.toDate,
-        semiannual: this.dataSearch.semiannual
-      }
-      this.atsSvc.download(json)
-
-    } catch (error) {
-      console.log(error)
-    }
+    const json = {
+      fromDate: this.dataSearch.fromDate,
+      toDate: this.dataSearch.toDate,
+      semiannual: this.dataSearch.semiannual,
+    };
+    this.atsSvc.download(json);
   }
-
 }
