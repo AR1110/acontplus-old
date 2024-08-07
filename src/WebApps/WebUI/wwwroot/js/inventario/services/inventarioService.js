@@ -447,8 +447,8 @@
             })
         }
 
-        
-        function mappedProductImportacion(products){
+
+        function mappedProductImportacion(products) {
             return products.map(item => {
                 const { principal, fraccionado, ...restItem } = item;
                 const medidas = fS.processAndSortMeasures(principal, fraccionado);
@@ -495,37 +495,57 @@
                 if (response !== null && typeof response === 'object') {
                     let mainData = response.articulos;
 
-                    articulos = mappedProductImportacion(mainData) 
+                    articulos = mappedProductImportacion(mainData)
                 }
                 return { articulos };
             })
         }
 
 
-        function getProductsValidateImport(obj){
-            let data = {
-                ...obj,
-                tipo: 6
+        function getProductsValidateImport(obj) {
+            // let data = {
+            //     ...obj,
+            //     tipo: 6
+            // }
+
+            // return mS.getData('post', `${url}Importacion`, {data}, true).then(response=>{
+            //     let articulos = [];
+            //     let noVinculados=[]
+
+            //     if (response !== null && typeof response === 'object') {
+            //         let mainData = response.articulos;
+
+            //         articulos = mappedProductImportacion(mainData);
+
+            //         noVinculados = response.noVinculados || [];
+
+
+            //     }
+            //     return { 
+            //         articulos,
+            //         noVinculados
+            //      };
+            // })
+
+            const data = {
+                jsonParams: JSON.stringify(obj)
             }
 
-            return mS.getData('post', `${url}Importacion`, {data}, true).then(response=>{
-                let articulos = [];
-                let noVinculados=[]
 
-                if (response !== null && typeof response === 'object') {
-                    let mainData = response.articulos;
-
-                    articulos = mappedProductImportacion(mainData);
-
-                    noVinculados = response.noVinculados || [];
-
-
+            return mS.getData('post', 'Config/Importacion/GetValidation/EX', data).then(response => {
+                let resultData = {
+                    noVinculados: [],
+                    articulos: []
                 }
-                return { 
-                    articulos,
-                    noVinculados
-                 };
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let { articulos, noVinculados } = mainData[0];
+                    resultData.noVinculados = noVinculados;
+                    resultData.articulos = articulos;
+                }
+                return resultData;
             })
+
 
         }
 
@@ -615,7 +635,7 @@
 
                         const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
                         let precioCostoFraccionado = 0, conversion = 1;
-                        if(dataMedida){
+                        if (dataMedida) {
                             restItem.conversion = dataMedida.conversion;
                             restItem.medidas = medidas;
                             precioCostoFraccionado = dataMedida.precioCostoFraccionado
@@ -700,17 +720,17 @@
 
 
 
-    /**
-     * TRANSFERENCIA BODEGA 
-     * 
-     */
+/**
+ * TRANSFERENCIA BODEGA 
+ * 
+ */
 
 
 (function () {
 
     'use strict';
 
-    app.factory('transferenciaBodegaService',['$injector', function ($injector) {
+    app.factory('transferenciaBodegaService', ['$injector', function ($injector) {
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
         let url = 'Inventario/TransferenciaBodega/';
