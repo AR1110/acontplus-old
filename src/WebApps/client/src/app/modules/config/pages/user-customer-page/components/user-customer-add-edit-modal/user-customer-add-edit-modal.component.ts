@@ -15,7 +15,7 @@ import { UserCustomerService } from '@modules/config/services/user-customer/user
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { AuthService, UserData } from '@modules/auth/services/auth.service';
+import { AuthService } from '@modules/auth/services/auth.service';
 
 @Component({
   selector: 'app-user-customer-add-edit-modal',
@@ -27,6 +27,7 @@ export class UserCustomerAddEditModalComponent {
   @Input() params = {
     idUsuario: 0,
     email: '',
+    username: '',
     firstName: null,
     lastName: null,
     nroIdentificacion: null,
@@ -37,7 +38,7 @@ export class UserCustomerAddEditModalComponent {
   dataForm!: FormGroup;
   roles: Role[] = [];
   modalIcon: IconProp = 'plus';
-  user = {} as UserData;
+  // user = {} as UserData;
   protected modal = inject(NgbActiveModal);
   protected tS = inject(ToasterService);
   private userCustomerSvc = inject(UserCustomerService);
@@ -52,14 +53,15 @@ export class UserCustomerAddEditModalComponent {
       },
     });
     const decodedToken = this.#authSvc.getDecodedToken();
-    if (decodedToken) {
-      this.user = decodedToken;
-    }
+    // if (decodedToken) {
+    //   this.user = decodedToken;
+    // }
     if (this.params.idUsuario > 0) {
       this.modalIcon = 'edit';
       this.titleModal = 'Editar Usuario';
       this.dataForm = this.fb.group({
         email: ['', [Validators.required, Validators.email]],
+        username: ['', Validators.required],
         nroIdentificacion: [
           '',
           [Validators.required, Validators.minLength(10)],
@@ -70,6 +72,7 @@ export class UserCustomerAddEditModalComponent {
       });
 
       this.dataForm.get('email')?.setValue(this.params.email);
+      this.dataForm.get('username')?.setValue(this.params.username);
       this.dataForm
         .get('nroIdentificacion')
         ?.setValue(this.params.nroIdentificacion);
@@ -80,7 +83,7 @@ export class UserCustomerAddEditModalComponent {
       this.dataForm = this.fb.group(
         {
           email: ['', [Validators.required, Validators.email]],
-          nombreUsuario: ['', Validators.required],
+          username: ['', Validators.required],
           nroIdentificacion: [''],
           firstName: [''],
           lastName: [''],
@@ -134,7 +137,6 @@ export class UserCustomerAddEditModalComponent {
     };
 
     if (this.params.idUsuario > 0) {
-      Object.assign(data, { username: this.user.username });
       this.userCustomerSvc
         .put(this.params.idUsuario, data)
         .subscribe((response) => {
