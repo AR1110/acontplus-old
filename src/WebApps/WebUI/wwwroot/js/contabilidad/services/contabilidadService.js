@@ -1489,20 +1489,22 @@
                         };
                     });
 
-                    let saldoActualDoc = fS.instanceDecimal(0);
+                    let saldoActualDoc = 0;
                     let diasMoraActual = 0;
                     let interesPorMoraActual = fS.instanceDecimal(0);
                     let interesActual = fS.instanceDecimal(0);
                     for (let cc of cuotasCalculadas) {
-                        saldoActualDoc = saldoActualDoc.plus(cc.saldoTotalActual);
+                        saldoActualDoc = fS.plus(saldoActualDoc, cc.saldoTotalActual, 5);
                         diasMoraActual += cc.diasMoraActual;
                         interesPorMoraActual = interesPorMoraActual.plus(cc.interesPorMoraActual);
                         interesActual = interesActual.plus(cc.interesActual)
                     }
 
+                    let decimalSaldo = fS.contarDecimales(documento.saldo)
+
                     return {
                         ...documento,
-                        saldoActualDoc: saldoActualDoc.toNumber(),
+                        saldoActualDoc: fS.roundNumber(saldoActualDoc, decimalSaldo) ,
                         cuotasCalculadas: structuredClone(cuotasCalculadas),
                         cuotasCalculadasClone: structuredClone(cuotasCalculadas),
                         diasMoraActual,
@@ -1511,6 +1513,7 @@
 
                     };
                 });
+                console.log(resultados)
 
                 return resultados;
             }
