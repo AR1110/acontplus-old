@@ -45,6 +45,8 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.save = save;
     $scope.closeModal = closeModal;
 
+    modalCobroSvc.clearData();
+
     initiateLoad();
     function initiateLoad() {
         try {
@@ -270,7 +272,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
             let abonoCuota = modalCobroSvc.getAbonoCuota();
-
+            console.log(abonoCuota)
 
 
             addDatosCobro(result, abonoCuota);
@@ -533,7 +535,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
                 let params = comprobanteIngresoSvc.mapperTo(data);
-
+                console.log(params)
                 showLoader();
                 comprobanteIngresoSvc.post(params).then((response) => {
                     hideLoader();
@@ -541,8 +543,9 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         fS.sweetAlert('warning', response.message)
                     }
                     if (response.code === '1') {
-                        fS.sweetAlert('success', response.message, '', 1000)
-                        $uibModalInstance.close(response)
+                        fS.sweetAlert('success', response.message, '', 1000);                        
+                        $uibModalInstance.close(response);
+                         
                     }
                 }).catch(error => {
                     hideLoader();
@@ -558,8 +561,8 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
     }
 
-    function closeModal() {
-        $uibModalInstance.close();
+    function closeModal() {        
+        $uibModalInstance.close(); 
     }
 
 

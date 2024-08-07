@@ -1110,14 +1110,16 @@
     advancedSearchCtrl.$inject = [
         "$scope",
         "$uibModalInstance", 
+        "toastService",
         "params"
     ]
-    function advancedSearchCtrl($scope, $uibModalInstance, params) {
+    function advancedSearchCtrl($scope, $uibModalInstance, tS, params) {
         const {idBodega, bodegas} = params;
 
         $scope.mainForm = {
             idBodega: idBodega,
-            descripcionBodega: bodegas.find(b=>b.idBodega===idBodega).descripcion
+            descripcionBodega: bodegas.find(b=>b.idBodega===idBodega).descripcion,
+            selectedFile: []
         };
 
         
@@ -1128,13 +1130,11 @@
             { code: 4, description: 'Proveedor' },
             { code: 5, description: 'N° Documento' },
             { code: 6, description: 'Artículos Importados' },
+            
         ]
         $scope.subfamilias = mainDataForm.subFamilias;
         $scope.articlesSelected = [];
-        $scope.articlesFounded = [];
-
-
-        
+        $scope.articlesFounded = []; 
         
         $scope.mainForm.opcion = $scope.catalogs.find(x => x.code == '4').code;
 
@@ -1143,7 +1143,20 @@
 
         }
 
-        $scope.onChangeOption = function(){
+        $scope.articulosNotFounded = [];
+
+        $scope.onChangeOption = onChangeOption;
+        $scope.onKeyupProveedor = onKeyupProveedor;
+        $scope.onSelectProveedor = onSelectProveedor;
+        $scope.onKeyupArticle = onKeyupArticle;
+        $scope.onSelectArticle = onSelectArticle;
+        $scope.getArticles = getArticles;
+        $scope.setArticlesSelected = setArticlesSelected;
+        $scope.closeAdvancedSearch = closeAdvancedSearch;
+        $scope.subirArchivo = subirArchivo;
+        $scope.showArticuloNoVinculado = showArticuloNoVinculado;
+
+        function onChangeOption(){
             $scope.mainForm.rucProveedor = null;
             $scope.mainForm.idArticulo = 0;
             if ($scope.mainForm.opcion===6){
@@ -1151,30 +1164,118 @@
             }
         }
 
-        $scope.onKeyupProveedor = function () {
+        function onKeyupProveedor () {
             if (!$scope.proveedor.nombreProveedor) {
                 $scope.mainForm.rucProveedor = null;
             }
         }
-        $scope.onSelectProveedor = function (item) {
+        function onSelectProveedor (item) {
             $scope.mainForm.rucProveedor = item.numeroIdentificacion
             $scope.getArticles()
         }
 
-        $scope.onKeyupArticle = function () {
+        function onKeyupArticle () {
             if ($scope.articuloSearch.nombreArticulo) {
                 $scope.mainForm.idArticulo = 0;
             }
         }
-        $scope.onSelectArticle = function (item) { 
+        function onSelectArticle(item) { 
             $scope.mainForm.idArticulo = item.idArticulo
             $scope.getArticles()
         }
 
 
-        $scope.getArticles = () => {
+        //importacion archivo  
+        function subirArchivo()     {
+            let formatFile = [{
+                "name": "jayanth",
+                "data": "scd",
+                "abc": "sdef"
+            }]
+            $scope.articulosNotFounded = [];
+
+
+            let {files} = document.getElementById('selectedFile');
+
+            if(files.length===0){
+                tS.toastr({
+                    type: 'warning',
+                    message: 'Seleccione el archivo de tipo formato excel'
+                })
+                return 
+            } 
+
+            try {
+                XLSX.utils.json_to_sheet(formatFile, 'out.xlsx');
+                let fileReader = new FileReader();
+                fileReader.readAsBinaryString(files[0]);
+
+                fileReader.onload = (event) => {
+                    let data = event.target.result;
+                    let workbook = XLSX.read(data, { type: "binary", cellDates: true });
+                
+
+                    workbook.SheetNames.forEach(async sheetName => {
+
+                        let product = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]); 
+                        
+                        getProductsValidateImport({
+                            product
+                        })
+ 
+                    })
+
+                }      
+
+            } catch (error) {
+                console.log(error)
+            }
+
+        }
+
+        function getProductsValidateImport(obj){
+            consolidacionInvSvc.getProductsValidateImport(obj).then(response=>{
+                $scope.articlesFounded = response.articulos;
+                $scope.articulosNotFounded = response.noVinculados;
+            })
+        }
+
+        function showArticuloNoVinculado(){
+            let html = `<div class="table-responsive">
+                    <table class="table table-hover table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th><small>N°</small></th>                              
+                                <th><small>Código</small></th>                              
+                                <th><small>Cantidad</small></th> 
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            let index = 1;
+            for (let item of $scope.articulosNotFounded) {
+                html += ` <tr>
+                        <td>${index++}</td>
+                        <td>${item.codigo}</td>
+                        <td>${item.cantidad}</td> 
+                    </tr>
+                `
+            }
+            html += '</tbody></table></div>'
+            Swal.fire({
+                title: '<small>Artículo No Vinculados</small>',
+                icon: 'info',
+                html,
+                width: 700
+            })
+
+        }
+
+        function getArticles(){
             try {
                 showLoader();
+                $scope.articulosNotFounded = [];
+
 
                 let dataSearch = {
                     idArticulo: fS.isValidField($scope.mainForm.idArticulo),
@@ -1201,14 +1302,14 @@
             }
         }
 
-        $scope.setArticlesSelected = () => {
+        function setArticlesSelected () {
             $uibModalInstance.close({
                 articlesSelected: $scope.articlesSelected,
                 opcion: $scope.mainForm.opcion
             })
         }
 
-        $scope.closeAdvancedSearch = () => {
+        function closeAdvancedSearch  (){
             $uibModalInstance.close()
         }
     } 

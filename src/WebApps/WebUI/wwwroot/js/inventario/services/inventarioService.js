@@ -399,6 +399,7 @@
             getDataForm,
             getAll,
             getProducts,
+            getProductsValidateImport,
             generateSerieComprobante,
             mapTo,
             post,
@@ -446,6 +447,44 @@
             })
         }
 
+        
+        function mappedProductImportacion(products){
+            return products.map(item => {
+                const { principal, fraccionado, ...restItem } = item;
+                const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
+                const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
+
+
+
+                return {
+                    idArticulo: restItem.idArticulo,
+                    codigo: restItem.codigo,
+                    codigoAuxiliar: restItem.codigoAuxiliar,
+                    codigoBarra: restItem.codigoBarra,
+                    descripcion: restItem.descripcion,
+                    stock: restItem.stock,
+                    precioCosto: restItem.precioCosto,
+                    // precioUnitario: restItem.precioUnitario,
+
+                    // precioCosto: dataMedida.precioCosto,
+                    precioUnitario: dataMedida.precioUnitario,
+                    precioActual: dataMedida.precioActual,
+                    precioCostoFraccionado: dataMedida.precioCostoFraccionado,
+                    estado: restItem.estado,
+                    iva: restItem.iva,
+                    cantidad: restItem.cantidad,
+                    llevaInventario: restItem.llevaInventario,
+                    idMedida: restItem.idMedida,
+                    medida: restItem.medida,
+                    nombreTipoIva: restItem.nombreTipoIva,
+                    medidas,
+                    conversion: dataMedida.conversion
+
+                }
+            })
+        }
+
         function getProducts(obj) {
             const json = JSON.stringify({
                 ...obj,
@@ -456,44 +495,40 @@
                 if (response !== null && typeof response === 'object') {
                     let mainData = response.articulos;
 
-                    articulos = mainData.map(item => {
-                        const { principal, fraccionado, ...restItem } = item;
-                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
-
-                        const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
-
-
-
-                        return {
-                            idArticulo: restItem.idArticulo,
-                            codigo: restItem.codigo,
-                            codigoAuxiliar: restItem.codigoAuxiliar,
-                            codigoBarra: restItem.codigoBarra,
-                            descripcion: restItem.descripcion,
-                            stock: restItem.stock,
-                            precioCosto: restItem.precioCosto,
-                           // precioUnitario: restItem.precioUnitario,
-
-                           // precioCosto: dataMedida.precioCosto,
-                           precioUnitario: dataMedida.precioUnitario,
-                            precioActual: dataMedida.precioActual,
-                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
-                            estado: restItem.estado,
-                            iva: restItem.iva,
-                            cantidad: restItem.cantidad,
-                            llevaInventario: restItem.llevaInventario,
-                            idMedida: restItem.idMedida,
-                            medida: restItem.medida,
-                            nombreTipoIva: restItem.nombreTipoIva,
-                            medidas,
-                            conversion: dataMedida.conversion
-
-                        }
-                    })
+                    articulos = mappedProductImportacion(mainData) 
                 }
                 return { articulos };
             })
         }
+
+
+        function getProductsValidateImport(obj){
+            let data = {
+                ...obj,
+                tipo: 6
+            }
+
+            return mS.getData('post', `${url}Importacion`, {data}, true).then(response=>{
+                let articulos = [];
+                let noVinculados=[]
+
+                if (response !== null && typeof response === 'object') {
+                    let mainData = response.articulos;
+
+                    articulos = mappedProductImportacion(mainData);
+
+                    noVinculados = response.noVinculados || [];
+
+
+                }
+                return { 
+                    articulos,
+                    noVinculados
+                 };
+            })
+
+        }
+
 
         function generateSerieComprobante(obj) {
             const json = JSON.stringify({
