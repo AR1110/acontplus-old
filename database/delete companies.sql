@@ -1,4 +1,22 @@
-DECLARE @uuid UNIQUEIDENTIFIER = 'BAD284A0-3F63-485B-A806-E337909C32F4'
+DECLARE @uuid UNIQUEIDENTIFIER = '159BC280-7E35-490A-9E9A-FDC1F116AD84'
+
+DELETE pea FROM Acontplus.Config.PtoEmi_Asig pea WITH (ROWLOCK)
+INNER JOIN  Acontplus.dbo.PuntoEmision pe WITH (NOLOCK) ON pea.idPuntoEmision = pe.idPuntoEmision
+INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON pe.idEstablecimiento = e.idEstablecimiento
+INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
+WHERE en.Uuid = @uuid
+
+DELETE ba FROM Acontplus.Config.Bodeg_Asig ba WITH (ROWLOCK)
+INNER JOIN Acontplus.dbo.Bodega b WITH (NOLOCK) ON ba.idBodega = b.idBodega
+INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON b.codEstab = e.codEstab
+INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
+WHERE en.Uuid = @uuid
+
+DELETE ea FROM Acontplus.Config.Estab_Asig ea WITH (ROWLOCK)
+INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON ea.codEstab = e.codEstab
+INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
+WHERE en.Uuid = @uuid
+
 
 DELETE sd FROM AcontplusAdmin.Sales.SuscripcionDetalle sd WITH (ROWLOCK)
 WHERE SuscripcionId in (
@@ -12,9 +30,8 @@ DELETE s FROM AcontplusAdmin.Sales.Suscripcion s WITH (ROWLOCK)
     WHERE c.Uuid = @uuid
 
 DELETE FROM AcontplusAdmin.Config.CompanyDemoStep WHERE Uuid = @uuid
- 
+
 DELETE FROM AcontplusAdmin.Config.Company WHERE Uuid  = @uuid
- 
 
 DELETE up FROM 
 Acontplus.Config.UserPermission up WITH (ROWLOCK)
@@ -26,9 +43,9 @@ DELETE ur FROM Acontplus.App.UsuarioRol ur WITH (ROWLOCK)
 INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad 
 WHERE e.Uuid = @uuid
 
-
---DELETE u FROM Acontplus.dbo.Usuario u WITH (ROWLOCK)
---WHERE u.idUsuario NOT IN (SELECT idUsuario FROM Acontplus.App.UsuarioRol WITH (NOLOCK)) and idUsuario <> 12
+DELETE u FROM Acontplus.dbo.Usuario u WITH (ROWLOCK)
+    INNER JOIN AcontplusDemo.Demo.UserCustomer uc WITH(NOLOCK) ON u.nombreUsuario = uc.Username
+WHERE uc.Uuid = @uuid
  
 DELETE s FROM Acontplus.Config.Sistema s WITH (ROWLOCK)
 INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON s.idEntidad = e.idEntidad
@@ -42,8 +59,9 @@ DELETE s FROM Acontplus.dbo.Tarifa s WITH (ROWLOCK)
 INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON s.idEntidad = e.idEntidad
 WHERE e.Uuid = @uuid
 
-DELETE pea FROM Acontplus.Config.PtoEmi_Asig pea WITH (ROWLOCK)
-INNER JOIN  Acontplus.dbo.PuntoEmision pe WITH (NOLOCK) ON pea.idPuntoEmision = pe.idPuntoEmision
+
+DELETE cd FROM Acontplus.dbo.ConfiguracionDocumento cd WITH(ROWLOCK)
+INNER JOIN Acontplus.dbo.PuntoEmision pe WITH (NOLOCK) ON cd.idPuntoEmision = pe.idPuntoEmision
 INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON pe.idEstablecimiento = e.idEstablecimiento
 INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
 WHERE en.Uuid = @uuid
@@ -58,16 +76,7 @@ INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON b.codEstab = e.codE
 INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
 WHERE en.Uuid = @uuid
 
-DELETE ea FROM Acontplus.Config.Estab_Asig ea WITH (ROWLOCK)
-INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON ea.codEstab = e.codEstab
-INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
-WHERE en.Uuid = @uuid
 
-DELETE ba FROM Acontplus.Config.Bodeg_Asig ba WITH (ROWLOCK)
-INNER JOIN Acontplus.dbo.Bodega b WITH (NOLOCK) ON ba.idBodega = b.idBodega
-INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON b.codEstab = e.codEstab
-INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
-WHERE en.Uuid = @uuid
 
 DELETE e FROM Acontplus.Sri.Establecimiento e WITH (ROWLOCK)  
 INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
