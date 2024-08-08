@@ -541,7 +541,7 @@
                     let mainData = JSON.parse(response.payload);
                     let { articulos, noVinculados } = mainData[0];
                     resultData.noVinculados = noVinculados;
-                    resultData.articulos = articulos;
+                    resultData.articulos = mappedProductImportacion(articulos);
                 }
                 return resultData;
             })

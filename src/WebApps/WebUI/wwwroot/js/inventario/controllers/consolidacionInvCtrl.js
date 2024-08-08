@@ -704,7 +704,7 @@
                     },
                     isRenderRazorPartial: true,
                     //windowClass: 'uibModalFullScreen'
-                }).result.then((result) => {
+                }).result.then((result) => { 
                 
                     if (result && Array.isArray(result.articlesSelected)) {
                         const {
@@ -717,7 +717,7 @@
                                 obj.precioUnitario = obj.precioUnitario;
                                 obj.precioCosto = obj.precioCosto;
                                 obj.precioCostoFraccionado = obj.precioCostoFraccionado;
-                                console.log(opcion)
+                          
                                 obj.cantidad = opcion && opcion===6? obj.cantidad : 1;
                                 obj.idBodega = $scope.data.idBodega;
                                 let total = obj.cantidad * obj.precioUnitario;
