@@ -1,7 +1,7 @@
 export interface UserCustomer {
   idUsuario: number;
   nroIdentificacion: string;
-  nombreUsuario: string;
+  username: string;
   email: string;
   nombreCompleto: string;
   firstName: string;

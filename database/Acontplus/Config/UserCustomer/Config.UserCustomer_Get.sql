@@ -36,6 +36,7 @@ BEGIN
 			SELECT u.idUsuario          
 				  ,c.IDCard nroIdentificacion 
 				  ,u.nombreUsuario  
+                  ,u.nombreUsuario as 'username'
 				  ,u.correo email           
                   ,ISNULL(u.firstName, '') firstName
                   ,ISNULL(u.lastName, '') lastName

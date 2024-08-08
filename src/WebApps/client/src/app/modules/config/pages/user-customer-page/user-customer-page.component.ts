@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ModalService } from '@core/services/modal.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -24,11 +23,10 @@ import { UserCustomerRoleModalComponent } from './components/user-customer-role-
   templateUrl: './user-customer-page.component.html',
 })
 export class UserCustomerPageComponent {
-  private readonly userCustomerSvc = inject(UserCustomerService);
-  private readonly modalSvc = inject(ModalService);
-
   pagination = new Pagination();
   usersCustomer: Array<UserCustomerRead> = [];
+  private readonly userCustomerSvc = inject(UserCustomerService);
+  private readonly modalSvc = inject(ModalService);
 
   getUsersCustomer() {
     let obj = {

@@ -28,7 +28,6 @@ BEGIN
         ,@nombreUsuario NVARCHAR(200)
         ,@firstName VARCHAR(50)
         ,@lastName VARCHAR(50)
-        ,@nombreCompleto NVARCHAR(500)
         ,@nroIdentificacion NVARCHAR(100) 
         ,@idEntidad INT  
         ,@roleId INT
@@ -39,18 +38,16 @@ BEGIN
 				@nombreUsuario      = LTRIM(RTRIM(js.nombreUsuario)),
 				@contrasena         = js.contrasena,
 				@nroIdentificacion  = LTRIM(RTRIM(js.nroIdentificacion)),
-				@nombreCompleto     = LTRIM(RTRIM(js.nombreCompleto)),
 				@correo             = LTRIM(RTRIM(js.correo)), 
 				@roleId             = roleId,
 				@roleCode           = roleCode,
                 @firstName          = firstName,
                 @lastName           = lastName
 		FROM OPENJSON(@json) 
-		WITH(correo NVARCHAR(200) '$.correo'
+		WITH(correo NVARCHAR(200) '$.email'
 			,contrasena NVARCHAR(200) '$.contrasena'
 			,nombreUsuario NVARCHAR(200) '$.nombreUsuario'
 			,nroIdentificacion NVARCHAR(80) '$.nroIdentificacion'
-			,nombreCompleto NVARCHAR(200) '$.nombreCompleto' 
 			,roleId INT '$.roleId'
 			,roleCode VARCHAR(10)
             ,firstName VARCHAR(50)
@@ -66,23 +63,26 @@ BEGIN
 				RETURN;
 			END 
 
-		BEGIN TRAN
-            DECLARE @userParams NVARCHAR(MAX)
+      DECLARE @userParams NVARCHAR(MAX)
             
-            SET @userParams = (SELECT '{"idCard": ' + @nroIdentificacion + 
-				', "username": ' + @nombreUsuario + 
-				', "email": "' + @correo + '"}' +
-                ', "password": "' + @contrasena + '"}' +
-                ', "fullname": "' + @nombreCompleto + '"}' +
-                ', "idEntidad": "' + @idEntidad + '"}' +
-                ', "firstName": "' + @firstName + '"}' +
-                ', "lastName": "' + @lastName + '"}' +
+            SET @userParams = (SELECT '{"idCard": "' + @nroIdentificacion + '"' +
+				', "username": "' + @nombreUsuario + '"' +
+				', "email": "' + @correo + '"' +
+                ', "password": "' + @contrasena + '"' +
+                ', "idEntidad": "' + CONVERT(VARCHAR(5),@idEntidad) + '"' +
+                ', "firstName": "' + @firstName + '"' +
+                ', "lastName": "' + @lastName + '"' +
 				', "fromMobile": "' + CONVERT(VARCHAR(5), @fromMobile) + '"}'
 				)
 
-            EXEC AcontplusAdmin.Config.UserCustomer_Insert 0, @userParams, @errorCode = @errorCode OUTPUT
-			IF (@errorCode = 1)
-				RAISERROR('sp AcontplusAdmin.Config.UserCustomer_Insert failed',16,1)
+		BEGIN TRAN
+        
+            EXEC AcontplusAdmin.Config.UserCustomer_Insert 0, @userParams, @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
+			IF (@errorCode <> 0)
+                BEGIN
+                    SET @errorMessage = 'sp AcontplusAdmin.Config.UserCustomer_Insert failed: ' + ISNULL(@errorMessage, '')
+				    RAISERROR(@errorMessage,16,1)
+                END
 
             DECLARE @userRoleParams VARCHAR(MAX)
 			,@userCustomerId INT
@@ -90,12 +90,12 @@ BEGIN
 			SET @userCustomerId = (SELECT idUsuario FROM Acontplus.dbo.Usuario WHERE nombreUsuario = @nombreUsuario)
 			SET @roleId = (SELECT TOP 1 Id FROM AcontplusAdmin.Seguridad.[Role] WHERE code = 'ADM')
 
-			SET @userRoleParams = (SELECT '{"userCustomerId": ' + CONVERT(VARCHAR, @userCustomerId) + 
-				', "roleId": ' + CONVERT(VARCHAR, @roleId) + 
-				', "companyUuid": "' + CONVERT(VARCHAR(36), @uuid) + '"}' +
+			SET @userRoleParams = (SELECT '{"userCustomerId": "' + CONVERT(VARCHAR, @userCustomerId) + '"' + 
+				', "roleId": "'+ CONVERT(VARCHAR, @roleId) + '"' + 
+				', "companyUuid": "' + CONVERT(VARCHAR(36), @uuid) + '"' +
 				', "fromMobile": "' + CONVERT(VARCHAR(5), @fromMobile) + '"}'
 				)
-			
+
  			EXEC AcontplusAdmin.Config.UserCustomerRole_Insert 0, @userRoleParams, @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
 
             IF (@errorCode <> 0)

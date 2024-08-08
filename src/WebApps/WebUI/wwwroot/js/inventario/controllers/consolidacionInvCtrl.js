@@ -1,4 +1,5 @@
 
+//@ts-check
 (function () {
     'use strict'
 
@@ -1241,7 +1242,7 @@
         }
 
         function showArticuloNoVinculado(){
-            let html = `<div class="table-responsive">
+            let html = `<div class="table-responsive" style="max-height: 400px;">
                     <table class="table table-hover table-bordered table-sm">
                         <thead>
                             <tr>

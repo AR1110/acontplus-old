@@ -175,7 +175,9 @@ export class CommonService {
             if (response.code === "0") {
                 throw response
             }
-            //return JSON.parse(response.payload) || [];
+            if(typeof response.payload==='string'){
+                return JSON.parse(response.payload) || [];
+            }
             return response || []
         })
     }

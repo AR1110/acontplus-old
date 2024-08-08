@@ -18,7 +18,7 @@ go
 
 
 UPDATE lh SET lh.userAgent = (
-SELECT 
+SELECT 'acontplus-web' as 'application',
         CONCAT(
             JSON_VALUE(UserAgent, '$.browser.name'), ' ',
             JSON_VALUE(UserAgent, '$.browser.version')
@@ -35,7 +35,7 @@ WHERE LEN(JSON_VALUE(UserAgent, '$.browser.name')) > 0
 GO
 
 UPDATE lh SET lh.userAgent = (
-		SELECT 
+		SELECT 'acontplus-web' as 'application',
         CONCAT(
 			JSON_VALUE(
 				JSON_VALUE(UserAgent, '$.userAgent'),
