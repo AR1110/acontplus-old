@@ -709,7 +709,8 @@
                     if (result && Array.isArray(result.articlesSelected)) {
                         const {
                             articlesSelected,
-                            opcion
+                            opcion,
+                            importedExcel
                         } = result;
                         for (const a of articlesSelected) {
                             if (!$scope.gridOptions.data.some(x => x.idArticulo == a.idArticulo)) {
@@ -718,7 +719,9 @@
                                 obj.precioCosto = obj.precioCosto;
                                 obj.precioCostoFraccionado = obj.precioCostoFraccionado;
                           
-                                obj.cantidad = opcion && opcion===6? obj.cantidad : 1;
+                                if (!importedExcel){
+                                    obj.cantidad = opcion && opcion===6? obj.cantidad : 1;
+                                } 
                                 obj.idBodega = $scope.data.idBodega;
                                 let total = obj.cantidad * obj.precioUnitario;
                                 obj.total = fS.roundNumber(total, $scope.decimal.nroPrecio); //Total Precio Venta
@@ -1145,6 +1148,8 @@
         }
 
         $scope.articulosNotFounded = [];
+        let importedExcel = false;
+
 
         $scope.onChangeOption = onChangeOption;
         $scope.onKeyupProveedor = onKeyupProveedor;
@@ -1235,9 +1240,11 @@
         }
 
         function getProductsValidateImport(obj){
+
             consolidacionInvSvc.getProductsValidateImport(obj).then(response=>{
                 $scope.articlesFounded = response.articulos;
                 $scope.articulosNotFounded = response.noVinculados;
+                importedExcel = true;
             })
         }
 
@@ -1276,6 +1283,7 @@
             try {
                 showLoader();
                 $scope.articulosNotFounded = [];
+                importedExcel = false;
 
 
                 let dataSearch = {
@@ -1306,7 +1314,8 @@
         function setArticlesSelected () {
             $uibModalInstance.close({
                 articlesSelected: $scope.articlesSelected,
-                opcion: $scope.mainForm.opcion
+                opcion: $scope.mainForm.opcion,
+                importedExcel
             })
         }
 
