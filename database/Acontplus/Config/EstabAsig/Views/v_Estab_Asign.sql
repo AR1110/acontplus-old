@@ -1,10 +1,19 @@
 USE AcontPlus
 GO
 
-CREATE OR ALTER VIEW v_Estab_Asign AS (
-	SELECT ea.*
+CREATE OR ALTER VIEW v_Estab_Asign WITH SCHEMABINDING AS (
+	SELECT ea.[idEstab_Asig]
+          ,ea.[codEstab_Asig]
+          ,ea.[idUsuarioRol]
+          ,ea.[codEstab]
+          ,ea.[predeterminado]
+          ,ea.[usuario]
+          ,ea.[fechaRegistro]
+          ,ea.[estado]
+          ,ea.[idEstablecimiento]
+          ,ea.[idUsuario]
+          ,ea.[fromMobile]
 	      ,en.ruc
-          ,es.idEstablecimiento
 	      ,es.nombreComercial
 	      ,es.estado estadoEstab
 	      ,es.agenteRetencion

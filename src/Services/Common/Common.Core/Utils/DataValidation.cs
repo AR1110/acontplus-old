@@ -74,17 +74,29 @@ public static class DataValidation
     }
     public static string ValidateIpAddress(string ipAddress)
     {
-        // Extract the relevant part of the IP address if necessary
-        var extractedIpAddress = ipAddress.Substring(13);
-
-        // Check if the extracted part is a valid IP address
-        if (IPAddress.TryParse(extractedIpAddress, out _))
+        if (string.IsNullOrEmpty(ipAddress))
         {
-            return extractedIpAddress;
+            return "0.0.0.0";
+        }
+        if (ipAddress.Length > 13)
+        {
+            var extractedIpAddress = ipAddress.Substring(13);
+            if (IPAddress.TryParse(extractedIpAddress, out _))
+            {
+                return extractedIpAddress;
+            }
+            else
+            {
+                return "0.0.0.0";
+            }
         }
         else
         {
-           return "0.0.0.0";
+            return ipAddress ?? "0.0.0.0";
         }
+        // Extract the relevant part of the IP address if necessary
+
+        // Check if the extracted part is a valid IP address
+       
     }
 }

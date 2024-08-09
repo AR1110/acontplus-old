@@ -20,6 +20,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ICompraHabitualService, CompraHabitualService>();
         services.AddScoped<ICompraNoHabitualService, CompraNoHabitualService>();
         services.AddScoped<ICustomLogger, CustomLogger>();
+        services.AddScoped<IDocumentoXmlToHtml, DocumentoXmlToHtml>();
         services.AddScoped<IDocumentoTempService, DocumentoTempService>();
         services.AddScoped<IDocRecDetailTempService, DocRecDetailTempService>();
         services.AddScoped<IProveedorService, ProveedorService>();
