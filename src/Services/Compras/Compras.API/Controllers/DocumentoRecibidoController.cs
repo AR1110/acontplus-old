@@ -6,6 +6,7 @@ public class DocumentoRecibidoController(
     IAdoRepository adoRepository,
     IConfiguration configuration,
     IDocumentoRecibidoService docRecibidoSvc,
+    IDocumentoXmlToHtml documentoXmlToHtml,
     FileTxt txtComp,
     IDocumentoTempService documentoTemp,
     IWebServiceSri webServiceSri)
@@ -188,7 +189,7 @@ public class DocumentoRecibidoController(
             }
             else
             {
-                response.Payload = DocumentoXmlToHtml.CreateHtml(ceXml);
+                response.Payload = documentoXmlToHtml.CreateHtml(ceXml);
             }
         }
         else
