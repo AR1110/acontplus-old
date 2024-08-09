@@ -31,8 +31,7 @@
                 }
                 $scope.empresas = [];
                 empresaSvc.getAll(params).then(response=>{ 
-                    $scope.empresas = response;
-                    console.log(response)
+                    $scope.empresas = response; 
                 })
                 .catch(error=>{ 
                     console.log(error)
