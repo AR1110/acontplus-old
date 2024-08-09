@@ -23,8 +23,8 @@ BEGIN
 	
 	DECLARE @tipo INT ,@pageSize INT ,@pageIndex INT, @idEntidad INT 
 
-	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
-    SELECT top 1 @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
+	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo') 
+    SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 	-- GET --
 	IF @tipo = 1
 		BEGIN
@@ -81,12 +81,11 @@ BEGIN
 				  ,COUNT(*) OVER()   as TotalRecords
 			FROM dbo.Usuario u WITH (NOLOCK) 
             INNER JOIN App.UsuarioRol ur WITH(NOLOCK) ON ur.idUsuario = u.idUsuario
-            LEFT JOIN Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
-
-			WHERE ur.idEntidad = @idEntidad AND c.BusinessName LIKE '%' + @textSearch + '%'
-				OR u.nombreUsuario LIKE '%'  +@textSearch + '%'
-			ORDER BY u.idUsuario 
-            --DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
+            LEFT JOIN Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id 
+			WHERE ur.idEntidad = @idEntidad 
+                AND ( c.BusinessName LIKE '%' + @textSearch + '%'
+				OR u.nombreUsuario LIKE '%'  +@textSearch + '%' )
+			ORDER BY u.idUsuario ASC 
 		END
 
 END

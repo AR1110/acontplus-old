@@ -192,12 +192,28 @@ class CommonService {
     /***
      *  json = {busqueda, idRol}
      */
-    usuarioSearch(json) {
-        return this.mS.getData('get', 'Config/Usuario/Search?json=' + JSON.stringify(json), null, true).then(response => {
+    usuarioSearch(obj) {
+        console.log(obj)
+        let json = JSON.stringify({
+            tipo: 3,
+            textSearch: obj.busqueda
+        })
+        return this.mS.getData('get', `Config/UserCustomer/?json=${json}`, null, true).then(response => {
             if (response.code === "0") {
                 return [];
             }
-            return JSON.parse(response.payload)
+            let customerUsers = [];
+            if(response && typeof response==='object'){
+                customerUsers = response.userCustomers.map((user) => {
+                    return {
+                        idUsuario: user.idUsuario,
+                        nombreCompleto: user.fullname || user.fullName,
+                        nombreUsuario: user.username,
+                        nroIdentificacion: user.idCard,
+                    }
+                })
+            }
+            return customerUsers;
         })
     }
 
