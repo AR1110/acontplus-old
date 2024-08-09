@@ -1,11 +1,14 @@
 ﻿using Common.Core.Enums;
-using Common.Core.Utils;
+using Microsoft.Extensions.Configuration;
 
 namespace FactElect.Application.Services;
-
-public static class DocumentoXmlToHtml
+public interface IDocumentoXmlToHtml
 {
-    public static string CreateHtml(ComprobanteElectronico data)
+    string CreateHtml(ComprobanteElectronico comprobanteElectronico);
+}
+public class DocumentoXmlToHtml(IConfiguration configuration) : IDocumentoXmlToHtml
+{
+    public string CreateHtml(ComprobanteElectronico data)
     {
         var dt = (SriDocument)Convert.ToInt32(data.codDoc);
         var documentName = dt.DisplayName();
@@ -16,7 +19,7 @@ public static class DocumentoXmlToHtml
                                 <div class=""card-body"">
 <div class=""text-center"">
                                     <img src=" +
-                  $"data:image/png;base64,{Convert.ToBase64String(File.ReadAllBytes("C:\\AcontPlus\\Images\\Logos\\NoLogo.png"))}" +
+                  $"data:image/png;base64,{Convert.ToBase64String(File.ReadAllBytes($"{configuration["Logos:Generic"]}NoLogo.png"))}" +
                   @" alt=""NO LOGO"" class=""img-fluid"" align=""center"" width=""100"">
 </div>
                                     <h6>" + data.infoTributaria.razonSocial + @"</h6>
