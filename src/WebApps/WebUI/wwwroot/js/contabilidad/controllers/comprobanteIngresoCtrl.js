@@ -160,8 +160,7 @@
 
         initialLoad();
         function initialLoad() {
-            compIngresoSvc.getDataFilter().then(response => {
-                console.log(response)
+            compIngresoSvc.getDataFilter().then(response => { 
                 $scope.establecimientos = response.estabs;
                 let dataEstab = $scope.establecimientos.find(e => e.defaultEstab);
                 if (dataEstab) {

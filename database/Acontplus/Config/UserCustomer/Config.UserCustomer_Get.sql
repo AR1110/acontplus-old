@@ -70,19 +70,23 @@ BEGIN
 			 
 			SET @tableNames = 'userCustomers'
 
-			SELECT @textSearch = textSearch, @pageSize = pageSize, @pageIndex  = pageIndex FROM OPENJSON(@json) WITH ( pageIndex INT '$.pageIndex', pageSize  INT '$.pageSize', textSearch VARCHAR(100) '$.textSearch')
+			SELECT @textSearch = textSearch    FROM OPENJSON(@json) WITH (   textSearch VARCHAR(100) '$.textSearch')
 
-			SELECT idUsuario         as Id
+			SELECT u.idUsuario         as Id
 				  ,c.IDCard as IDCard
 				  ,nombreUsuario     as Username
 				  ,correo            as Email
 				  ,c.BusinessName    as Fullname
+                  ,idUsuario  = u.idUsuario
 				  ,COUNT(*) OVER()   as TotalRecords
 			FROM dbo.Usuario u WITH (NOLOCK) 
+            INNER JOIN App.UsuarioRol ur WITH(NOLOCK) ON ur.idUsuario = u.idUsuario
             LEFT JOIN Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
-			WHERE c.BusinessName LIKE '%' + @textSearch + '%'
-				OR nombreUsuario LIKE '%'  +@textSearch + '%'
-			ORDER BY idUsuario DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
+
+			WHERE ur.idEntidad = @idEntidad AND c.BusinessName LIKE '%' + @textSearch + '%'
+				OR u.nombreUsuario LIKE '%'  +@textSearch + '%'
+			ORDER BY u.idUsuario 
+            --DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
 		END
 
 END

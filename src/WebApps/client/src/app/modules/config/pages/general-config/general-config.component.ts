@@ -123,7 +123,6 @@ export class GeneralConfigComponent {
             break;
 
           case this.CODE_TABS.CD:
-            console.log(response)
             this.decimalAlmacen = response.decimalAlmacen;
             this.decimalVenta = response.decimalVenta;
             this.decimalCompra = response.decimalCompra;

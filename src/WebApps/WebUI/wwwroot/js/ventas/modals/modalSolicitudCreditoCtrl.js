@@ -28,8 +28,7 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, params) 
         let params = {
             idCuentaPorCobrar: $scope.dataForm.idCuentaPorCobrar
         }
-        creditoGaranteSvc.getAll(params).then(response => {
-            console.log(response)
+        creditoGaranteSvc.getAll(params).then(response => { 
             $scope.guarantors = response.guarantors;
         })
             .catch(error => {

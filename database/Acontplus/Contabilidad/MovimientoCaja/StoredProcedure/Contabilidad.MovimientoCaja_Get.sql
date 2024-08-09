@@ -135,7 +135,7 @@ BEGIN
             
             SET @tableNames = 'establecimiento,caja,tipoDocumento,entidadFinanciera,subEntidadFinanciera'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
+            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
 
             SELECT ac.idCaja
                   ,ca.descripcion as caja 
@@ -160,7 +160,7 @@ BEGIN
             
             SET @tableNames = 'establecimiento'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
+            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
 
             RETURN
         END
