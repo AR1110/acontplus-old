@@ -266,7 +266,7 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                     modalCobroSvc.setHistorialCuentas([]);
                     modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
                     modalCobroSvc.setEsAbonoPosfechado($scope.cobro.posFechado);
-                    modalCobroSvc.setUniqueIndex(1) 
+                    modalCobroSvc.setUniqueIndex(0) 
 
                     //--------agregando abono ---
                     modalCobroSvc.aplicarAbono();

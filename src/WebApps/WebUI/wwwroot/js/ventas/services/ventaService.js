@@ -1122,7 +1122,7 @@
                 let cantidadTransaccion = item.cantidad * (item.conversion || 1)
                 return {
                     orderIndex: index++,
-                    uuid: item.uniqueRowDetalle,
+                    uuid: item.uniqueRowDetalle || fS.generateUuidv4(),
                     idArticulo: item.idArticulo,
                     idTarifa: item.idTarifa,
                     idBodega: item.idBodega,

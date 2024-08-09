@@ -202,6 +202,7 @@
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
 
                         let obj = {
+                            uniqueRowDetalle: fS.generateUuidv4(),
                             n: index + 1,
                             idAprob_Document_Detailt: restItem.idAprob_Document_Detailt,
                             cantidad: restItem.cantidad,
@@ -476,6 +477,7 @@
             const resultDetalles = detalles.map((item, index) => {
                 let cantidadTransaccion = item.cantidad * (item.conversion || 1)
                 return {
+                    uuid: item.uniqueRowDetalle,
                     orderIndex: index++,
                     idArticulo: item.idArticulo,
                     idTarifa: item.idTarifa,

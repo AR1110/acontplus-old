@@ -2090,7 +2090,7 @@
                  
                 this.setCuentasPorCobrar([]) 
                 this.setValorAbono(0)  
-                this.setUniqueIndex(1) 
+                this.setUniqueIndex(0) 
                 this.setCobrosDetalle([]); 
                 this.setHistorialCuentas([]) ;
                 this.setEstadoCobro([]); 
