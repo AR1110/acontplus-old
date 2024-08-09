@@ -219,9 +219,8 @@ BEGIN
                   ,u.nombreUsuario
                   ,u.nombreCompleto
                   ,CAST(IIF(u.idUsuario = @byUsuario, 1, 0) AS bit) as predeterminado
-	        FROM Usuario               u WITH(NOLOCK)
-	        INNER JOIN App.UsuarioRol ur WITH(NOLOCK) ON u.idUsuario = ur.idUsuario
-	        WHERE ur.idEntidad = @idEntidad
+	        FROM v_usuario          u WITH(NOLOCK) 
+	        WHERE u.idEntidad = @idEntidad
 
              SELECT    
 	              CAST(multipleVendedor AS BIT) as multipleVendedor 

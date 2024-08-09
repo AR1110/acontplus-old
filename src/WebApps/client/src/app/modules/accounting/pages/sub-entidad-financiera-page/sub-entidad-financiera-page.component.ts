@@ -83,7 +83,6 @@ export class SubEntidadFinancieraPageComponent {
 
     modalRef.componentInstance.params = params;
     modalRef.result.then(result => {
-      console.log(result)
       if (result !== null && typeof result === 'object') {
         this.getData();
       }
