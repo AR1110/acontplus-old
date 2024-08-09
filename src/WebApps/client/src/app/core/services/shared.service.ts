@@ -205,10 +205,20 @@ export class SharedService {
 
   getEstabAsign() {
     return this.http
-      .get('Config/EstabAsig/?json=' + JSON.stringify({ tipo: 1 }))
+      .get<any>('Config/EstabAsig/?json=' + JSON.stringify({ tipo: 1 }))
       .pipe(
         map((response) => {
-          let estabs = (response as []) || [];
+            let estabs:any = [];
+          if(response && typeof response==='object'){
+            if(response.code==="1"){
+
+              estabs = JSON.parse(response.payload);
+
+            }
+          }else{
+             estabs = (response as []) || [];
+          }
+
           let results = estabs.map((estab: any) => {
             return {
               idEstablecimiento: estab.idEstablecimiento,

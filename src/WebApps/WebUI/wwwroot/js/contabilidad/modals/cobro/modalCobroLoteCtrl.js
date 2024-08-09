@@ -271,8 +271,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             $scope.selectedDocumentos = modalCobroSvc.getCuentasPorCobrar();
 
 
-            let abonoCuota = modalCobroSvc.getAbonoCuota();
-            console.log(abonoCuota)
+            let abonoCuota = modalCobroSvc.getAbonoCuota(); 
 
 
             addDatosCobro(result, abonoCuota);
