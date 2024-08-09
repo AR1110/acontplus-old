@@ -197,18 +197,7 @@
                         const medidas = fS.processAndSortMeasures(principal, fraccionado);
 
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
-
-                        if ('infoDatosAdicionales' in itemPrincipal) {
-                            let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoDatosAdicionales);
-                            restItem.datosAdicionalesArticulo = infoAdicionalArrayTemp.map(dataAdicional => ({
-                                idArticulo: dataAdicional.idArticulo,
-                                idEtiqueta: dataAdicional.idEtiqueta,
-                                idInfoAdicional: dataAdicional.idInfoAdicional,
-                                jsonAdicional: JSON.parse(dataAdicional.jsonAdicional),
-                                uniqueId: dataAdicional.uniqueId,
-                                estado: dataAdicional.estado
-                            }))
-                        }
+ 
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
 
@@ -259,16 +248,7 @@
                         detalles: items,
                         historial: historialRepository,
                         infoAdicionalDocumento: infoAdicionalDocumento,
-                        datosAdicionalesArticulo: datosAdicionalesArticulo.map(item => ({
-                            idDocumento: item.idDocumento,
-                            idHistoryInfoAdicional: item.idHistoryInfoAdicional,
-                            idArticulo: item.idArticulo,
-                            idEtiqueta: item.idEtiqueta,
-                            idInfoAdicional: item.idInfoAdicional,
-                            jsonAdicional: JSON.parse(item.jsonAdicional),
-                            selected: item.selected,
-                            estado: item.estado
-                        })),
+                        datosAdicionalesArticulo: [],
                         formasPago: fS.mapperFromFormaPago(formasPago),
                         config
                     }
