@@ -79,7 +79,7 @@ BEGIN
 		    ,montoCredito           NUMERIC(15,5) 
 		    ,nota                   VARCHAR(300) 
 		    ,validationSri          BIT
-            ,infoCrediticia         NVARCHAR(MAX) AS JSON
+            ,infoCrediticia         NVARCHAR(MAX) 
         )
 
         --> Recuperando Informacion

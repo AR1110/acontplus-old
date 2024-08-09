@@ -123,7 +123,7 @@ BEGIN
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,abono))        OVER() as totalAbono
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,saldo))        OVER() as totalSaldo
                               ,codEstado
-                              ,tiempoCredito                                                   as tipo
+                              ,1                                                   as tipo
                         FROM v_CuentaPorCobrar cc WITH (NOLOCK)
                         WHERE idEntidad = @idEntidad '
 
