@@ -14,7 +14,7 @@ CREATE PROCEDURE Restaurant.Configuration_Get
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @idEntidad INT
+	DECLARE @idEntidad INT 
 	DECLARE @codEstab VARCHAR(20)
     DECLARE @customerCompanyId INT 
   --  DECLARE @actividad VARCHAR(4)
@@ -30,7 +30,9 @@ BEGIN
     SELECT TOP 1 @customerCompanyId = ISNULL(JSON_VALUE(jsonConfig, '$.idCliente'), 0) FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND  codConfig = 'CV'
 
     IF @tipo = 1
-        BEGIN 
+
+        --no eliminar este comentario, se usa para una nueva depuracion o migracion 
+       /** BEGIN 
             SET @tableNames='estabs,bodegas'
              SELECT idEstablecimiento
                   ,nombreComercial
@@ -52,7 +54,7 @@ BEGIN
             FROM v_Bodega_Asign WITH(NOLOCK) 
             WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
             RETURN 
-        END
+        END**/
 	SET @tableNames = 'ConfigDecimal,Tables,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,Room,Customer,tarifaImpuestoVigente,config,vendedores'
 	
     SELECT * FROM  Config.v_Sistema_Decimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
@@ -86,33 +88,14 @@ BEGIN
 	SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK)  
     
 
- --   SELECT pa.idPtoEmi_asig, ea.codEstab_Asig, pe.idPuntoEmision, pe.ptoEmi, pa.predeterminado, pa.estado
-	--FROM Config.PtoEmi_Asig pa  WITH (NOLOCK) 
-	--INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ea.codEstab_Asig = pa.codEstab_Asig
-	--INNER JOIN PuntoEmision pe On pa.idPuntoEmision = pe.idPuntoEmision
- --	WHERE ea.idUsuarioRol = @userRoleId
+    SELECT pa.idPtoEmi_asig, ea.codEstab_Asig, pe.idPuntoEmision, pe.ptoEmi, pa.predeterminado, pa.estado
+	FROM Config.PtoEmi_Asig pa  WITH (NOLOCK) 
+	INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ea.codEstab_Asig = pa.codEstab_Asig
+	INNER JOIN PuntoEmision pe On pa.idPuntoEmision = pe.idPuntoEmision
+ 	WHERE ea.idUsuarioRol = @userRoleId
 
- --   SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
-    SELECT idEstablecimiento
-                ,nombreComercial
-                ,codEstab
-                ,idPuntoEmision
-                ,ptoEmi + '-' + estab as ptoEmi
-                ,defaultEstab
-                ,defaultPtoEmi 
-        FROM v_PtoEmi_Asign WITH(NOLOCK) 
-        WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
-
-        SELECT idEstablecimiento
-                ,nombreComercial
-                ,codEstab
-                ,idBodega
-                ,bodega
-                ,defaultEstab
-                ,defaultBodega 
-        FROM v_Bodega_Asign WITH(NOLOCK) 
-        WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
-
+    SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
+    
     SELECT Id, Capacity, Code, [Description]  FROM Restaurant.[Floor] WHERE CodEstab = @codEstab
 
     SELECT id, code, [description], capacity, floorId FROM Restaurant.v_room
