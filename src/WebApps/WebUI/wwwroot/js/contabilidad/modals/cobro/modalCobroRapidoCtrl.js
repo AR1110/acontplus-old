@@ -254,19 +254,18 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                         abono: $scope.cobro.abono,
                         controlCaja: $scope.subEntidadesFinancieras.find(item => item.idSubEntidadFinanciera === $scope.cobro.idSubEntidadFinanciera).controlCaja,
                         observacion: $scope.cobro.observacion
-                    }]
+                    }];
+
+                    modalCobroSvc.clearData();
  
-                    modalCobroSvc.setValorAbono($scope.cobro.valorAbono);
-
+                    
                     for (let item of $scope.selectedDocumentos) {
-                        item.cuotasCalculadas = JSON.parse(JSON.stringify(item.cuotasCalculadasClone))
+                        item.cuotasCalculadas = structuredClone(item.cuotasCalculadasClone);
                     }
-
-                    modalCobroSvc.setCobrosDetalle([]);
-                    modalCobroSvc.setHistorialCuentas([]);
+                    modalCobroSvc.setValorAbono($scope.cobro.valorAbono); 
                     modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
                     modalCobroSvc.setEsAbonoPosfechado($scope.cobro.posFechado);
-                    modalCobroSvc.setUniqueIndex(1) 
+                    modalCobroSvc.setUniqueIndex(0) 
 
                     //--------agregando abono ---
                     modalCobroSvc.aplicarAbono();

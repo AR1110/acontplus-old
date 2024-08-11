@@ -17,6 +17,7 @@ namespace Reports.Application.Services
         private readonly IConfiguration _configuration;
         private readonly ConcurrentDictionary<string, Lazy<MemoryStream>> _reportCache;
         private bool _disposed;
+        private const int CacheLimit = 50; // Example cache limit
 
         public RdlcReportService(IConfiguration configuration)
         {
@@ -32,8 +33,7 @@ namespace Reports.Application.Services
             using var lr = new LocalReport();
             string reportPath = GetReportPath(parameters, reportProps, offline);
 
-            var reportDefinitionStream = GetOrAddReportDefinition(reportPath).Value;
-
+            using var reportDefinitionStream = GetOrAddReportDefinition(reportPath).Value;
             reportDefinitionStream.Seek(0, SeekOrigin.Begin); // Ensure the stream position is reset before reading
             lr.LoadReportDefinition(reportDefinitionStream);
 
@@ -48,14 +48,36 @@ namespace Reports.Application.Services
 
         private Lazy<MemoryStream> GetOrAddReportDefinition(string reportPath)
         {
+            EnsureCacheLimit();
+
             return _reportCache.GetOrAdd(reportPath, path =>
             {
                 return new Lazy<MemoryStream>(() =>
                 {
-                    var stream = RdlcHelpers.LoadReportDefinition(path);
-                    return new MemoryStream(stream.ToArray()); // Ensure a fresh MemoryStream instance
+                    using var stream = RdlcHelpers.LoadReportDefinition(path);
+                    var memoryStream = new MemoryStream();
+                    stream.CopyTo(memoryStream); // Copy the content directly to a new MemoryStream
+                    return memoryStream;
                 });
             });
+        }
+
+        private void EnsureCacheLimit()
+        {
+            if (_reportCache.Count >= CacheLimit)
+            {
+                var keysToRemove = _reportCache.Keys.Take(_reportCache.Count - CacheLimit).ToList();
+                foreach (var key in keysToRemove)
+                {
+                    if (_reportCache.TryRemove(key, out var lazyMemoryStream))
+                    {
+                        if (lazyMemoryStream.IsValueCreated)
+                        {
+                            lazyMemoryStream.Value.Dispose();
+                        }
+                    }
+                }
+            }
         }
 
         private string GetReportPath(DataSet parameters, ReportProps reportProps, bool offline)
@@ -71,8 +93,7 @@ namespace Reports.Application.Services
             else
             {
                 var mainPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports");
-                var paths = reportProps.ReportPath.Split("/");
-                paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+                var paths = reportProps.ReportPath.Split("/").Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
                 return paths.Length switch
                 {
@@ -89,12 +110,9 @@ namespace Reports.Application.Services
             if (parameters.Tables.Contains("DataSources"))
             {
                 var dataSources = parameters.Tables["DataSources"];
-                if (dataSources != null)
+                foreach (DataRow row in dataSources.Rows)
                 {
-                    foreach (DataRow row in dataSources.Rows)
-                    {
-                        lr.DataSources.Add(new ReportDataSource(row["dataSource"].ToString(), data.Tables[row.Field<int>("position")]));
-                    }
+                    lr.DataSources.Add(new ReportDataSource(row["dataSource"].ToString(), data.Tables[row.Field<int>("position")]));
                 }
             }
             else
@@ -118,7 +136,7 @@ namespace Reports.Application.Services
                 lr.SetParameters(new ReportParameter("mimeTypeBarcode", "image/png"));
             }
 
-            if (parameters.Tables.Contains("ReportParams") && parameters.Tables["ReportParams"]!.Rows.Count > 0)
+            if (parameters.Tables.Contains("ReportParams") && parameters.Tables["ReportParams"].Rows.Count > 0)
             {
                 foreach (DataRow item in parameters.Tables["ReportParams"].Rows)
                 {
@@ -145,13 +163,12 @@ namespace Reports.Application.Services
             TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileContentType fc);
             TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileExtension fe);
 
-            var response = new ReportResponse
+            return new ReportResponse
             {
                 FileContents = fileReport,
                 ContentType = fc.DisplayName(),
                 FileDownloadName = HttpUtility.UrlEncode(reportProps.ReportName + fe.DisplayName(), Encoding.UTF8)
             };
-            return response;
         }
 
         public async Task<ReportResponse> GetErrorAsync()

@@ -205,7 +205,7 @@ export class SharedService {
 
   getEstabAsign() {
     return this.http
-      .get('Config/EstabAsig/?json=' + JSON.stringify({ tipo: 1 }))
+      .get<any>('Config/EstabAsig/?json=' + JSON.stringify({ tipo: 1 }))
       .pipe(
         map((response) => {
           let estabs = (response as []) || [];

@@ -369,7 +369,7 @@
 
             try {
                 showLoader();
-                aprobacionDocSvc.findById(item.idAprob_Document).then(response => {
+                aprobacionDocSvc.findById(item.idAprob_Document).then(response => { 
                     let modalRef = modalSvc.openModalCustom({
                         controller: 'ModalApproveDocCtrl',
                         template: URL_TEMPLATE + '_ModalAprobacionDocumento.cshtml',

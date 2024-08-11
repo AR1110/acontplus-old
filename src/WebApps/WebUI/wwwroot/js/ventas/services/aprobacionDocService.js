@@ -132,16 +132,16 @@
                     throw response;
                 }
                 if (response.code === '1') {
-                    let dataRepository = JSON.parse(response.payload);
+                    let dataRepository = JSON.parse(response.payload); 
 
                     let compRepository = dataRepository[0][0];
                     let clienteRepository = dataRepository[1][0];
                     let detalleRepository = dataRepository[2];
                     let historialRepository = dataRepository[3];
                     let infoAdicionalDocumento = dataRepository[4];
-                    let datosAdicionalesArticulo = dataRepository[5];
-                    let formasPago = dataRepository[6];
-                    let config = dataRepository[7] ? dataRepository[7][0] : {}
+                    //let datosAdicionalesArticulo = dataRepository[5];
+                    let formasPago = dataRepository[5];
+                    let config = dataRepository[6] ? dataRepository[6][0] : {}
 
                     let clienteMapper = {
                         idCliente: clienteRepository.idCliente,
@@ -202,6 +202,7 @@
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
 
                         let obj = {
+                            uniqueRowDetalle: fS.generateUuidv4(),
                             n: index + 1,
                             idAprob_Document_Detailt: restItem.idAprob_Document_Detailt,
                             cantidad: restItem.cantidad,
@@ -476,6 +477,7 @@
             const resultDetalles = detalles.map((item, index) => {
                 let cantidadTransaccion = item.cantidad * (item.conversion || 1)
                 return {
+                    uuid: item.uniqueRowDetalle,
                     orderIndex: index++,
                     idArticulo: item.idArticulo,
                     idTarifa: item.idTarifa,
