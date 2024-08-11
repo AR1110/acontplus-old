@@ -10,7 +10,7 @@ using Restaurant.API.Data;
 
 #nullable disable
 
-namespace Restaurant.Infrastructure.Data.Migrations
+namespace Restaurant.API.Data.Migrations
 {
     [DbContext(typeof(RestaurantContext))]
     [Migration("20231022170133_FinishedColumnOrder")]

@@ -1,13 +1,13 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.AppSettings;
-using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Restaurant.API.Data;
 using Restaurant.API.Extensions;
 using Services.Common.Extensions;
 
+namespace Restaurant.API;
 
 internal class Program
 {
@@ -24,11 +24,11 @@ internal class Program
         builder.Services.AddApplicationServices(builder.Configuration);
 
         builder.Services.AddControllers()
-                       .AddNewtonsoftJson(x =>
-                       {
-                           x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                           x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-                       });
+            .AddNewtonsoftJson(x =>
+            {
+                x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+            });
 
         builder.Services.AddIdentityService(builder.Configuration);
 
