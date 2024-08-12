@@ -29,7 +29,7 @@ BEGIN
     --cliente por defecto agregado en configuracion general
     SELECT TOP 1 @customerCompanyId = ISNULL(JSON_VALUE(jsonConfig, '$.idCliente'), 0) FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND  codConfig = 'CV'
 
-    IF @tipo = 1
+   -- IF @tipo = 1
 
         --no eliminar este comentario, se usa para una nueva depuracion o migracion 
        /** BEGIN 
@@ -110,7 +110,7 @@ BEGIN
 	   ,cl.correo
 	FROM dbo.Cliente cl WITH (NOLOCK) WHERE cl.idCliente = @customerCompanyId 
             
-	SELECT idTarifaImpuesto, descripcion, codigo, porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo IN ('2') AND estado = 1 ORDER BY codigo DESC
+	SELECT idTarifaImpuesto, descripcion, codigo, porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo IN ('4') AND estado = 1 ORDER BY codigo DESC
 
     SELECT CAST(searchCode AS BIT)       as searchCode
 	    ,CAST(printerAutomatic AS BIT) as printerAutomatic
