@@ -1195,6 +1195,66 @@
     }])
 
 
+    //control caja 
+
+    app.factory('controlCajaService', ['mainService', function(mS){
+        let url = `Contabilidad/ControlCaja/`
+        return {
+            getDataFilter, 
+            getAll
+        }        
+        function getDataFilter(){
+            let json = JSON.stringify({
+                tipo: 6
+            })
+            return mS.getData('get', `${url}?json=${json}`).then(response=>{
+                let result = {
+                    estabs: []
+                }
+                if(response && typeof response==='object'){
+                    result.estabs = response.establecimiento;
+                }
+                return result;
+            })
+        }
+        function getAll(obj){
+            let json = JSON.stringify({
+                ...obj,
+                tipo: 7
+            })
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
+                let result = {
+                    cheques: []
+                }
+                if (response && typeof response === 'object') {
+                    console.log(response)
+                    result.cheques = response.cheques.map(item=>{
+                        return {
+                            id: item.id,
+                            idEstablecimiento: item.idEstablecimiento,
+                            codDoc: item.codDoc,
+                            nroDocumento: item.nroDocumento,
+                            persona: item.persona,
+                            nroIdentificacion: item.nroIdentificacion,
+                            valor: item.valor,
+                            nro: item.nro,
+                            fechaEmision: item.fechaEmision,
+                            posfechado: item.posfechado,
+                            cobro: item.cobro,
+                            totalRecords: item.totalRecords,
+                            tipoNombre: item.gestion==1?'Cobro':'Pago',
+                            posfechadoName: item.posfechado?'SI': 'NO'
+                        }
+                    });
+                }
+                return result;
+            })
+        }
+
+
+    }])
+
+
     app.factory('contabilidadUtils', [function () {
         return {
             generarCuentasPorCobrarEstado,
@@ -1500,7 +1560,12 @@
                         interesActual = interesActual.plus(cc.interesActual)
                     }
 
-                    let decimalSaldo = fS.contarDecimales(documento.saldo)
+                    let decimalSaldo=3
+                    if (cuotasCalculadas.length>2){
+
+                        decimalSaldo = fS.contarDecimales(documento.saldo)
+                    }
+
 
                     return {
                         ...documento,
@@ -1512,8 +1577,7 @@
                         interesActual: interesActual.toNumber()
 
                     };
-                });
-                console.log(resultados)
+                }); 
 
                 return resultados;
             }
@@ -1967,8 +2031,7 @@
 
 
 
-            getAbonoCuota() {
-                console.log(this.getCobrosDetalle())
+            getAbonoCuota() { 
                 let abonoCuota = this.getCobrosDetalle()
                     .filter(item => item.secuencial === this.getUniqueIndex())
                     .reduce((prev, curr) => fS.instanceDecimal(prev).plus(curr.abono), fS.instanceDecimal(0))

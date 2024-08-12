@@ -533,8 +533,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
 
-                let params = comprobanteIngresoSvc.mapperTo(data);
-                console.log(params)
+                let params = comprobanteIngresoSvc.mapperTo(data); 
                 showLoader();
                 comprobanteIngresoSvc.post(params).then((response) => {
                     hideLoader();
