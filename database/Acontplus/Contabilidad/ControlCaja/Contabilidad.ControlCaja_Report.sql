@@ -178,7 +178,7 @@ BEGIN
 		        ,caja               = ca.descripcion
 		        ,apertura           = FORMAT(cc.fechaApertura, 'dd/MM/yyyy HH:mm')
 		        ,cierre             = FORMAT(cc.fechaCierre, 'dd/MM/yyyy HH:mm') 
-		        ,usuario            = us.nombreCompleto
+		        ,usuario            = cu.BusinessName
 		        ,estado             = CASE WHEN cc.estado = 1 THEN 'ABIERTA' ELSE 'CERRADA' END
 		        ,entrada            = CAST(cc.entrada AS numeric(15,2))
 		        ,efectivoSistema    = CAST(ISNULL(@efectivoSistema,0) AS numeric(15,2))
@@ -192,6 +192,7 @@ BEGIN
 	         INNER JOIN dbo.Caja           ca WITH (NOLOCK) ON ca.idCaja    = cc.idCaja
 	         INNER JOIN dbo.AsignacionCaja ac WITH (NOLOCK) ON ac.idCaja    = ca.idCaja
 	         INNER JOIN dbo.Usuario        us WITH (NOLOCK) ON us.idUsuario = ac.idUsuario
+              LEFT JOIN Customer.Customer  cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
 	         WHERE cc.idControlCaja = @idControlCaja
 
 	
@@ -212,7 +213,7 @@ BEGIN
 
 	         SELECT 
 		        tipDoc   = td.descripcion
-	           ,total    = CAST(ISNULL((SELECT SUM(ac.total) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(15,2))
+	           ,total    = CAST(ISNULL((SELECT SUM(IIF(tipDoc IN ('FV','NE'),totalAnterior,total)) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(15,2))
 	           ,abono    = CAST(ISNULL((SELECT SUM(ac.abono) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(15,2))
 	           ,saldo    = CAST(ISNULL((SELECT SUM(IIF(tipDoc IN ('FV','NE'),totalAnterior,total)) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0)  - ISNULL((SELECT SUM(ac.abono) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(18,5))
 	           ,cantidad = (ISNULL((    SELECT COUNT(*)      FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0))
@@ -258,6 +259,7 @@ BEGIN
 	         SELECT chequePosfechado = CAST(ISNULL(@chequesPosf,0)as numeric(18,2))
 	               ,anticipos        = CAST(ISNULL((SELECT SUM(dc.total) FROM @tbDetalleCaja dc WHERE dc.tipDoc = 'A' ),0)as numeric(18,2))
 
+            
              RETURN 
         END 
 
@@ -399,12 +401,13 @@ BEGIN
 		          ,caja       = ca.descripcion
 		          ,apertura   = FORMAT(cc.fechaApertura, 'dd/MM/yyyy HH:mm')
 		          ,cierre     = FORMAT(cc.fechaCierre, 'dd/MM/yyyy HH:mm') 
-		          ,usuario    = us.nombreCompleto
+		          ,usuario    = cu.BusinessName
 		          ,estado     = CASE WHEN cc.estado = 1 THEN 'ABIERTA' ELSE 'CERRADA' END
 	         FROM dbo.ControlCaja          cc WITH (NOLOCK)
 	         INNER JOIN dbo.Caja           ca WITH (NOLOCK) ON ca.idCaja    = cc.idCaja
 	         INNER JOIN dbo.AsignacionCaja ac WITH (NOLOCK) ON ac.idCaja    = ca.idCaja
 	         INNER JOIN dbo.Usuario        us WITH (NOLOCK) ON us.idUsuario = ac.idUsuario
+              INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
 	         WHERE cc.idControlCaja = @idControlCaja
 
             EXEC sp_executesql @sql
