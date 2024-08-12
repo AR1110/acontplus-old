@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Restaurant.Infrastructure.Data.Migrations
+namespace Restaurant.API.Data.Migrations
 {
     /// <inheritdoc />
     public partial class NewTest : Migration

@@ -17,7 +17,7 @@ namespace Mechanical.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -68,6 +68,9 @@ namespace Mechanical.API.Data.Migrations
                         .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<string>("FuelLevel")
                         .IsRequired()
@@ -155,6 +158,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Obs")
                         .HasMaxLength(500)
                         .IsUnicode(false)
@@ -232,6 +238,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<int>("MedidaId")
                         .HasColumnType("int");
 
@@ -301,6 +310,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<string>("SeriesVoucher")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -352,6 +364,9 @@ namespace Mechanical.API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -430,6 +445,9 @@ namespace Mechanical.API.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LicensePlate")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -491,6 +509,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Observation")
                         .HasMaxLength(300)
                         .IsUnicode(false)
@@ -545,6 +566,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -598,6 +622,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -645,6 +672,9 @@ namespace Mechanical.API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");

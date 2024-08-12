@@ -17,7 +17,7 @@ namespace Configuracion.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -59,6 +59,9 @@ namespace Configuracion.API.Data.Migrations
                         .HasMaxLength(300)
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<bool?>("IsCompressed")
                         .HasColumnType("bit");
@@ -104,6 +107,9 @@ namespace Configuracion.API.Data.Migrations
 
                     b.Property<int>("EstablecimientoId")
                         .HasColumnType("int");
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<string>("IpAddress")
                         .IsRequired()
@@ -180,6 +186,9 @@ namespace Configuracion.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<int>("PrinterId")
                         .HasColumnType("int");
 
@@ -233,6 +242,9 @@ namespace Configuracion.API.Data.Migrations
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()

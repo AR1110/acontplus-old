@@ -8,6 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Reports\Contabilidad\AccountingMovement.rdl" />
+    <None Remove="Reports\Contabilidad\ComprobanteIngreso.rdl" />
+    <None Remove="Reports\Contabilidad\ComprobanteIngresoCuotas.rdl" />
+    <None Remove="Reports\Contabilidad\ComprobanteIngresoDocumento.rdl" />
+    <None Remove="Reports\Contabilidad\EstadoCuenta.rdl" />
+    <None Remove="Reports\Contabilidad\SolicitudCredito.rdl" />
+    <None Remove="Reports\Inventario\CaducidadArticulo.rdl" />
+    <None Remove="Reports\Inventario\Kardex.rdl" />
+    <None Remove="Reports\Mechanical\Inspection.rdl" />
+    <None Remove="Reports\Mechanical\Support.rdl" />
     <None Remove="Reports\TechnicalSupport\Order.rdl" />
     <None Remove="Reports\Ventas\AprobHistorial.rdl" />
     <None Remove="Reports\Ventas\Factura.rdlc" />
@@ -31,19 +41,49 @@
     <Content Include="Reports\Compras\ReporteCompras.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\Contabilidad\AccountingMovement.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\Contabilidad\CarteraProveedor.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Contabilidad\CarteraProveedorCuota.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\Contabilidad\ComprobanteIngreso.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Contabilidad\ComprobanteIngresoCuotas.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Contabilidad\ComprobanteIngresoDocumento.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\Contabilidad\DetalleControlCaja.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Contabilidad\EstadoCuenta.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Contabilidad\SolicitudCredito.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\FactElect\ComprobanteRetencionRG.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\Inventario\CaducidadArticulo.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\Inventario\ConsumoDiarioArticuloAgrupado.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Inventario\Kardex.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Mechanical\Inspection.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Mechanical\Support.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
 
@@ -186,7 +226,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Vet\MedicalHistory.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
