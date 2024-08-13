@@ -368,7 +368,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="item in tempDetail" class="small">
+                <tr ng-repeat="item in tempDetail track by $index" class="small">
                     <td class="text-center">
                         <md-button ng-if="!(item.idArticulo > 0 && item.idProveedor > 0)" class="md-icon-button"
                             ng-click="openMerge(item)" aria-label="Unir" title="Unir">
@@ -411,9 +411,9 @@
                         </md-button>
                     </td>
                     <td class="text-center">{{item.cantidad}}</td>
-                    <td class="text-center">{{item.codigoPrincipal}}</td>
+                    <td class="text-center">{{item.codigoPrincipal}} <span ng-if="item.existentCode" ng-bind-html="item.existentCode"></span></td>
                     <td class="text-center">{{item.codigoAuxiliar}}</td>
-                    <td>{{item.descripcion}}</td>
+                    <td>{{item.descripcion}} <span ng-if="item.existentProduct" ng-bind-html="item.existentProduct"></span></td>
                     <td> 
                         <div style="position:relative; min-width:100px;">
                             <div ng-if="item.medidas.length > 0">
@@ -435,7 +435,7 @@
                         </div>
                     </td>
                     <td class="text-right">{{item.precioUnitario | currency}}</td>
-                    <td class="text-right">{{item.costoNeto | currency}}</td>
+                    <td class="text-right">{{item.costoNeto | currency}} <span ng-if="item.existentCost" ng-bind-html="item.existentCost"></span> </td>
                     <td class="text-right">{{item.descuento | currency}}</td>
                     <td class="text-right">{{item.impuesto}}</td>
                     <td class="text-right">{{item.valorImpuesto | currency}}</td>
