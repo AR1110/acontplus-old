@@ -12,9 +12,8 @@
     let fS = {};
 
     let establecimientos = [];
-    let bodegas = [];
-    let subfamilias = [];
-    let config = {};
+    let tipoDocumento = [];
+    let tipoTransaccion = [];
 
     let consolidacionInvSvc = {};
     let mainDataForm = {};
@@ -109,7 +108,6 @@
                     mainDataForm = response;
                     let { estabs } = response;
                     establecimientos = estabs;
-                    
 
                     if (establecimientos.length > 0) {
                         let dataEstab = establecimientos.find(estab => (estab.defaultEstab));
@@ -437,10 +435,14 @@
                 const {
                     estabs,
                     decimal,
+                    tipoDocumento,
+                    tiposTransaccion,
                 } = mainDataForm;
                 $scope.establecimientos = estabs;
                 $scope.decimal = decimal;
-
+                $scope.tipoDocumento = tipoDocumento;
+                $scope.tipoTransaccion = tiposTransaccion;
+                
                 if (params.tipoRegistro === 1) {
                     let dataEstab = $scope.establecimientos.find(item => item.defaultEstab);
                     if (dataEstab) {
