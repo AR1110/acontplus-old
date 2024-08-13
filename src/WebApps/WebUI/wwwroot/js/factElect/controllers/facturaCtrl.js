@@ -2406,7 +2406,14 @@
                 return
             }
 
-            if ($scope.data.total === 0 || $scope.data.total < 0) {
+            //validacion de calculos 
+            let dataValicion = gridOptionsSvc.validarCalculosPorProducto($scope.gridOptions.data);
+            if (!dataValicion.esValido){
+                console.log(dataValicion)
+                return 
+            }
+ 
+            if ($scope.data.total <= 0) {
                 tS.toastr('warning', 'No se puede generar el documento con valor total 0!');
                 return
             }
@@ -2486,12 +2493,12 @@
 
 
         $scope.onSave = async function () {
-            try {
-                let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
-                let validateForm = isValidForm()
-                if (!validateForm) {
-                    throw "Invalid form!";
-                }
+             try {
+                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
+                 let validateForm = isValidForm()
+                 if (!validateForm) {
+                     throw "Invalid form!";
+                 }
 
                 if (!isValidTotals()) return 
 
@@ -2596,9 +2603,9 @@
                         console.error(error);
                     }).finally(() => hideLoader())
                 }
-            } catch (error) {
-                hideLoader();
-                console.log(error)
+             } catch (error) {
+                 hideLoader();
+                 console.log(error)
             }
         }
 

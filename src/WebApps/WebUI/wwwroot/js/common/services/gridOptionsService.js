@@ -1,7 +1,7 @@
- 
+//@ts-check
 (function () {
 
-    'use strict'; 
+    'use strict';
     /**
      * Para documentos de ventas
      */
@@ -201,14 +201,11 @@
                 },
                 "calculoTotalDetalle": function () {
                     try {
-                        //let total = (rowEntity.precioUnitario - rowEntity.valorDescuento) * rowEntity.cantidad;
-                        // let totalDescuento = rowEntity.cantidad * rowEntity.valorDescuento;
                         let precioTotalSinImpuesto = ((rowEntity.precioUnitario * rowEntity.cantidad)) - rowEntity.valorDescuento;
                         let valorImpuesto = pricingUtils.calculateTaxValue(precioTotalSinImpuesto, rowEntity.tarifa);
                         let total = precioTotalSinImpuesto + valorImpuesto;
                         let totalIce = rowEntity.cantidad * rowEntity.ice;
 
-                        //   rowEntity.totalDescuento = fS.roundNumber(totalDescuento, decimal.nroDescuentoDetalle)
                         rowEntity.precioTotalSinImpuesto = fS.roundNumber(precioTotalSinImpuesto, decimal.nroPrecio);
                         rowEntity.valorImpuesto = fS.roundNumber(valorImpuesto, decimal.nroPrecio)
                         rowEntity.total = fS.roundNumber(total, decimal.nroTotalDetalle);
@@ -289,7 +286,7 @@
                 });
 
                 // Construir el HTML para la tabla de impuestos
-                if(totalNetoIva>0){
+                if (totalNetoIva > 0) {
                     htmlImpuestoTotal += `<tr>
                                     <td class="left">
                                         <span class="text-dark">Subtotal ${dataTarifaImpuesto.descripcion}</span>
@@ -310,7 +307,7 @@
                     });
 
                     sumTotalIva += totalIva;
-                    if(totalIva>0){
+                    if (totalIva > 0) {
                         htmlIvaTotal += `
                                     <tr>
                                         <td class="left">
@@ -323,7 +320,7 @@
 
                 }
             }
-        
+
             const importeTotal = totalPrecioTotalSinImpuesto + sumTotalIva;
             if (totalSinImpuesto > 0) {
                 totalPorcentajeDescuento = ((totalSinImpuesto - totalPrecioTotalSinImpuesto) * 100) / totalSinImpuesto;
@@ -490,11 +487,133 @@
         }
 
 
+        service.mostrarErrorCalculosProducto = function (errores) {
+            // Agrupar errores por uniqueRow
+            const erroresPorUniqueRow = errores.reduce((acc, error) => {
+                if (!acc[error.uniqueRow]) {
+                    acc[error.uniqueRow] = {
+                        productoNombre: error.productoNombre,
+                        errores: []
+                    };
+                }
+                acc[error.uniqueRow].errores.push(error.errorMensaje);
+                return acc;
+            }, {});
+
+            // Crear el HTML para la tabla en SweetAlert2
+            const htmlContenido = Object.values(erroresPorUniqueRow).map(({ productoNombre, errores }) => {
+                const filasErrores = errores.map((mensaje, index) => `
+                    <tr>
+                    ${index === 0 ? `<td rowspan="${errores.length}" style="border: 1px solid #ddd; padding: 8px;">${productoNombre}</td>` : ''}
+                    <td style="border: 1px solid #ddd; padding: 8px;">${mensaje}</td>
+                    </tr>
+                `).join('');
+                return filasErrores;
+            }).join('');
+
+            // Mostrar en SweetAlert2
+            Swal.fire({
+                title: '<small>Errores en los cálculos</small>',
+                html: `
+                    <table style="width:100%; border-collapse: collapse;" class="small">
+                        <thead>
+                            <tr>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Producto</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Errores</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${htmlContenido}
+                        </tbody>
+                    </table>
+                `,
+                icon: 'error',
+                confirmButtonText: 'Aceptar', 
+                width: 850
+            });
+        }
+
+        service.validarCalculosPorProducto = function (productos) {
+
+            function calcularSubtotalProducto(producto) {
+             //   const descuentoPorcentaje = (producto.valorDescuento || producto.descuento || 0) / 100;
+                const descuentoProducto = (producto.valorDescuento || producto.descuento || 0) 
+                const subtotalProducto = producto.cantidad * producto.precioUnitario;
+               // const descuento = subtotalProducto * descuentoPorcentaje;
+                return subtotalProducto - descuentoProducto;
+            }
+
+            function calcularIVAProducto(subtotal, tasaIVA) {
+                let valorImpuesto = pricingUtils.calculateTaxValue(subtotal, tasaIVA);
+                return valorImpuesto;
+            }
+
+            function calcularTotalProducto(subtotal, iva) {
+                return subtotal + iva;
+            }
+
+            function validarProducto(productos) {
+                const errores = [];
+
+                for (let producto of productos) {
+                    const subtotalEsperado = calcularSubtotalProducto(producto);
+                    const ivaEsperado = calcularIVAProducto(subtotalEsperado, producto.tarifa);
+                    const totalEsperado = calcularTotalProducto(subtotalEsperado, ivaEsperado);
+
+                    if (!producto.llevaInventario) continue;
+
+                    let errorMensaje = null, productoNombre = producto.descripcion;
+                    let uniqueRow = fS.generateUuidv4();
+
+                    if (subtotalEsperado.toFixed(2) !== producto.precioTotalSinImpuesto.toFixed(2)) {
+                        errorMensaje = `Error en Subtotal: Calculado ${producto.precioTotalSinImpuesto.toFixed(2)}, Esperado ${subtotalEsperado.toFixed(2)}`
+                        errores.push({
+                            uniqueRow,
+                            errorMensaje,
+                            productoNombre
+                        });
+                    }
+
+                    if (ivaEsperado.toFixed(2) !== producto.valorImpuesto.toFixed(2)) {
+                        errorMensaje = `Error en IVA: Calculado ${producto.valorImpuesto.toFixed(2)}, Esperado ${ivaEsperado.toFixed(2)}`
+                        errores.push({
+                            uniqueRow,
+                            errorMensaje,
+                            productoNombre
+                        });
+                    }
+
+                    if (totalEsperado.toFixed(2) !== producto.total.toFixed(2)) {
+                        errorMensaje = `Error en Total: Calculado <b>${producto.total.toFixed(2)}</b>, Esperado <b>${totalEsperado.toFixed(2)}</b>`;
+                        errores.push({
+                            uniqueRow,
+                            errorMensaje,
+                            productoNombre
+                        });
+                    }
+                }
+
+                return {
+                    esValido: errores.length === 0,
+                    errores
+                };
+            }
+
+            let dataValid = validarProducto(productos); 
+
+            if (!dataValid.esValido) {
+                service.mostrarErrorCalculosProducto(dataValid.errores)
+                throw new Error(`Error en cálculos: ${dataValid}`)
+            }
+
+            return dataValid;
+
+        }
 
         return service;
 
     }
- 
+
     /**
      * Para documentos de compras 
      */
@@ -715,7 +834,7 @@
                 });
 
                 // Construir el HTML para la tabla de impuestos
-                if (totalNetoIva>0){
+                if (totalNetoIva > 0) {
 
                     htmlImpuestoTotal += `<tr>
                                     <td class="left">
@@ -737,7 +856,7 @@
 
                     sumTotalIva += totalIva;
 
-                    if (totalIva>0){
+                    if (totalIva > 0) {
                         htmlIvaTotal += `
                                     <tr>
                                         <td class="left">
