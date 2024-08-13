@@ -124,9 +124,11 @@ BEGIN
             
             SET @tableNames = 'establecimiento,entidadFinanciera,subEntidadFinanciera'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
+            SELECT es.idEstablecimiento,es.codEstab,es.nombreComercial,ea.predeterminado
+            FROM Config.Estab_Asig         ea WITH (NOLOCK) 
+            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = ea.codEstab
+            WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
 			 
-
             SELECT idEntidadFinanciera,descripcion,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 
             SELECT idSubEntidadFinanciera,idEntidadFinanciera,descripcion,codigo FROM dbo.SubEntidadFinanciera WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
@@ -140,7 +142,10 @@ BEGIN
             
             SET @tableNames = 'establecimiento'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC			
+            SELECT es.idEstablecimiento,es.codEstab,es.nombreComercial,ea.predeterminado
+            FROM Config.Estab_Asig         ea WITH (NOLOCK) 
+            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = ea.codEstab
+            WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC			
 
             RETURN
         END

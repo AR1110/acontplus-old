@@ -285,8 +285,6 @@ BEGIN
 			INSERT INTO InfoAdicionalDoc (idComprobante,idTipoDocumento,nombre,valor)
 						          SELECT @idAprobacion,@idTipoDocumento,nombre,valor FROM @tbInfoAdicional
 
-			INSERT INTO Ventas.HistoryInfoAdicional(idInfoAdicional,idDocumento,codDoc,secuencial,estab,ptoEmi)
-			                                 SELECT idInfoAdicional,@idAprobacion,'APR',@secuencial,@estab,@ptoEmi FROM @tbHistorialVenta
 
 			IF @docOrigen = 'NE'
 				BEGIN
