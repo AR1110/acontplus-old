@@ -415,10 +415,12 @@
                 const data = {
                     estabs: [],
                     subFamilias: [],
-                    config: {}
+                    config: {},
+                    tipoDocumento : [],
+                    tiposTransaccion : []
                 }
                 if (response !== null && typeof response === 'object') {
-                    const { bodegas, decimales, ptoEmision, subFamilia } = response;
+                    const { ptoEmision,bodegas, subFamilia,decimales,tiposTransaccion,tipoDocumento } = response;
                     const dataToGroup = {
                         estabs: ptoEmision,
                         bodegas: bodegas,
@@ -426,8 +428,11 @@
                     }
                     data.estabs = fS.groupingEstab(dataToGroup);
                     data.subFamilias = subFamilia;
-                    data.decimal = decimales[0]
+                    data.decimal = decimales[0];
+                    data.tipoDocumento = tipoDocumento;
+                    data.tipoTransaccion = tiposTransaccion;
                 }
+                
                 return data;
             })
         }
