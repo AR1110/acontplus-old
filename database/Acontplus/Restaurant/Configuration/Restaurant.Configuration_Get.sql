@@ -29,11 +29,12 @@ BEGIN
     --cliente por defecto agregado en configuracion general
     SELECT TOP 1 @customerCompanyId = ISNULL(JSON_VALUE(jsonConfig, '$.idCliente'), 0) FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND  codConfig = 'CV'
 
-   -- IF @tipo = 1
-
-        --no eliminar este comentario, se usa para una nueva depuracion o migracion 
-       /** BEGIN 
-            SET @tableNames='estabs,bodegas'
+    
+    --no eliminar este tipo 1, se usa para una nueva depuracion o migracion 
+    -- cargar datos estabs, puntos, emision y bodegas al iniciar sessión de manera general
+    IF @tipo = 1 
+         BEGIN 
+            SET @tableNames='puntosEmision,bodegas'
              SELECT idEstablecimiento
                   ,nombreComercial
                   ,codEstab
@@ -54,7 +55,18 @@ BEGIN
             FROM v_Bodega_Asign WITH(NOLOCK) 
             WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
             RETURN 
-        END**/
+        END 
+
+     --no eliminar este tipo 2, se usa para una nueva depuracion o migracion  
+    IF @tipo = 2
+        BEGIN 
+	        SET @tableNames = 'ConfigDecimal,Tables,SubCategorias,Impuesto,TarifaImpuesto,Floor,Room,Customer,tarifaImpuestoVigente,config,vendedores'
+            
+
+            RETURN 
+        END 
+
+   --se usa en pos tecnologia react 
 	SET @tableNames = 'ConfigDecimal,Tables,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,Room,Customer,tarifaImpuestoVigente,config,vendedores'
 	
     SELECT * FROM  Config.v_Sistema_Decimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
