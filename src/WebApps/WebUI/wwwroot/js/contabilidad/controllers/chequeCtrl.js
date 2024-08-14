@@ -1,3 +1,4 @@
+//@ts-check
 (function () {
 
     'use strict';
@@ -5,15 +6,15 @@
     app.controller('chequeCtrl', chequeCtrl);
     chequeCtrl.$inject = [
         '$scope',
-        'controlCajaService',
-        'chequeService',
-        'comprobanteEgresoService',
-        'formulario',
-        'commonService',
-
+        '$injector', 
     ];
 
-    function chequeCtrl($scope, controlCajaSvc, chequeSvc, comprobanteEgresoSvc, fS, commonSvc) {
+    function chequeCtrl($scope, $injector) {
+        const controlCajaSvc = $injector.get('controlCajaService');
+        const comprobanteEgresoSvc = $injector.get('comprobanteEgresoService');
+        const comprobanteIngresoSvc = $injector.get('comprobanteIngresoService');
+        const fS = $injector.get('formulario');
+        const commonSvc = $injector.get('commonService');
 
 
         $scope.recordsQuantity = [25, 50, 100];
@@ -25,8 +26,7 @@
             pageSize: 25,
             checkBoxDate: true,
             totalRecords: 0,
-            maxSize: 5,
-            tipo: 0
+            maxSize: 5, 
         }
 
         $scope.establecimientos = [];
@@ -78,6 +78,7 @@
                     checkBoxDate: $scope.dataSearch.checkBoxDate,
                     dateStart: fS.formatDateMoment($scope.dataSearch.dateStart),
                     dateEnd: fS.formatDateMoment($scope.dataSearch.dateEnd),
+                    byPosfechado: $scope.dataSearch.posfechado
                 }
                 controlCajaSvc.getAll(params).then(response => {
                     $scope.cheques = response.cheques;
@@ -127,20 +128,25 @@
 
 
 
+        const esComprobanteIngreso = item=>item.codDoc==='CI';
+        const esComprobanteEgreso = item=>item.codDoc==='CE';
+
 
         //Guardar Cheques Cobro/Pago
-        $scope.askToSaveCheck = async (item) => {
-            let tipoCheque = item.codDoc === 'CI' ? 'Cobro Cheque' : 'Pago Cheque';
+        $scope.askToSaveCheck = async function (item)  {
+            let tipoCheque = esComprobanteIngreso(item) ? 'Cobro Cheque' : 'Pago Cheque'; 
 
-            if (item.estado.toUpperCase() === "COBRADO" || item.estado.toUpperCase() === "ANULADO") {
-                Swal.fire({
-                    icon: 'warning',
-                    //title: 'Insumos',
-                    html: '<small>Este documento ya se encuentra <strong>COBRADO/ANULADO</strong>!</small>',
-                    allowOutsideClick: false
-                });
-                return
+            let responseApi = {};
+
+            if (esComprobanteIngreso(item)){
+                responseApi = await comprobanteIngresoSvc.getDataForDelete(item.idComprobante);
             }
+
+            if (esComprobanteEgreso(item)){
+                responseApi = await comprobanteEgresoSvc.getDataToDelete(item.idComprobante); 
+            }
+
+            console.log(responseApi)
 
 
             Swal.fire({

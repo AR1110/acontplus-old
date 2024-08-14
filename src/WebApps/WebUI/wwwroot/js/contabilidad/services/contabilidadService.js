@@ -1231,6 +1231,8 @@
                     result.cheques = response.cheques.map(item=>{
                         return {
                             id: item.id,
+
+                            idComprobante: item.idComprobante, // idcomprobante ingreso e egreso
                             idEstablecimiento: item.idEstablecimiento,
                             codDoc: item.codDoc,
                             nroDocumento: item.nroDocumento,
@@ -1241,8 +1243,7 @@
                             fechaEmision: item.fechaEmision,
                             posfechado: item.posfechado,
                             cobro: item.cobro,
-                            totalRecords: item.totalRecords,
-                            tipoNombre: item.gestion==1?'Cobro':'Pago',
+                            totalRecords: item.totalRecords, 
                             posfechadoName: item.posfechado?'SI': 'NO'
                         }
                     });
