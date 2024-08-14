@@ -35,9 +35,12 @@ public class CompraHabitualController(
     }
 
     [HttpDelete("Delete")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(string json)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> {
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(json) }
+        };
         return Ok(await compraHabitualService.DeleteAsync(parameters));
     }
 }

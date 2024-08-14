@@ -1,4 +1,5 @@
-﻿(function () {
+﻿//@ts-check
+(function () {
     "use strict";
 
     const TEMPLATE_URL = "~/Pages/Compras/DocumentoRecibido/Shared/";
@@ -151,17 +152,17 @@
             $scope.dataSearch.pageIndex = 1;
             $scope.getComprobantes();
         };
-        $scope.refresh= function(){
+        $scope.refresh = function () {
             $scope.getComprobantes();
         }
 
-        $scope.onChangeTipoDoc = function(){ 
+        $scope.onChangeTipoDoc = function () {
             $scope.isSelectedDocRetencion = $scope.dataSearch.codDoc === DOC_TYPE.R_SRI;
 
-            if ($scope.isSelectedDocRetencion){ 
+            if ($scope.isSelectedDocRetencion) {
                 $scope.dataSearch.rucProveedor = null;
                 $scope.proveedor.nombreProveedor = null;
-            }else{ 
+            } else {
                 $scope.clienteSearch.nombreCliente = null;
             }
             $scope.getComprobantes();
@@ -268,7 +269,7 @@
         $scope.openModalImportacionManual = async function () {
             try {
                 if (!(await alertEstabSelected())) return;
-                subcategories = $scope.subcategories;
+                subcategories = $scope.subcategories || [];
 
                 if (subcategories.length == 0) {
                     return tS.toastr(
@@ -1496,8 +1497,9 @@
 
         $scope.getArticleHC = async (result) => {
             try {
-                //console.log(result)
-                if (typeof result === "object") {
+                const { isRefresh } = result
+                //console.log(isRefresh);
+                if (isRefresh) {
                     getTempDetails();
                 }
             } catch (error) {

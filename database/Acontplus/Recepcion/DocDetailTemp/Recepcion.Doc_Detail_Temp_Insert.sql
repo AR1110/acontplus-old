@@ -1,5 +1,5 @@
 USE AcontPlus
-
+GO
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -20,10 +20,7 @@ GO
 -- Create date: 2022-09-17
 -- Description:	SP Para insertar los detalles temporales del comprobante importado
 -- =============================================
-IF OBJECT_ID(N'Recepcion.Doc_Detail_Temp_Insert', N'P') IS NOT NULL
-DROP PROCEDURE Recepcion.Doc_Detail_Temp_Insert 
-GO
-CREATE PROCEDURE Recepcion.Doc_Detail_Temp_Insert
+CREATE OR ALTER PROCEDURE Recepcion.Doc_Detail_Temp_Insert
 @idRol INT
 ,@jsonData NVARCHAR(MAX)
 ,@method VARCHAR(200) = NULL
@@ -52,42 +49,43 @@ BEGIN
 	,idDetalle INT
 	)
 
-	INSERT INTO @tmp(idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, codigo, codigoPorcentaje, valor)
-	SELECT idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, codigo, codigoPorcentaje, valor
-	FROM OPENJSON(@jsonData) WITH (
-	idDetalle INT '$.idDetalle'
-
-		,idDocumento INT '$.idDocumento'
-	,idArticulo INT '$.idArticulo'
-	,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
-	,codigoAuxiliar VARCHAR(100) '$.codigoAuxiliar'
-	,cantidad VARCHAR(100) '$.cantidad'
-	,descripcion VARCHAR(300) '$.descripcion'
-	,precioUnitario VARCHAR(15) '$.precioUnitario'
-	,descuento VARCHAR(15) '$.descuento'
-	,precioTotalSinImpuesto VARCHAR(15) '$.precioTotalSinImpuesto'
-	,codigo VARCHAR(15) '$.codigo'
-	,codigoPorcentaje VARCHAR(15) '$.codigoPorcentaje' 
-	,valor VARCHAR(15) '$.valor' 
-	)
-
-	IF NOT EXISTS (SELECT 1 FROM @tmp)
-		BEGIN
-			SELECT '0' code, 'No existe datos para registrar'as 'message'
-			RETURN
-		END
-	
-	SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM AFTDataRol(@idRol)
-
-	SELECT @rucProv = rucEmisor  FROM Recepcion.DocumentoRecibido WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
-
-	SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
-		IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento =  (SELECT TOP 1 idDocumento FROM @tmp) AND codDoc = '01' AND complete = 1)
-		BEGIN
-			SELECT '1' code, '' AS 'message'
-			RETURN
-		END
 	BEGIN TRY
+        INSERT INTO @tmp(idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, codigo, codigoPorcentaje, valor)
+	    SELECT idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, codigo, codigoPorcentaje, valor
+	    FROM OPENJSON(@jsonData) WITH (
+	    idDetalle INT '$.idDetalle'
+
+		    ,idDocumento INT '$.idDocumento'
+	    ,idArticulo INT '$.idArticulo'
+	    ,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
+	    ,codigoAuxiliar VARCHAR(100) '$.codigoAuxiliar'
+	    ,cantidad VARCHAR(100) '$.cantidad'
+	    ,descripcion VARCHAR(300) '$.descripcion'
+	    ,precioUnitario VARCHAR(15) '$.precioUnitario'
+	    ,descuento VARCHAR(15) '$.descuento'
+	    ,precioTotalSinImpuesto VARCHAR(15) '$.precioTotalSinImpuesto'
+	    ,codigo VARCHAR(15) '$.codigo'
+	    ,codigoPorcentaje VARCHAR(15) '$.codigoPorcentaje' 
+	    ,valor VARCHAR(15) '$.valor' 
+	    )
+
+	    IF NOT EXISTS (SELECT 1 FROM @tmp)
+		    BEGIN
+			    SELECT '0' code, 'No existe datos para registrar'as 'message'
+			    RETURN
+		    END
+	
+	    SELECT @idEntidad = idEntidad
+		    ,@idUsuario = idUsuario FROM dbo.v_usuario WHERE idUsuarioRol = @idRol
+
+	    SELECT @rucProv = rucEmisor  FROM Recepcion.DocumentoRecibido WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
+
+	    SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
+		    IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento =  (SELECT TOP 1 idDocumento FROM @tmp) AND codDoc = '01' AND complete = 1)
+		    BEGIN
+			    SELECT '1' code, '' AS 'message'
+			    RETURN
+		    END
 		BEGIN TRAN
 			IF EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
 				BEGIN
