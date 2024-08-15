@@ -570,6 +570,7 @@
                             tarifa: restItem.tarifa,//✅
                             valorDescuento: restItem.valorDescuento,
                             valorImpuesto: restItem.valorImpuesto,//✅
+                            precioTotalSinImpuesto: restItem.precioTotalSinImpuesto,
                             medidas,
                             conversion: dataMedida.conversion,
                             precioCostoFraccionado: dataMedida.precioCostoFraccionado,
@@ -628,7 +629,7 @@
                         }
                     }); 
 
-                    return {
+                    let resultData = {
                         comprobante,
                         cliente,
                         items,
@@ -636,6 +637,8 @@
                         formasPago,
                         cuotas
                     }
+                    console.log(resultData)
+                    return resultData;
                 }
             })
         }

@@ -53,13 +53,13 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     function calculateTotalItems(items) {
         return items.map((item, index) => {
             let precioConIva = typeof item.precioConIva === 'number' ? item.precioConIva : item.precioUnitario + item.valorImpuesto;
-            let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
-            let total = precioTotalSinImpuesto + item.valorImpuesto;
+           // let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
+            let total = item.precioTotalSinImpuesto + item.valorImpuesto;
             return {
                 n: index + 1,
                 ...item,
                 precioConIva: fS.roundNumber(precioConIva, 3),
-                precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
+              //  precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
                 total: fS.roundNumber(total, 3)
             }
         })

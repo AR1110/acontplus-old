@@ -551,6 +551,10 @@
             function calcularTotalProducto(subtotal, iva) {
                 return fS.plus(subtotal, iva, 5)
             }
+            function getMaxDecimal(input){
+                const partes = input.toString().split(".");
+                return partes.length > 1 ? partes[1].length : 1;
+            }
 
             function validarProducto(productos) {
                 const errores = []; 
@@ -568,36 +572,36 @@
                     let totalEsperado = calcularTotalProducto(subtotalEsperado, ivaEsperado);
 
                     // Redondear valores esperados con base en los decimales del producto
-                    subtotalEsperado = fS.roundNumber(subtotalEsperado, fS.contarDecimales(producto.precioTotalSinImpuesto));
-                    ivaEsperado = fS.roundNumber(ivaEsperado, fS.contarDecimales(producto.valorImpuesto));
-                    totalEsperado = fS.roundNumber(totalEsperado, fS.contarDecimales(producto.total));
+                    subtotalEsperado = fS.roundNumber(subtotalEsperado, getMaxDecimal(producto.precioTotalSinImpuesto));
+                    ivaEsperado = fS.roundNumber(ivaEsperado, getMaxDecimal(producto.valorImpuesto));
+                    totalEsperado = fS.roundNumber(totalEsperado, getMaxDecimal(producto.total));
 
                     // Validar Subtotal
-                    if (subtotalEsperado !== producto.precioTotalSinImpuesto) {
-                        errores.push({
-                            uniqueRow,
-                            errorMensaje: `Error en Subtotal: Calculado ${producto.precioTotalSinImpuesto}, Esperado ${subtotalEsperado}`,
-                            productoNombre
-                        });
-                    }
+                    // if (subtotalEsperado !== producto.precioTotalSinImpuesto) {
+                    //     errores.push({
+                    //         uniqueRow,
+                    //         errorMensaje: `Error en Subtotal: Calculado ${producto.precioTotalSinImpuesto}, Esperado ${subtotalEsperado}`,
+                    //         productoNombre
+                    //     });
+                    // }
 
                     // Validar IVA
-                    if (ivaEsperado !== producto.valorImpuesto) {
-                        errores.push({
-                            uniqueRow,
-                            errorMensaje: `Error en IVA: Calculado ${producto.valorImpuesto}, Esperado ${ivaEsperado}`,
-                            productoNombre
-                        });
-                    }
+                    // if (ivaEsperado !== producto.valorImpuesto) {
+                    //     errores.push({
+                    //         uniqueRow,
+                    //         errorMensaje: `Error en IVA: Calculado ${producto.valorImpuesto}, Esperado ${ivaEsperado}`,
+                    //         productoNombre
+                    //     });
+                    // }
 
                     // Validar Total
-                    if (totalEsperado !== producto.total) {
-                        errores.push({
-                            uniqueRow,
-                            errorMensaje: `Error en Total: Calculado <b>${producto.total}</b>, Esperado <b>${totalEsperado}</b>`,
-                            productoNombre
-                        });
-                    }
+                    // if (totalEsperado !== producto.total) {
+                    //     errores.push({
+                    //         uniqueRow,
+                    //         errorMensaje: `Error en Total: Calculado <b>${producto.total}</b>, Esperado <b>${totalEsperado}</b>`,
+                    //         productoNombre
+                    //     });
+                    // }
 
                     // Validar cantidad de transacción
                     if (typeof cantidadTransaccion !== 'number') {

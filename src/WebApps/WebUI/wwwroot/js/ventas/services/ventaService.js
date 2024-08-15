@@ -1942,7 +1942,8 @@
                         telefonos,
                         placas,
                         idFormaPagoSri: data.idFormaPagoSri,
-                        dataInfoCred: JSON.parse(infoCrediticia) || {}
+                        dataInfoCred: JSON.parse(infoCrediticia) || {},
+                        nota: data.nota
                     }
                 }
             })
