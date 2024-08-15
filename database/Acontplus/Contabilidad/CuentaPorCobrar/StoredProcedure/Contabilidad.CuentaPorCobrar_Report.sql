@@ -401,7 +401,7 @@ BEGIN
                               ,tt.bodega
                               ,me.descripcion as medidaSalida
                               ,tt.subFamilia
-                              ,valorRentabilidad           = CAST((tt.precioUnitario - tt.precioCosto) as numeric(18,2))
+                              ,valorRentabilidad           = CAST((tt.precioUnitario - tt.precioCosto) as numeric(18,5))
                               
                               ,valorPorcentajeRentabilidad = CAST((( IIF(tt.precioCosto>0, (tt.precioUnitario / tt.precioCosto), 0) * 100) - 100) as numeric(18,2))
                               ,totalPrecioCosto            = CAST((tt.cantidad * tt.precioCosto) as numeric(18,2))
