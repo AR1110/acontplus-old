@@ -135,7 +135,6 @@
                     }
                     if (response.code == "1") {
                         let tempDetail = JSON.parse(response.payload);
-                        console.log(tempDetail)
 
                         tempDetail = tempDetail.map(item => {
                             const { principal, fraccionado, etiquetas, ...restItem } = item;

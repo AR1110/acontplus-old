@@ -572,15 +572,15 @@ function modalArticuloCtrl(
         }
     };
 
-    $scope.refreshSubFamilia = function(){
+    $scope.refreshSubFamilia = function () {
         try {
-            showLoader();  
-            articuloSvc.getDataForForm().then(response=>{
+            showLoader();
+            articuloSvc.getDataForForm().then(response => {
 
-                $scope.subFamilias = response.subFamilias; 
-            }).catch(error=>{
+                $scope.subFamilias = response.subFamilias;
+            }).catch(error => {
                 console.log(error)
-            }).finally(()=>hideLoader())            
+            }).finally(() => hideLoader())
         } catch (error) {
             console.log(error)
             hideLoader();
@@ -623,14 +623,14 @@ function modalArticuloCtrl(
         }
     }
 
-    $scope.refreshMedida = async function(){
-        try { 
+    $scope.refreshMedida = async function () {
+        try {
             showLoader();
             articuloSvc.getDataForForm().then(response => {
-                $scope.medidas = response.medidas;  
+                $scope.medidas = response.medidas;
             }).catch(error => {
                 console.log(error)
-            }).finally(() => hideLoader())  
+            }).finally(() => hideLoader())
         } catch (error) {
             console.log(error);
         }
@@ -770,7 +770,7 @@ function modalArticuloCtrl(
             tS.toastr("warning", "Ingrese un número válido");
             return;
         }
- 
+
         if ($scope.data.precioCosto === 0) {
             tS.toastr("warning", "El valor mínimo en el precio de costo es 0.01");
             return;
@@ -1163,7 +1163,7 @@ function modalArticuloCtrl(
         }
         $scope.dataCodigoBarra.idArticulo = params.idArticulo;
         if ($scope.dataCodigoBarra.idArticuloCodigoBarra > 0) {
-            showLoader(); 
+            showLoader();
             articuloCodigoBarraSvc.put($scope.dataCodigoBarra.idArticuloCodigoBarra, $scope.dataCodigoBarra)
                 .then($scope.successReponseCodigoBarra)
                 .catch(err => {
@@ -2048,7 +2048,8 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
     $scope.deleteCH = (item) => {
         try {
             showLoader();
-            mS.getData('delete', `${URL}Delete?id=${item.idCompraHabitual}`, null, true).then(response => {
+            const { idDocumento, idCompraHabitual } = Object.assign(item, { idDocumento: params.idDocumento });
+            mS.getData('delete', `${URL}Delete?json=${JSON.stringify({ idDocumento, id: idCompraHabitual })}`).then(response => {
                 if (response.code == '0') {
                     tS.toastr('warning', response.message)
                     return
