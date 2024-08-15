@@ -564,6 +564,7 @@
 
                     let errorMensaje = null, productoNombre = producto.descripcion;
                     let uniqueRow = fS.generateUuidv4();
+                    let cantidadTransaccion = producto.cantidad * producto.conversion
 
                     if (subtotalEsperado.toFixed(2) !== producto.precioTotalSinImpuesto.toFixed(2)) {
                         errorMensaje = `Error en Subtotal: Calculado ${producto.precioTotalSinImpuesto.toFixed(2)}, Esperado ${subtotalEsperado.toFixed(2)}`
@@ -591,6 +592,17 @@
                             productoNombre
                         });
                     }
+
+
+                    if(typeof cantidadTransaccion!=='number'){
+                        errorMensaje = `No se ha podido recuperar la medida correctamente. Es posible que la medida principal del artículo haya sido actualizada, y que el documento esté utilizando una medida distinta a las asignadas al artículo.`;
+                        errores.push({
+                            uniqueRow,
+                            errorMensaje,
+                            productoNombre
+                        });
+                    }
+
                 }
 
                 return {

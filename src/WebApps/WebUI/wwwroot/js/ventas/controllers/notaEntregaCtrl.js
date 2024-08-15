@@ -460,9 +460,26 @@
 
         async function askToDelete(item) {
             try {
+                if (item.esAnulado){
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'El documento ya esta anulado!'
+                    })                    
+                    return 
+                }
+                if (item.enabledHistorialCobro){
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'El documento ya se encuentra cobrado!'
+                    })
+                    return 
+                }
                 if (item.disabledAnular) {
-                    fS.sweetAlert('warning', 'El documento ya se encuentra anulada o transferida');
-                    return
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'El documento ya se encuentra transferida!'
+                    })
+                    return 
                 }
 
                 let paramsPermission = getParamsPermission(item, 'A');
