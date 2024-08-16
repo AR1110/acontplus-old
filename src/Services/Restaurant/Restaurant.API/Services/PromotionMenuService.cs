@@ -1,31 +1,19 @@
-﻿using Common.Core.Interfaces;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
-using Restaurant.API.Interfaces;
 
-namespace Restaurant.API.Services
+namespace Restaurant.API.Services;
+public interface IPromotionMenuService
 {
-    public class PromotionMenuService : IPromotionMenuService
+    public Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters);
+}
+public class PromotionMenuService(IAdoRepository repository) : IPromotionMenuService
+{
+    public async Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        private readonly IAdoRepository _repository;
-
-        public PromotionMenuService(IAdoRepository repository)
-        {
-            _repository = repository;
-        }
-
-
-        public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync("Restaurant.Promotion_Menu_Get_By_Id", parameters);
-            if (ds == null)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJson(ds);
-            }
-        }
+        var ds = await repository.GetDataSetAsync("Restaurant.Promotion_Menu_Get_By_Id", parameters);
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new ApiResponse { Code = "0", Message = "Data not found" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }
