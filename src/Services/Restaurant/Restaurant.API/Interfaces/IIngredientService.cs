@@ -1,13 +1,12 @@
 using Common.Core.Models;
 
-namespace Restaurant.API.Interfaces
+namespace Restaurant.API.Interfaces;
+
+public interface IIngredientService
 {
-    public interface IIngredientService
-    {
-        Task<object> GetAsync(Dictionary<string, object> parameters);
-        Task<object> GetByIdAsync(int id);
-        Task<string> AddAsync(ApiRequest parameters);
-        Task<string> UpdateAsync(int id, ApiRequest data);
-        Task<bool> DeleteAsync(int id);
-    }
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> GetByIdAsync(int id);
+    Task<ApiResponse> AddAsync(ApiRequest parameters);
+    Task<ApiResponse> UpdateAsync(int id, ApiRequest data);
+    Task<ApiResponse> DeleteAsync(int userId, int id);
 }

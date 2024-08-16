@@ -2,130 +2,103 @@
 using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Restaurant.API.Interfaces;
+using Restaurant.API.Services;
 using Services.Common.Extensions;
 
-namespace Restaurant.API.Controllers
+namespace Restaurant.API.Controllers;
+
+public class PromotionController(
+    IPromotionService promotionService,
+    S3ObjectCustom s3ObjectCustom,
+    IS3StorageService storage)
+    : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PromotionController : ControllerBase
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IPromotionService _promotionService;
-        private readonly S3ObjectCustom _s3ObjectCustom;
-        private readonly IS3StorageService _storageService;
-        private readonly IConfiguration _configuration;
-        public PromotionController(IConfiguration configuration, IPromotionService promotionService,
-            S3ObjectCustom s3ObjectCustom,
-            IS3StorageService storage)
-        {
-            _configuration = configuration;
-            _promotionService = promotionService;
-            _s3ObjectCustom = s3ObjectCustom;
-            _storageService = storage;
+        var parameters =
+            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+        return Ok(await promotionService.GetAsync(parameters));
+    }
 
+    [HttpPost]
+    public async Task<IActionResult> Post(string json, IFormFile file)
+    {
+        try
+        {
+            if (file != null)
+            {
+                await s3ObjectCustom.Add($"{User.GetIdCardCompany}/promociones/", file);
+            }
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetUserRoleId() },
+                { "json", SqlStringParam.Sanitize(json) },
+                { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" },
+                { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" }
+            };
+
+            int userRoleId = User.GetUserRoleId();
+            var response = await promotionService.AddAsync(parameters);
+
+            if (response.Code == "1" && file != null)
+            {
+                var s3Response = await storage.UploadAsync(s3ObjectCustom);
+                s3ObjectCustom.Dispose();
+            }
+
+            return Ok(response);
         }
-
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+        catch (Exception ex)
         {
-            try
+            if (file != null)
             {
-                var parameters = new Dictionary<string, object> {
-                    {"userRoleId", User.GetUserRoleId() },
-                    {"json", json }
-                };
-                var response = await _promotionService.GetAsync(parameters);
-                if (response == null) { return NoContent(); }
-                return Ok(response);
+                s3ObjectCustom.Dispose();
             }
-            catch (Exception ex)
-            {
-                return BadRequest("Error on get: " + ex.Message);
-            }
+
+            return BadRequest("Error on put: " + ex.Message);
         }
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> Post(string json, IFormFile file)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, string json, IFormFile file)
+    {
+        try
         {
-
-            try
+            if (file != null)
             {
-                if (file != null)
-                {
-                    await _s3ObjectCustom.Add($"{User.GetIdCardCompany}/promociones/", file);
-                }
-
-                var parameters = new Dictionary<string, object> {
-                    {"userRoleId", User.GetUserRoleId() },
-                    {"json", SqlStringParam.Sanitize(json) },
-                    {"s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "" },
-                    {"s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "" }
-                };
-
-                int userRoleId = User.GetUserRoleId();
-                var response = await _promotionService.PostAsync(parameters);
-                if (response == null) { return NoContent(); }
-
-                dynamic decode = JsonConvert.DeserializeObject(response);
-
-                if (decode.code == "1" && file != null)
-                {
-                    var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
-                    _s3ObjectCustom.Dispose();
-                }
-                return Ok(response);
+                await s3ObjectCustom.Add($"{User.GetIdCardCompany}/promociones/", file);
             }
-            catch (Exception ex)
+
+            var parameters = new Dictionary<string, object>
             {
-                if (file != null)
-                {
-                    _s3ObjectCustom.Dispose();
-                }
-                return BadRequest("Error on put: " + ex.Message);
+                { "userRoleId", User.GetUserRoleId() },
+                { "id", id },
+                { "json", SqlStringParam.Sanitize(json) },
+                { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" },
+                { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" }
+            };
+
+            var response = await promotionService.UpdateAsync(parameters);
+            if (response == null) { return NoContent(); }
+
+            if (response.Code == "1" && file != null)
+            {
+                var s3Response = await storage.UploadAsync(s3ObjectCustom);
+                s3ObjectCustom.Dispose();
             }
+
+            return Ok(response);
         }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, string json, IFormFile file)
+        catch (Exception ex)
         {
-
-            try
+            if (file != null)
             {
-                if (file != null)
-                {
-                    await _s3ObjectCustom.Add($"{User.GetIdCardCompany}/promociones/", file);
-                }
-
-                var parameters = new Dictionary<string, object> {
-                    {"userRoleId", User.GetUserRoleId() },
-                    {"id", id },
-                    {"json", SqlStringParam.Sanitize(json) },
-                    {"s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "" },
-                    {"s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "" }
-                };
-
-                var response = await _promotionService.PutAsync(parameters);
-                if (response == null) { return NoContent(); }
-
-                dynamic decode = JsonConvert.DeserializeObject(response);
-
-                if (decode.code == "1" && file != null)
-                {
-                    var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
-                    _s3ObjectCustom.Dispose();
-                }
-                return Ok(response);
+                s3ObjectCustom.Dispose();
             }
-            catch (Exception ex)
-            {
-                if (file != null)
-                {
-                    _s3ObjectCustom.Dispose();
-                }
-                return BadRequest(ex.Message);
-            }
+
+            return BadRequest(ex.Message);
         }
     }
 }
