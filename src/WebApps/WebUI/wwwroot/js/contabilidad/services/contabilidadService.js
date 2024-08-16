@@ -1566,6 +1566,9 @@
 
                         decimalSaldo = fS.contarDecimales(documento.saldo)
                     }
+                    if (cuotasCalculadas.length===1){
+                        decimalSaldo = fS.contarDecimales(documento.saldo);
+                    }
 
 
                     return {

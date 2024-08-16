@@ -1,5 +1,6 @@
 //@ts-check
 (function () {
+    let precisionMaxima = 5;
 
     function instanceDecimal(num, max = 0) {
         if (max > 0) {
@@ -69,7 +70,14 @@
     angular.module('acontPlusApp')
         .factory('pricingUtils', function () {
             let service = {}
-            let precisionMaxima = 5;
+            
+            service.precisionMaxima = precisionMaxima;
+            service.instanceDecimal = instanceDecimal;
+            service.decPlus = decPlus;
+            service.decMinus = decMinus;
+            service.decMul = decMul;
+            service.decDiv = decDiv;
+
 
             service.calcularPrecioConIva = function (precioVenta, porcentaje) {
                 try {
@@ -1253,6 +1261,17 @@
 
         }
 
+
+        formSvc.cellTooltipGrid = function(entity, field){
+            var originalValue = 0;
+            if(entity && typeof entity ==='object'){
+                originalValue = entity[field];
+            }else{
+                originalValue = entity;
+            }
+            var roundedValue = formSvc.roundNumber(originalValue, 2);
+            return 'Original: ' + originalValue + '\nRedondeado: ' + roundedValue;
+        }
 
 
         return formSvc;
