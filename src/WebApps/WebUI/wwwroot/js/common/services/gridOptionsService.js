@@ -10,23 +10,19 @@
 
     gridOptionsService.$inject = [
         'formulario',
-        'pricingUtils'
+        'pricingUtils',
+        'toastService'
     ];
 
-    function gridOptionsService(fS, pricingUtils) {
+    function gridOptionsService(fS, pricingUtils, tS) {
 
         let service = {}
-
+ 
         /**
          * 
-         *  
-         * @param {object} rowEntity valores de uiGridOptions
-         * @param {string || number} oldValue valor numero o string 
-         * @returns object 
+         * @param {*} param0 
+         * @returns 
          */
-
-
-
         service.calculoColDef = function ({ rowEntity, oldValue, decimal, idTarifa, columnDefs }) {
 
             let tarifaImpuesto = columnDefs.find(item => item.field === 'idTipoIva').editDropdownOptionsArray
@@ -78,7 +74,10 @@
                         rowEntity.tarifa = tarifaImpuesto.tarifa;
                         calculoColumnas["precioUnitario"]();
                     } catch (error) {
-                        toastr.error(`CALCULO TIPO IVA: ${error}`)
+                        tS.toastr({
+                            type: 'error',
+                            message: `CALCULO TIPO IVA: ${error}`
+                        }) 
                     }
                 },
 
@@ -91,7 +90,10 @@
                         rowEntity.codigoPorcentaje = tarifaImpuesto.codigoPorcentaje;
                         calculoColumnas["precioUnitario"]();
                     } catch (error) {
-                        toastr.error(`CALCULO TIPO IVA: ${error}`)
+                        tS.toastr({
+                            type: 'warning',
+                            message: `CALCULO TIPO IVA: ${error}`
+                        })  
                     }
                 },
 
@@ -109,7 +111,11 @@
                         rowEntity.valorDescuento = fS.roundNumber(valorDescuento, decimal.nroDescuentoDetalle);
 
                     } catch (error) {
-                        toastr.error(`CAMBIO DE TARIFA: ${error}`)
+
+                        tS.toastr({
+                            type: 'warning',
+                            message: `CAMBIO DE TARIFA: ${error}`
+                        })  
                     }
                 },
                 'precioUnitario': function () {
@@ -118,7 +124,7 @@
                         if (rowEntity.precioUnitario === oldValue) return;
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(rowEntity.precioUnitario, tarifaImpuesto.tarifa);
-                        // let precioIvaDescuento = pricingUtils.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
+                        
                         let valorDescuento = pricingUtils.getValorDescuento(rowEntity.precioUnitario, rowEntity.porcentajeDescuento);
 
                         rowEntity.precioUnitario = fS.roundNumber(rowEntity.precioUnitario, decimal.nroPrecio);
@@ -127,7 +133,10 @@
                         // this.setTotalRow(entity, index)
 
                     } catch (error) {
-                        toastr.error(`CÁLCULO DE PRECIO UNITARIO: ${error}`)
+                        tS.toastr({
+                            type: 'warning',
+                            message: `CÁLCULO DE PRECIO UNITARIO: ${error}`
+                        })   
                     }
                 },
                 'precioConIva': function () {
@@ -141,35 +150,41 @@
                         rowEntity.precioUnitario = fS.roundNumber(precioUnitario, decimal.nroPrecio);
 
                     } catch (error) {
-                        toastr.error(`CÁLCULO DE PRECIO CON IVA: ${error}`)
+                        tS.toastr({
+                            type: 'warning',
+                            message: `CÁLCULO DE PRECIO CON IVA: ${error}`
+                        })  
                     }
                 },
                 'porcentajeDescuento': function () {
                     try {
 
-                        if (rowEntity.porcentajeDescuento === oldValue) return
-
-
+                        if (rowEntity.porcentajeDescuento === oldValue) return 
 
                         //Verificamos  si el porcentaje es un nuevo Valor y menor o  igual a 100
-                        if (rowEntity.porcentajeDescuento <= 100) {
-                            //  let precioConIva = pricingUtils.calcularPrecioConIva(rowEntity.precioUnitario, tarifaImpuesto.tarifa);
-                            //  let precioIvaDescuento = pricingUtils.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
+                        if (rowEntity.porcentajeDescuento <= 100) { 
                             let valorDescuento = pricingUtils.getValorDescuento(rowEntity.precioUnitario, rowEntity.porcentajeDescuento);
+                            let totalDescuento = pricingUtils.calcularValorTotalDescuento(rowEntity.cantidad , valorDescuento)
 
-                            rowEntity.porcentajeDescuento = fS.roundNumber(rowEntity.porcentajeDescuento, decimal.nroPorcentaje);
-                            // rowEntity.precioConIva = fS.roundNumber(precioIvaDescuento, decimal.nroPrecio);
-                            rowEntity.valorDescuento = fS.roundNumber(rowEntity.cantidad * valorDescuento, decimal.nroDescuentoDetalle);
+                            rowEntity.porcentajeDescuento = fS.roundNumber(rowEntity.porcentajeDescuento, decimal.nroPorcentaje); 
+                            rowEntity.valorDescuento = fS.roundNumber(totalDescuento, decimal.nroDescuentoDetalle);
 
                         } else {
                             rowEntity.porcentajeDescuento = oldValue;
-                            toastr.warning('El Porcentaje tiene que ser menor o igual a 100', 'Cálculo de Porcentaje Descuento');
+
+                            tS.toastr({
+                                type: 'warning',
+                                message: 'El Porcentaje tiene que ser menor o igual a 100'
+                            })  
                         }
 
                         rowEntity.porcentajeDescuento = fS.roundNumber(rowEntity.porcentajeDescuento, decimal.nroPorcentaje);
 
                     } catch (error) {
-                        toastr.error(`CÁLCULO DE PORCENTAJE DE DESCUENTO: ${error}`)
+                        tS.toastr({
+                            type: 'warning',
+                            message: `CÁLCULO DE PORCENTAJE DE DESCUENTO: ${error}`
+                        })   
                     }
                 },
                 'valorDescuento': function () {
@@ -177,42 +192,51 @@
 
                         if (rowEntity.valorDescuento === oldValue) return
 
-                        let subTotal = ((rowEntity.precioUnitario * rowEntity.cantidad))
+                        let totalAntesDescuento = pricingUtils.calcularTotalAntesDescuento(rowEntity.precioUnitario, rowEntity.cantidad);
 
-                        if (rowEntity.valorDescuento <= subTotal) {
+                        if (rowEntity.valorDescuento <= totalAntesDescuento) {
 
-                            let porcentajeDescuento = pricingUtils.getPorcentajeDescuento(subTotal, rowEntity.valorDescuento);
-                            //  let precioConIva = rowEntity.precioUnitario - rowEntity.valorDescuento;
+                            let porcentajeDescuento = pricingUtils.getPorcentajeDescuento(totalAntesDescuento, rowEntity.valorDescuento);
+                          
 
                             rowEntity.valorDescuento = fS.roundNumber(rowEntity.valorDescuento, decimal.nroDescuentoDetalle);
-                            rowEntity.porcentajeDescuento = fS.roundNumber(porcentajeDescuento, decimal.nroPorcentaje);
-                            //  rowEntity.precioConIva = fS.roundNumber(precioConIva, decimal.nroPrecio);
+                            rowEntity.porcentajeDescuento = fS.roundNumber(porcentajeDescuento, decimal.nroPorcentaje); 
 
                         } else {
                             rowEntity.valorDescuento = oldValue;
-                            toastr.warning('El descuento no puede ser mayor al subtotal', 'Ingreso Descuento');
+                            tS.toastr({
+                                type: 'warning',
+                                message: 'El descuento no puede ser mayor al subtotal'
+                            }) 
                         }
 
                         rowEntity.valorDescuento = fS.roundNumber(rowEntity.valorDescuento, decimal.nroDescuentoDetalle);
 
                     } catch (error) {
-                        toastr.error(`CÁLCULO DE VALOR DE DESCUENTO: ${error}`)
+                        tS.toastr({
+                            type: 'warning',
+                            message: `CÁLCULO DE VALOR DE DESCUENTO: ${error}`
+                        })  
                     }
                 },
                 "calculoTotalDetalle": function () {
                     try {
-                        let precioTotalSinImpuesto = ((rowEntity.precioUnitario * rowEntity.cantidad)) - rowEntity.valorDescuento;
-                        let valorImpuesto = pricingUtils.calculateTaxValue(precioTotalSinImpuesto, rowEntity.tarifa);
-                        let total = precioTotalSinImpuesto + valorImpuesto;
+ 
+                        let subtotalSinImpuesto = pricingUtils.calcularSubtotalSinImpuesto(rowEntity.precioUnitario, rowEntity.cantidad, rowEntity.valorDescuento);
+ 
+                        let valorImpuesto = pricingUtils.calculateTaxValue(subtotalSinImpuesto, rowEntity.tarifa);
+                        let total = pricingUtils.calcularTotalConImpuesto(subtotalSinImpuesto, valorImpuesto);
                         let totalIce = rowEntity.cantidad * rowEntity.ice;
 
-                        rowEntity.precioTotalSinImpuesto = fS.roundNumber(precioTotalSinImpuesto, decimal.nroPrecio);
-                        rowEntity.valorImpuesto = fS.roundNumber(valorImpuesto, decimal.nroPrecio)
+                        rowEntity.precioTotalSinImpuesto = fS.roundNumber(subtotalSinImpuesto, decimal.nroPrecio);
+                        rowEntity.valorImpuesto = fS.roundNumber(valorImpuesto, 2)
                         rowEntity.total = fS.roundNumber(total, decimal.nroTotalDetalle);
-                        rowEntity.totalIce = fS.roundNumber(totalIce, decimal.nroIce)
-                        // this.getTotales();
+                        rowEntity.totalIce = fS.roundNumber(totalIce, decimal.nroIce) 
                     } catch (error) {
-                        toastr.error(`CÁLCULO DE TOTAL: ${error}`)
+                        tS.toastr({
+                            type: 'warning',
+                            message: `CÁLCULO DE TOTAL: ${error}`
+                        })  
                     }
                 },
             }
