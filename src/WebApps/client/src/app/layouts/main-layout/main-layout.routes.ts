@@ -12,6 +12,9 @@ export const routes: Routes = [
         title: 'App - Compras',
         loadChildren: () =>
           import('@modules/purchase/purchase.routes').then((r) => r.routes),
+        data: {
+          breadcrumb: 'Compras',
+        },
       },
       {
         path: 'config',
@@ -38,41 +41,62 @@ export const routes: Routes = [
         title: 'App - Contabilidad',
         loadChildren: () =>
           import('@modules/accounting/accounting.routes').then((r) => r.routes),
+        data: {
+          breadcrumb: 'Contabilidad',
+        },
       },
       {
         path: 'inventory',
         title: 'App - Inventario',
         loadChildren: () =>
           import('@modules/inventory/inventory.routes').then((r) => r.routes),
+        data: {
+          breadcrumb: 'Inventario',
+        },
       },
       {
         path: 'sale',
         title: 'App - Venta',
         loadChildren: () => import('@sale/sale.routes').then((r) => r.routes),
+        data: {
+          breadcrumb: 'Venta',
+        },
       },
       {
         path: 'restaurant',
         title: 'App - Restaurante',
         loadChildren: () =>
           import('@restaurant/restaurant.routes').then((r) => r.routes),
+        data: {
+          breadcrumb: 'Restaurant',
+        },
       },
       {
         path: 'billing',
         title: 'App - Fact. Elect.',
         loadChildren: () =>
           import('@billing/billing.routes').then((r) => r.routes),
+        data: {
+          breadcrumb: 'Facturación',
+        },
       },
       {
         path: 'mechanical',
         title: 'App - Mecánica.',
         loadChildren: () =>
           import('@mechanical/mechanical.routes').then((r) => r.routes),
+        data: {
+          breadcrumb: 'Mecánica',
+        },
       },
       {
         path: 'customer',
         title: 'App - Customer',
         loadChildren: () =>
           import('@customer/customer.routes').then((r) => r.routes),
+        data: {
+          breadcrumb: 'Cliente',
+        },
       },
       {
         path: 'vet',
