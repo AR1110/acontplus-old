@@ -4,10 +4,18 @@
   "configurations": [
     {
       "name": "ng serve",
-      "type": "chrome",
+      "type": "node", // Use Node.js configuration instead of Chrome
       "request": "launch",
       "preLaunchTask": "npm: start",
-      "url": "http://localhost:4200/"
+      "program": "${workspaceFolder}/node_modules/@angular/cli/bin/ng",
+      "args": [
+        "serve",
+        "--no-open"
+      ],
+      "cwd": "${workspaceFolder}",
+      "protocol": "inspector",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     },
     {
       "name": "ng test",
