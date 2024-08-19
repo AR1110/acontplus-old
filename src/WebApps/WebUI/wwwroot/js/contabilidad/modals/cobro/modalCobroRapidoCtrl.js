@@ -297,8 +297,7 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                         cuotasPorCobrarEstado
                     }
 
-                    const params = comprobanteIngresoSvc.mapperTo(data); 
-                    console.log(params)
+                    const params = comprobanteIngresoSvc.mapperTo(data);  
 
                     showLoader(); 
                     comprobanteIngresoSvc.post(params).then(response => {
