@@ -34,10 +34,10 @@
         "src/app/modules/*"
       ],
       "@accounting/*": [
-        "src/app/modules/accounting/*",
+        "src/app/modules/accounting/*"
       ],
       "@technical-support/*": [
-        "src/app/modules/technical-support/*",
+        "src/app/modules/technical-support/*"
       ],
       "@inventory/*": [
         "src/app/modules/inventory/*",
@@ -51,21 +51,21 @@
         "src/app/modules/inventory/shared/*"
       ],
       "@restaurant/*": [
-        "src/app/modules/restaurant/*",
+        "src/app/modules/restaurant/*"
       ],
       "@billing/*": [
-        "src/app/modules/billing/*",
+        "src/app/modules/billing/*"
       ],
       "@mechanical/*": [
-        "src/app/modules/mechanical/*",
+        "src/app/modules/mechanical/*"
       ],
       "@customer/*": [
         "src/app/modules/customer/*"
       ],
       "@shared/*": [
         "src/app/shared/*"
-      ],
-    },
+      ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

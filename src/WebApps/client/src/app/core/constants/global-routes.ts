@@ -38,6 +38,7 @@ export enum GlobalRoutes {
   ConfigCompany = 'config/company',
   ConfigPrinter = 'config/printer',
   ConfigWizardConfig = 'config/wizard-config',
+  ConfigTiempoCredito = 'config/tiempo-credito',
   InventarioReporte = 'inventory/report',
   ContabilidadCarteraCliente = 'accounting/cartera-cliente',
   VentasReportVentaReporte = 'sale/reports/sale-report',
