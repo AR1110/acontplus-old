@@ -4,7 +4,6 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --base-href /client/",
     "development": "ng build -c development --base-href /client/",
     "prod": "ng build -c production --base-href /client/",
     "staging": "ng build -c staging --base-href /client/",
