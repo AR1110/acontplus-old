@@ -1,6 +1,7 @@
 //@ts-check
 (function () {
     let precisionMaxima = 5;
+    let precisionMaximaTotalDetalle = 2;
 
     function instanceDecimal(num, max = 0) {
         if (max > 0) {
@@ -377,6 +378,11 @@
             return roundedTempNumber / factor;
             // return Math.trunc(number * Math.pow(10, max)) / Math.pow(10, max);
 
+        }
+
+        formSvc.truncateNumber = function(number, decimals) {
+            const factor = Math.pow(10, decimals);
+            return Math.floor(number * factor) / factor;
         }
 
 
@@ -1269,8 +1275,12 @@
             }else{
                 originalValue = entity;
             }
-            var roundedValue = formSvc.roundNumber(originalValue, 2);
+            var roundedValue = formSvc.roundNumber(originalValue, precisionMaximaTotalDetalle);
             return 'Original: ' + originalValue + '\nRedondeado: ' + roundedValue;
+        }
+
+        formSvc.cellFilterRoundToNumber = function(){
+            return `roundTo:${precisionMaximaTotalDetalle}`;
         }
 
 

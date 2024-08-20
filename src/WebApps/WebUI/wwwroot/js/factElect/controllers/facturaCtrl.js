@@ -973,15 +973,11 @@
 
 
         function calculateTotalItems(items) {
-            return items.map(item => {
-                //   let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
-                let total = item.precioTotalSinImpuesto + item.valorImpuesto;
+            return items.map(item => { 
                 return {
                     ...item,
                     idFacturaDetalle: params.action === "DUPLICAR" ? 0 : item.idFacturaDetalle,
-                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
-                    //  precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, $scope.decimal.nroTotalDetalle),
-                    total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle)
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio), 
                 }
 
             })
@@ -1482,7 +1478,7 @@
                 width: '7%',
                 minWidth: '50',
                 visible: true,
-                cellFilter: 'roundTo:2',
+                cellFilter: fS.cellFilterRoundToNumber(),
                 cellTooltip: function (row, col) {
                     return fS.cellTooltipGrid(row.entity, col.field)
                 },
@@ -1496,7 +1492,7 @@
                 width: '5%',
                 minWidth: '50',
                 visible: true,
-                cellFilter: 'roundTo:2',
+                cellFilter: fS.cellFilterRoundToNumber(),
                 cellTooltip: function (row, col) {
                     return fS.cellTooltipGrid(row.entity, col.field)
                 },
@@ -1510,7 +1506,7 @@
                 width: '5%',
                 minWidth: '100',
                 visible: true,
-                cellFilter: 'roundTo:2',
+                cellFilter: fS.cellFilterRoundToNumber(),
                 cellTooltip: function (row, col) {
                     return fS.cellTooltipGrid(row.entity, col.field)
                 },
@@ -1581,10 +1577,10 @@
             $scope.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = $scope.bodegas;
         }
 
-        /**
-         * 
-         * @param {*} entity Datos del Articulo 
-         */
+       /**
+        * 
+        * @param {*} rowEntity 
+        */
         $scope.deleteRow = async function (rowEntity) {
             try {
                 let isConfirmed = await gridOptionsSvc.askToDeleteItem(rowEntity);
@@ -2227,57 +2223,26 @@
 
         function drawImpuestoTotales() {
             try {
-                let {
-                    subTotalSinImpuestos,
-                    htmlSubtotalImpuesto,
-                    htmlImpuestoTotal,
-                    htmlIvaTotal,
-                    htmlTotal,
-                    irbpnr,
-                    totalIce,
-                    importeTotal,
-                    totalDescuento,
-                    porcentajeDescuento,
-                    propina,
-                } = gridOptionsSvc.getImpuestoTotales({
+                let dataImpuestoTotales = gridOptionsSvc.getImpuestoTotales({
                     items: $scope.gridOptions.data,
                     decimal: $scope.decimal,
                     tarifasImpuesto: $scope.tarifasImpuesto.slice(),
                     TAX_RATE_CODE
                 })
+                let {
+                    subTotalSinImpuestos, 
+                    irbpnr, 
+                    importeTotal,
+                    totalDescuento,
+                    porcentajeDescuento,
+                    propina,
+                } = dataImpuestoTotales;
+ 
 
 
 
                 // Crear la estructura HTML con un template literal
-                const htmlTemplate = `<div class="table-responsive">
-                                        <table class="table table-clear table-sm">
-                                            <tbody>
-                                                ${htmlSubtotalImpuesto}
-                                                ${htmlImpuestoTotal}
-                                                <tr>
-                                                    <td class="left">
-                                                        <span class="text-dark">Total descuento</span>
-                                                    </td>
-                                                    <td class="right">$${totalDescuento}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="left">
-                                                        <span class="text-dark">Valor ICE</span>
-                                                    </td>
-                                                    <td class="right">$${totalIce}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="left">
-                                                        <span class="text-dark">Valor irbpnr</span>
-                                                    </td>
-                                                    <td class="right">$${irbpnr}</td>
-                                                </tr>
-                                                ${htmlIvaTotal}
-                                               ${htmlTotal}            
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                `;
+                const htmlTemplate = gridOptionsSvc.impuestoTotalesHtml(dataImpuestoTotales);
                 let drawImpuestoTotalesElement = document.getElementById("drawImpuestoTotales");
                 if (drawImpuestoTotalesElement){
                     drawImpuestoTotalesElement.innerHTML = htmlTemplate;

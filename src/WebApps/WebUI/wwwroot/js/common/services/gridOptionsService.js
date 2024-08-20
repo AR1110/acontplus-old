@@ -34,7 +34,7 @@
                     if (rowEntity.cantidad === oldValue) return
 
 
-                    rowEntity.cantidad = fS.roundNumber(rowEntity.cantidad, decimal.nroCantidad);
+                    rowEntity.cantidad = fS.truncateNumber(rowEntity.cantidad, decimal.nroCantidad);
                     calculoColumnas["porcentajeDescuento"]();
 
                 },
@@ -294,10 +294,10 @@
             for (let dataTarifaImpuesto of tarifasImpuesto) {
                 let filteredItems = items.filter(item => item.codigoPorcentaje === dataTarifaImpuesto.codigoPorcentaje);
 
-                let dataTotalNetoIva  = filteredItems.reduce((acc, prev) => {
+                let dataTotalNetoIva = filteredItems.reduce((acc, prev) => {
                     // Calcular el total neto con descuentos 
                     //  let precioTotalSinImpuesto = (prev.precioUnitario * prev.cantidad) - prev.valorDescuento;
-                    acc.totalNetoIva = pricingUtils.decPlus(acc.totalNetoIva, prev.precioTotalSinImpuesto, 2)
+                    acc.totalNetoIva = pricingUtils.decPlus(acc.totalNetoIva, prev.precioTotalSinImpuesto, 5)
                     acc.totalNetoIvaNoRedondeado = pricingUtils.decPlus(acc.totalNetoIvaNoRedondeado, prev.precioTotalSinImpuesto, pricingUtils.precisionMaxima)
 
                     return acc;
@@ -314,7 +314,7 @@
                                         <span class="text-dark">Subtotal ${dataTarifaImpuesto.descripcion}</span>
                                     </td>
                                    
-                                    <td class="right" title="${fS.cellTooltipGrid(dataTotalNetoIva, "totalNetoIvaNoRedondeado")}">$${dataTotalNetoIva.totalNetoIva}</td>
+                                    <td class="right" title="${fS.cellTooltipGrid(dataTotalNetoIva, "totalNetoIvaNoRedondeado")}">$${fS.roundNumber(dataTotalNetoIva.totalNetoIva, 2)}</td>
                                 </tr>`;
 
                 }
@@ -324,18 +324,18 @@
                         let totalIva = prev.valorImpuesto;
 
                         //en caso de no tener valor impusto calculado
-                        if(!("valorImpuesto" in prev)){
-                           totalIva = pricingUtils.calculateTaxValue(prev.precioTotalSinImpuesto, prev.tarifa);
+                        if (!("valorImpuesto" in prev)) {
+                            totalIva = pricingUtils.calculateTaxValue(prev.precioTotalSinImpuesto, prev.tarifa);
                         }
                         // Calcular el total neto con descuentos 
                         //let precioTotalSinImpuesto = (prev.precioUnitario * prev.cantidad) - prev.valorDescuento;
-                        acc.totalIva = pricingUtils.decPlus(acc.totalIva, totalIva, 2);
+                        acc.totalIva = pricingUtils.decPlus(acc.totalIva, totalIva, 5);
                         acc.totalIvaNoRedondeado = pricingUtils.decPlus(acc.totalIvaNoRedondeado, totalIva, pricingUtils.precisionMaxima);
                         return acc;
                     }, {
                         totalIva: 0,
                         totalIvaNoRedondeado: 0
-                    }); 
+                    });
 
                     sumTotalIva += dataToltalIva.totalIva;
 
@@ -363,7 +363,7 @@
                                             <td class="left">
                                                 <span class="text-dark">Subtotal sin Impuestos</span>
                                             </td>
-                                            <td class="right" title="${fS.cellTooltipGrid(totalPrecioTotalSinImpuesto)}">$${fS.roundNumber(totalPrecioTotalSinImpuesto, 2) }</td>
+                                            <td class="right" title="${fS.cellTooltipGrid(totalPrecioTotalSinImpuesto)}">$${fS.roundNumber(totalPrecioTotalSinImpuesto, 2)}</td>
                                         </tr>`;
 
             let htmlTotal = `
@@ -371,7 +371,7 @@
                     <td class="left">
                         <strong class="font-weight-bold">Valor Total</strong>
                     </td>
-                    <td class="right font-weight-bold">$${fS.roundNumber(importeTotal, 2) }</td>
+                    <td class="right font-weight-bold">$${fS.roundNumber(importeTotal, 2)}</td>
                 </tr>
             `
 
@@ -390,6 +390,51 @@
                 importeTotal: fS.roundNumber(importeTotal, 2)
             };
         };
+
+        service.impuestoTotalesHtml = function (obj) {
+            let { 
+                htmlSubtotalImpuesto, 
+                htmlImpuestoTotal, 
+                totalDescuento, 
+                totalIce, 
+                irbpnr ,
+                htmlIvaTotal,
+                htmlTotal
+            } = obj;
+            // Crear la estructura HTML con un template literal
+            const htmlTemplate = `<div class="table-responsive">
+                                        <table class="table table-clear table-sm">
+                                            <tbody>
+                                                ${htmlSubtotalImpuesto}
+                                                ${htmlImpuestoTotal}
+                                                <tr>
+                                                    <td class="left">
+                                                        <span class="text-dark">Total descuento</span>
+                                                    </td>
+                                                    <td class="right">$${totalDescuento}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="left">
+                                                        <span class="text-dark">Valor ICE</span>
+                                                    </td>
+                                                    <td class="right">$${totalIce}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="left">
+                                                        <span class="text-dark">Valor irbpnr</span>
+                                                    </td>
+                                                    <td class="right">$${irbpnr}</td>
+                                                </tr>
+                                                ${htmlIvaTotal}
+                                               ${htmlTotal}            
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                `;
+
+
+            return htmlTemplate;
+        }
 
 
         service.askToDeleteItem = async function (rowEntity) {
@@ -455,7 +500,7 @@
 
         /**
          * 
-         * @param {*} items 
+         * @param {*} gridOptions 
          * @param {*} idTarifa 
          * @param {*} decimal 
          */

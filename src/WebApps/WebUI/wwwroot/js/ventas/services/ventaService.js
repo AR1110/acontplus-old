@@ -797,6 +797,8 @@
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
 
+                        let total = itemPrincipal.precioTotalSinImpuesto + itemPrincipal.valorImpuesto;
+
                         let obj = {
                             n: index + 1,
                             uniqueRowDetalle,
@@ -823,6 +825,7 @@
                             tarifa: itemPrincipal.tarifa,//✅
                             valorDescuento: itemPrincipal.valorDescuento,
                             valorImpuesto: itemPrincipal.valorImpuesto,//✅
+                            precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
                             medidas,
                             conversion: dataMedida.conversion,
                             precioCostoFraccionado: dataMedida.precioCostoFraccionado,
@@ -830,7 +833,8 @@
                             consolidacionesFecha,
                             estado: 1,
                             datosAdicionalesArticulo,
-                            datosAdicionales: restItem.datosAdicionales
+                            datosAdicionales: restItem.datosAdicionales,
+                            total: fS.roundNumber(total, 5)
                         }
 
                         return obj;
@@ -1292,7 +1296,12 @@
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload) || [];
                     let proformasRepos = mainData[0];
-                    let { totalRecords, totalDocument } = proformasRepos[0];
+                    let totalRecords=0, totalDocument = 0;
+                    let data = proformasRepos[0];
+                    if(data){
+                        totalRecords = data.totalRecords;
+                        totalDocument = data.totalDocument;
+                    } 
                     let proformas = proformasRepos.map(item => {
                         return {
                             comprobante: 'Proforma',
@@ -1385,6 +1394,7 @@
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
+                        let total = itemPrincipal.precioTotalSinImpuesto + itemPrincipal.valorImpuesto;
                         let obj = {
                             n: index + 1,
                             idProformaDetalle: restItem.idProformaDetalle,
@@ -1417,7 +1427,9 @@
                             consolidacionesFecha: [],
                             estado: 1,
                             datosAdicionalesArticulo: [],
-                            datosAdicionales: restItem.datosAdicionales
+                            datosAdicionales: restItem.datosAdicionales,
+                            precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
+                            total: fS.roundNumber(total, 5)
                         }
 
                         return obj;
