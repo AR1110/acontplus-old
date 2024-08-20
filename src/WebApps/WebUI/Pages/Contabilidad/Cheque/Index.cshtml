@@ -122,8 +122,8 @@
                 </div> -->
                 <div class="col-xl-2 col-lg-2 col-md-6 col-12 col-sm-12">
                     <div class="form-group">
-                        <span for="tipos">PosFechado: </span>
-                        <select class="form-control border-select" ng-model="dataSearch.byPosfechado" ng-change="refresh()">
+                        <span for="tipos">Posfechado: </span>
+                        <select class="form-control border-select" ng-model="dataSearch.posfechado" ng-change="refresh()">
                             <option value="">Todos</option>                                   
                             <option ng-value="true">Posfechados</option>                                   
                             <option ng-value="false">No Posfechados</option>                                   
@@ -157,9 +157,9 @@
                         <tr md-row>
                             <th md-column >Nro.</th>                
                             <th md-column >Op.</th>                
+                            <th md-column >Tipo Doc.</th>                
                             <th md-column>Nro. Doc</th>
-                            <th md-column>F. Emisión</th>
-                            <th md-column>Tipo</th>
+                            <th md-column>F. Emisión</th> 
                             <th md-column>Persona</th>
                             <th md-column>Posfechado</th>                
                             <th md-column>Nro</th> 
@@ -178,11 +178,11 @@
                                         <button 
                                             class="dropdown-item" 
                                             type="button" 
-                                            ng-if="accion.crear"  
-                                            ng-click="askToSaveCheck(item)" 
-                                            tooltip data-toggle="tooltip" 
-                                            title="Guardar Cobro Cheque">
-                                            <i class="ti-save"></i> Guardar
+                                            
+                                            ng-click="askToSaveCheck(item)">
+                                            <i class="ti-save"></i>  
+                                            {{item.cobro?'Cobrar': 'Pagar'}}
+
                                         </button>
 
                                         <button 
@@ -209,11 +209,9 @@
                                     </div>
                                 </div>                       
                             </td>                
+                            <td md-cell>{{item.codDoc}}</td>  
                             <td md-cell>{{item.nroDocumento}}</td>  
-                            <td md-cell> {{item.fechaEmision}}</td> 
-                            <td md-cell>
-                                <span>{{item.tipoNombre}}</span>
-                            </td> 
+                            <td md-cell> {{item.fechaEmision}}</td>  
                             <td md-cell>{{item.persona}}</td>  
                             <td md-cell>{{item.posfechadoName}}</td>                                                                                                                                                                                                     
                             <td md-cell>{{item.nro}}</td>                                  

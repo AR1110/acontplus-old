@@ -65,7 +65,7 @@ public class AccountController(
 
                         await loginHistoryService.AddAsync(logingHistory);
 
-                        logingHistory.UserAgent = userData[0].UserAgent;
+                        logingHistory.UserAgent = authRequest.UserAgent;
                         await accountService.AddNotificationAsync(logingHistory);
 
                         return Ok(new

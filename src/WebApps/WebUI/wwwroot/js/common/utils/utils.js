@@ -1,40 +1,150 @@
+//@ts-check
 (function () {
+    let precisionMaxima = 5;
+    let precisionMaximaTotalDetalle = 2;
+
+    function instanceDecimal(num, max = 0) {
+        if (max > 0) {
+            return new Decimal(num).toDecimalPlaces(max).toNumber()
+        }
+        return new Decimal(num);
+    }
+
+    /**
+     * 
+     * @param {*} num1 
+     * @param {*} num2 
+     * @param {*} max 
+     * @returns 
+     */
+    function decPlus(num1, num2, max = 0) {
+        let dec = instanceDecimal(num1).plus(num2)
+        if (max > 0) {
+            return dec.toDecimalPlaces(max).toNumber()
+        }
+
+        return dec;
+
+    }
+
+    /**
+     * 
+     * @param {*} num1 
+     * @param {*} num2 
+     * @param {*} max 
+     * @returns 
+     */
+
+    function decMinus(num1, num2, max = 0) {
+        let dec = instanceDecimal(num1).minus(num2)
+        if (max > 0) {
+            return dec.toDecimalPlaces(max).toNumber()
+        }
+
+        return dec;
+
+    }
+
+
+    function decMul(num1, num2, max = 0) {
+        let dec = instanceDecimal(num1).mul(num2)
+        if (max > 0) {
+            return dec.toDecimalPlaces(max).toNumber()
+        }
+
+        return dec;
+
+    }
+
+
+    function decDiv(num1, num2, max = 0) {
+        let dec = instanceDecimal(num1).div(num2)
+        if (max > 0) {
+            return dec.toDecimalPlaces(max).toNumber()
+        }
+
+        return dec;
+    }
+
+
 
     angular.module('acontPlusApp')
         .factory('pricingUtils', function () {
             let service = {}
+            
+            service.precisionMaxima = precisionMaxima;
+            service.instanceDecimal = instanceDecimal;
+            service.decPlus = decPlus;
+            service.decMinus = decMinus;
+            service.decMul = decMul;
+            service.decDiv = decDiv;
+
 
             service.calcularPrecioConIva = function (precioVenta, porcentaje) {
                 try {
-                    let resultadoPorcentaje = Number(porcentaje) / 100;
-                    let result = Number(precioVenta) * Number(resultadoPorcentaje)
-                    let precioConIva = result + Number(precioVenta);
-                    return precioConIva;
+                    let porcentajeDecimal = decDiv(Number(porcentaje), 100, precisionMaxima)
+                    let montoImpuesto = decMul(Number(precioVenta), Number(porcentajeDecimal), precisionMaxima);
+                    let precioTotal = decPlus(montoImpuesto, Number(precioVenta), precisionMaxima);
+                    return precioTotal;
 
                 } catch (error) {
                     console.log('pricingUtils -> CALCULO PRECIO CON IVA', error);
                 }
             }
 
-            service.calcularPrecioVenta = function (precioConIva, porcentaje) {
+
+
+            /**
+             * Funtion old 
+             * @param {*} precioTotalConImpuesto 
+             * @param {*} porcentajeImpuesto 
+             * @returns 
+             */
+            service.calcularPrecioVenta = function (precioTotalConImpuesto, porcentajeImpuesto) {
                 try {
-                    let resultadoPorcentaje = Number(porcentaje) / 100 + 1;
-                    let precioVenta = Number(precioConIva) / Number(resultadoPorcentaje);
-                    return precioVenta;
+                    let factorImpuesto = decDiv(Number(porcentajeImpuesto), 100, precisionMaxima);
+                    let factorTotal = decPlus(factorImpuesto, 1, precisionMaxima);
+                    let precioBase = decDiv(Number(precioTotalConImpuesto), factorTotal, precisionMaxima);
+                    return precioBase;
                 } catch (error) {
-                    console.log('pricingUtils -> CALCULO PRECIO Unitario', error);
+                    console.log(`Error al calcular el precio base: precioTotalConImpuesto=${precioTotalConImpuesto}, porcentajeImpuesto=${porcentajeImpuesto}`, error);
+                    return null;
                 }
             }
+
+
+            /**
+             * Function new 
+             * @param {*} precioTotalConImpuesto 
+             * @param {*} porcentajeImpuesto 
+             * @returns 
+             */
+            service.calcularPrecioBase = function (precioTotalConImpuesto, porcentajeImpuesto) {
+                try {
+                    let factorImpuesto = decDiv(Number(porcentajeImpuesto), 100, precisionMaxima);
+                    let factorTotal = decPlus(factorImpuesto, 1, precisionMaxima);
+                    let precioBase = decDiv(Number(precioTotalConImpuesto), factorTotal, precisionMaxima);
+                    return precioBase;
+                } catch (error) {
+                    console.log(`Error al calcular el precio base: precioTotalConImpuesto=${precioTotalConImpuesto}, porcentajeImpuesto=${porcentajeImpuesto}`, error);
+                    return null;
+                }
+            }
+
+
+
+
             //cuando edito porcentaje utilidad
             service.calcularPorcentajeUtilidad = function (precioCosto, porcentajeUtilidad) {
-                try {
-                    let resultPorcentajeUtilidad = Number(porcentajeUtilidad) / 100;
-                    let result = Number(precioCosto) * resultPorcentajeUtilidad;
-                    let precioVenta = Number(precioCosto) + result;
-                    return precioVenta
 
+                try {
+                    let factorUtilidad = decDiv(Number(porcentajeUtilidad), 100, precisionMaxima);
+                    let montoUtilidad = decMul(Number(precioCosto), factorUtilidad, precisionMaxima)
+                    let precioVenta = decPlus(Number(precioCosto), montoUtilidad, precisionMaxima);
+                    return precioVenta;
                 } catch (error) {
-                    console.log('pricingUtils -> calcularPorcentajeUtilidad', error);
+                    console.log(`Error al calcular el precio de venta: precioCosto=${precioCosto}, porcentajeUtilidad=${porcentajeUtilidad}`, error);
+                    return null;
                 }
 
             }
@@ -44,11 +154,19 @@
             //Get Campo Porcentaje Utilidad
             service.campoPorcentajeUtilidad = function (precioCosto, precioVenta) {
                 try {
-                    let porcentajeUtilidad = (Number(precioVenta) / Number(precioCosto) * 100) - 100;
-                    return porcentajeUtilidad;
+                    // Primer paso: Dividir el precio de venta por el precio de costo
+                    let resultadoDivision = decDiv(Number(precioVenta), Number(precioCosto), precisionMaxima)
 
+                    // Segundo paso: Multiplicar el resultado de la división por 100
+                    let porcentajeBruto = decMul(resultadoDivision, 100, precisionMaxima);
+
+                    // Tercer paso: Restar 100 para obtener el porcentaje de utilidad
+                    let porcentajeUtilidad = decMinus(porcentajeBruto, 100, precisionMaxima);
+
+                    return porcentajeUtilidad;
                 } catch (error) {
-                    console.log('pricingUtils -> campoPorcentajeUtilidad', error);
+                    console.log(`Error al calcular el porcentaje de utilidad: precioCosto=${precioCosto}, precioVenta=${precioVenta}`, error);
+                    return null;
                 }
             }
 
@@ -56,46 +174,113 @@
             //EN VENTA 
             service.getPrecioIvaConDescuento = function (precioConIva, porcentajeDescuento) {
                 try {
-                    let porcentaje = Number(porcentajeDescuento) / 100;
-                    let descuento = Number(porcentaje) * Number(precioConIva);
-                    let precioIvaConDescuento = Number(precioConIva) - Number(descuento);
-                    return precioIvaConDescuento;
+                    // Convertir el porcentaje de descuento a decimal
+                    let porcentajeDecimal = decDiv(Number(porcentajeDescuento), 100, precisionMaxima);
+
+                    // Calcular el monto del descuento
+                    let montoDescuento = decMul(Number(precioConIva), porcentajeDecimal, precisionMaxima);
+
+                    // Calcular el precio con IVA después de aplicar el descuento
+                    let precioConDescuento = decMinus(Number(precioConIva), montoDescuento, precisionMaxima);
+
+                    return precioConDescuento;
                 } catch (error) {
-                    console.log('pricingUtils -> getPrecioIvaConDescuento', error);
+                    console.log(`Error al calcular el precio con descuento: precioConIva=${precioConIva}, porcentajeDescuento=${porcentajeDescuento}`, error);
+                    return null;
                 }
 
             }
 
             service.getValorDescuento = function (precioUnitario, porcentajeDescuento) {
                 try {
-                    let porcentaje = Number(porcentajeDescuento) / 100;
-                    let descuento = Number(porcentaje) * Number(precioUnitario);
-                    return descuento;
+                    // Convertir el porcentaje de descuento a decimal
+                    let porcentajeDecimal = decDiv(Number(porcentajeDescuento), 100, precisionMaxima);
+
+                    // Calcular el monto del descuento
+                    let montoDescuento = decMul(Number(precioUnitario), porcentajeDecimal, precisionMaxima)
+
+                    return montoDescuento;
                 } catch (error) {
-                    console.log('pricingUtils -> getValorDescuento', error);
+                    console.log(`Error al calcular el monto del descuento: precioUnitario=${precioUnitario}, porcentajeDescuento=${porcentajeDescuento}`, error);
+                    return null;
                 }
             }
 
-            service.getPorcentajeDescuento = function (precioUnitario, valorDescuento) {
+            
+            /**
+             *Función para calcular el valor total del descuento 
+             * @param {*} cantidad 
+             * @param {*} valorDescuento 
+             * @returns 
+             */
+            service.calcularValorTotalDescuento = function(cantidad, valorDescuento) {
+                // Calcular el valor total del descuento
+                let valorTotalDescuento = decMul(cantidad , valorDescuento, precisionMaxima);
+                
+                return valorTotalDescuento;
+            }
+
+            // Función para calcular el total antes de aplicar descuentos
+            service.calcularTotalAntesDescuento = function(precioUnitario, cantidad) {
+                let valorTotal = decMul(precioUnitario, cantidad, precisionMaxima);
+                return valorTotal;
+            }
+
+
+
+            service.getPorcentajeDescuento = function (precioUnitario, montoDescuento) {
                 try {
-                    let porcentaje = valorDescuento / precioUnitario;
-                    let porcentajeDescuento = porcentaje * 100;
+                    // Calcular el porcentaje de descuento en base al monto del descuento y el precio unitario
+                    let porcentajeDecimal = decDiv(Number(montoDescuento), Number(precioUnitario), precisionMaxima);
+                    let porcentajeDescuento = decMul(porcentajeDecimal, 100, precisionMaxima);
+
                     return porcentajeDescuento;
-
                 } catch (error) {
-                    console.log('pricingUtils -> getPorcentajeDescuento', error);
+                    console.log(`Error al calcular el porcentaje de descuento: precioUnitario=${precioUnitario}, montoDescuento=${montoDescuento}`, error);
+                    return null;
                 }
             }
 
-            service.calculateTaxValue = function (price, percentage) {
+            service.calculateTaxValue = function (precio, porcentajeImpuesto) {
                 try {
-                    const tax = (price * percentage) / 100;
-                    return tax;
+                    // Paso 1: Convertir el porcentaje a un valor decimal
+                    let porcentajeDecimal = decDiv(Number(porcentajeImpuesto), 100, precisionMaxima)
+
+                    // Paso 2: Calcular el valor del impuesto
+                    let valorImpuesto = decMul(Number(precio), porcentajeDecimal, precisionMaxima);
+
+                    return valorImpuesto;
                 } catch (error) {
-                    console.log('pricingUtils -> ERROR CALCULATE TAX VALUE', error);
-                    return -1;
+                    console.log(`Error al calcular el valor del impuesto: precio=${precio}, porcentajeImpuesto=${porcentajeImpuesto}`, error);
+                    return null;  // Devuelve null en lugar de -1 para una mejor gestión de errores
                 }
             };
+
+            /**
+             * Calcular el subtotal sin impuestos
+             * @param {*} precioUnitario 
+             * @param {*} cantidad 
+             * @param {*} descuento 
+             * @returns 
+             */
+            service.calcularSubtotalSinImpuesto = function(precioUnitario, cantidad, descuento) {
+                let totalAntesDescuento = service.calcularTotalAntesDescuento(precioUnitario, cantidad);
+                let subtotalSinImpuesto = decMinus(totalAntesDescuento, descuento, precisionMaxima);
+                return subtotalSinImpuesto;
+            }
+
+            // Calcular el total con impuesto
+            service.calcularTotalConImpuesto = function(subtotalSinImpuesto, valorImpuesto) {
+                try {
+                    // Sumar el subtotal sin impuestos y el valor del impuesto
+                    let totalConImpuesto = decPlus(subtotalSinImpuesto, valorImpuesto, precisionMaxima);
+                    return totalConImpuesto;
+                } catch (error) {
+                    console.error('Error en calcularTotalConImpuesto:', error);
+                    return null; // O algún valor por defecto si es necesario
+                }
+            }
+
 
 
 
@@ -106,7 +291,7 @@
     angular.module('acontPlusApp')
         .factory('formulario', formulario);
 
-    formulario.$inject = ['pricingUtils','uuid2'];
+    formulario.$inject = ['pricingUtils', 'uuid2'];
 
     function formulario(pricingUtils, uuid2) {
         let formSvc = {};
@@ -114,7 +299,6 @@
         formSvc.dataDocumento = {};
         formSvc.opcionEmit = "";
 
-        formSvc.loaderPost = $(".loadingoverlay");
 
         formSvc.sweetAlert = function (icon, message, title = null, timer = undefined, position = 'center') {
             Swal.fire({
@@ -196,6 +380,11 @@
 
         }
 
+        formSvc.truncateNumber = function(number, decimals) {
+            const factor = Math.pow(10, decimals);
+            return Math.floor(number * factor) / factor;
+        }
+
 
         /**
          * 
@@ -212,8 +401,8 @@
 
         /**
          * 
-         * @param {*} fecha 
-         * @returns date
+         * @param {*} dateString 
+         * @returns 
          */
         formSvc.formatDateMoment = function (dateString) {
             if (!this.isDateValid(dateString)) {
@@ -286,7 +475,7 @@
         };
 
         formSvc.getFechaEscritaCompleta = function (fecha) {
-            if (!this.campo(fecha)) {
+            if (!fecha) {
                 return fecha.toLocaleDateString("es-ES", {
                     year: 'numeric',
                     month: 'long',
@@ -390,7 +579,7 @@
             );
         };
 
-        formSvc.parseDate = function(dateString) {
+        formSvc.parseDate = function (dateString) {
             const [day, month, year] = dateString.split('/');
             return new Date(year, month - 1, day);
         }
@@ -488,7 +677,7 @@
 
         /**
          * 
-         * @param {*} estabs 
+         * @param {*} obj 
          */
         formSvc.groupingEstab = function (obj) {
             const tempEstabsAndPtosEmision = obj.estabs;
@@ -577,9 +766,9 @@
             return field;
         }
 
-        formSvc.getValidId = (id)=>{
+        formSvc.getValidId = (id) => {
             let valid = id > 0 ? id : null;
-            return valid;            
+            return valid;
         }
 
         /**
@@ -729,7 +918,7 @@
             const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medidaFraccionado => ({
                 ...medidaFraccionado,
                 precioCosto: medidaFraccionado.precioCosto || 0,
-                precioCostoFraccionado : medidaFraccionado.precioCostoFraccionado || 0,
+                precioCostoFraccionado: medidaFraccionado.precioCostoFraccionado || 0,
                 precioUnitario: medidaFraccionado.precioUnitario || 0,
                 tipo: 'FRACCIONADO'
             }))
@@ -891,7 +1080,7 @@
                         fechaVencimiento: formSvc.formatDateTimeZone(fechaVencimiento),
                         entrada: cuota.entrada,
                         idCuotaPorPagar: cuota.idCuotaPorPagar,
-                        idCuotaPorCobrar : cuota.idCuotaPorCobrar
+                        idCuotaPorCobrar: cuota.idCuotaPorCobrar
                     };
                 }
 
@@ -901,7 +1090,7 @@
                     fechaVencimiento: formSvc.formatDateTimeZone(cuota.fechaVencimiento),
                     entrada: cuota.entrada,
                     idCuotaPorPagar: cuota.idCuotaPorPagar,
-                    idCuotaPorCobrar : cuota.idCuotaPorCobrar
+                    idCuotaPorCobrar: cuota.idCuotaPorCobrar
                 };
             });
 
@@ -1000,10 +1189,10 @@
         }
 
         //sacamos numero decimal del saldo
-        formSvc.contarDecimales = function(input) { 
+        formSvc.contarDecimales = function (input) {
             const partes = input.toString().split(".");
             return partes.length > 1 ? partes[1].length : 3;
-             
+
         }
 
         formSvc.generateUuidv4 = () => uuid2.newguid()
@@ -1013,8 +1202,8 @@
             return regex.test(value);
         };
 
- 
-        formSvc.instanceDecimal = function(num, max = 0) {
+
+        formSvc.instanceDecimal = function (num, max = 0) {
             if (max > 0) {
                 return new Decimal(num).toDecimalPlaces(max).toNumber()
             }
@@ -1028,7 +1217,7 @@
          * @param {*} max 
          * @returns 
          */
-        formSvc.plus = function(num1, num2, max = 0) {
+        formSvc.plus = function (num1, num2, max = 0) {
             let instanceDecimal = new Decimal(num1).plus(num2)
             if (max > 0) {
                 return instanceDecimal.toDecimalPlaces(max).toNumber()
@@ -1037,7 +1226,7 @@
             return instanceDecimal;
 
         }
-         
+
         /**
          * 
          * @param {*} num1 
@@ -1046,7 +1235,7 @@
          * @returns 
          */
 
-        formSvc.minus = function(num1, num2, max = 0) {
+        formSvc.minus = function (num1, num2, max = 0) {
             let instanceDecimal = new Decimal(num1).minus(num2)
             if (max > 0) {
                 return instanceDecimal.toDecimalPlaces(max).toNumber()
@@ -1054,10 +1243,10 @@
 
             return instanceDecimal;
 
-        } 
+        }
 
 
-        formSvc.mul = function(num1, num2, max = 0) {
+        formSvc.mul = function (num1, num2, max = 0) {
             let instanceDecimal = new Decimal(num1).mul(num2)
             if (max > 0) {
                 return instanceDecimal.toDecimalPlaces(max).toNumber()
@@ -1068,7 +1257,7 @@
         }
 
 
-        formSvc.div = function(num1, num2, max = 0) {
+        formSvc.div = function (num1, num2, max = 0) {
             let instanceDecimal = new Decimal(num1).div(num2)
             if (max > 0) {
                 return instanceDecimal.toDecimalPlaces(max).toNumber()
@@ -1078,9 +1267,24 @@
 
         }
 
-         
 
-        return formSvc;        
+        formSvc.cellTooltipGrid = function(entity, field){
+            var originalValue = 0;
+            if(entity && typeof entity ==='object'){
+                originalValue = entity[field];
+            }else{
+                originalValue = entity;
+            }
+            var roundedValue = formSvc.roundNumber(originalValue, precisionMaximaTotalDetalle);
+            return 'Original: ' + originalValue + '\nRedondeado: ' + roundedValue;
+        }
+
+        formSvc.cellFilterRoundToNumber = function(){
+            return `roundTo:${precisionMaximaTotalDetalle}`;
+        }
+
+
+        return formSvc;
 
     }
 

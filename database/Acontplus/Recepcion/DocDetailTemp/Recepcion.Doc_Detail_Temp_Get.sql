@@ -20,24 +20,40 @@ GO
 -- Description: SP FOR GET DETAIL TEMP
 -- =============================================
 --Recepcion.Doc_Detail_Temp_Get 1061, 'A250AADC-1033-4056-B0A1-13A2F857CB37'
-IF OBJECT_ID(N'Recepcion.Doc_Detail_Temp_Get', N'P') IS NOT NULL
-DROP PROCEDURE Recepcion.Doc_Detail_Temp_Get 
-GO
-CREATE PROCEDURE Recepcion.Doc_Detail_Temp_Get
+
+CREATE OR ALTER PROCEDURE Recepcion.Doc_Detail_Temp_Get
 @idRol INT
 ,@idDocumento INT
 ,@jsonData NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @idEntidad INT =(SELECT idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idRol)
+	DECLARE @idEntidad INT =(SELECT idEntidad FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @idRol)
 
-	IF NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento)
+	IF NOT EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento)
 		BEGIN
 			RETURN
 		END
 
-	SELECT d.*
+	SELECT  d.[idDocumento]
+    ,d.[idProveedor]
+    ,d.[idBodega]
+    ,d.[idArticulo]
+    ,d.[idMedida]
+    ,d.[codigoPrincipal]
+    ,d.[codigoAuxiliar]
+    ,d.[cantidad]
+    ,d.[descripcion]
+    ,d.[precioUnitario]
+    ,d.[descuento]
+    ,d.[precioTotalSinImpuesto]
+    ,d.[costoNeto]
+    ,d.[detallesAdicionales]
+    ,d.[impuestos]
+    ,d.[fechaRegistro]
+    ,d.[idUsuario]
+    ,d.[isCustom]
+    ,d.[idDetalle]
 	,impuesto  = (SELECT TOP 1 si.descripcion FROM Recepcion.Doc_Impuesto_Temp i
 											INNER JOIN Sri.Impuesto si ON i.codigo = si.codigo
 														WHERE d.idDocumento = i.idDocumento 
@@ -46,16 +62,18 @@ BEGIN
 														WHERE d.idDocumento = i.idDocumento 
 														AND d.codigoPrincipal = i.codArticulo)
 	
-	,idDocumentoDetalle = ISNULL((SELECT TOP 1 dd.idDocumentoDetalle FROM Recepcion.DocumentoDetalle dd WHERE d.idArticulo = dd.idArticulo AND dd.idDocumento = d.idDocumento), 0) 
+	,idDocumentoDetalle = ISNULL((SELECT TOP 1 dd.idDocumentoDetalle FROM Recepcion.DocumentoDetalle dd WITH(NOLOCK)
+                            WHERE d.idArticulo = dd.idArticulo 
+                                AND dd.idDocumento = d.idDocumento), 0) 
 
 	,etiquetas = IIF(d.idARTICULO = 0, '[]', ISNULL((SELECT TOP 1 ee.idEtiqueta, ee.descripcion, ee.etiquetas
-				  FROM Inventario.Etiqueta ee
+				  FROM Inventario.Etiqueta ee WITH(NOLOCK)
 			      WHERE ee.idEtiqueta IN (
 					SELECT ar.idEtiqueta
-					FROM Articulo ar
+					FROM Articulo ar WITH(NOLOCK)
 					WHERE ar.idArticulo = d.idArticulo
 				) FOR JSON PATH), '[]'))
-	,datosAdicionales = IIF(d.idArticulo = 0, 0, ISNULL((SELECT top 1 ar.datosAdicionales FROM Articulo ar where ar.idArticulo = d.idArticulo), 0))
+	,datosAdicionales = IIF(d.idArticulo = 0, 0, ISNULL((SELECT top 1 ar.datosAdicionales FROM Articulo ar WITH(NOLOCK) where ar.idArticulo = d.idArticulo), 0))
     ----Medidas agregado por Emilio 
     ,IIF(d.idArticulo = 0, '[]', ISNULL
         ((
@@ -86,8 +104,12 @@ BEGIN
 			WHERE sc.idArticulo = d.idArticulo 
             FOR JSON PATH
 
-         ),'[]')) as principal 
-	FROM Recepcion.Doc_Detalle_Temp d
+         ),'[]')) as principal
+         ,IIF(a.idArticulo > 0, ' <b>-></b> <small class=''text-success''>' + ISNULL(a.codigo, '') + '</small>', '') existentCode
+         ,IIF(a.idArticulo > 0, ' <b>-></b> <small class=''text-success''>' + ISNULL(a.descripcion, '') + '</small>', '') existentProduct
+         ,IIF(a.idArticulo > 0,  ' <b>-></b> <small class=''text-success''>' + CONVERT(VARCHAR, CAST(ISNULL(a.precioCosto, 0) AS NUMERIC(18,5)))+ '</small>', '') existentCost
+	FROM Recepcion.Doc_Detalle_Temp d WITH (NOLOCK)
+        LEFT JOIN dbo.Articulo a WITH(NOLOCK) ON d.idArticulo = a.idArticulo
 	WHERE d.idDocumento = @idDocumento
 	ORDER BY d.idDetalle ASC
 END

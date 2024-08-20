@@ -247,29 +247,29 @@ BEGIN
             SELECT @id             ,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount FROM @tbTaxes
 
 		---------------------------------------------START-INFO-ADICIONAL-ARTICULO-------------------------------------------
-			UPDATE infoAdd  SET estado = 1
-			FROM Compra.InfoAdicional infoAdd
-			INNER JOIN Ventas.HistoryInfoAdicional h WITH(NOLOCK) ON h.idInfoAdicional = infoAdd.idInfoAdicional
-			WHERE h.codDoc ='APR' AND h.idDocumento = @id
+			--UPDATE infoAdd  SET estado = 1
+			--FROM Compra.InfoAdicional infoAdd
+			--INNER JOIN Ventas.HistoryInfoAdicional h WITH(NOLOCK) ON h.idInfoAdicional = infoAdd.idInfoAdicional
+			--WHERE h.codDoc ='APR' AND h.idDocumento = @id
 
-			DELETE FROM Ventas.HistoryInfoAdicional WHERE codDoc='APR' AND idDocumento = @id;
+			--DELETE FROM Ventas.HistoryInfoAdicional WHERE codDoc='APR' AND idDocumento = @id;
 
-			INSERT INTO Ventas.HistoryInfoAdicional(idInfoAdicional, codDoc, idDocumento, secuencial, ptoEmi, estab)
-			SELECT idInfoAdicional, 'APR', @id, @secuencial, @ptoEmi, @estab FROM @historyInfoAdicional
+			--INSERT INTO Ventas.HistoryInfoAdicional(idInfoAdicional, codDoc, idDocumento, secuencial, ptoEmi, estab)
+			--SELECT idInfoAdicional, 'APR', @id, @secuencial, @ptoEmi, @estab FROM @historyInfoAdicional
 			
-			UPDATE infoAdd  SET estado = 2 
-			FROM Compra.InfoAdicional infoAdd
-			INNER JOIN @historyInfoAdicional h ON h.idInfoAdicional = infoAdd.idInfoAdicional
+			--UPDATE infoAdd  SET estado = 2 
+			--FROM Compra.InfoAdicional infoAdd
+			--INNER JOIN @historyInfoAdicional h ON h.idInfoAdicional = infoAdd.idInfoAdicional
 			--------------------------------------------END-INFO-ADICIONAL-ARTICULO------------------------------
 			 
-			INSERT INTO @tblInfoAdicional
-			SELECT j.[key] as nombre, ar.codigo + ' : ' +  STRING_AGG(j.[value], ', ') WITHIN GROUP (ORDER BY j.[value]) AS valor
-			FROM Compra.InfoAdicional t WITH (NOLOCK)
-			INNER JOIN Ventas.HistoryInfoAdicional h WITH (NOLOCK) ON t.idInfoAdicional = h.idInfoAdicional
-			INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = t.idArticulo
-			CROSS APPLY OPENJSON(t.jsonAdicional) j
-			WHERE h.codDoc = 'APR' AND h.idDocumento = @id
-			GROUP BY j.[key],ar.codigo
+			--INSERT INTO @tblInfoAdicional
+			--SELECT j.[key] as nombre, ar.codigo + ' : ' +  STRING_AGG(j.[value], ', ') WITHIN GROUP (ORDER BY j.[value]) AS valor
+			--FROM Compra.InfoAdicional t WITH (NOLOCK)
+			--INNER JOIN Ventas.HistoryInfoAdicional h WITH (NOLOCK) ON t.idInfoAdicional = h.idInfoAdicional
+			--INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = t.idArticulo
+			--CROSS APPLY OPENJSON(t.jsonAdicional) j
+			--WHERE h.codDoc = 'APR' AND h.idDocumento = @id
+			--GROUP BY j.[key],ar.codigo
 
 			
 			--informacion Adiciomal--

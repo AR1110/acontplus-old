@@ -53,13 +53,13 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     function calculateTotalItems(items) {
         return items.map((item, index) => {
             let precioConIva = typeof item.precioConIva === 'number' ? item.precioConIva : item.precioUnitario + item.valorImpuesto;
-            let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
-            let total = precioTotalSinImpuesto + item.valorImpuesto;
+           // let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
+            let total = item.precioTotalSinImpuesto + item.valorImpuesto;
             return {
                 n: index + 1,
                 ...item,
                 precioConIva: fS.roundNumber(precioConIva, 3),
-                precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
+              //  precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
                 total: fS.roundNumber(total, 3)
             }
         })
@@ -324,56 +324,13 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
 
     // * Add by Ignacio Manchu.
     function drawImpuestoTotales() {
-        try {
-            let {
-                subTotalSinImpuestos,
-                htmlImpuestoTotal,
-                htmlIvaTotal,
-                irbpnr,
-                totalIce,
-                importeTotal,
-                totalDescuento,
-            } = gridOptionsSvc.getImpuestoTotales({
+        try { 
+            let dataImpuestoTotales = gridOptionsSvc.getImpuestoTotales({
                 items: $scope.gridOptions.data,
                 tarifasImpuesto: $scope.tarifasImpuesto.slice(),
-            });
+            }); 
 
-            const template = `<table class="table table-clear table-sm">
-                                    <tbody>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Subtotal sin Impuestos</strong>
-                                            </td>
-                                            <td class="right">$${subTotalSinImpuestos}</td>
-                                        </tr>
-                                        ${htmlImpuestoTotal}
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Total descuento</strong>
-                                            </td>
-                                            <td class="right">$${totalDescuento}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Valor ICE</strong>
-                                            </td>
-                                            <td class="right">$${totalIce}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Valor irbpnr</strong>
-                                            </td>
-                                            <td class="right">$${irbpnr}</td>
-                                        </tr>
-                                        ${htmlIvaTotal}
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="font-weight-bold">Valor Total</strong>
-                                            </td>
-                                            <td class="right font-weight-bold">$${importeTotal}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>`;
+            const template = gridOptionsSvc.impuestoTotalesHtml(dataImpuestoTotales);
 
             const element = document.getElementById('draw-dynamic-subtotal');
             if (element) {

@@ -17,6 +17,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new Auto
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<MobileRequestMiddleware>();
 
 if (Environment.OSVersion.Platform != PlatformID.Win32NT)
 {

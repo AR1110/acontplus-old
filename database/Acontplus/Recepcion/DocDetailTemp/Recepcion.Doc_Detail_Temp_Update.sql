@@ -39,71 +39,71 @@ BEGIN
 		,idDetalle INT
 		)
 
-	INSERT INTO @tmp (
-		todos
-		,idDocumento
-		,idProveedor
-		,idArticulo
-		,codArticulo
-		,idMedida
-		,idBodega
-		,idDetalle
-		)
-	SELECT ISNULL(todos,0)
-		,idDocumento
-		,idProveedor
-		,idArticulo
-		,LTRIM(RTRIM(codArticulo))
-		,idMedida
-		,idBodega
-		,idDetalle
-	FROM OPENJSON(@jsonData) WITH (
-			todos BIT '$.todos'
-			,idDocumento INT '$.idDocumento'
-			,idProveedor INT '$.idProveedor'
-			,idArticulo INT '$.idArticulo'
-			,codArticulo VARCHAR(100) '$.codArticulo'
-			,idMedida INT '$.idMedida'
-			,idBodega INT '$.idBodega'
-			,idDetalle INT '$.idDetalle'
-			)
-
-	IF NOT EXISTS (SELECT 1 FROM @tmp)
-	    BEGIN
-		    SELECT '0' code, 'No existe datos para registrar' AS 'message'
-		    RETURN
-	    END
-
-	IF EXISTS (SELECT 1 FROM @tmp WHERE idProveedor = 0 AND idArticulo = 0)
-	    BEGIN
-		    SELECT '0' AS code, 'No se pudo actualizar el articulo' AS 'message'
-		    RETURN
-	    END
-
-	SELECT @idEntidad = idEntidad
-		,@idUsuario = idUsuario
-	FROM AFTDataRol(@idRol)
-
-	SELECT TOP 1 @idDocumento = idDocumento,  @idProveedor = idProveedor FROM @tmp
-
-	SELECT @rucProv = rucEmisor
-	FROM Recepcion.DocumentoRecibido
-	WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
-
-	IF (@idProveedor = 0 AND @rucProv IS NOT NULL)
-	    BEGIN
-		    SELECT TOP 1 @idProveedor = idProveedor
-		    FROM Proveedor
-		    WHERE idEntidad = @idEntidad
-			    AND numeroIdentificacion = @rucProv
-	    END
-
-	IF (SELECT TOP 1 idArticulo FROM @tmp) > 0
-	    BEGIN
-		    SET @idMedida = (SELECT idMedida FROM Articulo WHERE idArticulo = (SELECT TOP 1 idArticulo FROM @tmp))
-	    END
 
 	BEGIN TRY
+	    INSERT INTO @tmp (
+		    todos
+		    ,idDocumento
+		    ,idProveedor
+		    ,idArticulo
+		    ,codArticulo
+		    ,idMedida
+		    ,idBodega
+		    ,idDetalle
+		    )
+	    SELECT ISNULL(todos,0)
+		    ,idDocumento
+		    ,idProveedor
+		    ,idArticulo
+		    ,LTRIM(RTRIM(codArticulo))
+		    ,idMedida
+		    ,idBodega
+		    ,idDetalle
+	    FROM OPENJSON(@jsonData) WITH (
+			    todos BIT '$.todos'
+			    ,idDocumento INT '$.idDocumento'
+			    ,idProveedor INT '$.idProveedor'
+			    ,idArticulo INT '$.idArticulo'
+			    ,codArticulo VARCHAR(100) '$.codArticulo'
+			    ,idMedida INT '$.idMedida'
+			    ,idBodega INT '$.idBodega'
+			    ,idDetalle INT '$.idDetalle'
+			    )
+
+	    IF NOT EXISTS (SELECT 1 FROM @tmp)
+	        BEGIN
+		        SELECT '0' code, 'No existe datos para registrar' AS 'message'
+		        RETURN
+	        END
+
+	    IF EXISTS (SELECT 1 FROM @tmp WHERE idProveedor = 0 AND idArticulo = 0)
+	        BEGIN
+		        SELECT '0' AS code, 'No se pudo actualizar el articulo' AS 'message'
+		        RETURN
+	        END
+
+        SELECT @idEntidad = idEntidad
+		    ,@idUsuario = idUsuario FROM dbo.v_usuario WHERE idUsuarioRol = @idRol
+
+	    SELECT TOP 1 @idDocumento = idDocumento,  @idProveedor = idProveedor FROM @tmp
+
+	    SELECT @rucProv = rucEmisor
+	    FROM Recepcion.DocumentoRecibido
+	    WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
+
+	    IF (@idProveedor = 0 AND @rucProv IS NOT NULL)
+	        BEGIN
+		        SELECT TOP 1 @idProveedor = idProveedor
+		        FROM Proveedor
+		        WHERE idEntidad = @idEntidad
+			        AND numeroIdentificacion = @rucProv
+	        END
+
+	    IF (SELECT TOP 1 idArticulo FROM @tmp) > 0
+	        BEGIN
+		        SET @idMedida = (SELECT idMedida FROM Articulo WHERE idArticulo = (SELECT TOP 1 idArticulo FROM @tmp))
+	        END
+
 		BEGIN TRAN
 		    IF EXISTS (SELECT 1 FROM @tmp WHERE todos = 1)
 		        BEGIN

@@ -22,6 +22,7 @@ export enum GlobalRoutes {
   MechanicalLayout = 'mechanical/layout',
   MechanicalVehicle = 'mechanical/vehicle-page',
   RestaurantReports = 'restaurant/item-report',
+  RestaurantInfrastructure = 'restaurant/infrastructure-page',
   RestaurantTable = 'restaurant/table-page',
   TechnicalSupport = 'technical-support/technical-support-page',
   TechnicalSupportBrand = 'technical-support/brand-page',

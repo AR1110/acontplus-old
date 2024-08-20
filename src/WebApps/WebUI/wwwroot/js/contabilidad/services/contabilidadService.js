@@ -1231,6 +1231,8 @@
                     result.cheques = response.cheques.map(item=>{
                         return {
                             id: item.id,
+
+                            idComprobante: item.idComprobante, // idcomprobante ingreso e egreso
                             idEstablecimiento: item.idEstablecimiento,
                             codDoc: item.codDoc,
                             nroDocumento: item.nroDocumento,
@@ -1241,8 +1243,7 @@
                             fechaEmision: item.fechaEmision,
                             posfechado: item.posfechado,
                             cobro: item.cobro,
-                            totalRecords: item.totalRecords,
-                            tipoNombre: item.gestion==1?'Cobro':'Pago',
+                            totalRecords: item.totalRecords, 
                             posfechadoName: item.posfechado?'SI': 'NO'
                         }
                     });
@@ -1564,6 +1565,9 @@
                     if (cuotasCalculadas.length>2){
 
                         decimalSaldo = fS.contarDecimales(documento.saldo)
+                    }
+                    if (cuotasCalculadas.length===1){
+                        decimalSaldo = fS.contarDecimales(documento.saldo);
                     }
 
 
@@ -2073,7 +2077,11 @@
 
 
 
-                    valorSaldo = valorSaldo.minus(totalNoPosfechado).toNumber()
+                    valorSaldo = valorSaldo.minus(totalNoPosfechado).toNumber();
+                    
+                    if(fS.roundNumber(valorSaldo, 3)<=0){
+                        valorSaldo =0;
+                    } 
 
                     let dataEstadoPago;
                     if (totalPosfechado.gt(0)) {
@@ -2084,8 +2092,8 @@
                         });
                     } else {
                         dataEstadoPago = this.getEstadoCuota({
-                            saldo: valorSaldo,
-                            abono: totalNoPosfechado.toNumber(),
+                            saldo: fS.roundNumber(valorSaldo, 2),
+                            abono: fS.roundNumber(totalNoPosfechado.toNumber(),2),
                             esPosfechado: false
                         });
                     }
@@ -2126,9 +2134,9 @@
                             return fS.instanceDecimal(acc).plus(curr.abono);
                         }, fS.instanceDecimal(0));
 
-                    let valorSaldoLectura = fS.roundNumber(item.valorSaldoLectura, 3);
+                    let valorSaldoLectura = fS.roundNumber(item.valorSaldoLectura, 2);
                     let valorSaldo = fS.instanceDecimal(valorSaldoLectura)
-                        .minus(fS.roundNumber(totalNoPosfechado.toNumber(), 3))
+                        .minus(fS.roundNumber(totalNoPosfechado.toNumber(), 2))
                         .toNumber();
 
                     let dataEstadoPago = this.getEstadoCuota({
