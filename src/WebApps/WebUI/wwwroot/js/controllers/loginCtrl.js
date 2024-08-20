@@ -1,4 +1,5 @@
-﻿(function () {
+﻿//@ts-check
+(function () {
     'use strict';
     angular.module('loginApp', ['ngStorage'])
         .controller('loginCtrl', loginCtrl);
