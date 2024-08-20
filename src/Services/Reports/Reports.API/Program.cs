@@ -23,6 +23,7 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
 var app = builder.Build();
 
+app.UseMiddleware<ConnStrRequestMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseSwaggerVersionedDocumentation();
