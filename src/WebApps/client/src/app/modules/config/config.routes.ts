@@ -8,6 +8,7 @@ import { EstablishmentPageComponent } from './pages/establishment-page/establish
 import { CompanyPageComponent } from '@modules/config/pages/company-page/company-page.component';
 import { PrinterPageComponent } from '@modules/config/pages/printer-page/printer-page.component';
 import { WizardConfigComponent } from '@modules/config/pages/wizard-config/wizard-config.component';
+import { TiempoCreditoPageComponent } from './pages/tiempo-credito-page/tiempo-credito-page.component';
 
 export const routes: Routes = [
   {
@@ -80,6 +81,14 @@ export const routes: Routes = [
     component: WizardConfigComponent,
     data: {
       breadcrumb: 'Configuración Inicial',
+    },
+  },
+  {
+    path: 'tiempo-credito',
+    title: 'Tiempo de Crédito',
+    component: TiempoCreditoPageComponent,
+    data: {
+      breadcrumb: 'Tiempo de Crédito',
     },
   },
 ];

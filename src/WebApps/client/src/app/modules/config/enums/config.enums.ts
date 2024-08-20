@@ -18,4 +18,5 @@ export const enum CONFIG_PATHS {
   PRINTER = 'Printer/',
   PRINTER_DOC = 'PrinterDocument',
   FIRMA_ELECTRONICA = 'FirmaElectronica/',
+  TIEMPO_CREDITO = 'TiempoCredito/'
 }

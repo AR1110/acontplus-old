@@ -1,4 +1,4 @@
 export const environment = {
-  production: true,
-  API_URL: 'https://acontplus.com/gateway/', //produccion
+  production: false,
+  API_URL: 'https://localhost:7060/gateway/',
 };
