@@ -1,3 +1,4 @@
+//@ts-check
 (function () {
     'use strict';
 
@@ -185,8 +186,7 @@
                 }
 
                 proformaSvc.getAll(dataSearch).then(response => {
-                    let { proformas, dataTotals } = response;
-                    console.log(response)
+                    let { proformas, dataTotals } = response; 
                     $scope.proformas = proformas;
                     $scope.cloneProformas = structuredClone($scope.proformas);
                     $scope.dataSearch.totalRecords = dataTotals.totalRecords;
@@ -668,15 +668,11 @@
         }
 
         function calculateTotalItems(items) {
-            return items.map(item => {
-                let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
-                let total = precioTotalSinImpuesto + item.valorImpuesto;
+            return items.map(item => { 
                 return {
                     ...item,
                     idProformaDetalle: params.action === "DUPLICAR" ? 0 : item.idProformaDetalle,
-                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
-                    precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, $scope.decimal.nroTotalDetalle),
-                    total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle)
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),  
                 }
 
             })
@@ -1075,6 +1071,10 @@
                 width: '7%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'IVA',
@@ -1085,6 +1085,10 @@
                 width: '5%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Total',
@@ -1095,6 +1099,10 @@
                 width: '5%',
                 minWidth: '100',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Ice',
@@ -1158,7 +1166,7 @@
 
         /**
          * 
-         * @param {*} entity Datos del Articulo 
+         * @param {*} rowEntity Datos del Articulo 
          */
         $scope.deleteRow = async function (rowEntity) {
             try {
@@ -1247,7 +1255,7 @@
                     $scope.$apply();
                     return
                 }
-                if ((!$scope.bodegas.length > 0)) {
+                if (!($scope.bodegas.length > 0)) {
                     tS.toastr('info', 'No tienes bodegas asignado a este establecimiento');
                     $scope.data.codEstab = $scope.dataClone.codEstab;
                     $scope.$apply();
@@ -1696,69 +1704,31 @@
 
 
         function drawImpuestoTotales() {
-            try {
-                let {
-                    subTotalSinImpuestos,
-                    htmlImpuestoTotal,
-                    htmlIvaTotal,
-                    irbpnr,
-                    totalIce,
-                    importeTotal,
-                    totalDescuento,
-                    porcentajeDescuento,
-                    propina,
-                } = gridOptionsSvc.getImpuestoTotales({
+            try { 
+                let dataImpuestoTotales  = gridOptionsSvc.getImpuestoTotales({
                     items: $scope.gridOptions.data,
                     decimal: $scope.decimal,
                     tarifasImpuesto: $scope.tarifasImpuesto.slice(),
                     TAX_RATE_CODE
                 })
 
+                let {
+                    subTotalSinImpuestos,
+                    irbpnr,
+                    importeTotal,
+                    totalDescuento,
+                    porcentajeDescuento,
+                    propina,
+                } = dataImpuestoTotales; 
+
 
 
                 // Crear la estructura HTML con un template literal
-                const htmlTemplate = `<div class="table-responsive">
-                                        <table class="table table-clear table-sm">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="left">
-                                                        <span class="text-dark">Subtotal sin Impuestos</span>
-                                                    </td>
-                                                    <td class="right">$${subTotalSinImpuestos}</td>
-                                                </tr>
-                                                ${htmlImpuestoTotal}
-                                                <tr>
-                                                    <td class="left">
-                                                        <span class="text-dark">Total descuento</span>
-                                                    </td>
-                                                    <td class="right">$${totalDescuento}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="left">
-                                                        <span class="text-dark">Valor ICE</span>
-                                                    </td>
-                                                    <td class="right">$${totalIce}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="left">
-                                                        <span class="text-dark">Valor irbpnr</span>
-                                                    </td>
-                                                    <td class="right">$${irbpnr}</td>
-                                                </tr>
-                                                ${htmlIvaTotal}
-                                               
-                                                <tr>
-                                                    <td class="left">
-                                                        <strong class="font-weight-bold">Valor Total</strong>
-                                                    </td>
-                                                    <td class="right font-weight-bold">$${importeTotal}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                `;
-                let drawImpuestoTotalesElement = document.getElementById("drawImpuestoTotales");
-                drawImpuestoTotalesElement.innerHTML = htmlTemplate;
+                const htmlTemplate = gridOptionsSvc.impuestoTotalesHtml(dataImpuestoTotales);
+                let ele = document.getElementById("drawImpuestoTotales");
+                if(ele){
+                    ele.innerHTML = htmlTemplate;
+                }
 
 
                 $scope.data.subTotalSinImpuestos = subTotalSinImpuestos;

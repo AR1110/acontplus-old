@@ -460,26 +460,26 @@
 
         async function askToDelete(item) {
             try {
-                if (item.esAnulado){
+                if (item.esAnulado) {
                     tS.toastr({
                         type: 'warning',
                         message: 'El documento ya esta anulado!'
-                    })                    
-                    return 
+                    })
+                    return
                 }
-                if (item.enabledHistorialCobro){
+                if (item.enabledHistorialCobro) {
                     tS.toastr({
                         type: 'warning',
                         message: 'El documento ya se encuentra cobrado!'
                     })
-                    return 
+                    return
                 }
                 if (item.disabledAnular) {
                     tS.toastr({
                         type: 'warning',
                         message: 'El documento ya se encuentra transferida!'
                     })
-                    return 
+                    return
                 }
 
                 let paramsPermission = getParamsPermission(item, 'A');
@@ -565,7 +565,7 @@
         async function cobroRapido(params) {
             try {
                 let { fileCtrl, ctrl, template } = nombreModalContabilidad.COBRO_RAPIDO;
-                let controller = (await import(fileCtrl))[ctrl]; 
+                let controller = (await import(fileCtrl))[ctrl];
 
                 let modalRef = modalSvc.open({
                     controller,
@@ -590,7 +590,7 @@
             try {
 
                 const { fileCtrl, ctrl, template } = nombreModalContabilidad.COBRO_LOTE;
-                let controller = (await import(fileCtrl))[ctrl]; 
+                let controller = (await import(fileCtrl))[ctrl];
 
                 let modalRef = modalSvc.open({
                     controller,
@@ -610,7 +610,7 @@
 
         //--------------------------------------------------COBROS----------
 
-        function opcionCobro(data) { 
+        function opcionCobro(data) {
             if (!data.enabledPayment) {
                 tS.toastr({
                     type: 'warning',
@@ -993,15 +993,11 @@
 
 
         function calculateTotalItems(items) {
-            return items.map(item => {
-                let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
-                let total = precioTotalSinImpuesto + item.valorImpuesto;
+            return items.map(item => {  
                 return {
                     ...item,
                     idNotaEntregaDetalle: params.action === "DUPLICAR" ? 0 : item.idNotaEntregaDetalle,
-                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
-                    precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, $scope.decimal.nroTotalDetalle),
-                    total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle)
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),  
                 }
 
             })
@@ -1449,6 +1445,10 @@
                 width: '7%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'IVA',
@@ -1459,6 +1459,10 @@
                 width: '5%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Total',
@@ -1469,6 +1473,10 @@
                 width: '5%',
                 minWidth: '100',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Ice',
@@ -2154,61 +2162,25 @@
         // * Add by Ignacio Manchu.
         function drawInfoGeneralNotaEntrega() {
             try {
-                let {
-                    subTotalSinImpuestos,
-                    htmlImpuestoTotal,
-                    htmlIvaTotal,
-                    irbpnr,
-                    totalIce,
-                    importeTotal,
-                    totalDescuento,
-                    porcentajeDescuento,
-                    propina,
-                } = gridOptionsSvc.getImpuestoTotales({
+                let dataImpuestoTotales = gridOptionsSvc.getImpuestoTotales({
                     items: $scope.gridOptions.data,
                     decimal: $scope.decimal,
                     tarifasImpuesto: $scope.tarifasImpuesto.slice(),
                 });
+                let {
+                    subTotalSinImpuestos, 
+                    irbpnr, 
+                    importeTotal,
+                    totalDescuento,
+                    porcentajeDescuento,
+                    propina,
+                } = dataImpuestoTotales; 
 
-                const template = `<table class="table table-clear table-sm">
-                                    <tbody>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Subtotal sin Impuestos</strong>
-                                            </td>
-                                            <td class="right">$${subTotalSinImpuestos}</td>
-                                        </tr>
-                                        ${htmlImpuestoTotal}
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Total descuento</strong>
-                                            </td>
-                                            <td class="right">$${totalDescuento}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Valor ICE</strong>
-                                            </td>
-                                            <td class="right">$${totalIce}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Valor irbpnr</strong>
-                                            </td>
-                                            <td class="right">$${irbpnr}</td>
-                                        </tr>
-                                        ${htmlIvaTotal}
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="font-weight-bold">Valor Total</strong>
-                                            </td>
-                                            <td class="right font-weight-bold">$${importeTotal}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>`;
-
+                const htmlTemplate = gridOptionsSvc.impuestoTotalesHtml(dataImpuestoTotales);
                 const element = document.getElementById('draw-dynamic-subtotal');
-                element.innerHTML = template;
+                if (element) {
+                    element.innerHTML = htmlTemplate;
+                }
 
                 $scope.data.subTotalSinImpuestos = subTotalSinImpuestos;
                 $scope.data.total = importeTotal;

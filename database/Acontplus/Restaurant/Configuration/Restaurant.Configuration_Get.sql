@@ -60,9 +60,66 @@ BEGIN
      --no eliminar este tipo 2, se usa para una nueva depuracion o migracion  
     IF @tipo = 2
         BEGIN 
-	        SET @tableNames = 'ConfigDecimal,Tables,SubCategorias,Impuesto,TarifaImpuesto,Floor,Room,Customer,tarifaImpuestoVigente,config,vendedores'
+	        SET @tableNames = 'ConfigDecimal,Tables,SubCategorias,Impuesto,TarifaImpuesto,Customer,config,vendedores'
             
+            SELECT * FROM  Config.v_Sistema_Decimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V';
 
+            SELECT 
+                 Id, 
+                 [NumberTable], 
+                 [Description], 
+                 [Floor], 
+                 roomDescription ,
+                 vt.Assigned
+             FROM Restaurant.v_Table vt 
+             INNER JOIN Entidad e WITH(NOLOCK) ON vt.ruc = e.ruc 
+             WHERE vt.codEstab = @codEstab
+
+              SELECT
+		        idSubFamilia    = sf.idSubFamilia
+		        ,idFamilia      = ISNULL(sf.idFamilia,0)
+		        ,descripcion    = sf.descripcion
+		        ,estado         = sf.estado
+		        ,siglas         = sf.siglas
+		        ,codigo         = sf.codigo
+		        ,montoObjetivo  = ISNULL(sf.montoObjetivo,0)
+		        ,nombreFamilia  = ISNULL(f.descripcion, 'Ninguna')
+                ,s3ObjectUrl    = ISNULL(sf.s3ObjectUrl, '')
+	        FROM Inventario.v_SubFamilia  sf
+	        INNER JOIN Familia f ON f.idFamilia = sf.idFamilia
+	        WHERE sf.idEntidad = @idEntidad
+	        --AND sf.applicationId IS NOT NULL
+            AND f.siglas IN( 'RES', 'POR')
+            AND sf.estado = 1
+            ORDER BY sf.idSubFamilia DESC  
+
+            SELECT * FROM Sri.Impuesto WITH (NOLOCK) 
+	        SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK)  
+
+             --CUSTOMER DEFAULT      
+	        SELECT 
+		        cl.idCliente
+	           ,cl.numeroIdentificacion
+	           ,cl.nombreComercial
+	           ,cl.nombreFiscal
+	           ,cl.direccion
+	           ,cl.correo
+	        FROM dbo.Cliente cl WITH (NOLOCK) WHERE cl.idCliente = @customerCompanyId 
+
+             SELECT CAST(searchCode AS BIT)       as searchCode
+	            ,CAST(printerAutomatic AS BIT) as printerAutomatic
+	            ,CAST(payAutomatic AS BIT)     as payAutomatic
+	            ,CAST(multipleVendedor AS BIT) as multipleVendedor
+	        FROM Config.v_Sistema_Ventas gs
+            WHERE gs.idEntidad = @idEntidad
+
+             SELECT 
+                u.idUsuario, 
+                u.nombreUsuario, 
+                u.nombreCompleto, 
+                predeterminado = CAST(IIF(u.idUsuario = @idUsuario, 1, 0) AS bit)
+             FROM v_usuario u WITH(NOLOCK) 
+             WHERE u.idEntidad = @idEntidad AND u.estadoUsuario = 1
             RETURN 
         END 
 

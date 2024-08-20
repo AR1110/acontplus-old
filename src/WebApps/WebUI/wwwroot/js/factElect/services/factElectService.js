@@ -544,6 +544,7 @@
 
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
+                        let total = restItem.precioTotalSinImpuesto + restItem.valorImpuesto;
                         let obj = {
                             n: index + 1,
                             uniqueRowDetalle,
@@ -578,7 +579,8 @@
                             consolidacionesFecha,
                             estado: 1,
                             datosAdicionalesArticulo,
-                            datosAdicionales: restItem.datosAdicionales
+                            datosAdicionales: restItem.datosAdicionales,
+                            total: fS.roundNumber(total, 5)
                         }
 
                         return obj;
@@ -636,8 +638,7 @@
                         infoAdicionalDocumento,                        
                         formasPago,
                         cuotas
-                    }
-                    console.log(resultData)
+                    } 
                     return resultData;
                 }
             })
@@ -1180,6 +1181,7 @@
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
+                        let total = itemPrincipal.precioTotalSinImpuesto + itemPrincipal.valorImpuesto;
 
                         let obj = {
                             n: index + 1,
@@ -1212,7 +1214,8 @@
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
-                            datosAdicionales: restItem.datosAdicionales
+                            datosAdicionales: restItem.datosAdicionales,
+                            total: fS.roundNumber(total, 5)
                         }
 
                         return obj;
