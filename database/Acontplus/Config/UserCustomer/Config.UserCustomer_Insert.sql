@@ -46,7 +46,7 @@ BEGIN
 		FROM OPENJSON(@json) 
 		WITH(correo NVARCHAR(200) '$.email'
 			,contrasena NVARCHAR(200) '$.contrasena'
-			,nombreUsuario NVARCHAR(200) '$.nombreUsuario'
+			,nombreUsuario NVARCHAR(200) '$.username'
 			,nroIdentificacion NVARCHAR(80) '$.nroIdentificacion'
 			,roleId INT '$.roleId'
 			,roleCode VARCHAR(10)
@@ -74,6 +74,7 @@ BEGIN
                 ', "lastName": "' + @lastName + '"' +
 				', "fromMobile": "' + CONVERT(VARCHAR(5), @fromMobile) + '"}'
 				)
+
 
 		BEGIN TRAN
         

@@ -98,9 +98,6 @@ BEGIN
 			    RETURN 
 		    END 
 
-        SELECT [Common].[ufnSpResponse]('0',ISNULL(infoCrediticia,'{}'), DEFAULT) from @tblCliente
-		RETURN
-
 		BEGIN TRAN
 
 			IF NOT EXISTS(SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @numeroIdentificacion)

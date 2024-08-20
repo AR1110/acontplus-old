@@ -161,10 +161,6 @@ BEGIN
 	FROM InfoAdicionalDoc ia
 	WHERE ia.idComprobante = @id AND ia.idTipoDocumento = @idTipoDocumento
 	
-	SELECT h.idDocumento, h.idHistoryInfoAdicional, selected = CAST(1 as BIT), i.* FROM Ventas.HistoryInfoAdicional h WITH(NOLOCK)
-	INNER JOIN Compra.InfoAdicional i WITH(NOLOCK) ON i.idInfoAdicional = h.idInfoAdicional
-	WHERE h.codDoc='APR' AND h.idDocumento = @id
-
     SELECT idFormaPagoSri, descripcion, codigo FROM dbo.FormaPagoSri WHERE estado = 1
    
     SELECT CAST(idFormaPagoSri   AS INT) as idFormaPagoSri

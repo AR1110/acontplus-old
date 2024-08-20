@@ -3,9 +3,17 @@
     'use strict';
 
     app.controller('chequeCtrl', chequeCtrl);
-    chequeCtrl.$inject = ['$scope', 'chequeService', 'comprobanteEgresoService', 'formulario', 'commonService'];
+    chequeCtrl.$inject = [
+        '$scope',
+        'controlCajaService',
+        'chequeService',
+        'comprobanteEgresoService',
+        'formulario',
+        'commonService',
 
-    function chequeCtrl($scope, chequeSvc, comprobanteEgresoSvc, fS, commonSvc) {
+    ];
+
+    function chequeCtrl($scope, controlCajaSvc, chequeSvc, comprobanteEgresoSvc, fS, commonSvc) {
 
 
         $scope.recordsQuantity = [25, 50, 100];
@@ -15,7 +23,7 @@
         $scope.dataSearch = {
             pageIndex: 1,
             pageSize: 25,
-            checkBoxFecha: true,
+            checkBoxDate: true,
             totalRecords: 0,
             maxSize: 5,
             tipo: 0
@@ -32,24 +40,29 @@
             { id: 2, descripcion: 'Cobros' }
         ];
 
+        $scope.resultRangeFilter = resultRangeFilter;
+        $scope.refresh = refresh;
+        $scope.onClickBtnMore = onClickBtnMore;
+
         initLoad();
         function initLoad() {
             try {
-                showLoader();
-                chequeSvc.getDataFilter().then(response => {
+                controlCajaSvc.getDataFilter().then(response => {
+                    console.log(response)
                     if (response) {
                         $scope.establecimientos = response.estabs;
                         if ($scope.establecimientos.length > 0) {
-                            let dataEstab = $scope.establecimientos.find(estab => estab.defaultEstab);
+                            let dataEstab = $scope.establecimientos.find(estab => estab.predeterminado);
                             if (dataEstab) {
-                                $scope.dataSearch.codEstab = dataEstab.codEstab;
+                                $scope.dataSearch.idEstablecimiento = dataEstab.idEstablecimiento;
                             }
                         }
                     }
+                    console.log($scope.dataSearch)
                     getCheques();
                 }).catch(error => {
                     console.log(error)
-                }).finally(() => hideLoader());
+                })
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -61,37 +74,31 @@
                 let params = {
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
-                    codEstab: fS.isValidField($scope.dataSearch.codEstab),
-                    checkBoxFecha: $scope.dataSearch.checkBoxFecha,
-                    fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                    fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
-                    byGestion: [1, 2].includes($scope.dataSearch.tipo) ? $scope.dataSearch.tipo : null,
-                    byPersona: [1, 2].includes($scope.dataSearch.tipo) ? fS.isValidField($scope.dataSearch.numeroIdentificacion) : null,
-                    byPosfechado: [true, false].includes($scope.dataSearch.byPosfechado) ? $scope.dataSearch.byPosfechado : null
+                    idEstablecimiento: $scope.dataSearch.idEstablecimiento,
+                    checkBoxDate: $scope.dataSearch.checkBoxDate,
+                    dateStart: fS.formatDateMoment($scope.dataSearch.dateStart),
+                    dateEnd: fS.formatDateMoment($scope.dataSearch.dateEnd),
                 }
-                showLoader();
-                chequeSvc.getAll(params).then(response => {
+                controlCajaSvc.getAll(params).then(response => {
                     $scope.cheques = response.cheques;
                 }).catch(error => console.log(error))
-                    .finally(() => hideLoader())
             } catch (error) {
-                hideLoader();
                 console.log(error)
 
             }
         }
 
-        $scope.resultRangeFilter = function (item) {
-            $scope.dataSearch.fechaInicio = item.startDate,
-                $scope.dataSearch.fechaFin = item.endDate
+        function resultRangeFilter(item) {
+            $scope.dataSearch.dateStart = item.startDate;
+            $scope.dataSearch.dateEnd = item.endDate;
             getCheques();
         }
 
-        $scope.refresh = function () {
+        function refresh() {
             getCheques();
         }
 
-        $scope.onClickBtnMore = function () {
+        function onClickBtnMore() {
             $scope.moreSearchOptions = !$scope.moreSearchOptions
         }
 
