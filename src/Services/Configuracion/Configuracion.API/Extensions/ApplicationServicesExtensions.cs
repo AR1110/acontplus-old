@@ -40,7 +40,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IEstablishmentService, EstablishmentService>();
         services.AddScoped<IPtoEmisionService, PtoEmisionService>();
         services.AddScoped<ICompanyService, CompanyService>();
-
+        services.AddScoped<ITiempoCreditoService, TiempoCreditoService>();
         services.AddScoped<ICustomLogger, CustomLogger>();
         services.AddScoped<ITurnoService, TurnoService>();
         services.AddScoped<IWhatsappUsageService, WhatsappUsageService>();
