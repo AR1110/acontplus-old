@@ -12,8 +12,6 @@
     let fS = {};
 
     let establecimientos = [];
-    let tipoDocumento = [];
-    let tipoTransaccion = [];
 
     let consolidacionInvSvc = {};
     let mainDataForm = {};
@@ -367,6 +365,28 @@
             enableCellEdit: false,
         }
 
+        $scope.onChangeTipoDocumento = async () => {
+            let dataDoc = $scope.tipoDocumento.find(t=>t.idTipoDocumento === $scope.data.idTipoDocumento)
+            let dataMovimiento = {};
+
+            if (dataDoc.codigo == 'CI'){
+                dataMovimiento = $scope.tipoTransaccion.find(t=>t.codigo ==='A')
+            }
+
+            if (dataDoc.codigo == 'BI'){
+                dataMovimiento = $scope.tipoTransaccion.find(t=>t.codigo ==='S')
+            }
+
+            if (dataDoc.codigo == 'EI'){
+                dataMovimiento = $scope.tipoTransaccion.find(t=>t.codigo ==='E')
+            }
+
+            if(dataMovimiento){
+                $scope.data.idTipoTransaccion = dataMovimiento.idTipoTransaccion;
+            }
+
+        }
+
         $scope.gridOptions.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
             if ($scope.gridApi) {
@@ -463,6 +483,7 @@
                             $scope.dataClone.idBodega = $scope.data.idBodega;
                         }
                     }
+                    setDefaultTipoDoc()
                 }
 
                 if (params.tipoRegistro === 2) {
@@ -484,6 +505,7 @@
                     }
                     $scope.gridOptions.data = detalles;
                     setCountIndex();
+                    $scope.onChangeTipoDocumento() 
                 }
 
                 if(params.tipoRegistro===3){
@@ -508,6 +530,7 @@
                     }
                     $scope.gridOptions.data = detalles;
                     setCountIndex();
+                    $scope.onChangeTipoDocumento() 
                 }
 
                 setColumnDefs();
@@ -517,6 +540,17 @@
             }
         }
 
+        function setDefaultTipoDoc(){
+            let dataTipoDoc = $scope.tipoDocumento.find(t=>t.codigo==='CI')
+            let dataMovimiento = $scope.tipoTransaccion.find(t=>t.codigo==='A')
+            if(dataTipoDoc){
+                $scope.data.idTipoDocumento = dataTipoDoc.idTipoDocumento;
+            }
+
+            if(dataMovimiento){
+                $scope.data.idTipoTransaccion = dataMovimiento.idTipoTransaccion;
+            }
+        }
 
         function setColumnDefs() {
             $scope.gridOptions.columnDefs = [{
@@ -996,6 +1030,17 @@
                 tS.toastr('warning', 'Seleccione el Punto de Emisión');
                 return
             }
+
+            if (!($scope.data.idTipoDocumento > 0)) {
+                tS.toastr('warning', 'Seleccione el Tipo de Documento');
+                return
+            }
+
+            if (!($scope.data.idTipoTransaccion > 0)) {
+                tS.toastr('warning', 'Seleccione el Tipo de Movimiento');
+                return
+            }
+
             if (!(fS.isDateValid($scope.data.fechaEmision))) {
                 tS.toastr('warning', 'Ingrese la Fecha de emisión');
                 return

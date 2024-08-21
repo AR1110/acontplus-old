@@ -70,7 +70,16 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN 
-			INSERT INTO dbo.Cliente
+
+            INSERT INTO Customer.Customer WITH (ROWLOCK)
+                     (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address])
+            SELECT	ti.codigoSri,t.numeroIdentificacion,t.nombreFiscal,t.nombreComercial,t.correo,t.telefono,t.direccion
+			FROM @table t
+            INNER JOIN TipoIdentificacion ti ON ti.idTipoIdentificacion = t.idTipoIdentificacion
+            WHERE t.numeroIdentificacion NOT IN (SELECT IDCard FROM Customer.Customer )
+
+
+            INSERT INTO dbo.Cliente
 				(idSubContribuyente
 				,idTipoIdentificacion
 				,numeroIdentificacion
@@ -83,7 +92,8 @@ BEGIN
 				,fechaRegistro
 				,idUsuario
 				,idEntidad
-                ,validationSri)
+                ,validationSri
+                ,CustomerId)
 			SELECT	
 				 idSubContribuyente
 				,idTipoIdentificacion
@@ -97,15 +107,9 @@ BEGIN
 				,dbo.ufnGetDateEcuador()
 				,@idUsuario
 				,@idEntidad
-                ,0
-			FROM @table 
-
-            INSERT INTO Customer.Customer WITH (ROWLOCK)
-                     (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address])
-            SELECT	ti.codigoSri,t.numeroIdentificacion,t.nombreFiscal,t.nombreComercial,t.correo,t.telefono,t.direccion
+                ,1
+                ,(SELECT TOP 1 c.Id FROM Customer.Customer c WHERE c.IDCard = t.numeroIdentificacion)
 			FROM @table t
-            INNER JOIN TipoIdentificacion ti ON ti.idTipoIdentificacion = t.idTipoIdentificacion
-            WHERE t.numeroIdentificacion NOT IN (SELECT IDCard FROM Customer.Customer )
 
 			INSERT INTO Importaciones.Historial(idUsuario,idEntidad,modulo,cantidad,fechaRegistro)
 			SELECT @idUsuario,@idEntidad,'/Ventas/Cliente',@count,dbo.ufnGetDateEcuador()
