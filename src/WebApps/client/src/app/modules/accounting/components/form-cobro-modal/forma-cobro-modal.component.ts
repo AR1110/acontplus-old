@@ -9,7 +9,10 @@ import { BancoSelectComponent } from './components/banco-select/banco-select.com
 import { roundNumber } from '@core/utils/round-number.utils';
 import { PaymentTypeCode } from '@modules/accounting/enums/accounting.constants';
 import { isValidField } from '@core/utils/utils';
-import { PaymentSubType, PaymentType } from '@modules/accounting/models/payment-type.model';
+import {
+  PaymentSubType,
+  PaymentType,
+} from '@modules/accounting/models/payment-type.model';
 import { PaymentData } from '@modules/accounting/models/comprobante-ingreso';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
@@ -17,12 +20,13 @@ import { map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import Swal from 'sweetalert2';
 
-
 export const _filter = (opt: any[], value: string): string[] => {
-  console.log(opt)
+  console.log(opt);
   const filterValue = value.toLowerCase();
 
-  return opt.filter(item => item.descripcion.toLowerCase().includes(filterValue));
+  return opt.filter((item) =>
+    item.descripcion.toLowerCase().includes(filterValue),
+  );
 };
 
 @Component({
@@ -41,20 +45,21 @@ export const _filter = (opt: any[], value: string): string[] => {
     AsyncPipe,
   ],
   templateUrl: './forma-cobro-modal.component.html',
-  styles: ``
+  styles: ``,
 })
 export class FormaCobroModalComponent {
   @Input() params = {
     dataFormaCobro: {} as any,
     comprobante: {
-      razonSocialComprador: null
+      razonSocialComprador: null,
     },
     saldo: 0,
-    multiplesPaymentType: []
-  }
+    multiplesPaymentType: [],
+  };
+  _formBuilder = inject(FormBuilder);
 
   modal = inject(NgbActiveModal);
-  tS = inject(ToasterService)
+  tS = inject(ToasterService);
 
   ciudadesGroupOptions!: Observable<any[]>;
   ciudadForm = this._formBuilder.group({
@@ -74,35 +79,22 @@ export class FormaCobroModalComponent {
     nro: null,
     lote: null,
     aprobacion: null,
-    fechaEmision: new Date()
-  }
+    fechaEmision: new Date(),
+  };
 
   comprobante = {
-    razonSocialComprador: null
-  }
+    razonSocialComprador: null,
+  };
 
   entidadesFinanciera: PaymentType[] = [];
-  subEntidadesFinanciera: PaymentSubType[] = []
-  bancos: any[] = []
-  ciudades: any[] = []
+  subEntidadesFinanciera: PaymentSubType[] = [];
+  bancos: any[] = [];
+  ciudades: any[] = [];
   documentosElectronicos: any[] = [];
 
-  selectedDocElectronico = []
+  selectedDocElectronico = [];
 
   selectedIndexTab = 0;
-
-  constructor(private _formBuilder: FormBuilder) { }
-
-
-  private _filterGroup(value: string): any[] {
-    if (value) {
-      return this.ciudades
-        .map(group => ({ provincia: group.provincia, ciudades: _filter(group.ciudades, value) }))
-        .filter(group => group.ciudades.length > 0);
-    }
-
-    return this.ciudades;
-  }
 
   agruparPorProvincia(ciudades: any) {
     let provincias: any = {};
@@ -117,34 +109,33 @@ export class FormaCobroModalComponent {
     });
   }
 
-
   loadInitialData() {
     try {
-      let { documentos, entidadesFinanciera, bancos, ciudades } = this.params.dataFormaCobro;
+      let { documentos, entidadesFinanciera, bancos, ciudades } =
+        this.params.dataFormaCobro;
       this.comprobante = this.params.comprobante;
       this.entidadesFinanciera = entidadesFinanciera;
-
 
       this.bancos = bancos;
       this.ciudades = this.agruparPorProvincia(ciudades);
 
       this.documentosElectronicos = documentos;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-
-
 
   ngOnInit() {
     let { saldo } = this.params;
     this.VALOR_ABONO_ORIGINAL = roundNumber(saldo, 3);
     this.loadInitialData();
 
-    this.ciudadesGroupOptions = this.ciudadForm.get('ciudadGroup')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterGroup(value || '')),
-    );
+    this.ciudadesGroupOptions = this.ciudadForm
+      .get('ciudadGroup')!
+      .valueChanges.pipe(
+        startWith(''),
+        map((value) => this._filterGroup(value || '')),
+      );
   }
 
   onSelectionChangeCiudad(id: number) {
@@ -152,18 +143,17 @@ export class FormaCobroModalComponent {
   }
 
   onChangeTabEntidadFinanciera($index: number) {
-
     try {
       const dataEntidadFinanciera = this.entidadesFinanciera.at($index);
       let descripcion = null;
       let idEntidadFinanciera = 0;
       let codigo = null;
-      let subEntidadesFinanciera: PaymentSubType[] = []
+      let subEntidadesFinanciera: PaymentSubType[] = [];
       if (dataEntidadFinanciera) {
         descripcion = dataEntidadFinanciera.descripcion;
         idEntidadFinanciera = dataEntidadFinanciera.idEntidadFinanciera;
-        codigo = dataEntidadFinanciera.codigo
-        subEntidadesFinanciera = dataEntidadFinanciera.subEntidadesFinanciera
+        codigo = dataEntidadFinanciera.codigo;
+        subEntidadesFinanciera = dataEntidadFinanciera.subEntidadesFinanciera;
       }
       const el = document.getElementById('btnAddFormaPago');
 
@@ -179,7 +169,8 @@ export class FormaCobroModalComponent {
       this.data.valorAbono = this.VALOR_ABONO_ORIGINAL;
       this.data.idBanco = 0;
       this.data.idCiudad = 0;
-      this.data.referencia = codigo === 'CHE' ? this.comprobante.razonSocialComprador : null;
+      this.data.referencia =
+        codigo === 'CHE' ? this.comprobante.razonSocialComprador : null;
       this.data.nro = null;
       this.data.lote = null;
       this.data.aprobacion = null;
@@ -188,42 +179,43 @@ export class FormaCobroModalComponent {
       this.data.fechaEmision = new Date();
 
       this.ciudadForm.reset({
-        ciudadGroup: '' // Reset to empty string or any other initial value
+        ciudadGroup: '', // Reset to empty string or any other initial value
       });
 
       if (this.subEntidadesFinanciera.length === 0) {
         this.tS.toastr({
           type: 'warning',
-          message: `${descripcion}: No tiene SubEntidad Financiera creada`
+          message: `${descripcion}: No tiene SubEntidad Financiera creada`,
         });
       } else {
-        this.data.idSubEntidadFinanciera = this.subEntidadesFinanciera[0].idSubEntidadFinanciera;
+        this.data.idSubEntidadFinanciera =
+          this.subEntidadesFinanciera[0].idSubEntidadFinanciera;
       }
-
     } catch (error) {
       console.log(error);
     }
   }
 
   isValidData() {
-    let paymentTypeCode = this.entidadesFinanciera.find(e => e.idEntidadFinanciera === this.data.idEntidadFinanciera)?.codigo;
+    let paymentTypeCode = this.entidadesFinanciera.find(
+      (e) => e.idEntidadFinanciera === this.data.idEntidadFinanciera,
+    )?.codigo;
     let { nro, referencia, aprobacion, idCiudad, idBanco, lote } = this.data;
 
     if (!(this.data.idSubEntidadFinanciera > 0)) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Seleccione la SubEntidad Financiera'
-      })
-      return
+        message: 'Seleccione la SubEntidad Financiera',
+      });
+      return;
     }
-
 
     if (!(Number(this.data.valorAbono) > 0)) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Ingrese el valor de abono'
-      })
-      return
+        message: 'Ingrese el valor de abono',
+      });
+      return;
     }
 
     // =================== TARJETA DE CREDITO / DEBITO  =================================== //
@@ -235,7 +227,6 @@ export class FormaCobroModalComponent {
       //   })
       //   return
       // }
-
       // if (!(idBanco && idBanco > 0)) {
       //   this.tS.toastr({
       //     type: 'warning',
@@ -272,16 +263,16 @@ export class FormaCobroModalComponent {
       if (!(idBanco && idBanco > 0)) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Seleccione el Banco'
-        })
-        return
+          message: 'Seleccione el Banco',
+        });
+        return;
       }
       if (!isValidField(nro)) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Ingrese el Número'
-        })
-        return
+          message: 'Ingrese el Número',
+        });
+        return;
       }
     }
 
@@ -291,35 +282,35 @@ export class FormaCobroModalComponent {
       if (!(idBanco && idBanco > 0)) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Seleccione el Banco'
-        })
-        return
+          message: 'Seleccione el Banco',
+        });
+        return;
       }
       if (!isValidField(nro)) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Ingrese el Número'
-        })
-        return
+          message: 'Ingrese el Número',
+        });
+        return;
       }
 
       if (!(idCiudad && idCiudad > 0)) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Seleccione la ciudad'
-        })
-        return
+          message: 'Seleccione la ciudad',
+        });
+        return;
       }
 
       if (!isValidField(referencia)) {
         if (!(idBanco && idBanco > 0)) {
           this.tS.toastr({
             type: 'warning',
-            message: 'Ingrese la referencia'
-          })
-          return
+            message: 'Ingrese la referencia',
+          });
+          return;
         }
-        return
+        return;
       }
     }
 
@@ -331,31 +322,39 @@ export class FormaCobroModalComponent {
       if (!this.isValidData()) throw 'Form Invalid';
 
       this.modal.close(this.getDataPago());
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-
   }
-
 
   getDataPago(item: any = {}) {
     try {
-      let entidadFinanciera = this.entidadesFinanciera.find(item => item.idEntidadFinanciera === this.data.idEntidadFinanciera);
-      let subEntidadFinanciera = entidadFinanciera?.subEntidadesFinanciera.find((item: any) => item.idSubEntidadFinanciera === this.data.idSubEntidadFinanciera);
+      let entidadFinanciera = this.entidadesFinanciera.find(
+        (item) => item.idEntidadFinanciera === this.data.idEntidadFinanciera,
+      );
+      let subEntidadFinanciera = entidadFinanciera?.subEntidadesFinanciera.find(
+        (item: any) =>
+          item.idSubEntidadFinanciera === this.data.idSubEntidadFinanciera,
+      );
 
-      let ciudad = this.ciudades.find(item => item.idCiudad === this.data.idCiudad);
-      let banco = this.bancos.find(item => item.idBanco === this.data.idBanco);
+      let ciudad = this.ciudades.find(
+        (item) => item.idCiudad === this.data.idCiudad,
+      );
+      let banco = this.bancos.find(
+        (item) => item.idBanco === this.data.idBanco,
+      );
 
       //  let formattedDateTime = formatDateMoment(this.data.fechaEmision);
 
-      const infoCobro = [{
-        nro: this.data.nro,
-        lote: this.data.lote,
-        aprobacion: this.data.aprobacion,
-        referencia: this.data.referencia,
-        idCiudad: this.data.idCiudad
-      }]
+      const infoCobro = [
+        {
+          nro: this.data.nro,
+          lote: this.data.lote,
+          aprobacion: this.data.aprobacion,
+          referencia: this.data.referencia,
+          idCiudad: this.data.idCiudad,
+        },
+      ];
 
       let obj: PaymentData = {
         //Info
@@ -367,8 +366,9 @@ export class FormaCobroModalComponent {
 
         //Data
         idEntidadFinanciera: entidadFinanciera?.idEntidadFinanciera ?? 0,
-        idSubEntidadFinanciera: subEntidadFinanciera?.idSubEntidadFinanciera ?? 0,
-        paymentTypeCode: entidadFinanciera?.codigo ?? "",
+        idSubEntidadFinanciera:
+          subEntidadFinanciera?.idSubEntidadFinanciera ?? 0,
+        paymentTypeCode: entidadFinanciera?.codigo ?? '',
         idBanco: this.data.idBanco,
         idCiudad: this.data.idCiudad,
         fechaEmision: this.data.fechaEmision,
@@ -385,34 +385,42 @@ export class FormaCobroModalComponent {
         valorAbono: item.saldo || this.data.valorAbono,
         controlCaja: subEntidadFinanciera?.controlCaja ?? false,
 
-        infoCobro: entidadFinanciera?.codigo === PaymentTypeCode.EFE ? undefined : JSON.stringify(infoCobro),
+        infoCobro:
+          entidadFinanciera?.codigo === PaymentTypeCode.EFE
+            ? undefined
+            : JSON.stringify(infoCobro),
         abonoCuota: 0,
         secuencial: 0,
-      }
+      };
       return obj;
     } catch (error) {
       console.log(error);
-      return {}
+      return {};
     }
   }
-
 
   addDocumentoElectronico(item: any) {
     if (item.saldo === 0) {
       this.tS.toastr({
         type: 'warning',
-        message: 'El Valor de Abono tiene que ser mayor a 0'
-      })
-      return
+        message: 'El Valor de Abono tiene que ser mayor a 0',
+      });
+      return;
     }
 
-    if (this.params.multiplesPaymentType.some((d: any) => d.idTipoDocumento === item.idTipoDocumento && d.idComprobante === item.idDocumento)) {
+    if (
+      this.params.multiplesPaymentType.some(
+        (d: any) =>
+          d.idTipoDocumento === item.idTipoDocumento &&
+          d.idComprobante === item.idDocumento,
+      )
+    ) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Este documento ya fue aplicado al cobro'
-      })
+        message: 'Este documento ya fue aplicado al cobro',
+      });
       // $(".swal2-container").css("z-index", "999999");
-      return
+      return;
     }
     Swal.fire({
       html: `<small>Abonar el valor <h3>$${item.saldo}</h3> del Documento ${item.codDoc == 'A' ? item.serieComprobante : item.tipoDoc}?</small>`,
@@ -421,14 +429,24 @@ export class FormaCobroModalComponent {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, abonar',
-      cancelButtonText: 'No, cancelar'
-    }).then(result => {
+      cancelButtonText: 'No, cancelar',
+    }).then((result) => {
       if (result.isConfirmed) {
-        this.modal.close(this.getDataPago(item))
+        this.modal.close(this.getDataPago(item));
       }
-    })
-
+    });
   }
 
+  private _filterGroup(value: string): any[] {
+    if (value) {
+      return this.ciudades
+        .map((group) => ({
+          provincia: group.provincia,
+          ciudades: _filter(group.ciudades, value),
+        }))
+        .filter((group) => group.ciudades.length > 0);
+    }
 
+    return this.ciudades;
+  }
 }
