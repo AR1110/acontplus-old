@@ -58,9 +58,9 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             return {
                 n: index + 1,
                 ...item,
-                precioConIva: fS.roundNumber(precioConIva, 3),
+                precioConIva: fS.roundNumber(precioConIva, 5),
               //  precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
-                total: fS.roundNumber(total, 3)
+                total: fS.roundNumber(total, 5)
             }
         })
     }
@@ -255,6 +255,10 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             type: 'number',
             width: '7%',
             minWidth: '50',
+            cellFilter: fS.cellFilterRoundToNumber(),
+            cellTooltip: function (row, col) {
+                return fS.cellTooltipGrid(row.entity, col.field)
+            },
         },
         {
             name: 'IVA',
@@ -262,6 +266,10 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             type: 'number',
             width: '5%',
             minWidth: '50',
+            cellFilter: fS.cellFilterRoundToNumber(),
+            cellTooltip: function (row, col) {
+                return fS.cellTooltipGrid(row.entity, col.field)
+            },
         },
         {
             name: 'Total',
@@ -269,6 +277,10 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             type: 'number',
             width: '5%',
             minWidth: '100',
+            cellFilter: fS.cellFilterRoundToNumber(),
+            cellTooltip: function (row, col) {
+                return fS.cellTooltipGrid(row.entity, col.field)
+            },
         },
         {
             name: 'Nota',

@@ -151,14 +151,14 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             saldoActualDoc = saldoActualDoc.plus(item.saldoActualDoc)
         }
 
-        $scope.data.importeTotal = importeTotal.toNumber();
-        $scope.data.totalSaldo = saldoActualDoc.toNumber();
-        $scope.data.totalAbonoAnterior = abono.toNumber();
-        $scope.data.totalMora = totalMora.toNumber();
+        $scope.data.importeTotal = fS.roundNumber(importeTotal.toNumber(), fS.max_dos)
+        $scope.data.totalSaldo = fS.roundNumber(saldoActualDoc.toNumber(), fS.max_dos)
+        $scope.data.totalAbonoAnterior = fS.roundNumber(abono.toNumber(), fS.max_dos)
+        $scope.data.totalMora = fS.roundNumber(totalMora.toNumber(), fS.max_dos)
         $scope.data.totalValorAbono = 0;
         $scope.data.valorCambio = 0;
-        $scope.data.saldoActualDoc = saldoActualDoc.toNumber();
-        $scope.data.totalSaldoDoc = saldoActualDoc.toNumber();
+        $scope.data.saldoActualDoc = fS.roundNumber(saldoActualDoc.toNumber(), fS.max_dos)
+        $scope.data.totalSaldoDoc = fS.roundNumber(saldoActualDoc.toNumber(), fS.max_dos)
 
         //cuando se realiza cobro desde modulo de comprobante ingreso  
         $scope.dataCuentaPorCobrar.importeTotal = $scope.data.importeTotal
@@ -271,7 +271,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             $scope.selectedDocumentos = modalCobroSvc.getCuentasPorCobrar();
 
 
-            let abonoCuota = modalCobroSvc.getAbonoCuota(); 
+            let abonoCuota = modalCobroSvc.getAbonoCuota();
 
 
             addDatosCobro(result, abonoCuota);
@@ -288,7 +288,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     function addDatosCobro(obj, abonoCuota) {
         $scope.datosCobro.push({
             ...obj,
-            abonoCuota: fS.roundNumber(abonoCuota, 2),
+            abonoCuota: fS.roundNumber(abonoCuota, fS.max_dos),
             secuencial: modalCobroSvc.getUniqueIndex()
         })
     }
@@ -311,14 +311,14 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             .reduce((prev, curr) => fS.plus(prev, curr.saldoTotalActual).toNumber(), 0);
         let valorCambio = 0;
 
-        $scope.data.totalValorAbono = fS.roundNumber(totalValorAbono, 5);
-        $scope.data.totalSaldo = fS.roundNumber(totalSaldo, 5);
+        $scope.data.totalValorAbono = fS.roundNumber(totalValorAbono, fS.max_dos);
+        $scope.data.totalSaldo = fS.roundNumber(totalSaldo, fS.max_dos);
 
         if (totalValorAbonoEfectivo >= $scope.dataCuentaPorCobrar.saldo) {
             valorCambio = fS.minus(totalValorAbonoEfectivo, $scope.dataCuentaPorCobrar.saldo).toNumber();
         }
 
-        $scope.data.valorCambio = fS.roundNumber(valorCambio, 5);
+        $scope.data.valorCambio = fS.roundNumber(valorCambio, fS.max_dos);
 
 
     }
@@ -533,8 +533,8 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
 
-                let params = comprobanteIngresoSvc.mapperTo(data); 
-             
+                let params = comprobanteIngresoSvc.mapperTo(data);
+                console.log(params)
                 showLoader();
                 comprobanteIngresoSvc.post(params).then((response) => {
                     hideLoader();
@@ -544,7 +544,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                     if (response.code === '1') {
                         fS.sweetAlert('success', response.message, '', 1000);                        
                         $uibModalInstance.close(response);
-                         
+
                     }
                 }).catch(error => {
                     hideLoader();
@@ -560,8 +560,8 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
     }
 
-    function closeModal() {        
-        $uibModalInstance.close(); 
+    function closeModal() {
+        $uibModalInstance.close();
     }
 
 

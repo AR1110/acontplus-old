@@ -552,16 +552,16 @@
             return resultsCuotas;
         }
 
-        function getDataFilter(){
-            let params = JSON.stringify({ 
+        function getDataFilter() {
+            let params = JSON.stringify({
                 tipo: 4
             })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response=>{
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 let resultData = {
                     estabs: []
                 }
-                if(response.code==="1"){
-                    let {ptoEmision } = JSON.parse(response.payload)
+                if (response.code === "1") {
+                    let { ptoEmision } = JSON.parse(response.payload)
 
                     let dataToGroup = {
                         estabs: ptoEmision, //Establecimientos con puntos de emision 
@@ -1197,27 +1197,27 @@
 
     //control caja 
 
-    app.factory('controlCajaService', ['mainService', function(mS){
+    app.factory('controlCajaService', ['mainService', function (mS) {
         let url = `Contabilidad/ControlCaja/`
         return {
-            getDataFilter, 
+            getDataFilter,
             getAll
-        }        
-        function getDataFilter(){
+        }
+        function getDataFilter() {
             let json = JSON.stringify({
                 tipo: 6
             })
-            return mS.getData('get', `${url}?json=${json}`).then(response=>{
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let result = {
                     estabs: []
                 }
-                if(response && typeof response==='object'){
+                if (response && typeof response === 'object') {
                     result.estabs = response.establecimiento;
                 }
                 return result;
             })
         }
-        function getAll(obj){
+        function getAll(obj) {
             let json = JSON.stringify({
                 ...obj,
                 tipo: 7
@@ -1228,7 +1228,7 @@
                 }
                 if (response && typeof response === 'object') {
                     console.log(response)
-                    result.cheques = response.cheques.map(item=>{
+                    result.cheques = response.cheques.map(item => {
                         return {
                             id: item.id,
 
@@ -1243,8 +1243,8 @@
                             fechaEmision: item.fechaEmision,
                             posfechado: item.posfechado,
                             cobro: item.cobro,
-                            totalRecords: item.totalRecords, 
-                            posfechadoName: item.posfechado?'SI': 'NO'
+                            totalRecords: item.totalRecords,
+                            posfechadoName: item.posfechado ? 'SI' : 'NO'
                         }
                     });
                 }
@@ -1433,7 +1433,7 @@
 
                 this._configCobro = {};
 
-                this.MAX_DECIMALS = {
+                this.MAX_DECIMALS = { 
                     GENERAL: 3,
                     CUOTA_ABONO: 5,
                     DEFAULT: 5
@@ -1561,27 +1561,27 @@
                         interesActual = interesActual.plus(cc.interesActual)
                     }
 
-                    let decimalSaldo=3
-                    if (cuotasCalculadas.length>2){
+                    let decimalSaldo = 2
+                    if (cuotasCalculadas.length > 2) {
 
                         decimalSaldo = fS.contarDecimales(documento.saldo)
                     }
-                    if (cuotasCalculadas.length===1){
+                    if (cuotasCalculadas.length === 1) {
                         decimalSaldo = fS.contarDecimales(documento.saldo);
                     }
 
 
                     return {
                         ...documento,
-                        saldoActualDoc: fS.roundNumber(saldoActualDoc, decimalSaldo) ,
+                        saldoActualDoc: fS.roundNumber(saldoActualDoc, 2),
                         cuotasCalculadas: structuredClone(cuotasCalculadas),
                         cuotasCalculadasClone: structuredClone(cuotasCalculadas),
                         diasMoraActual,
-                        interesPorMoraActual: interesPorMoraActual.toNumber(),
-                        interesActual: interesActual.toNumber()
+                        interesPorMoraActual: fS.roundNumber(interesPorMoraActual.toNumber(), 2),
+                        interesActual: fS.roundNumber(interesActual.toNumber(), 2)
 
                     };
-                }); 
+                });
 
                 return resultados;
             }
@@ -1691,9 +1691,9 @@
                     //let valorMovimientoSaldo = 0, historialAbono = 0;
                     let valorMovimientoSaldo = fS.instanceDecimal(0), historialAbono = fS.instanceDecimal(0);
 
-                    const cobrosDetalleFiltered = this.getCobrosDetalle().filter(cd => cd.idCuentaPorCobrar === this._dataCuentaPorCobrar.idCuentaPorCobrar) 
+                    const cobrosDetalleFiltered = this.getCobrosDetalle().filter(cd => cd.idCuentaPorCobrar === this._dataCuentaPorCobrar.idCuentaPorCobrar)
 
-                    const totalAbonoCuenta = cobrosDetalleFiltered.reduce((acc, curr) => acc.plus(curr.abono), fS.instanceDecimal(0)); 
+                    const totalAbonoCuenta = cobrosDetalleFiltered.reduce((acc, curr) => acc.plus(curr.abono), fS.instanceDecimal(0));
 
                     if (cobrosDetalleFiltered.length === 0) {
 
@@ -1705,8 +1705,8 @@
 
                         if (dataUltimoCobroDetalle) {
 
-                            valorMovimientoSaldo = fS.instanceDecimal(dataUltimoCobroDetalle.saldo).minus(dataUltimoCobroDetalle.abono).toNumber(); 
-                        } else { 
+                            valorMovimientoSaldo = fS.instanceDecimal(dataUltimoCobroDetalle.saldo).minus(dataUltimoCobroDetalle.abono).toNumber();
+                        } else {
                             valorMovimientoSaldo = fS.instanceDecimal(this._dataCuentaPorCobrar.saldoActualDoc).toNumber();
                         }
 
@@ -1716,7 +1716,7 @@
                         } else if (this.getValorAbono() >= this._dataCuentaPorCobrar.saldoActualDoc) {
                             historialAbono = this._dataCuentaPorCobrar.saldoActualDoc
                         }
- 
+
                         this.addHistorialCuenta(valorMovimientoSaldo, historialAbono)
 
                     }
@@ -1745,7 +1745,7 @@
                             }
 
 
-                            this.addHistorialCuenta(valorMovimientoSaldo, historialAbono) 
+                            this.addHistorialCuenta(valorMovimientoSaldo, historialAbono)
                         }
                     }
 
@@ -1781,8 +1781,8 @@
                     secuencial: this.getUniqueIndex(),
                     valorSaldoLectura: this._dataCuentaPorCobrar.saldoActualDoc,
                     idCuentaPorCobrar: this._dataCuentaPorCobrar.idCuentaPorCobrar,
-                    abono: fS.roundNumber(historialAbono, this.MAX_DECIMALS.DEFAULT),
-                    saldo: fS.roundNumber(valorMovimientoSaldo, this.MAX_DECIMALS.DEFAULT),
+                    abono: fS.roundNumber(historialAbono, fS.max_dos),
+                    saldo: fS.roundNumber(valorMovimientoSaldo, fS.max_dos),
                     diasMoraActual: this._dataCuentaPorCobrar.diasMoraActual,
                     interesPorMoraActual: this._dataCuentaPorCobrar.interesPorMoraActual,
                     interesActual: this._dataCuentaPorCobrar.interesActual
@@ -1840,11 +1840,26 @@
                 if (this.getEsAbonoPosfechado()) {
                     dataCuota.abonoPosfechado = fS.plus(dataCuota.abonoPosfechado, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
                 } else {
-                    dataCuota.abono = fS.plus(dataCuota.abono, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
+                    let totalAbonoCuota = fS.plus(dataCuota.abono, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
+
+                    if(fS.roundNumber(totalAbonoCuota, 2) === fS.roundNumber(dataCuota.saldo, 2)){
+                        dataCuota.abono = dataCuota.saldo;
+                    }else{
+                        dataCuota.abono = totalAbonoCuota;
+                    }
+
                 }
 
                 // Resta el valor del abono al saldo total actual de la cuota
-                dataCuota.saldoTotalActual = fS.minus(dataCuota.saldoTotalActual, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
+                let saldoTotalActual  =  fS.minus(dataCuota.saldoTotalActual, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
+
+                //se verifica antes  por temas de decimales porque al final queda milesimas 
+                if(fS.roundNumber(saldoTotalActual, 2)===0){
+                    dataCuota.saldoTotalActual= 0;
+                }else{
+                    dataCuota.saldoTotalActual = saldoTotalActual;
+                }
+
 
                 // Agrega un detalle de cobro con el valor del abono y el saldo total actual
                 this.addCobroDetalle(dataCuota, this.getValorAbono(), dataCuota.saldoTotalActual);
@@ -1901,6 +1916,7 @@
              * @param {*} dataCuota 
              */
             handleFullAbono(dataCuota) {
+                console.log(this.getValorAbono())
                 dataCuota.abono = this.getEsAbonoPosfechado() ? 0 : this.getValorAbono();
                 dataCuota.abonoPosfechado = this.getEsAbonoPosfechado() ? this.getValorAbono() : 0;
                 dataCuota.saldoTotalActual = fS.minus(dataCuota.saldoTotalActual, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
@@ -1918,6 +1934,14 @@
                 dataCuota.abonoPosfechado = this.getEsAbonoPosfechado() ? fS.instanceDecimal(dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT) : 0;
 
                 let valorAbono = fS.minus(this.getValorAbono(), dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT);
+                console.log(valorAbono)
+                //verificamos si la resta de valor abono es igual al total a cobrar 
+                //tomar mucha en cuenta, se agrega por temas de decimales 
+                if (fS.roundNumber(valorAbono, 2) === fS.roundNumber(dataCuota.saldoTotalActual, 2)){
+                    valorAbono = dataCuota.saldoTotalActual;
+                }
+
+
                 this.setValorAbono(valorAbono);
 
                 this.addCobroDetalle(dataCuota, dataCuota.saldoTotalActual, 0);
@@ -1983,9 +2007,9 @@
 
 
             roundCuotaFields(dataCuota) {
-                dataCuota.cuota = fS.roundNumber(dataCuota.cuota, this.MAX_DECIMALS.CUOTA_ABONO);
-                dataCuota.abono = fS.roundNumber(dataCuota.abono, this.MAX_DECIMALS.CUOTA_ABONO);
-                dataCuota.abonoPosfechado = fS.roundNumber(dataCuota.abonoPosfechado, this.MAX_DECIMALS.CUOTA_ABONO);
+                dataCuota.cuota = dataCuota.cuota
+                dataCuota.abono = dataCuota.abono
+                dataCuota.abonoPosfechado = dataCuota.abonoPosfechado;
             }
 
             updateEstado(dataCuota) {
@@ -2035,7 +2059,7 @@
 
 
 
-            getAbonoCuota() { 
+            getAbonoCuota() {
                 let abonoCuota = this.getCobrosDetalle()
                     .filter(item => item.secuencial === this.getUniqueIndex())
                     .reduce((prev, curr) => fS.instanceDecimal(prev).plus(curr.abono), fS.instanceDecimal(0))
@@ -2074,14 +2098,10 @@
 
                     let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && !cd.posfechado)
                         .reduce((acc, curr) => acc.plus(curr.abono), fS.instanceDecimal(0));
-
-
+ 
 
                     valorSaldo = valorSaldo.minus(totalNoPosfechado).toNumber();
-                    
-                    if(fS.roundNumber(valorSaldo, 3)<=0){
-                        valorSaldo =0;
-                    } 
+ 
 
                     let dataEstadoPago;
                     if (totalPosfechado.gt(0)) {
@@ -2092,8 +2112,8 @@
                         });
                     } else {
                         dataEstadoPago = this.getEstadoCuota({
-                            saldo: fS.roundNumber(valorSaldo, 2),
-                            abono: fS.roundNumber(totalNoPosfechado.toNumber(),2),
+                            saldo: fS.roundNumber(valorSaldo, fS.max_dos),
+                            abono: fS.roundNumber(totalNoPosfechado.toNumber(), fS.max_dos),
                             esPosfechado: false
                         });
                     }
@@ -2101,7 +2121,7 @@
                     cuentasPorCobrarEstado.push({
                         ...item,
                         idEstadoPago: dataEstadoPago.idEstadoPago,
-                        abono: totalNoPosfechado.toNumber(),
+                        abono: fS.roundNumber(totalNoPosfechado.toNumber(), fS.max_dos)
                     });
                 }
 
@@ -2134,9 +2154,9 @@
                             return fS.instanceDecimal(acc).plus(curr.abono);
                         }, fS.instanceDecimal(0));
 
-                    let valorSaldoLectura = fS.roundNumber(item.valorSaldoLectura, 2);
+                    let valorSaldoLectura = fS.roundNumber(item.valorSaldoLectura, fS.max_dos);
                     let valorSaldo = fS.instanceDecimal(valorSaldoLectura)
-                        .minus(fS.roundNumber(totalNoPosfechado.toNumber(), 2))
+                        .minus(fS.roundNumber(totalNoPosfechado.toNumber(), fS.max_dos))
                         .toNumber();
 
                     let dataEstadoPago = this.getEstadoCuota({
@@ -2157,15 +2177,15 @@
             }
 
 
-            clearData(){
-                 
-                this.setCuentasPorCobrar([]) 
-                this.setValorAbono(0)  
-                this.setUniqueIndex(0) 
-                this.setCobrosDetalle([]); 
-                this.setHistorialCuentas([]) ;
-             //   this.setEstadoCobro([]); 
-                this.setEsAbonoPosfechado(false) ;
+            clearData() {
+
+                this.setCuentasPorCobrar([])
+                this.setValorAbono(0)
+                this.setUniqueIndex(0)
+                this.setCobrosDetalle([]);
+                this.setHistorialCuentas([]);
+                //   this.setEstadoCobro([]); 
+                this.setEsAbonoPosfechado(false);
             }
 
 
