@@ -1,44 +1,46 @@
-﻿using Common.Core.Interfaces;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services
 {
-    public class ConsumptionConfigService : IConsumptionConfigService
+    public class ConsumptionConfigService(IAdoRepository adoRepository) : IConsumptionConfigService
     {
-        private readonly IAdoRepository _repository;
-        public ConsumptionConfigService(IAdoRepository repository)
+        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            _repository = repository;
+            var dt = await adoRepository.GetDataTableAsync("Restaurant.ConfigTpv_Get", parameters);
+            return DataValidation.DataTableIsNull(dt)
+                ? new ApiResponse { Code = "0", Message = "Data not found!" }
+                : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
         }
-        public async Task<string> GetAsync(Dictionary<string, object> parameters)
+
+        public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
-            var dt = await _repository.GetDataTableAsync("Restaurant.ConfigTpv_Get", parameters);
-            if (dt.Rows.Count == 0) { return null; }
-            return DataConverters.DataTableToJson(dt);
+            return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.ConfigTpv_Insert", parameters);
         }
-        public async Task<string> AddAsync(Dictionary<string, object> parameters)
+
+        public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ConfigTpv_Insert", parameters);
+            return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.ConfigTpv_Update", parameters);
         }
-        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+
+        public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ConfigTpv_Update", parameters);
+            return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.ConfigTpv_Delete", parameters);
         }
-        public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+
+        public async Task<ApiResponse> GetPrinterAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ConfigTpv_Delete", parameters);
+            var dt = await adoRepository.GetDataTableAsync("Restaurant.ConfigPrinter_Get", parameters);
+            return DataValidation.DataTableIsNull(dt)
+                ? new ApiResponse { Code = "0", Message = "Data not found!" }
+                : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
         }
-        public async Task<string> GetPrinterAsync(Dictionary<string, object> parameters)
+
+        public async Task<ApiResponse> AddPrinterAsync(Dictionary<string, object> parameters)
         {
-            var dt = await _repository.GetDataTableAsync("Restaurant.ConfigPrinter_Get", parameters);
-            if (dt.Rows.Count == 0) { return null; }
-            return DataConverters.DataTableToJson(dt);
-        }
-        public async Task<string> AddPrinterAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ConfigPrinter_Insert", parameters);
+            return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.ConfigPrinter_Insert", parameters);
         }
     }
 }

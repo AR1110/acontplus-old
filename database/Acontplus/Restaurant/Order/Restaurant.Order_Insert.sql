@@ -74,7 +74,7 @@ BEGIN
 			                      WHERE pa.idUsuarioRol = @userRoleId
 			                      AND cd.codDoc = 'OR')
         BEGIN       
-            SELECT Common.ufnSpResponse('0', 'Aun no se ha configurado el secuencial, para ordenes de restaurante',  DEFAULT)
+            SELECT '0' code, 'Aun no se ha configurado el secuencial, para ordenes de restaurante'  as 'message'
             RETURN
         END
         
@@ -124,14 +124,14 @@ BEGIN
 
             IF NOT EXISTS(SELECT 1 FROM @tblItems)
                 BEGIN
-                    SELECT Common.ufnSpResponse('0', 'No se pudo recuperar el detalle', NULL)
+                    SELECT '0' code, 'No se pudo recuperar el detalle'  as 'message'
                     RETURN
                 END
 
         END
     ELSE
         BEGIN
-            SELECT Common.ufnSpResponse('0', 'El detalle no es valido', NULL)
+            SELECT '0' code, 'El detalle no es valido'  as 'message'
             RETURN
         END
         
@@ -212,7 +212,7 @@ BEGIN
                     IF NOT EXISTS (SELECT 1 FROM Restaurant.OrderItem WHERE OrderId = @orderId)
                         BEGIN
                             ROLLBACK TRAN
-                            SELECT Common.ufnSpResponse('0', 'Error al guardar items', (SELECT * FROM @tblItems for json path))	
+                            SELECT '0' code, 'Error al guardar items'  as 'message', (SELECT * FROM @tblItems for json path) payload
                             RETURN
                         END
                     
@@ -258,12 +258,12 @@ BEGIN
             ----------------END VENTA RAPIDA--------
 		COMMIT TRAN
         IF (@orderId > 0)
-            SELECT Common.ufnSpResponse('1', 'Exitos al guardar', @payload)
+            SELECT '1' code, 'Exitos al guardar'  as 'message', @payload payload
         ELSE
-            SELECT Common.ufnSpResponse('0', 'No se pudo guardar la orden', NULL)	
+            SELECT '0' code, 'No se pudo guardar la orden' as 'message'
     END TRY
 	BEGIN CATCH
-		 SELECT Common.ufnSpResponse('0', 'Error al guardar el orden', NULL)
+		 SELECT '0' code, 'Error al guardar el orden' as 'message'
         
         IF (@@TRANCOUNT > 0)
             ROLLBACK TRAN

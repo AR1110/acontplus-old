@@ -1,0 +1,73 @@
+﻿using Common.Core.Models;
+using Microsoft.EntityFrameworkCore;
+using Restaurant.API.Data;
+using Restaurant.API.Entities;
+using Restaurant.API.Interfaces;
+
+namespace Restaurant.API.Services;
+
+public class FloorService(RestaurantContext context) : IFloorService
+{
+    public async Task<ApiResponse> AddAsync(Floor floor)
+    {
+        var floorExist = FloorExistsCodeEstab(floor.Code, floor.CodEstab);
+        if (floorExist) return new ApiResponse { Code = "0", Message = "El código ya está en uso" };
+        context.Floors.Add(floor);
+        await context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Registrado correctamente!" };
+    }
+
+    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    {
+        var floorFound = await context.Floors.FindAsync(id);
+        if (floorFound == null)
+        {
+            return new ApiResponse { Code = "0", Message = "Floor not found" };
+        }
+
+        floorFound.Enabled = false;
+        floorFound.Deleted = true;
+        floorFound.UserId = userId;
+        context.Update(floorFound);
+        await context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Eliminado correctamente!" };
+    }
+
+    public async Task<ApiResponse> GetAllAsync()
+    {
+        var floors = await context.Floors.Where(x => x.Deleted == null).ToListAsync();
+        return floors.Count > 0
+            ? new ApiResponse { Code = "1", Payload = floors }
+            : new ApiResponse { Code = "0", Message = "Not found!" };
+    }
+
+    public async Task<ApiResponse> GetByEstabAsync(string codEstab)
+    {
+        var floors = await context.Floors.Where(x => x.CodEstab == codEstab && x.Deleted == null).ToListAsync();
+        return floors.Count > 0
+            ? new ApiResponse { Code = "1", Payload = floors }
+            : new ApiResponse { Code = "0", Message = "Not found!" };
+    }
+
+    public async Task<ApiResponse> UpdateAsync(int id, Floor floor)
+    {
+        var floorFound = await context.Floors.FindAsync(id);
+        if (floorFound == null)
+        {
+            return new ApiResponse { Code = "0", Message = "Floor not found" };
+        }
+
+        floorFound.Code = floor.Code;
+        floorFound.Description = floor.Description;
+        floorFound.Enabled = floor.Enabled;
+        floorFound.UserId = floor.UserId;
+        context.Update(floorFound);
+        await context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Actualizado correctamente!" };
+    }
+
+    private bool FloorExistsCodeEstab(string code, string codEstab)
+    {
+        return context.Floors.Any(e => e.Code == code && e.CodEstab == codEstab);
+    } 
+}

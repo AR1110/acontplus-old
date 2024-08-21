@@ -30,6 +30,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Scrutor" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
   

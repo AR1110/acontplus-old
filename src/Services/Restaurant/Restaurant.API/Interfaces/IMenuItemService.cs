@@ -1,8 +1,9 @@
-﻿namespace Restaurant.API.Interfaces
+﻿using Common.Core.Models;
+
+namespace Restaurant.API.Interfaces;
+
+public interface IMenuItemService
 {
-    public interface IMenuItemService
-    {
-        Task<object> GetAsync(Dictionary<string, object> parameters);
-        Task<object> GetIdAsync(Dictionary<string, object> parameters);
-    }
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> GetIdAsync(Dictionary<string, object> parameters);
 }

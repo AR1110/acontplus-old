@@ -1,5 +1,4 @@
 ﻿using Common.Core.Models;
-using Common.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.API.Data;
 using Restaurant.API.Entities;
@@ -7,7 +6,7 @@ using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services;
 
-public class AppTableService(IAdoRepository adoRepository, RestaurantContext context) : IAppTableService
+public class AppTableService(RestaurantContext context) : IAppTableService
 {
     public async Task<ApiResponse> GetAsync(string codEstab)
     {

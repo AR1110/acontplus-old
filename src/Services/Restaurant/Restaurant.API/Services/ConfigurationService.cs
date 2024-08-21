@@ -1,36 +1,21 @@
-﻿using System.Data;
-using Common.Core.Interfaces;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
-using Restaurant.API.Interfaces;
 
-namespace Restaurant.API.Services
+namespace Restaurant.API.Services;
+
+public interface IConfigurationService
 {
-    public class ConfigurationService : IConfigurationService
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+}
+
+public class ConfigurationService(IAdoRepository repository) : IConfigurationService
+{
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        private readonly IAdoRepository _repository;
-
-        public ConfigurationService(IAdoRepository repository)
-        {
-            _repository = repository;
-        }
-
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync("Restaurant.Configuration_Get", parameters);
-
-            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-            {
-                if (ds.Tables.Count > 0)
-                {
-                    ds = new DataSet();
-                }
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJson(ds);
-            }
-        }
+        var ds = await repository.GetDataSetAsync("Restaurant.Configuration_Get", parameters);
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new ApiResponse { Code = "0", Message = "Can't get data" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }
