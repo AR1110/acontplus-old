@@ -47,6 +47,30 @@
 
             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
+                    <label for="tipoDocumento">Tipo Documento: <span class="text-danger">*</span></label>
+                    <select disabled id="tipoDocumento" name="tipoDocumento" class="form-control border-select"
+                        ng-model="data.idTipoDocumento" >
+                        <option ng-value="item.idTipoDocumento" ng-repeat="item in tipoDocumento">
+                            {{item.descripcion}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="tipoTransaccion">Tipo Movimiento: <span class="text-danger">*</span></label>
+                    <select disabled id="tipoTransaccion" name="tipoTransaccion" class="form-control border-select"
+                        ng-model="data.idTipoTransaccion">
+                        <option ng-value="item.idTipoTransaccion" ng-repeat="item in tipoTransaccion">
+                            {{item.descripcion}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
                     <label for="bodegas">Bodega</label>
                     <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="data.idBodega" ng-change="askToChangeBodega()">
                         <option ng-value="item.idBodega" ng-repeat="item in bodegas">{{item.bodega}}</option>

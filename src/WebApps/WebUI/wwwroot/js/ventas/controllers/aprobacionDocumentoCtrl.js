@@ -1,3 +1,4 @@
+//@ts-check
 (function () {
 
     'use strict';
@@ -521,12 +522,11 @@
     ModalSelectDocCtrl.$inject = [
         '$scope',
         '$uibModalInstance',
-        'uiGridConstants',
-        'pricingUtils',
+        'uiGridConstants', 
         'params'
     ];
 
-    function ModalSelectDocCtrl($scope, $uibModalInstance, uiGridConstants, pricingUtils, params) {
+    function ModalSelectDocCtrl($scope, $uibModalInstance, uiGridConstants, params) {
 
         let { docOrigen, docDestino } = params;
         $scope.docOrigen = docOrigen;
@@ -653,7 +653,7 @@
         //Step Dos -> Documento Destino 
         $scope.stepDos = function () {
             try {
-                if (!$scope.cliente.idCliente > 0) {
+                if (!($scope.cliente.idCliente > 0)) {
                     tS.toastr('warning', 'Seleccione el Cliente');
                     return
                 }
@@ -691,7 +691,7 @@
                     })
                     return
                 }
-                if ($scope.data.total < 0) {
+                if ($scope.data.total <= 0) {
                     tS.toastr('warning', 'No se puede generar el documento con valor total 0!');
                     return
                 }
@@ -842,12 +842,7 @@
             }
         }
 
-
-        /**
-         * cliente 
-         * @param {*} textSearch 
-         * @returns 
-         */
+ 
         $scope.onKeyupCliente = function () {
             if (fS.isValidField($scope.cliente.nombreCliente)) {
                 $scope.dataSearch.byCliente = 0;
@@ -1058,7 +1053,7 @@
                 return {
                     ...item,
                     precioConIva: fS.roundNumber(precioConIva, $scope.decimal.nroPrecio),
-                    total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle)
+                    total: fS.roundNumber(total, 5)
                 }
 
             })
@@ -1226,6 +1221,10 @@
                     width: '8%',
                     minWidth: '50',
                     visible: true,
+                    cellFilter: fS.cellFilterRoundToNumber(),
+                    cellTooltip: function (row, col) {
+                        return fS.cellTooltipGrid(row.entity, col.field)
+                    },
                     aggregationType: uiGridConstants.aggregationTypes.sum,
                     customTreeAggregationFinalizerFn: function (aggregation) {
                         aggregation.rendered = aggregation.value;
@@ -1242,6 +1241,10 @@
                     width: '5%',
                     minWidth: '50',
                     visible: true,
+                    cellFilter: fS.cellFilterRoundToNumber(),
+                    cellTooltip: function (row, col) {
+                        return fS.cellTooltipGrid(row.entity, col.field)
+                    },
                 },
                 {
                     name: 'Total',
@@ -1252,6 +1255,10 @@
                     width: '5%',
                     minWidth: '100',
                     visible: true,
+                    cellFilter: fS.cellFilterRoundToNumber(),
+                    cellTooltip: function (row, col) {
+                        return fS.cellTooltipGrid(row.entity, col.field)
+                    },
                     aggregationType: uiGridConstants.aggregationTypes.sum,
                     customTreeAggregationFinalizerFn: function (aggregation) {
                         aggregation.rendered = aggregation.value;
@@ -1420,6 +1427,10 @@
                 width: '7%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'IVA',
@@ -1430,6 +1441,10 @@
                 width: '5%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Total',
@@ -1440,6 +1455,10 @@
                 width: '5%',
                 minWidth: '100',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Ice',
@@ -1683,7 +1702,9 @@
                     propina,
                 } = getTotals;
 
-                drawElementHTMLTotals(getTotals)
+                const htmlTemplate = gridOptionsSvc.impuestoTotalesHtml(getTotals);
+                drawElementHTMLTotals(htmlTemplate)
+
 
                 $scope.data.subTotalSinImpuestos = subTotalSinImpuestos;
                 $scope.data.total = importeTotal;
@@ -1932,8 +1953,9 @@
                     porcentajeDescuento,
                     propina,
                 } = getTotals;
+                const htmlTemplate = gridOptionsSvc.impuestoTotalesHtml(getTotals);
 
-                drawElementHTMLTotals(getTotals)
+                drawElementHTMLTotals(htmlTemplate)
 
                 $scope.data.subTotalSinImpuestos = subTotalSinImpuestos;
                 $scope.data.total = importeTotal;
@@ -2193,6 +2215,10 @@
                 width: '7%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'IVA',
@@ -2203,6 +2229,10 @@
                 width: '5%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Total',
@@ -2213,6 +2243,10 @@
                 width: '5%',
                 minWidth: '100',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Ice',
@@ -2849,7 +2883,7 @@
                 return {
                     ...item,
                     precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
-                    total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle),
+                    total: fS.roundNumber(total, 5),
                     porcentajeDescuento: fS.roundNumber(porcentajeDescuento, $scope.decimal.nroPorcentaje)
                 }
 
@@ -3111,6 +3145,10 @@
                 width: '7%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'IVA',
@@ -3121,6 +3159,10 @@
                 width: '5%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Total',
@@ -3131,6 +3173,10 @@
                 width: '5%',
                 minWidth: '100',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Ice',
@@ -3593,8 +3639,9 @@
                     porcentajeDescuento,
                     propina,
                 } = getTotals;
+                const htmlTemplate = gridOptionsSvc.impuestoTotalesHtml(getTotals);
 
-                drawElementHTMLTotals(getTotals)
+                drawElementHTMLTotals(htmlTemplate)
 
                 $scope.data.subTotalSinImpuestos = subTotalSinImpuestos;
                 $scope.data.total = importeTotal;
@@ -3834,65 +3881,7 @@
                         console.log(error)
                     }).finally(() => hideLoader())
 
-
-                    //Documento Destino Factuta
-                    // if ($scope.data.docDestino === DOC_TYPE.FV_SRI) {
-                    //     let detalles = checkStockDetalle($scope.gridOptionsDetalle.data)
-                    //     let query = facturaSvc.queryMapper({
-                    //         data: $scope.data,
-                    //         cliente: $scope.cliente,
-                    //         detalles,
-                    //         dataFormaPago: $scope.dataFormaPago,
-                    //         itemsDeleted: [],
-                    //         infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                    //         historyDatosAdicionales: $scope.historyDatosAdicionales,
-                    //         fromAprobacion: true,
-                    //         cuotas,
-                    //     })
-
-                    //     showLoader();
-                    //     facturaSvc.save(query).then(response => {
-                    //         hideLoader();
-                    //         if (response.code === "0") {
-                    //             fS.sweetAlert('warning', response.message);
-                    //         }
-                    //         if (response.code === '1') {
-                    //             fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    //             $uibModalInstance.close(response);
-                    //         }
-                    //     }).catch(error => {
-                    //         hideLoader();
-                    //         console.error(error)
-                    //     })
-                    // }
-
-
-                    //Documento Destino Nota Entrega
-                    // if ($scope.data.docDestino === DOC_TYPE.NE) {
-                    //     let query = notaEntregaSvc.queryMapper({
-                    //         data: $scope.data,
-                    //         cliente: $scope.cliente,
-                    //         detalles: $scope.gridOptionsDetalle.data,
-                    //         itemsDeleted: [],
-                    //         historyDatosAdicionales: $scope.historyDatosAdicionales,
-                    //         cuotas
-                    //     })
-                    //     showLoader();
-                    //     notaEntregaSvc.save(query).then(response => {
-                    //         hideLoader()
-                    //         if (response.code === '0') {
-                    //             fS.sweetAlert('warning', response.message, response.titleSms);
-                    //         }
-                    //         if (response.code === "1") {
-                    //             fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                    //             $uibModalInstance.close(response)
-                    //         }
-                    //     }).catch(error => {
-                    //         hideLoader();
-                    //         console.log(error)
-                    //     })
-                    // }
+ 
 
                 }
 
@@ -3901,17 +3890,7 @@
                 console.log(error)
             }
         }
-
-
-        // function checkStockDetalle() {
-        //     let resultsItem = $scope.gridOptionsDetalle.data.map(item => {
-        //         let conversion = item.conversion || 1;
-        //         let cantidadTransaccion = item.cantidad * conversion;
-        //         item.cantidadTransaccion = cantidadTransaccion;
-        //         return item;
-        //     })
-        //     return resultsItem;
-        // }
+ 
 
 
         $scope.closeModal = function () {
@@ -3976,8 +3955,9 @@
                     decimal: $scope.decimal,
                     tarifasImpuesto: $scope.tarifasImpuesto.slice(),
                 });
+                const htmlTemplate = gridOptionsSvc.impuestoTotalesHtml(getTotals);
 
-                drawElementHTMLTotals(getTotals)
+                drawElementHTMLTotals(htmlTemplate)
             } catch (error) {
                 console.log(error);
             }
@@ -4146,6 +4126,10 @@
                 width: '7%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'IVA',
@@ -4156,6 +4140,10 @@
                 width: '5%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Total',
@@ -4166,6 +4154,10 @@
                 width: '5%',
                 minWidth: '100',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Ice',
@@ -4237,58 +4229,18 @@
 
 
 
+    /**
+     *  
+     * @param {*} htmlTemplate 
+     */
 
-    function drawElementHTMLTotals(obj) {
-        let {
-            subTotalSinImpuestos,
-            htmlImpuestoTotal,
-            htmlIvaTotal,
-            totalDescuento,
-            totalIce,
-            irbpnr,
-            importeTotal
-        } = obj;
-
-        const template = `<table class="table table-clear table-sm">
-                                    <tbody>
-                                        <tr>
-                                            <td class="left"> 
-                                                <strong class="text-dark">Subtotal sin Impuestos</strong>
-                                            </td>
-                                            <td class="right">$${subTotalSinImpuestos}</td>
-                                        </tr>
-                                        ${htmlImpuestoTotal}
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Total descuento</strong>
-                                            </td>
-                                            <td class="right">$${totalDescuento}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Valor ICE</strong>
-                                            </td>
-                                            <td class="right">$${totalIce}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Valor irbpnr</strong>
-                                            </td>
-                                            <td class="right">$${irbpnr}</td>
-                                        </tr>
-                                        ${htmlIvaTotal}
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="font-weight-bold">Valor Total</strong>
-                                            </td>
-                                            <td class="right font-weight-bold">$${importeTotal}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>`;
+    function drawElementHTMLTotals(htmlTemplate) {
+         
+         
 
         const element = document.getElementById('drawImpuestoTotales');
         if (element) {
-            element.innerHTML = template;
+            element.innerHTML = htmlTemplate;
         }
     }
 

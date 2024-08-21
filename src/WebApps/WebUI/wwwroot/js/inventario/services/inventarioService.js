@@ -430,9 +430,8 @@
                     data.subFamilias = subFamilia;
                     data.decimal = decimales[0];
                     data.tipoDocumento = tipoDocumento;
-                    data.tipoTransaccion = tiposTransaccion;
+                    data.tiposTransaccion = tiposTransaccion;
                 }
-                
                 return data;
             })
         }
@@ -568,6 +567,7 @@
                 return serieComprobante;
             })
         }
+
         function mapTo(obj) {
             const { data, detalles, itemsDeleted } = obj;
 
@@ -585,11 +585,14 @@
         function headerTo(data) {
             return {
                 idPuntoEmision: data.idPuntoEmision,
+                idTipoDocumento : data.idTipoDocumento,
+                idTipoTransaccion : data.idTipoTransaccion,
                 fechaEmision: fS.formatDateMoment(data.fechaEmision),
                 total: fS.roundNumber(data.total, 5),
                 observacion: fS.isValidField(data.observacion),
             }
         }
+
         function detalleTo(detalles) {
             let results = detalles.map((item, index) => {
                 return {
@@ -613,10 +616,10 @@
             return results;
         }
 
-
         function post(data) {
             return mS.getData('post', `${url}`, { data }, true);
         }
+
         function getId(id) {
             return mS.getData('get', `${url}GetId/${id}`, null, true).then(response => {
                 const data = {
@@ -687,6 +690,8 @@
                     fechaEmision: fS.formatDate(tempComprobante.fechaEmision),
                     observacion: tempComprobante.observacion,
                     total: tempComprobante.total,
+                    tipoDocumento : tempComprobante.tipoDocumento,
+                    movimiento : tempComprobante.movimiento 
                 }
                 detalles = detalles.map((item, index) => {
                     return {
