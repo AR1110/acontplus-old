@@ -518,6 +518,21 @@ BEGIN
 			RETURN
 		END 
 
+
+    IF @tipo = 6
+        BEGIN 
+            SELECT ar.descripcion, ar.precioCosto ,ta.descripcion, pv.precioVenta, pv.precioVenta - ar.precioCosto  as rentabilidad
+            FROM dbo.Articulo ar WITH (NOLOCK)
+            INNER JOIN dbo.ArticuloPvP pv WITH (NOLOCK) ON pv.idArticulo = ar.idArticulo
+            INNER JOIN dbo.Tarifa      ta WITH (NOLOCK) ON ta.idTarifa   = pv.idTarifa
+            WHERE ar.idEntidad = 7
+              AND ar.estado = 1 
+            ORDER BY ar.idArticulo,ta.codigo ASC
+
+
+
+
+        END 
 	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
 	RETURN 
 END

@@ -78,6 +78,8 @@ export class InventoryReportPageComponent {
     tipoReporteStock: INVENTORY_CODE_REPORT.STOCK_VALORACION,
     stockStatusCode: null,
     checkboxCompanyCustomer: false,
+    checkboxObtenerRentabilidad: false,
+    idTarifa: 0
   }
 
   expirationStates=[
@@ -93,16 +95,19 @@ export class InventoryReportPageComponent {
     {code: 'SM', description:  'Stock mínimo'},
   ]
 
+  tarifas:any[] = []
 
   private format : FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL | null = null;
 
   getDatFormReport(){
     this.productSvc.getDataReport().subscribe(response=>{
+      console.log(response)
 
       const {estabs, subCategorias, marcas} = response;
       this.estabs = estabs;
       this.subCategories = subCategorias;
       this.marcas = marcas;
+      this.tarifas = response.tarifas;
       let dataEstab = this.estabs.find(e=>e.defaultEstab);
       if(dataEstab){
         this.dataSearch.idEstablecimiento = dataEstab.idEstablecimiento;
