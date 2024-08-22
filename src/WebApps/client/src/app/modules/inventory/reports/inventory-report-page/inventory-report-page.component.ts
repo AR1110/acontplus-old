@@ -1,23 +1,23 @@
-import {Component, inject} from '@angular/core';
-import {NgbNavModule} from "@ng-bootstrap/ng-bootstrap";
-import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
-import {ProductService} from "@inventory/services/product.service";
-import {GroupedEstab, GroupedEstabBodega} from "@core/models/estab.model";
-import {FormsModule} from "@angular/forms";
-import {Brand} from "@inventory/models/brand.model";
+import { Component, inject } from '@angular/core';
+import { NgbNavModule } from "@ng-bootstrap/ng-bootstrap";
+import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
+import { ProductService } from "@inventory/services/product.service";
+import { GroupedEstab, GroupedEstabBodega } from "@core/models/estab.model";
+import { FormsModule } from "@angular/forms";
+import { Brand } from "@inventory/models/brand.model";
 import {
   SubCategoryGroupComponent
 } from "@inventory/components/sub-category/sub-category-group/sub-category-group.component";
-import {ProductSearchComponent} from "@inventory/components/product/product-search/product-search.component";
-import {UserSearchComponent} from "@core/components/user-search/user-search.component";
-import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
-import {FORMAT_REPORT} from "@core/constants/global.constants";
-import {ToasterService} from "@core/services/toaster.service";
-import {formatDateMoment} from "@core/utils/format-date-moment";
-import {isValidField} from "@core/utils/utils";
-import {INVENTORY_CODE_REPORT} from "@inventory/enums/inventory.enum";
-import {SharedService} from "@core/services/shared.service";
-import {SupplierSearchComponent} from "@purchase/components/supplier-search/supplier-search.component";
+import { ProductSearchComponent } from "@inventory/components/product/product-search/product-search.component";
+import { UserSearchComponent } from "@core/components/user-search/user-search.component";
+import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
+import { FORMAT_REPORT } from "@core/constants/global.constants";
+import { ToasterService } from "@core/services/toaster.service";
+import { formatDateMoment } from "@core/utils/format-date-moment";
+import { getValidId, isValidField } from "@core/utils/utils";
+import { INVENTORY_CODE_REPORT } from "@inventory/enums/inventory.enum";
+import { SharedService } from "@core/services/shared.service";
+import { SupplierSearchComponent } from "@purchase/components/supplier-search/supplier-search.component";
 import {
   CompanyCustomerSearchComponent
 } from "@company-customer/components/company-customer-search/company-customer-search.component";
@@ -46,10 +46,10 @@ export class InventoryReportPageComponent {
 
   activeTab = 1;
 
-  estabs: GroupedEstab[]=[];
-  bodegas:GroupedEstabBodega[]=[]
-  subCategories:any[] =[]
-  marcas:Brand[]=[]
+  estabs: GroupedEstab[] = [];
+  bodegas: GroupedEstabBodega[] = []
+  subCategories: any[] = []
+  marcas: Brand[] = []
 
   dataSearch = {
     idEstablecimiento: 0,
@@ -82,34 +82,34 @@ export class InventoryReportPageComponent {
     idTarifa: 0
   }
 
-  expirationStates=[
-    {code: 'CA', description: 'Caducado'},
-    {code: 'PA', description: 'Próximo a Caducar'},
-    {code: 'VI', description: 'Vigente'},
+  expirationStates = [
+    { code: 'CA', description: 'Caducado' },
+    { code: 'PA', description: 'Próximo a Caducar' },
+    { code: 'VI', description: 'Vigente' },
   ]
 
   stockStatus = [
-    {code: null, description:  'Todos'},
-    {code:'CS',description: 'Con stock'},
-    {code:'SS',description: 'Sin stock'},
-    {code: 'SM', description:  'Stock mínimo'},
+    { code: null, description: 'Todos' },
+    { code: 'CS', description: 'Con stock' },
+    { code: 'SS', description: 'Sin stock' },
+    { code: 'SM', description: 'Stock mínimo' },
   ]
 
-  tarifas:any[] = []
+  tarifas: any[] = []
 
-  private format : FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL | null = null;
+  private format: FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL | null = null;
 
-  getDatFormReport(){
-    this.productSvc.getDataReport().subscribe(response=>{
+  getDatFormReport() {
+    this.productSvc.getDataReport().subscribe(response => {
       console.log(response)
 
-      const {estabs, subCategorias, marcas} = response;
+      const { estabs, subCategorias, marcas } = response;
       this.estabs = estabs;
       this.subCategories = subCategorias;
       this.marcas = marcas;
       this.tarifas = response.tarifas;
-      let dataEstab = this.estabs.find(e=>e.defaultEstab);
-      if(dataEstab){
+      let dataEstab = this.estabs.find(e => e.defaultEstab);
+      if (dataEstab) {
         this.dataSearch.idEstablecimiento = dataEstab.idEstablecimiento;
         this.bodegas = dataEstab.bodegas;
         this.dataSearch.idBodega = this.bodegas.find(item => (item.defaultBodega))?.idBodega ?? 0;
@@ -117,11 +117,11 @@ export class InventoryReportPageComponent {
     })
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.getDatFormReport()
   }
 
-  onNavChange($event:any){
+  onNavChange($event: any) {
     this.dataSearch.checkboxArticuloFiltro = false;
     this.dataSearch.checkboxUsuarioFiltro = false;
     this.dataSearch.chkProveedor = false;
@@ -133,7 +133,7 @@ export class InventoryReportPageComponent {
     this.dataSearch.toDate = formatDateMoment(new Date());
   }
 
-  onChangeEstab () {
+  onChangeEstab() {
     if (this.estabs.length === 0) return
     if (!(this.dataSearch.idEstablecimiento > 0)) {
       this.dataSearch.idBodega = 0;
@@ -152,29 +152,29 @@ export class InventoryReportPageComponent {
   }
 
 
-  onSelectedSubCategory(id:number){
+  onSelectedSubCategory(id: number) {
     this.dataSearch.idSubFamilia = id;
   }
 
-  onEmptyDataSubCategory(){
+  onEmptyDataSubCategory() {
     this.dataSearch.idSubFamilia = 0;
   }
 
 
-  onProductSelected({data}:any){
+  onProductSelected({ data }: any) {
     this.dataSearch.idArticulo = data.idArticulo;
   }
 
-  onEmtyDataProduct(event:any){
+  onEmtyDataProduct(event: any) {
     this.dataSearch.idArticulo = 0;
   }
 
 
-  onUserSelected({data}:any){
+  onUserSelected({ data }: any) {
     this.dataSearch.idUsuario = data.idUsuario;
   }
 
-  onEmptyInputUserSearch(){
+  onEmptyInputUserSearch() {
     this.dataSearch.idUsuario = 0;
   }
 
@@ -186,28 +186,28 @@ export class InventoryReportPageComponent {
   }
 
 
-  onSupplierSelected<T extends { data: any }>({data}:T) {
+  onSupplierSelected<T extends { data: any }>({ data }: T) {
 
-   // this.dataSearch.idProveedor = data.idProveedor;
+    // this.dataSearch.idProveedor = data.idProveedor;
     this.dataSearch.numeroIdentificacion = data.numeroIdentificacion;
   }
 
   supplierResultEmptyInput($event: any) {
-    this.dataSearch.numeroIdentificacion =  null
+    this.dataSearch.numeroIdentificacion = null
   }
 
-  onChangeCheckProveedor  () {
+  onChangeCheckProveedor() {
     if (this.dataSearch.chkProveedor) {
       this.dataSearch.checkboxSubFamiliaFiltro = false;
     }
   }
 
-  resultEmptyInputCustomer(){
+  resultEmptyInputCustomer() {
     //this.dataSearch.companyCustomerId = 0;
     this.dataSearch.numeroIdentificacion = null;
   }
-  onCustomerSelected({data}:any){
-    this.dataSearch.numeroIdentificacion=data.identificacionComprador;
+  onCustomerSelected({ data }: any) {
+    this.dataSearch.numeroIdentificacion = data.identificacionComprador;
 
   }
 
@@ -221,7 +221,7 @@ export class InventoryReportPageComponent {
     return fecha + ' ' + hora;
   }
 
-  private  isValidReport(){
+  private isValidReport() {
     if (this.dataSearch.checkboxArticuloFiltro) {
       if (!(this.dataSearch.idArticulo > 0)) {
         this.tS.toastr({
@@ -256,8 +256,8 @@ export class InventoryReportPageComponent {
       if (!this.dataSearch.idSubFamilia) {
         this.tS.toastr({
           type: 'warning',
-          message:  'Seleccione la SubFamilia'
-      });
+          message: 'Seleccione la SubFamilia'
+        });
         return
       }
     }
@@ -267,7 +267,7 @@ export class InventoryReportPageComponent {
         this.tS.toastr({
           type: 'warning',
           message: 'Seleccione el Stock'
-      });
+        });
         return
       }
     }
@@ -277,13 +277,13 @@ export class InventoryReportPageComponent {
         this.tS.toastr({
           type: 'warning',
           message: 'Seleccione el Usuario'
-        } );
+        });
         return;
       }
     }
 
-    if(this.dataSearch.checkboxCompanyCustomer){
-      if(!isValidField(this.dataSearch.numeroIdentificacion)){
+    if (this.dataSearch.checkboxCompanyCustomer) {
+      if (!isValidField(this.dataSearch.numeroIdentificacion)) {
         this.tS.toastr({
           type: 'warning',
           message: 'Seleccione el cliente'
@@ -292,13 +292,13 @@ export class InventoryReportPageComponent {
       }
     }
 
-    if (this.activeTab=== 3) {
+    if (this.activeTab === 3) {
       if (this.dataSearch.chkUbicacion) {
         if (!this.dataSearch.textUbicacion) {
           this.tS.toastr({
             type: 'warning',
             message: 'Ingrese la ubicación '
-          } );
+          });
           return;
         }
       }
@@ -306,19 +306,21 @@ export class InventoryReportPageComponent {
     return true;
   }
 
-  getReportPDF(){
+
+
+  getReportPDF() {
     this.format = FORMAT_REPORT.PDF
     this.getReport()
   }
 
-  getReportExcel(){
+  getReportExcel() {
     this.format = FORMAT_REPORT.EXCEL
     this.getReport()
   }
 
-  getReport(){
+  getReport() {
 
-    if(!this.isValidReport()) return
+    if (!this.isValidReport()) return
 
 
 
@@ -328,7 +330,18 @@ export class InventoryReportPageComponent {
     }
 
     if (this.activeTab === 2) {
-      this.getReportArticuloStock();
+      if (this.dataSearch.checkboxObtenerRentabilidad) {
+        if(!getValidId(this.dataSearch.idTarifa)){
+          this.tS.toastr({
+            type: 'warning',
+            message: 'La Tarifa es obligatorio'
+          })
+          return
+        }
+        this.getArticuloStockRentabilidad();
+      } else {
+        this.getReportArticuloStock();
+      }
     }
     if (this.activeTab === 3) {
       this.getReportArticuloPVP();
@@ -342,26 +355,26 @@ export class InventoryReportPageComponent {
 
   }
 
-  private  getCodEstab(){
-    let dataEstab = this.estabs.find(e=>e.idEstablecimiento===this.dataSearch.idEstablecimiento);
-    if(dataEstab){
+  private getCodEstab() {
+    let dataEstab = this.estabs.find(e => e.idEstablecimiento === this.dataSearch.idEstablecimiento);
+    if (dataEstab) {
       return dataEstab.codEstab;
     }
     return null;
   }
 
   // REPORTE DE CONSUMO DIARIO DE ARTICULOS
-  private  getReportConsumoDiario() {
+  private getReportConsumoDiario() {
 
     let idSubFamilia = this.dataSearch.checkboxSubCategoryFilter ? isValidField(this.dataSearch.idSubFamilia) : null;
-    let numeroIdentificacion = this.dataSearch.checkboxCompanyCustomer? isValidField(this.dataSearch.numeroIdentificacion):null
+    let numeroIdentificacion = this.dataSearch.checkboxCompanyCustomer ? isValidField(this.dataSearch.numeroIdentificacion) : null
 
 
     let dataSearch = {
       tipo: 4,
       checkBoxFecha: true,
-      idUsuario: this.dataSearch.checkboxUsuarioFiltro ? isValidField(this.dataSearch.idUsuario): null,
-      idArticulo: this.dataSearch.checkboxArticuloFiltro ? isValidField( this.dataSearch.idArticulo):null,
+      idUsuario: this.dataSearch.checkboxUsuarioFiltro ? isValidField(this.dataSearch.idUsuario) : null,
+      idArticulo: this.dataSearch.checkboxArticuloFiltro ? isValidField(this.dataSearch.idArticulo) : null,
       codTransaccion: this.dataSearch.codTransaccion,
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
@@ -373,7 +386,7 @@ export class InventoryReportPageComponent {
 
     const parameters = {
       reportParams: JSON.stringify({
-        codigo: this.dataSearch.checkboxAgruparArticulo? INVENTORY_CODE_REPORT.CDAA: INVENTORY_CODE_REPORT.CDA,
+        codigo: this.dataSearch.checkboxAgruparArticulo ? INVENTORY_CODE_REPORT.CDAA : INVENTORY_CODE_REPORT.CDA,
         format: this.format,
         aditionalParams: []
       }),
@@ -394,7 +407,7 @@ export class InventoryReportPageComponent {
       let filtroFecha = this.getFilterDate();
 
       let idSubFamilia = this.dataSearch.checkboxSubCategoryFilter ? isValidField(this.dataSearch.idSubFamilia) : null
-      let numeroIdentificacion = this.dataSearch.chkProveedor? isValidField(this.dataSearch.numeroIdentificacion):null
+      let numeroIdentificacion = this.dataSearch.chkProveedor ? isValidField(this.dataSearch.numeroIdentificacion) : null
 
       let dataSearch = {
         tipo: 3,
@@ -410,7 +423,7 @@ export class InventoryReportPageComponent {
       const parameters = {
         reportParams: JSON.stringify({
           codigo: INVENTORY_CODE_REPORT.STOCK_VALORACION,
-          format:this.format,
+          format: this.format,
           aditionalParams: []
         }),
         dataParams: JSON.stringify(dataSearch)
@@ -424,6 +437,47 @@ export class InventoryReportPageComponent {
     } catch (error) {
       console.log(error)
     }
+  }
+
+
+  private getArticuloStockRentabilidad() {
+    try {
+      let filtroFecha = this.getFilterDate();
+
+      let idSubFamilia = this.dataSearch.checkboxSubCategoryFilter ? isValidField(this.dataSearch.idSubFamilia) : null;
+      let numeroIdentificacion = this.dataSearch.chkProveedor ? isValidField(this.dataSearch.numeroIdentificacion) : null;
+
+      let dataSearch = {
+        tipo: 6,
+        bySubFamilia: idSubFamilia,
+        numeroIdentificacion,
+        codEstab: this.getCodEstab(),
+        idBodega: isValidField(this.dataSearch.idBodega),
+        idMarca: isValidField(this.dataSearch.idMarca),
+        idTarifa: getValidId(this.dataSearch.idTarifa),
+        filtroFecha,
+        stockStatusCode: isValidField(this.dataSearch.stockStatusCode)
+      }
+
+      const parameters = {
+        reportParams: JSON.stringify({
+          codigo: INVENTORY_CODE_REPORT.RASR,
+          format: this.format,
+          aditionalParams: []
+        }),
+        dataParams: JSON.stringify(dataSearch)
+      }
+
+      this.sharedSvc.getReport({
+        data: parameters,
+        format: this.format!,
+        isOldVersion: true
+      })
+    } catch (error) {
+      console.log(error)
+    }
+
+
   }
 
 
@@ -456,9 +510,9 @@ export class InventoryReportPageComponent {
 
   // REPORTE DE ARTICULOS FRACCIONADOS
   getReportArticuloFraccionado() {
-    let numeroIdentificacion = this.dataSearch.chkProveedor ? isValidField(this.dataSearch.numeroIdentificacion):null
+    let numeroIdentificacion = this.dataSearch.chkProveedor ? isValidField(this.dataSearch.numeroIdentificacion) : null
 
-    let idSubFamilia = this.dataSearch.checkboxSubFamiliaFiltro ? isValidField(this.dataSearch.idSubFamilia):null
+    let idSubFamilia = this.dataSearch.checkboxSubFamiliaFiltro ? isValidField(this.dataSearch.idSubFamilia) : null
 
 
     let dataSearch = {
