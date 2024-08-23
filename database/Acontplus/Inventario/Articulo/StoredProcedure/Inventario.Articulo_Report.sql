@@ -18,6 +18,7 @@ BEGIN
 	SET LANGUAGE SPANISH;
 	--> Global
     DECLARE @tipo INT ,@idEntidad INT 
+      DECLARE @stockStatusCode VARCHAR(5)
 	
     --> Sql
     DECLARE @params NVARCHAR(MAX),@sql NVARCHAR(MAX)
@@ -160,7 +161,7 @@ BEGIN
 	--> Stock por Bodega
 	IF @tipo = 3
 		BEGIN 
-            DECLARE @stockStatusCode VARCHAR(5)
+          
 			
             SELECT @idSubFamilia = bySubFamilia
 				  ,@rucClienteProveedor = numeroIdentificacion
@@ -518,6 +519,149 @@ BEGIN
 			RETURN
 		END 
 
+
+    IF @tipo = 6
+        BEGIN 
+            DECLARE @idTarifa INT
+            DECLARE @idMarca INT 
+            
+            
+
+             SELECT @idSubFamilia = bySubFamilia
+				  ,@rucClienteProveedor = numeroIdentificacion
+                  ,@idBodega     = idBodega
+                  ,@codEstab     = codEstab
+                  ,@stockStatusCode = stockStatusCode
+                   ,@idMarca      = idMarca
+                  ,@idTarifa     = idTarifa 
+			FROM OPENJSON(@json) WITH 
+            (      
+                 bySubFamilia                 INT 	
+			    ,numeroIdentificacion VARCHAR(25) 
+                ,idBodega                     INT
+                ,codEstab             VARCHAR(50)
+                ,stockStatusCode VARCHAR(5)
+                ,idMarca              INT
+                ,idTarifa             INT 
+			) AS dt
+
+			SET @params = '@idEntidad    INT									
+						  ,@idSubFamilia INT
+						  ,@rucClienteProveedor VARCHAR(25)
+                          ,@idTarifa INT
+                          ,@idBodega INT
+						  ,@idMarca      INT
+                          ,@codEstab VARCHAR(150)'
+
+            SET @sql = 'SELECT ar.idArticulo
+							  ,ar.descripcion
+							  ,ar.codigo
+							  ,ar.subfamilia
+							  ,CAST(ar.precioCosto AS NUMERIC(18,2)) as precioCosto
+							  ,ar.idBodega
+							  ,ar.bodega
+                              ,tarifaNom = ta.descripcion
+                              ,pvp.precioVenta
+							  ,CAST(ar.cantidad as numeric(15, 2)) as stock 
+							  ,CAST(SUM(ar.cantidad) OVER(PARTITION BY ar.idArticulo) as numeric(15, 2)) as stockTotal
+							  ,CAST(SUM(ar.cantidad) OVER(PARTITION BY ar.idArticulo) * ar.precioCosto as numeric(15, 2)) as totalInventario
+                              ,ar.idEstablecimiento 
+                              ,ar.nombreComercial
+                              ,ar.marca
+                              ,ar.stockMinimo
+                              ,ar.medida
+						FROM Inventario.v_Articulo_Stock ar
+                        INNER JOIN dbo.ArticuloPvP pvp WITH (NOLOCK) ON pvp.idArticulo = ar.idArticulo 
+                        INNER JOIN dbo.Tarifa     ta WITH (NOLOCK)  ON ta.idTarifa     = pvp.idTarifa
+						WHERE ar.idEntidad = @idEntidad AND ar.estado = 1 AND pvp.idTarifa = @idTarifa '	
+ 
+          
+
+
+            IF @rucClienteProveedor IS NOT NULL
+				BEGIN
+					SET @sql = @sql + ' AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucClienteProveedor) '
+				END
+
+			IF @idSubFamilia > 0
+				BEGIN
+					SET @sql = @sql + ' AND ar.idSubFamilia = @idSubFamilia '
+				END
+
+            IF @idBodega > 0
+                BEGIN
+                    SET @sql = @sql + 'AND ar.idBodega = @idBodega '
+                END 
+
+            IF @codEstab IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND ar.codEstab = @codEstab '
+                END 
+
+            IF @stockStatusCode IS NOT NULL
+                --con stock 
+                IF @stockStatusCode='CS'
+                    BEGIN
+                        SET @sql = @sql + 'AND ar.stock > 0 '
+                    END
+                --sin stock 
+                    IF @stockStatusCode='SS'
+                        BEGIN
+                            SET @sql = @sql + 'AND ar.stock <= 0 '
+                        END
+                --stock minimo 
+                IF @stockStatusCode='SM'
+                    BEGIN
+                        SET @sql = @sql + ' AND ar.stock <= ar.stockMinimo '
+                    END
+
+
+			SET @sql = @sql + '  ORDER BY ar.idArticulo,ta.codigo ASC '
+
+            SELECT e.ruc
+				  ,e.razonSocial 
+				  ,e.nombreComercial	
+				  ,ISNULL(e.telefono, '')telEntidad
+				  ,ISNULL(e.direccion, '')dirEntidad			
+				  ,tituloReporte = 'ARTICULOS STOCK RENTABILIDAD' 
+				  ,usuario       = @usuario 		
+			FROM Entidad e WITH (NOLOCK)
+			WHERE e.idEntidad = @idEntidad 
+
+            --SELECT 
+            --    ar.descripcion
+            --    ,ar.precioCosto
+            --    ,tarifaNom = ta.descripcion
+            --    ,subfamilia = sf.descripcion
+            --    ,medida     = m.descripcion 
+            --    ,pv.precioVenta
+            --    ,valorRentab  =  CAST((pv.precioVenta - ar.precioCosto) as numeric(18,2))
+            --    ,valorPorcentajeRentab = CAST((((pv.precioVenta / ar.precioCosto) * 100) - 100) as numeric(18,2))
+            --FROM  dbo.ArticuloPvP pv     WITH (NOLOCK)
+            --INNER JOIN dbo.Articulo   ar WITH (NOLOCK) ON ar.idArticulo   = pv.idArticulo
+            --INNER JOIN dbo.SubFamilia sf WITH (NOLOCK) ON sf.idSubFamilia = ar.idSubFamilia
+            --INNER JOIN dbo.Medida      m WITH (NOLOCK) ON m.idMedida      = ar.idMedida 
+            --INNER JOIN dbo.Tarifa     ta WITH (NOLOCK) ON ta.idTarifa     = pv.idTarifa
+            --WHERE ar.idEntidad = 7
+            --  AND ar.estado = 1 
+            --ORDER BY ar.idArticulo,ta.codigo ASC
+
+
+            EXEC sp_executesql @sql
+							  ,@params
+							  ,@idEntidad    = @idEntidad
+							  ,@idSubFamilia = @idSubFamilia 
+							  ,@rucClienteProveedor = @rucClienteProveedor 
+                              ,@idTarifa     = @idTarifa 
+                              ,@idMarca      = @idMarca
+                              ,@idBodega     = @idBodega
+                              ,@codEstab     = @codEstab
+
+
+
+
+
+        END 
 	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
 	RETURN 
 END

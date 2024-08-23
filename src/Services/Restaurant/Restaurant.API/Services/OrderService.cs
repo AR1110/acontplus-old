@@ -1,64 +1,58 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Restaurant.API.Data;
 using Restaurant.API.Interfaces;
 
-namespace Restaurant.API.Services
-{
-    public class OrderService : IOrderService
-    {
-        private readonly IAdoRepository _repository;
-        private readonly RestaurantContext _context;
-        public OrderService(IAdoRepository repository,
-            RestaurantContext context)
-        {
-            _repository = repository;
-            _context = context;
-        }
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync("Restaurant.Order_Get", parameters);
-            if (ds.Tables.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJson(ds);
-            }
-        }
+namespace Restaurant.API.Services;
 
-        public async Task<string> AddAsync(ApiRequest data)
+public class OrderService(
+    IAdoRepository repository,
+    RestaurantContext context)
+    : IOrderService
+{
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await repository.GetDataSetAsync("Restaurant.Order_Get", parameters);
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new ApiResponse { Code = "0", Message = "Can't get data" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+    }
+
+    public async Task<ApiResponse> AddAsync(ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            var parameters = new Dictionary<string, object>{
-                { "userRoleId", data.UserRoleId },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-            };
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Order_Insert", parameters);
-        }
-        public async Task<string> PutAsync(int id, ApiRequest data)
+            { "userRoleId", data.UserRoleId },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        return await repository.SpExecuteAsync<ApiResponse>("Restaurant.Order_Insert", parameters);
+    }
+
+    public async Task<ApiResponse> PutAsync(int id, ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            var parameters = new Dictionary<string, object>{
-                { "userRoleId", data.UserRoleId },
-                { "id", id },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-            };
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Order_Update", parameters);
-        }
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null) { return false; }
-            order.Enabled = false;
-            _context.Update(order);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        public async Task<string> PrintAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Order_Print", parameters);
-        }
+            { "userRoleId", data.UserRoleId },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        return await repository.SpExecuteAsync<ApiResponse>("Restaurant.Order_Update", parameters);
+    }
+
+    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    {
+        var order = await context.Orders.FindAsync(id);
+        if (order == null) { return new ApiResponse {Code = "0", Message = "Order not found"}; }
+
+        order.Enabled = false;
+        context.Update(order);
+        await context.SaveChangesAsync();
+        return new ApiResponse {Code = "1", Message = "Eliminado exitosamente!"};
+    }
+
+    public async Task<ApiResponse> PrintAsync(Dictionary<string, object> parameters)
+    {
+        return await repository.SpExecuteAsync<ApiResponse>("Restaurant.Order_Print", parameters);
     }
 }

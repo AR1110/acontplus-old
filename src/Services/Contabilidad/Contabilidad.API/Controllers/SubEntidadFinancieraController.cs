@@ -1,14 +1,8 @@
 ﻿namespace Contabilidad.API.Controllers;
 
-public class SubEntidadFinancieraController : BaseApiController
+public class SubEntidadFinancieraController(ISubEntidadFinancieraService subEntidadFinancieraService)
+    : BaseApiController
 {
-    private readonly ISubEntidadFinancieraService _service;
-
-    public SubEntidadFinancieraController(ISubEntidadFinancieraService service)
-    {
-        _service = service;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -16,25 +10,26 @@ public class SubEntidadFinancieraController : BaseApiController
         {
             { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
-        var response = await _service.GetAsync(parameters);
+        var response = await subEntidadFinancieraService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
 
-        ;
         return Ok(response);
     }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
+        var fromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
+
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetUserRoleId() },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "fromMobile", fromMobile }
         };
-        var response = await _service.AddAsync(parameters);
+        var response = await subEntidadFinancieraService.AddAsync(parameters);
         if (response == null) { return NoContent(); }
 
-        ;
         return Ok(response);
     }
 
@@ -48,10 +43,9 @@ public class SubEntidadFinancieraController : BaseApiController
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await _service.UpdateAsync(parameters);
+        var response = await subEntidadFinancieraService.UpdateAsync(parameters);
         if (response == null) { return NoContent(); }
 
-        ;
         return Ok(response);
     }
 
@@ -60,7 +54,7 @@ public class SubEntidadFinancieraController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await _service.DeleteAsync(parameters);
+        var response = await subEntidadFinancieraService.DeleteAsync(parameters);
         return Ok(response);
     }
 }

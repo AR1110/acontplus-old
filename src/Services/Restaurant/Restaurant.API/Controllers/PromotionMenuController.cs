@@ -10,20 +10,11 @@ public class PromotionMenuController(IPromotionMenuService promotionMenuService)
     [HttpGet("GetById/{id}")]
     public async Task<IActionResult> Get(int id, string json)
     {
-        try
+        var parameters = new Dictionary<string, object>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }, { "id", id }
-            };
-            var response = await promotionMenuService.GetByIdAsync(parameters);
-            if (response == null) { return NoContent(); }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }, { "id", id }
+        };
 
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("Error on get: " + ex.Message);
-        }
+        return Ok(await promotionMenuService.GetByIdAsync(parameters));
     }
 }

@@ -89,7 +89,7 @@ BEGIN
 			,@userCustomerId INT
 
 			SET @userCustomerId = (SELECT idUsuario FROM Acontplus.dbo.Usuario WHERE nombreUsuario = @nombreUsuario)
-			SET @roleId = (SELECT TOP 1 Id FROM AcontplusAdmin.Seguridad.[Role] WHERE code = 'ADM')
+			--SET @roleId = (SELECT TOP 1 Id FROM AcontplusAdmin.Seguridad.[Role] WHERE code = 'ADM')
 
 			SET @userRoleParams = (SELECT '{"userCustomerId": "' + CONVERT(VARCHAR, @userCustomerId) + '"' + 
 				', "roleId": "'+ CONVERT(VARCHAR, @roleId) + '"' + 

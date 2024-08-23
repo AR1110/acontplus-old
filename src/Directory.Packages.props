@@ -36,6 +36,7 @@
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Ocelot" Version="23.3.3" />
     <PackageVersion Include="ReportViewerCore.NETCore" Version="15.1.22" />
+    <PackageVersion Include="Scrutor" Version="4.2.2" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.7.1" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
   </ItemGroup>

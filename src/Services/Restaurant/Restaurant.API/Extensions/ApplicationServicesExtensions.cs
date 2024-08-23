@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Restaurant.API.Data;
 using Restaurant.API.Interfaces;
 using Restaurant.API.Services;
+using Scrutor;
 
 
 namespace Restaurant.API.Extensions
@@ -16,22 +17,15 @@ namespace Restaurant.API.Extensions
         {
             services.AddDbContextPool<RestaurantContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<IRecipe, RecipeService>();
-            services.AddScoped<IAppTableService, AppTableService>();
-            services.AddScoped<IMenuService, MenuService>();
-            services.AddScoped<IIngredientService, IngredientService>();
-            services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IItemService, ItemService>();
-            services.AddScoped<IConfigurationService, ConfigurationService>();
-            services.AddScoped<IMenuItemService, MenuItemService>();
-            services.AddScoped<IPromotionService, PromotionService>();
-            services.AddScoped<IPromotionMenuService, PromotionMenuService>();
-            services.AddScoped<IS3StorageService, S3StorageService>();
-            services.AddScoped<IConsumptionConfigService, ConsumptionConfigService>();
-            services.AddScoped<IConsumptionService, ConsumptionService>();
-            services.AddScoped<IConsumptionCancelledService, ConsumptionCancelledService>();
-
-            services.AddScoped<ICustomLogger, CustomLogger>();
+            
+            services.Scan(scan => scan
+                .FromApplicationDependencies()
+                .AddClasses(classes => classes.InNamespaces("Restaurant.API.Services"))
+                .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+                .AsImplementedInterfaces()
+                .WithTransientLifetime()
+            );
+            
             services.AddSingleton<S3ObjectCustom>();
             return services;
         }

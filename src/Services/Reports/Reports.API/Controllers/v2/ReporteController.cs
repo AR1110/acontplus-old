@@ -15,11 +15,6 @@ namespace Reports.API.Controllers.v2
         {
             string connectionString = HttpContext.Items["ConnectionString"].ToString();
 
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                return BadRequest("Error on conn str!");
-            }
-
             // Validate input parameters
             if (data == null || string.IsNullOrWhiteSpace(data.reportParams) || string.IsNullOrWhiteSpace(data.dataParams))
             {

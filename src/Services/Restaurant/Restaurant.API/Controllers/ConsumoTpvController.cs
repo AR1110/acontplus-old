@@ -3,92 +3,59 @@ using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
 using Services.Common.Extensions;
 
+namespace Restaurant.API.Controllers;
 
-namespace Restaurant.API.Controllers
+public class ConsumoTpvController(IConsumptionService consumption) : BaseApiController
 {
-    public class ConsumoTpvController : BaseApiController
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IConsumptionService _consumption;
-        private readonly ICustomLogger _log;
-        public ConsumoTpvController(IConsumptionService consumption, ICustomLogger log)
+        var response = await consumption.GetAsync(new Dictionary<string, object>
         {
-            _consumption = consumption;
-            _log = log;
-        }
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        });
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post(string json)
+    {
+        var response = await consumption.AddAsync(new Dictionary<string, object>
         {
-            try
-            {
-                var response = await _consumption.GetAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
-                if (response == null) { return BadRequest("Data Not Found"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error in Get: \n" + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
-        [HttpPost]
-        public async Task<IActionResult> Post(string json)
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        });
+        return Ok(response);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Put(string json)
+    {
+        var response = await consumption.UpdateAsync(new Dictionary<string, object>
         {
-            try
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        });
+        return Ok(response);
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var response =
+            await consumption.DeleteAsync(new Dictionary<string, object>
             {
-                var response = await _consumption.AddAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Data Not Found"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
+                { "idRol", User.GetUserRoleId() }, { "id", id }
+            });
+        return Ok(response);
+    }
+
+    [HttpPost("Print")]
+    public async Task<IActionResult> Print(int id)
+    {
+        var response =
+            await consumption.PrintAsync(new Dictionary<string, object>
             {
-                _log.LogActivity("Error while saving consumo tpv: \n" + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
-        [HttpPut]
-        public async Task<IActionResult> Put(string json)
-        {
-            try
-            {
-                var response = await _consumption.UpdateAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Data Not Found"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error while updating consumo tpv: \n" + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
-        [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var response = await _consumption.DeleteAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Data Not Found"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error while deleting consumo tpv: \n" + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
-        [HttpPost("Print")]
-        public async Task<IActionResult> Print(int id)
-        {
-            try
-            {
-                var response = await _consumption.PrintAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Data Not Found"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error while to print consumo tpv: \n" + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
+                { "idRol", User.GetUserRoleId() }, { "id", id }
+            });
+        return Ok(response);
     }
 }

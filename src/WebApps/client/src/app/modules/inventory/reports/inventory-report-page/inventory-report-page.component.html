@@ -171,9 +171,17 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
               <div class="icheck-info">
                 <input type="checkbox" [(ngModel)]="dataSearch.checkboxSubCategoryFilter"
-                       class="form-control" name="checkboxSubCategoryTabStock"
+                       class="form-control" name="checkboxObtenerRentabilidad"
                        id="checkboxSubCategoryTabStock">
                 <label for="checkboxSubCategoryTabStock">Subfamilia</label>
+              </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+              <div class="icheck-info">
+                <input type="checkbox" [(ngModel)]="dataSearch.checkboxObtenerRentabilidad" class="form-control"
+                  name="checkboxSubCategoryTabStock" id="checkboxObtenerRentabilidad">
+                <label for="checkboxObtenerRentabilidad">Obtener Rentabilidad</label>
               </div>
             </div>
           </div>
@@ -260,6 +268,23 @@
 
               </div>
             </div>
+
+
+            @if(dataSearch.checkboxObtenerRentabilidad){
+              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                  <label for="select-tarifa">Tarifa: <span class="text-danger">*</span></label>
+                  <select name="select-tarifa" id="select-tarifa" class="form-select" [(ngModel)]="dataSearch.idTarifa">
+                    <option value="0">Seleccione::</option>
+                    @for(item of tarifas;track $index){
+                    <option [ngValue]="item.idTarifa">{{item.descripcion}}</option>
+                    }
+                  </select>
+
+                </div>
+              </div>
+
+            }
 
 
           </div>

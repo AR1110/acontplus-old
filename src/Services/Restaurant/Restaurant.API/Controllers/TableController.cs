@@ -5,7 +5,7 @@ using Services.Common.Extensions;
 
 namespace Restaurant.API.Controllers;
 
-public class TablesController(IAppTableService tableService) : BaseApiController
+public class TableController(IAppTableService tableService) : BaseApiController
 {
     [HttpGet("GetAll/{codEstab}")]
     public async Task<ActionResult<Dictionary<string, object>>> Get(string codEstab)
