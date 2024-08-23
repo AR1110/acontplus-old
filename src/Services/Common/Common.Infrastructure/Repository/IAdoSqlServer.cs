@@ -5,7 +5,7 @@ public interface IAdoSqlServer
     public Task<List<T>> DynamicListAsync<T>(string spname, Dictionary<string, object> parameters);
 
     public Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp = false,
-        bool timeout = true);
+        bool timeout = true, string connectionString = null);
 
     public Task<DataTable> GetDataTableAsync(string spname, Dictionary<string, object> parameters);
 

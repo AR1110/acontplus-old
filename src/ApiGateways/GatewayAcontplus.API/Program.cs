@@ -1,5 +1,7 @@
-﻿using Autofac.Extensions.DependencyInjection;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Common.AppSettings;
+using GatewayAcontplus.API.Delegates;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -27,12 +29,19 @@ var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().
 
 // Ocelot Configuration (consider using environment variables for dynamic configuration)
 builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-builder.Services.AddOcelot(builder.Configuration);
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()).ConfigureContainer<ContainerBuilder>(builder =>
+{
+    // Register the ReportHeaderDelegatingHandler
+    builder.RegisterType<ConnectionStringHeaderDelegatingHandler>()
+        .InstancePerLifetimeScope();
+
+    // Register any other dependencies here
+});
+builder.Services.AddOcelot().AddDelegatingHandler<ConnectionStringHeaderDelegatingHandler>();
 
 // Identity Services (adapt to your specific authentication mechanism)
 builder.Services.AddIdentityService(builder.Configuration);
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
 // CORS Configuration
 builder.Services.AddCors(options =>

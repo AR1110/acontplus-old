@@ -1,7 +1,7 @@
 //@ts-check
 (function () {
     let precisionMaxima = 5;
-    let precisionMaximaTotalDetalle = 2;
+    let DECIMAL_DOS = 2;
 
     function instanceDecimal(num, max = 0) {
         if (max > 0) {
@@ -295,6 +295,8 @@
 
     function formulario(pricingUtils, uuid2) {
         let formSvc = {};
+
+        formSvc.max_dos = DECIMAL_DOS;
 
         formSvc.dataDocumento = {};
         formSvc.opcionEmit = "";
@@ -1275,12 +1277,12 @@
             }else{
                 originalValue = entity;
             }
-            var roundedValue = formSvc.roundNumber(originalValue, precisionMaximaTotalDetalle);
+            var roundedValue = formSvc.roundNumber(originalValue, DECIMAL_DOS);
             return 'Original: ' + originalValue + '\nRedondeado: ' + roundedValue;
         }
 
         formSvc.cellFilterRoundToNumber = function(){
-            return `roundTo:${precisionMaximaTotalDetalle}`;
+            return `roundTo:${DECIMAL_DOS}`;
         }
 
 

@@ -18,20 +18,22 @@ SELECT tr.idTransaccion
       ,dt.cantidadTransaccion
 	  ,dt.precioUnitario
 	  ,dt.precioCosto
+      ,dt.precioCostoFraccionado
       ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN dt.cantidad END, 0) as cantidadEntrada
 	  ,ISNULL(CASE WHEN tt.codigo = 'S' THEN dt.cantidad END, 0)                    as cantidadSalida
       ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN dt.total END, 0)    as totalEntrada
       ,ISNULL(CASE WHEN tt.codigo = 'S' THEN dt.total END, 0)                       as totalSalida 
       ,CASE WHEN td.codigo = 'CI' THEN tr.idDocumento 
                                   ELSE (
-                                            SELECT max(ci.idConsolidacionInventario) 
-								            FROM dbo.ConsolidacionInventario              ci WITH (NOLOCK)
-									        INNER JOIN dbo.ConsolidacionInventarioDetalle cd WITH (NOLOCK) ON cd.idConsolidacionInventario = ci.idConsolidacionInventario
-									        INNER JOIN dbo.EstadoPago                     ep WITH (NOLOCK) ON ep.idEstadoPago              = ci.idEstadoDocumento
-									        WHERE ci.fechaEmision < tr.fechaEmision 
-                                              AND cd.idArticulo = dt.idArticulo 
-                                              AND cd.idBodega = dt.idBodega
-                                              AND ep.codigo = 'AC' 
+                                            SELECT max(tt.idDocumento)
+                                            FROM Inventario.Transaccion              tt WITH (NOLOCK)
+                                            INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento = tt.idTipoDocumento
+                                            INNER JOIN Inventario.TransaccionDetalle sd WITH (NOLOCK) ON sd.idTransaccion   = tt.idTransaccion
+                                            WHERE td.codigo = 'CI'
+                                              AND tt.estado = 1 
+                                              AND tt.fechaEmision <= tr.fechaEmision 
+                                              AND sd.idBodega   = dt.idBodega
+                                              AND sd.idArticulo = dt.idArticulo
                                              
                                        ) 
        END as particion

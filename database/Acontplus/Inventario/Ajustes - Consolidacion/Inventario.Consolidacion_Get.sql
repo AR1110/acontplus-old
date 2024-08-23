@@ -72,12 +72,14 @@ BEGIN
 				              ,ep.codigo                                                as codDoc
 				              ,us.nombreUsuario                                         as usuario
 				              ,IIF(ep.codigo = ''A'',''table-danger'','''')             as style
+                              ,td.descripcion                                           as tipoDocumento
                               ,COUNT(*) OVER()                                          as totalRecords
-			            FROM dbo.ConsolidacionInventario ci WITH (NOLOCK)
-			            INNER JOIN dbo.PuntoEmision      pe WITH (NOLOCK) ON pe.idPuntoEmision    = ci.idPuntoEmision
-			            INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario         = ci.idUsuario
-			            INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago      = ci.idEstadoDocumento
-                        INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+			            FROM dbo.ConsolidacionInventario    ci WITH (NOLOCK)
+			            INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision    = ci.idPuntoEmision
+			            INNER JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario         = ci.idUsuario
+			            INNER JOIN dbo.EstadoPago           ep WITH (NOLOCK) ON ep.idEstadoPago      = ci.idEstadoDocumento
+                        INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento   = ci.idTipoDocumento
+                        INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
 			            WHERE ci.idEntidad = @idEntidad '
 
             SET @params = '@idEntidad   INT
@@ -117,9 +119,9 @@ BEGIN
 			
             SELECT * FROM Config.v_Sistema_Decimal WITH(NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL' 
 
-            SELECT idTipoTransaccion,codigo,descripcion FROM Inventario.TipoTransaccion WHERE codigo IN ('A','S') AND estado = 1
+            SELECT idTipoTransaccion,codigo,descripcion FROM Inventario.TipoTransaccion WHERE codigo IN ('A','S','E') AND estado = 1
 
-            SELECT idTipoDocumento,codigo,descripcion FROM Inventario.TipoDocumento WHERE codigo IN ('CI','BI')
+            SELECT idTipoDocumento,codigo,descripcion FROM Inventario.TipoDocumento WHERE codigo IN ('CI','BI','EI')
 
             RETURN 
 		END
@@ -138,9 +140,15 @@ BEGIN
 				  ,ci.total
 				  ,es.nombreComercial
                   ,es.estab + '-' + pe.ptoEmi as ptoEmi 
-			FROM dbo.ConsolidacionInventario ci WITH (NOLOCK)
-			INNER JOIN dbo.PuntoEmision      pe WITH (NOLOCK) ON pe.idPuntoEmision = ci.idPuntoEmision
-			INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+                  ,td.descripcion             as tipoDocumento
+                  ,CASE td.codigo WHEN 'CI' THEN 'Ajuste'
+                                  WHEN 'BI' THEN 'Salida'
+                                  WHEN 'EI' THEN 'Entrada'
+                   END as movimiento
+			FROM dbo.ConsolidacionInventario    ci WITH (NOLOCK)
+			INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision    = ci.idPuntoEmision
+            INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento   = ci.idTipoDocumento
+			INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
 			WHERE ci.idConsolidacionInventario = @id
 
 			SELECT cd.idConsolidacionInventarioDetalle
