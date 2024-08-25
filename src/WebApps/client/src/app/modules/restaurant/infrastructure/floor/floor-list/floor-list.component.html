@@ -1,65 +1,82 @@
 <div class="card">
   <div class="card-body">
-    <div class="row mt-2 mb-2">
-      <div class="col-6">
-        <button (click)="onModalOpen()" mat-raised-button type="button">
-          <fa-icon [icon]="'plus'"></fa-icon>
-          Registrar
-        </button>
-      </div>
-    </div>
-    @if (floors.length > 0) {
-      <div class="table-responsive">
-        <table class="table">
-          <caption>Pisos</caption>
-          <thead>
-          <tr>
-            <th></th>
-            <th>N°</th>
-            <th>Código</th>
-            <th>Descripcion</th>
-            <th>Capacidad</th>
-            <th>Estado</th>
-          </tr>
-          </thead>
-          <tbody>
-            @for (item of floors; track $index) {
-              <tr>
-                <td>
-                  <a
-                    (click)="onEdit(item)"
-                    class="btn btn-sm btn-success"
-                    href="javascript:void(0)"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </a>
-                  <a
-                    (click)="onDelete(item)"
-                    class="btn btn-sm btn-danger"
-                    href="javascript:void(0)"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </a>
-                </td>
-                <td>{{ $index + 1 }}</td>
-                <td>{{ item.code }}</td>
-                <td>{{ item.description }}</td>
-                <td>{{ item.capacity }}</td>
-                <td>
+
+
+    <mat-accordion>
+      @for (item of establecimientos; track $index) {
+        <mat-expansion-panel (closed)="panelOpenState.set(false)" (opened)="panelOpenState.set(true); loadData(item)"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title> {{ item.nombreComercial }}</mat-panel-title>
+            <mat-panel-description>
+              {{ item.estab }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="row mt-2 mb-2">
+            <div class="col-6">
+              <button (click)="onModalOpen()" mat-raised-button type="button">
+                <fa-icon [icon]="'plus'"></fa-icon>
+                Registrar
+              </button>
+            </div>
+          </div>
+          @if (floors.length > 0) {
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                <tr>
+                  <th></th>
+                  <th class="text-center">N°</th>
+                  <th class="text-center">Código</th>
+                  <th>Descripcion</th>
+                  <th class="text-center">Capacidad</th>
+                  <th>Estado</th>
+                </tr>
+                </thead>
+                <tbody>
+                  @for (item of floors; track $index) {
+                    <tr>
+                      <td class="text-center">
+                        <div ngbDropdown class="d-inline-block">
+                          <button type="button" class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle
+                                  title="Opciones">
+                            <fa-icon [icon]="'list'"></fa-icon>
+                          </button>
+                          <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                            <button ngbDropdownItem (click)="onEdit(item)">
+                              <fa-icon [icon]="'edit'"></fa-icon>
+                              Editar
+                            </button>
+                            <button ngbDropdownItem (click)="onDelete(item)">
+                              <fa-icon [icon]="'trash'"></fa-icon>
+                              Editar
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="text-center">{{ $index + 1 }}</td>
+                      <td class="text-center">{{ item.code }}</td>
+                      <td>{{ item.description }}</td>
+                      <td class="text-center">{{ item.capacity }}</td>
+                      <td>
                 <span
-                  [ngClass]="item.enabled ? 'badge-success' : 'badge-danger'"
+                  [ngClass]="item.enabled ? 'text-success' : 'text-danger'"
                   class="badge"
                 >
                   {{ item.enabled ? 'Activo' : 'Inactivo' }}
                 </span>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    } @else {
-      <h5>No hay registros</h5>
-    }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <h5>No hay registros</h5>
+          }
+
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
   </div>
 </div>

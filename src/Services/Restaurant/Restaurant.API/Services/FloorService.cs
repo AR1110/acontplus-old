@@ -35,7 +35,7 @@ public class FloorService(RestaurantContext context) : IFloorService
 
     public async Task<ApiResponse> GetAllAsync()
     {
-        var floors = await context.Floors.Where(x => x.Deleted == null).ToListAsync();
+        var floors = await context.Floors.Include(x => x.Rooms).Where(x => x.Deleted == null).ToListAsync();
         return floors.Count > 0
             ? new ApiResponse { Code = "1", Payload = floors }
             : new ApiResponse { Code = "0", Message = "Not found!" };
@@ -43,7 +43,7 @@ public class FloorService(RestaurantContext context) : IFloorService
 
     public async Task<ApiResponse> GetByEstabAsync(string codEstab)
     {
-        var floors = await context.Floors.Where(x => x.CodEstab == codEstab && x.Deleted == null).ToListAsync();
+        var floors = await context.Floors.Include(x => x.Rooms).Where(x => x.CodEstab == codEstab && x.Deleted == null).ToListAsync();
         return floors.Count > 0
             ? new ApiResponse { Code = "1", Payload = floors }
             : new ApiResponse { Code = "0", Message = "Not found!" };
@@ -69,5 +69,5 @@ public class FloorService(RestaurantContext context) : IFloorService
     private bool FloorExistsCodeEstab(string code, string codEstab)
     {
         return context.Floors.Any(e => e.Code == code && e.CodEstab == codEstab);
-    } 
+    }
 }
