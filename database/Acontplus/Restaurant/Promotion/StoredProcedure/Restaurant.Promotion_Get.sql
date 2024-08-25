@@ -21,14 +21,15 @@ BEGIN
 	SET NOCOUNT ON;
    
     DECLARE @tipo           INT 
-    DECLARE @dateNow        DATETIME = (SELECT dbo.ufnGetDateEcuador())
+
     DECLARE @codEstab VARCHAR(150)
    
-    SELECT @tipo = tipo,@codEstab = codEstab FROM OPENJSON(@json) WITH(tipo INT '$.tipo', codEstab VARCHAR(150))
+    SELECT @tipo = tipo,@codEstab = codEstab FROM OPENJSON(@json) WITH(tipo INT , codEstab VARCHAR(150))
 
     IF @tipo = 1
         BEGIN
             SET @tableNames = 'promotions,days'
+
 	        SELECT p.Id
                    ,p.CodEstab
                    ,p.Description
@@ -44,23 +45,19 @@ BEGIN
         
     IF @tipo = 2
         BEGIN
-             DECLARE @day            INT
-                    ,@hour           VARCHAR(5)
-                    ,@dayForParam    VARCHAR(15)
-                                       
-            SET @day            = (SELECT DATEPART(WEEKDAY, @dateNow));
-            SET @hour           = (SELECT FORMAT(@dateNow, 'HH:mm'))
-            SET @dateNow        = CONVERT(DATE, @dateNow)
-
             SET @tableNames = 'promotions_pos'
+
             SELECT rp.Id
-                ,rp.[Description]
-                ,rp.S3ObjectUrl
-            FROM Restaurant.Promotion rp
-            WHERE RP.CodEstab = @codEstab AND  @dateNow BETWEEN rp.StartDate AND rp.EndDate
-            AND @day IN(SELECT diaSemana FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))
-            AND @hour BETWEEN(SELECT startHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day)) 
-            AND (SELECT endHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))   ORDER by rp.id DESC         
+                  ,rp.[Description]
+                  ,rp.S3ObjectUrl
+            FROM Restaurant.Promotion              rp WITH (NOLOCK)
+            CROSS APPLY OPENJSON(rp.PromotionDays) dt
+			INNER JOIN dbo.Dia                     ds WITH (NOLOCK) ON ds.idDia = JSON_VALUE(dt.[value],'$.idDia')
+			WHERE rp.CodEstab = @codEstab
+			  AND CAST(GETDATE() as date) BETWEEN cast(rp.StartDate as date) AND cast(rp.EndDate as date)
+			  AND ds.diaSemana = (SELECT DATEPART(WEEKDAY, GETDATE()))
+			  AND CAST(GETDATE() as time) BETWEEN CAST(JSON_VALUE(dt.[value],'$.horaInicio') as time) AND CAST(JSON_VALUE(dt.[value],'$.horaFin') as time)
+            ORDER by rp.id DESC         
         END
 END
 GO
