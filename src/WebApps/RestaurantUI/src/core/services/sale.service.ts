@@ -23,6 +23,12 @@ export const SaleService = {
                 json
             }
         })
+        let resultData = {} as any;
+        if("payload" in resultAxios.data){
+            resultData = JSON.parse(resultAxios.data.payload);
+        }else{
+            resultData = resultAxios.data;
+        }
         const {
             subCategorias,
             configDecimal,
@@ -37,7 +43,7 @@ export const SaleService = {
             tarifaImpuestoVigente,
             config,
             vendedores, 
-        } = resultAxios.data; 
+        } = resultData;
 
         const rooms: Array<Room> = room;
         const floors: Array<Floor> = floor;

@@ -107,7 +107,7 @@ export default function PrimarySearchAppBar() {
     useEffect(() => {
         const userData = getUserData(); 
         setUserName(userData.username)
-    }, [])
+    }, []) 
 
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
@@ -226,7 +226,7 @@ export default function PrimarySearchAppBar() {
                     <Box sx={{ flexGrow: 1, display: { xs: 'block', md: 'flex', justifyContent:'start' }, justifyContent: 'end' }}>
                         <Stack>
                             <Typography variant="body2">
-                                Estab: {dataEstab?.nombreComercial}
+                                Estab: {dataEstab?.nombreComercial ?? dataEstab?.estab}
                             </Typography>
                             <Typography variant="body2">
                                 Punto Emisión: {dataEstab.estab}-{puntoEmision}

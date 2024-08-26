@@ -1,23 +1,29 @@
-import { promotionService } from "@/core/services";
+import { getEstabs, promotionService } from "@/core/services";
 import { useEffect, useState } from "react";
 import PromotionCard from "./PromotionCard";
 import { IPromotion } from "@/core/models";
 import ItemListSkeleton from "../Item/ItemListSkeleton";
 import { Grid } from "@mui/material";
 import CustomNoRowsOverlay from "@/core/components/CustomNoRowsOverlay/CustomNoRowsOverlay";
+import { useSaleStore } from "@/stores";
 
 
 const Promotion = () => {
     const [promotiones, setPromotiones] = useState<Array<IPromotion>>([]);
     const [loading, setLoading] = useState(false);
+    const { order,   } = useSaleStore(state => ({
+        order: state.order, 
+    }))
     let controller: AbortController;
 
     const search = async () => {
         try {
+            const establecimientos = getEstabs();
+            const dataEstab = establecimientos[0]!;
             setLoading(true);
             // Intentamos realizar una búsqueda de productos utilizando un servicio llamado 'productService'
             // pasando la cadena de búsqueda 'value' como parámetro.
-            const dataFetch = promotionService.get({ pageIndex: 1, pageSize: 10, tipo: 2 });
+            const dataFetch = promotionService.get({ pageIndex: 1, pageSize: 10, tipo: 2, codEstab: dataEstab?.codEstab});
 
             // Si ya existe un controlador de solicitud activo (abortController), lo abortamos.
             if (controller) controller.abort();

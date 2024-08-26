@@ -163,15 +163,17 @@ const TableDialog = (props: SimpleDialogProps) => {
                     }
                     
                 }).finally(() => hideLoader())
-           // }
+           // }}
         } catch (error) {
             console.log(error)
         } 
     }
 
-    const handleChangeRoom = (_: SyntheticEvent, newValue: number) => {
+    const handleChangeRoom = (_: SyntheticEvent, newValue: number) => { 
         const dataRoom:any =  tempRooms.current[newValue]
+       
         const tempTablesFiltered =  tempTables.current.filter(table => table.roomId === dataRoom.id); 
+         
         setTables(() => tempTablesFiltered) 
         setRoomId(() => dataRoom.floorId);
         setValue(newValue); 

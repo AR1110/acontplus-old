@@ -167,7 +167,8 @@ BEGIN
     
     SELECT Id, Capacity, Code, [Description]  FROM Restaurant.[Floor] WHERE CodEstab = @codEstab
 
-    SELECT id, code, [description], capacity, floorId FROM Restaurant.v_room
+    SELECT id, code, [description], capacity, floorId 
+    FROM Restaurant.v_room WHERE codEstab = @codEstab
 
     --CUSTOMER DEFAULT      
 	SELECT 

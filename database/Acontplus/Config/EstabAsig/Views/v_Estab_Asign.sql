@@ -1,7 +1,7 @@
 USE AcontPlus
 GO
 
-CREATE OR ALTER VIEW v_Estab_Asign WITH SCHEMABINDING AS (
+CREATE OR ALTER VIEW v_Estab_Asign   AS (
 	SELECT ea.[idEstab_Asig]
           ,ea.[codEstab_Asig]
           ,ea.[idUsuarioRol]
@@ -10,7 +10,7 @@ CREATE OR ALTER VIEW v_Estab_Asign WITH SCHEMABINDING AS (
           ,ea.[usuario]
           ,ea.[fechaRegistro]
           ,ea.[estado]
-          ,ea.[idEstablecimiento]
+          ,idEstablecimiento = ISNULL(ea.[idEstablecimiento], es.idEstablecimiento)
           ,ea.[idUsuario]
           ,ea.[fromMobile]
 	      ,en.ruc
@@ -25,7 +25,7 @@ CREATE OR ALTER VIEW v_Estab_Asign WITH SCHEMABINDING AS (
 	      ,es.actividad
           ,es.telefono
           ,es.correo
-          ,ae.idActividadEconomica AS ActividadEconomicaId 
+          ,ae.idActividadEconomica AS ActividadEconomicaId  
 	FROM Config.Estab_Asig            ea WITH (NOLOCK)     
 	INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab  = ea.codEstab
     INNER JOIN Sri.ActividadEconomica ae WITH (NOLOCK) ON ae.codigo    = es.actividad 
