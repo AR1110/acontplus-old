@@ -19,16 +19,32 @@ public class FloorService(RestaurantContext context) : IFloorService
 
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
-        var floorFound = await context.Floors.FindAsync(id);
-        if (floorFound == null)
+        var orderExists = await context.Orders
+            .Join(context.Tables,
+                  order => order.TableId,
+                  table => table.Id,
+                  (order, table) => new { order, table })
+            .Join(context.Rooms,
+                  combined => combined.table.RoomId,
+                  room => room.Id,
+                  (combined, room) => new { combined.order, room })
+            .Join(context.Floors,
+                  combined => combined.room.FloorId,
+                  floor => floor.Id,
+                  (combined, floor) => new { combined.order, combined.room, floor })
+            .AnyAsync(f => f.floor.Id == id);
+
+        if (orderExists)
+        {
+            return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
+        }
+
+        var floor = await context.Floors.FindAsync(id);
+        if (floor == null)
         {
             return new ApiResponse { Code = "0", Message = "Floor not found" };
         }
-
-        floorFound.Enabled = false;
-        floorFound.Deleted = true;
-        floorFound.UserId = userId;
-        context.Update(floorFound);
+        context.Remove(floor);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminado correctamente!" };
     }

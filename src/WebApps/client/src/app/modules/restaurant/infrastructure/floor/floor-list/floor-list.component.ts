@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ViewChild } from '@angular/core';
 import { Floor } from '@restaurant/models/floor.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ModalService } from '@core/services/modal.service';
@@ -10,17 +10,22 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButton } from '@angular/material/button';
 import { NgClass } from '@angular/common';
 import {
+  NgbAccordionItem,
+  NgbAccordionModule,
   NgbDropdown,
   NgbDropdownItem,
   NgbDropdownMenu,
   NgbDropdownToggle,
 } from '@ng-bootstrap/ng-bootstrap';
+import swal from 'sweetalert2';
+import { ToasterService } from '@core/services/toaster.service';
 
 @Component({
   selector: 'app-floor-list',
   standalone: true,
   imports: [
     FaIconComponent,
+    NgbAccordionModule,
     MatExpansionModule,
     MatButton,
     NgClass,
@@ -33,6 +38,8 @@ import {
   styles: ``,
 })
 export class FloorListComponent {
+  @ViewChild('accordionItem') accordionItem: NgbAccordionItem | undefined;
+
   readonly panelOpenState = signal(false);
   codEstab: string = '';
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
@@ -41,13 +48,14 @@ export class FloorListComponent {
   #floorService = inject(FloorService);
   #modalService = inject(ModalService);
   #sharedService = inject(SharedService);
+  #tS = inject(ToasterService);
 
-  loadData(estab: EstablecimientoSelectHtmlOnly) {
-    if (!this.panelOpenState()) {
-      return;
-    }
-    this.codEstab = estab.codEstab;
-    this.#floorService.getByEstab(estab.codEstab).subscribe((response) => {
+  loadData(codEstab: string) {
+    // if (!this.panelOpenState()) {
+    //   return;
+    // }
+    this.codEstab = codEstab;
+    this.#floorService.getByEstab(codEstab).subscribe((response) => {
       this.floors = (response.payload as Floor[]) || [];
     });
   }
@@ -67,7 +75,32 @@ export class FloorListComponent {
     this.onModalOpen();
   }
 
-  onDelete(item: Floor) {}
+  onDelete(item: Floor) {
+    swal
+      .fire({
+        icon: 'warning',
+        title: 'Aviso!',
+        text: `Esta seguro/a de eliminar este piso: ${item.description}?`,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No',
+        showCancelButton: true,
+      })
+      .then((response) => {
+        if (response.isConfirmed) {
+          this.#floorService.remove(item.id).subscribe((result) => {
+            this.#tS.toastr({
+              type: result.code == '1' ? 'success' : 'warning',
+              message: result.message,
+            });
+            if (result.code == '1') {
+              this.loadData(this.codEstab);
+            }
+          });
+        }
+      });
+  }
 
   onModalOpen() {
     const modalRef = this.#modalService.openModalCustom(
@@ -84,10 +117,18 @@ export class FloorListComponent {
     modalRef.result.then((response) => {
       if (typeof response == 'object') {
         if (response.code == '1') {
-          this.getEstabs();
+          this.loadData(this.codEstab);
         }
         this.data = {} as Floor;
       }
     });
+  }
+
+  onPanelToggle(item: EstablecimientoSelectHtmlOnly) {
+    if (!this.accordionItem) return;
+    const isOpen = !this.accordionItem.collapsed;
+    if (isOpen) {
+      this.loadData(item.codEstab);
+    }
   }
 }

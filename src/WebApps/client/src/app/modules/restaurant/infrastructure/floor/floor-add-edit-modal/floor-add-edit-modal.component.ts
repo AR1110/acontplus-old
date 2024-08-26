@@ -17,6 +17,7 @@ import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semanti
 import { MatButton } from '@angular/material/button';
 import { ApiResponse } from '@core/models/api-response';
 import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-floor-add-edit-modal',
@@ -26,6 +27,7 @@ import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
     FaIconComponent,
     TabulatorSemanticUiComponent,
     MatButton,
+    MatSlideToggle,
   ],
   templateUrl: './floor-add-edit-modal.component.html',
   styles: ``,
@@ -96,6 +98,7 @@ export class FloorAddEditModalComponent {
     description: new FormControl('', [Validators.required]),
     code: new FormControl('', [Validators.required, Validators.minLength(3)]),
     capacity: new FormControl(0, [Validators.required, Validators.min(1)]),
+    enabled: new FormControl(true),
   });
   modalIcon: IconProp = 'plus';
   modalTitle: string = 'Registrar Piso';
@@ -121,7 +124,6 @@ export class FloorAddEditModalComponent {
   ngOnInit() {
     this.getEstabAsign();
     this.floorForm.patchValue({ codEstab: this.data.codEstab });
-    this.floorForm.get('codEstab')?.disable();
     if (this.data.id > 0) {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Piso';
