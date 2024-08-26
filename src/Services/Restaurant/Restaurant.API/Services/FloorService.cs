@@ -19,23 +19,39 @@ public class FloorService(RestaurantContext context) : IFloorService
 
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
-        var floorFound = await context.Floors.FindAsync(id);
-        if (floorFound == null)
+        var orderExists = await context.Orders
+            .Join(context.Tables,
+                  order => order.TableId,
+                  table => table.Id,
+                  (order, table) => new { order, table })
+            .Join(context.Rooms,
+                  combined => combined.table.RoomId,
+                  room => room.Id,
+                  (combined, room) => new { combined.order, room })
+            .Join(context.Floors,
+                  combined => combined.room.FloorId,
+                  floor => floor.Id,
+                  (combined, floor) => new { combined.order, combined.room, floor })
+            .AnyAsync(f => f.floor.Id == id);
+
+        if (orderExists)
+        {
+            return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
+        }
+
+        var floor = await context.Floors.FindAsync(id);
+        if (floor == null)
         {
             return new ApiResponse { Code = "0", Message = "Floor not found" };
         }
-
-        floorFound.Enabled = false;
-        floorFound.Deleted = true;
-        floorFound.UserId = userId;
-        context.Update(floorFound);
+        context.Remove(floor);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminado correctamente!" };
     }
 
     public async Task<ApiResponse> GetAllAsync()
     {
-        var floors = await context.Floors.Where(x => x.Deleted == null).ToListAsync();
+        var floors = await context.Floors.Include(x => x.Rooms).Where(x => x.Deleted == null).ToListAsync();
         return floors.Count > 0
             ? new ApiResponse { Code = "1", Payload = floors }
             : new ApiResponse { Code = "0", Message = "Not found!" };
@@ -43,7 +59,7 @@ public class FloorService(RestaurantContext context) : IFloorService
 
     public async Task<ApiResponse> GetByEstabAsync(string codEstab)
     {
-        var floors = await context.Floors.Where(x => x.CodEstab == codEstab && x.Deleted == null).ToListAsync();
+        var floors = await context.Floors.Include(x => x.Rooms).Where(x => x.CodEstab == codEstab && x.Deleted == null).ToListAsync();
         return floors.Count > 0
             ? new ApiResponse { Code = "1", Payload = floors }
             : new ApiResponse { Code = "0", Message = "Not found!" };
@@ -69,5 +85,5 @@ public class FloorService(RestaurantContext context) : IFloorService
     private bool FloorExistsCodeEstab(string code, string codEstab)
     {
         return context.Floors.Any(e => e.Code == code && e.CodEstab == codEstab);
-    } 
+    }
 }

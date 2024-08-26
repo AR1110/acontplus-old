@@ -8,55 +8,55 @@
 
     <div class="d-flex justify-content-between">
       <div class="form-group">
-        <select name="establecimiento" id="establecimiento" class="form-select" [(ngModel)]="dataSearch.codEstab"
-          (change)="onChangeEstab()">
-          @for(item of establecimientos; track $index){
-          <option [ngValue]="item.codEstab">{{item.nombreComercial}}</option>
+        <select (change)="onChangeEstab()" [(ngModel)]="dataSearch.codEstab" class="form-select" id="establecimiento"
+                name="establecimiento">
+          @for (item of establecimientos; track $index) {
+            <option [ngValue]="item.codEstab">{{ item.nombreComercial }}</option>
           }
         </select>
       </div>
     </div>
-    <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+    <ul #nav="ngbNav" [(activeId)]="active" class="nav-tabs" ngbNav>
       <li [ngbNavItem]="1">
         <button ngbNavLink>PISOS</button>
-        <ng-template ngbNavContent class="p-2">
-          <button type="button" class="btn btn-info btn-sm" (click)="openModalFloorAddEdit()">
-            <fa-icon [icon]="'plus'"></fa-icon> Nuevo
+        <ng-template class="p-2" ngbNavContent>
+          <button class="btn btn-info btn-sm" type="button">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            Nuevo
           </button>
           <div class="table-responsive">
             <table class="table table-condensed">
               <thead>
-                <tr>
-                  <th>Op.</th>
-                  <th>Nro.</th>
-                  <th>Código</th>
-                  <th>Descripción</th>
-                  <th>Capacidad</th>
-                </tr>
+              <tr>
+                <th>Op.</th>
+                <th>Nro.</th>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Capacidad</th>
+              </tr>
               </thead>
               <tbody>
                 @for (item of floors; track $index) {
-                <tr>
-                  <td>
-                    <div class="d-grid gap-1 d-md-flex  ">
-                      <button class="btn btn-success btn-sm" type="button" (click)="openModalFloorAddEdit(item)">
-                        <fa-icon [icon]="'edit'"></fa-icon>
-                      </button>
-                      <button class="btn btn-danger btn-sm" type="button" (click)="askToDeleteFloor(item.id)">
-                        <fa-icon [icon]="'trash'"></fa-icon>
-                      </button>
-                    </div>
-                  </td>
-                  <td>{{$index+1}}</td>
-                  <td>{{item.code}}</td>
-                  <td>{{item.description}}</td>
-                  <td>{{item.capacity}}</td>
-                </tr>
-                }
-                @empty {
-                <tr class="text-center">
-                  <td colspan="5">No hay registros!</td>
-                </tr>
+                  <tr>
+                    <td>
+                      <div class="d-grid gap-1 d-md-flex  ">
+                        <button class="btn btn-success btn-sm" type="button">
+                          <fa-icon [icon]="'edit'"></fa-icon>
+                        </button>
+                        <button class="btn btn-danger btn-sm" type="button" (click)="askToDeleteFloor(item.id)">
+                          <fa-icon [icon]="'trash'"></fa-icon>
+                        </button>
+                      </div>
+                    </td>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ item.code }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.capacity }}</td>
+                  </tr>
+                } @empty {
+                  <tr class="text-center">
+                    <td colspan="5">No hay registros!</td>
+                  </tr>
                 }
               </tbody>
             </table>

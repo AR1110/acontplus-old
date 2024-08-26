@@ -219,6 +219,7 @@ export class SharedService {
                   codEstab: estab.codEstab,
                   nombreComercial: estab.nombreComercial,
                   predeterminado: estab.predeterminado,
+                  estab: estab.estab,
                 };
               });
             }

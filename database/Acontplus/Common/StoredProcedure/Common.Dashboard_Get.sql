@@ -106,7 +106,7 @@ BEGIN
                 SELECT 
                     CAST(@expired AS BIT) AS expired, 
                     'Su licencia ha expirado, por favor comuníquese con el departamento de ventas' AS warningMessage 
-                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+                FOR JSON PATH
             );
         END
         ELSE IF @maxPaymentDateCount > 0
