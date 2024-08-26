@@ -132,7 +132,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>CONSOLIDACIÓN DE INVENTARIO</Value>
+                    <Value>=First(Fields!tipoDoc.Value, "ConsolidacionInvDs")</Value>
                     <Style>
                       <FontWeight>Bold</FontWeight>
                       <TextDecoration>None</TextDecoration>
