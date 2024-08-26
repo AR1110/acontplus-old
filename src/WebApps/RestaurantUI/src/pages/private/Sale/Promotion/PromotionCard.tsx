@@ -66,7 +66,7 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
                 <CardMedia
                     component="img"
                     height="130"
-                    image={promotion_img}
+                    image={promotion.s3ObjectUrl ?? promotion_img}
                     alt="green iguana"
                 />
                 <CardContent>
