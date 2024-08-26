@@ -6,7 +6,7 @@ GO
 CREATE OR ALTER VIEW Restaurant.v_Room  WITH SCHEMABINDING
 AS
 
-SELECT id					= rr.Id
+  SELECT id					= rr.Id
 		,code				= rr.Code
 		,description		= rr.Description
 		,capacity			= rr.Capacity
