@@ -118,7 +118,7 @@ BEGIN
 
 			INSERT INTO Sri.Establecimiento
 				   (codEstab,canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario, fromMobile)
-			SELECT @codEstab,canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile
+			SELECT @codEstab,canton,actividad,IIF(agenteRetencion = 'null', NULL, agenteRetencion),contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile
             FROM @tbEstablecimiento
 
             SET @id = (SELECT SCOPE_IDENTITY())
@@ -368,7 +368,8 @@ BEGIN
 
                         -----------FAMILIAS-------------------
                         DECLARE @idActividadEconomica INT,
-                            @actividadEconomicaName VARCHAR(500)
+                            @actividadEconomicaName VARCHAR(500),
+                            @idFamilia INT
 
                         SELECT @idActividadEconomica = idActividadEconomica, @actividadEconomicaName = descripcion  
                         FROM Acontplus.Sri.ActividadEconomica WITH(NOLOCK) WHERE codigo = @actividad;
@@ -377,6 +378,28 @@ BEGIN
                             BEGIN
                                 INSERT INTO Acontplus.dbo.Familia(descripcion, siglas, estado, ActividadEconomicaId)
                                 SELECT @actividadEconomicaName, LEFT(@actividadEconomicaName, 3) + '-' + @actividad, 1, @idActividadEconomica;
+
+                                SET @idFamilia = SCOPE_IDENTITY()
+                            END
+                         --SUBFAMILIA 
+
+                         IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.subfamilia WITH(NOLOCK) WHERE idEntidad = @idEntidad)
+                            BEGIN
+                                SET @idFamilia = (SELECT TOP 1 idFamilia FROM Acontplus.dbo.Familia WITH(NOLOCK) WHERE ActividadEconomicaId = @idActividadEconomica)
+                                INSERT INTO dbo.SubFamilia(idFamilia, descripcion, siglas,codigo, montoObjetivo, ultimoSecuencial, idUsuario, idEntidad)
+				                SELECT @idFamilia, 'SUBFAMILIA DEMO', 'SD', newid(), 0.00, 1 ,@idUsuario, @idEntidad
+                            END
+                        --MEDIDA
+                        DECLARE @sequential INT,  @code VARCHAR(15)
+
+                        IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.Medida WITH(NOLOCK) WHERE idEntidad = @idEntidad)
+                            BEGIN
+                                SELECT @sequential = COUNT(*) + 1 FROM dbo.Medida WITH(NOLOCK)
+
+	                            SET @code = ('ME' + Helper.F_Auto_Sequential(@sequential))
+
+                                INSERT INTO dbo.Medida ([descripcion], [idUsuario], [idEntidad], [codigo])
+                                VALUES('UNIDAD', @idUsuario, @idEntidad, 'UNI')
                             END
 
                         -----TURNOS---
