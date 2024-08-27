@@ -39,6 +39,7 @@ export class OrderListComponent {
   isLoadingResults = input(false)
   pagination = input.required<Pagination>();
   handlePageEvent = output<any>()
+  onEdit = output<any>();
   dataSource = input<OrderRead[]>([])
 
   isFinished = input.required<boolean>()

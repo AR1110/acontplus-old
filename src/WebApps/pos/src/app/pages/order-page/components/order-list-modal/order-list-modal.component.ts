@@ -5,7 +5,7 @@ import { OrderRead } from '@/models/order.model';
 import { Pagination } from '@/models/pagination.model';
 import { OrderService } from '@/services/order.service';
 import { MainStoreService } from '@/store/main-store.service';
-import { Component, computed, inject, model } from '@angular/core';
+import { Component, computed, inject, model, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -41,6 +41,8 @@ export class OrderListModalComponent {
 
   isFinished = computed(() => this.typeListOrder() === 'CD')
   typeListOrder = model('SD')
+
+  isFetching = signal(false);
 
   dataSearch = {
     userId: 0,
@@ -97,6 +99,18 @@ export class OrderListModalComponent {
     if (this.isLoadingResults) return
     this.pagination = new Pagination()
     this.refresh()
+  }
+
+  onEdit(data: OrderRead){
+
+    this.orderSvc.getId(data.id).subscribe({
+      next: response=>{
+        console.log(response)
+      },
+      error: (err)=>{
+        console.log()
+      }
+    })
   }
 
   closeDialog() {

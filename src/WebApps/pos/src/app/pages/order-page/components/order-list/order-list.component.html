@@ -18,7 +18,7 @@
         <mat-menu #menu="matMenu">
 
           @if(!isFinished()){
-          <button mat-menu-item>
+          <button mat-menu-item (click)="onEdit.emit(row)">
             <mat-icon>edit</mat-icon>
             <span>Editar</span>
           </button>

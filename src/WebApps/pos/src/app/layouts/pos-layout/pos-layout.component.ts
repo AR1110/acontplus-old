@@ -1,18 +1,17 @@
-import { NavUserInfoToggleComponent } from '@/core/components/nav-user-info-toggle/nav-user-info-toggle.component';
-import { PaymentComponent } from '@/core/components/payment/payment.component';
-import { OrderListModalComponent } from '@/pages/order-page/components/order-list-modal/order-list-modal.component';
-import { CartPopupComponent } from '@/pages/pos-page/components/cart-popup/cart-popup.component';
-import { DialogService } from '@/services/dialog.service';
-import { PosStoreService } from '@/store/pos-store.service';
-import { OverlayModule } from '@angular/cdk/overlay';
+import { NavUserInfoToggleComponent } from "@/core/components/nav-user-info-toggle/nav-user-info-toggle.component";
+import { OrderListModalComponent } from "@/pages/order-page/components/order-list-modal/order-list-modal.component";
+import { CartPopupComponent } from "@/pages/pos-page/components/cart-popup/cart-popup.component";
+import { DialogService } from "@/services/dialog.service";
+import { PosStoreService } from "@/store/pos-store.service";
+import { OverlayModule } from "@angular/cdk/overlay";
 import { AsyncPipe } from "@angular/common";
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from "@angular/core";
 import { MatBadgeModule } from "@angular/material/badge";
-import { MatIconButton } from "@angular/material/button";
-import { MatIcon } from "@angular/material/icon";
-import { MatListItem, MatNavList } from "@angular/material/list";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { Router, RouterLinkActive, RouterOutlet } from "@angular/router";
 
 @Component({
@@ -22,14 +21,13 @@ import { Router, RouterLinkActive, RouterOutlet } from "@angular/router";
     OverlayModule,
     RouterOutlet,
     AsyncPipe,
-    MatIcon,
-    MatIconButton,
-    MatListItem,
-    MatNavList,
     MatSidenavModule,
     MatToolbarModule,
     RouterLinkActive,
     MatBadgeModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatIconModule,
     NavUserInfoToggleComponent,
     CartPopupComponent
   ],
@@ -39,6 +37,7 @@ import { Router, RouterLinkActive, RouterOutlet } from "@angular/router";
 export class PosLayoutComponent {
   private posStoreSvc = inject(PosStoreService);
   private dialogSvc = inject(DialogService)
+  private router = inject(Router)
   isOverlayOpen = signal(false);
 
   totalOrderItems = computed(() => {
@@ -48,7 +47,6 @@ export class PosLayoutComponent {
     return quantity;
   })
 
-  private router = inject(Router)
 
 
   navigateDashboard() {

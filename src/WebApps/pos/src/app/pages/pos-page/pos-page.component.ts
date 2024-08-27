@@ -1,3 +1,4 @@
+import { CATEGORY_CODE } from './../../../../../RestaurantUI/src/core/models/category.models';
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatTabChangeEvent, MatTabsModule } from "@angular/material/tabs";
 import { MatIconModule } from "@angular/material/icon";
@@ -57,6 +58,12 @@ export class PosPageComponent {
     codigo: "",
     descripcion: 'TODOS',
     s3ObjectUrl: '',
+  },
+  {
+    idSubFamilia: 0,
+    codigo: CATEGORY_CODE.COM,
+    descripcion: 'COMBOS',
+    s3ObjectUrl: ''
   }]);
   items = signal<ItemRead[]>([])
   dataPagination = signal(new Pagination())
