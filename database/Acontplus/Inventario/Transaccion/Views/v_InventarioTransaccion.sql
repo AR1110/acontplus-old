@@ -30,8 +30,8 @@ SELECT tr.idTransaccion
                                             INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento = tt.idTipoDocumento
                                             INNER JOIN Inventario.TransaccionDetalle sd WITH (NOLOCK) ON sd.idTransaccion   = tt.idTransaccion
                                             WHERE td.codigo = 'CI'
-                                              AND tt.estado = 1 
                                               AND tt.fechaEmision <= tr.fechaEmision 
+                                              AND sd.estado = 1
                                               AND sd.idBodega   = dt.idBodega
                                               AND sd.idArticulo = dt.idArticulo
                                              

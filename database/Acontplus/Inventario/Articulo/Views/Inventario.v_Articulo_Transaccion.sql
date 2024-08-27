@@ -16,7 +16,7 @@ CREATE OR ALTER VIEW Inventario.v_Articulo_Transaccion WITH SCHEMABINDING AS (
 		  ,dt.precioUnitario
           ,dt.total
 		  ,IIF(tt.codigo =  'E' OR tt.codigo = 'A',dt.cantidad,0)            as cantidadEntrada 
-		  ,IIF(tt.codigo =  'S',dt.cantidad,0) as cantidadSalida 
+		  ,IIF(tt.codigo =  'S',dt.cantidad,0)                               as cantidadSalida 
           ,IIF(tt.codigo =  'E' OR tt.codigo = 'A',dt.cantidadTransaccion,0) as stockEntrada 
 		  ,IIF(tt.codigo =  'S',dt.cantidadTransaccion,0)                    as stockSalida 
           ,cantidadTransaccion

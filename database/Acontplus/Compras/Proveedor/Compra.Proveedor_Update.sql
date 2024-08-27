@@ -20,56 +20,106 @@ BEGIN
 	
     --> Global
     DECLARE @idUsuario INT
-    
-    --> Proveedor
-    DECLARE @nombreFiscal VARCHAR(100) ,@nombreComercial VARCHAR(100) ,@direccion VARCHAR (100),@telefono VARCHAR(300)
-	       ,@correo VARCHAR(90) ,@idTipoClienteProveedor INT ,@idTipoEntidad INT ,@idCiudad INT ,@idSubContribuyente INT 
-	       ,@idTiempoCredito INT ,@estado BIT ,@validationSri BIT
+
+    --> Data Cliente
+    DECLARE @IDType VARCHAR(10) ,@idTipoIdentificacion INT ,@numeroIdentificacion NVARCHAR(15) ,@customerId INT ,@nombreFiscal VARCHAR(300) ,@nombreComercial VARCHAR(300)
+
+    DECLARE @tbProveedor AS TABLE
+    (
+         id INT NOT NULL
+        ,idCiudad INT NULL
+        ,idTipoIdentificacion INT NOT NULL
+        ,idTipoClienteProveedor INT NULL
+        ,idTipoEntidad INT NULL
+        ,idSubContribuyente INT NULL
+        ,idTiempoCredito INT NULL
+        ,numeroIdentificacion VARCHAR(20) UNIQUE NOT NULL
+        ,nombreFiscal VARCHAR(300) NOT NULL
+        ,nombreComercial VARCHAR(300) NOT NULL
+        ,direccion VARCHAR(300) NULL
+        ,telefono VARCHAR(300) NULL
+        ,correo VARCHAR(300) NULL
+        ,validationSri BIT NOT NULL
+        ,estado BIT NOT NULL
+    )
+
 
 	BEGIN TRY 
         
-        SELECT @idCiudad               = idCiudad
-              ,@idTipoClienteProveedor = idTipoClienteProveedor
-              ,@idTipoEntidad          = idTipoEntidad
-              ,@idSubContribuyente     = idSubContribuyente
-              ,@idTiempoCredito        = idTiempoCredito
-              ,@nombreFiscal           = nombreFiscal
-              ,@nombreComercial        = nombreComercial
-              ,@direccion              = direccion
-              ,@telefono               = telefono
-              ,@correo                 = correo
-              ,@validationSri          = validationSri
-              ,@estado                 = estado
+        INSERT INTO @tbProveedor
+               (id,idCiudad,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,validationSri)
+        SELECT @id,idCiudad,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,validationSri
         FROM OPENJSON(@json) WITH
         (
-             idCiudad                     INT '$.idCiudad'
-            ,idTipoClienteProveedor       INT '$.idTipoClienteProveedor'
-            ,idTipoEntidad                INT '$.idTipoEntidad'
-            ,idSubContribuyente           INT '$.idSubContribuyente' 
-            ,idTiempoCredito              INT '$.idTiempoCredito'
-            ,nombreFiscal        VARCHAR(300) '$.nombreFiscal' 
-            ,nombreComercial     VARCHAR(300) '$.nombreComercial' 
-            ,direccion           VARCHAR(300) '$.direccion' 
-            ,telefono            VARCHAR(300) '$.telefono' 
-            ,correo              VARCHAR(300) '$.correo' 
-            ,validationSri                BIT '$.validationSri'
-            ,estado                       BIT '$.estado'
-        )
+            idCiudad                     INT '$.idCiudad'
+           ,idTipoIdentificacion         INT '$.idTipoIdentificacion' 
+           ,idTipoClienteProveedor       INT '$.idTipoClienteProveedor'
+           ,idTipoEntidad                INT '$.idTipoEntidad'
+           ,idSubContribuyente           INT '$.idSubContribuyente' 
+           ,idTiempoCredito              INT '$.idTiempoCredito'
+           ,numeroIdentificacion VARCHAR(20) '$.numeroIdentificacion' 
+           ,nombreFiscal        VARCHAR(300) '$.nombreFiscal' 
+           ,nombreComercial     VARCHAR(300) '$.nombreComercial' 
+           ,direccion           VARCHAR(300) '$.direccion' 
+           ,telefono            VARCHAR(300) '$.telefono' 
+           ,correo              VARCHAR(300) '$.correo' 
+           ,validationSri                BIT '$.validationSri'
+        ) 
+
+        --> Recuperando Informacion
+        SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion 
+                    ,@numeroIdentificacion = LTRIM(RTRIM(numeroIdentificacion)) 
+                    ,@nombreComercial      = LTRIM(RTRIM(nombreComercial)) 
+                    ,@nombreFiscal         = LTRIM(RTRIM(nombreFiscal)) 
+        FROM @tbProveedor 
+
+        --> Validacion de informacion 
+        IF NOT EXISTS(SELECT 1 FROM @tbProveedor) 
+            BEGIN
+                SELECT [Common].[ufnSpResponse]('0','Error en la info del proveedor', DEFAULT)
+                RETURN
+            END
 
 		BEGIN TRAN 
-			UPDATE Proveedor SET 
-				 idCiudad               = @idCiudad
-				,nombreFiscal           = LTRIM(RTRIM(@nombreFiscal))
-				,nombreComercial        = LTRIM(RTRIM(@nombreComercial))
-				,direccion              = @direccion
-				,telefono               = @telefono
-				,correo                 = @correo
-				,idTipoClienteProveedor = @idTipoClienteProveedor
-				,idTipoEntidad          = @idTipoEntidad
-				,idSubContribuyente     = @idSubContribuyente
-				,idTiempoCredito        = @idTiempoCredito
-				,estado                 = @estado
-				,validationSri          = @validationSri
+            
+            IF EXISTS (SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @numeroIdentificacion)
+				BEGIN
+					SELECT TOP 1 @customerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @numeroIdentificacion 
+
+                    UPDATE Customer.Customer WITH (ROWLOCK) 
+                        SET BusinessName = LTRIM(RTRIM(@nombreFiscal)) 
+                           ,TradeName    = LTRIM(RTRIM(@nombreComercial))
+                    WHERE Id = @customerId
+
+				END
+            ELSE
+				BEGIN
+					SELECT TOP 1 @IDType = codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion
+
+					INSERT INTO Customer.Customer WITH (ROWLOCK)
+                           (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation)
+					SELECT @IDType,LTRIM(RTRIM(numeroIdentificacion)), LTRIM(RTRIM(nombreFiscal)), LTRIM(RTRIM(nombreComercial)), LTRIM(RTRIM(correo)),LTRIM(RTRIM(telefono)),LTRIM(RTRIM(direccion)),validationSri
+					FROM @tbProveedor
+
+                    SET @customerId = @@IDENTITY
+				END
+
+			UPDATE pr SET 
+				   pr.idCiudad               = tp.idCiudad
+				  ,pr.nombreFiscal           = LTRIM(RTRIM(tp.nombreFiscal))
+				  ,pr.nombreComercial        = LTRIM(RTRIM(tp.nombreComercial))
+				  ,pr.direccion              = tp.direccion
+				  ,pr.telefono               = tp.telefono
+				  ,pr.correo                 = tp.correo
+				  ,pr.idTipoClienteProveedor = tp.idTipoClienteProveedor
+				  ,pr.idTipoEntidad          = tp.idTipoEntidad
+				  ,pr.idSubContribuyente     = tp.idSubContribuyente
+				  ,pr.idTiempoCredito        = tp.idTiempoCredito
+				  ,pr.estado                 = tp.estado
+				  ,pr.validationSri          = tp.validationSri
+                  ,pr.CustomerId             = @customerId
+            FROM dbo.Proveedor      pr WITH (ROWLOCK)
+            INNER JOIN @tbProveedor tp ON tp.id = pr.idProveedor 
 			WHERE idProveedor = @id 
 
 		COMMIT TRAN 

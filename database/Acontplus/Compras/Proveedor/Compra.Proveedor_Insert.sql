@@ -25,6 +25,7 @@ BEGIN
     --> Customer
     DECLARE @IDType VARCHAR(2) ,@customerId INT ,@numeroIdentificacion VARCHAR(15) ,@idTipoIdentificacion INT
 
+
     DECLARE @tbProveedor AS TABLE
     (
          idCiudad INT NULL
