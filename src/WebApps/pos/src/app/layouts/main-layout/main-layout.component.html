@@ -5,7 +5,7 @@
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
       @for (item of rootRoutes; track $index) {
-      <a mat-list-item [routerLink]="item.path" #link="routerLinkActive" routerLinkActive [activated]="link.isActive">
+      <a mat-list-item [routerLink]="item.path" #link="routerLinkActive"  routerLinkActive [activated]="link.isActive">
         {{ item.title }}
       </a>
       }

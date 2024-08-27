@@ -15,6 +15,7 @@ import { Component, computed, inject, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ToUpperCaseDirective } from '@/directives/to-upper-case.directive';
+import { generateUuidv4 } from '@/core/utils/generate-uuidv4';
 
 const messageSave: { [key: string]: string } = {
   [DOC_TYPE.FV]: `
@@ -172,9 +173,10 @@ export class CartFooterComponent {
       order.customerCompanyId = 0;
       order.orderId = 0;
       order.tableDesc = null;
+      order.uuid = generateUuidv4()
       return {
         ...e,
-        order,
+        order: order,
         orderItems: []
       }
     })

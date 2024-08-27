@@ -40,6 +40,7 @@
             ],
             "styles": [
               "public/lib/vanilla-daterange/vanilla-datetimerange-picker.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.scss"
             ],
             "scripts": [

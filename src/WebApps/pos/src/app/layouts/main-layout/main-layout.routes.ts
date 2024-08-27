@@ -28,6 +28,10 @@ export const routes: Routes = [
         loadComponent: () =>
           import('@/pages/company-customer/company-customer.component').then((c) => c.CompanyCustomerComponent),
       },
+      // {
+      //   path: '**',
+      //   redirectTo: 'dashboard',
+      // },
     ],
   },
   {
@@ -36,9 +40,10 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        title: 'Pos', 
+        title: 'Pos',
         loadComponent: () => import('@/pages/pos-page/pos-page.component').then(m => m.PosPageComponent),
       },
     ]
   },
+
 ]

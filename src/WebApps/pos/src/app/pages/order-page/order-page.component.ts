@@ -6,13 +6,12 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
-import { CustomTableContainerComponent } from "@core/components/custom-table-container/custom-table-container.component";
 import { Pagination } from "@/models/pagination.model";
 import { MatSelectModule } from "@angular/material/select";
 import {
   CompanyCustomerSearchComponent
 } from "@/pages/company-customer/components/company-customer-search/company-customer-search.component";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule  } from "@angular/forms";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { OrderService } from "@/services/order.service";
 import { OrderRead } from "@/models/order.model";
@@ -95,7 +94,6 @@ export class OrderPageComponent {
       error: () => this.isLoadingResults = false,
       complete: () => {
         this.isLoadingResults = false
-        console.log(this.isLoadingResults)
       }
     })
   }
