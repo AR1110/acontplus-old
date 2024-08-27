@@ -1,4 +1,4 @@
-DECLARE @uuid UNIQUEIDENTIFIER = '159BC280-7E35-490A-9E9A-FDC1F116AD84'
+DECLARE @uuid UNIQUEIDENTIFIER = '9D57F4EB-C708-4171-8018-042628EC0483'
 
 DELETE pea FROM Acontplus.Config.PtoEmi_Asig pea WITH (ROWLOCK)
 INNER JOIN  Acontplus.dbo.PuntoEmision pe WITH (NOLOCK) ON pea.idPuntoEmision = pe.idPuntoEmision
@@ -43,9 +43,7 @@ DELETE ur FROM Acontplus.App.UsuarioRol ur WITH (ROWLOCK)
 INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad 
 WHERE e.Uuid = @uuid
 
-DELETE u FROM Acontplus.dbo.Usuario u WITH (ROWLOCK)
-    INNER JOIN AcontplusDemo.Demo.UserCustomer uc WITH(NOLOCK) ON u.nombreUsuario = uc.Username
-WHERE uc.Uuid = @uuid
+
  
 DELETE s FROM Acontplus.Config.Sistema s WITH (ROWLOCK)
 INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON s.idEntidad = e.idEntidad
@@ -76,13 +74,32 @@ INNER JOIN Acontplus.Sri.Establecimiento e  WITH (NOLOCK) ON b.codEstab = e.codE
 INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
 WHERE en.Uuid = @uuid
 
-
-
 DELETE e FROM Acontplus.Sri.Establecimiento e WITH (ROWLOCK)  
 INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
 WHERE en.Uuid = @uuid
+ 
+ DELETE c FROM 
+Acontplus.dbo.Medida c  
+inner join Acontplus.dbo.Entidad e on c.idEntidad = e.identidad WHERE e.Uuid = @uuid
+ 
 
+ DELETE ac FROM Acontplus.dbo.asignacioncaja ac inner join
+Acontplus.dbo.caja c  on ac.idcaja = c.idCaja
+inner join Acontplus.dbo.Entidad e on c.idEntidad = e.identidad WHERE e.Uuid = @uuid
+ 
+
+DELETE c FROM 
+Acontplus.dbo.caja c  
+inner join Acontplus.dbo.Entidad e on c.idEntidad = e.identidad WHERE e.Uuid = @uuid
+ 
+
+DELETE t FROM Acontplus.dbo.turno t inner join Acontplus.dbo.Entidad e on t.idEntidad = e.identidad WHERE e.Uuid = @uuid
+ 
 DELETE FROM Acontplus.dbo.Entidad WHERE Uuid = @uuid
+
+DELETE u FROM Acontplus.dbo.Usuario u WITH (ROWLOCK)
+    INNER JOIN AcontplusDemo.Demo.UserCustomer uc WITH(NOLOCK) ON u.nombreUsuario = uc.Username
+WHERE uc.Uuid = @uuid
 
 DELETE FROM AcontplusDemo.Demo.UserCustomer WHERE uuid = @uuid
 
