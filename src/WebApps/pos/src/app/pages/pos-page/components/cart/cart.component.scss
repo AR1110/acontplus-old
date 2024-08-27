@@ -1,0 +1,177 @@
+.container-cart {
+  //background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(233, 221, 255, 0.75);
+  border-radius:20px;
+  display: block;
+  padding-right: 2.125em;
+  position: relative;
+
+}
+
+.cart-loader-overlay {
+  background-color: rgba(255, 255, 255, 0.8);
+  /* Color de borde con un tono morado claro, semi-transparente */
+  border-radius: 20px;
+  /* Bordes redondeados con un radio de 20px */
+  z-index: 10;
+  /* Control de la superposición en relación a otros elementos */
+  pointer-events: none;
+  /* Deshabilita la interacción del puntero para este elemento */
+}
+
+.img-cart {
+  background: rgba(0, 0, 0, 0.2);
+  width: 100%; /* Make image responsive to the container */
+  max-width: 100px; /* Limit the maximum size of the image */
+  height: 100px; /* Maintain aspect ratio */
+  border-radius: 50%; /* Make the image circular */
+  object-fit: cover; /* Cover the container while preserving aspect ratio */
+}
+
+@media (max-width: 768px) {
+  .img-cart {
+    max-width: 80px; /* Ajuste de tamaño máximo para pantallas más pequeñas */
+    height: 80px; /* Ajustar la altura para mantener la proporción */
+  }
+}
+
+@media (max-width: 480px) {
+  .img-cart {
+    max-width: 50px; /* Tamaño máximo para pantallas muy pequeñas */
+    height: 50px; /* Ajustar la altura para mantener la proporción */
+  }
+}
+
+.price {
+  font-size: 0.9rem;
+}
+.price-small {
+  font-size: 0.85rem;
+}
+
+
+
+//=======================INICIO BOTONES DE CANTIDAD========================
+.custom-btn-qty {
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.custom-btn-qty:hover {
+  background-color: #e2e6ea;
+}
+
+.custom-btn-decrease {
+  color: #dc3545;
+}
+
+.custom-btn-increase {
+  color: #28a745;
+}
+
+
+.custom-input-quantity {
+  width: 50px;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  border-radius: 5px;
+  font-size: 1rem;
+  outline: none;
+  border-color: transparent;
+}
+
+.custom-input-quantity:focus {
+  box-shadow: none;
+}
+
+/* Ajustes para pantallas más pequeñas */
+@media (max-width: 600px) {
+  .custom-input-quantity {
+    width: 60px;
+  }
+}
+
+@media (max-width: 400px) {
+  .custom-input-quantity {
+    width: 50px;
+  }
+}
+//=======================INICIO BOTONES DE CANTIDAD========================
+
+
+
+//=====================BUTTON LEFT =================
+//.btn-more-details {
+//  background: transparent;
+//  border: solid 1px #bbb;
+//  border-radius:20px;
+//  bottom: 0.125em;
+//  display: block;
+//  font-size: 150%;
+//  padding: 0.125em 0;
+//  position: absolute;
+//  top: 0.125em;
+// right:0;
+//  width: 1em;
+//  z-index: 1;
+//}
+//
+//
+//.btn-more-details:hover {
+//  background: white;
+//  opacity: 0.6;
+//  cursor: pointer;
+//}
+//
+//.btn-more-details.open {
+//  background: white;
+//}
+
+//=========================BOTONES LADO IZQUIERDO ELIMINAR Y VER MAS DETALLE
+
+.btn-group-vertical-custom {
+  display: inline-flex;
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+  height: 100%;
+  z-index: 1;
+}
+
+.btn-custom {
+  background: transparent;
+  border: solid 1px #bbb;
+  font-size: 100%;
+  width: 2em;
+  text-align: center;
+  flex: 1;
+}
+
+/* Botón de eliminar */
+.btn-delete-custom {
+  border-color:rgb(213, 77, 98);
+  color: #fff;
+  background: rgb(213 77 98);
+  border-radius: 0px 20px 0 0;
+}
+
+.btn-delete-custom:hover {
+  opacity: 0.8;
+}
+
+/*Boton ver información*/
+.btn-info-custom {
+  border-color: #ffbd67;
+  background: #ffbd67;
+  border-radius: 0 0 20px 0px;
+}
+
+.btn-info-custom:hover {
+  opacity: 0.8;
+}

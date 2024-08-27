@@ -1,0 +1,62 @@
+mat-card {
+  max-width: 300px;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  /* Fondo blanco para el card */
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.display {
+  font-size: 2em;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #e0e0e0;
+  text-align: right;
+  border-radius: 5px;
+  color: #333;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+button {
+  padding: 20px;
+  font-size: 1.2em;
+  border-radius: 5px;
+  color: #fff;
+  /* Color de texto blanco */
+}
+
+button.value-money {
+  background-color: #ba005c;
+  color: #fff;
+}
+
+button.value-money:hover {
+  background-color: #a00050;
+  color: #f0f0f0;
+}
+
+button.value-money:focus {
+  background-color: #8a0044;
+  color: #e0e0e0;
+ // outline: none;
+  box-shadow: 0 0 0 3px rgba(186, 0, 92, 0.5);
+}
+
+button.mat-button.color-warn {
+  background-color: #e53935;
+}
+
+button.mat-button.color-warn:hover {
+  background-color: #d32f2f;
+}
+
+
+.full-width {
+  grid-column: span 3;
+}

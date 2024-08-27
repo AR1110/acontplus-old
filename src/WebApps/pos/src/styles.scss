@@ -1,0 +1,286 @@
+@use "@angular/material" as mat;
+@use "./m3-theme";
+@use "./app/layouts/layout-component.theme";
+//@import "bootstrap/dist/css/bootstrap.css";
+//@import "bootstrap/scss/bootstrap-grid";
+@import "ngx-toastr/toastr";
+
+
+// Import all of Bootstrap's CSS
+
+@include mat.core();
+
+$angular-material-3-light-theme: mat.define-theme((color: (theme-type: light,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      density: (scale: 0,
+      ),
+    ));
+
+$angular-material-3-dark-theme: mat.define-theme((color: (theme-type: dark,
+        primary: mat.$magenta-palette,
+        tertiary: mat.$violet-palette,
+      ),
+      density: (scale: 0,
+      ),
+    ));
+
+// Light theme
+// Un comment below to use theme created by ng add @angular-material
+// $theme: $angular-material-3-light-theme;
+
+// Light Theme created by ng generate @angular-material:m3-theme
+$theme: m3-theme.$light-theme;
+
+// Dark theme
+// Un-comment below to use dark theme using @angular/material
+// $dark-theme: $angular-material-3-dark-theme;
+
+// Dark Theme created by ng generate @angular-material:m3-theme
+$dark-theme: m3-theme.$dark-theme;
+
+$danger-color: #d32f2f;
+$error-color: #f44336;
+$warning-color: #ffa000;
+$success-color: #4caf50;
+
+$button-padding: 8px 16px;
+$button-border-radius: 4px;
+$button-font-size: 14px;
+$button-font-weight: 500;
+
+:root {
+  @include mat.all-component-themes($theme);
+
+  // Components themes
+  @include layout-component.theme($theme);
+
+  // Add backwards compatibility styles for color variants
+  @include mat.color-variants-backwards-compatibility($theme);
+
+  @media (prefers-color-scheme: light) {
+    @include mat.all-component-colors($dark-theme);
+
+    // Components themes
+    @include layout-component.theme($dark-theme);
+
+    @include mat.color-variants-backwards-compatibility($dark-theme);
+  }
+
+  --pink: #d61672 ;
+}
+// Define a mixin to create custom button styles
+@mixin custom-button($color) {
+  background-color: $color;
+  color: #fff;
+  padding: $button-padding;
+  border-radius: $button-border-radius;
+  font-size: $button-font-size;
+  font-weight: $button-font-weight;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+
+  &:hover {
+    background-color: darken($color, 10%);
+  }
+
+  &:active {
+    background-color: darken($color, 20%);
+  }
+
+  &:disabled {
+    background-color: lighten($color, 30%);
+    cursor: not-allowed;
+  }
+}
+
+// Create specific button classes for each state
+.danger-button {
+  @include custom-button($danger-color);
+}
+
+.error-button {
+  @include custom-button($error-color);
+}
+
+.warning-button {
+  @include custom-button($warning-color);
+}
+
+.success-button {
+  @include custom-button($success-color);
+}
+ html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.swal2-shown {
+    overflow: unset !important;
+    padding-right: 0px !important;
+}
+
+// styles.scss
+// Estilos para .form-group de Bootstrap 5
+
+.m3-input-full-width{
+  width: 100%;
+}
+
+.shipping-card {
+  min-width: 120px;
+ // margin: 8px auto;
+}
+
+
+
+// Estilos base para los badges
+/* Estilos base para los badges */
+.c-badge {
+  display: inline-block;
+  padding: 0.5em 1em;
+  font-size: 0.875em;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+  color: #fff;
+}
+
+/* Estilos contextuales para los badges */
+.c-badge-success {
+  background-color: #28a745;
+}
+
+.c-badge-danger {
+  background-color: #dc3545;
+}
+
+.c-badge-info {
+  background-color: #17a2b8;
+}
+
+.c-badge-warning {
+  background-color: #ffc107;
+}
+
+/* Estilos para el badge pequeño */
+.c-badge-small {
+  padding: 0.25em 0.5em;
+  font-size: 0.75em;
+}
+
+
+.row{
+  //--bs-gutter-x: 0.0rem;
+//margin-right: 0px;
+
+}
+
+
+.custom-input {
+  margin-left: 1rem;
+  flex: 1;
+  font-size: 1.2rem;
+  height: calc(1.1em + 0.75rem + 2px);
+  border: 1px solid #00000038;
+  border-radius: 4px;
+  outline: none;
+  padding: 0.375rem 0.75rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.custom-input.fixed-wd {
+  width: 100px; /* Ancho definido */
+}
+
+.custom-input.full-wd{
+  width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+
+.custom-row-primary {
+  background-color: #cce5ff; /* Azul claro */
+  color: #004085;           /* Texto azul oscuro */
+}
+
+.custom-row-warning {
+  background-color: #fff3cd; /* Amarillo claro */
+  color: #856404;           /* Texto marrón oscuro */
+}
+
+.custom-row-danger {
+  background-color: #f8d7da !important; /* Rojo claro */
+  color: #721c24;           /* Texto rojo oscuro */
+}
+
+
+//start loader
+/*Loader */
+.loading {
+  display: inline-block;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.positionLoading {
+  position: fixed;
+  right: 0rem;
+  top: 0rem;
+  left: 0rem;
+  bottom: 0rem;
+  z-index: 2147483647;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+.spinner,
+.spinner:after {
+  width: 150px;
+  height: 150px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -75px;
+  margin-left: -75px;
+  /*margin: 100%;*/
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.spinner {
+  background-color: transparent;
+  border-top: 10px solid #d61672;
+  border-right: 10px solid #d61672;
+  border-bottom: 10px solid #d61672;
+  border-left: 10px solid rgba(255, 255, 255, 1);
+  transform: translateZ(0);
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 0.8s;
+  animation-name: spinner-loading;
+}
+
+@keyframes spinner-loading {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(1turn);
+  }
+}
+//end loader

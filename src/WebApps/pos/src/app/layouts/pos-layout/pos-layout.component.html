@@ -1,0 +1,33 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="navigateDashboard()">
+        <mat-icon aria-label="Side nav toggle icon">arrow_back</mat-icon>
+      </button>
+      <span class="navbar-spacer"></span>
+      <app-nav-user-info-toggle />
+      <button mat-icon-button aria-label="pedidos" (click)="openOrderListModal()">
+        <mat-icon>av_timer</mat-icon>
+      </button>
+
+      <button [matBadge]="totalOrderItems()" mat-icon-button aria-label="total" cdkOverlayOrigin
+        #trigger="cdkOverlayOrigin" (click)="isOverlayOpen.set(!isOverlayOpen())">
+        <mat-icon>add_shopping_cart</mat-icon>
+      </button>
+    </mat-toolbar>
+    <div class="sidenav-scroll-wrapper">
+      <div class=" ">
+        <router-outlet />
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="isOverlayOpen()"
+  hasBackdrop="true">
+  <div class="overlay-content">
+
+    <app-cart-popup />
+  </div>
+</ng-template>
