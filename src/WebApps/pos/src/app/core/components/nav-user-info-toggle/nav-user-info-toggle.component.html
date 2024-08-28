@@ -1,0 +1,51 @@
+<div class="d-flex flex-row justify-content-center align-items-center" cdkOverlayOrigin #trigger="cdkOverlayOrigin"
+  (click)="isOverlayOpen.set(true)" [class.open]="isOverlayOpen()">
+  <div class="d-flex flex-column justify-content-center align-items-center">
+    <span class="user-status text-truncate">{{ entidadName() }}</span>
+    <div class="estab-name text-truncate">
+      {{ estabName()}}
+    </div>
+  </div>
+  <div class="align-self-center">
+    <mat-icon>arrow_drop_down</mat-icon>
+  </div>
+</div>
+
+
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="isOverlayOpen()"
+  hasBackdrop="true" (overlayOutsideClick)="isOverlayOpen.set(false)">
+  <div class="overlay-content">
+    <div class="form-group">
+      <label class="small">Establecimiento</label>
+      <div class="form-control-wrap">
+        <select class="form-select form-select-sm" [(ngModel)]="data().establecimientoId" disabled>
+          @for(item of estabs();track $index){
+          <option [ngValue]="item.idEstablecimiento">{{item.name}}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="small">Punto Emisión</label>
+      <div class="form-control-wrap">
+        <select class="form-select form-select-sm" [(ngModel)]="data().puntoEmisionId" disabled>
+          @for(item of puntosEmision();track $index){
+          <option [ngValue]="item.idPuntoEmision">{{item.ptoEmi}}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="small">Bodega</label>
+      <div class="form-control-wrap">
+        <select class="form-select form-select-sm" [(ngModel)]="data().bodegaId" disabled>
+          @for(item of bodegas();track $index){
+          <option [ngValue]="item.idBodega">{{item.descripcion}}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+</ng-template>

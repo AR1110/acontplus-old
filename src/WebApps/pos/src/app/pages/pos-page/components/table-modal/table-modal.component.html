@@ -1,0 +1,68 @@
+<app-custom-container-dialog [containerTemplate]="containerTemplate" [actionsTemplate]="actionsTemplate"
+  [matDialogTitle]="'Seleccionar Mesa'" (close)="closeDialog()" />
+
+<ng-template #containerTemplate>
+
+  <dl class="tree">
+    @for(node of roomTables();track $index){
+    <div class="tree-node">
+      <dt class="tree-header d-flex flex-row align-items-center">
+
+        <button mat-icon-button (click)="toggleNode(node)">
+          @if(node.expanded){
+          <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="keyboard_arrow_down"></mat-icon>
+          }@else {
+
+          <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="keyboard_arrow_right"></mat-icon>
+          }
+        </button>
+        <div class="d-flex flex-row gap-1">
+          <span class="node-label" [ngStyle]="{
+            'background-color': getColorForFloor(node.floorName),
+            'border-radius': '8px',
+            'padding': '2px 6px'
+          }">{{node.floorName}}</span>
+          <span class="node-label">-</span>
+          <span class="node-label">{{node.roomName}}</span>
+        </div>
+      </dt>
+
+      @if(node.expanded){
+      <dd class="tree-children">
+        <div class="button-grid">
+          @for(table of node.tables;track table.id){
+          <button class="button-card" [ngClass]="{'selected': table.assigned || (selectedOption() === table.id)}"
+            (click)="selectOption(table, node.roomName)">
+            <!-- <button class="delete-btn"  >
+              ×
+            </button> -->
+            @if(table.assigned || (selectedOption() === table.id)){
+            <button class="success-btn">
+              &#10004;
+            </button>
+            }
+            <div class="button-content">
+              <span class="button-number">{{table.numberTable }}</span>
+              <span class="button-label">{{ table.description }}</span>
+            </div>
+          </button>
+          }
+        </div>
+
+      </dd>
+      }
+    </div>
+    }@empty {
+    <p>Cargando...</p>
+    }
+  </dl>
+
+
+
+</ng-template>
+
+<ng-template #actionsTemplate>
+
+  <button mat-raised-button (click)="closeDialog()">Cerrar</button>
+
+</ng-template>

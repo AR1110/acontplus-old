@@ -1,0 +1,72 @@
+<form [formGroup]="customerForm" (ngSubmit)="onSave()"  autocomplete="off">
+  <span mat-dialog-title>{{modalTitle}}</span>
+   
+  <mat-dialog-content class="mat-typography">
+    <mat-tab-group animationDuration="0ms">
+      <mat-tab label="General" >
+        <ng-template matTabContent  >
+           <div class="row gx-1 mt-4">
+             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+             
+                 <mat-form-field class="m3-input-full-width" appearance="outline">
+                   <mat-label>Tipo identificación</mat-label>
+                   <mat-select   formControlName="idTipoIdentificacion" >
+                     @for (item of tiposIdentificacion; track $index) { 
+                     <mat-option [value]="item.idTipoIdentificacion">
+                       {{ item.descripcion }}
+                     </mat-option>
+                     } 
+                   </mat-select>
+                 </mat-form-field> 
+               
+             </div>
+             <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+               <mat-form-field class="m3-input-full-width" appearance="outline">
+                 <mat-label>Número identificación</mat-label>
+                 <input matInput formControlName="numeroIdentificacion">
+            
+                 <mat-slide-toggle matSuffix style="margin-right: 10px;" (click)="onToggleSri($event)">SRI</mat-slide-toggle>
+               </mat-form-field>
+             </div>
+             
+             <div class="col-12">
+               <mat-form-field class="m3-input-full-width" appearance="outline">
+                 <mat-label>Nombre fiscal</mat-label>
+                 <input matInput formControlName="nombreFiscal">
+               </mat-form-field>
+             </div>
+             
+             <div class="col-12">
+               <mat-form-field class="m3-input-full-width" appearance="outline">
+                 <mat-label>Dirección</mat-label>
+                 <textarea matInput placeholder="Ex. 100 Main St" formControlName="direccion"></textarea>
+               </mat-form-field>
+             </div>
+             
+           </div>
+           <div class="row gx-1">
+           	<div class="col-xl-6 col-lg-6 col-md-12 col-12">
+               <app-m3-input-chip [chips]="emails" [labelText]="'Correo'"/>
+             </div>
+           	<div class="col-xl-6 col-lg-6 col-md-12 col-12">
+               <app-m3-input-chip [chips]="telefonos" [labelText]="'Teléfono'"/>
+             </div>
+           </div>
+          
+          
+          
+        </ng-template>
+        
+      </mat-tab>
+      <mat-tab label="Adicionales"> Adicionales </mat-tab> 
+    </mat-tab-group>
+    
+    
+  </mat-dialog-content>
+  
+  
+  <mat-dialog-actions align="end">
+    <button type="submit" mat-flat-button >{{btnText}}</button>
+    <button type="button" mat-raised-button mat-dialog-close>Cerrar</button> 
+  </mat-dialog-actions>
+</form>

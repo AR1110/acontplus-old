@@ -4,10 +4,8 @@ GO
 --- Date: 2023-08-15
 --- Description: Listado general de configuraciones para módulo de ventas - Restaurante.
 --- Restaurant.Configuration_Get 139, '{"codEstab":"ESTAB-000000117"}', ''
-IF OBJECT_ID(N'Restaurant.Configuration_Get', N'P') IS NOT NULL
-	DROP PROCEDURE Restaurant.Configuration_Get
-GO
-CREATE PROCEDURE Restaurant.Configuration_Get
+ 
+CREATE OR ALTER PROCEDURE Restaurant.Configuration_Get
 @userRoleId INT
 ,@json NVARCHAR(MAX)
 ,@tableNames NVARCHAR(MAX) OUTPUT
@@ -94,7 +92,8 @@ BEGIN
             ORDER BY sf.idSubFamilia DESC  
 
             SELECT * FROM Sri.Impuesto WITH (NOLOCK) 
-	        SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK)  
+	        SELECT i.idImpuesto, ti.idTarifaImpuesto, ti.codImpuesto, ti.codigo, ti.descripcion, ti.porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK)  
+            INNER JOIN Sri.Impuesto i WITH(NOLOCK) ON i.codigo = ti.codImpuesto 
 
              --CUSTOMER DEFAULT      
 	        SELECT 

@@ -35,9 +35,7 @@ BEGIN
     ,@puntoEmisionId        INT
     ,@userId                INT
     ,@codDoc                VARCHAR(2)
-    ,@fechaEmision          DATETIME2
-    ,@tax                   NUMERIC(18,5)
-    ,@taxPercent            NUMERIC(4,2)
+    ,@fechaEmision          DATETIME2 
     ,@discount              NUMERIC(18,5)
     ,@tip                   NUMERIC(18,5)
     ,@total                 NUMERIC(18,5)
@@ -115,8 +113,7 @@ BEGIN
     SELECT @establecimientoId   = establecimientoId
         ,@puntoEmisionId        = puntoEmisionId
         ,@customerCompanyId     = customerCompanyId
-        ,@subtotalSinImpuestos  = subtotalSinImpuestos
-        ,@tax                   = tax
+        ,@subtotalSinImpuestos  = subtotalSinImpuestos 
         ,@discount              = discount
         ,@tip                   = tip
         ,@total                 = total
@@ -131,9 +128,7 @@ BEGIN
         puntoEmisionId          INT             '$.puntoEmisionId',
         tableId                 INT             '$.tableId',        
         customerCompanyId       INT             '$.customerCompanyId',
-        subtotalSinImpuestos    NUMERIC(18,5)   '$.subtotalSinImpuestos',
-        tax                     NUMERIC(18,5)   '$.tax',
-        taxPercent              NUMERIC(4,2)    '$.taxPercent',
+        subtotalSinImpuestos    NUMERIC(18,5)   '$.subtotalSinImpuestos',  
         discount                NUMERIC(18,5)   '$.discount',
         tip                     NUMERIC(18,5)   '$.tip',
         total                   NUMERIC(18,5)   '$.total',
@@ -345,7 +340,7 @@ BEGIN
             SELECT TOP 1 @customerCompanyId = idCliente FROM v_Cliente WHERE codIdentSri = '07'
         END
 
-   SET @taxPercent = (SELECT porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK) INNER JOIN Restaurant.[Order] o WITH (NOLOCK) ON ti.idTarifaImpuesto = o.TaxPercentId WHERE o.Id = @orderId )
+  
     
     ---------- INSERT NEW ---------------
     INSERT INTO @FacturaDetalleInsert(idArticulo, idTarifa, idBodega, medidaId, ice, cantidad, precioUnitario, precioSinSubsidio    
