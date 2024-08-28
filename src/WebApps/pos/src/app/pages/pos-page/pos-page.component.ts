@@ -55,25 +55,23 @@ export class PosPageComponent {
   private configSvc = inject(ConfigService);
   private itemSvc = inject(ItemService);
 
+  selectedSubCategoryIndex  = 0;
   isPromotions = signal(false);
 
   subCategorias = signal<SubCategory[]>([{
     idSubFamilia: 0,
     codigo: "",
     descripcion: 'TODOS',
-    img: '',
   },
   {
     idSubFamilia: 0,
     codigo: CATEGORY_CODE.COM,
     descripcion: 'COMBOS',
-    img: ''
   },
     {
       idSubFamilia: 0,
       codigo: CATEGORY_CODE.PROM,
       descripcion: 'PROMOCIONES',
-      img: ''
     }
 ]);
   items = signal<ItemRead[]>([])

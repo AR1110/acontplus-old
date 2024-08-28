@@ -1,7 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PromotionsItemComponent } from './promotions-item/promotions-item.component';
+import { PromotionService } from '@/services/promotion.service';
+import { MainStoreService } from '@/store/main-store.service';
+import { PosStoreService } from '@/store/pos-store.service';
 
 @Component({
   selector: 'app-promotions',
@@ -15,6 +18,10 @@ import { PromotionsItemComponent } from './promotions-item/promotions-item.compo
   styleUrl: './promotions.component.scss'
 })
 export class PromotionsComponent {
+
+  private promotionSvc = inject(PromotionService)
+  private mainStoreSvc = inject(MainStoreService)
+  private posStoreSvc = inject(PosStoreService)
 
   promotions = signal([
     {
@@ -89,12 +96,40 @@ export class PromotionsComponent {
     }
   ])
 
+  setLoading(isLoading: boolean) {
+    this.posStoreSvc.state.update(e => ({
+      ...e,
+      isLoading
+    }))
+  }
+
+  private getPromotions() {
+    let params = {
+      codEstab: this.mainStoreSvc.state().codEstab
+    }
+    this.setLoading(true)
+    this.promotionSvc.getPromotions(params).subscribe({
+      next: response => {
+        this.setLoading(false)
+
+      },
+      error: err => {
+        this.setLoading(false)
+
+      }
+    })
+  }
+
+  ngOnInit(){
+    console.log('load prmotions')
+    this.getPromotions()
+  }
 
 
   toggleNode(node: any) {
     node.expanded = !node.expanded
-    this.promotions.update(e=>{
-      return e.map(item=>{
+    this.promotions.update(e => {
+      return e.map(item => {
         return {
           ...item,
           expanded: item.id === node.id && node.expanded

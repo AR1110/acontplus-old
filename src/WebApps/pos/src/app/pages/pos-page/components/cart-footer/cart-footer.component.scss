@@ -99,3 +99,14 @@
     /* Una columna en pantallas muy pequeñas */
   }
 }
+
+
+.auto-height-textarea {
+ // overflow: hidden;
+  resize: none;
+  /* Disable manual resize */
+  min-height: 50px;
+  /* Adjust based on initial content */
+  box-sizing: border-box;
+  /* Ensure padding/border is included in height */
+}

@@ -8,7 +8,15 @@
   </div>
   }
   <mat-card-header>
-    <mat-card-subtitle>Stock: {{item().stock}}</mat-card-subtitle>
+    <mat-card-subtitle>
+      Stock:
+      @if(item().stock<0){
+        <span class="badge text-bg-danger">{{item().stock}}</span>
+      }@else {
+        <span class="badge text-bg-success">{{item().stock}}</span>
+      }
+
+    </mat-card-subtitle>
 
     <!--<div class="addBtn">-->
     <!--  <span>Stock: {{item.stock}}</span>-->
@@ -46,7 +54,7 @@
       </div>
       }
 
-      <!-- <mat-card-subtitle class="price">{{ item().dataPvp.precioConIva | currency}}</mat-card-subtitle> -->
+      <mat-card-subtitle class="price">{{ item().dataPvp.precioConIva | currency}}</mat-card-subtitle>
     </div>
   </mat-card-actions>
 </mat-card>

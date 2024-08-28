@@ -1,4 +1,4 @@
-import {Component, inject, input, model, output} from '@angular/core';
+import {Component, inject, input, model, output, signal} from '@angular/core';
 import {debounceTime, distinctUntilChanged, Observable} from "rxjs";
 import {FormControl, ReactiveFormsModule} from "@angular/forms";
 import {catchError, map, startWith, switchMap, tap} from "rxjs/operators";
@@ -13,6 +13,9 @@ import {CompanyCustomerService} from "@/services/company-customer.service";
 import {isValidField} from "@core/utils/utils";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActionCompanyCustomerAddEditModalDirective } from '@/directives/action-company-customer-add-edit.directive';
+
+import { OverlayModule } from '@angular/cdk/overlay';
+import { MatCardModule } from '@angular/material/card';
 
 export interface State {
   flag: string;
@@ -32,7 +35,10 @@ export interface State {
     AsyncPipe,
     MatButtonModule,
     MatProgressSpinnerModule,
-    ActionCompanyCustomerAddEditModalDirective
+    OverlayModule,
+    MatCardModule,
+    ActionCompanyCustomerAddEditModalDirective,
+
   ],
   templateUrl: './company-customer-search.component.html',
   styleUrl: './company-customer-search.component.scss'
@@ -41,7 +47,7 @@ export class CompanyCustomerSearchComponent {
   isSimple = input(false);
   isAdvanced = input(false)
   id =input(0);
-  textName = model('')
+  textName = model<string | null | undefined>('')
   isApplyGetId = input(false)
   onSelect = output<any>()
   clearInput = output()
@@ -53,8 +59,12 @@ export class CompanyCustomerSearchComponent {
 
   isLoadingResults=false;
 
+  isOpenDetail = signal(false)
+
+  dataDetail = {} as any
+
   ngOnInit() {
-    
+
     this.filteredCustomers = this.control.valueChanges.pipe(
       startWith(''),
       debounceTime(100),
@@ -92,10 +102,25 @@ export class CompanyCustomerSearchComponent {
   onSelectionChange(item: CompanyCustomerSearch) {
     if(this.isApplyGetId()){
       this.companyCustomerSvc.getId(item.idCliente).subscribe(response=>{
-        this.onSelect.emit(response); 
+        this.onSelect.emit(response);
       })
     }else{
       this.onSelect.emit(item);
+    }
+  }
+
+  onClickOpenDetail($event:any){
+    $event.stopPropagation();
+    this.isOpenDetail.set(!this.isOpenDetail())
+
+    if (this.isOpenDetail()){
+      this.companyCustomerSvc.getId(this.id()).subscribe(response=>{
+        this.dataDetail = response;
+        console.log(response)
+      })
+
+    }else{
+      this.dataDetail = {}
     }
   }
 

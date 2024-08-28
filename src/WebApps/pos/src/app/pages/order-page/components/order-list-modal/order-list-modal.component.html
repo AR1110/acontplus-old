@@ -19,8 +19,15 @@
     </button>
   </div>
 
-  <app-order-list [isLoadingResults]="isLoadingResults" [pagination]="pagination"
-    (handlePageEvent)="handlePageEvent($event)" [dataSource]="data" [isFinished]="isFinished()" (refresh)="refresh()" />
+  <app-order-list
+  [isLoadingResults]="isLoadingResults"
+  [pagination]="pagination"
+    (handlePageEvent)="handlePageEvent($event)"
+    [dataSource]="data"
+    [isFinished]="isFinished()"
+    (refresh)="refresh()"
+    (onEdit)="onEdit($event)"
+     />
 </ng-template>
 
 <ng-template #actionsTemplate>

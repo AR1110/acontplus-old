@@ -1,7 +1,7 @@
 import { Order, OrderItem, OrderItemPostDB, OrderPostDB } from '@/models/order.model';
 import { Injectable } from '@angular/core';
 import { formatDate } from '@/core/utils/date.util';
-import { isValidField } from '@/core/utils/utils';
+import { imgDefault, isValidField } from '@/core/utils/utils';
 import { mergeMeasureFromAdapter } from "@/adapters/medida.adapter";
 import { plus } from '@/core/utils/decimal.util';
 import { DECIMALS } from '@/enums/main.enum';
@@ -143,7 +143,7 @@ export class OrderAdapter {
         descripcion: restOrderItem.descripcion,
         summary: restOrderItem.summary,
         code: restOrderItem.codigoArticulo,
-        img: restOrderItem.s3ObjectUrl,
+        img: restOrderItem.s3ObjectUrl || imgDefault,
         llevaInventario: restOrderItem.llevaInventario,
         precioConIva: restOrderItem.priceWithVat,
         pvps: dataMedida && dataMedida.pvps || [], // Asignar los datos de las tarifas obtenidos de data medida

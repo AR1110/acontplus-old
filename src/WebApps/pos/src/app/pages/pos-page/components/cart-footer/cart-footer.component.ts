@@ -52,6 +52,7 @@ export class CartFooterComponent {
   private total = 0;
 
   obs = computed(() => this.posStore.state().order?.obs)
+  orderId = computed(() => this.posStore.state().order?.orderId)
 
   htmlContentTotals = computed(() => {
     let dataTotals = this.calculateTotals();
@@ -234,6 +235,13 @@ export class CartFooterComponent {
         })
         return
       }
+      if (orderItems.some(i => !getValidId(i.quantity))) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'La cantidad de todos los items debe ser mayor a 0.'
+        })
+        return
+      }
 
       if (orderItems.some(i => !getValidId(i.bodegaId))) {
         this.tS.toastr({
@@ -257,6 +265,7 @@ export class CartFooterComponent {
         })
         return
       }
+
 
       if ((order.subtotalSinImpuestos <= 0)) {
         this.tS.toastr({
@@ -318,8 +327,7 @@ export class CartFooterComponent {
                 html: response.message,
                 timer: 1000
               })
-
-
+              this.clean();
 
             }
           },

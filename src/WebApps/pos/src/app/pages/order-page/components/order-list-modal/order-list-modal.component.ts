@@ -14,6 +14,8 @@ import { PageEvent } from '@angular/material/paginator';
 import { OrderListComponent } from '../order-list/order-list.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FormsModule } from '@angular/forms';
+import { PosStoreService } from '@/store/pos-store.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-order-list-modal',
@@ -32,6 +34,7 @@ import { FormsModule } from '@angular/forms';
 export class OrderListModalComponent {
   readonly dialogRef = inject(MatDialogRef<OrderListModalComponent>);
   private mainStoreSvc = inject(MainStoreService)
+  private posStoreSvc = inject(PosStoreService)
   private orderSvc = inject(OrderService)
   data: OrderRead[] = [];
 
@@ -80,7 +83,7 @@ export class OrderListModalComponent {
   refresh() {
     this.getOrders()
   }
-  ngOnInit(){
+  ngOnInit() {
     this.getOrders()
   }
 
@@ -101,16 +104,45 @@ export class OrderListModalComponent {
     this.refresh()
   }
 
-  onEdit(data: OrderRead){
 
+  private fetchDataToEdit(data: OrderRead){
     this.orderSvc.getId(data.id).subscribe({
-      next: response=>{
-        console.log(response)
+      next: response => {
+        this.posStoreSvc.state.update(state => ({
+          ...state,
+          order: response.order,
+          orderItems: response.order.items
+        }));
+        this.dialogRef.close()
       },
-      error: (err)=>{
-        console.log()
+      error: err => {
+        console.error('Error fetching order:', err);
       }
-    })
+    });
+  }
+
+  async onEdit(data: OrderRead): Promise<void> {
+    try {
+      if (this.posStoreSvc.state().orderItems.length > 0) {
+        const {isConfirmed} = await Swal.fire({
+          title: '¿Editar Orden?',
+          text: 'Tiene un pedido en proceso. ¿Desea continuar?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sí',
+          cancelButtonText: 'No'
+        });
+        if(isConfirmed){
+          this.fetchDataToEdit(data);
+        }
+      }else{
+        this.fetchDataToEdit(data);
+      }
+    } catch (error) {
+      console.error('An unexpected error occurred:', error);
+    }
   }
 
   closeDialog() {
