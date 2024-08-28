@@ -34,7 +34,6 @@ export class ConfigService {
         }
         if (response.code === "1") {
           let { puntosEmision, bodegas } = JSON.parse(response.payload as string)
-          console.log(JSON.parse(response.payload as string))
           let obj = {
             puntosEmisionEstab: puntosEmision,
             bodegasEstab: bodegas,

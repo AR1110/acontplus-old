@@ -1,0 +1,42 @@
+<app-custom-container-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [matDialogTitle]="'Establecimientos'"
+  (close)="closeDialog()"
+/>
+
+
+<ng-template #containerTemplate>
+  <div class="m-2">
+    <mat-accordion>
+      @for(item of multipleEstabs();track $index){
+      <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{item.IDCardCompany }}</mat-panel-title>
+          <mat-panel-description>
+            {{item.businessName }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="mx-1">
+          @for(estab of item.establecimientos;track $index){
+          <div class="list-group">
+            <button type="button" (click)="onSelect(estab)" class="list-group-item list-group-item-action" aria-current="true">
+              <div class="vstack gap-1">
+                <div><strong>Nro. Estab.:</strong> {{estab.estab}}</div>
+                <div><strong>Nombre Comercial:</strong> {{estab.nombreComercial}}</div>
+              </div>
+            </button>
+          
+          </div> 
+          }
+        </div> 
+      </mat-expansion-panel>
+      }
+    </mat-accordion>
+  </div>
+
+</ng-template>
+<ng-template #actionsTemplate>
+  <button mat-raised-button (click)="closeDialog()">Cerrar</button>
+</ng-template>
+
