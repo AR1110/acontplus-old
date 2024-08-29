@@ -1,3 +1,4 @@
 export const environment = {
-  API_URL: 'https://acontplus.com',
+  production: false,
+  API_URL: 'https://localhost:7060',
 };

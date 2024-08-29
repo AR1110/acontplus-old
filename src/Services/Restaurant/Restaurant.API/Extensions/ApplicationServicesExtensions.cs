@@ -1,11 +1,6 @@
-﻿using Common.Application.Services;
-using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
+﻿using Common.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.API.Data;
-using Restaurant.API.Interfaces;
-using Restaurant.API.Services;
 using Scrutor;
 
 
@@ -20,7 +15,7 @@ namespace Restaurant.API.Extensions
             
             services.Scan(scan => scan
                 .FromApplicationDependencies()
-                .AddClasses(classes => classes.InNamespaces("Restaurant.API.Services"))
+                .AddClasses(classes => classes.InNamespaces("Restaurant.API.Services", "Common.Application.Services"))
                 .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                 .AsImplementedInterfaces()
                 .WithTransientLifetime()
