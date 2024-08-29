@@ -6,9 +6,7 @@ AS
     SELECT cd.[idConfiguracionDocumento]
           ,cd.[idPuntoEmision]
           ,cd.[idTipoDocumento]
-          ,cd.[generacionNro]
           ,cd.[ultimaSecuencia]
-          ,cd.[codigoAmbiente]
           ,cd.[estado]
           ,cd.[fechaRegistro]
           ,cd.ultimaSecuencia as secuencial 
