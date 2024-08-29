@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { MatTab, MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
 import { MatCard } from '@angular/material/card';
 import { TablePageComponent } from '@restaurant/pages/table-page/table-page.component';
 import { RoomListComponent } from '@restaurant/infrastructure/room/room-list/room-list.component';
@@ -21,4 +21,14 @@ import { FloorListComponent } from '@restaurant/infrastructure/floor/floor-list/
   templateUrl: './infrastructure-page.component.html',
   styles: ``,
 })
-export class InfrastructurePageComponent {}
+export class InfrastructurePageComponent {
+  isRoomTabActive = false;
+
+  onTabChange(event: MatTabChangeEvent) {
+    // Verificamos si la pestaña seleccionada es la de 'Salas'
+    if (event.index === 1) {
+      // '1' es el índice de la pestaña 'Salas'
+      this.isRoomTabActive = true;
+    }
+  }
+}

@@ -188,6 +188,7 @@ export class FloorAddEditModalComponent {
 
   addRoom() {
     const newRoom: Room = {
+      id: 0,
       code: '',
       description: '',
       capacity: 0,

@@ -1,7 +1,8 @@
 export enum RESTAURANT_PATHS {
-  TABLE = 'Table/',
   FLOOR = 'Floor/',
-  ITEM = 'Item',
+  ITEM = 'Item/',
+  ROOM = 'Room/',
+  TABLE = 'Table/',
 }
 
 export const enum RESTAURANT_CODE_REPORT {

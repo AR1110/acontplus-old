@@ -3,12 +3,14 @@
   <div class="card-body">
     <div class="row">
       <div class="col">
-        <mat-tab-group>
+        <mat-tab-group (selectedTabChange)="onTabChange($event)">
           <mat-tab label="Pisos">
             <app-floor-list></app-floor-list>
           </mat-tab>
           <mat-tab label="Salas">
-            <app-room-list></app-room-list>
+            @if (isRoomTabActive) {
+              <app-room-list></app-room-list>
+            }
           </mat-tab>
           <mat-tab label="Mesas">
           </mat-tab>

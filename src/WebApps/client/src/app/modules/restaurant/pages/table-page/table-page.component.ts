@@ -84,7 +84,7 @@ export class TablePageComponent {
       }).then((result) => {
         if (result.isConfirmed) {
           showLoader();
-          this.floorSvc.remove(id).subscribe({
+          this.floorSvc.delete(id).subscribe({
             next: (response) => {
               hideLoader();
               this.getDataTables();

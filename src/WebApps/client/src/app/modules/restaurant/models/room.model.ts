@@ -5,7 +5,7 @@ export interface Room {
   code: string;
   description: string;
   capacity: number;
-  id?: number;
+  id: number;
   enabled: true;
   floor?: Floor;
 }

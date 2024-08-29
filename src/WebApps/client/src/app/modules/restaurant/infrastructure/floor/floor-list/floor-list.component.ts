@@ -89,7 +89,7 @@ export class FloorListComponent {
       })
       .then((response) => {
         if (response.isConfirmed) {
-          this.#floorService.remove(item.id).subscribe((result) => {
+          this.#floorService.delete(item.id).subscribe((result) => {
             this.#tS.toastr({
               type: result.code == '1' ? 'success' : 'warning',
               message: result.message,
@@ -107,6 +107,7 @@ export class FloorListComponent {
       FloorAddEditModalComponent,
       {
         size: 'lg',
+        centered: true,
       },
     );
     const modalData = Object.assign(this.data, { codEstab: this.codEstab });
