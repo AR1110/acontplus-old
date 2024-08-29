@@ -4,7 +4,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "development": "ng build -c development",
+    "prod": "ng build -c production",
+    "staging": "ng build -c staging",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -27,6 +29,7 @@
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
     "ngx-toastr": "^19.0.0",
+    "run-script-os": "*",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.6.13",
     "tslib": "^2.3.0",
