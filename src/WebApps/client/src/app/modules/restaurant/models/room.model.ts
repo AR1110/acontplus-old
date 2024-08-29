@@ -1,4 +1,5 @@
 import { Floor } from '@restaurant/models/floor.model';
+import { Table } from '@restaurant/models/table.model';
 
 export interface Room {
   floorId?: number;
@@ -8,4 +9,5 @@ export interface Room {
   id: number;
   enabled: true;
   floor?: Floor;
+  tables?: Table[];
 }
