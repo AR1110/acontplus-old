@@ -17,7 +17,7 @@ namespace Restaurant.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -853,6 +853,9 @@ namespace Restaurant.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<int>("EstablecimientoId")
+                        .HasColumnType("int");
+
                     b.Property<bool?>("FromMobile")
                         .HasColumnType("bit");
 
@@ -1108,7 +1111,7 @@ namespace Restaurant.API.Data.Migrations
             modelBuilder.Entity("Restaurant.API.Entities.AppTable", b =>
                 {
                     b.HasOne("Restaurant.API.Entities.Room", "Room")
-                        .WithMany()
+                        .WithMany("Tables")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1265,12 +1268,17 @@ namespace Restaurant.API.Data.Migrations
             modelBuilder.Entity("Restaurant.API.Entities.Room", b =>
                 {
                     b.HasOne("Restaurant.API.Entities.Floor", "Floor")
-                        .WithMany()
+                        .WithMany("Rooms")
                         .HasForeignKey("FloorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Floor");
+                });
+
+            modelBuilder.Entity("Restaurant.API.Entities.Floor", b =>
+                {
+                    b.Navigation("Rooms");
                 });
 
             modelBuilder.Entity("Restaurant.API.Entities.Menu", b =>
@@ -1281,6 +1289,11 @@ namespace Restaurant.API.Data.Migrations
             modelBuilder.Entity("Restaurant.API.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("Restaurant.API.Entities.Room", b =>
+                {
+                    b.Navigation("Tables");
                 });
 #pragma warning restore 612, 618
         }
