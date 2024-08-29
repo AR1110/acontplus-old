@@ -165,7 +165,6 @@ export class RoomListComponent {
         _children: floor.rooms?.map((room: Room) => ({
           ...room,
           parentId: floor.id,
-          capacity: 0,
         })),
       }));
       this.rooms = combinedData as [];
@@ -179,7 +178,7 @@ export class RoomListComponent {
   onModalOpen() {
     const modalRef = this.#modalService.openModalCustom(
       RoomAddEditModalComponent,
-      { size: 'lg', centered: true },
+      { size: 'sm', centered: true },
     );
     modalRef.componentInstance.data = { codEstab: this.codEstab };
     modalRef.result.then((response) => {
@@ -205,7 +204,7 @@ export class RoomListComponent {
     }
   };
 
-  private onDelete(room: any) {
+  private onDelete(room: Room) {
     swal
       .fire({
         icon: 'warning',
@@ -226,7 +225,7 @@ export class RoomListComponent {
       });
   }
 
-  private onEdit(room: any) {
+  private onEdit(room: Room) {
     this.#roomService
       .put(room.id, room)
       .subscribe((response) => this.successResponse(response));

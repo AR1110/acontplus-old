@@ -46,7 +46,7 @@ export class RoomAddEditModalComponent {
       Validators.minLength(1),
       Validators.maxLength(5),
     ]),
-    capacity: new FormControl(0, [Validators.required, Validators.min(1)]),
+    capacity: new FormControl(1, [Validators.required, Validators.min(1)]),
     enabled: new FormControl(true),
   });
   modalIcon: IconProp = 'plus';

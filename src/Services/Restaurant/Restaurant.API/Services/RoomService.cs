@@ -55,7 +55,9 @@ public class RoomService(RestaurantContext context) : IRoomService
 
     public async Task<ApiResponse> GetByEstabAsync(string codEstab)
     {
-        var rooms = await context.Rooms.Include(x => x.Floor)
+        var rooms = await context.Rooms
+            .Include(x => x.Floor)
+            .Include(x => x.Tables)
             .Where(x => x.Floor.CodEstab == codEstab && x.Deleted == null)
             .ToListAsync();
         return rooms.Count > 0
@@ -72,6 +74,7 @@ public class RoomService(RestaurantContext context) : IRoomService
         }
 
         roomFound.Code = room.Code;
+        roomFound.Capacity = room.Capacity;
         roomFound.Description = room.Description;
         roomFound.Enabled = room.Enabled;
         roomFound.UserId = room.UserId;
