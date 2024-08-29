@@ -1,11 +1,11 @@
-import {inject, Injectable} from '@angular/core';
-import {PATHS, PATHS_API, STRING_SPLIT_REGEX} from "@/enums/main.enum";
-import {HttpClient} from "@angular/common/http";
-import {map} from "rxjs/operators";
-import {ApiResponse} from "@/models/api-response";
-import {CompanyCustomerRead, CompanyCustomerSearch} from "@/models/company-customer.model";
-import {Observable} from "rxjs";
-import {getValidId, isValidField} from "@core/utils/utils";
+import { inject, Injectable } from '@angular/core';
+import { PATHS, PATHS_API, STRING_SPLIT_REGEX } from "@/enums/main.enum";
+import { HttpClient } from "@angular/common/http";
+import { map } from "rxjs/operators";
+import { ApiResponse } from "@/models/api-response";
+import { CompanyCustomerRead, CompanyCustomerSearch } from "@/models/company-customer.model";
+import { Observable } from "rxjs";
+import { getValidId, isValidField } from "@core/utils/utils";
 import { getNoLoader } from '@/core/interceptors/loader.interceptor';
 
 @Injectable({
@@ -15,13 +15,13 @@ export class CompanyCustomerService {
   private url = `${PATHS_API.BILLING}${PATHS.COMPANY_CUSTOMER}`
   private http = inject(HttpClient)
 
-  getDataForm(){
+  getDataForm() {
     let json = JSON.stringify({
       tipo: 2
     })
     return this.http.get<ApiResponse>(`${this.url}?json=${json}`).pipe(
-      map(response=>{
-         let result = {
+      map(response => {
+        let result = {
           tipoIdentificacion: [],
           tipoContribuyentes: [],
           tiempoCreditos: [],
@@ -48,7 +48,7 @@ export class CompanyCustomerService {
       })
     )
   }
-  getAll<T>(obj:T){
+  getAll<T>(obj: T) {
     let json = JSON.stringify({
       tipo: 1,
       ...obj
@@ -56,24 +56,24 @@ export class CompanyCustomerService {
     return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
       context: getNoLoader()
     }).pipe(
-      map(response=>{
-        let results:CompanyCustomerRead[] =[]
-        if(response.code==="1"){
-          let [data]= JSON.parse(response.payload as string);
+      map(response => {
+        let results: CompanyCustomerRead[] = []
+        if (response.code === "1") {
+          let [data] = JSON.parse(response.payload as string);
 
-          results = data.map((item:any)=>{
+          results = data.map((item: any) => {
             return {
-              idCliente:item.idCliente,
-              idTipoIdentificacion:item.idTipoIdentificacion,
-              numeroIdentificacion:item.numeroIdentificacion,
-              nombreComercial:item.nombreComercial,
-              razonSocial:item.nombreFiscal,
-              direccion:item.direccion,
-              telefono:item.telefono,
-              correo:item.correo,
-              consumidorFinal:item.consumidorFinal,
-              validationSri:item.validationSri,
-              estado:item.estado,
+              idCliente: item.idCliente,
+              idTipoIdentificacion: item.idTipoIdentificacion,
+              numeroIdentificacion: item.numeroIdentificacion,
+              nombreComercial: item.nombreComercial,
+              razonSocial: item.nombreFiscal,
+              direccion: item.direccion,
+              telefono: item.telefono,
+              correo: item.correo,
+              consumidorFinal: item.consumidorFinal,
+              validationSri: item.validationSri,
+              estado: item.estado,
               totalRecords: item.totalRecords
             }
           })
@@ -89,45 +89,45 @@ export class CompanyCustomerService {
       map((response) => {
         let result = {} as any;
 
-          if (response.code === "0") {
-            console.log(response)
+        if (response.code === "0") {
+          console.log(response)
+        }
+        if (response.code === "1") {
+          let dataRepository = JSON.parse(response.payload as string)[0];
+
+          let { correo, telefono, placa, ...data } = dataRepository;
+
+          const correos = correo ? correo.split(STRING_SPLIT_REGEX) : [];
+          const telefonos = telefono ? telefono.split(STRING_SPLIT_REGEX) : [];
+          const placas = placa ? placa.split(STRING_SPLIT_REGEX) : [];
+
+          result = {
+            idCliente: data.idCliente,
+            idTipoClienteProveedor: data.idTipoClienteProveedor,
+            idTipoEntidad: data.idTipoEntidad,
+            idSubContribuyente: data.idSubContribuyente,
+            idTiempoCredito: data.idTiempoCredito,
+            idTipoIdentificacion: data.idTipoIdentificacion,
+            idCiudad: data.idCiudad,
+            numeroIdentificacion: data.numeroIdentificacion,
+            identificacionComprador: data.numeroIdentificacion,
+            razonSocialComprador: data.nombreFiscal,
+            nombreFiscal: data.nombreFiscal,
+            montoCredito: data.montoCredito,
+            nombreComercial: data.nombreComercial,
+            direccion: data.direccion,
+            estado: data.estado,
+            idEmpleado: data.idEmpleado,
+            empleado: data.empleado,
+            idEmpresa: data.idEmpresa,
+            idCargo: data.idCargo,
+            validationSri: data.validationSri,
+            correos,
+            telefonos,
+            placas,
+            idFormaPagoSri: dataRepository.idFormaPagoSri
           }
-          if (response.code === "1") {
-            let dataRepository = JSON.parse(response.payload as string)[0];
-
-            let { correo, telefono, placa, ...data } = dataRepository;
-
-            const correos = correo ? correo.split(STRING_SPLIT_REGEX) : [];
-            const telefonos = telefono ? telefono.split(STRING_SPLIT_REGEX) : [];
-            const placas = placa ? placa.split(STRING_SPLIT_REGEX) : [];
-
-            result = {
-              idCliente: data.idCliente,
-              idTipoClienteProveedor: data.idTipoClienteProveedor,
-              idTipoEntidad: data.idTipoEntidad,
-              idSubContribuyente: data.idSubContribuyente,
-              idTiempoCredito: data.idTiempoCredito,
-              idTipoIdentificacion: data.idTipoIdentificacion,
-              idCiudad: data.idCiudad,
-              numeroIdentificacion: data.numeroIdentificacion,
-              identificacionComprador: data.numeroIdentificacion,
-              razonSocialComprador: data.nombreFiscal,
-              nombreFiscal: data.nombreFiscal,
-              montoCredito: data.montoCredito,
-              nombreComercial: data.nombreComercial,
-              direccion: data.direccion,
-              estado: data.estado,
-              idEmpleado: data.idEmpleado,
-              empleado: data.empleado,
-              idEmpresa: data.idEmpresa,
-              idCargo: data.idCargo,
-              validationSri: data.validationSri,
-              correos,
-              telefonos,
-              placas,
-              idFormaPagoSri: dataRepository.idFormaPagoSri
-            }
-          }
+        }
 
         return result;
       })
@@ -146,12 +146,12 @@ export class CompanyCustomerService {
       })
       .pipe(
         map((response) => {
-           let results: CompanyCustomerSearch[]=[]
+          let results: CompanyCustomerSearch[] = []
 
-          if(response.code==="1"){
+          if (response.code === "1") {
             let customers = (response.payload && JSON.parse(response.payload as string)) || [];
 
-            results = customers.map((item:any)=> {
+            results = customers.map((item: any) => {
               return {
                 customerId: item.customerId,
                 idCliente: item.idCliente,
@@ -167,16 +167,72 @@ export class CompanyCustomerService {
       );
   }
 
+  searchByNro(textSearch: string) {
+    let json = JSON.stringify({
+      tipo: 3,
+      textSearch
+    })
+    return this.http.get<ApiResponse>(`${this.url}?json=${json}`).pipe(
+      map(response => {
+        if (response.code === "0") {
+          const data: any = {
+            customerCompanyId: 0,
+            fiscalName: "",
+            tradeName: "",
+            identificationNumber: "",
+            correo: "",
+            telefono: "",
+            direccion: ""
+          }
+          return data;
+        }
+        const mainData = JSON.parse(response.payload as string)[0][0]
+        return {
+          customerCompanyId: mainData.idCliente,
+          identificationNumber: mainData.numeroIdentificacion,
+          fiscalName: mainData.nombreFiscal,
+          tradeName: mainData.nombreComercial,
+
+          idSubContribuyente: mainData.idSubContribuyente,
+          idTiempoCredito: mainData.idTiempoCredito,
+          idTipoIdentificacion: mainData.idTipoIdentificacion,
+          direccion: mainData.direccion,
+          correo: mainData.correo,
+          telefono: mainData.telefono,
+        };
+
+      })
+    )
+  }
+
+
+  checkClientSRIByRUC(Ruc: string) {
+    let path = `${PATHS_API.BILLING}${PATHS.CONSULTAS}GetRucSRI`;
+    return this.http.get<any>(`${path}`, {
+      params: {
+        Ruc
+      }
+    })
+  }
+  checkClientSRIByCedula(Ruc: string) {
+    let path = `${PATHS_API.BILLING}${PATHS.CONSULTAS}GetCedulaSri`;
+    return this.http.get<any>(`${path}`, {
+      params: {
+        Ruc
+      }
+    })
+  }
+
   post<T>(data: T) {
     return this.http.post<ApiResponse>(this.url, { data }).pipe(map((response) => {
-        if(response.code==="1"){
-          let payload = JSON.parse(response.payload as string)[0]
-          response.payload = {
-            id: payload.idCliente
-          }
+      if (response.code === "1") {
+        let payload = JSON.parse(response.payload as string)[0]
+        response.payload = {
+          id: payload.idCliente
         }
-        return response;
-      }));
+      }
+      return response;
+    }));
   }
 
   put<T>(id: number, data: T) {
@@ -184,33 +240,33 @@ export class CompanyCustomerService {
   }
 
 
-   adapterTo(data:any) {
+  adapterTo(data: any) {
 
-        return {
-            idCliente: getValidId(data.idCliente),
-            idEmpleado: getValidId(data.idEmpleado),
-            idTipoIdentificacion: data.idTipoIdentificacion,
-            idTipoClienteProveedor: getValidId(data.idTipoClienteProveedor),
-            idTipoEntidad: getValidId(data.idTipoEntidad),
-            idCiudad: getValidId(data.idCiudad),
-            idSubContribuyente: getValidId(data.idSubContribuyente),
-            idTiempoCredito: data.idTiempoCredito,
-            idEmpresa: getValidId(data.idEmpresa),
-            idCargo: getValidId(data.idCargo),
-            numeroIdentificacion: data.numeroIdentificacion,
-            nombreFiscal: data.nombreFiscal,
-            nombreComercial: data.nombreComercial,
-            direccion: isValidField(data.direccion),
-            telefono: isValidField(data.telefono),
-            correo: isValidField(data.correo),
-            placa: isValidField(data.placa),
-            montoCredito: isValidField(data.montoCredito),
-            nota: isValidField(data.nota),
-            validationSri: data.validationSri,
-            idFormaPagoSri: getValidId(data.idFormaPagoSri),
-            estado: data.estado || true
-        }
-
+    return {
+      idCliente: getValidId(data.idCliente),
+      idEmpleado: getValidId(data.idEmpleado),
+      idTipoIdentificacion: data.idTipoIdentificacion,
+      idTipoClienteProveedor: getValidId(data.idTipoClienteProveedor),
+      idTipoEntidad: getValidId(data.idTipoEntidad),
+      idCiudad: getValidId(data.idCiudad),
+      idSubContribuyente: getValidId(data.idSubContribuyente),
+      idTiempoCredito: data.idTiempoCredito,
+      idEmpresa: getValidId(data.idEmpresa),
+      idCargo: getValidId(data.idCargo),
+      numeroIdentificacion: data.numeroIdentificacion,
+      nombreFiscal: data.nombreFiscal,
+      nombreComercial: data.nombreComercial,
+      direccion: isValidField(data.direccion),
+      telefono: isValidField(data.telefono),
+      correo: isValidField(data.correo),
+      placa: isValidField(data.placa),
+      montoCredito: isValidField(data.montoCredito),
+      nota: isValidField(data.nota),
+      validationSri: data.validationSri,
+      idFormaPagoSri: getValidId(data.idFormaPagoSri),
+      estado: data.estado || true
     }
+
+  }
 
 }

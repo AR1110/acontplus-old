@@ -15,7 +15,13 @@
 @if (isAdvanced()){
 <mat-form-field appearance="outline" class="m3-input-full-width">
   <mat-label>Cliente</mat-label>
-  <input type="text" matInput [(ngModel)]="textName" [formControl]="control" [matAutocomplete]="auto">
+  <input type="text"
+  matInput
+  [formControl]="control"
+  [matAutocomplete]="auto"
+  [value]="textName"
+   (keydown.enter)="onEnter($event)"
+  >
 
   <button mat-icon-button matSuffix appActionCompanyCustomerAddEditModal>
     <mat-icon>add</mat-icon>
