@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS, PATHS_API, STRING_SPLIT_REGEX } from "@/enums/main.enum";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpContext } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { ApiResponse } from "@/models/api-response";
 import { CompanyCustomerRead, CompanyCustomerSearch } from "@/models/company-customer.model";
@@ -84,8 +84,10 @@ export class CompanyCustomerService {
 
   }
 
-  getId(id: number) {
-    return this.http.get<ApiResponse>(`${this.url}GetId/${id}`).pipe(
+  getId(id: number, noLoader?: boolean) {
+    return this.http.get<ApiResponse>(`${this.url}GetId/${id}`, {
+      context: noLoader ? getNoLoader() : new HttpContext()
+    }).pipe(
       map((response) => {
         let result = {} as any;
 

@@ -15,13 +15,8 @@
 @if (isAdvanced()){
 <mat-form-field appearance="outline" class="m3-input-full-width">
   <mat-label>Cliente</mat-label>
-  <input type="text"
-  matInput
-  [formControl]="control"
-  [matAutocomplete]="auto"
-  [value]="textName"
-   (keydown.enter)="onEnter($event)"
-  >
+  <input type="text" matInput [formControl]="control" [matAutocomplete]="auto" [value]="textName"
+    (keydown.enter)="onEnter($event)">
 
   <button mat-icon-button matSuffix appActionCompanyCustomerAddEditModal>
     <mat-icon>add</mat-icon>
@@ -38,7 +33,7 @@
     <button mat-icon-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="onClickOpenDetail($event) ">
       <mat-icon>info</mat-icon>
     </button>
-    <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger"  hasBackdrop="true"
+    <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" hasBackdrop="true"
       [cdkConnectedOverlayOpen]="isOpenDetail()" (overlayOutsideClick)="isOpenDetail.set(false)"
       [cdkConnectedOverlayPositions]="[
         {
@@ -48,8 +43,8 @@
             overlayY: 'center'
         }
     ]">
-       <div class="overlay-content">
-
+      <div class="overlay-content">
+        @if (dataDetail.idCliente>0) {
         <div class="vstack gap-1">
           <div>
             <strong>Identificación:</strong> {{dataDetail.identificacionComprador}}
@@ -64,7 +59,12 @@
             <strong>Dirección:</strong> {{dataDetail.direccion}}
           </div>
         </div>
-       </div>
+        }@else {
+        <p>Cargando...</p>
+        }
+
+
+      </div>
 
     </ng-template>
 

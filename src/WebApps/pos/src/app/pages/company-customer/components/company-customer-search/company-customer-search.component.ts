@@ -212,7 +212,7 @@ export class CompanyCustomerSearchComponent {
     this.isOpenDetail.set(!this.isOpenDetail())
 
     if (this.isOpenDetail()) {
-      this.companyCustomerSvc.getId(this.id()).subscribe(response => {
+      this.companyCustomerSvc.getId(this.id(), true).subscribe(response => {
         this.dataDetail = response;
         console.log(response)
       })

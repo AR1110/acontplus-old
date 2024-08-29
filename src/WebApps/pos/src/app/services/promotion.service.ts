@@ -20,8 +20,18 @@ export class PromotionService {
       context: getNoLoader()
     }).pipe(
       map(response => {
-        console.log(response)
-        return response;
+        let promotions = [] as any;
+        if (response.code === "1" && response.payload) {
+          let mainData = response.payload && JSON.parse(response.payload as string) || {};
+          promotions = mainData.promotions_pos.map((item: any) => {
+            return {
+              id: item.id,
+              description: item.description,
+              img: item.s3ObjectUrl
+            }
+          })
+        }
+        return promotions;
       })
     )
   }

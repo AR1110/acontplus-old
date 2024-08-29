@@ -21,12 +21,15 @@
 
       @if(node.expanded) {
       <dd class="tree-children">
-        <app-promotions-item />
+        <app-promotions-item [promotionId]="node.id" />
       </dd>
       }
     </div>
     } @empty {
-    <p>Cargando...</p>
+    <div class="d-flex justify-content-center align-items-center"
+      style="height: calc(90dvh - 50px - 100px); overflow: auto;">
+      <p>Sin Datos</p>
+    </div>
     }
   </dl>
 </div>

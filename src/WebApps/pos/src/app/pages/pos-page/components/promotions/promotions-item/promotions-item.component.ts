@@ -1,5 +1,7 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { ItemCardComponent } from '../../item-card/item-card.component';
+import { PromotionMenuService } from '@/services/promotion-menu.service';
+import { ItemRead } from '@/models/item.model';
 
 @Component({
   selector: 'app-promotions-item',
@@ -11,8 +13,21 @@ import { ItemCardComponent } from '../../item-card/item-card.component';
   styleUrl: './promotions-item.component.scss'
 })
 export class PromotionsItemComponent {
-  item = input<any>()
+  promotionId = input(0);
+  private promotionItemSvc = inject(PromotionMenuService)
 
-  items:any[]=[1,3,4,5,78,89,9,8,67]
+  items = signal<ItemRead[]>([])
+
+  private getPromotionsMenu() {
+    this.promotionItemSvc.getByPromotionId({
+      promotionId: this.promotionId()
+    }).subscribe(response => {
+      this.items.set(response.items)
+    })
+  }
+
+  ngOnInit(): void {
+    this.getPromotionsMenu()
+  }
 
 }
