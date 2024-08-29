@@ -13,6 +13,9 @@
             }
           </mat-tab>
           <mat-tab label="Mesas">
+            @if (isTableTabActive) {
+              <app-table-list></app-table-list>
+            }
           </mat-tab>
           <mat-tab label="Areas de Producción"></mat-tab>
         </mat-tab-group>

@@ -2,16 +2,11 @@
 
 namespace WebUI.Pages.Restaurant.Infrastructure
 {
-    public class IndexModel : PageModel
+    public class IndexModel(IConfiguration configuration) : PageModel
     {
-        private readonly IConfiguration _configuration;
-        public IndexModel(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
         public void OnGet()
         {
-            var url = _configuration["UrlApps:SveltekitApp"];
+            var url = configuration["UrlApps:AngularApp"];
             ViewData["FrontEnd"] = url;
         }
     }

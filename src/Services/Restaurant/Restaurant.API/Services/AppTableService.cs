@@ -45,19 +45,19 @@ public class AppTableService(RestaurantContext context) : IAppTableService
 
     public async Task<ApiResponse> UpdateAsync(int id, AppTable appTable)
     {
-        var tableFounded = await context.Tables.FindAsync(id);
+        var tableFound = await context.Tables.FindAsync(id);
 
-        if (tableFounded == null) return new ApiResponse { Code = "1", Message = "No se encontro mesa" };
+        if (tableFound == null) return new ApiResponse { Code = "1", Message = "No se encontro mesa" };
         ;
 
-        tableFounded.UserId = appTable.UserId;
-        tableFounded.RoomId = appTable.RoomId;
-        tableFounded.Description = appTable.Description;
-        tableFounded.NumberTable = appTable.NumberTable;
-        tableFounded.Enabled = appTable.Enabled;
-        tableFounded.Capacity = appTable.Capacity;
-        tableFounded.Assigned = appTable.Assigned;
-        context.Update(tableFounded);
+        tableFound.UserId = appTable.UserId;
+        tableFound.RoomId = appTable.RoomId;
+        tableFound.Description = appTable.Description;
+        tableFound.NumberTable = appTable.NumberTable;
+        tableFound.Enabled = appTable.Enabled;
+        tableFound.Capacity = appTable.Capacity;
+        tableFound.Assigned = appTable.Assigned;
+        context.Update(tableFound);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizada existosamente" };
         // var parameters = new Dictionary<string, object>
@@ -76,14 +76,33 @@ public class AppTableService(RestaurantContext context) : IAppTableService
         {
             return new ApiResponse { Code = "0", Message = "Ingredient not found" };
         }
+        var orderExists = await context.Orders
+                   .Join(context.Tables,
+                         order => order.TableId,
+                         table => table.Id,
+                         (order, table) => new { order, table })
+                   .AnyAsync(t => t.table.Id == id);
 
-        appTable.Enabled = false;
-        appTable.Deleted = true;
-        appTable.UserId = userId;
-        context.Update(appTable);
+        if (orderExists)
+        {
+            return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
+        }
+        context.Remove(appTable);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada existosamente" };
-        // var parameters = new Dictionary<string, object> { { "userRoleId", request.UserRoleId }, { "id", id } };
-        // return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.Table_Delete", request.Data);
+    }
+
+    public async Task<ApiResponse> UnassignAsync(int userId, int id)
+    {
+        var tableFound = await context.Tables.FindAsync(id);
+
+        if (tableFound == null) return new ApiResponse { Code = "1", Message = "No se encontro mesa" };
+        ;
+
+        tableFound.UserId = userId;
+        tableFound.Assigned = null;
+        context.Update(tableFound);
+        await context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Desasignada existosamente" };
     }
 }
