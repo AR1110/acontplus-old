@@ -1,9 +1,9 @@
 use [Acontplus]
 go 
 
---SELECT * FROM Inventario.TipoDocumento
+SELECT * FROM Inventario.TipoDocumento
 
---SELECT * FROM Inventario.TipoTransaccion
+SELECT * FROM Inventario.TipoTransaccion
 
 --insert into Inventario.TipoDocumento 
 --(codigo,descripcion,estado,orden)
