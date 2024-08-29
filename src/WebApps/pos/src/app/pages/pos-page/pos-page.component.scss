@@ -1,0 +1,20 @@
+::ng-deep .mat-mdc-paginator-range-label {
+  display: none;
+}
+::ng-deep .mat-mdc-paginator-container {
+  display: flex;
+  justify-content: flex-start  !important;
+}
+
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height:   calc(100dvh - 90px - 100px);
+  width: 100%;
+  background: rgba(255, 255, 255, 0.8); /* Fondo opcional para hacer el spinner más visible */
+}
+
+

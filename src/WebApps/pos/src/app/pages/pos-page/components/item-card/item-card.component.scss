@@ -1,0 +1,169 @@
+
+.card {
+  // background-color: #e60000;
+  border-radius: 20px;
+  max-width: 220px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  display: flex;
+
+  //  background-image: linear-gradient(315deg, #f9ea8f 0%, #aff1da 74%);
+}
+.disabled-card {
+  opacity: 0.5;
+  pointer-events: none;
+  background-color: #f0f0f0;
+}
+
+.card:hover {
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.3);
+  cursor: pointer;
+}
+
+ 
+
+mat-card-title {
+  font-size: 18px;
+  line-height: normal;
+}
+
+mat-card-subtitle {
+  font-size: 16px;
+}
+ 
+.addBtn {
+  //background-color: #5aff15;
+  // background-image: linear-gradient(315deg, #00b712 0%, #5aff15 74%);
+  // color: white;
+  height: 23px;
+  width: 60px;
+  text-align: center;
+  border-top-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+mat-card-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: center;
+}
+
+ 
+
+.container {
+  position: relative;
+  display: inline-block;
+}
+ 
+
+.expandable-content.up {
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: 0.3s ease, opacity 0.3s ease;
+  position: absolute;
+  bottom: 100%; /* Posiciona el contenido justo encima del texto */
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  z-index: 1000;
+  overflow-y: auto;
+  border-radius: 12px;
+}
+
+.container:hover .expandable-content.up,
+.expandable-content.up:hover {
+  height: 200px;
+  opacity: 1;
+  cursor: cell;
+  //  overflow-y: auto;
+}
+ 
+
+.image-container {
+  display: flex;
+  justify-content: center; /* Centers the image horizontally */
+  width: 100%; /* Full width of the card */
+  //margin-bottom: 16px; /* Space between the image and card content */
+  padding: 20px;
+}
+
+.product-image {
+  width: 100%; /* Make image responsive to the container */
+  max-width: 170px; /* Limit the maximum size of the image */
+  height: 170px; /* Maintain aspect ratio */
+  border-radius: 50%; /* Make the image circular */
+  object-fit: cover; /* Cover the container while preserving aspect ratio */
+}
+
+@media (max-width: 768px) {
+  .product-image {
+    max-width: 120px; /* Ajuste de tamaño máximo para pantallas más pequeñas */
+    height: 120px; /* Ajustar la altura para mantener la proporción */
+  }
+}
+
+@media (max-width: 480px) {
+  .product-image {
+    max-width: 90px; /* Tamaño máximo para pantallas muy pequeñas */
+    height: 90px; /* Ajustar la altura para mantener la proporción */
+  }
+}
+ 
+.name {
+  font-size: .700rem;
+  flex: 1 1 auto;
+  text-align: center;
+  /* white-space: nowrap; */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-weight: bold;
+}
+
+
+.price {
+  font-size: .950em;
+  font-weight: bold;
+  white-space: nowrap;
+  color: var(--pink);
+}
+
+
+//loader in card 
+.card-with-loader {
+  position: relative;
+}
+
+.card-loader-overlay {
+  border-radius: 20px; 
+  position: absolute; 
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 10;
+  pointer-events: none; /* Evita que se pueda interactuar con elementos bajo el loader */
+}
+
+.small-spinner {
+  width: 30px !important;  /* Ajusta el tamaño del spinner */
+  height: 30px !important;
+}
+
+.no-hover-name:hover {
+  background-color: initial; /* Resetea el color de fondo para desactivar el hover */
+}

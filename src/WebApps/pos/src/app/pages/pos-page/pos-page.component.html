@@ -1,0 +1,83 @@
+
+<div class="row gx-0">
+  <div class="col-xl-8 col-lg-8 col-md-7 col-sm-12 col-12 m-0">
+
+    <mat-tab-group dynamicHeight
+                   animationDuration="0ms"
+                   class="bg-white"
+                   mat-stretch-tabs="false"
+                   mat-align-tabs="center"
+                   (selectedTabChange)="onTabChange($event)">
+      @for (link of subCategorias(); track $index) {
+      <mat-tab [disabled]="loading()">
+        <ng-template mat-tab-label>
+          <img [src]="link.s3ObjectUrl || 'product-default.png'" class="rounded m-tab-img" alt="..." width="40" height="40">
+          <small>{{ link.descripcion }}</small>
+        </ng-template>
+
+        <ng-template matTabContent>
+          <ng-container *ngTemplateOutlet="tabContent"></ng-container>
+        </ng-template>
+      </mat-tab>
+      }
+    </mat-tab-group>
+
+
+
+    <ng-template matTabContent #tabContent>
+      <div class="m-2">
+        <div class="row justify-content-between ">
+          <div class="col-xl-4 col-lg-4 col-md-6">
+            <mat-paginator
+              [hidePageSize]="true"
+              [showFirstLastButtons]="true"
+
+              (page)="handlePageEvent($event)"
+              [length]="dataPagination().totalRecords"
+              [pageSize]="dataPagination().pageSize"
+              [pageIndex]="dataPagination().pageIndex"
+              aria-label="Select page"
+            >
+            </mat-paginator>
+
+          </div>
+          <div class="col-xl-5 col-lg-5 col-md-6">
+            <div class="d-flex flex-row gap-1">
+              <input type="text" [disabled]="loading()" class="form-control" placeholder="..." aria-label="Recipient's username with two button addons">
+              <button mat-icon-button [disabled]="loading()" aria-label="icon button refresh" (click)="refresh()">
+                <mat-icon>refresh</mat-icon>
+              </button>
+
+            </div>
+          </div>
+        </div>
+        <!-- Tab content goes here -->
+        @if(items().length === 0 && loading()){
+        <div class="spinner-container">
+          <mat-spinner></mat-spinner>
+        </div>
+        }
+        @else if(items().length === 0){
+        <p>Sin Datos</p>
+        }@else{
+        <app-items [items]="items()"/>
+        }
+
+      </div>
+    </ng-template>
+
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-5 d-none d-md-block">
+    <mat-card appearance="outlined" style=" height: calc(100dvh - 64px - 0px);
+              overflow: auto;border-radius: 0px;">
+      <mat-card-content class="d-flex flex-column">
+        <app-cart-header/>
+        <app-cart-items/>
+        <app-cart-footer/>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+
+</div>
+

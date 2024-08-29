@@ -72,22 +72,12 @@ BEGIN
 					SET @message = 'Eliminado Correctamente'
 				END
 
-		IF (@@ROWCOUNT > 0)
-			BEGIN
-				SET @code = '1'; 
-			END
-		ELSE
-			BEGIN
-				SET @code = '0';
-                SET @message = 'No se ejecuto ninguna transacción';
-			END
-
 	  IF (@trancount = 1)
 		BEGIN
 			COMMIT;
-			SELECT @code as code, @message as 'message';
+			SELECT  '1' as code, @message as 'message';
 		 END
-	END TRY 
+	END TRY
 
 	BEGIN CATCH	 
         IF (@trancount = 1)

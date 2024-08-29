@@ -85,6 +85,7 @@
                     }
                     if (response.code === "1") {
                         let results = JSON.parse(response.payload)
+                        console.log(results)
                         let proveedor = results.proveedor[0];
                         return {
                             ...proveedor,

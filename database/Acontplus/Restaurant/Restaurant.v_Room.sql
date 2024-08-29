@@ -17,5 +17,6 @@ AS
 		,userId				= rr.UserId
 		,floorId			= rr.FloorId
 		,floorDescription	= rf.Description
+        ,rf.codEstab
 FROM Restaurant.Room rr
 INNER JOIN Restaurant.[Floor] rf ON rf.Id = rr.FloorId

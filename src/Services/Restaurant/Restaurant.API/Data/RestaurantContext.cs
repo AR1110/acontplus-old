@@ -67,6 +67,10 @@ namespace Restaurant.API.Data
 
             builder.ApplyUtcDateTimeConverter();
 
+            builder.Entity<Floor>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<Floor>().Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Entity<Floor>().HasMany(x => x.Rooms).WithOne(x => x.Floor).HasForeignKey(x => x.FloorId);
+
             builder.Entity<ItemType>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<ItemType>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<ItemType>().HasIndex(x => x.Code).HasDatabaseName("UI_ItemType").IsUnique();
@@ -87,9 +91,6 @@ namespace Restaurant.API.Data
             builder.Entity<ProductionArea>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<ProductionArea>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<ProductionArea>().HasIndex(x => x.Code).HasDatabaseName("UI_ProductionArea").IsUnique();
-
-            builder.Entity<Floor>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-            builder.Entity<Floor>().Property(x => x.Enabled).HasDefaultValue(true);
 
             builder.Entity<Room>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Room>().Property(x => x.Enabled).HasDefaultValue(true);

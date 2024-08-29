@@ -21,7 +21,7 @@ public class ProductionAreaController(IProductionAreaService productionAreaServi
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ProductionArea productionArea)
+    public async Task<IActionResult> Post([FromBody] ProductionArea productionArea)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         productionArea.UserId = User.GetUserId();
@@ -29,7 +29,7 @@ public class ProductionAreaController(IProductionAreaService productionAreaServi
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ProductionArea productionArea)
+    public async Task<IActionResult> Put(int id, [FromBody] ProductionArea productionArea)
     {
         if (id != productionArea.Id) return BadRequest();
         productionArea.UserId = User.GetUserId();

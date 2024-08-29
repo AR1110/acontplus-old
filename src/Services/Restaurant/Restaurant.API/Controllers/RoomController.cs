@@ -21,7 +21,7 @@ public class RoomController(IRoomService roomService) : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(Room room)
+    public async Task<IActionResult> Post([FromBody] Room room)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         room.UserId = User.GetUserId();
@@ -29,7 +29,7 @@ public class RoomController(IRoomService roomService) : BaseApiController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, Room room)
+    public async Task<IActionResult> Put(int id, [FromBody] Room room)
     {
         if (id != room.Id) return BadRequest();
         room.UserId = User.GetUserId();

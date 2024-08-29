@@ -27,7 +27,13 @@ const useFetchItems = () => {
 
             // Extraemos los datos de la respuesta Axios.
             const response = resultAxios.data;
-            items = itemReadAdapter(response.items || []);
+            let resultData = {} as any;
+            if("payload" in response){
+                resultData = JSON.parse(response.payload)
+            }else{
+                resultData = response;
+            }
+            items = itemReadAdapter(resultData.items || []);
             setLoading(false)
         } catch (error) {
             setLoading(false)

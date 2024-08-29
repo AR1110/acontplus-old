@@ -1,3 +1,4 @@
+//@ts-check
 (function () {
     "use strict";
 
@@ -217,72 +218,6 @@
             $q.all([dashboardPromises, documentsPromises]).then((response) => {
                 const [responseDashboard, comprobantesElectronicos] = response;
                 let dashboardData = JSON.parse(responseDashboard.payload);
-
-                if (dashboardData) {
-                    const { statistics, licenses, releases, stepsConfig } = dashboardData;
-                    $scope.cantidad = angular.fromJson(statistics);
-                    $scope.licenses = angular.fromJson(licenses) || [];
-                    $scope.releases = angular.fromJson(releases) || [];
-                    $scope.stepsConfig = angular.fromJson(stepsConfig) || [];
-
-                    if ($scope.stepsConfig.length > 0) {
-                        location.href = '/Config/WizardConfig/Index'
-                    }
-
-                    if ($scope.releases.length > 0) {
-                        $scope.openReleases();
-                    }
-
-                    if ($scope.licenses.length > 0) {
-                        let expired = $scope.licenses[0].expired || false;
-
-                        if (expired) {
-                            warningMessage = $scope.licenses[0].warningMessage;
-                            $scope.openAlertExpired();
-                            return;
-                        }
-                        let maxPaymentDate = $scope.licenses[0].maxPaymentDate;
-                        let date1 = new Date();
-                        let date2 = new Date(maxPaymentDate);
-
-                        // To calculate the time difference of two dates
-                        let differenceInTime = date2.getTime() - date1.getTime();
-
-                        // To calculate the no. of days between two dates
-                        let differenceInDays = differenceInTime / (1000 * 3600 * 24);
-
-                        if ($scope.licenses.length == 1) {
-                            warningMessage = $scope.licenses[0].warningMessage;
-                            $scope.countDownDate = new Date(maxPaymentDate).setMinutes(
-                                new Date().getMinutes() + 5,
-                            );
-
-                            if (differenceInDays <= 30) {
-                                $scope.startTimer();
-                            }
-                        }
-                        if (
-                            $scope.licenses.some((x) => x.licenseCode != "ERP-D").length >
-                            1 &&
-                            differenceInDays <= 30
-                        ) {
-                            modalService.openModalCustom({
-                                controller: [
-                                    "$uibModalInstance",
-                                    "$scope",
-                                    ($uibModalInstance, $scope) => {
-                                        $scope.onClose = () => {
-                                            $uibModalInstance.close();
-                                        };
-                                    },
-                                ],
-                                scope: $scope,
-                                size: "xl",
-                                template: "~/Pages/Shared/_LicensesModal.cshtml",
-                            });
-                        }
-                    }
-                }
                 if (comprobantesElectronicos.length > 0) {
                     modalService.openModalCustom({
                         controller: [
@@ -345,6 +280,75 @@
                         size: "xl",
                         template: "~/Pages/Shared/_ComprobantesErroneos.cshtml",
                     });
+                }
+                if (dashboardData) {
+                    const { statistics, licenses, releases, stepsConfig } = dashboardData;
+                    $scope.cantidad = angular.fromJson(statistics);
+                    $scope.licenses = angular.fromJson(licenses) || [];
+                    $scope.releases = angular.fromJson(releases) || [];
+                    $scope.stepsConfig = angular.fromJson(stepsConfig) || [];
+
+                    if ($scope.stepsConfig.length > 0) {
+                        location.href = '/Config/WizardConfig/Index'
+                    }
+
+                    if ($scope.releases.length > 0) {
+                        $scope.openReleases();
+                    }
+
+                    if ($scope.licenses.length > 0) {
+                        let expired = $scope.licenses[0].expired || false;
+
+                        if (expired) {
+                            warningMessage = $scope.licenses[0].warningMessage;
+                            $scope.openAlertExpired();
+                            return;
+                        }
+                        let maxPaymentDate = $scope.licenses[0].maxPaymentDate;
+                        let date1 = new Date();
+                        let date2 = new Date(maxPaymentDate);
+
+                        // To calculate the time difference of two dates
+                        const differenceInTime = date2.getTime() - date1.getTime();
+
+                        // To calculate the no. of days between two dates
+                        let differenceInDays = differenceInTime / (1000 * 3600 * 24);
+                        differenceInDays = Math.round(differenceInDays);
+
+                        if ($scope.licenses.length == 1) {
+                            warningMessage = $scope.licenses[0].warningMessage;
+                            $scope.countDownDate = new Date(maxPaymentDate).setMinutes(
+                                new Date().getMinutes() + 5,
+                            );
+
+                            if (differenceInDays <= 30) {
+                                $scope.startTimer();
+                            }
+                        }
+
+                        const totalLicenses = $scope.licenses.filter((x) => x.licenseCode != "ERP-D").length;
+
+                        if (
+                            totalLicenses >
+                            1 &&
+                            differenceInDays <= 30
+                        ) {
+                            modalService.openModalCustom({
+                                controller: [
+                                    "$uibModalInstance",
+                                    "$scope",
+                                    ($uibModalInstance, $scope) => {
+                                        $scope.onClose = () => {
+                                            $uibModalInstance.close();
+                                        };
+                                    },
+                                ],
+                                scope: $scope,
+                                size: "xl",
+                                template: "~/Pages/Shared/_LicensesModal.cshtml",
+                            });
+                        }
+                    }
                 }
             });
         }
