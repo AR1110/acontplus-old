@@ -291,36 +291,38 @@ BEGIN
 
 		BEGIN TRAN 
 				UPDATE ar SET 
-					 ar.descripcion             = arj.descripcion
-					,ar.idSubFamilia            = arj.idSubFamilia  
-					,ar.codigo                  = arj.codigo
-					,ar.codigoBarra             = arj.codigoBarra
-					,ar.codigoAuxiliar          = arj.codigoAuxiliar
-					,ar.idTipoArticulo          = arj.idTipoArticulo
-					,ar.datosAdicionales        = arj.datosAdicionales
-					,ar.llevaInventario         = arj.llevaInventario
-					,ar.productoFraccionable    = arj.productoFraccionable
-					,ar.idMarca                 = arj.idMarca 
-					,ar.idModelo                = arj.idModelo  
-					,ar.idTipoIce               = arj.idTipoIce
-					,ar.idTipoIva               = arj.idTipoIva
-					,ar.idMedida                = arj.idMedida
-					,ar.valorIce                = arj.valorIce
-					,ar.stockMinimo             = arj.stockMinimo
-					,ar.stockMaximo             = arj.stockMaximo
-					,ar.Observaciones           = arj.observaciones
-					,ar.caducidad               = arj.caducidad
-					,ar.fechaCaducidad          = arj.fechaCaducidad
-					,ar.datosLote               = arj.datosLote
-					,ar.lote                    = arj.lote
-					,ar.fechaCreacion           = arj.fechaCreacion
-					,ar.fechaCaducidadLote      = arj.fechaCaducidadLote
-					,ar.estado                  = arj.estado
-					,ar.fechaBaja               = CASE WHEN arj.estado = 0 THEN GETDATE() ELSE NULL END  
-					,ar.precioCosto             = arj.precioCosto	
-					,ar.precioSinSubsidio       = arj.precioSinSubsidio
-					,ar.idEtiqueta              = arj.idEtiqueta
-					,ar.cantMinimaVentaPorMayor = arj.cantMinimaVentaPorMayor
+					   ar.descripcion             = arj.descripcion
+					  ,ar.idSubFamilia            = arj.idSubFamilia  
+					  ,ar.codigo                  = arj.codigo
+					  ,ar.codigoBarra             = arj.codigoBarra
+					  ,ar.codigoAuxiliar          = arj.codigoAuxiliar
+					  ,ar.idTipoArticulo          = arj.idTipoArticulo
+					  ,ar.datosAdicionales        = arj.datosAdicionales
+					  ,ar.llevaInventario         = arj.llevaInventario
+					  ,ar.productoFraccionable    = arj.productoFraccionable
+					  ,ar.idMarca                 = arj.idMarca 
+					  ,ar.idModelo                = arj.idModelo  
+					  ,ar.idTipoIce               = arj.idTipoIce
+					  ,ar.idTipoIva               = arj.idTipoIva
+					  ,ar.idMedida                = arj.idMedida
+					  ,ar.valorIce                = arj.valorIce
+					  ,ar.stockMinimo             = arj.stockMinimo
+					  ,ar.stockMaximo             = arj.stockMaximo
+					  ,ar.Observaciones           = arj.observaciones
+					  ,ar.caducidad               = arj.caducidad
+					  ,ar.fechaCaducidad          = arj.fechaCaducidad
+					  ,ar.datosLote               = arj.datosLote
+					  ,ar.lote                    = arj.lote
+					  ,ar.fechaCreacion           = arj.fechaCreacion
+					  ,ar.fechaCaducidadLote      = arj.fechaCaducidadLote
+					  ,ar.estado                  = arj.estado
+					  ,ar.fechaBaja               = CASE WHEN arj.estado = 0 THEN GETDATE() ELSE NULL END  
+					  ,ar.precioCosto             = arj.precioCosto	
+					  ,ar.precioSinSubsidio       = arj.precioSinSubsidio
+					  ,ar.idEtiqueta              = arj.idEtiqueta
+					  ,ar.cantMinimaVentaPorMayor = arj.cantMinimaVentaPorMayor
+                      ,ar.UpdateAt                = GETDATE()
+                      ,ar.UserUpdateId            = @idUsuario
 				FROM Articulo ar WITH (NOLOCK) JOIN @tbArticle arj ON ar.idArticulo = @id
 					
 				UPDATE arpvp SET 

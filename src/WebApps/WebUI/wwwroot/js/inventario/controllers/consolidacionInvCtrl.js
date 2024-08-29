@@ -647,7 +647,7 @@
                 minWidth: '65',
                 type: 'number',
                 enableColumnMenu: false,
-                visible: true,
+                visible: false,
                 aggregationType: uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
                     aggregation.rendered = fS.roundNumber(aggregation.value, 2)
@@ -662,6 +662,7 @@
                 type: 'number',
                 width: '8%',
                 minWidth: '100',
+                visible : false,
                 aggregationType: uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
                     aggregation.rendered = fS.roundNumber(aggregation.value, 2)
@@ -1074,7 +1075,15 @@
             try {
                 if (!isValidForm()) return
 
+                let documento;
+
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
+                
+                let dataTipoDoc = $scope.tipoDocumento.find(t=>t.idTipoDocumento === $scope.data.idTipoDocumento)
+            
+                if(dataTipoDoc){
+                    documento = dataTipoDoc.descripcion;
+                }
 
                 if (isRegister()) {
                     showLoader();
@@ -1083,11 +1092,11 @@
                     })
                     hideLoader();
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
-                    titleSwal = '<small>Guardar Consolidación de Inventario</small>';
+                    titleSwal = '<small>Guardar el documento <b>' + documento +  '</b> </small>';
                     confirmButtonText = 'Guardar';
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
                 } else {
-                    titleSwal = '<small>Actualizar Consolidación de Inventario</small>';
+                    titleSwal = '<small>Actualizar el documento <b>' + documento +  '</b> </small>';
                     confirmButtonText = 'Actualizar';
                     htmlSwal = `<small>Esta Ud. seguro de actualizar este Documento</small>?`;
                 }
