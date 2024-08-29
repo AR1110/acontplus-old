@@ -72,11 +72,11 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-success" type="submit">
+    <button [disabled]="floorForm.invalid" class="btn btn-outline-success" type="submit">
       <fa-icon [icon]="'save'"></fa-icon>
       Guardar
     </button>
-    <button (click)="onModalClose()" class="btn btn-dark" type="button">
+    <button (click)="onModalClose()" class="btn btn-outline-dark" type="button">
       &times; Cancelar
     </button>
   </div>

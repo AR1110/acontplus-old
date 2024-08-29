@@ -74,6 +74,7 @@ public class FloorService(RestaurantContext context) : IFloorService
             return new ApiResponse { Code = "0", Message = "Floor not found" };
         }
 
+        floorFound.Capacity = floor.Capacity;
         floorFound.Code = floor.Code;
         floorFound.Description = floor.Description;
         floorFound.Enabled = floor.Enabled;

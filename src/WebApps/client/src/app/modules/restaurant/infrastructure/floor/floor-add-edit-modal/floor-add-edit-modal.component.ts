@@ -38,7 +38,24 @@ export class FloorAddEditModalComponent {
     { title: 'ID', field: 'id', sorter: 'number', width: 60 },
     { title: 'Código', field: 'code', editor: 'input' },
     { title: 'Descripción', field: 'description', editor: 'input' },
-    { title: 'Capacidad', field: 'capacity', editor: 'number' },
+    {
+      title: 'Capacidad',
+      field: 'capacity',
+      editor: 'number',
+      validator: function (cell: any, value: any) {
+        if (cell.getRow().getTreeParent()) {
+          if (value === '' || value === null) {
+            return { valid: false, message: 'Este campo es requerido' };
+          } else if (!Number.isInteger(Number(value)) || Number(value) < 0) {
+            return {
+              valid: false,
+              message: 'Debe ser un número entero positivo',
+            };
+          }
+        }
+        return true;
+      },
+    },
     {
       title: 'Estado',
       field: 'enabled',
@@ -97,7 +114,7 @@ export class FloorAddEditModalComponent {
     codEstab: new FormControl('', [Validators.required]),
     description: new FormControl('', [Validators.required]),
     code: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    capacity: new FormControl(0, [Validators.required, Validators.min(1)]),
+    capacity: new FormControl(1, [Validators.required, Validators.min(1)]),
     enabled: new FormControl(true),
   });
   modalIcon: IconProp = 'plus';
