@@ -10,6 +10,11 @@ namespace Restaurant.API.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropIndex(
+                name: "UI_ProductionArea",
+                schema: "Restaurant",
+                table: "ProductionArea");
+
             migrationBuilder.AddColumn<int>(
                 name: "EstablecimientoId",
                 schema: "Restaurant",
@@ -52,6 +57,13 @@ namespace Restaurant.API.Data.Migrations
                 name: "EstablecimientoId",
                 schema: "Restaurant",
                 table: "Floor");
+
+            migrationBuilder.CreateIndex(
+                name: "UI_ProductionArea",
+                schema: "Restaurant",
+                table: "ProductionArea",
+                column: "Code",
+                unique: true);
         }
     }
 }

@@ -15,7 +15,7 @@ public class FloorController(IFloorService floorService) : BaseApiController
     }
 
     [HttpGet("GetByEstab/{codEstab}")]
-    public async Task<IActionResult> GetByCode(string codEstab)
+    public async Task<IActionResult> GetByEstab(string codEstab)
     {
         return Ok(await floorService.GetByEstabAsync(codEstab));
     }

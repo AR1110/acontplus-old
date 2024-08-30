@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { Floor } from '@restaurant/models/floor.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ModalService } from '@core/services/modal.service';
@@ -40,7 +40,6 @@ import { ToasterService } from '@core/services/toaster.service';
 export class FloorListComponent {
   @ViewChild('accordionItem') accordionItem: NgbAccordionItem | undefined;
 
-  readonly panelOpenState = signal(false);
   codEstab: string = '';
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   data = {} as Floor;

@@ -90,7 +90,6 @@ namespace Restaurant.API.Data
 
             builder.Entity<ProductionArea>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<ProductionArea>().Property(x => x.Enabled).HasDefaultValue(true);
-            builder.Entity<ProductionArea>().HasIndex(x => x.Code).HasDatabaseName("UI_ProductionArea").IsUnique();
 
             builder.Entity<Room>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Room>().Property(x => x.Enabled).HasDefaultValue(true);

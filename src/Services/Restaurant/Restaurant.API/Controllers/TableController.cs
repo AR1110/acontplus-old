@@ -9,9 +9,9 @@ namespace Restaurant.API.Controllers;
 public class TableController(IAppTableService tableService) : BaseApiController
 {
     [HttpGet("GetByEstab/{codEstab}")]
-    public async Task<IActionResult> Get(string codEstab)
+    public async Task<IActionResult> GetByEstab(string codEstab)
     {
-        return Ok(await tableService.GetAsync(SqlStringParam.Sanitize(codEstab)));
+        return Ok(await tableService.GetByEstabAsync(SqlStringParam.Sanitize(codEstab)));
     }
 
     [HttpPost]

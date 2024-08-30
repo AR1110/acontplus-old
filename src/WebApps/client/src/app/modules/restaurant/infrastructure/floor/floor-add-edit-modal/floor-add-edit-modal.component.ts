@@ -18,6 +18,7 @@ import { MatButton } from '@angular/material/button';
 import { ApiResponse } from '@core/models/api-response';
 import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 
 @Component({
   selector: 'app-floor-add-edit-modal',
@@ -108,7 +109,7 @@ export class FloorAddEditModalComponent {
     },
   ];
 
-  establecimientos: any[] = [];
+  establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   validation = [undefined, null, '', 0];
   floorForm = new FormGroup({
     codEstab: new FormControl('', [Validators.required]),
@@ -132,7 +133,6 @@ export class FloorAddEditModalComponent {
   getEstabAsign() {
     this.#sharedService.getEstabAsign().subscribe((response) => {
       if (response) {
-        console.log(response);
         this.establecimientos = response;
       }
     });
@@ -172,11 +172,11 @@ export class FloorAddEditModalComponent {
       this.#floorService.put(this.data.id, dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
+    } else {
+      this.#floorService.post(dataToSave).subscribe((response) => {
+        this.successResponse(response);
+      });
     }
-
-    this.#floorService.post(dataToSave).subscribe((response) => {
-      this.successResponse(response);
-    });
   }
 
   setCode() {

@@ -23,10 +23,29 @@ namespace Restaurant.API.Services
                 return new ApiResponse { Code = "0", Message = "Floor not found" };
             }
 
-            productionArea.Enabled = false;
-            productionArea.Deleted = true;
-            productionArea.UserId = userId;
-            context.Update(productionArea);
+            var orderExists = await context.OrderItems
+               .Join(context.Items,
+                     order => order.ItemId,
+                     item => item.Id,
+                     (order, item) => new { order, item })
+               .Join(context.ProductionAreas,
+                     combined => combined.item.ProductionAreaId,
+                     productionArea => productionArea.Id,
+                     (combined, productionArea) => new { combined.order, productionArea })
+              .AnyAsync(f => f.productionArea.Id == id);
+
+            if (!orderExists)
+            {
+                context.Remove(productionArea);
+            }
+            else
+            {
+                productionArea.Enabled = false;
+                productionArea.Deleted = true;
+                productionArea.UserId = userId;
+                context.Update(productionArea);
+            }
+            
             await context.SaveChangesAsync();
             return new ApiResponse { Code = "1", Message = "Eliminado correctamente!" };
         }
@@ -62,11 +81,6 @@ namespace Restaurant.API.Services
             context.Update(productionAreaFound);
             await context.SaveChangesAsync();
             return new ApiResponse { Code = "1", Message = "Actualizado correctamente!" };
-        }
-
-        private bool FloorExistsCodeEstab(string code, string codEstab)
-        {
-            return context.ProductionAreas.Any(e => e.Code == code);
         }
     }
 }

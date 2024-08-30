@@ -15,7 +15,7 @@ public class ProductionAreaController(IProductionAreaService productionAreaServi
     }
 
     [HttpGet("GetByEstab/{establecimientoId}")]
-    public async Task<IActionResult> GetByCode(int establecimientoId)
+    public async Task<IActionResult> GetByEstab(int establecimientoId)
     {
         return Ok(await productionAreaService.GetByEstabAsync(establecimientoId));
     }

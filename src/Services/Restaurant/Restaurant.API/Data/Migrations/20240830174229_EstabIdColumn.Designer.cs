@@ -12,7 +12,7 @@ using Restaurant.API.Data;
 namespace Restaurant.API.Data.Migrations
 {
     [DbContext(typeof(RestaurantContext))]
-    [Migration("20240830160815_EstabIdColumn")]
+    [Migration("20240830174229_EstabIdColumn")]
     partial class EstabIdColumn
     {
         /// <inheritdoc />
@@ -872,10 +872,6 @@ namespace Restaurant.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique()
-                        .HasDatabaseName("UI_ProductionArea");
 
                     b.ToTable("ProductionArea", "Restaurant");
                 });
