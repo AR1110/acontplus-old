@@ -14,7 +14,7 @@ public class RoomController(IRoomService roomService) : BaseApiController
         return Ok(await roomService.GetAllAsync());
     }
 
-    [HttpGet("GetByCode/{codEstab}")]
+    [HttpGet("GetByEstab/{codEstab}")]
     public async Task<IActionResult> GetByCode(string codEstab)
     {
         return Ok(await roomService.GetByEstabAsync(codEstab));

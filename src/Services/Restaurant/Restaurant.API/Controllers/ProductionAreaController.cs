@@ -14,10 +14,10 @@ public class ProductionAreaController(IProductionAreaService productionAreaServi
         return Ok(await productionAreaService.GetAllAsync());
     }
 
-    [HttpGet("GetByCode/{codEstab}")]
-    public async Task<IActionResult> GetByCode(string codEstab)
+    [HttpGet("GetByEstab/{establecimientoId}")]
+    public async Task<IActionResult> GetByCode(int establecimientoId)
     {
-        return Ok(await productionAreaService.GetByEstabAsync(codEstab));
+        return Ok(await productionAreaService.GetByEstabAsync(establecimientoId));
     }
 
     [HttpPost]
