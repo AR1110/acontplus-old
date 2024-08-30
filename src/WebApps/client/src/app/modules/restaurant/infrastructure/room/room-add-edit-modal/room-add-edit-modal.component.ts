@@ -35,6 +35,7 @@ export class RoomAddEditModalComponent {
   data: any = {};
   floors: Floor[] = [];
   roomForm = new FormGroup({
+    id: new FormControl(0),
     floorId: new FormControl(0, [Validators.required]),
     description: new FormControl('', [
       Validators.required,
