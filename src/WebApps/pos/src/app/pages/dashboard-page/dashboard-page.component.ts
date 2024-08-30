@@ -38,7 +38,7 @@ export class DashboardPageComponent {
     datasets: [
       {
         data: [40, 45, 50, 55, 60, 65, 70, 75, 70, 60, 50, 45],
-        label: 'Angular',
+        label: 'Ordenes',
         fill: true,
         tension: 0.5,
         borderColor: 'black',
@@ -46,7 +46,15 @@ export class DashboardPageComponent {
       },
       {
         data: [45, 50, 60, 70, 75, 65, 50, 60, 55, 50, 45, 45],
-        label: 'React',
+        label: 'Nota Entrega',
+        fill: true,
+        tension: 0.5,
+        borderColor: 'black',
+        backgroundColor: 'rgba(0,255,0,0.3)'
+      },
+       {
+        data: [45, 50, 60, 70, 75, 65, 50, 60, 55, 50, 45, 45],
+        label: 'Factura',
         fill: true,
         tension: 0.5,
         borderColor: 'black',

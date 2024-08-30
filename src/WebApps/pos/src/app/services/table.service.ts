@@ -1,4 +1,4 @@
-import { PATHS_API } from '@/enums/main.enum';
+import { PATHS, PATHS_API } from '@/enums/main.enum';
 import { ApiResponse } from '@/models/api-response';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
@@ -8,7 +8,7 @@ import { inject, Injectable } from '@angular/core';
 })
 export class TableService {
   private http = inject(HttpClient)
-  private url = `${PATHS_API.RESTAURANT}`
+  private url = `${PATHS_API.RESTAURANT}${PATHS.TABLE}`
 
   constructor() { }
 

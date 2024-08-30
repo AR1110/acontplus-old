@@ -16,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ToUpperCaseDirective } from '@/directives/to-upper-case.directive';
 import { generateUuidv4 } from '@/core/utils/generate-uuidv4';
+import { TableModalComponent } from '../table-modal/table-modal.component';
 
 const messageSave: { [key: string]: string } = {
   [DOC_TYPE.FV]: `
@@ -197,6 +198,12 @@ export class CartFooterComponent {
   }
 
 
+  openTableModal() {
+    this.dialogSvc.open(TableModalComponent, {
+      size: 'md'
+    })
+  }
+
   async save(codDoc: string) {
     try {
       const { orderItems } = this.posStore.state();
@@ -211,6 +218,7 @@ export class CartFooterComponent {
           type: 'warning',
           message: `Seleccione la Mesa`
         })
+        this.openTableModal()
         return
       }
       console.log(order)

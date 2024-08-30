@@ -35,7 +35,8 @@ export class TableModalComponent {
 
   selectedOption = computed(() => this.posStore.state().order.tableId)
 
-  roomTables = signal<any>([])
+  roomTables = signal<any>([]);
+  tableId = signal(0)
   private floorColors: { [key: string]: string } = {};
   private colors: string[] = ['#FFB6C1', '#FFD700', '#87CEFA', '#98FB98'];
 
@@ -53,7 +54,13 @@ export class TableModalComponent {
       codEstab: this.mainStore.state().dataEstab.codEstab
     }
     this.configSvc.getDataForm(params).subscribe(response => {
-      this.roomTables.set(response.roomTables)
+      console.log(response.roomTables)
+      this.roomTables.set(response.roomTables.map(item=>{
+        return {
+          ...item,
+          expanded: item.tables.some((tb:any)=>(tb.id===this.selectedOption() || tb.id === this.tableId()))
+        }
+      }))
     })
   }
 
@@ -62,12 +69,14 @@ export class TableModalComponent {
   }
 
   selectOption(value: any, roomName: string) {
+    this.tableId.set(value.id);
     if (value.assigned) {
       this.tableSvc.unassign(value.id).subscribe(res => {
         if (res.code === "0") {
           this.tS.warning(res.message)
         }
         if (res.code === "1") {
+          playBeepSound();
           this.tS.success(res.message);
           this.getDataForm()
 
