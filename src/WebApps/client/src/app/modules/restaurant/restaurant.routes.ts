@@ -1,15 +1,15 @@
 import { Route } from '@angular/router';
-import { TablePageComponent } from './pages/table-page/table-page.component';
 import { ItemReportComponent } from './reports/item-report/item-report.component';
 import { InfrastructurePageComponent } from '@restaurant/pages/infrastructure-page/infrastructure-page.component';
+import { ProductsPageComponent } from '@restaurant/pages/products-page/products-page.component';
 
 export const routes: Route[] = [
   {
-    path: 'table-page',
-    title: 'Mesas',
-    component: TablePageComponent,
+    path: 'products-page',
+    title: 'Productos',
+    component: ProductsPageComponent,
     data: {
-      breadcrumb: 'Gestión de Pisos, Salas y Mesas',
+      breadcrumb: 'Productos',
     },
   },
   {
@@ -25,7 +25,7 @@ export const routes: Route[] = [
     title: 'Restaurant Infrastructure',
     component: InfrastructurePageComponent,
     data: {
-      breadcrumb: 'Infraestructura',
+      breadcrumb: 'Configuración del Restaurante',
     },
   },
 ];

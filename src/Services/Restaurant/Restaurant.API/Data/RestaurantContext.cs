@@ -94,6 +94,7 @@ namespace Restaurant.API.Data
 
             builder.Entity<Room>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Room>().Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Entity<Room>().HasMany(x => x.Tables).WithOne(x => x.Room).HasForeignKey(x => x.RoomId);
 
             builder.Entity<AppTable>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<AppTable>().Property(x => x.Enabled).HasDefaultValue(true);

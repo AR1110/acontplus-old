@@ -23,7 +23,7 @@ export enum GlobalRoutes {
   MechanicalVehicle = 'mechanical/vehicle-page',
   RestaurantReports = 'restaurant/item-report',
   RestaurantInfrastructure = 'restaurant/infrastructure-page',
-  RestaurantTable = 'restaurant/table-page',
+  RestaurantProducts = 'restaurant/products-page',
   TechnicalSupport = 'technical-support/technical-support-page',
   TechnicalSupportBrand = 'technical-support/brand-page',
   TechnicalSupportCategory = 'technical-support/category-page',

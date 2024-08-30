@@ -1,4 +1,5 @@
 ﻿using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
 using Services.Common.Extensions;
@@ -10,7 +11,7 @@ public class ItemController(IItemService itemService) : BaseApiController
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } };
 
         return Ok(await itemService.GetAsync(parameters));
     }

@@ -14,5 +14,6 @@ namespace Restaurant.API.Entities
         [Required]
         [MaxLength(100)]
         public string Description { get; set; }
+        public int EstablecimientoId { get; set; }
     }
 }

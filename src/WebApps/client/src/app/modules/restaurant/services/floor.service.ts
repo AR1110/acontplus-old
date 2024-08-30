@@ -36,7 +36,7 @@ export class FloorService {
       .pipe(map((response) => response));
   }
 
-  remove(id: number) {
+  delete(id: number) {
     return this.#http
       .delete<ApiResponse>(`${this.#url}${id}`)
       .pipe(map((response) => response));

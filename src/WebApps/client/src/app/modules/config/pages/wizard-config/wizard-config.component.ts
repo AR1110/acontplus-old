@@ -49,7 +49,7 @@ import {
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
 import { DocConfig } from '@modules/config/models/doc-config.model';
-import { TabulatorSemanticUiComponent } from '../../../../core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
+import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import { FirmaElectronicaService } from '@modules/config/services/firma-electronica.service';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faYoutube } from '@fortawesome/free-brands-svg-icons';

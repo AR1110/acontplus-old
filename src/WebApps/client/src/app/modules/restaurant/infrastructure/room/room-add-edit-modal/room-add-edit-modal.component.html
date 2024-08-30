@@ -1,1 +1,55 @@
-<p>room-add-edit-modal works!</p>
+<form (ngSubmit)="onSave()" [formGroup]="roomForm">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <fa-icon [icon]="modalIcon"></fa-icon>
+      {{ modalTitle }}
+    </h5>
+    <button (click)="onModalClose()" class="btn-close" type="button"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="floorId">Piso:</label>
+          <select class="form-select" formControlName="floorId" id="floorId" required>
+            <option value="">Seleccione un piso</option>
+            @for (item of floors; track $index) {
+              <option [value]="item.id">{{ item.description }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="description">Descripción:</label>
+          <input (keyup)="setCode()" [maxlength]="50" [minlength]="1" class="form-control border-select"
+                 formControlName="description"
+                 id="description" placeholder="Sala I" required type="text">
+        </div>
+      </div>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2">
+      <div class="col">
+        <div class="form-group">
+          <label for="code">Código:</label>
+          <input [maxlength]="3" [minlength]="1" class="form-control border-select" formControlName="code" id="code"
+                 required type="text">
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="capacity">Capacidad:</label>
+          <input class="form-control border-select" formControlName="capacity" id="capacity" min="1" required
+                 type="number">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button [disabled]="roomForm.invalid" class="btn btn-outline-success" title="Guardar" type="submit">
+      <fa-icon [icon]="'save'"></fa-icon>
+      Guardar
+    </button>
+    <button (click)="onModalClose()" class="btn btn-outline-dark" type="button">
+      &times; Cancelar
+    </button>
+  </div>
+</form>
