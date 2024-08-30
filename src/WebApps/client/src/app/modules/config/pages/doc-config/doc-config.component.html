@@ -46,20 +46,25 @@
             <td>
               <div class="icheck-primary">
                 <input type="checkbox" [name]="item.descripcion + $index" [id]="item.descripcion + $index"
-                  [(ngModel)]="item.generacionNro">
+                  [(ngModel)]="item.estado">
                 <label [for]="item.descripcion + $index"></label>
               </div>
             </td>
             <td>
               <div class="form-group">
                 <input type="number" class="form-control" [(ngModel)]="item.ultimaSecuencia"
-                  [disabled]="!item.generacionNro" onclick="this.select()" min="1">
+                   onclick="this.select()" min="1">
               </div>
             </td>
-            <td>
+            <td class="d-flex gap-2">
               <button type="button" class="btn btn-success btn-sm" [disabled]="!item.ultimaSecuencia"
                 (click)="saveConfig(item)">
                 <fa-icon [icon]="'save'"></fa-icon>
+              </button>
+
+              <button type="button" class="btn btn-primary btn-sm" [disabled]="!item.ultimaSecuencia"
+                (click)="openModalInfoAdicional()">
+                <fa-icon [icon]="'tags'"></fa-icon>
               </button>
             </td>
           </tr>

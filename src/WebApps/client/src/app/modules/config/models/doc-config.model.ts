@@ -1,7 +1,7 @@
 export interface DocConfig {
   idConfiguracionDocumento: number
   idTipoDocumento: number
-  generacionNro: true,
+  estado: boolean,
   ultimaSecuencia: number
   descripcion: string
 }
