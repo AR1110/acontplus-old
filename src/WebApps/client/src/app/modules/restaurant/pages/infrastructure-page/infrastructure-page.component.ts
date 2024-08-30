@@ -5,6 +5,7 @@ import { MatCard } from '@angular/material/card';
 import { RoomListComponent } from '@restaurant/infrastructure/room/room-list/room-list.component';
 import { FloorListComponent } from '@restaurant/infrastructure/floor/floor-list/floor-list.component';
 import { TableListComponent } from '@restaurant/infrastructure/table/table-list/table-list.component';
+import { ProductionAreaListComponent } from '@restaurant/infrastructure/production-area/production-area-list/production-area-list.component';
 
 @Component({
   selector: 'app-infrastructure-page',
@@ -17,13 +18,15 @@ import { TableListComponent } from '@restaurant/infrastructure/table/table-list/
     RoomListComponent,
     FloorListComponent,
     TableListComponent,
+    ProductionAreaListComponent,
   ],
   templateUrl: './infrastructure-page.component.html',
   styles: ``,
 })
 export class InfrastructurePageComponent {
-  isRoomTabActive = false;
-  isTableTabActive = false;
+  isRoomTabActive: boolean = false;
+  isTableTabActive: boolean = false;
+  isProductionAreaTabActive: boolean = false;
 
   onTabChange(event: MatTabChangeEvent) {
     // Verificamos si la pestaña seleccionada es la de 'Salas'
@@ -33,6 +36,9 @@ export class InfrastructurePageComponent {
         break;
       case 2:
         this.isTableTabActive = true;
+        break;
+      case 3:
+        this.isProductionAreaTabActive = true;
         break;
     }
   }
