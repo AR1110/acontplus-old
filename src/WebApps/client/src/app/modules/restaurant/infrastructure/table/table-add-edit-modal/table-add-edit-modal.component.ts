@@ -71,11 +71,11 @@ export class TableAddEditModalComponent {
       this.#tableService.put(this.data.id, dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
+    } else {
+      this.#tableService.post(dataToSave).subscribe((response) => {
+        this.successResponse(response);
+      });
     }
-
-    this.#tableService.post(dataToSave).subscribe((response) => {
-      this.successResponse(response);
-    });
   }
 
   onModalClose() {
