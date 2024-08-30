@@ -7,6 +7,8 @@ import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ModalService } from '@core/services/modal.service';
+import { ItemAddEditModalComponent } from '@restaurant/products/item/item-add-edit-modal/item-add-edit-modal.component';
 
 @Component({
   selector: 'app-item-list',
@@ -25,6 +27,7 @@ export class ItemListComponent {
   items: Item[] = [];
   pagination = new Pagination();
   #itemService = inject(ItemService);
+  #modalService = inject(ModalService);
 
   loadData() {
     const obj = {
@@ -40,5 +43,21 @@ export class ItemListComponent {
 
   ngOnInit() {
     this.loadData();
+  }
+
+  onEdit(item: Item) {
+    const modalRef = this.#modalService.openModalCustom(
+      ItemAddEditModalComponent,
+      {
+        size: 'lg',
+        centered: true,
+      },
+    );
+    modalRef.componentInstance.data = item;
+    modalRef.result.then((response) => {
+      if (typeof response === 'object' && response.code === '1') {
+        this.loadData();
+      }
+    });
   }
 }

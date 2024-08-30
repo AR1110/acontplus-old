@@ -31,11 +31,11 @@
       </div>
     </div>
     <div class="table-responsive">
-      <table class="table">
+      <table class="table table-bordered">
         <thead>
         <tr>
-          <th scope="col">Op.</th>
-          <th scope="col">N°</th>
+          <th class="text-center" scope="col">Op.</th>
+          <th class="text-center" scope="col">N°</th>
           <th scope="col">Categoría</th>
           <th scope="col">Item</th>
           <th scope="col">Resumen</th>
@@ -45,12 +45,13 @@
           @if (items.length > 0) {
             @for (item of items; track $index) {
               <tr>
-                <td>
-                  <button class="btn btn-outline-warning btn-rounded btn-sm" type="button">
+                <td class="text-center">
+                  <button (click)="onEdit(item)" class="btn btn-outline-warning btn-rounded btn-sm" type="button"
+                          title="Editar">
                     <fa-icon [icon]="'edit'"></fa-icon>
                   </button>
                 </td>
-                <td>{{ $index + 1 }}</td>
+                <td class="text-center">{{ $index + 1 }}</td>
                 <td>{{ item.categoria }}</td>
                 <td>
                   <img
