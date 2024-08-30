@@ -72,7 +72,9 @@
     <!-- setting outline form field appearance -->
     <app-order-list [isLoadingResults]="isLoadingResults" [pagination]="pagination"
       (handlePageEvent)="handlePageEvent($event)" [dataSource]="data" [isFinished]="isFinished()"
-      (refresh)="refresh()" />
+      (refresh)="refresh()"
+       (onEdit)="onEdit($event)"
+      />
 
     <!-- <button mat-icon-button [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>

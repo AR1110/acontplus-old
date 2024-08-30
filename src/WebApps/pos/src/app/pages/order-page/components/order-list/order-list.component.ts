@@ -18,6 +18,7 @@ import { OrderDocModalComponent } from '../order-doc-modal/order-doc-modal.compo
 import { MatButtonModule } from '@angular/material/button';
 import { SharedService } from '@/services/shared.service';
 import { CODE_REPORT } from '@/enums/main.enum';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-order-list',
@@ -28,6 +29,7 @@ import { CODE_REPORT } from '@/enums/main.enum';
     MatTableModule,
     MatMenuModule,
     MatButtonModule,
+    MatTooltipModule,
     CustomContainerDialogComponent,
     CustomTableContainerComponent,
     ActionWhatsappSendDirective

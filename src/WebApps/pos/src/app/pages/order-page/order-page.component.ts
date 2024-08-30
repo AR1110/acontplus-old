@@ -24,6 +24,7 @@ import { CommonModule } from '@angular/common';
 import { OrderListComponent } from './components/order-list/order-list.component';
 import { MainStoreService } from '@/store/main-store.service';
 import { Router } from '@angular/router';
+import { PosStoreService } from '@/store/pos-store.service';
 
 @Component({
   selector: 'app-order-page',
@@ -53,7 +54,7 @@ export class OrderPageComponent {
   pagination = new Pagination()
   orderSvc = inject(OrderService)
   dialogSvc = inject(DialogService)
-  private tS = inject(ToasterService)
+  private posStoreSvc = inject(PosStoreService)
   private mainStore = inject(MainStoreService)
   private router = inject(Router)
   users: UserSelectHtmlOnly[] = [];
@@ -138,6 +139,24 @@ export class OrderPageComponent {
     if (this.isLoadingResults) return
     this.pagination = new Pagination()
     this.refresh()
+  }
+
+
+   onEdit(data: OrderRead) {
+    this.orderSvc.getId(data.id).subscribe({
+      next: response => {
+        this.posStoreSvc.state.update(state => ({
+          ...state,
+          order: response.order,
+          orderItems: response.order.items
+        }));
+        this.navigateToPos()
+      //  this.dialogRef.close()
+      },
+      error: err => {
+        console.error('Error fetching order:', err);
+      }
+    });
   }
 
   navigateToPos() {

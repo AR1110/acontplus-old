@@ -1,7 +1,6 @@
 import { PaymentComponent } from '@/core/components/payment/payment.component';
 import { OrderAdapter } from '@/adapters/order.adapter';
 import { plus } from '@/core/utils/decimal.util';
-import { pricingCalculateUtil } from '@/core/utils/princing-calculate.util';
 import { roundNumber } from '@/core/utils/round-number.util';
 import { playClearSound } from '@/core/utils/sound.util';
 import { getValidId } from '@/core/utils/utils';
@@ -10,8 +9,8 @@ import { DialogService } from '@/services/dialog.service';
 import { OrderService } from '@/services/order.service';
 import { SharedService } from '@/services/shared.service';
 import { ToasterService } from '@/services/toaster.service';
-import { PosStoreService } from '@/store/pos-store.service';
-import { Component, computed, inject, model } from '@angular/core';
+import { orderInitialState, PosStoreService } from '@/store/pos-store.service';
+import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ToUpperCaseDirective } from '@/directives/to-upper-case.directive';
@@ -171,7 +170,7 @@ export class CartFooterComponent {
       let order = structuredClone(e.order);
       order.tableId = 0;
       order.obs = null;
-      order.customerName = "CONSUMIR FINAL";
+      order.customerName = orderInitialState().customerName;
       order.customerCompanyId = 0;
       order.orderId = 0;
       order.tableDesc = null;

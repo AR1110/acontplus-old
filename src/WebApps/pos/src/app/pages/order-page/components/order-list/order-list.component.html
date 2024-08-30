@@ -1,6 +1,7 @@
 <app-custom-table-container [pagination]="pagination()" [isLoadingResults]="isLoadingResults()"
   (onPageEvent)="handlePageEvent.emit($event)">
-  <table mat-table [dataSource]="dataSource()" matSort matSortActive="created" matSortDisableClear matSortDirection="desc">
+  <table mat-table [dataSource]="dataSource()" matSort matSortActive="created" matSortDisableClear
+    matSortDirection="desc">
     <!-- Number Column -->
     <ng-container matColumnDef="index">
       <th mat-header-cell *matHeaderCellDef>#</th>
@@ -12,9 +13,22 @@
     <ng-container matColumnDef="op">
       <th mat-header-cell *matHeaderCellDef>Op.</th>
       <td mat-cell *matCellDef="let row">
-        <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
-          <mat-icon>more_vert</mat-icon>
-        </button>
+
+        <div class="hstack gap-2">
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          @if(!isFinished()){
+          <button mat-icon-button (click)="openOrderDivideDialog(row)" class="text-success"  matTooltip="Completar Venta">
+            <mat-icon>check_circle</mat-icon>
+          </button>
+          }
+          <button mat-icon-button (click)="openOrderDocDialog(row)" matTooltip="Orden Documentos (Factura y Nota Entrega)">
+            <mat-icon>open_in_new</mat-icon>
+          </button>
+
+        </div>
+
         <mat-menu #menu="matMenu">
 
           @if(!isFinished()){
@@ -30,16 +44,8 @@
           </button>
           }
 
-          @if(!isFinished()){
-          <button mat-menu-item (click)="openOrderDivideDialog(row)">
-            <mat-icon>check_circle</mat-icon>
-            <span>Completar venta</span>
-          </button>
-          }
-          <button mat-menu-item (click)="openOrderDocDialog(row)">
-            <mat-icon>open_in_new</mat-icon>
-            <span>Docs</span>
-          </button>
+
+
           <button mat-menu-item (click)="getReport(row)">
             <mat-icon>get_app</mat-icon>
             <span>PDF</span>

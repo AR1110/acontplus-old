@@ -1,4 +1,4 @@
-import { CATEGORY_CODE } from './../../../../../RestaurantUI/src/core/models/category.models';
+
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatTabChangeEvent, MatTabsModule } from "@angular/material/tabs";
 import { MatIconModule } from "@angular/material/icon";
@@ -23,6 +23,7 @@ import { CartFooterComponent } from './components/cart-footer/cart-footer.compon
 import { MainStoreService } from "@/store/main-store.service";
 import { Order } from '@/models/order.model';
 import { PromotionsComponent } from './components/promotions/promotions.component';
+import { SUB_CATEGORY_CODE } from '@/enums/main.enum';
 
 @Component({
   selector: 'app-pos-page',
@@ -55,7 +56,7 @@ export class PosPageComponent {
   private configSvc = inject(ConfigService);
   private itemSvc = inject(ItemService);
 
-  selectedSubCategoryIndex  = 0;
+  selectedSubCategoryIndex = 0;
   isPromotions = signal(false);
 
   subCategorias = signal<SubCategory[]>([{
@@ -65,15 +66,15 @@ export class PosPageComponent {
   },
   {
     idSubFamilia: 0,
-    codigo: CATEGORY_CODE.COM,
+    codigo: SUB_CATEGORY_CODE.COM,
     descripcion: 'COMBOS',
   },
-    {
-      idSubFamilia: 0,
-      codigo: CATEGORY_CODE.PROM,
-      descripcion: 'PROMOCIONES',
-    }
-]);
+  {
+    idSubFamilia: 0,
+    codigo: SUB_CATEGORY_CODE.PROM,
+    descripcion: 'PROMOCIONES',
+  }
+  ]);
   items = signal<ItemRead[]>([])
   dataPagination = signal(new Pagination())
 
@@ -85,7 +86,13 @@ export class PosPageComponent {
   });
 
   constructor() {
-    this.posStoreSvc.state.update(e => posStoreStateInitial)
+    this.posStoreSvc.state.update(e => {
+
+      if (e.order?.orderId > 0) {
+        return e;
+      }
+      return posStoreStateInitial()
+    })
   }
 
   refresh() {
@@ -134,7 +141,7 @@ export class PosPageComponent {
       }
     })
   }
-  getCombos(){
+  getCombos() {
     let params = {
       pageIndex: this.dataPagination().pageIndex + 1,
       pageSize: this.dataPagination().pageSize,
@@ -223,14 +230,14 @@ export class PosPageComponent {
       this.dataItemSearch.update(e => ({ ...e, idSubFamilia: dataSubcategory.idSubFamilia }));
       this.isPromotions.set(false)
 
-      if(dataSubcategory.codigo===CATEGORY_CODE.PROM){
+      if (dataSubcategory.codigo === SUB_CATEGORY_CODE.PROM) {
         this.isPromotions.set(true)
         return
       }
 
-      if(dataSubcategory.codigo===CATEGORY_CODE.COM){
+      if (dataSubcategory.codigo === SUB_CATEGORY_CODE.COM) {
         this.getCombos()
-      }else{
+      } else {
         this.getItems()
       }
     }

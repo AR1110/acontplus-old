@@ -1,3 +1,4 @@
+import { computed, SimpleChanges } from '@angular/core';
 import { Component, inject, input, model, output, signal } from '@angular/core';
 import { debounceTime, distinctUntilChanged, Observable } from "rxjs";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -59,7 +60,7 @@ export class CompanyCustomerSearchComponent {
   onSelect = output<any>()
   clearInput = output()
 
-  textName = model<string | null | undefined>('')
+  textName = model<string>('')
   control = new FormControl('');
   filteredCustomers!: Observable<any[]>;
 
@@ -71,8 +72,8 @@ export class CompanyCustomerSearchComponent {
 
   dataDetail = {} as any
 
-  ngOnInit() {
 
+  ngOnInit() {
     this.filteredCustomers = this.control.valueChanges.pipe(
       startWith(''),
       debounceTime(100),
@@ -91,6 +92,15 @@ export class CompanyCustomerSearchComponent {
       }),
 
     );
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["textName"]){
+      this.control.setValue(this.textName())
+
+    }
+    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
+    //Add '${implements OnChanges}' to the class.
+
   }
 
   private _filter(value: string) {

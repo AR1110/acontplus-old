@@ -15,7 +15,7 @@
 @if (isAdvanced()){
 <mat-form-field appearance="outline" class="m3-input-full-width">
   <mat-label>Cliente</mat-label>
-  <input type="text" matInput [formControl]="control" [matAutocomplete]="auto" [value]="textName"
+  <input type="text" matInput [formControl]="control" [matAutocomplete]="auto"
     (keydown.enter)="onEnter($event)">
 
   <button mat-icon-button matSuffix appActionCompanyCustomerAddEditModal>

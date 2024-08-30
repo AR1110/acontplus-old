@@ -157,4 +157,24 @@ export class OrderService {
     return this.http.put<ApiResponse>(`${this.url}${id}`, { data })
   }
 
+
+  getStats<T>(obj: T) {
+    let json = JSON.stringify({
+      ...obj,
+      tipo: 5
+    })
+    return this.http.get<ApiResponse>(`${this.url}?json=${json}`).pipe(
+      map(response => {
+        let mainData = JSON.parse(response.payload as string)
+        console.log(mainData)
+        let salesMerge = [...mainData.order, ...(mainData.docs || [])];
+        console.log(salesMerge)
+        let productsTop = mainData.productsTop || [];
+        return {
+          sales: salesMerge,
+          productsTop
+        }
+      })
+    )
+  }
 }

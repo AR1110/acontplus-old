@@ -12,9 +12,10 @@ import { DECIMALS } from '@/enums/main.enum';
 export class OrderAdapter {
 
   itemsTo(items: OrderItem[]): OrderItemPostDB[] {
-    const results = items.map(item => {
+    const results = items.map((item, index) => {
       let cantidadTransaccion = item.quantity * (item.conversion || 1)
       return {
+        orderIndex: index + 1,
         orderItemId: item.id,
         uuid: item.uuid,
         itemId: item.itemId || 0,
