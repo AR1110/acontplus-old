@@ -1,6 +1,8 @@
+
 import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
 import { playBeepSound } from '@/core/utils/sound.util';
 import { ConfigService } from '@/services/config.service';
+import { TableService } from '@/services/table.service';
 import { MainStoreService } from '@/store/main-store.service';
 import { PosStoreService } from '@/store/pos-store.service';
 import { CommonModule } from '@angular/common';
@@ -8,6 +10,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-table-modal',
@@ -27,6 +30,8 @@ export class TableModalComponent {
   private configSvc = inject(ConfigService)
   private mainStore = inject(MainStoreService)
   private posStore = inject(PosStoreService)
+  private tableSvc = inject(TableService)
+  private tS = inject(ToastrService)
 
   selectedOption = computed(() => this.posStore.state().order.tableId)
 
@@ -42,7 +47,7 @@ export class TableModalComponent {
     return this.floorColors[floorName];
   }
 
-  ngOnInit() {
+  private getDataForm() {
     let params = {
       idEstablecimiento: this.mainStore.state().dataEstab.idEstablecimiento,
       codEstab: this.mainStore.state().dataEstab.codEstab
@@ -52,8 +57,23 @@ export class TableModalComponent {
     })
   }
 
+  ngOnInit() {
+    this.getDataForm()
+  }
+
   selectOption(value: any, roomName: string) {
     if (value.assigned) {
+      this.tableSvc.unassign(value.id).subscribe(res => {
+        if (res.code === "0") {
+          this.tS.warning(res.message)
+        }
+        if (res.code === "1") {
+          this.tS.success(res.message);
+          this.getDataForm()
+
+        }
+      })
+
 
     } else {
       this.posStore.state.update(e => {

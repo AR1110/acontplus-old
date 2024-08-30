@@ -28,10 +28,7 @@ export const routes: Routes = [
         loadComponent: () =>
           import('@/pages/company-customer/company-customer.component').then((c) => c.CompanyCustomerComponent),
       },
-      // {
-      //   path: '**',
-      //   redirectTo: 'dashboard',
-      // },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
   {

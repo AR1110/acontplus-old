@@ -16,9 +16,6 @@ export const routes: Routes = [
     resolve: {
       configData: configDataResolver
     }
-    // data: {
-    //   breadcrumb: 'Soporte Técnico'
-    // }
   },
 
   {
