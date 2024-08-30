@@ -870,10 +870,6 @@ namespace Restaurant.API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code")
-                        .IsUnique()
-                        .HasDatabaseName("UI_ProductionArea");
-
                     b.ToTable("ProductionArea", "Restaurant");
                 });
 
