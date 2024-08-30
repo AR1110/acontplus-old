@@ -39,9 +39,9 @@ namespace Restaurant.API.Services
                 : new ApiResponse { Code = "0", Message = "Not found!" };
         }
 
-        public async Task<ApiResponse> GetByEstabAsync(string codEstab)
+        public async Task<ApiResponse> GetByEstabAsync(int establecimientoId)
         {
-            var productionAreas = await context.ProductionAreas.Where(x => x.Deleted == null).ToListAsync();
+            var productionAreas = await context.ProductionAreas.Where(x => x.Deleted == null && x.EstablecimientoId == establecimientoId).ToListAsync();
             return productionAreas.Count > 0
                 ? new ApiResponse { Code = "1", Payload = productionAreas }
                 : new ApiResponse { Code = "0", Message = "Not found!" };

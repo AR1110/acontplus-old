@@ -119,6 +119,9 @@ namespace Restaurant.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<int>("EstablecimientoId")
+                        .HasColumnType("int");
+
                     b.Property<bool?>("FromMobile")
                         .HasColumnType("bit");
 
@@ -909,6 +912,9 @@ namespace Restaurant.API.Data.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("EstablecimientoId")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("FromMobile")
                         .HasColumnType("bit");

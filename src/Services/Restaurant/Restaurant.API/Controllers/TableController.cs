@@ -8,7 +8,7 @@ namespace Restaurant.API.Controllers;
 
 public class TableController(IAppTableService tableService) : BaseApiController
 {
-    [HttpGet("{codEstab}")]
+    [HttpGet("GetByEstab/{codEstab}")]
     public async Task<IActionResult> Get(string codEstab)
     {
         return Ok(await tableService.GetAsync(SqlStringParam.Sanitize(codEstab)));

@@ -12,8 +12,8 @@ using Restaurant.API.Data;
 namespace Restaurant.API.Data.Migrations
 {
     [DbContext(typeof(RestaurantContext))]
-    [Migration("20240829232710_EstabIdPrdArea")]
-    partial class EstabIdPrdArea
+    [Migration("20240830160815_EstabIdColumn")]
+    partial class EstabIdColumn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,6 +121,9 @@ namespace Restaurant.API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<int>("EstablecimientoId")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("FromMobile")
                         .HasColumnType("bit");
@@ -912,6 +915,9 @@ namespace Restaurant.API.Data.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("EstablecimientoId")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("FromMobile")
                         .HasColumnType("bit");
