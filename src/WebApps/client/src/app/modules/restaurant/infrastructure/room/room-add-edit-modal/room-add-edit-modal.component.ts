@@ -84,11 +84,11 @@ export class RoomAddEditModalComponent {
       this.#roomService.put(this.data.id, dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
+    } else {
+      this.#roomService.post(dataToSave).subscribe((response) => {
+        this.successResponse(response);
+      });
     }
-
-    this.#roomService.post(dataToSave).subscribe((response) => {
-      this.successResponse(response);
-    });
   }
 
   onModalClose() {
