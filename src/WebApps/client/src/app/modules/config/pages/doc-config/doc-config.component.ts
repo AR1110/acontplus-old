@@ -110,7 +110,7 @@ export class DocConfigPageComponent {
       idConfiguracionDocumento: item.idConfiguracionDocumento,
       idPuntoEmision: this.dataSearch.idPuntoEmision,
       idTipoDocumento: item.idTipoDocumento,
-      estado : item.estado,
+      estado: item.estado,
       ultimaSecuencia: item.ultimaSecuencia
     };
 
@@ -135,15 +135,28 @@ export class DocConfigPageComponent {
         }
       },
       error(err) {
-          hideLoader();
-          console.log(err)
+        hideLoader();
+        console.log(err)
       },
     })
   };
 
-  openModalInfoAdicional(){
-    this.modalSvc.open(DocConfigInfoAdicionalComponent,{size:'lg'})
-    return;
+  openModalInfoAdicional(data: DocConfig) {
+    let modalRef = this.modalSvc.open(DocConfigInfoAdicionalComponent, {
+       size: 'lg' ,
+      })
+
+      let params = {
+        ...structuredClone(data),
+          idPuntoEmision:  this.dataSearch.idPuntoEmision
+      }
+      modalRef.componentInstance.params = structuredClone(params)
+
+    modalRef.result.then(result => {
+      if (result && typeof result === 'object') {
+        this.getDocs()
+      }
+    })
   }
 
 

@@ -52,8 +52,8 @@
             </td>
             <td>
               <div class="form-group">
-                <input type="number" class="form-control" [(ngModel)]="item.ultimaSecuencia"
-                   onclick="this.select()" min="1">
+                <input type="number" class="form-control" [(ngModel)]="item.ultimaSecuencia" onclick="this.select()"
+                  min="1">
               </div>
             </td>
             <td class="d-flex gap-2">
@@ -63,7 +63,7 @@
               </button>
 
               <button type="button" class="btn btn-primary btn-sm" [disabled]="!item.ultimaSecuencia"
-                (click)="openModalInfoAdicional()">
+                (click)="openModalInfoAdicional(item)">
                 <fa-icon [icon]="'tags'"></fa-icon>
               </button>
             </td>
