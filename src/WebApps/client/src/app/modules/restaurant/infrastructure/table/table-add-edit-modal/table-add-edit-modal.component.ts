@@ -27,6 +27,7 @@ export class TableAddEditModalComponent {
   data: any = {};
   rooms: Room[] = [];
   tableForm = new FormGroup({
+    id: new FormControl(0),
     roomId: new FormControl(0, [Validators.required]),
     description: new FormControl('', [
       Validators.required,
