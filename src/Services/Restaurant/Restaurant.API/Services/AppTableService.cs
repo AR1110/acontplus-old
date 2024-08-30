@@ -8,7 +8,7 @@ namespace Restaurant.API.Services;
 
 public class AppTableService(RestaurantContext context) : IAppTableService
 {
-    public async Task<ApiResponse> GetAsync(string codEstab)
+    public async Task<ApiResponse> GetByEstabAsync(string codEstab)
     {
         var rooms = await context.Rooms.Include(x => x.Floor)
             .Where(x => x.Floor.CodEstab == codEstab && x.Deleted == null)
