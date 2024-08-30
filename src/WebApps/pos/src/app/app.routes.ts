@@ -5,7 +5,7 @@ import {configDataResolver} from "@/resolvers/config-resolver";
 export const routes: Routes = [
   {
     path: 'auth',
-    title: 'POS-Login',
+    title: 'AcontPlusPos-Login',
     loadChildren: () =>
       import(`./layouts/auth-layout/auth-layout.routes`).then((m) => m.routes),
   },
