@@ -112,6 +112,7 @@ export class FloorAddEditModalComponent {
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   validation = [undefined, null, '', 0];
   floorForm = new FormGroup({
+    id: new FormControl(0),
     codEstab: new FormControl('', [Validators.required]),
     description: new FormControl('', [Validators.required]),
     code: new FormControl('', [Validators.required, Validators.minLength(3)]),

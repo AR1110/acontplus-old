@@ -28,6 +28,7 @@ export class ProductionAreaAddEditModalComponent {
   data = {} as ProductionArea;
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   productionAreaForm = new FormGroup({
+    id: new FormControl(0),
     establecimientoId: new FormControl(0, [Validators.required]),
     code: new FormControl('', [
       Validators.required,
