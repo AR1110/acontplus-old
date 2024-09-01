@@ -32,32 +32,32 @@ import { ToasterService } from '@/services/toaster.service';
      MatSlideToggleModule,
      M3InputChipComponent
   ],
-  templateUrl: './company-customer-add-edit-modal.component.html', 
+  templateUrl: './company-customer-add-edit-modal.component.html',
 })
 export class CompanyCustomerAddEditModalComponent {
-  
+
   readonly matDialogData = inject<any>(MAT_DIALOG_DATA);
   readonly dialogRef = inject(MatDialogRef<CompanyCustomerAddEditModalComponent>);
   private companyCustomerSvc = inject(CompanyCustomerService)
   private tS = inject(ToasterService)
-  
+
   modalTitle = 'Nuevo Cliente';
   btnText = 'Guardar'
-  
+
   tiemposCredito: any[] = [];
   tipoContribuyentes: any[] = [];
   tiposCliente: any[] = [];
   tiposIdentificacion: any[] = [];
-  
+
   emails = [];
   telefonos=[];
-  
+
   numeroIdentificacion = new FormControl({ value: '', disabled: false }, [
     Validators.required,
     Validators.minLength(6),
     Validators.maxLength(15),
   ]);
-  
+
   customerForm = new FormGroup({
     direccion: new FormControl('', Validators.required),
     idCargo: new FormControl(0),
@@ -75,7 +75,7 @@ export class CompanyCustomerAddEditModalComponent {
     estado: new FormControl(false),
     validationSri: new FormControl(false),
   });
-  
+
   getLoadData(): Observable<any> {
     if (this.matDialogData.id > 0) {
       return forkJoin([
@@ -86,7 +86,7 @@ export class CompanyCustomerAddEditModalComponent {
     }
     return this.companyCustomerSvc.getDataForm();
   }
-  
+
   ngOnInit(){
     try {
       console.log(this.matDialogData)
@@ -120,7 +120,7 @@ export class CompanyCustomerAddEditModalComponent {
                 ? this.tiemposCredito[0].idTiempoCredito
                 : 0,
           });
-        } else { 
+        } else {
           this.modalTitle = 'Editar Cliente';
           this.btnText='Actualizar'
           this.emails = dataCompanyCustomer.correos;
@@ -129,17 +129,17 @@ export class CompanyCustomerAddEditModalComponent {
         }
       });
     }catch (error){
-      
+
     }
   }
-  
-  
-  
+
+
+
   onToggleSri(event: MouseEvent){
     event.stopPropagation()
   }
-  
-  
+
+
   private successResponse = (response:ApiResponse)=>{
     if(response.code==="0"){
       this.tS.toastr({
@@ -153,14 +153,14 @@ export class CompanyCustomerAddEditModalComponent {
         message: response.message
       })
       let id = this.matDialogData.id> 0  ? this.matDialogData.id: (response.payload as any).id;
-      
+
       this.dialogRef.close({
         id,
       });
     }
   }
-  
-  onSave() { 
+
+  onSave() {
 
     this.customerForm.patchValue({
       telefono: this.telefonos.length > 0 ? this.telefonos.join(SEPARATOR_KEY_CODE.SLASH) : null,
@@ -169,25 +169,25 @@ export class CompanyCustomerAddEditModalComponent {
     this.customerForm.patchValue({
       correo: this.emails.length > 0 ? this.emails.join(SEPARATOR_KEY_CODE.SLASH) : null,
     });
-    
+
     if(this.customerForm.invalid){
       this.tS.toastr({
         type: 'warning',
         message: 'Ingrese todos los campos requeridos!'
       })
-      return 
+      return
     }
     const dataForm = this.companyCustomerSvc.adapterTo(this.customerForm.value)
-    
-   
+
+
     if (this.matDialogData.id > 0) {
       this.companyCustomerSvc.put(this.matDialogData.id, dataForm).subscribe(this.successResponse);
     }
-    
+
     if (!(this.matDialogData.id > 0)) {
       this.companyCustomerSvc.post(dataForm).subscribe(this.successResponse);
     }
   }
 
-  
+
 }

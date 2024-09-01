@@ -1,4 +1,47 @@
-<p>dashboard-page works!</p>
+<div class="row">
+  <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Ventas</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+
+        <div class="chart-container">
+          <canvas baseChart width="600" height="300" [type]="'line'" [data]="lineChartData" [options]="lineChartOptions"
+            [legend]="lineChartLegend">
+          </canvas>
+        </div>
+
+      </mat-card-content>
+
+    </mat-card>
+
+  </div>
+  <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Productos mas vendidos</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+
+        <div class="chart-container">
+
+
+          <canvas baseChart [data]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [legend]="barChartLegend"
+            [plugins]="barChartPlugins" [type]="'bar'">
+          </canvas>
+        </div>
+
+      </mat-card-content>
+
+    </mat-card>
+  </div>
+</div>
+
+
+
+
 
 <button class="float-button-custom-pink d-flex align-content-center" (click)="navigateToPos()">
   <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>

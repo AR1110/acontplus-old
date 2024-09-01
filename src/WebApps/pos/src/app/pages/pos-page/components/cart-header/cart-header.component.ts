@@ -1,3 +1,4 @@
+import { Order } from '@/models/order.model';
 import { CompanyCustomerSearchComponent } from '@/pages/company-customer/components/company-customer-search/company-customer-search.component';
 import { TableModalComponent } from "@/pages/pos-page/components/table-modal/table-modal.component";
 import { DialogService } from "@/services/dialog.service";
@@ -25,6 +26,7 @@ export class CartHeaderComponent {
   vendedores = computed(() => this.posStoreSvc.state().vendedores);
   tableDesc = computed(() => this.posStoreSvc.state().order.tableDesc ?? 'Seleccionar Mesa...')
 
+  order = computed(() => this.posStoreSvc.state().order)
   userId = computed(() => this.posStoreSvc.state().order?.userId)
 
   onClickTable() {
@@ -33,18 +35,25 @@ export class CartHeaderComponent {
     })
   }
 
+  private updateOrder(partialOrder: Partial<Order>): void {
+    this.posStoreSvc.state.update(state => ({
+      ...state,
+      order: {
+        ...state.order,
+        ...partialOrder
+      }
+    }));
+  }
 
-  onChangeVendedor($event: any) {
-    this.posStoreSvc.state.update(e => {
-      let dataOrder = {
-        ...e.order,
-        userId: Number($event.target.value)
-      }
-      return {
-        ...e,
-        order: dataOrder
-      }
-    })
+
+  onChangeVendedor(event: Event): void {
+    const userId = Number((event.target as HTMLSelectElement).value);
+    this.updateOrder({ userId });
+  }
+
+  onSelectCustomerCompany(event: any): void {
+    const { name: customerName, idCliente: customerCompanyId } = event;
+    this.updateOrder({ customerName, customerCompanyId });
   }
 
 

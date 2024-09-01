@@ -24,6 +24,10 @@ export const PATHS = {
   COMPROBANTE_INGRESO: 'ComprobanteIngreso/',
   REPORT_V1 : `Reporte/`,
   REPORT_V2 : `v2/Reporte/`,
+  PROMOTION: 'Promotion/',
+  CONSULTAS: 'Consultas/',
+  PRMOTION_MENU: 'PromotionMenu/',
+  TABLE: 'Table/'
 }
 
 

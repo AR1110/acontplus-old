@@ -1,6 +1,8 @@
+
 import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
 import { playBeepSound } from '@/core/utils/sound.util';
 import { ConfigService } from '@/services/config.service';
+import { TableService } from '@/services/table.service';
 import { MainStoreService } from '@/store/main-store.service';
 import { PosStoreService } from '@/store/pos-store.service';
 import { CommonModule } from '@angular/common';
@@ -8,6 +10,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-table-modal',
@@ -27,10 +30,13 @@ export class TableModalComponent {
   private configSvc = inject(ConfigService)
   private mainStore = inject(MainStoreService)
   private posStore = inject(PosStoreService)
+  private tableSvc = inject(TableService)
+  private tS = inject(ToastrService)
 
   selectedOption = computed(() => this.posStore.state().order.tableId)
 
-  roomTables = signal<any>([])
+  roomTables = signal<any>([]);
+  tableId = signal(0)
   private floorColors: { [key: string]: string } = {};
   private colors: string[] = ['#FFB6C1', '#FFD700', '#87CEFA', '#98FB98'];
 
@@ -42,18 +48,41 @@ export class TableModalComponent {
     return this.floorColors[floorName];
   }
 
-  ngOnInit() {
+  private getDataForm() {
     let params = {
       idEstablecimiento: this.mainStore.state().dataEstab.idEstablecimiento,
       codEstab: this.mainStore.state().dataEstab.codEstab
     }
     this.configSvc.getDataForm(params).subscribe(response => {
-      this.roomTables.set(response.roomTables)
+      console.log(response.roomTables)
+      this.roomTables.set(response.roomTables.map(item=>{
+        return {
+          ...item,
+          expanded: item.tables.some((tb:any)=>(tb.id===this.selectedOption() || tb.id === this.tableId()))
+        }
+      }))
     })
   }
 
+  ngOnInit() {
+    this.getDataForm()
+  }
+
   selectOption(value: any, roomName: string) {
+    this.tableId.set(value.id);
     if (value.assigned) {
+      this.tableSvc.unassign(value.id).subscribe(res => {
+        if (res.code === "0") {
+          this.tS.warning(res.message)
+        }
+        if (res.code === "1") {
+          playBeepSound();
+          this.tS.success(res.message);
+          this.getDataForm()
+
+        }
+      })
+
 
     } else {
       this.posStore.state.update(e => {

@@ -4,6 +4,7 @@ import { CONFIG_PATHS } from '../enums/config.enums';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { ApiResponse } from '@core/models/api-response';
 
 @Injectable({
   providedIn: 'root',
@@ -50,7 +51,7 @@ export class DocConfigService {
 
   post<T>(data: T) {
     return this.#http
-      .post(`${this.#url}`, { data })
+      .post<ApiResponse>(`${this.#url}`, { data })
       .pipe(map((response) => response));
   }
 }

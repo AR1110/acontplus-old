@@ -5,15 +5,17 @@
         <mat-icon aria-label="Side nav toggle icon">arrow_back</mat-icon>
       </button>
       <span class="navbar-spacer"></span>
-      <app-nav-user-info-toggle />
-      <button mat-icon-button aria-label="pedidos" (click)="openOrderListModal()">
-        <mat-icon>av_timer</mat-icon>
-      </button>
+      <div class="d-flex gap-3">
+        <app-nav-user-info-toggle />
+        <button mat-icon-button aria-label="pedidos" (click)="openOrderListModal()" matTooltip="Pedidos Recientes">
+          <mat-icon>av_timer</mat-icon>
+        </button>
 
-      <button [matBadge]="totalOrderItems()" mat-icon-button aria-label="total" cdkOverlayOrigin
-        #trigger="cdkOverlayOrigin" (click)="isOverlayOpen.set(!isOverlayOpen())">
-        <mat-icon>add_shopping_cart</mat-icon>
-      </button>
+        <button [matBadge]="totalOrderItems()" mat-icon-button aria-label="total" cdkOverlayOrigin
+          #trigger="cdkOverlayOrigin" (click)="isOverlayOpen.set(!isOverlayOpen())">
+          <mat-icon>add_shopping_cart</mat-icon>
+        </button>
+      </div>
     </mat-toolbar>
     <div class="sidenav-scroll-wrapper">
       <div class=" ">

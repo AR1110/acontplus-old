@@ -6,13 +6,12 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
-import { CustomTableContainerComponent } from "@core/components/custom-table-container/custom-table-container.component";
 import { Pagination } from "@/models/pagination.model";
 import { MatSelectModule } from "@angular/material/select";
 import {
   CompanyCustomerSearchComponent
 } from "@/pages/company-customer/components/company-customer-search/company-customer-search.component";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule  } from "@angular/forms";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { OrderService } from "@/services/order.service";
 import { OrderRead } from "@/models/order.model";
@@ -25,6 +24,7 @@ import { CommonModule } from '@angular/common';
 import { OrderListComponent } from './components/order-list/order-list.component';
 import { MainStoreService } from '@/store/main-store.service';
 import { Router } from '@angular/router';
+import { PosStoreService } from '@/store/pos-store.service';
 
 @Component({
   selector: 'app-order-page',
@@ -54,7 +54,7 @@ export class OrderPageComponent {
   pagination = new Pagination()
   orderSvc = inject(OrderService)
   dialogSvc = inject(DialogService)
-  private tS = inject(ToasterService)
+  private posStoreSvc = inject(PosStoreService)
   private mainStore = inject(MainStoreService)
   private router = inject(Router)
   users: UserSelectHtmlOnly[] = [];
@@ -95,7 +95,6 @@ export class OrderPageComponent {
       error: () => this.isLoadingResults = false,
       complete: () => {
         this.isLoadingResults = false
-        console.log(this.isLoadingResults)
       }
     })
   }
@@ -140,6 +139,24 @@ export class OrderPageComponent {
     if (this.isLoadingResults) return
     this.pagination = new Pagination()
     this.refresh()
+  }
+
+
+   onEdit(data: OrderRead) {
+    this.orderSvc.getId(data.id).subscribe({
+      next: response => {
+        this.posStoreSvc.state.update(state => ({
+          ...state,
+          order: response.order,
+          orderItems: response.order.items
+        }));
+        this.navigateToPos()
+      //  this.dialogRef.close()
+      },
+      error: err => {
+        console.error('Error fetching order:', err);
+      }
+    });
   }
 
   navigateToPos() {

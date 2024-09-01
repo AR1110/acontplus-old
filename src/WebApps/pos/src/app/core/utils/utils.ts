@@ -55,3 +55,6 @@ export const truncateNumber = function (number: number, decimals = 2) {
 }
 
 
+
+
+export const imgDefault = 'product-default.png'

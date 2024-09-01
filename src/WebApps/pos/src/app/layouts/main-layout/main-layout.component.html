@@ -1,54 +1,60 @@
-
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-    [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
-    <mat-toolbar>Menu</mat-toolbar>
+  <mat-sidenav #drawer class="sidenav" fixedInViewport [mode]="'over'" [opened]="false"
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'">
+    <!-- Sidebar cerrado por defecto -->
+
+    <mat-toolbar class="d-flex justify-content-between">
+
+      <span>Menu</span>
+      <!-- Botón para cerrar el sidebar, visible solo cuando el drawer está abierto -->
+      @if(drawer.opened){
+
+      <button mat-icon-button (click)="drawer.close()">
+        <mat-icon aria-label="Close sidenav">close</mat-icon>
+      </button>
+
+      }
+    </mat-toolbar>
+
     <mat-nav-list>
       @for (item of rootRoutes; track $index) {
       <a mat-list-item [routerLink]="item.path" #link="routerLinkActive" routerLinkActive [activated]="link.isActive">
         {{ item.title }}
       </a>
       }
+
     </mat-nav-list>
   </mat-sidenav>
 
   <mat-sidenav-content>
-
     <mat-toolbar color="primary">
-      @if (isHandset$ | async) {
+
       <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      }
       <span class="d-none d-xl-block d-lg-block">AcontPlus POS</span>
 
       <span class="navbar-spacer"></span>
-      <app-nav-user-info-toggle />
-
+      <app-nav-user-info-toggle></app-nav-user-info-toggle>
 
       <button mat-icon-button [matMenuTriggerFor]="notificationMenu">
         <mat-icon matBadge="2" matBadgeColor="accent">notifications</mat-icon>
       </button>
       <mat-menu #notificationMenu="matMenu" xPosition="before" yPosition="above" [overlapTrigger]="false">
-
         <a mat-menu-item>
           <span>You have new tasks</span>
         </a>
         <a mat-menu-item>
           <span>You have a new message</span>
         </a>
-
       </mat-menu>
 
-      <app-nav-user-toggle />
-
-
-
-
+      <app-nav-user-toggle></app-nav-user-toggle>
     </mat-toolbar>
+
     <div class="sidenav-scroll-wrapper">
       <div class="sidenav-content">
-        <router-outlet />
+        <router-outlet></router-outlet>
       </div>
     </div>
   </mat-sidenav-content>

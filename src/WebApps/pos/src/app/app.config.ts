@@ -8,6 +8,8 @@ import {injectSessionInterceptor} from "@core/interceptors/inject-session.interc
 import {errorInterceptor} from "@core/interceptors/error.interceptor";
 import { provideToastr } from 'ngx-toastr';
 import { loaderInterceptor } from './core/interceptors/loader.interceptor';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { BarController, Colors, Legend } from 'chart.js';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,5 +26,6 @@ export const appConfig: ApplicationConfig = {
     provideToastr({
       preventDuplicates: true,
     }),
+    provideCharts(withDefaultRegisterables())
   ]
 };

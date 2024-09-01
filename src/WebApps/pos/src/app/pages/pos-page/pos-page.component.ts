@@ -1,3 +1,4 @@
+
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatTabChangeEvent, MatTabsModule } from "@angular/material/tabs";
 import { MatIconModule } from "@angular/material/icon";
@@ -21,6 +22,8 @@ import { CartHeaderComponent } from './components/cart-header/cart-header.compon
 import { CartFooterComponent } from './components/cart-footer/cart-footer.component';
 import { MainStoreService } from "@/store/main-store.service";
 import { Order } from '@/models/order.model';
+import { PromotionsComponent } from './components/promotions/promotions.component';
+import { SUB_CATEGORY_CODE } from '@/enums/main.enum';
 
 @Component({
   selector: 'app-pos-page',
@@ -37,6 +40,7 @@ import { Order } from '@/models/order.model';
     MatInputModule,
 
     AsyncPipe,
+    PromotionsComponent,
     ItemsComponent,
     CartHeaderComponent,
     CartItemsComponent,
@@ -52,12 +56,25 @@ export class PosPageComponent {
   private configSvc = inject(ConfigService);
   private itemSvc = inject(ItemService);
 
+  selectedSubCategoryIndex = 0;
+  isPromotions = signal(false);
+
   subCategorias = signal<SubCategory[]>([{
     idSubFamilia: 0,
     codigo: "",
     descripcion: 'TODOS',
-    s3ObjectUrl: '',
-  }]);
+  },
+  {
+    idSubFamilia: 0,
+    codigo: SUB_CATEGORY_CODE.COM,
+    descripcion: 'COMBOS',
+  },
+  {
+    idSubFamilia: 0,
+    codigo: SUB_CATEGORY_CODE.PROM,
+    descripcion: 'PROMOCIONES',
+  }
+  ]);
   items = signal<ItemRead[]>([])
   dataPagination = signal(new Pagination())
 
@@ -69,7 +86,13 @@ export class PosPageComponent {
   });
 
   constructor() {
-    this.posStoreSvc.state.update(e => posStoreStateInitial)
+    this.posStoreSvc.state.update(e => {
+
+      if (e.order?.orderId > 0) {
+        return e;
+      }
+      return posStoreStateInitial()
+    })
   }
 
   refresh() {
@@ -117,7 +140,28 @@ export class PosPageComponent {
 
       }
     })
+  }
+  getCombos() {
+    let params = {
+      pageIndex: this.dataPagination().pageIndex + 1,
+      pageSize: this.dataPagination().pageSize,
+      idSubFamilia: this.dataItemSearch().idSubFamilia
+    }
 
+    this.items.set([]);
+    this.setLoading(true)
+    this.itemSvc.getCombos(params).subscribe({
+      next: (response) => {
+        this.setLoading(false)
+        this.items.set(response.items);
+        this.setTotalRecords();
+      },
+      error: (err) => {
+        console.log(err)
+        this.setLoading(false)
+
+      }
+    })
   }
 
   setTotalRecords() {
@@ -183,8 +227,19 @@ export class PosPageComponent {
           pageSize: 25,
         }
       })
-      this.dataItemSearch.update(e => ({ ...e, idSubFamilia: dataSubcategory.idSubFamilia }))
-      this.getItems()
+      this.dataItemSearch.update(e => ({ ...e, idSubFamilia: dataSubcategory.idSubFamilia }));
+      this.isPromotions.set(false)
+
+      if (dataSubcategory.codigo === SUB_CATEGORY_CODE.PROM) {
+        this.isPromotions.set(true)
+        return
+      }
+
+      if (dataSubcategory.codigo === SUB_CATEGORY_CODE.COM) {
+        this.getCombos()
+      } else {
+        this.getItems()
+      }
     }
   }
 

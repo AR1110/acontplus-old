@@ -80,6 +80,12 @@ export class AuthService {
 
   }
 
+  createToken<T>(data:T){
+    return this.http.post<ApiResponse>(`${this.url}createToken`, data, {
+      context: isCustomUrl()
+    })
+  }
+
   setToken(token: string) {
     localStorage.setItem("token", token)
   }

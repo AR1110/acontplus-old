@@ -1,22 +1,22 @@
 
-import { PATHS_API,PATHS } from "@/enums/main.enum";
+import { PATHS_API, PATHS } from "@/enums/main.enum";
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 
 import { map } from "rxjs";
-import {ItemRead} from "@/models/item.model";
+import { ItemRead } from "@/models/item.model";
 import { ItemAdapter } from "@/adapters/item.adapter";
 import { ApiResponse } from "@/models/api-response";
 import { getNoLoader } from "@/core/interceptors/loader.interceptor";
 @Injectable({
-  providedIn:'root'
+  providedIn: 'root'
 })
-export class ItemService{
+export class ItemService {
   private http = inject(HttpClient);
   private itemAdapter = inject(ItemAdapter)
   private url = `${PATHS_API.RESTAURANT}${PATHS.ITEM}`
 
-  getAll<T>(obj:T){
+  getAll<T>(obj: T) {
     let json = JSON.stringify({
       tipo: 2,
       ...obj
@@ -24,21 +24,43 @@ export class ItemService{
     return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
       context: getNoLoader()
     }).pipe(
-      map((response:any)=>{
+      map((response: any) => {
         let result = {
           items: [] as ItemRead[]
         }
-        if(response.code==="1"){
+        if (response.code === "1") {
           let mainData = JSON.parse(response.payload as string)
           result.items = this.itemAdapter.getAllFrom(mainData.items)
         }
         console.log(result)
         return result;
-    })
+      })
     )
   }
 
-  getPromotions(){
+  getCombos<T>(obj: T) {
+    let json = JSON.stringify({
+      tipo: 3,
+      ...obj
+    })
+    return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
+      map((response: any) => {
+        let result = {
+          items: [] as ItemRead[]
+        }
+        if (response.code === "1") {
+          let mainData = JSON.parse(response.payload as string)
+          result.items = this.itemAdapter.getAllFrom(mainData.items)
+        }
+        console.log(result)
+        return result;
+      })
+    )
+  }
+
+  getPromotions() {
 
   }
 

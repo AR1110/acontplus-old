@@ -133,7 +133,6 @@ export class ItemsComponent {
         let subtotalSinImpuesto = pricingCalculateUtil.calcularSubtotalSinImpuesto(dataAdded.price, dataAdded.quantity, dataAdded.discount);
         let taxValue = pricingCalculateUtil.calculateTaxValue(subtotalSinImpuesto, dataAdded.taxPercent);
         dataAdded.taxValue = roundNumber(taxValue, DECIMALS.CINCO)
-        console.log(subtotalSinImpuesto)
         let total = pricingCalculateUtil.calcularTotalConImpuesto(subtotalSinImpuesto, dataAdded.taxValue);
 
         dataAdded.precioTotalSinImpuesto = roundNumber(subtotalSinImpuesto, DECIMALS.CINCO)

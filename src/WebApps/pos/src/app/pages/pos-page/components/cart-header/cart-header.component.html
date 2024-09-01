@@ -12,4 +12,9 @@
   </div>
 </div>
 
-<app-company-customer-search [isAdvanced]="true"/>
+<app-company-customer-search
+[isAdvanced]="true"
+[textName]="order().customerName"
+[id]="order().customerCompanyId"
+ (onSelect)="onSelectCustomerCompany($event)"
+/>

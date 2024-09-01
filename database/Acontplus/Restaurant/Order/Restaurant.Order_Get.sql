@@ -31,6 +31,7 @@ BEGIN
     ,@userId INT
     ,@finished BIT
     ,@rucEmpresa VARCHAR(13)
+    ,@estabId INT 
 
     SET @sql = N'SELECT Id		    = o.Id	
 	                    ,EstablecimientoId	= o.EstablecimientoId
@@ -81,6 +82,7 @@ BEGIN
             ,@tableId           = tableId
             ,@userId            = userId
             ,@finished          = finished
+            ,@estabId           = estabId
     FROM OPENJSON(@json) 
     WITH ( tipo      INT         '$.tipo',
             id        INT         '$.id',
@@ -91,7 +93,8 @@ BEGIN
             pageSize  INT         '$.pageSize',
             tableId     INT       '$.tableId',
             userId INT '$.userId',
-            finished BIT
+            finished BIT,
+            estabId INT 
     )
 
     SELECT @idEntidad = idEntidad, @rucEmpresa = rucEmpresa FROM v_usuario WHERE idUsuarioRol = @userRoleId
@@ -346,5 +349,55 @@ BEGIN
 			 FROM v_usuario u WITH(NOLOCK) 
 			 WHERE u.idEntidad = @idEntidad AND u.estadoUsuario = 1
         END
+
+    --Estadisticas 
+    IF @tipo = 5
+        BEGIN 
+            SET @tableNames = 'order,docs,productsTop'
+            SELECT 'Orden' AS docNom, 
+                    SUM(ro.Total) AS totalVendido,
+                    YEAR(ro.CreatedAt) AS anio,
+                    MONTH(ro.CreatedAt) AS mes
+            FROM Restaurant.[Order] ro
+            --WHERE ro.Id NOT IN (SELECT orderId FROM Restaurant.OrderDocument)
+            WHERE ro.establecimientoId = @estabId
+            GROUP BY YEAR(ro.CreatedAt), MONTH(ro.CreatedAt)
+            ORDER BY YEAR(ro.CreatedAt), MONTH(ro.CreatedAt);
+
+
+          SELECT 
+                CASE 
+                    WHEN v_cpc.codDoc = '01' THEN 'Factura' 
+                    WHEN v_cpc.codDoc = 'NE' THEN 'Nota Entrega' 
+                    ELSE 'Otro' 
+                END AS docNom,
+                SUM(v_cpc.importeTotal) AS totalVendido,
+                YEAR(od.CreatedAt) AS anio,
+                MONTH(od.CreatedAt) AS mes
+             --   ,v_cpc.idEstablecimiento
+            FROM 
+                Restaurant.OrderDocument od WITH(NOLOCK)
+            INNER JOIN 
+                v_CuentaPorCobrar v_cpc WITH(NOLOCK) 
+                ON v_cpc.idDocumento = od.DocumentoId
+            WHERE  
+                v_cpc.idEstablecimiento = @estabId AND
+                v_cpc.codDoc IN ('01', 'NE')
+            GROUP BY 
+                v_cpc.codDoc, YEAR(od.CreatedAt), MONTH(od.CreatedAt) 
+            ORDER BY  
+                v_cpc.codDoc, YEAR(od.CreatedAt), MONTH(od.CreatedAt) 
+
+            SELECT top 5 ri.Id, ar.descripcion , COUNT(roi.ItemId) as vecesVendido 
+            FROM Articulo ar
+            INNER JOIN Restaurant.Item ri ON ri.ProductId = ar.idArticulo 
+            INNER JOIN Restaurant.OrderItem roi ON roi.ItemId = ri.Id
+            INNER JOIN Restaurant.[Order] ro ON ro.Id = roi.OrderId
+            WHERE ro.EstablecimientoId = @estabId
+            group by ri.Id, ar.descripcion, roi.ItemId
+            order by count(ri.Id) desc; 
+        END
+
+
 END
 GO

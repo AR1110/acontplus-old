@@ -34,7 +34,6 @@ export class ConfigService {
         }
         if (response.code === "1") {
           let { puntosEmision, bodegas } = JSON.parse(response.payload as string)
-          console.log(JSON.parse(response.payload as string))
           let obj = {
             puntosEmisionEstab: puntosEmision,
             bodegasEstab: bodegas,
@@ -67,7 +66,7 @@ export class ConfigService {
           vendedores: [] as any[],
         }
         if (response.code === "1") {
-          const {
+          let {
             configDecimal,
             tables,
             subCategorias,
@@ -85,7 +84,13 @@ export class ConfigService {
           const decimal: DecimalVenta = configDecimal[0] || {};
           const customerDefault: CompanyCustomerDefault = customer && customer[0] || {}
 
-          resultData.subCategorias = (subCategorias || []) as SubCategory[];
+          subCategorias = (subCategorias || []) as SubCategory[];
+          resultData.subCategorias = subCategorias.map((item:any)=>{
+            return {
+              ...item,
+              img: item.s3ObjectUrl
+            }
+          })
           resultData.roomTables = roomTables;
           resultData.taxes = taxes;
           resultData.taxRates = taxRates;
