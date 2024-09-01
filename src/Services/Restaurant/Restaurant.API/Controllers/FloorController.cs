@@ -14,10 +14,10 @@ public class FloorController(IFloorService floorService) : BaseApiController
         return Ok(await floorService.GetAllAsync());
     }
 
-    [HttpGet("GetByEstab/{codEstab}")]
-    public async Task<IActionResult> GetByEstab(string codEstab)
+    [HttpGet("GetByEstab/{establecimientoId}")]
+    public async Task<IActionResult> GetByEstab(int establecimientoId)
     {
-        return Ok(await floorService.GetByEstabAsync(codEstab));
+        return Ok(await floorService.GetByEstabAsync(establecimientoId));
     }
 
     [HttpPost]

@@ -18,9 +18,9 @@ export class FloorService {
       .pipe(map((response) => response));
   }
 
-  getByEstab(codEstab: string) {
+  getByEstab(establecimientoId: number) {
     return this.#http
-      .get<ApiResponse>(`${this.#url}GetByEstab/${codEstab}`)
+      .get<ApiResponse>(`${this.#url}GetByEstab/${establecimientoId}`)
       .pipe(map((response) => response));
   }
 
