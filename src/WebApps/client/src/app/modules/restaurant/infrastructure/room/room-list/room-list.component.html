@@ -9,10 +9,11 @@
       </div>
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
         <div class="form-group">
-          <select (change)="onEstabChange($event)" class="form-select" id="codEstab" name="codEstab">
+          <select (change)="onEstabChange($event)" class="form-select" id="idEstablecimiento" name="idEstablecimiento">
             <option value="">Seleccione un establecimiento</option>
             @for (item of establecimientos; track $index) {
-              <option [value]="item.codEstab" [selected]="codEstab">{{ item.nombreComercial }}</option>
+              <option [value]="item.idEstablecimiento" [selected]="establecimientoId">{{ item.nombreComercial }}
+              </option>
             }
           </select>
         </div>
