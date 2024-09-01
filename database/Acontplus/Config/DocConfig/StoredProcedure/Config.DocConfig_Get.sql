@@ -35,8 +35,9 @@ BEGIN
 				  ,idTipoDocumento = ISNULL(td.idTipoDocumento, 0)
 				  ,ultimaSecuencia = ISNULL(cd.ultimaSecuencia,0)
 				  ,descripcion = ISNULL(td.descripcion, '')
-			FROM  TipoDocumento td
-			LEFT JOIN dbo.ConfiguracionDocumento cd ON td.idTipoDocumento = cd.idTipoDocumento
+                  ,td.estado
+			FROM dbo.ConfiguracionDocumento cd WITH (NOLOCK)
+			INNER JOIN TipoDocumento        td WITH (NOLOCK) ON td.idTipoDocumento = cd.idTipoDocumento
 			WHERE cd.idPuntoEmision = @idPuntoEmision
 
 			UNION ALL 
@@ -45,8 +46,10 @@ BEGIN
 				  ,idTipoDocumento
 				  ,0
 				  ,descripcion
+                  ,CAST(0 as bit) as estado
 			FROM TipoDocumento 
-			WHERE secuencial = 1 AND idTipoDocumento NOT IN  (SELECT idTipoDocumento FROM ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision)
+			WHERE secuencial = 1
+              AND idTipoDocumento NOT IN  (SELECT idTipoDocumento FROM ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision)
 			
             RETURN 
 		END 
