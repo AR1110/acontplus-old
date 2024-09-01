@@ -58,7 +58,7 @@ export class OrderListModalComponent {
   getOrders() {
     let params = {
       isSearchDate: true,
-      establecimientoId: getValidId(this.mainStoreSvc.state().establecimientoId),
+      estabId: getValidId(this.mainStoreSvc.state().establecimientoId),
       puntoEmisionId: getValidId(this.mainStoreSvc.state().puntoEmisionId),
       startDate: this.dataSearch.startDate,
       endDate: this.dataSearch.endDate,

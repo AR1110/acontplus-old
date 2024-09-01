@@ -74,7 +74,7 @@ export class OrderPageComponent {
   getOrders() {
     let params = {
       isSearchDate: true,
-      establecimientoId: getValidId(this.mainStore.state().establecimientoId),
+      estabId: getValidId(this.mainStore.state().establecimientoId),
       puntoEmisionId: getValidId(this.mainStore.state().puntoEmisionId),
       startDate: this.dataSearch.startDate,
       endDate: this.dataSearch.endDate,

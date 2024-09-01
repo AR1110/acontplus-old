@@ -26,12 +26,13 @@ BEGIN
     ,@endDate     DATETIME2
     ,@tableId     INT
     ,@sql         NVARCHAR(MAX)
-    ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT, @tableId INT, @userId INT,@finished BIT,@rucEmpresa VARCHAR(13), @idEntidad INT '
+    ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT, @tableId INT, @userId INT,@finished BIT,@rucEmpresa VARCHAR(13), @idEntidad INT, @estabId INT '
     ,@idEntidad INT 
     ,@userId INT
     ,@finished BIT
     ,@rucEmpresa VARCHAR(13)
     ,@estabId INT 
+    ,@anio INT 
 
     SET @sql = N'SELECT Id		    = o.Id	
 	                    ,EstablecimientoId	= o.EstablecimientoId
@@ -67,7 +68,7 @@ BEGIN
                     LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId
                     LEFT JOIN Usuario u ON u.idUsuario = o.UserId
                     LEFT JOIN Restaurant.v_Table vt WITH(NOLOCK) ON o.tableId = vt.Id
-                    WHERE sri_e.idEntidad = @idEntidad
+                    WHERE sri_e.idEntidad = @idEntidad AND o.establecimientoId = @estabId
                       AND CAST(o.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE)
                       AND CAST(@endDate AS DATE) AND o.Enabled = 1 '
 
@@ -83,6 +84,7 @@ BEGIN
             ,@userId            = userId
             ,@finished          = finished
             ,@estabId           = estabId
+            ,@anio              = anio 
     FROM OPENJSON(@json) 
     WITH ( tipo      INT         '$.tipo',
             id        INT         '$.id',
@@ -94,7 +96,8 @@ BEGIN
             tableId     INT       '$.tableId',
             userId INT '$.userId',
             finished BIT,
-            estabId INT 
+            estabId INT,
+            anio INT
     )
 
     SELECT @idEntidad = idEntidad, @rucEmpresa = rucEmpresa FROM v_usuario WHERE idUsuarioRol = @userRoleId
@@ -136,6 +139,7 @@ BEGIN
                                 ,@finished
                                 ,@rucEmpresa
                                 ,@idEntidad = @idEntidad
+                                ,@estabId = @estabId
         END
     
     --Editar Orden
@@ -360,7 +364,7 @@ BEGIN
                     MONTH(ro.CreatedAt) AS mes
             FROM Restaurant.[Order] ro
             --WHERE ro.Id NOT IN (SELECT orderId FROM Restaurant.OrderDocument)
-            WHERE ro.establecimientoId = @estabId
+            WHERE ro.establecimientoId = @estabId AND YEAR(ro.CreatedAt) = @anio 
             GROUP BY YEAR(ro.CreatedAt), MONTH(ro.CreatedAt)
             ORDER BY YEAR(ro.CreatedAt), MONTH(ro.CreatedAt);
 
@@ -382,18 +386,22 @@ BEGIN
                 ON v_cpc.idDocumento = od.DocumentoId
             WHERE  
                 v_cpc.idEstablecimiento = @estabId AND
+                YEAR(od.CreatedAt) = @anio AND
                 v_cpc.codDoc IN ('01', 'NE')
             GROUP BY 
                 v_cpc.codDoc, YEAR(od.CreatedAt), MONTH(od.CreatedAt) 
             ORDER BY  
                 v_cpc.codDoc, YEAR(od.CreatedAt), MONTH(od.CreatedAt) 
 
-            SELECT top 5 ri.Id, ar.descripcion , COUNT(roi.ItemId) as vecesVendido 
+            SELECT 
+                top 5 ri.Id, 
+                ar.descripcion , 
+                COUNT(roi.ItemId) as vecesVendido 
             FROM Articulo ar
             INNER JOIN Restaurant.Item ri ON ri.ProductId = ar.idArticulo 
             INNER JOIN Restaurant.OrderItem roi ON roi.ItemId = ri.Id
             INNER JOIN Restaurant.[Order] ro ON ro.Id = roi.OrderId
-            WHERE ro.EstablecimientoId = @estabId
+            WHERE ro.EstablecimientoId = @estabId 
             group by ri.Id, ar.descripcion, roi.ItemId
             order by count(ri.Id) desc; 
         END
