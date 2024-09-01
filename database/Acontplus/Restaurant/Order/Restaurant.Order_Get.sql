@@ -401,7 +401,7 @@ BEGIN
             INNER JOIN Restaurant.Item ri ON ri.ProductId = ar.idArticulo 
             INNER JOIN Restaurant.OrderItem roi ON roi.ItemId = ri.Id
             INNER JOIN Restaurant.[Order] ro ON ro.Id = roi.OrderId
-            WHERE ro.EstablecimientoId = @estabId 
+            WHERE ro.EstablecimientoId = @estabId AND   YEAR(ro.CreatedAt) = @anio
             group by ri.Id, ar.descripcion, roi.ItemId
             order by count(ri.Id) desc; 
         END
