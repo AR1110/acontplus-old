@@ -43,16 +43,18 @@ export class FloorAddEditModalComponent {
       title: 'Capacidad',
       field: 'capacity',
       editor: 'number',
+      editorParams: {
+        min: 1,
+        step: 1,
+      },
       validator: function (cell: any, value: any) {
-        if (cell.getRow().getTreeParent()) {
-          if (value === '' || value === null) {
-            return { valid: false, message: 'Este campo es requerido' };
-          } else if (!Number.isInteger(Number(value)) || Number(value) < 0) {
-            return {
-              valid: false,
-              message: 'Debe ser un número entero positivo',
-            };
-          }
+        if (value === '' || value === null) {
+          return { valid: false, message: 'Este campo es requerido' };
+        } else if (!Number.isInteger(Number(value)) || Number(value) < 0) {
+          return {
+            valid: false,
+            message: 'Debe ser un número entero positivo',
+          };
         }
         return true;
       },
@@ -112,7 +114,8 @@ export class FloorAddEditModalComponent {
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   validation = [undefined, null, '', 0];
   floorForm = new FormGroup({
-    codEstab: new FormControl('', [Validators.required]),
+    id: new FormControl(0),
+    establecimientoId: new FormControl(0, [Validators.required]),
     description: new FormControl('', [Validators.required]),
     code: new FormControl('', [Validators.required, Validators.minLength(3)]),
     capacity: new FormControl(1, [Validators.required, Validators.min(1)]),
@@ -140,7 +143,9 @@ export class FloorAddEditModalComponent {
 
   ngOnInit() {
     this.getEstabAsign();
-    this.floorForm.patchValue({ codEstab: this.data.codEstab });
+    this.floorForm.patchValue({
+      establecimientoId: this.data.establecimientoId,
+    });
     if (this.data.id > 0) {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Piso';
@@ -165,6 +170,10 @@ export class FloorAddEditModalComponent {
 
     const dataToSave = {
       ...this.floorForm.value,
+      codEstab:
+        this.establecimientos.find(
+          (x) => x.idEstablecimiento === this.data.establecimientoId,
+        )?.codEstab || null,
       rooms: this.rooms,
     };
 

@@ -14,10 +14,10 @@ public class RoomController(IRoomService roomService) : BaseApiController
         return Ok(await roomService.GetAllAsync());
     }
 
-    [HttpGet("GetByEstab/{codEstab}")]
-    public async Task<IActionResult> GetByCode(string codEstab)
+    [HttpGet("GetByEstab/{establecimientoId}")]
+    public async Task<IActionResult> GetByCode(int establecimientoId)
     {
-        return Ok(await roomService.GetByEstabAsync(codEstab));
+        return Ok(await roomService.GetByEstabAsync(establecimientoId));
     }
 
     [HttpPost]

@@ -31,10 +31,11 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styles: ``,
 })
 export class RoomAddEditModalComponent {
-  codEstab: string = '';
+  establecimientoId: number = 0;
   data: any = {};
   floors: Floor[] = [];
   roomForm = new FormGroup({
+    id: new FormControl(0),
     floorId: new FormControl(0, [Validators.required]),
     description: new FormControl('', [
       Validators.required,
@@ -57,14 +58,16 @@ export class RoomAddEditModalComponent {
   #tS = inject(ToasterService);
 
   getFloors() {
-    this.#floorService.getByEstab(this.codEstab).subscribe((response) => {
-      console.log(response);
-      this.floors = (response.payload as Floor[]) || [];
-    });
+    this.#floorService
+      .getByEstab(this.establecimientoId)
+      .subscribe((response) => {
+        console.log(response);
+        this.floors = (response.payload as Floor[]) || [];
+      });
   }
 
   ngOnInit() {
-    this.codEstab = this.data.codEstab;
+    this.establecimientoId = this.data.establecimientoId;
     this.getFloors();
   }
 
