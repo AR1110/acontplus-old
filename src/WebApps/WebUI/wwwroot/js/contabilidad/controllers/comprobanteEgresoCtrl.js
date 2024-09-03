@@ -187,11 +187,11 @@
                 if (!existeDato) {
                     acc.push({
                         idCuentaPorPagar: curr.idCuentaPorPagar,
-                        abonoDoc: new Decimal(curr.abonoDoc).toNumber(),
+                        abonoDoc: fS.instanceDecimal(curr.abonoDoc).toNumber(),
                         abono,
                     });
                 } else {
-                    existeDato.abono = new Decimal(existeDato.abono).plus(curr.abono);
+                    existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
                 }
                 return acc;
             }, []);
@@ -209,7 +209,7 @@
                         abono,
                     });
                 } else {
-                    existeDato.abono = new Decimal(existeDato.abono).plus(curr.abono);
+                    existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
                 }
                 return acc;
             }, []);
@@ -217,17 +217,21 @@
             // Calcula los valores residuales y el estado de pago para cuentas por cobrar
             const tempCuentasPorPagar = cuentasPorPagarAgrupado.map(item => {
                 //let valorResiduo = fS.minus(item.abonoDoc,item.abono).toNumber()
-                let valorResiduo = new Decimal(item.abonoDoc).minus(item.abono).toNumber()
+                let valorResiduo = fS.instanceDecimal(item.abonoDoc).minus(item.abono).toNumber();
+
+                //quitar cuando se haya validado bien tema de decimales en compras 
+                let valorResiduoValidar = fS.minus(fS.roundNumber(item.abonoDoc, 2), fS.roundNumber(item.abono, 2), 2);
+                console.log(valorResiduoValidar)
                 return {
                     idCuentaPorPagar: item.idCuentaPorPagar,
                     abono: valorResiduo,
-                    idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP', estadosPago)
+                    idEstadoPago: getDataIdEstadoPago(valorResiduoValidar === 0 ? 'PE' : 'PP', estadosPago)
                 };
             });
 
             // Calcula los valores residuales y el estado de pago para cuotas por cobrar
             const tempCuotasPorCobrar = cuotasPorPagarAgrupado.map(item => {
-                let valorResiduo = new Decimal(item.abonoCuota).minus(item.abono).toNumber()
+                let valorResiduo = fS.instanceDecimal(item.abonoCuota).minus(item.abono).toNumber()
                 
                 return {
                     idCuotaPorPagar: item.idCuotaPorPagar,
@@ -271,7 +275,7 @@
                             observacion: result.value,
                             ...dataParams
                         };  
-
+                       
                         showLoader();
                         comprobanteEgresoSvc.anular(item.idComprobanteEgreso, data).then(response => {
                             if (response.code == "0") {

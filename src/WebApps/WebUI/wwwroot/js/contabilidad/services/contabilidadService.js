@@ -1915,8 +1915,7 @@
              * 
              * @param {*} dataCuota 
              */
-            handleFullAbono(dataCuota) {
-                console.log(this.getValorAbono())
+            handleFullAbono(dataCuota) { 
                 dataCuota.abono = this.getEsAbonoPosfechado() ? 0 : this.getValorAbono();
                 dataCuota.abonoPosfechado = this.getEsAbonoPosfechado() ? this.getValorAbono() : 0;
                 dataCuota.saldoTotalActual = fS.minus(dataCuota.saldoTotalActual, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
@@ -2155,9 +2154,11 @@
                         }, fS.instanceDecimal(0));
 
                     let valorSaldoLectura = fS.roundNumber(item.valorSaldoLectura, fS.max_dos);
+
                     let valorSaldo = fS.instanceDecimal(valorSaldoLectura)
                         .minus(fS.roundNumber(totalNoPosfechado.toNumber(), fS.max_dos))
                         .toNumber();
+                        
 
                     let dataEstadoPago = this.getEstadoCuota({
                         saldo: valorSaldo,

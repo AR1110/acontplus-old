@@ -544,7 +544,7 @@
 
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
-                        let total = restItem.precioTotalSinImpuesto + restItem.valorImpuesto;
+                        let total = fS.roundNumber(restItem.precioTotalSinImpuesto, pricingUtils.max_dos) + fS.roundNumber(restItem.valorImpuesto, pricingUtils.max_dos);
                         let obj = {
                             n: index + 1,
                             uniqueRowDetalle,
@@ -688,7 +688,7 @@
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
 
                         let precioTotalSinImpuesto = ((itemPrincipal.precioUnitario * itemPrincipal.cantidad)) - itemPrincipal.valorDescuento;
-                        let total = precioTotalSinImpuesto + itemPrincipal.valorImpuesto;
+                        let total = pricingUtils.decPlus(fS.roundNumber(precioTotalSinImpuesto, pricingUtils.max_dos), fS.roundNumber(itemPrincipal.valorImpuesto, pricingUtils.max_dos))
 
                         let obj = {
                             n: index + 1,
@@ -722,8 +722,8 @@
                             estado: 1,
                             datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || [],
                             precioConIva: fS.roundNumber(precioConIva, 3),
-                            precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
-                            total: fS.roundNumber(total, 3)
+                            precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 5),
+                            total
                         }
 
                         return obj;
