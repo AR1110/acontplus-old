@@ -39,6 +39,7 @@ BEGIN
 		,es.nombreComercial
 		,asig.predeterminado 
 		,asig.estado
+        ,es.idEstablecimiento
 	FROM Config.Estab_Asig       asig  WITH (NOLOCK)
 	INNER JOIN Sri.Establecimiento es  WITH (NOLOCK) ON es.codEstab = asig.codEstab 
 	wHERE asig.idUsuarioRol = @idUsuarioRol  
@@ -53,6 +54,7 @@ BEGIN
 		,es.nombreComercial
 		,CAST(0 AS bit)
 		,CAST(0 AS bit)
+        ,es.idEstablecimiento
 	FROM Sri.Establecimiento es  WITH (NOLOCK)
 	WHERE es.codEstab NOT IN (SELECT sc.codEstab FROM Config.Estab_Asig sc WITH (NOLOCK) WHERE sc.idUsuarioRol = @idUsuarioRol)
 	AND es.idEntidad = @idEntidad 

@@ -32,7 +32,7 @@ import { ApiResponse } from '@core/models/api-response';
   styles: ``,
 })
 export class RoomListComponent {
-  codEstab: string = '';
+  establecimientoId: number = 0;
   columnNames = [
     { title: 'floorId', field: 'floorId', visible: false },
     {
@@ -73,7 +73,7 @@ export class RoomListComponent {
       field: 'capacity',
       editor: 'number',
       editorParams: {
-        min: 0,
+        min: 1,
         step: 1,
       },
       editable: function (cell: any) {
@@ -149,16 +149,16 @@ export class RoomListComponent {
     this.#sharedService.getEstabAsign().subscribe((response) => {
       this.establecimientos = response;
       if (this.establecimientos.length > 0) {
-        this.codEstab = this.establecimientos[0].codEstab;
+        this.establecimientoId = this.establecimientos[0].idEstablecimiento;
         setTimeout(() => {
-          this.loadData(this.codEstab);
+          this.loadData(this.establecimientoId);
         });
       }
     });
   }
 
-  loadData(codEstab: string) {
-    this.#florService.getByEstab(codEstab).subscribe((response) => {
+  loadData(establecimientoId: number) {
+    this.#florService.getByEstab(establecimientoId).subscribe((response) => {
       const tempFloors = (response.payload as Floor[]) || [];
       const combinedData = tempFloors.map((floor) => ({
         ...floor,
@@ -180,18 +180,20 @@ export class RoomListComponent {
       RoomAddEditModalComponent,
       { size: 'sm', centered: true },
     );
-    modalRef.componentInstance.data = { codEstab: this.codEstab };
+    modalRef.componentInstance.data = {
+      establecimientoId: this.establecimientoId,
+    };
     modalRef.result.then((response) => {
       if (typeof response === 'object') {
-        this.loadData(this.codEstab);
+        this.loadData(this.establecimientoId);
       }
     });
   }
 
   onEstabChange($event: any) {
-    this.codEstab = $event.target.value;
-    if (!this.codEstab) return;
-    this.loadData(this.codEstab);
+    this.establecimientoId = $event.target.value;
+    if (!this.establecimientoId) return;
+    this.loadData(this.establecimientoId);
   }
 
   successResponse = (response: ApiResponse) => {
@@ -200,7 +202,7 @@ export class RoomListComponent {
       message: response.message,
     });
     if (response.code == '1') {
-      this.loadData(this.codEstab);
+      this.loadData(this.establecimientoId);
     }
   };
 

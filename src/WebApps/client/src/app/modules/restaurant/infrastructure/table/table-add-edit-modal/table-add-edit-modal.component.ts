@@ -23,7 +23,7 @@ import { TableService } from '@restaurant/services/table.service';
   styles: ``,
 })
 export class TableAddEditModalComponent {
-  codEstab: string = '';
+  establecimientoId: number = 0;
   data: any = {};
   rooms: Room[] = [];
   tableForm = new FormGroup({
@@ -46,13 +46,15 @@ export class TableAddEditModalComponent {
   #tS = inject(ToasterService);
 
   getRooms() {
-    this.#roomService.getByEstab(this.codEstab).subscribe((response) => {
-      this.rooms = (response.payload as Room[]) || [];
-    });
+    this.#roomService
+      .getByEstab(this.establecimientoId)
+      .subscribe((response) => {
+        this.rooms = (response.payload as Room[]) || [];
+      });
   }
 
   ngOnInit() {
-    this.codEstab = this.data.codEstab;
+    this.establecimientoId = this.data.establecimientoId;
     this.getRooms();
   }
 

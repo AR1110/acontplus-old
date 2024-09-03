@@ -53,12 +53,12 @@ public class RoomService(RestaurantContext context) : IRoomService
             : new ApiResponse { Code = "0", Message = "Not found!" };
     }
 
-    public async Task<ApiResponse> GetByEstabAsync(string codEstab)
+    public async Task<ApiResponse> GetByEstabAsync(int establecimientoId)
     {
         var rooms = await context.Rooms
             .Include(x => x.Floor)
             .Include(x => x.Tables)
-            .Where(x => x.Floor.CodEstab == codEstab && x.Deleted == null)
+            .Where(x => x.Floor.EstablecimientoId == establecimientoId && x.Deleted == null)
             .ToListAsync();
         return rooms.Count > 0
             ? new ApiResponse { Code = "1", Payload = rooms }

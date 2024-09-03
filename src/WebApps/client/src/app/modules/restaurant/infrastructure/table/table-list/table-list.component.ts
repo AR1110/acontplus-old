@@ -31,7 +31,7 @@ import { TableAddEditModalComponent } from '@restaurant/infrastructure/table/tab
   styles: ``,
 })
 export class TableListComponent {
-  codEstab: string = '';
+  establecimientoId: number = 0;
   columnNames = [
     { title: 'floorId', field: 'floorId', visible: false },
     {
@@ -77,7 +77,7 @@ export class TableListComponent {
       field: 'capacity',
       editor: 'number',
       editorParams: {
-        min: 0,
+        min: 1,
         step: 1,
       },
       editable: function (cell: any) {
@@ -111,7 +111,7 @@ export class TableListComponent {
           editBtn.type = 'button';
           editBtn.innerHTML = `${icon(faSave).html.join('')}`;
           editBtn.classList.add('btn', 'btn-success', 'btn-sm');
-          editBtn.title = 'Guardar Sala';
+          editBtn.title = 'Guardar Mesa';
           editBtn.addEventListener('click', () => {
             const rowData = cell.getRow().getData();
             this.onEdit(rowData);
@@ -122,7 +122,7 @@ export class TableListComponent {
           delBtn.type = 'button';
           delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
           delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
-          delBtn.title = 'Eliminar Sala';
+          delBtn.title = 'Eliminar Mesa';
           delBtn.addEventListener('click', () => {
             const rowData = cell.getRow().getData();
             this.onDelete(rowData);
@@ -153,16 +153,16 @@ export class TableListComponent {
     this.#sharedService.getEstabAsign().subscribe((response) => {
       this.establecimientos = response;
       if (this.establecimientos.length > 0) {
-        this.codEstab = this.establecimientos[0].codEstab;
+        this.establecimientoId = this.establecimientos[0].idEstablecimiento;
         setTimeout(() => {
-          this.loadData(this.codEstab);
+          this.loadData(this.establecimientoId);
         });
       }
     });
   }
 
-  loadData(codEstab: string) {
-    this.#roomService.getByEstab(codEstab).subscribe((response) => {
+  loadData(establecimientoId: number) {
+    this.#roomService.getByEstab(establecimientoId).subscribe((response) => {
       const tempRooms = (response.payload as Floor[]) || [];
       const combinedData = tempRooms.map((room: Room) => ({
         ...room,
@@ -184,18 +184,18 @@ export class TableListComponent {
       TableAddEditModalComponent,
       { size: 'sm', centered: true },
     );
-    modalRef.componentInstance.data = { codEstab: this.codEstab };
+    modalRef.componentInstance.data = { codEstab: this.establecimientoId };
     modalRef.result.then((response) => {
       if (typeof response === 'object') {
-        this.loadData(this.codEstab);
+        this.loadData(this.establecimientoId);
       }
     });
   }
 
   onEstabChange($event: any) {
-    this.codEstab = $event.target.value;
-    if (!this.codEstab) return;
-    this.loadData(this.codEstab);
+    this.establecimientoId = $event.target.value;
+    if (!this.establecimientoId) return;
+    this.loadData(this.establecimientoId);
   }
 
   successResponse = (response: ApiResponse) => {
@@ -204,7 +204,7 @@ export class TableListComponent {
       message: response.message,
     });
     if (response.code == '1') {
-      this.loadData(this.codEstab);
+      this.loadData(this.establecimientoId);
     }
   };
 

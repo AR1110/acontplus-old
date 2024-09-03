@@ -40,7 +40,7 @@ import { ToasterService } from '@core/services/toaster.service';
 export class FloorListComponent {
   @ViewChild('accordionItem') accordionItem: NgbAccordionItem | undefined;
 
-  codEstab: string = '';
+  establecimientoId: number = 0;
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   data = {} as Floor;
   floors: Floor[] = [];
@@ -49,12 +49,12 @@ export class FloorListComponent {
   #sharedService = inject(SharedService);
   #tS = inject(ToasterService);
 
-  loadData(codEstab: string) {
+  loadData(establecimientoId: number) {
     // if (!this.panelOpenState()) {
     //   return;
     // }
-    this.codEstab = codEstab;
-    this.#floorService.getByEstab(codEstab).subscribe((response) => {
+    this.establecimientoId = establecimientoId;
+    this.#floorService.getByEstab(establecimientoId).subscribe((response) => {
       this.floors = (response.payload as Floor[]) || [];
     });
   }
@@ -94,7 +94,7 @@ export class FloorListComponent {
               message: result.message,
             });
             if (result.code == '1') {
-              this.loadData(this.codEstab);
+              this.loadData(this.establecimientoId);
             }
           });
         }
@@ -109,7 +109,9 @@ export class FloorListComponent {
         centered: true,
       },
     );
-    const modalData = Object.assign(this.data, { codEstab: this.codEstab });
+    const modalData = Object.assign(this.data, {
+      establecimientoId: this.establecimientoId,
+    });
     modalRef.componentInstance.data = modalData;
     if (this.data.id > 0) {
       modalRef.componentInstance.data = modalData;
@@ -117,10 +119,10 @@ export class FloorListComponent {
     modalRef.result.then((response) => {
       if (typeof response == 'object') {
         if (response.code == '1') {
-          this.loadData(this.codEstab);
+          this.loadData(this.establecimientoId);
         }
-        this.data = {} as Floor;
       }
+      this.data = {} as Floor;
     });
   }
 
@@ -128,7 +130,7 @@ export class FloorListComponent {
     if (!this.accordionItem) return;
     const isOpen = !this.accordionItem.collapsed;
     if (isOpen) {
-      this.loadData(item.codEstab);
+      this.loadData(item.idEstablecimiento);
     }
   }
 }
