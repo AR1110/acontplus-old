@@ -72,6 +72,7 @@
         .factory('pricingUtils', function () {
             let service = {}
             
+            service.max_dos = 2;
             service.precisionMaxima = precisionMaxima;
             service.instanceDecimal = instanceDecimal;
             service.decPlus = decPlus;

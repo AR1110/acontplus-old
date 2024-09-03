@@ -36,6 +36,8 @@ import { instanceDecimal, minus, mul, plus } from "@core/utils/decimal.util";
 import { OrderAdapter } from '@/adapters/order.adapter';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { PaymentComponent } from '@/core/components/payment/payment.component';
+import { SharedService } from '@/services/shared.service';
 
 
 @Component({
@@ -71,6 +73,7 @@ export class OrderDivideModalComponent {
   private dialogSvc = inject(DialogService)
   private tS = inject(ToasterService);
   private orderAdapterSvc = inject(OrderAdapter)
+  private sharedSvc = inject(SharedService)
   private codDoc: any;
 
   orderData: OrderData = {
@@ -471,14 +474,51 @@ export class OrderDivideModalComponent {
         this.tS.toastr({
           type: 'success',
           message: response.message
-        })
-        this.refresh()
-        this.isReload = true;
+        });
+
+        // Se ha guardado la orden + el documento (Nota Entrega, Factura)
+              if (Array.isArray(response.payload)) {
+                const dataSave = response.payload[0] as any;
+
+                // Si el pago es automático
+                if (dataSave.payAutomatic) {
+                  const modalRef = this.dialogSvc.open(PaymentComponent, {
+                    size: 'xl',
+                    data: {
+                      data: structuredClone(dataSave),
+                      codDoc: this.codDoc,
+                    },
+                  });
+
+                  modalRef.subscribe(result => {
+                    if (result && typeof result === 'object') {
+                      if (dataSave.printerAutomatic) {
+                        this.sharedSvc.printerDoc(dataSave, this.codDoc);
+                      }
+                    }
+                    this.refreshAfterToSaveDoc();
+                  });
+
+                  return;
+                }
+
+                // Si la impresión es automática
+                if (dataSave.printerAutomatic) {
+                  this.sharedSvc.printerDoc(dataSave, this.codDoc);
+                }
+                this.refreshAfterToSaveDoc();
+              }
+
+
       }
     })
 
   }
 
+  refreshAfterToSaveDoc(){
+  this.refresh()
+        this.isReload = true;
+  }
 
   closeDialog() {
     this.dialogRef.close({

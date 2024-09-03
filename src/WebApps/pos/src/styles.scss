@@ -295,3 +295,10 @@ body {
 }
 
 //end loader
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+  border-color: #D61672;
+  box-shadow: 0 0 0 0.10rem #D61672;
+  /* Sombra con color rosa */
+}
