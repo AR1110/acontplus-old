@@ -7,74 +7,21 @@
           <mat-icon>add</mat-icon>
           Nuevo
         </button>
-        <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults">
-          <mat-icon>refresh</mat-icon>
-        </button>
       </div>
     </mat-card-title-group>
   </mat-card-header>
   <mat-card-content>
 
-    <div class="row gx-1">
-      <div class="col-xl-10 col-lg-10">
-        <div class="row gx-1">
 
-          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-            <app-date-range-selection (onChangeDateRange)="onChangeDateRange($event)" />
-          </div>
-
-          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-            <app-company-customer-search [isSimple]="true" (onSelect)="onSelectCustomer($event)"
-              (clearInput)="clearCustomer()" />
-          </div>
-
-          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-            <mat-form-field appearance="outline" class="m3-input-full-width">
-              <mat-label>Mesa</mat-label>
-              <mat-select [(ngModel)]="dataSearch.tableId" (selectionChange)="refresh()">
-                <mat-option [value]="0">-- Todos --</mat-option>
-                @for (group of tablesGroup; track $index) {
-                <mat-optgroup [label]="group.name" style="font-weight: 500;">
-                  @for (children of group.tables; track $index) {
-                  <mat-option [value]="children.id">{{children.description}}</mat-option>
-                  }
-                </mat-optgroup>
-                }
-              </mat-select>
-            </mat-form-field>
-          </div>
+   
 
 
-          <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
-            <mat-form-field appearance="outline" class="m3-input-full-width">
-              <mat-label>Usuario</mat-label>
-              <mat-select [(ngModel)]="dataSearch.userId" (selectionChange)="refresh()">
-                <mat-option [value]="0">-- Todos --</mat-option>
-                @for(item of users;track $index){
-                <mat-option [value]="item.idUsuario">{{item.nombreUsuario}}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-        </div>
-      </div>
-      <div class="col-xl-2 col-lg-2 ">
-        <mat-button-toggle-group [(ngModel)]="typeListOrder" [disabled]="isLoadingResults" aria-label="Change color"
-          (change)="onChangeTypeListOrder()">
-          <mat-button-toggle value="SD">Sin Doc.</mat-button-toggle>
-          <mat-button-toggle value="CD">Con Doc.</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
-    </div>
 
 
     <!-- setting outline form field appearance -->
-    <app-order-list [isLoadingResults]="isLoadingResults" [pagination]="pagination"
-      (handlePageEvent)="handlePageEvent($event)" [dataSource]="data" [isFinished]="isFinished()"
-      (refresh)="refresh()"
-       (onEdit)="onEdit($event)"
-      />
+    <app-order-list  
+      
+      [dataSearch]="dataSearch"  />
 
     <!-- <button mat-icon-button [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>

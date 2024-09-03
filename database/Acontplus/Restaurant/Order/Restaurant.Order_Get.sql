@@ -26,14 +26,27 @@ BEGIN
     ,@endDate     DATETIME2
     ,@tableId     INT
     ,@sql         NVARCHAR(MAX)
-    ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT, @tableId INT, @userId INT,@finished BIT,@rucEmpresa VARCHAR(13), @idEntidad INT, @estabId INT '
+    
     ,@idEntidad INT 
     ,@userId INT
     ,@finished BIT
     ,@rucEmpresa VARCHAR(13)
     ,@estabId INT 
     ,@anio INT 
+    ,@deleted BIT
+    ,@isEnabled BIT
 
+    DECLARE @params    NVARCHAR(MAX) = N'@pageIndex INT
+                                         ,@pageSize INT
+                                         ,@startDate DATETIME2
+                                         ,@endDate DATETIME2
+                                         ,@customerCompanyId INT
+                                         ,@tableId INT
+                                         ,@userId INT
+                                         ,@finished BIT 
+                                         ,@estabId INT
+                                         ,@deleted BIT 
+                                         ,@isEnabled BIT'
     SET @sql = N'SELECT Id		    = o.Id	
 	                    ,EstablecimientoId	= o.EstablecimientoId
                         ,sri_e.codEstab    
@@ -68,9 +81,9 @@ BEGIN
                     LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId
                     LEFT JOIN Usuario u ON u.idUsuario = o.UserId
                     LEFT JOIN Restaurant.v_Table vt WITH(NOLOCK) ON o.tableId = vt.Id
-                    WHERE sri_e.idEntidad = @idEntidad AND o.establecimientoId = @estabId
+                    WHERE o.establecimientoId = @estabId
                       AND CAST(o.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE)
-                      AND CAST(@endDate AS DATE) AND o.Enabled = 1 '
+                      AND CAST(@endDate AS DATE) '
 
             
     SELECT @tipo                 = tipo
@@ -85,6 +98,8 @@ BEGIN
             ,@finished          = finished
             ,@estabId           = estabId
             ,@anio              = anio 
+            ,@deleted           = deleted
+            ,@isEnabled         = isEnabled
     FROM OPENJSON(@json) 
     WITH ( tipo      INT         '$.tipo',
             id        INT         '$.id',
@@ -97,7 +112,9 @@ BEGIN
             userId INT '$.userId',
             finished BIT,
             estabId INT,
-            anio INT
+            anio INT,
+            deleted BIT,
+            isEnabled BIT
     )
 
     SELECT @idEntidad = idEntidad, @rucEmpresa = rucEmpresa FROM v_usuario WHERE idUsuarioRol = @userRoleId
@@ -113,15 +130,19 @@ BEGIN
 
             IF (@userId > 0)
                 SET @sql = @sql + ' AND o.userId = @userId'
+ 
+            SET @sql = @sql + ' AND o.Enabled = @isEnabled' 
 
-            IF @finished = 1
+            IF @isEnabled = 1
                 BEGIN
-                 SET @sql = @sql + ' AND o.Finished = 1'
-                 END
-            ELSE 
-                BEGIN 
-                    SET @sql = @sql + ' AND o.Finished = 0'
+                    SET @sql = @sql + ' AND o.Finished = @finished' 
+                    
                 END
+
+
+        --    SET @sql = @sql + ' AND o.Deleted = @deleted' 
+
+
 
             SET @sql = @sql + ' ORDER BY o.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
                                  
@@ -135,11 +156,12 @@ BEGIN
                                 ,@endDate
                                 ,@customerCompanyId
                                 ,@tableId
-                                ,@userId
-                                ,@finished
-                                ,@rucEmpresa
-                                ,@idEntidad = @idEntidad
+                                ,@userId 
+                                
                                 ,@estabId = @estabId
+                                ,@deleted = @deleted
+                                ,@isEnabled = @isEnabled
+                                ,@finished = @finished
         END
     
     --Editar Orden

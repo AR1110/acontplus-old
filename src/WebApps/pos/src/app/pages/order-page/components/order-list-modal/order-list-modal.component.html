@@ -6,28 +6,14 @@
   />
 
 
-<ng-template #containerTemplate>
-  <div class="d-flex gap-1">
-    <mat-button-toggle-group [(ngModel)]="typeListOrder" [disabled]="isLoadingResults" aria-label="Change color"
-      (change)="onChangeTypeListOrder()">
-      <mat-button-toggle value="SD">Sin Doc.</mat-button-toggle>
-      <mat-button-toggle value="CD">Con Doc.</mat-button-toggle>
-    </mat-button-toggle-group>
+<ng-template #containerTemplate> 
 
-    <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults">
-      <mat-icon>refresh</mat-icon>
-    </button>
-  </div>
-
-  <app-order-list
-  [isLoadingResults]="isLoadingResults"
-  [pagination]="pagination"
-    (handlePageEvent)="handlePageEvent($event)"
-    [dataSource]="data"
-    [isFinished]="isFinished()"
-    (refresh)="refresh()"
-    (onEdit)="onEdit($event)"
+  <app-order-list 
+    [dataSearch]="dataSearch"
+    (closeDialog)="closeDialog()"
+    [isComingOfPos]="true"
      />
+     
 </ng-template>
 
 <ng-template #actionsTemplate>

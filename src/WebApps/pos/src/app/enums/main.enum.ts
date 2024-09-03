@@ -22,8 +22,8 @@ export const PATHS = {
   CONFIG: 'Configuration/',
   ITEM: 'Item/',
   COMPROBANTE_INGRESO: 'ComprobanteIngreso/',
-  REPORT_V1 : `Reporte/`,
-  REPORT_V2 : `v2/Reporte/`,
+  REPORT_V1: `Reporte/`,
+  REPORT_V2: `v2/Reporte/`,
   PROMOTION: 'Promotion/',
   CONSULTAS: 'Consultas/',
   PRMOTION_MENU: 'PromotionMenu/',
@@ -100,4 +100,11 @@ export const enum PaymentTypeCode {
 export const DECIMALS = {
   DOS: 2,
   CINCO: 5
+}
+
+export const STATUS_ORDER = {
+  PENDIENTE: 'PE',
+  PROCESO: 'P',
+  FINALIZADO: 'F',
+  ANULADO: 'A',
 }
