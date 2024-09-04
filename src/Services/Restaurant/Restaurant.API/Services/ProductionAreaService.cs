@@ -23,28 +23,28 @@ namespace Restaurant.API.Services
                 return new ApiResponse { Code = "0", Message = "Floor not found" };
             }
 
-            var orderExists = await context.OrderItems
-               .Join(context.Items,
-                     order => order.ItemId,
-                     item => item.Id,
-                     (order, item) => new { order, item })
-               .Join(context.ProductionAreas,
-                     combined => combined.item.ProductionAreaId,
-                     productionArea => productionArea.Id,
-                     (combined, productionArea) => new { combined.order, productionArea })
-              .AnyAsync(f => f.productionArea.Id == id);
+            //var orderExists = await context.OrderItems
+            //   .Join(context.Items,
+            //         order => order.ItemId,
+            //         item => item.Id,
+            //         (order, item) => new { order, item })
+            //   .Join(context.ProductionAreas,
+            //         combined => combined.item.ProductionAreaId,
+            //         productionArea => productionArea.Id,
+            //         (combined, productionArea) => new { combined.order, productionArea })
+            //  .AnyAsync(f => f.productionArea.Id == id);
 
-            if (!orderExists)
-            {
+            //if (!orderExists)
+            //{
                 context.Remove(productionArea);
-            }
-            else
-            {
-                productionArea.Enabled = false;
-                productionArea.Deleted = true;
-                productionArea.UserId = userId;
-                context.Update(productionArea);
-            }
+            //}
+            //else
+            //{
+            //    productionArea.Enabled = false;
+            //    productionArea.Deleted = true;
+            //    productionArea.UserId = userId;
+            //    context.Update(productionArea);
+            //}
             
             await context.SaveChangesAsync();
             return new ApiResponse { Code = "1", Message = "Eliminado correctamente!" };

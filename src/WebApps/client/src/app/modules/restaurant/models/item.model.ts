@@ -1,4 +1,5 @@
 export interface Item {
+  id: number;
   categoria: string;
   descripcion: string;
   totalRecords: number;

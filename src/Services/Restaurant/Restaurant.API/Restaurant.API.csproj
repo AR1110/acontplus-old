@@ -47,17 +47,17 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
-  <Target Name="PublishDemoDev" BeforeTargets="PrepareForBuild" AfterTargets="ComputeFilesToPublish" Condition="'$(EnvironmentName)' == 'Development'">
+  <Target Name="PublishRestaurantDev" BeforeTargets="PrepareForBuild" AfterTargets="ComputeFilesToPublish" Condition="'$(EnvironmentName)' == 'Development'">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run development" />
   </Target>
 
-  <Target Name="PublishDemoStaging" BeforeTargets="PrepareForBuild" AfterTargets="ComputeFilesToPublish" Condition="'$(EnvironmentName)' == 'Staging'">
+  <Target Name="PublishRestaurantStaging" BeforeTargets="PrepareForBuild" AfterTargets="ComputeFilesToPublish" Condition="'$(EnvironmentName)' == 'Staging'">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run staging" />
   </Target>
 
-  <Target Name="PublishDemoPrd" BeforeTargets="PrepareForBuild" AfterTargets="ComputeFilesToPublish" Condition="'$(EnvironmentName)' == 'Production'">
+  <Target Name="PublishRestaurantPrd" BeforeTargets="PrepareForBuild" AfterTargets="ComputeFilesToPublish" Condition="'$(EnvironmentName)' == 'Production'">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run prod" />
   </Target>

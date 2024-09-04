@@ -10,10 +10,25 @@ namespace Restaurant.API.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "UI_ProductionArea",
+            migrationBuilder.DropForeignKey(
+                name: "FK_Item_ProductionArea_ProductionAreaId",
                 schema: "Restaurant",
-                table: "ProductionArea");
+                table: "Item");
+
+            //migrationBuilder.DropIndex(
+            //    name: "UI_ProductionArea",
+            //    schema: "Restaurant",
+            //    table: "ProductionArea");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Item_ProductionAreaId",
+                schema: "Restaurant",
+                table: "Item");
+
+            migrationBuilder.DropColumn(
+                name: "ProductionAreaId",
+                schema: "Restaurant",
+                table: "Item");
 
             migrationBuilder.AddColumn<int>(
                 name: "EstablecimientoId",
@@ -58,12 +73,34 @@ namespace Restaurant.API.Data.Migrations
                 schema: "Restaurant",
                 table: "Floor");
 
-            migrationBuilder.CreateIndex(
-                name: "UI_ProductionArea",
+            migrationBuilder.AddColumn<int>(
+                name: "ProductionAreaId",
                 schema: "Restaurant",
-                table: "ProductionArea",
-                column: "Code",
-                unique: true);
+                table: "Item",
+                type: "int",
+                nullable: true);
+
+            //migrationBuilder.CreateIndex(
+            //    name: "UI_ProductionArea",
+            //    schema: "Restaurant",
+            //    table: "ProductionArea",
+            //    column: "Code",
+            //    unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Item_ProductionAreaId",
+                schema: "Restaurant",
+                table: "Item",
+                column: "ProductionAreaId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Item_ProductionArea_ProductionAreaId",
+                schema: "Restaurant",
+                table: "Item",
+                column: "ProductionAreaId",
+                principalSchema: "Restaurant",
+                principalTable: "ProductionArea",
+                principalColumn: "Id");
         }
     }
 }
