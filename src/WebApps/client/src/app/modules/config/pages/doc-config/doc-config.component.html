@@ -61,11 +61,12 @@
                 (click)="saveConfig(item)">
                 <fa-icon [icon]="'save'"></fa-icon>
               </button>
-
+              @if (item.infoAdicional) {
               <button type="button" class="btn btn-primary btn-sm" [disabled]="!item.ultimaSecuencia"
                 (click)="openModalInfoAdicional(item)">
                 <fa-icon [icon]="'tags'"></fa-icon>
               </button>
+              }
             </td>
           </tr>
           }
