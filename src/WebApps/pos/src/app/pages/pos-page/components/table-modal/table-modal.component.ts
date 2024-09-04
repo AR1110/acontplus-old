@@ -5,10 +5,10 @@ import { ConfigService } from '@/services/config.service';
 import { TableService } from '@/services/table.service';
 import { MainStoreService } from '@/store/main-store.service';
 import { PosStoreService } from '@/store/pos-store.service';
+import { DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button'; 
 import { MatIconModule } from '@angular/material/icon';
 import { ToastrService } from 'ngx-toastr';
 
@@ -26,7 +26,16 @@ import { ToastrService } from 'ngx-toastr';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableModalComponent {
-  readonly dialogRef = inject(MatDialogRef<TableModalComponent>);
+
+  constructor(public dialogRef: DialogRef<TableModalComponent>) { }
+
+  close(): void {
+    this.dialogRef.close();
+  }
+
+ 
+
+ // readonly dialogRef = inject(MatDialogRef<TableModalComponent>);
   private configSvc = inject(ConfigService)
   private mainStore = inject(MainStoreService)
   private posStore = inject(PosStoreService)
@@ -58,7 +67,8 @@ export class TableModalComponent {
       this.roomTables.set(response.roomTables.map(item=>{
         return {
           ...item,
-          expanded: item.tables.some((tb:any)=>(tb.id===this.selectedOption() || tb.id === this.tableId()))
+          expanded: true
+         // expanded: item.tables.some((tb:any)=>(tb.id===this.selectedOption() || tb.id === this.tableId()))
         }
       }))
     })

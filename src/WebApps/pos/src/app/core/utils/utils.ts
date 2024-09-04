@@ -1,3 +1,5 @@
+import { SRI_IDENTIFICATION_CODE } from "@/enums/main.enum";
+
 export const getValidId = (id: number) => id > 0 ? id : null;
 export const isValidField = <T>(field: T): T | null => {
   let value: any = field
@@ -58,3 +60,10 @@ export const truncateNumber = function (number: number, decimals = 2) {
 
 
 export const imgDefault = 'product-default.png'
+
+
+export const consumirFinalSuperaElValorPermitido = function (codTipoIdentificacion: string, valor: number): boolean {
+  return codTipoIdentificacion === SRI_IDENTIFICATION_CODE.CONSUMIDOR_FINAL && valor > 50;
+}
+
+export const messageSuperaElValorTotalPermitido = `La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del CONSUMIDOR FINAL`

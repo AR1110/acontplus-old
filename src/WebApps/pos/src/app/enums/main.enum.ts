@@ -54,6 +54,7 @@ export enum SRI_IDENTIFICATION_CODE {
   RUC = '04',
   CEDULA = '05',
   PASSPORT = '06',
+  CONSUMIDOR_FINAL = '07'
 }
 
 

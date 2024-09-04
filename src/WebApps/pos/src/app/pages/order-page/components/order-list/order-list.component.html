@@ -36,8 +36,8 @@
         }
       </mat-select>
     </mat-form-field>
-  </div> 
-</div> 
+  </div>
+</div>
 <div class="hstack gap-3 justify-content-between">
   <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
     @for(item of statusOrder();track $index){
@@ -49,7 +49,7 @@
     }
   </div>
 
-  <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
+  <button mat-icon-button (click)="refresh()" color="primary" [disabled]="isLoadingResults()">
     <mat-icon>refresh</mat-icon>
   </button>
 </div>
@@ -78,7 +78,7 @@
           @if(isPending()){
           <button mat-icon-button (click)="openOrderDivideDialog(row)" class="text-success"
             matTooltip="Completar Venta">
-            <mat-icon>check_circle</mat-icon>
+            <img src="/icons/icon-cash-register-32.png" alt="icon-cash-register-32" class="icon-img">
           </button>
           }
           <button mat-icon-button (click)="openOrderDocDialog(row)"

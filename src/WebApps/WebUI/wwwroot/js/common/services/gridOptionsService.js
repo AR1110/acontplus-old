@@ -291,7 +291,7 @@
                 const filteredItems = items.filter(item => item.codigoPorcentaje === codigoPorcentaje);
                 return filteredItems.reduce((acc, item) => {
                     const totalIva = item.valorImpuesto || pricingUtils.calculateTaxValue(item.precioTotalSinImpuesto, tarifa);
-                    acc.totalIva = pricingUtils.decPlus(acc.totalIva, fS.roundNumber(totalIva, pricingUtils.max_dos), pricingUtils.precisionMaxima);
+                    acc.totalIva = pricingUtils.decPlus(acc.totalIva, fS.roundNumber(totalIva, pricingUtils.max_dos), pricingUtils.max_dos);
                     return acc;
                 }, { totalIva: 0 });
             }
@@ -341,7 +341,7 @@
                 if (tarifa.tarifa > 0) {
                     const dataTotalIva = calcularTotalIvaPorTarifa(tarifa.codigoPorcentaje, tarifa.tarifa);
 
-                    totalizadores.sumTotalIva = pricingUtils.decPlus(totalizadores.sumTotalIva , dataTotalIva.totalIva, pricingUtils.precisionMaxima)
+                    totalizadores.sumTotalIva = pricingUtils.decPlus(totalizadores.sumTotalIva , dataTotalIva.totalIva, pricingUtils.max_dos)
                     if (dataTotalIva.totalIva > 0) {
                         htmlIvaTotal += `
                     <tr>

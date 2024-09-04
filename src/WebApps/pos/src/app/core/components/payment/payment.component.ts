@@ -636,7 +636,7 @@ export class PaymentComponent {
     let data = {
       comprobante,
       cobros: this.cobrosAgregados(),
-      cobroDetalle: cobrosDetalle,
+      cobrosDetalle,
       historialCuentas,
       cuentasPorCobrarEstado,
       cuotasPorCobrarEstado

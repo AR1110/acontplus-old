@@ -73,6 +73,7 @@ export type Order = {
   uuid: string
   orderId: number
   userId: number
+  tipoIdentificacionSri: string
   customerCompanyId: number
   customerName: string
   createdAt: Date

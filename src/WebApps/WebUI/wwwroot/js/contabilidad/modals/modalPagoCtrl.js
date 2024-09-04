@@ -158,6 +158,7 @@ class PagoService {
 
             let totalPosfechado = pagosDetalle.filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && cd.posfechado)
                 .reduce((acc, curr) => acc.plus(curr.abono), this.fS.instanceDecimal(0));
+ 
 
             let totalNoPosfechado = pagosDetalle.filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && !cd.posfechado)
                 .reduce((acc, curr) => acc.plus(curr.abono), this.fS.instanceDecimal(0));
@@ -391,6 +392,8 @@ class PagoService {
             valorAbono = dataCuota.saldo;
         }
  
+        this.valorAbono = valorAbono;
+ 
         this.addPagoDetalle(dataCuota, dataCuota.saldo, 0)
         dataCuota.saldo = 0; 
     }
@@ -537,8 +540,7 @@ class PagoService {
             valorMovimientoSaldo = this.fS.minus(dataUltimoCobroDetalle.saldoOriginal, dataUltimoCobroDetalle.abono, this.DECIMAL_CINCO)
         } else {
             valorMovimientoSaldo = this.fS.instanceDecimal(item.saldoOriginal, this.DECIMAL_CINCO);
-        }
-
+        } 
 
         this.pagosDetalle.push({
             idCuentaPorPagar: this.group.idCuentaPorPagar,
@@ -758,14 +760,13 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
                     try {
 
-                        let { isPosFechado, valorAbono } = result;
+                        let { isPosfechado, valorAbono } = result;
 
                         pagoSvc.selectedDocumentos = $scope.selectedDocumentos;
 
                         pagoSvc.secuencial = $scope.pagos.length + 1;
-                        pagoSvc.esAbonoPosfechado = isPosFechado;
-                        pagoSvc.valorAbono = valorAbono;
-
+                        pagoSvc.esAbonoPosfechado = isPosfechado;
+                        pagoSvc.valorAbono = valorAbono; 
 
 
                         //--------agregando abono ---
@@ -779,7 +780,7 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
                             .reduce((prev, curr) => fS.instanceDecimal(prev).plus(curr.abono), fS.instanceDecimal(0))
                             .toNumber();
 
-
+                       
                         $scope.addDataPayment(result, abonoCuota);
 
                         calculoTotales();
@@ -1010,7 +1011,7 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
                         let params = comprobanteEgresoSvc.mapperTo(data);
-
+                  
                         showLoader();
                         comprobanteEgresoSvc.post(params).then(response => {
                             if (response.code === "0") {

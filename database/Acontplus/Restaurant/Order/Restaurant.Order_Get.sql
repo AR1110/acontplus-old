@@ -210,9 +210,11 @@ BEGIN
                 customerName = CASE WHEN o.CustomerCompanyId = 0 THEN 'CONSUMIDOR FINAL' ELSE c.nombreFiscal END
                 ,tableName = r.[description] + ' - ' + ISNULL(t.[Description], '') 
                 ,numberTable = numberTable
+                ,tipoIdentificacionSri= ti.codigoSri
                 ,o.*
              FROM Restaurant.[Order] o WITH(NOLOCK)
              LEFT JOIN Cliente c WITH(NOLOCK) ON c.idCliente = o.CustomerCompanyId
+             LEFT JOIN dbo.TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = c.idTipoIdentificacion 
              LEFT JOIN Restaurant.[Table] t WITH(NOLOCK) ON t.iD = o.TableId
              LEFT JOIN Restaurant.[v_room] r ON r.Id = t.RoomId
              WHERE o.Id = @id 

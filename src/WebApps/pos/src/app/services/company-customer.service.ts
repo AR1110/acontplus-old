@@ -160,7 +160,8 @@ export class CompanyCustomerService {
                 razonSocialComprador: item.nombreFiscal,
                 identificacionComprador: item.numeroIdentificacion,
                 nombreComercial: item.nombreComercial,
-                name: item.nombreComercial
+                name: item.nombreComercial,
+                codigoSri: item.codigoSri
               }
             })
           }

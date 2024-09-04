@@ -3,13 +3,14 @@
   [containerTemplate]="containerTemplate"
   [actionsTemplate]="actionsTemplate"
   [matDialogTitle]="'Detalle Personalizado'"
+  (close)="closeDialog()"
 />
 
 <ng-template #containerTemplate>
   <div class="mt-1"></div>
   <app-product-search
     [isSimple]="true"
-    [labelText]="'Buscar Producto'"
+    [labelText]="'Buscar Producto de Tipo Servicio'"
     (onSelect)="onSelectProduct($event)"
   />
 

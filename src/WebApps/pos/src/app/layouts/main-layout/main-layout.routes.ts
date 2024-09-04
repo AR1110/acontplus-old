@@ -40,6 +40,12 @@ export const routes: Routes = [
         title: 'Pos',
         loadComponent: () => import('@/pages/pos-page/pos-page.component').then(m => m.PosPageComponent),
       },
+      // {
+      //   path: 'scheme-table',
+      //   title: 'Mesa de Esquemas',
+      //   loadComponent: () => import('@/pages/scheme-table-page/scheme-table-page.component').then(m => m.SchemeTablePageComponent),
+      // },
+
     ]
   },
 

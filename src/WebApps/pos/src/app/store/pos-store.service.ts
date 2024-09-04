@@ -1,4 +1,5 @@
 import { generateUuidv4 } from "@/core/utils/generate-uuidv4";
+import { SRI_IDENTIFICATION_CODE } from "@/enums/main.enum";
 import { Order, OrderItem } from "@/models/order.model";
 import { Tax, TaxRate } from "@/models/tax.model";
 import { GenericStoreSignalService } from "@/services/generic-store-signal.service";
@@ -20,6 +21,7 @@ export const orderInitialState = () => {
     uuid: generateUuidv4(),
     orderId: 0,
     userId: 0,
+    tipoIdentificacionSri: SRI_IDENTIFICATION_CODE.CONSUMIDOR_FINAL,
     customerCompanyId: 0,
     customerName: "CONSUMIDOR FINAL",
     createdAt: new Date(),

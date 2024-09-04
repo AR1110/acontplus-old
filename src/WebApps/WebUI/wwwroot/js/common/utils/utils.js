@@ -359,28 +359,36 @@
         /* number: número a redondear
            max: máximo de dígitos fraccionables
         */
-        formSvc.roundNumber = function (number, max = 1) {
+        // formSvc.roundNumber = function (number, max = 1) {
 
+        //     if (typeof number !== 'number' || isNaN(number)) {
+        //         throw new TypeError('Número inválido: ' + number);
+        //     }
+
+        //     if (typeof max !== 'number' || isNaN(max)) {
+        //         throw new TypeError('Máximo de dígitos inválido: ' + max);
+        //     }
+ 
+
+        //     let factor = Math.pow(10, max);
+        //     let tempNumber = number * factor;
+        //     let roundedTempNumber = Math.round(tempNumber);
+        //     return roundedTempNumber / factor; 
+
+        // }
+        formSvc.roundNumber = function(number, max = 2) {
             if (typeof number !== 'number' || isNaN(number)) {
                 throw new TypeError('Número inválido: ' + number);
             }
 
-            if (typeof max !== 'number' || isNaN(max)) {
+            if (typeof max !== 'number' || isNaN(max) || max < 0) {
                 throw new TypeError('Máximo de dígitos inválido: ' + max);
             }
 
-            // let fraccion = number.toString().split('.')[1];
-
-            // if (!fraccion || fraccion.length <= 2) {
-            //     return number;
-            // }
-
-            let factor = Math.pow(10, max);
-            let tempNumber = number * factor;
-            let roundedTempNumber = Math.round(tempNumber);
-            return roundedTempNumber / factor;
-            // return Math.trunc(number * Math.pow(10, max)) / Math.pow(10, max);
-
+            // Asegúrate de usar la precisión adecuada
+            const factor = Math.pow(10, max);
+            // Multiplica y luego divide para redondear
+            return Math.round((number + Number.EPSILON) * factor) / factor;
         }
 
         formSvc.truncateNumber = function(number, decimals) {

@@ -25,6 +25,8 @@ import { FormsModule } from "@angular/forms";
 import Swal from "sweetalert2";
 import { OrderAdapter } from "@/adapters/order.adapter";
 import { OrderService } from "@/services/order.service";
+import { DialogService } from '@/services/dialog.service';
+import { PaymentComponent } from '@/core/components/payment/payment.component';
 
 type Props = {
   dataForm: any,
@@ -56,6 +58,7 @@ export class OrderCustomItemComponent {
   private tS = inject(ToasterService);
   private orderAdapter = inject(OrderAdapter)
   private orderSvc = inject(OrderService)
+  private dialogSvc = inject(DialogService)
 
   orderItemCustom = signal({
     quantity: 1,
@@ -68,9 +71,6 @@ export class OrderCustomItemComponent {
 
   importeTotal = this.matDialogData.orderData.order.total;
 
-  ngOnInit() {
-    console.log(this.matDialogData)
-  }
 
 
   onSelectProduct<T extends { idArticulo: number }>({ idArticulo }: T) {
@@ -147,12 +147,12 @@ export class OrderCustomItemComponent {
 
   async saveInvoice() {
     try {
-      const { dataForm, orderData } = structuredClone(this.matDialogData);
+      const { orderData } = structuredClone(this.matDialogData);
       const { order } = orderData;
 
       const data = {
         ...order,
-        subtotalSinImpuestos: this.orderItemCustom().price,
+        subtotalSinImpuestos: roundNumber(this.orderItemCustom().price),
         discount: this.orderItemCustom().discount,
         tax: 0, //remover mas adelante
         total: this.importeTotal,
@@ -213,7 +213,6 @@ export class OrderCustomItemComponent {
 
       if (!isConfirmed) return
 
-      console.log(order)
       let orderItems = [
         {
           ...this.orderItemCustom(),
@@ -249,6 +248,33 @@ export class OrderCustomItemComponent {
               type: 'success',
               message: response.message
             })
+
+
+
+            // Se ha guardado la orden + el documento (Nota Entrega, Factura)
+            if (Array.isArray(response.payload)) {
+              const dataSave = response.payload[0] as any;
+
+              // Si el pago es automático
+              if (dataSave.payAutomatic) {
+                const modalRef = this.dialogSvc.open(PaymentComponent, {
+                  size: 'xl',
+                  data: {
+                    data: structuredClone(dataSave),
+                    codDoc: DOC_TYPE.FV,
+                  },
+                });
+
+                modalRef.subscribe(result => {
+                  this.dialogRef.close({
+                    isReload: true
+                  })
+                });
+
+                return;
+              }
+            }
+
             this.dialogRef.close({
               isReload: true
             })

@@ -4,7 +4,7 @@ import { formatDate } from '@/core/utils/date.util';
 import { imgDefault, isValidField } from '@/core/utils/utils';
 import { mergeMeasureFromAdapter } from "@/adapters/medida.adapter";
 import { plus } from '@/core/utils/decimal.util';
-import { DECIMALS } from '@/enums/main.enum';
+import { DECIMALS, SRI_IDENTIFICATION_CODE } from '@/enums/main.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -176,6 +176,7 @@ export class OrderAdapter {
       establecimientoId: order.establecimientoId,
       puntoEmisionId: order.puntoEmisionId,
       tableId: order.tableId,
+      tipoIdentificacionSri: order.tipoIdentificacionSri ?? SRI_IDENTIFICATION_CODE.CONSUMIDOR_FINAL,
       customerCompanyId: order.customerCompanyId,
       tax: order.tax,
       discount: order.discount,
