@@ -284,9 +284,6 @@ namespace Restaurant.API.Data.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductionAreaId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Recipe")
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
@@ -303,8 +300,6 @@ namespace Restaurant.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductionAreaId");
 
                     b.ToTable("Item", "Restaurant");
                 });
@@ -1128,15 +1123,6 @@ namespace Restaurant.API.Data.Migrations
                         .HasForeignKey("IngredientTypeId");
 
                     b.Navigation("IngredientType");
-                });
-
-            modelBuilder.Entity("Restaurant.API.Entities.Item", b =>
-                {
-                    b.HasOne("Restaurant.API.Entities.ProductionArea", "ProductionArea")
-                        .WithMany()
-                        .HasForeignKey("ProductionAreaId");
-
-                    b.Navigation("ProductionArea");
                 });
 
             modelBuilder.Entity("Restaurant.API.Entities.Menu", b =>

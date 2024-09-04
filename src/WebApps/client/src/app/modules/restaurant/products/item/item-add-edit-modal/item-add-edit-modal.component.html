@@ -1,1 +1,85 @@
-<p>item-add-edit-modal works!</p>
+<form (ngSubmit)="onSave()" [formGroup]="itemForm">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <fa-icon [icon]="modalIcon"></fa-icon>
+      {{ modalTitle }}
+    </h5>
+    <button (click)="onModalClose()" aria-label="Close" class="btn-close" type="button"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-6">
+        <div class="form-group input-group-lg">
+          <label for="production-area">Áreas de producción</label>
+          <select
+            class="form-control"
+            formControlName="productionAreaId"
+            id="production-area"
+          >
+            <option disabled selected>Seleccione una área de producción</option>
+            @for (item of productionAreas; track $index) {
+              <option [value]="item.id">
+                {{ item.description }}
+              </option>
+            }
+
+          </select>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          <label>Resumen</label>
+          <input
+            class="form-control form-control-lg"
+            formControlName="summary"
+            type="text"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-6">
+        <div class="form-group">
+          <label for="recipe">Receta</label>
+          <textarea
+            class="form-control"
+            formControlName="recipe"
+            id="recipe"
+            rows="6"
+          ></textarea>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          <label for="instructions">Instrucciones</label>
+          <textarea
+            class="form-control"
+            formControlName="instructions"
+            id="instructions"
+            rows="6"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+    <hr/>
+    <div class="row">
+      <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
+        <div class="form-group">
+          <label>Ingredientes</label>
+        </div>
+      </div>
+      <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
+        <!--      <app-search (onChange)="setOnChange($event)"></app-search>-->
+      </div>
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <button [disabled]="itemForm.invalid" class="btn btn-outline-success" type="submit">
+      <fa-icon [icon]="'save'"></fa-icon>
+      Guardar
+    </button>
+    <button (click)="onModalClose()" class="btn btn-outline-dark" type="button"> &times; Cancelar</button>
+  </div>
+
+</form>
