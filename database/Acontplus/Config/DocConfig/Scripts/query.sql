@@ -13,6 +13,15 @@ go
 
 --ALTER TABLE dbo.ConfiguracionDocumento ADD UsuarioEditId INT NULL CONSTRAINT FK_Usuario_Edit_Config_Doc FOREIGN KEY (idUsuario) REFERENCES dbo.Usuario(idUsuario)
 
+--ALTER TABLE dbo.ConfiguracionDocumento ADD infoAdicional VARCHAR(MAX)
+
 --SELECT * FROM Contabilidad.Category
 
+--ALTER TABLE dbo.TipoDocumento ADD infoAdicional BIT 
+
+select * from TipoDocumento
+
 select * from dbo.ConfiguracionDocumento
+
+
+--UPDATE dbo.TipoDocumento set infoAdicional = 1 where codigo in ('LC','NE','RC','GR','NC','PR','FV')

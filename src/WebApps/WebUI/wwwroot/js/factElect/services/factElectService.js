@@ -228,6 +228,13 @@
 
                     let formasPago = mainData[11];
                     let tiposIdentificacion = mainData[12]
+                    let infoAdicional = mainData[13] || []
+                    infoAdicional = infoAdicional.map(item=>{
+                    return {
+                    ...item,
+                    infoAdicional: JSON.parse(item.infoAdicional)
+                    }
+                    })
                     // Devuelve los datos finales estructurados
 
                     return {
@@ -244,7 +251,8 @@
                         clienteDefault,
                         permisoEditarDoc,
                         formasPago: fS.mapperFromFormaPago(formasPago),
-                        tiposIdentificacion
+                        tiposIdentificacion,
+                        infoAdicional
                     };
 
                 }

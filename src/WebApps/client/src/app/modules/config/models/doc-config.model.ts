@@ -4,5 +4,6 @@ export interface DocConfig {
   idTipoDocumento: number
   estado: boolean,
   ultimaSecuencia: number
-  descripcion: string
+  descripcion: string,
+  infoAdicional : boolean
 }
