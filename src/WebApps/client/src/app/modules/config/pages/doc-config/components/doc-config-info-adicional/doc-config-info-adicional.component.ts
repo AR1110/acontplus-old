@@ -108,13 +108,6 @@ export class DocConfigInfoAdicionalComponent {
   save() {
     try {
 
-      if (this.infoAdicional.length === 0) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Ingrese al menos un dato adicional'
-        })
-        return
-      }
       if (this.infoAdicional.some(item => !(isValidField(item.nombre) || isValidField(item.valor)))) {
         this.tS.toastr({
           type: 'warning',
@@ -131,7 +124,7 @@ export class DocConfigInfoAdicionalComponent {
         estado: this.params.estado,
         ultimaSecuencia: this.params.ultimaSecuencia,
         editInfo : true,
-        infoAdicional: JSON.stringify(this.infoAdicional)
+        infoAdicional: this.infoAdicional.length == 0 ? null : JSON.stringify(this.infoAdicional)
       };
 
       showLoader();
