@@ -65,6 +65,10 @@ export class DashboardPageComponent {
     })
   }
   ngOnInit(): void {
+    if (!(this.mainStoreSvc.state().establecimientoId>0)){
+      console.error("estab id", this.mainStoreSvc.state().establecimientoId)
+      return
+    }
     this.onLoad()
   }
 

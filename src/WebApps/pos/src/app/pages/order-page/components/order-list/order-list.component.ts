@@ -13,8 +13,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import Swal from 'sweetalert2';
 
-import { OrderDivideModalComponent } from '../order-divide-modal/order-divide-modal.component';
-import { OrderDocModalComponent } from '../order-doc-modal/order-doc-modal.component';
+import { OrderDivideModalComponent } from '../order-divide-modal/order-divide-modal.component'; 
 import { MatButtonModule } from '@angular/material/button';
 import { SharedService } from '@/services/shared.service';
 import { CODE_REPORT, STATUS_ORDER } from '@/enums/main.enum';
@@ -32,6 +31,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { PosStoreService } from '@/store/pos-store.service';
 import { Router } from '@angular/router';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { OrderDocListComponent } from '../order-doc-list/order-doc-list.component';
 
 @Component({
   selector: 'app-order-list',
@@ -53,8 +54,16 @@ import { Router } from '@angular/router';
     ActionWhatsappSendDirective,
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
+    OrderDocListComponent
   ],
   templateUrl: './order-list.component.html',
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed,void', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
   styleUrl: './order-list.component.scss',
   encapsulation: ViewEncapsulation.None, // Desactiva el encapsulamiento de estilos
 })
@@ -78,6 +87,9 @@ export class OrderListComponent {
 
   displayedColumns: string[] = ['index', 'op', 'nroDoc', 'fechaEmision', 'customer', 'importeTotal', 'tableName', 'obs', 'userName'];
 
+  columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
+
+  expandedElement: any | null;
 
   isLoadingResults = signal(true)
 
@@ -125,10 +137,10 @@ export class OrderListComponent {
     this.dataSource.set([])
     this.orderSvc.getAll(params).subscribe({
       next: (response) => {
-        this.dataSource.set(response)
+        this.dataSource.set(response.map((_, i)=>({..._, index: i+1})))
         this.pagination.update(e=>({
           ...e,
-          totalRecords : this.dataSource.length > 0 ? this.dataSource()[0].totalRecords : 0
+          totalRecords : this.dataSource().length > 0 ? this.dataSource()[0].totalRecords : 0
         }))
       },
       error: () => this.isLoadingResults.set(false),
@@ -210,23 +222,7 @@ export class OrderListComponent {
     });
   }
 
-  openOrderDocDialog(item: OrderRead) {
-    this.dialogSvc.open(OrderDocModalComponent, {
-      size: 'xl',
-      data: {
-        orderId: item.id
-      },
-
-    }).subscribe(result => {
-      if (result) {
-        console.log('User confirmed');
-        // Perform action on confirmation
-      } else {
-        console.log('User canceled');
-        // Handle cancelation
-      }
-    });
-  }
+ 
 
   async askToAnul(row: OrderRead) {
     let { isConfirmed } = await Swal.fire({

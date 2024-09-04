@@ -4,8 +4,7 @@
 <ng-template #containerTemplate>
   <div class="row">
   <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 d-none d-sm-flex justify-content-center">
-    <app-payment-calculator (appendValueMoney)="appendValueMoney($event)" (onClickNumber)="onClickNumber($event)"
-      (onClickPunto)="onClickPunto($event)" (onClickClear)="onClickClear()" />
+    <app-payment-calculator (onEqual)="onEqual($event)" />
   </div>
 
 

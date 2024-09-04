@@ -180,6 +180,15 @@ export class PaymentComponent {
 
 
   //inicio funciones calculadora
+  onEqual(value:string){
+    this.valorAbono.set(value)
+    if (this.formaCobro() === 'NORMAL') {
+      this.calcularCambio()
+    }
+    playBeepSound()
+  }
+
+
   alcanzoDosDecimales() {
     if (this.valorAbono().toString().split(".")[1]?.length >= 2) return true
     return false;

@@ -1,41 +1,33 @@
-import { CustomContainerDialogComponent } from "@/core/components/custom-container-dialog/custom-container-dialog.component";
-import { PaymentComponent } from "@/core/components/payment/payment.component";
-import { ActionEmailSendDirective } from "@/directives/action-email-send.directive";
-import { ActionWhatsappSendDirective } from "@/directives/action-whatsapp-send.directive";
-import { CODE_REPORT, DOC_TYPE } from "@/enums/main.enum";
-import { OrderDocRed } from "@/models/order-doc.model";
-import { DialogService } from "@/services/dialog.service";
-import { OrderService } from "@/services/order.service";
-import { SharedService } from "@/services/shared.service";
-import { Component, inject } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { MatIconModule } from "@angular/material/icon";
-import { MatMenuModule } from "@angular/material/menu";
-import { MatTableModule } from "@angular/material/table";
-import { CustomTableContainerComponent } from "@core/components/custom-table-container/custom-table-container.component";
+import { PaymentComponent } from '@/core/components/payment/payment.component';
+import { ActionEmailSendDirective } from '@/directives/action-email-send.directive';
+import { ActionWhatsappSendDirective } from '@/directives/action-whatsapp-send.directive';
+import { CODE_REPORT, DOC_TYPE } from '@/enums/main.enum';
+import { OrderDocRed } from '@/models/order-doc.model';
+import { DialogService } from '@/services/dialog.service';
+import { OrderService } from '@/services/order.service';
+import { SharedService } from '@/services/shared.service';
+import { Component, inject, input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
-  selector: 'app-order-doc-modal',
+  selector: 'app-order-doc-list',
   standalone: true,
   imports: [
     MatMenuModule,
     MatButtonModule,
     MatIconModule,
-    MatTableModule,
-    CustomContainerDialogComponent,
-    CustomTableContainerComponent,
+    MatTableModule, 
     ActionWhatsappSendDirective,
     ActionEmailSendDirective
   ],
-  templateUrl: './order-doc-modal.component.html',
-
+  templateUrl: './order-doc-list.component.html',
+  styleUrl: './order-doc-list.component.scss'
 })
-
-export class OrderDocModalComponent {
-  readonly dialogRef = inject(MatDialogRef<OrderDocModalComponent>);
-  readonly data = inject<{ orderId: 0 }>(MAT_DIALOG_DATA);
-
+export class OrderDocListComponent {
+  readonly data = input.required<{ id: 0 }>();
   orderSvc = inject(OrderService);
   private sharedSvc = inject(SharedService);
   private dialogSvc = inject(DialogService)
@@ -45,8 +37,9 @@ export class OrderDocModalComponent {
 
   isLoadingResults = false;
   private getOrderDocs() {
+    this.dataSource = [];
     this.isLoadingResults = true;
-    this.orderSvc.getOrderDocs(this.data.orderId).subscribe({
+    this.orderSvc.getOrderDocs(this.data().id).subscribe({
       next: response => {
         this.isLoadingResults = false;
         this.dataSource = response;
@@ -54,7 +47,7 @@ export class OrderDocModalComponent {
       error: () => this.isLoadingResults = false
     })
   }
-  ngOnInit() {
+  ngOnInit() { 
     this.getOrderDocs()
   }
 
@@ -104,8 +97,7 @@ export class OrderDocModalComponent {
         })
       }
     } catch (error) {
-      console.log(error)
-      console.log(error)
+      console.log(error) 
     }
   }
 
@@ -126,10 +118,7 @@ export class OrderDocModalComponent {
   }
 
 
-  closeDialog(){
-    this.dialogRef.close()
+  ngOnDestroy(){
+    this.dataSource = [];
   }
-
-
-
 }

@@ -1,25 +1,33 @@
-<mat-card>
-  <mat-card-content>
-    <div class="button-grid">
-      <button mat-raised-button class="value-money" (click)="appendValueMoney.emit(5)">+5</button>
-      <button mat-raised-button class="value-money" (click)="appendValueMoney.emit(10)">+10</button>
-      <button mat-raised-button class="value-money" (click)="appendValueMoney.emit(20)">+20</button>
+ 
 
-      <button mat-raised-button (click)="onClickNumber.emit(7)">7</button>
-      <button mat-raised-button (click)="onClickNumber.emit(8)">8</button>
-      <button mat-raised-button (click)="onClickNumber.emit(9)">9</button>
+<div class="container-calculator">
+  <div class="calculator">
+    <input type="text" class="value" [value]="display" readonly />
 
-      <button mat-raised-button (click)="onClickNumber.emit(4)">4</button>
-      <button mat-raised-button (click)="onClickNumber.emit(5)">5</button>
-      <button mat-raised-button (click)="onClickNumber.emit(6)">6</button>
-
-      <button mat-raised-button (click)="onClickNumber.emit(1)">1</button>
-      <button mat-raised-button (click)="onClickNumber.emit(2)">2</button>
-      <button mat-raised-button (click)="onClickNumber.emit(3)">3</button>
-
-      <button mat-raised-button (click)="onClickNumber.emit(0)">0</button>
-      <button mat-raised-button (click)="onClickPunto.emit('.')">.</button>
-      <button mat-raised-button color="warn" (click)="onClickClear.emit()">C</button>
-    </div>
-  </mat-card-content>
-</mat-card>
+    <button (click)="appendMoney('5')">+5</button>
+    <button (click)="appendMoney('10')">+10</button>
+    <button (click)="appendMoney('15')">+15</button>
+    <button (click)="appendMoney('20')">+20</button> 
+    
+    <button (click)="append('7')">7</button>
+    <button (click)="append('8')">8</button>
+    <button (click)="append('9')">9</button>
+    <button class="clear" (click)="clear()">C</button> 
+    
+    <button (click)="append('4')">4</button>
+    <button (click)="append('5')">5</button>
+    <button (click)="append('6')">6</button>
+    <button class="backspace" (click)="backspace()">x</button>   
+    
+    <button (click)="append('1')">1</button>
+    <button (click)="append('2')">2</button>
+    <button (click)="append('3')">3</button>
+    <button class="plus" (click)="append('+')">+</button>
+    
+    
+    <!-- <button (click)="append('00')">00</button> -->
+    <button (click)="append('0')">0</button>
+    <button (click)="append('.')">.</button> 
+    <button class="equal" (click)="calculate()">=</button>
+  </div>
+</div>
