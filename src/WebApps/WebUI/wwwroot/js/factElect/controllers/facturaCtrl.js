@@ -1,50 +1,46 @@
-
-
 //@ts-check
 (function () {
-    'use strict';
+    "use strict";
 
-    const TEMPLATE_URL = '~/Pages/Factura/';
+    const TEMPLATE_URL = "~/Pages/Factura/";
     let mainDataForm = {};
     let facturaSvc = {};
     let commonSvc = {};
     let tS = {};
     let fS = {};
     let modalSvc = {};
-    let tipoDoc = {}
+    let tipoDoc = {};
     const NUM_CONSUMIDOR_FINAL = "9999999999999";
     let nombreModalVenta = {};
 
+    app.controller("facturaCtrl", facturaCtrl);
 
-    app.controller('facturaCtrl', facturaCtrl)
-
-    facturaCtrl.$inject = ['$scope', '$filter', '$injector', 'nombreModal']
+    facturaCtrl.$inject = ["$scope", "$filter", "$injector", "nombreModal"];
 
     function facturaCtrl($scope, $filter, $injector, _nombreModalConst) {
+        facturaSvc = $injector.get("facturaService");
+        commonSvc = $injector.get("commonService");
+        tS = $injector.get("toastService");
+        fS = $injector.get("formulario");
+        modalSvc = $injector.get("modalService");
+        let nombreModalContabilidad = $injector.get("nombreModalContabilidad");
+        nombreModalVenta = $injector.get("nombreModalVenta");
+        let userCustomerPermissionSvc = $injector.get(
+            "userCustomerPermissionService"
+        );
 
-        facturaSvc = $injector.get('facturaService');
-        commonSvc = $injector.get('commonService');
-        tS = $injector.get('toastService');
-        fS = $injector.get('formulario');
-        modalSvc = $injector.get('modalService');
-        let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
-        nombreModalVenta = $injector.get('nombreModalVenta');
-        let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
-
-        let DOC_TYPE = $injector.get('DOC_TYPE');
-        const CODE_REPORT = $injector.get('CODE_REPORT');
+        let DOC_TYPE = $injector.get("DOC_TYPE");
+        const CODE_REPORT = $injector.get("CODE_REPORT");
 
         tipoDoc = {
-            codigo: DOC_TYPE['FV']
-        }
+            codigo: DOC_TYPE["FV"],
+        };
 
-
-        $scope.typeSend = 'SRI';
-
+        $scope.typeSend = "SRI";
 
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
-            order: '',
+            order: "",
             tipo: 1,
             pageSize: 50,
             pageIndex: 1,
@@ -56,133 +52,128 @@
         };
 
         $scope.cliente = {
-            nombreCliente: ''
-        }
+            nombreCliente: "",
+        };
 
-
-        $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
+        $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento
         $scope.parametersPrint = {};
 
-
         $scope.permisoEditarDoc = {};
-        //Remove Focus new invoice 
+        //Remove Focus new invoice
         let btnNewInvoice = document.getElementById("btnNewInvoice");
         if (btnNewInvoice) {
             btnNewInvoice.addEventListener("click", () => {
                 btnNewInvoice.blur();
-            })
-
+            });
         }
 
         //========================Start Filters=================
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate;
-            $scope.dataSearch.fechaFin = item.endDate
+            $scope.dataSearch.fechaFin = item.endDate;
             $scope.getFacturas();
-        }
-
-
+        };
 
         $scope.onKeyupCliente = function () {
             if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.idCliente = 0;
                 $scope.dataSearch.checkBoxFecha = true;
             }
-        }
+        };
         $scope.onSelectCliente = function (item) {
             $scope.dataSearch.idCliente = item.idCliente;
             $scope.dataSearch.checkBoxFecha = true;
             $scope.getFacturas();
-        }
+        };
 
         $scope.usuarioSearch = function (textSearch) {
             try {
                 let query = {
-                    busqueda: textSearch
-                }
+                    busqueda: textSearch,
+                };
 
                 if (query.busqueda.length > 2) {
-                    return commonSvc.usuarioSearch(query)
-                        .catch(error => {
-                            console.log(error);
-                            throw error;
-                        })
+                    return commonSvc.usuarioSearch(query).catch((error) => {
+                        console.log(error);
+                        throw error;
+                    });
                 }
             } catch (error) {
                 console.log(error);
             }
-        }
+        };
 
         $scope.onKeyupUsuarioSearch = function () {
             if (!$scope.modelNombreCompleto) {
                 $scope.dataSearch.byUsuario = 0;
             }
-        }
+        };
 
         $scope.selectedUsuarioSearch = function (item) {
             $scope.dataSearch.byUsuario = item.idUsuario;
             $scope.getFacturas();
-        }
+        };
 
         $scope.onClickBtnMore = function () {
             $scope.moreSearchOptions = !$scope.moreSearchOptions;
-        }
-
+        };
 
         $scope.searchFilterLocal = function () {
             let facturas = JSON.parse(JSON.stringify($scope.cloneFacturas));
             $scope.facturas = $filter("filter")(facturas, $scope.dataSearch.bySearch);
             $scope.getTotales();
-        }
+        };
 
-        //=====================Eend Filters======================= 
+        //=====================Eend Filters=======================
 
         $scope.getTotales = () => {
-            let { total,
-                totalAbono,
-                totalSaldo } = $scope.facturas.reduce((total, factura) => {
-                    if (factura.codEstado !== 'A') {
+            let { total, totalAbono, totalSaldo } = $scope.facturas.reduce(
+                (total, factura) => {
+                    if (factura.codEstado !== "A") {
                         total.total += factura.total;
                         total.totalAbono += factura.abono;
                         total.totalSaldo += factura.saldo;
                     }
                     return total;
-                }, {
+                },
+                {
                     total: 0,
                     totalAbono: 0,
-                    totalSaldo: 0
-                })
+                    totalSaldo: 0,
+                }
+            );
             $scope.total = fS.roundNumber(total, 5);
             $scope.totalAbono = fS.roundNumber(totalAbono, 5);
             $scope.totalSaldo = fS.roundNumber(totalSaldo, 5);
-        }
-
+        };
 
         $scope.refresh = function () {
             $scope.getFacturas();
-        }
+        };
 
         $scope.getFacturas = function () {
-
             try {
                 //  $scope.dataSearch.checkBoxFecha = true;
                 if ($scope.dataSearch.nroSecuencial) {
-                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
+                    if (
+                        !fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
+                    ) {
                         $scope.dataSearch.checkBoxFecha = true;
                         tS.toastr({
-                            type: 'warning',
-                            message: 'Define correctamente el número de secuencial o el rango de número secuencial!'
-                        })
-                        return
+                            type: "warning",
+                            message:
+                                "Define correctamente el número de secuencial o el rango de número secuencial!",
+                        });
+                        return;
                     }
                     if (!($scope.dataSearch.idCliente > 0)) {
                         $scope.dataSearch.checkBoxFecha = false;
                     }
                     tS.toastr({
-                        type: 'info',
-                        message: 'Buscando por número secuencial'
-                    })
+                        type: "info",
+                        message: "Buscando por número secuencial",
+                    });
                 }
                 if ($scope.dataSearch.infoAdicional) {
                     $scope.dataSearch.checkBoxFecha = false;
@@ -200,72 +191,83 @@
                     byEstado: $scope.dataSearch.byEstado,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
-                    nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
-                    infoAdicional: $scope.dataSearch.infoAdicional ? $scope.dataSearch.infoAdicional : null
-                }
+                    nroSecuencial: fS.validAndFormatedRangeSequential(
+                        $scope.dataSearch.nroSecuencial
+                    ),
+                    infoAdicional: $scope.dataSearch.infoAdicional
+                        ? $scope.dataSearch.infoAdicional
+                        : null,
+                };
 
                 showLoader();
                 $scope.facturas = [];
                 $scope.getTotales();
-                facturaSvc.getAll(dataSearch).then(response => {
+                facturaSvc
+                    .getAll(dataSearch)
+                    .then((response) => {
+                        let { facturas, dataTotals } = response;
+                        $scope.facturas = facturas;
+                        $scope.cloneFacturas = structuredClone($scope.facturas);
 
-                    let { facturas, dataTotals } = response;
-                    $scope.facturas = facturas;
-                    $scope.cloneFacturas = structuredClone($scope.facturas);
-
-                    $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                    $scope.getTotales();
-                    hideLoader();
-                }).catch(error => {
-                    $scope.dataSearch.totalRecords = 0;
-                    hideLoader();
-                    console.log(error);
-                })
-
-
+                        $scope.dataSearch.totalRecords = dataTotals.totalRecords;
+                        $scope.getTotales();
+                        hideLoader();
+                    })
+                    .catch((error) => {
+                        $scope.dataSearch.totalRecords = 0;
+                        hideLoader();
+                        console.log(error);
+                    });
             } catch (error) {
                 hideLoader();
-                console.log(error)
+                console.log(error);
             }
-        }
-
-
+        };
 
         $scope.initiload = async function () {
             showLoader();
-            facturaSvc.getDataFilter().then(response => {
-                hideLoader();
-                $scope.establecimientos = response.estabs;
-                $scope.estadoDocumentos = response.estadosDoc;
+            facturaSvc
+                .getDataFilter()
+                .then((response) => {
+                    hideLoader();
+                    $scope.establecimientos = response.estabs;
+                    $scope.estadoDocumentos = response.estadosDoc;
 
-                if ($scope.establecimientos.length > 0) {
-                    let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
-                    $scope.puntosEmision = dataEstab.puntosEmision;
-                    $scope.dataSearch.codEstab = dataEstab.codEstab;
-                    $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
-                    $scope.getFacturas();
-                } else {
-                    tS.toastr('warning', 'No tienes asignado Establecimiento!')
-                }
-            }).catch(() => {
-                hideLoader();
-            })
+                    if ($scope.establecimientos.length > 0) {
+                        let dataEstab = $scope.establecimientos.find(
+                            (estab) => estab.defaultEstab
+                        );
+                        $scope.puntosEmision = dataEstab.puntosEmision;
+                        $scope.dataSearch.codEstab = dataEstab.codEstab;
+                        $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(
+                            (pto) => pto.defaultPtoEmi
+                        ).idPuntoEmision;
+                        $scope.getFacturas();
+                    } else {
+                        tS.toastr("warning", "No tienes asignado Establecimiento!");
+                    }
+                })
+                .catch(() => {
+                    hideLoader();
+                });
 
-            facturaSvc.getDataForm().then(response => {
+            facturaSvc.getDataForm().then((response) => {
                 mainDataForm = response;
                 $scope.permisoEditarDoc = response.permisoEditarDoc;
-            })
-
-        }
+            });
+        };
         $scope.initiload();
 
         $scope.estabFilter = function () {
-            let dataEstab = $scope.establecimientos.find(estab => estab.codEstab === $scope.dataSearch.codEstab);
+            let dataEstab = $scope.establecimientos.find(
+                (estab) => estab.codEstab === $scope.dataSearch.codEstab
+            );
             $scope.puntosEmision = dataEstab.puntosEmision;
-            $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
+            $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(
+                (pto) => pto.defaultPtoEmi
+            ).idPuntoEmision;
             $scope.getFacturas();
-        }
-
+        };
 
         $scope.pagechanged = function () {
             $scope.getFacturas();
@@ -276,284 +278,300 @@
             $scope.getFacturas();
         };
 
-
         $scope.onOrderInvoice = function (item) {
-            console.log('test order', item)
-        }
+            console.log("test order", item);
+        };
 
         $scope.validateOperationPrintAndPayment = (result) => {
-            //Verificamos 
+            //Verificamos
             let { isRegister, data } = result;
             $scope.isRegister = isRegister;
             $scope.isPrintDocument = mainDataForm.config.printerAutomatic;
 
             $scope.parametersPrint = {
                 ...data,
-                codDoc: 'FV',
+                codDoc: "FV",
                 idDocument: data.idDocumento,
-                codigo: 'RFPT',
-            }
-
+                codigo: "RFPT",
+            };
 
             if (data.payAutomatic) {
                 if (data.esContado) {
-                    $scope.openModalRapido(result)
+                    $scope.openModalRapido(result);
                 } else {
-                    $scope.openModalCobroDocumento(result)
+                    $scope.openModalCobroDocumento(result);
                 }
-                return
+                return;
             }
 
             if (mainDataForm.config.printerAutomatic) {
-                commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
+                commonSvc.getPrinter(JSON.stringify($scope.parametersPrint));
             }
 
             $scope.getFacturas();
 
             //Focus New Invoice
             btnNewInvoice.focus();
-        }
+        };
 
         $scope.openModalInvoiceNew = async () => {
             try {
-                modalSvc.openModalCustom({
-                    controller: 'modalFacturaCtrl',
-                    template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
-                    size: 'xl',
-                    params: {
-                        action: 'NUEVO'
-                    },
-                    windowClass: 'uibModalFullScreen',
-                    isRenderRazorPartial: true
-                }).result.then(result => {
-                    if (typeof result !== 'object') return
+                modalSvc
+                    .openModalCustom({
+                        controller: "modalFacturaCtrl",
+                        template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                        size: "xl",
+                        params: {
+                            action: "NUEVO",
+                        },
+                        windowClass: "uibModalFullScreen",
+                        isRenderRazorPartial: true,
+                    })
+                    .result.then((result) => {
+                        if (typeof result !== "object") return;
 
-                    //Pendiednte 📛
-                    $scope.validateOperationPrintAndPayment(result)
-                })
+                        //Pendiednte 📛
+                        $scope.validateOperationPrintAndPayment(result);
+                    });
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
-        }
+        };
 
         /**
-         * 
-         * @param {*} params 
+         *
+         * @param {*} params
          */
         $scope.openModalDetalle = async (params) => {
             try {
-                let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
+                let { fileCtrl, controller, templates } =
+                    nombreModalVenta.DOC_VENTA_DETALLE;
                 let ctrl = (await import(fileCtrl))[controller];
-                let template = templates['FV_SRI'];
+                let template = templates["FV_SRI"];
                 modalSvc.openModalCustom({
                     controller: ctrl,
                     template: template,
-                    size: 'xl',
+                    size: "xl",
                     params: {
                         codDoc: params.codDoc,
-                        id: params.idDocumento
+                        id: params.idDocumento,
                     },
-                    windowClass: 'uibModalFullScreen',
-                    isRenderRazorPartial: true
-                })
+                    windowClass: "uibModalFullScreen",
+                    isRenderRazorPartial: true,
+                });
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
-        }
+        };
 
         function getParamsPermission(item, codigoAccion) {
             let paramsPermission = {
                 idDocumento: item.idDocumento,
                 codDoc: item.codDoc,
                 codigoAccion,
-                tipoDoc: 'Factura Electrónica',
+                tipoDoc: "Factura Electrónica",
                 serieComprobante: item.serieComprobante,
                 jsonData: JSON.stringify({
                     idDocumento: item.idDocumento,
                     codDoc: item.codDoc,
                     codEstab: item.codEstab,
-                    tipoDoc: 'Factura Electrónica',
-                    serieComprobante: item.serieComprobante
-                })
-            }
+                    tipoDoc: "Factura Electrónica",
+                    serieComprobante: item.serieComprobante,
+                }),
+            };
             return paramsPermission;
         }
         $scope.openModalInvoiceEdit = async (item) => {
             try {
                 if (item.disabledActionUpdate) {
-                    fS.sweetAlert('warning', 'Este documento ya no se puede editar');
-                    return
+                    fS.sweetAlert("warning", "Este documento ya no se puede editar");
+                    return;
                 }
 
-                let paramsPermission = getParamsPermission(item, 'E');
-                let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
+                let paramsPermission = getParamsPermission(item, "E");
+                let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(
+                    paramsPermission
+                );
 
-                if (!response) return
+                if (!response) return;
 
                 if (response && response.code === "2") {
                     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
-                    return
+                    return;
                 }
 
                 showLoader();
-                facturaSvc.getId(item.idDocumento).then(response => {
-                    const modalRef = modalSvc.openModalCustom({
-                        controller: 'modalFacturaCtrl',
-                        template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
-                        size: 'xl',
-                        params: {
-                            data: response,
-                            action: 'EDITAR'
-                        },
-                        windowClass: 'uibModalFullScreen',
-                        isRenderRazorPartial: true
-                    })
-                    modalRef.result.then(result => {
+                facturaSvc
+                    .getId(item.idDocumento)
+                    .then((response) => {
+                        const modalRef = modalSvc.openModalCustom({
+                            controller: "modalFacturaCtrl",
+                            template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                            size: "xl",
+                            params: {
+                                data: response,
+                                action: "EDITAR",
+                            },
+                            windowClass: "uibModalFullScreen",
+                            isRenderRazorPartial: true,
+                        });
+                        modalRef.result.then((result) => {
+                            if (typeof result === "object" && result.isUpdate) {
+                                //Actualizar el estado de solicitud en caso de tener
+                                if (
+                                    typeof $scope.permisoEditarDoc === "object" &&
+                                    $scope.permisoEditarDoc.requiereClave
+                                ) {
+                                    userCustomerPermissionSvc.updateRequestKey(paramsPermission);
+                                }
 
-                        if (typeof result === 'object' && result.isUpdate) {
-                            //Actualizar el estado de solicitud en caso de tener 
-                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
+                                $scope.getFacturas();
                             }
-
-                            $scope.getFacturas();
-                        }
+                        });
                     })
-                })
-                    .catch(error => {
-                        console.log(error)
+                    .catch((error) => {
+                        console.log(error);
                     })
-                    .finally(() => hideLoader())
-
+                    .finally(() => hideLoader());
             } catch (error) {
                 hideLoader();
-                console.log(error)
+                console.log(error);
             }
-        }
-
+        };
 
         $scope.openModalInvoiceDuplicate = async (item) => {
             try {
                 showLoader();
-                facturaSvc.getId(item.idDocumento).then(response => {
-                    let modalRef = modalSvc.openModalCustom({
-                        controller: 'modalFacturaCtrl',
-                        template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
-                        size: 'xl',
-                        params: {
-                            data: response,
-                            action: 'DUPLICAR'
-                        },
-                        windowClass: 'uibModalFullScreen',
-                        isRenderRazorPartial: true
-                    })
+                facturaSvc
+                    .getId(item.idDocumento)
+                    .then((response) => {
+                        let modalRef = modalSvc.openModalCustom({
+                            controller: "modalFacturaCtrl",
+                            template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                            size: "xl",
+                            params: {
+                                data: response,
+                                action: "DUPLICAR",
+                            },
+                            windowClass: "uibModalFullScreen",
+                            isRenderRazorPartial: true,
+                        });
 
-                    modalRef.result.then(result => {
-                        if (typeof result === 'object') {
-                            $scope.validateOperationPrintAndPayment(result)
-                        }
+                        modalRef.result.then((result) => {
+                            if (typeof result === "object") {
+                                $scope.validateOperationPrintAndPayment(result);
+                            }
+                        });
                     })
-                })
-                    .catch(error => {
-                        console.log(error)
+                    .catch((error) => {
+                        console.log(error);
                     })
-                    .finally(() => hideLoader())
+                    .finally(() => hideLoader());
             } catch (error) {
                 hideLoader();
-                console.log(error)
+                console.log(error);
             }
-
-        }
+        };
 
         $scope.openModalInvoiceParam = ({
             controller,
             template,
-            size = 'xl',
-            params
+            size = "xl",
+            params,
         }) => {
-
-            modalSvc.openModalCustom({
-                controller,
-                template,
-                size,
-                params,
-                windowClass: 'uibModalFullScreen'
-            }).result.then(result => {
-
-                if (typeof result === 'object') {
-                    $scope.getFacturas();
-                }
-            })
-
-        }
-
+            modalSvc
+                .openModalCustom({
+                    controller,
+                    template,
+                    size,
+                    params,
+                    windowClass: "uibModalFullScreen",
+                })
+                .result.then((result) => {
+                    if (typeof result === "object") {
+                        $scope.getFacturas();
+                    }
+                });
+        };
 
         $scope.askToDelete = async (item) => {
             try {
-
                 if (item.disabledActionAnular) {
-                    fS.sweetAlert('warning', 'Este documento ya se cuentra anulada');
-                    return
+                    fS.sweetAlert("warning", "Este documento ya se cuentra anulada");
+                    return;
                 }
 
-                let paramsPermission = getParamsPermission(item, 'A');
-                let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(paramsPermission);
+                let paramsPermission = getParamsPermission(item, "A");
+                let response =
+                    await userCustomerPermissionSvc.checkHasPermissionToDelete(
+                        paramsPermission
+                    );
 
-                if (!response) return
+                if (!response) return;
 
                 if (response && response.code === "2") {
                     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
-                    return
+                    return;
                 }
 
                 let { isConfirmed } = await Swal.fire({
-                    title: '<small>Anular Factura?</small>',
+                    title: "<small>Anular Factura?</small>",
                     html: `<small>Esta Ud. seguro/a de anular este Factura de Venta <b>N° ${item.serieComprobante}</b></small>?`,
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
                     cancelButtonColor: "#d33",
-                    cancelButtonText: 'No, cancelar!',
-                    confirmButtonText: "Si, anular!"
-                })
+                    cancelButtonText: "No, cancelar!",
+                    confirmButtonText: "Si, anular!",
+                });
 
                 if (isConfirmed) {
                     showLoader();
-                    facturaSvc.delete(item.idDocumento).then(response => {
-                        hideLoader();
-                        if (response.code === "0") {
-                            fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {
-                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                            //Una vez actualizado el documento 
-                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
+                    facturaSvc
+                        .delete(item.idDocumento)
+                        .then((response) => {
+                            hideLoader();
+                            if (response.code === "0") {
+                                fS.sweetAlert("warning", response.message, response.titleSms);
                             }
-                            $scope.getFacturas();
-                        }
-                    }).catch(error => {
-                        hideLoader();
-                        console.log(error)
-                    }).finally(() => hideLoader())
+                            if (response.code === "1") {
+                                fS.sweetAlert(
+                                    "success",
+                                    response.message,
+                                    response.titleSms,
+                                    1000
+                                );
+
+                                //Una vez actualizado el documento
+                                if (
+                                    typeof $scope.permisoEditarDoc === "object" &&
+                                    $scope.permisoEditarDoc.requiereClave
+                                ) {
+                                    userCustomerPermissionSvc.updateRequestKey(paramsPermission);
+                                }
+                                $scope.getFacturas();
+                            }
+                        })
+                        .catch((error) => {
+                            hideLoader();
+                            console.log(error);
+                        })
+                        .finally(() => hideLoader());
                 }
             } catch (error) {
                 hideLoader();
-                console.log(error)
+                console.log(error);
             }
-        }
-
-
+        };
 
         $scope.getReport = function (item) {
             showLoader();
-            let format = 'pdf';
+            let format = "pdf";
             let dataParms = {
                 id: item.idDocumento,
                 normalMethod: true,
-                tipo: 1
-            }
+                tipo: 1,
+            };
 
             let parameters = {
                 dataParams: JSON.stringify(dataParms),
@@ -562,43 +580,41 @@
                     codEstab: item.codEstab,
                     format,
                 }),
-                hasService: true
-            }
+                hasService: true,
+            };
 
             commonSvc.getReport({
                 parameters,
-                format
-            })
-        }
-
+                format,
+            });
+        };
 
         //--------------------------------------------------COBROS----------
 
         $scope.opcionCobro = (item) => {
             if (item.esCobrado) {
-                fS.sweetAlert('warning', '<small>Este documento ya se encuentra cobrada!</small>')
-                return
+                fS.sweetAlert(
+                    "warning",
+                    "<small>Este documento ya se encuentra cobrada!</small>"
+                );
+                return;
             }
 
             let params = {
                 data: {
-                    ...item
-                }
-            }
+                    ...item,
+                },
+            };
 
             if (item.esContado) {
                 $scope.openModalRapido(params);
             } else {
-                $scope.openModalCobroDocumento(params)
+                $scope.openModalCobroDocumento(params);
             }
-        }
-
-
-
+        };
 
         $scope.openModalCobroDocumento = async (params) => {
             try {
-
                 const { fileCtrl, ctrl, template } = nombreModalContabilidad.COBRO_LOTE;
                 let controller = (await import(fileCtrl))[ctrl];
 
@@ -606,19 +622,17 @@
                     controller,
                     template,
                     params,
-                    size: 'xl',
+                    size: "xl",
                     //   windowClass: 'uibModalFullScreen'
-                })
+                });
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
-        }
-
-
+        };
 
         /**
-         * 
-         * @param {object} params 
+         *
+         * @param {object} params
          */
         $scope.openModalRapido = async (params) => {
             try {
@@ -629,26 +643,24 @@
                     controller,
                     template,
                     params,
-                })
+                });
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
-
-        }
+        };
 
         /**
-         * 
-         * @param {object} param0 
+         *
+         * @param {object} param0
          */
 
         $scope.openModalCobro = ({
             controller,
             template,
-            size = 'lg',
+            size = "lg",
             params,
-            windowClass
+            windowClass,
         }) => {
-
             let $modalRef = modalSvc.openModalCustom({
                 controller,
                 template,
@@ -656,19 +668,18 @@
                 params,
                 keyboard: true,
                 windowClass,
-                isRenderRazorPartial: true
-            })
+                isRenderRazorPartial: true,
+            });
 
-            $modalRef.result.then(result => {
-
-                if (typeof result == 'object' || $scope.isRegister) {
+            $modalRef.result.then((result) => {
+                if (typeof result == "object" || $scope.isRegister) {
                     $scope.getFacturas();
                 }
 
-                //Cuando el documento es Nuevo o Duplicado 
+                //Cuando el documento es Nuevo o Duplicado
                 if ($scope.isPrintDocument == 1) {
                     //    $scope.getFacturas();
-                    commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
+                    commonSvc.getPrinter(JSON.stringify($scope.parametersPrint));
                     $scope.isPrintDocument = null;
                 }
 
@@ -678,84 +689,86 @@
                 }
                 $scope.isRegister = null;
                 $scope.isPrintDocument = null;
-            })
-        }
-
-
+            });
+        };
 
         $scope.openModalCuota = async (item) => {
             try {
                 let fileCtrl = nombreModalContabilidad.COBRO.fileCuotaCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['MC'];
-                let template = nombreModalContabilidad.COBRO.templates['MC'];
+                let ctrl = nombreModalContabilidad.COBRO.controllers["MC"];
+                let template = nombreModalContabilidad.COBRO.templates["MC"];
                 let controller = (await import(fileCtrl))[ctrl];
 
                 let modalRef = modalSvc.openModalCustom({
                     controller,
                     template,
-                    size: 'xl',
+                    size: "xl",
                     params: item,
-                    isRenderRazorPartial: true
-                })
-                modalRef.result.then(result => {
-                    if (typeof result === 'object' && result.isReload) {
+                    isRenderRazorPartial: true,
+                });
+                modalRef.result.then((result) => {
+                    if (typeof result === "object" && result.isReload) {
                         $scope.getFacturas();
                     }
-                })
+                });
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
-        }
-
+        };
 
         $scope.print = function (item) {
             let parameters = {
                 idDocument: item.idDocumento,
                 idTipoDocumento: item.idTipoDocumento,
                 codEstab: item.codEstab,
-                codDoc: 'FV',
-            }
+                codDoc: "FV",
+            };
 
             commonSvc.askToPrint({
-                parameters: JSON.stringify(parameters)
-            })
-
-        }
-
+                parameters: JSON.stringify(parameters),
+            });
+        };
     }
 
-
-
     /**
-     * 
-     * MODAL FACTURA 
+     *
+     * MODAL FACTURA
      * Registrar
      * Actualizar
      * Duplicar
      */
-    app.controller('modalFacturaCtrl', modalFacturaCtrl)
+    app.controller("modalFacturaCtrl", modalFacturaCtrl);
     modalFacturaCtrl.$inject = [
-        '$scope',
-        '$uibModalInstance',
-        '$timeout',
-        '$injector',
-        'params'
+        "$scope",
+        "$uibModalInstance",
+        "$timeout",
+        "$injector",
+        "params",
     ];
-    function modalFacturaCtrl($scope, $uibModalInstance, $timeout, $injector, params) {
-        let ventaSvc = $injector.get('ventaService');
-        let clienteSvc = $injector.get('clienteService');
-        let gridOptionsSvc = $injector.get('gridOptionsService');
-        let storageSvc = $injector.get('storageService');
-        let articuloSvc = $injector.get('articuloService');
-        let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
-        let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
-
+    function modalFacturaCtrl(
+        $scope,
+        $uibModalInstance,
+        $timeout,
+        $injector,
+        params
+    ) {
+        let ventaSvc = $injector.get("ventaService");
+        let clienteSvc = $injector.get("clienteService");
+        let gridOptionsSvc = $injector.get("gridOptionsService");
+        let storageSvc = $injector.get("storageService");
+        let articuloSvc = $injector.get("articuloService");
+        let TAX_RATE_CODE = $injector.get("TAX_RATE_CODE");
+        let userCustomerPermissionSvc = $injector.get(
+            "userCustomerPermissionService"
+        );
+        let infoAdicionalConfig = [];
+        let isSetInfoAdicionalConfig = true;
 
         const FORM_PAGO_SRI_ACCION = {
-            DEFAULT: 'DEFAULT',
-            FORMA_PAGO_SRI_CLIENTE: 'FORMA_PAGO_SRI_CLIENTE',
-            FORMA_PAGO_CHANGE: 'FORMA_PAGO_CHANGE'
-        }
+            DEFAULT: "DEFAULT",
+            FORMA_PAGO_SRI_CLIENTE: "FORMA_PAGO_SRI_CLIENTE",
+            FORMA_PAGO_CHANGE: "FORMA_PAGO_CHANGE",
+        };
 
         $scope.tipoDoc = tipoDoc;
         $scope.cuotas = [];
@@ -778,15 +791,14 @@
             iva: 0,
             totalDescuento: 0,
             total: 0,
-        }
+        };
 
         $scope.dataFormaPago = {
             idFormaPagoSri: 0,
             idTiempoCredito: 0,
             plazo: 1,
-            total: 0
-        }
-
+            total: 0,
+        };
 
         $scope.dataClone = {};
 
@@ -800,21 +812,20 @@
         $scope.formasPago = [];
         $scope.tiposIdentificacion = [];
 
-
-        //Informacion adicional del documento 
+        //Informacion adicional del documento
         $scope.infoAdicionalDocumento = [];
 
         //Habilitar cuando la acción es editar
         $scope.isDisabledFormField = false;
 
-        $scope.indexRow = null; //Indice del items del detalle 
+        $scope.indexRow = null; //Indice del items del detalle
 
-        //GridOptions Invoice 
+        //GridOptions Invoice
         $scope.gridOptions = {
             enableColumnMenus: false,
             enableColumnReordering: true,
             showGridFooter: false,
-        }
+        };
         $scope.gridOptions.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
             if ($scope.gridApi) {
@@ -824,9 +835,8 @@
                 }, 5);
             }
 
-
-            gridApi.grid.element.on('keyup', function (ev) {
-                if (ev.which == 13 || ev.keyCode == '13') {
+            gridApi.grid.element.on("keyup", function (ev) {
+                if (ev.which == 13 || ev.keyCode == "13") {
                     if ($scope.config.searchCode == 1) {
                         setFocusInputBarcode();
                     } else {
@@ -834,46 +844,58 @@
                     }
 
                     $scope.gridApi.grid.cellNav.clearFocus();
-                    // ev.stopPropagation();   
+                    // ev.stopPropagation();
                 }
-            })
+            });
 
-            gridApi.edit.on.afterCellEdit($scope, (rowEntity, colDef, newValue, oldValue) => {
-                //Validar campos
-                if ([null, "", undefined].includes(rowEntity[colDef.field])) {
-                    rowEntity[colDef.field] = oldValue;
+            gridApi.edit.on.afterCellEdit(
+                $scope,
+                (rowEntity, colDef, newValue, oldValue) => {
+                    //Validar campos
+                    if ([null, "", undefined].includes(rowEntity[colDef.field])) {
+                        rowEntity[colDef.field] = oldValue;
+                    }
+
+                    //Validacion de numeros negativos
+                    if (
+                        [
+                            "cantidad",
+                            "precioUnitario",
+                            "precioConIva",
+                            "valorDescuento",
+                            "porcentajeDescuento",
+                        ].includes(colDef.field) &&
+                        newValue < 0
+                    ) {
+                        rowEntity[colDef.field] = oldValue;
+                    }
+
+                    if (colDef.field === "cantidad" && rowEntity[colDef.field] === 0) {
+                        rowEntity[colDef.field] = 1;
+                    }
+                    if (colDef.field === "idMedida" && rowEntity.idMedida == oldValue)
+                        return;
+                    if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue)
+                        return;
+
+                    //Verificacion del stock
+                    if (["idMedida", "cantidad"].includes(colDef.field)) {
+                        checkNotificationStock(colDef.field, rowEntity, oldValue);
+                        return;
+                    }
+                    // if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
+                    //     checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    //     return
+                    // }
+                    if (colDef.field === "idBodega" && rowEntity.idBodega !== oldValue) {
+                        checkNotificationStock(colDef.field, rowEntity, oldValue);
+                        return;
+                    }
+
+                    setCalculoTotales(colDef.field, rowEntity, oldValue);
                 }
-
-
-                //Validacion de numeros negativos
-                if (['cantidad', 'precioUnitario', 'precioConIva', 'valorDescuento', 'porcentajeDescuento'].includes(colDef.field) && newValue < 0) {
-
-                    rowEntity[colDef.field] = oldValue;
-                }
-
-                if (colDef.field === 'cantidad' && rowEntity[colDef.field] === 0) {
-                    rowEntity[colDef.field] = 1;
-                }
-                if (colDef.field === "idMedida" && rowEntity.idMedida == oldValue) return
-                if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue) return
-
-                //Verificacion del stock
-                if (["idMedida", "cantidad"].includes(colDef.field)) {
-                    checkNotificationStock(colDef.field, rowEntity, oldValue);
-                    return
-                }
-                // if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
-                //     checkNotificationStock(colDef.field, rowEntity, oldValue);
-                //     return
-                // }
-                if (colDef.field === 'idBodega' && rowEntity.idBodega !== oldValue) {
-                    checkNotificationStock(colDef.field, rowEntity, oldValue);
-                    return
-                }
-
-                setCalculoTotales(colDef.field, rowEntity, oldValue);
-            })
-        }
+            );
+        };
 
         $scope.gridOptionsItemsDeleted = [];
 
@@ -901,59 +923,64 @@
                 // Si la cantidad no ha cambiado, no realizar más acciones.
                 if (dataItemMerge.cantidad == oldValue) return;
 
-
                 // Llama a un servicio para verificar la notificación de stock.
-                let cantidadStock = fS.getCantidadStock(dataItemMerge, $scope.data.fechaEmision);
+                let cantidadStock = fS.getCantidadStock(
+                    dataItemMerge,
+                    $scope.data.fechaEmision
+                );
                 if (cantidadStock === 0) {
                     setCalculoTotales(field, rowEntity, oldValue);
                     return;
                 }
                 showLoader();
 
-                articuloSvc.checkNotificationStock({
-                    idArticulo: rowEntity.idArticulo,
-                    cantidad: cantidadStock,
-                    idBodega: rowEntity.idBodega,
-                    idMedida: rowEntity.idMedida
-                }).then(async responseApi => {
-                    // Oculta el indicador de carga después de recibir la respuesta del servicio.
-                    hideLoader();
+                articuloSvc
+                    .checkNotificationStock({
+                        idArticulo: rowEntity.idArticulo,
+                        cantidad: cantidadStock,
+                        idBodega: rowEntity.idBodega,
+                        idMedida: rowEntity.idMedida,
+                    })
+                    .then(async (responseApi) => {
+                        // Oculta el indicador de carga después de recibir la respuesta del servicio.
+                        hideLoader();
 
-                    let { code, message, titleSms } = responseApi;
+                        let { code, message, titleSms } = responseApi;
 
-                    // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
-                    if (code === "1") {
-                        setCalculoTotales(field, rowEntity, oldValue);
-                        return;
-                    }
+                        // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
+                        if (code === "1") {
+                            setCalculoTotales(field, rowEntity, oldValue);
+                            return;
+                        }
 
-                    // Muestra un mensaje de advertencia y espera la confirmación del usuario.
-                    let { isConfirmed } = await Swal.fire({
-                        title: `<small>${titleSms}</small>`,
-                        icon: 'warning',
-                        html: `<small>${message}</small>`,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
+                        // Muestra un mensaje de advertencia y espera la confirmación del usuario.
+                        let { isConfirmed } = await Swal.fire({
+                            title: `<small>${titleSms}</small>`,
+                            icon: "warning",
+                            html: `<small>${message}</small>`,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                        });
+
+                        // Según la confirmación, realiza acciones adicionales.
+                        if (isConfirmed) {
+                            if (code === "0") {
+                                // Si el código es "0", restaura el valor anterior y realiza cálculos totales.
+                                rowEntity[field] = oldValue;
+                                setCalculoTotales(field, rowEntity, oldValue);
+                                $("#custom-template-md-autocomplete-articulo").focus();
+                            }
+                            if (code === "2") {
+                                // Si el código es "2", solo realiza cálculos totales.
+                                setCalculoTotales(field, rowEntity, oldValue);
+                            }
+                        }
+                    })
+                    .catch((error) => {
+                        // Maneja errores en la llamada al servicio.
+                        hideLoader();
+                        console.log(error);
                     });
-
-                    // Según la confirmación, realiza acciones adicionales.
-                    if (isConfirmed) {
-                        if (code === "0") {
-                            // Si el código es "0", restaura el valor anterior y realiza cálculos totales.
-                            rowEntity[field] = oldValue;
-                            setCalculoTotales(field, rowEntity, oldValue);
-                            $("#custom-template-md-autocomplete-articulo").focus();
-                        }
-                        if (code === "2") {
-                            // Si el código es "2", solo realiza cálculos totales.
-                            setCalculoTotales(field, rowEntity, oldValue);
-                        }
-                    }
-                }).catch(error => {
-                    // Maneja errores en la llamada al servicio.
-                    hideLoader();
-                    console.log(error);
-                });
             } catch (error) {
                 // Maneja errores generales en el bloque try-catch.
                 hideLoader();
@@ -963,47 +990,55 @@
 
         $scope.setInfoEstabPtoEmi = function () {
             if ($scope.establecimientos.length > 0) {
-                $scope.infoEstabPtoEmi.nombreComercial = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab).nombreComercial;
+                $scope.infoEstabPtoEmi.nombreComercial = $scope.establecimientos.find(
+                    (item) => item.codEstab === $scope.data.codEstab
+                ).nombreComercial;
             }
 
             if ($scope.puntosEmision.length > 0) {
-                $scope.infoEstabPtoEmi.puntoEmision = $scope.puntosEmision.find(item => item.idPuntoEmision === $scope.data.idPuntoEmision).ptoEmi;
+                $scope.infoEstabPtoEmi.puntoEmision = $scope.puntosEmision.find(
+                    (item) => item.idPuntoEmision === $scope.data.idPuntoEmision
+                ).ptoEmi;
             }
-        }
-
+            setInfoAdicional();
+        };
 
         function calculateTotalItems(items) {
-            return items.map(item => { 
+            return items.map((item) => {
                 return {
                     ...item,
-                    idFacturaDetalle: params.action === "DUPLICAR" ? 0 : item.idFacturaDetalle,
-                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio), 
-                }
-
-            })
+                    idFacturaDetalle:
+                        params.action === "DUPLICAR" ? 0 : item.idFacturaDetalle,
+                    precioConIva: fS.roundNumber(
+                        item.precioConIva,
+                        $scope.decimal.nroPrecio
+                    ),
+                };
+            });
         }
 
         $scope.refreshUserPermission = function () {
             showLoader();
-            userCustomerPermissionSvc.fetchUserPermission().then(response => {
-                const { porcentajeDescuento, descuento } = response.detalle;
+            userCustomerPermissionSvc
+                .fetchUserPermission()
+                .then((response) => {
+                    const { porcentajeDescuento, descuento } = response.detalle;
 
-                for (let item of $scope.gridOptions.columnDefs) {
-                    if (["porcentajeDescuento"].includes(item.field)) {
-                        item.visible = porcentajeDescuento;
+                    for (let item of $scope.gridOptions.columnDefs) {
+                        if (["porcentajeDescuento"].includes(item.field)) {
+                            item.visible = porcentajeDescuento;
+                        }
+                        if (item.field === "valorDescuento") {
+                            item.visible = descuento;
+                        }
                     }
-                    if (item.field === "valorDescuento") {
-                        item.visible = descuento;
-
-
-                    }
-                }
-                $scope.gridApi.core.refresh();
-            }).catch(error => {
-                console.log(error)
-            }).finally(() => hideLoader())
-        }
-
+                    $scope.gridApi.core.refresh();
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+                .finally(() => hideLoader());
+        };
 
         initiload();
         setColumnDefs();
@@ -1021,7 +1056,8 @@
                 clienteDefault,
                 articuloDefault,
                 formasPago,
-                tiposIdentificacion
+                tiposIdentificacion,
+                infoAdicional,
             } = structuredClone(mainDataForm);
 
             $scope.establecimientos = estabs;
@@ -1032,19 +1068,19 @@
 
             if (params && ["EDITAR", "DUPLICAR"].includes(params.action)) {
                 const { comprobante } = params.data;
-                dataEstab = $scope.establecimientos.find(estab => estab.codEstab === comprobante.codEstab);
+                dataEstab = $scope.establecimientos.find(
+                    (estab) => estab.codEstab === comprobante.codEstab
+                );
             } else {
-                dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+                dataEstab = $scope.establecimientos.find((estab) => estab.defaultEstab);
             }
 
             $scope.data.codEstab = dataEstab.codEstab;
-
-
-
             $scope.dataClone.codEstab = dataEstab.codEstab;
-
             $scope.puntosEmision = dataEstab.puntosEmision;
             $scope.bodegas = dataEstab.bodegas;
+            infoAdicionalConfig = infoAdicional;
+
             $scope.tarifas = tarifas;
             $scope.tiemposCredito = tiemposCredito;
             $scope.vendedores = vendedores;
@@ -1056,9 +1092,8 @@
             $scope.decimal = decimal;
             $scope.config = config;
 
-
             if ($scope.bodegas.length > 0) {
-                let dataBodega = $scope.bodegas.find(bodega => (bodega.defaultBodega));
+                let dataBodega = $scope.bodegas.find((bodega) => bodega.defaultBodega);
                 $scope.data.idBodega = dataBodega.idBodega;
                 $scope.dataClone.idBodega = $scope.data.idBodega;
             }
@@ -1069,28 +1104,33 @@
 
             if (params && params.action === "NUEVO") {
                 if ($scope.puntosEmision.length > 0) {
-                    let dataPuntoEmision = $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi));
+                    let dataPuntoEmision = $scope.puntosEmision.find(
+                        (ptoEmi) => ptoEmi.defaultPtoEmi
+                    );
                     $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
                 }
                 if ($scope.tiemposCredito.length > 0) {
-                    let dataTiempoCredito = $scope.tiemposCredito.find(item => item.diasCredito === 0 && item.numeroCuota === 1)
+                    let dataTiempoCredito = $scope.tiemposCredito.find(
+                        (item) => item.diasCredito === 0 && item.numeroCuota === 1
+                    );
                     $scope.data.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                     $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
 
-                    //Formas Pago 
-                    $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
+                    //Formas Pago
+                    $scope.dataFormaPago.idTiempoCredito =
+                        dataTiempoCredito.idTiempoCredito;
                     $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
                 }
 
                 if ($scope.vendedores.length > 0 && !$scope.config.multipleVendedor) {
-                    $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
+                    $scope.data.idUsuario = $scope.vendedores.find(
+                        (item) => item.predeterminado
+                    ).idUsuario;
                 } else {
                     $scope.data.idUsuario = 0;
                 }
 
-
-
-                //Cliente Predeterminado 
+                //Cliente Predeterminado
                 if (clienteDefault.idCliente > 0) {
                     $scope.cliente = structuredClone(clienteDefault);
                     if ($scope.cliente.idTiempoCredito > 0) {
@@ -1101,49 +1141,56 @@
                 //Forma pago sri
                 if ($scope.cliente.idFormaPagoSri > 0) {
                     setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.FORMA_PAGO_SRI_CLIENTE);
-
                 } else {
                     setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.DEFAULT);
                 }
 
                 //Articulo Predeterminado
                 if (articuloDefault.idArticulo > 0) {
-                    articuloSvc.getForSale({
-                        idArticulo: articuloDefault.idArticulo,
-                        idBodega: $scope.data.idBodega
-                    }).then(dataArticuloApi => {
-                        $scope.setItemArticuloEnDetalle(dataArticuloApi)
-                    })
+                    articuloSvc
+                        .getForSale({
+                            idArticulo: articuloDefault.idArticulo,
+                            idBodega: $scope.data.idBodega,
+                        })
+                        .then((dataArticuloApi) => {
+                            $scope.setItemArticuloEnDetalle(dataArticuloApi);
+                        });
                 }
 
                 getFechaVencimiento();
             }
 
             //Cuando el documento es duplicar
-            if (params && params.action === 'DUPLICAR') {
+            if (params && params.action === "DUPLICAR") {
                 const {
                     comprobante,
                     cliente,
                     items,
                     infoAdicionalDocumento,
-                    formasPago
+                    formasPago,
                 } = params.data;
 
                 $scope.data = {
                     ...$scope.data,
-                    ...structuredClone(comprobante)
-                }
+                    ...structuredClone(comprobante),
+                };
                 $scope.data.fechaEmision = new Date();
                 $scope.data.idFactura = 0;
 
                 $scope.dataClone.codEstab = $scope.data.codEstab;
                 $scope.gridOptions.data = calculateTotalItems(items);
 
-                $scope.data.fechaEmisionEscrita = fS.getFechaEscrita($scope.data.fechaEmision);
-                $scope.data.fechaVencimientoEscrita = fS.getFechaEscrita($scope.data.fechaVencimiento);
+                $scope.data.fechaEmisionEscrita = fS.getFechaEscrita(
+                    $scope.data.fechaEmision
+                );
+                $scope.data.fechaVencimientoEscrita = fS.getFechaEscrita(
+                    $scope.data.fechaVencimiento
+                );
 
                 if ($scope.vendedores.length > 0) {
-                    $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
+                    $scope.data.idUsuario = $scope.vendedores.find(
+                        (item) => item.predeterminado
+                    ).idUsuario;
                 } else {
                     $scope.data.idUsuario = 0;
                 }
@@ -1151,43 +1198,49 @@
                 $scope.cliente = cliente;
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
 
-                //Formas pagos 
+                //Formas pagos
                 $scope.dataFormaPago = formasPago[0];
                 //Forma pago sri
                 if ($scope.formasPago.length > 0) {
                     setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.FORMA_PAGO_CHANGE);
                 }
                 counterGridOptions();
+                isSetInfoAdicionalConfig = false;
             }
 
-
             //Cuando el documento es editar
-            if (params && params.action === 'EDITAR') {
+            if (params && params.action === "EDITAR") {
                 const {
                     comprobante,
                     cliente,
                     items,
                     infoAdicionalDocumento,
                     formasPago,
-                    cuotas
+                    cuotas,
                 } = params.data;
 
                 $scope.data = {
                     ...$scope.data,
-                    ...structuredClone(comprobante)
-                }
+                    ...structuredClone(comprobante),
+                };
                 $scope.dataClone.fechaEmision = $scope.data.fechaEmision;
 
                 $scope.dataClone.codEstab = $scope.data.codEstab;
 
-                //Calcular los subtotales del detalle 
-                $scope.gridOptions.data = calculateTotalItems(items)
+                //Calcular los subtotales del detalle
+                $scope.gridOptions.data = calculateTotalItems(items);
 
-                $scope.data.fechaEmisionEscrita = fS.getFechaEscrita($scope.data.fechaEmision);
-                $scope.data.fechaVencimientoEscrita = fS.getFechaEscrita($scope.data.fechaVencimiento);
+                $scope.data.fechaEmisionEscrita = fS.getFechaEscrita(
+                    $scope.data.fechaEmision
+                );
+                $scope.data.fechaVencimientoEscrita = fS.getFechaEscrita(
+                    $scope.data.fechaVencimiento
+                );
 
                 if ($scope.vendedores.length > 0) {
-                    $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
+                    $scope.data.idUsuario = $scope.vendedores.find(
+                        (item) => item.predeterminado
+                    ).idUsuario;
                 } else {
                     $scope.data.idUsuario = 0;
                 }
@@ -1200,7 +1253,7 @@
                 // Cuotas
                 $scope.cuotas = cuotas;
 
-                //Formas pagos 
+                //Formas pagos
                 $scope.dataFormaPago = formasPago[0];
 
                 //Forma pago sri
@@ -1217,42 +1270,50 @@
                 }
             });
 
-
             if (params.action === "NUEVO" && !($scope.data.idFactura > 0)) {
-                if (Object.keys(storageSvc.getObject("storeFacturaDetail")).length > 0) {
-                    storageSvc.restoreInvoiceDetail("storeFacturaDetail").then(result => {
-                        if (result.isConfirmed) {
-                            $scope.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);
-                            delete result.dataInvoiceDetail[result.value];
+                if (
+                    Object.keys(storageSvc.getObject("storeFacturaDetail")).length > 0
+                ) {
+                    storageSvc
+                        .restoreInvoiceDetail("storeFacturaDetail")
+                        .then((result) => {
+                            if (result.isConfirmed) {
+                                $scope.gridOptions.data = JSON.parse(
+                                    result.dataInvoiceDetail[result.value]
+                                );
+                                delete result.dataInvoiceDetail[result.value];
 
-                            storageSvc.setObject("storeFacturaDetail", result.dataInvoiceDetail)
+                                storageSvc.setObject(
+                                    "storeFacturaDetail",
+                                    result.dataInvoiceDetail
+                                );
 
-                            recalculateTotalsSimple();
-                            $scope.$apply();
-                        }
-
-                    })
+                                recalculateTotalsSimple();
+                                $scope.$apply();
+                            }
+                        });
                 }
             }
             $scope.setInfoEstabPtoEmi();
 
             $uibModalInstance.rendered.then(() => {
                 drawImpuestoTotales();
-            })
-
+            });
         }
 
         function getFechaVencimiento() {
             if ($scope.data.fechaEmision && $scope.tiemposCredito.length > 0) {
-                let fechaEmision = fS.setHoursToDate($scope.data.fechaEmision)
-                let dataTiempoCredito = $scope.tiemposCredito.find(item => item.idTiempoCredito === $scope.data.idTiempoCredito);
-                let diasCredito = typeof dataTiempoCredito === 'object' ? dataTiempoCredito.diasCredito : 0;
+                let fechaEmision = fS.setHoursToDate($scope.data.fechaEmision);
+                let dataTiempoCredito = $scope.tiemposCredito.find(
+                    (item) => item.idTiempoCredito === $scope.data.idTiempoCredito
+                );
+                let diasCredito =
+                    typeof dataTiempoCredito === "object"
+                        ? dataTiempoCredito.diasCredito
+                        : 0;
 
-                let {
-                    fechaVencimiento,
-                    fechaEmisionEscrita,
-                    fechaVencimientoEscrita
-                } = fS.sumarDiasAFecha(fechaEmision, diasCredito);
+                let { fechaVencimiento, fechaEmisionEscrita, fechaVencimientoEscrita } =
+                    fS.sumarDiasAFecha(fechaEmision, diasCredito);
 
                 // let formattedDateTime = fS.formatDateMoment(fechaVencimiento)
 
@@ -1273,12 +1334,12 @@
         $scope.resultModalAdicional = function (result) {
             let { infoAdicionalDoc } = result;
             $scope.infoAdicionalDocumento = infoAdicionalDoc;
-        }
-        function setColumnDefs() {
+        };
 
+        function setColumnDefs() {
             /**<a btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales'   result-modal-adicional="grid.appScope.resultModalAdicional(result)" class="btn btn-warning btn-xs text-white" title="Agregar dato Adicional" > <i class="fas fa-tags"></i></a >**/
 
-            const ventaDetailPermission = $scope.permisoDetalleVenta
+            const ventaDetailPermission = $scope.permisoDetalleVenta;
             const CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
         <a update-article ng-click="grid.appScope.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
@@ -1296,262 +1357,266 @@
             <i class="fas fa-tags"></i>
         </a>`;
 
-            $scope.gridOptions.columnDefs = [{
-                name: 'Op.',
-                enableCellEdit: false,
-                width: '12%',
-                minWidth: '100',
-                cellTemplate: CELL_TEMPLATE_OPTION,
-            },
-            {
-                name: 'N°',
-                field: 'n',
-                enableCellEdit: false,
-                allowCellFocus: false,
-                width: '5%',
-                minWidth: '50'
-            },
-            {
-                name: 'cód.',
-                field: 'codigo',
-                enableCellEdit: false,
-                allowCellFocus: false,
-                width: '8%',
-                minWidth: '100'
-            },
-            {
-                name: 'idArticulo',
-                field: 'idArticulo',
-                visible: false
-            },
-            {
-                name: "Descripción",
-                field: "descripcion",
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
-                cellEditableCondition: function (scope) {
-                    return scope.row.entity.llevaInventario !== true;
+            $scope.gridOptions.columnDefs = [
+                {
+                    name: "Op.",
+                    enableCellEdit: false,
+                    width: "12%",
+                    minWidth: "100",
+                    cellTemplate: CELL_TEMPLATE_OPTION,
                 },
-                cellTooltip: function (row) {
-                    return row.entity.descripcion;
+                {
+                    name: "N°",
+                    field: "n",
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    width: "5%",
+                    minWidth: "50",
                 },
-                width: '25%',
-                minWidth: '100'
-            },
-            {
-                name: 'Cant.',
-                field: 'cantidad',
-                enableCellEditOnFocus: true,
-                min: 1,
-                type: 'number',
-                width: '6%',
-                minWidth: '50'
-            },
-            {
-                name: 'Medida',
-                field: 'idMedida',
-                cellFilter: 'mapMedida:row.entity.medidas',
-                editableCellTemplate: 'ui-grid/dropdownEditor',
-                enableCellEdit: ventaDetailPermission.medida,
-                enableCellEditOnFocus: ventaDetailPermission.medida,
-                allowCellFocus: ventaDetailPermission.medida,
-                editDropdownOptionsFunction: function (rowEntity) {
-                    return rowEntity.medidas.map(function (val) {
-                        return {
-                            id: val.idMedida,
-                            value: val.descripcion
-                        }
-                    })
-
+                {
+                    name: "cód.",
+                    field: "codigo",
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    width: "8%",
+                    minWidth: "100",
                 },
-                type: 'number',
-                width: '8%',
-                minWidth: '100'
-            },
-            {
-                name: 'codigoTipoIva',
-                field: 'codigoTipoIva',
-                enableCellEdit: false,
-                width: '8%',
-                visible: false
-            },
-            {
-                name: 'I.V.A',
-                field: 'idTipoIva',
-                width: '8%',
-                minWidth: '100',
-                type: 'number',
-                editableCellTemplate: 'ui-grid/dropdownEditor',
-                cellFilter: 'cellFilterTipoIva:this',
-                editDropdownValueLabel: 'descripcion',
-                editDropdownIdLabel: 'idTipoIva',
-                enableCellEdit: ventaDetailPermission.tipoIva,
-                allowCellFocus: ventaDetailPermission.tipoIva,
-                enableCellEditOnFocus: ventaDetailPermission.tipoIva,
-                //    visible: config.porcentajeIva
-            },
-            {
-                name: 'Tarifa',
-                field: 'idTarifa',
-                width: '9%',
-                minWidth: '80',
-                cellFilter: 'mapTarifa:row.entity.articuloTarifas',
-                editableCellTemplate: 'ui-grid/dropdownEditor',
-                enableCellEdit: ventaDetailPermission.tarifa,
-                enableCellEditOnFocus: ventaDetailPermission.tarifa,
-                allowCellFocus: ventaDetailPermission.tarifa,
-                editDropdownOptionsFunction: (rowEntity) => {
-                    return rowEntity.articuloTarifas.map(val => ({
-                        id: val.idTarifa,
-                        value: val.tarifa + ' - $' + val.precioConIva
-                    }))
+                {
+                    name: "idArticulo",
+                    field: "idArticulo",
+                    visible: false,
                 },
-            },
-            {
-                name: 'Precio U.',
-                field: 'precioUnitario',
-                enableCellEditOnFocus: true,
-                enableColumnMenu: false,
-                allowCellFocus: true,
-                type: 'number',
-                width: '8%',
-                minWidth: '90',
-                cellEditableCondition: function (scope) {
-                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioUnitario : true;
+                {
+                    name: "Descripción",
+                    field: "descripcion",
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true,
+                    cellEditableCondition: function (scope) {
+                        return scope.row.entity.llevaInventario !== true;
+                    },
+                    cellTooltip: function (row) {
+                        return row.entity.descripcion;
+                    },
+                    width: "25%",
+                    minWidth: "100",
                 },
-                // cellFilter: "currency:'$'",
-            },
-            {
-                name: 'P. Iva',
-                field: 'precioConIva',
-                min: 0,
-                type: 'number',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
-                width: '7%',
-                minWidth: '90',
-                cellEditableCondition: function (scope) {
-                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioConIva : true;
+                {
+                    name: "Cant.",
+                    field: "cantidad",
+                    enableCellEditOnFocus: true,
+                    min: 1,
+                    type: "number",
+                    width: "6%",
+                    minWidth: "50",
                 },
-                // cellFilter: "currency:'$'",
-            },
-            {
-                name: '%',
-                field: 'porcentajeDescuento',
-                // enableCellEdit: ventaDetailPermission.porcentajeDescuento,
-                // allowCellFocus: ventaDetailPermission.porcentajeDescuento,
-                // enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
-                min: 0,
-                width: '4%',
-                minWidth: '60',
-                // cellFilter: "currency:'%'",
-                visible: ventaDetailPermission.porcentajeDescuento || false,
-                type: 'number',
-                /*cellFilter: "limitTo:3",*/
-            },
-            {
-                name: 'Desc.',
-                field: 'valorDescuento',
-                // enableCellEdit: ventaDetailPermission.descuento,
-                // enableCellEditOnFocus: ventaDetailPermission.descuento,
-                // allowCellFocus: ventaDetailPermission.descuento,
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
-                allowCellFocus: true,
-                min: 0,
-                type: 'number',
-                width: '4%',
-                minWidth: '65',
-                // cellFilter: "currency:'$'",
-                visible: ventaDetailPermission.descuento || false
-            },
-            {
-                name: 'SubTotal',
-                field: 'precioTotalSinImpuesto',
-                enableCellEdit: false,
-                allowCellFocus: false,
-                type: 'number',
-                width: '7%',
-                minWidth: '50',
-                visible: true,
-                cellFilter: fS.cellFilterRoundToNumber(),
-                cellTooltip: function (row, col) {
-                    return fS.cellTooltipGrid(row.entity, col.field)
+                {
+                    name: "Medida",
+                    field: "idMedida",
+                    cellFilter: "mapMedida:row.entity.medidas",
+                    editableCellTemplate: "ui-grid/dropdownEditor",
+                    enableCellEdit: ventaDetailPermission.medida,
+                    enableCellEditOnFocus: ventaDetailPermission.medida,
+                    allowCellFocus: ventaDetailPermission.medida,
+                    editDropdownOptionsFunction: function (rowEntity) {
+                        return rowEntity.medidas.map(function (val) {
+                            return {
+                                id: val.idMedida,
+                                value: val.descripcion,
+                            };
+                        });
+                    },
+                    type: "number",
+                    width: "8%",
+                    minWidth: "100",
                 },
-            },
-            {
-                name: 'IVA',
-                field: 'valorImpuesto',
-                enableCellEdit: false,
-                allowCellFocus: false,
-                type: 'number',
-                width: '5%',
-                minWidth: '50',
-                visible: true,
-                cellFilter: fS.cellFilterRoundToNumber(),
-                cellTooltip: function (row, col) {
-                    return fS.cellTooltipGrid(row.entity, col.field)
+                {
+                    name: "codigoTipoIva",
+                    field: "codigoTipoIva",
+                    enableCellEdit: false,
+                    width: "8%",
+                    visible: false,
                 },
-            },
-            {
-                name: 'Total',
-                field: 'total',
-                enableCellEdit: false,
-                allowCellFocus: false,
-                type: 'number',
-                width: '5%',
-                minWidth: '100',
-                visible: true,
-                cellFilter: fS.cellFilterRoundToNumber(),
-                cellTooltip: function (row, col) {
-                    return fS.cellTooltipGrid(row.entity, col.field)
+                {
+                    name: "I.V.A",
+                    field: "idTipoIva",
+                    width: "8%",
+                    minWidth: "100",
+                    type: "number",
+                    editableCellTemplate: "ui-grid/dropdownEditor",
+                    cellFilter: "cellFilterTipoIva:this",
+                    editDropdownValueLabel: "descripcion",
+                    editDropdownIdLabel: "idTipoIva",
+                    enableCellEdit: ventaDetailPermission.tipoIva,
+                    allowCellFocus: ventaDetailPermission.tipoIva,
+                    enableCellEditOnFocus: ventaDetailPermission.tipoIva,
+                    //    visible: config.porcentajeIva
                 },
-            },
-            {
-                name: 'Ice',
-                field: 'ice',
-                enableCellEdit: false,
-                allowCellFocus: false,
-                type: 'number',
-                width: '6%',
-                minWidth: '100',
-                // cellFilter: "currency:'$'",
-                visible: false
-            },
-            {
-                name: 'Nota',
-                field: 'nota',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
-                type: 'string',
-                width: '15%',
-                minWidth: '100'
-            },
-            {
-                name: 'bodega',
-                field: 'idBodega',
-                editableCellTemplate: 'ui-grid/dropdownEditor',
-                cellFilter: 'cellFilterBodega:this',
-                editDropdownValueLabel: 'descripcion',
-                editDropdownIdLabel: 'idBodega',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
-                type: 'number',
-                width: '11%',
-                minWidth: '100'
-            },
-            ]
+                {
+                    name: "Tarifa",
+                    field: "idTarifa",
+                    width: "9%",
+                    minWidth: "80",
+                    cellFilter: "mapTarifa:row.entity.articuloTarifas",
+                    editableCellTemplate: "ui-grid/dropdownEditor",
+                    enableCellEdit: ventaDetailPermission.tarifa,
+                    enableCellEditOnFocus: ventaDetailPermission.tarifa,
+                    allowCellFocus: ventaDetailPermission.tarifa,
+                    editDropdownOptionsFunction: (rowEntity) => {
+                        return rowEntity.articuloTarifas.map((val) => ({
+                            id: val.idTarifa,
+                            value: val.tarifa + " - $" + val.precioConIva,
+                        }));
+                    },
+                },
+                {
+                    name: "Precio U.",
+                    field: "precioUnitario",
+                    enableCellEditOnFocus: true,
+                    enableColumnMenu: false,
+                    allowCellFocus: true,
+                    type: "number",
+                    width: "8%",
+                    minWidth: "90",
+                    cellEditableCondition: function (scope) {
+                        return scope.row.entity.llevaInventario
+                            ? ventaDetailPermission.precioUnitario
+                            : true;
+                    },
+                    // cellFilter: "currency:'$'",
+                },
+                {
+                    name: "P. Iva",
+                    field: "precioConIva",
+                    min: 0,
+                    type: "number",
+                    enableCellEdit: true,
+                    allowCellFocus: true,
+                    enableCellEditOnFocus: true,
+                    width: "7%",
+                    minWidth: "90",
+                    cellEditableCondition: function (scope) {
+                        return scope.row.entity.llevaInventario
+                            ? ventaDetailPermission.precioConIva
+                            : true;
+                    },
+                    // cellFilter: "currency:'$'",
+                },
+                {
+                    name: "%",
+                    field: "porcentajeDescuento",
+                    // enableCellEdit: ventaDetailPermission.porcentajeDescuento,
+                    // allowCellFocus: ventaDetailPermission.porcentajeDescuento,
+                    // enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
+                    enableCellEdit: true,
+                    allowCellFocus: true,
+                    enableCellEditOnFocus: true,
+                    min: 0,
+                    width: "4%",
+                    minWidth: "60",
+                    // cellFilter: "currency:'%'",
+                    visible: ventaDetailPermission.porcentajeDescuento || false,
+                    type: "number",
+                    /*cellFilter: "limitTo:3",*/
+                },
+                {
+                    name: "Desc.",
+                    field: "valorDescuento",
+                    // enableCellEdit: ventaDetailPermission.descuento,
+                    // enableCellEditOnFocus: ventaDetailPermission.descuento,
+                    // allowCellFocus: ventaDetailPermission.descuento,
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true,
+                    allowCellFocus: true,
+                    min: 0,
+                    type: "number",
+                    width: "4%",
+                    minWidth: "65",
+                    // cellFilter: "currency:'$'",
+                    visible: ventaDetailPermission.descuento || false,
+                },
+                {
+                    name: "SubTotal",
+                    field: "precioTotalSinImpuesto",
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    type: "number",
+                    width: "7%",
+                    minWidth: "50",
+                    visible: true,
+                    cellFilter: fS.cellFilterRoundToNumber(),
+                    cellTooltip: function (row, col) {
+                        return fS.cellTooltipGrid(row.entity, col.field);
+                    },
+                },
+                {
+                    name: "IVA",
+                    field: "valorImpuesto",
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    type: "number",
+                    width: "5%",
+                    minWidth: "50",
+                    visible: true,
+                    cellFilter: fS.cellFilterRoundToNumber(),
+                    cellTooltip: function (row, col) {
+                        return fS.cellTooltipGrid(row.entity, col.field);
+                    },
+                },
+                {
+                    name: "Total",
+                    field: "total",
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    type: "number",
+                    width: "5%",
+                    minWidth: "100",
+                    visible: true,
+                    cellFilter: fS.cellFilterRoundToNumber(),
+                    cellTooltip: function (row, col) {
+                        return fS.cellTooltipGrid(row.entity, col.field);
+                    },
+                },
+                {
+                    name: "Ice",
+                    field: "ice",
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    type: "number",
+                    width: "6%",
+                    minWidth: "100",
+                    // cellFilter: "currency:'$'",
+                    visible: false,
+                },
+                {
+                    name: "Nota",
+                    field: "nota",
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true,
+                    type: "string",
+                    width: "15%",
+                    minWidth: "100",
+                },
+                {
+                    name: "bodega",
+                    field: "idBodega",
+                    editableCellTemplate: "ui-grid/dropdownEditor",
+                    cellFilter: "cellFilterBodega:this",
+                    editDropdownValueLabel: "descripcion",
+                    editDropdownIdLabel: "idBodega",
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true,
+                    type: "number",
+                    width: "11%",
+                    minWidth: "100",
+                },
+            ];
 
             setWarehouseAndIVA();
         }
 
         function setFocusInputBarcode() {
             $timeout(function () {
-                let inputBarcode = document.querySelector('#inputBarcode')
+                let inputBarcode = document.querySelector("#inputBarcode");
                 if (inputBarcode) {
                     inputBarcode.focus();
                 }
@@ -1560,7 +1625,9 @@
 
         function setFocusArticulo() {
             $timeout(function () {
-                let el = document.querySelector('#custom-template-md-autocomplete-articulo')
+                let el = document.querySelector(
+                    "#custom-template-md-autocomplete-articulo"
+                );
                 if (el) {
                     el.focus();
                 }
@@ -1571,16 +1638,22 @@
          * Agregamos lista de tipos IVA y bodegas en sus respectivas columnas
          */
         function setWarehouseAndIVA() {
-            let indexTipoIva = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'idTipoIva');
-            let indexBodega = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
-            $scope.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = $scope.tarifasImpuesto;
-            $scope.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = $scope.bodegas;
+            let indexTipoIva = $scope.gridOptions.columnDefs.findIndex(
+                (item) => item.field === "idTipoIva"
+            );
+            let indexBodega = $scope.gridOptions.columnDefs.findIndex(
+                (item) => item.field === "idBodega"
+            );
+            $scope.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray =
+                $scope.tarifasImpuesto;
+            $scope.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray =
+                $scope.bodegas;
         }
 
-       /**
-        * 
-        * @param {*} rowEntity 
-        */
+        /**
+         *
+         * @param {*} rowEntity
+         */
         $scope.deleteRow = async function (rowEntity) {
             try {
                 let isConfirmed = await gridOptionsSvc.askToDeleteItem(rowEntity);
@@ -1594,26 +1667,29 @@
                         $scope.gridOptionsItemsDeleted.push({
                             ...rowEntity,
                             cantidad: rowEntity.cantidadOriginal,
-                            estado: 0
+                            estado: 0,
                         });
                     }
 
-                    //Recalculamos los totales 
+                    //Recalculamos los totales
                     setCalculoTotales("cantidad", rowEntity, 0);
                     counterGridOptions();
                     $scope.$apply();
                 }
 
                 if (isConfirmed && rowEntity.datosAdicionales) {
-                    $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(ia => {
-                        return !(rowEntity.datosAdicionalesArticulo.some(iaa => iaa.idInfoAdicional === ia.idInfoAdicional))
-                    });
+                    $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(
+                        (ia) => {
+                            return !rowEntity.datosAdicionalesArticulo.some(
+                                (iaa) => iaa.idInfoAdicional === ia.idInfoAdicional
+                            );
+                        }
+                    );
                 }
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
-
-        }
+        };
 
         function updateStatusDatosAdicionalesArticulo(rowEntity) {
             for (let item of rowEntity.datosAdicionalesArticulo) {
@@ -1621,20 +1697,22 @@
             }
         }
 
-
         $scope.openModalArticle = function (item) {
             if ($scope.config.detailDuplicate) {
-                fS.sweetAlert('warning', 'No disponible para editar el artículo cuando se ha seleccionado <b>Duplicar Artículo</b>.');
-                return
+                fS.sweetAlert(
+                    "warning",
+                    "No disponible para editar el artículo cuando se ha seleccionado <b>Duplicar Artículo</b>."
+                );
+                return;
             }
             $scope.gridApi.cellNav.scrollToFocus(
                 $scope.gridOptions.data[0],
                 $scope.gridOptions.columnDefs[2]
-            )
+            );
 
             $scope.indexRow = $scope.gridOptions.data.indexOf(item);
-            $scope.$broadcast("editArticulo", item)
-        }
+            $scope.$broadcast("editArticulo", item);
+        };
 
         function setIdBodegaInDetalle() {
             for (let item of $scope.gridOptions.data) {
@@ -1642,61 +1720,68 @@
             }
         }
 
-
         $scope.onChangeEstablecimiento = async function () {
             try {
-
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger ml-2'
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger ml-2",
                     },
-                    buttonsStyling: false
-                })
+                    buttonsStyling: false,
+                });
 
-                let {
-                    isConfirmed
-                } = await swalWithBootstrapButtons.fire({
-                    title: '<small>Cambiar Establecimiento?</small>',
+                let { isConfirmed } = await swalWithBootstrapButtons.fire({
+                    title: "<small>Cambiar Establecimiento?</small>",
                     html: "<small>Esta seguro de cambiar <b>Punto de Emisión</b> y la <b>Bodega</b>?</small>",
-                    icon: 'warning',
+                    icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: 'Si, cambiar!',
-                    cancelButtonText: 'No, cancelar!',
+                    confirmButtonText: "Si, cambiar!",
+                    cancelButtonText: "No, cancelar!",
                     reverseButtons: false,
                     allowOutsideClick: false,
-                    allowEscapeKey: false
-                })
+                    allowEscapeKey: false,
+                });
 
                 if (!isConfirmed) {
                     $scope.data.codEstab = $scope.dataClone.codEstab;
                     $scope.$apply();
-                    return
+                    return;
                 }
 
-                let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab);
+                let dataEstab = $scope.establecimientos.find(
+                    (item) => item.codEstab === $scope.data.codEstab
+                );
 
                 $scope.puntosEmision = dataEstab.puntosEmision;
                 $scope.bodegas = dataEstab.bodegas;
 
                 if (!($scope.puntosEmision.length > 0)) {
-                    tS.toastr('info', 'No tienes Puntos de Emisión asignado a este establecimiento');
+                    tS.toastr(
+                        "info",
+                        "No tienes Puntos de Emisión asignado a este establecimiento"
+                    );
                     $scope.data.codEstab = $scope.dataClone.codEstab;
                     $scope.$apply();
-                    return
+                    return;
                 }
-                if ((!$scope.bodegas.length > 0)) {
-                    tS.toastr('info', 'No tienes bodegas asignado a este establecimiento');
+                if (!$scope.bodegas.length > 0) {
+                    tS.toastr(
+                        "info",
+                        "No tienes bodegas asignado a este establecimiento"
+                    );
                     $scope.data.codEstab = $scope.dataClone.codEstab;
                     $scope.$apply();
-                    return
+                    return;
                 }
 
-                let dataPtoEmi = $scope.puntosEmision.find(item => (item.defaultPtoEmi))
+                // PtoEmi
+                let dataPtoEmi = $scope.puntosEmision.find(
+                    (item) => item.defaultPtoEmi
+                );
                 $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
 
-                //Bodegas  
-                let dataBodega = $scope.bodegas.find(item => (item.defaultBodega));
+                //Bodegas
+                let dataBodega = $scope.bodegas.find((item) => item.defaultBodega);
                 $scope.data.idBodega = dataBodega.idBodega;
 
                 $scope.dataClone.codEstab = $scope.data.codEstab;
@@ -1707,45 +1792,46 @@
                 $scope.setInfoEstabPtoEmi();
                 $scope.$apply();
             } catch (error) {
-                console.trace(error)
+                console.trace(error);
             }
-        }
+        };
 
         $scope.getAllTiempoCredito = function () {
             if (isUpdate()) {
-                tS.toastr('warning', 'No disponible en actualizar!');
-                return
+                tS.toastr("warning", "No disponible en actualizar!");
+                return;
             }
             showLoader();
-            facturaSvc.getDataForm().then(response => {
-                $scope.tiemposCredito = response.tiemposCredito;
-            }).finally(() => hideLoader())
-        }
-
+            facturaSvc
+                .getDataForm()
+                .then((response) => {
+                    $scope.tiemposCredito = response.tiemposCredito;
+                })
+                .finally(() => hideLoader());
+        };
 
         $scope.onChangeTiempoCredito = function () {
             if (!$scope.permisoComprobanteVenta.tiempoCredito) {
-                tS.toastr('warning', 'No tienes permiso para realizar esta acción');
-                return
+                tS.toastr("warning", "No tienes permiso para realizar esta acción");
+                return;
             }
 
             getFechaVencimiento();
-
-        }
+        };
 
         $scope.onChangeFechaEmision = function () {
             try {
                 if (!$scope.permisoComprobanteVenta.fechaEmision) {
                     $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
-                    tS.toastr('warning', 'No tienes permiso para realizar esta acción');
-                    return
+                    tS.toastr("warning", "No tienes permiso para realizar esta acción");
+                    return;
                 }
                 getFechaVencimiento();
             } catch (error) {
-                console.log(error)
+                console.log(error);
                 $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
             }
-        }
+        };
 
         //==============================START CUSTOMER===========================
         $scope.onKeyupCustomer = function () {
@@ -1753,50 +1839,55 @@
                 $scope.cliente = {};
                 $scope.newCustomer = false;
             }
-
-        }
+        };
 
         $scope.onSelectedClienteChange = async function (item) {
             try {
-
-                if (!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)) {
+                if (
+                    !item.validationSri &&
+                    ["R", "C"].includes(item.tipoIdentificacion)
+                ) {
                     Swal.fire({
-                        icon: 'warning',
-                        html: 'Datos Incorrectos!',
+                        icon: "warning",
+                        html: "Datos Incorrectos!",
                         showConfirmButton: true,
                         showCancelButton: true,
-                        confirmButtonText: 'Actualizar con el SRI!.',
-                        cancelButtonText: 'Cancelar'
-                    }).then(async result => {
+                        confirmButtonText: "Actualizar con el SRI!.",
+                        cancelButtonText: "Cancelar",
+                    }).then(async (result) => {
                         if (result.isConfirmed) {
-                            let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
-                            let ctrl = (await import(fileCtrl))[controllers['M']];
-                            let template = templates['M'];
+                            let { fileCtrl, controllers, templates } =
+                                nombreModalVenta.CLIENTE;
+                            let ctrl = (await import(fileCtrl))[controllers["M"]];
+                            let template = templates["M"];
 
                             let modalRef = modalSvc.openModalCustom({
                                 controller: ctrl,
                                 template,
-                                size: 'xl',
+                                size: "xl",
                                 params: {
                                     ...item,
-                                    isUpdateDataCustomerFromSRI: true
+                                    isUpdateDataCustomerFromSRI: true,
                                 },
-                                isRenderRazorPartial: true
-                            })
+                                isRenderRazorPartial: true,
+                            });
 
-                            modalRef.result.then(result => {
-                                if (typeof result === 'object') {
-                                    setCustomerData(item)
+                            modalRef.result.then((result) => {
+                                if (typeof result === "object") {
+                                    setCustomerData(item);
                                 }
-                            })
+                            });
                         }
-                    })
-                    return
+                    });
+                    return;
                 }
 
-                if (['R', 'C', 'P'].includes(item.tipoIdentificacion) && $scope.notificacionVenta.notificacionVenta) {
+                if (
+                    ["R", "C", "P"].includes(item.tipoIdentificacion) &&
+                    $scope.notificacionVenta.notificacionVenta
+                ) {
                     let isPendientAccount = await ventaSvc.verifyPendientAccount({
-                        idCliente: item.idCliente
+                        idCliente: item.idCliente,
                     });
                     if (isPendientAccount) {
                         setCustomerData(item);
@@ -1804,21 +1895,20 @@
                         setCustomerData(item);
                     }
                 } else {
-                    setCustomerData(item)
+                    setCustomerData(item);
                 }
             } catch (error) {
                 $scope.cliente = {};
-                console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
+                console.log("ERROR AL OBTENER DATOS DEL CLIENTE", error);
                 $scope.$apply();
             }
-        }
-
+        };
 
         async function setCustomerData(item) {
             let dataCliente = await clienteSvc.findById(item.idCliente);
             $scope.cliente = dataCliente;
             if (!($scope.data.idFactura > 0)) {
-                if (($scope.cliente.idTiempoCredito > 0)) {
+                if ($scope.cliente.idTiempoCredito > 0) {
                     $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
                 }
 
@@ -1835,45 +1925,67 @@
             $scope.$apply();
         }
 
-
         $scope.receiveDataCustomerSRI = function (result) {
             $scope.newCustomer = !(result.idCliente > 0);
             $scope.cliente = result;
             setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.DEFAULT);
+        };
 
+        function setInfoAdicional() {
+            if (isSetInfoAdicionalConfig) {
+                $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(
+                    (d) => d.idPuntoEmision > 0
+                );
+
+                let dataInfoAdicional = infoAdicionalConfig.find(
+                    (i) => i.idPuntoEmision === $scope.data.idPuntoEmision
+                );
+                if (!dataInfoAdicional) return;
+                let infoAdicionPtoEmi = dataInfoAdicional.infoAdicional.map((i) => {
+                    return {
+                        ...i,
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    };
+                });
+                $scope.infoAdicionalDocumento = [
+                    ...infoAdicionPtoEmi,
+                    ...$scope.infoAdicionalDocumento,
+                ];
+            }
+            isSetInfoAdicionalConfig = true;
         }
 
         //=================================END CUSTOMER============================
 
         $scope.onChangeBodega = async function () {
             try {
-                let bodega = $scope.bodegas.find(item => item.idBodega === $scope.data.idBodega);
+                let bodega = $scope.bodegas.find(
+                    (item) => item.idBodega === $scope.data.idBodega
+                );
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger ml-2'
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger ml-2",
                     },
-                    buttonsStyling: false
-                })
+                    buttonsStyling: false,
+                });
 
-                let {
-                    isConfirmed
-                } = await swalWithBootstrapButtons.fire({
-                    title: '<small>Cambiar Bodega</small>',
+                let { isConfirmed } = await swalWithBootstrapButtons.fire({
+                    title: "<small>Cambiar Bodega</small>",
                     html: `<small>¿Esta seguro de cambiar la Bodega: <b>${bodega.descripcion}</b>  en el detalle del Documento?</small>`,
-                    icon: 'warning',
+                    icon: "warning",
                     showCancelButton: true,
                     confirmButtonText: `Si, cambiar!`,
-                    cancelButtonText: 'No, cancelar!',
+                    cancelButtonText: "No, cancelar!",
                     reverseButtons: false,
                     allowOutsideClick: false,
-                    allowEscapeKey: false
-                })
+                    allowEscapeKey: false,
+                });
 
                 if (isConfirmed) {
                     $scope.dataClone.idBodega = $scope.data.idBodega;
 
-                    if ($scope.gridOptions.data.length === 0) return
+                    if ($scope.gridOptions.data.length === 0) return;
 
                     setIdBodegaInDetalle();
                     resetCantidadToZeroAndRecalculateTotals();
@@ -1883,9 +1995,9 @@
                     $scope.$apply();
                 }
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
-        }
+        };
 
         function resetCantidadToZeroAndRecalculateTotals() {
             try {
@@ -1899,7 +2011,7 @@
                         oldValue: null,
                         decimal: $scope.decimal,
                         idTarifa: $scope.data.idTarifa,
-                        columnDefs: $scope.gridOptions.columnDefs
+                        columnDefs: $scope.gridOptions.columnDefs,
                     });
 
                     objCalculo["cantidad"] && objCalculo["cantidad"]();
@@ -1909,52 +2021,49 @@
             } catch (error) {
                 console.log(error);
             }
-
         }
-
 
         $scope.onChangeTarifaGeneral = async function () {
             if (!$scope.permisoComprobanteVenta.tarifa) {
                 $scope.data.idTarifa = $scope.dataClone.idTarifa;
-                tS.toastr('warning', 'No tienes permiso para realizar esta acción');
-                return
+                tS.toastr("warning", "No tienes permiso para realizar esta acción");
+                return;
             }
 
-            let tarifa = $scope.tarifas.find(item => item.idTarifa === $scope.data.idTarifa);
-            let {
-                isConfirmed
-            } = await Swal.fire({
+            let tarifa = $scope.tarifas.find(
+                (item) => item.idTarifa === $scope.data.idTarifa
+            );
+            let { isConfirmed } = await Swal.fire({
                 html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
-                icon: 'warning',
+                icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
+                confirmButtonColor: "#3085d6",
                 confirmButtonText: `Sí, cambiar!`,
-                cancelButtonText: 'No, cancelar!',
+                cancelButtonText: "No, cancelar!",
                 allowOutsideClick: false,
-            })
+            });
 
             if (isConfirmed) {
-
                 $scope.dataClone.idTarifa = $scope.data.idTarifa;
 
-                if ($scope.gridOptions.data.length === 0) return
+                if ($scope.gridOptions.data.length === 0) return;
 
-                if (gridOptionsSvc.setTarifaInDetail(
-                    $scope.gridOptions,
-                    $scope.data.idTarifa,
-                    $scope.decimal,
-                    gridOptionsSvc.calculoColDef
-                )
+                if (
+                    gridOptionsSvc.setTarifaInDetail(
+                        $scope.gridOptions,
+                        $scope.data.idTarifa,
+                        $scope.decimal,
+                        gridOptionsSvc.calculoColDef
+                    )
                 ) {
                     recalculateTotalsSimple();
                 }
                 $scope.$apply();
-
             } else {
                 $scope.data.idTarifa = $scope.dataClone.idTarifa;
                 $scope.$apply();
             }
-        }
+        };
 
         //=================================START PRODUCT=======================================
         function addRow() {
@@ -1983,8 +2092,8 @@
                 nota: null,
                 llevaInventario: false,
                 datosAdicionales: false,
-                estado: 1
-            }
+                estado: 1,
+            };
             $scope.gridOptions.data.push(obj);
         }
 
@@ -1996,17 +2105,24 @@
                     articulo,
                     medidas,
                     datosAdicionalesArticulo,
-                    consolidacionesFecha
+                    consolidacionesFecha,
                 } = $scope.dataArticulo;
 
-                let index = 0, entity = {}, tarifaImpuesto = {}, cantidad = 0;
+                let index = 0,
+                    entity = {},
+                    tarifaImpuesto = {},
+                    cantidad = 0;
 
-                //verificar si hay un articulo que lleva inventario mas de uno 
-                let itemsDuplicated = $scope.gridOptions.data.filter(item => (
-                    item.llevaInventario && item.idArticulo === articulo.idArticulo
-                ))
+                //verificar si hay un articulo que lleva inventario mas de uno
+                let itemsDuplicated = $scope.gridOptions.data.filter(
+                    (item) =>
+                        item.llevaInventario && item.idArticulo === articulo.idArticulo
+                );
 
-                let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
+                let findIndexById = $scope.gridOptions.data.findIndex(
+                    (item) =>
+                        item.llevaInventario && item.idArticulo === articulo.idArticulo
+                );
 
                 //Verificamos si tiene configurado: <<Duplicar Artículo en el detalle>>
                 if ($scope.config.detailDuplicate) {
@@ -2016,8 +2132,11 @@
                     entity.cantidad = 1;
                 } else {
                     if (itemsDuplicated.length > 1) {
-                        fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
-                        return
+                        fS.sweetAlert(
+                            "warning",
+                            `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`
+                        );
+                        return;
                     }
 
                     if (findIndexById === -1) {
@@ -2033,15 +2152,15 @@
                     }
                 }
 
-                let dataMedida = medidas.find(medida => (medida.defaultMedida));
-
+                let dataMedida = medidas.find((medida) => medida.defaultMedida);
 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
                 entity.descripcion = articulo.descripcion;
 
-
-                tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
+                tarifaImpuesto = $scope.tarifasImpuesto.find(
+                    (ti) => ti.codigoPorcentaje === articulo.codigoPorcentaje
+                );
 
                 entity.idImpuesto = tarifaImpuesto.idImpuesto;
                 entity.idTipoIva = articulo.idTipoIva;
@@ -2054,59 +2173,71 @@
                 entity.llevaInventario = articulo.llevaInventario;
                 entity.datosAdicionales = articulo.datosAdicionales;
                 entity.productoFraccionable = articulo.productoFraccionable;
-                entity.medidas = medidas; //Lista Medida 
-                entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+                entity.medidas = medidas; //Lista Medida
+                entity.idMedida = dataMedida.idMedida; //Medida por defecto
                 entity.conversion = dataMedida.conversion;
                 entity.precioCosto = dataMedida.precioCosto;
                 entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
                 entity.articuloTarifas = dataMedida.tarifas;
 
-
-                entity.datosAdicionalesArticulo = datosAdicionalesArticulo.map(daa => {
-                    return {
-                        ...daa,
-                        uniqueRowDetalle: entity.uniqueRowDetalle
+                entity.datosAdicionalesArticulo = datosAdicionalesArticulo.map(
+                    (daa) => {
+                        return {
+                            ...daa,
+                            uniqueRowDetalle: entity.uniqueRowDetalle,
+                        };
                     }
-                }); //
+                ); //
                 entity.consolidacionesFecha = consolidacionesFecha;
 
-
-                let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
+                let tarifa = entity.articuloTarifas.find(
+                    (item) => item.idTarifa === $scope.data.idTarifa
+                );
                 entity.idTarifa = $scope.data.idTarifa;
                 entity.precioSinSubsidio = articulo.precioSinSubsidio;
-                entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
-                entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
+                entity.precioUnitario = fS.roundNumber(
+                    tarifa.precioVenta,
+                    $scope.decimal.nroPrecio
+                );
+                entity.precioConIva = fS.roundNumber(
+                    tarifa.precioConIva,
+                    $scope.decimal.nroPrecio
+                );
                 entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
                 $scope.indexRow = index;
-                setCalculoTotales('precioUnitario', entity, 0);
+                setCalculoTotales("precioUnitario", entity, 0);
                 focusColumnCantidad();
                 //checkNotificationStock("cantidad", entity, cantidad);
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
-        }
+        };
 
         function focusColumnCantidad() {
             let index = 0;
 
             if ($scope.dataArticulo.articulo.llevaInventario) {
-                index = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'cantidad')
+                index = $scope.gridOptions.columnDefs.findIndex(
+                    (item) => item.field === "cantidad"
+                );
             } else {
-                index = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'descripcion')
+                index = $scope.gridOptions.columnDefs.findIndex(
+                    (item) => item.field === "descripcion"
+                );
             }
             $scope.gridApi.cellNav.scrollToFocus(
                 $scope.gridOptions.data[0],
                 $scope.gridOptions.columnDefs[2]
-            )
+            );
             $timeout(() => {
                 $scope.gridApi.cellNav.scrollToFocus(
                     $scope.gridOptions.data[$scope.indexRow],
                     $scope.gridOptions.columnDefs[index]
                 );
                 $scope.indexRow = null;
-            }, 30)
+            }, 30);
 
-            counterGridOptions()
+            counterGridOptions();
         }
 
         //=================================END PRODUCT=======================================
@@ -2114,24 +2245,23 @@
         function counterGridOptions() {
             angular.forEach($scope.gridOptions.data, (item, index) => {
                 item.n = index + 1;
-            })
+            });
         }
 
         /**
-        * 
-        * @param {*} colField nombre de la columnas 
-        * @param {*} rowEntity datos del item 
-        * @param {*} oldValue valor anterior de la columna
-        */
+         *
+         * @param {*} colField nombre de la columnas
+         * @param {*} rowEntity datos del item
+         * @param {*} oldValue valor anterior de la columna
+         */
         function setCalculoTotales(colField, rowEntity, oldValue) {
-
             //calculoColDef recibbe params obj: {rowEntity, oldValue, decimal, idTarifa, columnDefs}
             let objCalculo = gridOptionsSvc.calculoColDef({
                 rowEntity,
                 oldValue,
                 decimal: $scope.decimal,
                 idTarifa: $scope.data.idTarifa,
-                columnDefs: $scope.gridOptions.columnDefs
+                columnDefs: $scope.gridOptions.columnDefs,
             });
 
             objCalculo[colField] && objCalculo[colField]();
@@ -2141,85 +2271,112 @@
         }
 
         /**
-         * Calculamos todos los totales y subtotales del comprobantes 
+         * Calculamos todos los totales y subtotales del comprobantes
          */
         function recalculateTotalsSimple() {
             drawImpuestoTotales();
         }
 
-
         $scope.calcularPorcentajeDescuento = function () {
             if (!$scope.permisoComprobanteVenta.porcentajeDescuento) {
                 $scope.data.porcentajeDescuento = 0;
-                tS.toastr('warning', 'No tienes permiso para realizar esta acción');
-                return
+                tS.toastr("warning", "No tienes permiso para realizar esta acción");
+                return;
             }
             if ($scope.gridOptions.data.length === 0) {
-                return
+                return;
             }
 
-            if (typeof $scope.data.porcentajeDescuento !== 'number' || isNaN($scope.data.porcentajeDescuento)) {
-                tS.toastr('warning', 'Ingrese un Número Válido');
-                return
+            if (
+                typeof $scope.data.porcentajeDescuento !== "number" ||
+                isNaN($scope.data.porcentajeDescuento)
+            ) {
+                tS.toastr("warning", "Ingrese un Número Válido");
+                return;
             }
 
             if ($scope.data.porcentajeDescuento <= 100) {
-
                 gridOptionsSvc.setPorcentajeDescuentoAll(
-                    $scope.gridOptions, $scope.data, $scope.decimal, gridOptionsSvc.calculoColDef
-                )
-                //redondeo del numero porcentaje 
-                $scope.data.porcentajeDescuento = fS.roundNumber($scope.data.porcentajeDescuento, $scope.decimal.nroTotalSubTotal)
+                    $scope.gridOptions,
+                    $scope.data,
+                    $scope.decimal,
+                    gridOptionsSvc.calculoColDef
+                );
+                //redondeo del numero porcentaje
+                $scope.data.porcentajeDescuento = fS.roundNumber(
+                    $scope.data.porcentajeDescuento,
+                    $scope.decimal.nroTotalSubTotal
+                );
                 recalculateTotalsSimple();
             } else {
-                tS.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
+                tS.toastr(
+                    "warning",
+                    "El Porcentaje de Descuento tiene que ser menor o igual a 100"
+                );
             }
-        }
+        };
 
-        //Calcular Porcentaje  Descuento 
+        //Calcular Porcentaje  Descuento
         $scope.calcularDescuento = function () {
             try {
                 if (!$scope.permisoComprobanteVenta.descuento) {
                     $scope.data.descuento = 0;
-                    tS.toastr('warning', 'No tienes permiso para realizar esta acción');
-                    return
+                    tS.toastr("warning", "No tienes permiso para realizar esta acción");
+                    return;
                 }
                 if ($scope.gridOptions.data.length === 0) {
-                    return
+                    return;
                 }
-                if (typeof $scope.data.totalDescuento !== 'number' || isNaN($scope.data.totalDescuento)) {
-                    tS.toastr('warning', 'Ingrese un númeto válido', 'Valor Descuento');
-                    return
+                if (
+                    typeof $scope.data.totalDescuento !== "number" ||
+                    isNaN($scope.data.totalDescuento)
+                ) {
+                    tS.toastr("warning", "Ingrese un númeto válido", "Valor Descuento");
+                    return;
                 }
 
-                const { subTotalSinImpuestos } = gridOptionsSvc.getSubTotalSinImpuesto($scope.gridOptions.data);
+                const { subTotalSinImpuestos } = gridOptionsSvc.getSubTotalSinImpuesto(
+                    $scope.gridOptions.data
+                );
                 if ($scope.data.totalDescuento <= subTotalSinImpuestos) {
-                    let porcentajeDescuento = ($scope.data.totalDescuento * 100) / subTotalSinImpuestos;
-                    $scope.data.porcentajeDescuento = fS.roundNumber(porcentajeDescuento, $scope.decimal.nroDescuentoDetalle);
+                    let porcentajeDescuento =
+                        ($scope.data.totalDescuento * 100) / subTotalSinImpuestos;
+                    $scope.data.porcentajeDescuento = fS.roundNumber(
+                        porcentajeDescuento,
+                        $scope.decimal.nroDescuentoDetalle
+                    );
                     //setPorcentajeDescuentoAll($scope.data.porcentajeDescuento)
                     gridOptionsSvc.setPorcentajeDescuentoAll(
-                        $scope.gridOptions, $scope.data, $scope.decimal, gridOptionsSvc.calculoColDef
-                    )
+                        $scope.gridOptions,
+                        $scope.data,
+                        $scope.decimal,
+                        gridOptionsSvc.calculoColDef
+                    );
                     recalculateTotalsSimple();
                 } else {
-                    tS.toastr('warning', 'El Valor Descuento no puede ser mayor al total');
+                    tS.toastr(
+                        "warning",
+                        "El Valor Descuento no puede ser mayor al total"
+                    );
                 }
             } catch (error) {
-                console.log("CALCULO DE TOTAL DESCUENTO", error)
+                console.log("CALCULO DE TOTAL DESCUENTO", error);
             }
-        }
-
+        };
 
         $scope.getImporteTotal = function () {
-            if (!$scope.decimal) return
+            if (!$scope.decimal) return;
             let total = Number($scope.data.total);
             let transporte = Number($scope.data.transporte);
             let recargo = Number($scope.data.recargo);
             let importeTotal = total + transporte + recargo;
             $scope.data.total = importeTotal;
-            $scope.dataFormaPago.total = fS.roundNumber(importeTotal, $scope.decimal.importeTotal)
+            $scope.dataFormaPago.total = fS.roundNumber(
+                importeTotal,
+                $scope.decimal.importeTotal
+            );
             return fS.roundNumber(importeTotal, $scope.decimal.importeTotal);
-        }
+        };
 
         function drawImpuestoTotales() {
             try {
@@ -2227,33 +2384,32 @@
                     items: $scope.gridOptions.data,
                     decimal: $scope.decimal,
                     tarifasImpuesto: $scope.tarifasImpuesto.slice(),
-                    TAX_RATE_CODE
-                })
+                    TAX_RATE_CODE,
+                });
                 let {
-                    subTotalSinImpuestos, 
-                    irbpnr, 
+                    subTotalSinImpuestos,
+                    irbpnr,
                     importeTotal,
                     totalDescuento,
                     porcentajeDescuento,
                     propina,
                 } = dataImpuestoTotales;
- 
-
-
 
                 // Crear la estructura HTML con un template literal
-                const htmlTemplate = gridOptionsSvc.impuestoTotalesHtml(dataImpuestoTotales);
-                let drawImpuestoTotalesElement = document.getElementById("drawImpuestoTotales");
-                if (drawImpuestoTotalesElement){
+                const htmlTemplate =
+                    gridOptionsSvc.impuestoTotalesHtml(dataImpuestoTotales);
+                let drawImpuestoTotalesElement = document.getElementById(
+                    "drawImpuestoTotales"
+                );
+                if (drawImpuestoTotalesElement) {
                     drawImpuestoTotalesElement.innerHTML = htmlTemplate;
                 }
-
 
                 $scope.data.subTotalSinImpuestos = subTotalSinImpuestos;
                 $scope.data.total = importeTotal;
                 $scope.data.totalDescuento = totalDescuento;
                 $scope.data.porcentajeDescuento = porcentajeDescuento;
-                $scope.data.irbpnr = irbpnr
+                $scope.data.irbpnr = irbpnr;
                 $scope.data.propina = propina;
 
                 $scope.dataFormaPago.total = importeTotal;
@@ -2262,19 +2418,17 @@
             }
         }
 
-
         function setDataFormaPagoSri(tipoAction) {
             let dataFormaPago = {};
             if (tipoAction === FORM_PAGO_SRI_ACCION.DEFAULT) {
-
-                dataFormaPago = $scope.formasPago.find(item => {
-                    if ($scope.config.idFormaPagoSri > 0) {
-                        return (item.idFormaPagoSri === $scope.config.idFormaPagoSri);
-                    } else {
-                        return (item.codigo === '01');
-                    }
-                }) || {};
-
+                dataFormaPago =
+                    $scope.formasPago.find((item) => {
+                        if ($scope.config.idFormaPagoSri > 0) {
+                            return item.idFormaPagoSri === $scope.config.idFormaPagoSri;
+                        } else {
+                            return item.codigo === "01";
+                        }
+                    }) || {};
             }
             if (tipoAction === FORM_PAGO_SRI_ACCION.FORMA_PAGO_SRI_CLIENTE) {
                 dataFormaPago = findFormaPagoById($scope.cliente.idFormaPagoSri);
@@ -2287,123 +2441,169 @@
             $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
 
             function findFormaPagoById(idFormaPagoSri) {
-                return $scope.formasPago.find(item => item.idFormaPagoSri === idFormaPagoSri) || {};
+                return (
+                    $scope.formasPago.find(
+                        (item) => item.idFormaPagoSri === idFormaPagoSri
+                    ) || {}
+                );
             }
-
         }
         $scope.onChangeFormaPago = function () {
             setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.FORMA_PAGO_CHANGE);
-        }
-
+        };
 
         function isValidForm() {
             if (!$scope.data.codEstab) {
-                tS.toastr('warning', 'Seleccione el Establecimiento');
-                return
+                tS.toastr("warning", "Seleccione el Establecimiento");
+                return;
             }
             if (!($scope.data.idPuntoEmision > 0)) {
-                tS.toastr('warning', 'Seleccione el Punto de Emisión');
-                return
+                tS.toastr("warning", "Seleccione el Punto de Emisión");
+                return;
             }
             if (!($scope.data.idTiempoCredito > 0)) {
-                tS.toastr('warning', 'Seleccione el Tiempo Credito');
-                return
+                tS.toastr("warning", "Seleccione el Tiempo Credito");
+                return;
             }
-            if (!(fS.isDateValid($scope.data.fechaEmision))) {
-                tS.toastr('warning', 'Ingrese la Fecha de emisión');
-                return
+            if (!fS.isDateValid($scope.data.fechaEmision)) {
+                tS.toastr("warning", "Ingrese la Fecha de emisión");
+                return;
             }
 
             if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
-                tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
-                return
+                tS.toastr(
+                    "warning",
+                    "La fecha de emisión del documento no puede ser posterior a la fecha actual."
+                );
+                return;
             }
 
-
-            let ajusteFechaEmision = fS.ajustarFechaEmision(isUpdate(), $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
+            let ajusteFechaEmision = fS.ajustarFechaEmision(
+                isUpdate(),
+                $scope.data.fechaEmision,
+                $scope.data.fechaEmisionDocCreado
+            );
 
             if (ajusteFechaEmision) {
                 $scope.data.fechaEmision = ajusteFechaEmision;
             } else {
-                console.log('Error al justar la fecha de Emisión')
-                return
+                console.log("Error al justar la fecha de Emisión");
+                return;
             }
 
-            if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
-                tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
-                return
+            if (!fS.isDateValid($scope.data.fechaVencimiento)) {
+                tS.toastr("warning", "Seleccione la Fecha de vencimiento");
+                return;
             }
 
             //===================Start customer validate ============================
-            if ($scope.cliente.idCliente === 0 && ("razonSocialComprador" in $scope.cliente) && ("nombreComercial")) {
+            if (
+                $scope.cliente.idCliente === 0 &&
+                "razonSocialComprador" in $scope.cliente &&
+                "nombreComercial"
+            ) {
                 if (!($scope.cliente.idTipoIdentificacion > 0)) {
-                    tS.toastr('warning', `idTipoIdentificacion no proporcionada: ${$scope.cliente.idTipoIdentificacion} `);
-                    return
+                    tS.toastr(
+                        "warning",
+                        `idTipoIdentificacion no proporcionada: ${$scope.cliente.idTipoIdentificacion} `
+                    );
+                    return;
                 }
 
-                if (!$scope.cliente.razonSocialComprador || !$scope.cliente.nombreComercial) {
-                    tS.toastr('warning', 'Seleccione el Cliente');
-                    return
+                if (
+                    !$scope.cliente.razonSocialComprador ||
+                    !$scope.cliente.nombreComercial
+                ) {
+                    tS.toastr("warning", "Seleccione el Cliente");
+                    return;
                 }
             } else if (!($scope.cliente.idCliente > 0)) {
-                tS.toastr('warning', 'Seleccione el Cliente');
-                return
+                tS.toastr("warning", "Seleccione el Cliente");
+                return;
             }
 
-
             if (!($scope.data.idUsuario > 0)) {
-                tS.toastr('warning', 'Seleccione el Vendedor');
-                return
+                tS.toastr("warning", "Seleccione el Vendedor");
+                return;
             }
 
             //===================End customer validate ============================
 
             if ($scope.gridOptions.data.length === 0) {
-                tS.toastr('warning', 'Ingrese al menon un artículo en el detalle');
-                return
+                tS.toastr("warning", "Ingrese al menon un artículo en el detalle");
+                return;
             }
 
-            if ($scope.gridOptions.data.some(row => row.llevaInventario && row.cantidad === 0)) {
-                tS.toastr('warning', 'No es posible vender artículos con inventario cuando la cantidad es igual a 0.');
-                return
+            if (
+                $scope.gridOptions.data.some(
+                    (row) => row.llevaInventario && row.cantidad === 0
+                )
+            ) {
+                tS.toastr(
+                    "warning",
+                    "No es posible vender artículos con inventario cuando la cantidad es igual a 0."
+                );
+                return;
             }
 
-            if ($scope.gridOptions.data.some(row => !(row.idBodega > 0))) {
-                tS.toastr('warning', 'Seleccione la bodega en el detalle de los artículos');
-                return
+            if ($scope.gridOptions.data.some((row) => !(row.idBodega > 0))) {
+                tS.toastr(
+                    "warning",
+                    "Seleccione la bodega en el detalle de los artículos"
+                );
+                return;
             }
 
-            if ($scope.gridOptions.data.some(item => item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))) {
+            if (
+                $scope.gridOptions.data.some((item) =>
+                    item.articuloTarifas.some(
+                        (ta) =>
+                            ta.ventaPorMayor && item.cantidad < item.cantMinimaVentaPorMayor
+                    )
+                )
+            ) {
                 for (let item of $scope.gridOptions.data) {
-                    if (item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)) {
-                        fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
+                    if (
+                        item.articuloTarifas.some(
+                            (ta) =>
+                                ta.ventaPorMayor && item.cantidad < item.cantMinimaVentaPorMayor
+                        )
+                    ) {
+                        fS.sweetAlert(
+                            "warning",
+                            `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`
+                        );
                     }
                 }
-                return
+                return;
             }
 
-            //validacion de calculos 
-            let dataValicion = gridOptionsSvc.validarCalculosPorProducto($scope.gridOptions.data);
+            //validacion de calculos
+            let dataValicion = gridOptionsSvc.validarCalculosPorProducto(
+                $scope.gridOptions.data
+            );
             if (!dataValicion.esValido) {
-                console.log(dataValicion)
-                return
+                console.log(dataValicion);
+                return;
             }
 
             if ($scope.data.total <= 0) {
-                tS.toastr('warning', 'No se puede generar el documento con valor total 0!');
-                return
+                tS.toastr(
+                    "warning",
+                    "No se puede generar el documento con valor total 0!"
+                );
+                return;
             }
 
             return true;
         }
 
-
         function isRegister() {
-            return (params.action === 'NUEVO' || params.action === 'DUPLICAR');
+            return params.action === "NUEVO" || params.action === "DUPLICAR";
         }
 
         function isUpdate() {
-            return params.action === 'EDITAR';
+            return params.action === "EDITAR";
         }
 
         const validateCuota = function () {
@@ -2412,8 +2612,8 @@
                 tiemposCredito: $scope.tiemposCredito,
                 idTiempoCredito: $scope.data.idTiempoCredito,
                 montoTotal: $scope.data.total,
-                cuotas: $scope.cuotas
-            }
+                cuotas: $scope.cuotas,
+            };
             let cuotas = [];
             let montoTotalCuota = 0;
 
@@ -2421,72 +2621,89 @@
                 let dataCuota = fS.calcularCuotas(objParamsCuota);
                 cuotas = dataCuota.cuotas;
                 montoTotalCuota = dataCuota.montoTotalCuota;
-
             }
             if (isUpdate()) {
-                let dataCuota = fS.updateCuotas(objParamsCuota)
+                let dataCuota = fS.updateCuotas(objParamsCuota);
                 cuotas = dataCuota.cuotas;
                 montoTotalCuota = dataCuota.montoTotalCuota;
             }
 
-            if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
-                tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
+            if (
+                fS.roundNumber(montoTotalCuota, 2) !==
+                fS.roundNumber($scope.data.total, 2)
+            ) {
+                tS.toastr(
+                    "warning",
+                    "No coincide el total de la cuota con el importe total del documento."
+                );
                 return [];
             }
 
             return cuotas;
-        }
+        };
 
         function isValidTotals() {
-            let {
-                subTotalSinImpuestos,
-                importeTotal,
-                totalDescuento,
-            } = gridOptionsSvc.getImpuestoTotales({
-                items: $scope.gridOptions.data,
-                decimal: $scope.decimal,
-                tarifasImpuesto: $scope.tarifasImpuesto.slice(),
-                TAX_RATE_CODE
-            })
+            let { subTotalSinImpuestos, importeTotal, totalDescuento } =
+                gridOptionsSvc.getImpuestoTotales({
+                    items: $scope.gridOptions.data,
+                    decimal: $scope.decimal,
+                    tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+                    TAX_RATE_CODE,
+                });
 
             if ($scope.data.subTotalSinImpuestos !== subTotalSinImpuestos) {
-                tS.toastr('warning', `El valor del Subtotal sin impuestos: ${$scope.data.subTotalSinImpuestos} difiere del valor del Subtotal sin impuestos en el detalle: ${subTotalSinImpuestos}`);
+                tS.toastr(
+                    "warning",
+                    `El valor del Subtotal sin impuestos: ${$scope.data.subTotalSinImpuestos} difiere del valor del Subtotal sin impuestos en el detalle: ${subTotalSinImpuestos}`
+                );
                 return;
             }
 
             if ($scope.data.totalDescuento !== totalDescuento) {
-                tS.toastr('warning', `El valor total del descuento: ${$scope.data.totalDescuento} no coincide con el descuento total calculado en el detalle: ${totalDescuento}`);
+                tS.toastr(
+                    "warning",
+                    `El valor total del descuento: ${$scope.data.totalDescuento} no coincide con el descuento total calculado en el detalle: ${totalDescuento}`
+                );
                 return;
             }
 
             if ($scope.data.total !== importeTotal) {
-                tS.toastr('warning', `El valor del importe total: ${$scope.data.total} difiere del importe total calculado en el detalle: ${importeTotal}`);
+                tS.toastr(
+                    "warning",
+                    `El valor del importe total: ${$scope.data.total} difiere del importe total calculado en el detalle: ${importeTotal}`
+                );
                 return;
             }
 
             return true;
         }
 
-
         $scope.onSave = async function () {
             try {
-                let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
-                let validateForm = isValidForm()
+                let serieComprobante = null,
+                    titleSwal = "",
+                    htmlSwal = "",
+                    confirmButtonText = "";
+                let validateForm = isValidForm();
                 if (!validateForm) {
                     throw "Invalid form!";
                 }
 
-                if (!isValidTotals()) return
+                if (!isValidTotals()) return;
 
                 let cuotas = validateCuota();
 
-                if (cuotas && cuotas.length === 0) return
+                if (cuotas && cuotas.length === 0) return;
 
-
-
-                if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL && $scope.data.total > 50) {
-                    fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');
-                    return
+                if (
+                    $scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL &&
+                    $scope.data.total > 50
+                ) {
+                    fS.sweetAlert(
+                        "warning",
+                        "La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>"
+                    );
+                    return;
                 }
 
                 if (isRegister()) {
@@ -2495,41 +2712,40 @@
                         idPuntoEmision: $scope.data.idPuntoEmision,
                     });
                     hideLoader();
-                    if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
+                    if (!serieComprobante)
+                        throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
-                    titleSwal = '<small>Guardar Factura</small>';
-                    confirmButtonText = 'Guardar';
+                    titleSwal = "<small>Guardar Factura</small>";
+                    confirmButtonText = "Guardar";
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
-
                 } else if (isUpdate()) {
                     serieComprobante = $scope.data.serieComprobante;
-                    titleSwal = '<small>Actualizar Factura</small>';
-                    confirmButtonText = 'Actualizar';
+                    titleSwal = "<small>Actualizar Factura</small>";
+                    confirmButtonText = "Actualizar";
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
                 }
 
-
                 const customSwal = Swal.mixin({
                     customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger ml-2'
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger ml-2",
                     },
-                    buttonsStyling: false
-                })
+                    buttonsStyling: false,
+                });
 
                 let { isConfirmed } = await customSwal.fire({
                     title: titleSwal,
                     html: htmlSwal,
-                    icon: 'warning',
+                    icon: "warning",
                     showCancelButton: true,
                     confirmButtonText,
-                    cancelButtonText: 'No, cancelar!',
+                    cancelButtonText: "No, cancelar!",
                     reverseButtons: false,
                     allowOutsideClick: false,
-                    allowEscapeKey: false
-                })
+                    allowEscapeKey: false,
+                });
 
-                if (!isConfirmed) return
+                if (!isConfirmed) return;
 
                 //Mappeamos todo el objecto necesario para guardar factura.
                 let params = facturaSvc.queryMapper({
@@ -2539,106 +2755,122 @@
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
                     infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                    cuotas
-                })
+                    cuotas,
+                });
 
-
-                //Registar Doc 
+                //Registar Doc
                 if (isRegister()) {
                     showLoader();
-                    facturaSvc.save(params).then(response => {
-                        if (response.code === '0') {
-                            fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {
-                            fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
-                            let mainData = {
-                                isRegister: true,
-                                data: response.dataResponse
+                    facturaSvc
+                        .save(params)
+                        .then((response) => {
+                            if (response.code === "0") {
+                                fS.sweetAlert("warning", response.message, response.titleSms);
                             }
-                            $uibModalInstance.close(mainData)
-                        }
-                    }).catch(error => {
-                        console.error(error);
-                    }).finally(() => hideLoader())
+                            if (response.code === "1") {
+                                fS.sweetAlert(
+                                    "success",
+                                    "Registrado Correctamente",
+                                    response.titleSms,
+                                    1000
+                                );
+                                let mainData = {
+                                    isRegister: true,
+                                    data: response.dataResponse,
+                                };
+                                $uibModalInstance.close(mainData);
+                            }
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                        })
+                        .finally(() => hideLoader());
                 }
                 if (isUpdate()) {
                     showLoader();
-                    facturaSvc.update($scope.data.idFactura, params).then(response => {
-                        if (response.code === '0') {
-                            fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {
-                            fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
-                            $uibModalInstance.close({
-                                ...response,
-                                isUpdate: true
-                            })
-                        }
-                    }).catch(error => {
-                        console.error(error);
-                    }).finally(() => hideLoader())
+                    facturaSvc
+                        .update($scope.data.idFactura, params)
+                        .then((response) => {
+                            if (response.code === "0") {
+                                fS.sweetAlert("warning", response.message, response.titleSms);
+                            }
+                            if (response.code === "1") {
+                                fS.sweetAlert(
+                                    "success",
+                                    "Registrado Correctamente",
+                                    response.titleSms,
+                                    1000
+                                );
+                                $uibModalInstance.close({
+                                    ...response,
+                                    isUpdate: true,
+                                });
+                            }
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                        })
+                        .finally(() => hideLoader());
                 }
             } catch (error) {
                 hideLoader();
-                console.log(error)
+                console.log(error);
             }
-        }
+        };
 
         $scope.resultModalDatoAdicional = function (result) {
             $scope.infoAdicionalDocumento = result;
-        }
-
-
+        };
 
         async function askToSaveStorage() {
             try {
-                await storageSvc.askToSaveDetailDoc("storeFacturaDetail", $scope.gridOptions.data);
+                await storageSvc.askToSaveDetailDoc(
+                    "storeFacturaDetail",
+                    $scope.gridOptions.data
+                );
                 $uibModalInstance.close();
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
         }
-
-
 
         $scope.closeModal = () => {
             if ($scope.gridOptions.data.length > 0) {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
-                        confirmButton: 'btn btn-success',
-                        denyButton: 'btn btn-info ml-2',
-                        cancelButton: 'btn btn-danger ml-2'
+                        confirmButton: "btn btn-success",
+                        denyButton: "btn btn-info ml-2",
+                        cancelButton: "btn btn-danger ml-2",
                     },
-                    buttonsStyling: false
-                })
+                    buttonsStyling: false,
+                });
 
-                swalWithBootstrapButtons.fire({
-                    title: 'Salir ?',
-                    html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    showConfirmButton: true,
-                    showDenyButton: true,
-                    confirmButtonText: 'Apartar',
-                    denyButtonText: 'Si, salir',
-                    cancelButtonText: 'No, cancelar!',
-                    focusDeny: true,
-                    reverseButtons: false
-                }).then(result => {
+                swalWithBootstrapButtons
+                    .fire({
+                        title: "Salir ?",
+                        html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
+                        icon: "warning",
+                        showCancelButton: true,
+                        showConfirmButton: true,
+                        showDenyButton: true,
+                        confirmButtonText: "Apartar",
+                        denyButtonText: "Si, salir",
+                        cancelButtonText: "No, cancelar!",
+                        focusDeny: true,
+                        reverseButtons: false,
+                    })
+                    .then((result) => {
+                        if (result.isConfirmed) {
+                            askToSaveStorage();
+                        }
 
-                    if (result.isConfirmed) {
-                        askToSaveStorage();
-                    }
-
-                    if (result.isDenied) {
-                        $uibModalInstance.close();
-                    }
-
-                })
-                return
+                        if (result.isDenied) {
+                            $uibModalInstance.close();
+                        }
+                    });
+                return;
             }
             $uibModalInstance.close();
-        }
+        };
     }
-})(window.angular)
+})(window.angular);

@@ -36,6 +36,7 @@ BEGIN
 				  ,ultimaSecuencia = ISNULL(cd.ultimaSecuencia,0)
 				  ,descripcion = ISNULL(td.descripcion, '')
                   ,td.estado
+                  ,td.infoAdicional
 			FROM dbo.ConfiguracionDocumento cd WITH (NOLOCK)
 			INNER JOIN TipoDocumento        td WITH (NOLOCK) ON td.idTipoDocumento = cd.idTipoDocumento
 			WHERE cd.idPuntoEmision = @idPuntoEmision
@@ -47,6 +48,7 @@ BEGIN
 				  ,0
 				  ,descripcion
                   ,CAST(0 as bit) as estado
+                  ,infoAdicional
 			FROM TipoDocumento 
 			WHERE secuencial = 1
               AND idTipoDocumento NOT IN  (SELECT idTipoDocumento FROM ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision)
@@ -76,4 +78,17 @@ BEGIN
             RETURN 
 		END 
 	
+    --> Get InfoAdicional
+    IF @tipo = 3
+        BEGIN   
+            SET @tableNames = 'infoAdicional'
+
+            DECLARE @id INT
+
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+            SELECT infoAdicional FROM dbo.ConfiguracionDocumento WITH (NOLOCK) WHERE idConfiguracionDocumento = @id
+
+            RETURN 
+        END 
 END

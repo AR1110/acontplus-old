@@ -298,7 +298,12 @@ BEGIN
 
             SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
 
-            SELECT * FROM Administrador.Empresa WHERE idEntidad = @idEntidad
+            SELECT en.idEmpresa
+                  ,cu.BusinessName as nombreComercial
+            FROM Administrador.Empresa en WITH (NOLOCK)
+            INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = en.CustomerId
+            WHERE en.idEntidad = @idEntidad
+              AND en.estado = 1
             RETURN 
         END
 

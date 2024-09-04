@@ -18,6 +18,28 @@ export class DocConfigService {
       .get(`${this.#url}?json=${JSON.stringify(params)}`)
       .pipe(map((response) => response));
   }
+
+  getInfoAdicional(id: number) {
+    let json = JSON.stringify({
+      tipo: 3,
+      id,
+    });
+    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+      map((response: any) => { 
+        let infoAdicional = [];
+        if(response && typeof response==='object'){
+          let [mainData ]= response.infoAdicional;
+          infoAdicional = JSON.parse(mainData.infoAdicional);
+        }
+       
+        return {
+          infoAdicional
+        };
+      }),
+    );
+  }
+
+
   getDataForm() {
     return this.#http
       .get(`${this.#url}?json=${JSON.stringify({ tipo: 2 })}`)
@@ -49,7 +71,10 @@ export class DocConfigService {
     );
   }
 
-  post<T>(data: T) {
+  post<T>(obj: T) {
+    let data = {
+      docs: JSON.stringify(obj)
+     }
     return this.#http
       .post<ApiResponse>(`${this.#url}`, { data })
       .pipe(map((response) => response));

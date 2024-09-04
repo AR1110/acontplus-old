@@ -1,4 +1,4 @@
-import { Component, inject, input, ViewChild } from '@angular/core';
+import { Component, inject, Input, input, ViewChild } from '@angular/core';
 import { FormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ToasterService } from "@core/services/toaster.service";
@@ -6,7 +6,6 @@ import { TabulatorComponent } from "@core/components/tabulator/tabulator.compone
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faPlusSquare, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import Swal from 'sweetalert2';
-import { DocConfig } from '@modules/config/models/doc-config.model';
 import { isValidField } from '@core/utils/utils';
 import { DocConfigService } from '@modules/config/services/doc-config.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
@@ -20,7 +19,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styles: ``
 })
 export class DocConfigInfoAdicionalComponent {
-  params = input.required<DocConfig>();
+  @Input() params = {} as any;
 
   private tS = inject(ToasterService);
   private docConfigSvc = inject(DocConfigService);
@@ -30,6 +29,17 @@ export class DocConfigInfoAdicionalComponent {
 
   infoAdicional: any[] = [];
 
+  getInfoAdicional(){
+    this.infoAdicional = []
+    this.docConfigSvc.getInfoAdicional(this.params.idConfiguracionDocumento).subscribe(response=>{
+      
+      this.infoAdicional = response.infoAdicional || [];
+    })
+  }
+
+  ngOnInit(){
+    this.getInfoAdicional()
+  }
 
   readonly columns = [
     {
@@ -66,7 +76,7 @@ export class DocConfigInfoAdicionalComponent {
     },
     {
       title: "Valor",
-      field: "Valor",
+      field: "valor",
       width: "60px",
       headerSort: false,
       editor: true
@@ -115,11 +125,12 @@ export class DocConfigInfoAdicionalComponent {
 
 
       const data = {
-        idConfiguracionDocumento: this.params().idConfiguracionDocumento,
-        idPuntoEmision: this.params().idPuntoEmision,
-        idTipoDocumento: this.params().idTipoDocumento,
-        estado: this.params().estado,
-        ultimaSecuencia: this.params().ultimaSecuencia,
+        id: this.params.idConfiguracionDocumento,
+        idPuntoEmision: this.params.idPuntoEmision,
+        idTipoDocumento: this.params.idTipoDocumento,
+        estado: this.params.estado,
+        ultimaSecuencia: this.params.ultimaSecuencia,
+        editInfo : true,
         infoAdicional: JSON.stringify(this.infoAdicional)
       };
 
