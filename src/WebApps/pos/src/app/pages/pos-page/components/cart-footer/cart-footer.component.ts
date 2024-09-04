@@ -16,6 +16,7 @@ import Swal from 'sweetalert2';
 import { ToUpperCaseDirective } from '@/directives/to-upper-case.directive';
 import { generateUuidv4 } from '@/core/utils/generate-uuidv4';
 import { TableModalComponent } from '../table-modal/table-modal.component';
+import { Dialog } from '@angular/cdk/dialog';
 
 const messageSave: { [key: string]: string } = {
   [DOC_TYPE.FV]: `
@@ -45,6 +46,7 @@ export class CartFooterComponent {
   private orderSvc = inject(OrderService);
   private sharedSvc = inject(SharedService);
   private dialogSvc = inject(DialogService)
+  public dialog = inject(Dialog)
 
   private subtotalSinImpuestos = 0;
   private tax = 0;
@@ -198,9 +200,14 @@ export class CartFooterComponent {
 
 
   openTableModal() {
-    this.dialogSvc.open(TableModalComponent, {
-      size: 'md'
-    })
+    // this.dialogSvc.open(TableModalComponent, {
+    //   size: 'md'
+    // })
+    const dialogRef = this.dialog.open(TableModalComponent, {
+      width: '600px',
+      height: '80vh',
+      panelClass: 'full-screen-cdk-dialog',
+    });
   }
 
   async save(codDoc: string) {

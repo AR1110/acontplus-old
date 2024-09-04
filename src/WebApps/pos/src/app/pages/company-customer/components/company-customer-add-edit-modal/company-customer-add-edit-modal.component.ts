@@ -15,6 +15,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {ApiResponse} from "@/models/api-response";
 import { ToasterService } from '@/services/toaster.service';
+import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
 
 @Component({
   selector: 'app-company-customer-add-edit-modal',
@@ -30,7 +31,8 @@ import { ToasterService } from '@/services/toaster.service';
      MatFormFieldModule,
      MatCheckboxModule,
      MatSlideToggleModule,
-     M3InputChipComponent
+     M3InputChipComponent,
+     CustomContainerDialogComponent
   ],
   templateUrl: './company-customer-add-edit-modal.component.html',
 })
@@ -189,5 +191,10 @@ export class CompanyCustomerAddEditModalComponent {
     }
   }
 
+
+
+  closeDialog(){
+    this.dialogRef.close()
+  }
 
 }

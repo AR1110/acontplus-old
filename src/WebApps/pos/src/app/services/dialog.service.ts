@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
 type DialogOptions = {
   size?: 'sm' | 'md' | 'lg' | 'xl'
   data?: any,
-  disableClose?:boolean
+  disableClose?:boolean,
+  isFullScreen?: boolean
 }
 @Injectable({
   providedIn: 'root'
@@ -18,11 +19,20 @@ export class DialogService {
   open(component: any, options: DialogOptions): Observable<any> {
 
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.panelClass = 'custom-dialog-container';
-    dialogConfig.data = options.data;
-    dialogConfig.width = this.getDialogWidth(options.size);
-    dialogConfig.maxWidth = '90vw'; // Set maximum width for xl size
-    dialogConfig.height='auto'
+   
+    if(options.isFullScreen){
+      dialogConfig.width = '100vw';
+      dialogConfig.height = '100vh';
+      dialogConfig.maxWidth = '100vw';
+      dialogConfig.maxHeight = '100vh';
+      dialogConfig.panelClass = 'full-screen-dialog';
+    }else{
+      dialogConfig.width = this.getDialogWidth(options.size);
+      dialogConfig.maxWidth = '90vw'; // Set maximum width for xl size
+      dialogConfig.height = 'auto'
+    }
+
+    dialogConfig.data = options.data; 
     dialogConfig.hasBackdrop = true;
     dialogConfig.autoFocus =false
     dialogConfig.scrollStrategy = this.overlay.scrollStrategies.reposition()

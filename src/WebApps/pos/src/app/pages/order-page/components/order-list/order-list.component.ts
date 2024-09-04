@@ -122,6 +122,7 @@ export class OrderListComponent {
     }
     this.isLoadingResults.set(true)
 
+    this.dataSource.set([])
     this.orderSvc.getAll(params).subscribe({
       next: (response) => {
         this.dataSource.set(response)

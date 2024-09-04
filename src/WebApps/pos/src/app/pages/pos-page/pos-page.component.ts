@@ -24,6 +24,8 @@ import { MainStoreService } from "@/store/main-store.service";
 import { Order } from '@/models/order.model';
 import { PromotionsComponent } from './components/promotions/promotions.component';
 import { SUB_CATEGORY_CODE } from '@/enums/main.enum';
+import { Dialog } from '@angular/cdk/dialog';
+import { TableModalComponent } from './components/table-modal/table-modal.component';
 
 @Component({
   selector: 'app-pos-page',
@@ -55,6 +57,8 @@ export class PosPageComponent {
   private mainStore = inject(MainStoreService)
   private configSvc = inject(ConfigService);
   private itemSvc = inject(ItemService);
+
+  public dialog = inject(Dialog)
 
   selectedSubCategoryIndex = 0;
   isPromotions = signal(false);
@@ -183,6 +187,15 @@ export class PosPageComponent {
   }
 
   ngOnInit() {
+    if(!(this.posStoreSvc.state().order?.orderId>0)){
+      const dialogRef = this.dialog.open(TableModalComponent, {
+        width: '100vw',
+        height: '100vh',
+        panelClass: 'full-screen-cdk-dialog',
+      });
+      
+    }
+
     this.setLoading(true)
     this.getDataFormInit()?.subscribe({
       next: response => {

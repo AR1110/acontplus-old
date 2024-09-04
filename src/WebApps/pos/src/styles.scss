@@ -296,9 +296,21 @@ body {
 
 //end loader
 .form-control:focus,
-.form-select:focus,
-textarea:focus {
+.form-select:focus{
   border-color: #D61672;
   box-shadow: 0 0 0 0.10rem #D61672;
   /* Sombra con color rosa */
+}
+
+
+//dialog full screen 
+.full-screen-dialog .mat-dialog-container {
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: hidden;
 }

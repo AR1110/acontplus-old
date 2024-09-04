@@ -154,7 +154,14 @@ export class OrderService {
   }
 
   put<T>(id: number, data: T) {
-    return this.http.put<ApiResponse>(`${this.url}${id}`, { data })
+    return this.http.put<ApiResponse>(`${this.url}${id}`, { data }).pipe(
+      map(response=>{
+        let mainData = JSON.parse(response.payload as string)
+
+        response.payload = mainData;
+        return response;
+      })
+    )
   }
 
 
