@@ -797,7 +797,7 @@
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
 
-                        let total = itemPrincipal.precioTotalSinImpuesto + itemPrincipal.valorImpuesto;
+                        let total = fS.roundNumber(itemPrincipal.precioTotalSinImpuesto, pricingUtils.max_dos) + fS.roundNumber(itemPrincipal.valorImpuesto, pricingUtils.max_dos); 
 
                         let obj = {
                             n: index + 1,
@@ -834,7 +834,7 @@
                             estado: 1,
                             datosAdicionalesArticulo,
                             datosAdicionales: restItem.datosAdicionales,
-                            total: fS.roundNumber(total, 5)
+                            total
                         }
 
                         return obj;
@@ -1393,8 +1393,10 @@
 
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
-                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
-                        let total = itemPrincipal.precioTotalSinImpuesto + itemPrincipal.valorImpuesto;
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa); 
+
+                        let total = fS.roundNumber(itemPrincipal.precioTotalSinImpuesto, pricingUtils.max_dos) + fS.roundNumber(itemPrincipal.valorImpuesto, pricingUtils.max_dos); 
+
                         let obj = {
                             n: index + 1,
                             idProformaDetalle: restItem.idProformaDetalle,
@@ -1429,7 +1431,7 @@
                             datosAdicionalesArticulo: [],
                             datosAdicionales: restItem.datosAdicionales,
                             precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
-                            total: fS.roundNumber(total, 5)
+                            total
                         }
 
                         return obj;
