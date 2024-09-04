@@ -1,19 +1,19 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
-import {M3InputChipComponent} from "@core/components/m3-input-chip/m3-input-chip.component";
-import {CompanyCustomerService} from "@/services/company-customer.service";
+import { M3InputChipComponent } from "@core/components/m3-input-chip/m3-input-chip.component";
+import { CompanyCustomerService } from "@/services/company-customer.service";
 import { Observable, forkJoin } from 'rxjs';
-import {SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE} from '@/enums/main.enum';
+import { SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE } from '@/enums/main.enum';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, } from '@angular/forms';
-import {MatCheckboxModule} from "@angular/material/checkbox";
-import {MatSlideToggleModule} from "@angular/material/slide-toggle";
-import {ApiResponse} from "@/models/api-response";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { ApiResponse } from "@/models/api-response";
 import { ToasterService } from '@/services/toaster.service';
 import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
 
@@ -24,15 +24,15 @@ import { CustomContainerDialogComponent } from '@/core/components/custom-contain
     ReactiveFormsModule,
     MatDialogModule,
     MatIconModule,
-     MatButtonModule,
-     MatTabsModule,
-     MatSelectModule,
-     MatInputModule,
-     MatFormFieldModule,
-     MatCheckboxModule,
-     MatSlideToggleModule,
-     M3InputChipComponent,
-     CustomContainerDialogComponent
+    MatButtonModule,
+    MatTabsModule,
+    MatSelectModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatCheckboxModule,
+    MatSlideToggleModule,
+    M3InputChipComponent,
+    CustomContainerDialogComponent
   ],
   templateUrl: './company-customer-add-edit-modal.component.html',
 })
@@ -43,6 +43,10 @@ export class CompanyCustomerAddEditModalComponent {
   private companyCustomerSvc = inject(CompanyCustomerService)
   private tS = inject(ToasterService)
 
+  selectedTab = 0;
+
+
+
   modalTitle = 'Nuevo Cliente';
   btnText = 'Guardar'
 
@@ -52,7 +56,7 @@ export class CompanyCustomerAddEditModalComponent {
   tiposIdentificacion: any[] = [];
 
   emails = [];
-  telefonos=[];
+  telefonos = [];
 
   numeroIdentificacion = new FormControl({ value: '', disabled: false }, [
     Validators.required,
@@ -78,6 +82,11 @@ export class CompanyCustomerAddEditModalComponent {
     validationSri: new FormControl(false),
   });
 
+
+  selectTab(index: number) {
+    this.selectedTab = index;
+  }
+
   getLoadData(): Observable<any> {
     if (this.matDialogData.id > 0) {
       return forkJoin([
@@ -89,9 +98,9 @@ export class CompanyCustomerAddEditModalComponent {
     return this.companyCustomerSvc.getDataForm();
   }
 
-  ngOnInit(){
+  ngOnInit() {
     try {
-      console.log(this.matDialogData)
+
       this.getLoadData().subscribe((response) => {
         let mainDataForm = {} as any;
         let dataCompanyCustomer = {} as any;
@@ -124,37 +133,37 @@ export class CompanyCustomerAddEditModalComponent {
           });
         } else {
           this.modalTitle = 'Editar Cliente';
-          this.btnText='Actualizar'
+          this.btnText = 'Actualizar'
           this.emails = dataCompanyCustomer.correos;
           this.telefonos = dataCompanyCustomer.telefonos;
           this.customerForm.patchValue(response[1]);
         }
       });
-    }catch (error){
+    } catch (error) {
 
     }
   }
 
 
 
-  onToggleSri(event: MouseEvent){
+  onToggleSri(event: MouseEvent) {
     event.stopPropagation()
   }
 
 
-  private successResponse = (response:ApiResponse)=>{
-    if(response.code==="0"){
+  private successResponse = (response: ApiResponse) => {
+    if (response.code === "0") {
       this.tS.toastr({
-        type:'warning',
+        type: 'warning',
         message: response.message
       })
     }
-    if(response.code==="1"){
+    if (response.code === "1") {
       this.tS.toastr({
-        type:'success',
+        type: 'success',
         message: response.message
       })
-      let id = this.matDialogData.id> 0  ? this.matDialogData.id: (response.payload as any).id;
+      let id = this.matDialogData.id > 0 ? this.matDialogData.id : (response.payload as any).id;
 
       this.dialogRef.close({
         id,
@@ -172,7 +181,7 @@ export class CompanyCustomerAddEditModalComponent {
       correo: this.emails.length > 0 ? this.emails.join(SEPARATOR_KEY_CODE.SLASH) : null,
     });
 
-    if(this.customerForm.invalid){
+    if (this.customerForm.invalid) {
       this.tS.toastr({
         type: 'warning',
         message: 'Ingrese todos los campos requeridos!'
@@ -193,7 +202,7 @@ export class CompanyCustomerAddEditModalComponent {
 
 
 
-  closeDialog(){
+  closeDialog() {
     this.dialogRef.close()
   }
 

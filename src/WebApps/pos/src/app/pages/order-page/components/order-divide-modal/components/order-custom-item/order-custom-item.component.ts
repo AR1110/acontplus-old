@@ -71,9 +71,6 @@ export class OrderCustomItemComponent {
 
   importeTotal = this.matDialogData.orderData.order.total;
 
-  ngOnInit() {
-    console.log(this.matDialogData)
-  }
 
 
   onSelectProduct<T extends { idArticulo: number }>({ idArticulo }: T) {
@@ -150,12 +147,12 @@ export class OrderCustomItemComponent {
 
   async saveInvoice() {
     try {
-      const { dataForm, orderData } = structuredClone(this.matDialogData);
+      const { orderData } = structuredClone(this.matDialogData);
       const { order } = orderData;
 
       const data = {
         ...order,
-        subtotalSinImpuestos: this.orderItemCustom().price,
+        subtotalSinImpuestos: roundNumber(this.orderItemCustom().price),
         discount: this.orderItemCustom().discount,
         tax: 0, //remover mas adelante
         total: this.importeTotal,
@@ -216,7 +213,6 @@ export class OrderCustomItemComponent {
 
       if (!isConfirmed) return
 
-      console.log(order)
       let orderItems = [
         {
           ...this.orderItemCustom(),

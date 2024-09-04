@@ -3,7 +3,7 @@ import { OrderAdapter } from '@/adapters/order.adapter';
 import { plus } from '@/core/utils/decimal.util';
 import { roundNumber } from '@/core/utils/round-number.util';
 import { playClearSound } from '@/core/utils/sound.util';
-import { getValidId } from '@/core/utils/utils';
+import { consumirFinalSuperaElValorPermitido, getValidId, messageSuperaElValorTotalPermitido } from '@/core/utils/utils';
 import { DECIMALS, DOC_TYPE } from '@/enums/main.enum';
 import { DialogService } from '@/services/dialog.service';
 import { OrderService } from '@/services/order.service';
@@ -82,8 +82,10 @@ export class CartFooterComponent {
     const { orderItems, taxRates } = this.posStore.state();
 
     let sumTotalIva = 0;
-    const totalPrecioTotalSinImpuesto = orderItems.reduce((acc, item) =>
-      plus(acc, item.precioTotalSinImpuesto, DECIMALS.CINCO), 0);
+    const totalPrecioTotalSinImpuesto = orderItems.reduce((acc, item) => {
+      acc = plus(acc, roundNumber(item.precioTotalSinImpuesto), DECIMALS.CINCO)
+      return acc;
+    }, 0)
 
     const totalDescuento = orderItems.reduce((acc, item) =>
       plus(acc, item.discount, DECIMALS.CINCO), 0);
@@ -94,7 +96,7 @@ export class CartFooterComponent {
       .map(tarifa => {
         const totalIva = orderItems
           .filter(item => item.taxPercentId === tarifa.idTarifaImpuesto)
-          .reduce((acc, item) => plus(acc, item.taxValue, DECIMALS.CINCO), 0);
+          .reduce((acc, item) => plus(acc, roundNumber(item.taxValue), DECIMALS.DOS), 0);
 
         sumTotalIva += totalIva;
 
@@ -118,7 +120,7 @@ export class CartFooterComponent {
         <small class="text-muted">Subtotal:</small>
       </div>
       <div>
-        <small class="text-muted">$${roundNumber(totalPrecioTotalSinImpuesto, 2)}</small>
+        <small class="text-muted">$${roundNumber(totalPrecioTotalSinImpuesto)}</small>
       </div>
     </div>`;
 
@@ -128,7 +130,7 @@ export class CartFooterComponent {
         <small class="text-danger">Desc:</small>
       </div>
       <div>
-        <small class="text-danger">$${roundNumber(totalDescuento, 2)}</small>
+        <small class="text-danger">$${roundNumber(totalDescuento)}</small>
       </div>
     </div>`;
 
@@ -138,19 +140,19 @@ export class CartFooterComponent {
         <span class="fw-semibold">Total:</span>
       </div>
       <div>
-        <span class="fw-semibold">$${roundNumber(importeTotal, 2)}</span>
+        <span class="fw-semibold">$${roundNumber(importeTotal)}</span>
       </div>
     </div>`;
 
     return {
-      subTotalSinImpuestos: roundNumber(totalPrecioTotalSinImpuesto, 2),
-      totalDescuento: roundNumber(totalDescuento, 2),
+      subTotalSinImpuestos: roundNumber(totalPrecioTotalSinImpuesto),
+      totalDescuento: roundNumber(totalDescuento),
       htmlSubtotalImpuesto,
       htmlDiscount,
       htmlIvaTotal,
       htmlTotal,
-      tax: roundNumber(sumTotalIva, DECIMALS.DOS),
-      total: roundNumber(importeTotal, DECIMALS.DOS),
+      tax: roundNumber(sumTotalIva),
+      total: roundNumber(importeTotal),
     };
   }
 
@@ -203,7 +205,7 @@ export class CartFooterComponent {
     // this.dialogSvc.open(TableModalComponent, {
     //   size: 'md'
     // })
-    const dialogRef = this.dialog.open(TableModalComponent, {
+    this.dialog.open(TableModalComponent, {
       width: '600px',
       height: '80vh',
       panelClass: 'full-screen-cdk-dialog',
@@ -227,7 +229,7 @@ export class CartFooterComponent {
         this.openTableModal()
         return
       }
-      console.log(order)
+
       if (!(order.puntoEmisionId > 0)) {
         this.tS.toastr({
           type: 'warning',
@@ -293,6 +295,14 @@ export class CartFooterComponent {
         this.tS.toastr({
           type: 'warning',
           message: `total no tiene que ser 0`
+        })
+        return
+      }
+
+      if (codDoc === DOC_TYPE.FV && consumirFinalSuperaElValorPermitido(order.tipoIdentificacionSri, order.total)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: messageSuperaElValorTotalPermitido
         })
         return
       }

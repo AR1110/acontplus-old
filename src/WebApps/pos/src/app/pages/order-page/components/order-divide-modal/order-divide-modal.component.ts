@@ -26,18 +26,19 @@ import {
 import {
   CompanyCustomerSearchComponent
 } from '@/pages/company-customer/components/company-customer-search/company-customer-search.component';
-import { getValidId } from "@core/utils/utils";
+import { consumirFinalSuperaElValorPermitido, messageSuperaElValorTotalPermitido } from "@core/utils/utils";
 import { ToasterService } from '@/services/toaster.service';
 import Swal from 'sweetalert2';
 import { DECIMALS, DOC_TYPE } from "@/enums/main.enum";
 import { ConfigService } from "@/services/config.service";
 import { AuthService } from "@/services/auth.service";
-import { instanceDecimal, minus, mul, plus } from "@core/utils/decimal.util";
+import { plus } from "@core/utils/decimal.util";
 import { OrderAdapter } from '@/adapters/order.adapter';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PaymentComponent } from '@/core/components/payment/payment.component';
 import { SharedService } from '@/services/shared.service';
+import { orderInitialState } from '@/store/pos-store.service';
 
 
 @Component({
@@ -77,32 +78,7 @@ export class OrderDivideModalComponent {
   private codDoc: any;
 
   orderData: OrderData = {
-    order: {
-      uuid: '',
-      orderId: 0,
-      userId: 0,
-      customerCompanyId: 0,
-      customerName: '',
-      createdAt: new Date(),
-      subtotalSinImpuestos: 0,
-      items: [],
-      customDetail: undefined,
-      itemsToPay: undefined,
-      tableId: 0,
-      obs: undefined,
-      tableDesc: undefined,
-      establecimientoId: 0,
-      puntoEmisionId: 0,
-      codDoc: undefined,
-      tax: 0,
-      discount: 0,
-      tip: 0,
-      total: 0,
-      quickSale: undefined,
-      bodegaId: undefined,
-      saveDoc: undefined,
-      updateOrder: undefined
-    }
+    order: orderInitialState()
   };
   tempOrderData: OrderData = structuredClone(this.orderData);
   orderDivideItems: OrderDivideItem[] = [];
@@ -199,6 +175,7 @@ export class OrderDivideModalComponent {
   onSelectCompanyCustomer($event: any) {
     this.orderData.order.customerCompanyId = $event.idCliente;
     this.orderData.order.customerName = $event.name;
+    this.orderData.order.tipoIdentificacionSri = $event.codigoSri;
   }
 
   refresh() {
@@ -211,6 +188,16 @@ export class OrderDivideModalComponent {
   }
 
   openCustomOrderItemModal() {
+
+    if (consumirFinalSuperaElValorPermitido(this.orderData.order.tipoIdentificacionSri, this.orderData.order.total)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: messageSuperaElValorTotalPermitido
+      })
+      return
+    }
+
+
     this.dialogSvc.open(OrderCustomItemComponent, {
       size: 'md',
       data: {
@@ -226,11 +213,6 @@ export class OrderDivideModalComponent {
       }
     });
   }
-
-  openConvertToDocModal() {
-
-  }
-
 
   //===========================
   // Verifica si todos los elementos están pagados y no tienen cantidad restante
@@ -268,7 +250,7 @@ export class OrderDivideModalComponent {
   }
 
   toggleRow(row: OrderDivideItem) {
-    const index = this.selectedRows().findIndex(r => r.id === row.id); // Suponiendo que tienes una propiedad id para identificar filas únicas
+    const index = this.selectedRows().findIndex(r => r.id === row.id);
 
     if (index === -1) {
       const newRows = [...this.selectedRows(), row];
@@ -332,9 +314,11 @@ export class OrderDivideModalComponent {
 
   private getTotales(arr: OrderDivideItem[]) {
     const { subtotalSinImpuestos, orderDivideImporteTotal } = arr.reduce((acc, prev) => {
+
       const { precioTotalSinImpuesto, total, discount } = this.getItemDivideTotal(prev);
-      acc.subtotalSinImpuestos = plus(acc.subtotalSinImpuestos, precioTotalSinImpuesto, DECIMALS.CINCO);
-      acc.orderDivideImporteTotal = plus(acc.orderDivideImporteTotal, total, DECIMALS.CINCO);
+
+      acc.subtotalSinImpuestos = plus(acc.subtotalSinImpuestos, roundNumber(precioTotalSinImpuesto), DECIMALS.CINCO);
+      acc.orderDivideImporteTotal = plus(acc.orderDivideImporteTotal, roundNumber(total), DECIMALS.CINCO);
       acc.totalDescuento = plus(acc.totalDescuento, discount, DECIMALS.CINCO)
       return acc;
     }, {
@@ -349,31 +333,6 @@ export class OrderDivideModalComponent {
     }
   }
 
-
-
-
-
-  isValidForm() {
-    let { order } = this.orderData;
-    if (!getValidId(order.customerCompanyId)) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Seleccione el cliente'
-      })
-      return
-    }
-
-    if (this.selectedRows().length === 0) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'El detalle es vacio'
-      })
-      return
-    }
-
-    return true;
-
-  }
 
 
   saveInvoice() {
@@ -428,10 +387,30 @@ export class OrderDivideModalComponent {
     if (!(cloneOrder.subtotalSinImpuestos > 0)) {
       this.tS.toastr({
         type: 'warning',
-        message: 'subtotalSinImpuestos undefined'
+        message: 'subtotalSinImpuestos 0'
       })
       return
     }
+
+    if ((cloneOrder.total <= 0)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: `total no tiene que ser 0`
+      })
+      return
+    }
+
+
+
+
+    if (this.codDoc === DOC_TYPE.FV && consumirFinalSuperaElValorPermitido(cloneOrder.tipoIdentificacionSri, cloneOrder.total)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: messageSuperaElValorTotalPermitido
+      })
+      return
+    }
+
 
     const { isConfirmed } = await Swal.fire({
       title: `Convertir a un documento`,
@@ -477,37 +456,37 @@ export class OrderDivideModalComponent {
         });
 
         // Se ha guardado la orden + el documento (Nota Entrega, Factura)
-              if (Array.isArray(response.payload)) {
-                const dataSave = response.payload[0] as any;
+        if (Array.isArray(response.payload)) {
+          const dataSave = response.payload[0] as any;
 
-                // Si el pago es automático
-                if (dataSave.payAutomatic) {
-                  const modalRef = this.dialogSvc.open(PaymentComponent, {
-                    size: 'xl',
-                    data: {
-                      data: structuredClone(dataSave),
-                      codDoc: this.codDoc,
-                    },
-                  });
+          // Si el pago es automático
+          if (dataSave.payAutomatic) {
+            const modalRef = this.dialogSvc.open(PaymentComponent, {
+              size: 'xl',
+              data: {
+                data: structuredClone(dataSave),
+                codDoc: this.codDoc,
+              },
+            });
 
-                  modalRef.subscribe(result => {
-                    if (result && typeof result === 'object') {
-                      if (dataSave.printerAutomatic) {
-                        this.sharedSvc.printerDoc(dataSave, this.codDoc);
-                      }
-                    }
-                    this.refreshAfterToSaveDoc();
-                  });
-
-                  return;
-                }
-
-                // Si la impresión es automática
+            modalRef.subscribe(result => {
+              if (result && typeof result === 'object') {
                 if (dataSave.printerAutomatic) {
                   this.sharedSvc.printerDoc(dataSave, this.codDoc);
                 }
-                this.refreshAfterToSaveDoc();
               }
+              this.refreshAfterToSaveDoc();
+            });
+
+            return;
+          }
+
+          // Si la impresión es automática
+          if (dataSave.printerAutomatic) {
+            this.sharedSvc.printerDoc(dataSave, this.codDoc);
+          }
+          this.refreshAfterToSaveDoc();
+        }
 
 
       }
@@ -515,9 +494,9 @@ export class OrderDivideModalComponent {
 
   }
 
-  refreshAfterToSaveDoc(){
-  this.refresh()
-        this.isReload = true;
+  refreshAfterToSaveDoc() {
+    this.refresh()
+    this.isReload = true;
   }
 
   closeDialog() {

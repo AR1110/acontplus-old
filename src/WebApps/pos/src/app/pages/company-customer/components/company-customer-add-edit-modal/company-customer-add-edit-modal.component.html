@@ -3,90 +3,77 @@
 
   <mat-dialog-content>
 
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button"
-          role="tab" aria-controls="pills-home" aria-selected="true">Home</button>
+    <ul class="nav nav-tabs">
+      <li class="nav-item" style="cursor: pointer;">
+        <a class="nav-link" [class.active]="selectedTab === 0" (click)="selectTab(0)">Generales</a>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button"
-          role="tab" aria-controls="pills-profile" aria-selected="false">Profile</button>
+      <li class="nav-item"  style="cursor: pointer;">
+        <a class="nav-link" [class.active]="selectedTab === 1" (click)="selectTab(1)">Adicionales</a>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button"
-          role="tab" aria-controls="pills-contact" aria-selected="false">Contact</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-disabled-tab" data-bs-toggle="pill" data-bs-target="#pills-disabled"
-          type="button" role="tab" aria-controls="pills-disabled" aria-selected="false" disabled>Disabled</button>
-      </li>
+      
     </ul>
-    <div class="tab-content" id="pills-tabContent">
-      <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
-        ...</div>
-      <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">...
-      </div>
-      <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">...
-      </div>
-      <div class="tab-pane fade" id="pills-disabled" role="tabpanel" aria-labelledby="pills-disabled-tab" tabindex="0">...
-      </div>
+    
+    <div class="tab-content mt-3">
+      @if(selectedTab===0){
+        <div  >
+          <div class="row   mt-4">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+          
+              <mat-form-field class="m3-input-full-width" appearance="outline">
+                <mat-label>Tipo identificación</mat-label>
+                <mat-select formControlName="idTipoIdentificacion">
+                  @for (item of tiposIdentificacion; track $index) {
+                  <mat-option [value]="item.idTipoIdentificacion">
+                    {{ item.descripcion }}
+                  </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+          
+            </div>
+            <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+              <mat-form-field class="m3-input-full-width" appearance="outline">
+                <mat-label>Número identificación</mat-label>
+                <input matInput formControlName="numeroIdentificacion">
+          
+                <mat-slide-toggle matSuffix style="margin-right: 10px;" (click)="onToggleSri($event)">SRI</mat-slide-toggle>
+              </mat-form-field>
+            </div>
+          
+            <div class="col-12">
+              <mat-form-field class="m3-input-full-width" appearance="outline">
+                <mat-label>Nombre fiscal</mat-label>
+                <input matInput formControlName="nombreFiscal">
+              </mat-form-field>
+            </div>
+          
+            <div class="col-12">
+              <mat-form-field class="m3-input-full-width" appearance="outline">
+                <mat-label>Dirección</mat-label>
+                <textarea matInput placeholder="Ex. 100 Main St" formControlName="direccion"></textarea>
+              </mat-form-field>
+            </div>
+          
+          </div>
+          <div class="row ">
+            <div class="col-xl-6 col-lg-6 col-md-12 col-12">
+              <app-m3-input-chip [chips]="emails" [labelText]="'Correo'" />
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12 col-12">
+              <app-m3-input-chip [chips]="telefonos" [labelText]="'Teléfono'" />
+            </div>
+          </div>
+        </div>
+
+      }
+      @if(selectedTab===1){
+        <div  >
+          <p>Contenido de Tab 2</p>
+        </div>
+      } 
     </div>
 
-    <mat-tab-group animationDuration="0ms">
-      <mat-tab label="General" style="overflow: hidden;">
-        <div class="row   mt-4">
-          <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-
-            <mat-form-field class="m3-input-full-width" appearance="outline">
-              <mat-label>Tipo identificación</mat-label>
-              <mat-select formControlName="idTipoIdentificacion">
-                @for (item of tiposIdentificacion; track $index) {
-                <mat-option [value]="item.idTipoIdentificacion">
-                  {{ item.descripcion }}
-                </mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-
-          </div>
-          <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
-            <mat-form-field class="m3-input-full-width" appearance="outline">
-              <mat-label>Número identificación</mat-label>
-              <input matInput formControlName="numeroIdentificacion">
-
-              <mat-slide-toggle matSuffix style="margin-right: 10px;"
-                (click)="onToggleSri($event)">SRI</mat-slide-toggle>
-            </mat-form-field>
-          </div>
-
-          <div class="col-12">
-            <mat-form-field class="m3-input-full-width" appearance="outline">
-              <mat-label>Nombre fiscal</mat-label>
-              <input matInput formControlName="nombreFiscal">
-            </mat-form-field>
-          </div>
-
-          <div class="col-12">
-            <mat-form-field class="m3-input-full-width" appearance="outline">
-              <mat-label>Dirección</mat-label>
-              <textarea matInput placeholder="Ex. 100 Main St" formControlName="direccion"></textarea>
-            </mat-form-field>
-          </div>
-
-        </div>
-        <div class="row ">
-          <div class="col-xl-6 col-lg-6 col-md-12 col-12">
-            <app-m3-input-chip [chips]="emails" [labelText]="'Correo'" />
-          </div>
-          <div class="col-xl-6 col-lg-6 col-md-12 col-12">
-            <app-m3-input-chip [chips]="telefonos" [labelText]="'Teléfono'" />
-          </div>
-        </div>
-
-
-      </mat-tab>
-      <mat-tab label="Adicionales"> Adicionales </mat-tab>
-    </mat-tab-group>
+ 
 
 
   </mat-dialog-content>

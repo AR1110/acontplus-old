@@ -20,6 +20,7 @@ export interface CompanyCustomerSearch extends CompanyCustomer {
   razonSocialComprador: string
   identificacionComprador:string,
   name: string
+  codigoSri: string
 }
 
 export type CompanyCustomerDefault = {

@@ -67,7 +67,8 @@ export class TableModalComponent {
       this.roomTables.set(response.roomTables.map(item=>{
         return {
           ...item,
-          expanded: item.tables.some((tb:any)=>(tb.id===this.selectedOption() || tb.id === this.tableId()))
+          expanded: true
+         // expanded: item.tables.some((tb:any)=>(tb.id===this.selectedOption() || tb.id === this.tableId()))
         }
       }))
     })
