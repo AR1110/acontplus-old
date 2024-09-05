@@ -49,7 +49,7 @@ export class ItemListComponent {
     const modalRef = this.#modalService.openModalCustom(
       ItemAddEditModalComponent,
       {
-        size: 'lg',
+        size: 'xl',
         centered: true,
       },
     );
