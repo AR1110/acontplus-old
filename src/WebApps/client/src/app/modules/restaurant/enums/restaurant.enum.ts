@@ -7,6 +7,7 @@ export enum RESTAURANT_PATHS {
   PRODUCTION_AREA = 'ProductionArea/',
   ROOM = 'Room/',
   TABLE = 'Table/',
+  CONFIG = 'Configuration/'
 }
 
 export const enum RESTAURANT_CODE_REPORT {

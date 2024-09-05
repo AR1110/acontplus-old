@@ -2,6 +2,7 @@ import { Route } from '@angular/router';
 import { ItemReportComponent } from './reports/item-report/item-report.component';
 import { InfrastructurePageComponent } from '@restaurant/pages/infrastructure-page/infrastructure-page.component';
 import { ProductsPageComponent } from '@restaurant/pages/products-page/products-page.component';
+import { restaurantConfigDataResolver } from './resolvers/restaurant-config.resolver';
 
 export const routes: Route[] = [
   {
@@ -11,6 +12,9 @@ export const routes: Route[] = [
     data: {
       breadcrumb: 'Productos',
     },
+    resolve: {
+      configData: restaurantConfigDataResolver
+    }
   },
   {
     path: 'item-report',
