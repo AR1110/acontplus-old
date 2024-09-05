@@ -36,11 +36,11 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 export class FloorAddEditModalComponent {
   data = {} as Floor;
   roomColumns: any[] = [
-    { title: 'ID', field: 'id', sorter: 'number', width: 60 },
+    { title: 'ID', field: 'id', visible: false },
     { title: 'Código', field: 'code', editor: 'input' },
-    { title: 'Descripción', field: 'description', editor: 'input' },
+    { title: 'Descripción', field: 'description', editor: 'input', width: 250 },
     {
-      title: 'Capacidad',
+      title: 'Capacidad (Mesas)',
       field: 'capacity',
       editor: 'number',
       editorParams: {
@@ -203,8 +203,7 @@ export class FloorAddEditModalComponent {
       message: response.message,
     });
     if (response.code == '1') {
-      this.onModalClose();
-      this.floorForm.reset();
+      this.#modalRef.close(response);
     }
   }
 
@@ -213,11 +212,15 @@ export class FloorAddEditModalComponent {
   }
 
   addRoom() {
+    const code =
+      this.rooms.length > 0
+        ? `${Math.max(...this.rooms.map((room) => parseInt(room.code))) + 1}`
+        : '1';
     const newRoom: Room = {
       id: 0,
-      code: '',
-      description: '',
-      capacity: 0,
+      code: code,
+      description: `Sala ${code}`,
+      capacity: 1,
       enabled: true,
     };
     this.rooms.push(newRoom);
