@@ -1,3 +1,4 @@
+//@ts-check
 (function () {
 
     'use strict';
@@ -84,7 +85,7 @@
                 montoObjetivo: data.montoObjetivo,
                 siglas: data.siglas,
             }
-            return mS.getDataFile(url + "/?json=" + JSON.stringify(spParams), file, null, true);
+            return mS.getDataFile(url + "?json=" + JSON.stringify(spParams), file, null, true);
         }
 
         service.update = function (id, data) {
@@ -95,7 +96,7 @@
                 estado: data.estado,
                 secuencial: data.ultimoSecuencial || 0
             }
-            return mS.getData('PUT', url + `/${id}/?json=${JSON.stringify(spParams)}`, null, true);
+            return mS.getData('PUT', url + `${id}/?json=${JSON.stringify(spParams)}`, null, true);
         }
 
         service.delete = function (id) {
