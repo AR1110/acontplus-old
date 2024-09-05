@@ -6,5 +6,6 @@ export interface Item {
   summary?: string;
   cooking?: boolean;
   recipe?: string;
+  instructions: string;
   s3ObjectUrl?: string;
 }
