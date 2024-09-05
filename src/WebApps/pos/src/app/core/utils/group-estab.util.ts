@@ -58,6 +58,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
         })) || [],
       }));
     }
+    console.log(groupEstabs)
     return groupEstabs;
   }
 

@@ -36,7 +36,10 @@
                 <mat-label>Número identificación</mat-label>
                 <input matInput formControlName="numeroIdentificacion">
           
-                <mat-slide-toggle matSuffix style="margin-right: 10px;" (click)="onToggleSri($event)">SRI</mat-slide-toggle>
+                <!-- <mat-slide-toggle matSuffix style="margin-right: 10px;" (click)="onToggleSri($event)">SRI</mat-slide-toggle> -->
+                <button type="button" matSuffix style="margin-right: 10px;" (click)="syncDataSri($event)" mat-icon-button aria-label="Obtener Datos del sri">
+                  <mat-icon>autorenew</mat-icon>                  
+                </button>
               </mat-form-field>
             </div>
           

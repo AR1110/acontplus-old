@@ -29,6 +29,7 @@ export class ConfigService {
       context: getNoLoader()
     }).pipe(
       map(response => {
+        console.log(response)
         let result = {
           estabs: [] as GroupedEstab[]
         }

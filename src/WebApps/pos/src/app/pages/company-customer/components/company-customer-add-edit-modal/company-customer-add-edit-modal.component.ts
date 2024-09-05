@@ -146,7 +146,7 @@ export class CompanyCustomerAddEditModalComponent {
 
 
 
-  onToggleSri(event: MouseEvent) {
+  syncDataSri(event: MouseEvent) {
     event.stopPropagation()
   }
 
