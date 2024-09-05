@@ -1934,7 +1934,7 @@
         function setInfoAdicional() {
             if (isSetInfoAdicionalConfig) {
                 $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(
-                    (d) => d.idPuntoEmision > 0
+                    (d) => !(d.idPuntoEmision > 0)
                 );
 
                 let dataInfoAdicional = infoAdicionalConfig.find(
