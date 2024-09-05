@@ -1,5 +1,6 @@
 import { NavUserInfoToggleComponent } from "@/core/components/nav-user-info-toggle/nav-user-info-toggle.component";
-import { OrderListModalComponent } from "@/pages/order-page/components/order-list-modal/order-list-modal.component";
+import { ActionOrderDialogDirective } from "@/directives/action-order-dialog.directive";
+ 
 import { CartPopupComponent } from "@/pages/pos-page/components/cart-popup/cart-popup.component";
 import { DialogService } from "@/services/dialog.service";
 import { PosStoreService } from "@/store/pos-store.service";
@@ -29,7 +30,8 @@ import { Router, RouterLinkActive, RouterOutlet } from "@angular/router";
     MatButtonModule,
     MatIconModule,
     NavUserInfoToggleComponent,
-    CartPopupComponent
+    CartPopupComponent,
+    ActionOrderDialogDirective
   ],
   templateUrl: './pos-layout.component.html',
   styleUrl: './pos-layout.component.scss'
@@ -53,20 +55,6 @@ export class PosLayoutComponent {
     this.router.navigateByUrl('/dashboard')
   }
 
-
-  openOrderListModal() {
-    // let modalRef = this.dialogSvc.open(PaymentComponent, {
-    //   size: 'xl',
-
-    // })
-
-
-
-    let modalRef = this.dialogSvc.open(OrderListModalComponent, {
-      size: 'xl',
-
-    })
-
-  }
+ 
 
 }

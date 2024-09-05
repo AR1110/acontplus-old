@@ -196,15 +196,17 @@
     <tr mat-row [ngClass]="{'custom-row-danger': row.deleted}" *matRowDef="let row; columns: displayedColumns;">
     </tr>
 
-    <tr class="mat-row" *matNoDataRow class="text-center">
-      <td class="mat-cell" colspan="9">Sin registro</td>
-    </tr> -->
+    -->
 
     <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
     <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="example-element-row"
       [class.example-expanded-row]="expandedElement === element" >
     </tr>
     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+    <tr class="mat-row" *matNoDataRow class="text-center">
+      <td class="mat-cell" colspan="10">Sin registro</td>
+    </tr>
 
   </table>
 </app-custom-table-container>

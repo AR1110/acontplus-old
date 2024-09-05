@@ -1,6 +1,7 @@
 
 import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
 import { playBeepSound } from '@/core/utils/sound.util';
+import { ActionOrderDialogDirective } from '@/directives/action-order-dialog.directive';
 import { ConfigService } from '@/services/config.service';
 import { TableService } from '@/services/table.service';
 import { MainStoreService } from '@/store/main-store.service';
@@ -19,7 +20,8 @@ import { ToastrService } from 'ngx-toastr';
     CommonModule,
     MatButtonModule,
     MatIconModule,
-    CustomContainerDialogComponent
+    CustomContainerDialogComponent,
+    ActionOrderDialogDirective
   ],
   templateUrl: './table-modal.component.html',
   styleUrl: './table-modal.component.scss',

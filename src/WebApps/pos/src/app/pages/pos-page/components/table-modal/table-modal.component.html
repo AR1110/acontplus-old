@@ -7,9 +7,9 @@
   <dl class="tree">
     @for(node of roomTables();track $index){
     <div class="tree-node">
-      <dt class="tree-header d-flex flex-row align-items-center">
+      <dt class="tree-header d-flex flex-row align-items-center" (click)="toggleNode(node)">
 
-        <button mat-icon-button (click)="toggleNode(node)">
+        <button mat-icon-button >
           @if(node.expanded){
           <mat-icon aria-hidden="false" aria-label="keyboard_arrow_down" fontIcon="keyboard_arrow_down"></mat-icon>
           }@else {
@@ -34,10 +34,7 @@
           @for(table of node.tables;track table.id){
           <button class="button-card" [ngClass]="{'selected': table.assigned || (selectedOption() === table.id)}"
             (click)="selectOption(table, node.roomName)">
-            <!-- <button class="delete-btn"  >
-              ×
-            </button> -->
-            @if(table.assigned || (selectedOption() === table.id)){
+            @if(table.assigned || (selectedOption() === table.id)) {
             <button class="success-btn">
               &#10004;
             </button>
@@ -46,7 +43,12 @@
               <span class="button-number">{{table.numberTable }}</span>
               <span class="button-label">{{ table.description }}</span>
             </div>
+            <div class="button-footer" appActionOrderDialog [tableId]="table.id" >
+              <mat-icon>list</mat-icon>
+              <span class="button-footer-text">Pedidos</span>
+            </div>
           </button>
+
           }
         </div>
 

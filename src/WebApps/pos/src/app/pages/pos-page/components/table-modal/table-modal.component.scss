@@ -80,17 +80,14 @@
 
 /* Estilos para el encabezado del nodo del árbol (dt) */
 .tree-header {
-  background-color: rgba(233, 221, 255, 0.75);
-  /* Fondo opaco */
-  border-radius: 8px;
-  /* Borde redondeado */
-  padding: 5px;
-  /* Espaciado interno */
-  margin: 5px 0;
-  /* Espaciado externo */
+  background-color: rgba(233, 221, 255, 0.75); 
+  border-radius: 8px; 
+  padding: 5px; 
+  margin: 5px 0; 
   display: flex;
   align-items: center;
   position: relative;
+  cursor: pointer;
 }
 
 /* Termino del árbol (dt) */
@@ -143,9 +140,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  /* Para espacio entre el contenido y el footer */
   width: 100%;
-  height: 100px;
+  height: 120px;
   border: 2px solid #ddd;
   border-radius: 4px;
   background-color: #f9f9f9;
@@ -157,11 +155,10 @@
 
 .button-card.selected {
   border-color: #007bff;
-  /* Color del borde cuando está seleccionado */
   background-color: #e9f5ff;
-  /* Fondo cuando está seleccionado */
 }
 
+/* Contenido principal del botón */
 .button-content {
   display: flex;
   flex-direction: column;
@@ -180,70 +177,73 @@
   color: #333;
 }
 
+/* Footer del botón */
+.button-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  width: 100%;
+  border-top: 1px solid #ddd;
+  background-color: #f1f1f1;
+  border-radius: 0 0 4px 4px;
+}
+
+.button-footer i {
+  margin-right: 5px;
+  font-size: 16px;
+  color: #007bff;
+}
+
+.button-footer-text {
+  font-size: 12px;
+  color: #555;
+}
+
 /* Botón de eliminar */
 .delete-btn {
   position: absolute;
   top: -10px;
   right: -10px;
   background: #ff0000;
-  /* Color de fondo del botón de eliminar */
   color: #fff;
-  /* Color del texto del botón de eliminar */
   border: 2px solid #ff0000;
-  /* Borde del botón de eliminar */
   border-radius: 50%;
-  /* Hace el botón redondo */
   width: 24px;
-  /* Ancho del botón */
   height: 24px;
-  /* Alto del botón */
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  /* Tamaño del texto del botón */
   cursor: pointer;
   transition: background-color 0.3s, border-color 0.3s;
 }
 
 .delete-btn:hover {
   background-color: #cc0000;
-  /* Color de fondo cuando se pasa el mouse sobre el botón */
   border-color: #cc0000;
-  /* Color del borde cuando se pasa el mouse sobre el botón */
 }
 
-
-//==========================
 /* Botón de éxito */
 .success-btn {
   position: absolute;
   top: -10px;
   right: -10px;
   background: #28a745;
-  /* Color de fondo del botón de éxito */
   color: #fff;
-  /* Color del texto del botón de éxito */
   border: 2px solid #28a745;
-  /* Borde del botón de éxito */
   border-radius: 50%;
-  /* Hace el botón redondo */
   width: 30px;
-  /* Ancho del botón */
   height: 30px;
-  /* Alto del botón */
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  /* Tamaño del icono del botón */
   cursor: pointer;
   transition: background-color 0.3s, border-color 0.3s;
 }
 
 .success-btn:hover {
   background-color: #218838;
-  /* Color de fondo cuando se pasa el mouse sobre el botón */
   border-color: #218838;
-  /* Color del borde cuando se pasa el mouse sobre el botón */
 }
