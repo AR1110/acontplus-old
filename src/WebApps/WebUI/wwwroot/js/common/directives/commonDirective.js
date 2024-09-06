@@ -2168,7 +2168,7 @@
                             console.log("cuotasPorCobrar", cuotasPorCobrar);
                             return;
                         }
-
+                    
                         const { isConfirmed, value } = await Swal.fire({
                             icon: 'warning',
                             html: '<small>¿Está seguro/a de anular este registro ahora?</small>',
@@ -2188,8 +2188,7 @@
                         const data = {
                             observacion: value,
                             ...dataParams
-                        }; 
-
+                        } 
                         showLoader();
                         const updateResponse = await compIngresoSvc.update(idComprobanteIngreso, data);
 
@@ -2242,8 +2241,8 @@
                     // Agrupa cuotas por cobrar
                     const cuotasPorCobrarAgrupado = cuotasPorCobrar.reduce((acc, curr) => {
                         let existeDato = acc.find(dataCxc => dataCxc.idCuotaPorCobrar === curr.idCuotaPorCobrar);
-                      //  let abono = curr.cobro ? curr.abono : 0;
-                      let abono = curr.abono
+                        let abono = curr.cobro ? curr.abono : 0;
+                     // let abono = curr.abono
 
                         if (!existeDato) {
                             acc.push({
