@@ -135,7 +135,8 @@ BEGIN
             SELECT 'Subtotal' + ' ' + ti.descripcion as descripcion
                   ,ISNULL
                   ((
-                    SELECT  CAST(SUM(ai.TaxBase) as numeric(18,2)) 
+                    SELECT   
+                        SUM(CAST(ai.TaxBase as numeric(18,2)))
                     FROM Ventas.AprobVentasImpuesto ai WITH (NOLOCK) 
                     WHERE ai.AprobDocumentId = @id AND ai.TaxPercentId = ti.idTipoIva
 
@@ -147,7 +148,8 @@ BEGIN
             SELECT ti.descripcion as descripcion
                   ,ISNULL
                   ((
-                    SELECT  CAST(SUM(ai.TaxValue) as numeric(18,2)) 
+                    SELECT  
+                        SUM(CAST(ai.TaxValue as numeric(18,2)))
                     FROM Ventas.AprobVentasImpuesto ai WITH (NOLOCK) 
                     WHERE ai.AprobDocumentId = @id AND ai.TaxPercentId = ti.idTipoIva
 
