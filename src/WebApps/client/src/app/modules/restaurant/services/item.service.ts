@@ -27,6 +27,7 @@ export class ItemService {
             const tempItems = JSON.parse(response.payload as string);
             return tempItems['items'];
           }
+          return [];
         }),
       );
   }
