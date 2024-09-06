@@ -1,1 +1,76 @@
-<p>ingredient-add-edit-modal works!</p>
+<form (ngSubmit)="onSave()" [formGroup]="ingredientForm">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <fa-icon [icon]="modalIcon"></fa-icon>
+      {{ modalTitle }}
+    </h5>
+    <button (click)="onModalClose()" class="btn-close" type="button"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col">
+        <label for="summary">Resumen - Descripción</label>
+        <input
+          class="form-control form-control-lg"
+          formControlName="summary"
+          id="summary"
+          type="text"
+        />
+      </div>
+      <div class="col">
+        <label for="ingredientTypeId">Tipo</label>
+        <select
+          class="form-control form-control-lg"
+          formControlName="ingredientTypeId"
+          id="ingredientTypeId"
+        >
+          <option value="">Seleccione un tipo</option>
+          @for (item of ingredientTypes; track $index) {
+            <option [value]="item.id">{{ item.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <label for="quantity">Cantidad</label>
+        <input
+          class="form-control form-control-lg"
+          formControlName="quantity"
+          id="quantity"
+          min="0"
+          type="number"
+        />
+      </div>
+      <div class="col">
+        <label for="unit">Unidad</label>
+        <input
+          class="form-control form-control-lg"
+          formControlName="unit"
+          id="unit"
+          min="0"
+          type="number"
+        />
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <label for="content">Contenido</label>
+        <textarea
+          class="form-control"
+          formControlName="content"
+          id="content"
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button [disabled]="ingredientForm.invalid" class="btn btn-outline-success" title="Guardar">
+      <fa-icon [icon]="'save'"></fa-icon>
+      Guardar
+    </button>
+    <button (click)="onModalClose()" class="btn btn-outline-dark" title="Cancelar" type="button">&times; Cancelar
+    </button>
+  </div>
+</form>

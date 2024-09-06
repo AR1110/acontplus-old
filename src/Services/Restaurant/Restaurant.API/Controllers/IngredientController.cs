@@ -1,5 +1,6 @@
 ﻿using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
+using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
 using Services.Common.Extensions;
 
@@ -28,10 +29,10 @@ public class IngredientController(IIngredientService ingredientService) : BaseAp
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] Ingredient ingredient)
     {
-        data.UserRoleId = User.GetUserRoleId();
-        return Ok(await ingredientService.UpdateAsync(id, data));
+        ingredient.UserId = User.GetUserId();
+        return Ok(await ingredientService.UpdateAsync(id, ingredient));
     }
 
     [HttpDelete("{id}")]

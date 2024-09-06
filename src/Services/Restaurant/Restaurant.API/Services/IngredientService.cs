@@ -2,6 +2,7 @@
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Restaurant.API.Data;
+using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services;
@@ -34,15 +35,23 @@ public class IngredientService(IAdoRepository adoRepository, RestaurantContext c
         return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.Ingredient_Insert", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(int id, ApiRequest data)
+    public async Task<ApiResponse> UpdateAsync(int id, Ingredient ingredient)
     {
-        var parameters = new Dictionary<string, object>
+        var ingredientFound = await context.Ingredients.FindAsync(id);
+        if (ingredientFound == null)
         {
-            { "userRoleId", data.UserRoleId },
-            { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
-        return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.Ingredient_Update", parameters);
+            return new ApiResponse { Code = "0", Message = "Ingredient not found" };
+        }
+        ingredientFound.IngredientTypeId = ingredient.IngredientTypeId;
+        ingredientFound.Quantity = ingredient.Quantity;
+        ingredientFound.Summary = ingredient.Summary;
+        ingredientFound.Unit = ingredient.Unit;
+        ingredientFound.Content = ingredient.Content;
+        ingredientFound.Enabled = ingredient.Enabled;
+        ingredientFound.UserId = ingredient.UserId;
+        context.Update(ingredientFound);
+        await context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Actualizado exitosamente" };
     }
 
     public async Task<ApiResponse> DeleteAsync(int userId, int id)

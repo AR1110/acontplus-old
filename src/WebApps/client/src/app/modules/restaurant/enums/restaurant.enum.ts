@@ -1,13 +1,13 @@
 export enum RESTAURANT_PATHS {
   FLOOR = 'Floor/',
-  INGREDIENT = 'Ingredient',
+  INGREDIENT = 'Ingredient/',
   ITEM = 'Item/',
   MENU = 'Menu/',
   PROMOTION = 'Promotion/',
   PRODUCTION_AREA = 'ProductionArea/',
   ROOM = 'Room/',
   TABLE = 'Table/',
-  CONFIG = 'Configuration/'
+  CONFIG = 'Configuration/',
 }
 
 export const enum RESTAURANT_CODE_REPORT {

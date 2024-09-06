@@ -35,6 +35,12 @@ export class IngredientService {
       );
   }
 
+  put<T>(id: number, data: T) {
+    return this.#http
+      .put<ApiResponse>(`${this.#url}${id}`, data)
+      .pipe(map((response) => response));
+  }
+
   search<T extends { textSearch: string }>(
     data: T,
   ): Observable<Array<Ingredient>> {
