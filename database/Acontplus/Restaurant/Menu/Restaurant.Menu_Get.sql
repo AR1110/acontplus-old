@@ -28,6 +28,7 @@ BEGIN
     SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
     SET @sql = N' SELECT m.Id
+                ,a.codigo
                 ,m.ProductId
                 ,m.Title
                 ,m.Summary

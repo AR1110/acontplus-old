@@ -8,7 +8,7 @@
             <div class="row  row-cols-1 row-cols-xxl-1 row-cols-xl-1 row-cols-lg-1 row-cols-md-1 row-cols-sm-1">
                 <div class="form-group">
                     <label for="estab">Establecimiento: <span class="text-danger">*</span> </label>
-                    <select name="estab" id="estab" class="form-select">
+                    <select name="estab" id="estab" class="form-select" [(ngModel)]="estabId">
                         @for(item of estabs();track $index){
                         <option [value]="item.idEstablecimiento">{{item.nombreComercial}}</option>
                         }
@@ -17,7 +17,7 @@
 
                 <div class="form-group">
                     <label for="description">Descripción: <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" appToUpperCase [(ngModel)]="data.description">
                 </div>
             </div>
 
@@ -25,11 +25,11 @@
 
                 <div class="form-group">
                     <label for="startDate">Fecha Inicio</label>
-                    <input type="date" class="form-control">
+                    <app-input-date [(value)]="data.startDate" />
                 </div>
                 <div class="form-group">
                     <label for="endDate">Fecha Final</label>
-                    <input type="date" class="form-control">
+                    <app-input-date [(value)]="data.endDate" />
                 </div>
 
             </div>
@@ -51,7 +51,6 @@
     </ul>
 
     @if(selectedTab()===0){
-
     <div class="d-flex  ">
         <div class="table-responsive w-auto">
             <table class="table ">
@@ -59,7 +58,8 @@
                     <tr>
                         <th>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="allDays">
+                                <input class="form-check-input" type="checkbox" id="allDays" [(ngModel)]="allDay"
+                                    (change)="onChangeAllDay()">
                                 <label class="form-check-label" for="allDays">Todos</label>
                             </div>
                         </th>
@@ -69,22 +69,25 @@
                 <tbody>
                     @for(day of daysOfWeek();track $index){
                     <tr>
-                        <td >
+                        <td>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" [id]="day.id">
+                                <input class="form-check-input" type="checkbox" [id]="day.id" [(ngModel)]="day.checked"
+                                    (change)="onChangeDay()">
                                 <label class="form-check-label" [for]="day.id">{{ day.name }}</label>
                             </div>
                         </td>
-                        <td >
+                        <td>
                             <div class="hstack gap-3">
                                 <div class="col-4">
                                     <label [for]="day.id + 'Start'" class="form-label"></label>
-                                    <input type="time" class="form-control" [id]="day.id + 'Start'">
+                                    <input type="text" appTimeInputFormat24 [(ngModel)]="day.horaInicio"
+                                        class="form-control" [id]="day.id + 'Start'" placeholder="HH:MM">
                                 </div>
                                 <span>-</span>
                                 <div class="col-4">
                                     <label [for]="day.id + 'End'" class="form-label"></label>
-                                    <input type="time" class="form-control" [id]="day.id + 'End'">
+                                    <input type="text" appTimeInputFormat24 [(ngModel)]="day.horaFin"
+                                        class="form-control" [id]="day.id + 'End'" placeholder="HH:MM">
                                 </div>
                             </div>
                         </td>
@@ -99,7 +102,44 @@
 
 
     @if(selectedTab()===1){
-    <span>Productos</span>
+    <div class="form-group">
+        <label for="menuSearch">Buscar Menú </label>
+        <app-menu-search (optionSelected)="onProductSelected($event)" />
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nro.</th>
+                    <th>Op.</th>
+                    <th>Img.</th>
+                    <th>Menú</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(item of promotionMenus();track $index ){
+                <tr>
+                    <td>{{$index + 1}}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" (click)="onRemove(item.menuId)">
+                            &times;
+                        </button>
+                    </td>
+                    <td>
+                        <img class="rounded" [ngClass]="{'img-thumbnail': !item.s3ObjectUrl}" width="80" src="{{item.s3ObjectUrl}}" />
+                         
+                    </td>
+                    <td>{{item.title}}</td>
+                </tr>
+                }@empty{
+                    <tr class="text-center">
+                        <td colspan="4">Sin registro</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
     }
 

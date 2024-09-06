@@ -337,7 +337,8 @@ function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, 
                     razonSocial,
                     direccion,
                     telefono,
-                    email
+                    email,
+                    nombreComercial
                 } = response;
                 $scope.data.validationSri = true;
                 $scope.typeNotify = 'is-valid';
@@ -346,6 +347,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, 
                 if (typeof dataCustomerAcontPlus === 'object') {
                     updateDataWithSRI(dataCustomerAcontPlus.idCliente, {
                         razonSocial: razonSocial,
+                        nombreComercial,
                         direccion,
                         telefonos: telefono && new Array(telefono) || [],
                         correos: email && new Array(email) || []
@@ -354,8 +356,8 @@ function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, 
                 }
 
 
-                $scope.data.nombreComercial = razonSocial;
                 $scope.data.nombreFiscal = razonSocial;
+                $scope.data.nombreComercial = nombreComercial || razonSocial;
                 //$scope.data.direccion = establecimientos.find(item => item.matriz === 'SI').direccionCompleta
                 if (direccion) {
                     $scope.data.direccion = direccion
@@ -449,8 +451,9 @@ function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, 
             $scope.isDisableInputIdentificacion = $scope.data.idCliente > 0;
 
             $scope.data = Object.assign($scope.data, {
-                nombreComercial: dataSRI.razonSocial,
-                nombreFiscal: dataSRI.razonSocial
+                nombreFiscal: dataSRI.razonSocial,
+                nombreComercial: dataSRI.nombreComercial || dataSRI.razonSocial,
+
             });
             $scope.tempIdTipoIdentificacion = $scope.data.idTipoIdentificacion;
 

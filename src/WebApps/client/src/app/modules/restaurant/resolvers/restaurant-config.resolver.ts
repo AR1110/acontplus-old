@@ -13,8 +13,7 @@ export const restaurantConfigDataResolver: ResolveFn<any> = (route, state) => {
 
   mainData.subscribe(response => {
     let dataEstab = response.estabs.find(e => e.defaultEstab);
-    console.log(response)
-    console.log(dataEstab)
+     
     if (dataEstab) {
       let puntosEmision = dataEstab.puntosEmision;
       let bodegas = dataEstab.bodegas;

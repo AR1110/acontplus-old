@@ -4,6 +4,7 @@ import { RESTAURANT_PATHS } from '@restaurant/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 import { map } from 'rxjs';
+import { getNoLoader } from '@core/interceptors/loader.interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -36,6 +37,28 @@ export class MenuService {
         }),
       );
   }
+
+
+  search<T extends {textSearch: string}>(obj: T){
+    let json = JSON.stringify({
+      ...obj
+    })
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
+      map(response=>{
+        let result = {
+          menus: [] as any[]
+        }
+        if(response.code==="1"){
+          let mainData = JSON.parse(response.payload as string); 
+          result.menus = mainData["menus"] || [];
+        }
+        return result;
+      })
+    )
+  }
+
 
   post<T>(data: T) {
     return this.#http
