@@ -36,7 +36,7 @@ export class ItemListComponent {
       tipo: 1,
     };
     this.#itemService.get(obj).subscribe((response) => {
-      this.items = response;
+      this.items = response.items;
       this.pagination.totalRecords = this.items[0]?.totalRecords ?? 0;
     });
   }

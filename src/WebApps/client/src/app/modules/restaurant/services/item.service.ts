@@ -23,11 +23,15 @@ export class ItemService {
       .get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`)
       .pipe(
         map((response) => {
-          if (response.code === '1') {
-            const tempItems = JSON.parse(response.payload as string);
-            return tempItems['items'];
+          if (response.code !== '1') {
+            return { items: [] };
           }
-          return [];
+
+          const { items } = JSON.parse(response.payload as string);
+
+          return {
+            items: items || [],
+          };
         }),
       );
   }
