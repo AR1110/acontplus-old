@@ -1,1 +1,101 @@
-<p>menu-add-edit-modal works!</p>
+<form [formGroup]="menuForm">
+  <div class="modal-header"></div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-6 col-md-6 col-sm-12">
+        <div class="form-group">
+          <label for="title">Nombre</label>
+          <input
+            class="form-control input-group-lg"
+            formControlName="title"
+            id="title"
+            type="text"
+          />
+        </div>
+      </div>
+      <div class="col-6 col-md-6 col-sm-6">
+        <div class="form-group">
+          <label for="forPromotion">Usar en promoción</label>
+          <mat-slide-toggle formControlName="forPromotion" id="forPromotion">
+            Activo
+          </mat-slide-toggle>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <label for="summary"
+          >Descripción -
+            <span>
+                <button
+                  (click)="generateDescription()"
+                  class="btn btn-sm btn-outline-info"
+                  title="Generar la descripción para el combo"
+                  type="button"
+                >
+                  <i class="fa-solid fa-sync"></i> Generar descripción
+                </button>
+              </span>
+          </label>
+          <textarea
+            class="form-control"
+            formControlName="summary"
+            id="summary"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <label>Buscar productos</label>
+          <app-item-search (onItemSelected)="onItemSelected($event)"
+                           [textSearch]="itemSearch"></app-item-search>
+        </div>
+      </div>
+    </div>
+    <!--    <div *ngIf="productsAdded.length > 0" class="row">-->
+    <!--      <div class="col-12">-->
+    <!--        <table class="table table-striped">-->
+    <!--          <thead>-->
+    <!--          <tr>-->
+    <!--            <th>Producto</th>-->
+    <!--            <th>Medida</th>-->
+    <!--            <th>Precio</th>-->
+    <!--            <th>Acciones</th>-->
+    <!--          </tr>-->
+    <!--          </thead>-->
+    <!--          <tbody>-->
+    <!--          <tr *ngFor="let item of productsAdded">-->
+    <!--            <td>{{ item.descripcion }}</td>-->
+    <!--            <td>{{ item.medida }}</td>-->
+    <!--            <td>{{ item.priceIVA }}</td>-->
+    <!--            <td>-->
+    <!--              <button-->
+    <!--                (click)="removeFromList(item.itemId)"-->
+    <!--                class="btn btn-outline-danger btn-sm"-->
+    <!--                type="button"-->
+    <!--              >-->
+    <!--                <i class="fa-solid fa-trash"></i>-->
+    <!--              </button>-->
+    <!--            </td>-->
+    <!--          </tr>-->
+    <!--          </tbody>-->
+    <!--        </table>-->
+    <!--      </div>-->
+    <!--    </div>-->
+  </div>
+  <div class="modal-footer">
+    <button
+      (click)="onModalClose()"
+      class="btn btn-outline-secondary"
+      type="button"
+    >
+      Cancelar
+    </button>
+    <button class="btn btn-outline-primary" type="button">
+      Guardar
+    </button>
+  </div>
+</form>

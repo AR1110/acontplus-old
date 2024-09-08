@@ -12,9 +12,11 @@ export class MenuItemService {
   #url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.MENU_ITEM}`;
   #http = inject(HttpClient);
 
-  getByMenu<T>(params: T) {
+  getByMenu<T>(id: number, params: T) {
     return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`)
+      .get<ApiResponse>(
+        `${this.#url}GetById/${id}/?json=${JSON.stringify(params)}`,
+      )
       .pipe(
         map((response) => {
           if (response.code !== '1') {
