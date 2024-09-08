@@ -1,5 +1,11 @@
-<form [formGroup]="menuForm">
-  <div class="modal-header"></div>
+<form (ngSubmit)="onSave()" [formGroup]="menuForm">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <fa-icon [icon]="modalIcon"></fa-icon>
+      {{ modalTitle }}
+    </h5>
+    <button (click)="onModalClose()" aria-hidden="true" class="btn-close" title="Cerrar" type="button"></button>
+  </div>
   <div class="modal-body">
     <div class="row">
       <div class="col-6 col-md-6 col-sm-12">
@@ -13,14 +19,6 @@
           />
         </div>
       </div>
-      <div class="col-6 col-md-6 col-sm-6">
-        <div class="form-group">
-          <label for="forPromotion">Usar en promoción</label>
-          <mat-slide-toggle formControlName="forPromotion" id="forPromotion">
-            Activo
-          </mat-slide-toggle>
-        </div>
-      </div>
     </div>
     <div class="row">
       <div class="col-12">
@@ -30,7 +28,7 @@
             <span>
                 <button
                   (click)="generateDescription()"
-                  class="btn btn-sm btn-outline-info"
+                  class="btn btn-sm btn-outline-info mb-3"
                   title="Generar la descripción para el combo"
                   type="button"
                 >
@@ -47,6 +45,15 @@
       </div>
     </div>
     <div class="row">
+      <div class="col-6 col-md-6 col-sm-6">
+        <div class="form-group">
+          <mat-slide-toggle formControlName="forPromotion" id="forPromotion">
+            Usar en promoción
+          </mat-slide-toggle>
+        </div>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-12">
         <div class="form-group">
           <label>Buscar productos</label>
@@ -55,47 +62,25 @@
         </div>
       </div>
     </div>
-    <!--    <div *ngIf="productsAdded.length > 0" class="row">-->
-    <!--      <div class="col-12">-->
-    <!--        <table class="table table-striped">-->
-    <!--          <thead>-->
-    <!--          <tr>-->
-    <!--            <th>Producto</th>-->
-    <!--            <th>Medida</th>-->
-    <!--            <th>Precio</th>-->
-    <!--            <th>Acciones</th>-->
-    <!--          </tr>-->
-    <!--          </thead>-->
-    <!--          <tbody>-->
-    <!--          <tr *ngFor="let item of productsAdded">-->
-    <!--            <td>{{ item.descripcion }}</td>-->
-    <!--            <td>{{ item.medida }}</td>-->
-    <!--            <td>{{ item.priceIVA }}</td>-->
-    <!--            <td>-->
-    <!--              <button-->
-    <!--                (click)="removeFromList(item.itemId)"-->
-    <!--                class="btn btn-outline-danger btn-sm"-->
-    <!--                type="button"-->
-    <!--              >-->
-    <!--                <i class="fa-solid fa-trash"></i>-->
-    <!--              </button>-->
-    <!--            </td>-->
-    <!--          </tr>-->
-    <!--          </tbody>-->
-    <!--        </table>-->
-    <!--      </div>-->
-    <!--    </div>-->
+    <div class="row">
+      <div class="col">
+        <app-tabulator-semantic-ui [columnNames]="productColumns" [options]="{reactiveData:true}"
+                                   [tableData]="productsAdded"></app-tabulator-semantic-ui>
+      </div>
+    </div>
   </div>
   <div class="modal-footer">
+    <button [disabled]="menuForm.invalid" class="btn btn-outline-success" title="guardar" type="submit">
+      <fa-icon [icon]="'save'"></fa-icon>
+      Guardar
+    </button>
     <button
       (click)="onModalClose()"
-      class="btn btn-outline-secondary"
+      class="btn btn-outline-dark"
+      title="Cancelar"
       type="button"
-    >
+    > &times;
       Cancelar
-    </button>
-    <button class="btn btn-outline-primary" type="button">
-      Guardar
     </button>
   </div>
 </form>
