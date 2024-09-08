@@ -1,4 +1,7 @@
 export interface Item {
+  medida: string;
+  costPrice: number;
+  codigo: string;
   id: number;
   categoria: string;
   descripcion: string;
@@ -8,4 +11,5 @@ export interface Item {
   recipe?: string;
   instructions: string;
   s3ObjectUrl?: string;
+  productId: number;
 }

@@ -55,11 +55,14 @@ export class ItemService {
       pageIndex: 1,
       pageSize: 30,
     });
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) => {
-        if (response !== null && response) {
-          return response.items;
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`).pipe(
+      map((response) => {
+        if (response.code === '1') {
+          const { items } =
+            (response.payload && JSON.parse(response.payload as string)) || [];
+          return items || [];
         }
+        return [];
       }),
     );
   }

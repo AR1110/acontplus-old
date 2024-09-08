@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse, isApiResponse } from '@core/models/api-response';
+import { ApiResponse } from '@core/models/api-response';
 import { map, Observable } from 'rxjs';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { Ingredient } from '@restaurant/models/ingredient.model';
@@ -49,12 +49,12 @@ export class IngredientService {
       tipo: 2,
     };
     return this.#http
-      .get(`${this.#url}?json=${JSON.stringify(query)}`, {
+      .get<ApiResponse>(`${this.#url}?json=${JSON.stringify(query)}`, {
         context: getNoLoader(),
       })
       .pipe(
         map((response) => {
-          if (isApiResponse(response) && response.code === '1') {
+          if (response.code === '1') {
             const { ingredients } =
               (response.payload && JSON.parse(response.payload as string)) ||
               [];

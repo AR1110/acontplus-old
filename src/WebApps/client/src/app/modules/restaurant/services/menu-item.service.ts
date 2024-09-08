@@ -20,15 +20,13 @@ export class MenuItemService {
       .pipe(
         map((response) => {
           if (response.code !== '1') {
-            return { menusItems: [], tarifas: [] };
+            return { menuItems: [], tarifas: [] };
           }
 
-          const { menusItems, tarifas } = JSON.parse(
-            response.payload as string,
-          );
+          const { menuItems, tarifas } = JSON.parse(response.payload as string);
 
           return {
-            menusItems: menusItems || [],
+            menuItems: menuItems || [],
             tarifas: tarifas || [],
           };
         }),

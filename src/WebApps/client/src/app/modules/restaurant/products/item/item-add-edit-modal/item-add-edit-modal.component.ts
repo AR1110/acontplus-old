@@ -20,6 +20,7 @@ import { Ingredient } from '@restaurant/models/ingredient.model';
 import { ItemService } from '@restaurant/services/item.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { IngredientService } from '@restaurant/services/ingredient.service';
+import { RecipeService } from '@restaurant/services/recipe.service';
 
 @Component({
   selector: 'app-item-add-edit-modal',
@@ -45,12 +46,14 @@ export class ItemAddEditModalComponent {
     recipe: new FormControl(''),
     instructions: new FormControl(''),
     cooking: new FormControl(false),
+    productId: new FormControl(0),
   });
   recipes: Recipe[] = [];
   ingredientSearch: string = '';
   #ingredientService = inject(IngredientService);
   #itemService = inject(ItemService);
   #modalRef = inject(NgbActiveModal);
+  #recipeService = inject(RecipeService);
   #tS = inject(ToasterService);
 
   selectExtend = (cell: any, onRendered: any, success: any, cancel: any) => {
@@ -206,6 +209,10 @@ export class ItemAddEditModalComponent {
       width: 100,
       widthGrow: 1,
       editor: true,
+      editorParams: {
+        selectContents: true,
+        verticalNavigation: 'table', //up and down arrow keys navigate away from cell without changing value
+      },
       cellEdited: this.priceUpdate,
     },
     {
@@ -246,8 +253,15 @@ export class ItemAddEditModalComponent {
     let newArray = this.recipes.filter((x: Recipe) => x.id !== id);
   }
 
+  getRecipes() {
+    this.#recipeService.getByItem(this.data.id).subscribe((response) => {
+      this.recipes = response.recipes;
+    });
+  }
+
   ngOnInit() {
     if (this.data.id > 0) {
+      this.getRecipes();
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Item';
       this.itemForm.patchValue(this.data);
@@ -267,8 +281,9 @@ export class ItemAddEditModalComponent {
     }
     const dataToSave = {
       itemJson: this.itemForm.value,
-      recipeJson: JSON.stringify(this.recipes),
+      recipeJson: this.recipes,
     };
+    console.log(dataToSave);
     this.#itemService
       .put(this.data.id, { data: dataToSave })
       .subscribe((response) => {
