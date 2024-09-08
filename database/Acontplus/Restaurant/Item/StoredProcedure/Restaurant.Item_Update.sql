@@ -45,70 +45,72 @@ BEGIN
             RETURN
         END
 
-    SELECT @itemJson                = itemJson
-        ,@recipeJson            = recipeJson
-    FROM OPENJSON(@json) 
-    WITH (itemJson NVARCHAR(MAX) '$.itemJson' AS JSON 
-            , recipeJson NVARCHAR(MAX) '$.recipeJson' AS JSON
-    )
-
-
-    INSERT INTO #RecipeTemp
-    SELECT ISNULL(id, 0)
-            , ISNULL(itemId, 0)
-            , ISNULL(unit, 0)
-            , weight
-            , ISNULL(netWeigth, 0)
-            , ISNULL(ingredientId, 0)
-            , ISNULL(instructions, '')
-            , ISNULL(quantity, 0)
-            , enabled
-            , ISNULL(extentId, 0)
-            , ISNULL(costPrice, 0)
-    FROM OPENJSON(@recipeJson)
-    WITH(
-      id            INT             '$.id'
-      ,itemId       INT             '$.itemId'
-      ,unit         INT             '$.unit'
-      ,weight       NUMERIC(18,5)   '$.weight'
-      ,netWeigth    NUMERIC(18,5)   '$.netWeight'
-      ,ingredientId INT             '$.ingredientId'
-      ,instructions VARCHAR(MAX)    '$.instructions'
-      ,quantity     FLOAT           '$.quantity'
-      ,enabled      BIT             '$.enabled'
-      ,extentId     INT             '$.extentId'
-      ,costPrice    NUMERIC(18,5)   '$.costPrice'
-    )
-    
-    SELECT @productId = productId FROM OPENJSON(@itemJson) WITH(productId INT '$.productId')
-
-    IF EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @productId AND Id != @id)
-        BEGIN
-            SELECT '0' code, 'Este ítem ya se encuentra registrado' as 'message'
-            RETURN
-        END
-            
-    SET @userId = (SELECT idUsuario FROM V_usuario WHERE idUsuarioRol = @userRoleId) 
-    
-    SELECT @summary        = summary
-            ,@cooking        = cooking
-            ,@recipe         = recipe
-            ,@instructions   = instructions
-            ,@content        = content
-            ,@enabled        = enabled
-    FROM OPENJSON(@itemJson) 
-    WITH(
-        summary         VARCHAR(500) '$.summary'
-        ,cooking         BIT          '$.cooking'
-        ,recipe          VARCHAR(MAX) '$.recipe'
-        ,instructions    VARCHAR(MAX) '$.instructions'
-        ,content         VARCHAR(500) '$.content'
-        ,enabled         BIT          '$.enabled'
-    )
-
-    SET @itemId = (SELECT TOP 1 itemId FROM #RecipeTemp)
+   
         
-	BEGIN TRY               
+	BEGIN TRY
+         SELECT @itemJson                = itemJson
+        ,@recipeJson            = recipeJson
+        FROM OPENJSON(@json) 
+        WITH (itemJson NVARCHAR(MAX) '$.itemJson' AS JSON 
+                , recipeJson NVARCHAR(MAX) '$.recipeJson' AS JSON
+        )
+
+
+        INSERT INTO #RecipeTemp
+        SELECT ISNULL(id, 0)
+                , ISNULL(itemId, 0)
+                , ISNULL(unit, 0)
+                , weight
+                , ISNULL(netWeigth, 0)
+                , ISNULL(ingredientId, 0)
+                , ISNULL(instructions, '')
+                , ISNULL(quantity, 0)
+                , enabled
+                , ISNULL(extentId, 0)
+                , ISNULL(costPrice, 0)
+        FROM OPENJSON(@recipeJson)
+        WITH(
+          id            INT             '$.id'
+          ,itemId       INT             '$.itemId'
+          ,unit         INT             '$.unit'
+          ,weight       NUMERIC(18,5)   '$.weight'
+          ,netWeigth    NUMERIC(18,5)   '$.netWeight'
+          ,ingredientId INT             '$.ingredientId'
+          ,instructions VARCHAR(MAX)    '$.instructions'
+          ,quantity     FLOAT           '$.quantity'
+          ,enabled      BIT             '$.enabled'
+          ,extentId     INT             '$.extentId'
+          ,costPrice    NUMERIC(18,5)   '$.costPrice'
+        )
+    
+        SELECT @productId = productId FROM OPENJSON(@itemJson) WITH(productId INT '$.productId')
+        
+        --IF EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @productId AND Id != @id)
+        --    BEGIN
+        --        SELECT '0' code, 'Este ítem ya se encuentra registrado' as 'message'
+        --        RETURN
+        --    END
+            
+        SET @userId = (SELECT idUsuario FROM V_usuario WHERE idUsuarioRol = @userRoleId) 
+    
+        SELECT @summary        = summary
+                ,@cooking        = cooking
+                ,@recipe         = recipe
+                ,@instructions   = instructions
+                ,@content        = content
+                ,@enabled        = enabled
+        FROM OPENJSON(@itemJson) 
+        WITH(
+            summary         VARCHAR(500) '$.summary'
+            ,cooking         BIT          '$.cooking'
+            ,recipe          VARCHAR(MAX) '$.recipe'
+            ,instructions    VARCHAR(MAX) '$.instructions'
+            ,content         VARCHAR(500) '$.content'
+            ,enabled         BIT          '$.enabled'
+        )
+
+        SET @itemId = (SELECT TOP 1 itemId FROM #RecipeTemp)
+ 
 		BEGIN TRAN
             UPDATE Restaurant.Item
             SET summary         = @summary

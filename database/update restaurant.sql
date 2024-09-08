@@ -15,3 +15,5 @@ go
 update f set f.EstablecimientoId = e.idEstablecimiento
 from restaurant.Promotion f 
 inner join sri.establecimiento e on f.codestab = e.codestab
+
+DROP PROC IF EXISTS Restaurant.Ingredient_Update
