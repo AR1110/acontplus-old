@@ -4,11 +4,16 @@ import { RestaurantStoreService } from '@modules/restaurant/store/restaurant-sto
 import { PromotionAddEditModalComponent } from '../promotion-add-edit-modal/promotion-add-edit-modal.component';
 import { PromotionService } from '@modules/restaurant/services/promotion.service';
 import { Pagination } from '@shared/models/pagination.model';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-promotion-list',
   standalone: true,
-  imports: [],
+  imports: [
+    FontAwesomeModule,
+    NgbPaginationModule
+  ],
   templateUrl: './promotion-list.component.html',
   styles: ``
 })
@@ -28,8 +33,7 @@ export class PromotionListComponent {
   pagination = signal(new Pagination())
   days = signal<any[]>([])
 
-  openModalAddEdit() {
-    console.log('this')
+  openModalAddEdit() { 
     let modalRef = this.modalSvc.open(PromotionAddEditModalComponent,
       {
         size: 'lg',
@@ -46,9 +50,21 @@ export class PromotionListComponent {
     let params = {
       pageIndex: this.pagination().pageIndex,
       pageSize: this.pagination().pageSize,
+      estabId: this.estabId()
     }
+    this.promotions.set([])
     this.promotionSvc.getAll(params).subscribe(response => {
       this.days.set(response.days)
+      this.promotions.set(response.promotions)
+      if (this.promotions().length > 0) {
+        this.pagination.update(e => {
+          return {
+            ...e,
+            
+            totalRecords: this.promotions()[0].totalRecords
+          }
+        })
+      }
     })
   }
 
@@ -57,4 +73,18 @@ export class PromotionListComponent {
   }
 
 
+  refresh() {
+    this.getPromotions()
+  }
+
+
+  onChangeEstab(){
+    this.refresh();
+    this.restaurantStore.state.update(e=>{
+      return {
+        ...e,
+        establecimientoId: this.estabId()
+      }
+    })
+  }
 }
