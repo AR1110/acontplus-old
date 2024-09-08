@@ -1,10 +1,15 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.AppSettings;
+using GatewayAcontplus.API.Data;
 using GatewayAcontplus.API.Delegates;
+using GatewayAcontplus.API.Middleware;
+using GatewayAcontplus.API.Services;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -26,6 +31,12 @@ ConfigHelper.AddJsonFiles(builder.Configuration);
 // Secure Environment Variable Retrieval (consider secret management for sensitive data)
 var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().Split(",")
                    ?? throw new ArgumentException("SafeOrigins configuration is missing.");
+
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//        options.UseSqlServer(builder.Configuration.GetConnectionString("OcelotGateway")));
+
+//builder.Services.AddSingleton<IMessageQueueService, RabbitMQService>();
+//builder.Services.AddHostedService<RequestConsumerService>();
 
 // Ocelot Configuration (consider using environment variables for dynamic configuration)
 builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
@@ -82,6 +93,8 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 var app = builder.Build();
 
 app.UseResponseCompression();
+
+//app.UseMiddleware<RequestCountingMiddleware>();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

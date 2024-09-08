@@ -35,6 +35,7 @@
     <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.0.2" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Ocelot" Version="23.3.3" />
+    <PackageVersion Include="RabbitMQ.Client" Version="6.8.1" />
     <PackageVersion Include="ReportViewerCore.NETCore" Version="15.1.22" />
     <PackageVersion Include="Scrutor" Version="4.2.2" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.7.3" />
