@@ -350,11 +350,6 @@ BEGIN
 						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = bo.codEstab 
 						WHERE es.idEntidad = @idEntidad AND bo.idBodega NOT IN (SELECT sb.idBodega FROM Inventario.Stock sb WITH (NOLOCK) WHERE sb.idArticulo = @id)
 					END
-					
-
-				SELECT @ultimoSecuencial = COUNT(*)+1 FROM dbo.Articulo WITH (NOLOCK) WHERE idSubFamilia = @idSubFamilia
-
-			    UPDATE dbo.SubFamilia SET ultimoSecuencial = @ultimoSecuencial WHERE idSubFamilia = @idSubFamilia
 
                 ----- GET CODE SubFamilia and Familia - by Ignacio -----
                 SELECT @siglaFamilia = f.siglas

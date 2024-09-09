@@ -591,6 +591,7 @@
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     $scope.data.idPuntoEmision = $scope.puntosEmision.length > 0 ? $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi)).idPuntoEmision : 0;
                     $scope.dataDocumentoReferenciado = {};
+                    setInfoAdicional();
                     $scope.$apply();
                 } else {
                     $scope.data.codEstab = $scope.dataClone.codEstab;
@@ -600,6 +601,15 @@
             } catch (error) {
                 console.trace(error)
             }
+        }
+
+        $scope.onChangePuntoEmision = function () {
+            if ($scope.data.id > 0) {
+                tS.toastr('warning', 'Punto de Emisión no puede ser editada');
+                $scope.data.idPuntoEmision = $scope.dataClone.idPuntoEmision;
+                return
+            }
+            setInfoAdicional();
         }
 
         function setInfoAdicional() {
@@ -892,13 +902,12 @@
 
                 };
             } else {
-                let index = $scope.infoAdicionalDocumento.findIndex(item => item.valor === data.serieComprobante);
-                if (index === -1) {
-                    $scope.infoAdicionalDocumento = [{
-                        nombre: 'Comprobante',
-                        valor: data.serieComprobante
-                    }]
-                }
+                $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(item => item.valor !== data.serieComprobante);
+           
+                $scope.infoAdicionalDocumento.push({
+                    nombre: 'Comprobante',
+                    valor: data.serieComprobante
+                })
                 $scope.dataDocumentoReferenciado = {
                     serieComprobante: data.serieComprobante,
                     labelName: `${data.nameDoc}: ${data.serieComprobante}`
