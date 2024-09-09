@@ -14,7 +14,10 @@ export class PromotionService {
   constructor() { }
 
   getPromotions<T>(obj: T) {
-    let json = JSON.stringify(obj);
+    let json = JSON.stringify({
+      tipo: 2,
+      ...obj
+    });
 
     return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
       context: getNoLoader()

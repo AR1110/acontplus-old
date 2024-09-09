@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, ElementRef, inject, input, model, Renderer2, signal, ViewChild } from '@angular/core';
+import { Component,  ElementRef, inject,   model,   signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
+import { formatDate } from '@core/utils/date.util';
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { imgDefault, isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MenuSearchComponent } from '@modules/restaurant/components/menu-search/menu-search.component';
+import { PromotionMenuService } from '@modules/restaurant/services/promotion-menu.service';
 import { PromotionService } from '@modules/restaurant/services/promotion.service';
 import { RestaurantStoreService } from '@modules/restaurant/store/restaurant-store.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -35,6 +37,7 @@ export class PromotionAddEditModalComponent {
   private restaurantStore = inject(RestaurantStoreService);
   private tS = inject(ToasterService)
   private promotionSvc = inject(PromotionService)
+  private promotionMenuSvc = inject(PromotionMenuService)
 
   estabs = signal(this.restaurantStore.state().establecimientos);
   estabId = model(this.restaurantStore.state().establecimientoId);
@@ -56,10 +59,10 @@ export class PromotionAddEditModalComponent {
     endDate: new Date(),
   }
 
-  @ViewChild('imagePreview') imagePreview!: ElementRef; 
+  @ViewChild('imagePreview') imagePreview!: ElementRef;
 
   imageUrl: string | ArrayBuffer | null = imgDefault();
-  file:File | null = null;
+  file: File | null = null;
 
   onFileChange(event: any): void {
     const file = event.target.files[0];
@@ -67,7 +70,7 @@ export class PromotionAddEditModalComponent {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        this.imageUrl = reader.result; 
+        this.imageUrl = reader.result;
       };
       reader.readAsDataURL(file);
     }
@@ -83,12 +86,27 @@ export class PromotionAddEditModalComponent {
   }
 
   ngOnInit() {
-    console.log(this.params)
-    const {data, days}= this.params;
-    if(data.id>0){
-      //console.log()  
+    const { data, days } = this.params;
+    if (data.id > 0) {
 
-    }else{
+      this.titleModal = signal('Editar Promoción')
+      this.titleBtnSave = signal('Actualizar')
+
+      this.data.id = data.id;
+      this.data.startDate = formatDate(data.startDate);
+      this.data.endDate = formatDate(data.endDate);
+      this.data.description = data.description;
+      if (data.img) {
+        this.imageUrl = data.img
+      }
+
+
+      this.daysOfWeek.set(JSON.parse(data.promotionDays))
+
+      this.promotionMenuSvc.getByPromotionId(data.id, {}).subscribe(response => [
+        this.promotionMenus.set(response.promotionMenus)
+      ])
+    } else {
       this.daysOfWeek.set(days.map((item: any) => {
         return {
           idDia: item.idDia,
@@ -98,7 +116,7 @@ export class PromotionAddEditModalComponent {
           horaFin: "23:59",
           checked: true,
         }
-  
+
       }))
 
     }
@@ -218,11 +236,11 @@ export class PromotionAddEditModalComponent {
 
       let newPromotionMenu = this.promotionMenus().map((e) => ({
         id: e.id, promotionId: e.promotionId, menuId: e.menuId
-      }))
-      console.log(newPromotionMenu);
+      })) 
 
       let promotionDays = JSON.stringify(this.daysOfWeek());
       let newObject = {
+        id: this.data.id,
         estabId: this.estabId(),
         description: this.data.description,
         startDate: formatDateMoment(this.data.startDate),
@@ -231,10 +249,40 @@ export class PromotionAddEditModalComponent {
         promotionMenus: newPromotionMenu,
       };
 
-      this.promotionSvc.post(newObject, this.file).subscribe(response=>{
-        console.log(response)
-      })
-      
+      if (this.data.id > 0) {
+        this.promotionSvc.put(this.data.id, newObject, this.file).subscribe(response => {
+          if (response.code === "0") {
+            this.tS.toastr({
+              type: 'warning',
+              message: response.message
+            })
+          }
+          if (response.code === "1") {
+            this.tS.toastr({
+              type: 'success',
+              message: response.message
+            })
+            this.modalRef.close(response)
+          }
+        })
+      } else {
+        this.promotionSvc.post(newObject, this.file).subscribe(response => {
+          if (response.code === "0") {
+            this.tS.toastr({
+              type: 'warning',
+              message: response.message
+            })
+          }
+          if (response.code === "1") {
+            this.tS.toastr({
+              type: 'success',
+              message: response.message
+            })
+            this.modalRef.close(response)
+          }
+        })
+      }
+
     } catch (err) {
       console.log(err)
 

@@ -5,6 +5,7 @@ export enum RESTAURANT_PATHS {
   MENU = 'Menu/',
   MENU_ITEM = 'MenuItem/',
   PROMOTION = 'Promotion/',
+  PROMOTION_MENU = 'PromotionMenu/',
   PRODUCTION_AREA = 'ProductionArea/',
   RECIPE = 'Recipe/',
   ROOM = 'Room/',

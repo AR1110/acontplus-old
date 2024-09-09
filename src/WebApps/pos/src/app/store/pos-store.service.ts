@@ -3,7 +3,8 @@ import { SRI_IDENTIFICATION_CODE } from "@/enums/main.enum";
 import { Order, OrderItem } from "@/models/order.model";
 import { Tax, TaxRate } from "@/models/tax.model";
 import { GenericStoreSignalService } from "@/services/generic-store-signal.service";
-import { Injectable } from "@angular/core";
+import { PromotionService } from "@/services/promotion.service";
+import { inject, Injectable } from "@angular/core";
 
 type PosStoreState = {
   isLoading: boolean
@@ -14,6 +15,9 @@ type PosStoreState = {
   taxes: Record<string | number, Tax>
   taxRates: Record<string | number, TaxRate>
   orderItem: OrderItem
+  isRefreshPromotion: boolean
+  promotionsMenu: any[]
+  codeSubCategory: string
 }
 export const orderInitialState = () => {
 
@@ -94,7 +98,10 @@ export const posStoreStateInitial = (): PosStoreState => {
       paid: undefined,
       conversion: 1,
       costoFraccionado: 0
-    }
+    },
+    isRefreshPromotion: false,
+    promotionsMenu: [],
+    codeSubCategory: ''
   }
 }
 
@@ -102,11 +109,81 @@ export const posStoreStateInitial = (): PosStoreState => {
   providedIn: 'root'
 })
 export class PosStoreService extends GenericStoreSignalService<PosStoreState> {
+  private promotionSvc = inject(PromotionService)
   constructor() {
     super();
   }
 
+  setLoading(isLoading: boolean) {
+    this.state.update(e => ({
+      ...e,
+      isLoading
+    }))
+  }
 
+
+  public getPromotions(estabId:number) {
+    let params = {
+      estabId 
+    }
+    this.setLoading(true) 
+    this.state.update(e => ({
+      ...e,
+      promotionsMenu: []
+    })) 
+    this.promotionSvc.getPromotions(params).subscribe({
+      next: response => {
+        this.setLoading(false)
+        this.state.update(e => ({
+          ...e,
+          promotionsMenu: response
+        })) 
+      },
+      error: err => {
+        this.setLoading(false)
+        console.log(err)
+      }
+    })
+  }
+
+
+  addRow() {
+    let data: OrderItem = {
+      uuid: generateUuidv4(),
+      itemTypeCode: '',
+      id: 0,
+      menuId: 0,
+      itemId: 0,
+      taxId: 0,
+      taxPercentId: 0,
+      feeId: 0,
+      taxValue: 0,
+      quantity: 0,
+      cost: 0,
+      price: 0,
+      discount: 0,
+      total: 0,
+      bodegaId: 0,
+      medidaId: 0,
+      codigoTarifaImpuesto: '',
+      taxPercent: 0,
+      productId: 0,
+      code: '',
+      precioConIva: 0,
+      precioTotalSinImpuesto: 0,
+      medida: '',
+      descripcion: '',
+      llevaInventario: false,
+      medidas: [],
+      pvps: [],
+      consolidacionesFecha: [],
+      costoFraccionado: 0,
+      conversion: 1
+    }
+    return data;
+  }
+
+  
 
 
 }

@@ -27,7 +27,7 @@ export const PATHS = {
   PROMOTION: 'Promotion/',
   CONSULTAS: 'Consultas/',
   PRMOTION_MENU: 'PromotionMenu/',
-  TABLE: 'Table/'
+  TABLE: 'Table/', 
 }
 
 

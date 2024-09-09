@@ -45,6 +45,11 @@ export class PromotionListComponent {
       days: this.days(),
       data: data && structuredClone(data) || {}
     }
+    modalRef.result.then(result=>{
+      if(result && typeof result==='object'){
+        this.getPromotions()
+      }
+    })
   }
 
   private getPromotions() {

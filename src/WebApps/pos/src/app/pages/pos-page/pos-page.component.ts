@@ -60,8 +60,10 @@ export class PosPageComponent {
 
   public dialog = inject(Dialog)
 
-  selectedSubCategoryIndex = 0;
-  isPromotions = signal(false);
+  selectedSubCategoryIndex = 0; 
+
+  private establecimientoId = this.mainStore.select("establecimientoId");
+  private codEstab = this.mainStore.select("codEstab");
 
   subCategorias = signal<SubCategory[]>([{
     idSubFamilia: 0,
@@ -100,18 +102,24 @@ export class PosPageComponent {
   }
 
   refresh() {
-    this.getItems()
+    if (this.posStoreSvc.state().codeSubCategory === SUB_CATEGORY_CODE.PROM) {
+      this.getPromotions()
+    } else if (this.posStoreSvc.state().codeSubCategory === SUB_CATEGORY_CODE.COM) {
+      this.getCombos()
+    } else {
+      this.getItems()
+    }
+
   }
 
   getDataFormInit() {
-    let { codEstab, establecimientoId } = this.mainStore.state();
-    if (!codEstab || !(establecimientoId > 0)) {
+    if (!this.codEstab() || !(this.establecimientoId() > 0)) {
       console.log('no se encontró datos del establecimiento')
       return
     }
     let params = {
-      codEstab,
-      idEstablecimiento: establecimientoId
+      codEstab: this.codEstab(),
+      idEstablecimiento: this.establecimientoId()
     }
     let paramsItem = {
       pageIndex: this.dataPagination().pageIndex + 1,
@@ -145,6 +153,7 @@ export class PosPageComponent {
       }
     })
   }
+
   getCombos() {
     let params = {
       pageIndex: this.dataPagination().pageIndex + 1,
@@ -168,6 +177,10 @@ export class PosPageComponent {
     })
   }
 
+  getPromotions() {
+    this.posStoreSvc.getPromotions(this.establecimientoId())
+  }
+
   setTotalRecords() {
     if (this.items().length > 0) {
       this.dataPagination.update(e => {
@@ -187,13 +200,13 @@ export class PosPageComponent {
   }
 
   ngOnInit() {
-    if(!(this.posStoreSvc.state().order?.orderId>0)){
+    if (!(this.posStoreSvc.state().order?.orderId > 0)) {
       const dialogRef = this.dialog.open(TableModalComponent, {
         width: '100vw',
         height: '100vh',
         panelClass: 'full-screen-cdk-dialog',
       });
-      
+
     }
 
     this.setLoading(true)
@@ -201,7 +214,6 @@ export class PosPageComponent {
       next: response => {
         this.setLoading(false)
         const [dataForm, dataItem] = response;
-        console.log(dataForm.vendedores)
 
         this.posStoreSvc.state.update(e => {
           let orderData: Order = {
@@ -233,26 +245,22 @@ export class PosPageComponent {
   onTabChange(event: MatTabChangeEvent) {
     let dataSubcategory = this.subCategorias()[event.index];
     if (dataSubcategory) {
+      this.posStoreSvc.state.update(e => {
+        return {
+          ...e,
+          codeSubCategory: dataSubcategory.codigo
+        }
+      })
       this.dataPagination.update(dp => {
         return {
           ...dp,
           pageIndex: 0,
           pageSize: 25,
+          totalRecords: 0
         }
       })
-      this.dataItemSearch.update(e => ({ ...e, idSubFamilia: dataSubcategory.idSubFamilia }));
-      this.isPromotions.set(false)
-
-      if (dataSubcategory.codigo === SUB_CATEGORY_CODE.PROM) {
-        this.isPromotions.set(true)
-        return
-      }
-
-      if (dataSubcategory.codigo === SUB_CATEGORY_CODE.COM) {
-        this.getCombos()
-      } else {
-        this.getItems()
-      }
+      this.dataItemSearch.update(e => ({ ...e, idSubFamilia: dataSubcategory.idSubFamilia })); 
+      this.refresh()
     }
   }
 
