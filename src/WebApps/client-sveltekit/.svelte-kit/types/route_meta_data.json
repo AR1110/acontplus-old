@@ -1,0 +1,26 @@
+{
+	"/": [
+		"src/routes/+page.ts"
+	],
+	"/config/email": [
+		"src/routes/config/email/+page.ts"
+	],
+	"/inventario/motivo-discrepancia": [
+		"src/routes/inventario/motivo-discrepancia/+page.ts"
+	],
+	"/inventario/stock-fisico": [
+		"src/routes/inventario/stock-fisico/+page.ts"
+	],
+	"/restaurant/infrastructure": [
+		"src/routes/restaurant/infrastructure/+page.ts"
+	],
+	"/restaurant/products": [
+		"src/routes/restaurant/products/+page.ts"
+	],
+	"/restaurant/reports": [
+		"src/routes/restaurant/reports/+page.ts"
+	],
+	"/restaurant/[2]": [
+		"src/routes/restaurant/[2]/+page.ts"
+	]
+}
