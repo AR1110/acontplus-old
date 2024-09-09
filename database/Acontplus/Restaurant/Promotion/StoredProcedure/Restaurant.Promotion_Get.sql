@@ -22,9 +22,13 @@ BEGIN
    
     DECLARE @tipo           INT 
 
-    DECLARE @codEstab VARCHAR(150)
-   
-    SELECT @tipo = tipo,@codEstab = codEstab FROM OPENJSON(@json) WITH(tipo INT , codEstab VARCHAR(150))
+    DECLARE @estabId INT
+    DECLARE @codEstab VARCHAR(200)
+
+    SELECT @tipo = tipo,@estabId = estabId FROM OPENJSON(@json) WITH(tipo INT , estabId INT)
+
+    SELECT @codEstab = codEstab FROM Sri.Establecimiento WHERE idEstablecimiento = @estabId
+
 
     IF @tipo = 1
         BEGIN
