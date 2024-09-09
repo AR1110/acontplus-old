@@ -334,8 +334,10 @@
         let gridOptionsSvc = $injector.get('gridOptionsService');
         let DOC_TYPE = $injector.get('DOC_TYPE');
         let nombreModalVenta = $injector.get('nombreModalVenta');
+        let infoAdicionalConfig = [];
+        let isSetInfoAdicionalConfig = true;
 
-        let { estabs, decimal, tarifasImpuesto, tarifas, config, vendedores, permisoVenta } = mainDataForm;
+        let { estabs, decimal, tarifasImpuesto, tarifas, config, vendedores, permisoVenta,infoAdicional } = mainDataForm;
 
         $scope.infoAdicionalDocumento = [];
 
@@ -346,6 +348,7 @@
         $scope.config = config;
         $scope.vendedores = vendedores;
         $scope.permisoComprobanteVenta = permisoVenta.comprobante;
+        infoAdicionalConfig = infoAdicional;
 
         $scope.clienteSearch = {};
         $scope.cliente = {};
@@ -511,7 +514,7 @@
 
                     $scope.data.idTarifa = $scope.tarifas.length > 0 ? $scope.tarifas.find(tarifa => (tarifa.predeterminada)).idTarifa : 0;
                     $scope.dataClone.idTarifa = $scope.data.idTarifa;
-
+                    setInfoAdicional();
                 }
 
                 $uibModalInstance.rendered.then(() => {
@@ -933,10 +936,44 @@
 
                 $scope.dataClone.codEstab = $scope.data.codEstab;
                 setWarehouseAndIVA();
+                setInfoAdicional();
                 $scope.$apply();
             } catch (error) {
                 console.trace(error)
             }
+        }
+
+        $scope.onChangePuntoEmision = function () {
+            if ($scope.data.idNotaCredito > 0) {
+                tS.toastr('warning', 'Punto de Emisión no puede ser editada');
+                $scope.data.idPuntoEmision = $scope.dataClone.idPuntoEmision;
+                return
+            }
+            setInfoAdicional();
+        }
+
+        function setInfoAdicional() {
+            if (isSetInfoAdicionalConfig) {
+                $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(
+                    (d) => !(d.idPuntoEmision > 0)
+                );
+
+                let dataInfoAdicional = infoAdicionalConfig.find(
+                    (i) => i.idPuntoEmision === $scope.data.idPuntoEmision
+                );
+                if (!dataInfoAdicional) return;
+                let infoAdicionPtoEmi = dataInfoAdicional.infoAdicional.map((i) => {
+                    return {
+                        ...i,
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    };
+                });
+                $scope.infoAdicionalDocumento = [
+                    ...infoAdicionPtoEmi,
+                    ...$scope.infoAdicionalDocumento,
+                ];
+            }
+            isSetInfoAdicionalConfig = true;
         }
 
         /**

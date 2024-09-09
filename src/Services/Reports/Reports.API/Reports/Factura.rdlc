@@ -234,6 +234,10 @@
           <DataField>valor</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="plazo">
+          <DataField>plazo</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>ComprobantesElectronicosVentas</rd:DataSetName>
@@ -1399,7 +1403,7 @@
             <Top>10.28325cm</Top>
             <Left>0.01032cm</Left>
             <Height>0.90896cm</Height>
-            <Width>20.10425cm</Width>
+            <Width>20.10423cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -1545,10 +1549,13 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>7.90085cm</Width>
+                  <Width>7.52517cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.92491cm</Width>
+                  <Width>1.51675cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.78384cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1577,6 +1584,42 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox163</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                              <Width>0.5pt</Width>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Plazo</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1669,6 +1712,41 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="plazo">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!plazo.Value</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>plazo</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                              <Width>0.5pt</Width>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="valor">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -1710,6 +1788,7 @@
               <TablixMembers>
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -1726,7 +1805,7 @@
             <Top>11.29804cm</Top>
             <Left>0.01032cm</Left>
             <Height>1cm</Height>
-            <Width>10.83608cm</Width>
+            <Width>10.82576cm</Width>
             <ZIndex>7</ZIndex>
             <Style>
               <Border>
