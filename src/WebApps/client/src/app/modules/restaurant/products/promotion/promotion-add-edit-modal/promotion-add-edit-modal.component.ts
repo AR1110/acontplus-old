@@ -83,17 +83,25 @@ export class PromotionAddEditModalComponent {
   }
 
   ngOnInit() {
-    this.daysOfWeek.set(this.params.days.map((item: any) => {
-      return {
-        idDia: item.idDia,
-        diaSemana: item.diaSemana,
-        descripcion: item.descripcion,
-        horaInicio: "00:00",
-        horaFin: "23:59",
-        checked: true,
-      }
+    console.log(this.params)
+    const {data, days}= this.params;
+    if(data.id>0){
+      //console.log()  
 
-    }))
+    }else{
+      this.daysOfWeek.set(days.map((item: any) => {
+        return {
+          idDia: item.idDia,
+          diaSemana: item.diaSemana,
+          descripcion: item.descripcion,
+          horaInicio: "00:00",
+          horaFin: "23:59",
+          checked: true,
+        }
+  
+      }))
+
+    }
   }
 
 

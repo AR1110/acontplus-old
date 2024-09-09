@@ -703,6 +703,10 @@
                         nombreComercial: item.nombreComercial,
                         codEstab: item.codEstab,
                         defaultEstab: item.defaultEstab,
+                        estab: item.estab,
+                        dirEstablecimiento: item.dirEstablecimiento,
+                        contribuyenteEspecial: item.contribuyenteEspecial,
+                        obligadoContabilidad: item.obligadoContabilidad,
                         puntosEmision: [{
                             codEstab: item.codEstab,
                             idPuntoEmision: item.idPuntoEmision,

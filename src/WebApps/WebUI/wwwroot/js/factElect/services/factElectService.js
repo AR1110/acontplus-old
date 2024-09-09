@@ -1527,6 +1527,7 @@
     function retencionAtsService($injector) {
         let url = "FactElect/RetencionAts/";
         let mS = $injector.get("mainService");
+        let fS = $injector.get("formulario");
         return {
             getDataForm,
         };
@@ -1558,7 +1559,16 @@
                             establecimientos,
                             puntosEmisionTemp,
                             infoAdicional,
-                        ] = tempArray;
+                        ] = tempArray; 
+                        console.log(tempArray)
+
+
+                        let dataToGroup = {
+                            estabs: establecimientos, //Establecimientos con puntos de emision  
+                        }
+                        let estabsGroup = fS.groupingEstab(dataToGroup);
+                
+
                         return {
                             tiposIdentificacion,
                             tiposSujRetenido,
@@ -1573,15 +1583,15 @@
                             impuestosRet,
                             porcentajesRetIva,
                             codigosRetencion,
-                            formasPago,
-                            establecimientos,
+                            formasPago, 
+                            estabsGroup,
                             puntosEmisionTemp,
-                            infoAdicional: infoAdicional.map((item) => {
-                                return {
-                                    ...item,
-                                    infoAdicional: JSON.parse(item.infoAdicional),
-                                };
-                            }),
+                            // infoAdicional: infoAdicional.map((item) => {
+                            //     return {
+                            //         ...item,
+                            //         infoAdicional: JSON.parse(item.infoAdicional),
+                            //     };
+                            // }),
                         };
                     }
                 });

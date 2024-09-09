@@ -9,13 +9,14 @@ modalRetencionAtsCtrl.$inject = [
     '$injector',
     '$cookies',
     '$window',
+    '$q',
     'FileSaver',
     'Blob',
     '$uibModalInstance',
     'params'
 ]
 
-function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, Blob, $uibModalInstance, params) {
+function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSaver, Blob, $uibModalInstance, params) {
     const { data } = params;
     const TEMPLATE_URL = '~/Pages/FactElect/RetencionAts/Shared/'
 
@@ -55,8 +56,9 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
     $scope.codigosRetencion = []
     $scope.formasPago = []
 
-    $scope.establecimientos = []
-    $scope.puntosEmisionTemp = []
+
+    $scope.estabs = [];
+    $scope.puntosEmision = [];
 
 
     function formatDateTimeZone(fecha) {
@@ -84,102 +86,165 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
     $scope.idDocumentoElectronico = idDocumentoElectronico;
     $scope.retencionesTemp = []
 
+    $scope.onChangeEstablecimiento = onChangeEstablecimiento;
+    $scope.docPreview = docPreview;
+    $scope.getPeriod = getPeriod;
+    $scope.showTipoSujetoRetenido = showTipoSujetoRetenido;
+    $scope.getProveedor = getProveedor;
 
-    $scope.initialLoad = () => {
-        try {
-            let token = $cookies.get('ck_token')
-            if (!token) {
-                let expireDate = new Date();
-                expireDate.setDate(expireDate.getDate() + 1);
-                $cookies.put('ck_token', uuid2.newguid(), { expires: expireDate });
-            }
-            //console.log($cookies.get('ck_token'))
-            showLoader();
-            retencionAtsSvc.getDataForm().then(
-                response => {
-                    $scope.tiposIdentificacion = response.tiposIdentificacion;
-                    $scope.tiposSujRetenido = response.tiposSujRetenido;
-                    $scope.documentos = response.documentos;
-                    $scope.sustentos = response.sustentos;
-                    $scope.tiposPago = response.tiposPago;
-                    $scope.tiposRegimenFE = response.tiposRegimenFE;
-                    $scope.paises = response.paises;
-                    $scope.paraisosFiscales = response.paraisosFiscales;
-                    $scope.impuestos = response.impuestos;
-                    $scope.tarifasImp = response.tarifasImpuesto;
-                    $scope.impuestosRet = response.impuestosRet;
-                    $scope.porcentajesRetIva = response.porcentajesRetIva;
-                    $scope.codigosRetencion = response.codigosRetencion;
-                    $scope.formasPago = response.formasPago;
-                    $scope.establecimientos = response.establecimientos;
-                    $scope.puntosEmisionTemp = response.puntosEmisionTemp;
-                    $scope.infoCompRet.fechaEmision = new Date()
-                    $scope.getPeriod(null, new Date())
-                    //Only if is new
-                    if (!idDocumentoElectronico) {
-                        $scope.infoCompRet.codEstab_Asig = $scope.establecimientos.find(item => item.predeterminado).codEstab_Asig
-                        $scope.onChangeEstablecimiento()
-                    }
-                    $scope.docSustento.pagoLocExt = '01'
+    function getMainDataForm() {
 
-                }).catch((error) => console.log(error))
-                .finally(() => hideLoader());
-        } catch (error) {
-            hideLoader();
-            console.log(error)
+        let token = $cookies.get('ck_token')
+        if (!token) {
+            let expireDate = new Date();
+            expireDate.setDate(expireDate.getDate() + 1);
+            $cookies.put('ck_token', uuid2.newguid(), { expires: expireDate });
+        }
+
+        if (idDocumentoElectronico > 0) {
+
+            let data = { tipo: 2, idDoc: idDocumentoElectronico }
+
+            return $q.all([
+                retencionAtsSvc.getDataForm(),
+                mS.getData('get', `${PATH_FACT_ELECT}${url}${JSON.stringify(data)}`, null, true)
+            ])
+        }
+
+        if (!(idDocumentoElectronico > 0)) {
+
+            return $q.all([
+                retencionAtsSvc.getDataForm(),
+
+            ])
+
         }
     }
-    //FOR EDIT
-    if (idDocumentoElectronico > 0) {
-        $scope.btnText = "Actualizar";
-        $scope.btnIcon = "pencil";
-        try {
-            showLoader()
-            let data = { tipo: 2, idDoc: idDocumentoElectronico }
-            mS.getData('get', `${PATH_FACT_ELECT}${url}${JSON.stringify(data)}`, null, true).then(
-                response => {
-                    let tempArray = JSON.parse(response.payload)
-                    $scope.initialLoad()
-                    setTimeout(() => {
-                        $scope.infoCompRet = tempArray[0][0]
-                        $scope.infoCompRet.fechaEmision = fS.formatDate(tempArray[0][0].fechaEmision)
-                        $scope.infoCompRet.codEstab_Asig = $scope.establecimientos.find(item => (item.codEstab == $scope.infoCompRet.codEstab)).codEstab_Asig
-                        $scope.onChangeEstablecimiento()
-                        $scope.subContribuyente = tempArray[0].subContribuyente
 
-                        $scope.tempTaxes = tempArray[2]
-                        $scope.retencionesTemp = tempArray[3]
-                        $scope.paymentsTemp = tempArray[4]
-                        let totalDocsSust = 0
-                        for (const d of tempArray[1]) {
-                            $scope.docSustento = d
-                            $scope.selectSutento($scope.docSustento.codDocSustento)
-                            $scope.addDocSustento(false)
-                            totalDocsSust++
-                        }
-                        if (tempArray[1].length == totalDocsSust) {
-                            $scope.tempTaxes = []
-                            $scope.retencionesTemp = []
-                            $scope.paymentsTemp = []
-                        }
-                        $scope.infoAdded = tempArray[5]
-                        hideLoader()
-                        $scope.$apply()
-                    }, 2000)
+    function setDataEstab() {
+        let dataEstab = $scope.estabs.find(e => e.codEstab === $scope.infoCompRet.codEstab);
 
-
-                }, error => {
-                    console.log(error)
-                }
-            )
-
-        } catch (error) {
-            console.log(error)
+        if (!dataEstab) {
+            console.error('not found data estab group')
+            return
         }
-    } else {
-        $scope.btnText = "Guardar";
-        $scope.btnIcon = "save";
-        $scope.initialLoad()
+        if (dataEstab) {
+            $scope.puntosEmision = dataEstab.puntosEmision;
+
+            let dataPuntoEmision = $scope.puntosEmision.find(p => p.defaultPtoEmi);
+            if (!dataPuntoEmision) {
+                console.log('not found data pto emision')
+                return
+            }
+            $scope.infoCompRet.ptoEmi = dataPuntoEmision.ptoEmi;
+
+            $scope.infoCompRet.codEstab = dataEstab.codEstab
+            $scope.infoCompRet.estab = dataEstab.estab
+            $scope.infoCompRet.dirEstablecimiento = dataEstab.dirEstablecimiento
+            $scope.infoCompRet.contribuyenteEspecial = dataEstab.contribuyenteEspecial
+            $scope.infoCompRet.obligadoContabilidad = dataEstab.obligadoContabilidad
+
+        }
+
+    }
+
+    initialLoad();
+    function initialLoad() {
+        showLoader();
+        getMainDataForm().then(response => { 
+            const [mainDataForm, dataEdit] = response;
+
+            const {
+                tiposIdentificacion,
+                tiposSujRetenido,
+                documentos,
+                sustentos,
+                tiposPago,
+                tiposRegimenFE,
+                paises,
+                paraisosFiscales,
+                impuestos,
+                tarifasImpuesto,
+                impuestosRet,
+                porcentajesRetIva,
+                codigosRetencion,
+                formasPago,
+                estabsGroup,
+            } = mainDataForm;
+
+            $scope.tiposIdentificacion = tiposIdentificacion;
+            $scope.tiposSujRetenido = tiposSujRetenido;
+            $scope.documentos = documentos;
+            $scope.sustentos = sustentos;
+            $scope.tiposPago = tiposPago;
+            $scope.tiposRegimenFE = tiposRegimenFE;
+            $scope.paises = paises;
+            $scope.paraisosFiscales = paraisosFiscales;
+            $scope.impuestos = impuestos;
+            $scope.tarifasImp = tarifasImpuesto;
+            $scope.impuestosRet = impuestosRet;
+            $scope.porcentajesRetIva = porcentajesRetIva;
+            $scope.codigosRetencion = codigosRetencion;
+            $scope.formasPago = formasPago;
+            $scope.estabs = estabsGroup;
+            $scope.infoCompRet.fechaEmision = new Date()
+            $scope.getPeriod(null, new Date())
+
+
+            if (!(idDocumentoElectronico > 0)) {
+                $scope.btnText = "Guardar";
+                $scope.btnIcon = "save";
+
+                let dataEstab = $scope.estabs.find(item => item.defaultEstab);
+                $scope.infoCompRet.codEstab = dataEstab.codEstab;
+                setDataEstab();
+
+            }
+            $scope.docSustento.pagoLocExt = '01';
+
+
+            if (dataEdit) {
+                $scope.btnText = "Actualizar";
+                $scope.btnIcon = "pencil";
+
+                let [
+                    infoCompRet,
+                    retAtsDocSustento,
+                    tempTaxes,
+                    retencionesTemp,
+                    paymentsTemp,
+                    retAtsInfoAdicional
+                ] = JSON.parse(dataEdit.payload);
+
+                let dataInfoCompRet = infoCompRet[0];
+
+                $scope.infoCompRet = dataInfoCompRet;
+
+                $scope.infoCompRet.fechaEmision = fS.formatDate(dataInfoCompRet.fechaEmision);
+
+                setDataEstab();
+
+                $scope.subContribuyente = dataInfoCompRet.subContribuyente
+
+                $scope.tempTaxes = tempTaxes;
+
+                $scope.retencionesTemp = retencionesTemp
+                $scope.paymentsTemp = paymentsTemp;
+                let totalDocsSust = 0
+                for (const d of retAtsDocSustento) {
+                    $scope.docSustento = d
+                    $scope.selectSutento($scope.docSustento.codDocSustento)
+                    $scope.addDocSustento(false)
+                    totalDocsSust++
+                }
+                if (retAtsDocSustento.length == totalDocsSust) {
+                    $scope.tempTaxes = []
+                    $scope.retencionesTemp = []
+                    $scope.paymentsTemp = []
+                }
+                $scope.infoAdded = retAtsInfoAdicional[5]
+            } 
+        }).finally(()=>hideLoader())
     }
 
 
@@ -187,7 +252,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
 
     /**Info Comp Retencion */
 
-    $scope.getPeriod = (item = null, aut = null) => {
+     function getPeriod(item = null, aut = null)  {
         let date = aut ? aut : item.infoCompRet.fechaEmision
         let month = ('0' + (date.getMonth() + 1)).slice(-2);
         let year = date.getFullYear();
@@ -202,7 +267,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
 
     $scope.isNotForeign = true
 
-    $scope.showTipoSujetoRetenido = (codDoc) => {
+    function showTipoSujetoRetenido(codDoc) {
         switch (codDoc) {
             case "06":
                 $scope.isNotForeign = false
@@ -225,18 +290,10 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
     }
 
 
-    $scope.onChangeEstablecimiento = () => {
+    function onChangeEstablecimiento() {
         $scope.puntosEmision = []
         $scope.infoCompRet.ptoEmi = ''
-        $scope.puntosEmision = $scope.puntosEmisionTemp.filter(item => (item.codEstab_Asig === $scope.infoCompRet.codEstab_Asig))
-        $scope.infoCompRet.ptoEmi = $scope.puntosEmision.find(item => item.predeterminado).ptoEmi
-        let temp = $scope.establecimientos.find(item => (item.codEstab_Asig === $scope.infoCompRet.codEstab_Asig))
-        $scope.infoCompRet.codEstab = temp.codEstab
-        $scope.infoCompRet.estab = temp.estab
-        $scope.infoCompRet.dirEstablecimiento = temp.dirEstablecimiento
-        $scope.infoCompRet.contribuyenteEspecial = temp.contribuyenteEspecial
-        $scope.infoCompRet.obligadoContabilidad = temp.obligadoContabilidad
-        $scope.infoCompRet.dirEstablecimiento = temp.dirEstablecimiento
+       setDataEstab()
     }
 
     /**End Info Comp Retencion */
@@ -277,7 +334,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
         }
     }
 
-    $scope.getProveedor = (item) => {
+     function getProveedor(item)  {
         try {
             if (item == 1 && !$scope.infoCompRet.razonSocialSujetoRetenido) {
                 tS.toastr('warning', 'Ingresa un texto de busqueda correcto')
@@ -324,7 +381,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
     function callDocViewOfSearchDoc(item) {
         $scope.docPreview(item);
     }
-    $scope.docPreview = async (item) => {
+    async function docPreview(item)  {
         try {
 
             if (!item.isAutomatic) {
@@ -1481,7 +1538,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
         } else {
             $scope.removeDocSust(item);
         }
-        
+
     }
 
     /**************************************************************************************** */

@@ -12,8 +12,8 @@
                     <div class="form-group">
                         <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
                         <select name="establecimiento" id="establecimiento" class="form-control border-select"
-                                ng-model="infoCompRet.codEstab_Asig" ng-change="onChangeEstablecimiento()">
-                            <option ng-value="item.codEstab_Asig" ng-repeat="item in establecimientos">
+                                ng-model="infoCompRet.codEstab" ng-change="onChangeEstablecimiento()">
+                            <option ng-value="item.codEstab" ng-repeat="item in estabs">
                                 {{item.nombreComercial}}
                             </option>
                         </select>

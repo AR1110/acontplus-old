@@ -33,7 +33,7 @@ export class PromotionListComponent {
   pagination = signal(new Pagination())
   days = signal<any[]>([])
 
-  openModalAddEdit() { 
+  openModalAddEdit<T>(data?: T) { 
     let modalRef = this.modalSvc.open(PromotionAddEditModalComponent,
       {
         size: 'lg',
@@ -42,7 +42,8 @@ export class PromotionListComponent {
       }
     )
     modalRef.componentInstance.params = {
-      days: this.days()
+      days: this.days(),
+      data: data && structuredClone(data) || {}
     }
   }
 
