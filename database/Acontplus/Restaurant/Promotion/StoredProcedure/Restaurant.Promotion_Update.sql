@@ -5,10 +5,8 @@ GO
 --- Description: Update 
 --- Date: 2023-08-17
 --- Restaurant.Promotion_Update, 139, 4, 
-IF OBJECT_ID('Restaurant.Promotion_Update') IS NOT NULL
-	DROP PROC Restaurant.Promotion_Update
-GO
-CREATE PROC Restaurant.Promotion_Update
+ 
+CREATE OR ALTER PROC Restaurant.Promotion_Update
 @userRoleId INT
 ,@id INT
 ,@json VARCHAR(MAX)
@@ -27,24 +25,27 @@ BEGIN
     DECLARE @promotionMenus NVARCHAR(MAX)
     DECLARE @dateNow        DATETIME    
     DECLARE @response       NVARCHAR(100)
+    DECLARE @estabId        INT 
 
     SET @userId     = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
     SET @dateNow    = (SELECT dbo.ufnGetDateEcuador())
     
-    SELECT  @codEstab           = codEstab
+    SELECT  @estabId           = estabId
             ,@description       = description
             ,@startDate         = startDate
             ,@endDate           = endDate
             ,@promotionDays     = promotionDays
             ,@promotionMenus    = promotionMenus
     FROM OPENJSON(@json)
-    WITH(codEstab       VARCHAR(50)      '$.codEstab'
+    WITH(estabId       INT 
         ,description    VARCHAR(100)     '$.description'
         ,startDate      DATETIME2        '$.startDate'
         ,endDate        DATETIME2        '$.endDate'
         ,promotionDays  NVARCHAR(MAX)    '$.promotionDays'
         ,promotionMenus NVARCHAR(MAX)    '$.promotionMenus' AS JSON
     )
+    
+    SELECT @codEstab = codEstab FROM Sri.Establecimiento WHERE idEstablecimiento = @estabId
 
     IF @s3ObjectUrl = '' OR @s3ObjectKey = ''
         BEGIN
@@ -70,10 +71,10 @@ BEGIN
             EXEC Restaurant.Promotion_Menu_Insert @userRoleId, @id, @promotionMenus, @response 
             
 		COMMIT TRAN
-        SELECT Common.ufnSpResponse('1', 'Actualizado exitosamente', NULL)
+        SELECT '1'code, 'Actualizado exitosamente'[message] 
 	END TRY
 	BEGIN CATCH
-		SELECT Common.ufnSpResponse('0', 'Error al registrar la Promoción', NULL)
+		SELECT '0'code, 'Error al actualizar la Promoción'[message] 
         
         IF (@@TRANCOUNT > 0) ROLLBACK TRAN
 
