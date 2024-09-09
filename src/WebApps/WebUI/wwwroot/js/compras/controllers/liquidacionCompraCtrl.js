@@ -970,6 +970,7 @@
                 $scope.data.idPuntoEmision = $scope.dataClone.idPuntoEmision;
                 return
             }
+            setInfoAdicional();
         }
 
         function getFechaVencimiento() {

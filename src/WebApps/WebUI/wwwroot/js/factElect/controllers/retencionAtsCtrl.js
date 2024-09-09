@@ -31,7 +31,11 @@
 
         mS.detectDevice()
         /**Initial Load */
+
         $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
+        let infoAdicionalConfig = [];
+        let isSetInfoAdicionalConfig = true;
+
 
         $scope.infoCompRet = {}
         $scope.infoCompRet.parteRel = 'NO'
@@ -130,6 +134,7 @@
                         $scope.establecimientos = response.establecimientos;
                         $scope.puntosEmisionTemp = response.puntosEmisionTemp;
                         $scope.infoCompRet.fechaEmision = new Date()
+                        infoAdicionalConfig = response.infoAdicional;
                         $scope.getPeriod(null, new Date())
                         //Only if is new
                         if (!idDocumentoElectronico) {
@@ -230,9 +235,6 @@
             $scope.infoCompRet.identificacionSujetoRetenido = ''
         }
 
-
-
-
         $scope.onChangeEstablecimiento = () => {
             $scope.puntosEmision = []
             $scope.infoCompRet.ptoEmi = ''
@@ -245,6 +247,32 @@
             $scope.infoCompRet.contribuyenteEspecial = temp.contribuyenteEspecial
             $scope.infoCompRet.obligadoContabilidad = temp.obligadoContabilidad
             $scope.infoCompRet.dirEstablecimiento = temp.dirEstablecimiento
+            setInfoAdicional();
+        }
+
+
+        function setInfoAdicional() {
+            if (isSetInfoAdicionalConfig) {
+                $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(
+                    (d) => !(d.idPuntoEmision > 0)
+                );
+
+                let dataInfoAdicional = infoAdicionalConfig.find(
+                    (i) => i.idPuntoEmision === $scope.data.idPuntoEmision
+                );
+                if (!dataInfoAdicional) return;
+                let infoAdicionPtoEmi = dataInfoAdicional.infoAdicional.map((i) => {
+                    return {
+                        ...i,
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    };
+                });
+                $scope.infoAdicionalDocumento = [
+                    ...infoAdicionPtoEmi,
+                    ...$scope.infoAdicionalDocumento,
+                ];
+            }
+            isSetInfoAdicionalConfig = true;
         }
 
         /**End Info Comp Retencion */
