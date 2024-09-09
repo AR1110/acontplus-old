@@ -67,21 +67,25 @@ BEGIN
 
 			SELECT idCodigoRetencion, codigo, concepto descripcion, porcentajeMin porcentaje, estado FROM Sri.CodigoRetencion  WITH (NOLOCK)
 			
-            SELECT * FROM Sri.FormaPago  WITH (NOLOCK)
- 
-			SELECT ea.codEstab_Asig, ea.predeterminado,
-			e.*
-			FROM Config.Estab_Asig ea WITH (NOLOCK) 
-			INNER JOIN Sri.Establecimiento e WITH (NOLOCK)  ON ea.codEstab = e.codEstab
-			WHERE idUsuarioRol = @idRol
+            SELECT * FROM Sri.FormaPago WITH (NOLOCK) WHERE estado = 1 
 
-			SELECT pa.idPtoEmi_asig, ea.codEstab_Asig, pe.idPuntoEmision, pe.ptoEmi, pa.predeterminado, pa.estado
-			FROM Config.PtoEmi_Asig pa  WITH (NOLOCK) 
-			INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ea.codEstab_Asig = pa.codEstab_Asig
-			INNER JOIN PuntoEmision pe On pa.idPuntoEmision = pe.idPuntoEmision
- 			WHERE ea.idUsuarioRol = @idRol
+			SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,estab + '-' + ptoEmi as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+                  ,estab
+                  ,dirEstablecimiento
+                  ,contribuyente
+                  ,obligadoContabilidad
+            FROM v_PtoEmi_Asign WITH(NOLOCK) 
+            WHERE idUsuarioRol = @idRol 
+            ORDER BY defaultEstab DESC
 
-            SELECT cd.idPuntoEmision,cd.infoAdicional 
+            SELECT cd.idPuntoEmision
+                  ,cd.infoAdicional 
             FROM dbo.ConfiguracionDocumento cd WITH (NOLOCK)
             INNER JOIN dbo.PuntoEmision     pe WITH (NOLOCK) ON pe.idPuntoEmision    = cd.idPuntoEmision
             INNER JOIN dbo.TipoDocumento    td WITH (NOLOCK) ON td.idTipoDocumento   = cd.idTipoDocumento 

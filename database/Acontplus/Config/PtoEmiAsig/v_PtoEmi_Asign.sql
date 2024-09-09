@@ -18,6 +18,9 @@ CREATE OR ALTER VIEW v_PtoEmi_Asign WITH SCHEMABINDING AS (
 	      ,es.estab
 	      ,es.estado estadoEstab
           ,es.idEstablecimiento
+          ,es.dirEstablecimiento
+          ,es.contribuyente
+          ,es.obligadoContabilidad
 	FROM Config.PtoEmi_Asig        pa WITH (NOLOCK)
 	INNER JOIN dbo.PuntoEmision        pt WITH (NOLOCK) ON pt.idPuntoEmision = pa.idPuntoEmision
     INNER JOIN Config.Estab_Asig   ea WITH (NOLOCK) ON ea.codEstab_Asig  = pa.codEstab_Asig

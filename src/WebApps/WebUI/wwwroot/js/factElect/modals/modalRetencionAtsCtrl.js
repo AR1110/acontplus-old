@@ -32,10 +32,12 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
     const PATH_FACT_ELECT = 'FactElect/'
     const url = 'RetencionAts/'
     let fS = $injector.get('formulario');
+    let infoAdicionalConfig = [];
+
 
     /**Initial Load */
     $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
-
+    $scope.infoAdded = []
     $scope.infoCompRet = {}
     $scope.infoCompRet.parteRel = 'NO'
     $scope.tiposIdentificacion = []
@@ -136,8 +138,8 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
                 console.log('not found data pto emision')
                 return
             }
+            $scope.infoCompRet.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
             $scope.infoCompRet.ptoEmi = dataPuntoEmision.ptoEmi;
-
             $scope.infoCompRet.codEstab = dataEstab.codEstab
             $scope.infoCompRet.estab = dataEstab.estab
             $scope.infoCompRet.dirEstablecimiento = dataEstab.dirEstablecimiento
@@ -145,13 +147,52 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
             $scope.infoCompRet.obligadoContabilidad = dataEstab.obligadoContabilidad
 
         }
+        setInfoAdicional();
 
+    }
+
+    function setInfoAdicional() {
+
+        $scope.infoAdded = $scope.infoAdded.filter(
+            (d) => !(d.idPuntoEmision > 0)
+        );
+
+        let dataInfoAdicional = infoAdicionalConfig.find(
+            (i) => i.idPuntoEmision === $scope.infoCompRet.idPuntoEmision
+        );
+        if (!dataInfoAdicional) return;
+        let infoAdicionPtoEmi = dataInfoAdicional.infoAdicional.map((i) => {
+            return {
+                ...i,
+                idPuntoEmision: $scope.infoCompRet.idPuntoEmision,
+            };
+        });
+        $scope.infoAdded = [
+            ...infoAdicionPtoEmi,
+            ...$scope.infoAdded,
+        ];
+    }
+
+    function onChangeEstablecimiento() {
+        $scope.puntosEmision = []
+        $scope.infoCompRet.ptoEmi = ''
+        setDataEstab()
+    }
+
+    $scope.onChangePtoEmi = function () {
+        let dataPuntoEmision = $scope.puntosEmision.find(p => p.idPuntoEmision == $scope.infoCompRet.idPuntoEmision);
+        if (!dataPuntoEmision) {
+            console.log('not found data pto emision')
+            return
+        }
+        $scope.infoCompRet.ptoEmi = dataPuntoEmision.ptoEmi;
+        setInfoAdicional();
     }
 
     initialLoad();
     function initialLoad() {
         showLoader();
-        getMainDataForm().then(response => { 
+        getMainDataForm().then(response => {
             const [mainDataForm, dataEdit] = response;
 
             const {
@@ -170,6 +211,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
                 codigosRetencion,
                 formasPago,
                 estabsGroup,
+                infoAdicional
             } = mainDataForm;
 
             $scope.tiposIdentificacion = tiposIdentificacion;
@@ -189,7 +231,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
             $scope.estabs = estabsGroup;
             $scope.infoCompRet.fechaEmision = new Date()
             $scope.getPeriod(null, new Date())
-
+            infoAdicionalConfig = infoAdicional;
 
             if (!(idDocumentoElectronico > 0)) {
                 $scope.btnText = "Guardar";
@@ -243,8 +285,8 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
                     $scope.paymentsTemp = []
                 }
                 $scope.infoAdded = retAtsInfoAdicional[5]
-            } 
-        }).finally(()=>hideLoader())
+            }
+        }).finally(() => hideLoader())
     }
 
 
@@ -252,7 +294,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
 
     /**Info Comp Retencion */
 
-     function getPeriod(item = null, aut = null)  {
+    function getPeriod(item = null, aut = null) {
         let date = aut ? aut : item.infoCompRet.fechaEmision
         let month = ('0' + (date.getMonth() + 1)).slice(-2);
         let year = date.getFullYear();
@@ -287,13 +329,6 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
     $scope.isVisibleInfoComprobante = true;
     $scope.onClickVisibleInfoComprobante = function () {
         $scope.isVisibleInfoComprobante = !$scope.isVisibleInfoComprobante;
-    }
-
-
-    function onChangeEstablecimiento() {
-        $scope.puntosEmision = []
-        $scope.infoCompRet.ptoEmi = ''
-       setDataEstab()
     }
 
     /**End Info Comp Retencion */
@@ -334,7 +369,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
         }
     }
 
-     function getProveedor(item)  {
+    function getProveedor(item) {
         try {
             if (item == 1 && !$scope.infoCompRet.razonSocialSujetoRetenido) {
                 tS.toastr('warning', 'Ingresa un texto de busqueda correcto')
@@ -381,7 +416,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
     function callDocViewOfSearchDoc(item) {
         $scope.docPreview(item);
     }
-    async function docPreview(item)  {
+    async function docPreview(item) {
         try {
 
             if (!item.isAutomatic) {
@@ -1547,7 +1582,6 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
     /**************************/
     /**Info Adicional */
     $scope.additionalInfo = {}
-    $scope.infoAdded = []
 
     $scope.additionalInfoValid = () => {
         if (!$scope.additionalInfo.nombre) {

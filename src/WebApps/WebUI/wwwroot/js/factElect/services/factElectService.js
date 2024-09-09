@@ -1557,10 +1557,8 @@
                             codigosRetencion,
                             formasPago,
                             establecimientos,
-                            puntosEmisionTemp,
                             infoAdicional,
                         ] = tempArray; 
-                        console.log(tempArray)
 
 
                         let dataToGroup = {
@@ -1585,13 +1583,12 @@
                             codigosRetencion,
                             formasPago, 
                             estabsGroup,
-                            puntosEmisionTemp,
-                            // infoAdicional: infoAdicional.map((item) => {
-                            //     return {
-                            //         ...item,
-                            //         infoAdicional: JSON.parse(item.infoAdicional),
-                            //     };
-                            // }),
+                            infoAdicional: infoAdicional.map((item) => {
+                                return {
+                                    ...item,
+                                    infoAdicional: JSON.parse(item.infoAdicional),
+                                };
+                            }),
                         };
                     }
                 });
