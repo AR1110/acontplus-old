@@ -2,17 +2,15 @@
 
 public class CuentaPorPagarController(ICuentaPorPagarService _svc) : BaseApiController
 {
-  
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            {"idUsuarioRol", User.GetUserRoleId() },
-            {"json",  SqlStringParam.Sanitize(json)}
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
 
-        return Ok(await _svc.GetAsync(parameters)); 
+        return Ok(await _svc.GetAsync(parameters));
     }
 
     [HttpPost("{json}")]
@@ -20,10 +18,9 @@ public class CuentaPorPagarController(ICuentaPorPagarService _svc) : BaseApiCont
     {
         var parametros = new Dictionary<string, object>
         {
-            {"idUsuarioRol", User.GetUserRoleId() },
-            {"json",  SqlStringParam.Sanitize(json)}
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
-        return Ok(await _svc.AddAsync(parametros)); 
+        return Ok(await _svc.AddAsync(parametros));
     }
 
     [HttpPut("{id}")]
@@ -31,8 +28,8 @@ public class CuentaPorPagarController(ICuentaPorPagarService _svc) : BaseApiCont
     {
         var parameters = new Dictionary<string, object>
         {
-            {"idUsuarioRol", User.GetUserRoleId()},
-           {"idCuentaPorPagar", id},
+            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idCuentaPorPagar", id },
             { "json", SqlStringParam.Sanitize(data.cuotas) }
         };
         return Ok(await _svc.UpdateAsync(parameters));

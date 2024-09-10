@@ -1,10 +1,8 @@
 ﻿global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
-global using Asp.Versioning;
 global using Autofac;
 global using Autofac.Extensions.DependencyInjection;
 global using Common.Core.Entities;
-global using Common.Core.Interfaces;
 global using Common.Core.Models;
 global using Common.Core.Utils;
 global using Common.Infrastructure.Data;
@@ -19,5 +17,4 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Design;
 global using Newtonsoft.Json.Serialization;
 global using Services.Common.Extensions;
-
 global using Services.Common.Middleware;

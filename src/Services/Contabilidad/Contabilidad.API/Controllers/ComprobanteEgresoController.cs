@@ -1,6 +1,4 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace Contabilidad.API.Controllers;
+﻿namespace Contabilidad.API.Controllers;
 
 public class ComprobanteEgresoController : BaseApiController
 {
@@ -17,7 +15,7 @@ public class ComprobanteEgresoController : BaseApiController
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
-        }; 
+        };
         return Ok(await _svc.GetAsync(parameters));
     }
 
@@ -28,7 +26,7 @@ public class ComprobanteEgresoController : BaseApiController
         {
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };  
+        };
         return Ok(await _svc.AddAsync(parameters));
     }
 
@@ -37,9 +35,7 @@ public class ComprobanteEgresoController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId",   User.GetUserRoleId() }, 
-            { "id", id }, 
-            { "observacion", observacion }
+            { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "observacion", observacion }
         };
         var response = await _svc.DeleteAsync(parameters);
         return Ok(response);
@@ -51,8 +47,8 @@ public class ComprobanteEgresoController : BaseApiController
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetUserRoleId() },
-            {"id", id },
-           { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
 
         var response = await _svc.UpdateAsync(parameters);
