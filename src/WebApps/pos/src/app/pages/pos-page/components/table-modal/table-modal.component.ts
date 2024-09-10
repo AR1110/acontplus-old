@@ -64,8 +64,7 @@ export class TableModalComponent {
       idEstablecimiento: this.mainStore.state().dataEstab.idEstablecimiento,
       codEstab: this.mainStore.state().dataEstab.codEstab
     }
-    this.configSvc.getDataForm(params).subscribe(response => {
-      console.log(response.roomTables)
+    this.configSvc.getDataForm(params).subscribe(response => { 
       this.roomTables.set(response.roomTables.map(item=>{
         return {
           ...item,

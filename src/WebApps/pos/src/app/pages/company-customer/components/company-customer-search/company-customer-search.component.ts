@@ -20,6 +20,7 @@ import { MatCardModule } from '@angular/material/card';
 import { ToasterService } from '@/services/toaster.service';
 import { DialogService } from '@/services/dialog.service';
 import { CompanyCustomerAddEditModalComponent } from '../company-customer-add-edit-modal/company-customer-add-edit-modal.component';
+import { SRI_IDENTIFICATION_CODE } from '@/enums/main.enum';
 
 export interface State {
   flag: string;
@@ -94,7 +95,7 @@ export class CompanyCustomerSearchComponent {
     );
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes["textName"]){
+    if (changes["textName"]) {
       this.control.setValue(this.textName())
 
     }
@@ -155,21 +156,26 @@ export class CompanyCustomerSearchComponent {
           if (inputValue.length === 13) {
             try {
               this.companyCustomerSvc.checkClientSRIByRUC(inputValue).subscribe(response => {
-                const { numeroRuc, razonSocial, direccion, telefono, email, error } = response;
-                if (!numeroRuc) {
+
+                const { numeroRuc, razonSocial, direccion, telefonos, correos, error, nombreComercial } = response;
+
+                if (error) {
                   this.tS.toastr({
                     type: 'warning',
                     message: error
                   })
                   return
                 }
+
                 let params = {
                   dataOfSri: true,
                   numeroRuc,
                   razonSocial,
-                  direccion: direccion as string,
-                  telefono: telefono as string,
-                  email: email as string
+                  nombreComercial: nombreComercial ?? razonSocial,
+                  direccion,
+                  telefonos,
+                  correos,
+                  codigoSri: SRI_IDENTIFICATION_CODE.RUC
                 }
                 this.dialogSvc.open(CompanyCustomerAddEditModalComponent, {
                   size: 'lg',
@@ -186,8 +192,8 @@ export class CompanyCustomerSearchComponent {
           if (inputValue.length === 10) {
             try {
               this.companyCustomerSvc.checkClientSRIByCedula(inputValue).subscribe(response => {
-                const { identificacion, nombreCompleto, direccion, telefono, email, error } = response;
-                if (!identificacion || !nombreCompleto) {
+                const { direccion, correos, error, nombreCompleto, telefonos } = response;
+                if (error) {
                   this.tS.toastr({
                     type: 'warning',
                     message: error
@@ -196,12 +202,18 @@ export class CompanyCustomerSearchComponent {
                 }
                 let params = {
                   dataOfSri: true,
-                  numeroRuc: identificacion,
+                  numeroRuc: inputValue,
                   razonSocial: nombreCompleto,
-                  direccion: direccion as string,
-                  telefono: telefono as string,
-                  email: email as string
+                  nombreComercial: nombreCompleto,
+                  direccion,
+                  telefonos,
+                  correos,
+                  codigoSri: SRI_IDENTIFICATION_CODE.CEDULA
                 }
+                this.dialogSvc.open(CompanyCustomerAddEditModalComponent, {
+                  size: 'lg',
+                  data: params
+                })
 
               })
             } catch (error) {

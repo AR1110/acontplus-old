@@ -63,7 +63,7 @@ export class CartHeaderComponent {
   onSelectCustomerCompany(event: any): void {
     console.log(event)
     const {
-      name: customerName, idCliente: customerCompanyId,
+      razonSocialComprador: customerName, idCliente: customerCompanyId,
       codigoSri: tipoIdentificacionSri
     } = event;
     this.updateOrder({ customerName, customerCompanyId, tipoIdentificacionSri });

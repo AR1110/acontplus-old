@@ -22,8 +22,7 @@ export class RestaurantConfigService {
         return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
             context: getNoLoader()
         }).pipe(
-            map(response => {
-                console.log(response)
+            map(response => { 
                 let result = {
                     estabs: [] as GroupedEstab[]
                 }
@@ -37,8 +36,7 @@ export class RestaurantConfigService {
                         isGroupPuntoEmision: true,
                     };
                     result.estabs = groupEstabUtil(obj)
-                }
-                console.log(result)
+                } 
                 return result;
             })
         )

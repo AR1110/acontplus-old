@@ -31,8 +31,7 @@ export class ItemService {
         if (response.code === "1") {
           let mainData = JSON.parse(response.payload as string)
           result.items = this.itemAdapter.getAllFrom(mainData.items)
-        }
-        console.log(result)
+        } 
         return result;
       })
     )
@@ -53,8 +52,7 @@ export class ItemService {
         if (response.code === "1") {
           let mainData = JSON.parse(response.payload as string)
           result.items = this.itemAdapter.getAllFrom(mainData.items)
-        }
-        console.log(result)
+        } 
         return result;
       })
     )

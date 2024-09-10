@@ -127,7 +127,8 @@ export class CompanyCustomerService {
             correos,
             telefonos,
             placas,
-            idFormaPagoSri: dataRepository.idFormaPagoSri
+            idFormaPagoSri: dataRepository.idFormaPagoSri,
+            codigoSri: dataRepository.codigoSri
           }
         }
 
@@ -209,23 +210,48 @@ export class CompanyCustomerService {
   }
 
 
-  checkClientSRIByRUC(Ruc: string) {
-    let path = `${PATHS_API.BILLING}${PATHS.CONSULTAS}GetRucSRI`;
-    return this.http.get<any>(`${path}`, {
-      params: {
-        Ruc
-      }
-    })
-  }
-  checkClientSRIByCedula(Ruc: string) {
-    let path = `${PATHS_API.BILLING}${PATHS.CONSULTAS}GetCedulaSri`;
-    return this.http.get<any>(`${path}`, {
-      params: {
-        Ruc
-      }
-    })
+  checkClientSRIByRUC(identificacion: string) {
+    const url = `${PATHS_API.BILLING}${PATHS.CONSULTAS}`
+
+    return this.http.get(`${url}GetRucSRI?Ruc=${identificacion.trim()}`).pipe(
+      map(response => {
+        const { email, telefono, ...rest } = response as any;
+
+        const correos = email ? email.split(STRING_SPLIT_REGEX) : [];
+        const telefonos = telefono ? telefono.split(STRING_SPLIT_REGEX) : [];
+
+        return {
+          ...rest,
+          correos,
+          telefonos
+        }
+
+
+      })
+    )
+
   }
 
+  checkClientSRIByCedula(identificacion: string) {
+    const url = `${PATHS_API.BILLING}${PATHS.CONSULTAS}`
+    return this.http.get(`${url}GetCedulaSri?Ruc=${identificacion.trim()}`).pipe(
+      map(response => {
+        const { email, telefono, ...rest } = response as any;
+
+        const correos = email ? email.split(STRING_SPLIT_REGEX) : [];
+        const telefonos = telefono ? telefono.split(STRING_SPLIT_REGEX) : [];
+
+        return {
+          ...rest,
+          correos,
+          telefonos
+        }
+
+      })
+    )
+
+  }
+  
   post<T>(data: T) {
     return this.http.post<ApiResponse>(this.url, { data }).pipe(map((response) => {
       if (response.code === "1") {

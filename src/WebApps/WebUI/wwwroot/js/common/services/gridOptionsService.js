@@ -296,6 +296,9 @@
                 }, { totalIva: 0 });
             }
 
+
+ 
+
             function construirHtmlTotales(totales) {
                 return {
                     htmlSubtotalImpuesto: `
@@ -339,16 +342,21 @@
                 }
 
                 if (tarifa.tarifa > 0) {
-                    const dataTotalIva = calcularTotalIvaPorTarifa(tarifa.codigoPorcentaje, tarifa.tarifa);
 
-                    totalizadores.sumTotalIva = pricingUtils.decPlus(totalizadores.sumTotalIva , dataTotalIva.totalIva, pricingUtils.max_dos)
-                    if (dataTotalIva.totalIva > 0) {
+                    let valorImpuesto = pricingUtils.calculateTaxValue(dataTotalNetoIva.totalNetoIva, tarifa.tarifa);
+
+                  //  const dataTotalIva = calcularTotalIvaPorTarifa(tarifa.codigoPorcentaje, tarifa.tarifa);
+
+                    //totalizadores.sumTotalIva = pricingUtils.decPlus(totalizadores.sumTotalIva, dataTotalIva.totalIva, pricingUtils.max_dos)
+                    totalizadores.sumTotalIva = pricingUtils.decPlus(totalizadores.sumTotalIva, valorImpuesto, pricingUtils.max_dos);
+
+                    if (valorImpuesto > 0) {
                         htmlIvaTotal += `
                     <tr>
                         <td class="left">
                             <span class="text-dark">${tarifa.descripcion}</span>
                         </td>
-                        <td class="right">$${fS.roundNumber(dataTotalIva.totalIva, pricingUtils.max_dos)}</td>
+                        <td class="right">$${fS.roundNumber(valorImpuesto, pricingUtils.max_dos)}</td>
                     </tr>`;
                     }
                 }
