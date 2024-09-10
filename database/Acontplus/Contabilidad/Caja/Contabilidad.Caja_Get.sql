@@ -47,7 +47,7 @@ BEGIN
                 ,pageIndex     INT
 			)
 
-	        SELECT @verOtrasCajas = ISNULL(JSON_VALUE(jsonPermission, '$.verOtrasCajas.view'), 0) FROM Config.UserPermission WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId AND codModule = 'C'
+            SELECT TOP 1 @verOtrasCajas = verOtrasCajas FROM Config.v_User_Permission_CashAccounting where idUsuarioRol = @userRoleId
 
             SET @params = '@idEntidad INT
                           ,@idUsuario INT

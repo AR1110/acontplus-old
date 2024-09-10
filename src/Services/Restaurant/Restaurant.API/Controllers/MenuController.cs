@@ -3,48 +3,22 @@ using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
 using Services.Common.Extensions;
 
-namespace Restaurant.API.Controllers
-{
-    public class MenuController : BaseApiController
-    {
-        private readonly IMenuService _menuService;
-        public MenuController(IMenuService menuService)
-        {
-            _menuService = menuService;
-        }
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object> {
-                    {"userRoleId", User.GetUserRoleId() },
-                    {"json", json }
-                };
-                var response = await _menuService.GetAsync(parameters);
-                if (response == null) { return NoContent(); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Error on get: " + ex.Message);
-            }
-        }
+namespace Restaurant.API.Controllers;
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
-        {
-            try
-            {
-                data.UserRoleId = User.GetUserRoleId();
-                var response = await _menuService.PutAsync(id, data);
-                if (response == null) { return NoContent(); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+public class MenuController(IMenuService menuService) : BaseApiController
+{
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters =
+            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+        return Ok(await menuService.GetAsync(parameters));
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    {
+        data.UserRoleId = User.GetUserRoleId();
+        return Ok(await menuService.PutAsync(id, data));
     }
 }

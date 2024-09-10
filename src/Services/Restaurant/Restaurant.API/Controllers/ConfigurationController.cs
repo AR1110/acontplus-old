@@ -1,39 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.API.Interfaces;
+using Restaurant.API.Services;
 using Services.Common.Extensions;
 
-namespace Restaurant.API.Controllers
+namespace Restaurant.API.Controllers;
+
+public class ConfigurationController(IConfigurationService configurationService) : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ConfigurationController : ControllerBase
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IConfigurationService _configurationService;
-
-        public ConfigurationController(IConfigurationService configurationService)
-        {
-            _configurationService = configurationService;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", json}
-                };
-
-                var response = await _configurationService.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Error on getting items: " + ex.Message);
-            }
-        }
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+        return Ok(await configurationService.GetAsync(parameters));
     }
 }

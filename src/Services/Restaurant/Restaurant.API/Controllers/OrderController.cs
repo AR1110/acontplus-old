@@ -1,126 +1,49 @@
 ﻿using Common.Core.Models;
-using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
 using Services.Common.Extensions;
 
+namespace Restaurant.API.Controllers;
 
-namespace Restaurant.API.Controllers
+public class OrderController(IOrderService orderService) : BaseApiController
 {
-    public class OrderController : BaseApiController
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IOrderService _orderService;
-        private readonly ICustomLogger _log;
-        public OrderController(IOrderService orderService, ICustomLogger log)
-        {
-            _orderService = orderService;
-            _log = log;
-        }
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                    { "userRoleId", User.GetUserRoleId()},
-                    { "json", json}
-                };
-                var orders = await _orderService.GetAsync(parameters);
-                if (orders == null)
-                {
-                    _log.LogActivity("No se encontro datos");
-                    return NoContent();
-                }
-                return Ok(orders);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Get: \n" + ex.ToString());
-                return BadRequest("Error on get");
-            }
-        }
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ApiRequest data)
-        {
-            try
-            {
-                //var parameters = new Dictionary<string, object> {
-                //    { "userRoleId", User.GetUserRoleId() },
-                //    { "json", JsonConvert.SerializeObject(data) }
-                //};
-                data.UserRoleId = User.GetUserRoleId();
-                var response = await _orderService.AddAsync(data);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on save: " + ex.ToString());
-                return BadRequest("Error On Save");
-            }
-        }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
-        {
-            try
-            {
-                data.UserRoleId = User.GetUserRoleId();
-                var response = await _orderService.PutAsync(id, data);
-                if (response == null | string.IsNullOrEmpty(response))
-                {
-                    _log.LogActivity("Error on update");
-                    return BadRequest("No se pudo actualizar");
-                }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on put catch " + ex.ToString());
-                return BadRequest("Error On Put");
-            }
-        }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                if (id == 0) { return BadRequest("Id Incorrecto"); }
-                var response = await _orderService.DeleteAsync(id);
-                if (!response)
-                {
-                    _log.LogActivity("Error on delete");
-                    return BadRequest("No se pudo anular la orden");
-                }
-                return Ok(new { code = "1", message = "Anulada Exitosamente" });
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on delete order " + ex.ToString());
-                return BadRequest("Error on delete");
-            }
-        }
-        [HttpGet("Print/{json}")]
-        public async Task<IActionResult> Print(string json)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                    { "userRoleId", User.GetUserRoleId()},
-                    { "json", json}
-                };
-                var prints = await _orderService.PrintAsync(parameters);
-                if (prints == null | string.IsNullOrEmpty(prints))
-                {
-                    _log.LogActivity("No se encontró datos");
-                    return NoContent();
-                }
-                return Ok(prints);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on print {ex.Message}");
-                return BadRequest("Error on print " + ex.Message);
-            }
-        }
+        var parameters =
+            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+
+        return Ok(await orderService.GetAsync(parameters));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    {
+        data.UserRoleId = User.GetUserRoleId();
+        return Ok(await orderService.AddAsync(data));
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    {
+        data.UserRoleId = User.GetUserRoleId();
+
+        return Ok(await orderService.PutAsync(id, data));
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        if (id == 0) { return BadRequest("Id Incorrecto"); }
+
+        return Ok(await orderService.DeleteAsync(User.GetUserId(), id));
+    }
+
+    [HttpGet("Print/{json}")]
+    public async Task<IActionResult> Print(string json)
+    {
+        var parameters =
+            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+        return Ok(await orderService.PrintAsync(parameters));
     }
 }

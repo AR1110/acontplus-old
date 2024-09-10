@@ -1,18 +1,17 @@
-﻿using Reports.API.Interfaces;
-
-namespace Reports.API.Services
+﻿namespace Reports.API.Services;
+public interface IReportService
 {
-    public class ReportService(IAdoSqlServer repository) : IReportService
+    Task<DataSet> GetParamsAsync(Dictionary<string, object> parameters, string connectionString);
+    Task<DataSet> GetDataAsync(string spname, Dictionary<string, object> parameters, string connectionString, bool legacy = true);
+}
+public class ReportService(IAdoSqlServer adoSqlServer) : IReportService
+{
+    public async Task<DataSet> GetParamsAsync(Dictionary<string, object> parameters, string connectionString)
     {
-        private readonly IAdoSqlServer _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-
-        public async Task<DataSet> GetParamsAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.GetDataSetAsync("Reporte.Report_Get", parameters);
-        }
-        public async Task<DataSet> GetDataAsync(string spname, Dictionary<string, object> parameters, bool legacy)
-        {
-            return await _repository.GetDataSetAsync(spname, parameters, legacy, false);
-        }
+        return await adoSqlServer.GetDataSetAsync("Reporte.Report_Get", parameters);
+    }
+    public async Task<DataSet> GetDataAsync(string spname, Dictionary<string, object> parameters, string connectionString, bool legacy)
+    {
+        return await adoSqlServer.GetDataSetAsync(spname, parameters, legacy, false);
     }
 }

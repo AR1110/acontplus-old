@@ -71,12 +71,13 @@ BEGIN
                                        SELECT @company = IIF(e.nombreComercial IS NULL, e.razonSocial, e.nombreComercial)
                                     ,@role = r.[Name]
                                     ,@username = u.nombreUsuario
-                                    ,@requesting_user = UPPER(u.nombreCompleto)
+                                    ,@requesting_user = UPPER(c.BusinessName)
                                     ,@userId = ur.idUsuario
                                 FROM Acontplus.App.UsuarioRol ur 
                                 INNER JOIN Acontplus.dbo.Entidad e ON ur.idEntidad = e.idEntidad
                                 INNER JOIN AcontplusAdmin.Seguridad.[Role] r ON ur.RoleId = r.Id
                                 INNER JOIN Acontplus.dbo.Usuario u ON ur.idUsuario = u.idUsuario
+                                LEFT JOIN Acontplus.Customer.Customer c ON u.customerId = c.Id
                                 WHERE ur.idUsuarioRol = @userRoleId
 
                                     INSERT INTO Seguridad.AccessAuthorization(SenderId, ReceiverId, Code, Uuid)
@@ -99,7 +100,7 @@ BEGIN
 							        SELECT  
                                         (SELECT body = (SELECT @requesting_user requesting_user
                                                     ,@auth_code auth_code
-                                                    ,approving_user = u.nombreCompleto 
+                                                    ,approving_user = cc.businessName
                                                     ,@username username
                                                     ,@company company
                                                     ,@role AS 'role'
@@ -122,6 +123,7 @@ BEGIN
                                              INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
                                              INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.Uuid = c.Uuid 
                                             INNER JOIN AcontplusAdmin.Seguridad.[Role] r ON ur.RoleId = r.Id
+                                            LEFT JOIN Acontplus.Customer.Customer cc On u.customerId = c.Id
                                          WHERE  r.Code = 'ADM'
                                             AND c.Id IN (SELECT cc.Id FROM Acontplus.App.UsuarioRol urr WITH (NOLOCK) 
                                                                     INNER JOIN Acontplus.dbo.Entidad ee WITH (NOLOCK) ON urr.idEntidad = ee.idEntidad

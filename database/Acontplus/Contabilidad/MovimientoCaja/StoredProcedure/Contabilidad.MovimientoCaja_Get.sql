@@ -37,14 +37,16 @@ BEGIN
         BEGIN 
             
             SET @tableNames = 'movimientos'
+            DECLARE @verOtrasCajas BIT 
 
+			SELECT @verOtrasCajas = (SELECT TOP 1 verOtrasCajas FROM Config.v_User_Permission_CashAccounting WHERE idUsuarioRol = @userRoleId)
             SET @params = '@idEntidad   INT
 						  ,@IDCard      VARCHAR(50) 
 						  ,@fechaInicio DATETIME2
 						  ,@fechaFin    DATETIME2
 						  ,@codEstado   VARCHAR(20)
                           ,@pageIndex   INT
-                          ,@pageSize    INT'
+                           ,@idUsuario   INT'
 
             SET @sql = 'SELECT mc.idMovimientoCaja
 						      ,td.idTipoDocumento									
@@ -94,6 +96,11 @@ BEGIN
                  ,pageIndex       INT
             )
 
+             IF @verOtrasCajas = 0
+                BEGIN
+                    SET @sql = @sql + ' AND mc.idUsuarioRegister = @idUsuario '
+                END 
+	
 	
 		    IF @customerId > 0 
 			    BEGIN
@@ -124,6 +131,7 @@ BEGIN
 				              ,@codEstado   = @codEstado
                               ,@pageIndex   = @pageIndex
                               ,@pageSize    = @pageSize
+                               ,@idUsuario   = @idUsuario
 
 	
             RETURN 
@@ -135,7 +143,7 @@ BEGIN
             
             SET @tableNames = 'establecimiento,caja,tipoDocumento,entidadFinanciera,subEntidadFinanciera'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
+            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
 
             SELECT ac.idCaja
                   ,ca.descripcion as caja 
@@ -160,7 +168,7 @@ BEGIN
             
             SET @tableNames = 'establecimiento'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
+            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
 
             RETURN
         END

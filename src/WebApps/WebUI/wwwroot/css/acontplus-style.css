@@ -86,26 +86,27 @@ table.md-table tr td.md-cell {
 #table-kardex.tabulator {
     font-size: 75%;
     padding: 5px;
-} 
+}
+
 #tabla-kardex.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
     font-size: 400px;
     text-align: center;
 }
 
 .tabulator {
-font-size: 13px;
-padding: 6px;
+    font-size: 13px;
+    padding: 6px;
 }
 
-.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
-    color: rgba(0, 0, 0, 0.54);
-    padding: 6px;
-    font-weight: bold;
-    /* font-size: 400; */
-    text-align: center;
-    white-space: nowrap;
-}
- 
+    .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
+        color: rgba(0, 0, 0, 0.54);
+        padding: 6px;
+        font-weight: bold;
+        /* font-size: 400; */
+        text-align: center;
+        white-space: nowrap;
+    }
+
 
 /*botones personalizados */
 .btn-primary-1 {
@@ -914,4 +915,12 @@ input.card {
 sticky header table
 */
 
- 
+.btn-playstore {
+    background-color: #3ddc84; /* Google Play Store green */
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}

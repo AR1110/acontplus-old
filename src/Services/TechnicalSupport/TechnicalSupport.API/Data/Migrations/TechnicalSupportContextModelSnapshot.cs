@@ -17,7 +17,7 @@ namespace TechnicalSupport.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -51,6 +51,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -101,6 +104,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(300)
@@ -143,6 +149,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ModeloId")
                         .HasColumnType("int");
@@ -193,6 +202,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<string>("SerialNumber")
                         .IsRequired()
                         .HasMaxLength(300)
@@ -241,6 +253,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Specs")
                         .IsRequired()
@@ -291,6 +306,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -356,6 +374,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool?>("Finished")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<string>("Obs")
@@ -443,6 +464,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Obs")
                         .HasMaxLength(500)
                         .IsUnicode(false)
@@ -492,6 +516,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -550,6 +577,9 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<int>("FeeId")
                         .HasColumnType("int");
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<int>("MedidaId")
                         .HasColumnType("int");
@@ -623,6 +653,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -677,6 +710,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -722,6 +758,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");

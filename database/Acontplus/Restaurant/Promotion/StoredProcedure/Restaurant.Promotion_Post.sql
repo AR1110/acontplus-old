@@ -27,25 +27,29 @@ BEGIN
     DECLARE @dateNow        DATETIME 
     DECLARE @id             INT
     DECLARE @response       NVARCHAR(100)
+    DECLARE @estabId        INT 
 
     SET @userId     = (SELECT idUsuario FROM V_usuario WHERE idUsuarioRol = @userRoleId)
     SET @dateNow    = (SELECT dbo.ufnGetDateEcuador())
     
-    SELECT  @codEstab           = codEstab
+    
+    SELECT  @estabId            = estabId
             ,@description       = description
             ,@startDate         = startDate
             ,@endDate           = endDate
             ,@promotionDays     = promotionDays
             ,@promotionMenus    = promotionMenus
     FROM OPENJSON(@json)
-    WITH(codEstab      VARCHAR(50)      '$.codEstab'
+    WITH(estabId      VARCHAR(50)      '$.estabId'
         ,description   VARCHAR(100)     '$.description'
         ,startDate     DATETIME2        '$.startDate'
         ,endDate       DATETIME2        '$.endDate'
         ,promotionDays NVARCHAR(MAX)    '$.promotionDays'
         ,promotionMenus NVARCHAR(MAX)   '$.promotionMenus' AS JSON
     )
-        
+      
+    SELECT @codEstab = codEstab FROM Sri.Establecimiento WHERE idEstablecimiento = @estabId
+     
 	BEGIN TRY
 		BEGIN TRAN
             INSERT INTO Restaurant.Promotion([CodEstab], [Description], [StartDate], [EndDate], [CreatedAt]
@@ -62,10 +66,10 @@ BEGIN
             
 
 		COMMIT TRAN
-        SELECT Common.ufnSpResponse('1', 'Registrado exitosamente', NULL)
+        SELECT '1'code, 'Registrado exitosamente'[message]
 	END TRY
 	BEGIN CATCH
-		SELECT Common.ufnSpResponse('0', 'Error al registrar la Promoción', NULL)
+		SELECT '0'code, 'Error al registrar la Promoción'[message]
         
         IF (@@TRANCOUNT > 0) ROLLBACK TRAN
 

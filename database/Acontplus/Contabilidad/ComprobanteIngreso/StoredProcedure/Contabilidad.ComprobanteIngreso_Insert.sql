@@ -53,7 +53,7 @@ BEGIN
 
 	DECLARE @history AS TABLE (
 		 idCuentaPorCobrar INT NOT NULL
-        ,secuencial INT NOT NULL
+        ,secuencial INT NOT NULL 
 		,saldo NUMERIC(18,5) NOT NULL
         ,abono NUMERIC(18,5) NOT NULL
         ,mora NUMERIC(15,5) NOT NULL

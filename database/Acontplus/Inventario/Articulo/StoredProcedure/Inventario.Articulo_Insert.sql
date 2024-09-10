@@ -326,9 +326,9 @@ BEGIN
 			IF(@siglaFamilia IN ('RES', 'POR'))
 				BEGIN
 					INSERT INTO Restaurant.Item
-					(ProductId, ProductionAreaId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
+					(ProductId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
 					,[Enabled], Deleted, UserId)
-					VALUES(@idArticulo, NULL, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
+					VALUES(@idArticulo, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
 				END
 
 			IF(@siglaFamilia = 'ING')

@@ -166,7 +166,8 @@ BEGIN
 								  ,codEstado        = ep.codigo
 			                FROM Contabilidad.CuotaPorCobrar  cx WITH (NOLOCK)
 							INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
-							WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1
+							WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1 
+                            ORDER BY cx.nroCuota ASC
 						   FOR JSON PATH)
 
 		COMMIT TRAN 

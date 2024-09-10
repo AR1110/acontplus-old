@@ -1,15 +1,19 @@
-import { Route } from "@angular/router";
-import { TablePageComponent } from "./pages/table-page/table-page.component";
-import { ItemReportComponent } from "./reports/item-report/item-report.component";
-
+import { Route } from '@angular/router';
+import { ItemReportComponent } from './reports/item-report/item-report.component';
+import { InfrastructurePageComponent } from '@restaurant/pages/infrastructure-page/infrastructure-page.component';
+import { ProductsPageComponent } from '@restaurant/pages/products-page/products-page.component';
+import { restaurantConfigDataResolver } from './resolvers/restaurant-config.resolver';
 
 export const routes: Route[] = [
   {
-    path: 'table-page',
-    title: 'Mesas',
-    component: TablePageComponent,
+    path: 'products-page',
+    title: 'Productos',
+    component: ProductsPageComponent,
     data: {
-      breadcrumb: 'Gestión de Pisos, Salas y Mesas'
+      breadcrumb: 'Productos',
+    },
+    resolve: {
+      configData: restaurantConfigDataResolver
     }
   },
   {
@@ -17,7 +21,15 @@ export const routes: Route[] = [
     title: 'Reporte Items',
     component: ItemReportComponent,
     data: {
-      breadcrumb: 'Reporte Item-Ingrediente'
-    }
-  }
-]
+      breadcrumb: 'Reporte Item-Ingrediente',
+    },
+  },
+  {
+    path: 'infrastructure-page',
+    title: 'Restaurant Infrastructure',
+    component: InfrastructurePageComponent,
+    data: {
+      breadcrumb: 'Configuración del Restaurante',
+    },
+  },
+];

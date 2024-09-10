@@ -6,6 +6,13 @@ SELECT * FROM Contabilidad.CuentaPorCobrar where idCuentaPorCobrar = 135953
 
 select * from Contabilidad.CuotaPorCobrar where idCuentaPorCobrar = 135953
 
+--ALTER TABLE ComprobanteIngreso ADD movimiento BIT
+
+--UPDATE ComprobanteIngreso SET movimiento = 0
+
+--ALTER TABLE ComprobanteIngreso ALTER COLUMN movimiento BIT NOT NULL
+
+--ALTER TABLE ComprobanteIngreso ADD DEFAULT 0 FOR movimiento
 
 --UPDATE Contabilidad.CuentaPorCobrar set mora = 0 ,abono =  1.01 where idCuentaPorCobrar = 135953
 --UPDATE Contabilidad.CuotaPorCobrar set mora = 0 ,abono =  1.01 where idCuentaPorCobrar = 135953

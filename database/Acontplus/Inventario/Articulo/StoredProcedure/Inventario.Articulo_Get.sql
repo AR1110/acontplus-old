@@ -638,7 +638,7 @@ BEGIN
     --> Filters
     IF @tipo = 11
         BEGIN
-            SELECT idSubFamilia,descripcion FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+            SELECT idSubFamilia,descripcion FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY descripcion ASC
 
 			SELECT idMedida,descripcion,codigo FROM Medida WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
 
@@ -665,6 +665,7 @@ BEGIN
            FROM dbo.SubFamilia    sf WITH (NOLOCK) 
            LEFT JOIN dbo.Familia fa WITH (NOLOCK) ON fa.idFamilia = sf.idFamilia
            WHERE idEntidad = @idEntidad
+           ORDER BY sf.descripcion ASC
 
            SELECT idMarca, descripcion FROM dbo.Marca WHERE idEntidad = @idEntidad
 
@@ -672,7 +673,7 @@ BEGIN
 
            SELECT idTarifa, descripcion, predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad
 
-           SELECT idMarca,descripcion FROM dbo.Marca WHERE idEntidad = @idEntidad AND estado = 1
+           SELECT idMarca,descripcion FROM dbo.Marca WHERE idEntidad = @idEntidad AND estado = 1 
            RETURN 
         END 
 

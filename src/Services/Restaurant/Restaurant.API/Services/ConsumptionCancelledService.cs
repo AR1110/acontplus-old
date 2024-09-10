@@ -1,34 +1,33 @@
-﻿using Common.Core.Interfaces;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services
 {
-    public class ConsumptionCancelledService : IConsumptionCancelledService
+    public class ConsumptionCancelledService(IAdoRepository adoRepository) : IConsumptionCancelledService
     {
-        private readonly IAdoRepository _repository;
-        public ConsumptionCancelledService(IAdoRepository repository)
+        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            _repository = repository;
+            var dt = await adoRepository.GetDataTableAsync("Restaurant.ConsumoAnuladoTpv_Get", parameters);
+            return DataValidation.DataTableIsNull(dt)
+                ? new ApiResponse { Code = "0", Message = "Data not found!" }
+                : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
         }
-        public async Task<string> GetAsync(Dictionary<string, object> parameters)
+
+        public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
-            var dt = await _repository.GetDataTableAsync("Restaurant.ConsumoAnuladoTpv_Get", parameters);
-            if (dt.Rows.Count == 0) { return null; }
-            return DataConverters.DataTableToJson(dt);
+            return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.ConsumoAnuladoTpv_Insert", parameters);
         }
-        public async Task<string> AddAsync(Dictionary<string, object> parameters)
+
+        public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ConsumoAnuladoTpv_Insert", parameters);
+            return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.ConsumoAnuladoTpv_Update", parameters);
         }
-        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+
+        public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ConsumoAnuladoTpv_Update", parameters);
-        }
-        public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ConsumoAnuladoTpv_Delete", parameters);
+            return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.ConsumoAnuladoTpv_Delete", parameters);
         }
     }
 }

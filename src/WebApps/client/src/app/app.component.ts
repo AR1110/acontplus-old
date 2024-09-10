@@ -95,10 +95,10 @@ export class AppComponent implements OnInit {
 
       if (token) {
         //temporalmente
-        const themeClass = this.themeOptions.find((x) => x.name === 'cyan')
+        const themeClass = this.themeOptions.find((x) => x.name === 'azure')
           ?.light.class;
         if (themeClass) {
-          this.changeTheme(themeClass);
+          //this.changeTheme(themeClass);
         } else {
           console.error('Theme not found!');
         }

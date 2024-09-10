@@ -1,17 +1,11 @@
-export class CommonService {
+class CommonService {
     static $inject = [
         "$rootScope",
         "$http",
         "mainService",
         "FileSaver",
         "formulario",
-        "modalService",
-        "nombreModal",
-        "nombreModalFactElect",
-        "nombreModalVenta",
-        "nombreModalInventario",
-        "nombreModalCompra",
-        "nombreModalLogistica",
+        "modalService",  
         "articuloService",
         "empleadoService",
         "ventaService",
@@ -23,13 +17,7 @@ export class CommonService {
         mS,
         FileSaver,
         form,
-        _modalSvc,
-        _nombreModalConst,
-        nombreModalFactElect,
-        nombreModalVenta,
-        nombreModalInventario,
-        nombreModalCompra,
-        nombreModalLogistica,
+        _modalSvc,    
         articuloSvc,
         empleadoSvc,
         ventaSvc,
@@ -41,13 +29,7 @@ export class CommonService {
         this.FileSaver = FileSaver;
         this.form = form;
 
-        this._modalSvc = _modalSvc;
-        this._nombreModalConst = _nombreModalConst;
-        this.nombreModalFactElect = nombreModalFactElect;
-        this.nombreModalVenta = nombreModalVenta;
-        this.nombreModalInventario = nombreModalInventario;
-        this.nombreModalCompra = nombreModalCompra;
-        this.nombreModalLogistica = nombreModalLogistica;
+        this._modalSvc = _modalSvc;    
         this.articuloSvc = articuloSvc;
         this.empleadoSvc = empleadoSvc;
         this.ventaSvc = ventaSvc;
@@ -175,7 +157,9 @@ export class CommonService {
             if (response.code === "0") {
                 throw response
             }
-            //return JSON.parse(response.payload) || [];
+            if(typeof response.payload==='string'){
+                return JSON.parse(response.payload) || [];
+            }
             return response || []
         })
     }
@@ -208,12 +192,28 @@ export class CommonService {
     /***
      *  json = {busqueda, idRol}
      */
-    usuarioSearch(json) {
-        return this.mS.getData('get', 'Config/Usuario/Search?json=' + JSON.stringify(json), null, true).then(response => {
+    usuarioSearch(obj) {
+        console.log(obj)
+        let json = JSON.stringify({
+            tipo: 3,
+            textSearch: obj.busqueda
+        })
+        return this.mS.getData('get', `Config/UserCustomer/?json=${json}`, null, true).then(response => {
             if (response.code === "0") {
                 return [];
             }
-            return JSON.parse(response.payload)
+            let customerUsers = [];
+            if(response && typeof response==='object'){
+                customerUsers = response.userCustomers.map((user) => {
+                    return {
+                        idUsuario: user.idUsuario,
+                        nombreCompleto: user.fullname || user.fullName,
+                        nombreUsuario: user.username,
+                        nroIdentificacion: user.idCard,
+                    }
+                })
+            }
+            return customerUsers;
         })
     }
 
@@ -244,454 +244,8 @@ export class CommonService {
         }
     }
 
-
-
-    //-----------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
-
-    //Eliminar mas Adelante en depuracion co
-    getDataFormVenta() {
-        return this.mS.getData('get', 'FactElect/Factura/Get?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
-            if (response.code === '0') {
-                throw response
-            }
-            return JSON.parse(response.payload)
-        })
-    }
-
-    //-------------------------------------------------GET DATA TIPO DOCUMENTO COMPRA ---------------------
-    setUiGridDetalleCompra(detalleCompra) {
-
-        let index = 1;
-        return detalleCompra.map(item => {
-            item.n = index++
-            this.articuloSvc.findForPurchase({
-                idArticulo: item.idArticulo
-            }).then(response => {
-                item.medidas = response.medidas
-                item.etiquetas = response.etiquetas;
-            })
-
-            let subTotal = item.cantidad * item.precioUnitario;
-            let totalDescuento = item.cantidad * item.valorDescuento;
-
-            if (!("total" in item)) {
-                let total = (item.precioUnitario - item.valorDescuento) * item.cantidad;
-                item.total = total;
-            }
-
-
-            item.subTotal = subTotal;
-            item.totalDescuento = totalDescuento;
-            item.totalIce = item.cantidad * item.ice;
-            return item;
-        })
-
-    }
-
-    /*  
-    -------------------------------------------------START GET DATA TIPO DOCUMENTO VENTA-------------------
-    */
-
-    /**
-     * 
-     * @param {Array} detalleVenta 
-     * @param {string} nombrePrecio default Property PrecioVenta
-     * @returns Array
-     */
-    getDetalleVenta(detalleVenta, nombrePrecio = 'precioUnitario') {
-        try {
-            let index = 1;
-            return detalleVenta.map(item => {
-                item.n = index++;
-
-                let query = {
-                    tipo: 6,
-                    idArticulo: item.idArticulo,
-                }
-                this.articuloSvc.findForSale(query).then(response => {
-                    let { articulo, medidas, datosAdicionalesArticulo } = response;
-                    item.medidas = medidas;
-                    item.datosAdicionalesArticulo = datosAdicionalesArticulo;
-
-                    let dataMedida = medidas.find(m => m.idMedida === item.idMedida) || {};
-                    item.articuloTarifas = dataMedida.tarifas && JSON.parse(dataMedida.tarifas) || [];
-
-                    item.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
-                }).catch(err => {
-                    console.log(err);
-                })
-
-
-                let subTotal = item.cantidad * item[nombrePrecio] || 0;
-                let totalDescuento = item.cantidad * item.valorDescuento || 0;
-
-                item.subTotal = subTotal || 0;
-                item.totalDescuento = totalDescuento || 0;
-                return item;
-            });
-
-        } catch (error) {
-            toastr.error(`Error al cargar detalle del documento: ${error}`)
-        }
-    }
-
-    async getDataTipoDocVenta({
-        id,
-        codigoDocumento
-    }) {
-        let isComplete = false;
-        let cliente = {};
-        let dataTipoDocumento = {};
-        let detalleDocumento = [];
-        let dataDocumento = {};
-        let infoAdicionalDocumento = [];
-        let datosAdicionalesArticulo = [];
-        let factura = {}
-        let actividadTipoIva = {};
-
-        switch (codigoDocumento) {
-            case "FV":
-                await this.mS.getData('get', "/FacturaVenta/GetId?id=" + id).then(response => {
-                    if (response.id === "0") {
-                        this.form.sweetAlert('warning', response.message)
-                        throw response.message
-                    }
-                    if (response.id === "1") {
-                        let dataMain = JSON.parse(response.payload);
-
-                        let detalle = dataMain[2];
-                        dataDocumento = dataMain[0][0];
-
-                        dataDocumento.nroDocSecuencial = `${dataDocumento.estab}-${dataDocumento.ptoEmi}-${dataDocumento.secuencial}`;
-
-                        dataDocumento.ptoEmi = `${dataDocumento.estab}-${dataDocumento.ptoEmi}`
-                        //Fechas                         
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-                        dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento);
-
-                        cliente = dataMain[1][0];
-                        detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
-
-                        infoAdicionalDocumento = dataMain[3];
-
-                        actividadTipoIva = {
-                            tarifa: dataDocumento.tarifa,
-                            codigoPorcentaje: dataDocumento.codigoPorcentaje
-                        }
-
-                        //----------------------Datos Adicionales del Articulo-----------------
-                        datosAdicionalesArticulo = dataMain[4].map(item => ({
-                            idDocumento: item.idDocumento,
-                            idHistoryInfoAdicional: item.idHistoryInfoAdicional,
-                            idArticulo: item.idArticulo,
-                            idEtiqueta: item.idEtiqueta,
-                            idInfoAdicional: item.idInfoAdicional,
-                            jsonAdicional: JSON.parse(item.jsonAdicional),
-                            selected: item.selected,
-                            estado: item.estado
-                        }))
-
-                        isComplete = true;
-                        hideLoader();
-                    }
-                })
-                break;
-
-            case "NE":
-                // showLoader();
-                await this.ventaSvc.getIdNotaEntrega(id).then(response => {
-                    if (response.code == "0") {
-                        this.form.sweetAlert('warning', response.message)
-                        throw response.message
-                    }
-
-                    if (response.code == "1") {
-
-                        let dataMain = JSON.parse(response.payload);
-
-                        let detalle = dataMain[2];
-                        dataDocumento = dataMain[0][0];
-                        dataDocumento.nroDocSecuencial = `${dataDocumento.estab}-${dataDocumento.ptoEmi}-${dataDocumento.secuencial}`;
-                        dataDocumento.ptoEmi = `${dataDocumento.estab}-${dataDocumento.ptoEmi}`
-                        //Fechas                         
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-                        dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento);
-
-                        cliente = dataMain[1][0];
-                        detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
-
-                        infoAdicionalDocumento = dataMain[3];
-
-                        //----------------------Datos Adicionales del Articulo-----------------
-                        datosAdicionalesArticulo = dataMain[4].map(item => ({
-                            idDocumento: item.idDocumento,
-                            idHistoryInfoAdicional: item.idHistoryInfoAdicional,
-                            idArticulo: item.idArticulo,
-                            idEtiqueta: item.idEtiqueta,
-                            idInfoAdicional: item.idInfoAdicional,
-                            jsonAdicional: item.jsonAdicional && JSON.parse(item.jsonAdicional) || [],
-                            selected: item.selected,
-                            estado: item.estado
-                        }))
-
-                        actividadTipoIva = {
-                            tarifa: dataDocumento.tarifa,
-                            codigoPorcentaje: dataDocumento.codigoPorcentaje
-                        }
-
-                        isComplete = true;
-                        //  hideLoader();
-                    }
-                });
-                break;
-
-            case "PR":
-
-                await this.mS.getData('get', '/Proforma/GetId?id=' + id).then(response => {
-                    if (response.code === "0") {
-                        this.form.sweetAlert('warning', response.message)
-                        throw response.message
-                    }
-                    if (response.code === "1") {
-                        let dataMain = JSON.parse(response.payload);
-
-                        let detalle = dataMain[2];
-                        dataDocumento = dataMain[0][0];
-                        dataDocumento.nroDocSecuencial = `${dataDocumento.estab}-${dataDocumento.ptoEmi}-${dataDocumento.secuencial}`;
-                        dataDocumento.ptoEmi = `${dataDocumento.estab}-${dataDocumento.ptoEmi}`
-                        //Fechas                         
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-
-                        cliente = dataMain[1][0];
-
-                        detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
-                        infoAdicionalDocumento = dataMain[3];
-                        actividadTipoIva = {
-                            tarifa: dataDocumento.tarifa,
-                            codigoPorcentaje: dataDocumento.codigoPorcentaje
-                        }
-                        isComplete = true;
-                    }
-                });
-                break;
-
-            case "NC":
-                await this.mS.getData('get', 'FactElect/NotaCredito/' + '?json=' + JSON.stringify({ id: id, tipo: 4 }), null, true).then(response => {
-                    console.log(response)
-                    if (response.code == "0") {
-                        this.form.sweetAlert('warning', response.message)
-                        throw response.message
-                    }
-                    if (response.code === "1") {
-                        let dataMain = JSON.parse(response.payload);
-                        let detalle = dataMain[3];
-
-                        dataDocumento = dataMain[0][0];
-
-                        //Fechas                         
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-
-                        factura = dataMain[1][0]
-
-                        cliente = dataMain[2][0];
-
-
-                        detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
-
-                        infoAdicionalDocumento = dataMain[4];
-
-                        actividadTipoIva = {
-                            tarifa: dataDocumento.tarifa,
-                            codigoPorcentaje: dataDocumento.codigoPorcentaje
-                        }
-                        isComplete = true;
-
-                    }
-                });
-                break
-
-            case "RV":
-                await this.mS.getData('get', '/RetencionVenta/GetId?id=' + id).then(response => {
-
-                    if (response.code == "0") {
-                        this.form.sweetAlert('warning', response.message)
-                        throw response.message
-                    }
-
-                    if (response.code === "1") {
-                        let dataMain = JSON.parse(response.payload)
-
-                        dataDocumento = dataMain[0][0];
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision)
-                        cliente = dataMain[1][0];
-                        factura = dataMain[2][0];
-                        detalleDocumento = dataMain[3];
-                        isComplete = true;
-                    }
-                });
-                break;
-        }
-
-        return {
-            cliente,
-            dataTipoDocumento,
-            dataDocumento,
-            factura,
-            detalleDocumento,
-            infoAdicionalDocumento,
-            actividadTipoIva,
-            datosAdicionalesArticulo,
-            isComplete,
-        };
-    }
-    /**--------------------------------------------------END GET DATA TIPO DOCUMENTO VENTA  */
-
-    /**------------------------------------------------- OTROS DOCUMENTOS-------------------*/
-
-    async getDataGuiaRemision(id) {
-
-        let isComplete = false;
-        let dataDocumento = {},
-            cliente = {},
-            transportista = {},
-            vehiculo = {},
-            empleado = {},
-            detalleDocumento = [],
-            infoAdicionalDocumento = []
-
-        if (!id) throw "ID DOCUMENTO INVÁLIDO";
-
-        await this.mS.getData('get', 'Logistica/GuiaRemision/GetId/' + id, null, true).then(response => {
-
-            if (response.code == "0") {
-                this.form.sweetAlert('warning', response.message)
-                throw response.message
-            }
-
-            if (response.code === "1") {
-                let dataMain = JSON.parse(response.payload)
-
-                dataDocumento = dataMain[0][0];
-                dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-                dataDocumento.fechaInicio = this.form.formatDate(dataDocumento.fechaInicio);
-                dataDocumento.fechaFin = this.form.formatDate(dataDocumento.fechaFin);
-
-                cliente = dataMain[1][0];
-                transportista = dataMain[2][0];
-                vehiculo = dataMain[3][0];
-                empleado = dataMain[4][0];
-                detalleDocumento = dataMain[5];
-                infoAdicionalDocumento = dataMain[6];
-                isComplete = true;
-            }
-
-        })
-
-        return {
-            dataDocumento,
-            cliente,
-            transportista,
-            vehiculo,
-            empleado,
-            detalleDocumento,
-            infoAdicionalDocumento,
-            isComplete
-        }
-
-    }
-
-
-
-
-    /**
-     * 
-     * @param {number} id 
-     * @returns  object 
-     */
-    async getDataConsolidacionInventario(id) {
-        let isComplete = false,
-            dataTipoDocumento = {},
-            dataDocumento = {},
-            detalleDocumento = [],
-            medidasTemp = [];
-
-        await this.mS.getData('get', 'Inventario/Consolidacion/?json=' + JSON.stringify({ tipo: 3, id: id }), null, true).then(response => {
-
-            if (response.code === '0') {
-                this.form.sweetAlert('warning', response.message)
-                throw response.message
-            }
-            if (response.code === '1') {
-                let dataMain = JSON.parse(response.payload);
-                dataDocumento = dataMain[0][0];
-                dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision)
-                detalleDocumento = dataMain[1];
-                medidasTemp = dataMain[2];
-                isComplete = true;
-            }
-        })
-
-        return {
-            isComplete,
-            dataTipoDocumento,
-            dataDocumento,
-            detalleDocumento,
-            medidasTemp
-        }
-    }
-
-
-    /**
-     * 
-     * @param {numbre} idTransferenciaBodega
-     * @returns 
-     */
-
-    async getDataTransferenciaBodega(id) {
-        let dataDocumento = {},
-            establecimientoOrigen = {},
-            establecimientoDestino = {},
-            detalleDocumento = [],
-            isComplete = false;
-        if (!id) throw "ID DOCUMENTO INVÁLIDO";
-
-        await this.mS.getData('get', `Inventario/TransferenciaBodega/GetId?id=${id}`, null, true).then(response => {
-
-            if (response.code === "0") {
-                this.form.sweetAlert('warning', response.message)
-                throw response.message
-            }
-
-            if (response.code === "1") {
-                let dataMain = JSON.parse(response.payload);
-
-                dataDocumento = dataMain[0][0];
-                dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-
-                establecimientoOrigen = dataMain[1][0];
-                establecimientoDestino = dataMain[2][0];
-
-                for (let item of dataMain[3]) {
-                    this.articuloSvc.findForPurchase(item).then(response => {
-                        item.medidas = response.medidas
-                    })
-
-                    detalleDocumento.push(item)
-                }
-
-
-                isComplete = true;
-            }
-        })
-
-        return {
-            dataDocumento,
-            establecimientoOrigen,
-            establecimientoDestino,
-            detalleDocumento,
-            isComplete
-        }
-    }
+ 
+  
 
     //--------------------------------------------------REPORTE----------------------------------
     async getReport(params) {
@@ -853,8 +407,7 @@ export class CommonService {
     }
 
     getPrinter(parameters) {
-        try {
-            console.log(parameters)
+        try { 
             let newParams = Object.assign(JSON.parse(parameters), { tipo: 2 });
             let url = `Config/Print/?json=${JSON.stringify(newParams)}`
             this.mS.getData('get', url, null, true).then(
@@ -979,273 +532,7 @@ export class CommonService {
         }
 
     }
-
-
-
-
-
-
-    /**
-     * Ver Detalle del Documento 
-     * 
-     */
-
-    async viewDetailDocumentII({
-        id,
-        codTransaccion,
-        codigoDocumento,
-        size,
-        windowClass = "uibModalFullScreen"
-    }) {
-        try {
-            let controller = null,
-                template = null,
-                params = {},
-                response = {},
-                isComplete = false;
-            let controllers = {};
-            let templates = {};
-            let fileCtrl = '';
-            let ctrl;
-            let isRenderRazorPartial = false;
-
-            switch (codigoDocumento) {
-                case "FE":
-
-                    if (codTransaccion == 'E') {
-                        response = await this.getDataTipoDocVenta({
-                            id,
-                            codigoDocumento
-                        })
-                    }
-                    if (codTransaccion == 'S') {
-
-                        fileCtrl = this.nombreModalFactElect.FACTURA.fileCtrl;
-                        ctrl = this.nombreModalFactElect.FACTURA.controllers['D']
-                        template = this.nombreModalFactElect.FACTURA.templates['D']
-
-                        controller = (await import(fileCtrl))[ctrl];
-
-                        response = await this.getDataTipoDocVenta({
-                            id,
-                            codigoDocumento: 'FV'
-                        })
-                    }
-
-
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: response,
-                    }
-
-                    break
-
-                case "NE":
-
-                    fileCtrl = this.nombreModalVenta.NOTA_ENTREGA.fileCtrl;
-                    ctrl = this.nombreModalVenta.NOTA_ENTREGA.controllers['D']
-                    template = this.nombreModalVenta.NOTA_ENTREGA.templates['D']
-
-                    controller = (await import(fileCtrl))[ctrl];
-
-                    response = await this.getDataTipoDocVenta({
-                        id,
-                        codigoDocumento
-                    })
-
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: response,
-                    }
-
-                    break
-
-
-                case "NC":
-                    let {
-                        nota_credito_cliente
-                    } = this._nombreModalConst;
-                    controller = (await import('./../' + nota_credito_cliente.MODAL_FILE_CTRL))[nota_credito_cliente.MODAL_DETALLE['controller']];
-                    template = nota_credito_cliente.MODAL_DETALLE['template'];
-
-                    response = await this.getDataTipoDocVenta({
-                        id,
-                        codigoDocumento
-                    })
-
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: response,
-                    }
-
-                    break
-
-
-                case "CI":
-
-                    fileCtrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.fileCtrl;
-                    ctrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.controllers['D']
-                    template = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.templates['D']
-
-                    controller = (await import(fileCtrl))[ctrl];
-
-                    response = await this.getDataConsolidacionInventario(id)
-
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: response
-                    }
-
-                    break
-            }
-
-
-
-            this._modalSvc.openModalCustom({
-                controller,
-                template,
-                params: codigoDocumento == "IV" ? params.data : params,
-                size,
-                windowClass,
-                isRenderRazorPartial
-            })
-
-        } catch (error) {
-            hideLoader()
-            console.log(error)
-        }
-
-    }
-
-
-    async viewDetailDocument({
-        id,
-        codigoDocumento,
-        size,
-        windowClass = "uibModalFullScreen",
-        isRenderRazorPartial = false,
-    }) {
-        try {
-            let controller = null,
-                template = null,
-                params = {},
-                response = {},
-                isComplete = false;
-            let fileCtrl = null;
-            let ctrl;
-
-
-            switch (codigoDocumento) {
-                case "FV":
-
-                    fileCtrl = this.nombreModalFactElect.FACTURA.fileCtrl;
-                    ctrl = this.nombreModalFactElect.FACTURA.controllers['D']
-                    template = this.nombreModalFactElect.FACTURA.templates['D']
-
-                    controller = (await import(fileCtrl))[ctrl];
-
-
-                    response = await this.getDataTipoDocVenta({
-                        id,
-                        codigoDocumento
-                    })
-
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: response,
-                    }
-
-                    break
-
-                case "NE":
-
-                    fileCtrl = this.nombreModalVenta.NOTA_ENTREGA.fileCtrl;
-                    ctrl = this.nombreModalVenta.NOTA_ENTREGA.controllers['D']
-                    template = this.nombreModalVenta.NOTA_ENTREGA.templates['D']
-
-                    controller = (await import(fileCtrl))[ctrl];
-
-                    response = await this.getDataTipoDocVenta({
-                        id,
-                        codigoDocumento
-                    })
-
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: response,
-                    }
-
-                    break
-
-
-                case "NC":
-                    let {
-                        nota_credito_cliente
-                    } = this._nombreModalConst;
-                    controller = (await import('./../' + nota_credito_cliente.MODAL_FILE_CTRL))[nota_credito_cliente.MODAL_DETALLE['controller']];
-                    template = nota_credito_cliente.MODAL_DETALLE['template'];
-
-                    response = await this.getDataTipoDocVenta({
-                        id,
-                        codigoDocumento
-                    })
-
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: response,
-                    }
-
-                    break
-
-                case "CI":
-                    fileCtrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.fileCtrl;
-                    ctrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.controllers['D']
-                    template = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.templates['D']
-
-                    controller = (await import(fileCtrl))[ctrl];
-
-                    response = await this.getDataConsolidacionInventario(id)
-
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: response
-                    }
-
-                    break
-
-                case "GR":
-
-                    fileCtrl = this.nombreModalLogistica.GUIA_REMISION.fileCtrl;
-                    ctrl = this.nombreModalLogistica.GUIA_REMISION.controller;
-                    template = this.nombreModalLogistica.GUIA_REMISION.template;
-                    controller = (await import(fileCtrl))[ctrl];
-
-                    response = await this.getDataGuiaRemision(id);
-                    params = response;
-                    break
-
-                default:
-                    console.log(`Detalle del Documento No definido: ${codigoDocumento}`);
-                    throw 'Detalle del Documento No definido'
-            }
-
-
-            this._modalSvc.openModalCustom({
-                controller,
-                template,
-                params,
-                size,
-                windowClass,
-                isRenderRazorPartial
-            })
-
-        } catch (error) {
-            console.log(error)
-        }
-
-    }
-
-
+ 
 
 
     //Permiso para editar o anular Doc. Venta  

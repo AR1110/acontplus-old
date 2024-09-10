@@ -4,77 +4,28 @@ using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
 using Services.Common.Extensions;
 
+namespace Restaurant.API.Controllers;
 
-namespace Restaurant.API.Controllers
+public class ItemController(IItemService itemService) : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ItemController : ControllerBase
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IItemService _item;
-        private readonly ICustomLogger _log;
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } };
 
-        public ItemController(IItemService item, ICustomLogger log)
-        {
-            _item = item;
-            _log = log;
-        }
+        return Ok(await itemService.GetAsync(parameters));
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", json}
-                };
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        return Ok(await itemService.GetByIdAsync(id));
+    }
 
-                var response = await _item.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Error on getting items: " + ex.Message);
-            }
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            try
-            {
-                var response = await _item.GetByIdAsync(id);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest("Error on getting ingredients, testing hot reload: " + ex.Message);
-            }
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
-        {
-            try
-            {
-                data.UserRoleId = User.GetUserRoleId();
-                var response = await _item.UpdateAsync(id, data);
-                if (response == null | string.IsNullOrEmpty(response))
-                {
-                    _log.LogActivity("No se pudo actualizar Ítem");
-                    return BadRequest("Cant Update");
-                };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en catch \n" + ex.Message);
-                return BadRequest("Error on Post: " + ex.Message);
-            }
-        }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    {
+        data.UserRoleId = User.GetUserRoleId();
+        return Ok(await itemService.UpdateAsync(id, data));
     }
 }

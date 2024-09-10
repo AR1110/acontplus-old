@@ -356,6 +356,8 @@
 
         let $timeout = $injector.get('$timeout');
         let gridOptionsSvc = $injector.get('gridOptionsCompraService')
+        let infoAdicionalConfig = [];
+        let isSetInfoAdicionalConfig = true;
 
         //Tipo Doc
         $scope.tipoDoc = {
@@ -453,6 +455,7 @@
                     tarifasImpuesto,
                     tiemposCredito,
                     subcategories,
+                    infoAdicional,
                 } = mainDataForm;
 
                 $scope.establecimientos = estabs;
@@ -462,6 +465,7 @@
                 $scope.tarifasImpuesto = tarifasImpuesto;
                 $scope.tiemposCredito = tiemposCredito;
                 $scope.subcategories = subcategories;
+                infoAdicionalConfig = infoAdicional;
 
 
                 if (!("comprobante" in params && params.comprobante.idLiquidacionCompra > 0)) {
@@ -494,6 +498,7 @@
                     }
 
                     getFechaVencimiento();
+                    setInfoAdicional();
                 }
 
                 if (("comprobante" in params && params.comprobante.idLiquidacionCompra > 0)) {
@@ -887,6 +892,7 @@
                     $scope.data.idBodega = $scope.bodegas.find(bodega => bodega.defaultBodega).idBodega;
                     $scope.dataClone.idBodega = $scope.data.idBodega;
 
+                    setInfoAdicional();
                     setWarehouseAndIVA();
                     setIdBodegaInDetalle();
                 } else {
@@ -934,12 +940,37 @@
             })
         }
 
+        function setInfoAdicional() {
+            if (isSetInfoAdicionalConfig) {
+                $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(
+                    (d) => !(d.idPuntoEmision > 0)
+                );
+
+                let dataInfoAdicional = infoAdicionalConfig.find(
+                    (i) => i.idPuntoEmision === $scope.data.idPuntoEmision
+                );
+                if (!dataInfoAdicional) return;
+                let infoAdicionPtoEmi = dataInfoAdicional.infoAdicional.map((i) => {
+                    return {
+                        ...i,
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    };
+                });
+                $scope.infoAdicionalDocumento = [
+                    ...infoAdicionPtoEmi,
+                    ...$scope.infoAdicionalDocumento,
+                ];
+            }
+            isSetInfoAdicionalConfig = true;
+        }
+
         $scope.onChangePuntoEmision = function () {
             if ($scope.data.idLiquidacionCompra > 0) {
                 tS.toastr('warning', 'Punto de Emisión no puede ser editada');
                 $scope.data.idPuntoEmision = $scope.dataClone.idPuntoEmision;
                 return
             }
+            setInfoAdicional();
         }
 
         function getFechaVencimiento() {

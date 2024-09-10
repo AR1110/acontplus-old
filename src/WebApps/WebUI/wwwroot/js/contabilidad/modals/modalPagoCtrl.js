@@ -1,51 +1,6 @@
 //@ts-check
 
-/**
- * 
- * @param {*} num 
- * @param {*} max por defecto 0 
- * @returns 
- */
-function instanceDecimal(num, max = 0) {
-    if (max > 0) {
-        return new Decimal(num).toDecimalPlaces(max).toNumber()
-    }
-    return new Decimal(num);
-}
-
-/**
- * 
- * @param {*} num1 
- * @param {*} num2 
- * @param {*} max 
- * @returns 
- */
-function plus(num1, num2, max = 0) {
-    let instanceDecimal = new Decimal(num1).plus(num2)
-    if (max > 0) {
-        return instanceDecimal.toDecimalPlaces(max).toNumber()
-    }
-
-    return instanceDecimal;
-
-}
-/**
- * 
- * @param {*} num1 
- * @param {*} num2 
- * @param {*} max 
- * @returns 
- */
-
-function minus(num1, num2, max = 0) {
-    let instanceDecimal = new Decimal(num1).minus(num2)
-    if (max > 0) {
-        return instanceDecimal.toDecimalPlaces(max).toNumber()
-    }
-
-    return instanceDecimal;
-
-}
+ 
 class PagoService {
     constructor(tS, fS) {
         this.tS = tS;
@@ -65,6 +20,7 @@ class PagoService {
         this.MAX_NUMBER_ROUND_GENERAL = 3;
         this.MAX_NUMBER_ROUND_CUOTA_ABONO = 5;
         this.MAX_NUMBER_ROUND = 5;
+        this.DECIMAL_CINCO = 5;
     }
 
     set setEstadosPago(estadosPago) {
@@ -183,13 +139,13 @@ class PagoService {
             if (!existeDato) {
                 acc.push({
                     idCuentaPorPagar: curr.idCuentaPorPagar,
-                    valorSaldoLectura: instanceDecimal(curr.valorSaldoLectura),
-                    abono: instanceDecimal(curr.abono),
+                    valorSaldoLectura: this.fS.instanceDecimal(curr.valorSaldoLectura),
+                    abono: this.fS.instanceDecimal(curr.abono),
                     diasMora: curr.diasMora,
                     mora: curr.mora
                 });
             } else {
-                existeDato.abono = plus(existeDato.abono, curr.abono);
+                existeDato.abono = this.fS.plus(existeDato.abono, curr.abono);
             }
             return acc;
         }, []);
@@ -197,21 +153,19 @@ class PagoService {
         let cuentasPorPagarEstado = [];
 
         for (let item of cuentasPorPagarAgrupado) {
-            let valorSaldo = instanceDecimal(item.valorSaldoLectura);
- 
+            let valorSaldo = this.fS.instanceDecimal(item.valorSaldoLectura);
+
 
             let totalPosfechado = pagosDetalle.filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && cd.posfechado)
-                .reduce((acc, curr) => acc.plus(curr.abono), instanceDecimal(0));
+                .reduce((acc, curr) => acc.plus(curr.abono), this.fS.instanceDecimal(0));
+ 
 
             let totalNoPosfechado = pagosDetalle.filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && !cd.posfechado)
-                .reduce((acc, curr) => acc.plus(curr.abono), instanceDecimal(0));
+                .reduce((acc, curr) => acc.plus(curr.abono), this.fS.instanceDecimal(0));
+ 
+            valorSaldo = valorSaldo.minus(totalNoPosfechado).toNumber();
+            
 
-       
-            let maxDecimalNumber = this.fS.contarDecimales(valorSaldo)
-            let totalNoPosfechadoRounded = this.fS.roundNumber(totalNoPosfechado.toNumber(), maxDecimalNumber);
-
-            valorSaldo = valorSaldo.minus(totalNoPosfechadoRounded).toNumber()
-        
 
             let dataEstadoPago = {};
             if (totalPosfechado.gt(0)) {
@@ -219,16 +173,16 @@ class PagoService {
                     esPosfechado: true
                 });
             } else {
-                dataEstadoPago = this.getEstadoCuota({
-                    saldo: valorSaldo,
-                    abono: totalNoPosfechado.toNumber()
+                dataEstadoPago = this.getEstadoCuota({  
+                    saldo: this.fS.roundNumber(valorSaldo, this.fS.max_dos),
+                    abono: this.fS.roundNumber(totalNoPosfechado.toNumber(), this.fS.max_dos),
                 });
             }
 
             cuentasPorPagarEstado.push({
                 idCuentaPorPagar: item.idCuentaPorPagar,
                 idEstadoPago: dataEstadoPago.idEstadoPago,
-                abono: totalNoPosfechado.toNumber()
+                abono: this.fS.roundNumber(totalNoPosfechado.toNumber(), this.fS.max_dos)  
             });
         }
 
@@ -251,10 +205,10 @@ class PagoService {
                     idCuentaPorPagar: curr.idCuentaPorPagar,
                     idCuotaPorPagar: curr.idCuotaPorPagar,
                     valorSaldoLectura: curr.valorSaldoLectura,
-                    abono: instanceDecimal(curr.abono)
+                    abono: this.fS.instanceDecimal(curr.abono)
                 });
             } else {
-                existeDato.abono = plus(existeDato.abono, curr.abono);
+                existeDato.abono = this.fS.plus(existeDato.abono, curr.abono);
             }
             return acc;
         }, []);
@@ -264,13 +218,13 @@ class PagoService {
         for (let item of cuotasPorPagarAgrupado) {
             let totalNoPosfechado = pagosDetalle.filter(cd => cd.idCuotaPorPagar === item.idCuotaPorPagar && !cd.posfechado)
                 .reduce((acc, curr) => {
-                    return plus(acc, curr.abono);
-                }, instanceDecimal(0));
+                    return this.fS.plus(acc, curr.abono);
+                }, this.fS.instanceDecimal(0));
 
-            let valorSaldoLectura = this.fS.roundNumber(item.valorSaldoLectura, 3);
-            let totalNoPosfechadoTemp = this.fS.roundNumber(totalNoPosfechado.toNumber(), 3);
+            let valorSaldoLectura = this.fS.roundNumber(item.valorSaldoLectura, this.fS.max_dos);
+            let totalNoPosfechadoTemp = this.fS.roundNumber(totalNoPosfechado.toNumber(), this.fS.max_dos);
 
-            let valorSaldo = minus(valorSaldoLectura, totalNoPosfechadoTemp).toNumber();
+            let valorSaldo = this.fS.minus(valorSaldoLectura, totalNoPosfechadoTemp).toNumber();
 
             let dataEstadoPago = this.getEstadoCuota({
                 saldo: valorSaldo,
@@ -289,12 +243,12 @@ class PagoService {
     }
 
     addHistorialCuentas() {
-        let valorMovimientoSaldo = instanceDecimal(0), historialAbono = instanceDecimal(0);
+        let valorMovimientoSaldo = this.fS.instanceDecimal(0), historialAbono = this.fS.instanceDecimal(0);
 
         const pagosDetalleFiltered = this.pagosDetalle.filter(cd => cd.idCuentaPorPagar === this.group.idCuentaPorPagar)
 
 
-        const totalAbonoCuenta = pagosDetalleFiltered.reduce((acc, curr) => acc.plus(curr.abono), instanceDecimal(0));
+        const totalAbonoCuenta = pagosDetalleFiltered.reduce((acc, curr) => acc.plus(curr.abono), this.fS.instanceDecimal(0));
 
         if (pagosDetalleFiltered.length === 0) {
 
@@ -305,10 +259,10 @@ class PagoService {
             let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
 
             if (dataUltimoCobroDetalle) {
-                valorMovimientoSaldo = minus(dataUltimoCobroDetalle.saldo, dataUltimoCobroDetalle.abono).toNumber();
+                valorMovimientoSaldo = this.fS.minus(dataUltimoCobroDetalle.saldo, dataUltimoCobroDetalle.abono).toNumber();
 
             } else {
-                valorMovimientoSaldo = instanceDecimal(this.group.saldo).toNumber();
+                valorMovimientoSaldo = this.fS.instanceDecimal(this.group.saldo).toNumber();
             }
 
             if (this.valorAbono <= this.group.saldo) {
@@ -323,8 +277,8 @@ class PagoService {
                 idCuentaPorPagar: this.group.idCuentaPorPagar,
                 valorSaldoLectura: this.group.valorSaldoLectura,
 
-                abono: instanceDecimal(historialAbono, this.MAX_NUMBER_ROUND),
-                saldo: instanceDecimal(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
+                abono: this.fS.instanceDecimal(historialAbono, this.DECIMAL_CINCO),
+                saldo: this.fS.instanceDecimal(valorMovimientoSaldo, this.DECIMAL_CINCO),
 
 
                 diasMora: this.group.diasMora,
@@ -342,9 +296,9 @@ class PagoService {
                 let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
 
                 if (dataUltimoCobroDetalle) {
-                    valorMovimientoSaldo = minus(dataUltimoCobroDetalle.saldo, dataUltimoCobroDetalle.abono).toNumber();
+                    valorMovimientoSaldo = this.fS.minus(dataUltimoCobroDetalle.saldo, dataUltimoCobroDetalle.abono).toNumber();
                 } else {
-                    valorMovimientoSaldo = instanceDecimal(this.group.saldo).toNumber();
+                    valorMovimientoSaldo = this.fS.instanceDecimal(this.group.saldo).toNumber();
                 }
 
                 if (this.valorAbono <= valorMovimientoSaldo) {
@@ -359,8 +313,8 @@ class PagoService {
                     idCuentaPorPagar: this.group.idCuentaPorPagar,
                     valorSaldoLectura: this.group.valorSaldoLectura,
 
-                    abono: instanceDecimal(historialAbono, this.MAX_NUMBER_ROUND),
-                    saldo: instanceDecimal(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
+                    abono: this.fS.instanceDecimal(historialAbono, this.DECIMAL_CINCO),
+                    saldo: this.fS.instanceDecimal(valorMovimientoSaldo, this.DECIMAL_CINCO),
 
                     diasMora: this.group.diasMora,
                     mora: this.group.mora,
@@ -397,9 +351,9 @@ class PagoService {
                     this.cuotaSinAbono(item)
                 }
 
-                item.cuota = instanceDecimal(item.cuota, this.MAX_NUMBER_ROUND)
-                item.abono = instanceDecimal(item.abono, this.MAX_NUMBER_ROUND)
-                item.abonoPosfechado = instanceDecimal(item.abonoPosfechado, this.MAX_NUMBER_ROUND)
+                item.cuota = this.fS.instanceDecimal(item.cuota, this.DECIMAL_CINCO)
+                item.abono = this.fS.instanceDecimal(item.abono, this.DECIMAL_CINCO)
+                item.abonoPosfechado = this.fS.instanceDecimal(item.abonoPosfechado, this.DECIMAL_CINCO)
 
 
                 let dataEstadoPago = this.getEstadoCuota({
@@ -417,6 +371,33 @@ class PagoService {
     }
 
 
+
+    /**
+             * 
+             * @param {*} dataCuota 
+             */
+    handlePartialAbono(dataCuota) {
+
+        //Si el Abono pago no es Posfechado
+        dataCuota.abono = this.esAbonoPosfechado ? 0 : this.fS.instanceDecimal(dataCuota.saldo, this.DECIMAL_CINCO);
+
+        //Si el abono pago es posfechado
+        dataCuota.abonoPosfechado = this.esAbonoPosfechado ? this.fS.instanceDecimal(dataCuota.saldo, this.DECIMAL_CINCO) : 0;
+  
+        let valorAbono = this.fS.minus(this.valorAbono, dataCuota.saldo, this.DECIMAL_CINCO);
+       
+        //verificamos si la resta de valor abono es igual al total a cobrar 
+        //tomar mucha en cuenta, se agrega por temas de decimales 
+        if (this.fS.roundNumber(valorAbono, 2) === this.fS.roundNumber(dataCuota.saldo, 2)) {
+            valorAbono = dataCuota.saldo;
+        }
+ 
+        this.valorAbono = valorAbono;
+ 
+        this.addPagoDetalle(dataCuota, dataCuota.saldo, 0)
+        dataCuota.saldo = 0; 
+    }
+
     /**
         * 
         * @param {object} item 
@@ -425,7 +406,7 @@ class PagoService {
 
         //Validaciones Saldo Cuota 
         if (item.saldoCta >= this.valorAbono) {
-            item.saldoCta = minus(item.saldoCta, this.valorAbono, this.MAX_NUMBER_ROUND);
+            item.saldoCta = this.fS.minus(item.saldoCta, this.valorAbono, this.MAX_NUMBER_ROUND);
 
         } else if (item.saldoCta <= this.valorAbono) {
             item.saldoCta = 0;
@@ -440,27 +421,77 @@ class PagoService {
             //Si el abono pago es posfechado
             item.abonoPosfechado = this.esAbonoPosfechado ? this.valorAbono : 0;
 
-            item.saldo = minus(item.saldo,this.valorAbono,this.MAX_NUMBER_ROUND);
+            item.saldo = this.fS.minus(item.saldo, this.valorAbono, this.MAX_NUMBER_ROUND);
 
 
             this.addPagoDetalle(item, this.valorAbono, item.saldo)
             this.valorAbono = 0;
 
-        } else if (item.saldo <= this.valorAbono) {
-
-            //Si el Abono pago no es Posfechado
-            item.abono = this.esAbonoPosfechado ? 0 : instanceDecimal(item.saldo, this.MAX_NUMBER_ROUND);
-
-            //Si el abono pago es posfechado
-            item.abonoPosfechado = this.esAbonoPosfechado ? instanceDecimal(item.saldo, this.MAX_NUMBER_ROUND) : 0;
-
-            //this.valorAbono = this.valorAbono - item.saldo;
-            this.valorAbono = minus(this.valorAbono, item.saldo, this.MAX_NUMBER_ROUND);
-
-            this.addPagoDetalle(item, item.saldo, 0)
-            item.saldo = 0;
+        } else if (item.saldo <= this.valorAbono) { 
+            this.handlePartialAbono(item);  
         }
 
+    }
+
+
+
+    /**
+            * 
+            * @param {*} dataCuota 
+            */
+    handleFullAbonoWithExistingAbono(dataCuota) {
+
+        // Determina si el abono es posfechado y ajusta el valor del abono según corresponda
+        if (this.esAbonoPosfechado) {
+            dataCuota.abonoPosfechado = this.fS.plus(dataCuota.abonoPosfechado, this.valorAbono, this.DECIMAL_CINCO);
+
+        } else {
+            let totalAbonoCuota = this.fS.plus(dataCuota.abono, this.valorAbono, this.DECIMAL_CINCO);
+
+            if (this.fS.roundNumber(totalAbonoCuota, 2) === this.fS.roundNumber(dataCuota.saldo, 2)) {
+                dataCuota.abono = dataCuota.saldo;
+            } else {
+                dataCuota.abono = totalAbonoCuota;
+            }
+
+        }
+
+
+
+        // Resta el valor del abono al saldo total actual de la cuota
+        let saldoTotalActual = this.fS.minus(dataCuota.saldo, this.valorAbono, this.DECIMAL_CINCO);
+
+        //se verifica antes  por temas de decimales porque al final queda milesimas 
+        if (this.fS.roundNumber(saldoTotalActual, 2) === 0) {
+            dataCuota.saldo = 0;
+        } else {
+            dataCuota.saldo = saldoTotalActual;
+        }
+
+        this.addPagoDetalle(dataCuota, this.valorAbono, dataCuota.saldo);
+        this.valorAbono = 0;
+    }
+
+    /**
+             * Maneja un abono parcial con un abono existente.
+             * 
+             * @param {*} dataCuota - El objeto que contiene información del abono y el saldoTotalActual.
+             */
+    handlePartialAbonoWithExistingAbono(dataCuota) {
+        // Determina si el abono es posfechado y ajusta el valor del abono según corresponda
+        if (this.esAbonoPosfechado) {
+            dataCuota.abonoPosfechado = this.fS.plus(dataCuota.abonoPosfechado, dataCuota.saldo, this.DECIMAL_CINCO);
+        } else {
+            dataCuota.abono = this.fS.plus(dataCuota.abono, dataCuota.saldo, this.DECIMAL_CINCO);
+        }
+
+        // Agrega un detalle de cobro con el saldoTotalActual como valor del abono
+        this.addPagoDetalle(dataCuota, dataCuota.saldo, 0);
+
+        // Calcula el nuevo valor del abono restando el saldo del valor actual del abono
+        this.valorAbono = this.fS.minus(this.valorAbono, dataCuota.saldo, this.DECIMAL_CINCO);
+
+        dataCuota.saldo = 0;
     }
 
     /**
@@ -471,7 +502,7 @@ class PagoService {
 
         //Validaciones Saldo Cuota 
         if (item.saldoCta >= this.valorAbono) {
-            item.saldoCta = minus(item.saldoCta, this.valorAbono, this.MAX_NUMBER_ROUND);
+            item.saldoCta = this.fS.minus(item.saldoCta, this.valorAbono, this.MAX_NUMBER_ROUND);
         } else if (item.saldoCta <= this.valorAbono) {
             item.saldoCta = 0;
         }
@@ -479,26 +510,10 @@ class PagoService {
         //Validaciones Saldo 
 
         if (item.saldo >= this.valorAbono) {
-
-            item.abono = this.esAbonoPosfechado ? item.abono : plus(item.abono, this.valorAbono, this.MAX_NUMBER_ROUND);
-            item.abonoPosfechado = this.esAbonoPosfechado ? plus(item.abonoPosfechado, this.valorAbono, this.MAX_NUMBER_ROUND) : item.abonoPosfechado;
-
-            item.saldo = minus(item.saldo, this.valorAbono, this.MAX_NUMBER_ROUND);
-
-            this.addPagoDetalle(item, this.valorAbono, item.saldo);
-            this.valorAbono = 0;
-
+            this.handleFullAbonoWithExistingAbono(item)
 
         } else if (item.saldo <= this.valorAbono) {
-            item.abono = this.esAbonoPosfechado ? item.abono : plus(item.abono, item.saldo, this.MAX_NUMBER_ROUND);
-
-            item.abonoPosfechado = this.esAbonoPosfechado ? plus(item.abonoPosfechado, item.saldo, this.MAX_NUMBER_ROUND) : item.abonoPosfechado;
-
-            this.addPagoDetalle(item, item.saldo, 0);
-
-            this.valorAbono = minus(this.valorAbono, item.saldo, this.MAX_NUMBER_ROUND);
-
-            item.saldo = 0;
+            this.handlePartialAbonoWithExistingAbono(item);
         }
     }
 
@@ -510,7 +525,7 @@ class PagoService {
      * @param {*} saldo 
      * @returns 
      */
-   
+
     addPagoDetalle(item, abono, saldo) {
         if (item.cuota === 0 || abono === 0) return;
 
@@ -522,11 +537,10 @@ class PagoService {
 
         let dataUltimoCobroDetalle = pagosDetalleFiltered.pop();
         if (dataUltimoCobroDetalle) {
-            valorMovimientoSaldo = minus(dataUltimoCobroDetalle.saldoOriginal, dataUltimoCobroDetalle.abono, this.MAX_NUMBER_ROUND)
+            valorMovimientoSaldo = this.fS.minus(dataUltimoCobroDetalle.saldoOriginal, dataUltimoCobroDetalle.abono, this.DECIMAL_CINCO)
         } else {
-            valorMovimientoSaldo = instanceDecimal(item.saldoOriginal, this.MAX_NUMBER_ROUND);
-        }
-
+            valorMovimientoSaldo = this.fS.instanceDecimal(item.saldoOriginal, this.DECIMAL_CINCO);
+        } 
 
         this.pagosDetalle.push({
             idCuentaPorPagar: this.group.idCuentaPorPagar,
@@ -535,21 +549,21 @@ class PagoService {
             interes: item.interes,
             diasMora: item.diasMora,
             mora: item.mora,
-            cuota: instanceDecimal(item.cuota, this.MAX_NUMBER_ROUND),
-            saldo: instanceDecimal(saldo, this.MAX_NUMBER_ROUND),
+            cuota: this.fS.instanceDecimal(item.cuota, this.DECIMAL_CINCO),
+            saldo: this.fS.instanceDecimal(saldo, this.DECIMAL_CINCO),
             secuencial: this.secuencial,
             valorSaldoLectura: item.valorSaldoLectura,
 
-            saldoOriginal: instanceDecimal(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
+            saldoOriginal: this.fS.instanceDecimal(valorMovimientoSaldo, this.DECIMAL_CINCO),
             posfechado: this.esAbonoPosfechado
         })
-        item.saldo = instanceDecimal(item.saldo, this.MAX_NUMBER_ROUND);
+        item.saldo = this.fS.instanceDecimal(item.saldo, this.DECIMAL_CINCO);
 
-        item.saldoOriginal = minus(item.saldoOriginal, abono, this.MAX_NUMBER_ROUND);
+        item.saldoOriginal = this.fS.minus(item.saldoOriginal, abono, this.DECIMAL_CINCO);
 
     }
 
-   
+
 
     /**
      * 
@@ -559,7 +573,7 @@ class PagoService {
     getEstadoCuota({ saldo, abono, esPosfechado }) {
         let estado = '';
         let dataEstadoPago = {};
-      
+
 
         if (esPosfechado) {
             dataEstadoPago = this.estadosPago.find(ep => ep.codigo === 'PFC');
@@ -654,10 +668,10 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
                 pagoSvc.setEstadosPago = mainDataFormPago.estadosPago;
 
             })
-            .catch(error=>{
-                console.log(error)
-            })
-            .finally(() => hideLoader())
+                .catch(error => {
+                    console.log(error)
+                })
+                .finally(() => hideLoader())
         } catch (error) {
             console.log(error);
         }
@@ -668,9 +682,9 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
     getTotalesCuota();
     function getTotalesCuota() {
         //let groupCuotas = $scope.selectedDocumentos.flatMap(item=>item.cuotas);
-        let totalCuota = instanceDecimal(0);
-        let totalAbonoAnterior = instanceDecimal(0);
-        let totalSaldo = instanceDecimal(0);
+        let totalCuota = fS.instanceDecimal(0);
+        let totalAbonoAnterior = fS.instanceDecimal(0);
+        let totalSaldo = fS.instanceDecimal(0);
 
         for (let item of $scope.selectedDocumentos) {
             totalCuota = totalCuota.plus(item.importeTotal)
@@ -689,13 +703,13 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
     //Calculo de abono y saldo una vez agregado el forma pago 
-    function calculoTotales() { 
+    function calculoTotales() {
 
         let totalValorAbono = $scope.pagos.map(item => item.valorAbono)
-            .reduce((prev, curr) => instanceDecimal(prev).plus(curr).toNumber(), 0);
+            .reduce((prev, curr) => fS.instanceDecimal(prev).plus(curr).toNumber(), 0);
 
         let totalSaldo = $scope.selectedDocumentos.flatMap(item => item.cuotas)
-            .reduce((prev, curr) => instanceDecimal(prev).plus(curr.saldo).toNumber(), 0); 
+            .reduce((prev, curr) => fS.instanceDecimal(prev).plus(curr.saldo).toNumber(), 0);
         let valorCambio = 0;
 
         $scope.data.totalValorAbono = fS.roundNumber(totalValorAbono, 5);
@@ -703,7 +717,7 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
         if ($scope.data.totalValorAbono >= $scope.data.totalSaldoOriginal) {
-            valorCambio = minus($scope.data.totalValorAbono, $scope.data.totalSaldoOriginal, 5)
+            valorCambio = fS.minus($scope.data.totalValorAbono, $scope.data.totalSaldoOriginal, 5)
         }
 
         $scope.data.valorCambio = valorCambio;
@@ -746,28 +760,27 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
                     try {
 
-                        let { isPosFechado, valorAbono } = result;
+                        let { isPosfechado, valorAbono } = result;
 
                         pagoSvc.selectedDocumentos = $scope.selectedDocumentos;
 
                         pagoSvc.secuencial = $scope.pagos.length + 1;
-                        pagoSvc.esAbonoPosfechado = isPosFechado;
-                        pagoSvc.valorAbono = valorAbono;
-
+                        pagoSvc.esAbonoPosfechado = isPosfechado;
+                        pagoSvc.valorAbono = valorAbono; 
 
 
                         //--------agregando abono ---
                         pagoSvc.addFormaCobro();
 
                         $scope.pagosDetalle = pagoSvc.pagosDetalle;
-                        $scope.selectedDocumentos = pagoSvc.selectedDocumentos; 
+                        $scope.selectedDocumentos = pagoSvc.selectedDocumentos;
 
                         let abonoCuota = $scope.pagosDetalle
                             .filter(item => item.secuencial === pagoSvc.secuencial)
-                            .reduce((prev, curr) =>instanceDecimal(prev).plus(curr.abono), instanceDecimal(0))
+                            .reduce((prev, curr) => fS.instanceDecimal(prev).plus(curr.abono), fS.instanceDecimal(0))
                             .toNumber();
 
-
+                       
                         $scope.addDataPayment(result, abonoCuota);
 
                         calculoTotales();
@@ -789,7 +802,7 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.addDataPayment = function (obj, abonoCuota) {
         $scope.pagos.push({
             ...obj,
-            abonoCuota: instanceDecimal(abonoCuota, 2),
+            abonoCuota: fS.instanceDecimal(abonoCuota, 2),
             secuencial: pagoSvc.secuencial
         })
     }
@@ -926,8 +939,8 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
                 if (result.isConfirmed) {
                     try {
 
-                        let totalValorAbono = $scope.pagos.reduce((acc, curr) => instanceDecimal(acc).plus(curr.valorAbono), instanceDecimal(0)).toNumber();
-                        let totalAbonoCuota = $scope.pagos.reduce((acc, curr) => instanceDecimal(acc).plus(curr.abonoCuota), instanceDecimal(0)).toNumber();
+                        let totalValorAbono = $scope.pagos.reduce((acc, curr) => fS.instanceDecimal(acc).plus(curr.valorAbono), fS.instanceDecimal(0)).toNumber();
+                        let totalAbonoCuota = $scope.pagos.reduce((acc, curr) => fS.instanceDecimal(acc).plus(curr.abonoCuota), fS.instanceDecimal(0)).toNumber();
 
 
                         let comprobante = {
@@ -997,8 +1010,8 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
 
-                        let params = comprobanteEgresoSvc.mapperTo(data); 
-
+                        let params = comprobanteEgresoSvc.mapperTo(data);
+                  
                         showLoader();
                         comprobanteEgresoSvc.post(params).then(response => {
                             if (response.code === "0") {
@@ -1032,7 +1045,7 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 modalFormaPagoCtrl.$inject = ['$scope', '$uibModalInstance', '$injector', 'params'];
 function modalFormaPagoCtrl($scope, $uibModalInstance, $injector, params) {
- 
+
     const fS = $injector.get('formulario');
     const tS = $injector.get('toastService');
     let pagoSvc = new PagoService(tS)
@@ -1093,11 +1106,13 @@ function modalFormaPagoCtrl($scope, $uibModalInstance, $injector, params) {
         try {
 
             let { idEntidadFinanciera, codigo, subEntidadesFinanciera } = $scope.entidadesFinancieras.at($scope.selectedIndexTab)
-
+            let el = document.getElementById('btnAddFormaPago');
             if (codigo === 'DOC') {
-                document.getElementById('btnAddFormaPago').style.display = 'none';
-            } else {
-                document.getElementById('btnAddFormaPago').style.display = 'block';
+                if(el){
+                    el.style.display = 'none';
+                }
+            } else if(el) {
+                el.style.display = 'block';
             }
 
             $scope.subEntidadesFinancieras = subEntidadesFinanciera;
@@ -1157,6 +1172,7 @@ function modalFormaPagoCtrl($scope, $uibModalInstance, $injector, params) {
             idCiudad: $scope.data.idCiudad,
             fechaEmision: formattedDateTime,
             posFechado: $scope.data.posFechado,
+            isPosfechado: $scope.data.posFechado,
             cobro: !$scope.data.posFechado,
             referencia: $scope.data.referencia,
             aprobacion: $scope.data.aprobacion,

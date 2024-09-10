@@ -69,6 +69,15 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN 
+            
+
+            INSERT INTO Customer.Customer WITH (ROWLOCK)
+                     (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address])
+            SELECT	ti.codigoSri,t.numeroIdentificacion,t.nombreFiscal,t.nombreComercial,t.correo,t.telefono,t.direccion
+			FROM @table t
+            INNER JOIN TipoIdentificacion ti ON ti.idTipoIdentificacion = t.idTipoIdentificacion
+            WHERE t.numeroIdentificacion NOT IN (SELECT IDCard FROM Customer.Customer )
+
 			INSERT INTO dbo.Proveedor
 				(idSubContribuyente
 				,idTipoIdentificacion
@@ -81,7 +90,9 @@ BEGIN
 				,importacion
 				,fechaRegistro
 				,idUsuario
-				,idEntidad)
+				,idEntidad
+                ,validationSri
+                ,CustomerId)
 			SELECT	
 				idSubContribuyente
 				,idTipoIdentificacion
@@ -95,7 +106,9 @@ BEGIN
 				,dbo.ufnGetDateEcuador()
 				,@idUsuario
 				,@idEntidad
-			FROM @table 
+                ,1
+                ,(SELECT TOP 1 c.Id FROM Customer.Customer c WHERE c.IDCard = t.numeroIdentificacion)
+			FROM @table t
 
 			INSERT INTO Importaciones.Historial(idUsuario,idEntidad,modulo,cantidad,fechaRegistro)
 			SELECT @idUsuario,@idEntidad,'/Compras/Proveedor',@count,dbo.ufnGetDateEcuador()

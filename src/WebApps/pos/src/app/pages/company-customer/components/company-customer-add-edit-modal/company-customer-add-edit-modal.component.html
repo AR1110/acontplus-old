@@ -1,0 +1,89 @@
+<form [formGroup]="customerForm" (ngSubmit)="onSave()" autocomplete="off">
+  <span mat-dialog-title>{{modalTitle}}</span>
+
+  <mat-dialog-content>
+
+    <ul class="nav nav-tabs">
+      <li class="nav-item" style="cursor: pointer;">
+        <a class="nav-link" [class.active]="selectedTab === 0" (click)="selectTab(0)">Generales</a>
+      </li>
+      <li class="nav-item"  style="cursor: pointer;">
+        <a class="nav-link" [class.active]="selectedTab === 1" (click)="selectTab(1)">Adicionales</a>
+      </li>
+      
+    </ul>
+    
+    <div class="tab-content mt-3">
+      @if(selectedTab===0){
+        <div  >
+          <div class="row   mt-4">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+          
+              <mat-form-field class="m3-input-full-width" appearance="outline">
+                <mat-label>Tipo identificación</mat-label>
+                <mat-select formControlName="idTipoIdentificacion">
+                  @for (item of tiposIdentificacion; track $index) {
+                  <mat-option [value]="item.idTipoIdentificacion">
+                    {{ item.descripcion }}
+                  </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+          
+            </div>
+            <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+              <mat-form-field class="m3-input-full-width" appearance="outline">
+                <mat-label>Número identificación</mat-label>
+                <input matInput formControlName="numeroIdentificacion">
+          
+                <!-- <mat-slide-toggle matSuffix style="margin-right: 10px;" (click)="onToggleSri($event)">SRI</mat-slide-toggle> -->
+                <button type="button" matSuffix style="margin-right: 10px;" (click)="syncDataSri($event)" mat-icon-button aria-label="Obtener Datos del sri">
+                  <mat-icon>autorenew</mat-icon>                  
+                </button>
+              </mat-form-field>
+            </div>
+          
+            <div class="col-12">
+              <mat-form-field class="m3-input-full-width" appearance="outline">
+                <mat-label>Nombre fiscal</mat-label>
+                <input matInput formControlName="nombreFiscal">
+              </mat-form-field>
+            </div>
+          
+            <div class="col-12">
+              <mat-form-field class="m3-input-full-width" appearance="outline">
+                <mat-label>Dirección</mat-label>
+                <textarea matInput placeholder="Ex. 100 Main St" formControlName="direccion"></textarea>
+              </mat-form-field>
+            </div>
+          
+          </div>
+          <div class="row ">
+            <div class="col-xl-6 col-lg-6 col-md-12 col-12">
+              <app-m3-input-chip [chips]="emails" [labelText]="'Correo'" />
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12 col-12">
+              <app-m3-input-chip [chips]="telefonos" [labelText]="'Teléfono'" />
+            </div>
+          </div>
+        </div>
+
+      }
+      @if(selectedTab===1){
+        <div  >
+          <p>Contenido de Tab 2</p>
+        </div>
+      } 
+    </div>
+
+ 
+
+
+  </mat-dialog-content>
+
+
+  <mat-dialog-actions align="end">
+    <button type="submit" mat-flat-button>{{btnText}}</button>
+    <button type="button" mat-raised-button mat-dialog-close>Cerrar</button>
+  </mat-dialog-actions>
+</form>

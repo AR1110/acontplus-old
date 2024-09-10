@@ -1,50 +1,27 @@
-﻿using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
 using Services.Common.Extensions;
 
 
 namespace Restaurant.API.Controllers
 {
-    public class ConfigPrinterController : BaseApiController
+    public class ConfigPrinterController(IConsumptionConfigService configService) : BaseApiController
     {
-        private readonly IConsumptionConfigService _configService;
-        private readonly ICustomLogger _log;
-
-        public ConfigPrinterController(IConsumptionConfigService configService, ICustomLogger log)
-        {
-            _configService = configService;
-            _log = log;
-        }
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            try
-            {
-                var response = await _configService.GetPrinterAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() } });
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("Data Not Found"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error in Get: \n" + ex.ToString());
-                return BadRequest(ex.Message);
-            }
+            var response =
+                await configService.GetPrinterAsync(
+                    new Dictionary<string, object> { { "idRol", User.GetUserRoleId() } });
+            return Ok(response);
         }
+
         [HttpPost]
         public async Task<IActionResult> Post(bool estado)
         {
-            try
-            {
-                var response = await _configService.AddPrinterAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "estado", estado } });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Data Not Found"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error while saving config: \n" + ex.ToString());
-                return BadRequest(ex.Message);
-            }
+            var response = await configService.AddPrinterAsync(
+                new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "estado", estado } });
+            return Ok(response);
         }
     }
 }

@@ -1,10 +1,12 @@
-﻿namespace Restaurant.API.Interfaces
+﻿using Common.Core.Models;
+
+namespace Restaurant.API.Interfaces
 {
     public interface IConsumptionCancelledService
     {
-        Task<string> GetAsync(Dictionary<string, object> parameters);
-        Task<string> AddAsync(Dictionary<string, object> parameters);
-        Task<string> UpdateAsync(Dictionary<string, object> parameters);
-        Task<string> DeleteAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters);
     }
 }

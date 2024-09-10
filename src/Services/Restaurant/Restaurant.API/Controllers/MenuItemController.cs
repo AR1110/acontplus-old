@@ -3,59 +3,29 @@ using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
 using Services.Common.Extensions;
 
+namespace Restaurant.API.Controllers;
 
-namespace Restaurant.API.Controllers
+public class MenuItemController(IMenuItemService menuItemService) : BaseApiController
 {
-    public class MenuItemController : BaseApiController
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-        private readonly IMenuItemService _menuItem;
-        private readonly ICustomLogger _log;
-
-
-        public MenuItemController(IMenuItemService menuItem, ICustomLogger log)
+        var parameters = new Dictionary<string, object>
         {
-            _menuItem = menuItem;
-            _log = log;
-        }
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object> {
-                    {"userRoleId", User.GetUserRoleId() },
-                    {"json", SqlStringParam.Sanitize(json) }
-                };
-                var response = await _menuItem.GetAsync(parameters);
-                if (response == null) { return NoContent(); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on get MenuItems: \n" + ex.ToString());
-                return BadRequest("Error al obtener los detalles: " + ex.Message);
-            }
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        
+        return Ok(await menuItemService.GetAsync(parameters));
+    }
 
-        [HttpGet("GetById/{id}")]
-        public async Task<IActionResult> GetById(int id, string json)
+    [HttpGet("GetById/{id}")]
+    public async Task<IActionResult> GetById(int id, string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            try
-            {
-                var parameters = new Dictionary<string, object> {
-                    {"userRoleId", User.GetUserRoleId() },
-                    {"id", id },
-                    {"json", json}
-                };
-                var response = await _menuItem.GetIdAsync(parameters);
-                if (response == null) { return NoContent(); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on get MenuItems: \n" + ex.ToString());
-                return BadRequest("Error al obtener los detalles: " + ex.Message);
-            }
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "json", json }
+        };
+
+        return Ok(await menuItemService.GetIdAsync(parameters));
     }
 }

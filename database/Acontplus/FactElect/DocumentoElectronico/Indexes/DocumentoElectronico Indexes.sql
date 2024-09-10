@@ -13,17 +13,17 @@ IF EXISTS (SELECT name from sys.indexes
            AND object_id = OBJECT_ID(N'dbo.DocumentoElectronico', N'U'))   
    DROP INDEX UX_DocumentoElectronico_ClaveAcceso ON dbo.DocumentoElectronico;   
 GO
---CREATE UNIQUE INDEX UX_DocumentoElectronico_ClaveAcceso  
---   ON dbo.DocumentoElectronico(claveAcceso);  
---GO
+CREATE UNIQUE INDEX UX_DocumentoElectronico_ClaveAcceso  
+ ON dbo.DocumentoElectronico(claveAcceso);  
+GO
 
 IF EXISTS (SELECT name from sys.indexes  
            WHERE name = N'UX_DocumentoElectronico_CodigoAutorizacion'
            AND object_id = OBJECT_ID(N'dbo.DocumentoElectronico', N'U'))   
    DROP INDEX UX_DocumentoElectronico_CodigoAutorizacion ON dbo.DocumentoElectronico;   
 GO  
---CREATE UNIQUE INDEX UX_DocumentoElectronico_CodigoAutorizacion  
---   ON dbo.DocumentoElectronico(codigoAutorizacion);  
+CREATE UNIQUE INDEX UX_DocumentoElectronico_CodigoAutorizacion  
+ ON dbo.DocumentoElectronico(codigoAutorizacion);  
 GO
 
  --UPDATE STATISTICS dbo.DocumentoElectronico WITH FULLSCAN;

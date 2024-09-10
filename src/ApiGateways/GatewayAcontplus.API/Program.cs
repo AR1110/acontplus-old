@@ -1,8 +1,15 @@
-﻿using Autofac.Extensions.DependencyInjection;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Common.AppSettings;
-using Common.Core.Utils;
+using GatewayAcontplus.API.Data;
+using GatewayAcontplus.API.Delegates;
+using GatewayAcontplus.API.Middleware;
+using GatewayAcontplus.API.Services;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -25,14 +32,27 @@ ConfigHelper.AddJsonFiles(builder.Configuration);
 var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().Split(",")
                    ?? throw new ArgumentException("SafeOrigins configuration is missing.");
 
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//        options.UseSqlServer(builder.Configuration.GetConnectionString("OcelotGateway")));
+
+//builder.Services.AddSingleton<IMessageQueueService, RabbitMQService>();
+//builder.Services.AddHostedService<RequestConsumerService>();
+
 // Ocelot Configuration (consider using environment variables for dynamic configuration)
 builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-builder.Services.AddOcelot(builder.Configuration);
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()).ConfigureContainer<ContainerBuilder>(builder =>
+{
+    // Register the ReportHeaderDelegatingHandler
+    builder.RegisterType<ConnectionStringHeaderDelegatingHandler>()
+        .InstancePerLifetimeScope();
+
+    // Register any other dependencies here
+});
+builder.Services.AddOcelot().AddDelegatingHandler<ConnectionStringHeaderDelegatingHandler>();
 
 // Identity Services (adapt to your specific authentication mechanism)
 builder.Services.AddIdentityService(builder.Configuration);
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
 // CORS Configuration
 builder.Services.AddCors(options =>
@@ -54,9 +74,27 @@ builder.Services
                .AddHealthChecks()
                .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
-builder.Services.AddScoped<ICustomLogger, CustomLogger>();
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+});
+
+builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+{
+    options.Level = System.IO.Compression.CompressionLevel.Fastest;
+});
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+    options.Level = System.IO.Compression.CompressionLevel.SmallestSize;
+});
 
 var app = builder.Build();
+
+app.UseResponseCompression();
+
+//app.UseMiddleware<RequestCountingMiddleware>();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

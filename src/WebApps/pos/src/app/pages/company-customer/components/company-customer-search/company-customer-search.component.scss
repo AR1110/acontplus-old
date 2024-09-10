@@ -1,0 +1,17 @@
+.loading-option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px; /* Ajusta esta altura según tus necesidades */
+}
+
+.overlay-content {
+  width: 280px;
+  // max-height: 300px;
+  border-radius: 5px;
+  margin: 0;
+  box-shadow: 0 0 5px 0px rgba(0, 0, 0, 0.4);
+  background: #fff;
+  padding: 10px;
+
+}

@@ -85,6 +85,9 @@ BEGIN
 							         ,CASE WHEN ci.estado = 0 THEN ''table-danger'' ELSE '''' END				   as style
 							         ,CASE WHEN ci.estado = 0 THEN ''Anulado''      ELSE ''Activo'' END			   as estado
 							         ,us.nombreUsuario														       as usuario
+                                     ,telefonoEstab = es.telefono
+                                     ,correoEstab   = es.correo 
+                                     ,nombreEstab   = es.nombreComercial 
 					FROM dbo.ComprobanteIngreso    ci WITH (NOLOCK) 
 					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = ci.idEstablecimiento
 					INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = ci.idUsuario

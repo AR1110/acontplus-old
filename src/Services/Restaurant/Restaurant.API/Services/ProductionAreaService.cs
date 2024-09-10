@@ -1,65 +1,86 @@
-﻿using System.Data;
-using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
+﻿using Common.Core.Models;
+using Microsoft.EntityFrameworkCore;
+using Restaurant.API.Data;
+using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services
 {
-    public class ProductionAreaService : IProductionAreaService
+    public class ProductionAreaService(RestaurantContext context) : IProductionAreaService
     {
-        private readonly IAdoRepository _repository;
-
-        public ProductionAreaService(IAdoRepository repository)
+        public async Task<ApiResponse> AddAsync(ProductionArea productionArea)
         {
-            _repository = repository;
+            context.ProductionAreas.Add(productionArea);
+            await context.SaveChangesAsync();
+            return new ApiResponse { Code = "1", Message = "Registrado correctamente!" };
         }
 
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> DeleteAsync(int userId, int id)
         {
-            var ds = await _repository.GetDataSetAsync("Restaurant.ProductionArea_Get", parameters);
-
-            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+            var productionArea = await context.ProductionAreas.FindAsync(id);
+            if (productionArea == null)
             {
-                if (ds.Tables.Count > 0)
-                {
-                    ds = new DataSet();
-                }
-                return null;
+                return new ApiResponse { Code = "0", Message = "Floor not found" };
             }
-            else
+
+            //var orderExists = await context.OrderItems
+            //   .Join(context.Items,
+            //         order => order.ItemId,
+            //         item => item.Id,
+            //         (order, item) => new { order, item })
+            //   .Join(context.ProductionAreas,
+            //         combined => combined.item.ProductionAreaId,
+            //         productionArea => productionArea.Id,
+            //         (combined, productionArea) => new { combined.order, productionArea })
+            //  .AnyAsync(f => f.productionArea.Id == id);
+
+            //if (!orderExists)
+            //{
+                context.Remove(productionArea);
+            //}
+            //else
+            //{
+            //    productionArea.Enabled = false;
+            //    productionArea.Deleted = true;
+            //    productionArea.UserId = userId;
+            //    context.Update(productionArea);
+            //}
+            
+            await context.SaveChangesAsync();
+            return new ApiResponse { Code = "1", Message = "Eliminado correctamente!" };
+        }
+
+        public async Task<ApiResponse> GetAllAsync()
+        {
+            var productionAreas = await context.ProductionAreas.Where(x => x.Deleted == null).ToListAsync();
+            return productionAreas.Count > 0
+                ? new ApiResponse { Code = "1", Payload = productionAreas }
+                : new ApiResponse { Code = "0", Message = "Not found!" };
+        }
+
+        public async Task<ApiResponse> GetByEstabAsync(int establecimientoId)
+        {
+            var productionAreas = await context.ProductionAreas.Where(x => x.Deleted == null && x.EstablecimientoId == establecimientoId).ToListAsync();
+            return productionAreas.Count > 0
+                ? new ApiResponse { Code = "1", Payload = productionAreas }
+                : new ApiResponse { Code = "0", Message = "Not found!" };
+        }
+
+        public async Task<ApiResponse> UpdateAsync(int id, ProductionArea productionArea)
+        {
+            var productionAreaFound = await context.ProductionAreas.FindAsync(id);
+            if (productionAreaFound == null)
             {
-                return DataConverters.DataSetToJson(ds);
+                return new ApiResponse { Code = "0", Message = "Floor not found" };
             }
-        }
 
-        public async Task<string> AddAsync(ApiRequest request)
-        {
-            var parameters = new Dictionary<string, object>{
-                {"userRoleId", request.UserRoleId},
-                {"json", DataConverters.SerializeDictionary(request.Data)}
-            };
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ProductionArea_Insert", parameters);
-        }
-
-        public async Task<string> UpdateAsync(int id, ApiRequest request)
-        {
-            var parameters = new Dictionary<string, object>{
-                {"userRoleId", request.UserRoleId},
-                {"id", id},
-                {"json", DataConverters.SerializeDictionary(request.Data)}
-            };
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ProductionArea_Update", request.Data);
-        }
-
-        public async Task<string> DeleteAsync(int id, ApiRequest request)
-        {
-            var parameters = new Dictionary<string, object>{
-                {"userRoleId", request.UserRoleId},
-                {"id", id}
-            };
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.ProductionArea_Update_Cancel", request.Data);
+            productionAreaFound.Code = productionArea.Code;
+            productionAreaFound.Description = productionArea.Description;
+            productionAreaFound.Enabled = productionArea.Enabled;
+            productionAreaFound.UserId = productionArea.UserId;
+            context.Update(productionAreaFound);
+            await context.SaveChangesAsync();
+            return new ApiResponse { Code = "1", Message = "Actualizado correctamente!" };
         }
     }
 }

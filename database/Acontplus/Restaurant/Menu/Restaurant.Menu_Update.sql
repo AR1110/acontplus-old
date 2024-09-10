@@ -14,7 +14,7 @@ GO
 CREATE OR ALTER PROCEDURE Restaurant.Menu_Update
 @userRoleId INT
 ,@id        INT
-,@json      NVARCHAR(MAX) 
+,@json      NVARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -30,8 +30,10 @@ BEGIN
             ,@response      VARCHAR(300)
             ,@promotionDays NVARCHAR(MAX)
             ,@forPromotion  BIT
-               
-   SELECT @title            = title
+            ,@userId INT;
+                     
+    BEGIN TRY
+        SELECT @title            = title
           ,@menuTypeId      = menuTypeId
           ,@summary         = summary
           ,@content         = content          
@@ -40,20 +42,21 @@ BEGIN
           ,@promotionDays   = promotionDays
           ,@menuItem        = menuItem
           ,@forPromotion    = forPromotion
-   FROM OPENJSON(@json)
-   WITH(
-    title           VARCHAR(500)    '$.title'
-    ,menuTypeId     INT             '$.menuTypeId'
-    ,summary        VARCHAR(500)    '$.summary'
-    ,content        VARCHAR(MAX)    '$.content'
-    ,startDate      DATETIME2       '$.startDate'
-    ,endDate        DATETIME2       '$.endDate'
-    ,promotionDays  NVARCHAR(MAX)   '$.promotionDays'
-    ,menuItem       NVARCHAR(MAX)   '$.menuItems' AS JSON
-    ,forPromotion   BIT             '$.forPromotion'
-   )
-            
-   BEGIN TRY
+        FROM OPENJSON(@json)
+        WITH(
+            title           VARCHAR(500)    '$.title'
+            ,menuTypeId     INT             '$.menuTypeId'
+            ,summary        VARCHAR(500)    '$.summary'
+            ,content        VARCHAR(MAX)    '$.content'
+            ,startDate      DATETIME2       '$.startDate'
+            ,endDate        DATETIME2       '$.endDate'
+            ,promotionDays  NVARCHAR(MAX)   '$.promotionDays'
+            ,menuItem       NVARCHAR(MAX)   '$.menuItems' AS JSON
+            ,forPromotion   BIT             '$.forPromotion'
+        )
+        
+        SET @userId = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId) 
+
         BEGIN TRAN
             ---- UPDATE Menu ----
             UPDATE Restaurant.Menu
@@ -68,16 +71,16 @@ BEGIN
             EXEC Restaurant.MenuItem_Insert @userRoleId, @id, @menuItem, @response OUTPUT
                                              
         COMMIT TRAN
-        SELECT Common.ufnSpResponse('1', 'Éxitos al actualizar', NULL)
+        SELECT '1' code, 'Éxitos al actualizar' as 'message'
    END TRY
    BEGIN CATCH
-        SELECT Common.ufnSpResponse('0', 'Error al actualizar el Menu', NULL)
+        SELECT '0' code, 'Error al actualizar el Menu' as 'message'
         
         IF (@@TRANCOUNT > 0) ROLLBACK TRAN
 
         INSERT INTO ErroresSistema
         (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-        VALUES(NEWID(), 'Menu/Put', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userRoleId)
+        VALUES(NEWID(), 'Menu/Put', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
    END CATCH
 END
 GO

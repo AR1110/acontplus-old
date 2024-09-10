@@ -1,10 +1,9 @@
 ﻿using Common.Core.Models;
 
-namespace Restaurant.API.Interfaces
+namespace Restaurant.API.Interfaces;
+
+public interface IMenuService
 {
-    public interface IMenuService
-    {
-        public Task<object> GetAsync(Dictionary<string, object> parameters);
-        public Task<string> PutAsync(int id, ApiRequest request);
-    }
+    public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    public Task<ApiResponse> PutAsync(int id, ApiRequest request);
 }

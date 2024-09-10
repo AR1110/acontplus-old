@@ -6,7 +6,7 @@ GO
 CREATE OR ALTER VIEW Restaurant.v_Room  WITH SCHEMABINDING
 AS
 
-SELECT id					= rr.Id
+  SELECT id					= rr.Id
 		,code				= rr.Code
 		,description		= rr.Description
 		,capacity			= rr.Capacity
@@ -17,5 +17,6 @@ SELECT id					= rr.Id
 		,userId				= rr.UserId
 		,floorId			= rr.FloorId
 		,floorDescription	= rf.Description
+        ,rf.codEstab
 FROM Restaurant.Room rr
 INNER JOIN Restaurant.[Floor] rf ON rf.Id = rr.FloorId

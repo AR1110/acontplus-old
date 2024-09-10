@@ -1,3 +1,4 @@
+//@ts-check
 (function () {
 
     'use strict';
@@ -37,14 +38,14 @@
 
         const CODE_REPORT = $injector.get('CODE_REPORT');
 
-        let DOC_TYPE = $injector.get('DOC_TYPE'); 
+        let DOC_TYPE = $injector.get('DOC_TYPE');
         TIPO_DOC_NE = {
             codigo: DOC_TYPE['NE']
-        } 
+        }
 
-   
+
         $scope.codDoc = DOC_TYPE['NE'];
-      
+
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
             order: '',
@@ -69,63 +70,91 @@
 
 
         $scope.cliente = {}
-        $scope.notaEntregas = []; 
+        $scope.notaEntregas = [];
 
         // removed focus new NE
         let btnNewDocument = document.getElementById("btnNewDocument");
-        btnNewDocument.addEventListener("click", () => {
-            btnNewDocument.blur();
-        })
+        if (btnNewDocument) {
+            btnNewDocument.addEventListener("click", () => {
+                btnNewDocument.blur();
+            })
+
+        }
+
+        $scope.resultRangeFilter = resultRangeFilter;
+        $scope.onKeyupCliente = onKeyupCliente;
+        $scope.onSelectCliente = onSelectCliente;
+        $scope.onKeyupUsuarioSearch = onKeyupUsuarioSearch;
+        $scope.selectedUsuarioSearch = selectedUsuarioSearch;
+        $scope.onClickBtnMore = onClickBtnMore;
+        $scope.searchFilterLocal = searchFilterLocal;
+        $scope.getTotales = getTotales;
+        $scope.getNotaEntregas = getNotaEntregas;
+        $scope.refresh = refresh;
+        $scope.initiload = initiload;
+        $scope.pageChanged = pageChanged;
+        $scope.changePageSize = changePageSize;
+        $scope.estabFilter = estabFilter;
+        $scope.opcionCobro = opcionCobro;
+
+        $scope.openModalNew = openModalNew;
+        $scope.openModalDetalle = openModalDetalle;
+        $scope.openModalEdit = openModalEdit;
+        $scope.openModalDuplicate = openModalDuplicate;
+        $scope.askToDelete = askToDelete;
+        $scope.openModalCuota = openModalCuota;
+        $scope.print = print;
+        $scope.getParamToSendMail = getParamToSendMail;
+        $scope.getReport = getReport;
 
         //========================Start Filters=================
 
-        $scope.resultRangeFilter = function (item) {
-            $scope.dataSearch.fechaInicio = item.startDate,
-                $scope.dataSearch.fechaFin = item.endDate
+        function resultRangeFilter(item) {
+            $scope.dataSearch.fechaInicio = item.startDate;
+            $scope.dataSearch.fechaFin = item.endDate
             $scope.getNotaEntregas();
         }
 
 
 
-        $scope.onKeyupCliente = function () {
+        function onKeyupCliente() {
             if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.idCliente = 0;
                 $scope.dataSearch.checkBoxFecha = true;
             }
         }
-        $scope.onSelectCliente = function (item) {
+        function onSelectCliente(item) {
             $scope.dataSearch.idCliente = item.idCliente;
             $scope.dataSearch.checkBoxFecha = true;
             $scope.getNotaEntregas();
         }
- 
-    
-        $scope.onKeyupUsuarioSearch = function () {
+
+
+        function onKeyupUsuarioSearch() {
             if (!$scope.dataUserSearch.name) {
                 $scope.dataSearch.byUsuario = 0;
             }
         }
 
-        $scope.selectedUsuarioSearch = function (item) { 
+        function selectedUsuarioSearch(item) {
             $scope.dataSearch.byUsuario = item.idUsuario;
             $scope.getNotaEntregas()
         }
 
-        $scope.onClickBtnMore = function () {
+        function onClickBtnMore() {
             $scope.moreSearchOptions = !$scope.moreSearchOptions;
         }
 
-        $scope.searchFilterLocal = function () {
-            let aprobComprobantes = JSON.parse(JSON.stringify($scope.cloneAproComprobantes));
-            $scope.aprobComprobantes = $filter("filter")(aprobComprobantes, $scope.dataSearch.bySearch);
-            $scope.calculoColumnTotal();
+
+        function searchFilterLocal() {
+            let notaEntregas = JSON.parse(JSON.stringify($scope.cloneNotaEntregas));
+            $scope.notaEntregas = $filter("filter")(notaEntregas, $scope.dataSearch.bySearch);
+            getTotales();
         }
 
-        //=====================Eend Filters=======================
+        //=====================Eend Filters======================= 
 
-
-
-        $scope.getTotales = function () {
+        function getTotales() {
             let { total, totalAbono, totalSaldo } = notaEntregaSvc.getTotales($scope.notaEntregas)
             $scope.total = fS.roundNumber(total, 5);
             $scope.totalAbono = fS.roundNumber(totalAbono, 5);
@@ -134,7 +163,7 @@
         }
 
 
-        $scope.getNotaEntregas = async () => {
+        async function getNotaEntregas() {
             try {
 
                 if ($scope.dataSearch.nroSecuencial) {
@@ -160,7 +189,7 @@
                     byCliente: $scope.dataSearch.idCliente,
                     checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                     byUsuario: $scope.dataSearch.byUsuario,
-                    idEstadoPago: $scope.dataSearch.idEstadoPago>0 ?  $scope.dataSearch.idEstadoPago: null,
+                    idEstadoPago: $scope.dataSearch.idEstadoPago > 0 ? $scope.dataSearch.idEstadoPago : null,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
@@ -171,16 +200,16 @@
                 showLoader();
                 $scope.notaEntregas = [];
                 $scope.cloneNotaEntregas = [];
-                $scope.getTotales();
+                getTotales();
 
-                notaEntregaSvc.getAll(dataSearch).then(response => { 
+                notaEntregaSvc.getAll(dataSearch).then(response => {
                     hideLoader();
                     let { notaEntregas, dataTotals } = response;
                     $scope.notaEntregas = notaEntregas;
                     $scope.cloneNotaEntregas = structuredClone($scope.notaEntregas);
- 
+
                     $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                    $scope.getTotales(); 
+                    getTotales();
 
                 }).catch(error => {
                     $scope.dataSearch.totalRecords = 0;
@@ -194,24 +223,25 @@
             }
         }
 
-        $scope.refresh = function(){
-            $scope.getNotaEntregas();
+        function refresh() {
+            getNotaEntregas();
         }
 
 
-        $scope.initiload = async function () {
+        initiload();
+        async function initiload() {
             showLoader();
             notaEntregaSvc.getDataFilter().then(response => {
                 hideLoader();
                 $scope.establecimientos = response.estabs;
-                $scope.estadoDocumentos = response.estadosDoc; 
+                $scope.estadoDocumentos = response.estadosDoc;
 
                 if ($scope.establecimientos.length > 0) {
                     let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     $scope.dataSearch.codEstab = dataEstab.codEstab;
                     $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
-                    $scope.getNotaEntregas();
+                    getNotaEntregas();
                 } else {
                     tS.toastr('warning', 'No tienes asignado Establecimiento!')
                 }
@@ -220,39 +250,33 @@
             })
 
             showLoader()
-
             notaEntregaSvc.getDataForm().then(response => {
                 mainDataForm = structuredClone(response);
                 $scope.permisoEditarDoc = response.permisoEditarDoc;
-            }).finally(()=>hideLoader())
+            }).finally(() => hideLoader())
 
         }
-        $scope.initiload();
 
 
-        $scope.estabFilter = function () {
+        function estabFilter() {
             let dataEstab = $scope.establecimientos.find(estab => estab.codEstab === $scope.dataSearch.codEstab);
             $scope.puntosEmision = dataEstab.puntosEmision;
             $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
-            $scope.getNotaEntregas();
+            getNotaEntregas();
         }
 
-        $scope.pagechanged = function () {
-            $scope.getNotaEntregas();
-        };
+        function pageChanged() {
+            getNotaEntregas();
+        }
 
-        $scope.changePageSize = function () {
+        function changePageSize() {
             $scope.dataSearch.pageIndex = 1;
-            $scope.getNotaEntregas();
+            getNotaEntregas();
         };
         //Filtro de Nota de Entregas localmente 
-        $scope.searchFilterLocal = function () {
-            let notaEntregas = JSON.parse(JSON.stringify($scope.cloneNotaEntregas));
-            $scope.notaEntregas = $filter("filter")(notaEntregas, $scope.dataSearch.bySearch);
-            $scope.getTotales();
-        }
 
-        $scope.validateOperationPrintAndPayment = (result) => {
+
+        function validateOperationPrintAndPayment(result) {
 
             let { isRegister, data } = result;
 
@@ -268,9 +292,9 @@
 
             if (data.payAutomatic) {
                 if (data.esContado) {
-                    $scope.openModalRapido(result)
+                    cobroRapido(result)
                 } else {
-                    $scope.openModalCobroDocumento(result)
+                    cobroPorLote(result)
                 }
                 return
             }
@@ -279,14 +303,16 @@
                 commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
             }
 
-            $scope.getNotaEntregas();
-            btnNewDocument.focus();
+            getNotaEntregas();
+            if (btnNewDocument) {
+                btnNewDocument.focus();
+            }
         }
 
 
-        $scope.openModalNew = async () => {
+        async function openModalNew() {
             try {
-                modalSvc.openModalCustom({
+                modalSvc.open({
                     controller: 'modalNotaEntregaCtrl',
                     template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
                     size: 'xl',
@@ -300,14 +326,14 @@
                     if (typeof result !== 'object') return
 
                     //Pendiednte ⭕
-                    $scope.validateOperationPrintAndPayment(result)
+                    validateOperationPrintAndPayment(result)
                 })
             } catch (error) {
                 console.log(error)
             }
         }
 
-        $scope.openModalDetalle = async (params) => {
+        async function openModalDetalle(params) {
             try {
                 let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
                 let ctrl = (await import(fileCtrl))[controller];
@@ -346,12 +372,12 @@
             return paramsPermission;
         }
 
-        $scope.openModalEdit = async (item) => {
-            try { 
+        async function openModalEdit(item) {
+            try {
                 if (item.disabledUpdate) {
                     fS.sweetAlert('warning', 'Este documento ya no se puede editar!');
                     return
-                } 
+                }
 
                 let paramsPermission = getParamsPermission(item, 'E');
                 let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
@@ -378,9 +404,9 @@
                     })
                     modalRef.result.then(result => {
                         if (typeof result === 'object') {
-                            $scope.getNotaEntregas();
+                            getNotaEntregas();
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)     
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
 
                             }
 
@@ -399,7 +425,7 @@
 
 
 
-        $scope.openModalDuplicate = async (item) => {
+        async function openModalDuplicate(item) {
             try {
                 showLoader();
                 notaEntregaSvc.getId(item.idDocumento).then(response => {
@@ -417,7 +443,7 @@
 
                     modalRef.result.then(result => {
                         if (typeof result === 'object') {
-                            $scope.validateOperationPrintAndPayment(result)
+                            validateOperationPrintAndPayment(result)
                         }
                     })
                 })
@@ -432,10 +458,27 @@
         }
 
 
-        $scope.askToDelete = async (item) => {
+        async function askToDelete(item) {
             try {
+                if (item.esAnulado) {
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'El documento ya esta anulado!'
+                    })
+                    return
+                }
+                if (item.enabledHistorialCobro) {
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'El documento ya se encuentra cobrado!'
+                    })
+                    return
+                }
                 if (item.disabledAnular) {
-                    fS.sweetAlert('warning', 'El documento ya se encuentra anulada o transferida');
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'El documento ya se encuentra transferida!'
+                    })
                     return
                 }
 
@@ -447,7 +490,7 @@
                 if (response && response.code === "2") {
                     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
-                } 
+                }
 
 
                 let { isConfirmed } = await Swal.fire({
@@ -474,10 +517,10 @@
 
                             //Una vez actualizado el documento  
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)    
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
 
                             }
-                            $scope.getNotaEntregas();
+                            getNotaEntregas();
                         }
                     }).catch(error => {
                         hideLoader();
@@ -491,106 +534,104 @@
             }
         }
 
-
-
-        //--------------------------------------------------COBROS----------
-
-        $scope.opcionCobro = (item) => {
-
-            if (item.estadoFinanciero === "Cobrada") {
-                fS.sweetAlert('warning', '<small>Este documento ya se encuentra cobrada!</small>')
-                return
+        /**
+         * 
+         * @param {*} result 
+         */
+        function limpiarDatoCobro(result) {
+            if (typeof result == 'object' || $scope.isRegister) {
+                getNotaEntregas();
             }
 
-            let params = {
-                data: item
+            //Cuando el documento es Nuevo o Duplicado 
+            if ($scope.isPrintDocument == 1) {
+                getNotaEntregas();
+                commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
+                $scope.isPrintDocument = null;
             }
 
-            if (item.tiempoCredito) {
-                $scope.openModalRapido(params);
-            } else {
-                $scope.openModalCobroDocumento(params)
+            $scope.isPrintDocument = null;
+            $scope.isRegister = null;
+            $scope.parametersPrint = {};
+            if (btnNewDocument) {
+                btnNewDocument.focus();
             }
         }
 
-
-
-
-        $scope.openModalCobroDocumento = async (params) => {
+        /**
+         * 
+         * @param {*} params 
+         */
+        async function cobroRapido(params) {
             try {
                 let { fileCtrl, ctrl, template } = nombreModalContabilidad.COBRO_RAPIDO;
                 let controller = (await import(fileCtrl))[ctrl];
 
-                $scope.openModalCobro({
+                let modalRef = modalSvc.open({
                     controller,
                     template,
                     params,
-                    size: 'xl',
-                    //   windowClass: 'uibModalFullScreen'
+                    size: 'lg'
+                })
+
+                modalRef.result.then(result => {
+                    limpiarDatoCobro(result)
                 })
             } catch (error) {
-                console.log(error)
+
             }
         }
 
-
-
         /**
          * 
-         * @param {object} params 
+         * @param {*} params 
          */
-        $scope.openModalRapido = async (params) => {
-
+        async function cobroPorLote(params) {
             try {
-                const { fileCtrl, ctrl, template } = nombreModalContabilidad.COBRO_LOTE;
-                let controller = (await import(fileCtrl))[ctrl];  
 
-                $scope.openModalCobro({
+                const { fileCtrl, ctrl, template } = nombreModalContabilidad.COBRO_LOTE;
+                let controller = (await import(fileCtrl))[ctrl];
+
+                let modalRef = modalSvc.open({
                     controller,
                     template,
                     params,
+                    size: 'xl'
+                })
+
+                modalRef.result.then(result => {
+                    limpiarDatoCobro(result)
                 })
             } catch (error) {
                 console.log(error)
             }
-
-        }
-
-        /**
-         * 
-         * @param {object} param0 
-         */
-
-        $scope.openModalCobro = ({ controller, template, size = 'lg', params }) => {
-            let $modalRef = modalSvc.openModalCustom({
-                controller,
-                template,
-                size,
-                params,
-                isRenderRazorPartial: true
-            })
-
-            $modalRef.result.then(result => {
-                if (typeof result == 'object' || $scope.isRegister) {
-                    $scope.getNotaEntregas();
-                }
-
-                //Cuando el documento es Nuevo o Duplicado 
-                if ($scope.isPrintDocument == 1) {
-                    $scope.getNotaEntregas();
-                    commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
-                    $scope.isPrintDocument = null;
-                }
-
-                btnNewDocument.focus();
-                $scope.isPrintDocument = null;
-                $scope.isRegister = null;
-                $scope.parametersPrint = {}
-            })
         }
 
 
-        $scope.openModalCuota = async (item) => {
+        //--------------------------------------------------COBROS----------
+
+        function opcionCobro(data) {
+            if (!data.enabledPayment) {
+                tS.toastr({
+                    type: 'warning',
+                    message: 'Este documento ya se encuentra cobrada!'
+                })
+                return
+            }
+
+            let params = {
+                data: structuredClone(data)
+            }
+
+            if (data.tiempoCredito) {
+                cobroRapido(params)
+            } else {
+                cobroPorLote(params)
+            }
+        }
+
+
+        async function openModalCuota(item) {
 
             try {
                 let fileCtrl = nombreModalContabilidad.COBRO.fileCuotaCtrl;
@@ -614,11 +655,11 @@
                 console.log(error)
             }
         }
- 
 
 
 
-        $scope.print = function (item) {
+
+        function print(item) {
             let parameters = {
                 isPrint: 1,
                 idDocument: item.idDocumento,
@@ -637,7 +678,7 @@
 
 
         $scope.typeSendToMail = 'N'
-        $scope.getParamToSendMail = function (item) {
+        function getParamToSendMail(item) {
             return {
                 TYPE_NOTIFICATION: 'N',
                 codDoc: item.codDoc,
@@ -662,7 +703,7 @@
         }
 
 
-        $scope.getReport = function (item) {
+        function getReport(item) {
             let format = 'pdf';
             let dataParms = {
                 id: item.idDocumento,
@@ -761,7 +802,7 @@
         $scope.tiposIdentificacion = [];
 
         $scope.cuotas = [];
-        $scope.datosAdicionalesArticulo = []; 
+        $scope.datosAdicionalesArticulo = [];
 
         //Informacion adicional del documento 
         $scope.infoAdicionalDocumento = [];
@@ -919,7 +960,7 @@
             }
         }
 
-        $scope.refreshUserPermission = function(){
+        $scope.refreshUserPermission = function () {
             showLoader();
             userCustomerPermissionSvc.fetchUserPermission().then(response => {
                 const { porcentajeDescuento, descuento } = response.detalle;
@@ -952,15 +993,11 @@
 
 
         function calculateTotalItems(items) {
-            return items.map(item => {
-                let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
-                let total = precioTotalSinImpuesto + item.valorImpuesto;
+            return items.map(item => {  
                 return {
                     ...item,
                     idNotaEntregaDetalle: params.action === "DUPLICAR" ? 0 : item.idNotaEntregaDetalle,
-                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
-                    precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, $scope.decimal.nroTotalDetalle),
-                    total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle)
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),  
                 }
 
             })
@@ -1126,7 +1163,7 @@
                 }
 
                 $scope.cliente = cliente;
-                $scope.infoAdicionalDocumento = infoAdicionalDocumento; 
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
 
@@ -1176,7 +1213,7 @@
             });
         }
 
-       
+
 
         function getFechaVencimiento() {
             if ($scope.data.fechaEmision && $scope.tiemposCredito.length > 0) {
@@ -1207,14 +1244,14 @@
             }
         }
 
-        $scope.resultModalAdicional = function (result) { 
+        $scope.resultModalAdicional = function (result) {
             let { infoAdicionalDoc } = result;
             $scope.infoAdicionalDocumento = infoAdicionalDoc;
         }
 
-        function setColumnDefs() { 
+        function setColumnDefs() {
 
-            const ventaDetailPermission = $scope.permisoDetalleVenta  
+            const ventaDetailPermission = $scope.permisoDetalleVenta
             const CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
         <a update-article ng-click="grid.appScope.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
@@ -1367,7 +1404,7 @@
             },
             {
                 name: '%',
-                field: 'porcentajeDescuento', 
+                field: 'porcentajeDescuento',
                 // enableCellEdit: ventaDetailPermission.porcentajeDescuento,
                 // allowCellFocus: ventaDetailPermission.porcentajeDescuento,
                 // enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
@@ -1408,6 +1445,10 @@
                 width: '7%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'IVA',
@@ -1418,6 +1459,10 @@
                 width: '5%',
                 minWidth: '50',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Total',
@@ -1428,6 +1473,10 @@
                 width: '5%',
                 minWidth: '100',
                 visible: true,
+                cellFilter: fS.cellFilterRoundToNumber(),
+                cellTooltip: function (row, col) {
+                    return fS.cellTooltipGrid(row.entity, col.field)
+                },
             },
             {
                 name: 'Ice',
@@ -1519,7 +1568,7 @@
                 if (isConfirmed && rowEntity.datosAdicionales) {
                     $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(ia => {
                         return !(rowEntity.datosAdicionalesArticulo.some(iaa => iaa.idInfoAdicional === ia.idInfoAdicional))
-                    }); 
+                    });
                 }
             } catch (error) {
                 console.log(error)
@@ -1926,11 +1975,11 @@
 
 
 
-                let dataMedida = medidas.find(medida => (medida.defaultMedida)); 
+                let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
-                entity.descripcion = articulo.descripcion; 
+                entity.descripcion = articulo.descripcion;
 
                 tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
@@ -1957,8 +2006,8 @@
                         ...daa,
                         uniqueRowDetalle: entity.uniqueRowDetalle
                     }
-                }); 
-                
+                });
+
                 entity.consolidacionesFecha = consolidacionesFecha;
 
                 entity.articuloTarifas = dataMedida.tarifas;
@@ -2113,61 +2162,25 @@
         // * Add by Ignacio Manchu.
         function drawInfoGeneralNotaEntrega() {
             try {
-                let {
-                    subTotalSinImpuestos,
-                    htmlImpuestoTotal,
-                    htmlIvaTotal,
-                    irbpnr,
-                    totalIce,
-                    importeTotal,
-                    totalDescuento,
-                    porcentajeDescuento,
-                    propina,
-                } = gridOptionsSvc.getImpuestoTotales({
+                let dataImpuestoTotales = gridOptionsSvc.getImpuestoTotales({
                     items: $scope.gridOptions.data,
                     decimal: $scope.decimal,
                     tarifasImpuesto: $scope.tarifasImpuesto.slice(),
                 });
+                let {
+                    subTotalSinImpuestos, 
+                    irbpnr, 
+                    importeTotal,
+                    totalDescuento,
+                    porcentajeDescuento,
+                    propina,
+                } = dataImpuestoTotales; 
 
-                const template = `<table class="table table-clear table-sm">
-                                    <tbody>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Subtotal sin Impuestos</strong>
-                                            </td>
-                                            <td class="right">$${subTotalSinImpuestos}</td>
-                                        </tr>
-                                        ${htmlImpuestoTotal}
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Total descuento</strong>
-                                            </td>
-                                            <td class="right">$${totalDescuento}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Valor ICE</strong>
-                                            </td>
-                                            <td class="right">$${totalIce}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Valor irbpnr</strong>
-                                            </td>
-                                            <td class="right">$${irbpnr}</td>
-                                        </tr>
-                                        ${htmlIvaTotal}
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="font-weight-bold">Valor Total</strong>
-                                            </td>
-                                            <td class="right font-weight-bold">$${importeTotal}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>`;
-
+                const htmlTemplate = gridOptionsSvc.impuestoTotalesHtml(dataImpuestoTotales);
                 const element = document.getElementById('draw-dynamic-subtotal');
-                element.innerHTML = template;
+                if (element) {
+                    element.innerHTML = htmlTemplate;
+                }
 
                 $scope.data.subTotalSinImpuestos = subTotalSinImpuestos;
                 $scope.data.total = importeTotal;
@@ -2324,9 +2337,9 @@
 
         function isValidTotals() {
             let {
-                subTotalSinImpuestos, 
+                subTotalSinImpuestos,
                 importeTotal,
-                totalDescuento, 
+                totalDescuento,
             } = gridOptionsSvc.getImpuestoTotales({
                 items: $scope.gridOptions.data,
                 decimal: $scope.decimal,
@@ -2360,7 +2373,7 @@
                     throw "Invalid form!";
                 }
 
-                if (!isValidTotals()) return 
+                if (!isValidTotals()) return
 
                 let cuotas = validateCuota();
 
@@ -2413,8 +2426,8 @@
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
-                    infoAdicionalDocumento: $scope.infoAdicionalDocumento, 
-                    cuotas 
+                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
+                    cuotas
                 })
 
 
@@ -2597,7 +2610,7 @@
                                 detalles: $scope.gridOptions.data,
                                 dataFormaPago: $scope.dataFormaPago,
                                 itemsDeleted: $scope.gridOptionsItemsDeleted,
-                                infoAdicionalDocumento: $scope.infoAdicionalDocumento, 
+                                infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                                 cuotas
                             })
 

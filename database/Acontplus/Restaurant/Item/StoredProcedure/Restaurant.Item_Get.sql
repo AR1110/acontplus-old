@@ -16,11 +16,8 @@ GO
 -- Restaurant.Item_Get 139, '{"tipo":2}', ''
 -- Restaurant.Item_Get 139, '{"tipo":4, "pageIndex":1,"pageSize":10 }', ''
 -- Restaurant.Item_Get 139, '{"tipo":3,"checkSubFamilia":false,"idSubFamilia":0,"pageIndex":1,"pageSize":25,"checkBySearch":true,"code":"COM"}', ''
-IF OBJECT_ID(N'Restaurant.Item_Get', N'P') IS NOT NULL
-	DROP PROCEDURE Restaurant.Item_Get
-GO
-CREATE PROCEDURE Restaurant.Item_Get
-@userRoleId INT
+
+CREATE OR ALTER PROCEDURE Restaurant.Item_Get @userRoleId INT
 ,@json NVARCHAR(MAX)
 ,@tableNames NVARCHAR(MAX) OUTPUT
 AS
@@ -88,8 +85,6 @@ BEGIN
 				    ,tipoIva			            = CAST(CAST(a.porcentaje AS DECIMAL(15,0)) AS VARCHAR)+''%''
 				    ,tipoArticulo		            = ISNULL(a.tipoArticulo,''Ninguna'')
 				    ,style				            = a.colorRow
-				    ,ProductionAreaId               = pa.Id
-				    ,descripcionProductionArea      = pa.Description
                     ,costPrice                      = a.precioCosto
                     ,pvp				            = (SELECT	idArticuloPvP = ap.idArticuloPvP
 										                        ,idTarifa = ap.idTarifa
@@ -113,7 +108,6 @@ BEGIN
 			FROM Restaurant.Item ri
 			INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId AND a.idEntidad = @idEntidad   
             LEFT JOIN Familia f ON f.siglas = a.siglaFamilia
-			LEFT JOIN Restaurant.ProductionArea pa ON pa.Id = ri.ProductionAreaId
 			WHERE   a.estado = 1 '
     -- ===== PARTE ADMINISTRATIVA ===== --
     IF @tipo = 1

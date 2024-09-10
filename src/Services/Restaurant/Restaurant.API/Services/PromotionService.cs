@@ -1,41 +1,33 @@
-﻿using Common.Core.Interfaces;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
-using Restaurant.API.Interfaces;
 
-namespace Restaurant.API.Services
+namespace Restaurant.API.Services;
+
+public interface IPromotionService
 {
-    public class PromotionService : IPromotionService
+    public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    public Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
+    public Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
+}
+
+public class PromotionService(IAdoRepository repository) : IPromotionService
+{
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        private readonly IAdoRepository _repository;
+        var ds = await repository.GetDataSetAsync("Restaurant.Promotion_Get", parameters);
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new ApiResponse { Code = "0", Message = "Data not found" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+    }
 
-        public PromotionService(IAdoRepository repository)
-        {
-            _repository = repository;
-        }
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    {
+        return await repository.SpExecuteAsync<ApiResponse>("Restaurant.Promotion_Post", parameters);
+    }
 
-
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync("Restaurant.Promotion_Get", parameters);
-            if (ds == null)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJson(ds);
-            }
-        }
-
-        public async Task<string> PostAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Promotion_Post", parameters);
-        }
-
-        public async Task<string> PutAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SpExecuteDeprecatedAsync("Restaurant.Promotion_Update", parameters);
-        }
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await repository.SpExecuteAsync<ApiResponse>("Restaurant.Promotion_Update", parameters);
     }
 }

@@ -34,28 +34,13 @@ BEGIN
 			IF NOT EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH (NOLOCK)
 						   WHERE Uuid = @uuid
 						   AND DemoStepId = @demoStepId)
-			BEGIN
-				INSERT INTO AcontplusAdmin.Config.CompanyDemoStep (DemoStepId, CompanyId, Uuid, FromMobile)
-				VALUES (@demoStepId, @companyId, @uuid, @fromMobile);
-
-				PRINT 'Insert statement executed';
-			END
-
-			PRINT 'Rows affected: ' + CAST(@@ROWCOUNT AS NVARCHAR);
-
-			IF @@ROWCOUNT > 0
-			BEGIN
-				SET @code = '1';
-				SET @message = 'Registrado correctamente';
-			END
-			ELSE
-			BEGIN
-				SET @code = '0';
-				SET @message = 'No se pudo completar el proceso';
-			END
+			    BEGIN
+				    INSERT INTO AcontplusAdmin.Config.CompanyDemoStep (DemoStepId, CompanyId, Uuid, FromMobile)
+				    VALUES (@demoStepId, @companyId, @uuid, @fromMobile);
+			    END 
 
 		COMMIT TRAN
-		SELECT @code, @message as 'message'
+		SELECT '1' as code, 'Registrado correctamente' as 'message'
 	END TRY
 	BEGIN CATCH
 		IF @@TRANCOUNT > 0

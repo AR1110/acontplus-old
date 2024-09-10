@@ -1,76 +1,89 @@
-<form autocomplete="off" [formGroup]="dataForm" (ngSubmit)="onSubmit()">
-	<div class="modal-header">
-		<h4 class="modal-title" id="modal-basic-title">
-      {{titleModal}}
+<form (ngSubmit)="onSubmit()" [formGroup]="dataForm" autocomplete="off">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      <fa-icon [icon]="modalIcon"></fa-icon>
+      {{ titleModal }}
     </h4>
-		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-	</div>
-	<div class="modal-body">
-		<div class="form-group">
-			<div for="numeroIdentificacion">Número Identificación: <span class="text-danger">*</span></div>
-			<input type="text" name="numeroIdentificacion" id="numeroIdentificacion" formControlName="nroIdentificacion" class="form-control" placeholder="..." required>
-		</div>
+    <button (click)="modal.dismiss('Cross click')" aria-label="Close" class="btn-close" type="button"></button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <div for="nroIdentificacion">Número Identificación: <span class="text-danger">*</span></div>
+      <input class="form-control" formControlName="nroIdentificacion" id="nroIdentificacion"
 
-		<div class="form-group">
-			<label for="nombreCompleto">Nombres y Apellidos: <span class="text-danger">*</span></label>
-			<input type="text" name="nombreCompleto" id="nombreCompleto" formControlName="nombreCompleto" class="form-control" placeholder="..." required>
-		</div>
-		<div class="form-group">
-			<label for="email">Correo: <span class="text-danger">*</span></label>
-			<input type="text" name="email" id="email" class="form-control" formControlName="correo" placeholder="Ej: example@gmail.com" required>
-		</div>
-    @if (!(params.idUsuario>0)) {
+             placeholder="..." required type="text">
+    </div>
+
+    <div class="form-group">
+      <label for="firstName">Nombre: <span class="text-danger">*</span></label>
+      <input class="form-control" formControlName="firstName" id="firstName" placeholder="..."
+             required type="text">
+    </div>
+    <div class="form-group">
+      <label for="lastName">Apellido: <span class="text-danger">*</span></label>
+      <input class="form-control" formControlName="lastName" id="lastName" placeholder="..."
+             required type="text">
+    </div>
+    <div class="form-group">
+      <label for="email">Correo: <span class="text-danger">*</span></label>
+      <input class="form-control" formControlName="email" id="email" placeholder="Ej: example@gmail.com"
+             required type="text">
+    </div>
+    @if (!(params.idUsuario > 0)) {
       <div class="form-group">
-        <label for="nombreUsuario">Usuario: <span class="text-danger">*</span></label>
-        <input type="text" name="nombreUsuario" id="nombreUsuario" formControlName="nombreUsuario" class="form-control"
-          placeholder="..." required>
+        <label for="username">Usuario: <span class="text-danger">*</span></label>
+        <input type="text" id="username" formControlName="username" class="form-control"
+               placeholder="..." required>
       </div>
       <div class="row">
         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
           <div class="form-group">
             <label for="contrasena">Contraseña: <span class="text-danger">*</span></label>
-            <input type="text" name="contrasena" id="contrasena" formControlName="contrasena" class="form-control" placeholder=".." required>
+            <input type="text" id="contrasena" formControlName="contrasena" class="form-control"
+                   placeholder=".." required>
           </div>
         </div>
         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
           <div class="form-group">
             <label for="confirmContrasena">Confirmar Contraseña: <span class="text-danger">*</span></label>
-            <input type="text" name="confirmContrasena" id="confirmContrasena" formControlName="confirmContrasena" class="form-control" placeholder=".." required >
+            <input type="text" id="confirmContrasena" formControlName="confirmContrasena"
+                   class="form-control" placeholder=".." required>
             @if (dataForm.hasError('matchValidator')) {
-            <span class="text-danger">Las contraseñas no coinciden</span>
+              <span class="text-danger">Las contraseñas no coinciden</span>
             }
           </div>
         </div>
         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
           <div class="form-group">
-            <label for="rol">Rol: <span class="text-danger">*</span></label>
-            <select name="rol" id="rol" class="form-select" formControlName="roleId" required >
+            <label for="roleId">Rol: <span class="text-danger">*</span></label>
+            <select id="roleId" class="form-select" formControlName="roleId" required>
               @for (item of roles; track $index) {
-                <option [ngValue]="item.id">{{item.name}}</option>
+                <option [ngValue]="item.id">{{ item.name }}</option>
               }
             </select>
           </div>
         </div>
       </div>
     }
-    @if (params.idUsuario>0) {
+    @if (params.idUsuario > 0) {
       <div class="icheck-primary icheck-inline">
-        <input type="radio" id="activo" name="estado" [value]="true" formControlName="estado" />
+        <input type="radio" id="activo" [value]="true" formControlName="estado"/>
         <label for="activo">Activo</label>
       </div>
       <div class="icheck-primary">
-        <input type="radio" id="inactivo" name="estado" [value]="false" formControlName="estado" />
+        <input type="radio" id="inactivo" [value]="false" formControlName="estado"/>
         <label for="inactivo">Inactivo</label>
       </div>
     }
-	</div>
-	<div class="modal-footer">
-		<button type="submit" class="btn btn-outline-success"  [disabled]="dataForm.invalid">
-      {{textBtn}}
-		</button>
-		<button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">
+  </div>
+  <div class="modal-footer">
+    <button [disabled]="dataForm.invalid" class="btn btn-outline-success" type="submit">
+      <fa-icon [icon]="'save'"></fa-icon>
+      Guardar
+    </button>
+    <button (click)="modal.close('Save click')" class="btn btn-outline-dark" type="button">
       &times; Cerrar
     </button>
-	</div>
+  </div>
 
 </form>

@@ -1,4 +1,5 @@
 
+//@ts-check
 (function () {
     'use strict'
 
@@ -11,9 +12,6 @@
     let fS = {};
 
     let establecimientos = [];
-    let bodegas = [];
-    let subfamilias = [];
-    let config = {};
 
     let consolidacionInvSvc = {};
     let mainDataForm = {};
@@ -108,7 +106,6 @@
                     mainDataForm = response;
                     let { estabs } = response;
                     establecimientos = estabs;
-                    
 
                     if (establecimientos.length > 0) {
                         let dataEstab = establecimientos.find(estab => (estab.defaultEstab));
@@ -368,6 +365,28 @@
             enableCellEdit: false,
         }
 
+        $scope.onChangeTipoDocumento = async () => {
+            let dataDoc = $scope.tipoDocumento.find(t=>t.idTipoDocumento === $scope.data.idTipoDocumento)
+            let dataMovimiento = {};
+
+            if (dataDoc.codigo == 'CI'){
+                dataMovimiento = $scope.tipoTransaccion.find(t=>t.codigo ==='A')
+            }
+
+            if (dataDoc.codigo == 'BI'){
+                dataMovimiento = $scope.tipoTransaccion.find(t=>t.codigo ==='S')
+            }
+
+            if (dataDoc.codigo == 'EI'){
+                dataMovimiento = $scope.tipoTransaccion.find(t=>t.codigo ==='E')
+            }
+
+            if(dataMovimiento){
+                $scope.data.idTipoTransaccion = dataMovimiento.idTipoTransaccion;
+            }
+
+        }
+
         $scope.gridOptions.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
             if ($scope.gridApi) {
@@ -436,10 +455,14 @@
                 const {
                     estabs,
                     decimal,
+                    tipoDocumento,
+                    tiposTransaccion,
                 } = mainDataForm;
                 $scope.establecimientos = estabs;
                 $scope.decimal = decimal;
-
+                $scope.tipoDocumento = tipoDocumento;
+                $scope.tipoTransaccion = tiposTransaccion;
+                
                 if (params.tipoRegistro === 1) {
                     let dataEstab = $scope.establecimientos.find(item => item.defaultEstab);
                     if (dataEstab) {
@@ -460,6 +483,7 @@
                             $scope.dataClone.idBodega = $scope.data.idBodega;
                         }
                     }
+                    setDefaultTipoDoc()
                 }
 
                 if (params.tipoRegistro === 2) {
@@ -481,6 +505,7 @@
                     }
                     $scope.gridOptions.data = detalles;
                     setCountIndex();
+                    $scope.onChangeTipoDocumento() 
                 }
 
                 if(params.tipoRegistro===3){
@@ -505,6 +530,7 @@
                     }
                     $scope.gridOptions.data = detalles;
                     setCountIndex();
+                    $scope.onChangeTipoDocumento() 
                 }
 
                 setColumnDefs();
@@ -514,6 +540,17 @@
             }
         }
 
+        function setDefaultTipoDoc(){
+            let dataTipoDoc = $scope.tipoDocumento.find(t=>t.codigo==='CI')
+            let dataMovimiento = $scope.tipoTransaccion.find(t=>t.codigo==='A')
+            if(dataTipoDoc){
+                $scope.data.idTipoDocumento = dataTipoDoc.idTipoDocumento;
+            }
+
+            if(dataMovimiento){
+                $scope.data.idTipoTransaccion = dataMovimiento.idTipoTransaccion;
+            }
+        }
 
         function setColumnDefs() {
             $scope.gridOptions.columnDefs = [{
@@ -610,7 +647,7 @@
                 minWidth: '65',
                 type: 'number',
                 enableColumnMenu: false,
-                visible: true,
+                visible: false,
                 aggregationType: uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
                     aggregation.rendered = fS.roundNumber(aggregation.value, 2)
@@ -625,6 +662,7 @@
                 type: 'number',
                 width: '8%',
                 minWidth: '100',
+                visible : false,
                 aggregationType: uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
                     aggregation.rendered = fS.roundNumber(aggregation.value, 2)
@@ -703,12 +741,13 @@
                     },
                     isRenderRazorPartial: true,
                     //windowClass: 'uibModalFullScreen'
-                }).result.then((result) => {
+                }).result.then((result) => { 
                 
                     if (result && Array.isArray(result.articlesSelected)) {
                         const {
                             articlesSelected,
-                            opcion
+                            opcion,
+                            importedExcel
                         } = result;
                         for (const a of articlesSelected) {
                             if (!$scope.gridOptions.data.some(x => x.idArticulo == a.idArticulo)) {
@@ -716,8 +755,10 @@
                                 obj.precioUnitario = obj.precioUnitario;
                                 obj.precioCosto = obj.precioCosto;
                                 obj.precioCostoFraccionado = obj.precioCostoFraccionado;
-                                console.log(opcion)
-                                obj.cantidad = opcion && opcion===6? obj.cantidad : 1;
+                          
+                                if (!importedExcel){
+                                    obj.cantidad = opcion && opcion===6? obj.cantidad : 1;
+                                } 
                                 obj.idBodega = $scope.data.idBodega;
                                 let total = obj.cantidad * obj.precioUnitario;
                                 obj.total = fS.roundNumber(total, $scope.decimal.nroPrecio); //Total Precio Venta
@@ -990,6 +1031,17 @@
                 tS.toastr('warning', 'Seleccione el Punto de Emisión');
                 return
             }
+
+            if (!($scope.data.idTipoDocumento > 0)) {
+                tS.toastr('warning', 'Seleccione el Tipo de Documento');
+                return
+            }
+
+            if (!($scope.data.idTipoTransaccion > 0)) {
+                tS.toastr('warning', 'Seleccione el Tipo de Movimiento');
+                return
+            }
+
             if (!(fS.isDateValid($scope.data.fechaEmision))) {
                 tS.toastr('warning', 'Ingrese la Fecha de emisión');
                 return
@@ -1023,7 +1075,15 @@
             try {
                 if (!isValidForm()) return
 
+                let documento;
+
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
+                
+                let dataTipoDoc = $scope.tipoDocumento.find(t=>t.idTipoDocumento === $scope.data.idTipoDocumento)
+            
+                if(dataTipoDoc){
+                    documento = dataTipoDoc.descripcion;
+                }
 
                 if (isRegister()) {
                     showLoader();
@@ -1032,11 +1092,11 @@
                     })
                     hideLoader();
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
-                    titleSwal = '<small>Guardar Consolidación de Inventario</small>';
+                    titleSwal = '<small>Guardar el documento <b>' + documento +  '</b> </small>';
                     confirmButtonText = 'Guardar';
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
                 } else {
-                    titleSwal = '<small>Actualizar Consolidación de Inventario</small>';
+                    titleSwal = '<small>Actualizar el documento <b>' + documento +  '</b> </small>';
                     confirmButtonText = 'Actualizar';
                     htmlSwal = `<small>Esta Ud. seguro de actualizar este Documento</small>?`;
                 }
@@ -1110,14 +1170,16 @@
     advancedSearchCtrl.$inject = [
         "$scope",
         "$uibModalInstance", 
+        "toastService",
         "params"
     ]
-    function advancedSearchCtrl($scope, $uibModalInstance, params) {
+    function advancedSearchCtrl($scope, $uibModalInstance, tS, params) {
         const {idBodega, bodegas} = params;
 
         $scope.mainForm = {
             idBodega: idBodega,
-            descripcionBodega: bodegas.find(b=>b.idBodega===idBodega).descripcion
+            descripcionBodega: bodegas.find(b=>b.idBodega===idBodega).descripcion,
+            selectedFile: []
         };
 
         
@@ -1128,13 +1190,11 @@
             { code: 4, description: 'Proveedor' },
             { code: 5, description: 'N° Documento' },
             { code: 6, description: 'Artículos Importados' },
+            
         ]
         $scope.subfamilias = mainDataForm.subFamilias;
         $scope.articlesSelected = [];
-        $scope.articlesFounded = [];
-
-
-        
+        $scope.articlesFounded = []; 
         
         $scope.mainForm.opcion = $scope.catalogs.find(x => x.code == '4').code;
 
@@ -1143,7 +1203,22 @@
 
         }
 
-        $scope.onChangeOption = function(){
+        $scope.articulosNotFounded = [];
+        let importedExcel = false;
+
+
+        $scope.onChangeOption = onChangeOption;
+        $scope.onKeyupProveedor = onKeyupProveedor;
+        $scope.onSelectProveedor = onSelectProveedor;
+        $scope.onKeyupArticle = onKeyupArticle;
+        $scope.onSelectArticle = onSelectArticle;
+        $scope.getArticles = getArticles;
+        $scope.setArticlesSelected = setArticlesSelected;
+        $scope.closeAdvancedSearch = closeAdvancedSearch;
+        $scope.subirArchivo = subirArchivo;
+        $scope.showArticuloNoVinculado = showArticuloNoVinculado;
+
+        function onChangeOption(){
             $scope.mainForm.rucProveedor = null;
             $scope.mainForm.idArticulo = 0;
             if ($scope.mainForm.opcion===6){
@@ -1151,30 +1226,121 @@
             }
         }
 
-        $scope.onKeyupProveedor = function () {
+        function onKeyupProveedor () {
             if (!$scope.proveedor.nombreProveedor) {
                 $scope.mainForm.rucProveedor = null;
             }
         }
-        $scope.onSelectProveedor = function (item) {
+        function onSelectProveedor (item) {
             $scope.mainForm.rucProveedor = item.numeroIdentificacion
             $scope.getArticles()
         }
 
-        $scope.onKeyupArticle = function () {
+        function onKeyupArticle () {
             if ($scope.articuloSearch.nombreArticulo) {
                 $scope.mainForm.idArticulo = 0;
             }
         }
-        $scope.onSelectArticle = function (item) { 
+        function onSelectArticle(item) { 
             $scope.mainForm.idArticulo = item.idArticulo
             $scope.getArticles()
         }
 
 
-        $scope.getArticles = () => {
+        //importacion archivo  
+        function subirArchivo()     {
+            let formatFile = [{
+                "name": "jayanth",
+                "data": "scd",
+                "abc": "sdef"
+            }]
+            $scope.articulosNotFounded = [];
+
+
+            let {files} = document.getElementById('selectedFile');
+
+            if(files.length===0){
+                tS.toastr({
+                    type: 'warning',
+                    message: 'Seleccione el archivo de tipo formato excel'
+                })
+                return 
+            } 
+
+            try {
+                XLSX.utils.json_to_sheet(formatFile, 'out.xlsx');
+                let fileReader = new FileReader();
+                fileReader.readAsBinaryString(files[0]);
+
+                fileReader.onload = (event) => {
+                    let data = event.target.result;
+                    let workbook = XLSX.read(data, { type: "binary", cellDates: true });
+                
+
+                    workbook.SheetNames.forEach(async sheetName => {
+
+                        let product = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]); 
+                        
+                        getProductsValidateImport({
+                            product
+                        })
+ 
+                    })
+
+                }      
+
+            } catch (error) {
+                console.log(error)
+            }
+
+        }
+
+        function getProductsValidateImport(obj){
+
+            consolidacionInvSvc.getProductsValidateImport(obj).then(response=>{
+                $scope.articlesFounded = response.articulos;
+                $scope.articulosNotFounded = response.noVinculados;
+                importedExcel = true;
+            })
+        }
+
+        function showArticuloNoVinculado(){
+            let html = `<div class="table-responsive" style="max-height: 400px;">
+                    <table class="table table-hover table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th><small>N°</small></th>                              
+                                <th><small>Código</small></th>                              
+                                <th><small>Cantidad</small></th> 
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            let index = 1;
+            for (let item of $scope.articulosNotFounded) {
+                html += ` <tr>
+                        <td>${index++}</td>
+                        <td>${item.codigo}</td>
+                        <td>${item.cantidad}</td> 
+                    </tr>
+                `
+            }
+            html += '</tbody></table></div>'
+            Swal.fire({
+                title: '<small>Artículo No Vinculados</small>',
+                icon: 'info',
+                html,
+                width: 700
+            })
+
+        }
+
+        function getArticles(){
             try {
                 showLoader();
+                $scope.articulosNotFounded = [];
+                importedExcel = false;
+
 
                 let dataSearch = {
                     idArticulo: fS.isValidField($scope.mainForm.idArticulo),
@@ -1201,14 +1367,15 @@
             }
         }
 
-        $scope.setArticlesSelected = () => {
+        function setArticlesSelected () {
             $uibModalInstance.close({
                 articlesSelected: $scope.articlesSelected,
-                opcion: $scope.mainForm.opcion
+                opcion: $scope.mainForm.opcion,
+                importedExcel
             })
         }
 
-        $scope.closeAdvancedSearch = () => {
+        function closeAdvancedSearch  (){
             $uibModalInstance.close()
         }
     } 

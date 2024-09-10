@@ -1,122 +1,43 @@
 ﻿namespace Configuracion.API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class TiempoCreditoController : ControllerBase
+public class TiempoCreditoController(ITiempoCreditoService tiempoCreditoService) : BaseApiController
 {
-    public readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
-
-    public TiempoCreditoController(IConfiguration configuration, ICustomLogger log)
-    {
-        _configuration = configuration;
-        _log = log;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _db = new DbAccess(_configuration);
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Config.TiempoCredito_Get");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", json);
-            _response = await _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al listar tiempo credito: \n" + ex);
-            _response.Create("0", "Error al listar tiempo credito");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await tiempoCreditoService.GetAsync(parameters));
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(string json)
     {
-        var _db = new DbAccess(_configuration);
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SpExecuteAsync("Config.TiempoCredito_Insert");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", json);
-            _response = await _db.GetDefaultAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al crear tiempo creditos: \n" + ex);
-            _response.Create("0", "Error al crear tiempo creditos");
-        }
-        finally
-        {
-            _db.Close();
-        }
+        var fromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
 
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>
+        {
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }, {"fromMobile", fromMobile}
+        };
+        return Ok(await tiempoCreditoService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _db = new DbAccess(_configuration);
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Config.TiempoCredito_Update");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", json);
-
-            _response = await _db.GetDefaultAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al actualizar tiempo creditos: \n" + ex);
-            _response.Create("0", "Error al actualizar tiempo creditos");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await tiempoCreditoService.UpdateAsync(parameters));
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _db = new DbAccess(_configuration);
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SpExecuteAsync("Config.TiempoCredito_Delete");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-
-            _response = await _db.GetDefaultAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar tiempo creditos: \n" + ex);
-            _response.Create("0", "Error al eliminar tiempo creditos");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        return Ok(await tiempoCreditoService.DeleteAsync(parameters));
     }
 }

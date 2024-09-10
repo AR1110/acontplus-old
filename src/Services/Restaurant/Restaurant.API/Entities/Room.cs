@@ -20,5 +20,6 @@ namespace Restaurant.API.Entities
 
         [Required]
         public int Capacity { get; set; }
+        public List<AppTable> Tables { get; set; }
     }
 }

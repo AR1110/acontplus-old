@@ -1,13 +1,13 @@
 ﻿using Common.Core.Models;
+using Restaurant.API.Entities;
 
-namespace Restaurant.API.Interfaces
+namespace Restaurant.API.Interfaces;
+
+public interface IAppTableService
 {
-    public interface IAppTableService
-    {
-        Task<object> GetAsync(Dictionary<string, object> parameters);
-        Task<string> AddAsync(ApiRequest request);
-        Task<string> UpdateAsync(int id, ApiRequest request);
-        Task<string> DeleteAsync(int id, ApiRequest request);
-
-    }
+    Task<ApiResponse> GetByEstabAsync(string codEstab);
+    Task<ApiResponse> AddAsync(AppTable appTable);
+    Task<ApiResponse> UpdateAsync(int id, AppTable appTable);
+    Task<ApiResponse> UnassignAsync(int userId, int id);
+    Task<ApiResponse> DeleteAsync(int userId, int id);
 }

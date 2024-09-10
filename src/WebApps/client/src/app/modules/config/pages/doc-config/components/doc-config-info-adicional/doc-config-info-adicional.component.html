@@ -1,0 +1,13 @@
+<div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Información Adicional</h4>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <div class="mt-2">
+        <app-tabulator [columnNames]="columns" [tableData]="infoAdicional"/>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-success" (click)="save()">Guardar</button>
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">&times; Cerrar</button>
+</div>

@@ -1,4 +1,5 @@
-﻿(function () {
+﻿//@ts-check
+(function () {
     'use strict';
     angular.module('loginApp', ['ngStorage'])
         .controller('loginCtrl', loginCtrl);
@@ -8,26 +9,25 @@
     function loginCtrl($scope, $http, $localStorage) {
         let urlBase = document.getElementById('urlGateway').value
         let urlService = `${urlBase}/gateway/`
-        // Ditect user info
-        let Url = "https://" + "cloudflare.com/cdn-cgi/trace";
-        let customerIp = "";
-        let AjaxUrl = new XMLHttpRequest();
-        AjaxUrl.open("get", Url);
-        AjaxUrl.send();
-
         // For get the customer data from response
         $scope.codes = ['', '', '', '', '', ''];
         $scope.mainResponse = {};
+        let customerIp = "";
 
-        AjaxUrl.onreadystatechange = function () {
-            if (AjaxUrl.readyState === 4 && AjaxUrl.status === 200) {
-                let resultUrl = AjaxUrl.responseText;
-                let mapUrlStart = resultUrl.indexOf("ip") + 3;
-                let mapUrlEnd = resultUrl.indexOf("ts");
-                let IpResult = resultUrl.slice(mapUrlStart, mapUrlEnd);
-                customerIp = IpResult.replace(/[\n\r]/g, "")
-            }
-        };
+        // Ditect user info
+        //let Url = "https://" + "cloudflare.com/cdn-cgi/trace"; 
+        //let AjaxUrl = new XMLHttpRequest();
+        //AjaxUrl.open("get", Url);
+        //AjaxUrl.send();
+        //AjaxUrl.onreadystatechange = function () {
+        //    if (AjaxUrl.readyState === 4 && AjaxUrl.status === 200) {
+        //        let resultUrl = AjaxUrl.responseText;
+        //        let mapUrlStart = resultUrl.indexOf("ip") + 3;
+        //        let mapUrlEnd = resultUrl.indexOf("ts");
+        //        let IpResult = resultUrl.slice(mapUrlStart, mapUrlEnd);
+        //        customerIp = IpResult.replace(/[\n\r]/g, "")
+        //    }
+        //};
         $scope.loader = false;
         $scope.ver = false;
         $scope.data = {};
@@ -36,6 +36,21 @@
 
         let parser = new UAParser(navigator.userAgent)
         let parserResults = parser.getResult()
+
+        $scope.getPublicIP = function () {
+            $http.get('https://api.ipify.org?format=json')
+                .then(function (response) {
+                    customerIp = response.data.ip;
+                })
+                .catch(function (error) {
+                    //console.error('Error fetching public IP address:', error);
+                    //$scope.publicIP = 'Unable to retrieve IP address.';
+                });
+        };
+
+        // Automatically fetch the public IP when the controller is loaded
+        $scope.getPublicIP();
+
         $scope.askToCancel = () => {
             swal.fire({
                 icon: 'warning',
@@ -62,6 +77,7 @@
         }
 
         $scope.authMultiple = () => {
+            showLoader();
             let item = $scope.roleSelected;
             item.userAgent = JSON.stringify({ userAgent: JSON.stringify(parserResults), ipAddress: customerIp });
             $http.post(`${urlService}seguridad/account/createToken`, item).then(
