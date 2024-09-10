@@ -52,8 +52,12 @@ export class PromotionService {
     return this.http.post<ApiResponse>(`${this.url}?json=${json}`, formData)
   }
 
-  put<T>(id: number, obj: T) {
-    return this.http.post<ApiResponse>(`${this.url}${id}`, { data: obj })
+  put<T>(id: number, obj: T, file: any) {
+    let json = JSON.stringify(obj)
+
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.put<ApiResponse>(`${this.url}${id}?json=${json}`, formData)
   }
 
 }

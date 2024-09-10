@@ -28,8 +28,7 @@ export class ConfigService {
     return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
       context: getNoLoader()
     }).pipe(
-      map(response => {
-        console.log(response)
+      map(response => { 
         let result = {
           estabs: [] as GroupedEstab[]
         }

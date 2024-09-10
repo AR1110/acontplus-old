@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { M3InputChipComponent } from "@core/components/m3-input-chip/m3-input-chip.component";
 import { CompanyCustomerService } from "@/services/company-customer.service";
@@ -15,7 +15,8 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { ApiResponse } from "@/models/api-response";
 import { ToasterService } from '@/services/toaster.service';
-import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
+import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component'; 
+import { isValidField } from '@/core/utils/utils';
 
 @Component({
   selector: 'app-company-customer-add-edit-modal',
@@ -41,7 +42,7 @@ export class CompanyCustomerAddEditModalComponent {
   readonly matDialogData = inject<any>(MAT_DIALOG_DATA);
   readonly dialogRef = inject(MatDialogRef<CompanyCustomerAddEditModalComponent>);
   private companyCustomerSvc = inject(CompanyCustomerService)
-  private tS = inject(ToasterService)
+  private tS = inject(ToasterService) 
 
   selectedTab = 0;
 
@@ -57,6 +58,8 @@ export class CompanyCustomerAddEditModalComponent {
 
   emails = [];
   telefonos = [];
+
+  errorNumeroIdentificacion = signal('')
 
   numeroIdentificacion = new FormControl({ value: '', disabled: false }, [
     Validators.required,
@@ -74,7 +77,7 @@ export class CompanyCustomerAddEditModalComponent {
     idSubContribuyente: new FormControl(0),
     idTiempoCredito: new FormControl(0),
     nombreFiscal: new FormControl('', Validators.required),
-    nombreComercial: new FormControl(''),
+    nombreComercial: new FormControl('', Validators.required),
     numeroIdentificacion: this.numeroIdentificacion,
     correo: new FormControl(''),
     telefono: new FormControl(''),
@@ -114,7 +117,38 @@ export class CompanyCustomerAddEditModalComponent {
         this.tiposIdentificacion = mainDataForm.tipoIdentificacion;
         this.tiemposCredito = mainDataForm.tiempoCreditos;
 
-        if (!(this.matDialogData.id > 0)) {
+        if (this.matDialogData.dataOfSri) {
+
+          let {
+            numeroRuc,
+            razonSocial,
+            nombreComercial,
+            direccion,
+            telefonos,
+            correos,
+            codigoSri
+          } = this.matDialogData;
+          const dataIdentificacion = this.tiposIdentificacion.find(obj => obj.codigoSri === codigoSri);
+
+
+          this.customerForm.patchValue({
+            idTipoIdentificacion: dataIdentificacion.idTipoIdentificacion,
+            numeroIdentificacion: numeroRuc,
+            nombreFiscal: razonSocial,
+            nombreComercial: nombreComercial ?? razonSocial,
+            direccion,
+            validationSri: true,
+            idTiempoCredito:
+              this.tiemposCredito.length > 0
+                ? this.tiemposCredito[0].idTiempoCredito
+                : 0,
+          });
+
+          this.emails = correos;
+          this.telefonos = telefonos;
+          
+
+        } else if (!(this.matDialogData.id > 0)) {
           let dataIdentificacion = this.tiposIdentificacion.find(
             (ti: any) => ti.codigoSri === SRI_IDENTIFICATION_CODE.RUC,
           );
@@ -145,9 +179,148 @@ export class CompanyCustomerAddEditModalComponent {
   }
 
 
+  private syncDataOfSri(){
+    let dataNroIdentificacion = this.getDataNroIdentificacion();
+    let { numeroIdentificacion } = this.customerForm.value;
+
+    if (this.isValidNroIdentificacion()) {
+      this.customerForm.patchValue({
+        validationSri: false
+      })
+      if (dataNroIdentificacion.codigoSri === SRI_IDENTIFICATION_CODE.RUC) {
+        this.companyCustomerSvc.checkClientSRIByRUC(numeroIdentificacion!).subscribe(response => {
+          const { numeroRuc, razonSocial, direccion, telefonos, correos, error, nombreComercial } = response;
+
+          if (error) {
+            this.tS.toastr({
+              type: 'warning',
+              message: error
+            })
+            return
+          }
+
+          this.customerForm.patchValue({
+            numeroIdentificacion: numeroRuc,
+            nombreFiscal: razonSocial,
+            nombreComercial: nombreComercial ?? razonSocial,
+            direccion,
+          });
+
+
+          this.emails = correos;
+          this.telefonos = telefonos;
+
+          this.customerForm.patchValue({
+            validationSri: true
+          })
+        })
+      }
+
+      if (dataNroIdentificacion.codigoSri === SRI_IDENTIFICATION_CODE.CEDULA) {
+        this.companyCustomerSvc.checkClientSRIByCedula(numeroIdentificacion!).subscribe(response => {
+
+          const { direccion, correos, error, nombreCompleto, telefonos } = response;
+          if (error) {
+            this.tS.toastr({
+              type: 'warning',
+              message: error
+            })
+            return
+          }
+
+          this.customerForm.patchValue({
+            numeroIdentificacion,
+            nombreFiscal: nombreCompleto,
+            nombreComercial: nombreCompleto,
+            direccion,
+          });
+
+
+          this.emails = correos;
+          this.telefonos = telefonos;
+          this.customerForm.patchValue({
+            validationSri: true
+          })
+
+        })
+
+      }
+
+    }
+  }
+
+  onTipoIdentificacionChange(event: MatSelectChange): void {
+    const selectedValue = event.value; 
+    this.customerForm.patchValue({
+      numeroIdentificacion: null,
+      validationSri: false
+    });
+    this.errorNumeroIdentificacion.set('');
+
+  }
+
+  enterInputNroIdentificacion(event: Event): void {
+    event.preventDefault();
+    if (!this.isValidNroIdentificacion()) return
+    this.syncDataOfSri()
+  }
+
+  private getDataNroIdentificacion() {
+    let data = this.tiposIdentificacion.find(e => e.idTipoIdentificacion === this.customerForm.value.idTipoIdentificacion)
+    return data ?? {}
+  }
+
+  private isValidNroIdentificacion(): boolean {
+    const dataNroIdentificacion = this.getDataNroIdentificacion();
+    const { numeroIdentificacion } = this.customerForm.value;
+
+    this.errorNumeroIdentificacion.set('');
+
+    if (![SRI_IDENTIFICATION_CODE.RUC, SRI_IDENTIFICATION_CODE.CEDULA].includes(dataNroIdentificacion.codigoSri)) {
+      return false;
+    }
+    const trimmedNumeroIdentificacion = numeroIdentificacion?.trim() || ''
+
+    if (!isValidField(trimmedNumeroIdentificacion)) {
+      this.errorNumeroIdentificacion.set('Ingrese número de identificación');
+      return false;
+    }
+
+
+    switch (dataNroIdentificacion.codigoSri) {
+      case SRI_IDENTIFICATION_CODE.RUC:
+        if (trimmedNumeroIdentificacion.length !== 13) {
+          this.errorNumeroIdentificacion.set('Número de RUC debe tener 13 dígitos');
+          return false;
+        }
+        if (!trimmedNumeroIdentificacion.endsWith('001')) {
+          this.errorNumeroIdentificacion.set('Número de RUC debe terminar en "001"');
+          return false;
+        }
+        break;
+
+      case SRI_IDENTIFICATION_CODE.CEDULA:
+        if (trimmedNumeroIdentificacion.length !== 10) {
+          this.errorNumeroIdentificacion.set('Número de cédula debe tener 10 dígitos');
+          return false;
+        }
+        break;
+    }
+
+    return true;
+  }
+
+
+  keyupInputNroIdentificacion() {
+    this.isValidNroIdentificacion()
+    
+  }
+
 
   syncDataSri(event: MouseEvent) {
     event.stopPropagation()
+    if (!this.isValidNroIdentificacion()) return
+    this.syncDataOfSri()
   }
 
 
@@ -173,6 +346,14 @@ export class CompanyCustomerAddEditModalComponent {
 
   onSave() {
 
+    if (!this.isValidNroIdentificacion()) {
+      this.tS.toastr({
+        type: 'warning',
+        message: this.errorNumeroIdentificacion()
+      })
+      return
+    }
+
     this.customerForm.patchValue({
       telefono: this.telefonos.length > 0 ? this.telefonos.join(SEPARATOR_KEY_CODE.SLASH) : null,
     });
@@ -188,6 +369,9 @@ export class CompanyCustomerAddEditModalComponent {
       })
       return
     }
+
+
+
     const dataForm = this.companyCustomerSvc.adapterTo(this.customerForm.value)
 
 

@@ -47,8 +47,8 @@ BEGIN
 	BEGIN TRY 
         
         INSERT INTO @tbProveedor
-               (id,idCiudad,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,validationSri)
-        SELECT @id,idCiudad,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,validationSri
+               (id,idCiudad,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,validationSri, estado)
+        SELECT @id,idCiudad,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,validationSri, estado
         FROM OPENJSON(@json) WITH
         (
             idCiudad                     INT '$.idCiudad'
@@ -64,6 +64,7 @@ BEGIN
            ,telefono            VARCHAR(300) '$.telefono' 
            ,correo              VARCHAR(300) '$.correo' 
            ,validationSri                BIT '$.validationSri'
+           ,estado              BIT
         ) 
 
         --> Recuperando Informacion
