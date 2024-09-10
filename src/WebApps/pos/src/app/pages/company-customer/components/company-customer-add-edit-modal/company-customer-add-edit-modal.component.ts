@@ -15,8 +15,8 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { ApiResponse } from "@/models/api-response";
 import { ToasterService } from '@/services/toaster.service';
-import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
-import { SharedService } from '@/services/shared.service';
+import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component'; 
+import { isValidField } from '@/core/utils/utils';
 
 @Component({
   selector: 'app-company-customer-add-edit-modal',
@@ -178,20 +178,8 @@ export class CompanyCustomerAddEditModalComponent {
     }
   }
 
-  onTipoIdentificacionChange(event: MatSelectChange): void {
-    const selectedValue = event.value;
-    console.log('Tipo de identificación seleccionado:', selectedValue);
-    // Aquí puedes agregar la lógica adicional que necesites
-    this.customerForm.patchValue({
-      numeroIdentificacion: null,
-      validationSri: false
-    });
-    this.errorNumeroIdentificacion.set('');
 
-  }
-
-  enterInputNroIdentificacion(event: Event): void {
-    event.preventDefault();
+  private syncDataOfSri(){
     let dataNroIdentificacion = this.getDataNroIdentificacion();
     let { numeroIdentificacion } = this.customerForm.value;
 
@@ -261,47 +249,78 @@ export class CompanyCustomerAddEditModalComponent {
     }
   }
 
+  onTipoIdentificacionChange(event: MatSelectChange): void {
+    const selectedValue = event.value; 
+    this.customerForm.patchValue({
+      numeroIdentificacion: null,
+      validationSri: false
+    });
+    this.errorNumeroIdentificacion.set('');
+
+  }
+
+  enterInputNroIdentificacion(event: Event): void {
+    event.preventDefault();
+    if (!this.isValidNroIdentificacion()) return
+    this.syncDataOfSri()
+  }
+
   private getDataNroIdentificacion() {
     let data = this.tiposIdentificacion.find(e => e.idTipoIdentificacion === this.customerForm.value.idTipoIdentificacion)
     return data ?? {}
   }
 
-  private isValidNroIdentificacion() {
-    let dataNroIdentificacion = this.getDataNroIdentificacion();
-    let { numeroIdentificacion } = this.customerForm.value;
+  private isValidNroIdentificacion(): boolean {
+    const dataNroIdentificacion = this.getDataNroIdentificacion();
+    const { numeroIdentificacion } = this.customerForm.value;
 
-    this.errorNumeroIdentificacion.set('')
+    this.errorNumeroIdentificacion.set('');
 
-    if (dataNroIdentificacion.codigoSri === SRI_IDENTIFICATION_CODE.RUC) {
-      if (numeroIdentificacion?.trim() && numeroIdentificacion.length !== 13) {
-        this.errorNumeroIdentificacion.set('Número de RUC tiene que tener 13 dígitos');
-        return
-      }
+    if (![SRI_IDENTIFICATION_CODE.RUC, SRI_IDENTIFICATION_CODE.CEDULA].includes(dataNroIdentificacion.codigoSri)) {
+      return false;
+    }
+    const trimmedNumeroIdentificacion = numeroIdentificacion?.trim() || ''
 
-      if (numeroIdentificacion?.trim() && numeroIdentificacion.slice(-3) !== "001") {
-        this.errorNumeroIdentificacion.set('Número de RUC tiene que tener últimos tres dígitos "001"')
-        return
-      }
+    if (!isValidField(trimmedNumeroIdentificacion)) {
+      this.errorNumeroIdentificacion.set('Ingrese número de identificación');
+      return false;
     }
 
-    if (dataNroIdentificacion.codigoSri === SRI_IDENTIFICATION_CODE.CEDULA) {
-      if (numeroIdentificacion?.trim() && numeroIdentificacion.length !== 10) {
-        this.errorNumeroIdentificacion.set('Número de RUC tiene que tener 10 dígitos')
-        return
-      }
+
+    switch (dataNroIdentificacion.codigoSri) {
+      case SRI_IDENTIFICATION_CODE.RUC:
+        if (trimmedNumeroIdentificacion.length !== 13) {
+          this.errorNumeroIdentificacion.set('Número de RUC debe tener 13 dígitos');
+          return false;
+        }
+        if (!trimmedNumeroIdentificacion.endsWith('001')) {
+          this.errorNumeroIdentificacion.set('Número de RUC debe terminar en "001"');
+          return false;
+        }
+        break;
+
+      case SRI_IDENTIFICATION_CODE.CEDULA:
+        if (trimmedNumeroIdentificacion.length !== 10) {
+          this.errorNumeroIdentificacion.set('Número de cédula debe tener 10 dígitos');
+          return false;
+        }
+        break;
     }
+
     return true;
   }
 
+
   keyupInputNroIdentificacion() {
     this.isValidNroIdentificacion()
-
-
+    
   }
 
 
   syncDataSri(event: MouseEvent) {
     event.stopPropagation()
+    if (!this.isValidNroIdentificacion()) return
+    this.syncDataOfSri()
   }
 
 
@@ -350,6 +369,9 @@ export class CompanyCustomerAddEditModalComponent {
       })
       return
     }
+
+
+
     const dataForm = this.companyCustomerSvc.adapterTo(this.customerForm.value)
 
 
