@@ -15,8 +15,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { ApiResponse } from "@/models/api-response";
 import { ToasterService } from '@/services/toaster.service';
-import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
-import { SharedService } from '@/services/shared.service';
+import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component'; 
 
 @Component({
   selector: 'app-company-customer-add-edit-modal',
@@ -178,20 +177,8 @@ export class CompanyCustomerAddEditModalComponent {
     }
   }
 
-  onTipoIdentificacionChange(event: MatSelectChange): void {
-    const selectedValue = event.value;
-    console.log('Tipo de identificación seleccionado:', selectedValue);
-    // Aquí puedes agregar la lógica adicional que necesites
-    this.customerForm.patchValue({
-      numeroIdentificacion: null,
-      validationSri: false
-    });
-    this.errorNumeroIdentificacion.set('');
 
-  }
-
-  enterInputNroIdentificacion(event: Event): void {
-    event.preventDefault();
+  private syncDataOfSri(){
     let dataNroIdentificacion = this.getDataNroIdentificacion();
     let { numeroIdentificacion } = this.customerForm.value;
 
@@ -261,6 +248,22 @@ export class CompanyCustomerAddEditModalComponent {
     }
   }
 
+  onTipoIdentificacionChange(event: MatSelectChange): void {
+    const selectedValue = event.value; 
+    this.customerForm.patchValue({
+      numeroIdentificacion: null,
+      validationSri: false
+    });
+    this.errorNumeroIdentificacion.set('');
+
+  }
+
+  enterInputNroIdentificacion(event: Event): void {
+    event.preventDefault();
+    if (!this.isValidNroIdentificacion()) return
+    this.syncDataOfSri()
+  }
+
   private getDataNroIdentificacion() {
     let data = this.tiposIdentificacion.find(e => e.idTipoIdentificacion === this.customerForm.value.idTipoIdentificacion)
     return data ?? {}
@@ -295,13 +298,14 @@ export class CompanyCustomerAddEditModalComponent {
 
   keyupInputNroIdentificacion() {
     this.isValidNroIdentificacion()
-
-
+    
   }
 
 
   syncDataSri(event: MouseEvent) {
     event.stopPropagation()
+    if (!this.isValidNroIdentificacion()) return
+    this.syncDataOfSri()
   }
 
 
@@ -350,6 +354,9 @@ export class CompanyCustomerAddEditModalComponent {
       })
       return
     }
+
+
+
     const dataForm = this.companyCustomerSvc.adapterTo(this.customerForm.value)
 
 
