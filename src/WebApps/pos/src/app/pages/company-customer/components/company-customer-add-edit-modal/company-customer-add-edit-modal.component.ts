@@ -16,6 +16,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { ApiResponse } from "@/models/api-response";
 import { ToasterService } from '@/services/toaster.service';
 import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component'; 
+import { isValidField } from '@/core/utils/utils';
 
 @Component({
   selector: 'app-company-customer-add-edit-modal',
@@ -269,32 +270,46 @@ export class CompanyCustomerAddEditModalComponent {
     return data ?? {}
   }
 
-  private isValidNroIdentificacion() {
-    let dataNroIdentificacion = this.getDataNroIdentificacion();
-    let { numeroIdentificacion } = this.customerForm.value;
+  private isValidNroIdentificacion(): boolean {
+    const dataNroIdentificacion = this.getDataNroIdentificacion();
+    const { numeroIdentificacion } = this.customerForm.value;
 
-    this.errorNumeroIdentificacion.set('')
+    this.errorNumeroIdentificacion.set('');
 
-    if (dataNroIdentificacion.codigoSri === SRI_IDENTIFICATION_CODE.RUC) {
-      if (numeroIdentificacion?.trim() && numeroIdentificacion.length !== 13) {
-        this.errorNumeroIdentificacion.set('Número de RUC tiene que tener 13 dígitos');
-        return
-      }
+    if (![SRI_IDENTIFICATION_CODE.RUC, SRI_IDENTIFICATION_CODE.CEDULA].includes(dataNroIdentificacion.codigoSri)) {
+      return false;
+    }
+    const trimmedNumeroIdentificacion = numeroIdentificacion?.trim() || ''
 
-      if (numeroIdentificacion?.trim() && numeroIdentificacion.slice(-3) !== "001") {
-        this.errorNumeroIdentificacion.set('Número de RUC tiene que tener últimos tres dígitos "001"')
-        return
-      }
+    if (!isValidField(trimmedNumeroIdentificacion)) {
+      this.errorNumeroIdentificacion.set('Ingrese número de identificación');
+      return false;
     }
 
-    if (dataNroIdentificacion.codigoSri === SRI_IDENTIFICATION_CODE.CEDULA) {
-      if (numeroIdentificacion?.trim() && numeroIdentificacion.length !== 10) {
-        this.errorNumeroIdentificacion.set('Número de RUC tiene que tener 10 dígitos')
-        return
-      }
+
+    switch (dataNroIdentificacion.codigoSri) {
+      case SRI_IDENTIFICATION_CODE.RUC:
+        if (trimmedNumeroIdentificacion.length !== 13) {
+          this.errorNumeroIdentificacion.set('Número de RUC debe tener 13 dígitos');
+          return false;
+        }
+        if (!trimmedNumeroIdentificacion.endsWith('001')) {
+          this.errorNumeroIdentificacion.set('Número de RUC debe terminar en "001"');
+          return false;
+        }
+        break;
+
+      case SRI_IDENTIFICATION_CODE.CEDULA:
+        if (trimmedNumeroIdentificacion.length !== 10) {
+          this.errorNumeroIdentificacion.set('Número de cédula debe tener 10 dígitos');
+          return false;
+        }
+        break;
     }
+
     return true;
   }
+
 
   keyupInputNroIdentificacion() {
     this.isValidNroIdentificacion()
