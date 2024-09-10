@@ -23,8 +23,8 @@
                     <div class="form-group">
                         <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
                         <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
-                                ng-model="infoCompRet.ptoEmi">
-                            <option ng-value="item.ptoEmi" ng-repeat="item in puntosEmision">{{item.ptoEmi}}</option>
+                                ng-model="infoCompRet.idPuntoEmision" ng-change="onChangePtoEmi()" >
+                            <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">{{item.ptoEmi}}</option>
                         </select>
                     </div>
                 </div>

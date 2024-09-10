@@ -135,10 +135,11 @@ BEGIN
             SELECT 'Subtotal' + ' ' + ti.descripcion as descripcion
                   ,ISNULL
                   ((
-                    SELECT   
-                        SUM(CAST(ai.TaxBase as numeric(18,2)))
+                    SELECT SUM(CAST(ai.TaxBase as numeric(18,2)))
                     FROM Ventas.AprobVentasImpuesto ai WITH (NOLOCK) 
-                    WHERE ai.AprobDocumentId = @id AND ai.TaxPercentId = ti.idTipoIva
+                    WHERE ai.AprobDocumentId = @id 
+                      AND ai.TaxPercentId = ti.idTipoIva
+                      AND ai.[Enabled] = 1
 
                   ),0) as subTotal
             FROM dbo.TipoIva ti WITH (NOLOCK)
@@ -146,14 +147,15 @@ BEGIN
 
 
             SELECT ti.descripcion as descripcion
-                  ,ISNULL
+                  ,CAST(ISNULL
                   ((
-                    SELECT  
-                        SUM(CAST(ai.TaxValue as numeric(18,2)))
+                    SELECT SUM(CAST(ai.TaxBase as numeric(18,2)))
                     FROM Ventas.AprobVentasImpuesto ai WITH (NOLOCK) 
-                    WHERE ai.AprobDocumentId = @id AND ai.TaxPercentId = ti.idTipoIva
+                    WHERE ai.AprobDocumentId = @id 
+                      AND ai.TaxPercentId = ti.idTipoIva
+                      AND ai.[Enabled] = 1
 
-                  ),0) as iva
+                  ),0) * porcentaje / 100 as numeric(18,2)) as iva
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE ti.porcentaje > 0 
               AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)

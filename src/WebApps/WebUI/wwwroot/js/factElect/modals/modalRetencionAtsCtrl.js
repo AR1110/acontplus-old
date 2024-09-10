@@ -182,7 +182,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
     $scope.onChangePtoEmi = function () {
         let dataPuntoEmision = $scope.puntosEmision.find(p => p.idPuntoEmision == $scope.infoCompRet.idPuntoEmision);
         if (!dataPuntoEmision) {
-            console.log('not found data pto emision')
+            console.log('not found data pto emision.')
             return
         }
         $scope.infoCompRet.ptoEmi = dataPuntoEmision.ptoEmi;

@@ -549,7 +549,8 @@
         let storageSvc = $injector.get('storageService');
         let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
         let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
- 
+        let infoAdicionalConfig = [];
+        let isSetInfoAdicionalConfig = true;
 
         $scope.tipoDoc = tipoDoc;
         $scope.infoEstabPtoEmi = {};
@@ -564,7 +565,6 @@
             totalIce: 0,
             irbpnr: 0,
             propina: 0,
-
             porcentajeDescuento: 0,
             transporte: 0,
             recargo: 0,
@@ -665,7 +665,33 @@
             if ($scope.puntosEmision.length > 0) {
                 $scope.infoEstabPtoEmi.puntoEmision = $scope.puntosEmision.find(item => item.idPuntoEmision === $scope.data.idPuntoEmision).ptoEmi;
             }
+            setInfoAdicional();
         }
+
+        function setInfoAdicional() {
+            if (isSetInfoAdicionalConfig) {
+                $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(
+                    (d) => !(d.idPuntoEmision > 0)
+                );
+
+                let dataInfoAdicional = infoAdicionalConfig.find(
+                    (i) => i.idPuntoEmision === $scope.data.idPuntoEmision
+                );
+                if (!dataInfoAdicional) return;
+                let infoAdicionPtoEmi = dataInfoAdicional.infoAdicional.map((i) => {
+                    return {
+                        ...i,
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    };
+                });
+                $scope.infoAdicionalDocumento = [
+                    ...infoAdicionPtoEmi,
+                    ...$scope.infoAdicionalDocumento,
+                ];
+            }
+            isSetInfoAdicionalConfig = true;
+        }
+
 
         function calculateTotalItems(items) {
             return items.map(item => { 
@@ -713,9 +739,10 @@
                 decimal,
                 config,
                 vendedores,
+                infoAdicional
             } = mainDataForm;
-            $scope.establecimientos = estabs;
 
+            $scope.establecimientos = estabs;
 
             let dataEstab = {};
             if (params && ["EDITAR", "DUPLICAR"].includes(params.action)) {
@@ -740,6 +767,7 @@
             $scope.notificacionVenta = notificacionVenta;
             $scope.decimal = decimal;
             $scope.config = config;
+            infoAdicionalConfig = infoAdicional;
 
             if ($scope.bodegas.length > 0) {
                 let dataBodega = $scope.bodegas.find(bodega => (bodega.defaultBodega));
@@ -764,21 +792,6 @@
                 } else {
                     $scope.data.idUsuario = 0;
                 }
-
-                // //Cliente Predeterminado 
-                // if (clienteDefault.idCliente > 0) {
-                //     $scope.cliente = clienteDefault;
-                // }
-
-                // //Articulo Predeterminado
-                // if (articuloDefault.idArticulo > 0) {
-                //     articuloSvc.getForSale({
-                //         idArticulo: articuloDefault.idArticulo,
-                //         idBodega: $scope.data.idBodega
-                //     }).then(dataArticuloApi => {
-                //         $scope.setItemArticuloEnDetalle(dataArticuloApi)
-                //     })
-                // } 
             }
 
 
