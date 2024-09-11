@@ -1158,7 +1158,7 @@
                         $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
                     }
                 }
-
+                isSetInfoAdicionalConfig = false;
                 counterGridOptions();
             }
 

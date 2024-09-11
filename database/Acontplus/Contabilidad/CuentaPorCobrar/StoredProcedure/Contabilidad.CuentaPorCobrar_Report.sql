@@ -21,7 +21,7 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
     --> Global
-    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150) ,@idUsuario INT
+    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150) ,@idUsuario INT ,@nombreReporte VARCHAR(300)
 
     --> Sql
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
@@ -46,8 +46,7 @@ BEGIN
            ,@idEmpresa          INT
            ,@convertToDoc       BIT
            ,@id                 INT
-           ,@idCiudad           INT       
-           ,@nombreReporte      VARCHAR(300)
+           ,@idCiudad           INT 
 
     --> Variables
     SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -238,7 +237,7 @@ BEGIN
                   ,@fechaInicio    = fechaInicio
                   ,@fechaFin       = fechaFin
                   ,@convertToDoc   = convertToDoc
-                  ,@idCiudad        = idCiudad
+                  ,@idCiudad       = idCiudad
             FROM OPENJSON(@json) WITH 
             ( 
                 codDoc         VARCHAR(10)
@@ -251,7 +250,7 @@ BEGIN
                ,fechaInicio    DATETIME2
                ,fechaFin       DATETIME2
                ,convertToDoc   BIT
-               ,idCiudad        INT
+               ,idCiudad       INT
             )
             
             SET @params = '@idEntidad      INT
@@ -332,7 +331,7 @@ BEGIN
                         END 
                 END
 
-            IF (@idCiudad > 0)
+            IF @idCiudad > 0
                 BEGIN
                     SET @nombreReporte = @nombreReporte + ' - ' + (SELECT descripcion FROM dbo.Ciudad WITH(NOLOCK) WHERE idCiudad = @idCiudad)
                     SET @sql = @sql + 'AND idCiudad = @idCiudad '
@@ -361,7 +360,7 @@ BEGIN
                                    ,@codEstado      = @codEstado
                                    ,@idUsuario      = @idUsuario
                                    ,@convertToDoc   = @convertToDoc
-                                   ,@idCiudad      = @idCiudad
+                                   ,@idCiudad       = @idCiudad
 
             RETURN 
         END 

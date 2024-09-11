@@ -826,6 +826,7 @@
                 }
 
                 $scope.cliente = cliente;
+                isSetInfoAdicionalConfig = false;
                 counterGridOptions();
             }
 
