@@ -1193,7 +1193,7 @@
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
-
+                isSetInfoAdicionalConfig = false;
                 // Cuotas
                 $scope.cuotas = cuotas;
             }

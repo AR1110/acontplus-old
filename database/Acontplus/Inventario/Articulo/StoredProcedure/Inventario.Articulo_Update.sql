@@ -77,8 +77,8 @@ BEGIN
 
 	DECLARE @tbPrices AS TABLE (
 		idArticuloPvP INT UNIQUE NOT NULL
-	   ,precioVenta NUMERIC(18,5) NOT NULL  
-	   ,precioConIva NUMERIC(18,5) NOT NULL 
+	   ,precioVenta NUMERIC(18,6) NOT NULL  
+	   ,precioConIva NUMERIC(18,6) NOT NULL 
 	   ,porcentajeUtilidad NUMERIC(18,5) NOT NULL 
 	   ,precioPredeterminado BIT NOT NULL
 	)
@@ -192,8 +192,8 @@ BEGIN
 					   SELECT idArticuloPvP,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado
 					   FROM OPENJSON(@jsonPvp) 
 					   WITH (idArticuloPvP                INT '$.idArticuloPvP'
-							,precioVenta        NUMERIC(20,5) '$.precioVenta'
-							,precioConIva       NUMERIC(20,5) '$.precioConIva' 
+							,precioVenta        NUMERIC(20,6) '$.precioVenta'
+							,precioConIva       NUMERIC(20,6) '$.precioConIva' 
 							,porcentajeUtilidad NUMERIC(20,5) '$.porcentajeUtilidad'
 							,precioPredeterminado         BIT '$.precioPredeterminado') as dt 
 		
@@ -283,7 +283,7 @@ BEGIN
 					END
 			END 
 
-		IF @llevaInventario=1 AND @inventory='NO'
+		IF @llevaInventario = 1 AND @inventory = 'NO'
 			BEGIN
 				SELECT '0'code,'No se ha establecido una configuración de control de inventario en la sección general de la configuración esto indica que no es posible establecer que este artículo requiere llevar un registro de inventario.' as 'message'
 				RETURN;
@@ -362,9 +362,9 @@ BEGIN
                         IF NOT EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @id)
                             BEGIN 
                                 INSERT INTO Restaurant.Item
-					            (ProductId, ProductionAreaId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
+					            (ProductId, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
 					            ,Enabled, Deleted, UserId)
-					            VALUES(@id, NULL, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
+					            VALUES(@id, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
                             END
                         ELSE
                             BEGIN

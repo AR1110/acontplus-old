@@ -3,7 +3,6 @@ import { PATHS_API } from "@core/constants/global.constants";
 import { ACCOUNTING_PATHS } from "../enums/accounting.constants";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
-import { isApiResponse } from "@core/models/api-response";
 
 
 @Injectable({

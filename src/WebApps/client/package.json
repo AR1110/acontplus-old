@@ -50,6 +50,7 @@
     "tabulator-tables": "^6.2.5",
     "tslib": "^2.7.0",
     "uuid": "^9.0.1",
+    "xlsx": "^0.18.5",
     "zone.js": "^0.14.10"
   },
   "devDependencies": {

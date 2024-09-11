@@ -32,7 +32,6 @@ export class DocConfigInfoAdicionalComponent {
   getInfoAdicional(){
     this.infoAdicional = []
     this.docConfigSvc.getInfoAdicional(this.params.idConfiguracionDocumento).subscribe(response=>{
-      
       this.infoAdicional = response.infoAdicional || [];
     })
   }

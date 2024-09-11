@@ -484,6 +484,7 @@
 
                     $scope.data.idTarifa = $scope.tarifas.length > 0 ? $scope.tarifas.find(tarifa => (tarifa.predeterminada)).idTarifa : 0;
                     $scope.dataClone.idTarifa = $scope.data.idTarifa;
+                    isSetInfoAdicionalConfig = false;
                 } else {
                     let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
 

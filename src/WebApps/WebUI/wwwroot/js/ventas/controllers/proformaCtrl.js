@@ -860,7 +860,7 @@
                 $scope.cliente = cliente;
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
-
+                isSetInfoAdicionalConfig = false;
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
             }
 

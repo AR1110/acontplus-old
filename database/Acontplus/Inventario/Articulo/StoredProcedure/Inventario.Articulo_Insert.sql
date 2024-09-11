@@ -85,8 +85,8 @@ BEGIN
 
 	DECLARE @tbPrices AS TABLE (
 		idTarifa INT UNIQUE NOT NULL
-	   ,precioVenta NUMERIC(18,5) NOT NULL  
-	   ,precioConIva NUMERIC(18,5) NOT NULL 
+	   ,precioVenta NUMERIC(18,6) NOT NULL  
+	   ,precioConIva NUMERIC(18,6) NOT NULL 
 	   ,porcentajeUtilidad NUMERIC(18,5) NOT NULL 
 	   ,precioPredeterminado BIT NOT NULL
 	)
@@ -192,8 +192,8 @@ BEGIN
 					    FROM OPENJSON(@jsonPvp) 
 					    WITH (idArticuloPvP                INT '$.idArticuloPvP'
 							 ,idTarifa                     INT '$.idTarifa' 
-							 ,precioVenta        NUMERIC(20,5) '$.precioVenta'
-							 ,precioConIva       NUMERIC(20,5) '$.precioConIva' 
+							 ,precioVenta        NUMERIC(20,6) '$.precioVenta'
+							 ,precioConIva       NUMERIC(20,6) '$.precioConIva' 
 							 ,porcentajeUtilidad NUMERIC(20,5) '$.porcentajeUtilidad'
 							 ,precioPredeterminado         BIT '$.precioPredeterminado') as dt 
 

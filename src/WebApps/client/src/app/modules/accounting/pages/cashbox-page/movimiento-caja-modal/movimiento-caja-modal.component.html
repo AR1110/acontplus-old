@@ -111,6 +111,11 @@
                   </button>
                 }
 
+                @if (!item.estado) {
+                  <button ngbDropdownItem (click)="openModalDetalleArqureoCaja(item)">
+                    <fa-icon [icon]="['fas', 'money-check-dollar']"></fa-icon> Detalle Arqueo Caja
+                  </button>
+                }
 
                 @if (!item.estado){
                   <button
