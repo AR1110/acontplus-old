@@ -45,7 +45,10 @@ public class TipoService : ITipoService
             return new ApiResponseDeprecated { code = "0", message = "Data no existe" };
         }
 
-        return new ApiResponseDeprecated { code = "1", payload = DataConverters.SerializeObjectCustom<List<Tipo>>(tipos) };
+        return new ApiResponseDeprecated
+        {
+            code = "1", payload = DataConverters.SerializeObjectCustom<List<Tipo>>(tipos)
+        };
     }
 
     public async Task<ApiResponseDeprecated> UpdateAsync(int id, Tipo tipo)

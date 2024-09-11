@@ -3,92 +3,112 @@
 <div class="card">
   <div class="card-body">
     <div class="row">
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
         <div class="icheck-primary">
-          <input type="checkbox" id="checkBoxCustomer" [(ngModel)]="dataSearch.checkBoxCustomer"
-                 name="checkBoxCustomerName" />
+          <input [(ngModel)]="dataSearch.checkBoxCustomer" id="checkBoxCustomer" name="checkBoxCustomerName"
+                 type="checkbox"/>
           <label for="checkBoxCustomer">Cliente</label>
         </div>
       </div>
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
         <div class="icheck-primary">
-          <input type="checkbox" id="checkBoxUser" [(ngModel)]="dataSearch.checkBoxUser"
-                 name="checkBoxUserName" />
+          <input [(ngModel)]="dataSearch.checkBoxUser" id="checkBoxUser" name="checkBoxUserName"
+                 type="checkbox"/>
           <label for="checkBoxUser">Usuario</label>
         </div>
       </div>
     </div>
-
     <hr>
-
-
     <div class="row">
-      <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="form-group">
           <label>Tipo Documento: </label>
-          <select class="form-select" [(ngModel)]="dataSearch.codDoc"
-                  (change)="onChangeTipoDoc()">
-            @for (item of tiposDoc;track $index){
-              <option [ngValue]="item.codigo"  >
-                {{item.descripcion}}
+          <select (change)="onChangeTipoDoc()" [(ngModel)]="dataSearch.codDoc"
+                  class="form-select">
+            @for (item of tiposDoc; track $index) {
+              <option [ngValue]="item.codigo">
+                {{ item.descripcion }}
               </option>
             }
-
           </select>
         </div>
       </div>
-      <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
         <div class="form-group">
           <label>Establecimiento:</label>
-          <select class="form-select" (change)="onChangeEstab()"
-                 [(ngModel)]="dataSearch.idEstablecimiento">
+          <select (change)="onChangeEstab()" [(ngModel)]="dataSearch.idEstablecimiento"
+                  class="form-select">
             <option [ngValue]="0">Todos</option>
-            @for(item of establecimientos;track $index){
+            @for (item of establecimientos; track $index) {
               <option [ngValue]="item.idEstablecimiento">
-                {{item.nombreComercial}}
+                {{ item.nombreComercial }}
               </option>
             }
 
           </select>
         </div>
       </div>
-      <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+      <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
         <div class="form-group">
           <label>Punto Emisión</label>
-          <select class="form-select" [(ngModel)]="dataSearch.idPuntoEmision">
+          <select [(ngModel)]="dataSearch.idPuntoEmision" class="form-select">
             <option [ngValue]="0">Todos</option>
-            @for (item of puntosEmision;track $index){
-              <option [ngValue]="item.idPuntoEmision"  >
-                {{item.ptoEmi}}
+            @for (item of puntosEmision; track $index) {
+              <option [ngValue]="item.idPuntoEmision">
+                {{ item.ptoEmi }}
               </option>
             }
 
           </select>
         </div>
       </div>
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-2 col-sm-6 col-12">
+        <div class="form-group">
+          <label>Ciudad</label>
+          <select [(ngModel)]="dataSearch.idCiudad" class="form-select">
+            <ng-container *ngFor="let provincia of provinciasAgrupadas">
+              <optgroup [label]="provincia.nombre">
+                <option *ngFor="let ciudad of provincia.ciudades" [ngValue]="ciudad.idCiudad">
+                  {{ ciudad.ciudad }}
+                </option>
+              </optgroup>
+            </ng-container>
+          </select>
 
-
+        </div>
+      </div>
     </div>
     <div class="row">
-      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <label  >Rango Fechas: </label>
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+        <label>Rango Fechas: </label>
         <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)"/>
-
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
         <div class="form-group">
-          <label >Cliente</label>
+          <label>Cliente</label>
           <app-company-customer-search
-            [isSearchSimple]="true"
-            (resultEmptyInput)="resultEmptyInputCustomer()"
             (onCustomerSelected)="onCustomerSelected($event)"
-
+            (resultEmptyInput)="resultEmptyInputCustomer()"
+            [isSearchSimple]="true"
           />
         </div>
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+      <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
         <div class="form-group">
-          <label >Usuario: </label>
+          <label>Estado</label>
+          <select [(ngModel)]="dataSearch.idEstadoDocumento" class="form-select">
+            <option [ngValue]="0">Todos</option>
+            @for (item of estadosDoc; track $index) {
+              <option [ngValue]="item.idEstadoPago">
+                {{ item.descripcion }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+        <div class="form-group">
+          <label>Usuario: </label>
           <app-user-search
             (emptyInput)="emptyInputUser()"
             (onUserSelected)="onUserSelected($event)"
@@ -97,41 +117,29 @@
         </div>
       </div>
     </div>
-
     <div class="row">
-      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <div class="form-group">
-          <label>Estado</label>
-          <select class="form-select" [(ngModel)]="dataSearch.idEstadoDocumento">
-            <option [ngValue]="0">Todos</option>
-            @for (item of estadosDoc;track $index){
-              <option [ngValue]="item.idEstadoPago">
-                {{item.descripcion}}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
-
-      <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12  d-flex align-items-center">
-        @if(isSelectedNotaEntrega){
-          <div class="icheck-primary icheck-inline"  >
-            <input type="checkbox" id="docTransferidas" [(ngModel)]="dataSearch.convertToDoc" />
+      <div class="col-xl-3 col-lg-3 col-md-12 col-sm-6 col-12 d-flex align-items-center">
+        @if (isSelectedNotaEntrega) {
+          <div class="icheck-primary icheck-inline">
+            <input type="checkbox" id="docTransferidas" [(ngModel)]="dataSearch.convertToDoc"/>
             <label for="docTransferidas">Docs. Transferidas</label>
           </div>
         }
       </div>
-
     </div>
 
-
+  </div>
+  <div class="card-footer bg-transparent">
     <div class="d-flex flex-row gap-1">
-      <button type="button" class="btn btn-success" (click)="getReportPdf()">PDF</button>
-      <button type="button" class="btn btn-info" (click)="getReportExcel()">EXCEL</button>
+      <button (click)="getReportPdf()" class="btn btn-outline-danger" type="button">
+        <fa-icon [icon]="'file-pdf'"></fa-icon>
+        PDF
+      </button>
+      <button (click)="getReportExcel()" class="btn btn-outline-success" type="button">
+        <fa-icon [icon]="'file-excel'"></fa-icon>
+        EXCEL
+      </button>
     </div>
-
-
-
 
   </div>
 </div>

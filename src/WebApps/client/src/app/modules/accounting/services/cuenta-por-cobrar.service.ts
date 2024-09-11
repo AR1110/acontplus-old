@@ -7,13 +7,11 @@ import { map } from 'rxjs';
 import { ACCOUNTING_PATHS } from '../enums/accounting.constants';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CuentaPorCobrarService {
   #url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_COBRAR}`;
   #http = inject(HttpClient);
-
-
 
   getDataFilter() {
     const json = JSON.stringify({ tipo: 6 });
@@ -22,30 +20,36 @@ export class CuentaPorCobrarService {
       map((response: any) => {
         if (!response) throw response;
 
-        const { establecimientos, estadoPago, tipoDocumento, empresas} = response;
+        const {
+          establecimientos,
+          estadoPago,
+          tipoDocumento,
+          empresas,
+          ciudades,
+        } = response;
         let estabs = groupEstabUtil({
           estabs: establecimientos,
-          isGroupPuntoEmision: true
-        })
+          isGroupPuntoEmision: true,
+        });
 
         return {
           estabs,
           estadosDoc: estadoPago,
           tiposDoc: tipoDocumento,
-          empresas
-        }
-      }
-      ))
+          empresas,
+          ciudades: ciudades || [],
+        };
+      }),
+    );
   }
 
   getAll<T>(obj: T) {
     const json = JSON.stringify({ ...obj, tipo: 1 });
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
       map((response: any) => {
-        if (!response) throw response
+        if (!response) throw response;
 
         const { cuentasPorCobrar } = response;
-
 
         const results = cuentasPorCobrar.map((cxc: any, index: number) => {
           return {
@@ -66,24 +70,21 @@ export class CuentaPorCobrarService {
             codEstab: cxc.codEstab,
             identificacionComprador: cxc.identificacionComprador,
             diasMora: cxc.diasMora,
-            mora: cxc.mora
-          }
-        })
-
+            mora: cxc.mora,
+          };
+        });
 
         let dataFiltered = cuentasPorCobrar[0];
 
-
         return {
           cuentasPorCobrar: results,
-          totalRecords: dataFiltered && dataFiltered.totalRecords || 0,
-          totalVenta: dataFiltered && dataFiltered.totalVenta || 0,
-          totalAbono: dataFiltered && dataFiltered.totalAbono || 0,
-          totalSaldo: dataFiltered && dataFiltered.totalSaldo || 0,
+          totalRecords: (dataFiltered && dataFiltered.totalRecords) || 0,
+          totalVenta: (dataFiltered && dataFiltered.totalVenta) || 0,
+          totalAbono: (dataFiltered && dataFiltered.totalAbono) || 0,
+          totalSaldo: (dataFiltered && dataFiltered.totalSaldo) || 0,
         };
-
-      })
-    )
+      }),
+    );
   }
 
   getDataForm(idCuentaPorCobrar: number, idCliente: number) {
@@ -92,20 +93,28 @@ export class CuentaPorCobrarService {
       map((response: any) => {
         if (!response) return {};
 
-        const { entidadFinanciera, banco, documentos, subEntidadFinanciera, provincia } = response;
+        const {
+          entidadFinanciera,
+          banco,
+          documentos,
+          subEntidadFinanciera,
+          provincia,
+        } = response;
 
         const resultEntidadesFinanciera = entidadFinanciera.map((ef: any) => {
-          let filteredSubEntidadFinanciera = subEntidadFinanciera.filter((sef: any) => sef.idEntidadFinanciera === ef.idEntidadFinanciera)
+          let filteredSubEntidadFinanciera = subEntidadFinanciera.filter(
+            (sef: any) => sef.idEntidadFinanciera === ef.idEntidadFinanciera,
+          );
           return {
             idEntidadFinanciera: ef.idEntidadFinanciera,
             descripcion: ef.descripcion,
             detalle: ef.detalle,
             codigo: ef.codigo,
-            subEntidadesFinanciera: filteredSubEntidadFinanciera
-          }
-        })
+            subEntidadesFinanciera: filteredSubEntidadFinanciera,
+          };
+        });
 
-        let cuentaPorCobrar = []
+        let cuentaPorCobrar = [];
         //cuando el cobro es por documento
         if (idCuentaPorCobrar > 0 && response.cuentaPorCobrar) {
           cuentaPorCobrar = response.cuentaPorCobrar;
@@ -124,9 +133,9 @@ export class CuentaPorCobrarService {
                 saldoCta: cuota.saldoCta,
                 saldo: cuota.saldo,
                 estado: cuota.estado,
-                saldoOriginal: cuota.saldo
-              }
-            })
+                saldoOriginal: cuota.saldo,
+              };
+            });
             return {
               codEstab: cxc.codEstab,
               idCliente: cxc.idCliente,
@@ -145,9 +154,9 @@ export class CuentaPorCobrarService {
               saldoTemporal: cxc.saldo,
               descripcion: cxc.descripcion,
               cuotas: structuredClone(resultsCuotas),
-              cuotasOriginal: structuredClone(resultsCuotas)
-            }
-          })
+              cuotasOriginal: structuredClone(resultsCuotas),
+            };
+          });
         }
 
         let obj = {
@@ -155,13 +164,12 @@ export class CuentaPorCobrarService {
           bancos: banco,
           documentos,
           ciudades: provincia,
-          cuentaPorCobrar
-        }
+          cuentaPorCobrar,
+        };
         return obj;
-      }))
-
+      }),
+    );
   }
-
 
   getCuotasById(id: number) {
     const json = JSON.stringify({ idCuentaPorCobrar: id, tipo: 8 });
@@ -182,12 +190,12 @@ export class CuentaPorCobrarService {
               saldoCta: cuota.saldoCta,
               saldo: cuota.saldo,
               estado: cuota.estado,
-              saldoOriginal: cuota.saldo
-            }
-          })
+              saldoOriginal: cuota.saldo,
+            };
+          });
         }
         return cuotas;
-      })
-    )
+      }),
+    );
   }
 }

@@ -1,16 +1,7 @@
-﻿namespace Contabilidad.API.Controllers.v1;
+﻿namespace Contabilidad.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class CajaController : ControllerBase
+public class ControlCajaController(IControlCajaService controlCajaService) : BaseApiController
 {
-    private readonly ICajaService _service;
-
-    public CajaController(ICajaService service)
-    {
-        _service = service;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -18,12 +9,16 @@ public class CajaController : ControllerBase
         {
             { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
-        var response = await _service.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
 
-        ;
+        var response = await controlCajaService.GetAsync(parameters);
+        if (response == null)
+        {
+            return NoContent();
+        } 
+
         return Ok(response);
     }
+
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest data)
@@ -33,13 +28,12 @@ public class CajaController : ControllerBase
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await _service.AddAsync(parameters);
+        var response = await controlCajaService.AddAsync(parameters);
         if (response == null) { return NoContent(); }
 
         ;
         return Ok(response);
     }
-
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
@@ -50,19 +44,10 @@ public class CajaController : ControllerBase
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await _service.UpdateAsync(parameters);
+        var response = await controlCajaService.UpdateAsync(parameters);
         if (response == null) { return NoContent(); }
 
         ;
-        return Ok(response);
-    }
-
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await _service.DeleteAsync(parameters);
         return Ok(response);
     }
 }

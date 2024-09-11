@@ -1,16 +1,5 @@
 USE [Acontplus]
-go 
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -283,7 +272,7 @@ BEGIN
     --> Filter 
     IF @tipo = 6
         BEGIN
-            SET @tableNames = 'establecimientos,estadoPago,tipoDocumento,empresas'
+            SET @tableNames = 'establecimientos,estadoPago,tipoDocumento,empresas,ciudades'
 
             SELECT idEstablecimiento
                   ,nombreComercial
@@ -292,7 +281,8 @@ BEGIN
                   ,ptoEmi + '-' + estab as ptoEmi
                   ,defaultEstab
                   ,defaultPtoEmi 
-            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
+            ORDER BY defaultEstab DESC
 
             SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NCBR','CBR')
 
@@ -304,6 +294,15 @@ BEGIN
             INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = en.CustomerId
             WHERE en.idEntidad = @idEntidad
               AND en.estado = 1
+            
+			SELECT c.idCiudad
+                ,ciudad = c.descripcion
+                ,c.codigo, c.estado
+                ,c.idProvincia
+                ,provincia = pr.descripcion 
+            FROM dbo.Ciudad  c WITH (NOLOCK)																							         
+                INNER JOIN dbo.Provincia pr WITH (NOLOCK) ON pr.idProvincia = c.idProvincia
+            WHERE c.estado = CAST(1 AS bit)
             RETURN 
         END
 

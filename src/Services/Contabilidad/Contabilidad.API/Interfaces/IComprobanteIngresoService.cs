@@ -1,11 +1,9 @@
-﻿namespace Contabilidad.API.Interfaces
+﻿namespace Contabilidad.API.Interfaces;
+
+public interface IComprobanteIngresoService
 {
-    public interface IComprobanteIngresoService
-    {
-        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-        Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
-        Task<ApiResponse> CancelAsync(Dictionary<string, object> parameters); 
-        Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters); 
-     
-    }
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> CancelAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
 }

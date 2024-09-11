@@ -1,16 +1,6 @@
 USE [Acontplus]
 go 
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -56,6 +46,8 @@ BEGIN
            ,@idEmpresa          INT
            ,@convertToDoc       BIT
            ,@id                 INT
+           ,@idCiudad           INT       
+           ,@nombreReporte      VARCHAR(300)
 
     --> Variables
     SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -234,6 +226,8 @@ BEGIN
             
             SET @tableNames = 'headerDs,detalleDs'
 
+            SET @nombreReporte = 'Reporte de Ventas'
+
             SELECT @codDoc         = codDoc 
                   ,@idCliente      = idCliente
                   ,@idUsuario      = idUsuario
@@ -244,6 +238,7 @@ BEGIN
                   ,@fechaInicio    = fechaInicio
                   ,@fechaFin       = fechaFin
                   ,@convertToDoc   = convertToDoc
+                  ,@idCiudad        = idCiudad
             FROM OPENJSON(@json) WITH 
             ( 
                 codDoc         VARCHAR(10)
@@ -256,6 +251,7 @@ BEGIN
                ,fechaInicio    DATETIME2
                ,fechaFin       DATETIME2
                ,convertToDoc   BIT
+               ,idCiudad        INT
             )
             
             SET @params = '@idEntidad      INT
@@ -267,7 +263,8 @@ BEGIN
                           ,@fechaInicio    DATETIME2
                           ,@fechaFin       DATETIME2
                           ,@codDoc         VARCHAR(10)
-                          ,@convertToDoc   BIT'
+                          ,@convertToDoc   BIT
+                          ,@idCiudad INT'
 
             SET @sql = 'SELECT idEstablecimiento
                               ,nombreComercial
@@ -333,7 +330,13 @@ BEGIN
                         BEGIN
                             SET @sql = @sql + 'AND codEstado = @codEstado '
                         END 
-                END 
+                END
+
+            IF (@idCiudad > 0)
+                BEGIN
+                    SET @nombreReporte = @nombreReporte + ' - ' + (SELECT descripcion FROM dbo.Ciudad WITH(NOLOCK) WHERE idCiudad = @idCiudad)
+                    SET @sql = @sql + 'AND idCiudad = @idCiudad '
+                END
 
             SET @sql = @sql + 'ORDER BY  CAST(fechaEmision AS DATE) ASC '
 
@@ -343,7 +346,7 @@ BEGIN
                   ,direccion 
                   ,@usuario  as usuario 
                   ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
-                  ,'Reporte de Ventas' as nombreReporte
+                  ,@nombreReporte as nombreReporte
             FROM dbo.Entidad WITH (NOLOCK)
             WHERE idEntidad = @idEntidad
 
@@ -358,6 +361,7 @@ BEGIN
                                    ,@codEstado      = @codEstado
                                    ,@idUsuario      = @idUsuario
                                    ,@convertToDoc   = @convertToDoc
+                                   ,@idCiudad      = @idCiudad
 
             RETURN 
         END 
