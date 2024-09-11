@@ -272,8 +272,10 @@
 
                     acc.totalIce += totalIce;
                     acc.totalPrecioTotalSinImpuesto = pricingUtils.decPlus(acc.totalPrecioTotalSinImpuesto, fS.roundNumber(item.precioTotalSinImpuesto, pricingUtils.max_dos), pricingUtils.precisionMaxima);
+
                     acc.totalDescuento = pricingUtils.decPlus(acc.totalDescuento, item.valorDescuento, pricingUtils.precisionMaxima);
-                    acc.totalSinImpuesto = pricingUtils.decPlus(acc.totalSinImpuesto, totalSinImpuesto, pricingUtils.precisionMaxima);
+
+                    acc.totalSinImpuesto = pricingUtils.decPlus(acc.totalSinImpuesto, fS.roundNumber(totalSinImpuesto, pricingUtils.max_dos), pricingUtils.precisionMaxima);
 
                     return acc;
                 }, { ...totalizadores });
@@ -363,10 +365,12 @@
             });
 
             const importeTotal = totalesGenerales.totalPrecioTotalSinImpuesto + totalizadores.sumTotalIva;
-
-            if (totalesGenerales.totalSinImpuesto > 0) {
-                totalizadores.totalPorcentajeDescuento = ((totalesGenerales.totalSinImpuesto - totalesGenerales.totalPrecioTotalSinImpuesto) * 100) / totalesGenerales.totalSinImpuesto;
-            }
+           
+            if (totalesGenerales.totalDescuento > 0) { 
+                totalizadores.totalPorcentajeDescuento = pricingUtils.getPorcentajeDescuento(totalesGenerales.totalSinImpuesto, totalesGenerales.totalDescuento)
+                
+               // ((totalesGenerales.totalSinImpuesto - totalesGenerales.totalPrecioTotalSinImpuesto) * 100) / totalesGenerales.totalSinImpuesto;
+            } 
 
             const { htmlSubtotalImpuesto, htmlTotal } = construirHtmlTotales({ ...totalesGenerales, importeTotal });
 
