@@ -64,7 +64,7 @@ BEGIN
            ,telefono            VARCHAR(300) '$.telefono' 
            ,correo              VARCHAR(300) '$.correo' 
            ,validationSri                BIT '$.validationSri'
-           ,estado              BIT
+           ,estado                       BIT
         ) 
 
         --> Recuperando Informacion

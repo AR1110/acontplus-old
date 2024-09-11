@@ -748,7 +748,8 @@
         let articuloSvc = $injector.get('articuloService');
         let facturaSvc = $injector.get('facturaService');
         let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
-
+        let infoAdicionalConfig = [];
+        let isSetInfoAdicionalConfig = true;
 
 
         $scope.tipoDoc = TIPO_DOC_NE;
@@ -989,8 +990,32 @@
             if ($scope.puntosEmision.length > 0) {
                 $scope.infoEstabPtoEmi.puntoEmision = $scope.puntosEmision.find(item => item.idPuntoEmision === $scope.data.idPuntoEmision).ptoEmi;
             }
+            setInfoAdicional();
         }
 
+        function setInfoAdicional() {
+            if (isSetInfoAdicionalConfig) {
+                $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(
+                    (d) => !(d.idPuntoEmision > 0)
+                );
+
+                let dataInfoAdicional = infoAdicionalConfig.find(
+                    (i) => i.idPuntoEmision === $scope.data.idPuntoEmision
+                );
+                if (!dataInfoAdicional) return;
+                let infoAdicionPtoEmi = dataInfoAdicional.infoAdicional.map((i) => {
+                    return {
+                        ...i,
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    };
+                });
+                $scope.infoAdicionalDocumento = [
+                    ...infoAdicionPtoEmi,
+                    ...$scope.infoAdicionalDocumento,
+                ];
+            }
+            isSetInfoAdicionalConfig = true;
+        }
 
         function calculateTotalItems(items) {
             return items.map(item => {  
@@ -1019,7 +1044,8 @@
                 vendedores,
                 clienteDefault,
                 formasPago,
-                tiposIdentificacion
+                tiposIdentificacion,
+                infoAdicional
             } = structuredClone(mainDataForm);
             let dataEstab = {};
 
@@ -1047,6 +1073,7 @@
             $scope.notificacionVenta = notificacionVenta;
             $scope.decimal = decimal;
             $scope.config = config;
+            infoAdicionalConfig = infoAdicional;
 
             if (params && params.action === "NUEVO") {
                 if ($scope.puntosEmision.length > 0) {
