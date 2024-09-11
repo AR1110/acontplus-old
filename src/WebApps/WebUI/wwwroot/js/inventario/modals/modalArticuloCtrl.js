@@ -183,7 +183,7 @@ function modalArticuloCtrl(
                         );
                         $scope.gridOptions.data[index].porcentajeUtilidad = fS.roundNumber(
                             porcentajeUtilidad,
-                            5
+                            pricingUtils.precisionMaxima
                         );
 
                         break;
@@ -208,7 +208,7 @@ function modalArticuloCtrl(
                         );
                         $scope.gridOptions.data[index].porcentajeUtilidad = fS.roundNumber(
                             porcentajeUtilidad,
-                            5
+                            pricingUtils.precisionMaxima
                         );
 
                         break;
@@ -235,7 +235,7 @@ function modalArticuloCtrl(
 
                 //alexis ramirez
                 ganancia = rowEntity.precioVenta - $scope.data.precioCosto;
-                $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, 5);
+                $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, pricingUtils.precisionMaxima);
             }
         );
     };
@@ -517,7 +517,7 @@ function modalArticuloCtrl(
 
                     $scope.gridOptions.data = articuloTarifas.map((item) => {
                         let ganancia = item.precioVenta - $scope.data.precioCosto;
-                        item.ganancia = fS.roundNumber(ganancia, 5);
+                        item.ganancia = fS.roundNumber(ganancia, pricingUtils.precisionMaxima);
                         return item;
                     });
 
@@ -747,7 +747,7 @@ function modalArticuloCtrl(
                 );
                 $scope.gridOptions.data[index].porcentajeUtilidad = fS.roundNumber(
                     porcentajeUtilidad,
-                    5
+                    pricingUtils.precisionMaxima
                 );
 
                 let ganancia = getTarifaGanacia(
@@ -811,12 +811,12 @@ function modalArticuloCtrl(
                     );
                     $scope.gridOptions.data[index].porcentajeUtilidad = fS.roundNumber(
                         porcentajeUtilidad,
-                        5
+                        pricingUtils.precisionMaxima
                     );
                 }
 
                 ganancia = getTarifaGanacia(val.precioVenta, $scope.data.precioCosto);
-                $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, 5);
+                $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, pricingUtils.precisionMaxima);
                 index++;
             }
         } catch (error) {
@@ -1455,7 +1455,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
                         );
                         $scope.gridOptions.data[index].porcentajeUtilidad = fS.roundNumber(
                             porcentajeUtilidad,
-                            5
+                            pricingUtils.precisionMaxima
                         );
 
                         break;
@@ -1480,7 +1480,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
                         );
                         $scope.gridOptions.data[index].porcentajeUtilidad = fS.roundNumber(
                             porcentajeUtilidad,
-                            5
+                            pricingUtils.precisionMaxima
                         );
 
                         break;
@@ -1507,7 +1507,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
 
                 //alexis ramirez
                 ganancia = rowEntity.precioVenta - precioCosto;
-                $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, 5);
+                $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, pricingUtils.precisionMaxima);
             }
         );
     };
@@ -1639,7 +1639,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
             };
             $scope.gridOptions.data = pvps.map((val) => {
                 let ganancia = val.precioVenta - $scope.data.precioCostoFraccionado;
-                val.ganancia = fS.roundNumber(ganancia, 5);
+                val.ganancia = fS.roundNumber(ganancia, pricingUtils.precisionMaxima);
                 return val;
             })
         })
@@ -1737,14 +1737,14 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
                 );
                 $scope.gridOptions.data[index].porcentajeUtilidad = fS.roundNumber(
                     porcentajeUtilidad,
-                    5
+                    pricingUtils.precisionMaxima
                 );
 
                 let ganancia = getTarifaGanacia(
                     val.precioVenta,
                     precioCosto
                 );
-                $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, 5);
+                $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, pricingUtils.precisionMaxima);
                 index++;
             }
         } catch (error) {
