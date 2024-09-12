@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { MaterialModule } from '@core/material/material.module';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -8,7 +7,7 @@ import { TiempoCredito } from '@modules/config/models/tiempo-credito.model';
 @Component({
   selector: 'app-tiempo-credito-page',
   standalone: true,
-  imports: [CommonModule, MaterialModule, FormsModule, BreadcrumbComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbComponent],
   templateUrl: './tiempo-credito-page.component.html',
   styles: ``,
 })
