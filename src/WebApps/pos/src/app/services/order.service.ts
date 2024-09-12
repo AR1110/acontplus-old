@@ -1,15 +1,15 @@
-import { inject, Injectable } from '@angular/core';
-import { DOC_TYPE, PATHS, PATHS_API } from "@/enums/main.enum";
-import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs/operators";
-import { OrderRead } from "@/models/order.model";
-import { GroupedEstab } from "@/models/estab.model";
-import { UserSelectHtmlOnly } from "@/models/user.model";
-import { groupEstabUtil } from "@core/utils/group-estab.util";
-import { ApiResponse } from "@/models/api-response";
 import { OrderAdapter } from "@/adapters/order.adapter";
-import { groupRoomTableUtil } from '@/core/utils/group-room-table.util';
 import { getNoLoader } from '@/core/interceptors/loader.interceptor';
+import { groupRoomTableUtil } from '@/core/utils/group-room-table.util';
+import { DOC_TYPE, PATHS, PATHS_API } from "@/enums/main.enum";
+import { ApiResponse } from "@/models/api-response";
+import { GroupedEstab } from "@/models/estab.model";
+import { OrderRead } from "@/models/order.model";
+import { UserSelectHtmlOnly } from "@/models/user.model";
+import { HttpClient } from "@angular/common/http";
+import { inject, Injectable } from '@angular/core';
+import { groupEstabUtil } from "@core/utils/group-estab.util";
+import { map } from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -172,15 +172,18 @@ export class OrderService {
     })
     return this.http.get<ApiResponse>(`${this.url}?json=${json}`).pipe(
       map(response => {
-        let mainData = JSON.parse(response.payload as string)
-        console.log(mainData)
-        let salesMerge = [...mainData.order, ...(mainData.docs || [])];
-        console.log(salesMerge)
-        let productsTop = mainData.productsTop || [];
-        return {
-          sales: salesMerge,
-          productsTop
+        let result = {
+          sales: [] as any[],
+          productsTop: [] as any[]
         }
+        if(response.code==="1" && response.payload){
+          let mainData = JSON.parse(response.payload as string)
+          result.sales = [...mainData.order, ...(mainData.docs || [])];
+
+          result.productsTop = mainData.productsTop || [];
+
+        }
+        return result;
       })
     )
   }

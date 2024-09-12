@@ -3,7 +3,7 @@
 <div class="card">
   <div class="card-body">
     <div class="row">
-      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+      <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
         <div class="icheck-primary">
           <input type="checkbox"
                  id="ckFecha"
@@ -13,7 +13,7 @@
         </div>
       </div>
 
-      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+      <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
         <div class="icheck-primary">
           <input type="checkbox"
                  id="checkboxCompanyCustomer"
@@ -22,7 +22,7 @@
           <label for="checkboxCompanyCustomer">Cliente</label>
         </div>
       </div>
-      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+      <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
         <div class="icheck-primary">
           <input type="checkbox" id="ckCxcVencida" [(ngModel)]="dataSearch.ckCxcVencida" />
           <label for="ckCxcVencida">Vencidas</label>
@@ -34,7 +34,12 @@
           <label for="ckCuotas">Cuotas</label>
         </div>
       </div>
-      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+      <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+          <div class="icheck-primary">
+            <input type="checkbox" id="dirViviendaCliente" [(ngModel)]="dataSearch.checkBoxDirViviendaCliente" />
+            <label for="dirViviendaCliente">Dir. Vivienda Cliente</label>
+          </div>
+      </div>
     </div>
     <hr />
 
@@ -153,6 +158,17 @@
         }
 
       </div>
+    </div>
+
+    <div class="row">
+      @if (dataSearch.checkBoxDirViviendaCliente) {
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="dirVivienda">Dirección de vivienda (Sector, Barrio y Calle):</label>
+          <input type="text" class="form-control border-select" id="dirVivienda" [(ngModel)]="dataSearch.dirViviendaCliente" >
+        </div>
+      </div>
+      }
     </div>
 
 

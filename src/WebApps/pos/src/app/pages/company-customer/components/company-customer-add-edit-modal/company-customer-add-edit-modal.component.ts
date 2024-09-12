@@ -1,22 +1,22 @@
+import { isValidField } from '@/core/utils/utils';
+import { SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE } from '@/enums/main.enum';
+import { ApiResponse } from "@/models/api-response";
+import { CompanyCustomerService } from "@/services/company-customer.service";
+import { ToasterService } from '@/services/toaster.service';
 import { Component, inject, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
-import { MatTabsModule } from '@angular/material/tabs';
-import { M3InputChipComponent } from "@core/components/m3-input-chip/m3-input-chip.component";
-import { CompanyCustomerService } from "@/services/company-customer.service";
-import { Observable, forkJoin } from 'rxjs';
-import { SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE } from '@/enums/main.enum';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators, } from '@angular/forms';
-import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { ApiResponse } from "@/models/api-response";
-import { ToasterService } from '@/services/toaster.service';
-import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component'; 
-import { isValidField } from '@/core/utils/utils';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { M3InputChipComponent } from "@core/components/m3-input-chip/m3-input-chip.component";
+import { forkJoin, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-company-customer-add-edit-modal',
@@ -32,8 +32,8 @@ import { isValidField } from '@/core/utils/utils';
     MatFormFieldModule,
     MatCheckboxModule,
     MatSlideToggleModule,
+    MatTooltipModule,
     M3InputChipComponent,
-    CustomContainerDialogComponent
   ],
   templateUrl: './company-customer-add-edit-modal.component.html',
 })
@@ -42,7 +42,7 @@ export class CompanyCustomerAddEditModalComponent {
   readonly matDialogData = inject<any>(MAT_DIALOG_DATA);
   readonly dialogRef = inject(MatDialogRef<CompanyCustomerAddEditModalComponent>);
   private companyCustomerSvc = inject(CompanyCustomerService)
-  private tS = inject(ToasterService) 
+  private tS = inject(ToasterService)
 
   selectedTab = 0;
 
@@ -146,7 +146,7 @@ export class CompanyCustomerAddEditModalComponent {
 
           this.emails = correos;
           this.telefonos = telefonos;
-          
+
 
         } else if (!(this.matDialogData.id > 0)) {
           let dataIdentificacion = this.tiposIdentificacion.find(
@@ -179,7 +179,7 @@ export class CompanyCustomerAddEditModalComponent {
   }
 
 
-  private syncDataOfSri(){
+  private syncDataOfSri() {
     let dataNroIdentificacion = this.getDataNroIdentificacion();
     let { numeroIdentificacion } = this.customerForm.value;
 
@@ -204,15 +204,11 @@ export class CompanyCustomerAddEditModalComponent {
             nombreFiscal: razonSocial,
             nombreComercial: nombreComercial ?? razonSocial,
             direccion,
+            validationSri: true
           });
 
+          this.updateEmailTelOfSri(correos, telefonos)
 
-          this.emails = correos;
-          this.telefonos = telefonos;
-
-          this.customerForm.patchValue({
-            validationSri: true
-          })
         })
       }
 
@@ -233,14 +229,12 @@ export class CompanyCustomerAddEditModalComponent {
             nombreFiscal: nombreCompleto,
             nombreComercial: nombreCompleto,
             direccion,
+            validationSri: true
           });
 
 
-          this.emails = correos;
-          this.telefonos = telefonos;
-          this.customerForm.patchValue({
-            validationSri: true
-          })
+          this.updateEmailTelOfSri(correos, telefonos)
+
 
         })
 
@@ -249,8 +243,19 @@ export class CompanyCustomerAddEditModalComponent {
     }
   }
 
+  private updateEmailTelOfSri(correos: any, telefonos:any){
+
+    if(this.matDialogData.id>0) return
+
+    this.emails = correos;
+    this.telefonos = telefonos;
+
+
+  }
+
+
   onTipoIdentificacionChange(event: MatSelectChange): void {
-    const selectedValue = event.value; 
+
     this.customerForm.patchValue({
       numeroIdentificacion: null,
       validationSri: false
@@ -313,7 +318,7 @@ export class CompanyCustomerAddEditModalComponent {
 
   keyupInputNroIdentificacion() {
     this.isValidNroIdentificacion()
-    
+
   }
 
 
@@ -345,6 +350,15 @@ export class CompanyCustomerAddEditModalComponent {
   }
 
   onSave() {
+
+    const dataNroIdentificacion = this.getDataNroIdentificacion();
+    if (this.matDialogData.id > 0 && dataNroIdentificacion.codigoSri === SRI_IDENTIFICATION_CODE.CONSUMIDOR_FINAL) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Consumidor Final no puede ser editada'
+      })
+      return
+    }
 
     if (!this.isValidNroIdentificacion()) {
       this.tS.toastr({

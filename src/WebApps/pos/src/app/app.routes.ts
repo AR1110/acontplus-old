@@ -1,6 +1,6 @@
+import { configDataResolver } from "@/resolvers/config-resolver";
 import { Routes } from '@angular/router';
-import {sessionGuard} from "@core/guards/session.guard";
-import {configDataResolver} from "@/resolvers/config-resolver";
+import { sessionGuard } from "@core/guards/session.guard";
 
 export const routes: Routes = [
   {

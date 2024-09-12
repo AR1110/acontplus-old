@@ -3,7 +3,7 @@ import { ApiResponse } from '@/models/api-response';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import FileSaver from 'file-saver';
-import { map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 
 import { ToasterService } from './toaster.service';
@@ -112,8 +112,7 @@ export class SharedService {
   }
 
 
-
-  saveFile(response: any, format?: string, downloadOnly: boolean = false) {
+  getFileName(response:any){
     let contentDisposition = response.headers.get('content-disposition');
     let fileName = contentDisposition
       ?.split(';')[1]
@@ -121,6 +120,11 @@ export class SharedService {
       .split('=')[1]
       .trim();
     fileName = fileName?.replaceAll('+', ' ');
+    return fileName;
+  }
+
+  saveFile(response: any, format?: string, downloadOnly: boolean = false) {
+    let fileName = this.getFileName(response)
 
     if (format === 'pdf') {
       const ieEDGE = navigator.userAgent.match(/Edge/g);
@@ -145,38 +149,60 @@ export class SharedService {
   }
 
   /**
-   *
-   * @param data
-   * @param format pdf | excel
-   * @param isOldVersion
-   */
+* Genera y descarga o retorna un reporte en formato PDF o Excel.
+*
+* @template T Tipo de los datos que se envían para generar el reporte.
+* @param data Datos necesarios para la generación del reporte.
+* @param format Formato del reporte (pdf | excel), por defecto 'pdf'.
+* @param isOldVersion Define si se usa la versión antigua del reporte.
+* @param downloadOnly Si es verdadero, solo descarga el archivo sin abrirlo.
+* @param isReturnData Si es verdadero, retorna el blob en lugar de descargarlo.
+* @returns Observable si `isReturnData` es verdadero, de lo contrario void.
+*/
   getReport<T>({
     data,
     format = 'pdf',
     isOldVersion = false,
     downloadOnly = false,
+    isReturnData = false
   }: {
     data: T;
-    format?: string;
+    format?: 'pdf' | 'excel';
     isOldVersion?: boolean;
     downloadOnly?: boolean;
-  }) {
-    const path = isOldVersion
-      ? `${PATHS.REPORT_V1}`
-      : `${PATHS.REPORT_V2}`;
-    this.http
-      .post(`${PATHS_API.REPORT}${path}Download`, data, {
-        observe: 'response',
-        responseType: 'blob',
-      })
-      .subscribe((response) => {
-        this.saveFile(response, format, downloadOnly);
-      });
+    isReturnData?: boolean;
+  }): Observable<any> | void {  // <- Retorna Observable si isReturnData es true, de lo contrario void
+    const reportVersionPath = isOldVersion ? PATHS.REPORT_V1 : PATHS.REPORT_V2;
+    const fullPath = `${PATHS_API.REPORT}${reportVersionPath}Download`;
+
+    // Configuración de la petición
+    const requestOptions = {
+      observe: 'response' as const,
+      responseType: 'blob' as const,
+    };
+
+    // Si se debe retornar el blob en lugar de descargar
+    if (isReturnData) {
+      return this.http.post(fullPath, data, requestOptions);  // Retorna Observable
+    }
+
+    // Si solo se descarga el archivo
+    this.http.post(fullPath, data, requestOptions).subscribe({
+      next: (response) => this.saveFile(response, format, downloadOnly),
+      error: (err) => {
+        console.error('Error al descargar el reporte:', err);
+        // Aquí podrías mostrar un mensaje de error al usuario
+      }
+    });
+
+    return;  // <- Devuelve void en caso de que no se use isReturnData
   }
 
 
 
- 
+
+
+
 
 
 }
