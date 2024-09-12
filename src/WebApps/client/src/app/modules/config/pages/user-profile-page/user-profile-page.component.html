@@ -1,11 +1,10 @@
-<app-breadcrumb></app-breadcrumb>
-
+<app-breadcrumb/>
 <div class="card">
   <div class="card-body">
     <div class="row">
       <div class="col-lg-4 col-xlg-3 col-md-5">
         <div style="text-align: center; margin-top: 20px;">
-          <img src="../assets/images/users/1.jpg" class="rounded-circle" width="150" />
+          <img class="rounded-circle" src="../assets/images/users/1.jpg" width="150"/>
           <br><br>
           <h4 class="card-title m-t-10">{{ user.nombreCompleto }}</h4>
           <h6 class="card-subtitle">{{ user.correo }}</h6>
@@ -36,25 +35,25 @@
                 <div class="table-responsive">
                   <table class="table">
                     <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Código</th>
-                        <th>Rol</th>
-                        <th>Fecha registro</th>
-                        <th>Estado</th>
-                      </tr>
+                    <tr>
+                      <th>#</th>
+                      <th>Código</th>
+                      <th>Rol</th>
+                      <th>Fecha registro</th>
+                      <th>Estado</th>
+                    </tr>
                     </thead>
                     <tbody>
                       @for (item of roles; track $index) {
-                      <tr>
-                        <td>{{$index+1}}</td>
-                        <td>{{ item.code }}</td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.fechaRegistro }}</td>
-                        <td>
-                          <span class="label label-danger">{{ item.estado ? 'Activo': 'Inactivo'}}</span>
-                        </td>
-                      </tr>
+                        <tr>
+                          <td>{{ $index + 1 }}</td>
+                          <td>{{ item.code }}</td>
+                          <td>{{ item.name }}</td>
+                          <td>{{ item.fechaRegistro }}</td>
+                          <td>
+                            <span class="label label-danger">{{ item.estado ? 'Activo' : 'Inactivo' }}</span>
+                          </td>
+                        </tr>
                       }
                     </tbody>
                   </table>
@@ -73,40 +72,40 @@
                       <form [formGroup]="passwordForm" autocomplete="off">
                         <div class="form-floating mb-3">
                           <input (change)="verifyPassword()"
-                                formControlName="password"
-                                [type]="isShowPassword ? 'text' : 'password'"
-                                class="form-control"
-                                id="floatingInput"
-                                placeholder="*******">
+                                 [type]="isShowPassword ? 'text' : 'password'"
+                                 class="form-control"
+                                 formControlName="password"
+                                 id="floatingInput"
+                                 placeholder="*******">
                           <label for="floatingInput">Contraseña</label>
                         </div>
 
                         <div class="form-floating mb-3">
                           <input (change)="verifyPassword()"
-                                formControlName="confirmPassword"
-                                [type]="isShowPassword ? 'text' : 'password'"
-                                class="form-control"
-                               id="floatingInputConfirmPass"
-                                placeholder="*******">
+                                 [type]="isShowPassword ? 'text' : 'password'"
+                                 class="form-control"
+                                 formControlName="confirmPassword"
+                                 id="floatingInputConfirmPass"
+                                 placeholder="*******">
 
                           <label for="floatingInputConfirmPass">Confirmar contraseña</label>
                         </div>
 
                         <section class="example-section">
-                          <mat-checkbox class="example-margin" (change)="showPassword()">Mostrar contraseña</mat-checkbox>
+                          <mat-checkbox (change)="showPassword()" class="example-margin">Mostrar contraseña
+                          </mat-checkbox>
                         </section>
 
-                        <button [disabled]="!isVerified"
-                                (click)="confirmUpdate()"
-                                type="button"
-                                class="btn btn-outline-success btn-lg btn-block mt-3">
-                                Cambiar contraseña
+                        <button (click)="confirmUpdate()"
+                                [disabled]="!isVerified"
+                                class="btn btn-outline-success btn-lg btn-block mt-3"
+                                type="button">
+                          Cambiar contraseña
                         </button>
                       </form>
                     </div>
                   </div>
                 </div>
-
 
 
               </div>

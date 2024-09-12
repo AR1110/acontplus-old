@@ -1,11 +1,14 @@
-﻿<app-breadcrumb>
-  <button (click)="onModalOpen()" class="btn btn-primary">
-    <fa-icon [icon]="'plus'"></fa-icon>
-    Nueva
-  </button>
-</app-breadcrumb>
+﻿<app-breadcrumb/>
 <div class="card">
   <div class="card-body">
+    <div class="row mb-3">
+      <div class="col">
+        <button (onResult)="onResultModal()" appCompanyCustomerAddEdit class="btn btn-info" type="button">
+          <fa-icon [icon]="'plus'"></fa-icon>
+          Nuevo
+        </button>
+      </div>
+    </div>
     <div class="table-responsive">
       <table class="table table-bordered">
         <thead>

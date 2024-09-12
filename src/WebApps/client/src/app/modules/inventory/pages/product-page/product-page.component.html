@@ -1,27 +1,28 @@
-<app-breadcrumb [crear]="true">
-  <button
-    type="button"
-    class="btn btn-info d-none d-lg-block m-l-15 text-white"
-    appProductAddEdit
-  >
-    <fa-icon [icon]="'plus'"></fa-icon> Nuevo
-  </button>
-</app-breadcrumb>
-
+<app-breadcrumb/>
 <app-product-search></app-product-search>
 
 <div class="card">
   <div class="card-body">
     <div class="row">
+      <div class="col-md-2 col-12">
+        <button
+          appProductAddEdit
+          class="btn btn-info d-none d-lg-block m-l-15 text-white"
+          type="button"
+        >
+          <fa-icon [icon]="'plus'"></fa-icon>
+          Nuevo
+        </button>
+      </div>
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="category">Categoría: </label>
-          <select name="category" id="category" class="form-select">
+          <select class="form-select" id="category" name="category">
             <option value="">Todos</option>
             @for (item of subCategorias; track $index) {
-            <option [ngValue]="item.idSubFamilia">
-              {{ item.descripcion }}
-            </option>
+              <option [ngValue]="item.idSubFamilia">
+                {{ item.descripcion }}
+              </option>
             }
           </select>
         </div>
@@ -29,12 +30,12 @@
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="measure">Medida: </label>
-          <select name="measure" id="measure" class="form-select">
+          <select class="form-select" id="measure" name="measure">
             <option value="">Todos</option>
             @for (item of measures; track $index) {
-            <option [ngValue]="item.idMedida">
-              {{ item.descripcion }}
-            </option>
+              <option [ngValue]="item.idMedida">
+                {{ item.descripcion }}
+              </option>
             }
           </select>
         </div>
@@ -42,12 +43,12 @@
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="brand">Marca: </label>
-          <select name="brand" id="brand" class="form-select">
+          <select class="form-select" id="brand" name="brand">
             <option value="">Todos</option>
             @for (item of subCategorias; track $index) {
-            <option [ngValue]="item.idSubFamilia">
-              {{ item.descripcion }}
-            </option>
+              <option [ngValue]="item.idSubFamilia">
+                {{ item.descripcion }}
+              </option>
             }
           </select>
         </div>
@@ -59,16 +60,16 @@
 <div class="card">
   <div class="card-body">
     <section class="section-container-table">
-      <table mat-table [dataSource]="dataSource" matSort>
+      <table [dataSource]="dataSource" mat-table matSort>
         <!-- Options -->
         <ng-container matColumnDef="op">
-          <th mat-header-cell *matHeaderCellDef>Op.</th>
-          <td mat-cell *matCellDef="let element">
-            <div ngbDropdown container="body">
+          <th *matHeaderCellDef mat-header-cell>Op.</th>
+          <td *matCellDef="let element" mat-cell>
+            <div container="body" ngbDropdown>
               <button
-                type="button"
                 class="btn btn-outline-primary btn-sm"
                 ngbDropdownToggle
+                type="button"
               >
                 <fa-icon [icon]="'cog'"></fa-icon>
               </button>
@@ -89,67 +90,67 @@
 
         <!-- Position Column -->
         <ng-container matColumnDef="position">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nro.</th>
-          <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Nro.</th>
+          <td *matCellDef="let element" mat-cell>{{ element.position }}</td>
         </ng-container>
 
         <!-- IDCard Column -->
         <ng-container matColumnDef="s3ObjectUrl">
-          <th mat-header-cell *matHeaderCellDef>Imagen</th>
-          <td mat-cell *matCellDef="let element">
+          <th *matHeaderCellDef mat-header-cell>Imagen</th>
+          <td *matCellDef="let element" mat-cell>
             <img
+              [src]="element.s3ObjectUrl"
               class="img-fluid img-thumbnail"
               width="50"
-              [src]="element.s3ObjectUrl"
             />
           </td>
         </ng-container>
 
         <!-- businessName Column -->
         <ng-container matColumnDef="codigo">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
-          <td mat-cell *matCellDef="let element">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Código</th>
+          <td *matCellDef="let element" mat-cell>
             {{ element.codigo }}
           </td>
         </ng-container>
 
         <!-- tradeName Column -->
         <ng-container matColumnDef="descripcion">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
-          <td mat-cell *matCellDef="let element">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Descripción</th>
+          <td *matCellDef="let element" mat-cell>
             {{ element.descripcion }}
           </td>
         </ng-container>
 
         <!-- Email Column -->
         <ng-container matColumnDef="medida">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Medida</th>
-          <td mat-cell *matCellDef="let element">{{ element.medida }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Medida</th>
+          <td *matCellDef="let element" mat-cell>{{ element.medida }}</td>
         </ng-container>
 
         <!-- Address Column -->
         <ng-container matColumnDef="subFamilia">
-          <th mat-header-cell *matHeaderCellDef>Subfamilia</th>
-          <td mat-cell *matCellDef="let element">{{ element.subFamilia }}</td>
+          <th *matHeaderCellDef mat-header-cell>Subfamilia</th>
+          <td *matCellDef="let element" mat-cell>{{ element.subFamilia }}</td>
         </ng-container>
 
         <ng-container matColumnDef="stock">
-          <th mat-header-cell *matHeaderCellDef>Stock</th>
-          <td mat-cell *matCellDef="let element">{{ element.stock }}</td>
+          <th *matHeaderCellDef mat-header-cell>Stock</th>
+          <td *matCellDef="let element" mat-cell>{{ element.stock }}</td>
         </ng-container>
 
         <ng-container matColumnDef="estado">
-          <th mat-header-cell *matHeaderCellDef>Estado</th>
-          <td mat-cell *matCellDef="let element">{{ element.address }}</td>
+          <th *matHeaderCellDef mat-header-cell>Estado</th>
+          <td *matCellDef="let element" mat-cell>{{ element.address }}</td>
         </ng-container>
         <tr
-          mat-header-row
           *matHeaderRowDef="displayedColumns; sticky: true"
+          mat-header-row
         ></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
 
         <!-- Row shown when there is no matching data. -->
-        <tr class="mat-row" *matNoDataRow>
+        <tr *matNoDataRow class="mat-row">
           <td class="mat-cell" colspan="7">
             <!-- No data matching the filter {{ input.value }} -->
           </td>
@@ -158,8 +159,8 @@
     </section>
     <mat-paginator
       [pageSizeOptions]="pagination.pageSizeOptions"
-      showFirstLastButtons
       aria-label="Select page of enterprises elements"
+      showFirstLastButtons
     >
     </mat-paginator>
   </div>
