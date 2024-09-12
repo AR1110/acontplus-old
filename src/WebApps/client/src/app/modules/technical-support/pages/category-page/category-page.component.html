@@ -1,44 +1,47 @@
-<app-breadcrumb>
-  <button
-    type="button"
-    class="btn btn-primary d-none d-lg-block m-l-15"
-    (click)="onModalOpen()"
-  >
-    <fa-icon [icon]="'plus'"></fa-icon> Nueva
-  </button>
-</app-breadcrumb>
+<app-breadcrumb/>
 <div class="card">
   <div class="card-body">
-    <h5 class="card-title"></h5>
+    <div class="row mb-3">
+      <div class="col-md-2 col-12">
+        <button
+          (click)="onModalOpen()"
+          class="btn btn-primary d-none d-lg-block m-l-15"
+          type="button"
+        >
+          <fa-icon [icon]="'plus'"></fa-icon>
+          Nueva
+        </button>
+      </div>
+    </div>
     <div class="table-responsive">
       <table class="table">
         <thead>
-          <tr>
-            <th class="text-center">#</th>
-            <th>Código</th>
-            <th>Nombre</th>
-            <th>Opciones</th>
-          </tr>
+        <tr>
+          <th class="text-center">#</th>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Opciones</th>
+        </tr>
         </thead>
         <tbody>
           @for (item of categories; track $index) {
-          <tr>
-            <td class="text-center">{{ $index + 1 }}</td>
-            <td>{{ item.code }}</td>
-            <td>{{ item.name }}</td>
-            <td>
-              <button
-                type="button"
-                class="btn btn-outline-warning btn-sm m-r-5"
-                (click)="onEdit(item)"
-              >
-                <fa-icon [icon]="'edit'"></fa-icon>
-              </button>
-              <button type="button" class="btn btn-outline-danger btn-sm">
-                <fa-icon [icon]="'trash'"></fa-icon>
-              </button>
-            </td>
-          </tr>
+            <tr>
+              <td class="text-center">{{ $index + 1 }}</td>
+              <td>{{ item.code }}</td>
+              <td>{{ item.name }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-outline-warning btn-sm m-r-5"
+                  (click)="onEdit(item)"
+                >
+                  <fa-icon [icon]="'edit'"></fa-icon>
+                </button>
+                <button type="button" class="btn btn-outline-danger btn-sm">
+                  <fa-icon [icon]="'trash'"></fa-icon>
+                </button>
+              </td>
+            </tr>
           }
         </tbody>
       </table>
