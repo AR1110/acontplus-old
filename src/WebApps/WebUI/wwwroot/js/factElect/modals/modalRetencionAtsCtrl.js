@@ -284,7 +284,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
                     $scope.retencionesTemp = []
                     $scope.paymentsTemp = []
                 }
-                $scope.infoAdded = retAtsInfoAdicional[5]
+                $scope.infoAdded = retAtsInfoAdicional
             }
         }).finally(() => hideLoader())
     }
