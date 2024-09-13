@@ -26,8 +26,7 @@
                                         <div class="input-group-prepend">
                                             <select class="form-control border-select"
                                                 ng-model="data.idTipoIdentificacion"
-                                                ng-change="onChangeTipoIdentificacion()" name="tipoDocumento"
-                                                ng-model="data.idTipoIdentificacion"
+                                                ng-change="onChangeTipoIdentificacion()" name="tipoDocumento" 
                                                 ng-disabled="isDisableSelectIdentificacion">
                                                 <option ng-value="ti.idTipoIdentificacion"
                                                     ng-repeat="ti in tiposIdentificacion">{{ti.descripcion}}
@@ -419,19 +418,24 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label>Dirección de la Vivienda:</label>
-                                            <input type="text" class="form-control border-select" ng-model="dataInfoCred.dirVivienda">
+                                            <label for="dirVivienda">Dirección de vivienda (Sector, Barrio y Calle):
+                                                <span tooltip-placement="top"
+                                                    uib-tooltip="Esta dirección será utilizada como filtro en los informes de cartera del cliente">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </span>
+                                            </label>
+                                            <input type="text" class="form-control border-select" id="dirVivienda" ng-model="dataInfoCred.dirVivienda">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label>Referencia del Domicilio:</label>
-                                            <input type="text" class="form-control border-select"  ng-model="dataInfoCred.refDomicilio">
+                                            <label for="refDomicilio">Descripción del punto de referencia:</label>
+                                            <input type="text" class="form-control border-select" id="refDomicilio" ng-model="dataInfoCred.refDomicilio">
                                         </div>
                                     </div>
-                                </div> 
-                               
+                                </div>
                             </div>
+
                              
                         </div>
                         <hr>

@@ -216,6 +216,7 @@ export class CartFooterComponent {
     try {
       const { orderItems } = this.posStore.state();
       let order = structuredClone(this.posStore.state().order);
+
       order.subtotalSinImpuestos = this.subtotalSinImpuestos;
       order.tax = this.tax;
       order.discount = this.discount;

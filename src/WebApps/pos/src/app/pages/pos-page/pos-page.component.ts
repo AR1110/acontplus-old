@@ -60,7 +60,7 @@ export class PosPageComponent {
 
   public dialog = inject(Dialog)
 
-  selectedSubCategoryIndex = 0; 
+  selectedSubCategoryIndex = 0;
 
   private establecimientoId = this.mainStore.select("establecimientoId");
   private codEstab = this.mainStore.select("codEstab");
@@ -200,7 +200,8 @@ export class PosPageComponent {
   }
 
   ngOnInit() {
-    if (!(this.posStoreSvc.state().order?.orderId > 0)) {
+    let orderId = this.posStoreSvc.state().order?.orderId || 0;
+    if (!(orderId > 0)) {
       const dialogRef = this.dialog.open(TableModalComponent, {
         width: '100vw',
         height: '100vh',
@@ -220,7 +221,7 @@ export class PosPageComponent {
             ...e.order,
             puntoEmisionId: this.mainStore.state().puntoEmisionId,
             establecimientoId: this.mainStore.state().establecimientoId,
-            userId: dataForm.vendedores.find((u: any) => u.predeterminado)?.idUsuario ?? 0
+            userId: orderId > 0 ? orderId: dataForm.vendedores.find((u: any) => u.predeterminado)?.idUsuario ?? 0
           }
           return {
             ...e,
@@ -259,7 +260,7 @@ export class PosPageComponent {
           totalRecords: 0
         }
       })
-      this.dataItemSearch.update(e => ({ ...e, idSubFamilia: dataSubcategory.idSubFamilia })); 
+      this.dataItemSearch.update(e => ({ ...e, idSubFamilia: dataSubcategory.idSubFamilia }));
       this.refresh()
     }
   }

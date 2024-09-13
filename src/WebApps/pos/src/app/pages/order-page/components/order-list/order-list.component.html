@@ -44,6 +44,7 @@
 
 
     <input type="radio" class="btn-check" name="btnradio" [id]="'statusId'+$index" [value]="item.code"
+      [disabled]="isLoadingResults()"
       [(ngModel)]="selectedStatus" autocomplete="off" (change)="selectionChangeStatusOrder()">
     <label class="btn btn-outline-primary" [for]="'statusId'+$index">{{item.description}}</label>
     }
@@ -80,7 +81,7 @@
             matTooltip="Completar Venta">
             <img src="/icons/icon-cash-register-32.png" alt="icon-cash-register-32" class="icon-img">
           </button>
-          } 
+          }
 
         </div>
 
@@ -186,7 +187,7 @@
             </div>
 
           }
-           
+
         </div>
       </td>
     </ng-container>

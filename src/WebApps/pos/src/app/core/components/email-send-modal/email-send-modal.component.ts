@@ -1,16 +1,16 @@
+import { isValidEmail } from '@/core/utils/utils';
+import { DOC_TYPE, DOC_TYPE_SRI, SEPARATOR_KEY_CODE } from '@/enums/main.enum';
+import { isApiResponse } from '@/models/api-response';
+import { EmailConfigService } from '@/services/email-config.service';
+import { NotificacionTributariaService } from "@/services/notificacion-tributaria.service";
+import { NotificacionService } from "@/services/notificacion.service";
+import { ToasterService } from '@/services/toaster.service'
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import {MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import {ToasterService} from '@/services/toaster.service'
-import { isValidEmail } from '@/core/utils/utils';
-import {DOC_TYPE, DOC_TYPE_SRI, SEPARATOR_KEY_CODE} from '@/enums/main.enum';
-import { EmailConfigService } from '@/services/email-config.service';
-import { isApiResponse } from '@/models/api-response';
-import {NotificacionService} from "@/services/notificacion.service";
-import {NotificacionTributariaService} from "@/services/notificacion-tributaria.service";
 
 type Props = {
   idDocumento: number,
@@ -142,6 +142,9 @@ successResponse = (response:object)=>{
   send(){
 
       try {
+
+        console.log(this.esNotificacionTributaria ,
+        this.esNotificacionGeneral  )
 
         if (this.emails.length === 0) {
           this.tS.toastr({
