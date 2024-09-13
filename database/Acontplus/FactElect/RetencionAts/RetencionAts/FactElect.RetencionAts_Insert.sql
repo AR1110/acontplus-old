@@ -38,8 +38,6 @@ BEGIN
 	DECLARE @tblInfoCompRet AS TABLE(
 		 fechaEmision DATETIME2 NOT NULL
 		,codEstab VARCHAR(25) NOT NULL
-		,estab VARCHAR(5) NOT NULL
-		,ptoEmi VARCHAR(5) NOT NULL
 		,contribuyentEspecial VARCHAR(13) NULL
 		,obligadoContabilidad VARCHAR(2) NULL
 		,codDoc VARCHAR(10) NOT NULL DEFAULT '07' 
@@ -117,13 +115,11 @@ BEGIN
 
         --> Info Json
         INSERT INTO @tblInfoCompRet
-              (codEstab,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
-		SELECT codEstab,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
+              (codEstab,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
+		SELECT codEstab,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
 		FROM OPENJSON(@infoCompRet) WITH
         (
              codEstab                         VARCHAR(25)
-            ,estab                            VARCHAR(5)
-            ,ptoEmi                           VARCHAR(5)
             ,fechaEmision                     DATETIME2
             ,contribuyentEspecial             VARCHAR(13)
             ,obligadoContabilidad             VARCHAR(2)
@@ -257,10 +253,11 @@ BEGIN
 			                                                   ,Helper.F_Auto_Sequential(@secuencial)
                                                              ) 
                    ,@serieComprobante = estab + '-' +  ptoEmi  + '-' + Helper.F_Auto_Sequential(@secuencial)
-		FROM @tblInfoCompRet
+		FROM @tblInfoCompRet           tb
+        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab          = tb.codEstab
+        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento
 
         --> Validaciones
-
         IF NOT EXISTS (SELECT 1 FROM @tblInfoCompRet)
 			BEGIN
 				SELECT '0' code, 'Debe agregar al menos un documento de sustento' as 'message'

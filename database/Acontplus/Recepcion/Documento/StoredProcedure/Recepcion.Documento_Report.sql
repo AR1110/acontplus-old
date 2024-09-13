@@ -264,7 +264,8 @@ BEGIN
 			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
 			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
 			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
-			                                AND ti.codigoPorcentaje = ''6''
+			                                  AND ti.codigoPorcentaje = ''6''
+                                              AND fi.[Enabled] = 1
 	                                   ),0) 
 
                                        ,ISNULL
@@ -274,7 +275,8 @@ BEGIN
 			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
 			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
 			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
-			                                AND ti.codigoPorcentaje = ''5''			
+			                                  AND fi.[Enabled] = 1
+                                              AND ti.codigoPorcentaje = ''5''			
 	                                   ),0)
                                        ,ISNULL
 	                                   ((
@@ -283,7 +285,8 @@ BEGIN
 			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
 			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
 			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
-			                                AND ti.codigoPorcentaje = ''4''			
+			                                  AND fi.[Enabled] = 1
+                                              AND ti.codigoPorcentaje = ''4''			
 	                                   ),0)                                        
 
 	                                    ,ISNULL
@@ -293,7 +296,8 @@ BEGIN
 			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
 			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
 			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
-			                                AND ti.codigoPorcentaje = ''0''
+			                                  AND fi.[Enabled] = 1
+                                              AND ti.codigoPorcentaje = ''0''
 			
 	                                   ),0)                                                                   
 
@@ -304,7 +308,8 @@ BEGIN
 			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
 			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
 			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
-			                                AND ti.codigoPorcentaje IN(''2'',''8'')
+			                                  AND fi.[Enabled] = 1
+                                              AND ti.codigoPorcentaje IN(''2'',''8'')
 			
 	                                   ),0)
 	                                   ,CAST(fc.totalDescuento as numeric(18,2))
@@ -315,8 +320,9 @@ BEGIN
 			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
 			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
 			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
-			                                AND im.codigo = ''2''
-                                            AND ti.codigoPorcentaje = 2
+			                                  AND fi.[Enabled] = 1
+                                              AND im.codigo = ''2''
+                                              AND ti.codigoPorcentaje = 2
 	                                   ),0)
 
                                        ,ISNULL
@@ -326,8 +332,9 @@ BEGIN
 			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
 			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
 			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
-			                                AND im.codigo = ''2''
-                                            AND ti.codigoPorcentaje = 5			
+			                                  AND fi.[Enabled] = 1
+                                              AND im.codigo = ''2''
+                                              AND ti.codigoPorcentaje = 5			
 	                                   ),0) 
 
                                        ,ISNULL
@@ -347,7 +354,8 @@ BEGIN
 			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
 			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
 			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
-			                                AND im.codigo = ''3''			
+			                                  AND fi.[Enabled] = 1
+                                              AND im.codigo = ''3''			
 	                                   ),0)
 
 	                                   ,CAST(fc.total as numeric(18,2))
@@ -400,6 +408,7 @@ BEGIN
                                 INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario   = fc.idUsuario
                                 WHERE fc.estado =  1
                                   AND fc.idEntidad = @idEntidad
+                                  AND fc.nroAutorizacion NOT IN (SELECT claveAcceso FROM Recepcion.DocumentoRecibido where identificacionReceptor = @identificacionReceptor)
 
                         ) as dt WHERE dt.idDocumento > 0 '
 

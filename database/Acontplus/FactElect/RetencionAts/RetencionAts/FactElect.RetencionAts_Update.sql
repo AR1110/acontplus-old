@@ -32,8 +32,6 @@ BEGIN
          idRetencionAts INT NOT NULL
         ,fechaEmision DATETIME2 NOT NULL
 		,codEstab VARCHAR(25) NOT NULL
-		,estab VARCHAR(5) NOT NULL
-		,ptoEmi VARCHAR(5) NOT NULL
 		,contribuyentEspecial VARCHAR(13) NULL
 		,obligadoContabilidad VARCHAR(2) NULL
 		,tipoIdentificacionSujetoRetenido VARCHAR(2) NULL
@@ -51,13 +49,11 @@ BEGIN
 
         --> Info Json
         INSERT INTO @tblInfoCompRet
-              (idRetencionAts,codEstab,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
-		SELECT @id           ,codEstab,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
+              (idRetencionAts,codEstab,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
+		SELECT @id           ,codEstab,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
 		FROM OPENJSON(@infoCompRet) WITH
         (
              codEstab                         VARCHAR(25)
-            ,estab                            VARCHAR(5)
-            ,ptoEmi                           VARCHAR(5)
             ,secuencial                       VARCHAR(6)
             ,fechaEmision                     DATETIME2
             ,contribuyentEspecial             VARCHAR(13)
@@ -93,13 +89,14 @@ BEGIN
 			                                                   ,'07'
 												               ,CAST(@ambiente as nvarchar)
 												               ,CAST(@tipoEmision as nvarchar)                         
-			                                                   ,dbo.AFTConvertDate(fechaEmision)                
+			                                                   ,dbo.AFTConvertDate(@fechaEmision)                
 			                                                   ,@ruc                                             
 			                                                   ,estab+ptoEmi                                                     
 			                                                   ,Helper.F_Auto_Sequential(@secuencial)
                                                              ) 
-                   ,@fechaEmision = fechaEmision
-		FROM @tblInfoCompRet 
+		FROM @tblInfoCompRet           tb
+        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab          = tb.codEstab
+        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento 
         
         --> Validaciones 
 
