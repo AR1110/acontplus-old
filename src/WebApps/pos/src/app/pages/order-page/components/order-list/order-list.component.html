@@ -44,8 +44,8 @@
 
 
     <input type="radio" class="btn-check" name="btnradio" [id]="'statusId'+$index" [value]="item.code"
-      [disabled]="isLoadingResults()"
-      [(ngModel)]="selectedStatus" autocomplete="off" (change)="selectionChangeStatusOrder()">
+      [disabled]="isLoadingResults()" [(ngModel)]="selectedStatus" autocomplete="off"
+      (change)="selectionChangeStatusOrder()">
     <label class="btn btn-outline-primary" [for]="'statusId'+$index">{{item.description}}</label>
     }
   </div>
@@ -83,6 +83,10 @@
           </button>
           }
 
+          <button mat-icon-button (click)="printOrder(row)"   matTooltip="Imprimir">
+            <mat-icon>print</mat-icon>
+
+          </button>
         </div>
 
         <mat-menu #menu="matMenu">
@@ -180,11 +184,11 @@
       <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
         <div class="element-detail my-2" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
           @if(expandedElement === element){
-            <div class="card border-info">
-              <div class="card-body">
-                <app-order-doc-list [data]="element" />
-              </div>
+          <div class="card border-info">
+            <div class="card-body">
+              <app-order-doc-list [data]="element" />
             </div>
+          </div>
 
           }
 
@@ -201,7 +205,7 @@
 
     <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
     <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="example-element-row"
-      [class.example-expanded-row]="expandedElement === element" >
+      [class.example-expanded-row]="expandedElement === element">
     </tr>
     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 
