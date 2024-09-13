@@ -8,6 +8,6 @@ public static class DirHelper
     {
         //https://stackoverflow.com/questions/60236727/how-find-bin-directory-in-asp-net-core-3-1
         var runDir = Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
-        return runDir;
+        return runDir == null ? throw new InvalidOperationException("Could not determine the run directory.") : runDir;
     }
 }

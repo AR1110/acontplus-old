@@ -32,6 +32,7 @@ import { FiltroDetalleCajaReportModal } from './components/filtro-detalle-caja-r
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { SendMailModalDirective } from '@shared/directives/send-mail-modal.directive';
+import { DetalleArqueoControlCajaModalComponent } from './components/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
 
 @Component({
   selector: 'app-movimiento-caja-modal',
@@ -469,6 +470,18 @@ export class MovimientoCajaModalComponent {
     try {
       const modalRef = this.modalSvc.openModalCustom(
         FiltroDetalleCajaReportModal,
+      );
+      modalRef.componentInstance.params = params || {};
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // --> Modal Detalle ArqueoCaja
+  openModalDetalleArqureoCaja(params: ControlCaja) {
+    try {
+      const modalRef = this.modalSvc.openModalCustom(
+        DetalleArqueoControlCajaModalComponent,
       );
       modalRef.componentInstance.params = params || {};
     } catch (error) {

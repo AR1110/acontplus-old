@@ -1,82 +1,72 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Restaurant.API.Data;
+using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
 
-namespace Restaurant.API.Services
+namespace Restaurant.API.Services;
+
+public class IngredientService(IAdoRepository adoRepository, RestaurantContext context) : IIngredientService
 {
-    public class IngredientService : IIngredientService
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        private readonly IAdoRepository _repository;
-        private readonly RestaurantContext _context;
-        public IngredientService(IAdoRepository repository, RestaurantContext context)
+        var ds = await adoRepository.GetDataSetAsync("Restaurant.Ingredient_Get", parameters);
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new ApiResponse { Code = "0", Message = "Data not found" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+    }
+
+    public async Task<ApiResponse> GetByIdAsync(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "id", id }, };
+        var ds = await adoRepository.GetDataSetAsync("Restaurant.Ingredient_GetById", parameters);
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new ApiResponse { Code = "0", Message = "Data not found" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+    }
+
+    public async Task<ApiResponse> AddAsync(ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            _repository = repository;
-            _context = context;
+            { "userRoleId", data.UserRoleId }, { "json", DataConverters.SerializeDictionary(data.Data) }
+        };
+        return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.Ingredient_Insert", parameters);
+    }
+
+    public async Task<ApiResponse> UpdateAsync(int id, Ingredient ingredient)
+    {
+        var ingredientFound = await context.Ingredients.FindAsync(id);
+        if (ingredientFound == null)
+        {
+            return new ApiResponse { Code = "0", Message = "Ingredient not found" };
         }
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        ingredientFound.IngredientTypeId = ingredient.IngredientTypeId;
+        ingredientFound.Quantity = ingredient.Quantity;
+        ingredientFound.Summary = ingredient.Summary;
+        ingredientFound.Unit = ingredient.Unit;
+        ingredientFound.Content = ingredient.Content;
+        ingredientFound.Enabled = ingredient.Enabled;
+        ingredientFound.UserId = ingredient.UserId;
+        context.Update(ingredientFound);
+        await context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Actualizado exitosamente" };
+    }
+
+    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    {
+        var ingredient = await context.Ingredients.FindAsync(id);
+        if (ingredient == null)
         {
-            var ds = await _repository.GetDataSetAsync("Restaurant.Ingredient_Get", parameters);
-            if (ds.Tables.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJson(ds);
-            }
-        }
-        public async Task<object> GetByIdAsync(int id)
-        {
-            var parameters = new Dictionary<string, object>{
-                {"id", id},
-            };
-            var ds = await _repository.GetDataSetAsync("Restaurant.Ingredient_GetById", parameters);
-            if (ds.Tables.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJson(ds);
-            }
-        }
-        public async Task<string> AddAsync(ApiRequest data)
-        {
-            var parameters = new Dictionary<string, object>{
-                    {"userRoleId", data.UserRoleId},
-                    {"json", DataConverters.SerializeDictionary(data.Data)}
-                };
-            var response = await _repository.SpExecuteDeprecatedAsync("Restaurant.Ingredient_Insert", parameters);
-            return response;
-        }
-        public async Task<string> UpdateAsync(int id, ApiRequest data)
-        {
-            var parameters = new Dictionary<string, object>{
-                {"userRoleId", data.UserRoleId},
-                {"id", id},
-                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-            };
-            var response = await _repository.SpExecuteDeprecatedAsync("Restaurant.Ingredient_Update", parameters);
-            return response;
+            return new ApiResponse { Code = "0", Message = "Ingredient not found" };
         }
 
-        public async Task<bool> DeleteAsync(int id)
-        {
-
-            var ingredient = await _context.Ingredients.FindAsync(id);
-            ingredient.Enabled = false;
-            ingredient.Deleted = true;
-            _context.Update(ingredient);
-            await _context.SaveChangesAsync();
-            return true;
-            // var parameters = new Dictionary<string, object>{
-            //     {"id", id}
-            // };
-            // var response = await _repository.SpExecuteAsync<ApiResponse>("Restaurant.Ingredient_Delete", parameters);
-            // return response;
-        }
+        ingredient.Enabled = false;
+        ingredient.Deleted = true;
+        ingredient.UserId = userId;
+        context.Update(ingredient);
+        await context.SaveChangesAsync();
+        return new ApiResponse { Code = "1", Message = "Eliminado existosamente" };
     }
 }

@@ -20,7 +20,6 @@ export const routes: Routes = [
     component: CategoryPageComponent,
     data: {
       breadcrumb: 'Categorías',
-      buttonAction: 'Nueva',
     },
   },
   {
@@ -29,7 +28,6 @@ export const routes: Routes = [
     component: BrandPageComponent,
     data: {
       breadcrumb: 'Marcas',
-      buttonAction: 'Nueva',
     },
   },
   {
@@ -38,7 +36,6 @@ export const routes: Routes = [
     component: ModeloPageComponent,
     data: {
       breadcrumb: 'Modelos',
-      buttonAction: 'Nuevo',
     },
   },
   {
@@ -47,7 +44,6 @@ export const routes: Routes = [
     component: DevicePageComponent,
     data: {
       breadcrumb: 'Equipos',
-      buttonAction: 'Nuevo',
     },
   },
 ];

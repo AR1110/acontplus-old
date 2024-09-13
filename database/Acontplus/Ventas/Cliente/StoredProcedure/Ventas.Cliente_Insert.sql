@@ -79,7 +79,7 @@ BEGIN
 		    ,montoCredito           NUMERIC(15,5) 
 		    ,nota                   VARCHAR(300) 
 		    ,validationSri          BIT
-            ,infoCrediticia         NVARCHAR(MAX) AS JSON
+            ,infoCrediticia         NVARCHAR(MAX) 
         )
 
         --> Recuperando Informacion
@@ -97,9 +97,6 @@ BEGIN
 			    SELECT [Common].[ufnSpResponse]('0','El cliente ya se encuentra registrado', DEFAULT)
 			    RETURN 
 		    END 
-
-        SELECT [Common].[ufnSpResponse]('0',ISNULL(infoCrediticia,'{}'), DEFAULT) from @tblCliente
-		RETURN
 
 		BEGIN TRAN
 

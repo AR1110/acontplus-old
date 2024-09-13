@@ -2,8 +2,8 @@
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Roles Asignados</h5>
-                <button class="close" data-dismiss="modal">&times;</button>
+                <h5 class="modal-title"><i class="fas fa-user-group"></i> Roles Asignados</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -12,18 +12,19 @@
                         <div class="card">
                             <div class="card-body shadow">
                                 <h5 class="card-title">{{ue.tradeName}}</h5>
-                                <small class="text-muted">{{ue.businessName}}</small>
+                                <small class="text-muted">{{ue.businessName}}</small><br />
+                                <small class="text-muted">{{ue.idCardCompany}}</small>
                                 <div class="d-flex no-block align-items-center p-t-10">
                                     <span><i class="fas fa-user"></i> {{ue.role}}</span>
                                 </div>
-                                <button class="btn btn-success btn-rounded waves-effect btn-block waves-light m-t-30" ng-click="loginMultiple(ue)">Ingresar <i class="fa fa-sign-in-alt"></i></button>
+                                <button class="btn btn-success btn-rounded waves-effect btn-block waves-light m-t-30" ng-click="loginMultiple(ue)" title="Seleccione para ingresar con este rol">Ingresar <i class="fa fa-sign-in-alt"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+                <button type="button" class="btn btn-dark btn-sm" data-dismiss="modal">&times; Cerrar</button>
             </div>
         </div>
     </div>

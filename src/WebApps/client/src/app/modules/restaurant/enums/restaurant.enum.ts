@@ -1,16 +1,22 @@
 export enum RESTAURANT_PATHS {
-  TABLE = 'Tables/',
-  FLOOR = 'Floors/',
-  ITEM = 'Item'
+  FLOOR = 'Floor/',
+  INGREDIENT = 'Ingredient/',
+  ITEM = 'Item/',
+  MENU = 'Menu/',
+  MENU_ITEM = 'MenuItem/',
+  PROMOTION = 'Promotion/',
+  PROMOTION_MENU = 'PromotionMenu/',
+  PRODUCTION_AREA = 'ProductionArea/',
+  RECIPE = 'Recipe/',
+  ROOM = 'Room/',
+  TABLE = 'Table/',
+  CONFIG = 'Configuration/',
 }
 
-
 export const enum RESTAURANT_CODE_REPORT {
-
   /**
    * REPO´RTE ITEM INGREDIENTE
    * @type {string}
    */
   RII = 'RII',
-
 }

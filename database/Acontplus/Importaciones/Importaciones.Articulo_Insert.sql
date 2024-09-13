@@ -46,6 +46,7 @@ BEGIN
 	(
 		idArticulo INT NOT NULL
 	   ,codArticulo VARCHAR(50) UNIQUE NOT NULL
+       ,precioCosto NUMERIC(18,5) NOT NULL
 	)
 
 	DECLARE @tableArticulo TABLE 
@@ -232,8 +233,8 @@ BEGIN
 				,importacion
 			FROM @tableArticulo 
 
-			INSERT INTO @tablaArticuloImport(idArticulo,codArticulo)
-			SELECT idArticulo,codigo FROM dbo.Articulo WHERE idEntidad = @idEntidad AND importacion = 1
+			INSERT INTO @tablaArticuloImport(idArticulo,codArticulo,precioCosto)
+			SELECT idArticulo,codigo,precioCosto FROM dbo.Articulo WHERE idEntidad = @idEntidad AND importacion = 1
 
 			INSERT INTO dbo.ArticuloPvP
 				(
@@ -246,11 +247,11 @@ BEGIN
 				,fechaRegistro
 				)
 			SELECT 
-				ai.idArticulo
+				 ai.idArticulo
 				,ta.idTarifa
 				,precioConIva = pvp.precio
 				,precioVenta =  CONVERT(DECIMAL(20,5),pvp.precio / (ti.porcentaje / 100 + 1))
-				,0
+				,porcentajeUtilidad = ((CONVERT(DECIMAL(20,5),pvp.precio / (ti.porcentaje / 100 + 1)) - ai.precioCosto) * 100) / ai.precioCosto
 				,ta.perdeterminada
 				,dbo.ufnGetDateEcuador()
 			FROM @tablePvP pvp

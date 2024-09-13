@@ -1,14 +1,17 @@
 ﻿namespace Contabilidad.API.Services;
 
 public class ComprobanteEgresoService(IAdoRepository _repository) : IComprobanteEgresoService
-{  
+{
     private readonly string nameSchema = "Contabilidad.ComprobanteEgreso_";
- 
+
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
-    { 
+    {
         var ds = await _repository.GetDataSetAsync($"{nameSchema}Get", parameters);
-        if (ds.Tables.Count == 0) return null; 
+        if (ds.Tables.Count == 0)
+        {
+            return null;
+        }
 
         return DataConverters.DataSetToJson(ds);
     }

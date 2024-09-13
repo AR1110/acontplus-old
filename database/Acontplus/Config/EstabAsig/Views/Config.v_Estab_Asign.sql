@@ -16,6 +16,8 @@ CREATE OR ALTER VIEW Config.v_Estab_Asign WITH SCHEMABINDING AS (
           ,ae.idActividadEconomica AS ActividadEconomicaId 
           ,es.telefono
           ,es.correo
+          ,ea.idUsuarioRol
+          ,ea.predeterminado
 	FROM Config.Estab_Asig            ea WITH (NOLOCK)     
 	INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab  = ea.codEstab
     INNER JOIN Sri.ActividadEconomica ae WITH (NOLOCK) ON ae.codigo    = es.actividad 

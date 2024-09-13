@@ -106,7 +106,7 @@ BEGIN
                 SELECT 
                     CAST(@expired AS BIT) AS expired, 
                     'Su licencia ha expirado, por favor comuníquese con el departamento de ventas' AS warningMessage 
-                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+                FOR JSON PATH
             );
         END
         ELSE IF @maxPaymentDateCount > 0
@@ -148,17 +148,18 @@ BEGIN
 
         IF EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH(NOLOCK) WHERE uuid = @uuid)
             BEGIN
+            print @uuid
                 SET @stepsConfig = (
-                    SELECT cds.Id, cds.DemoStepId, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
-                    FROM AcontplusAdmin.Config.CompanyDemoStep cds WITH(NOLOCK)
-                        INNER JOIN AcontplusAdmin.Config.DemoStep ds ON cds.DemoStepId = ds.Id
-                    WHERE uuid = @uuid FOR JSON PATH
+                    SELECT ds.Id, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
+                    FROM  AcontplusAdmin.Config.DemoStep ds 
+                    WHERE ds.Id NOT IN (SELECT DemoStepId FROM AcontplusAdmin.Config.CompanyDemoStep WITH(NOLOCK) WHERE Uuid = @uuid)
+                    FOR JSON PATH
                 )
             END
 
         -- Check for new releases
         IF (SELECT COUNT(*) FROM AcontplusAdmin.Common.Release WITH (NOLOCK)) <> 
-           (SELECT COUNT(*) FROM AcontplusAdmin.Common.UserReleaseRead WITH (NOLOCK))
+           (SELECT COUNT(*) FROM AcontplusAdmin.Common.UserReleaseRead WITH (NOLOCK) WHERE userId = @userId)
         BEGIN
             SET @releases = (
                 SELECT 
@@ -168,7 +169,7 @@ BEGIN
                     version, 
                     CONVERT(VARCHAR, FORMAT(ReleaseDate, 'dd/MM/yyyy')) AS releaseDate
                 FROM AcontplusAdmin.Common.Release r WITH (NOLOCK)
-                WHERE r.Id NOT IN (SELECT Id FROM AcontplusAdmin.Common.UserReleaseRead) 
+                WHERE r.Id NOT IN (SELECT Id FROM AcontplusAdmin.Common.UserReleaseRead WHERE UserId = @userId) 
                 FOR JSON PATH
             );
         END

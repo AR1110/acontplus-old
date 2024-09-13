@@ -1,0 +1,21 @@
+<input
+  (keyup)="onKeyupSearch()"
+  (keyup.enter)="onEnterKeyPressed($event)"
+  (selectItem)="onSelect($event)"
+  [(ngModel)]="textSearch"
+  [class.is-invalid]="searchFailed"
+  [ngbTypeahead]="search"
+  [resultTemplate]="rt"
+  class="form-control"
+  id="typeahead-ingredient-search"
+  onclick="select();"
+  placeholder="Buscar ingrediente"
+  type="text"
+/>
+
+<ng-template #rt let-r="result" let-t="term">
+  <ngb-highlight
+    [result]="r.productDescription + ' - ' + r.summary"
+    [term]="t"
+  />
+</ng-template>

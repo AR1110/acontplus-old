@@ -1,16 +1,6 @@
 USE [Acontplus]
 go 
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -31,7 +21,7 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
     --> Global
-    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150) ,@idUsuario INT
+    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150) ,@idUsuario INT ,@nombreReporte VARCHAR(300)
 
     --> Sql
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
@@ -56,6 +46,8 @@ BEGIN
            ,@idEmpresa          INT
            ,@convertToDoc       BIT
            ,@id                 INT
+           ,@idCiudad           INT 
+           ,@dirViviendaCliente VARCHAR(150)
 
     --> Variables
     SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -78,6 +70,7 @@ BEGIN
                   ,@ckCuotas     = ckCuotas
                   ,@codDoc       = codDoc
                   ,@idEmpresa    = idEmpresa
+                  ,@dirViviendaCliente = dirViviendaCliente
             FROM OPENJSON(@json) WITH 
             (
                 idCliente    INT         '$.idCliente'
@@ -90,6 +83,7 @@ BEGIN
                ,ckCuotas     BIT         '$.ckCuotas'
                ,codDoc       VARCHAR(10) '$.codDoc'
                ,idEmpresa    INT         '$.idEmpresa'
+               ,dirViviendaCliente VARCHAR(150) 
             )
 
             SET @sql = 'SELECT IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)  as codDoc
@@ -178,6 +172,11 @@ BEGIN
                     SET @sql = @sql + 'AND cc.idCliente = @idCliente '
                 END
 
+            IF @dirViviendaCliente IS NOT NULL 
+                BEGIN 
+                     SET @sql = @sql + ' AND cc.idCliente (SELECT idCliente FROM Cliente cl WHERE cl.idCliente = cc.idCliente AND JSON_VALUE(cl.infoCrediticia, ''$.dirVivienda'') LIKE ''%@dirViviendaCliente%'') '
+                END 
+
             IF @idEmpresa > 0
                 BEGIN
                     SET @sql = @sql + 'AND cc.idEmpresa = @idEmpresa '
@@ -234,6 +233,8 @@ BEGIN
             
             SET @tableNames = 'headerDs,detalleDs'
 
+            SET @nombreReporte = 'Reporte de Ventas'
+
             SELECT @codDoc         = codDoc 
                   ,@idCliente      = idCliente
                   ,@idUsuario      = idUsuario
@@ -244,6 +245,7 @@ BEGIN
                   ,@fechaInicio    = fechaInicio
                   ,@fechaFin       = fechaFin
                   ,@convertToDoc   = convertToDoc
+                  ,@idCiudad       = idCiudad
             FROM OPENJSON(@json) WITH 
             ( 
                 codDoc         VARCHAR(10)
@@ -256,6 +258,7 @@ BEGIN
                ,fechaInicio    DATETIME2
                ,fechaFin       DATETIME2
                ,convertToDoc   BIT
+               ,idCiudad       INT
             )
             
             SET @params = '@idEntidad      INT
@@ -267,7 +270,8 @@ BEGIN
                           ,@fechaInicio    DATETIME2
                           ,@fechaFin       DATETIME2
                           ,@codDoc         VARCHAR(10)
-                          ,@convertToDoc   BIT'
+                          ,@convertToDoc   BIT
+                          ,@idCiudad INT'
 
             SET @sql = 'SELECT idEstablecimiento
                               ,nombreComercial
@@ -333,7 +337,13 @@ BEGIN
                         BEGIN
                             SET @sql = @sql + 'AND codEstado = @codEstado '
                         END 
-                END 
+                END
+
+            IF @idCiudad > 0
+                BEGIN
+                    SET @nombreReporte = @nombreReporte + ' - ' + (SELECT descripcion FROM dbo.Ciudad WITH(NOLOCK) WHERE idCiudad = @idCiudad)
+                    SET @sql = @sql + 'AND idCiudad = @idCiudad '
+                END
 
             SET @sql = @sql + 'ORDER BY  CAST(fechaEmision AS DATE) ASC '
 
@@ -343,7 +353,7 @@ BEGIN
                   ,direccion 
                   ,@usuario  as usuario 
                   ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
-                  ,'Reporte de Ventas' as nombreReporte
+                  ,@nombreReporte as nombreReporte
             FROM dbo.Entidad WITH (NOLOCK)
             WHERE idEntidad = @idEntidad
 
@@ -358,6 +368,7 @@ BEGIN
                                    ,@codEstado      = @codEstado
                                    ,@idUsuario      = @idUsuario
                                    ,@convertToDoc   = @convertToDoc
+                                   ,@idCiudad       = @idCiudad
 
             RETURN 
         END 
@@ -401,8 +412,9 @@ BEGIN
                               ,tt.bodega
                               ,me.descripcion as medidaSalida
                               ,tt.subFamilia
-                              ,valorRentabilidad           = CAST((tt.precioUnitario - tt.precioCosto) as numeric(18,2))
-                              ,valorPorcentajeRentabilidad = CAST((((tt.precioUnitario / tt.precioCosto) * 100) - 100) as numeric(18,2))
+                              ,valorRentabilidad           = CAST((tt.precioUnitario - tt.precioCosto) as numeric(18,5))
+                              
+                              ,valorPorcentajeRentabilidad = CAST((( IIF(tt.precioCosto>0, (tt.precioUnitario / tt.precioCosto), 0) * 100) - 100) as numeric(18,2))
                               ,totalPrecioCosto            = CAST((tt.cantidad * tt.precioCosto) as numeric(18,2))
                               ,totalValorRentabilidad      = CAST( (tt.cantidad * (tt.precioUnitario - tt.precioCosto)) as numeric(18,2))
 						FROM v_InventarioTransaccion tt WITH (NOLOCK)

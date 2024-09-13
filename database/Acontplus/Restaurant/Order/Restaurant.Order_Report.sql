@@ -27,7 +27,7 @@ BEGIN
    
    --Order
 	SELECT 
-        o.Serie
+         o.Serie
         ,o.[Sequence]        
         ,createdAt = CONVERT(NVARCHAR,FORMAT(o.CreatedAt, 'dd/MM/yyyy HH:mm'))  
         ,o.Obs
@@ -45,20 +45,26 @@ BEGIN
                                       , 0) 
     FROM Restaurant.[Order] o WITH (NOLOCK)
             INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON o.EstablecimientoId = e.idEstablecimiento
-            LEFT JOIN Cliente c WITH(NOLOCK) ON o.CustomerCompanyId = c.idCliente
-            LEFT JOIN dbo.Usuario u ON u.idUsuario = o.UserId
-            LEFT JOIN Restaurant.[Table] t WITH(NOLOCK) ON o.TableId = t.Id
-            LEFT JOIN Restaurant.[v_room] r ON r.Id = t.RoomId
-    WHERE o.Id = @id --134
+            LEFT JOIN Cliente              c WITH(NOLOCK) ON o.CustomerCompanyId = c.idCliente
+            LEFT JOIN dbo.Usuario          u WITH(NOLOCK) ON u.idUsuario = o.UserId
+            LEFT JOIN Restaurant.[Table]   t WITH(NOLOCK) ON o.TableId = t.Id
+            LEFT JOIN Restaurant.[v_room]  r WITH(NOLOCK) ON r.Id = t.RoomId
+    WHERE o.Id = @id 
 
 	--OrderItems
 	SELECT oi.*
-        ,i.productName
+        ,CASE it.[Code] WHEN 'MENU' THEN ma.descripcion 
+	                                ELSE ia.descripcion
+	     END as productName
         ,oi.TaxValue iva
-    FROM Restaurant.[OrderItem] oi WITH (NOLOCK) 
-        INNER JOIN Restaurant.v_Item i ON oi.ItemId = i.Id
-        INNER JOIN Sri.Impuesto t WITH(NOLOCK) ON oi.TaxId = t.idImpuesto
-        INNER JOIN Sri.TarifaImpuesto ti WITH(NOLOCK) ON t.codigo = ti.codImpuesto AND ti.codigo = '2'
+    FROM Restaurant.[OrderItem]    oi WITH (NOLOCK) 
+	INNER JOIN Restaurant.ItemType it WITH (NOLOCK) ON it.id         = oi.itemTypeId
+    LEFT JOIN Restaurant.Item       i WITH (NOLOCK) ON i.Id          = oi.ItemId
+	LEFT JOIN Restaurant.Menu      me WITH (NOLOCK) ON me.id         = oi.MenuId
+    LEFT JOIN Sri.Impuesto          t WITH (NOLOCK) ON oi.TaxId      = t.idImpuesto
+    LEFT JOIN Sri.TarifaImpuesto   ti WITH (NOLOCK) ON t.codigo      = ti.codImpuesto AND ti.codigo = '2'
+	LEFT JOIN dbo.Articulo         ma WITH (NOLOCK) ON ma.idArticulo = me.ProductId
+	LEFT JOIN dbo.Articulo         ia WITH (NOLOCK) ON ia.idArticulo = i.ProductId
     WHERE oi.OrderId = @id
         AND oi.Deleted IS NULL 
 

@@ -1,3 +1,4 @@
+//@ts-check
 (function () {
 
     'use strict';
@@ -84,7 +85,7 @@
                 montoObjetivo: data.montoObjetivo,
                 siglas: data.siglas,
             }
-            return mS.getDataFile(url + "/?json=" + JSON.stringify(spParams), file, null, true);
+            return mS.getDataFile(url + "?json=" + JSON.stringify(spParams), file, null, true);
         }
 
         service.update = function (id, data) {
@@ -95,7 +96,7 @@
                 estado: data.estado,
                 secuencial: data.ultimoSecuencial || 0
             }
-            return mS.getData('PUT', url + `/${id}/?json=${JSON.stringify(spParams)}`, null, true);
+            return mS.getData('PUT', url + `${id}/?json=${JSON.stringify(spParams)}`, null, true);
         }
 
         service.delete = function (id) {
@@ -399,6 +400,7 @@
             getDataForm,
             getAll,
             getProducts,
+            getProductsValidateImport,
             generateSerieComprobante,
             mapTo,
             post,
@@ -414,10 +416,12 @@
                 const data = {
                     estabs: [],
                     subFamilias: [],
-                    config: {}
+                    config: {},
+                    tipoDocumento : [],
+                    tiposTransaccion : []
                 }
                 if (response !== null && typeof response === 'object') {
-                    const { bodegas, decimales, ptoEmision, subFamilia } = response;
+                    const { ptoEmision,bodegas, subFamilia,decimales,tiposTransaccion,tipoDocumento } = response;
                     const dataToGroup = {
                         estabs: ptoEmision,
                         bodegas: bodegas,
@@ -425,7 +429,9 @@
                     }
                     data.estabs = fS.groupingEstab(dataToGroup);
                     data.subFamilias = subFamilia;
-                    data.decimal = decimales[0]
+                    data.decimal = decimales[0];
+                    data.tipoDocumento = tipoDocumento;
+                    data.tiposTransaccion = tiposTransaccion;
                 }
                 return data;
             })
@@ -446,6 +452,44 @@
             })
         }
 
+
+        function mappedProductImportacion(products) {
+            return products.map(item => {
+                const { principal, fraccionado, ...restItem } = item;
+                const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
+                const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
+
+
+
+                return {
+                    idArticulo: restItem.idArticulo,
+                    codigo: restItem.codigo,
+                    codigoAuxiliar: restItem.codigoAuxiliar,
+                    codigoBarra: restItem.codigoBarra,
+                    descripcion: restItem.descripcion,
+                    stock: restItem.stock,
+                    precioCosto: restItem.precioCosto,
+                    // precioUnitario: restItem.precioUnitario,
+
+                    // precioCosto: dataMedida.precioCosto,
+                    precioUnitario: dataMedida.precioUnitario,
+                    precioActual: dataMedida.precioActual,
+                    precioCostoFraccionado: dataMedida.precioCostoFraccionado,
+                    estado: restItem.estado,
+                    iva: restItem.iva,
+                    cantidad: restItem.cantidad,
+                    llevaInventario: restItem.llevaInventario,
+                    idMedida: restItem.idMedida,
+                    medida: restItem.medida,
+                    nombreTipoIva: restItem.nombreTipoIva,
+                    medidas,
+                    conversion: dataMedida.conversion
+
+                }
+            })
+        }
+
         function getProducts(obj) {
             const json = JSON.stringify({
                 ...obj,
@@ -456,44 +500,60 @@
                 if (response !== null && typeof response === 'object') {
                     let mainData = response.articulos;
 
-                    articulos = mainData.map(item => {
-                        const { principal, fraccionado, ...restItem } = item;
-                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
-
-                        const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
-
-
-
-                        return {
-                            idArticulo: restItem.idArticulo,
-                            codigo: restItem.codigo,
-                            codigoAuxiliar: restItem.codigoAuxiliar,
-                            codigoBarra: restItem.codigoBarra,
-                            descripcion: restItem.descripcion,
-                            stock: restItem.stock,
-                            precioCosto: restItem.precioCosto,
-                           // precioUnitario: restItem.precioUnitario,
-
-                           // precioCosto: dataMedida.precioCosto,
-                           precioUnitario: dataMedida.precioUnitario,
-                            precioActual: dataMedida.precioActual,
-                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
-                            estado: restItem.estado,
-                            iva: restItem.iva,
-                            cantidad: restItem.cantidad,
-                            llevaInventario: restItem.llevaInventario,
-                            idMedida: restItem.idMedida,
-                            medida: restItem.medida,
-                            nombreTipoIva: restItem.nombreTipoIva,
-                            medidas,
-                            conversion: dataMedida.conversion
-
-                        }
-                    })
+                    articulos = mappedProductImportacion(mainData)
                 }
                 return { articulos };
             })
         }
+
+
+        function getProductsValidateImport(obj) {
+            // let data = {
+            //     ...obj,
+            //     tipo: 6
+            // }
+
+            // return mS.getData('post', `${url}Importacion`, {data}, true).then(response=>{
+            //     let articulos = [];
+            //     let noVinculados=[]
+
+            //     if (response !== null && typeof response === 'object') {
+            //         let mainData = response.articulos;
+
+            //         articulos = mappedProductImportacion(mainData);
+
+            //         noVinculados = response.noVinculados || [];
+
+
+            //     }
+            //     return { 
+            //         articulos,
+            //         noVinculados
+            //      };
+            // })
+
+            const data = {
+                jsonParams: JSON.stringify(obj)
+            }
+
+
+            return mS.getData('post', 'Config/Importacion/GetValidation/EX', data).then(response => {
+                let resultData = {
+                    noVinculados: [],
+                    articulos: []
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let { articulos, noVinculados } = mainData[0];
+                    resultData.noVinculados = noVinculados;
+                    resultData.articulos = mappedProductImportacion(articulos);
+                }
+                return resultData;
+            })
+
+
+        }
+
 
         function generateSerieComprobante(obj) {
             const json = JSON.stringify({
@@ -508,6 +568,7 @@
                 return serieComprobante;
             })
         }
+
         function mapTo(obj) {
             const { data, detalles, itemsDeleted } = obj;
 
@@ -525,11 +586,14 @@
         function headerTo(data) {
             return {
                 idPuntoEmision: data.idPuntoEmision,
+                idTipoDocumento : data.idTipoDocumento,
+                idTipoTransaccion : data.idTipoTransaccion,
                 fechaEmision: fS.formatDateMoment(data.fechaEmision),
                 total: fS.roundNumber(data.total, 5),
                 observacion: fS.isValidField(data.observacion),
             }
         }
+
         function detalleTo(detalles) {
             let results = detalles.map((item, index) => {
                 return {
@@ -553,10 +617,10 @@
             return results;
         }
 
-
         function post(data) {
             return mS.getData('post', `${url}`, { data }, true);
         }
+
         function getId(id) {
             return mS.getData('get', `${url}GetId/${id}`, null, true).then(response => {
                 const data = {
@@ -580,7 +644,7 @@
 
                         const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
                         let precioCostoFraccionado = 0, conversion = 1;
-                        if(dataMedida){
+                        if (dataMedida) {
                             restItem.conversion = dataMedida.conversion;
                             restItem.medidas = medidas;
                             precioCostoFraccionado = dataMedida.precioCostoFraccionado
@@ -627,6 +691,8 @@
                     fechaEmision: fS.formatDate(tempComprobante.fechaEmision),
                     observacion: tempComprobante.observacion,
                     total: tempComprobante.total,
+                    tipoDocumento : tempComprobante.tipoDocumento,
+                    movimiento : tempComprobante.movimiento 
                 }
                 detalles = detalles.map((item, index) => {
                     return {
@@ -665,17 +731,17 @@
 
 
 
-    /**
-     * TRANSFERENCIA BODEGA 
-     * 
-     */
+/**
+ * TRANSFERENCIA BODEGA 
+ * 
+ */
 
 
 (function () {
 
     'use strict';
 
-    app.factory('transferenciaBodegaService',['$injector', function ($injector) {
+    app.factory('transferenciaBodegaService', ['$injector', function ($injector) {
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
         let url = 'Inventario/TransferenciaBodega/';

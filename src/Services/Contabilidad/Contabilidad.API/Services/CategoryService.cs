@@ -44,7 +44,10 @@ public class CategoryService(ContabilidadContext context, IAdoRepository reposit
     public async Task<ApiResponseDeprecated> UpdateAsync(int id, Category category)
     {
         var categoryFound = await context.Categories.FindAsync(id);
-        if (categoryFound == null) { return new ApiResponseDeprecated { code = "0", message = "Categoría no encontrada" }; }
+        if (categoryFound == null)
+        {
+            return new ApiResponseDeprecated { code = "0", message = "Categoría no encontrada" };
+        }
 
         categoryFound.Code = category.Code;
         categoryFound.Name = category.Name;

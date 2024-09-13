@@ -43,10 +43,10 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
     }
 
     public async Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp,
-        bool timeout)
+        bool timeout, string connectionString)
     {
         DataSet ds = null;
-        await using var conn = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
+        await using var conn = new SqlConnection(configuration.GetConnectionString(connectionString ?? "DefaultConnection"));
         await using var cmd = new SqlCommand(spname, conn);
         var wasOpen = cmd.Connection.State == ConnectionState.Open;
         try

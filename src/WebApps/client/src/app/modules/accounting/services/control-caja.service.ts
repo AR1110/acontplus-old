@@ -26,7 +26,6 @@ export class ControlCajaService {
   }
 
   getDataForm() {
-
     let paramsStr = JSON.stringify({ tipo: 2 })
     return this.http.get(`${this.url}?json=${paramsStr}`)
       .pipe(
@@ -35,6 +34,17 @@ export class ControlCajaService {
         })
       )
   }
+
+  getArqueoCaja(id: number) {
+    let paramsStr = JSON.stringify({id, tipo: 8 })
+    return this.http.get(`${this.url}?json=${paramsStr}`)
+      .pipe(
+        map((response) => {
+          return response as any;
+        })
+      )
+  }
+
 
   getDataFilter() {
     let paramsStr = JSON.stringify({ tipo: 5 })

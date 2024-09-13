@@ -53,14 +53,14 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     function calculateTotalItems(items) {
         return items.map((item, index) => {
             let precioConIva = typeof item.precioConIva === 'number' ? item.precioConIva : item.precioUnitario + item.valorImpuesto;
-            let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
-            let total = precioTotalSinImpuesto + item.valorImpuesto;
+           // let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
+            let total = fS.roundNumber(item.precioTotalSinImpuesto, 2) + fS.roundNumber(item.valorImpuesto, 2)
             return {
                 n: index + 1,
                 ...item,
-                precioConIva: fS.roundNumber(precioConIva, 3),
-                precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
-                total: fS.roundNumber(total, 3)
+                precioConIva: fS.roundNumber(precioConIva, 5),
+              //  precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
+                total: fS.roundNumber(total, 2)
             }
         })
     }
@@ -255,6 +255,10 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             type: 'number',
             width: '7%',
             minWidth: '50',
+            cellFilter: fS.cellFilterRoundToNumber(),
+            cellTooltip: function (row, col) {
+                return fS.cellTooltipGrid(row.entity, col.field)
+            },
         },
         {
             name: 'IVA',
@@ -262,6 +266,10 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             type: 'number',
             width: '5%',
             minWidth: '50',
+            cellFilter: fS.cellFilterRoundToNumber(),
+            cellTooltip: function (row, col) {
+                return fS.cellTooltipGrid(row.entity, col.field)
+            },
         },
         {
             name: 'Total',
@@ -269,6 +277,10 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             type: 'number',
             width: '5%',
             minWidth: '100',
+            cellFilter: fS.cellFilterRoundToNumber(),
+            cellTooltip: function (row, col) {
+                return fS.cellTooltipGrid(row.entity, col.field)
+            },
         },
         {
             name: 'Nota',
@@ -324,56 +336,13 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
 
     // * Add by Ignacio Manchu.
     function drawImpuestoTotales() {
-        try {
-            let {
-                subTotalSinImpuestos,
-                htmlImpuestoTotal,
-                htmlIvaTotal,
-                irbpnr,
-                totalIce,
-                importeTotal,
-                totalDescuento,
-            } = gridOptionsSvc.getImpuestoTotales({
+        try { 
+            let dataImpuestoTotales = gridOptionsSvc.getImpuestoTotales({
                 items: $scope.gridOptions.data,
                 tarifasImpuesto: $scope.tarifasImpuesto.slice(),
-            });
+            }); 
 
-            const template = `<table class="table table-clear table-sm">
-                                    <tbody>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Subtotal sin Impuestos</strong>
-                                            </td>
-                                            <td class="right">$${subTotalSinImpuestos}</td>
-                                        </tr>
-                                        ${htmlImpuestoTotal}
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Total descuento</strong>
-                                            </td>
-                                            <td class="right">$${totalDescuento}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Valor ICE</strong>
-                                            </td>
-                                            <td class="right">$${totalIce}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="text-dark">Valor irbpnr</strong>
-                                            </td>
-                                            <td class="right">$${irbpnr}</td>
-                                        </tr>
-                                        ${htmlIvaTotal}
-                                        <tr>
-                                            <td class="left">
-                                                <strong class="font-weight-bold">Valor Total</strong>
-                                            </td>
-                                            <td class="right font-weight-bold">$${importeTotal}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>`;
+            const template = gridOptionsSvc.impuestoTotalesHtml(dataImpuestoTotales);
 
             const element = document.getElementById('draw-dynamic-subtotal');
             if (element) {

@@ -32,7 +32,14 @@ BEGIN
 	DECLARE @idUsuario INT 
 
     --> DataJson
-    DECLARE @cuenta VARCHAR(MAX) ,@cuota VARCHAR(MAX) ,@observacion VARCHAR(300)
+    DECLARE @cuenta VARCHAR(MAX) ,@cuota VARCHAR(MAX) ,@observacion VARCHAR(300) ,@cobro VARCHAR(MAX)
+
+    DECLARE @tbCobro AS TABLE(
+         id INT NOT NULL
+        ,idCobro INT NULL
+        ,observacion VARCHAR(300) NOT NULL
+        ,estado BIT NOT NULL
+    )
 
     DECLARE @tbCuenta AS TABLE(
         idCuentaPorCobrar INT NOT NULL UNIQUE
@@ -50,21 +57,30 @@ BEGIN
        ,diasMora INT NOT NULL
     )
 
+
 	BEGIN TRY 
         --> Variables Globales
         SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
   	    --> obtener Datos de los Json
-		SELECT @observacion = observacion
-              ,@cuenta      = cuenta
-              ,@cuota       = cuota
+		SELECT @cobro  = cobro 
+              ,@cuenta = cuenta
+              ,@cuota  = cuota
         FROM OPENJSON(@json) WITH 
         (
-            observacion VARCHAR(500)
-           ,cuenta      NVARCHAR(MAX) AS JSON
-           ,cuota       NVARCHAR(MAX) AS JSON
+            cobro  NVARCHAR(MAX) AS JSON
+           ,cuenta NVARCHAR(MAX) AS JSON
+           ,cuota  NVARCHAR(MAX) AS JSON
 
 		) as dt
+
+
+        INSERT INTO @tbCobro
+        SELECT * FROM OPENJSON(@cobro) WITH 
+        (
+             idCobro INT 
+            
+        )
 
         INSERT INTO @tbCuenta
               (idCuentaPorCobrar,idEstadoPago,abono,mora,diasMora)

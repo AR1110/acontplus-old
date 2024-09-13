@@ -1,86 +1,32 @@
-import { Injectable, inject } from "@angular/core";
-import { PATHS_API } from "@core/constants/global.constants";
-import { RESTAURANT_PATHS } from "../enums/restaurant.enum";
-import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs";
-import { Floor } from "../models/floor.model";
-import { Room } from "../models/room.model";
-import { Table } from "../models/table.model";
-
+import { inject, Injectable } from '@angular/core';
+import { PATHS_API } from '@core/constants/global.constants';
+import { RESTAURANT_PATHS } from '../enums/restaurant.enum';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs';
+import { ApiResponse } from '@core/models/api-response';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class TableService {
-  private url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.TABLE}`;
-  private http = inject(HttpClient);
+  #url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.TABLE}`;
+  #http = inject(HttpClient);
 
-  getAll(codEstab: string) {
-    return this.http.get(`${this.url}GetAll/${codEstab}`)
-      .pipe(
-        map((response: any) => {
-          let floors: Array<Floor> = [];
-          let rooms: Array<Room> = [];
-          let tables: Array<Table> = [];
-          if (response) {
-            let tempFloors = response.floors;
-            let tempRooms = response.rooms;
-            let tempTables = response.tables;
-            console.log(tempTables)
-            floors = tempFloors.map((item: any) => {
-              return {
-                codEstab: item.codEstab,
-                code: item.code,
-                description: item.description,
-                capacity: item.capacity,
-                id: item.id,
-                createdAt: item.createdAt,
-                updatedAt: item.updatedAt,
-                enabled: item.enabled,
-                deleted: item.deleted,
-                userId: item.userId
-              }
-            })
+  delete(id: number) {
+    return this.#http
+      .delete<ApiResponse>(`${this.#url}${id}`)
+      .pipe(map((response) => response));
+  }
 
-            rooms = tempRooms.map((item: any) => {
-              return {
-                floorId: item.floorId,
-                code: item.code,
-                description: item.description,
-                capacity: item.capacity,
-                id: item.id,
-                createdAt: item.createdAt,
-                updatedAt: item.updatedAt,
-                enabled: item.enabled,
-                deleted: item.deleted,
-                userId: item.userId
-              }
-            })
+  post<T>(data: T) {
+    return this.#http
+      .post<ApiResponse>(`${this.#url}`, data)
+      .pipe(map((response) => response));
+  }
 
-            tables = tempTables.map((item: any) => {
-              return {
-                roomId: item.roomId,
-                numberTable: item.numberTable,
-                description: item.description,
-                capacity: item.capacity,
-                assigned: item.assigned,
-                id: item.id,
-                createdAt: item.createdAt,
-                updatedAt: item.updatedAt,
-                enabled: item.enabled,
-                deleted: item.deleted,
-                userId: item.userId
-              }
-
-            })
-          }
-          return {
-            floors,
-            rooms,
-            tables
-          }
-        })
-      )
+  put<T>(id: number, data: T) {
+    return this.#http
+      .put<ApiResponse>(`${this.#url}${id}`, data)
+      .pipe(map((response) => response));
   }
 }

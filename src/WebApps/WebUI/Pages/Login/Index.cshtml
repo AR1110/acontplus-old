@@ -48,6 +48,15 @@
                 color: #fff;
                 border-color: #be1a5e;
             }
+        .btn-playstore {
+            background-color: #3ddc84; /* Google Play Store green */
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body class="skin-blue card-no-border" ng-cloak ng-app="loginApp" ng-controller="loginCtrl">
@@ -93,6 +102,29 @@
                     <div class="form-group text-center m-t-20">
                         <div class="col-12">
                             <button class="btn btn-block btn-lg btn-default btn-rounded btn-login" type="submit">Ingresar <i class="fa fa-sign-in-alt"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 m-t-10 text-center">
+                            <div class="social">
+                                <a href="https://www.facebook.com/acontplus.ec" target="_blank" class="btn btn-facebook" data-bs-toggle="tooltip" title="Visita nuestra página en Facebook"> <i aria-hidden="true" class="fab fa-facebook-f"></i> </a>
+                                @{
+                                    var youtubeUrl = "https://www.youtube.com/@acontplusweb";
+                                }
+
+                                <a href="@youtubeUrl" target="_blank" class="btn btn-youtube" data-bs-toggle="tooltip" title="Visita nuestro canal en Youtube">
+                                    <i aria-hidden="true" class="fab fa-youtube"></i>
+                                </a>
+                                <a href="https://play.google.com/store/apps/details?id=com.acontplus_facturacion&hl=es_EC" target="_blank" class="btn btn-playstore" data-bs-toggle="tooltip" title="Descargar desde Google Play">
+                                    <i aria-hidden="true" class="fab fa-google-play"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group m-b-0">
+                        <div class="col-sm-12 text-center">
+                            Eres nuevo? <a href="https://demo.acontplus.com" target="_blank" class="text-info m-l-5"><b>Solicita una demo <i class="fa fa-upload"></i></b></a>
                         </div>
                     </div>
 

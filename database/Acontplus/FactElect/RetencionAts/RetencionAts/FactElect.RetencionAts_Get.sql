@@ -23,22 +23,22 @@ CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Get @idRol INT ,@json VARCHAR(M
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET LANGUAGE SPANISH;
 
+    --> Global
+    DECLARE @tipo INT
+
+    --> Filters
 	DECLARE @idEntidad INT
-	,@idSucursal INT
-	,@dirEstablecimiento VARCHAR(300)
 
-	DECLARE @params AS TABLE(
-		tipo INT NOT NULL
-		,idDoc BIGINT NULL
-	)
+    --> Data Json
+	SELECT @tipo =  tipo FROM OPENJSON(@json) WITH(tipo INT )
 
-	--SELECT @idEntidad = idEntidad, @idSucursal = idSucursal FROM AFTDataRol(@idRol)
-	--SET @dirEstablecimiento = (SELECT direccion FROM Sucursal WHERE idSucursal = @idSucursal)
-	INSERT INTO @params(tipo, idDoc)
-	SELECT tipo, idDoc FROM OPENJSON(@json) WITH(tipo INT '$.tipo', idDoc BIGINT '$.idDoc')
-	--1 FORMULARIO
-	IF EXISTS(SELECT 1 FROM @params WHERE tipo = 1)
+    --> Variables Globales 
+    SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+
+	--> DataForm
+	IF @tipo = 1
 		BEGIN
 			SELECT * FROM TipoIdentificacion WITH (NOLOCK) 
 
@@ -67,28 +67,44 @@ BEGIN
 
 			SELECT idCodigoRetencion, codigo, concepto descripcion, porcentajeMin porcentaje, estado FROM Sri.CodigoRetencion  WITH (NOLOCK)
 			
-            SELECT * FROM Sri.FormaPago  WITH (NOLOCK)
- 
-			SELECT ea.codEstab_Asig, ea.predeterminado,
-			e.*
-			FROM Config.Estab_Asig ea WITH (NOLOCK) 
-			INNER JOIN Sri.Establecimiento e WITH (NOLOCK)  ON ea.codEstab = e.codEstab
-			WHERE idUsuarioRol = @idRol
+            SELECT * FROM Sri.FormaPago WITH (NOLOCK) WHERE estado = 1 
 
-			SELECT pa.idPtoEmi_asig, ea.codEstab_Asig, pe.idPuntoEmision, pe.ptoEmi, pa.predeterminado, pa.estado
-			FROM Config.PtoEmi_Asig pa  WITH (NOLOCK) 
-			INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ea.codEstab_Asig = pa.codEstab_Asig
-			INNER JOIN PuntoEmision pe On pa.idPuntoEmision = pe.idPuntoEmision
- 			WHERE ea.idUsuarioRol = @idRol
+			SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,estab + '-' + ptoEmi as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+                  ,estab
+                  ,dirEstablecimiento
+                  ,contribuyente
+                  ,obligadoContabilidad
+            FROM v_PtoEmi_Asign WITH(NOLOCK) 
+            WHERE idUsuarioRol = @idRol 
+            ORDER BY defaultEstab DESC
+
+            SELECT cd.idPuntoEmision
+                  ,cd.infoAdicional 
+            FROM dbo.ConfiguracionDocumento cd WITH (NOLOCK)
+            INNER JOIN dbo.PuntoEmision     pe WITH (NOLOCK) ON pe.idPuntoEmision    = cd.idPuntoEmision
+            INNER JOIN dbo.TipoDocumento    td WITH (NOLOCK) ON td.idTipoDocumento   = cd.idTipoDocumento 
+            INNER JOIN Sri.Establecimiento  es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+            WHERE es.idEntidad = @idEntidad
+              AND td.codigoSri = '07'
+              AND cd.infoAdicional IS NOT NULL
 
 			RETURN
 		END
-
-	IF EXISTS(SELECT 1 FROM @params WHERE tipo = 2)
+    
+    --> Get Id
+	IF @tipo = 2
 		BEGIN
-			DECLARE @idRetencionATS INT 
+			DECLARE @idRetencionATS INT ,@idDoc INT 
 
-			SELECT TOP 1 @idRetencionATS = idRetencionAts FROM FactElect.RetencionAts WITH (NOLOCK)  WHERE idDocumentoElectronico = (SELECT TOP 1 idDoc FROM @params)
+            SELECT @idDoc = idDoc FROM OPENJSON(@json) WITH(idDoc BIGINT )
+
+			SELECT TOP 1 @idRetencionATS = idRetencionAts FROM FactElect.RetencionAts WITH (NOLOCK)  WHERE idDocumentoElectronico = @idDoc
 			
 			--INFO RETENCION
 			SELECT ra.*

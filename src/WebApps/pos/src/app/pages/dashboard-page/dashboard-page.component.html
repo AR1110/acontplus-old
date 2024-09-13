@@ -1,0 +1,24 @@
+<div class="hstack gap-3 bg-whitw my-2">
+  <div class="form-group">
+    <select name="anio" id="anio" class="form-select" [(ngModel)]="dataSearch().anio" (change)="refresh()">
+      @for(item of anios();track $index){
+        <option [value]="item">{{item}}</option>
+      }
+    </select>
+  </div>
+</div>
+
+<div class="row ">
+  <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+    <app-sale-stats [sales]="sales()" />
+  </div>
+  <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+    <app-best-selling-product-stats [bestSellingProduct]="bestSellingProduct()" />
+  </div>
+</div>
+
+
+<button class="float-button-custom-pink d-flex align-content-center" (click)="navigateToPos()">
+  <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
+  Crear Orden
+</button>

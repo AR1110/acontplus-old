@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW v_usuario AS (
 	,u.nombreUsuario
 	,c.BusinessName nombreCompleto
 	,c.IDCard nroIdentificacion
-	,u.estado estadoUsuario
+	,ur.estado estadoUsuario
 	,ur.idUsuarioRol
 	,ur.idEntidad
     ,e.uuid

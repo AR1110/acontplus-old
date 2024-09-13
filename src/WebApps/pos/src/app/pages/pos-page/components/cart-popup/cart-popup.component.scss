@@ -1,0 +1,13 @@
+.overlay-content {
+  // max-height: 300px;
+  // border-radius: 5px;
+  margin: 0;
+  box-shadow: 0 0 5px 0px rgba(0, 0, 0, 0.4);
+  background: #fff;
+  padding: 10px;
+  // opacity: 0.85 !important;
+
+  height: calc(100dvh - 64px - 0px);
+  overflow: auto;
+
+}

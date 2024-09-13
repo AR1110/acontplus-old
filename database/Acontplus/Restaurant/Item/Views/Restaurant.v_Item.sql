@@ -4,7 +4,6 @@ GO
 CREATE OR ALTER VIEW Restaurant.v_Item WITH SCHEMABINDING AS (
 	SELECT i.Id
 		,i.ProductId
-		,i.ProductionAreaId
 		,i.Summary
 		,i.Cooking
 		,i.Recipe

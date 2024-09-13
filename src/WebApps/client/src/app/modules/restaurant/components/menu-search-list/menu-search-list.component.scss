@@ -1,0 +1,119 @@
+.mat-mdc-table-sticky {
+    // background: #59abfd;
+    opacity: 1;
+}
+
+
+
+.mat-mdc-header-cell,
+.mat-mdc-footer-cell,
+.mat-mdc-cell {
+    min-width: 60px;
+    font-size: 12px;
+    box-sizing: border-box;
+    height: 10px;
+}
+
+.mat-mdc-header-row,
+.mat-mdc-footer-row,
+.mat-mdc-row {
+    min-width: 1920px;
+    /* 24 columns, 80px each */
+}
+
+.mat-mdc-row .mat-mdc-cell {
+    cursor: pointer;
+}
+
+// .mat-mdc-table-sticky-border-elem-top {
+//    border-bottom: 1px rgba(0, 0, 120, 0.5) solid;
+// }
+
+// .mat-mdc-table-sticky-border-elem-right {
+//   border-left: 1px rgba(0, 0, 120, 0.5) solid;
+// }
+
+// .mat-mdc-table-sticky-border-elem-bottom {
+//   border-top: 1px rgba(0, 0, 120, 0.5) solid;
+// }
+
+// .mat-mdc-table-sticky-border-elem-left {
+//   border-right: 1px rgba(0, 0, 120, 0.5) solid;
+// }
+
+
+$dark-grey: #4A4A4A;
+$table-row-height: 35px;
+
+.table-container {
+
+    .mat-table {
+        overflow: auto;
+        width: 100%;
+
+        // th.mat-header-cell, td.mat-cell {
+        //   border-left: 1px rgba(0, 0, 0, 0.12) solid;
+        //   padding: 0 8px !important;
+        // }
+    }
+
+    tr.mat-footer-row {
+        font-weight: bold;
+    }
+
+    th.mat-sort-header-sorted {
+        color: black;
+    }
+
+    tr.mat-row,
+    tr.mat-footer-row,
+    .mat-form-field {
+        height: $table-row-height;
+        min-height: $table-row-height;
+    }
+
+
+    // tr.mat-row:nth-child(even) {
+    //   background-color: #f9f9f9;
+    // }
+}
+
+// .table-container.space-bottom {
+//   margin-bottom: 20px;
+// }
+
+.table-container.small-table {
+    // max-height: 300px;
+    // cursor: pointer;
+    // overflow: auto;
+    border: 1px rgba(0, 0, 120, 0.5) solid;
+}
+
+.highlighted {
+    // background-color: #e7cccc;
+    background-color: rgba(26, 27, 31, .12);
+    // background-color: #f6f6f6;;
+}
+
+
+.highlight {
+    background: yellow;
+}
+
+tr:focus {
+    outline: none;
+}
+
+
+.loading-shade {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 56px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

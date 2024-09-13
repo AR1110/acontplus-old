@@ -147,7 +147,7 @@
                     console.log(error)
                 }).finally(() => hideLoader())
 
-              
+
             } catch (error) {
                 hideLoader();
                 console.log(error);
@@ -174,7 +174,7 @@
         }
         $scope.initiload();
 
-        $scope.refresh = function(){
+        $scope.refresh = function () {
             $scope.getGuiasRemision();
         }
 
@@ -343,7 +343,8 @@
         const tS = $injector.get('toastService');
         const fS = $injector.get('formulario');
         const DOC_TYPE = $injector.get('DOC_TYPE');
-
+        let infoAdicionalConfig = [];
+        let isSetInfoAdicionalConfig = true;
 
         $scope.tipoDoc = {
             codigo: 'GR'
@@ -477,11 +478,12 @@
             try {
                 showLoader();
                 guiaRemisionSvc.getDataForm().then(response => {
-                    const { estabs } = response; 
+                    const { estabs, infoAdicional } = response;
                     $scope.establecimientos = estabs;
+                    infoAdicionalConfig = infoAdicional
                     tiposDoc = response.tiposDoc
                     tiposDoc.push({
-                        codigo: DOC_TYPE.APROB_DOC, 
+                        codigo: DOC_TYPE.APROB_DOC,
                         descripcion: 'Aprobación Ventas'
                     })
                     //Nuevo 
@@ -501,6 +503,8 @@
                                 $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
                             }
                         }
+
+                        setInfoAdicional();
 
                     }
 
@@ -537,7 +541,7 @@
                             $scope.dataDocumentoReferenciado = {
                                 serieComprobante: params.serieComprobanteDocReferenciado,
                                 idDocumento: comprobante.idDocumento,
-                                labelName: comprobante.idDocumento > 0 ? `Factura: ${params.serieComprobanteDocReferenciado}`:  ``
+                                labelName: comprobante.idDocumento > 0 ? `Factura: ${params.serieComprobanteDocReferenciado}` : ``
                             }
 
                         })
@@ -587,6 +591,7 @@
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     $scope.data.idPuntoEmision = $scope.puntosEmision.length > 0 ? $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi)).idPuntoEmision : 0;
                     $scope.dataDocumentoReferenciado = {};
+                    setInfoAdicional();
                     $scope.$apply();
                 } else {
                     $scope.data.codEstab = $scope.dataClone.codEstab;
@@ -598,6 +603,38 @@
             }
         }
 
+        $scope.onChangePuntoEmision = function () {
+            if ($scope.data.id > 0) {
+                tS.toastr('warning', 'Punto de Emisión no puede ser editada');
+                $scope.data.idPuntoEmision = $scope.dataClone.idPuntoEmision;
+                return
+            }
+            setInfoAdicional();
+        }
+
+        function setInfoAdicional() {
+            if (isSetInfoAdicionalConfig) {
+                $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(
+                    (d) => !(d.idPuntoEmision > 0)
+                );
+
+                let dataInfoAdicional = infoAdicionalConfig.find(
+                    (i) => i.idPuntoEmision === $scope.data.idPuntoEmision
+                );
+                if (!dataInfoAdicional) return;
+                let infoAdicionPtoEmi = dataInfoAdicional.infoAdicional.map((i) => {
+                    return {
+                        ...i,
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    };
+                });
+                $scope.infoAdicionalDocumento = [
+                    ...infoAdicionPtoEmi,
+                    ...$scope.infoAdicionalDocumento,
+                ];
+            }
+            isSetInfoAdicionalConfig = true;
+        }
 
         //----------------------------TRANSPORTISTA----------------------
 
@@ -724,7 +761,7 @@
                                 fechaInicio: new Date(),
                                 fechaFin: new Date()
                             };
-                            $scope.documentos = []; 
+                            $scope.documentos = [];
 
                             $scope.resultRangeFilter = function (item) {
                                 $scope.dataSearch.fechaInicio = item.startDate,
@@ -732,13 +769,13 @@
                                 $scope.getDocs();
                             }
 
-                            function getTipo(){
+                            function getTipo() {
                                 if ($scope.dataSearch.codDoc === DOC_TYPE.FE) return 5;
                                 if ($scope.dataSearch.codDoc === DOC_TYPE.NE) return 6;
                                 if ($scope.dataSearch.codDoc === DOC_TYPE.APROB_DOC) return 7;
                             }
 
-                            
+
 
                             $scope.getDocs = function () {
                                 try {
@@ -763,7 +800,7 @@
                                         fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin) || null,
                                     }
                                     showLoader();
-                                    $scope.documentos = []; 
+                                    $scope.documentos = [];
                                     guiaRemisionSvc.getDocs(params).then(response => {
                                         $scope.documentos = response;
                                         $scope.dataSearch.totalRecords = $scope.documentos.length > 0 ? $scope.documentos[0].totalRecords : 0
@@ -809,7 +846,7 @@
                                         codDoc = DOC_TYPE.NE;
                                         keyTemplate = 'NE'
                                     }
-                                    if ($scope.dataSearch.codDoc === DOC_TYPE.APROB_DOC){
+                                    if ($scope.dataSearch.codDoc === DOC_TYPE.APROB_DOC) {
                                         tS.toastr('warning', 'No disponible')
                                         return
                                     }
@@ -857,7 +894,7 @@
         }
         function setDataDocReferenciado(result) {
             let { data, codDoc } = result;
-            if (codDoc === 'FE') {                
+            if (codDoc === 'FE') {
                 $scope.dataDocumentoReferenciado = {
                     idDocumento: data.idDocumento,
                     serieComprobante: data.serieComprobante,
@@ -865,18 +902,17 @@
 
                 };
             } else {
-                let index = $scope.infoAdicionalDocumento.findIndex(item => item.valor === data.serieComprobante);
-                if (index === -1) {
-                    $scope.infoAdicionalDocumento = [{
-                        nombre: 'Comprobante',
-                        valor: data.serieComprobante
-                    }]
-                }
+                $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(item => item.valor !== data.serieComprobante);
+           
+                $scope.infoAdicionalDocumento.push({
+                    nombre: 'Comprobante',
+                    valor: data.serieComprobante
+                })
                 $scope.dataDocumentoReferenciado = {
                     serieComprobante: data.serieComprobante,
                     labelName: `${data.nameDoc}: ${data.serieComprobante}`
                 }
-                tS.toastr('info','Recuerde que si el documento de referencia es distinto a la factura, el número de comprobante se agrega en los datos adicionales.', '', 6000, 2000)
+                tS.toastr('info', 'Recuerde que si el documento de referencia es distinto a la factura, el número de comprobante se agrega en los datos adicionales.', '', 6000, 2000)
             }
             $scope.gridOptionsDetalle.data = data.detalles;
             focusColumnCantidad();
@@ -991,7 +1027,7 @@
             if (isConfirmed) {
                 let index = $scope.gridOptionsDetalle.data.indexOf(row);
                 $scope.gridOptionsDetalle.data.splice(index, 1);
-                if(row.idGuiaRemisionDetalle>0){
+                if (row.idGuiaRemisionDetalle > 0) {
                     deletedItems.push({
                         ...row,
                         estado: false
@@ -1059,7 +1095,7 @@
                     tS.toastr('warning', 'Ingrese Fecha de Fin');
                     return
                 }
-              
+
 
                 if (!fS.isValidField($scope.data.ptoPartida)) {
                     tS.toastr('warning', 'Ingrese el Punto de Partida');

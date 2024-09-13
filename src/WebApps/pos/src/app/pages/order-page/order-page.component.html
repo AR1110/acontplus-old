@@ -1,0 +1,70 @@
+<mat-card class="shipping-card">
+  <mat-card-header class="m-2">
+    <mat-card-title-group>
+      <mat-card-title>Ordenes</mat-card-title>
+      <div class="d-flex flex-row gap-2">
+        <button mat-flat-button (click)="navigateToPos()">
+          <mat-icon>add</mat-icon>
+          Nuevo
+        </button>
+      </div>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+
+
+   
+
+
+
+
+    <!-- setting outline form field appearance -->
+    <app-order-list  
+      
+      [dataSearch]="dataSearch"  />
+
+    <!-- <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+
+      @if(!isFinished()){
+      <button mat-menu-item>
+        <mat-icon>edit</mat-icon>
+        <span>Editar</span>
+      </button>
+      }
+      @if(!isFinished()){
+      <button mat-menu-item (click)="askToAnul(row)">
+        <mat-icon>delete</mat-icon>
+        <span>Anular</span>
+      </button>
+      }
+
+      @if(!isFinished()){
+      <button mat-menu-item (click)="openOrderDivideDialog(row)">
+        <mat-icon>check_circle</mat-icon>
+        <span>Completar venta</span>
+      </button>
+      }
+      <button mat-menu-item (click)="openOrderDocDialog(row)">
+        <mat-icon>open_in_new</mat-icon>
+        <span>Docs</span>
+      </button>
+      <button mat-menu-item (click)="openOrderDocDialog(row)">
+        <mat-icon>get_app</mat-icon>
+        <span>PDF</span>
+      </button>
+
+      <button mat-menu-item appActionWhatsappSend [params]="row">
+        <mat-icon>share</mat-icon>
+        <span>WhatsApp</span>
+      </button>
+    </mat-menu> -->
+
+
+
+
+
+  </mat-card-content>
+</mat-card>

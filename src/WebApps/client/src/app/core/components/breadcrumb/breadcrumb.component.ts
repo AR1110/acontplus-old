@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -10,21 +10,15 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   templateUrl: './breadcrumb.component.html',
   styles: ``,
 })
-export class BreadcrumbComponent implements OnInit {
-  @Output() clicked = new EventEmitter<void>();
-  @Input() crear = false;
+export class BreadcrumbComponent {
   parentData: any;
   childData: any;
+  #route = inject(ActivatedRoute);
 
-  constructor(private route: ActivatedRoute) {}
-  ngOnInit(): void {
-    this.parentData = this.route.parent?.snapshot.data;
-    this.childData = this.route.snapshot.data;
+  ngOnInit() {
+    this.parentData = this.#route.parent?.snapshot.data;
+    this.childData = this.#route.snapshot.data;
     // console.log(this.parentData);
     // console.log(this.childData);
-  }
-
-  onClick() {
-    this.clicked.emit();
   }
 }

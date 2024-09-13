@@ -24,7 +24,6 @@ BEGIN
     ,@sequence INT
     ,@serie VARCHAR(18)    
     ,@customerCompanyId INT   
-    ,@tax NUMERIC(18,5)   
     ,@discount NUMERIC(18,5)
     ,@tip NUMERIC(18,5)
     ,@total NUMERIC(18,5)
@@ -40,8 +39,7 @@ BEGIN
         ,@establecimientoId     = establecimientoId
         ,@puntoEmisionId        = puntoEmisionId       
         ,@tableId               = tableId        
-        ,@customerCompanyId     = customerCompanyId
-        ,@tax                   = tax
+        ,@customerCompanyId     = customerCompanyId 
         ,@discount              = discount
         ,@tip                   = tip
         ,@total                 = total
@@ -49,7 +47,7 @@ BEGIN
         ,@quickSale             = quickSale
         ,@bodegaId              = bodegaId
         ,@userId                = userId
-        ,@TaxPercentId          = TaxPercentId
+     --   ,@TaxPercentId          = TaxPercentId
     FROM OPENJSON(@json)
         WITH(
             uuid UNIQUEIDENTIFIER '$.uuid',
@@ -65,8 +63,8 @@ BEGIN
             obs VARCHAR(500) '$.obs',
             quickSale BIT '$.quickSale',
             bodegaId INT '$.bodegaId',
-            userId              INT '$.userId',
-            TaxPercentId INT '$.taxPercentId'
+            userId              INT '$.userId'
+        --    TaxPercentId INT '$.taxPercentId'
         )
 
     IF NOT EXISTS (SELECT TOP 1 1 FROM Config.v_ConfigDocumento cd
@@ -74,7 +72,7 @@ BEGIN
 			                      WHERE pa.idUsuarioRol = @userRoleId
 			                      AND cd.codDoc = 'OR')
         BEGIN       
-            SELECT Common.ufnSpResponse('0', 'Aun no se ha configurado el secuencial, para ordenes de restaurante',  DEFAULT)
+            SELECT '0' code, 'Aun no se ha configurado el secuencial, para ordenes de restaurante'  as 'message'
             RETURN
         END
         
@@ -124,14 +122,14 @@ BEGIN
 
             IF NOT EXISTS(SELECT 1 FROM @tblItems)
                 BEGIN
-                    SELECT Common.ufnSpResponse('0', 'No se pudo recuperar el detalle', NULL)
+                    SELECT '0' code, 'No se pudo recuperar el detalle'  as 'message'
                     RETURN
                 END
 
         END
     ELSE
         BEGIN
-            SELECT Common.ufnSpResponse('0', 'El detalle no es valido', NULL)
+            SELECT '0' code, 'El detalle no es valido'  as 'message'
             RETURN
         END
         
@@ -170,10 +168,26 @@ BEGIN
                 BEGIN
                     SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @sequence, DEFAULT)) 
                     
-                    INSERT INTO Restaurant.[Order](EstablecimientoId, puntoEmisionId, TableId, [Sequence], Serie, CustomerCompanyId
-                                                    , Tax, Discount, Total, [Enabled], UserId, obs, CreatedAt, Uuid, TaxPercentId)
-                    VALUES(@establecimientoId, @puntoEmisionId, @tableId, @sequence, @serie, @customerCompanyId
-                           , @tax, @discount, @total, 1, @userId, ISNULL(@obs, NULL), dbo.ufnGetDateEcuador(), @uuid, @TaxPercentId)
+                  INSERT INTO Restaurant.[Order] (
+                            EstablecimientoId, 
+                            puntoEmisionId, 
+                            TableId, 
+                            [Sequence], 
+                            Serie, 
+                            CustomerCompanyId, 
+                            Discount, 
+                            Total, 
+                            [Enabled], 
+                            UserId, 
+                            obs, 
+                            CreatedAt, 
+                            Uuid
+                        ) 
+                        VALUES (
+                                @establecimientoId, @puntoEmisionId, @tableId, @sequence, @serie, @customerCompanyId,  @discount, @total, 1, @userId, 
+                                ISNULL(@obs, NULL), dbo.ufnGetDateEcuador(), @uuid
+                                );
+
 
 	                SET @orderId = (SELECT SCOPE_IDENTITY())
                     
@@ -212,7 +226,7 @@ BEGIN
                     IF NOT EXISTS (SELECT 1 FROM Restaurant.OrderItem WHERE OrderId = @orderId)
                         BEGIN
                             ROLLBACK TRAN
-                            SELECT Common.ufnSpResponse('0', 'Error al guardar items', (SELECT * FROM @tblItems for json path))	
+                            SELECT '0' code, 'Error al guardar items'  as 'message', (SELECT * FROM @tblItems for json path) payload
                             RETURN
                         END
                     
@@ -258,12 +272,12 @@ BEGIN
             ----------------END VENTA RAPIDA--------
 		COMMIT TRAN
         IF (@orderId > 0)
-            SELECT Common.ufnSpResponse('1', 'Exitos al guardar', @payload)
+            SELECT '1' code, 'Exitos al guardar'  as 'message', @payload payload
         ELSE
-            SELECT Common.ufnSpResponse('0', 'No se pudo guardar la orden', NULL)	
+            SELECT '0' code, 'No se pudo guardar la orden' as 'message'
     END TRY
 	BEGIN CATCH
-		 SELECT Common.ufnSpResponse('0', 'Error al guardar el orden', NULL)
+		 SELECT '0' code, 'Error al guardar el orden' as 'message'
         
         IF (@@TRANCOUNT > 0)
             ROLLBACK TRAN

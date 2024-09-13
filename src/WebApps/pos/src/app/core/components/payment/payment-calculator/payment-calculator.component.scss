@@ -1,0 +1,132 @@
+// mat-card {
+//   max-width: 300px;
+//   margin-bottom: 20px;
+//   background-color: #ffffff;
+//   /* Fondo blanco para el card */
+//   border-radius: 10px;
+//   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+// }
+
+// .display {
+//   font-size: 2em;
+//   margin-bottom: 20px;
+//   padding: 10px;
+//   background-color: #e0e0e0;
+//   text-align: right;
+//   border-radius: 5px;
+//   color: #333;
+// }
+
+// .button-grid {
+//   display: grid;
+//   grid-template-columns: repeat(3, 1fr);
+//   gap: 10px;
+// }
+
+// button {
+//   padding: 20px;
+//   font-size: 1.2em;
+//   border-radius: 5px;
+//   color: #fff; 
+// }
+
+// button.value-money {
+//   background-color: #ba005c;
+//   color: #fff;
+// }
+
+// button.value-money:hover {
+//   background-color: #a00050;
+//   color: #f0f0f0;
+// }
+
+// button.value-money:focus {
+//   background-color: #8a0044;
+//   color: #e0e0e0;
+//  // outline: none;
+//   box-shadow: 0 0 0 3px rgba(186, 0, 92, 0.5);
+// }
+
+// button.mat-button.color-warn {
+//   background-color: #e53935;
+// }
+
+// button.mat-button.color-warn:hover {
+//   background-color: #d32f2f;
+// }
+
+
+// .full-width {
+//   grid-column: span 3;
+// }
+
+
+.container-calculator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // height: 100vh;
+//  background-color: #333;
+}
+
+.calculator {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  padding: 20px;
+  background: #2e2e2e;
+  border-radius: 12px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.value {
+  grid-column: span 4;
+  height: 50px;
+  text-align: right;
+  font-size: 1.5em;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background-color: #444;
+  color: #fff;
+  box-shadow: inset 0px -4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button {
+  height: 50px;
+  font-size: 1.2em;
+  border: none;
+  border-radius: 8px;
+  background: #666;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s, transform 0.1s;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+.clear {
+  //grid-column: span 1;
+  background: #ff5c5c;
+}
+
+.plus {
+ // grid-row: span 2;
+  background: #ff9f43;
+}
+
+.equal {
+  grid-column: span 2;
+  background: #2196f3;
+}
+
+.backspace {
+  background: #ff6f61;
+}
+
+button:hover {
+  background: #777;
+}

@@ -777,3 +777,15 @@ app.filter("mapTipoIce", () => {
         return result[input];
     };
 });
+
+
+app.filter('roundTo',['formulario', function (fS) {
+     return function (input, decimals) {
+         var number = parseFloat(input); // Convertir a número
+         
+         if (!isNaN(number)) {
+             return fS.roundNumber(number, decimals || 2); // Redondear a 2 decimales por defecto
+         }
+         return input;
+     }
+ }]);

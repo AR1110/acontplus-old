@@ -52,16 +52,17 @@ BEGIN
 							  ,ISNULL(UPPER(an.observaciones),'''')                              as obs
 							  ,''A'' + ''-'' + es.estab + ''-'' + dbo.AFTAutoComplete(an.nroDoc) as serieComprobante
 							  ,cu.IDCard			                                             as identificacion
-							  ,cu.IDCard    											         as nombreFiscal
+							  ,cu.BusinessName 											         as nombreFiscal
 							  ,sf.descripcion                                                    as subEntidadFinanciera
 							  ,IIF(ci.estado = 1 ,''Activo'',''Anulado'')                        as estadoDoc
 							  ,''A''														     as codDoc
 							  ,us.nombreUsuario                                                  as usuario
-							  ,us.nroIdentificacion                                              as identificacionUsuario
+							  ,uscc.IDCard                                                       as identificacionUsuario
                               ,COUNT(*) OVER()                                                   as totalRecords
 						FROM dbo.Anticipo                    an WITH (NOLOCK)								  
 						INNER JOIN dbo.SubEntidadFinanciera  sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera  = an.idSubEntidadFinanciera
 						INNER JOIN dbo.Usuario               us WITH (NOLOCK) ON us.idUsuario               = an.idUsarioRegister
+                        INNER JOIN Customer.Customer       uscc WITH (NOLOCK) ON uscc.Id                    = us.CustomerId
 						INNER JOIN dbo.ComprobanteIngreso    ci WITH (NOLOCK) ON ci.idComprobanteIngreso    = an.idComprobanteIngreso 
 						INNER JOIN Sri.Establecimiento       es WITH (NOLOCK) ON es.idEstablecimiento       = ci.idEstablecimiento
 						INNER JOIN Customer.Customer         cu WITH (NOLOCK) ON cu.Id						= ci.CustomerId
@@ -123,9 +124,11 @@ BEGIN
             
             SET @tableNames = 'establecimiento,entidadFinanciera,subEntidadFinanciera'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
+            SELECT es.idEstablecimiento,es.codEstab,es.nombreComercial,ea.predeterminado
+            FROM Config.Estab_Asig         ea WITH (NOLOCK) 
+            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = ea.codEstab
+            WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
 			 
-
             SELECT idEntidadFinanciera,descripcion,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 
             SELECT idSubEntidadFinanciera,idEntidadFinanciera,descripcion,codigo FROM dbo.SubEntidadFinanciera WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
@@ -139,7 +142,10 @@ BEGIN
             
             SET @tableNames = 'establecimiento'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC			
+            SELECT es.idEstablecimiento,es.codEstab,es.nombreComercial,ea.predeterminado
+            FROM Config.Estab_Asig         ea WITH (NOLOCK) 
+            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = ea.codEstab
+            WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC			
 
             RETURN
         END

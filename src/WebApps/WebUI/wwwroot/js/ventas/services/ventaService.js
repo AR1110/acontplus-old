@@ -1,11 +1,11 @@
 //@ts-check
- 
+
 (function () {
 
     'use strict';
     const URL_API = 'Venta/'
 
-    app.factory('ventaService',['$injector', function ($injector) {
+    app.factory('ventaService', ['$injector', function ($injector) {
         let service = {};
         let mS = $injector.get('mainService');
         /**
@@ -274,7 +274,13 @@
 
                     let formasPago = mainData[11];
                     let tiposIdentificacion = mainData[12];
-
+                    let infoAdicional = mainData[13] || [];
+                    infoAdicional = infoAdicional.map((item) => {
+                        return {
+                            ...item,
+                            infoAdicional: JSON.parse(item.infoAdicional),
+                        };
+                    });
                     return {
                         estabs,
                         tarifasImpuesto,
@@ -288,7 +294,8 @@
                         vendedores,
                         permisoEditarDoc,
                         formasPago: fS.mapperFromFormaPago(formasPago),
-                        tiposIdentificacion
+                        tiposIdentificacion,
+                        infoAdicional
 
                     }
                 }
@@ -419,13 +426,13 @@
         }
 
         service.queryMapper = function (params) {
-            let { 
-                data, 
-                cliente, 
-                detalles, 
-                itemsDeleted,  
-                infoAdicionalDocumento, 
-                cuotas 
+            let {
+                data,
+                cliente,
+                detalles,
+                itemsDeleted,
+                infoAdicionalDocumento,
+                cuotas
             } = params;
             //data que se usara dentro de la función "getCantidadStock"
             service.data = Object.assign({}, data);
@@ -454,8 +461,8 @@
 
             const itemsMainMapper = service.detalleMapperTo(mergeDetalles);
 
-          //  const itemsMainMapper = service.detalleMapperTo(detalles);
-           // const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted || [])
+            //  const itemsMainMapper = service.detalleMapperTo(detalles);
+            // const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted || [])
             const impuestos = fS.impuestoTarifaMapperTo(detalles);
 
             infoAdicionalDocumento = infoAdicionalDocumento || [];
@@ -477,7 +484,7 @@
                 idInfoAdicional: item.idInfoAdicional,
                 estado: estado
             });
-            
+
 
             const datosAdicionalesArticuloDeleted = mergeDetalles
                 .flatMap(md => md.datosAdicionalesArticulo)
@@ -502,7 +509,7 @@
 
 
 
- 
+
             return {
                 notaEntrega: service.infoComprobanteMapperTo(notaEntrega),
                 detalles: itemsMainMapper,
@@ -554,7 +561,7 @@
 
             for (let item of detalles) {
                 let cantidadTransaccion = item.cantidad * (item.conversion || 1)
-                tempDetails.push({                    
+                tempDetails.push({
                     orderIndex: orderIndex++,
                     uuid: item.uniqueRowDetalle,
                     idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
@@ -767,7 +774,7 @@
                         let uniqueRowDetalle = restItem.uuid;
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
-                        let datosAdicionalesArticulo = []; 
+                        let datosAdicionalesArticulo = [];
 
                         if (itemPrincipal.infoAdicionalArticulo && typeof itemPrincipal.infoAdicionalArticulo === 'string') {
                             let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoAdicionalArticulo);
@@ -797,6 +804,8 @@
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
 
+                        let total = fS.roundNumber(itemPrincipal.precioTotalSinImpuesto, pricingUtils.max_dos) + fS.roundNumber(itemPrincipal.valorImpuesto, pricingUtils.max_dos);
+
                         let obj = {
                             n: index + 1,
                             uniqueRowDetalle,
@@ -823,6 +832,7 @@
                             tarifa: itemPrincipal.tarifa,//✅
                             valorDescuento: itemPrincipal.valorDescuento,
                             valorImpuesto: itemPrincipal.valorImpuesto,//✅
+                            precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
                             medidas,
                             conversion: dataMedida.conversion,
                             precioCostoFraccionado: dataMedida.precioCostoFraccionado,
@@ -830,7 +840,8 @@
                             consolidacionesFecha,
                             estado: 1,
                             datosAdicionalesArticulo,
-                            datosAdicionales: restItem.datosAdicionales
+                            datosAdicionales: restItem.datosAdicionales,
+                            total
                         }
 
                         return obj;
@@ -875,7 +886,7 @@
                         comprobante,
                         cliente,
                         items,
-                        infoAdicionalDocumento, 
+                        infoAdicionalDocumento,
                         cuotas
                     }
                 }
@@ -1122,7 +1133,7 @@
                 let cantidadTransaccion = item.cantidad * (item.conversion || 1)
                 return {
                     orderIndex: index++,
-                    uuid: item.uniqueRowDetalle,
+                    uuid: item.uniqueRowDetalle || fS.generateUuidv4(),
                     idArticulo: item.idArticulo,
                     idTarifa: item.idTarifa,
                     idBodega: item.idBodega,
@@ -1154,7 +1165,7 @@
                 comprobante: resultComprobante,
                 detalles: resultDetalles,
                 impuestos: impuestos,
-                infoAdicional: infoAdicionalDocumento || [], 
+                infoAdicional: infoAdicionalDocumento || [],
                 cuotas,
                 formaPago: dataFormaPago,
             }
@@ -1201,11 +1212,6 @@
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
                     let tiemposCredito = mainData[3];
-                    // let articuloDefaultTemp = mainData[6];
-                    // let articuloDefault = {}
-                    // if(articuloDefaultTemp && articuloDefaultTemp.length>0){
-                    //     articuloDefault = articuloDefaultTemp[0];
-                    // }
                     let clienteDefaultTemp = mainData[5];
                     let clienteDefault = {};
                     if (clienteDefaultTemp && clienteDefaultTemp.length > 0) {
@@ -1220,6 +1226,13 @@
                     let vendedores = mainData[7];
                     let tempEstabsAndPtosEmision = mainData[8];
                     let tempBodegas = mainData[9];
+                    let infoAdicional = mainData[10] || [];
+                    infoAdicional = infoAdicional.map((item) => {
+                        return {
+                            ...item,
+                            infoAdicional: JSON.parse(item.infoAdicional),
+                        };
+                    });
                     let { sales: permisoVenta, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
 
                     let dataToGroup = {
@@ -1239,7 +1252,8 @@
                         decimal,
                         config,
                         vendedores,
-                        permisoEditarDoc
+                        permisoEditarDoc,
+                        infoAdicional
                     }
                 }
             })
@@ -1292,7 +1306,12 @@
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload) || [];
                     let proformasRepos = mainData[0];
-                    let { totalRecords, totalDocument } = proformasRepos[0];
+                    let totalRecords = 0, totalDocument = 0;
+                    let data = proformasRepos[0];
+                    if (data) {
+                        totalRecords = data.totalRecords;
+                        totalDocument = data.totalDocument;
+                    }
                     let proformas = proformasRepos.map(item => {
                         return {
                             comprobante: 'Proforma',
@@ -1385,6 +1404,9 @@
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
+
+                        let total = fS.roundNumber(itemPrincipal.precioTotalSinImpuesto, pricingUtils.max_dos) + fS.roundNumber(itemPrincipal.valorImpuesto, pricingUtils.max_dos);
+
                         let obj = {
                             n: index + 1,
                             idProformaDetalle: restItem.idProformaDetalle,
@@ -1417,7 +1439,9 @@
                             consolidacionesFecha: [],
                             estado: 1,
                             datosAdicionalesArticulo: [],
-                            datosAdicionales: restItem.datosAdicionales
+                            datosAdicionales: restItem.datosAdicionales,
+                            precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
+                            total
                         }
 
                         return obj;
@@ -1804,8 +1828,8 @@
                     }
                     if (response.code === '1') {
                         let mainData = JSON.parse(response.payload)
-                    
-                       
+
+
                         return {
                             tipoIdentificacion: mainData[0],
                             tipoContribuyentes: mainData[1],
@@ -1882,7 +1906,7 @@
                 validationSri: data.validationSri,
                 idFormaPagoSri: fS.isValidField(data.idFormaPagoSri),
                 estado: data.estado || true,
-                infoCrediticia: data.dataInfoCred && JSON.stringify(data.dataInfoCred) 
+                infoCrediticia: data.dataInfoCred && JSON.stringify(data.dataInfoCred)
             }
 
         }
@@ -1942,7 +1966,8 @@
                         telefonos,
                         placas,
                         idFormaPagoSri: data.idFormaPagoSri,
-                        dataInfoCred: JSON.parse(infoCrediticia) || {}
+                        dataInfoCred: JSON.parse(infoCrediticia) || {},
+                        nota: data.nota
                     }
                 }
             })
@@ -2271,7 +2296,7 @@
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario')
 
-        let service = {} 
+        let service = {}
 
         service.getAll = (obj) => {
             let json = JSON.stringify({
@@ -2303,15 +2328,15 @@
             })
         }
 
-        service.getId = function(id){
+        service.getId = function (id) {
             let json = JSON.stringify({
                 tipo: 1,
                 id
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response=>{
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
                 let data = {};
-                if(response.code==="1"){
-                    let {empresa} = JSON.parse(response.payload);
+                if (response.code === "1") {
+                    let { empresa } = JSON.parse(response.payload);
                     data = empresa[0];
                 }
                 console.log(data)
@@ -2355,33 +2380,33 @@
 
 
 
-    app.factory('creditoGaranteService', ['$injector', function($injector){
+    app.factory('creditoGaranteService', ['$injector', function ($injector) {
         let url = `${URL_API}CreditoGarante`;
         let mS = $injector.get('mainService');
         return {
-            getAll,            
+            getAll,
             post,
         }
 
-        function getAll(obj){
+        function getAll(obj) {
             let json = JSON.stringify({
                 tipo: 1,
                 ...obj
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response=>{
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
                 let result = {
                     guarantors: []
                 }
-                if(response.code==="1"){
-                    let {guarantors}= JSON.parse(response.payload)
+                if (response.code === "1") {
+                    let { guarantors } = JSON.parse(response.payload)
                     result.guarantors = guarantors;
                 }
                 return result;
-        })
+            })
         }
 
-        function post(data){
-            return mS.getData('post', url, {data}, true )
+        function post(data) {
+            return mS.getData('post', url, { data }, true)
         }
     }])
 

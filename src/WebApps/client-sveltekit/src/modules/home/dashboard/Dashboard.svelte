@@ -1,1 +1,0 @@
-<small>Cargando ...</small>

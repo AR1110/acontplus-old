@@ -27,7 +27,7 @@
                         <div class="form-group">
                             <label for="ptoEmision">Punto Emisión: <span class="text-danger">*</span></label>
                             <select class="form-control border-select" ng-model="data.idPuntoEmision"
-                                    ng-disabled="tipoRegistro===2">
+                                    ng-disabled="tipoRegistro===2"  ng-change="onChangePuntoEmision()">
                                 <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                     {{item.ptoEmi}}
                                 </option>

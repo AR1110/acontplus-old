@@ -1,0 +1,58 @@
+ .container-promotions {
+   height: calc(98dvh - 80px - 100px);
+   overflow: auto;
+
+ }
+
+ .tree {
+   border: 1px solid #ddd;
+   border-radius: 5px;
+   margin-bottom: 10px;
+ }
+
+ .tree-node {
+   border-bottom: 1px solid #ddd;
+ }
+
+ .tree-node:last-child {
+   border-bottom: none;
+ }
+
+ .tree-header {
+   padding: 10px;
+   background-color: #f7f7f7;
+   cursor: pointer;
+   transition: background-color 0.3s ease;
+ }
+
+ .tree-header:hover {
+   background-color: #e0e0e0;
+ }
+
+ .tree-header .node-label {
+   font-size: 16px;
+   font-weight: 500;
+   margin-left: 10px;
+ }
+
+ .tree-header img {
+   width: 40px;
+   height: 40px;
+   border-radius: 50%;
+   object-fit: cover;
+   margin-right: 10px;
+ }
+
+ .tree-children {
+   padding: 10px;
+   background-color: #fafafa;
+   display: none;
+ }
+
+ .tree-node.expanded .tree-children {
+   display: block;
+ }
+
+ .tree-node.expanded .tree-header {
+   background-color: #e0e0e0;
+ }

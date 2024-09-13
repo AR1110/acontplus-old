@@ -1,0 +1,181 @@
+<div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{titleModal()}}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-6 col-12">
+            <div class="row  row-cols-1 row-cols-xxl-1 row-cols-xl-1 row-cols-lg-1 row-cols-md-1 row-cols-sm-1">
+                <div class="form-group">
+                    <label for="estab">Establecimiento: <span class="text-danger">*</span> </label>
+                    <select name="estab" id="estab" class="form-select" [(ngModel)]="estabId">
+                        @for(item of estabs();track $index){
+                        <option [value]="item.idEstablecimiento">{{item.nombreComercial}}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descripción: <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" appToUpperCase [(ngModel)]="data.description">
+                </div>
+            </div>
+
+            <div class="row  row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1  row-cols-1">
+
+                <div class="form-group">
+                    <label for="startDate">Fecha Inicio</label>
+                    <app-input-date [(value)]="data.startDate" />
+                </div>
+                <div class="form-group">
+                    <label for="endDate">Fecha Final</label>
+                    <app-input-date [(value)]="data.endDate" />
+                </div>
+
+            </div>
+        </div>
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-12">
+            <div class="container-upload">
+                <div class="avatar-upload">
+                    <div class="avatar-preview" [ngStyle]="{'background-image': 'url(' + imageUrl + ')'}"></div>
+
+                    <div class="avatar-actions">
+                        <!-- Botón de edición -->
+                        <label for="imageUpload" class="edit-button">
+                            <fa-icon [icon]="'pencil'"></fa-icon>
+                        </label>
+
+                        <!-- Botón de eliminación -->
+                        <button class="delete-button" (click)="onDelete()">
+                            <fa-icon [icon]="'trash'"></fa-icon>
+                        </button>
+                    </div>
+
+                    <!-- Input oculto para seleccionar archivos -->
+                    <input type="file" id="imageUpload" accept=".png, .jpg, .jpeg" (change)="onFileChange($event)"
+                        style="display: none;" />
+                </div>
+            </div>
+
+
+
+
+
+
+        </div>
+
+    </div>
+
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item" style="cursor: pointer;">
+            <a class="nav-link" [class.active]="selectedTab() === 0" (click)="selectedTab.set(0)">Dias</a>
+        </li>
+        <li class="nav-item" style="cursor: pointer;">
+            <a class="nav-link" [class.active]="selectedTab() === 1" (click)="selectedTab.set(1)">Productos</a>
+        </li>
+    </ul>
+
+    @if(selectedTab()===0){
+    <div class="d-flex  ">
+        <div class="table-responsive w-auto">
+            <table class="table ">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="allDays" [(ngModel)]="allDay"
+                                    (change)="onChangeAllDay()">
+                                <label class="form-check-label" for="allDays">Todos</label>
+                            </div>
+                        </th>
+                        <th>Hora Inicio - Hora Fin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(day of daysOfWeek();track $index){
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" [id]="day.id" [(ngModel)]="day.checked"
+                                    (change)="onChangeDay()">
+                                <label class="form-check-label" [for]="day.id">{{ day.descripcion }}</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="hstack gap-3">
+                                <div class="col-4">
+                                    <label [for]="day.id + 'Start'" class="form-label"></label>
+                                    <input type="text" appTimeInputFormat24 [(ngModel)]="day.horaInicio"
+                                        class="form-control" [id]="day.id + 'Start'" placeholder="HH:MM">
+                                </div>
+                                <span>-</span>
+                                <div class="col-4">
+                                    <label [for]="day.id + 'End'" class="form-label"></label>
+                                    <input type="text" appTimeInputFormat24 [(ngModel)]="day.horaFin"
+                                        class="form-control" [id]="day.id + 'End'" placeholder="HH:MM">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    }
+
+
+    @if(selectedTab()===1){
+    <div class="form-group">
+        <label for="menuSearch">Buscar Menú </label>
+        <app-menu-search (optionSelected)="onProductSelected($event)" />
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nro.</th>
+                    <th>Op.</th>
+                    <th>Img.</th>
+                    <th>Menú</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(item of promotionMenus();track $index ){
+                <tr>
+                    <td>{{$index + 1}}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" (click)="onRemove(item.menuId)">
+                            <fa-icon [icon]="'trash'"></fa-icon>
+                        </button>
+                    </td>
+                    <td>
+                        <img class="rounded" [ngClass]="{'img-thumbnail': !item.s3ObjectUrl}" width="80" src="{{item.s3ObjectUrl}}" />
+
+                    </td>
+                    <td>{{item.title}}</td>
+                </tr>
+                }@empty{
+                    <tr class="text-center">
+                        <td colspan="4">Sin registro</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    }
+
+
+
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="save()">
+        {{titleBtnSave()}}
+    </button>
+    <button type="button" class="btn btn-dark" (click)="close()">&times; Cerrar</button>
+</div>

@@ -30,6 +30,7 @@ BEGIN
         @bodegas VARCHAR(MAX),
         @direccionBodega VARCHAR(300),
         @telefonoBodega VARCHAR(150),
+        @actividad VARCHAR(9),
         @id INT;
 
     DECLARE @tbEstablecimiento AS TABLE (
@@ -91,6 +92,7 @@ BEGIN
             ,@bodegas = bodegas
             ,@direccionBodega = dirEstablecimiento 
             ,@telefonoBodega = telefono
+            ,@actividad = actividad
         FROM @tbEstablecimiento
 
         --> Validaciones
@@ -115,9 +117,10 @@ BEGIN
 		BEGIN TRAN
 
 			INSERT INTO Sri.Establecimiento
-				   (codEstab,canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario, fromMobile)
-			SELECT @codEstab,canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile
-            FROM @tbEstablecimiento
+				   (codEstab,canton,idActividadEconomica, actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario, fromMobile)
+			SELECT @codEstab,canton,ae.idActividadEconomica,actividad,IIF(agenteRetencion = 'null', NULL, agenteRetencion),contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile
+            FROM @tbEstablecimiento e
+                INNER JOIN Sri.ActividadEconomica ae On e.actividad = ae.codigo
 
             SET @id = (SELECT SCOPE_IDENTITY())
 
@@ -305,8 +308,126 @@ BEGIN
                                     BREAK;
                                 END
                             END
-                        END
+                        END 
                 END
+
+                
+                        ---SUB ENTIDAD FINANCIERA
+
+                        DECLARE @subentidadFinancieraParams VARCHAR(MAX),
+                            @tiempoCreditoParams VARCHAR(MAX)
+
+                        SET @subentidadFinancieraParams = '{
+                                                      "idEntidadFinanciera": 13,
+                                                      "descripcion": "EFECTIVO",
+                                                      "codigo": "EFE",
+                                                      "interes": 0.00000,
+                                                      "idEntidad": "' + CONVERT(VARCHAR, @idEntidad) + '",
+                                                      "predeterminado": 0,
+                                                      "controlCaja": 1,
+                                                      "fromMobile": "' + CONVERT(VARCHAR, @fromMobile) + '"
+                                                    }
+                                                    '
+
+                        EXEC Contabilidad.SubEntidadFinanciera_Insert @userRoleId, 
+                                    @subentidadFinancieraParams,
+                                    @fromMobile, 
+                                    @errorCode = @errorCode OUT,
+                                    @errorMessage = @errorMessage OUT;
+                        
+                        
+                        IF @errorCode <> 0
+                                BEGIN
+                                    SET @errorMessage = 'sp Acontplus.Contabilidad.SubEntidadFinanciera_Insert failed: ' + ISNULL(@errorMessage, '')
+				                    RAISERROR(@errorMessage,16,1);
+                                END
+                       
+                       ----TIEMPOS CREDITO ------
+                        
+                       SET @tiempoCreditoParams = '{
+                                                  "gestion": 1,
+                                                  "descripcion": "VENTAS-CONTADO",
+                                                  "diasCredito": 0,
+                                                  "numeroCuota": 1,
+                                                  "entrada": 0,
+                                                  "idEntidad": "' + CONVERT(VARCHAR, @idEntidad) + '",
+                                                  "tipo": 1,
+                                                  "fromMobile": "' + CONVERT(VARCHAR, @fromMobile) + '"
+                                                }'
+
+                        EXEC Config.TiempoCredito_Insert @userRoleId , 
+                                    @tiempoCreditoParams,
+                                    @fromMobile, 
+                                    @errorCode = @errorCode OUT,
+                                    @errorMessage = @errorMessage OUT;
+                        
+                        IF @errorCode <> 0
+                                BEGIN
+                                    SET @errorMessage = 'sp Acontplus.Config.TiempoCredito_Insert failed: ' + ISNULL(@errorMessage, '')
+				                    RAISERROR(@errorMessage,16,1);
+                                END
+
+                        -----------FAMILIAS-------------------
+                        DECLARE @idActividadEconomica INT,
+                            @actividadEconomicaName VARCHAR(500),
+                            @idFamilia INT
+
+                        SELECT @idActividadEconomica = idActividadEconomica, @actividadEconomicaName = descripcion  
+                        FROM Acontplus.Sri.ActividadEconomica WITH(NOLOCK) WHERE codigo = @actividad;
+
+                        IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.Familia WITH(NOLOCK) WHERE ActividadEconomicaId = @idActividadEconomica)
+                            BEGIN
+                                INSERT INTO Acontplus.dbo.Familia(descripcion, siglas, estado, ActividadEconomicaId)
+                                SELECT @actividadEconomicaName, LEFT(@actividadEconomicaName, 3) + '-' + @actividad, 1, @idActividadEconomica;
+
+                                SET @idFamilia = SCOPE_IDENTITY()
+                            END
+                         --SUBFAMILIA 
+
+                         IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.subfamilia WITH(NOLOCK) WHERE idEntidad = @idEntidad)
+                            BEGIN
+                                SET @idFamilia = (SELECT TOP 1 idFamilia FROM Acontplus.dbo.Familia WITH(NOLOCK) WHERE ActividadEconomicaId = @idActividadEconomica)
+                                INSERT INTO dbo.SubFamilia(idFamilia, descripcion, siglas,codigo, montoObjetivo, ultimoSecuencial, idUsuario, idEntidad)
+				                SELECT @idFamilia, 'SUBFAMILIA DEMO', 'SD', newid(), 0.00, 1 ,@idUsuario, @idEntidad
+                            END
+                        --MEDIDA
+                        DECLARE @sequential INT,  @code VARCHAR(15)
+
+                        IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.Medida WITH(NOLOCK) WHERE idEntidad = @idEntidad)
+                            BEGIN
+                                SELECT @sequential = COUNT(*) + 1 FROM dbo.Medida WITH(NOLOCK)
+
+	                            SET @code = ('ME' + Helper.F_Auto_Sequential(@sequential))
+
+                                INSERT INTO dbo.Medida ([descripcion], [idUsuario], [idEntidad], [codigo])
+                                VALUES('UNIDAD', @idUsuario, @idEntidad, 'UNI')
+                            END
+
+                        -----TURNOS---
+                        IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.Turno WITH(NOLOCK) WHERE idEntidad = @idEntidad)
+                            BEGIN
+                                INSERT INTO Acontplus.dbo.Turno(descripcion, estado, fechaRegistro, idUsuario, idEntidad)
+                                VALUES ('DIURNO', 1, dbo.ufnGetDateEcuador(), @idUsuario, @idEntidad);
+                            END
+
+                        -----CAJAS----
+
+                        DECLARE @idTurno INT,
+                            @idCaja INT;
+
+                        IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.Caja WITH(NOLOCK) WHERE idEntidad = @idEntidad)
+                            BEGIN
+                                INSERT INTO Acontplus.dbo.Caja(descripcion, estado, fechaRegistro, idUsuario, idEntidad, actividad)
+                                VALUES ('PRINCIPAL', 1, dbo.ufnGetDateEcuador(), @idUsuario, @idEntidad, 1);
+                                
+                                SET @idCaja = SCOPE_IDENTITY()
+
+                                SET @idTurno = (SELECT TOP 1 idTurno FROM dbo.Turno WITH (NOLOCK) WHERE idEntidad = @idEntidad)
+
+                                ---ASIGNACION DE CAJAS---
+                                INSERT INTO dbo.AsignacionCaja(idCaja, idUsuario, idTurno, fechaRegistro, idUsuarioRegistro, idEntidad)
+                                VALUES(@idCaja, @idUsuario, @idTurno, dbo.ufnGetDateEcuador(), @idUsuario, @idEntidad)
+                            END
             
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' AS 'message'

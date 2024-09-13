@@ -18,7 +18,7 @@
                     if (response.code === "0") {
                         throw response;
                     }
-                    if (response.code === "1") { 
+                    if (response.code === "1") {
                         let { proveedores } = JSON.parse(response.payload);
 
                         return proveedores.map(proveedor => (
@@ -85,6 +85,7 @@
                     }
                     if (response.code === "1") {
                         let results = JSON.parse(response.payload)
+                        console.log(results)
                         let proveedor = results.proveedor[0];
                         return {
                             ...proveedor,
@@ -240,7 +241,7 @@
                 }
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload) || [];
-                    const { configDecimales, estab, impuestos, ptoEmi, tiempoCredito, subcategories } = results;
+                    const { configDecimales, impuestos, tiempoCredito, ptoEmi, estab, subcategories, infoAdicional } = results;
 
 
                     let dataToGroup = {
@@ -251,13 +252,20 @@
                     let estabs = fS.groupingEstab(dataToGroup);
                     let decimal = configDecimales[0];
                     let tarifasImpuesto = impuestos;
-
+                    let info = infoAdicional.map(item=>{
+                    return {
+                    ...item,
+                    infoAdicional: JSON.parse(item.infoAdicional)
+                    }
+                    })
+                    
                     return {
                         estabs,
                         decimal,
                         tarifasImpuesto,
                         tiemposCredito: tiempoCredito,
                         subcategories,
+                        infoAdicional : info
                     }
                 }
             })
@@ -395,9 +403,9 @@
                     descripcion: item.descripcion,
                     llevaInventario: item.llevaInventario,
                     cantidadTransaccion: cantidadTransaccion,
-                    precioCosto : item.precioCosto,
-                    precioCostoFraccionado : item.precioCostoFraccionado,
-                    conversion : item.conversion,
+                    precioCosto: item.precioCosto,
+                    precioCostoFraccionado: item.precioCostoFraccionado,
+                    conversion: item.conversion,
                     estado: item.estado
                 }
 
@@ -478,8 +486,8 @@
                                 datosAdicionales: item.datosAdicionales,
                                 medidas,
                                 conversion: dataMedida.conversion,
-                                precioCosto : dataMedida.precioCosto,
-                                precioCostoFraccionado : dataMedida.precioCostoFraccionado,
+                                precioCosto: dataMedida.precioCosto,
+                                precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                                 ice: item.ice,
                                 estado: item.estado
                             }
@@ -555,7 +563,7 @@
                         total: comprobante.total,
                         observacion: comprobante.observacion,
                         irbpnr: comprobante.irbpnr,
-                        fechaEmisionEscrita:  fS.getFechaEscrita(fechaEmision),
+                        fechaEmisionEscrita: fS.getFechaEscrita(fechaEmision),
                         fechaVencimientoEscrita: fS.getFechaEscrita(fechaVencimiento),
                     }
 
@@ -804,7 +812,7 @@
                     }
                     if (response.code === "1") {
                         let [comprobanteApi, proveedorApi, detallesApi, datosAdicionalesArticuloApi, cuentaPorPagar, cuotasApi] = JSON.parse(response.payload);
-                      
+
                         let comprobante = comprobanteApi[0];
                         let proveedor = proveedorApi[0];
                         cuentaPorPagar = cuentaPorPagar[0];
@@ -998,9 +1006,9 @@
                     nota: item.nota,
                     descripcion: item.descripcion,
                     llevaInventario: item.llevaInventario,
-                    precioCosto : item.precioCosto,
-                    precioCostoFraccionado : item.precioCostoFraccionado,
-                    conversion : item.conversion,
+                    precioCosto: item.precioCosto,
+                    precioCostoFraccionado: item.precioCostoFraccionado,
+                    conversion: item.conversion,
                     cantidadTransaccion: cantidadTransaccion,
                     estado: item.estado
                 }
@@ -1279,9 +1287,9 @@
                     descripcion: item.descripcion,
                     llevaInventario: item.llevaInventario,
                     cantidadTransaccion: cantidadTransaccion,
-                    precioCosto : item.precioCosto,
-                    precioCostoFraccionado : item.precioCostoFraccionado,
-                    conversion : item.conversion,
+                    precioCosto: item.precioCosto,
+                    precioCostoFraccionado: item.precioCostoFraccionado,
+                    conversion: item.conversion,
                     estado: item.estado
                 }
 
@@ -1304,7 +1312,7 @@
                         const mainData = JSON.parse(response.payload);
 
                         let { comprobante, proveedor, detalles, infoAdicional, cuentaPorPagar, cuotas } = mainData;
-                        
+
                         comprobante = comprobante[0];
                         proveedor = proveedor[0];
 
@@ -1374,9 +1382,9 @@
                                 estado: restItem.estado,
                                 ice: restItem.ice || 0,
                                 medidas,
-                                conversion : dataMedida.conversion | 1,
-                                precioCosto : dataMedida.precioCosto ,
-                                precioCostoFraccionado : dataMedida.precioCostoFraccionado,
+                                conversion: dataMedida.conversion | 1,
+                                precioCosto: dataMedida.precioCosto,
+                                precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                                 etiquetas: etiquetasMapper,
                             }
                         })

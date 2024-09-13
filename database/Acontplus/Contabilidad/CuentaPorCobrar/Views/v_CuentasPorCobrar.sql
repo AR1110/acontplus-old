@@ -27,6 +27,7 @@ CREATE OR ALTER VIEW v_CuentaPorCobrar AS (
 		  ,correo                  = cl.correo
 		  ,telefono                = cl.telefono
           ,cl.CustomerId
+          ,cl.idCiudad
 		  ,estado                  = ep.descripcion
 		  ,codEstado               = ep.codigo
 		  ,cc.importeTotal

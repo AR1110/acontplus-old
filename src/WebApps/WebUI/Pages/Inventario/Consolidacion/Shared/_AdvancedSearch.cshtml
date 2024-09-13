@@ -1,110 +1,158 @@
 ﻿<form autocomplete="off" ng-submit="setArticlesSelected()">
     <div class="modal-header">
-        <h5 class="modal-title"><i class="ti-search"></i> Busqueda Avanzada</h5>
+        <div class="d-flex flex-row w-50">
+            <h5 class="modal-title">
+                <i class="ti-search"></i> Búsqueda Avanzada
+            </h5>
+            <span class="ml-auto">
+               <b>Bodega:</b> {{ mainForm.descripcionBodega }}
+            </span>
+        </div>
+
         <button class="close" ng-click="closeAdvancedSearch()">&times;</button>
     </div>
     <div class="modal-body">
+
         <div class="row">
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
-                <div class="form-group">
-                    <label for="codEstab">Opciones:</label>
-                    <select name="codEstab" id="codEstab" class="form-control" ng-model="mainForm.opcion" ng-change="onChangeOption()">
-                        <option ng-value="item.code" ng-repeat="item in catalogs">
-                            {{item.description}}
-                        </option>
-                    </select>
+            <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="codEstab">Opciones:</label>
+                            <select name="codEstab" id="codEstab" class="form-control border-select" ng-model="mainForm.opcion" ng-change="onChangeOption()">
+                                <option ng-value="item.code" ng-repeat="item in catalogs">
+                                    {{item.description}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xl-7 col-lg-7 col-md-7 col-sm-6 col-12">
+                        <div class="form-group" ng-if="mainForm.opcion == 1">
+                            <label for="articuloFiltro">Articulo</label>
+                            <input type="text" 
+                                class="form-control border-select" 
+                                article-search-drtv
+                                ng-model="articuloSearch.nombreArticulo"
+                                on-keyup-article="onKeyupArticle()"
+                                on-select="onSelectArticle(result)" 
+                                onclick="this.select()"
+                                placeholder="Ingrese Descripción del Articulo"
+                            > 
+
+                            <script type="text/ng-template" id="autocompleteArticleTemplate.html">
+                                <div class="autocomplete-suggestion-uib-typeahead">
+                                    <span class="item-title">
+                                        <small> {{match.model.descripcion}}</small><br>
+                                        <small><b>Código: </b>{{match.model.codigo}}</small>
+                                    </span>
+                                </div>
+                            </script> 
+                        </div> 
+
+                        <div class="form-group" ng-if="mainForm.opcion==2">
+                            <label for="idFamilia">Familias:</label>
+                            <select name="idFamilia" id="idFamilia" class="form-control" ng-model="mainForm.idFamilia"
+                                    ng-change="getArticles()">
+                                <option ng-value="item.idFamilia" ng-repeat="item in familias">
+                                    {{item.descripcion}}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" ng-if="mainForm.opcion==3">
+                            <label for="idSubFamilia">Subfamilias:</label>
+                            <select name="idSubFamilia" id="idSubFamilia" class="form-control"
+                                    ng-model="mainForm.idSubFamilia" ng-change="getArticles()">
+                                <option ng-value="item.idSubFamilia" ng-repeat="item in subfamilias">
+                                    {{item.descripcion}}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" ng-if="mainForm.opcion==4">
+                            <label for="searchSupplier">Proveedor</label>
+                            <input type="text" id="providerInputSearch" class="form-control border-select"
+                                    ng-model="proveedor.nombreProveedor" provider-search-drtv
+                                    on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
+                                    placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+
+                                <script type="text/ng-template" id="autocompleteProviderTemplate.html">
+                                    <div class="autocomplete-suggestion-uib-typeahead">
+                                        <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                                    </div>
+                                </script>
+                        </div>
+
+                        <div class="form-group" ng-if="mainForm.opcion==5">
+                            <label for="nroDocumento">N° de Documento:</label>
+                            <input type="text" class="form-control" id="nroDocumento" name="nroDocumento"
+                                placeholder="000-000-000000000" onclick="this.select()" mask="999-999-999999999"
+                                ng-blur="getArticles()" ng-model="mainForm.nroDocumento" required>
+                        </div> 
+                    </div>  
                 </div>
             </div>
-             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-                <div class="form-group" ng-if="mainForm.opcion == 1">
-                    <label for="articuloFiltro">Articulo</label>
-                    <input type="text" 
-                        class="form-control border-select" 
-                        article-search-drtv
-                        ng-model="articuloSearch.nombreArticulo"
-                        on-keyup-article="onKeyupArticle()"
-                        on-select="onSelectArticle(result)" 
-                        onclick="this.select()"
-                         placeholder="Ingrese Descripción del Articulo"
-                     > 
 
-                    <script type="text/ng-template" id="autocompleteArticleTemplate.html">
-                        <div class="autocomplete-suggestion-uib-typeahead">
-                            <span class="item-title">
-                                <small> {{match.model.descripcion}}</small><br>
-                                <small><b>Código: </b>{{match.model.codigo}}</small>
-                            </span>
+
+            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                <div class="card border">
+                    <div class="card-header">
+                        <button type="button" 
+                                class="btn btn-info btn-sm btn-block" 
+                                uib-popover-template="'modeloImportacion.html'" 
+                                popover-placement="bottom"
+                                popover-trigger="'outsideClick'"
+                                >
+                            <i class="fas fa-info-circle"></i>  Modelo de Importación
+                        </button>
+                    </div>
+                    <div class="m-3">
+                        <div class="form-group">
+                            <label class="text-muted">Archivo: <span class="text-danger">.xls, .xlsx</span></label>
+                            <input type="file" class="form-control"   accept=".xls,.xlsx" id="selectedFile" />                        
                         </div>
-                    </script> 
-                </div> 
 
-                <div class="form-group" ng-if="mainForm.opcion==2">
-                    <label for="idFamilia">Familias:</label>
-                    <select name="idFamilia" id="idFamilia" class="form-control" ng-model="mainForm.idFamilia"
-                            ng-change="getArticles()">
-                        <option ng-value="item.idFamilia" ng-repeat="item in familias">
-                            {{item.descripcion}}
-                        </option>
-                    </select>
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-success btn-sm"  ng-click="subirArchivo()">
+                                <i class=" far fa-paper-plane"></i> Importar
+                            </button> 
+                            <button type="button" class="btn btn-danger btn-sm" ng-if="articulosNotFounded.length>0" ng-click="showArticuloNoVinculado()">
+                                <i class=" far fa-eye"></i> Articulos no igualados
+                            </button> 
+
+                        </div>
+                       
+                    </div> 
                 </div>
+                <script type="text/ng-template" id="modeloImportacion.html">
+                    <label>Para consolidar los productos con un archivo de tipo Excel, debe tener las siguientes columnas en minúsculas:</label>
+                    <ul class="no-style">
+                        <li>codigo</li>
+                        <li>cantidad</li>
+                    </ul>                
+                </script>
 
-                <div class="form-group" ng-if="mainForm.opcion==3">
-                    <label for="idSubFamilia">Subfamilias:</label>
-                    <select name="idSubFamilia" id="idSubFamilia" class="form-control"
-                            ng-model="mainForm.idSubFamilia" ng-change="getArticles()">
-                        <option ng-value="item.idSubFamilia" ng-repeat="item in subfamilias">
-                            {{item.descripcion}}
-                        </option>
-                    </select>
-                </div>
-
-                <div class="form-group" ng-if="mainForm.opcion==4">
-                    <label for="searchSupplier">Proveedor</label>
-                    <input type="text" id="providerInputSearch" class="form-control border-select"
-                            ng-model="proveedor.nombreProveedor" provider-search-drtv
-                            on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
-                            placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
-
-                        <script type="text/ng-template" id="autocompleteProviderTemplate.html">
-                            <div class="autocomplete-suggestion-uib-typeahead">
-                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
-                            </div>
-                        </script>
-                </div>
-
-                <div class="form-group" ng-if="mainForm.opcion==5">
-                    <label for="nroDocumento">N° de Documento:</label>
-                    <input type="text" class="form-control" id="nroDocumento" name="nroDocumento"
-                           placeholder="000-000-000000000" onclick="this.select()" mask="999-999-999999999"
-                           ng-blur="getArticles()" ng-model="mainForm.nroDocumento" required>
-                </div> 
-             </div>
-           
-            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" ng-if="mainForm.opcion==6" >
-                <div class="form-group">
-                    <label for="descripcionBodega">Bodega:</label>
-                    <input type="text" class="form-control" id="descripcionBodega" name="descripcionBodega"
-                           placeholder="Bodega"  ng-model="mainForm.descripcionBodega" disabled>
-                </div>
-            </div> 
+            </div>
         </div>
-        <hr />
+ 
         <div class="row" ng-show="articlesFounded.length > 0">
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
-                    <input type="text" class="search form-control" onclick="this.select()" ng-model="search"
+                    <input type="text" class="search form-control border-select" onclick="this.select()" ng-model="search"
                            placeholder="Buscar artículo">
                 </div>
             </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 d-flex justify-content-end align-items-center">
+                Articulos Selecionados: <span class="text-info"> {{articlesSelected.length}}</span>    
+            </div>
         </div>
-        <div class="table-responsive" ng-show="articlesFounded.length > 0">
-            <table md-table md-row-select multiple ng-model="articlesSelected" md-progress="promise">
-                <caption>Articulos Selecionados: <span class="text-info">{{articlesSelected.length}}</span></caption>
+        <md-table-container style="max-height: 400px;" ng-show="articlesFounded.length > 0">
+            <table md-table md-row-select multiple ng-model="articlesSelected" md-progress="promise"> 
                 <thead md-head>
                     <tr md-row>
-                        <th md-column>Cód.</th>
+                        <th md-column>Código</th>
                         <th md-column>Descripcion</th>
-                        <th md-column>Cantidad</th>
+                        <th md-column>Cant.</th>
                         <th md-column>Medida</th>
                         <th md-column>Iva</th>
                         <th md-column>Stock</th>
@@ -130,7 +178,7 @@
                     </tr>
                 </tbody>
             </table>
-        </div>
+        </md-table-container>
 
     </div>
     <div class="modal-footer">

@@ -1,7 +1,9 @@
 export interface DocConfig {
+  idPuntoEmision?: number
   idConfiguracionDocumento: number
   idTipoDocumento: number
-  generacionNro: true,
+  estado: boolean,
   ultimaSecuencia: number
-  descripcion: string
+  descripcion: string,
+  infoAdicional : boolean
 }

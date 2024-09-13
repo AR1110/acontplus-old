@@ -1,20 +1,21 @@
-<app-breadcrumb>
-  <!-- appActionAdd -->
-  <button type="button" class="btn btn-info" appVehicleAddEdit (resultModalHandler)="resultModal($event)">
-    <fa-icon [icon]="'add'"></fa-icon> Nuevo
-  </button>
-</app-breadcrumb>
+<app-breadcrumb/>
 
 <div class="card">
   <div class="card-body">
 
     <div class="row">
+      <div class="col-md-2 col-12">
+        <button (resultModalHandler)="resultModal($event)" appVehicleAddEdit class="btn btn-info" type="button">
+          <fa-icon [icon]="'add'"></fa-icon>
+          Nuevo
+        </button>
+      </div>
       <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
         <div class="d-flex justify-content-start">
           <span class="form-group pull-left page-size form-inline">
-            <select class="form-select control-color" [(ngModel)]="pagination.pageSize" (change)="changePageSize()">
-              @for(item of pagination.pageSizeOptions; track $index){
-              <option [ngValue]="item">{{ item }}</option>
+            <select (change)="changePageSize()" [(ngModel)]="pagination.pageSize" class="form-select control-color">
+              @for (item of pagination.pageSizeOptions; track $index) {
+                <option [ngValue]="item">{{ item }}</option>
               }
             </select>
           </span>
@@ -23,77 +24,80 @@
       <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
         <div class="d-flex justify-content-end">
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Buscar vehiculo">
+            <input class="form-control" placeholder="Buscar vehiculo" type="text">
           </div>
         </div>
       </div>
     </div>
 
     <section class="section-container-table">
-      <table mat-table [dataSource]="dataSource">
+      <table [dataSource]="dataSource" mat-table>
 
         <!-- Position Column -->
         <ng-container matColumnDef="position">
-          <th mat-header-cell *matHeaderCellDef> No. </th>
-          <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+          <th *matHeaderCellDef mat-header-cell> No.</th>
+          <td *matCellDef="let element" mat-cell> {{ element.position }}</td>
         </ng-container>
 
         <!-- Name Column -->
         <ng-container matColumnDef="op">
-          <th mat-header-cell *matHeaderCellDef> Op. </th>
-          <td mat-cell *matCellDef="let element">
-            <button class="btn btn-outline-warning btn-sm" appVehicleAddEdit [params]="{id: element.id}"
-              (resultModalHandler)="resultModal($event)">
+          <th *matHeaderCellDef mat-header-cell> Op.</th>
+          <td *matCellDef="let element" mat-cell>
+            <button (resultModalHandler)="resultModal($event)" [params]="{id: element.id}" appVehicleAddEdit
+                    class="btn btn-outline-warning btn-sm">
               <fa-icon [icon]="'pencil'"></fa-icon>
             </button>
-            <button class="btn btn-outline-danger btn-sm" (click)="askToDelete(element.id)">
+            <button (click)="askToDelete(element.id)" class="btn btn-outline-danger btn-sm">
               <fa-icon [icon]="'trash'"></fa-icon>
             </button>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="tipoVehiculo">
-          <th mat-header-cell *matHeaderCellDef> T. Vehiculo </th>
-          <td mat-cell *matCellDef="let element"> {{element.vehicleType}} </td>
+          <th *matHeaderCellDef mat-header-cell> T. Vehiculo</th>
+          <td *matCellDef="let element" mat-cell> {{ element.vehicleType }}</td>
         </ng-container>
 
         <!-- Weight Column -->
         <ng-container matColumnDef="placa">
-          <th mat-header-cell *matHeaderCellDef> Placa </th>
-          <td mat-cell *matCellDef="let element"> {{element.licensePlate}} </td>
+          <th *matHeaderCellDef mat-header-cell> Placa</th>
+          <td *matCellDef="let element" mat-cell> {{ element.licensePlate }}</td>
         </ng-container>
 
         <ng-container matColumnDef="identificacion">
-          <th mat-header-cell *matHeaderCellDef> Identificación </th>
-          <td mat-cell *matCellDef="let element"> {{element.idCard}} </td>
+          <th *matHeaderCellDef mat-header-cell> Identificación</th>
+          <td *matCellDef="let element" mat-cell> {{ element.idCard }}</td>
         </ng-container>
 
         <!-- Symbol Column -->
         <ng-container matColumnDef="cliente-conductor">
-          <th mat-header-cell *matHeaderCellDef> Cliente/Conductor </th>
-          <td mat-cell *matCellDef="let element"> {{element.tradeName}} </td>
+          <th *matHeaderCellDef mat-header-cell> Cliente/Conductor</th>
+          <td *matCellDef="let element" mat-cell> {{ element.tradeName }}</td>
         </ng-container>
 
         <ng-container matColumnDef="estado">
-          <th mat-header-cell *matHeaderCellDef> Estado </th>
-          <td mat-cell *matCellDef="let element">
-            <mat-slide-toggle [(ngModel)]="element.enabled" (change)="putState(element.id, element.enabled)"></mat-slide-toggle>
+          <th *matHeaderCellDef mat-header-cell> Estado</th>
+          <td *matCellDef="let element" mat-cell>
+            <mat-slide-toggle (change)="putState(element.id, element.enabled)"
+                              [(ngModel)]="element.enabled"></mat-slide-toggle>
           </td>
         </ng-container>
 
-        <tr class="mat-row" *matNoDataRow>
+        <tr *matNoDataRow class="mat-row">
           <td class="mat-cell text-center" colspan="8">
             Sin registro
           </td>
         </tr>
 
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
       </table>
     </section>
 
-    <ngb-pagination [collectionSize]="pagination.totalRecords" [(page)]="pagination.pageIndex" [maxSize]="pagination.maxSize"
-      [pageSize]="pagination.pageSize" [rotate]="true" (pageChange)="pageChanged()" [boundaryLinks]="true" />
+    <ngb-pagination (pageChange)="pageChanged()" [(page)]="pagination.pageIndex"
+                    [boundaryLinks]="true"
+                    [collectionSize]="pagination.totalRecords" [maxSize]="pagination.maxSize" [pageSize]="pagination.pageSize"
+                    [rotate]="true"/>
   </div>
 </div>

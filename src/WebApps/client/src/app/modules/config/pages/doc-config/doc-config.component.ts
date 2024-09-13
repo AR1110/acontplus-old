@@ -9,8 +9,8 @@ import { isValidField } from "@core/utils/utils";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DocConfig } from "@modules/config/models/doc-config.model";
 import { DocConfigService } from "@modules/config/services/doc-config.service";
-
-
+import { ModalService } from "@core/services/modal.service";
+import { DocConfigInfoAdicionalComponent } from "./components/doc-config-info-adicional/doc-config-info-adicional.component";
 
 @Component({
   selector: 'app-doc-config-page',
@@ -24,7 +24,8 @@ import { DocConfigService } from "@modules/config/services/doc-config.service";
 })
 export class DocConfigPageComponent {
   private docConfigSvc = inject(DocConfigService);
-  private tS = inject(ToasterService)
+  private tS = inject(ToasterService);
+  private modalSvc = inject(ModalService);
 
   establecimientos: Array<GroupedEstab> = [];
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];
@@ -88,6 +89,7 @@ export class DocConfigPageComponent {
     }
   }
 
+
   saveConfig(item: DocConfig) {
     if (!(this.dataSearch.idPuntoEmision > 0)) {
       this.tS.toastr({
@@ -108,7 +110,7 @@ export class DocConfigPageComponent {
       idConfiguracionDocumento: item.idConfiguracionDocumento,
       idPuntoEmision: this.dataSearch.idPuntoEmision,
       idTipoDocumento: item.idTipoDocumento,
-      generacionNro: item.generacionNro,
+      estado: item.estado,
       ultimaSecuencia: item.ultimaSecuencia
     };
 
@@ -133,13 +135,29 @@ export class DocConfigPageComponent {
         }
       },
       error(err) {
-          hideLoader();
-          console.log(err)
+        hideLoader();
+        console.log(err)
       },
     })
   };
 
+  openModalInfoAdicional(data: DocConfig) {
+    let modalRef = this.modalSvc.open(DocConfigInfoAdicionalComponent, {
+       size: 'lg' ,
+      })
 
+      let params = {
+        ...structuredClone(data),
+          idPuntoEmision:  this.dataSearch.idPuntoEmision
+      }
+      modalRef.componentInstance.params = structuredClone(params)
+
+    modalRef.result.then(result => {
+      if (result && typeof result === 'object') {
+        this.getDocs()
+      }
+    })
+  }
 
 
 }

@@ -205,18 +205,25 @@ export class SharedService {
 
   getEstabAsign() {
     return this.http
-      .get('Config/EstabAsig/?json=' + JSON.stringify({ tipo: 1 }))
+      .get<any>('Config/EstabAsig/?json=' + JSON.stringify({ tipo: 1 }))
       .pipe(
         map((response) => {
-          let estabs = (response as []) || [];
-          let results = estabs.map((estab: any) => {
-            return {
-              idEstablecimiento: estab.idEstablecimiento,
-              codEstab: estab.codEstab,
-              nombreComercial: estab.nombreComercial,
-              predeterminado: estab.predeterminado,
-            };
-          });
+          let estabs: any[] = [];
+          let results: any[] = [];
+          if (isApiResponse(response)) {
+            if (response.code === '1') {
+              estabs = JSON.parse(response.payload as string);
+              results = estabs.map((estab: any) => {
+                return {
+                  idEstablecimiento: estab.idEstablecimiento,
+                  codEstab: estab.codEstab,
+                  nombreComercial: estab.nombreComercial,
+                  predeterminado: estab.predeterminado,
+                  estab: estab.estab,
+                };
+              });
+            }
+          }
           return results;
         }),
       );

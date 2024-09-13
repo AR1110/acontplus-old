@@ -14,59 +14,81 @@ CREATE OR ALTER PROCEDURE Config.DocConfig_Get @userRoleId INT, @json VARCHAR(MA
 AS
 BEGIN 
 	SET NOCOUNT ON;
+
+    --> Variables global 
 	DECLARE @tipo INT 
-	DECLARE @idPuntoEmision INT 
 
-	SELECT 
-		@tipo = tipo
-		,@idPuntoEmision = idPuntoEmision
-	FROM OPENJSON(@json)
-	WITH(
-		tipo INT
-		,idPuntoEmision INT 
-	)
+    --> Gestion General
+	SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT)
 
+    --> Get
 	IF @tipo = 1
 		BEGIN 
+            
+            DECLARE @idPuntoEmision INT 
 
-             SET @tableNames = 'docs'
-			SELECT 
-				 idConfiguracionDocumento = ISNULL(cd.idConfiguracionDocumento,0)
-				,idTipoDocumento = ISNULL(td.idTipoDocumento, 0)
-				,generacionNro = ISNULL(cd.generacionNro,0)
-				,ultimaSecuencia = ISNULL(cd.ultimaSecuencia,0)
-				,descripcion = ISNULL(td.descripcion, '')
-			FROM  TipoDocumento td
-			LEFT JOIN dbo.ConfiguracionDocumento cd ON td.idTipoDocumento = cd.idTipoDocumento
+            SELECT @idPuntoEmision = idPuntoEmision FROM OPENJSON(@json) WITH(idPuntoEmision INT)
+
+            SET @tableNames = 'docs'
+
+			SELECT idConfiguracionDocumento = ISNULL(cd.idConfiguracionDocumento,0)
+				  ,idTipoDocumento = ISNULL(td.idTipoDocumento, 0)
+				  ,ultimaSecuencia = ISNULL(cd.ultimaSecuencia,0)
+				  ,descripcion = ISNULL(td.descripcion, '')
+                  ,td.estado
+                  ,td.infoAdicional
+			FROM dbo.ConfiguracionDocumento cd WITH (NOLOCK)
+			INNER JOIN TipoDocumento        td WITH (NOLOCK) ON td.idTipoDocumento = cd.idTipoDocumento
 			WHERE cd.idPuntoEmision = @idPuntoEmision
 
 			UNION ALL 
 
-			SELECT 
-				  0
-				 ,idTipoDocumento
-				 ,CAST(0 AS bit)
-				 ,0
-				 ,descripcion
+			SELECT 0
+				  ,idTipoDocumento
+				  ,0
+				  ,descripcion
+                  ,CAST(0 as bit) as estado
+                  ,infoAdicional
 			FROM TipoDocumento 
-			WHERE secuencial = 1 AND idTipoDocumento NOT IN  (SELECT idTipoDocumento FROM ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision)
-			RETURN 
+			WHERE secuencial = 1
+              AND idTipoDocumento NOT IN  (SELECT idTipoDocumento FROM ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision)
+			
+            RETURN 
 		END 
 
+    --> DataForm
 	IF @tipo = 2
 		BEGIN
+            
             SET @tableNames = 'estabs,tiposDoc'
-			 SELECT idEstablecimiento
-                      ,nombreComercial
-                      ,codEstab
-                      ,idPuntoEmision
-                      ,estab + '-' + ptoEmi as ptoEmi
-                      ,defaultEstab
-                      ,defaultPtoEmi 
-             FROM v_PtoEmi_Asign WITH(NOLOCK) 
-			 WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+
+			SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,estab + '-' + ptoEmi as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK) 
+			WHERE idUsuarioRol = @userRoleId 
+            ORDER BY defaultEstab DESC
 
 	        SELECT * FROM Acontplus.dbo.TipoDocumento WITH(NOLOCK) WHERE estado = 1 AND secuencial = 1	
+
+            RETURN 
 		END 
 	
+    --> Get InfoAdicional
+    IF @tipo = 3
+        BEGIN   
+            SET @tableNames = 'infoAdicional'
+
+            DECLARE @id INT
+
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+            SELECT infoAdicional FROM dbo.ConfiguracionDocumento WITH (NOLOCK) WHERE idConfiguracionDocumento = @id
+
+            RETURN 
+        END 
 END

@@ -77,8 +77,8 @@ BEGIN
 
 	DECLARE @tbPrices AS TABLE (
 		idArticuloPvP INT UNIQUE NOT NULL
-	   ,precioVenta NUMERIC(18,5) NOT NULL  
-	   ,precioConIva NUMERIC(18,5) NOT NULL 
+	   ,precioVenta NUMERIC(18,6) NOT NULL  
+	   ,precioConIva NUMERIC(18,6) NOT NULL 
 	   ,porcentajeUtilidad NUMERIC(18,5) NOT NULL 
 	   ,precioPredeterminado BIT NOT NULL
 	)
@@ -192,8 +192,8 @@ BEGIN
 					   SELECT idArticuloPvP,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado
 					   FROM OPENJSON(@jsonPvp) 
 					   WITH (idArticuloPvP                INT '$.idArticuloPvP'
-							,precioVenta        NUMERIC(20,5) '$.precioVenta'
-							,precioConIva       NUMERIC(20,5) '$.precioConIva' 
+							,precioVenta        NUMERIC(20,6) '$.precioVenta'
+							,precioConIva       NUMERIC(20,6) '$.precioConIva' 
 							,porcentajeUtilidad NUMERIC(20,5) '$.porcentajeUtilidad'
 							,precioPredeterminado         BIT '$.precioPredeterminado') as dt 
 		
@@ -283,7 +283,7 @@ BEGIN
 					END
 			END 
 
-		IF @llevaInventario=1 AND @inventory='NO'
+		IF @llevaInventario = 1 AND @inventory = 'NO'
 			BEGIN
 				SELECT '0'code,'No se ha establecido una configuración de control de inventario en la sección general de la configuración esto indica que no es posible establecer que este artículo requiere llevar un registro de inventario.' as 'message'
 				RETURN;
@@ -291,36 +291,38 @@ BEGIN
 
 		BEGIN TRAN 
 				UPDATE ar SET 
-					 ar.descripcion             = arj.descripcion
-					,ar.idSubFamilia            = arj.idSubFamilia  
-					,ar.codigo                  = arj.codigo
-					,ar.codigoBarra             = arj.codigoBarra
-					,ar.codigoAuxiliar          = arj.codigoAuxiliar
-					,ar.idTipoArticulo          = arj.idTipoArticulo
-					,ar.datosAdicionales        = arj.datosAdicionales
-					,ar.llevaInventario         = arj.llevaInventario
-					,ar.productoFraccionable    = arj.productoFraccionable
-					,ar.idMarca                 = arj.idMarca 
-					,ar.idModelo                = arj.idModelo  
-					,ar.idTipoIce               = arj.idTipoIce
-					,ar.idTipoIva               = arj.idTipoIva
-					,ar.idMedida                = arj.idMedida
-					,ar.valorIce                = arj.valorIce
-					,ar.stockMinimo             = arj.stockMinimo
-					,ar.stockMaximo             = arj.stockMaximo
-					,ar.Observaciones           = arj.observaciones
-					,ar.caducidad               = arj.caducidad
-					,ar.fechaCaducidad          = arj.fechaCaducidad
-					,ar.datosLote               = arj.datosLote
-					,ar.lote                    = arj.lote
-					,ar.fechaCreacion           = arj.fechaCreacion
-					,ar.fechaCaducidadLote      = arj.fechaCaducidadLote
-					,ar.estado                  = arj.estado
-					,ar.fechaBaja               = CASE WHEN arj.estado = 0 THEN GETDATE() ELSE NULL END  
-					,ar.precioCosto             = arj.precioCosto	
-					,ar.precioSinSubsidio       = arj.precioSinSubsidio
-					,ar.idEtiqueta              = arj.idEtiqueta
-					,ar.cantMinimaVentaPorMayor = arj.cantMinimaVentaPorMayor
+					   ar.descripcion             = arj.descripcion
+					  ,ar.idSubFamilia            = arj.idSubFamilia  
+					  ,ar.codigo                  = arj.codigo
+					  ,ar.codigoBarra             = arj.codigoBarra
+					  ,ar.codigoAuxiliar          = arj.codigoAuxiliar
+					  ,ar.idTipoArticulo          = arj.idTipoArticulo
+					  ,ar.datosAdicionales        = arj.datosAdicionales
+					  ,ar.llevaInventario         = arj.llevaInventario
+					  ,ar.productoFraccionable    = arj.productoFraccionable
+					  ,ar.idMarca                 = arj.idMarca 
+					  ,ar.idModelo                = arj.idModelo  
+					  ,ar.idTipoIce               = arj.idTipoIce
+					  ,ar.idTipoIva               = arj.idTipoIva
+					  ,ar.idMedida                = arj.idMedida
+					  ,ar.valorIce                = arj.valorIce
+					  ,ar.stockMinimo             = arj.stockMinimo
+					  ,ar.stockMaximo             = arj.stockMaximo
+					  ,ar.Observaciones           = arj.observaciones
+					  ,ar.caducidad               = arj.caducidad
+					  ,ar.fechaCaducidad          = arj.fechaCaducidad
+					  ,ar.datosLote               = arj.datosLote
+					  ,ar.lote                    = arj.lote
+					  ,ar.fechaCreacion           = arj.fechaCreacion
+					  ,ar.fechaCaducidadLote      = arj.fechaCaducidadLote
+					  ,ar.estado                  = arj.estado
+					  ,ar.fechaBaja               = CASE WHEN arj.estado = 0 THEN GETDATE() ELSE NULL END  
+					  ,ar.precioCosto             = arj.precioCosto	
+					  ,ar.precioSinSubsidio       = arj.precioSinSubsidio
+					  ,ar.idEtiqueta              = arj.idEtiqueta
+					  ,ar.cantMinimaVentaPorMayor = arj.cantMinimaVentaPorMayor
+                      ,ar.UpdateAt                = GETDATE()
+                      ,ar.UserUpdateId            = @idUsuario
 				FROM Articulo ar WITH (NOLOCK) JOIN @tbArticle arj ON ar.idArticulo = @id
 					
 				UPDATE arpvp SET 
@@ -348,11 +350,6 @@ BEGIN
 						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = bo.codEstab 
 						WHERE es.idEntidad = @idEntidad AND bo.idBodega NOT IN (SELECT sb.idBodega FROM Inventario.Stock sb WITH (NOLOCK) WHERE sb.idArticulo = @id)
 					END
-					
-
-				SELECT @ultimoSecuencial = COUNT(*)+1 FROM dbo.Articulo WITH (NOLOCK) WHERE idSubFamilia = @idSubFamilia
-
-			    UPDATE dbo.SubFamilia SET ultimoSecuencial = @ultimoSecuencial WHERE idSubFamilia = @idSubFamilia
 
                 ----- GET CODE SubFamilia and Familia - by Ignacio -----
                 SELECT @siglaFamilia = f.siglas
@@ -365,9 +362,9 @@ BEGIN
                         IF NOT EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @id)
                             BEGIN 
                                 INSERT INTO Restaurant.Item
-					            (ProductId, ProductionAreaId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
+					            (ProductId, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
 					            ,Enabled, Deleted, UserId)
-					            VALUES(@id, NULL, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
+					            VALUES(@id, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
                             END
                         ELSE
                             BEGIN

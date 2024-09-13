@@ -65,7 +65,10 @@
       "UpstreamHttpMethod": [
         "Post"
       ],
-      "UpstreamPathTemplate": "/gateway/Reports{everything}"
+      "UpstreamPathTemplate": "/gateway/Reports{everything}",
+      "DelegatingHandlers": [
+        "ReportHeaderDelegatingHandler"
+      ]
     },
     {
       "DownstreamHostAndPorts": [

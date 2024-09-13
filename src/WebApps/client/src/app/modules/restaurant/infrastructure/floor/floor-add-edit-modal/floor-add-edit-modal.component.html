@@ -1,0 +1,83 @@
+<form (ngSubmit)="onSave()" [formGroup]="floorForm">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <fa-icon [icon]="modalIcon"></fa-icon>
+      {{ modalTitle }}
+    </h5>
+    <button (click)="onModalClose()" class="btn-close" type="button"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="establecimientoId">Establecimiento: </label>
+          <select class="form-select border-select" formControlName="establecimientoId" id="establecimientoId">
+            <option>Seleccione un establecimiento</option>
+            @for (item of establecimientos; track $index) {
+              <option [value]="item.idEstablecimiento">
+                {{ item.nombreComercial }}
+              </option>
+            }
+
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+
+      <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+        <div class="form-group">
+          <label for="description">Descripción:</label>
+          <input (keyup)="setCode()" class="form-control border-select" formControlName="description" id="description"
+                 placeholder="Primer Piso" required type="text">
+        </div>
+      </div>
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+        <div class="form-group">
+          <label for="code">Código:</label>
+          <input class="form-control border-select" formControlName="code" id="code" required type="text">
+        </div>
+      </div>
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+        <div class="form-group">
+          <label for="capacity">Capacidad: <small>(Salas)</small></label>
+          <input class="form-control border-select" formControlName="capacity" id="capacity" min="1" required
+                 type="number">
+        </div>
+      </div>
+    </div>
+    @if (data.id > 0) {
+      <div class="row mb-3">
+        <div class="col">
+          <mat-slide-toggle formControlName="enabled">
+            Activo
+          </mat-slide-toggle>
+        </div>
+      </div>
+    }
+
+    <div class="row">
+      <div class="col-md-4">
+        <button (click)="addRoom()" mat-raised-button type="button">
+          <fa-icon [icon]="'plus'"></fa-icon>
+          Añadir Sala
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <app-tabulator-semantic-ui [columnNames]="roomColumns" [options]="{reactiveData: true}"
+                                   [tableData]="rooms"></app-tabulator-semantic-ui>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button [disabled]="floorForm.invalid" class="btn btn-outline-success" type="submit">
+      <fa-icon [icon]="'save'"></fa-icon>
+      Guardar
+    </button>
+    <button (click)="onModalClose()" class="btn btn-outline-dark" type="button">
+      &times; Cancelar
+    </button>
+  </div>
+</form>

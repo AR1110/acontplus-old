@@ -53,6 +53,8 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.save = save;
 
 
+    modalCobroSvc.clearData();
+
 
     function resetData() {
         $scope.cobro.valorAbono = $scope.comprobante.saldo;
@@ -190,16 +192,16 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
 
         if ($scope.cobro.valorAbono >= $scope.comprobante.saldo) {
             valorCambio = $scope.cobro.valorAbono - $scope.comprobante.saldo;
-            $scope.cobro.valorCambio = fS.roundNumber(valorCambio, NUM_MAX_ROUND);
-            $scope.cobro.abono = fS.roundNumber($scope.comprobante.saldo, NUM_MAX_ROUND);
+            $scope.cobro.valorCambio = fS.roundNumber(valorCambio, fS.max_dos);
+            $scope.cobro.abono = fS.roundNumber($scope.comprobante.saldo, fS.max_dos);
             $scope.cobro.valorSaldo = 0;
         } else {
             $scope.cobro.valorSaldo = $scope.comprobante.saldo;
 
             saldo = $scope.cobro.valorSaldo - $scope.cobro.valorAbono;
             $scope.cobro.valorCambio = 0;
-            $scope.cobro.valorSaldo = fS.roundNumber(saldo, NUM_MAX_ROUND);
-            $scope.cobro.abono = fS.roundNumber($scope.cobro.valorAbono, NUM_MAX_ROUND)
+            $scope.cobro.valorSaldo = fS.roundNumber(saldo, fS.max_dos);
+            $scope.cobro.abono = fS.roundNumber($scope.cobro.valorAbono, fS.max_dos)
         }
     }
 
@@ -252,19 +254,18 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                         abono: $scope.cobro.abono,
                         controlCaja: $scope.subEntidadesFinancieras.find(item => item.idSubEntidadFinanciera === $scope.cobro.idSubEntidadFinanciera).controlCaja,
                         observacion: $scope.cobro.observacion
-                    }]
+                    }];
+
+                    modalCobroSvc.clearData();
  
-                    modalCobroSvc.setValorAbono($scope.cobro.valorAbono);
-
+                    
                     for (let item of $scope.selectedDocumentos) {
-                        item.cuotas = JSON.parse(JSON.stringify(item.cuotasCalculadasClone))
+                        item.cuotasCalculadas = structuredClone(item.cuotasCalculadasClone);
                     }
-
-                    modalCobroSvc.setCobrosDetalle([]);
-                    modalCobroSvc.setHistorialCuentas([]);
+                    modalCobroSvc.setValorAbono($scope.cobro.valorAbono); 
                     modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
                     modalCobroSvc.setEsAbonoPosfechado($scope.cobro.posFechado);
-                    modalCobroSvc.setUniqueIndex(1) 
+                    modalCobroSvc.setUniqueIndex(0) 
 
                     //--------agregando abono ---
                     modalCobroSvc.aplicarAbono();
@@ -296,7 +297,7 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                         cuotasPorCobrarEstado
                     }
 
-                    const params = comprobanteIngresoSvc.mapperTo(data);
+                    const params = comprobanteIngresoSvc.mapperTo(data);  
 
                     showLoader(); 
                     comprobanteIngresoSvc.post(params).then(response => {

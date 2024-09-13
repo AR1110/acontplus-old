@@ -1,43 +1,25 @@
-﻿using Common.Core.Interfaces;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Restaurant.API.Interfaces;
 
-namespace Restaurant.API.Services
+namespace Restaurant.API.Services;
+
+public class MenuItemService(IAdoRepository repository) : IMenuItemService
 {
-    public class MenuItemService : IMenuItemService
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        private readonly IAdoRepository _repository;
+        var ds = await repository.GetDataSetAsync("Restaurant.MenuItem_Get", parameters);
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new ApiResponse { Code = "0", Message = "Can't get data" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+    }
 
-        public MenuItemService(IAdoRepository repository)
-        {
-            _repository = repository;
-        }
-
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync("Restaurant.MenuItem_Get", parameters);
-            if (ds == null)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJson(ds);
-            }
-        }
-
-        public async Task<object> GetIdAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync("Restaurant.MenuItem_Get_Id", parameters);
-            if (ds == null)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJson(ds);
-            }
-        }
+    public async Task<ApiResponse> GetIdAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await repository.GetDataSetAsync("Restaurant.MenuItem_Get_Id", parameters);
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new ApiResponse { Code = "0", Message = "Can't get data" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

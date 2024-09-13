@@ -1,21 +1,15 @@
 <div class="row page-titles">
   <div class="col-md-5 align-self-center">
-    <h4 class="text-themecolor">{{childData.breadcrumb}}</h4>
+    <h4 class="text-themecolor">{{ childData.breadcrumb }}</h4>
   </div>
   <div class="col-md-7 align-self-center text-end">
     <div class="d-flex justify-content-end align-items-center">
-      @if(parentData.breadcrumb){
+      @if (parentData.breadcrumb) {
         <ol class="breadcrumb justify-content-end">
-          <li class="breadcrumb-item"><a href="javascript:void(0)">{{parentData.breadcrumb}}</a></li>
-          <li class="breadcrumb-item active">{{childData.breadcrumb}}</li>
+          <li class="breadcrumb-item"><a href="javascript:void(0)">{{ parentData.breadcrumb }}</a></li>
+          <li class="breadcrumb-item active">{{ childData.breadcrumb }}</li>
         </ol>
       }
-
-        <!-- <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" (click)="onClick()">
-          <fa-icon [icon]="'plus'"></fa-icon>
-          {{childData.buttonAction}}</button> -->
-          <ng-content></ng-content>
-      
     </div>
   </div>
 </div>

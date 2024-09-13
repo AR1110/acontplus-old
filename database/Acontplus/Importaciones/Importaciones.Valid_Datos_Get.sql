@@ -313,10 +313,83 @@ BEGIN
 									)
 				END
 
+            IF @codImportacion = 'EX'
+                BEGIN
+                    DECLARE @product VARCHAR(MAX)
+
+                    DECLARE @tbDetail TABLE(
+                        codigo VARCHAR(50) UNIQUE NOT NULL
+                       ,cantidad NUMERIC(18,5) NOT NULL
+                    )
+
+                    SELECT @product = product FROM OPENJSON(@json) WITH (product NVARCHAR(MAX) AS JSON)
+
+                    INSERT INTO @tbDetail
+                          (codigo,cantidad)
+                    SELECT codigo,cantidad FROM OPENJSON(@product) WITH (codigo VARCHAR(50),cantidad NUMERIC(18,5))
+
+                    SET @payload = ( SELECT articulos = (
+
+                                                            SELECT a.idArticulo
+				                                                  ,a.codigo
+				                                                  ,a.codigoAuxiliar
+				                                                  ,a.codigoBarra
+				                                                  ,a.descripcion
+				                                                  ,a.precioCosto
+				                                                  ,a.estado
+				                                                  ,llevaInventario
+				                                                  ,ISNULL(a.medida, 'SIN MEDIDA') as medida
+				                                                  ,ISNULL(tipoIva, 'SIN IVA')     as nombreTipoIva
+                                                                  ,ISNULL(idMedida,0) idMedida
+				                                                  ,ISNULL
+                                                                   ((
+                                                                        SELECT me.idMedida
+                                                                              ,me.descripcion            as medida
+                                                                              ,ar.precioCosto
+                                                                              ,af.precioCostoFraccionado as precioUnitario
+                                                                              ,af.precioCostoFraccionado as precioCostoFraccionado
+                                                                              ,af.conversion
+                                                                        FROM ArticuloFraccionado af WITH (NOLOCK) 
+                                                                        INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+                                                                        INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
+                                                                        WHERE af.idArticulo = a.idArticulo 
+                                                                        FOR JSON PATH
+
+                                                                   ),'[]') as fraccionado 
+
+                                                                  ,ISNULL
+                                                                   ((
+                                                                        SELECT me.idMedida 
+                                                                              ,me.descripcion  as medida
+                                                                              ,ar.precioCosto 
+                                                                              ,ar.precioCosto  as precioUnitario
+                                                                              ,ar.precioCosto  as precioCostoFraccionado
+                                                                              ,1               as conversion
+                                                                        FROM Articulo     ar WITH (NOLOCK) 
+                                                                        INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida 
+                                                                        WHERE ar.idArticulo = a.idArticulo 
+                                                                        FOR JSON PATH
+
+                                                                    ),'[]') as principal 
+                                                                   ,td.cantidad as stock
+                                                                   ,td.cantidad 
+                                                            FROM @tbDetail td 
+                                                            LEFT JOIN Inventario.v_Articulo a WITH (NOLOCK) ON a.codigo = td.codigo
+                                                            WHERE a.idEntidad = @idEntidad
+                                                              AND a.estado = 1
+                                                              AND a.llevaInventario = 1
+                                                            FOR JSON PATH
+                                                        ) 
+                                       ,noVinculados =  (
+                                                            SELECT * FROM @tbDetail WHERE codigo NOT IN (SELECT codigo FROM Articulo WHERE idEntidad = @idEntidad AND estado = 1 AND llevaInventario = 1)  FOR JSON PATH
+                                                        )
+                                  
+                                        FOR JSON PATH
+                                  )
+                END
+
 		COMMIT TRAN 
 		SELECT '1'code, @payload as payload
-		RETURN
-
 	END TRY 
 
 	BEGIN CATCH 

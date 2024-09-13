@@ -1,16 +1,17 @@
-<app-breadcrumb>
-  <button
-    (click)="onModalOpen()"
-    class="btn btn-info d-block d-lg-inline-block m-l-15"
-    type="button"
-  >
-    <fa-icon [icon]="'plus-circle'"></fa-icon>
-    Nueva
-  </button>
-</app-breadcrumb>
+<app-breadcrumb/>
 <div class="card">
   <div class="card-body">
     <div class="row">
+      <div class="col-md-2 col-12">
+        <button
+          (click)="onModalOpen()"
+          class="btn btn-info d-block d-lg-inline-block m-l-15"
+          type="button"
+        >
+          <fa-icon [icon]="'plus-circle'"></fa-icon>
+          Nueva
+        </button>
+      </div>
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
         <input
           #input

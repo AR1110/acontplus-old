@@ -23,10 +23,7 @@ BEGIN
 	DECLARE @params nvarchar(MAX) ,@sql nvarchar(MAX) ,@pageIndex INT ,@pageSize INT
 
     --> Filters
-	DECLARE @idCaja INT ,@statusMovement BIT ,@checkBoxDate BIT ,@dateStart DATETIME2 ,@dateEnd DATETIME2
-
-    --> Permision 
-    DECLARE @verOtrasCajas BIT
+	DECLARE @idCaja INT ,@statusMovement BIT ,@checkBoxDate BIT ,@dateStart DATETIME2 ,@dateEnd DATETIME2 ,@idEstablecimiento INT
 
     --> Recuperando Variables
     SELECT TOP 1 @idEntidad  = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -38,8 +35,6 @@ BEGIN
         BEGIN 
             
             SET @tableNames = 'movimientos'
-
-            SELECT @verOtrasCajas = (SELECT TOP 1 verOtrasCajas FROM Config.v_User_Permission_CashAccounting WHERE idUsuarioRol = @userRoleId)
 
             SELECT @idCaja         = idCaja 
 	              ,@dateStart      = dateStart
@@ -67,9 +62,9 @@ BEGIN
  					           ,ISNULL(cc.totalArqueo,0)                       as totalArqueo
 					           ,cc.estado
                                ,ISNULL(e.email, null)                          as receptor
-                               ,COUNT(*) OVER()                             as totalRecords
-				         FROM ControlCaja cc WITH (NOLOCK)  
-                         INNER JOIN dbo.Caja c WITH (NOLOCK)       ON c.idCaja = cc.idCaja
+                               ,COUNT(*) OVER()                                as totalRecords
+				         FROM ControlCaja      cc WITH (NOLOCK)  
+                         INNER JOIN dbo.Caja    c WITH (NOLOCK) ON c.idCaja    = cc.idCaja
                          INNER JOIN dbo.Entidad e WITH (NOLOCK) ON e.idEntidad = c.idEntidad 
 				         WHERE cc.idCaja = @idCaja '
 
@@ -85,15 +80,14 @@ BEGIN
 				    SET @sql = @sql + 'AND CAST(fechaApertura AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
 			    END 
 
-            IF @checkBoxDate = 0 
-                BEGIN
-                    SET @sql = @sql + 'AND idControlCaja IN (SELECT MAX(idControlCaja) FROM dbo.ControlCaja mc WITH (NOLOCK) WHERE estado = 1 AND idCaja = @idCaja) '
-                END 
-
 		    IF @statusMovement IN (0,1)
 			    BEGIN
 				    SET @sql = @sql + 'AND cc.estado = @statusMovement '
 			    END 
+            ELSE 
+                BEGIN
+                    SET @sql = @sql + 'AND idControlCaja IN (SELECT MAX(idControlCaja) FROM dbo.ControlCaja mc WITH (NOLOCK) WHERE estado = 1 AND idCaja = @idCaja) '
+                END 
 
 		    SET @sql = @sql + 'ORDER BY cc.idControlCaja DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
@@ -145,6 +139,150 @@ BEGIN
             SELECT idUsuario, nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
 
             SELECT idEstadoPago, codigo as codEstado, descripcion FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('NCBR')
+
+            RETURN 
+        END 
+
+    ---Filters
+	IF @tipo = 6
+        BEGIN 
+            
+            SET @tableNames = 'establecimiento'
+
+            SELECT es.idEstablecimiento,es.codEstab,es.nombreComercial,ea.predeterminado
+            FROM Config.Estab_Asig         ea WITH (NOLOCK) 
+            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = ea.codEstab
+            WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC			
+
+            RETURN
+        END
+
+    --> Cheques 
+    IF @tipo = 7
+        BEGIN
+            
+            SET @tableNames = 'cheques'
+
+            DECLARE @byPosfechado BIT
+
+            SELECT @idEstablecimiento = idEstablecimiento
+                  ,@dateStart         = dateStart
+	              ,@dateEnd           = dateEnd
+	              ,@checkBoxDate      = checkBoxDate
+                  ,@byPosfechado      = byPosfechado
+                  ,@pageSize          = pageSize
+				  ,@pageIndex         = pageIndex
+	        FROM OPENJSON(@json) WITH 
+            (
+                 idEstablecimiento INT
+                ,checkBoxDate      BIT 
+                ,dateStart         DATETIME2 
+                ,dateEnd           DATETIME2
+                ,pageSize          INT
+                ,pageIndex         INT
+                ,byPosfechado      BIT
+	        )
+
+            SET @params  = '@idEntidad    INT
+                           ,@dateStart    DATETIME2
+				           ,@dateEnd      DATETIME2
+                           ,@pageSize     INT
+                           ,@pageIndex    INT
+                           ,@byPosfechado BIT'
+
+            SET @sql = 'SELECT *,COUNT(*) OVER() as totalRecords
+                                     FROM (
+
+                                            SELECT co.idCobro                                                                                      as id
+		                                          ,co.idComprobanteIngreso                                                                         as idComprobante
+                                                  ,es.idEstablecimiento
+                                                  ,''CI''                                                                                          as codDoc
+		                                          ,''CI'' + ''-'' + es.estab + ''-'' + RIGHT(''000000000'' + CONVERT(VARCHAR, ci.nroDocumento), 9) as nroDocumento
+		                                          ,cu.BusinessName                                                                                 as persona
+		                                          ,cu.IDCard                                                                                       as nroIdentificacion
+		                                          ,co.valor
+		                                          ,JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),''$.nro'')                                         as nro
+		                                          ,FORMAT(co.fechaEmision, ''dd/MM/yyyy HH:mm'')                                                   as fechaEmision
+		                                          ,co.posfechado                                                                           
+		                                          ,co.cobro
+	                                        FROM dbo.Cobro                    co WITH (NOLOCK)
+	                                        INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
+	                                        INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = co.idEntidadFinanciera
+                                            INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                   = ci.CustomerId
+                                            INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento    = ci.idEstablecimiento
+	                                        WHERE ef.codigo = ''CHE''
+                                              AND ci.estado = 1
+                                              AND ci.idEntidad = @idEntidad
+
+                                            UNION ALL
+
+                                            SELECT pa.idPago                                                                                       as id
+		                                          ,pa.idComprobanteEgreso                                                                          as idComprobante
+                                                  ,es.idEstablecimiento
+                                                  ,''CE''                                                                                          as codDoc
+		                                          ,''CE'' + ''-'' + es.estab + ''-'' + RIGHT(''000000000'' + CONVERT(VARCHAR, ce.nroDocumento), 9) as nroDocumento
+		                                          ,cu.BusinessName                                                                                 as persona
+		                                          ,cu.IDCard                                                                                       as nroIdentificacion
+		                                          ,pa.valor
+		                                          ,pa.nro                                 
+		                                          ,FORMAT(pa.fechaEmision, ''dd/MM/yyyy HH:mm'')                                                   as fechaEmision
+		                                          ,pa.posfechado                                                                           
+		                                          ,pa.cobro 
+                                            FROM dbo.Pago pa WITH (NOLOCK)
+                                            INNER JOIN dbo.ComprobanteEgreso ce WITH (NOLOCK) ON ce.idComprobanteEgreso = pa.idComprobanteEgreso
+                                            INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = pa.idEntidadFinanciera
+                                            INNER JOIN Customer.Customer     cu WITH (NOLOCK) ON cu.Id                  = ce.CustomerId
+                                            INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento   = ce.idEstablecimiento
+                                            WHERE ef.codigo = ''CHE''
+                                              AND ce.estado = 1
+                                              AND ce.idEntidad = @idEntidad
+ 
+                                      ) as dt 
+                                 
+                                 WHERE dt.id > 0  '
+
+
+            IF @checkBoxDate = 1
+			    BEGIN
+				    SET @sql = @sql + 'AND CAST(fechaEmision AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
+			    END 
+
+            IF @byPosfechado IN (1,0)
+                BEGIN
+                    SET @sql = @sql + 'AND posfechado = @byPosfechado '
+                END
+            
+            SET @sql = @sql + 'ORDER BY dt.fechaEmision DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
+
+            EXEC SP_EXECUTESQL @sql,@params
+								   ,@dateStart    = @dateStart
+								   ,@dateEnd      = @dateEnd
+                                   ,@pageIndex    = @pageIndex
+                                   ,@pageSize     = @pageSize
+                                   ,@idEntidad    = @idEntidad
+                                   ,@byPosfechado = @byPosfechado
+
+            RETURN 
+        END 
+
+    --> ArqueoCaja
+    IF @tipo = 8 
+        BEGIN
+            
+            DECLARE @id INT
+
+            SET @tableNames = 'arqueoCajaDetalle'
+
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+            SELECT mo.descripcion  
+                  ,JSON_VALUE(dt.[value],'$.cantidad')                                   as cantidad
+                  ,mo.valor
+                  ,CAST(JSON_VALUE(dt.[value],'$.cantidad') * mo.valor as numeric(18,2)) as total
+            FROM dbo.ControlCaja                cc WITH (NOLOCK)
+            CROSS APPLY OPENJSON(cc.arqueoCaja) dt
+            INNER JOIN dbo.Moneda               mo WITH (NOLOCK) ON mo.idMoneda = JSON_VALUE(dt.[value],'$.idMoneda')
+            WHERE cc.idControlCaja = @id
 
             RETURN 
         END 

@@ -85,8 +85,8 @@ BEGIN
 
 	DECLARE @tbPrices AS TABLE (
 		idTarifa INT UNIQUE NOT NULL
-	   ,precioVenta NUMERIC(18,5) NOT NULL  
-	   ,precioConIva NUMERIC(18,5) NOT NULL 
+	   ,precioVenta NUMERIC(18,6) NOT NULL  
+	   ,precioConIva NUMERIC(18,6) NOT NULL 
 	   ,porcentajeUtilidad NUMERIC(18,5) NOT NULL 
 	   ,precioPredeterminado BIT NOT NULL
 	)
@@ -192,8 +192,8 @@ BEGIN
 					    FROM OPENJSON(@jsonPvp) 
 					    WITH (idArticuloPvP                INT '$.idArticuloPvP'
 							 ,idTarifa                     INT '$.idTarifa' 
-							 ,precioVenta        NUMERIC(20,5) '$.precioVenta'
-							 ,precioConIva       NUMERIC(20,5) '$.precioConIva' 
+							 ,precioVenta        NUMERIC(20,6) '$.precioVenta'
+							 ,precioConIva       NUMERIC(20,6) '$.precioConIva' 
 							 ,porcentajeUtilidad NUMERIC(20,5) '$.porcentajeUtilidad'
 							 ,precioPredeterminado         BIT '$.precioPredeterminado') as dt 
 
@@ -326,9 +326,9 @@ BEGIN
 			IF(@siglaFamilia IN ('RES', 'POR'))
 				BEGIN
 					INSERT INTO Restaurant.Item
-					(ProductId, ProductionAreaId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
+					(ProductId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
 					,[Enabled], Deleted, UserId)
-					VALUES(@idArticulo, NULL, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
+					VALUES(@idArticulo, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
 				END
 
 			IF(@siglaFamilia = 'ING')

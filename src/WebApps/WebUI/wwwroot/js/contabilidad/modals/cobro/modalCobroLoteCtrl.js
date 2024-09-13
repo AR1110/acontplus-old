@@ -44,7 +44,9 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.showInfoCobro = showInfoCobro;
     $scope.save = save;
     $scope.closeModal = closeModal;
- 
+
+    modalCobroSvc.clearData();
+
     initiateLoad();
     function initiateLoad() {
         try {
@@ -62,14 +64,14 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             showLoader();
             comprobanteIngresoSvc.getDataForm(idCuentaPorCobrar, idCliente).then(response => {
 
-                dataFormaCobro = response; 
+                dataFormaCobro = response;
                 modalCobroSvc.setEstadoCobro(dataFormaCobro.estadosPago);
                 modalCobroSvc.setConfigCobro(dataFormaCobro.configCobro);
 
                 //Cuando proviene de Cuentas por Cobrar
                 if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
                     let selectedDocsTemp = modalCobroSvc.calcularInteresMora(selectedDocumentos)
- 
+
                     $scope.selectedDocumentos = structuredClone(selectedDocsTemp);
                     $scope.selectedDocumentosClone = structuredClone(selectedDocsTemp);
 
@@ -149,14 +151,14 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             saldoActualDoc = saldoActualDoc.plus(item.saldoActualDoc)
         }
 
-        $scope.data.importeTotal = importeTotal.toNumber();
-        $scope.data.totalSaldo = saldoActualDoc.toNumber();
-        $scope.data.totalAbonoAnterior = abono.toNumber();
-        $scope.data.totalMora = totalMora.toNumber();
+        $scope.data.importeTotal = fS.roundNumber(importeTotal.toNumber(), fS.max_dos)
+        $scope.data.totalSaldo = fS.roundNumber(saldoActualDoc.toNumber(), fS.max_dos)
+        $scope.data.totalAbonoAnterior = fS.roundNumber(abono.toNumber(), fS.max_dos)
+        $scope.data.totalMora = fS.roundNumber(totalMora.toNumber(), fS.max_dos)
         $scope.data.totalValorAbono = 0;
         $scope.data.valorCambio = 0;
-        $scope.data.saldoActualDoc = saldoActualDoc.toNumber();
-        $scope.data.totalSaldoDoc = saldoActualDoc.toNumber();
+        $scope.data.saldoActualDoc = fS.roundNumber(saldoActualDoc.toNumber(), fS.max_dos)
+        $scope.data.totalSaldoDoc = fS.roundNumber(saldoActualDoc.toNumber(), fS.max_dos)
 
         //cuando se realiza cobro desde modulo de comprobante ingreso  
         $scope.dataCuentaPorCobrar.importeTotal = $scope.data.importeTotal
@@ -171,7 +173,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         item.display = !item.display
     }
 
-    function showCobroDetalle(data) { 
+    function showCobroDetalle(data) {
         let tempDetails = modalCobroSvc.getCobrosDetalle().filter(item => item.idCuotaPorCobrar === data.idCuotaPorCobrar && item.idCuentaPorCobrar === data.idCuentaPorCobrar);
         let infoCobrosDetalle = [];
 
@@ -272,7 +274,6 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             let abonoCuota = modalCobroSvc.getAbonoCuota();
 
 
-
             addDatosCobro(result, abonoCuota);
 
             calculoTotales();
@@ -287,7 +288,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     function addDatosCobro(obj, abonoCuota) {
         $scope.datosCobro.push({
             ...obj,
-            abonoCuota: fS.roundNumber(abonoCuota, 2),
+            abonoCuota: fS.roundNumber(abonoCuota, fS.max_dos),
             secuencial: modalCobroSvc.getUniqueIndex()
         })
     }
@@ -310,14 +311,14 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             .reduce((prev, curr) => fS.plus(prev, curr.saldoTotalActual).toNumber(), 0);
         let valorCambio = 0;
 
-        $scope.data.totalValorAbono = fS.roundNumber(totalValorAbono, 5);
-        $scope.data.totalSaldo = fS.roundNumber(totalSaldo, 5);
+        $scope.data.totalValorAbono = fS.roundNumber(totalValorAbono, fS.max_dos);
+        $scope.data.totalSaldo = fS.roundNumber(totalSaldo, fS.max_dos);
 
         if (totalValorAbonoEfectivo >= $scope.dataCuentaPorCobrar.saldo) {
             valorCambio = fS.minus(totalValorAbonoEfectivo, $scope.dataCuentaPorCobrar.saldo).toNumber();
         }
 
-        $scope.data.valorCambio = fS.roundNumber(valorCambio, 5);
+        $scope.data.valorCambio = fS.roundNumber(valorCambio, fS.max_dos);
 
 
     }
@@ -454,101 +455,107 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     }
 
     async function save() {
-        if (!isValidForm()) return; 
+        try {
+            if (!isValidForm()) return;
 
-        let { isConfirmed } = await Swal.fire({
-            title: '<small>Guardar Cobro</small>',
-            html: "<small class='text-muted'>Esta seguro de guardar este cobro ahora?</small>",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Si, guardar!',
-            cancelButtonText: 'No, cancelar!'
-        })
+            let { isConfirmed } = await Swal.fire({
+                title: '<small>Guardar Cobro</small>',
+                html: "<small class='text-muted'>Esta seguro de guardar este cobro ahora?</small>",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, guardar!',
+                cancelButtonText: 'No, cancelar!'
+            })
 
-        if (isConfirmed) {
+            if (isConfirmed) {
 
-            let totalValorAbono = getValorAbono("valorAbono");
-            let totalAbonoCuota = getValorAbono("abonoCuota");
+                let totalValorAbono = getValorAbono("valorAbono");
+                let totalAbonoCuota = getValorAbono("abonoCuota");
 
-            let comprobante = {
-                idCliente: $scope.dataCuentaPorCobrar.idCliente,
-                total: totalValorAbono,
-                abono: totalAbonoCuota,
-                codEstab: $scope.dataCuentaPorCobrar.codEstab,
-                numeroIdentificacion: $scope.dataCuentaPorCobrar.identificacionComprador,
-                nombreFiscal: $scope.dataCuentaPorCobrar.razonSocialComprador,
-                observacion: $scope.dataCuentaPorCobrar.observacion
-            };
+                let comprobante = {
+                    idCliente: $scope.dataCuentaPorCobrar.idCliente,
+                    total: totalValorAbono,
+                    abono: totalAbonoCuota,
+                    codEstab: $scope.dataCuentaPorCobrar.codEstab,
+                    numeroIdentificacion: $scope.dataCuentaPorCobrar.identificacionComprador,
+                    nombreFiscal: $scope.dataCuentaPorCobrar.razonSocialComprador,
+                    observacion: $scope.dataCuentaPorCobrar.observacion
+                };
 
 
-            let cobros = $scope.datosCobro.map(item => { 
-                let obj = {
-                    idSubEntidadFinanciera: item.idSubEntidadFinanciera,
-                    idEntidadFinanciera: item.idEntidadFinanciera,
-                    idBanco: item.idBanco,
-                    idCuentaBancaria: 0,
-                    fechaEmision: item.fechaEmision,
-                    valor: item.valorAbono,
-                    posfechado: item.posfechado,
-                    cobro: item.cobro,
-                    secuencial: item.secuencial,
-                    infoCobro: item.infoCobro,
-                    abono: item.abonoCuota,
-                    controlCaja: item.controlCaja,
-                    idComprobante: item.idComprobante,
-                    idTipoDocumento: item.idTipoDocumento,
-                    observacion: item.observacion
+                let cobros = $scope.datosCobro.map(item => {
+                    let obj = {
+                        idSubEntidadFinanciera: item.idSubEntidadFinanciera,
+                        idEntidadFinanciera: item.idEntidadFinanciera,
+                        idBanco: item.idBanco,
+                        idCuentaBancaria: 0,
+                        fechaEmision: item.fechaEmision,
+                        valor: item.valorAbono,
+                        posfechado: item.posfechado,
+                        cobro: item.cobro,
+                        secuencial: item.secuencial,
+                        infoCobro: item.infoCobro,
+                        abono: item.abonoCuota,
+                        controlCaja: item.controlCaja,
+                        idComprobante: item.idComprobante,
+                        idTipoDocumento: item.idTipoDocumento,
+                        observacion: item.observacion
+                    }
+                    return obj;
+                })
+
+
+                let cobrosDetalle = $scope.cobrosDetalle.filter(item => (item.abono > 0))
+                let historialCuentas = modalCobroSvc.getHistorialCuentas();
+
+
+
+                let cuentasPorCobrarEstado = modalCobroSvc.generarCuentasPorCobrarEstado({
+                    historialCuentas,
+                    cobros,
+                    cobrosDetalle
+                })
+
+                let cuotasPorCobrarEstado = modalCobroSvc.generarCuotasPorCobrarEstado({
+                    cobrosDetalle
+                })
+
+                let data = {
+                    comprobante,
+                    cobros,
+                    cobroDetalle: cobrosDetalle,
+                    historialCuentas,
+                    cuentasPorCobrarEstado,
+                    cuotasPorCobrarEstado
                 }
-                return obj;
-            })
-
-
-            let cobrosDetalle = $scope.cobrosDetalle.filter(item => (item.abono > 0))
-            let historialCuentas = modalCobroSvc.getHistorialCuentas();
 
 
 
-            let cuentasPorCobrarEstado = modalCobroSvc.generarCuentasPorCobrarEstado({
-                historialCuentas,
-                cobros,
-                cobrosDetalle
-            })
+                let params = comprobanteIngresoSvc.mapperTo(data);
+                console.log(params)
+                showLoader();
+                comprobanteIngresoSvc.post(params).then((response) => {
+                    hideLoader();
+                    if (response.code === '0') {
+                        fS.sweetAlert('warning', response.message)
+                    }
+                    if (response.code === '1') {
+                        fS.sweetAlert('success', response.message, '', 1000);                        
+                        $uibModalInstance.close(response);
 
-            let cuotasPorCobrarEstado = modalCobroSvc.generarCuotasPorCobrarEstado({
-                cobrosDetalle
-            })
-
-            let data = {
-                comprobante,
-                cobros,
-                cobroDetalle: cobrosDetalle,
-                historialCuentas,
-                cuentasPorCobrarEstado,
-                cuotasPorCobrarEstado
-            } 
-
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error)
+                })
 
 
-            let params = comprobanteIngresoSvc.mapperTo(data);
-
-            showLoader();
-            comprobanteIngresoSvc.post(params).then((response) => { 
-                hideLoader();
-                if (response.code === '0') {
-                    fS.sweetAlert('warning', response.message)
-                }
-                if (response.code === '1') {
-                    fS.sweetAlert('success', response.message, '', 1000)
-                    $uibModalInstance.close(response)
-                }
-            }).catch(error => {
-                hideLoader();
-                console.log(error)
-            })
-
-
+            }
+        } catch (error) {
+            console.log(error)
+            hideLoader();
         }
 
     }

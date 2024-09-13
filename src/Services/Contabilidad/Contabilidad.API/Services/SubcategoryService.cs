@@ -18,7 +18,10 @@ public class SubcategoryService(ContabilidadContext context, IAdoRepository repo
     public async Task<ApiResponseDeprecated> DeleteAsync(int userId, int id)
     {
         var subcategory = await context.Subcategories.FirstOrDefaultAsync(x => x.Id == id);
-        if (subcategory == null) { return new ApiResponseDeprecated { code = "0", message = "Subcategoría no encontrada" }; }
+        if (subcategory == null)
+        {
+            return new ApiResponseDeprecated { code = "0", message = "Subcategoría no encontrada" };
+        }
 
         subcategory.Enabled = false;
         subcategory.Deleted = true;

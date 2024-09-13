@@ -7,7 +7,7 @@ namespace Restaurant.API.Data
     public class DesignTimeDbContext : IDesignTimeDbContextFactory<RestaurantContext>
     {
         private const string _databaseName = "DefaultConnection";
-        private const string _migrationAssembly = "Restaurant.Infrastructure";
+        private const string _migrationAssembly = "Restaurant.API";
 
         public RestaurantContext CreateDbContext(string[] args)
         {

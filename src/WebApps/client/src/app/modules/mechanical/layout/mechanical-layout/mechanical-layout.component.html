@@ -1,19 +1,18 @@
-<app-breadcrumb></app-breadcrumb>
-
+<app-breadcrumb/>
 <div class="card">
   <div class="card-body">
-    <ul ngbNav #nav="ngbNav" [(activeId)]="valueStatus" (shown)="onShown($event)" class="nav-tabs">
+    <ul #nav="ngbNav" (shown)="onShown($event)" [(activeId)]="valueStatus" class="nav-tabs" ngbNav>
       <li [ngbNavItem]="statusTab.DASHBOARD">
         <button ngbNavLink>Dashboard</button>
         <ng-template ngbNavContent>
-          <app-mechanical-dashboard [valueStatus]="valueStatus" [supportStatus]="supportStatus" />
+          <app-mechanical-dashboard [supportStatus]="supportStatus" [valueStatus]="valueStatus"/>
         </ng-template>
       </li>
       <li [ngbNavItem]="statusTab.PENDIENTE">
         <button ngbNavLink>Pendiente</button>
         <ng-template ngbNavContent>
-          @if (supportStatus.length>0) {
-            <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus" />
+          @if (supportStatus.length > 0) {
+            <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus"/>
 
           }
         </ng-template>
@@ -21,8 +20,8 @@
       <li [ngbNavItem]="statusTab.EN_PROCESO">
         <button ngbNavLink>En proceso</button>
         <ng-template ngbNavContent>
-          @if (supportStatus.length>0) {
-          <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus" />
+          @if (supportStatus.length > 0) {
+            <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus"/>
 
           }
           <!-- <app-inspection-page /> -->
@@ -33,8 +32,8 @@
       <li [ngbNavItem]="statusTab.POR_ENTREGAR">
         <button ngbNavLink>Por entregar</button>
         <ng-template ngbNavContent>
-          @if (supportStatus.length>0) {
-          <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus" />
+          @if (supportStatus.length > 0) {
+            <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus"/>
 
           }
         </ng-template>
@@ -43,15 +42,15 @@
         <button ngbNavLink>Inspección</button>
         <ng-template ngbNavContent>
 
-          <app-inspection-page />
+          <app-inspection-page/>
         </ng-template>
       </li>
 
       <li [ngbNavItem]="statusTab.APROBADO">
         <button ngbNavLink>Aprobado</button>
         <ng-template ngbNavContent>
-          @if (supportStatus.length>0) {
-          <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus" />
+          @if (supportStatus.length > 0) {
+            <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus"/>
 
           }
           <!-- <app-inspection-page /> -->
@@ -61,8 +60,8 @@
       <li [ngbNavItem]="statusTab.ANULADO">
         <button ngbNavLink>Anulado</button>
         <ng-template ngbNavContent>
-          @if (supportStatus.length>0) {
-          <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus" />
+          @if (supportStatus.length > 0) {
+            <app-support-page [valueStatus]="valueStatus" [supportStatus]="supportStatus"/>
 
           }
           <!-- <app-inspection-page /> -->
