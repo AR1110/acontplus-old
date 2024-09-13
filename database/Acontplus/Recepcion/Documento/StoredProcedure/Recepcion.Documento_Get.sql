@@ -88,10 +88,11 @@ BEGIN
                               ,COUNT(*) OVER()                                                   as totalRecords
                               ,ISNULL(s.[Name], '''') subcategoryName
                               ,ISNULL(dr.subcategoryId, 0) subcategoryId
-	                    FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
-                            LEFT JOIN Contabilidad.CuentaPorPagar cpp ON dr.claveAcceso = cpp.uniqueId
-                            LEFT JOIN Contabilidad.Subcategory s ON dr.subcategoryId = s.Id
-	                    WHERE dr.codEstab = @codEstab '
+	                    FROM Recepcion.DocumentoRecibido       dr WITH (NOLOCK)
+                        LEFT JOIN Contabilidad.CuentaPorPagar cpp WITH (NOLOCK) ON dr.claveAcceso = cpp.uniqueId
+                        LEFT JOIN Contabilidad.Subcategory      s WITH (NOLOCK) ON dr.subcategoryId = s.Id
+	                    WHERE dr.codEstab = @codEstab
+                          AND dr.estado = 1 '
 
             SELECT @codDoc       = codDoc
 		          ,@ckBoxFecha   = ckBoxFecha
