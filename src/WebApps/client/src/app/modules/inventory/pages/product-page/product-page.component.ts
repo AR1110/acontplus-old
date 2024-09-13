@@ -1,19 +1,22 @@
+import { Component, inject, signal, ViewChild } from "@angular/core"
+import { MatButtonModule } from "@angular/material/button"
+import { MatCardModule } from "@angular/material/card"
+import { MatIconModule } from "@angular/material/icon"
+import { MatMenuModule } from "@angular/material/menu"
+import { MatPaginator, PageEvent } from "@angular/material/paginator"
+import { MatSort } from "@angular/material/sort"
+import { MatTableDataSource, MatTableModule } from "@angular/material/table"
+import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component"
+import { CustomTableContainerComponent } from "@core/components/custom-table-container/custom-table-container.component"
+import { ToasterService } from "@core/services/toaster.service"
+import { ProductAddEditDirective } from "@modules/inventory/directives/product/product-list.directive"
+import { ProductService } from "@modules/inventory/services/product.service"
+import { ActionAddDirective } from "@shared/directives/permission/action-add.directive"
+import { MatPagination } from "@shared/models/pagination.model"
+import { PrimaryStatusPipe } from "@shared/pipe/primary-status.pipe"
+import Swal from "sweetalert2"
 
-import { Component, ElementRef, ViewChild, inject } from '@angular/core'
-import { FormsModule } from '@angular/forms';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { ProductAddEditDirective } from '@inventory/directives/product/product.directive';
-import { MeasureSelectHtmlOnly } from '@inventory/models/measure.model';
-import { SubCategorySelectHtmlOnly } from '@inventory/models/sub-category.model';
-import { ProductService } from '@inventory/services/product.service';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { Pagination } from '@shared/models/pagination.model';
+
 
 type Product = {
   position: number
@@ -44,71 +47,82 @@ type Product = {
   selector: 'inventory-product-page',
   standalone: true,
   imports: [
-    FontAwesomeModule,
     BreadcrumbComponent,
-    FormsModule,
-    ProductAddEditDirective,
+    ActionAddDirective,
+    PrimaryStatusPipe,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
     MatTableModule,
-    MatPaginatorModule,
-    NgbDropdownModule,
-    ProductSearchComponent
+    MatMenuModule,
+    CustomTableContainerComponent,
+    ProductAddEditDirective
   ],
   templateUrl: './product-page.component.html'
 })
 export class ProductPageComponent {
-  private readonly productSvc = inject(ProductService);
 
-  @ViewChild('productsTabulator') myTabularTable!: ElementRef;
+  productSvc = inject(ProductService);
+  private tS = inject(ToasterService)
+  pagination = signal(new MatPagination());
+
+
+  dataSource = new MatTableDataSource<Product>();
+
+  isLoadingResults = false;
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['op', 'position', 's3ObjectUrl', 'codigo', 'descripcion', 'medida', 'subFamilia', 'stock', 'estado'];
-  dataSource = new MatTableDataSource<Product>();
 
 
 
-  public subCategorias: Array<SubCategorySelectHtmlOnly> = [];
-  public measures: Array<MeasureSelectHtmlOnly> = [];
+  pageEvent!: PageEvent;
 
 
-  pagination = new Pagination();
+
+  displayedColumns: string[] = ['index','op', 's3ObjectUrl', 'codigo', 'descripcion', 'medida', 'subFamilia', 'stock', 'estado'];
+
+
 
 
   private initLoad() {
-    try {
-      showLoader();
-      this.productSvc.getDataFilter().subscribe({
-        next: (response) => {
-          hideLoader();
-          const {
-            subCategorias,
-            medidas,
-            marcas,
-            modelos,
-            tarifasImpuesto
-          } = response;
+    // try {
+    //   showLoader();
+    //   this.productSvc.getDataFilter().subscribe({
+    //     next: (response) => {
+    //       hideLoader();
+    //       const {
+    //         subCategorias,
+    //         medidas,
+    //         marcas,
+    //         modelos,
+    //         tarifasImpuesto
+    //       } = response;
 
-          this.subCategorias = subCategorias;
-          this.measures = medidas;
-        },
-        error(err) {
-          hideLoader()
-          console.log(err)
-        },
-      })
-    } catch (error) {
-      console.log(error)
-    }
+    //       this.subCategorias = subCategorias;
+    //       this.measures = medidas;
+    //     },
+    //     error(err) {
+    //       hideLoader()
+    //       console.log(err)
+    //     },
+    //   })
+    // } catch (error) {
+    //   console.log(error)
+    // }
   }
 
   private getProducts() {
     try {
       let params = {
-        pageIndex: this.pagination.pageIndex,
-        pageSize: this.pagination.pageSize
+        pageIndex: this.pagination().pageIndex + 1,
+        pageSize: this.pagination().pageSize
       }
-      this.productSvc.getAll(params).subscribe({
-        next: (response) => {
+      this.isLoadingResults = true;
+      this.productSvc.getAll(params).subscribe(
+        (response) => {
+          this.isLoadingResults = false;
           let results: Array<Product> = JSON.parse(response)[0]
           let products = results.map((product, index) => {
             return {
@@ -120,26 +134,54 @@ export class ProductPageComponent {
           this.dataSource = new MatTableDataSource(products);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
-        },
-        complete() {
-          hideLoader();
-        },
-        error() {
-          hideLoader();
-        }
+
       })
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
   }
 
   ngOnInit() {
     // this.initLoad();
-    // this.getProducts();
+     this.getProducts();
   }
 
 
+  refresh() {
+    this.getProducts();
+  }
+
+  handlePageEvent(e: PageEvent) {
+    this.pageEvent = e;
+    this.pagination.update(pag => {
+      return {
+        ...pag,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
+      }
+    })
+    this.getProducts();
+  }
+
+
+  askToDelete(data: any) {
+    try {
+      Swal.fire({
+        icon: 'warning',
+        html: `<small>Esta seguro/a de eliminar esta Medida ahora?</small>`,
+        showConfirmButton: true,
+        confirmButtonText: 'Si, eliminar',
+        showCancelButton: true,
+        cancelButtonText: 'No, cancelar',
+        allowOutsideClick: false
+      }).then(result => {
+
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 }
 

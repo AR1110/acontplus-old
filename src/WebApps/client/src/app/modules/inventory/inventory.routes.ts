@@ -18,16 +18,16 @@ export const routes: Route[] = [
     }
   },
   {
-    path: 'subcategory-page',
+    path: 'subcategory',
     title: 'SubCategoria',
     component: SubCategoryPageComponent,
     data: {
-      breadcrumb: 'Reporte Compras'
+      breadcrumb: 'Sub Categorias'
     }
   },
 
   {
-    path: 'product-page',
+    path: 'product',
     title: 'Productos',
     component: ProductPageComponent,
     data: {

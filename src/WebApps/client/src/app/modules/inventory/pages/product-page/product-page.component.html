@@ -1,108 +1,89 @@
 <app-breadcrumb/>
-<app-product-search></app-product-search>
 
-<div class="card">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-2 col-12">
-        <button
-          appProductAddEdit
-          class="btn btn-info d-none d-lg-block m-l-15 text-white"
-          type="button"
-        >
-          <fa-icon [icon]="'plus'"></fa-icon>
+
+
+
+<mat-card>
+  <mat-card-header>
+    <mat-card-title-group>
+      <mat-card-title></mat-card-title>
+      <div class="d-flex flex-row gap-2">
+        <button mat-flat-button appProductAddEdit (onResultModal)="refresh()">
+          <mat-icon>add</mat-icon>
           Nuevo
         </button>
+        <button mat-icon-button (click)="refresh()">
+          <mat-icon>refresh</mat-icon>
+        </button>
       </div>
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="category">Categoría: </label>
-          <select class="form-select" id="category" name="category">
-            <option value="">Todos</option>
-            @for (item of subCategorias; track $index) {
-              <option [ngValue]="item.idSubFamilia">
-                {{ item.descripcion }}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="measure">Medida: </label>
-          <select class="form-select" id="measure" name="measure">
-            <option value="">Todos</option>
-            @for (item of measures; track $index) {
-              <option [ngValue]="item.idMedida">
-                {{ item.descripcion }}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="brand">Marca: </label>
-          <select class="form-select" id="brand" name="brand">
-            <option value="">Todos</option>
-            @for (item of subCategorias; track $index) {
-              <option [ngValue]="item.idSubFamilia">
-                {{ item.descripcion }}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="card">
-  <div class="card-body">
-    <section class="section-container-table">
-      <table [dataSource]="dataSource" mat-table matSort>
-        <!-- Options -->
-        <ng-container matColumnDef="op">
-          <th *matHeaderCellDef mat-header-cell>Op.</th>
-          <td *matCellDef="let element" mat-cell>
-            <div container="body" ngbDropdown>
-              <button
-                class="btn btn-outline-primary btn-sm"
-                ngbDropdownToggle
-                type="button"
-              >
-                <fa-icon [icon]="'cog'"></fa-icon>
-              </button>
-              <div ngbDropdownMenu>
-                <button ngbDropdownItem>
-                  <fa-icon [icon]="'edit'"></fa-icon>
-                  Editar
-                </button>
-
-                <button ngbDropdownItem>
-                  <fa-icon [icon]="'trash'"></fa-icon>
-                  Eliminar
-                </button>
-              </div>
-            </div>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <!-- setting outline form field appearance -->
+    <app-custom-table-container [pagination]="pagination()" [isLoadingResults]="isLoadingResults"
+      (onPageEvent)="handlePageEvent($event)">
+      <table mat-table [dataSource]="dataSource" matSort matSortActive="descripcion" matSortDisableClear
+        matSortDirection="desc">
+        <!-- Number Column -->
+        <ng-container matColumnDef="index">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let element; let i = index">
+            {{ i + 1 }}
           </td>
         </ng-container>
 
-        <!-- Position Column -->
-        <ng-container matColumnDef="position">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>Nro.</th>
-          <td *matCellDef="let element" mat-cell>{{ element.position }}</td>
+        <ng-container matColumnDef="op">
+          <th mat-header-cell *matHeaderCellDef>Op.</th>
+          <td mat-cell *matCellDef="let row">
+            <div class="d-flex flex-row gap-1">
+              <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+
+              <mat-menu #menu="matMenu">
+
+                <button mat-menu-item  >
+                  <mat-icon>update</mat-icon>
+                  <span>Actualizar Stock</span>
+                </button>
+                <button mat-menu-item>
+                  <mat-icon>delete</mat-icon>
+                  <span>Eliminar</span>
+                </button>
+
+                <button mat-menu-item>
+                  <mat-icon>add_a_photo</mat-icon>
+                  <span>Imagenes</span>
+                </button>
+
+                <button mat-menu-item>
+                  <mat-icon>history</mat-icon>
+                  <span>Historial compras</span>
+                </button>
+
+
+
+
+
+              </mat-menu>
+
+              <button mat-icon-button  >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button  >
+                <mat-icon>timeline</mat-icon>
+              </button>
+            </div>
+
+          </td>
         </ng-container>
+
 
         <!-- IDCard Column -->
         <ng-container matColumnDef="s3ObjectUrl">
           <th *matHeaderCellDef mat-header-cell>Imagen</th>
           <td *matCellDef="let element" mat-cell>
-            <img
-              [src]="element.s3ObjectUrl"
-              class="img-fluid img-thumbnail"
-              width="50"
-            />
+            <img [src]="element.s3ObjectUrl" class="img-fluid img-thumbnail" width="50" />
           </td>
         </ng-container>
 
@@ -139,29 +120,20 @@
           <td *matCellDef="let element" mat-cell>{{ element.stock }}</td>
         </ng-container>
 
-        <ng-container matColumnDef="estado">
-          <th *matHeaderCellDef mat-header-cell>Estado</th>
-          <td *matCellDef="let element" mat-cell>{{ element.address }}</td>
-        </ng-container>
-        <tr
-          *matHeaderRowDef="displayedColumns; sticky: true"
-          mat-header-row
-        ></tr>
-        <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
 
-        <!-- Row shown when there is no matching data. -->
-        <tr *matNoDataRow class="mat-row">
-          <td class="mat-cell" colspan="7">
-            <!-- No data matching the filter {{ input.value }} -->
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let row">
+            <div [innerHTML]="row.estado | primaryStatus"></div>
           </td>
-        </tr>
+        </ng-container>
+
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
-    </section>
-    <mat-paginator
-      [pageSizeOptions]="pagination.pageSizeOptions"
-      aria-label="Select page of enterprises elements"
-      showFirstLastButtons
-    >
-    </mat-paginator>
-  </div>
-</div>
+    </app-custom-table-container>
+
+  </mat-card-content>
+</mat-card>

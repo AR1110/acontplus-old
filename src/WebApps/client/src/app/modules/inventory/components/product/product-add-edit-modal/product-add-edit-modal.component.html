@@ -4,17 +4,31 @@
 </div>
 
 <div class="modal-body">
-  <nav ngbNav #nav="ngbNav" class="nav-tabs" (navChange)="onNavChange($event)">
-    <ng-container ngbNavItem [ngbNavItem]="1">
-      <a ngbNavLink>General</a>
-      <ng-template ngbNavContent>
+
+   <ul class="nav nav-tabs">
+      <li class="nav-item" style="cursor: pointer;">
+        <a class="nav-link" [class.active]="selectedTab() === 0" (click)="selectTab(0)">Generales</a>
+      </li>
+      <li class="nav-item"  style="cursor: pointer;">
+        <a class="nav-link" [class.active]="selectedTab() === 1" (click)="selectTab(1)">Datos Adicionales</a>
+      </li>
+
+      <li class="nav-item" style="cursor: pointer;">
+        <a class="nav-link" [class.active]="selectedTab() === 2" (click)="selectTab(2)">Código de Barras</a>
+      </li>
+      <li class="nav-item" style="cursor: pointer;">
+        <a class="nav-link" [class.active]="selectedTab() === 3" (click)="selectTab(3)">Ubicación</a>
+      </li>
+
+    </ul>
+
+    <div class="tab-content mt-3">
+      @if(selectedTab()===0){
         <div class="row">
           <div class="colxl-6 col-lg-6 col-md-6 col-12">
             <div class="form-group">
-              <label for="description"
-                >Descripción: <span class="text-danger">*</span></label
-              >
-              <input type="text" class="form-control" placeholder="..." [(ngModel)]="data.descripcion"  appToUpperCase  />
+              <label for="description">Descripción: <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="..." [(ngModel)]="data.descripcion" appToUpperCase />
             </div>
           </div>
           <div class="colxl-6 col-lg-6 col-md-6 col-12">
@@ -28,8 +42,7 @@
                   @for (group of subCategoriesGroupOptions | async ; track group) {
                   <mat-optgroup style="font-weight: 700;" [label]="group.provincia">
                     @for (name of group.ciudades; track $index) {
-                    <mat-option [value]="name.descripcion"
-                     >{{name.descripcion}}</mat-option>
+                    <mat-option [value]="name.descripcion">{{name.descripcion}}</mat-option>
                     }
                   </mat-optgroup>
                   }
@@ -38,33 +51,22 @@
             </form>
 
             <div class="form-group">
-              <label for="subcategoría"
-                >SubCategoría: <span class="text-danger">*</span></label
-              >
+              <label for="subcategoría">SubCategoría: <span class="text-danger">*</span></label>
 
               <div class="input-group">
-                <select
-                  id="subcategoría"
-                  class="form-select"
-                  name="subcategoría"
-                >
+                <select id="subcategoría" class="form-select" name="subcategoría">
                   <!-- @for (group of groupedArrayCategories; track $index) {
-                    <optgroup [attr.label]="group.category">
-                      @for (item of group.subCategories; track $index) {
-                      <option [value]="item.idSubFamilia">
-                        {{ item.subFamilia }}
-                      </option>
-                      }
-                    </optgroup>
-                    } -->
+                            <optgroup [attr.label]="group.category">
+                              @for (item of group.subCategories; track $index) {
+                              <option [value]="item.idSubFamilia">
+                                {{ item.subFamilia }}
+                              </option>
+                              }
+                            </optgroup>
+                            } -->
                 </select>
 
-                <button
-                  class="btn btn-outline-secondary btn-sm"
-
-                  type="button"
-                  tabindex="-1"
-                >
+                <button class="btn btn-outline-secondary btn-sm" type="button" tabindex="-1">
                   <fa-icon [icon]="'plus'"></fa-icon>
                 </button>
               </div>
@@ -76,44 +78,24 @@
             <div class="row">
               <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
-                  <label for="codigo"
-                    >Código: <span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Ej: COM050"
-
-                  />
+                  <label for="codigo">Código: <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" placeholder="Ej: COM050" />
                 </div>
               </div>
 
               <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                   <label for="codigoAuxiliar">Código Aux: </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Ej: COM050"
-
-                  />
+                  <input type="text" class="form-control" placeholder="Ej: COM050" />
                 </div>
               </div>
 
               <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                 <div class="form-group">
-                  <label for="codigoBarra"
-                    >Código de Barra: <span class="text-danger">*</span>
+                  <label for="codigoBarra">Código de Barra: <span class="text-danger">*</span>
                   </label>
 
-                  <input
-                    type="text"
-                    class="form-control"
-                    ng-model="data.codigoBarra"
-                    touppercase
-                    placeholder="H20089"
-
-                  />
+                  <input type="text" class="form-control" ng-model="data.codigoBarra" touppercase placeholder="H20089" />
                 </div>
               </div>
             </div>
@@ -123,16 +105,14 @@
             <div class="row">
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
-                  <label for=""
-                    >Tipo Artículo: <span class="text-danger">*</span>
+                  <label for="">Tipo Artículo: <span class="text-danger">*</span>
                   </label>
-                  <select class="form-select"
-                  >
-                     @for (item of tiposArticulo; track $index) {
-                      <option [value]="item.idTipoArticulo">
-                        {{ item.descripcion }}
-                      </option>
-                      }
+                  <select class="form-select">
+                    @for (item of tiposArticulo; track $index) {
+                    <option [value]="item.idTipoArticulo">
+                      {{ item.descripcion }}
+                    </option>
+                    }
                   </select>
                 </div>
               </div>
@@ -141,21 +121,16 @@
                 <div class="form-group">
                   <label for="medida">Medida: <span class="text-danger">*</span></label>
                   <div class="input-group">
-                    <select class="form-select"
-                    >
+                    <select class="form-select">
                       @for (item of medidas; track $index) {
-                        <option [value]="item.idMedida">
-                          {{ item.descripcion }}
-                        </option>
-                        }
+                      <option [value]="item.idMedida">
+                        {{ item.descripcion }}
+                      </option>
+                      }
                     </select>
 
-                    <button
-                      class="btn btn-outline-secondary btn-sm"
-                      appMeasureAddEdit
-                      results="resultModalMedida(item)"
-                      tabindex="-1"
-                    >
+                    <button class="btn btn-outline-secondary btn-sm" appMeasureAddEdit results="resultModalMedida(item)"
+                      tabindex="-1">
                       <fa-icon [icon]="'plus'"></fa-icon>
                     </button>
                   </div>
@@ -168,44 +143,23 @@
         <div class="row" ng-show="tipoRegistro === 1">
           <div class="form-group col-lg-2 col-md-6 col-sm-6 col-12">
             <label for="tipoIVA">Tipo Iva: <span class="text-danger">*</span> </label>
-            <select
-              class="form-select"
-              ng-change="recalculateTarifaAdd()"
-              ng-disabled="!articlePermission.isUpdatePrice"
-
-            >
+            <select class="form-select" ng-change="recalculateTarifaAdd()" ng-disabled="!articlePermission.isUpdatePrice">
               @for (item of tiposIva; track $index) {
-                <option [value]="item.idTipoIva">{{ item.descripcion }}</option>
-                }
+              <option [value]="item.idTipoIva">{{ item.descripcion }}</option>
+              }
             </select>
           </div>
           <div class="col-lg-2 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
-              <label for=""
-                >Precio Costo: <span class="text-danger">*</span></label
-              >
-              <input
-                type="number"
-                class="form-control"
-                decimal
-                ng-focus="delayFocus('.precioCosto')"
-                ng-model="data.precioCosto"
-                ng-blur="redondearPrecioCosto()"
-                ng-change="recalculateTarifaAdd()"
-
-                placeholder="0.00"
-              />
+              <label for="">Precio Costo: <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" decimal ng-focus="delayFocus('.precioCosto')"
+                ng-model="data.precioCosto" ng-blur="redondearPrecioCosto()" ng-change="recalculateTarifaAdd()"
+                placeholder="0.00" />
             </div>
           </div>
           <div class="form-group col-lg-2 col-md-6 col-sm-6 col-xs-6">
             <label for="">Precio Sin Subsidio:</label>
-            <input
-              type="number"
-              class="form-control"
-              decimal
-              placeholder="0.00"
-
-            />
+            <input type="number" class="form-control" decimal placeholder="0.00" />
           </div>
           <div class="col-lg-2 col-md-6 col-sm-6 col-12">
             <div class="row align-items-center">
@@ -220,86 +174,32 @@
           </div>
           <div class="col-lg-2 col-md-3 col-sm-6 col-12">
             <!-- @if (dataForm.get('datosAdicionales')?.value) {
-              <div class="form-group">
-                <label>Etiqueta: </label>
-                <select
-                  class="form-control "
+                      <div class="form-group">
+                        <label>Etiqueta: </label>
+                        <select
+                          class="form-control "
 
-                >
-                  @for (item of etiquetaActividades; track $index) {
-                  <option [value]="item.idEtiqueta">
-                    {{ item.descripcion }}
-                  </option>
-                  }
-                </select>
-              </div>
-              } -->
+                        >
+                          @for (item of etiquetaActividades; track $index) {
+                          <option [value]="item.idEtiqueta">
+                            {{ item.descripcion }}
+                          </option>
+                          }
+                        </select>
+                      </div>
+                      } -->
           </div>
         </div>
 
         <div class="row">
           <div class="col-lg-10 col-12">
-            <app-tabulator [columnNames]="columnNames" [tableData]="productTarifa" [options]="tabOptions" />
+
           </div>
         </div>
-      </ng-template>
-    </ng-container>
-    <ng-container ngbNavItem [ngbNavItem]="2">
-      <a ngbNavLink>Datos Adicionales</a>
-      <ng-template ngbNavContent>
-        <p>
-          Exercitation +1 labore velit, blog sartorial PBR leggings next level
-          wes anderson artisan four loko farm-to-table craft beer twee. Qui
-          photo booth letterpress, commodo enim craft beer mlkshk aliquip jean
-          shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda
-          labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia
-          yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio
-          cillum wes anderson 8-bit, sustainable jean shorts beard ut DIY
-          ethical culpa terry richardson biodiesel. Art party scenester
-          stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed
-          echo park.
-        </p>
-      </ng-template>
-    </ng-container>
-    <ng-container ngbNavItem [ngbNavItem]="3">
-      <a ngbNavLink>Código de Barras</a>
-      <ng-template ngbNavContent>
-        <p>
-          Sed commodo, leo at suscipit dictum, quam est porttitor sapien, eget
-          sodales nibh elit id diam. Nulla facilisi. Donec egestas ligula vitae
-          odio interdum aliquet. Duis lectus turpis, luctus eget tincidunt eu,
-          congue et odio. Duis pharetra et nisl at faucibus. Quisque luctus
-          pulvinar arcu, et molestie lectus ultrices et. Sed diam urna, egestas
-          ut ipsum vel, volutpat volutpat neque. Praesent fringilla tortor arcu.
-          Vivamus faucibus nisl enim, nec tristique ipsum euismod facilisis.
-          Morbi ut bibendum est, eu tincidunt odio. Orci varius natoque
-          penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-          Mauris aliquet odio ac lorem aliquet ultricies in eget neque.
-          Phasellus nec tortor vel tellus pulvinar feugiat.
-        </p>
-      </ng-template>
-    </ng-container>
-    <ng-container ngbNavItem [ngbNavItem]="4">
-      <a ngbNavLink>Ubicación</a>
-      <ng-template ngbNavContent>
-        <p>
-          Sed commodo, leo at suscipit dictum, quam est porttitor sapien, eget
-          sodales nibh elit id diam. Nulla facilisi. Donec egestas ligula vitae
-          odio interdum aliquet. Duis lectus turpis, luctus eget tincidunt eu,
-          congue et odio. Duis pharetra et nisl at faucibus. Quisque luctus
-          pulvinar arcu, et molestie lectus ultrices et. Sed diam urna, egestas
-          ut ipsum vel, volutpat volutpat neque. Praesent fringilla tortor arcu.
-          Vivamus faucibus nisl enim, nec tristique ipsum euismod facilisis.
-          Morbi ut bibendum est, eu tincidunt odio. Orci varius natoque
-          penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-          Mauris aliquet odio ac lorem aliquet ultricies in eget neque.
-          Phasellus nec tortor vel tellus pulvinar feugiat.
-        </p>
-      </ng-template>
-    </ng-container>
-  </nav>
+      }
 
-  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+    </div>
+
 </div>
 
 <div class="modal-footer">
