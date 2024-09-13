@@ -108,6 +108,7 @@ BEGIN
 			
 			--INFO RETENCION
 			SELECT ra.*
+                  ,pe.idPuntoEmision
                   ,s.descripcion subContribuyente 
                   ,es.codEstab 
                   ,p.numeroIdentificacion as identificacionSujetoRetenido

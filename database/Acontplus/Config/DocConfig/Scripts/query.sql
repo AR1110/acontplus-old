@@ -19,7 +19,7 @@ go
 
 --ALTER TABLE dbo.TipoDocumento ADD infoAdicional BIT 
 
-select * from TipoDocumento
+select * from TipoDocumento where infoAdicional = 1
 
 select * from dbo.ConfiguracionDocumento
 
