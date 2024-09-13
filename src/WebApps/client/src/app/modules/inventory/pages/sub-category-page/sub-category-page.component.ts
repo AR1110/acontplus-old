@@ -1,26 +1,31 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, ViewChild } from "@angular/core";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
+import { MatIconModule } from "@angular/material/icon";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
+import { CustomTableContainerComponent } from "@core/components/custom-table-container/custom-table-container.component";
+import { SubCategoryService } from "@modules/inventory/services/sub-category.service";
+import { ActionAddDirective } from "@shared/directives/permission/action-add.directive";
+import { MatPagination } from "@shared/models/pagination.model";
+import { PrimaryStatusPipe } from "@shared/pipe/primary-status.pipe";
 
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { SubCategoryRead } from '@modules/inventory/models/sub-category.model';
-import { SubCategoryService } from '@modules/inventory/services/sub-category.service';
-import { ModalService } from '@core/services/modal.service';
-import {SubCategoryModalDirective} from '@inventory/directives/sub-category.directive'
-import { FormsModule } from '@angular/forms';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { PrimaryStatusPipe } from '@shared/pipe/primary-status.pipe';
-import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+
 
 @Component({
   selector: 'app-subcategory-page',
   standalone: true,
   imports: [
-    NgbPagination,
-    FontAwesomeModule,
-    FormsModule,
     BreadcrumbComponent,
-    SubCategoryModalDirective,
-    PrimaryStatusPipe
+    ActionAddDirective,
+    PrimaryStatusPipe,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatTableModule,
+    CustomTableContainerComponent
   ],
   templateUrl: './sub-category-page.component.html',
 
@@ -28,34 +33,39 @@ import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 export class SubCategoryPageComponent {
 
   private subCategorySvc = inject(SubCategoryService);
-  private modalSvc = inject(ModalService)
-  dataSearch = {
-    pageIndex: 1,
-    pageSize: 25,
-    maxSize: 5,
-    totalRecords: 0
-  }
-  recordsQuantity = [25, 50, 100]
+  pagination = signal(new MatPagination());
 
-  subcategories: Array<SubCategoryRead> = [];
+  displayedColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
+
+  dataSource = new MatTableDataSource<any>();
+
+  isLoadingResults = false;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+
+
+
+  pageEvent!: PageEvent;
 
   getSubcategories() {
     let params = {
-      pageIndex: this.dataSearch.pageIndex,
-      pageSize: this.dataSearch.pageSize
+      pageIndex: this.pagination().pageIndex + 1,
+      pageSize: this.pagination().pageSize
     }
-    showLoader();
+    this.isLoadingResults = true;
+
     this.subCategorySvc.getAll(params).subscribe({
       next: (categories) => {
-        this.subcategories = categories;
-        this.dataSearch.totalRecords = this.subcategories.length > 0 ? this.subcategories[0].totalRecords : 0
+        this.isLoadingResults = false;
+        this.dataSource = new MatTableDataSource(categories);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
       },
-      error(err) {
-        hideLoader()
+      error:(err)=> {
+        this.isLoadingResults = false;
         console.log(err)
-      },
-      complete() {
-        hideLoader();
       },
     })
   }
@@ -64,12 +74,20 @@ export class SubCategoryPageComponent {
     this.getSubcategories()
   }
 
-  pageChanged(): void {
+  refresh() {
+    this.getSubcategories();
+  }
+  handlePageEvent(e: PageEvent) {
+    this.pageEvent = e;
+    this.pagination.update(pag => {
+      return {
+        ...pag,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
+      }
+    })
     this.getSubcategories();
   }
 
-  changePageSize(): void {
-    this.dataSearch.pageIndex = 1;
-    this.getSubcategories();
-  }
 }
