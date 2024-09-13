@@ -1,7 +1,7 @@
-import { environment } from "@/env/environment";
-import { AuthService } from '@/services/auth.service';
-import { HttpContext, HttpContextToken, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import {environment} from "@/env/environment";
+import {AuthService} from '@/services/auth.service';
+import {HttpContext, HttpContextToken, HttpInterceptorFn} from '@angular/common/http';
+import {inject} from '@angular/core';
 
 const CUSTOM_URL = new HttpContextToken<boolean>(() => false);
 
@@ -17,7 +17,9 @@ export const injectSessionInterceptor: HttpInterceptorFn = (req, next) => {
 
   let externalUrl = req.context.get(CUSTOM_URL);
 
-  if (!externalUrl){
+  console.log(externalUrl)
+
+  if (!externalUrl) {
     const authToken = authSvc.getToken();
     req = req.clone({
       url,
@@ -25,13 +27,12 @@ export const injectSessionInterceptor: HttpInterceptorFn = (req, next) => {
         Authorization: 'Bearer ' + authToken,
       },
     });
-  }else{
+  } else {
 
     req = req.clone({
       url: req.url,
     });
   }
-
 
 
   return next(req);

@@ -56,7 +56,7 @@ BEGIN
     DECLARE @id INT = 0
     BEGIN TRY
         BEGIN TRAN
-            INSERT INTO Restaurant.Ingredient(ProductId, Summary, TypeId, Quantity, Unit, Content, [Enabled], UserId)
+            INSERT INTO Restaurant.Ingredient(ProductId, Summary, IngredientTypeId, Quantity, Unit, Content, [Enabled], UserId)
             VALUES(@productId, @summary, @typeId, @quantity, @unit, @content, 1, @userId)
             SET @id = (SELECT SCOPE_IDENTITY())
 
