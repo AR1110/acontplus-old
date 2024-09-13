@@ -385,7 +385,7 @@ BEGIN
 			SET @sql = 'SELECT tt.articulo
 							  ,tt.codArticulo
 							  ,cantidad                = CAST(tt.cantidad as numeric(18,2))
-                              ,precioCosto             = CAST(tt.precioCosto as numeric(18,2))
+                              ,precioCosto             = CAST(tt.precioCostoFraccionado as numeric(18,2))
 							  ,precioUnitario          = CAST(tt.precioUnitario as numeric(18,2))
 							  ,precioTotalSinImpuestos = CASE WHEN tt.codTransaccion = ''S'' THEN CAST(tt.totalSalida as numeric(18,2)) 
 															  WHEN tt.codTransaccion = ''E'' THEN CAST(tt.totalEntrada as numeric(18,2)) 
@@ -404,11 +404,11 @@ BEGIN
                               ,tt.bodega
                               ,me.descripcion as medidaSalida
                               ,tt.subFamilia
-                              ,valorRentabilidad           = CAST((tt.precioUnitario - tt.precioCosto) as numeric(18,5))
+                              ,valorRentabilidad           = CAST((tt.precioUnitario - tt.precioCostoFraccionado) as numeric(18,5))
                               
-                              ,valorPorcentajeRentabilidad = CAST((( IIF(tt.precioCosto>0, (tt.precioUnitario / tt.precioCosto), 0) * 100) - 100) as numeric(18,2))
-                              ,totalPrecioCosto            = CAST((tt.cantidad * tt.precioCosto) as numeric(18,2))
-                              ,totalValorRentabilidad      = CAST( (tt.cantidad * (tt.precioUnitario - tt.precioCosto)) as numeric(18,2))
+                              ,valorPorcentajeRentabilidad = CAST((( IIF(tt.precioCostoFraccionado >0, (tt.precioUnitario / tt.precioCostoFraccionado), 0) * 100) - 100) as numeric(18,2))
+                              ,totalPrecioCosto            = CAST((tt.cantidad * tt.precioCostoFraccionado) as numeric(18,2))
+                              ,totalValorRentabilidad      = CAST( (tt.cantidad * (tt.precioUnitario - tt.precioCostoFraccionado)) as numeric(18,2))
 						FROM v_InventarioTransaccion tt WITH (NOLOCK)
                         INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida = tt.idMedida 
 						WHERE tt.idEntidad = @idEntidad 
