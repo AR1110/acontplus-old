@@ -20,27 +20,27 @@ export class SharedService {
   constructor() { }
 
 
-  async askToPrint(obj: ParamsPrint) {
-    const {
-      isConfirmed
-    } = await Swal.fire({
+  askToPrint(obj: ParamsPrint) {
+    Swal.fire({
       icon: 'warning',
       html: `<small>Desea Imprimir este comprobante?</small>`,
       confirmButtonText: '<icon class="mdi mdi-cloud-print-outline"></icon> Sí, imprimir',
       showDenyButton: true,
       denyButtonText: 'No, cancelar',
       allowOutsideClick: false
+    }).then(result=>{
+
+      if (result.isConfirmed) {
+        this.getPrinter(obj)
+      }
     })
-    if (isConfirmed) {
-      this.getPrinter(obj)
-    }
   }
 
-  async getPrinter(obj: ParamsPrint) {
+  getPrinter(obj: ParamsPrint) {
 
     let json = JSON.stringify(obj);
-    return this.http.get<ApiResponse>(`${PATHS_API.RESTAURANT}${PATHS.ORDER}Print/${json}`).pipe(
-      map(response => {
+    this.http.get<ApiResponse>(`${PATHS_API.RESTAURANT}${PATHS.ORDER}Print/${json}`).subscribe({
+      next: response=>{
         if (response.code === "0") {
           this.tS.toastr({
             type: 'warning',
@@ -52,13 +52,16 @@ export class SharedService {
           this.print(mainData);
 
         }
-      })
-    )
+      },
+      error: err=>{
+        console.log(err)
+      }
+    })
   }
-  async print<T extends { urlPrinter: string }>(params: T[]) {
+  print<T extends { urlPrinter: string }>(params: T[]) {
     for (const param of params) {
-      this.http.post<ApiResponse>(`${param.urlPrinter}`, JSON.stringify(param)).pipe(
-        map(response => {
+      this.http.post<ApiResponse>(`${param.urlPrinter}`, JSON.stringify(param)).subscribe({
+        next: response=>{
           if (response.code === "0") {
             this.tS.toastr({
               type: 'warning',
@@ -71,8 +74,12 @@ export class SharedService {
               message: response.message
             })
           }
-        })
-      )
+        },
+         error: err => {
+          console.log(err)
+        }
+      })
+
     }
   }
 
