@@ -337,10 +337,11 @@ BEGIN
                      
     IF (@customerCompanyId = 0)
         BEGIN 
-            SELECT TOP 1 @customerCompanyId = idCliente FROM v_Cliente WHERE codIdentSri = '07'
+            SELECT TOP 1 @customerCompanyId = idCliente FROM v_Cliente 
+            WHERE codIdentSri = '07'
+                AND customerId IS NOT NULL
+	            AND idEntidad = @companyId
         END
-
-  
     
     ---------- INSERT NEW ---------------
     INSERT INTO @FacturaDetalleInsert(idArticulo, idTarifa, idBodega, medidaId, ice, cantidad, precioUnitario, precioSinSubsidio    

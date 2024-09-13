@@ -1,16 +1,17 @@
-import { PaymentComponent } from '@/core/components/payment/payment.component';
-import { ActionEmailSendDirective } from '@/directives/action-email-send.directive';
-import { ActionWhatsappSendDirective } from '@/directives/action-whatsapp-send.directive';
-import { CODE_REPORT, DOC_TYPE } from '@/enums/main.enum';
-import { OrderDocRed } from '@/models/order-doc.model';
-import { DialogService } from '@/services/dialog.service';
-import { OrderService } from '@/services/order.service';
-import { SharedService } from '@/services/shared.service';
-import { Component, inject, input } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTableModule } from '@angular/material/table';
+import {PaymentComponent} from '@/core/components/payment/payment.component';
+import {ActionEmailSendDirective} from '@/directives/action-email-send.directive';
+import {ActionWhatsappSendDirective} from '@/directives/action-whatsapp-send.directive';
+import {CODE_REPORT, DOC_TYPE} from '@/enums/main.enum';
+import {OrderDocRed} from '@/models/order-doc.model';
+import {DialogService} from '@/services/dialog.service';
+import {OrderService} from '@/services/order.service';
+import {SharedService} from '@/services/shared.service';
+import {Component, inject, input} from '@angular/core';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatTableModule} from '@angular/material/table';
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-order-doc-list',
@@ -19,9 +20,10 @@ import { MatTableModule } from '@angular/material/table';
     MatMenuModule,
     MatButtonModule,
     MatIconModule,
-    MatTableModule, 
+    MatTableModule,
     ActionWhatsappSendDirective,
-    ActionEmailSendDirective
+    ActionEmailSendDirective,
+    MatTooltip
   ],
   templateUrl: './order-doc-list.component.html',
   styleUrl: './order-doc-list.component.scss'
@@ -36,6 +38,7 @@ export class OrderDocListComponent {
   dataSource: OrderDocRed[] = []
 
   isLoadingResults = false;
+
   private getOrderDocs() {
     this.dataSource = [];
     this.isLoadingResults = true;
@@ -47,7 +50,8 @@ export class OrderDocListComponent {
       error: () => this.isLoadingResults = false
     })
   }
-  ngOnInit() { 
+
+  ngOnInit() {
     this.getOrderDocs()
   }
 
@@ -97,7 +101,7 @@ export class OrderDocListComponent {
         })
       }
     } catch (error) {
-      console.log(error) 
+      console.log(error)
     }
   }
 
@@ -117,8 +121,28 @@ export class OrderDocListComponent {
 
   }
 
+  documentPrint(data: OrderDocRed) {
+    try {
+      if (data.docType === DOC_TYPE.FV) {
+        this.sharedSvc.askToPrint({
+          id: data.orderId,
+          documentoId: data.documentoId,
+          tipo: 3
+        })
+      }
+      if (data.docType === DOC_TYPE.NE) {
+        this.sharedSvc.askToPrint({
+          id: data.orderId,
+          documentoId: data.documentoId,
+          tipo: 4
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.dataSource = [];
   }
 }
