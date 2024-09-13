@@ -17,10 +17,9 @@ export const injectSessionInterceptor: HttpInterceptorFn = (req, next) => {
 
   let externalUrl = req.context.get(CUSTOM_URL);
 
-  console.log(externalUrl)
+  const authToken = authSvc.getToken();
 
   if (!externalUrl) {
-    const authToken = authSvc.getToken();
     req = req.clone({
       url,
       setHeaders: {
@@ -31,6 +30,9 @@ export const injectSessionInterceptor: HttpInterceptorFn = (req, next) => {
 
     req = req.clone({
       url: req.url,
+      setHeaders: {
+        Authorization: 'Bearer ' + authToken,
+      },
     });
   }
 
