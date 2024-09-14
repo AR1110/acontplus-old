@@ -117,9 +117,10 @@ BEGIN
 		BEGIN TRAN
 
 			INSERT INTO Sri.Establecimiento
-				   (codEstab,canton,actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario, fromMobile)
-			SELECT @codEstab,canton,actividad,IIF(agenteRetencion = 'null', NULL, agenteRetencion),contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile
-            FROM @tbEstablecimiento
+				   (codEstab,canton,idActividadEconomica, actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario, fromMobile)
+			SELECT @codEstab,canton,ae.idActividadEconomica,actividad,IIF(agenteRetencion = 'null', NULL, agenteRetencion),contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile
+            FROM @tbEstablecimiento e
+                INNER JOIN Sri.ActividadEconomica ae On e.actividad = ae.codigo
 
             SET @id = (SELECT SCOPE_IDENTITY())
 

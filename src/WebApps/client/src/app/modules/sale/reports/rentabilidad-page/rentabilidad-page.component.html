@@ -120,6 +120,7 @@
         <div class="form-group">
           <label for="tarifas">Tarifa: </label>
           <select class="form-select" name="tarifas" id="tarifas" [(ngModel)]="dataSearch.idTarifa">
+              <option [ngValue]="0">Todos</option>
             @for(item of tarifas; track $index){
             <option [ngValue]="item.idTarifa">{{ item.descripcion }}</option>
             }

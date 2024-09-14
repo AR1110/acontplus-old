@@ -47,6 +47,7 @@ BEGIN
            ,@convertToDoc       BIT
            ,@id                 INT
            ,@idCiudad           INT 
+           ,@dirViviendaCliente VARCHAR(150)
 
     --> Variables
     SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -69,6 +70,7 @@ BEGIN
                   ,@ckCuotas     = ckCuotas
                   ,@codDoc       = codDoc
                   ,@idEmpresa    = idEmpresa
+                  ,@dirViviendaCliente = dirViviendaCliente
             FROM OPENJSON(@json) WITH 
             (
                 idCliente    INT         '$.idCliente'
@@ -81,6 +83,7 @@ BEGIN
                ,ckCuotas     BIT         '$.ckCuotas'
                ,codDoc       VARCHAR(10) '$.codDoc'
                ,idEmpresa    INT         '$.idEmpresa'
+               ,dirViviendaCliente VARCHAR(150) 
             )
 
             SET @sql = 'SELECT IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)  as codDoc
@@ -168,6 +171,11 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND cc.idCliente = @idCliente '
                 END
+
+            IF @dirViviendaCliente IS NOT NULL 
+                BEGIN 
+                     SET @sql = @sql + ' AND cc.idCliente (SELECT idCliente FROM Cliente cl WHERE cl.idCliente = cc.idCliente AND JSON_VALUE(cl.infoCrediticia, ''$.dirVivienda'') LIKE ''%@dirViviendaCliente%'') '
+                END 
 
             IF @idEmpresa > 0
                 BEGIN

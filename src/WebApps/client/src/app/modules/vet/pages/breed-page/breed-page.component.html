@@ -1,16 +1,19 @@
-<app-breadcrumb>
-  <button
-    (click)="onModalOpen()"
-    class="btn btn-info d-block d-lg-inline-block m-l-15"
-    type="button"
-  >
-    <fa-icon [icon]="'plus-circle'"></fa-icon>
-    Nueva
-  </button>
-</app-breadcrumb>
+<app-breadcrumb/>
 @if (breeds.length > 0) {
   <div class="card">
     <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-md-2 col-12">
+          <button
+            (click)="onModalOpen()"
+            class="btn btn-primary"
+            type="button"
+          >
+            <fa-icon [icon]="'plus-circle'"></fa-icon>
+            Nueva
+          </button>
+        </div>
+      </div>
       <div class="table-responsive">
         <table class="table table-bordered">
           <thead>

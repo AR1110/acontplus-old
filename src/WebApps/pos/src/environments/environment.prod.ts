@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  API_URL: 'https://restaurant.acontplus.com',
+  API_URL: 'https://acontplus.com',
 };

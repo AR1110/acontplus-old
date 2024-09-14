@@ -176,7 +176,8 @@ BEGIN
                         ,Tax                = @Tax
                         ,Discount           = @Discount
                         ,Total              = @Total
-                        ,Obs                = @obs                        
+                        ,Obs                = @obs     
+                        ,UserId             = @userId
                     WHERE Id = @id
                     
                            -- ========= SELECT EXISTS ========= --

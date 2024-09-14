@@ -1,18 +1,16 @@
-import {Component, inject} from '@angular/core';
-import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
-import {CuentaPorCobrarService} from "@accounting/services/cuenta-por-cobrar.service";
-import {FormsModule} from "@angular/forms";
-import {GroupedEstab, GroupedEstabPuntoEmision} from "@core/models/estab.model";
-import {CODE_ESTADO, DOC_TYPE, DOC_TYPE_SRI, FORMAT_REPORT} from "@core/constants/global.constants";
-import {ToasterService} from "@core/services/toaster.service";
-import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
-import {
-  CompanyCustomerSearchComponent
-} from "@company-customer/components/company-customer-search/company-customer-search.component";
-import {formatDateMoment} from "@core/utils/format-date-moment";
-import {isValidField} from "@core/utils/utils";
-import {ACCOUNTING_CODE_REPORT} from "@accounting/enums/accounting.constants";
-import {SharedService} from "@core/services/shared.service";
+import { ACCOUNTING_CODE_REPORT } from "@accounting/enums/accounting.constants";
+import { CuentaPorCobrarService } from "@accounting/services/cuenta-por-cobrar.service";
+import { Component, inject } from '@angular/core';
+import { FormsModule } from "@angular/forms";
+import { CompanyCustomerSearchComponent } from "@company-customer/components/company-customer-search/company-customer-search.component";
+import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
+import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
+import { CODE_ESTADO, DOC_TYPE, DOC_TYPE_SRI, FORMAT_REPORT } from "@core/constants/global.constants";
+import { GroupedEstab, GroupedEstabPuntoEmision } from "@core/models/estab.model";
+import { SharedService } from "@core/services/shared.service";
+import { ToasterService } from "@core/services/toaster.service";
+import { formatDateMoment } from "@core/utils/format-date-moment";
+import { isValidField } from "@core/utils/utils";
 
 @Component({
   selector: 'app-cartera-cliente-page',
@@ -45,7 +43,9 @@ export class CarteraClientePageComponent {
     convertToDoc: false,
     fromDate: formatDateMoment(new Date()),
     toDate: formatDateMoment(new Date()),
-    companyCustomerId: 0
+    companyCustomerId: 0,
+    dirViviendaCliente: '',
+    checkBoxDirViviendaCliente: false
   }
 
   establecimientos: GroupedEstab[]=[];
@@ -147,6 +147,10 @@ export class CarteraClientePageComponent {
 
     let idCliente = this.dataSearch.checkboxCompanyCustomer? isValidField(this.dataSearch.companyCustomerId) : null
     let idEmpresa = this.dataSearch.idEmpresa > 0 ? this.dataSearch.idEmpresa: null;
+
+    let dirViviendaCliente = this.dataSearch.checkBoxDirViviendaCliente? isValidField(this.dataSearch.dirViviendaCliente) : null
+
+
     let dataParams = {
       tipo: 1,
       ckFecha: this.dataSearch.ckFecha,
@@ -159,7 +163,8 @@ export class CarteraClientePageComponent {
       ckCuotas: this.dataSearch.ckCuotas,
       codDoc: isValidField(this.getTipoDoc()),
       idEmpresa,
-      convertToDoc: this.dataSearch.convertToDoc
+      convertToDoc: this.dataSearch.convertToDoc,
+      dirViviendaCliente
     };
 
 

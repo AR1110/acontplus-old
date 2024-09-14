@@ -8,6 +8,7 @@ import { CategoryService } from '@modules/accounting/services/category.service';
 import { isApiResponse } from '@core/models/api-response';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { SecondaryStatusPipe } from '@shared/pipe/secondary-status.pipe';
+import { CompanyCustomerAddEditDirective } from '@company-customer/directives/company-customer-add-edit.directive';
 
 @Component({
   selector: 'app-category-page',
@@ -17,6 +18,7 @@ import { SecondaryStatusPipe } from '@shared/pipe/secondary-status.pipe';
     FontAwesomeModule,
     NgbDropdownModule,
     SecondaryStatusPipe,
+    CompanyCustomerAddEditDirective,
   ],
   templateUrl: './category-page.component.html',
   styles: ``,
@@ -60,4 +62,6 @@ export class CategoryPageComponent {
       this.data = {} as Category;
     });
   }
+
+  onResultModal() {}
 }

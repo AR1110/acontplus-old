@@ -1,12 +1,13 @@
-<form [formGroup]="customerForm" (ngSubmit)="onSave()" autocomplete="off">
+<form (ngSubmit)="onSave()" [formGroup]="customerForm" autocomplete="off">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
+      <fa-icon [icon]="modalIcon"></fa-icon>
+      {{ modalTitle }}
     </h5>
-    <button type="button" class="btn-close" (click)="onModalClose()"></button>
+    <button (click)="onModalClose()" class="btn-close" type="button"></button>
   </div>
   <div class="modal-body">
-    <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs">
+    <ul #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs" ngbNav>
       <li [ngbNavItem]="1">
         <button ngbNavLink>Datos Principales</button>
         <ng-template ngbNavContent>
@@ -14,18 +15,17 @@
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
               <div class="form-group">
                 <label
-                  >Tipo Identificación: <span class="text-danger">*</span>
+                >Tipo Identificación: <span class="text-danger">*</span>
                 </label>
                 <select
-                  class="form-select"
-                  formControlName="idTipoIdentificacion"
                   (change)="onChangeTipoIdentificacion()"
+                  class="form-select"
                   formControlName="idTipoIdentificacion"
                 >
                   @for (item of tiposIdentificacion; track $index) {
-                  <option [ngValue]="item.idTipoIdentificacion">
-                    {{ item.descripcion }}
-                  </option>
+                    <option [ngValue]="item.idTipoIdentificacion">
+                      {{ item.descripcion }}
+                    </option>
                   }
                 </select>
               </div>
@@ -33,16 +33,16 @@
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
               <div class="form-group">
                 <label for="numeroIdentificacion"
-                  >Número de Identificación</label
+                >Número de Identificación</label
                 >
                 <input
-                  type="text"
-                  class="form-control border-select"
-                  id="numeroIdentificacion"
-                  formControlName="numeroIdentificacion"
                   (keydown.enter)="onKeyDownGovernmentId()"
+                  class="form-control border-select"
+                  formControlName="numeroIdentificacion"
+                  id="numeroIdentificacion"
                   maxlength="15"
                   placeholder="Ej: 2105234568"
+                  type="text"
                 />
 
                 <div
@@ -63,14 +63,14 @@
               <div class="form-group">
                 <label>Nombre Fiscal: <span class="text-danger">*</span></label>
                 <input
-                  type="text"
-                  class="form-control border-select"
-                  id="nombreComercial"
                   (keyup)="copyTradeName()"
-                  touppercase
                   autocomplete="off"
+                  class="form-control border-select"
                   formControlName="nombreFiscal"
+                  id="nombreComercial"
                   placeholder="Ej: TECNOMEGA"
+                  touppercase
+                  type="text"
                 />
               </div>
             </div>
@@ -81,11 +81,11 @@
               <div class="form-group">
                 <label>Dirección</label>
                 <textarea
-                  type="text"
                   class="form-control border-select"
                   formControlName="direccion"
-                  touppercase
                   placeholder="AV. 09 DE OCTUBRE..."
+                  touppercase
+                  type="text"
                 ></textarea>
               </div>
             </div>
@@ -95,34 +95,34 @@
             <div class="col-xl-6 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label
-                  >Email:
+                >Email:
                   <span
-                    tooltip-placement="top"
                     ngbTooltip="Haz doble 'Click' sobre el correo para editar"
+                    tooltip-placement="top"
                   >
                     <fa-icon [icon]="'info-circle'"></fa-icon>
                   </span>
                 </label>
                 <mat-chip-grid #chipGridEmail aria-label="Enter emails">
                   <mat-chip-row
-                    *ngFor="let email of emails"
-                    (removed)="removeEmail(email)"
-                    [editable]="true"
                     (edited)="editEmail(email, $event)"
+                    (removed)="removeEmail(email)"
+                    *ngFor="let email of emails"
                     [aria-description]="'press enter to edit ' + email"
+                    [editable]="true"
                   >
                     {{ email }}
-                    <button matChipRemove [attr.aria-label]="'remove ' + email">
+                    <button [attr.aria-label]="'remove ' + email" matChipRemove>
                       <mat-icon>cancel</mat-icon>
                     </button>
                   </mat-chip-row>
                   <input
-                    placeholder="example@example.com,info@example.com"
-                    class="form-control"
+                    (matChipInputTokenEnd)="addEmail($event)"
+                    [matChipInputAddOnBlur]="addOnBlur"
                     [matChipInputFor]="chipGridEmail"
                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                    [matChipInputAddOnBlur]="addOnBlur"
-                    (matChipInputTokenEnd)="addEmail($event)"
+                    class="form-control"
+                    placeholder="example@example.com,info@example.com"
                   />
                 </mat-chip-grid>
               </div>
@@ -130,10 +130,10 @@
             <div class="col-xl-6 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label
-                  >Telefono:
+                >Telefono:
                   <span
-                    tooltip-placement="top"
                     ngbTooltip="Haz doble 'Click' sobre el número de telefono para editar"
+                    tooltip-placement="top"
                   >
                     <fa-icon [icon]="'info-circle'"></fa-icon>
                   </span>
@@ -143,27 +143,27 @@
                   aria-label="Ingrese los teléfonos"
                 >
                   <mat-chip-row
-                    *ngFor="let telephone of telephones"
-                    (removed)="removeTelephone(telephone)"
-                    [editable]="true"
                     (edited)="editTelephone(telephone, $event)"
+                    (removed)="removeTelephone(telephone)"
+                    *ngFor="let telephone of telephones"
                     [aria-description]="'press enter to edit ' + telephone"
+                    [editable]="true"
                   >
                     {{ telephone }}
                     <button
-                      matChipRemove
                       [attr.aria-label]="'remove ' + telephone"
+                      matChipRemove
                     >
                       <mat-icon>cancel</mat-icon>
                     </button>
                   </mat-chip-row>
                   <input
-                    placeholder="0900000001,0900000002"
-                    class="form-control"
+                    (matChipInputTokenEnd)="addTelephone($event)"
+                    [matChipInputAddOnBlur]="addOnBlur"
                     [matChipInputFor]="chipGridTelephone"
                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                    [matChipInputAddOnBlur]="addOnBlur"
-                    (matChipInputTokenEnd)="addTelephone($event)"
+                    class="form-control"
+                    placeholder="0900000001,0900000002"
                   />
                 </mat-chip-grid>
               </div>
@@ -179,12 +179,12 @@
               <div class="form-group">
                 <label>Nombre Comercial: </label>
                 <input
-                  type="text"
-                  class="form-control border-select"
                   autocomplete="off"
+                  class="form-control border-select"
                   formControlName="nombreComercial"
-                  touppercase
                   placeholder="Ej: TECNOMEGA"
+                  touppercase
+                  type="text"
                 />
               </div>
             </div>
@@ -193,14 +193,14 @@
               <div class="form-group">
                 <label for="idSubContribuyente">Contribuyente: </label>
                 <select
+                  class="form-select border-select"
                   formControlName="idSubContribuyente"
                   id="idSubContribuyente"
-                  class="form-select border-select"
                 >
                   @for (item of tipoContribuyentes; track $index) {
-                  <option [ngValue]="item.idSubContribuyente">
-                    {{ item.descripcion }}
-                  </option>
+                    <option [ngValue]="item.idSubContribuyente">
+                      {{ item.descripcion }}
+                    </option>
                   }
                 </select>
               </div>
@@ -211,20 +211,20 @@
                 <label for="idTiempoCredito">Tiempo de Credito </label>
                 <div class="input-group">
                   <select
-                    id="idTiempoCredito"
-                    formControlName="idTiempoCredito"
                     class="form-select border-select"
+                    formControlName="idTiempoCredito"
+                    id="idTiempoCredito"
                   >
                     @for (item of tiemposCredito; track $index) {
-                    <option [ngValue]="item.idTiempoCredito">
-                      {{ item.descripcion }}
-                    </option>
+                      <option [ngValue]="item.idTiempoCredito">
+                        {{ item.descripcion }}
+                      </option>
                     }
                   </select>
                   <button
-                    type="button"
-                    class="btn btn-outline-secondary btn-sm"
                     (click)="refreshTiempoCredito()"
+                    class="btn btn-outline-secondary btn-sm"
+                    type="button"
                   >
                     <fa-icon [icon]="'sync'"></fa-icon>
                   </button>
@@ -239,7 +239,7 @@
                 <label>Ciudad: </label>
                 <select
                   class="form-select border-select"
-                  ng-model="data.idCiudad"
+                  formControlName="idCiudad"
                   ng-options="cp.idCiudad as cp.ciudad group by cp.provincia for cp in ciudades"
                 >
                   <option value=""></option>
@@ -251,14 +251,14 @@
               <div class="form-group">
                 <label for="idTipoClienteProveedor">Tipo Cliente: </label>
                 <select
-                  id="idTipoClienteProveedor"
-                  formControlName="idTipoClienteProveedor"
                   class="form-select border-select"
+                  formControlName="idTipoClienteProveedor"
+                  id="idTipoClienteProveedor"
                 >
                   @for (item of tiposCliente; track $index) {
-                  <option [ngValue]="item.idTipoClienteProveedor">
-                    {{ item.descripcion }}
-                  </option>
+                    <option [ngValue]="item.idTipoClienteProveedor">
+                      {{ item.descripcion }}
+                    </option>
                   }
                 </select>
               </div>
@@ -269,23 +269,23 @@
                 <label for="idEmpresa">Empresa</label>
                 <div class="input-group">
                   <select
-                    ng-model="data.idEmpresa"
-                    id="idEmpresa"
-                    formControlName="idEmpresa"
                     class="form-select border-select"
+                    formControlName="idEmpresa"
+                    id="idEmpresa"
+                    ng-model="data.idEmpresa"
                   >
                     @for (item of empresas; track $index) {
-                    <option [ngValue]="item.idEmpresa">
-                      {{ item.razonSocial }}
-                    </option>
+                      <option [ngValue]="item.idEmpresa">
+                        {{ item.razonSocial }}
+                      </option>
                     }
                   </select>
                   <button
-                    type="button"
-                    tabindex="-1"
-                    class="btn btn-outline-secondary btn-sm"
                     btn-empresa
+                    class="btn btn-outline-secondary btn-sm"
                     result-modal="resultModalEmpresa(result)"
+                    tabindex="-1"
+                    type="button"
                   >
                     <fa-icon [icon]="'plus'"></fa-icon>
                   </button>
@@ -300,26 +300,26 @@
                 <label for="empleado">Empleado</label>
                 <div class="input-group">
                   <input
-                    type="text"
-                    id="empleado"
                     autocomplete="off"
-                    name="empleadoAutocomplete"
                     class="form-control border-select"
-                    placeholder="Buscar Empleado"
-                    ng-model="selectedEmpleado"
+                    id="empleado"
+                    name="empleadoAutocomplete"
                     ng-keyup="onKeyupSearchEmpleado(selectedEmpleado)"
-                    uib-typeahead="a as a.nombreCompleto for a in searchEmpleadoFilter($viewValue)"
+                    ng-model="selectedEmpleado"
+                    onClick="select();"
+                    placeholder="Buscar Empleado"
+                    type="text"
+                    typeahead-editable="false"
                     typeahead-loading="loadingLocations"
                     typeahead-no-results="data.noResults"
-                    typeahead-template-url="autocompleteEmpleado.html"
-                    typeahead-editable="false"
                     typeahead-on-select="selectedEmpleadoChange($item)"
-                    onClick="select();"
+                    typeahead-template-url="autocompleteEmpleado.html"
+                    uib-typeahead="a as a.nombreCompleto for a in searchEmpleadoFilter($viewValue)"
                   />
 
                   <script
-                    type="text/ng-template"
                     id="autocompleteEmpleado.html"
+                    type="text/ng-template"
                   >
                     <div class="autocomplete-suggestion-cliente">
                         <span class="item-title">
@@ -328,17 +328,17 @@
                     </div>
                   </script>
                   <button
-                    type="button"
-                    tabindex="-1"
-                    class="btn btn-outline-secondary btn-sm"
                     btn-empleado
+                    class="btn btn-outline-secondary btn-sm"
                     result-modal="resultModalEmpleado(result)"
+                    tabindex="-1"
+                    type="button"
                   >
                     <fa-icon [icon]="'plus'"></fa-icon>
                   </button>
                 </div>
                 <small class="text-danger" ng-show="data.noResults"
-                  >No se encontraron los resultados</small
+                >No se encontraron los resultados</small
                 >
               </div>
             </div>
@@ -348,22 +348,22 @@
                 <label for="idCargo">Cargo</label>
                 <div class="input-group">
                   <select
-                    id="idCargo"
-                    formControlName="idCargo"
                     class="form-select border-select"
+                    formControlName="idCargo"
+                    id="idCargo"
                   >
                     @for (item of cargos; track $index) {
-                    <option [ngValue]="item.idCargo">
-                      {{ item.descripcion }}
-                    </option>
+                      <option [ngValue]="item.idCargo">
+                        {{ item.descripcion }}
+                      </option>
                     }
                   </select>
                   <button
-                    type="button"
-                    tabindex="-1"
-                    class="btn btn-outline-secondary btn-sm"
                     btn-cargo
+                    class="btn btn-outline-secondary btn-sm"
                     result-modal="resultModalCargo(result)"
+                    tabindex="-1"
+                    type="button"
                   >
                     <fa-icon [icon]="'plus'"></fa-icon>
                   </button>
@@ -375,11 +375,11 @@
               <div class="form-group">
                 <label for="observacion">Observación</label>
                 <textarea
-                  id="observacion"
                   class="form-control border-select"
-                  touppercase
+                  id="observacion"
                   ng-model="data.nota"
                   placeholder="..."
+                  touppercase
                 >
                 </textarea>
               </div>
@@ -390,13 +390,13 @@
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
               <div class="form-group">
                 <label
-                  >Placa
+                >Placa
                   <span
                     tooltip-placement="top"
                     uib-tooltip="Haz doble 'Click' sobre el placa para editar"
                   >
                     <fa-icon [icon]="'info'"></fa-icon
-                  ></span>
+                    ></span>
                 </label>
                 <!-- <md-chips
                   ng-model="placas"
@@ -413,13 +413,13 @@
               <div class="form-group">
                 <label for="barcode"> Código de Barras:</label>
                 <button
-                  type="button"
                   class="btn btn-info btn-sm"
                   ng-click="getBarcode(data.numeroIdentificacion)"
+                  type="button"
                 >
                   <i class="fa fa-barcode"></i> Generar
                 </button>
-                <img   src="" alt="" style="display: none" />
+                <img alt="" src="" style="display: none"/>
               </div>
               <div
                 class="card border border-success"
@@ -428,7 +428,7 @@
               >
                 <div class="card-body">
                   <h5 class="card-title text-center">
-                    {{customerForm.get('nombreFiscal')?.value}}
+                    {{ customerForm.get('nombreFiscal')?.value }}
                   </h5>
                   <div class="row">
                     <div class="col-md-12"></div>
@@ -436,10 +436,10 @@
                   <div class="row">
                     <div class="col-md-12 text-center">
                       <h5 style="align-content: center">
-                        {{customerForm.get('numeroIdentificacion')?.value}}
+                        {{ customerForm.get('numeroIdentificacion')?.value }}
                       </h5>
-                      <img id="barcode" src="{{ barcodeCard }}" alt="" />
-                      <br />
+                      <img alt="" id="barcode" src="{{ barcodeCard }}"/>
+                      <br/>
                       <h6><small>&copy; Acontplus</small></h6>
                     </div>
                   </div>
@@ -447,10 +447,11 @@
               </div>
               <button
                 class="btn btn-success btn-sm"
-                ng-if="data.barcodeGenerated"
                 ng-click="exportTpvCard(data.numeroIdentificacion)"
+                ng-if="data.barcodeGenerated"
               >
-                <fa-icon [icon]="'share'"></fa-icon> Compartir Tarjeta
+                <fa-icon [icon]="'share'"></fa-icon>
+                Compartir Tarjeta
               </button>
             </div>
           </div>
@@ -461,16 +462,17 @@
   </div>
   <div class="modal-footer">
     <button
-      type="submit"
-      class="btn btn-outline-success"
       [disabled]="!customerForm.valid"
+      class="btn btn-outline-success"
+      type="submit"
     >
-      <fa-icon [icon]="'save'"></fa-icon> Guardar
+      <fa-icon [icon]="'save'"></fa-icon>
+      Guardar
     </button>
     <button
-      type="button"
-      class="btn btn-outline-dark"
       (click)="onModalClose()"
+      class="btn btn-outline-dark"
+      type="button"
     >
       &times; Cancelar
     </button>

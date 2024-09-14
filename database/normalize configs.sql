@@ -40,8 +40,7 @@ BEGIN
     REFERENCES dbo.Entidad(idEntidad)
 END
 GO
-
---DELETE chc FROM Contabilidad.Historial_Cobro chc
+--UPDATE c SET c.idEntidad = ci.idEntidad FROM Contabilidad.Historial_Cobro chc
 --INNER JOIN dbo.Cobro cb ON chc.idCobro = cb.idCobro
 --INNER JOIN dbo.ComprobanteIngreso ci ON cb.idComprobanteIngreso = ci.idComprobanteIngreso
 --INNER JOIN dbo.ControlCaja cc ON ci.idControlCaja = cc.idControlCaja

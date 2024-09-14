@@ -12,8 +12,13 @@ import {
   NgbNavModule,
   NgbTooltipModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
-import { MaterialModule } from '@core/material/material.module';
+import {
+  MatChipEditedEvent,
+  MatChipGrid,
+  MatChipInput,
+  MatChipInputEvent,
+  MatChipRow,
+} from '@angular/material/chips';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { CompanyCustomerService } from '../../services/company-customer.service';
 import { isApiResponse } from '@core/models/api-response';
@@ -23,6 +28,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { SRI_IDENTIFICATION_CODE } from '@core/constants/global.constants';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CommonModule } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-add-edit-modal',
@@ -32,8 +38,11 @@ import { CommonModule } from '@angular/common';
     ReactiveFormsModule,
     NgbNavModule,
     FontAwesomeModule,
-    MaterialModule,
     NgbTooltipModule,
+    MatChipGrid,
+    MatChipRow,
+    MatIcon,
+    MatChipInput,
   ],
   templateUrl: './add-edit-modal.component.html',
   styles: ``,

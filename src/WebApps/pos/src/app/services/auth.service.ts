@@ -1,16 +1,12 @@
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
+import {getCustomUrlContext} from '@/core/interceptors/inject-session.interceptor';
+import {isValidField} from '@/core/utils/utils';
+import {PATHS, PATHS_API} from "@/enums/main.enum";
+import {ApiResponse} from "@/models/api-response";
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {Observable, throwError} from 'rxjs';
 import {jwtDecode} from 'jwt-decode';
-import {PATHS, PATHS_API} from "@/enums/main.enum";
-import {isCustomUrl} from "@core/interceptors/inject-session.interceptor";
-import {ApiResponse} from "@/models/api-response";
-import {isValidField} from '@/core/utils/utils';
+import {Observable, throwError} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -72,17 +68,14 @@ export class AuthService {
       userAgent,
       external: true,
     }
-
-    return this.http.post<ApiResponse>(`${url}`, body, {
-      context: isCustomUrl()
-    })
+    return this.http.post<ApiResponse>(`${url}`, body)
 
 
   }
 
-  createToken<T>(data:T){
+  createToken<T>(data: T) {
     return this.http.post<ApiResponse>(`${this.url}createToken`, data, {
-      context: isCustomUrl()
+      context: getCustomUrlContext()
     })
   }
 

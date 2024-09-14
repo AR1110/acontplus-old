@@ -1,12 +1,13 @@
-import { DOC_TYPE, PATHS, PATHS_API, STRING_SPLIT_REGEX } from '@/enums/main.enum';
-import { ApiResponse } from '@/models/api-response';
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import {DOC_TYPE, PATHS, PATHS_API, STRING_SPLIT_REGEX} from '@/enums/main.enum';
+import {ApiResponse} from '@/models/api-response';
+import {HttpClient} from '@angular/common/http';
+import {inject, Injectable} from '@angular/core';
 import FileSaver from 'file-saver';
-import { map } from 'rxjs';
+import {map, Observable} from 'rxjs';
 import Swal from 'sweetalert2';
 
-import { ToasterService } from './toaster.service';
+import {ToasterService} from './toaster.service';
+import {getCustomUrlContext} from "@core/interceptors/inject-session.interceptor";
 
 type ParamsPrint = { id: number, documentoId: number, tipo: 1 | 2 | 3 | 4 }
 
@@ -17,30 +18,31 @@ export class SharedService {
   private http = inject(HttpClient)
   private tS = inject(ToasterService)
 
-  constructor() { }
+  constructor() {
+  }
 
 
-  async askToPrint(obj: ParamsPrint) {
-    const {
-      isConfirmed
-    } = await Swal.fire({
+  askToPrint(obj: ParamsPrint) {
+    Swal.fire({
       icon: 'warning',
       html: `<small>Desea Imprimir este comprobante?</small>`,
       confirmButtonText: '<icon class="mdi mdi-cloud-print-outline"></icon> Sí, imprimir',
       showDenyButton: true,
       denyButtonText: 'No, cancelar',
       allowOutsideClick: false
+    }).then(result => {
+
+      if (result.isConfirmed) {
+        this.getPrinter(obj)
+      }
     })
-    if (isConfirmed) {
-      this.getPrinter(obj)
-    }
   }
 
-  async getPrinter(obj: ParamsPrint) {
+  getPrinter(obj: ParamsPrint) {
 
     let json = JSON.stringify(obj);
-    return this.http.get<ApiResponse>(`${PATHS_API.RESTAURANT}${PATHS.ORDER}Print/${json}`).pipe(
-      map(response => {
+    this.http.get<ApiResponse>(`${PATHS_API.RESTAURANT}${PATHS.ORDER}Print/${json}`).subscribe({
+      next: response => {
         if (response.code === "0") {
           this.tS.toastr({
             type: 'warning',
@@ -52,13 +54,17 @@ export class SharedService {
           this.print(mainData);
 
         }
-      })
-    )
+      },
+      error: err => {
+        console.log(err)
+      }
+    })
   }
-  async print<T extends { urlPrinter: string }>(params: T[]) {
+
+  print<T extends { urlPrinter: string }>(params: T[]) {
     for (const param of params) {
-      this.http.post<ApiResponse>(`${param.urlPrinter}`, JSON.stringify(param)).pipe(
-        map(response => {
+      this.http.post<ApiResponse>(`${param.urlPrinter}`, param, {context: getCustomUrlContext()}).subscribe({
+        next: response => {
           if (response.code === "0") {
             this.tS.toastr({
               type: 'warning',
@@ -71,8 +77,12 @@ export class SharedService {
               message: response.message
             })
           }
-        })
-      )
+        },
+        error: err => {
+          console.log(err)
+        }
+      })
+
     }
   }
 
@@ -91,6 +101,7 @@ export class SharedService {
       tipo: 3
     })
   }
+
   getPrinterNotaEntrega(id: number, documentoId: number) {
     this.getPrinter({
       id,
@@ -112,8 +123,7 @@ export class SharedService {
   }
 
 
-
-  saveFile(response: any, format?: string, downloadOnly: boolean = false) {
+  getFileName(response: any) {
     let contentDisposition = response.headers.get('content-disposition');
     let fileName = contentDisposition
       ?.split(';')[1]
@@ -121,6 +131,11 @@ export class SharedService {
       .split('=')[1]
       .trim();
     fileName = fileName?.replaceAll('+', ' ');
+    return fileName;
+  }
+
+  saveFile(response: any, format?: string, downloadOnly: boolean = false) {
+    let fileName = this.getFileName(response)
 
     if (format === 'pdf') {
       const ieEDGE = navigator.userAgent.match(/Edge/g);
@@ -145,38 +160,54 @@ export class SharedService {
   }
 
   /**
+   * Genera y descarga o retorna un reporte en formato PDF o Excel.
    *
-   * @param data
-   * @param format pdf | excel
-   * @param isOldVersion
+   * @template T Tipo de los datos que se envían para generar el reporte.
+   * @param data Datos necesarios para la generación del reporte.
+   * @param format Formato del reporte (pdf | excel), por defecto 'pdf'.
+   * @param isOldVersion Define si se usa la versión antigua del reporte.
+   * @param downloadOnly Si es verdadero, solo descarga el archivo sin abrirlo.
+   * @param isReturnData Si es verdadero, retorna el blob en lugar de descargarlo.
+   * @returns Observable si `isReturnData` es verdadero, de lo contrario void.
    */
   getReport<T>({
-    data,
-    format = 'pdf',
-    isOldVersion = false,
-    downloadOnly = false,
-  }: {
+                 data,
+                 format = 'pdf',
+                 isOldVersion = false,
+                 downloadOnly = false,
+                 isReturnData = false
+               }: {
     data: T;
-    format?: string;
+    format?: 'pdf' | 'excel';
     isOldVersion?: boolean;
     downloadOnly?: boolean;
-  }) {
-    const path = isOldVersion
-      ? `${PATHS.REPORT_V1}`
-      : `${PATHS.REPORT_V2}`;
-    this.http
-      .post(`${PATHS_API.REPORT}${path}Download`, data, {
-        observe: 'response',
-        responseType: 'blob',
-      })
-      .subscribe((response) => {
-        this.saveFile(response, format, downloadOnly);
-      });
+    isReturnData?: boolean;
+  }): Observable<any> | void {  // <- Retorna Observable si isReturnData es true, de lo contrario void
+    const reportVersionPath = isOldVersion ? PATHS.REPORT_V1 : PATHS.REPORT_V2;
+    const fullPath = `${PATHS_API.REPORT}${reportVersionPath}Download`;
+
+    // Configuración de la petición
+    const requestOptions = {
+      observe: 'response' as const,
+      responseType: 'blob' as const,
+    };
+
+    // Si se debe retornar el blob en lugar de descargar
+    if (isReturnData) {
+      return this.http.post(fullPath, data, requestOptions);  // Retorna Observable
+    }
+
+    // Si solo se descarga el archivo
+    this.http.post(fullPath, data, requestOptions).subscribe({
+      next: (response) => this.saveFile(response, format, downloadOnly),
+      error: (err) => {
+        console.error('Error al descargar el reporte:', err);
+        // Aquí podrías mostrar un mensaje de error al usuario
+      }
+    });
+
+    return;  // <- Devuelve void en caso de que no se use isReturnData
   }
-
-
-
- 
 
 
 }
