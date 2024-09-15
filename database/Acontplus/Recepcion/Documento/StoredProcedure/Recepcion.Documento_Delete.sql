@@ -21,14 +21,16 @@ BEGIN
     DECLARE @idUsuario INT 
     
     --> Contabilidad 
-    DECLARE @codDoc VARCHAR(10)
+    DECLARE @codDoc VARCHAR(10) ,@idEstadoPago INT 
 
 	
 	BEGIN TRY
         --> Variables
         SELECT TOP 1 @idUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
-        SELECT TOP 1 @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
+        SELECT TOP 1 @codDoc = ISNULL(codDoc,'00') FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
+
+        SELECT TOP 1 @idEstadoPago = idEstadoPago FROM EstadoPago WITH (NOLOCK) WHERE codigo = 'A'
 
         IF EXISTS(SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND complete = 1)
 			 BEGIN
@@ -56,12 +58,32 @@ BEGIN
         
 
 		BEGIN TRAN
-				
-			 DELETE FROM FactElect.DocRelacionado WHERE idDocumentoRecibido = @idDocumento
-
-             DELETE FROM Recepcion.DocumentoImpuesto WHERE DocumentoRecibidoId = @idDocumento
+            IF @codDoc IN ('04','01')
+                BEGIN
+                    IF EXISTS (SELECT 1 FROM v_CuentaPorPagar WITH (NOLOCK) WHERE codDoc = @codDoc AND idDocumento = @idDocumento)
+                        BEGIN
+				            UPDATE Recepcion.DocumentoRecibido SET estado = 0 WHERE idDocumento = @idDocumento
 			
-             DELETE FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento
+                            UPDATE Contabilidad.CuentaPorPagar SET idEstadoPago = @idEstadoPago WHERE codDoc = @codDoc AND idDocumento = @idDocumento
+			             END
+                END 
+
+            IF @codDoc IN ('07')
+                BEGIN
+                    IF EXISTS (SELECT 1 FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE codDoc = '07' AND idDocumento = @idDocumento)
+                        BEGIN
+				             UPDATE Recepcion.DocumentoRecibido SET estado = 0 WHERE idDocumento = @idDocumento
+
+                             UPDATE Contabilidad.CuentaPorCobrar SET idEstadoPago = @idEstadoPago WHERE codDoc = @codDoc AND idDocumento = @idDocumento
+			             END
+                END 
+
+            IF @codDoc IN ('00')
+                BEGIN
+                    DELETE FROM Recepcion.DocumentoImpuesto WHERE DocumentoRecibidoId = @idDocumento
+			
+                    DELETE FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento
+                END
 
 		COMMIT TRAN
         SELECT '1' code, 'Eliminado Exitosamente' as 'message'
