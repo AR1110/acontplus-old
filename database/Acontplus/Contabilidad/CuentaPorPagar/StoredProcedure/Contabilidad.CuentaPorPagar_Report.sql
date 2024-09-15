@@ -138,6 +138,12 @@ BEGIN
                             SET @sql = @sql + 'AND cp.codEstado = @codEstado '
                         END 
                 END 
+            ELSE 
+                BEGIN
+                    BEGIN
+                            SET @sql = @sql + 'AND cp.codEstado NOT IN (''A'') '
+                        END 
+                END 
 
 
             SET @sql = @sql + 'ORDER BY cp.idProveedor,cp.codDoc,cp.fechaEmision,cp.secuencial ASC '
