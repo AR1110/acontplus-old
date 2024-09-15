@@ -108,7 +108,8 @@ export class ProductService {
       json: JSON.stringify({ ...obj, tipo: 1 })
     }
     return this.http.get(`${this.url_old}Get`, {
-      params
+      params,
+      context: getNoLoader()
     }).pipe(map((response: any) => response.payload))
   }
 
