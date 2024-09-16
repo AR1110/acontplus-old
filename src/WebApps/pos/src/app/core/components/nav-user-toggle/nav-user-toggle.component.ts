@@ -1,6 +1,6 @@
 import { AuthService } from '@/services/auth.service';
 import { MainStoreService } from '@/store/main-store.service';
-import {Component, computed, inject} from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -25,6 +25,7 @@ export class NavUserToggleComponent {
 
   logout(){
     this.authSvc.logout()
+    window.location.reload()
   }
 
 }
