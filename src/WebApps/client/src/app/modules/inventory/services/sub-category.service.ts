@@ -1,8 +1,9 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
-import { map } from "rxjs";
 import { isApiResponse } from "@core/models/api-response";
+import { map } from "rxjs";
+
 import { INVENTORY_PATHS } from "../enums/inventory.enum";
 
 @Injectable({
@@ -16,7 +17,7 @@ export class SubCategoryService {
 
   getAll<T>(data: T) {
     let params = JSON.stringify({ ...data, tipo: 1 })
-    return this.http.get(`${this.url}Get?json=${params}`)
+    return this.http.get(`${this.url}?json=${params}`)
       .pipe(
         map(response => {
           if (isApiResponse(response)) {
