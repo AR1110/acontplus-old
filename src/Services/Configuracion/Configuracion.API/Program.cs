@@ -1,4 +1,5 @@
 ﻿using Common.AppSettings;
+using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,7 @@ app.UseSwaggerDocumentation();
 
 app.UseRouting();
 
-if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
     app.Urls.Add("http://*:5004"); // Linux Port
 }

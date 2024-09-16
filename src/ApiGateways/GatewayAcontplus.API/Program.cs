@@ -15,6 +15,8 @@ using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Services.Common.Extensions;
 using Services.Common.Middleware;
+using System.Runtime.InteropServices;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -101,7 +103,7 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseRouting();
 
 // Handle Port Configuration for Different Environments (consider a configuration or environment variable)
-if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
     app.Urls.Add("http://*:5001"); // Linux Port
 }
