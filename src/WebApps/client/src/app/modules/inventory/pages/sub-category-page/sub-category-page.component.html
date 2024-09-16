@@ -6,9 +6,13 @@
     <mat-card-title-group>
       <mat-card-title></mat-card-title>
       <div class="d-flex flex-row gap-2">
-        <button mat-flat-button  >
+        <button mat-flat-button appSubCategoryModal (onResult)="onResultModal($event)">
           <mat-icon>add</mat-icon>
           Nuevo
+        </button>
+        <button mat-raised-button>
+          <mat-icon>save_alt</mat-icon>
+          Exportar
         </button>
         <button mat-icon-button (click)="refresh()">
           <mat-icon>refresh</mat-icon>
@@ -34,10 +38,10 @@
           <th mat-header-cell *matHeaderCellDef>Op.</th>
           <td mat-cell *matCellDef="let row">
             <div class="d-flex flex-row gap-1">
-              <button mat-icon-button    >
+              <button mat-icon-button>
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button  >
+              <button mat-icon-button>
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
@@ -47,6 +51,19 @@
 
 
         <!-- Title Column -->
+        <ng-container matColumnDef="nombreFamilia">
+          <th mat-header-cell *matHeaderCellDef>Categoria</th>
+          <td mat-cell *matCellDef="let row">{{row.nombreFamilia
+            }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="img">
+          <th *matHeaderCellDef mat-header-cell>Imagen</th>
+          <td *matCellDef="let element" mat-cell>
+            <img [src]="element.s3ObjectUrl" class="img-fluid img-thumbnail" width="50" />
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="code">
           <th mat-header-cell *matHeaderCellDef>Código</th>
           <td mat-cell *matCellDef="let row">{{row.codigo

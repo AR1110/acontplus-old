@@ -11,8 +11,11 @@
   <div class="modal-body">
     <div class="form-group">
       <label for="category">Categoria: </label>
-      <select name="category" id="category" class="form-select">
-        <option value=""></option>
+      <select name="category" id="category" class="form-select" [(ngModel)]="data.idFamilia">
+        <option [value]="0">Ninguno</option>
+        @for (item of categorias; track $index) {
+          <option [value]="item.idFamilia">{{item.descripcion}}</option>
+        }
       </select>
     </div>
     <div class="form-group">
@@ -59,7 +62,7 @@
         </div>
       </div>
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-
+        <app-upload-image/>
       </div>
     </div>
   </div>
