@@ -1,8 +1,10 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
   OnChanges,
+  OnDestroy,
   Output,
   SimpleChanges,
   ViewEncapsulation,
@@ -14,75 +16,96 @@ import {
   TabulatorFull as Tabulator,
 } from 'tabulator-tables';
 
+// Register Tabulator modules
 Tabulator.registerModule([PageModule, ReactiveDataModule]);
 
 @Component({
   selector: 'app-tabulator-semantic-ui',
   standalone: true,
-  imports: [],
   templateUrl: './tabulator-semantic-ui.component.html',
   styleUrls: ['./tabulator-semantic-ui.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class TabulatorSemanticUiComponent implements OnChanges {
+export class TabulatorSemanticUiComponent
+  implements OnChanges, AfterViewInit, OnDestroy
+{
   @Input() tableData: any[] = [];
   @Input() columnNames: any[] = [];
+  @Input() options: Record<string, any> = {}; // Allows more flexibility by accepting a general options object
 
-  @Input() options = {};
+  @Output() cellEdited = new EventEmitter<any>();
+  @Output() cellClick = new EventEmitter<any>();
 
-  @Output() cellEdited = new EventEmitter();
-  @Output() cellClick = new EventEmitter();
+  uniqueIdTabulator: string = generateUuidv4();
+  private refTabulator!: Tabulator;
+  private readonly tabContainer: HTMLDivElement;
 
-  uniqueIdTabulator = generateUuidv4();
-  tab = document.createElement('div');
-
-  refTabulator!: Tabulator;
-
-  // ngOnInit(): void {
-  //   this.drawTable();
-  // }
+  constructor() {
+    this.tabContainer = document.createElement('div'); // Initialize the table container
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['tableData']) {
-      this.drawTable();
+    if (changes['tableData'] && !changes['tableData'].isFirstChange()) {
+      // Efficiently update the data without redrawing the table
+      this.updateTableData();
     }
   }
 
-  ngAfterViewInit() {
-    this.drawTable();
+  ngAfterViewInit(): void {
+    // Initialize the table after the view has been fully rendered
+    this.initializeTable();
   }
 
-  updateData() {
-    // this.refTabulator.updateData(this.tableData)
+  ngOnDestroy(): void {
+    // Clean up the Tabulator instance to prevent memory leaks
+    if (this.refTabulator) {
+      this.refTabulator.destroy();
+    }
   }
 
-  private drawTable(): void {
-    this.refTabulator = new Tabulator(this.tab, {
+  private initializeTable(): void {
+    const tableElement = document.getElementById(this.uniqueIdTabulator);
+    if (!tableElement) {
+      console.error(
+        `Table element with id ${this.uniqueIdTabulator} not found.`,
+      );
+      return;
+    }
+
+    // Create Tabulator instance with configuration
+    this.refTabulator = new Tabulator(this.tabContainer, {
       renderVerticalBuffer: 300,
       columns: this.columnNames,
       data: this.tableData,
-      headerSort: false,
       layout: 'fitData',
-      autoResize: true, // prevent auto resizing of table
       placeholder: 'Sin registro',
-
-      ...this.options,
+      autoResize: true,
+      ...this.options, // Spread user-defined options for flexibility
     });
-    let table = document.getElementById(`${this.uniqueIdTabulator}`);
 
-    if (table) {
-      table.appendChild(this.tab);
-      if (this.cellEdited) {
-        this.refTabulator.on('cellEdited', (cell) => {
-          this.cellEdited.emit(cell);
-        });
-      }
+    // Append the Tabulator DOM element to the parent container
+    tableElement.appendChild(this.tabContainer);
 
-      if (this.cellClick) {
-        this.refTabulator.on('rowClick', (cell, row) => {
-          this.cellClick.emit(row);
-        });
-      }
+    // Register event listeners
+    this.registerEvents();
+  }
+
+  private registerEvents(): void {
+    // Handle cell edited events
+    this.refTabulator.on('cellEdited', (cell) => {
+      this.cellEdited.emit(cell);
+    });
+
+    // Handle row click events
+    this.refTabulator.on('rowClick', (e, row) => {
+      this.cellClick.emit(row);
+    });
+  }
+
+  private updateTableData(): void {
+    // Efficiently update table data without redrawing the entire table
+    if (this.refTabulator) {
+      this.refTabulator.replaceData(this.tableData);
     }
   }
 }
