@@ -4,6 +4,7 @@ using FactElect.API.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Services.Common.Middleware;
+using System.Runtime.InteropServices;
 
 namespace FactElect.API;
 
@@ -45,7 +46,7 @@ public class Program
 
         app.UseSwaggerDocumentation();
 
-        if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             app.Urls.Add("http://*:5006"); // Linux Port
         }

@@ -92,3 +92,5 @@ bin-release/
 /src/WebApps/WebUI/.vscode
 /src/AcontPlus.sln.DotSettings
 /src/WebApps/client/.fleet
+.DS_Store
+shared/sharedsettings.Development.json
