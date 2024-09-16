@@ -12,6 +12,13 @@ public class FloorService(RestaurantContext context) : IFloorService
     {
         var floorExist = FloorExistsCodeEstab(floor.Code, floor.CodEstab);
         if (floorExist) return new ApiResponse { Code = "0", Message = "El código ya está en uso" };
+        if (floor.Rooms.Count > 0)
+        {
+            foreach (var item in floor.Rooms)
+            {
+                item.Id = 0;
+            }
+        }
         context.Floors.Add(floor);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Registrado correctamente!" };
