@@ -3,6 +3,8 @@ using Common.API.Data;
 using Common.AppSettings;
 using Microsoft.EntityFrameworkCore;
 using Services.Common.Middleware;
+using System.Runtime.InteropServices;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +29,7 @@ app.UseSwaggerDocumentation();
 
 app.UseRouting();
 
-if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
     app.Urls.Add("http://*:5002"); // Linux Port
 }

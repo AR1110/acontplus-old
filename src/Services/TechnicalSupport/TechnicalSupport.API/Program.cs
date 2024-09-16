@@ -1,4 +1,5 @@
 ﻿using Common.AppSettings;
+using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,7 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
     app.Urls.Add("http://*:5012"); // Linux Port
 }
