@@ -220,8 +220,8 @@
                 let valorResiduo = fS.instanceDecimal(item.abonoDoc).minus(item.abono).toNumber();
 
                 //quitar cuando se haya validado bien tema de decimales en compras 
-                let valorResiduoValidar = fS.minus(fS.roundNumber(item.abonoDoc, 2), fS.roundNumber(item.abono, 2), 2);
-                console.log(valorResiduoValidar)
+                let valorResiduoValidar = fS.minus(fS.roundNumber(item.abonoDoc, 2), fS.roundNumber(item.abono.toNumber(), 2), 2);
+                
                 return {
                     idCuentaPorPagar: item.idCuentaPorPagar,
                     abono: valorResiduo,
@@ -275,6 +275,7 @@
                             observacion: result.value,
                             ...dataParams
                         };  
+                        
                        
                         showLoader();
                         comprobanteEgresoSvc.anular(item.idComprobanteEgreso, data).then(response => {
