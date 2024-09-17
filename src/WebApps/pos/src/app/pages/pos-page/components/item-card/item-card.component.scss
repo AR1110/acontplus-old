@@ -21,7 +21,7 @@
   cursor: pointer;
 }
 
- 
+
 
 mat-card-title {
   font-size: 18px;
@@ -31,7 +31,7 @@ mat-card-title {
 mat-card-subtitle {
   font-size: 16px;
 }
- 
+
 .addBtn {
   //background-color: #5aff15;
   // background-image: linear-gradient(315deg, #00b712 0%, #5aff15 74%);
@@ -58,13 +58,13 @@ mat-card-header {
   text-align: center;
 }
 
- 
+
 
 .container {
   position: relative;
   display: inline-block;
 }
- 
+
 
 .expandable-content.up {
   width: 100%;
@@ -90,7 +90,7 @@ mat-card-header {
   cursor: cell;
   //  overflow-y: auto;
 }
- 
+
 
 .image-container {
   display: flex;
@@ -121,7 +121,7 @@ mat-card-header {
     height: 90px; /* Ajustar la altura para mantener la proporción */
   }
 }
- 
+
 .name {
   font-size: .700rem;
   flex: 1 1 auto;
@@ -141,14 +141,14 @@ mat-card-header {
 }
 
 
-//loader in card 
+//loader in card
 .card-with-loader {
   position: relative;
 }
 
 .card-loader-overlay {
-  border-radius: 20px; 
-  position: absolute; 
+  border-radius: 20px;
+  position: absolute;
   width: 100%;
   height: 100%;
   display: flex;
