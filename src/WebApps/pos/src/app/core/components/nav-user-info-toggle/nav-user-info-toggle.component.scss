@@ -1,10 +1,11 @@
-//navbar
-.user-status {
+
+.company-name {
   font-size: 11px;
   font-weight: 500;
   line-height: 1;
   padding-top: 0.125rem;
   padding-bottom: 0.375rem;
+  max-width: 200px;
 }
 .estab-name {
  // color: #b8c7ce;
@@ -19,12 +20,23 @@
   border-radius: 5px;
   margin: 0;
   box-shadow: 0 0 5px 0px rgba(0, 0, 0, 0.4);
-  background: #fff;
+  //background: #fff;
   padding: 10px;
 
 }
- @media screen and (max-width: 600px) {
+
+
+/* Ajustes específicos para dispositivos móviles */
+@media (max-width: 576px) {
+
+
+  .company-name,
+  .estab-name {
+    max-width: 80%;
+  }
+
   .overlay-content {
-    width: 100%;
+   // width: 100%;
+    padding: 1rem;
   }
 }

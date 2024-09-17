@@ -44,24 +44,33 @@
         }
     ]">
       <div class="overlay-content">
-        @if (dataDetail.idCliente>0) {
-        <div class="vstack gap-1">
-          <div>
-            <strong>Identificación:</strong> {{dataDetail.identificacionComprador}}
-          </div>
-          <div>
-            <strong>Nombre Fiscal:</strong> {{dataDetail.nombreFiscal}}
-          </div>
-          <div>
-            <strong>Nombre Comercial:</strong> {{dataDetail.nombreComercial}}
-          </div>
-          <div>
-            <strong>Dirección:</strong> {{dataDetail.direccion}}
-          </div>
-        </div>
-        }@else {
-        <p>Cargando...</p>
-        }
+        <mat-card class="m-0 p-0">
+          <mat-card-content>
+            <p>
+              hola
+            </p>
+            @if (dataDetail.idCliente>0) {
+            <div class="vstack gap-1">
+              <p>
+                <strong>Identificación:</strong> {{dataDetail.identificacionComprador}}
+              </p>
+              <p>
+                <strong>Nombre Fiscal:</strong> {{dataDetail.nombreFiscal}}
+              </p>
+              <p>
+                <strong>Nombre Comercial:</strong> {{dataDetail.nombreComercial}}
+              </p>
+              <p>
+                <strong>Dirección:</strong> {{dataDetail.direccion}}
+              </p>
+            </div>
+            }@else {
+            <p>Cargando...</p>
+            }
+          </mat-card-content>
+
+        </mat-card>
+
 
 
       </div>
