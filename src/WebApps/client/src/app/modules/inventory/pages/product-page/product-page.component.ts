@@ -120,9 +120,7 @@ export class ProductPageComponent {
         pageSize: this.pagination().pageSize
       }
       this.isLoadingResults = true;
-      this.productSvc.getAll(params).subscribe(
-        (response) => {
-          this.isLoadingResults = false;
+      this.productSvc.getAll(params).subscribe((response) => {
           let results: Array<Product> = JSON.parse(response)[0]
           let products = results.map((product, index) => {
             return {

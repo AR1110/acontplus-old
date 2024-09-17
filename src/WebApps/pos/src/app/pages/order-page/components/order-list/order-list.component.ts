@@ -102,6 +102,7 @@ export class OrderListComponent {
   ])
 
 
+
   users: UserSelectHtmlOnly[] = [];
   tablesGroup: any[] = [];
 
@@ -131,7 +132,8 @@ export class OrderListComponent {
       isEnabled: !this.isDeleted(),
       finished: this.isFinished(),
       divided: this.isDividing(),
-      deleted: this.isDeleted()
+      deleted: this.isDeleted(),
+      typeSearchCustomer: this.dataSearch.typeSearchCustomer
     }
     this.isLoadingResults.set(true)
 
@@ -159,6 +161,12 @@ export class OrderListComponent {
       this.users = response.users;
       this.getOrders()
     })
+  }
+
+  onChangeTypeSearchCustomer(){
+    if (getValidId(this.dataSearch.customerCompanyId)){
+      this.refresh()
+    }
   }
 
   refresh() {

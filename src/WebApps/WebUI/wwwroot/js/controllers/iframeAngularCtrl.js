@@ -81,8 +81,8 @@
             route = totalRoutes[1] + totalRoutes[2] + totalRoutes[3];
         }
         else {
-         //   route = pathname.split('/')[1]
-            route = pathname
+            route = pathname.split('/')[1]
+            //route = pathname
         }
         async function getSrc() {
             if (!frontend) { return; }
