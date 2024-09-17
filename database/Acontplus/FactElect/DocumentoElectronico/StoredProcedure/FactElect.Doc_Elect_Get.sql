@@ -178,7 +178,7 @@ BEGIN
                       ,nombreComercial
                       ,codEstab
                       ,idPuntoEmision
-                      ,ptoEmi + '-' + estab as ptoEmi
+                      ,estab + '-' + ptoEmi as ptoEmi
                       ,defaultEstab
                       ,defaultPtoEmi 
             FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultEstab DESC
