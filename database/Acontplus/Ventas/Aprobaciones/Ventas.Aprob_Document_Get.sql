@@ -221,6 +221,7 @@ BEGIN
                   ,CAST(IIF(u.idUsuario = @byUsuario, 1, 0) AS bit) as predeterminado
 	        FROM v_usuario          u WITH(NOLOCK) 
 	        WHERE u.idEntidad = @idEntidad
+              AND u.estadoUsuario = 1
 
              SELECT    
 	              CAST(multipleVendedor AS BIT) as multipleVendedor 

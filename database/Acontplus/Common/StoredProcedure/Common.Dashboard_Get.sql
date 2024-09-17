@@ -158,7 +158,7 @@ BEGIN
             END
 
         -- Check for new releases
-        IF (SELECT COUNT(*) FROM AcontplusAdmin.Common.Release WITH (NOLOCK)) <> 
+        IF (SELECT COUNT(*) FROM AcontplusAdmin.Common.Release WITH (NOLOCK) WHERE Deleted IS NULL AND Enabled = 1) <> 
            (SELECT COUNT(*) FROM AcontplusAdmin.Common.UserReleaseRead WITH (NOLOCK) WHERE userId = @userId)
         BEGIN
             SET @releases = (
@@ -169,7 +169,7 @@ BEGIN
                     version, 
                     CONVERT(VARCHAR, FORMAT(ReleaseDate, 'dd/MM/yyyy')) AS releaseDate
                 FROM AcontplusAdmin.Common.Release r WITH (NOLOCK)
-                WHERE r.Id NOT IN (SELECT Id FROM AcontplusAdmin.Common.UserReleaseRead WHERE UserId = @userId) 
+                WHERE r.Id NOT IN (SELECT ReleaseId FROM AcontplusAdmin.Common.UserReleaseRead WHERE UserId = @userId) 
                 FOR JSON PATH
             );
         END

@@ -7,6 +7,5 @@ public class UserReleaseReadController(IUserReleaseReadService userReleaseReadSe
     {
         apiRequest.UserRoleId = User.GetUserRoleId();
         return Ok(await userReleaseReadService.AddAsync(apiRequest));
-        ;
     }
 }
