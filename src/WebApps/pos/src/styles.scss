@@ -71,6 +71,18 @@ $button-font-weight: 500;
   --pink: #d61672;
 }
 
+.dark-theme {
+  @include mat.all-component-colors($dark-theme);
+
+  // Components themes
+  @include layout-component.theme($dark-theme);
+
+  @include mat.color-variants-backwards-compatibility($dark-theme);
+
+  @include mat.core-color($dark-theme);
+    @include mat.button-color($dark-theme);
+}
+
 // Define a mixin to create custom button styles
 @mixin custom-button($color) {
   background-color: $color;
@@ -181,12 +193,6 @@ body {
 }
 
 
-.row {
-  //--bs-gutter-x: 0.0rem;
-  //margin-right: 0px;
-
-}
-
 
 .custom-input {
   margin-left: 1rem;
@@ -296,14 +302,14 @@ body {
 
 //end loader
 .form-control:focus,
-.form-select:focus{
+.form-select:focus {
   border-color: #D61672;
   box-shadow: 0 0 0 0.10rem #D61672;
   /* Sombra con color rosa */
 }
 
 
-//dialog full screen 
+//dialog full screen
 .full-screen-dialog .mat-dialog-container {
   padding: 0;
   margin: 0;
@@ -321,5 +327,5 @@ body {
   height: 24px;
   margin-right: 8px;
   vertical-align: middle;
-  color:  #49454e;
+  color: #49454e;
 }

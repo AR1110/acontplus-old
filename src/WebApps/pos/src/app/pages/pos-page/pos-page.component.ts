@@ -1,6 +1,6 @@
 
-import { Component, computed, inject, signal } from '@angular/core';
-import { MatTabChangeEvent, MatTabsModule } from "@angular/material/tabs";
+import { Component, computed, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from "@angular/material/tabs";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { AsyncPipe, CommonModule } from "@angular/common";
@@ -64,6 +64,11 @@ export class PosPageComponent {
 
   private establecimientoId = this.mainStore.select("establecimientoId");
   private codEstab = this.mainStore.select("codEstab");
+
+  @ViewChild('tabGroup', { static: false }) tabGroup!: MatTabGroup;
+
+  private startX: number = 0;
+  private endX: number = 0;
 
   subCategorias = signal<SubCategory[]>([{
     idSubFamilia: 0,
@@ -275,6 +280,50 @@ export class PosPageComponent {
       }
     })
     this.getItems()
+  }
+
+
+
+  ngAfterViewInit() {
+    const element = this.tabGroup._elementRef.nativeElement;
+
+    if (element) {
+      element.addEventListener('touchstart', this.onTouchStart.bind(this));
+      element.addEventListener('touchend', this.onTouchEnd.bind(this));
+    } else {
+      console.error('Tab group element not found');
+    }
+  }
+
+  private onTouchStart(event: TouchEvent) {
+    this.startX = event.touches[0].clientX;
+  }
+
+  private onTouchEnd(event: TouchEvent) {
+    this.endX = event.changedTouches[0].clientX;
+    this.handleSwipe();
+  }
+
+  private handleSwipe() {
+    if (this.endX - this.startX < -50) {
+      this.nextTab();  // Swipe left
+    } else if (this.endX - this.startX > 50) {
+      this.previousTab();  // Swipe right
+    }
+  }
+
+  private nextTab() {
+    const index = this.tabGroup.selectedIndex??0;
+    if (index < this.tabGroup._tabs.length - 1) {
+      this.tabGroup.selectedIndex = index + 1;
+    }
+  }
+
+  private previousTab() {
+    const index = this.tabGroup.selectedIndex??0;
+    if (index > 0) {
+      this.tabGroup.selectedIndex = index - 1;
+    }
   }
 
 

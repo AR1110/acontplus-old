@@ -17,4 +17,11 @@
   background: rgba(255, 255, 255, 0.8); /* Fondo opcional para hacer el spinner más visible */
 }
 
+.mat-tab-header {
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  /* Optional for smooth scrolling */
+  white-space: nowrap;
+}
+
 

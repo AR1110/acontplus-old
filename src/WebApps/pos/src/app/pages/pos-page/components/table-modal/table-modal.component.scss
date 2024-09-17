@@ -62,7 +62,7 @@
   background-color: #303f9f;
 }
 
- 
+
 
 /* Contenedor del árbol */
 .tree {
@@ -80,10 +80,10 @@
 
 /* Estilos para el encabezado del nodo del árbol (dt) */
 .tree-header {
-  background-color: rgba(233, 221, 255, 0.75); 
-  border-radius: 8px; 
-  padding: 5px; 
-  margin: 5px 0; 
+  background-color: rgba(233, 221, 255, 0.75);
+  border-radius: 8px;
+  padding: 5px;
+  margin: 5px 0;
   display: flex;
   align-items: center;
   position: relative;
@@ -100,6 +100,7 @@
 /* Contenedor para los hijos del nodo (dd) */
 .tree-children {
   margin-left: 20px;
+    padding-right: 20px;
   /* Oculta los hijos por defecto */
 }
 
