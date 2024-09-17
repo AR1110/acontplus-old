@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.CuotaPorCobrar_Insert', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.CuotaPorCobrar_Insert
-GO
-CREATE PROCEDURE Contabilidad.CuotaPorCobrar_Insert @idUsuarioRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Contabilidad.CuotaPorCobrar_Insert @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -89,6 +86,7 @@ BEGIN
 			,@cuota        = @importeTotal /numeroCuota
 		FROM dbo.TiempoCredito WITH (NOLOCK) WHERE idTiempoCredito = @idTiempoCredito
 
+
 		--===============================Calculo de cuota con entrada=================================================
 		IF @entrada = 1
 			BEGIN
@@ -150,8 +148,15 @@ BEGIN
 				
 			INSERT INTO Contabilidad.CuotaPorCobrar (idCuentaPorCobrar,idEstadoPago,fechaVencimiento,nroCuota,cuota,entrada)
 			                                 SELECT @idCuentaPorCobrar,@idEstadoPago,fechaVencimiento,nroCuota,cuota,entrada FROM @cuotas
-			
-			DELETE Contabilidad.CuotaPorCobrar WHERE idCuentaPorCobrar = @idCuentaPorCobrar AND estado = 0 AND idCuotaPorCobrar NOT IN (SELECT idCuotaPorCobrar FROM CobroDetalle WITH (NOLOCK))
+
+            IF EXISTS (SELECT 1 FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar AND codDoc = '01')
+                BEGIN
+                    DECLARE @idDocumento INT
+
+                    SELECT TOP 1 @idDocumento = idDocumento FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+
+                    UPDATE dbo.FormaPagoFactura SET idTiempoCredito = @idTiempoCredito WHERE idFactura = @idDocumento
+                END 
 
 			SET @payload = (SELECT cx.idCuotaPorCobrar
 			                      ,cx.nroCuota
