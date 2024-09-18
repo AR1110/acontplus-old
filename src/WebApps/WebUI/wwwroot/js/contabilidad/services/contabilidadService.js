@@ -513,7 +513,7 @@
     /**
      * COBROS 
      */
-    app.factory('comprobanteIngresoService', ['mainService', 'formulario', function (mS, fS) {
+    app.factory('comprobanteIngresoService', ['mainService', 'formulario', 'modalService', 'nombreModalContabilidad', function (mS, fS, modalSvc, nombreModalContab) {
         const url = `Contabilidad/ComprobanteIngreso/`
         return {
             getDataFilter,
@@ -523,6 +523,7 @@
             mapperTo,
             getHistorialCobrosById,
             getHistorialCobrosByDoc,
+            getPosfechadoCobrosModal,
             update,
             cancel,
             getCuotasByIdCuentaPorCobrar,
@@ -908,7 +909,53 @@
             })
         }
 
-        //==================SE USA EN CHEQUE===========
+
+        function getPosfechadoCobrosModal(obj){
+            let json = JSON.stringify({
+                tipo: 8,
+                pageIndex: obj && obj.pageIndex || 1,
+                pageSize: obj && obj.pageSize || 25
+            })
+            mS.getData('get', `${url}?json=${json}`, null, true).then(async response=>{
+                let results = {
+                    cheques: []
+                };
+                if(response.code==="1"){
+                    let mainData = JSON.parse(response.payload);
+                    let cheques = mainData && mainData.cheques || [];
+
+                    results.cheques = cheques.map(item=>{
+                        return {
+                            id: item.id,
+                            idComprobante: item.idComprobante,
+                            nroDocumento: item.nroDocumento,
+                            persona: item.persona,
+                            nroIdentificacion: item.nroIdentificacion,
+                            valor: item.valor,
+                            nro: item.nro,
+                            fechaEmision: item.fechaEmision,
+                        }
+                    }) 
+                }
+                
+                if(results.cheques.length>0){
+
+                    const { fileCtrl, ctrl, template } = nombreModalContab.POSFECHADO_COBROS_MODAL;
+                    let controller = (await import(fileCtrl))[ctrl];
+
+                    modalSvc.open({
+                        controller,
+                        template,
+                        size: 'xl',
+                        params: results,
+                        keyboard: true,  
+                    });
+                }
+                
+            })
+        }
+
+         
         function update(comprobanteIngresoId, data) {
             return mS.getData('put', `${url}${comprobanteIngresoId}`, { data }, true)
         }
