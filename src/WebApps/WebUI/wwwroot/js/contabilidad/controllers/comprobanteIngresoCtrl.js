@@ -169,6 +169,8 @@
                 }
                 getCobros();
             })
+
+            compIngresoSvc.getPosfechadoCobrosModal()
         }
 
         $scope.pagechanged = function () {

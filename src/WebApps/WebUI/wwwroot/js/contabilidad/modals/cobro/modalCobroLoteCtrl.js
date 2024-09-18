@@ -261,7 +261,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
             modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
             modalCobroSvc.setUniqueIndex($scope.datosCobro.length + 1)
-            modalCobroSvc.setEsAbonoPosfechado(posfechado);
+         //   modalCobroSvc.setEsAbonoPosfechado(posfechado);
             modalCobroSvc.setValorAbono(valorAbono);
 
             //--------agregando abono ---
@@ -363,7 +363,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         modalCobroSvc.setUniqueIndex(uniqueIndex);
 
                         modalCobroSvc.setValorAbono(item.valorAbono);
-                        modalCobroSvc.setEsAbonoPosfechado(item.posfechado);
+                      //  modalCobroSvc.setEsAbonoPosfechado(item.posfechado);
 
                         //--------agregando abono ---
                         modalCobroSvc.aplicarAbono();
@@ -534,7 +534,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
                 let params = comprobanteIngresoSvc.mapperTo(data);
-                console.log(params)
+                
                 showLoader();
                 comprobanteIngresoSvc.post(params).then((response) => {
                     hideLoader();

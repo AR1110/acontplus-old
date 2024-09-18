@@ -765,7 +765,7 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         pagoSvc.selectedDocumentos = $scope.selectedDocumentos;
 
                         pagoSvc.secuencial = $scope.pagos.length + 1;
-                        pagoSvc.esAbonoPosfechado = isPosfechado;
+                     //   pagoSvc.esAbonoPosfechado = isPosfechado;
                         pagoSvc.valorAbono = valorAbono; 
 
 
@@ -897,7 +897,7 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         pagoSvc.secuencial = secuencial;
 
                         pagoSvc.valorAbono = item.valorAbono;
-                        pagoSvc.esAbonoPosfechado = item.isPosfechado;
+                      //  pagoSvc.esAbonoPosfechado = item.isPosfechado;
 
                         //--------agregando abono ---
                         pagoSvc.addFormaCobro();
