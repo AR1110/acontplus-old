@@ -7,11 +7,14 @@ import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
 import { CustomTableContainerComponent } from "@core/components/custom-table-container/custom-table-container.component";
+import { SharedService } from "@core/services/shared.service";
+import { ToasterService } from "@core/services/toaster.service";
 import { SubCategoryModalDirective } from "@modules/inventory/directives/sub-category.directive";
 import { SubCategoryService } from "@modules/inventory/services/sub-category.service";
 import { ActionAddDirective } from "@shared/directives/permission/action-add.directive";
 import { MatPagination } from "@shared/models/pagination.model";
 import { PrimaryStatusPipe } from "@shared/pipe/primary-status.pipe";
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-subcategory-page',
@@ -33,9 +36,12 @@ import { PrimaryStatusPipe } from "@shared/pipe/primary-status.pipe";
 export class SubCategoryPageComponent {
 
   private subCategorySvc = inject(SubCategoryService);
+  private tS = inject(ToasterService)
+  private sharedSvc = inject(SharedService)
   pagination = signal(new MatPagination());
 
-  displayedColumns: string[] = ['index', 'op','nombreFamilia','img', 'code', 'description', 'estado'];
+
+  displayedColumns: string[] = ['index', 'op', 'nombreFamilia', 'img', 'code', 'siglas', 'description', 'estado'];
 
   dataSource = new MatTableDataSource<any>();
 
@@ -49,7 +55,7 @@ export class SubCategoryPageComponent {
 
   pageEvent!: PageEvent;
 
-  onResultModal($event: any){
+  onResultModal($event: any) {
     this.refresh()
   }
 
@@ -64,11 +70,11 @@ export class SubCategoryPageComponent {
       next: (categories) => {
         this.isLoadingResults = false;
         this.dataSource = new MatTableDataSource(categories);
-      //  this.dataSource.paginator = this.paginator;
+        //  this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
-        if(this.dataSource.data.length>0){
-          this.pagination.update(e=>{
+        if (this.dataSource.data.length > 0) {
+          this.pagination.update(e => {
             return {
               ...e,
               totalRecords: this.dataSource.data[0].totalRecords
@@ -76,7 +82,7 @@ export class SubCategoryPageComponent {
           })
         }
       },
-      error:(err)=> {
+      error: (err) => {
         this.isLoadingResults = false;
         console.log(err)
       },
@@ -102,5 +108,54 @@ export class SubCategoryPageComponent {
     })
     this.getSubcategories();
   }
+
+  async askToUpdateStatus(obj: any) {
+    try {
+      let { isConfirmed } = await Swal.fire({
+        icon: 'warning',
+        html: `<small>Esta seguro/a de eliminar esta subfamilia ahora?</small>`,
+        confirmButtonText: 'Si, eliminar',
+        showCancelButton: true,
+        cancelButtonText: 'No, cancelar',
+        allowOutsideClick: false
+      });
+
+      if (isConfirmed) {
+
+        this.subCategorySvc.updateStatus(obj.idSubFamilia).subscribe(response=>{
+          if(response.code==="0"){
+            this.tS.toastr({
+              type: 'warning',
+              message: response.message
+            })
+          }
+          if (response.code === "1") {
+            this.tS.toastr({
+              type: 'success',
+              message: response.message
+            })
+            this.getSubcategories()
+          }
+        })
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  exportToExcel(){
+    const results = this.dataSource.data.map((category: any) => {
+      return {
+        descripcion: category.descripcion,
+        siglas: category.siglas,
+        codigo: category.codigo,
+        nombreFamilia: category.nombreFamilia,
+        ultimoSecuencial: category.ultimoSecuencial,
+      }
+    })
+
+    this.sharedSvc.exportToExcel(results, 'Listado de SubCategorias')
+  }
+
 
 }

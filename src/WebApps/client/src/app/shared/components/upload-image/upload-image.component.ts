@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input, input, output, signal } from '@angular/core';
 import { imgDefault } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
@@ -14,18 +14,20 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   styleUrl: `./upload-image.component.scss`
 })
 export class UploadImageComponent {
+  onSelected = output<File | null>()
 
-  imageUrl: string | ArrayBuffer | null = imgDefault();
+  @Input() imageUrl: string | ArrayBuffer | null =  imgDefault()
 
   file: File | null = null;
 
   onFileChange(event: any): void {
     const file = event.target.files[0];
     this.file = file;
+    this.onSelected.emit(this.file)
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        this.imageUrl = reader.result;
+        this.imageUrl = reader.result
       };
       reader.readAsDataURL(file);
     }
@@ -34,6 +36,7 @@ export class UploadImageComponent {
   onDelete(): void {
     this.imageUrl = imgDefault()
     this.file = null;
+    this.onSelected.emit(null)
   }
 
 }
