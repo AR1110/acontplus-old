@@ -1,4 +1,4 @@
-<form>
+
   <div class="modal-header">
     <h4 class="modal-title">{{ titleModal }}</h4>
     <button
@@ -22,7 +22,8 @@
       <label for="description"
         >Descripción: <span class="text-danger">*</span>
       </label>
-      <input name="description" id="description" class="form-control" />
+      <input name="description" id="description" class="form-control" appToUpperCase [(ngModel)]="data.descripcion"
+      (blur)="generateSigla()" />
     </div>
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
@@ -30,7 +31,7 @@
           <label for="siglas"
             >Siglas: <span class="text-danger">*</span>
           </label>
-          <input name="siglas" id="siglas" class="form-control" />
+          <input name="siglas" id="siglas" class="form-control" appToUpperCase [(ngModel)]="data.siglas" />
         </div>
       </div>
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
@@ -43,6 +44,7 @@
             name="montoObjetivo"
             id="montoObjetivo"
             class="form-control"
+            [(ngModel)]="data.montoObjetivo"
           />
         </div>
       </div>
@@ -58,18 +60,24 @@
             name="sequential"
             id="sequential"
             class="form-control"
+            [(ngModel)]="data.ultimoSecuencial"
           />
         </div>
       </div>
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-        <app-upload-image/>
+        <div class="form-group">
+          <label for="imagen">Imagen</label>
+          <app-upload-image
+           [imageUrl]="imageUrl()"
+           (onSelected)="onSelected($event)"
+           />
+        </div>
       </div>
     </div>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-success">Guardar</button>
+    <button type="button" class="btn btn-success" (click)="save()">Guardar</button>
     <button type="button" class="btn btn-dark" (click)="closeModal()">
       Cerrar
     </button>
   </div>
-</form>

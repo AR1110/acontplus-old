@@ -13,8 +13,8 @@ export class SubCategoryModalDirective {
   @HostListener('click') onClick() {
     const modalRef = this.modalSvc.open(SubCategoryModalComponent);
     modalRef.componentInstance.params = this.params || {};
-    modalRef.result.then((result: unknown) => {
-      if (this.onResult && typeof result === 'object') {
+    modalRef.result.then((result: any) => {
+      if (typeof result === 'object' && result.isRefresh) {
         this.onResult.emit(result);
       }
     })

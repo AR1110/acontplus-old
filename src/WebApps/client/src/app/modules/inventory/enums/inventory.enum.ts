@@ -6,7 +6,8 @@ export const enum INVENTORY_PATHS {
   MASSIVE_TAX = 'MassiveTax/',
   LOT_PRICE = 'LotPrice/',
   TRANSACTION = 'Transaccion/',
-  MEASURE = 'Measure/'
+  MEASURE = 'Measure/',
+  SUBCATEGORY_PHOTO = 'SubcategoryPhoto/'
 }
 
 
