@@ -174,8 +174,9 @@ BEGIN
 
             IF @dirViviendaCliente IS NOT NULL 
                 BEGIN 
-                     SET @sql = @sql + ' AND cc.idCliente (SELECT idCliente FROM Cliente cl WHERE cl.idCliente = cc.idCliente AND JSON_VALUE(cl.infoCrediticia, ''$.dirVivienda'') LIKE ''%@dirViviendaCliente%'') '
-                END 
+                    SET @sql = @sql + ' AND EXISTS (SELECT 1 FROM Cliente cl WHERE cl.idCliente = cc.idCliente AND JSON_VALUE(cl.infoCrediticia, ''$.dirVivienda'') LIKE ''%' + @dirViviendaCliente + '%'') '
+                END
+
 
             IF @idEmpresa > 0
                 BEGIN
