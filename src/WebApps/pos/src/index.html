@@ -2,15 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>AngularPos</title>
-  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="POS Restaurante Ventas">
+  <meta name="keywords" content="Acontplus Restaurante, POS, Restaurante Ventas, POS Ventas">
+  <meta name="author" content="Acontplus">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Acontplus">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Dynamically adapt theme color for light/dark modes -->
+  <meta name="theme-color" content="#d61672">
+  <!--<meta name="theme-color" content="#d61672" media="(prefers-color-scheme: light)">-->
+  <!--<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">-->
+
+  <!-- Open Graph and Twitter Card data for social media -->
+  <meta property="og:title" content="Acontplus Restaurant">
+  <meta property="og:description" content="POS Restaurante Ventas">
+  <!--<meta property="og:image" content="your-image-url.jpg">-->
+  <!--<meta property="og:url" content="your-website-url">-->
+  <!--<meta name="twitter:card" content="summary_large_image">-->
+
+  <title>Acontplus Restaurant</title>
+  <base href="/">
+
+  <!-- Icons -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Preconnect for performance optimization -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <!-- Lazy loading Google Fonts -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" as="style" onload="this.rel='stylesheet'">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- Manifest for PWA support -->
+  <!--<link rel="manifest" href="/manifest.json">-->
 </head>
-<body class="mat-typography"  >
-  <div id="loaderCss"></div>
+<body class="mat-typography">
+  <div id="loaderCss">
+    <!-- Add CSS or animation for the loader here -->
+  </div>
   <app-root></app-root>
+
+  <!-- Async scripts (if needed in the future) -->
+  <!-- <script async src="some-external-script.js"></script> -->
 </body>
 </html>

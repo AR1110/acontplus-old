@@ -3,6 +3,7 @@ import { minus, plus } from '@/core/utils/decimal.util';
 import { PaymentUtil } from '@/core/utils/payment.util';
 import { roundNumber } from '@/core/utils/round-number.util';
 import { playBeepSound, playClearSound } from '@/core/utils/sound.util';
+import { isValidField, truncateNumber } from '@/core/utils/utils';
 import { InputNumberDirective } from '@/directives/input-number.directive';
 import { DECIMALS, PaymentTypeCode } from '@/enums/main.enum';
 import { BancoSelectHtmlOnly } from '@/models/contabilidad/banco.model';
@@ -27,12 +28,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTabsModule } from '@angular/material/tabs';
+import Swal from 'sweetalert2';
 
 import { CustomContainerDialogComponent } from '../custom-container-dialog/custom-container-dialog.component';
 import { CobrosAgregadoModalComponent } from './cobros-agregado-modal/cobros-agregado-modal.component';
 import { PaymentCalculatorComponent } from './payment-calculator/payment-calculator.component';
-import { isValidField, truncateNumber } from '@/core/utils/utils';
-import Swal from 'sweetalert2';
 
 let dataInitial = {
   posfechado: false,
@@ -361,7 +361,7 @@ export class PaymentComponent {
       this.paymentUtil.setCuentasPorCobrar(this.cuentasPorCobrarCalculado());
       this.paymentUtil.setUniqueIndex(this.cobrosAgregados().length + 1);
 
-      this.paymentUtil.setEsAbonoPosfechado(this.data.posfechado);
+   //   this.paymentUtil.setEsAbonoPosfechado(this.data.posfechado);
       this.paymentUtil.setValorAbono(Number(this.valorAbono()));
 
       //--------agregando abono ---
@@ -504,7 +504,7 @@ export class PaymentComponent {
           this.paymentUtil.setUniqueIndex(uniqueIndex);
 
           this.paymentUtil.setValorAbono(item.valorAbono);
-          this.paymentUtil.setEsAbonoPosfechado(item.posfechado);
+       //   this.paymentUtil.setEsAbonoPosfechado(item.posfechado);
 
           //--------agregando abono ---
           this.paymentUtil.aplicarAbono();
@@ -539,7 +539,7 @@ export class PaymentComponent {
     }
     this.paymentUtil.setValorAbono(Number(this.valorAbono()));
     this.paymentUtil.setCuentasPorCobrar(this.cuentasPorCobrarCalculado());
-    this.paymentUtil.setEsAbonoPosfechado(this.data.posfechado);
+    //this.paymentUtil.setEsAbonoPosfechado(this.data.posfechado);
     this.paymentUtil.setUniqueIndex(0)
 
     //--------agregando abono ---

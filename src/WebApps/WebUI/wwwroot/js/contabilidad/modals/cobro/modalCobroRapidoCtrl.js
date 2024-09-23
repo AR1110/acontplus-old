@@ -41,8 +41,7 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.estadoCobro = {};
 
     $scope.selectedDocumentos = [];
-
-    const NUM_MAX_ROUND = 5;
+ 
 
     $scope.entidadesFinancieras = [];
     $scope.subEntidadesFinancieras = [];
@@ -264,7 +263,7 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                     }
                     modalCobroSvc.setValorAbono($scope.cobro.valorAbono); 
                     modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
-                    modalCobroSvc.setEsAbonoPosfechado($scope.cobro.posFechado);
+                  //  modalCobroSvc.setEsAbonoPosfechado($scope.cobro.posFechado);
                     modalCobroSvc.setUniqueIndex(0) 
 
                     //--------agregando abono ---

@@ -1,86 +1,92 @@
-<div class="row gx-0">
-  <div class="col-xl-8 col-lg-8 col-md-7 col-sm-12 col-12 m-0">
+<mat-card  style="border-radius: 0px;">
+  <mat-card-content class="m-0 p-0">
+    <div class="row gx-0">
+      <!-- <div class="col-xl-8 col-lg-8 col-md-7 col-sm-12 col-12 m-0"> -->
+      <div class="col-12 m-0">
 
-    <mat-tab-group [selectedIndex]="selectedSubCategoryIndex" dynamicHeight animationDuration="0ms" class="bg-white"
-      mat-stretch-tabs="false" mat-align-tabs="center" (selectedTabChange)="onTabChange($event)">
-      @for (link of subCategorias(); track $index) {
-      <mat-tab [disabled]="loading()">
-        <ng-template mat-tab-label>
-          <img [src]="link.img || 'product-default.png'" class="rounded m-tab-img" alt="..." width="40" height="40">
-          <small>{{ link.descripcion }}</small>
-        </ng-template>
-
-        <ng-template matTabContent>
-          <div class="m-2">
-            <div class="row justify-content-between my-2">
-              <div class="col-xl-4 col-lg-4 col-md-6">
-                <mat-paginator [hidePageSize]="true" [showFirstLastButtons]="true" (page)="handlePageEvent($event)"
-                  [length]="dataPagination().totalRecords" [pageSize]="dataPagination().pageSize"
-                  [pageIndex]="dataPagination().pageIndex" aria-label="Select page">
-                </mat-paginator>
-              </div>
-              <div class="col-xl-5 col-lg-5 col-md-6">
-                <div class="d-flex flex-row gap-1">
-                  <input type="text" [disabled]="loading()" class="form-control" placeholder="..."
-                    aria-label="Recipient's username with two button addons">
-                  <button mat-icon-button [disabled]="loading()" aria-label="icon button refresh" (click)="refresh()">
-                    <mat-icon>refresh</mat-icon>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Cargar <app-promotions> solo si el índice es 2 -->
-            @if($index===2){
-            <ng-container>
-              <app-promotions></app-promotions>
-            </ng-container>
-            }
-            <!-- Cargar otros contenidos si el índice no es 2 -->
-            @if($index!==2){
-            <ng-container>
-              <ng-container *ngTemplateOutlet="containerItems"></ng-container>
-            </ng-container>
-            }
-
-            <ng-template #containerItems>
-
-              @if(items().length === 0 && loading()){
-              <div class="spinner-container">
-                <mat-spinner></mat-spinner>
-              </div>
-              }
-
-              @if(items().length === 0 && !loading()){
-              <div class="d-flex justify-content-center align-items-center"
-                style="height: calc(98dvh - 80px - 100px); overflow: auto;">
-                <p>Sin Datos</p>
-              </div>
-              }
-
-              @if(items().length > 0){
-              <app-items [items]="items()"></app-items>
-              }
+        <mat-tab-group  #tabGroup [selectedIndex]="selectedSubCategoryIndex" dynamicHeight animationDuration="0ms"
+          mat-stretch-tabs="false" mat-align-tabs="center" (selectedTabChange)="onTabChange($event)">
+          @for (link of subCategorias(); track $index) {
+          <mat-tab [disabled]="loading()">
+            <ng-template mat-tab-label>
+              <img [src]="link.img || 'product-default.png'" class="rounded m-tab-img" alt="..." width="40" height="40">
+              <small>{{ link.descripcion }}</small>
             </ng-template>
 
-          </div>
-        </ng-template>
+            <ng-template matTabContent>
+              <div class="m-2">
+                <div class="row justify-content-between my-2">
+                  <div class="col-xl-4 col-lg-4 col-md-6">
+                    <mat-paginator [hidePageSize]="true" [showFirstLastButtons]="true" (page)="handlePageEvent($event)"
+                      [length]="dataPagination().totalRecords" [pageSize]="dataPagination().pageSize"
+                      [pageIndex]="dataPagination().pageIndex" aria-label="Select page">
+                    </mat-paginator>
+                  </div>
+                  <div class="col-xl-5 col-lg-5 col-md-6">
+                    <div class="d-flex flex-row gap-1">
+                      <input type="text" [disabled]="loading()" class="form-control" placeholder="..."
+                        aria-label="Recipient's username with two button addons">
+                      <button mat-icon-button [disabled]="loading()" aria-label="icon button refresh" (click)="refresh()">
+                        <mat-icon>refresh</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
-      </mat-tab>
-      }
-    </mat-tab-group>
+                <!-- Cargar <app-promotions> solo si el índice es 2 -->
+                @if($index===2){
+                <ng-container>
+                  <app-promotions></app-promotions>
+                </ng-container>
+                }
+                <!-- Cargar otros contenidos si el índice no es 2 -->
+                @if($index!==2){
+                <ng-container>
+                  <ng-container *ngTemplateOutlet="containerItems"></ng-container>
+                </ng-container>
+                }
 
-  </div>
-  <div class="col-xl-4 col-lg-4 col-md-5 d-none d-md-block">
-    <mat-card appearance="outlined" style=" height: calc(100dvh - 64px - 0px);
-              overflow:auto;border-radius: 0px;">
-      <mat-card-content class="d-flex flex-column">
-        <app-cart-header />
-        <app-cart-items />
-        <app-cart-footer />
-      </mat-card-content>
-    </mat-card>
+                <ng-template #containerItems>
 
-  </div>
+                  @if(items().length === 0 && loading()){
+                  <div class="spinner-container">
+                    <mat-spinner></mat-spinner>
+                  </div>
+                  }
 
-</div>
+                  @if(items().length === 0 && !loading()){
+                  <div class="d-flex justify-content-center align-items-center"
+                    style="height: calc(98dvh - 80px - 100px); overflow: auto;">
+                    <p>Sin Datos</p>
+                  </div>
+                  }
+
+                  @if(items().length > 0){
+                  <app-items [items]="items()"></app-items>
+                  }
+                </ng-template>
+
+              </div>
+            </ng-template>
+
+          </mat-tab>
+          }
+        </mat-tab-group>
+
+      </div>
+      <!-- <div class="col-xl-4 col-lg-4 col-md-5 d-none d-md-block">
+         <mat-card appearance="outlined" style=" height: calc(100dvh - 64px - 0px);
+                  overflow:auto;border-radius: 0px;">
+          <mat-card-content class="d-flex flex-column">
+            <app-cart-header />
+            <app-cart-items />
+            <app-cart-footer />
+          </mat-card-content>
+        </mat-card>
+
+      </div> -->
+
+    </div>
+
+  </mat-card-content>
+</mat-card>

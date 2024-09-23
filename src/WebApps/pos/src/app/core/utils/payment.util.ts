@@ -529,7 +529,6 @@ export class PaymentUtil {
    * @param {*} dataCuota
    */
   handleFullAbono(dataCuota: CuotaCobroCalculado) {
-    console.log(this.getValorAbono())
     dataCuota.abono = this.getEsAbonoPosfechado() ? 0 : this.getValorAbono();
     dataCuota.abonoPosfechado = this.getEsAbonoPosfechado() ? this.getValorAbono() : 0;
     dataCuota.saldoTotalActual = minus(dataCuota.saldoTotalActual, this.getValorAbono(), DECIMALS.CINCO) as number;

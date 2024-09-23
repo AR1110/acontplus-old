@@ -182,7 +182,8 @@
             // Agrupa cuentas por pagar
             const cuentasPorPagarAgrupado = cuentasPorPagar.reduce((acc, curr) => {
                 let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorPagar === curr.idCuentaPorPagar);
-                let abono = curr.cobro ? curr.abono : 0;
+              //  let abono = curr.cobro ? curr.abono : 0;
+                let abono =   curr.abono  ;
 
                 if (!existeDato) {
                     acc.push({

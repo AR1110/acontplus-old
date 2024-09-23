@@ -392,6 +392,11 @@ app.constant('nombreModalContabilidad', {
             MFP: '~/Pages/Contabilidad/CuentaPorPagar/Shared/_ModalFormaPago.cshtml'
         }
     }, 
+    POSFECHADO_COBROS_MODAL: {
+        fileCtrl: '/js/contabilidad/modals/cobro/posfechadoCobrosModalCtrl.js' + CHANGE_VERSION(),
+        ctrl: 'posfechadoCobrosModalCtrl',
+        template: '~/Pages/Contabilidad/ComprobanteIngreso/_PosfechadoCobrosModal.cshtml'
+    }
 })
 
 app.constant('nombreModal', { 
