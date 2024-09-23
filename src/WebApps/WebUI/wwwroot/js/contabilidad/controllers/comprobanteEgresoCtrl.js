@@ -47,6 +47,9 @@
             }).catch(error => {
                 console.log(error)
             }).finally(() => hideLoader());
+
+            comprobanteEgresoSvc.getPosfechadoPagosModal()
+
         }
 
         function getComprobantesEgreso() {
