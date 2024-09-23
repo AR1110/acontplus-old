@@ -7,6 +7,7 @@ import { MeasurePageComponent } from "./pages/measure-page/measure-page.componen
 import { ProductPageComponent } from "./pages/product-page/product-page.component";
 import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
 import {InventoryReportPageComponent} from "@inventory/reports/inventory-report-page/inventory-report-page.component";
+import { BrandPageComponent } from "./pages/brand-page/brand-page.component";
 
 export const routes: Route[] = [
   {
@@ -57,6 +58,14 @@ export const routes: Route[] = [
     component: MeasurePageComponent,
     data: {
       breadcrumb: 'Medida'
+    },
+  },
+  {
+    path: 'brand',
+    title: 'Marca',
+    component: BrandPageComponent,
+    data: {
+      breadcrumb: 'Marca'
     },
   },
   {
