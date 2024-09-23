@@ -1,0 +1,35 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">{{titleModal()}} Tarifa</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.close()"></button>
+
+</div>
+<div class="modal-body">
+
+  <div class="form-group">
+    <label class="form-control-label" for="descripcion">
+      Descripcion <span class="text-danger">*</span>
+    </label>
+    <input type="text" [(ngModel)]="data.descripcion" appToUpperCase class="form-control"
+      placeholder="Ej: Contado">
+  </div>
+
+
+  <div class="form-group">
+    <label class="form-control-label" for="descripcion">Codigo: </label>
+    <input type="text" [(ngModel)]="data.codigo" class="form-control" touppercase placeholder="Ej: CON">
+  </div>
+
+  <div class="form-group">
+    <div class="icheck-primary">
+      <input type="checkbox" id="someCheckboxId"  [(ngModel)]="data.ventaPorMayor" />
+      <label for="someCheckboxId">Venta al por mayor</label>
+    </div>
+  </div>
+
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" (click)="save()">
+    {{btnText}}
+  </button>
+  <button type="button" class="btn btn-dark" (click)="modal.close()">&times; Cerrar</button>
+</div>

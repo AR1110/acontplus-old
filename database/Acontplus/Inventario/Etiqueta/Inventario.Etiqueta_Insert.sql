@@ -2,15 +2,13 @@
 
 USE AcontPlus;
 
-IF OBJECT_ID('Inventario.Etiqueta_Insert') IS NOT NULL
-	DROP PROCEDURE Inventario.Etiqueta_Insert
-GO
+ GO
 
-CREATE PROCEDURE Inventario.Etiqueta_Insert @idUsuarioRol INT, @json VARCHAR(500)
+CREATE OR ALTER PROCEDURE Inventario.Etiqueta_Insert @userRoleId INT, @json VARCHAR(500), @fromMobile BIT 
 AS
 BEGIN
-	DECLARE @idUsuario INT = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
-	DECLARE @idEntidad INT = (SELECT idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+	DECLARE @idUsuario INT  
+	DECLARE @idEntidad INT  
 	DECLARE @descripcion VARCHAR(100)
 	DECLARE @etiquetas VARCHAR(600) 
 
@@ -19,9 +17,11 @@ BEGIN
 		@etiquetas = etiquetas
 	FROM OPENJSON(@json)
 	WITH(
-		descripcion VARCHAR(100) '$.descripcion',
-		etiquetas VARCHAR(600) '$.etiquetas'
+		descripcion VARCHAR(100) , 
+		etiquetas VARCHAR(600)  
 	)
+
+    SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
 	BEGIN TRY
 		BEGIN TRAN
@@ -44,6 +44,6 @@ BEGIN
 			ROLLBACK TRAN
 
 		INSERT INTO ErroresSistema(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-		VALUES (NEWID(), 'api/Etiqueta/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+		VALUES (NEWID(), 'Inventario/Etiqueta/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	END CATCH 
 END 
