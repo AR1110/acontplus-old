@@ -46,10 +46,12 @@ export enum GlobalRoutes {
   ContabilidadAccountingSummary = 'accounting/accounting-movement',
 
   //Inventarios
-  Inventario ='inventory/product',
-  MigrationProduct = 'inventory/product',
-  MigrationSubCategory = 'inventory/subcategory',
-  MigrationMeasure = 'inventory/measure',
+  Articulo = 'inventory/product',
+  InventarioSubFamilia = 'inventory/subcategory',
+  InventarioMedida = 'inventory/measure',
   InventarioMarca = 'inventory/brand',
+  InventarioModelo = 'inventory/model',
+  InventarioTarifa = 'inventory/tarifa',
+  Etiqueta = 'inventory/tags'
 
 }
