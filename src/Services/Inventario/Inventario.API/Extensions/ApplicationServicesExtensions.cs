@@ -32,7 +32,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ISubFamiliaService, SubFamiliaService>();
         services.AddScoped<IArticuloService, ArticuloService>();
-        services.AddScoped<IBodegaService, BodegaService>();
+        services.AddScoped<IBodegaService, BodegaService>(); 
+        services.AddScoped<IMarcaService, MarcaService>(); 
 
 
         services.AddScoped<ICustomLogger, CustomLogger>();

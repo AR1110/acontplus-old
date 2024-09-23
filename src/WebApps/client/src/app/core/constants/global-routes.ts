@@ -47,7 +47,9 @@ export enum GlobalRoutes {
 
   //Inventarios
   Inventario ='inventory/product',
-  "/Inventario/Measure" = 'inventory/measure',
   MigrationProduct = 'inventory/product',
-  MigrationSubCategory = 'inventory/subcategory'
+  MigrationSubCategory = 'inventory/subcategory',
+  MigrationMeasure = 'inventory/measure',
+  InventarioMarca = 'inventory/brand',
+
 }

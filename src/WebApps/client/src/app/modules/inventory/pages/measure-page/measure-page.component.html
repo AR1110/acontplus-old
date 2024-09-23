@@ -1,97 +1,4 @@
 <app-breadcrumb/>
-<!-- <div class="card">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-2 col-12">
-        <button (onResultModal)="onResultModal()" appMeasureAddEdit class="btn btn-info">
-          Nuevo
-        </button>
-      </div>
-      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-        <div class="d-flex justify-content-start">
-          <span class="form-group pull-left page-size form-inline">
-            <select (change)="pageChanged()" [(ngModel)]="pagination.pageSize" class="form-select control-color">
-              @for (item of pagination.pageSizeOptions; track $index) {
-                <option [ngValue]="item">{{ item }}</option>
-              }
-            </select>
-          </span>
-
-          <span class="form-group pull-left page-size form-inline">
-            <button class="btn btn-success m-l-5" ng-click="exportTableToExcel()" type="button">
-              <i class="far fa-file-excel"></i> Exportar
-            </button>
-          </span>
-
-        </div>
-      </div>
-      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-        <div class="d-flex justify-content-end">
-          <form class="form-material">
-            <input class="form-control" ng-model="buscar" placeholder="Buscar Medida" type="text"/>
-          </form>
-        </div>
-      </div>
-    </div>
-
-
-    <div class="table-responsive">
-      <table class="table  table-no-bordered">
-        <thead>
-        <tr>
-          <th>Op</th>
-          <th>N°</th>
-          <th>Descripcion</th>
-          <th>codigo</th>
-          <th>Estado</th>
-        </tr>
-        </thead>
-        <tbody>
-          @for (item of measures; track $index) {
-
-            <tr>
-              <td>
-                <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs" appMeasureAddEdit
-                        (onResultModal)="onResultModal()" [params]="item"><i class="ti-pencil"></i></button>
-
-                <button type="button" ng-if="accion.eliminar" class="btn btn-danger btn-xs" tooltip data-toggle="toggle"
-                        title="Eliminar" ng-click="delete(t)"><i class="ti-trash"></i></button>
-              </td>
-              <td>
-                {{ $index + 1 }}
-              </td>
-              <td>{{ item.descripcion }}</td>
-              <td>{{ item.codigo }}</td>
-              <td>
-                <div [innerHTML]="item.estado | primaryStatus"></div>
-              </td>
-            </tr>
-          } @empty {
-            <tr class="text-center">
-              <td colspan="6">
-                No existen registros disponibles en esta tabla;
-              </td>
-            </tr>
-
-          }
-        </tbody>
-        <tfoot>
-        <tr>
-          <td align="center" colspan="6">
-            <div class="pull-left">
-              <ngb-pagination (pageChange)="pageChanged()" [(page)]="pagination.pageIndex"
-                              [boundaryLinks]="true"
-                              [collectionSize]="pagination.totalRecords" [maxSize]="pagination.maxSize" [pageSize]="pagination.pageSize"
-                              [rotate]="true"/>
-            </div>
-          </td>
-        </tr>
-        </tfoot>
-      </table>
-    </div>
-  </div>
-</div> -->
-
 
 <mat-card  >
   <mat-card-header>
@@ -101,6 +8,10 @@
         <button mat-flat-button appMeasureAddEdit (onResultModal)="refresh()">
           <mat-icon>add</mat-icon>
           Nuevo
+        </button>
+        <button mat-raised-button (click)="exportToExcel()">
+          <mat-icon>save_alt</mat-icon>
+          Exportar
         </button>
         <button mat-icon-button (click)="refresh()">
           <mat-icon>refresh</mat-icon>

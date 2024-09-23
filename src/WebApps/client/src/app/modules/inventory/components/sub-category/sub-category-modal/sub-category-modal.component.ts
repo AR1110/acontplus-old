@@ -11,7 +11,6 @@ import { UploadImageComponent } from "@shared/components/upload-image/upload-ima
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
 import { NgxFileDropEntry } from "ngx-file-drop";
 
-
 @Component({
   selector: 'app-sub-category-modal',
   standalone: true,
@@ -33,7 +32,7 @@ export class SubCategoryModalComponent {
 
   params = input<any>({})
 
-  titleModal = 'Nueva Categoria';
+  titleModal = 'Nueva SubCategoria';
   categorias: any[] = []
 
   files: NgxFileDropEntry[] = [];
@@ -68,7 +67,7 @@ export class SubCategoryModalComponent {
     this.getDataForm()
 
     if (typeof this.params() === 'object' && this.esEditar()) {
-      this.titleModal = 'Editar Categoria';
+      this.titleModal = 'Editar SubCategoria';
       this.data = structuredClone(this.params())
       this.imageUrl.set(this.params().s3ObjectUrl || imgDefault())
     }
