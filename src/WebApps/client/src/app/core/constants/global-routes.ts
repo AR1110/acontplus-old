@@ -52,6 +52,8 @@ export enum GlobalRoutes {
   InventarioMarca = 'inventory/brand',
   InventarioModelo = 'inventory/model',
   InventarioTarifa = 'inventory/tarifa',
-  Etiqueta = 'inventory/tags'
+  Etiqueta = 'inventory/tags',
 
+  //**Recepcion**//
+  ComprasDocumentoRecibido = 'purchase/documento-recibido',
 }
