@@ -1,0 +1,119 @@
+<app-breadcrumb></app-breadcrumb>
+<mat-card>
+  <mat-card-content>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3">
+      <div class="col">
+        <div class="form-group">
+          <label for="estab">Establecimiento:</label>
+          <select (change)="onChangeEstab()" [(ngModel)]="dataSearch.codEstab" class="form-select border-select"
+                  id="estab">
+            @for (item of establecimientos; track $index) {
+              <option [ngValue]="item.codEstab">
+                {{ item.nombreComercial }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label>Rango Fechas: </label>
+          <app-date-range-selection
+            (onChangeDateRange)="onDateRangeSelection($event)" [inputGroupDateChecked]="dateChecked"/>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="tipoComprobante"> Tipo Comprobante</label>
+          <div class="input-group">
+            <select (change)="onChangeTipoDoc()" [(ngModel)]="dataSearch.codDoc"
+                    class="form-select border-select" id="tipoComprobante">
+              <option [ngValue]="">Todos</option>
+              @for (item of tipoComprobantes; track $index) {
+                <option [ngValue]="item.codDoc">
+                  {{ item.descripcion }}
+                </option>
+              }
+            </select>
+            <div class="input-group-append">
+              <button (click)="onClickBtnMore()" class="btn btn-primary m-l-5" type="button">
+                <fa-icon [icon]="extraOptionsIcon" matTooltip="{{extraOptionsTooltip}}"></fa-icon>
+              </button>
+              <button (click)="refresh()" class="btn btn-success m-l-5" matTooltip="Recargar"
+                      type="button">
+                <fa-icon [icon]="'refresh'"></fa-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    @if (moreOptionsFilter) {
+      <div class="row mb-3">
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+          <div class="form-group">
+            <label>Proveedor:</label>
+            <app-supplier-search (onSelected)="onSupplierSelected($event)"></app-supplier-search>
+          </div>
+        </div>
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="claveAcceso">Clave Acceso:</label>
+            <input class="form-control" id="claveAcceso" name="claveAcceso" type="text">
+          </div>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="serieComprobante">Nro. Documento:</label>
+            <input type="text" class="form-control border-select" id="serieComprobante"
+                   (change)="onChangeSerieComprobante()" appInputNumber
+                   [(ngModel)]="dataSearch.serieComprobante"/>
+          </div>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="subcategoryId">Subcategoría:</label>
+            <select class="form-select border-select" id="subcategoryId" [(ngModel)]="dataSearch.subcategoryId"
+                    (change)="getComprobantes()">
+              <option [ngValue]="">Todos</option>
+              @for (item of subcategories; track $index) {
+                <option [ngValue]="item.id">
+                  {{ item.name }}
+                </option>
+              }
+            </select>
+          </div>
+        </div>
+      </div>
+    }
+    <div class="row">
+      <div class="col">
+        <div class="button-group ml-2">
+          <button (click)="openModalAutomaticUpload()" class="btn btn-primary" type="button">
+            <fa-icon [icon]="'download'"></fa-icon>
+            Importación Automatica
+          </button>
+          <button (click)="openModalManualUpload()" class="btn btn-danger" type="button">
+            <fa-icon [icon]="'mouse'"></fa-icon>
+            Importación Manual
+          </button>
+          <button (click)="openModalChangeEstab()" class="btn btn-success" type="button">
+            <fa-icon [icon]="'file-export'"></fa-icon>
+            Migrar Comprobantes
+          </button>
+          <button (click)="editSubcategory()" class="btn btn-primary">
+            <fa-icon [icon]="'pencil'"></fa-icon>
+            Modificar Subcategoría
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <app-mat-dynamic-table [dataList]="documentos" [displayColumnDefs]="columnsDefs"
+                               [displayedColumns]="columns"></app-mat-dynamic-table>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
