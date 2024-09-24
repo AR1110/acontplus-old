@@ -1,6 +1,9 @@
-import { Component, inject, signal, ViewChild } from "@angular/core"
+import { Component, ElementRef, inject, model, QueryList, signal, ViewChild, ViewChildren } from "@angular/core"
+import { FormsModule } from "@angular/forms"
 import { MatButtonModule } from "@angular/material/button"
+import { MatButtonToggleModule } from "@angular/material/button-toggle"
 import { MatCardModule } from "@angular/material/card"
+import { MatCheckboxModule } from "@angular/material/checkbox"
 import { MatIconModule } from "@angular/material/icon"
 import { MatMenuModule } from "@angular/material/menu"
 import { MatPaginator, PageEvent } from "@angular/material/paginator"
@@ -11,6 +14,7 @@ import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.comp
 import { CustomTableContainerComponent } from "@core/components/custom-table-container/custom-table-container.component"
 import { ModalService } from "@core/services/modal.service"
 import { ToasterService } from "@core/services/toaster.service"
+import { isValidField } from "@core/utils/utils"
 import { ProductPhotoComponent } from "@modules/inventory/components/product/product-photo/product-photo.component"
 import { ProductKardexModalDirective } from "@modules/inventory/directives/product/product-kardex-modal.directive"
 import { ProductAddEditDirective } from "@modules/inventory/directives/product/product-list.directive"
@@ -51,6 +55,7 @@ type Product = {
   selector: 'inventory-product-page',
   standalone: true,
   imports: [
+    FormsModule,
     BreadcrumbComponent,
     ActionAddDirective,
     PrimaryStatusPipe,
@@ -60,6 +65,7 @@ type Product = {
     MatTableModule,
     MatMenuModule,
     MatTooltipModule,
+    MatCheckboxModule,
     CustomTableContainerComponent,
     ProductAddEditDirective,
     CompraHabitualHistorialDirective,
@@ -73,27 +79,43 @@ export class ProductPageComponent {
   private stockSvc = inject(StockService)
   private tS = inject(ToasterService)
   private modalSvc = inject(ModalService)
+
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  @ViewChildren('selectElement') selectElements!: QueryList<ElementRef<HTMLSelectElement>>;
+
+  displayedColumns: string[] = ['index', 'op', 's3ObjectUrl', 'codigo', 'descripcion', 'medida', 'subFamilia', 'stock', 'estado'];
+
+
+
   pagination = signal(new MatPagination());
 
 
   dataSource = new MatTableDataSource<Product>();
 
   isLoadingResults = false;
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-
-
-
-
   pageEvent!: PageEvent;
+  private wasEmptyBefore: boolean = false;  // Indica si alguna vez el campo estuvo vacío
 
+  dataSearch = model({
+    textSearch: null as string | null,
+    checkBoxFraccionado: false,
+    checkBoxInventario: false,
+    status: null,
+    byStock: null
+  })
 
+  isSearchAdvanced = signal(false)
 
-  displayedColumns: string[] = ['index', 'op', 's3ObjectUrl', 'codigo', 'descripcion', 'medida', 'subFamilia', 'stock', 'estado'];
-
-
-
+  subCategorias = signal<any[]>([])
+  medidas = signal<any[]>([])
+  marcas = signal<any[]>([])
+  modelos = signal<any[]>([])
+  tipoImpuestos = signal<any[]>([])
+  stocks = signal<any[]>([])
+  estados = signal<any[]>([])
 
   private initLoad() {
     // try {
@@ -122,16 +144,60 @@ export class ProductPageComponent {
     // }
   }
 
+  onSearch(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const searchValue = isValidField(target.value);
+    this.dataSearch.update(ds=>{
+      return {
+        ...ds,
+        textSearch: searchValue
+      }
+    })
+
+    if (!searchValue) {
+      if (this.wasEmptyBefore) {
+        return;
+      }
+
+      this.wasEmptyBefore = true;
+      this.applyFilter(searchValue);
+    } else {
+      this.wasEmptyBefore = false
+      this.applyFilter(searchValue);
+
+    }
+  }
+
+  applyFilter(filterValue: string | null): void {
+    console.log('Filtrando con:', filterValue);
+    this.getProducts()
+  }
+
   private getProducts() {
     try {
       let params = {
         pageIndex: this.pagination().pageIndex + 1,
-        pageSize: this.pagination().pageSize
+        pageSize: this.pagination().pageSize,
+        bySearch: isValidField(this.dataSearch().textSearch),
+        status: this.dataSearch().status,
+        byStock: this.dataSearch().byStock,
+
+        checkBoxFraccionado: this.dataSearch().checkBoxFraccionado,
+        checkBoxInventario: this.dataSearch().checkBoxInventario,
       }
       if (this.isLoadingResults) return
 
       this.isLoadingResults = true;
+      this.pagination.update(p => {
+        return {
+          ...p,
+          totalRecords: 0
+        }
+      })
+
+      this.toggleSelectsState()
       this.productSvc.getAll(params).subscribe((response) => {
+
         this.isLoadingResults = false
         let results: Array<Product> = response.products;
         let products = results.map((product, index) => {
@@ -152,10 +218,17 @@ export class ProductPageComponent {
           })
         }
 
+        this.toggleSelectsState()
       })
     } catch (error) {
       console.log(error)
     }
+  }
+
+  toggleSelectsState(): void {
+    this.selectElements?.forEach(selectRef => {
+      selectRef.nativeElement.disabled = this.isLoadingResults;
+    });
   }
 
   ngOnInit() {
