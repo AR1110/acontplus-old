@@ -1,24 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Pages.Login
+namespace WebUI.Pages.Login;
+
+public class IndexModel(IConfiguration configuration) : PageModel
 {
-    public class IndexModel : PageModel
+    public void OnGet(string returnUrl)
     {
-        private readonly IConfiguration _configuration;
-        public IndexModel(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-        public void OnGet(string returnUrl)
-        {
-            ViewData["ReturnUrl"] = returnUrl;
-            ViewData["UrlGateway"] = _configuration["ApiGateways:Acontplus"];
-        }
-        public IActionResult OnPost()
-        {
-            //put logout code here
-            return Redirect("/Pages/Login/Index");
-        }
+        ViewData["ReturnUrl"] = returnUrl;
+        ViewData["UrlGateway"] = configuration["ApiGateways:Acontplus"];
+    }
+    public IActionResult OnPost()
+    {
+        //put logout code here
+        return Redirect("/Pages/Login/Index");
     }
 }
