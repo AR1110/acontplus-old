@@ -2,11 +2,6 @@
 @model WebUI.Pages.Inventario.Medida.IndexModel
 @{
     ViewData["Title"] = "Medidas";
-    
 }
 
-<input type="text" id="frontend" value="@ViewData["FrontEnd"]" hidden />
 <div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
-@section Scripts {
-    <script src="~/js/controllers/iframeAngularCtrl.min.js" asp-append-version="true"></script>
-}

@@ -2,12 +2,7 @@
 @model WebUI.Pages.Compras.Reportes.IndexModel
 
 @{
-    ViewData["title"] = "Movimiento Caja";
-    
+    ViewData["title"] = "Movimiento Caja"; 
 }
 
-<input type="text" id="frontend" value="@ViewData["FrontEnd"]" hidden />
 <div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
-@section Scripts {
-    <script src="~/js/controllers/iframeAngularCtrl.js" asp-append-version="true"></script>
-}
