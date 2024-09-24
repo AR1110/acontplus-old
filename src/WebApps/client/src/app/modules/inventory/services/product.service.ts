@@ -274,4 +274,11 @@ export class ProductService {
     }))
 
   }
+
+
+
+  updateStatus(id: number) {
+    return this.http.delete<ApiResponse>(`${this.url}Delete/${id}`)
+  }
+
 }

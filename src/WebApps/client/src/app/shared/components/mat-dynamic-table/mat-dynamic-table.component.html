@@ -60,6 +60,10 @@
     <tr *matHeaderRowDef="displayedColumns; sticky: true" class="small-header" mat-header-row></tr>
     <tr (click)="selectRow(row)" *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
 
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">Sin Registro</td>
+    </tr>
+
     @if (showFooter && dataSource.data) {
     <tr *matFooterRowDef="displayedColumns" mat-footer-row></tr>
     }

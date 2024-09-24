@@ -1,19 +1,20 @@
 import { Directive, HostListener, inject, input, output } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
-import { ProductHistPurchaseModalComponent } from '@modules/inventory/components/product/product-hist-purchase-modal/product-hist-purchase-modal.component';
+
+import { CompraHabitualHistorialModalComponent } from '../components/compra-habitual-historial-modal/compra-habitual-historial-modal.component';
 
 @Directive({
-  selector: '[appProductHistPurchase]',
+  selector: '[appCompraHabitualHistorial]',
   standalone: true
 })
-export class ProductHistPurchaseDirective {
+export class CompraHabitualHistorialDirective {
 
   private modalSvc = inject(ModalService)
   onResult = output<any>();
   params = input({});
 
   @HostListener('click') onClick() {
-    const modalRef = this.modalSvc.open(ProductHistPurchaseModalComponent, {
+    const modalRef = this.modalSvc.open(CompraHabitualHistorialModalComponent, {
       size: 'xl'
     });
     modalRef.componentInstance.params = this.params() || {};

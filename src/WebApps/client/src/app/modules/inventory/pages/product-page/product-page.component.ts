@@ -6,14 +6,17 @@ import { MatMenuModule } from "@angular/material/menu"
 import { MatPaginator, PageEvent } from "@angular/material/paginator"
 import { MatSort } from "@angular/material/sort"
 import { MatTableDataSource, MatTableModule } from "@angular/material/table"
+import { MatTooltipModule } from "@angular/material/tooltip"
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component"
 import { CustomTableContainerComponent } from "@core/components/custom-table-container/custom-table-container.component"
 import { ModalService } from "@core/services/modal.service"
 import { ToasterService } from "@core/services/toaster.service"
 import { ProductPhotoComponent } from "@modules/inventory/components/product/product-photo/product-photo.component"
-import { ProductHistPurchaseDirective } from "@modules/inventory/directives/product/product-hist-purchase.directive"
+import { ProductKardexModalDirective } from "@modules/inventory/directives/product/product-kardex-modal.directive"
 import { ProductAddEditDirective } from "@modules/inventory/directives/product/product-list.directive"
 import { ProductService } from "@modules/inventory/services/product.service"
+import { StockService } from "@modules/inventory/services/stock.service"
+import { CompraHabitualHistorialDirective } from "@modules/purchase/directives/compra-habitual-historial.directive"
 import { ActionAddDirective } from "@shared/directives/permission/action-add.directive"
 import { MatPagination } from "@shared/models/pagination.model"
 import { PrimaryStatusPipe } from "@shared/pipe/primary-status.pipe"
@@ -56,15 +59,18 @@ type Product = {
     MatIconModule,
     MatTableModule,
     MatMenuModule,
+    MatTooltipModule,
     CustomTableContainerComponent,
     ProductAddEditDirective,
-    ProductHistPurchaseDirective
+    CompraHabitualHistorialDirective,
+    ProductKardexModalDirective
   ],
   templateUrl: './product-page.component.html'
 })
 export class ProductPageComponent {
 
   private productSvc = inject(ProductService);
+  private stockSvc = inject(StockService)
   private tS = inject(ToasterService)
   private modalSvc = inject(ModalService)
   pagination = signal(new MatPagination());
@@ -176,35 +182,83 @@ export class ProductPageComponent {
   }
 
 
-  askToDelete(data: any) {
+  async askToUpdateStatus(item: Product) {
     try {
-      Swal.fire({
+      let { isConfirmed } = await Swal.fire({
         icon: 'warning',
-        html: `<small>Esta seguro/a de eliminar esta Medida ahora?</small>`,
-        showConfirmButton: true,
-        confirmButtonText: 'Si, eliminar',
-        showCancelButton: true,
-        cancelButtonText: 'No, cancelar',
+        html: `<small>Está seguro de elimiar este Artículo: <strong>${item.descripcion}</strong> ahora</small>`,
+        confirmButtonText: 'Sí',
+        showDenyButton: true,
+        denyButtonText: 'No',
         allowOutsideClick: false
-      }).then(result => {
-
       })
+
+      if (isConfirmed) {
+        this.productSvc.updateStatus(item.idArticulo).subscribe(response => {
+          if (response.code === "0") {
+            this.tS.toastr({
+              type: 'warning',
+              message: response.message
+            })
+          }
+          if (response.code === "1") {
+            this.tS.toastr({
+              type: 'success',
+              message: response.message
+            })
+            this.refresh()
+          }
+
+        })
+      }
     } catch (error) {
-      console.log(error)
+      console.log(error);
+    }
+
+  }
+
+  async updateStock(item: Product) {
+    let {
+      isConfirmed
+    } = await Swal.fire({
+      icon: 'warning',
+      html: `<small>Está seguro de actualizar el Stock del articulo: <b>${item.descripcion}</b></small>`,
+      confirmButtonText: 'Sí',
+      showDenyButton: true,
+      denyButtonText: 'No',
+      allowOutsideClick: false
+    })
+
+    if (isConfirmed) {
+      this.stockSvc.put(item.idArticulo).subscribe(response => {
+        if (response.code === "0") {
+          this.tS.toastr({
+            type: 'warning',
+            message: response.message
+          })
+        }
+        if (response.code === "1") {
+          this.tS.toastr({
+            type: 'success',
+            message: response.message
+          })
+          this.refresh()
+        }
+      })
     }
   }
 
 
-  onPhotoModal(data:Product){
+  onPhotoModal(data: Product) {
     let modalRef = this.modalSvc.open(ProductPhotoComponent, {
       size: 'lg'
     })
 
     modalRef.componentInstance.params = data;
 
-    modalRef.result.then(result=>{
+    modalRef.result.then(result => {
       console.log(result)
-      if(result && typeof result==='object' && result.isRefresh){
+      if (result && typeof result === 'object' && result.isRefresh) {
         this.refresh()
       }
     })
