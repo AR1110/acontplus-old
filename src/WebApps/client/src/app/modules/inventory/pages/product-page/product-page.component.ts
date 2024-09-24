@@ -11,6 +11,7 @@ import { CustomTableContainerComponent } from "@core/components/custom-table-con
 import { ModalService } from "@core/services/modal.service"
 import { ToasterService } from "@core/services/toaster.service"
 import { ProductPhotoComponent } from "@modules/inventory/components/product/product-photo/product-photo.component"
+import { ProductHistPurchaseDirective } from "@modules/inventory/directives/product/product-hist-purchase.directive"
 import { ProductAddEditDirective } from "@modules/inventory/directives/product/product-list.directive"
 import { ProductService } from "@modules/inventory/services/product.service"
 import { ActionAddDirective } from "@shared/directives/permission/action-add.directive"
@@ -56,7 +57,8 @@ type Product = {
     MatTableModule,
     MatMenuModule,
     CustomTableContainerComponent,
-    ProductAddEditDirective
+    ProductAddEditDirective,
+    ProductHistPurchaseDirective
   ],
   templateUrl: './product-page.component.html'
 })
@@ -120,6 +122,8 @@ export class ProductPageComponent {
         pageIndex: this.pagination().pageIndex + 1,
         pageSize: this.pagination().pageSize
       }
+      if (this.isLoadingResults) return
+
       this.isLoadingResults = true;
       this.productSvc.getAll(params).subscribe((response) => {
         this.isLoadingResults = false
