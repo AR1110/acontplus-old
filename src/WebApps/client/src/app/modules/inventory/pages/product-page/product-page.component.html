@@ -1,4 +1,4 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
 
 
@@ -8,7 +8,7 @@
     <mat-card-title-group>
       <mat-card-title></mat-card-title>
       <div class="d-flex flex-row gap-2">
-        <button mat-flat-button appProductAddEdit (onResultModal)="refresh()">
+        <button mat-flat-button appProductAddEdit (onResultModal)="refresh()" [disabled]="isLoadingResults">
           <mat-icon>add</mat-icon>
           Nuevo
         </button>
@@ -42,7 +42,7 @@
 
               <mat-menu #menu="matMenu">
 
-                <button mat-menu-item  >
+                <button mat-menu-item>
                   <mat-icon>update</mat-icon>
                   <span>Actualizar Stock</span>
                 </button>
@@ -56,9 +56,9 @@
                   <span>Imagenes</span>
                 </button>
 
-                <button mat-menu-item>
+                <button mat-menu-item appProductHistPurchase [params]="row">
                   <mat-icon>history</mat-icon>
-                  <span>Historial compras</span>
+                  <span>Hist. compras</span>
                 </button>
 
 
@@ -67,10 +67,10 @@
 
               </mat-menu>
 
-              <button mat-icon-button  >
+              <button mat-icon-button>
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button  >
+              <button mat-icon-button>
                 <mat-icon>timeline</mat-icon>
               </button>
             </div>

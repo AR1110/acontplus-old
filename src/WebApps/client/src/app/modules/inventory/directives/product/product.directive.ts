@@ -9,7 +9,7 @@ import { ProductAddEditModalComponent } from "@inventory/components/product/prod
 export class ProductAddEditDirective {
   @Input() resultModalHandler!: Function;
   @HostListener('click') onClick() {
-    const modalRef = this.modalSvc.openModalCustom(ProductAddEditModalComponent, {
+    const modalRef = this.modalSvc.open(ProductAddEditModalComponent, {
       size: 'xl',
     });
     modalRef.result.then((result: unknown) => {
