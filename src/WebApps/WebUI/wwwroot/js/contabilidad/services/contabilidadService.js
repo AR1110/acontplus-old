@@ -221,7 +221,7 @@
 
     }])
 
-    app.factory('comprobanteEgresoService', ['mainService', 'formulario', function (mS, fS) {
+    app.factory('comprobanteEgresoService', ['mainService', 'formulario','modalService', 'nombreModalContabilidad', function (mS, fS, modalSvc, nombreModalContab) {
         const url = `${PATH_API}ComprobanteEgreso/`
 
         return {
@@ -230,6 +230,7 @@
             getCuotasByIdCuentaPorPagar,
             getDataFormaPago,
             getDataToDelete,
+            getPosfechadoPagosModal,
             mapperTo,
             post,
             anular,
@@ -414,6 +415,53 @@
                 return resultData
             })
         }
+
+
+        function getPosfechadoPagosModal(obj) {
+            let json = JSON.stringify({
+                tipo: 6,
+                pageIndex: obj && obj.pageIndex || 1,
+                pageSize: obj && obj.pageSize || 25
+            })
+            mS.getData('get', `${url}?json=${json}`, null, true).then(async response => {
+                let results = {
+                    cheques: []
+                };
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let cheques = mainData && mainData.cheques || [];
+
+                    results.cheques = cheques.map(item => {
+                        return {
+                            id: item.id,
+                            idComprobante: item.idComprobante,
+                            nroDocumento: item.nroDocumento,
+                            persona: item.persona,
+                            nroIdentificacion: item.nroIdentificacion,
+                            valor: item.valor,
+                            nro: item.nro,
+                            fechaEmision: item.fechaEmision,
+                        }
+                    })
+                }
+
+                if (results.cheques.length > 0) {
+
+                    const { fileCtrl, ctrl, template } = nombreModalContab.POSFECHADO_PAGOS_MODAL;
+                    let controller = (await import(fileCtrl))[ctrl];
+
+                    modalSvc.open({
+                        controller,
+                        template,
+                        size: 'xl',
+                        params: results,
+                        keyboard: true,
+                    });
+                }
+
+            })
+        }
+
 
         function mapperTo(obj) {
             const {

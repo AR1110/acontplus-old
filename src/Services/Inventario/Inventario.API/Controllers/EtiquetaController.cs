@@ -2,97 +2,66 @@
 
 public class EtiquetaController : BaseApiController
 {
-    public readonly IConfiguration _configuration;
-    public readonly DbAccess _db;
-    
+    private readonly IEtiquetaService _service;
 
-    public EtiquetaController(IConfiguration configuration)
+    public EtiquetaController(IEtiquetaService service)
     {
-        _configuration = configuration;
-        _db = new DbAccess(configuration);
-        
+        _service = service;
     }
 
-    [HttpGet("Get/{json}")]
+    [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Inventario.Etiqueta_Get");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", json);
-            _response = await _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(json) }
+        };
 
-        return Ok(_response);
+        var response = await _service.GetAsync(parameters);
+        return Ok(response);
     }
 
-    [HttpPost("Insert")]
-    public async Task<IActionResult> Insert(string json)
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Inventario.Etiqueta_Insert");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", json);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+        };
 
-        return Ok(_response);
+        var response = await _service.AddAsync(parameters);
+
+        return Ok(response);
     }
 
-    [HttpPut("Update/{id}")]
-    public async Task<IActionResult> Update(int id, string json)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Inventario.Etiqueta_Update");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", json);
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+              { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+        };
 
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var response = await _service.UpdateAsync(parameters);
+        return Ok(response);
     }
 
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Inventario.Etiqueta_Delete");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+        };
 
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var response = await _service.DeleteAsync(parameters);
+        return Ok(response);
     }
 }

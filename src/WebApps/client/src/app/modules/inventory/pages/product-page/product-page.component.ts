@@ -121,6 +121,7 @@ export class ProductPageComponent {
       }
       this.isLoadingResults = true;
       this.productSvc.getAll(params).subscribe((response) => {
+        this.isLoadingResults = false
           let results: Array<Product> = JSON.parse(response)[0]
           let products = results.map((product, index) => {
             return {
@@ -128,7 +129,6 @@ export class ProductPageComponent {
               position: index + 1
             }
           });
-          console.log(products)
           this.dataSource = new MatTableDataSource(products);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;

@@ -7,6 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
+import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { MeasureAddEditDirective } from '@modules/inventory/directives/measure-add-edit.directive';
 import { MeasureRead } from '@modules/inventory/models/measure.model';
@@ -36,10 +37,11 @@ import Swal from 'sweetalert2';
 export class MeasurePageComponent {
   measureSvc = inject(MeasureService);
   private tS = inject(ToasterService)
+  private sharedSvc = inject(SharedService)
   pagination = signal(new MatPagination());
 
 
-  displayedColumns: string[] = ['index', 'op','code', 'description', 'estado'];
+  displayedColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
 
   dataSource = signal<MeasureRead[]>([])
 
@@ -56,7 +58,7 @@ export class MeasurePageComponent {
 
 
 
-  getMeasures(){
+  getMeasures() {
     let params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize
@@ -66,8 +68,8 @@ export class MeasurePageComponent {
       next: response => {
         this.isLoadingResults = false;
         this.dataSource.set(response)
-        if (this.dataSource().length > 0){
-          this.pagination.update(e=>{
+        if (this.dataSource().length > 0) {
+          this.pagination.update(e => {
             return {
               ...e,
               totalRecords: this.dataSource()[0].totalRecords
@@ -80,7 +82,7 @@ export class MeasurePageComponent {
 
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.getMeasures();
   }
 
@@ -94,16 +96,16 @@ export class MeasurePageComponent {
     this.pagination.update(pag => {
       return {
         ...pag,
-        totalRecords : e.length,
-        pageSize : e.pageSize,
-        pageIndex : e.pageIndex,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
       }
     })
     this.getMeasures();
   }
 
 
-  askToDelete(data:any){
+  askToDelete(data: any) {
     try {
       Swal.fire({
         icon: 'warning',
@@ -115,7 +117,7 @@ export class MeasurePageComponent {
         allowOutsideClick: false
       }).then(result => {
         if (result.isConfirmed) {
-          this.measureSvc.updateStatus(data.idMedida).subscribe(response=>{
+          this.measureSvc.updateStatus(data.idMedida).subscribe(response => {
             if (response.code == "0") {
               this.tS.toastr({
                 type: 'warning',
@@ -136,6 +138,18 @@ export class MeasurePageComponent {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  exportToExcel() {
+    const results = this.dataSource().map((item: any) => {
+      return {
+        idMedida: item.idMedida,
+        descripcion: item.descripcion,
+        codigo: item.codigo,
+      }
+    })
+
+    this.sharedSvc.exportToExcel(results, 'Listado de Medidas')
   }
 
 }

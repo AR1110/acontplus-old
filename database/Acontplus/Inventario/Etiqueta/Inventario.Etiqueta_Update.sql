@@ -1,11 +1,9 @@
 
 USE AcontPlus;
 
-IF OBJECT_ID('Inventario.Etiqueta_Update') IS NOT NULL
-	DROP PROCEDURE Inventario.Etiqueta_Update 
-GO 
+ GO
 
-CREATE PROCEDURE Inventario.Etiqueta_Update @idUsuarioRol INT, @id INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Inventario.Etiqueta_Update @userRoleId INT, @id INT, @json VARCHAR(MAX), @fromMobile BIT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -18,7 +16,7 @@ BEGIN
 	DECLARE @etiquetas VARCHAR(900) 
 	DECLARE @estado BIT 
 
-	SELECT top 1 @idUsuario = idUsuario, @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
+	SELECT top 1 @idUsuario = idUsuario, @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
 	SELECT 
 		@descripcion = descripcion,
 		@etiquetas = etiquetas,

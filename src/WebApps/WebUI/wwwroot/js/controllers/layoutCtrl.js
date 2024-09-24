@@ -117,6 +117,45 @@
                 if ([1, 2, 3].includes(lengthPath)) {
                     let dataMenu = $scope.submenus.find((item) => item.url === pathname);
                     if (dataMenu) {
+                        const { newUrl, newUrlExpiration } = dataMenu;
+                        if (newUrl.length > 0) {
+                            let timerInterval;
+                            swal.fire({
+                                icon: 'info',
+                                //title: 'Nueva Versión Disponible',
+                                text: 'Existe una nueva versión disponible, ¿desea acceder?',
+                                showCancelButton: true,
+                                confirmButtonText: 'Sí, acceder',
+                                cancelButtonText: 'Cancelar',
+                                timer: 5000,
+                                timerProgressBar: true,
+                                didOpen: () => {
+                                    //const progressBar = swal.getTimerProgressBar();
+                                    //if (progressBar) {
+                                    //    progressBar.style.background = '#4caf50';
+                                    //    progressBar.style.height = '6px';
+                                    //}
+                                    Swal.showLoading()
+                                    timerInterval = setInterval(() => {
+                                        const content = Swal.getHtmlContainer()
+                                        if (content) {
+                                            const b = content.querySelector('b')
+                                            if (b) {
+                                                b.textContent = Swal.getTimerLeft()
+                                            }
+                                        }
+                                    }, 100)
+                                },
+                                willClose: () => {
+                                    clearInterval(timerInterval)
+                                },
+                            }).then(result => {
+                                if (result.isConfirmed) {
+                                    location.href = newUrl;
+                                };
+                            });
+
+                        }
                         const dataAccionesSubMenu = userCustomerPermissionSvc.accionesSubMenu()
                         $rootScope.usuarioPermiso = userCustomerPermissionSvc.userPermissionAdapter();
                         let tempArray = JSON.parse(dataMenu.actions) || []

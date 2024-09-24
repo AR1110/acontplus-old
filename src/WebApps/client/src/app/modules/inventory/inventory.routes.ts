@@ -7,6 +7,10 @@ import { MeasurePageComponent } from "./pages/measure-page/measure-page.componen
 import { ProductPageComponent } from "./pages/product-page/product-page.component";
 import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
 import {InventoryReportPageComponent} from "@inventory/reports/inventory-report-page/inventory-report-page.component";
+import { BrandPageComponent } from "./pages/brand-page/brand-page.component";
+import { InvModelPageComponent } from "./pages/inv-model-page/inv-model-page.component";
+import { TarifaPageComponent } from "./pages/tarifa-page/tarifa-page.component";
+import { TagsPageComponent } from "./pages/tags-page/tags-page.component";
 
 export const routes: Route[] = [
   {
@@ -57,6 +61,38 @@ export const routes: Route[] = [
     component: MeasurePageComponent,
     data: {
       breadcrumb: 'Medida'
+    },
+  },
+  {
+    path: 'brand',
+    title: 'Marca',
+    component: BrandPageComponent,
+    data: {
+      breadcrumb: 'Marca'
+    },
+  },
+  {
+    path: 'model',
+    title: 'Modelo',
+    component: InvModelPageComponent,
+    data: {
+      breadcrumb: 'Modelo'
+    },
+  },
+  {
+    path: 'tarifa',
+    title: 'Tarifa',
+    component: TarifaPageComponent,
+    data: {
+      breadcrumb: 'Tarifa'
+    },
+  },
+  {
+    path: 'tags',
+    title: 'Etiquetas',
+    component: TagsPageComponent,
+    data: {
+      breadcrumb: 'Etiquetas'
     },
   },
   {

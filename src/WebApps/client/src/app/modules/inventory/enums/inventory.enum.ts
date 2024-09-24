@@ -7,7 +7,11 @@ export const enum INVENTORY_PATHS {
   LOT_PRICE = 'LotPrice/',
   TRANSACTION = 'Transaccion/',
   MEASURE = 'Measure/',
-  SUBCATEGORY_PHOTO = 'SubcategoryPhoto/'
+  SUBCATEGORY_PHOTO = 'SubcategoryPhoto/',
+  BRAND ='Marca/',
+  MODEL='Modelo/',
+  TARIFA = 'Tarifa/',
+  TAGS = 'Etiqueta/'
 }
 
 
