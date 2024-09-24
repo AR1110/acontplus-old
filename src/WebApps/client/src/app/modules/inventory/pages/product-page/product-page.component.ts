@@ -8,15 +8,15 @@ import { MatSort } from "@angular/material/sort"
 import { MatTableDataSource, MatTableModule } from "@angular/material/table"
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component"
 import { CustomTableContainerComponent } from "@core/components/custom-table-container/custom-table-container.component"
+import { ModalService } from "@core/services/modal.service"
 import { ToasterService } from "@core/services/toaster.service"
+import { ProductPhotoComponent } from "@modules/inventory/components/product/product-photo/product-photo.component"
 import { ProductAddEditDirective } from "@modules/inventory/directives/product/product-list.directive"
 import { ProductService } from "@modules/inventory/services/product.service"
 import { ActionAddDirective } from "@shared/directives/permission/action-add.directive"
 import { MatPagination } from "@shared/models/pagination.model"
 import { PrimaryStatusPipe } from "@shared/pipe/primary-status.pipe"
 import Swal from "sweetalert2"
-
-
 
 type Product = {
   position: number
@@ -62,8 +62,9 @@ type Product = {
 })
 export class ProductPageComponent {
 
-  productSvc = inject(ProductService);
+  private productSvc = inject(ProductService);
   private tS = inject(ToasterService)
+  private modalSvc = inject(ModalService)
   pagination = signal(new MatPagination());
 
 
@@ -81,7 +82,7 @@ export class ProductPageComponent {
 
 
 
-  displayedColumns: string[] = ['index','op', 's3ObjectUrl', 'codigo', 'descripcion', 'medida', 'subFamilia', 'stock', 'estado'];
+  displayedColumns: string[] = ['index', 'op', 's3ObjectUrl', 'codigo', 'descripcion', 'medida', 'subFamilia', 'stock', 'estado'];
 
 
 
@@ -122,16 +123,24 @@ export class ProductPageComponent {
       this.isLoadingResults = true;
       this.productSvc.getAll(params).subscribe((response) => {
         this.isLoadingResults = false
-          let results: Array<Product> = JSON.parse(response)[0]
-          let products = results.map((product, index) => {
+        let results: Array<Product> = response.products;
+        let products = results.map((product, index) => {
+          return {
+            ...product,
+            position: index + 1
+          }
+        });
+        this.dataSource = new MatTableDataSource(products);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        if (products.length > 0) {
+          this.pagination.update(p => {
             return {
-              ...product,
-              position: index + 1
+              ...p,
+              totalRecords: products[0].totalRecords
             }
-          });
-          this.dataSource = new MatTableDataSource(products);
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
+          })
+        }
 
       })
     } catch (error) {
@@ -141,7 +150,7 @@ export class ProductPageComponent {
 
   ngOnInit() {
     // this.initLoad();
-     this.getProducts();
+    this.getProducts();
   }
 
 
@@ -179,6 +188,23 @@ export class ProductPageComponent {
     } catch (error) {
       console.log(error)
     }
+  }
+
+
+  onPhotoModal(data:Product){
+    let modalRef = this.modalSvc.open(ProductPhotoComponent, {
+      size: 'lg'
+    })
+
+    modalRef.componentInstance.params = data;
+
+    modalRef.result.then(result=>{
+      console.log(result)
+      if(result && typeof result==='object' && result.isRefresh){
+        this.refresh()
+      }
+    })
+
   }
 
 }
