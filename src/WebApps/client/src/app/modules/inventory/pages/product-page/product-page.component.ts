@@ -12,10 +12,12 @@ import { MatTableDataSource, MatTableModule } from "@angular/material/table"
 import { MatTooltipModule } from "@angular/material/tooltip"
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component"
 import { CustomTableContainerComponent } from "@core/components/custom-table-container/custom-table-container.component"
+import { ApiResponse } from "@core/models/api-response"
 import { ModalService } from "@core/services/modal.service"
 import { ToasterService } from "@core/services/toaster.service"
-import { isValidField } from "@core/utils/utils"
+import { getValidId, isValidField } from "@core/utils/utils"
 import { ProductPhotoComponent } from "@modules/inventory/components/product/product-photo/product-photo.component"
+import { SubCategoryGroupComponent } from "@modules/inventory/components/sub-category/sub-category-group/sub-category-group.component"
 import { ProductKardexModalDirective } from "@modules/inventory/directives/product/product-kardex-modal.directive"
 import { ProductAddEditDirective } from "@modules/inventory/directives/product/product-list.directive"
 import { ProductService } from "@modules/inventory/services/product.service"
@@ -24,6 +26,7 @@ import { CompraHabitualHistorialDirective } from "@modules/purchase/directives/c
 import { ActionAddDirective } from "@shared/directives/permission/action-add.directive"
 import { MatPagination } from "@shared/models/pagination.model"
 import { PrimaryStatusPipe } from "@shared/pipe/primary-status.pipe"
+import { finalize, forkJoin } from "rxjs"
 import Swal from "sweetalert2"
 
 type Product = {
@@ -67,6 +70,7 @@ type Product = {
     MatTooltipModule,
     MatCheckboxModule,
     CustomTableContainerComponent,
+    SubCategoryGroupComponent,
     ProductAddEditDirective,
     CompraHabitualHistorialDirective,
     ProductKardexModalDirective
@@ -104,7 +108,12 @@ export class ProductPageComponent {
     checkBoxFraccionado: false,
     checkBoxInventario: false,
     status: null,
-    byStock: null
+    byStock: null,
+    bySubFamilia: 0,
+    idMarca: 0,
+    idMedida: 0,
+    idModelo: 0,
+    idTipoIva: 0
   })
 
   isSearchAdvanced = signal(false)
@@ -113,46 +122,119 @@ export class ProductPageComponent {
   medidas = signal<any[]>([])
   marcas = signal<any[]>([])
   modelos = signal<any[]>([])
-  tipoImpuestos = signal<any[]>([])
+  tiposIva = signal<any[]>([])
   stocks = signal<any[]>([])
   estados = signal<any[]>([])
 
-  private initLoad() {
-    // try {
-    //   showLoader();
-    //   this.productSvc.getDataFilter().subscribe({
-    //     next: (response) => {
-    //       hideLoader();
-    //       const {
-    //         subCategorias,
-    //         medidas,
-    //         marcas,
-    //         modelos,
-    //         tarifasImpuesto
-    //       } = response;
 
-    //       this.subCategorias = subCategorias;
-    //       this.measures = medidas;
-    //     },
-    //     error(err) {
-    //       hideLoader()
-    //       console.log(err)
-    //     },
-    //   })
-    // } catch (error) {
-    //   console.log(error)
-    // }
+  private successResponseProductAll(response: any) {
+
+    let results: Array<Product> = response.products;
+    let products = results.map((product, index) => ({
+      ...product,
+      position: index + 1
+    }));
+
+    this.dataSource = new MatTableDataSource(products);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
+    if (products.length > 0) {
+      this.pagination.update(p => ({
+        ...p,
+        totalRecords: products[0].totalRecords
+      }));
+    }
+  }
+
+  setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(key: K, value: ReturnType<typeof this.dataSearch>[K]) {
+
+    this.dataSearch.update(ds => {
+      return {
+        ...ds,
+        [key]: value
+      };
+    });
+  }
+
+
+
+
+  private getDataParams() {
+    let params = {
+
+      bySubFamilia: getValidId(this.dataSearch().bySubFamilia),
+      byMedida: getValidId(this.dataSearch().idMedida),
+      byMarca: getValidId(this.dataSearch().idMarca),
+      byModelo: getValidId(this.dataSearch().idModelo),
+      byTipoIva: getValidId(this.dataSearch().idTipoIva),
+
+      pageIndex: this.pagination().pageIndex + 1,
+      pageSize: this.pagination().pageSize,
+      bySearch: isValidField(this.dataSearch().textSearch),
+      status: this.dataSearch().status,
+      byStock: this.dataSearch().byStock,
+      checkBoxFraccionado: this.dataSearch().checkBoxFraccionado,
+      checkBoxInventario: this.dataSearch().checkBoxInventario,
+    };
+    return params;
+  }
+
+  private resetDataAfterFetch() {
+    this.isLoadingResults = true;
+    this.pagination.update(p => ({
+      ...p,
+      totalRecords: 0
+    }));
+
+    this.toggleSelectsState();
+  }
+
+
+
+  private initLoad() {
+    return forkJoin([
+      this.productSvc.getDataFilter(),
+      this.productSvc.getAll(this.getDataParams())
+    ])
+  }
+
+
+
+  ngOnInit() {
+    this.resetDataAfterFetch()
+    this.initLoad()
+      .pipe(
+        finalize(() => {
+          this.isLoadingResults = false;
+          this.toggleSelectsState();
+        })
+      )
+      .subscribe({
+        next: response => {
+          const [dataForm, responseProduct] = response;
+
+          console.log(dataForm)
+          this.subCategorias.set(dataForm.subCategorias)
+          this.medidas.set(dataForm.medidas)
+          this.marcas.set(dataForm.marcas)
+          this.modelos.set(dataForm.modelos)
+          this.tiposIva.set(dataForm.tiposIva)
+
+          this.successResponseProductAll(responseProduct)
+
+        },
+        error: err => {
+          console.error('Error load data form and products:', err);
+        }
+      })
+
   }
 
   onSearch(event: Event): void {
     const target = event.target as HTMLInputElement;
     const searchValue = isValidField(target.value);
-    this.dataSearch.update(ds=>{
-      return {
-        ...ds,
-        textSearch: searchValue
-      }
-    })
+    this.setDataSearch("textSearch", searchValue)
 
     if (!searchValue) {
       if (this.wasEmptyBefore) {
@@ -160,70 +242,32 @@ export class ProductPageComponent {
       }
 
       this.wasEmptyBefore = true;
-      this.applyFilter(searchValue);
+      this.applyFilter();
     } else {
       this.wasEmptyBefore = false
-      this.applyFilter(searchValue);
+      this.applyFilter();
 
     }
   }
 
-  applyFilter(filterValue: string | null): void {
-    console.log('Filtrando con:', filterValue);
+  applyFilter(): void {
     this.getProducts()
   }
 
   private getProducts() {
-    try {
-      let params = {
-        pageIndex: this.pagination().pageIndex + 1,
-        pageSize: this.pagination().pageSize,
-        bySearch: isValidField(this.dataSearch().textSearch),
-        status: this.dataSearch().status,
-        byStock: this.dataSearch().byStock,
+    if (this.isLoadingResults) return; // Prevenir múltiples llamadas
 
-        checkBoxFraccionado: this.dataSearch().checkBoxFraccionado,
-        checkBoxInventario: this.dataSearch().checkBoxInventario,
-      }
-      if (this.isLoadingResults) return
-
-      this.isLoadingResults = true;
-      this.pagination.update(p => {
-        return {
-          ...p,
-          totalRecords: 0
-        }
+    this.resetDataAfterFetch()
+    this.productSvc.getAll(this.getDataParams()).pipe(
+      finalize(() => {
+        this.isLoadingResults = false;
+        this.toggleSelectsState();
       })
-
-      this.toggleSelectsState()
-      this.productSvc.getAll(params).subscribe((response) => {
-
-        this.isLoadingResults = false
-        let results: Array<Product> = response.products;
-        let products = results.map((product, index) => {
-          return {
-            ...product,
-            position: index + 1
-          }
-        });
-        this.dataSource = new MatTableDataSource(products);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        if (products.length > 0) {
-          this.pagination.update(p => {
-            return {
-              ...p,
-              totalRecords: products[0].totalRecords
-            }
-          })
-        }
-
-        this.toggleSelectsState()
-      })
-    } catch (error) {
-      console.log(error)
-    }
+    ).subscribe(response => {
+      this.successResponseProductAll(response)
+    });
   }
+
 
   toggleSelectsState(): void {
     this.selectElements?.forEach(selectRef => {
@@ -231,14 +275,35 @@ export class ProductPageComponent {
     });
   }
 
-  ngOnInit() {
-    // this.initLoad();
+
+  refresh() {
     this.getProducts();
   }
 
 
-  refresh() {
-    this.getProducts();
+  onSelectedSubCategory(id: number) {
+    this.setDataSearch("bySubFamilia", id)
+    this.getProducts()
+  }
+
+  onEmptyDataSubCategory() {
+    this.setDataSearch("bySubFamilia", 0)
+  }
+
+  private successResponse = (response: ApiResponse) => {
+    if (response.code === "0") {
+      this.tS.toastr({
+        type: 'warning',
+        message: response.message
+      })
+    }
+    if (response.code === "1") {
+      this.tS.toastr({
+        type: 'success',
+        message: response.message
+      })
+      this.refresh()
+    }
   }
 
   handlePageEvent(e: PageEvent) {
@@ -267,22 +332,7 @@ export class ProductPageComponent {
       })
 
       if (isConfirmed) {
-        this.productSvc.updateStatus(item.idArticulo).subscribe(response => {
-          if (response.code === "0") {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message
-            })
-          }
-          if (response.code === "1") {
-            this.tS.toastr({
-              type: 'success',
-              message: response.message
-            })
-            this.refresh()
-          }
-
-        })
+        this.productSvc.updateStatus(item.idArticulo).subscribe(this.successResponse)
       }
     } catch (error) {
       console.log(error);
@@ -303,21 +353,7 @@ export class ProductPageComponent {
     })
 
     if (isConfirmed) {
-      this.stockSvc.put(item.idArticulo).subscribe(response => {
-        if (response.code === "0") {
-          this.tS.toastr({
-            type: 'warning',
-            message: response.message
-          })
-        }
-        if (response.code === "1") {
-          this.tS.toastr({
-            type: 'success',
-            message: response.message
-          })
-          this.refresh()
-        }
-      })
+      this.stockSvc.put(item.idArticulo).subscribe(this.successResponse)
     }
   }
 

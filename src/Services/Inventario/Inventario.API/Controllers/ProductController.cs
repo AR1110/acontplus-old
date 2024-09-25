@@ -15,13 +15,12 @@ public class ProductController : BaseApiController
     public async Task<ActionResult<ApiResponseDeprecated>> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
-            };
-        var response = await _service.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(json) }
+        };
 
-            ;
+        var response = await _service.GetAsync(parameters);
         return Ok(response);
     }
 

@@ -3,7 +3,7 @@
            matInput
            formControlName="subCategoryGroup"
            [matAutocomplete]="autoGroup" class="form-control"
-           placeholder="Buscar subfamilia..."
+           placeholder="Buscar SubFamilia..."
     >
     <mat-autocomplete #autoGroup="matAutocomplete">
       @for (group of stateGroupOptions | async; track $index) {

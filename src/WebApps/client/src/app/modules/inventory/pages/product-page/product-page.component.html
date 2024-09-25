@@ -10,8 +10,8 @@
       <div class="col">
         <div class="form-group w-75">
           <div class="input-group mb-3">
-            <input type="search" #selectElement class="form-control" placeholder="Buscar producto" (keyup)="onSearch($event)"
-              (input)="onSearch($event)" placeholder="Ej: Clavo...">
+            <input type="search"   class="form-control"
+              (keyup)="onSearch($event)" (input)="onSearch($event)" placeholder="Ej: Clavo...">
             <span class="input-group-text" id="basic-addon1">
               <mat-icon>search</mat-icon>
             </span>
@@ -40,23 +40,22 @@
     <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
 
       <div class="col">
-        <div class="form-group">
-          <label for="subCategories">SubCategoria</label>
-          <select  #selectElement name="subCategories" id="subCategories" class="form-select">
 
-            <option value=""></option>
-          </select>
+        <div class="form-group">
+          <label>SubFamilia</label>
+          <app-sub-category-group [subCategoryGroups]="subCategorias()" (onSelected)="onSelectedSubCategory($event)"
+            (onEmptyData)="onEmptyDataSubCategory()" />
         </div>
       </div>
 
       <div class="col">
         <div class="form-group">
-          <span>Medida</span>
-          <select #selectElement name="medida" id="medida" class="form-select" ng-model="dataSearch.idMedida"
-            ng-change="searchArticulo()">
-            <option value="">Todos</option>
+          <label>Medida</label>
+          <select #selectElement name="medida" id="medida" class="form-select" [(ngModel)]="dataSearch().idMedida"
+            (change)="refresh()">
+            <option [ngValue]="0">Todos</option>
             @for (item of medidas(); track $index) {
-            <option ng-value="item.idMedida">
+            <option [ngValue]="item.idMedida">
               {{item.descripcion}}
             </option>
             }
@@ -65,12 +64,12 @@
       </div>
       <div class="col">
         <div class="form-group">
-          <span>Marca</span>
-          <select #selectElement name="marca" id="marca" class="form-select" ng-model="dataSearch.idMarca"
-            ng-change="searchArticulo()">
-            <option value="">Todos</option>
+          <label>Marca</label>
+          <select #selectElement name="marca" id="marca" class="form-select" [(ngModel)]="dataSearch().idMarca"
+            (change)="refresh()">
+            <option [ngValue]="0">Todos</option>
             @for (item of marcas(); track $index) {
-            <option ng-value="item.idMarca" ng-repeat="item in marcas">
+            <option [ngValue]="item.idMarca" ng-repeat="item in marcas">
               {{item.descripcion}}
             </option>
             }
@@ -79,13 +78,13 @@
       </div>
       <div class="col">
         <div class="form-group">
-          <span>Modelos</span>
-          <select #selectElement name="modelo" id="modelo" class="form-select" ng-model="dataSearch.idModelo"
-            ng-change="searchArticulo()">
-            <option value="">Todos</option>
+          <label>Modelos</label>
+          <select #selectElement name="modelo" id="modelo" class="form-select" [(ngModel)]="dataSearch().idModelo"
+            (change)="refresh()">
+            <option [ngValue]="0">Todos</option>
             @for (item of modelos(); track $index) {
 
-            <option ng-value="item.idModelo" ng-repeat="item in modelos">
+            <option [ngValue]="item.idModelo" ng-repeat="item in modelos">
               {{item.descripcion}}
             </option>
             }
@@ -99,13 +98,13 @@
 
       <div class="col">
         <div class="form-group">
-          <span>Tipo Iva</span>
-          <select #selectElement name="tipoIva" id="tipoIva" class="form-select" ng-model="dataSearch.idTipoIva"
-            ng-change="searchArticulo()">
-            <option value="">Todos</option>
-            @for (item of tipoImpuestos(); track $index) {
+          <label>Tipo Iva</label>
+          <select #selectElement name="tipoIva" id="tipoIva" class="form-select" [(ngModel)]="dataSearch().idTipoIva"
+            (change)="refresh()">
+            <option [ngValue]="0">Todos</option>
+            @for (item of tiposIva(); track $index) {
 
-            <option ng-value="item.idTipoIva" ng-repeat="item in tiposIva">
+            <option [ngValue]="item.idTipoIva" ng-repeat="item in tiposIva">
               {{item.descripcion}}
             </option>
             }
@@ -116,7 +115,7 @@
 
       <div class="col">
         <div class="form-group">
-          <span>Stock</span>
+          <label>Stock</label>
           <select #selectElement class="form-select" [(ngModel)]="dataSearch().byStock" (change)="refresh()">
             <option [ngValue]="null">Todos</option>
             <option [ngValue]="1">Con Stock</option>
@@ -128,8 +127,9 @@
 
       <div class="col">
         <div class="form-group">
-          <span>Estado</span>
-          <select #selectElement name="" id="" class="form-select" [(ngModel)]="dataSearch().status" (change)="refresh()">
+          <label>Estado</label>
+          <select #selectElement name="" id="" class="form-select" [(ngModel)]="dataSearch().status"
+            (change)="refresh()">
             <option [ngValue]="null">Todos</option>
             <option [ngValue]="1">Activo</option>
             <option [ngValue]="0">Inactivo</option>
@@ -142,7 +142,8 @@
 
         <div class="form-group d-flex flex-column">
           <label for="fraccionado">Fraccionado</label>
-          <mat-checkbox   [(ngModel)]="dataSearch().checkBoxFraccionado" (change)="refresh()" [disabled]="isLoadingResults">
+          <mat-checkbox [(ngModel)]="dataSearch().checkBoxFraccionado" (change)="refresh()"
+            [disabled]="isLoadingResults">
             @if (dataSearch().checkBoxFraccionado) {
             <span>Si</span>
             }@else {
@@ -153,7 +154,8 @@
         </div>
         <div class="form-group d-flex flex-column">
           <label for="fraccionado">Inventario</label>
-          <mat-checkbox [(ngModel)]="dataSearch().checkBoxInventario" (change)="refresh()" [disabled]="isLoadingResults">
+          <mat-checkbox [(ngModel)]="dataSearch().checkBoxInventario" (change)="refresh()"
+            [disabled]="isLoadingResults">
             @if (dataSearch().checkBoxInventario) {
             <span>Si</span>
             }@else {

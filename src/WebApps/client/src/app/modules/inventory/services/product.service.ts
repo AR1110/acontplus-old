@@ -30,23 +30,25 @@ export class ProductService {
 
   getDataFilter() {
     let params = JSON.stringify({ tipo: 11 })
-    return this.http.get(`${this.url}Get?json=${params}`).pipe(
+    return this.http.get<ApiResponse>(`${this.url}?json=${params}`, {
+      context: getNoLoader()
+    }).pipe(
       map(response => {
         let data = {
           subCategorias: [],
           medidas: [],
           marcas: [],
           modelos: [],
-          tarifasImpuesto: []
+          tiposIva: []
         };
-        if (isApiResponse(response)) {
-          let [subCategorias, medidas, marcas, modelos, tarifasImpuesto] = JSON.parse(response.payload as string);
+        if (response.code==="1") {
+          let { subCategorias,medidas,marcas,modelos,tiposIva} = JSON.parse(response.payload as string);
           data = {
-            subCategorias,
+            subCategorias: groupSubCategoryUtil(subCategorias),
             medidas,
             marcas,
             modelos,
-            tarifasImpuesto
+            tiposIva
           }
         }
         return data;
@@ -107,19 +109,19 @@ export class ProductService {
     let params = {
       json: JSON.stringify({ ...obj, tipo: 1 })
     }
-    return this.http.get<ApiResponse>(`${this.url_old}Get`, {
+    return this.http.get<ApiResponse>(`${this.url}`, {
       params,
       context: getNoLoader()
     }).pipe(map((response) => {
       let result = {
         products: [] as any[]
       }
-      if(response.code==="1"){
-        let [productsTemp] = JSON.parse(response.payload as string);
+      if (response.code === "1") {
+        let {articulos} = JSON.parse(response.payload as string);
 
-        let products = productsTemp || [];
+        let products = articulos || [];
 
-        result.products = products.map((item:any)=>{
+        result.products = products.map((item: any) => {
           return {
             idArticulo: item.idArticulo,
             idMedida: item.idMedida,
@@ -154,7 +156,7 @@ export class ProductService {
       .pipe(map((response) => response));
   }
 
-  search<T extends { textSearch: string, pageIndex?: number, pageSize?:number }>(
+  search<T extends { textSearch: string, pageIndex?: number, pageSize?: number }>(
     data: T
   ): Observable<Array<ProductSearch>> {
     let query = {
