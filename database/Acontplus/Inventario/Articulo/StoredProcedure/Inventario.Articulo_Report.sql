@@ -38,6 +38,7 @@ BEGIN
 	       ,@estado         VARCHAR(5)
 	       ,@usuario      VARCHAR(150)
            ,@codEstab     VARCHAR(100) 
+           ,@idMarca              INT
            
 
 	SELECT TOP 1  @idEntidad = idEntidad, @usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
@@ -129,6 +130,7 @@ BEGIN
 							  ,ar.tarifa
 							  ,FORMAT(ar.fechaCaducidad, ''dd/MM/yyyy'') as fechaCaducidad 
 							  ,ISNULL(CAST(ar.precioConIva as numeric(15,2)),0) as precioIva
+                              ,ar.stock 
 						FROM Inventario.v_Articulo_Tarifa ar WITH (NOLOCK)
 						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '
 
@@ -168,6 +170,7 @@ BEGIN
                   ,@idBodega     = idBodega
                   ,@codEstab     = codEstab
                   ,@stockStatusCode = stockStatusCode
+                  ,@idMarca         = idMarca 
 			FROM OPENJSON(@json) WITH 
             (      
                  bySubFamilia                 INT 	
@@ -175,13 +178,15 @@ BEGIN
                 ,idBodega                     INT
                 ,codEstab             VARCHAR(50)
                 ,stockStatusCode VARCHAR(5)
+                ,idMarca INT 
 			) AS dt
 
 			SET @params = '@idEntidad    INT									
 						  ,@idSubFamilia INT
 						  ,@idBodega     INT
                           ,@codEstab     VARCHAR(50)
-						  ,@rucClienteProveedor VARCHAR(25)'
+						  ,@rucClienteProveedor VARCHAR(25)
+                          ,@idMarca      INT '
 
 			SET @sql = 'SELECT ar.idArticulo
 							  ,ar.descripcion
@@ -221,6 +226,13 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND ar.codEstab = @codEstab '
                 END 
+
+
+            IF @idMarca > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND ar.idMarca  = @idMarca '
+                END 
+
             IF @stockStatusCode IS NOT NULL
                 --con stock 
                 IF @stockStatusCode='CS'
@@ -259,6 +271,7 @@ BEGIN
 							  ,@idBodega     = @idBodega
 							  ,@rucClienteProveedor = @rucClienteProveedor
                               ,@codEstab     = @codEstab
+                              ,@idMarca      = @idMarca
 
 			RETURN 
 		END
@@ -522,8 +535,7 @@ BEGIN
 
     IF @tipo = 6
         BEGIN 
-            DECLARE @idTarifa INT
-            DECLARE @idMarca INT 
+            DECLARE @idTarifa INT  
             
             
 

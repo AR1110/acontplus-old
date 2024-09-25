@@ -1,20 +1,20 @@
-import { GroupedSubFamilia } from './../models/sub-category.model';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { isApiResponse } from '@core/models/api-response';
+import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { map, Observable } from 'rxjs';
 
 import { ProductAdapter } from '../adapters/product.adapter';
 import { INVENTORY_PATHS } from '../enums/inventory.enum';
-import { ProductSearch } from '../models/product.model';
 import { MedidaProducto } from '../models/measure.model';
+import { ProductSearch } from '../models/product.model';
 import { groupSubCategoryUtil } from '../utils/group-sub-category.util';
 import { mergeMeasureUtil } from '../utils/merge-measure.util';
 import { ProductSale } from './../models/product.model';
+import { GroupedSubFamilia } from './../models/sub-category.model';
 
 @Injectable({
   providedIn: 'root',
@@ -107,10 +107,45 @@ export class ProductService {
     let params = {
       json: JSON.stringify({ ...obj, tipo: 1 })
     }
-    return this.http.get(`${this.url_old}Get`, {
+    return this.http.get<ApiResponse>(`${this.url_old}Get`, {
       params,
       context: getNoLoader()
-    }).pipe(map((response: any) => response.payload))
+    }).pipe(map((response) => {
+      let result = {
+        products: [] as any[]
+      }
+      if(response.code==="1"){
+        let [productsTemp] = JSON.parse(response.payload as string);
+
+        let products = productsTemp || [];
+
+        result.products = products.map((item:any)=>{
+          return {
+            idArticulo: item.idArticulo,
+            idMedida: item.idMedida,
+            code_unique: item.code_unique,
+            codigo: item.codigo,
+            descripcion: item.descripcion,
+            precioCosto: item.precioCosto,
+            estado: item.estado,
+            stock: item.stock,
+            observaciones: item.observaciones,
+            imagen: item.imagen,
+            subFamilia: item.subFamilia,
+            medida: item.medida,
+            tipoIva: item.tipoIva,
+            tipoArticulo: item.tipoArticulo,
+            totalRecords: item.totalRecords,
+            style: item.style,
+            s3ObjectKey: item.s3ObjectKey,
+            s3ObjectUrl: item.s3ObjectUrl
+          }
+        })
+      }
+
+      return result;
+
+    }))
   }
 
   get(params: any) {
@@ -239,4 +274,11 @@ export class ProductService {
     }))
 
   }
+
+
+
+  updateStatus(id: number) {
+    return this.http.delete<ApiResponse>(`${this.url}Delete/${id}`)
+  }
+
 }

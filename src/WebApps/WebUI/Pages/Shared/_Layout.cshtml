@@ -1,6 +1,8 @@
-﻿@*{
-    @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
-    }*@
+﻿@*@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv*@
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@using System.Text.Json
+
 @{
     var youtubeUrl = "https://www.youtube.com/@acontplusweb/playlists";
 }
@@ -428,6 +430,9 @@
     <script src="~/lib/axios/axios.min.js" asp-append-version="true"></script>
     <script src="~/js/contabilidad/services/contabilidadService.js" asp-append-version="true"></script>
 
+    <!--Angular v18 App Redirection-->
+    <script src="~/js/controllers/iframeAngularCtrl.min.js" asp-append-version="true"></script>
+
     <script>
 
 
@@ -464,6 +469,8 @@
                 });
             location.href = '/Login';
         };
+        const angularApp = @Html.Raw(JsonSerializer.Serialize(Configuration["UrlApps:AngularApp"]));
+        window.angularAppUrl = angularApp;
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

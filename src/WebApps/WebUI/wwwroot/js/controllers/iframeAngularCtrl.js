@@ -62,7 +62,7 @@
 
         const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
         mS.detectDevice();
-        let frontend = window.angularAppUrl || document.getElementById('frontend').value
+        let frontend = window.angularAppUrl;
         let div = document.querySelector('.container-fluid'); // Select the div by class
         div.classList.remove('container-fluid'); // Remove the div
         // Get the current URL
