@@ -5,6 +5,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { AtsService } from '@modules/billing/services/ats.service';
 import moment from 'moment';
+import { ToasterService } from '@core/services/toaster.service';
 
 @Component({
   selector: 'app-ats-page',
@@ -14,8 +15,6 @@ import moment from 'moment';
   styles: ``,
 })
 export class AtsPageComponent {
-  atsSvc = inject(AtsService);
-
   fromDate: any = moment().subtract(1, 'month').startOf('month');
   toDate: any = moment().subtract(1, 'month').endOf('month');
   dataSearch = {
@@ -23,6 +22,8 @@ export class AtsPageComponent {
     toDate: formatDateMoment(this.toDate),
     semiannual: false,
   };
+  private readonly _atsSvc = inject(AtsService);
+  private readonly _tS = inject(ToasterService);
 
   ngOnInit() {}
 
@@ -37,6 +38,16 @@ export class AtsPageComponent {
       toDate: this.dataSearch.toDate,
       semiannual: this.dataSearch.semiannual,
     };
-    this.atsSvc.download(json);
+    this._atsSvc.checkValidation(json).subscribe((response) => {
+      if (response.code === '0') {
+        this._tS.toastr({
+          type: 'warning',
+          message: response.message,
+        });
+      }
+      if (response.code === '1') {
+        this._atsSvc.download(json);
+      }
+    });
   }
 }
