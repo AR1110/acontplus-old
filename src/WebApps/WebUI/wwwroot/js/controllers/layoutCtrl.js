@@ -118,7 +118,7 @@
                     let dataMenu = $scope.submenus.find((item) => item.url === pathname);
                     if (dataMenu) {
                         const { newUrl, newUrlExpiration } = dataMenu;
-                        if (newUrl.length > 0) {
+                        if (newUrl && newUrl.length > 0) {
                             let timerInterval;
                             swal.fire({
                                 icon: 'info',
