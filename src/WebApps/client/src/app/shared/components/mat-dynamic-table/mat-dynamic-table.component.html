@@ -1,68 +1,72 @@
 <div class="table-container small-table">
 
-  <table #sort="matSort" [dataSource]="dataSource.data" class="mat-elevation-z2" mat-table matSort>
+  <table #sort="matSort" [dataSource]="dataSource.data" mat-table matSort>
     <!-- (matSortChange)="sortData($event)" -->
 
     @if (displayColumnDefs) {
-      <!-- Checkbox Column *ngIf="showSelectBox" -->
-      <ng-container matColumnDef="select">
-        <th *matHeaderCellDef mat-header-cell>
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-                        [aria-label]="checkboxLabel()"
-                        [checked]="selection.hasValue() && isAllSelected()"
-                        [indeterminate]="selection.hasValue() && !isAllSelected()">
-          </mat-checkbox>
-        </th>
-        <td *matCellDef="let row" mat-cell>
-          <mat-checkbox (change)="$event ? selection.toggle(row) : null; selectRow(row)"
-                        (click)="$event.stopPropagation()"
-                        [aria-label]="checkboxLabel(row)"
-                        [checked]="selection.isSelected(row)">
-          </mat-checkbox>
-        </td>
-        <td *matFooterCellDef mat-footer-cell></td>
-      </ng-container>
-      @for (col of displayColumnDefs; track $index) {
-        <ng-container [matColumnDef]="col.key">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ col.label }}</th>
+    <!-- Checkbox Column *ngIf="showSelectBox" -->
+    <ng-container matColumnDef="select">
+      <th *matHeaderCellDef mat-header-cell>
+        <mat-checkbox (change)="$event ? masterToggle() : null" [aria-label]="checkboxLabel()"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()">
+        </mat-checkbox>
+      </th>
+      <td *matCellDef="let row" mat-cell>
+        <mat-checkbox (change)="$event ? selection.toggle(row) : null; selectRow(row)"
+          (click)="$event.stopPropagation()" [aria-label]="checkboxLabel(row)" [checked]="selection.isSelected(row)">
+        </mat-checkbox>
+      </td>
+      <td *matFooterCellDef mat-footer-cell></td>
+    </ng-container>
+    @for (col of displayColumnDefs; track $index) {
 
-          <td *matCellDef="let element; let i = index" [ngClass]="{'highlighted': highlightRowIndex === i}" mat-cell>
 
-            <!-- The pipe number here works as follows: | number : '.2-2'
-                     - Sow at-least 1 integer digit before decimal point, set by default
-                     - Show not less 2 integer digits after the decimal point
-                     - Show not more than 2 integer digits after the decimal point
-            -->
-            @if (col.type === 'number') {
-              <div>{{ element[col.key] | number : '1.2' : locale }}</div>
-            }
-            @if (col.type === 'date') {
-              <div>{{ element[col.key] | date: 'dd.MM.yyyy' }}</div>
-            }
-            @if (col.type !== 'number' && col.type !== 'date') {
-              <div>{{ element[col.key] }}</div>
-            }
-          </td>
 
-          <td *matFooterCellDef mat-footer-cell>
-            @if (!col.index) {
-              <div> Total</div>                     <!-- col.index === 0 -->
-            }
-            @if (col.index && col.hasFooter) {
-              <div>{{ col.key | getTotal: this.dataSource.data }}</div>
-            }
-            <!-- col.index !== 0 -->
-          </td>
-        </ng-container>
+    <ng-container [matColumnDef]="col.key">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ col.label }}</th>
 
-      }
+      <td *matCellDef="let element; let i = index" [ngClass]="{'highlighted': highlightRowIndex === i}" mat-cell>
 
-      <tr *matHeaderRowDef="displayedColumns; sticky: true" class="small-header" mat-header-row></tr>
-      <tr (click)="selectRow(row)" *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+        @if (col.key==='op') {
+        <div class="d-flex flex-row gap-1">
+          <ng-container *ngTemplateOutlet="templateOp; context: { item: element }"></ng-container>
+        </div>
+        }
+        @if (col.type === 'number') {
+        <div>{{ element[col.key] | number : '1.2' : locale }}</div>
+        }
+        @if (col.type === 'date') {
+        <div>{{ element[col.key] | date: 'dd.MM.yyyy' }}</div>
+        }
+        @if (col.type !== 'number' && col.type !== 'date') {
+        <div>{{ element[col.key] }}</div>
+        }
+      </td>
 
-      @if (showFooter && dataSource.data) {
-        <tr *matFooterRowDef="displayedColumns" mat-footer-row></tr>
-      }
+      <td *matFooterCellDef mat-footer-cell>
+        @if (!col.index) {
+        <div> Total</div> <!-- col.index === 0 -->
+        }
+        @if (col.index && col.hasFooter) {
+        <div>{{ col.key | getTotal: this.dataSource.data }}</div>
+        }
+        <!-- col.index !== 0 -->
+      </td>
+    </ng-container>
+
+    }
+
+    <tr *matHeaderRowDef="displayedColumns; sticky: true" class="small-header" mat-header-row></tr>
+    <tr (click)="selectRow(row)" *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">Sin Registro</td>
+    </tr>
+
+    @if (showFooter && dataSource.data) {
+    <tr *matFooterRowDef="displayedColumns" mat-footer-row></tr>
+    }
     }
   </table>
 

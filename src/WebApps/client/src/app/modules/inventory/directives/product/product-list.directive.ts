@@ -24,30 +24,3 @@ export class ProductAddEditDirective {
 }
 
 
-/**
- * Category
- */
-
-
-/**
- * Category
- */
-// @Directive({
-//   selector: '[appMeasureModal]',
-//   standalone: true
-// })
-// export class MeasureModalDirective {
-//   @Input() resultModalHandler!: Function;
-//   @Input() params = {};
-
-//   @HostListener('click') onClick() {
-//     const modalRef = this.modalSvc.openModalCustom(MeasureModalComponent);
-//     modalRef.componentInstance.params = this.params || {};
-//     modalRef.result.then(result => {
-//       if (this.resultModalHandler && typeof result === 'object') {
-//         this.resultModalHandler(result);
-//       }
-//     })
-//   }
-//   constructor(private modalSvc: ModalService, private el: ElementRef) { }
-// }

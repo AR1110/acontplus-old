@@ -7,6 +7,7 @@ import {
   Output,
   QueryList,
   SimpleChanges,
+  TemplateRef,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
@@ -27,37 +28,25 @@ import {
   MatRowDef,
   MatTable,
   MatTableDataSource,
+  MatTableModule,
 } from '@angular/material/table';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TableCellIndex } from '@shared/models/mat-table-models/table-cell-index.model';
-import { MatCheckbox } from '@angular/material/checkbox';
+import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { DatePipe, DecimalPipe, NgClass } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import { GetTotalPipe } from '@shared/pipe/get-total.pipe';
 
 @Component({
   selector: 'app-mat-dynamic-table',
   standalone: true,
   imports: [
-    MatCheckbox,
-    MatSort,
-    MatTable,
-    MatColumnDef,
-    MatHeaderCellDef,
-    MatHeaderCell,
-    MatCell,
-    MatCellDef,
-    MatFooterCellDef,
-    MatFooterCell,
+    CommonModule,
+    MatTableModule,
+    MatCheckboxModule,
     MatSortModule,
     NgClass,
-    MatFooterRowDef,
-    MatFooterRow,
-    MatRowDef,
-    MatHeaderRow,
-    MatRow,
-    MatHeaderRowDef,
     GetTotalPipe,
     DatePipe,
     DecimalPipe,
@@ -91,6 +80,7 @@ export class MatDynamicTableComponent<T> {
   @ContentChildren(ViewContainerRef)
   rows!: QueryList<ViewContainerRef>; // Query for ViewContainerRefs
 
+  @Input() templateOp!: TemplateRef<any> | null;
   constructor() {}
 
   ngAfterContentInit(): void {

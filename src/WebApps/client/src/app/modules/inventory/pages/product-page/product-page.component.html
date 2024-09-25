@@ -1,24 +1,179 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
 
 
 
-<mat-card>
-  <mat-card-header>
-    <mat-card-title-group>
-      <mat-card-title></mat-card-title>
-      <div class="d-flex flex-row gap-2">
-        <button mat-flat-button appProductAddEdit (onResultModal)="refresh()">
-          <mat-icon>add</mat-icon>
-          Nuevo
-        </button>
-        <button mat-icon-button (click)="refresh()">
-          <mat-icon>refresh</mat-icon>
-        </button>
-      </div>
-    </mat-card-title-group>
-  </mat-card-header>
+<mat-card class="bg-white">
   <mat-card-content>
+    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4">
+
+      <div class="col">
+        <div class="form-group w-75">
+          <div class="input-group mb-3">
+            <input type="search" #selectElement class="form-control" placeholder="Buscar producto" (keyup)="onSearch($event)"
+              (input)="onSearch($event)" placeholder="Ej: Clavo...">
+            <span class="input-group-text" id="basic-addon1">
+              <mat-icon>search</mat-icon>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="col  ">
+        <div class="d-flex flex-row gap-2 justify-content-end">
+          <button mat-flat-button appProductAddEdit (onResultModal)="refresh()" [disabled]="isLoadingResults">
+            <mat-icon>add</mat-icon>
+            Nuevo
+          </button>
+          <button mat-icon-button (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())">
+            <mat-icon>filter_list</mat-icon>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    @if(isSearchAdvanced()){
+
+    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
+
+      <div class="col">
+        <div class="form-group">
+          <label for="subCategories">SubCategoria</label>
+          <select  #selectElement name="subCategories" id="subCategories" class="form-select">
+
+            <option value=""></option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="form-group">
+          <span>Medida</span>
+          <select #selectElement name="medida" id="medida" class="form-select" ng-model="dataSearch.idMedida"
+            ng-change="searchArticulo()">
+            <option value="">Todos</option>
+            @for (item of medidas(); track $index) {
+            <option ng-value="item.idMedida">
+              {{item.descripcion}}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <span>Marca</span>
+          <select #selectElement name="marca" id="marca" class="form-select" ng-model="dataSearch.idMarca"
+            ng-change="searchArticulo()">
+            <option value="">Todos</option>
+            @for (item of marcas(); track $index) {
+            <option ng-value="item.idMarca" ng-repeat="item in marcas">
+              {{item.descripcion}}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <span>Modelos</span>
+          <select #selectElement name="modelo" id="modelo" class="form-select" ng-model="dataSearch.idModelo"
+            ng-change="searchArticulo()">
+            <option value="">Todos</option>
+            @for (item of modelos(); track $index) {
+
+            <option ng-value="item.idModelo" ng-repeat="item in modelos">
+              {{item.descripcion}}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
+
+      <div class="col">
+        <div class="form-group">
+          <span>Tipo Iva</span>
+          <select #selectElement name="tipoIva" id="tipoIva" class="form-select" ng-model="dataSearch.idTipoIva"
+            ng-change="searchArticulo()">
+            <option value="">Todos</option>
+            @for (item of tipoImpuestos(); track $index) {
+
+            <option ng-value="item.idTipoIva" ng-repeat="item in tiposIva">
+              {{item.descripcion}}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+
+
+      <div class="col">
+        <div class="form-group">
+          <span>Stock</span>
+          <select #selectElement class="form-select" [(ngModel)]="dataSearch().byStock" (change)="refresh()">
+            <option [ngValue]="null">Todos</option>
+            <option [ngValue]="1">Con Stock</option>
+            <option [ngValue]="2">Sin Stock</option>
+          </select>
+        </div>
+      </div>
+
+
+      <div class="col">
+        <div class="form-group">
+          <span>Estado</span>
+          <select #selectElement name="" id="" class="form-select" [(ngModel)]="dataSearch().status" (change)="refresh()">
+            <option [ngValue]="null">Todos</option>
+            <option [ngValue]="1">Activo</option>
+            <option [ngValue]="0">Inactivo</option>
+          </select>
+        </div>
+      </div>
+
+
+      <div class="col d-flex gap-4">
+
+        <div class="form-group d-flex flex-column">
+          <label for="fraccionado">Fraccionado</label>
+          <mat-checkbox   [(ngModel)]="dataSearch().checkBoxFraccionado" (change)="refresh()" [disabled]="isLoadingResults">
+            @if (dataSearch().checkBoxFraccionado) {
+            <span>Si</span>
+            }@else {
+            <span>No</span>
+            }
+          </mat-checkbox>
+
+        </div>
+        <div class="form-group d-flex flex-column">
+          <label for="fraccionado">Inventario</label>
+          <mat-checkbox [(ngModel)]="dataSearch().checkBoxInventario" (change)="refresh()" [disabled]="isLoadingResults">
+            @if (dataSearch().checkBoxInventario) {
+            <span>Si</span>
+            }@else {
+            <span>No</span>
+            }
+          </mat-checkbox>
+
+        </div>
+      </div>
+
+    </div>
+
+    }
+
+
+
+
+
+
+
     <!-- setting outline form field appearance -->
     <app-custom-table-container [pagination]="pagination()" [isLoadingResults]="isLoadingResults"
       (onPageEvent)="handlePageEvent($event)">
@@ -42,35 +197,30 @@
 
               <mat-menu #menu="matMenu">
 
-                <button mat-menu-item  >
+                <button mat-menu-item (click)="updateStock(row)">
                   <mat-icon>update</mat-icon>
                   <span>Actualizar Stock</span>
                 </button>
-                <button mat-menu-item>
+                <button mat-menu-item (click)="askToUpdateStatus(row)">
                   <mat-icon>delete</mat-icon>
                   <span>Eliminar</span>
                 </button>
 
-                <button mat-menu-item>
+                <button mat-menu-item (click)="onPhotoModal(row)">
                   <mat-icon>add_a_photo</mat-icon>
                   <span>Imagenes</span>
                 </button>
 
-                <button mat-menu-item>
+                <button mat-menu-item appCompraHabitualHistorial [params]="row">
                   <mat-icon>history</mat-icon>
-                  <span>Historial compras</span>
+                  <span>Hist. compras</span>
                 </button>
-
-
-
-
-
               </mat-menu>
 
-              <button mat-icon-button  >
+              <button mat-icon-button matTooltip="Editar">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button  >
+              <button mat-icon-button appProductKardexModal [params]="row" matTooltip="Kardex">
                 <mat-icon>timeline</mat-icon>
               </button>
             </div>
@@ -132,6 +282,11 @@
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">Sin Registro</td>
+        </tr>
+
       </table>
     </app-custom-table-container>
 

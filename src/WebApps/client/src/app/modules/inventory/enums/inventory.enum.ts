@@ -11,7 +11,9 @@ export const enum INVENTORY_PATHS {
   BRAND ='Marca/',
   MODEL='Modelo/',
   TARIFA = 'Tarifa/',
-  TAGS = 'Etiqueta/'
+  TAGS = 'Etiqueta/',
+  PRODUCT_PHOTO ='ProductPhoto/',
+  STOCK = 'Stock/'
 }
 
 
