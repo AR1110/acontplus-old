@@ -1,10 +1,18 @@
 ﻿namespace FactElect.API.Controllers.Sri;
 
-[ApiController]
-[Route("api/[controller]")]
-public class AtsController(IAtsService atsService) : ControllerBase
+public class AtsController(IAtsService atsService) : BaseApiController
 {
     private readonly AtsXml _atsXml = new();
+    [HttpGet("CheckValidation")]
+    public async Task<IActionResult> CheckValidation(string json)
+    {
+        var parameters = new Dictionary<string, object>
+        {
+            {"userRoleId", User.GetUserRoleId() },
+            {"json", SqlStringParam.Sanitize(json)},
+        };
+        return Ok(await atsService.CheckValidationAsync(parameters));
+    }
 
     [HttpGet("Get")]
     public IActionResult GetPeriods()
@@ -44,7 +52,7 @@ public class AtsController(IAtsService atsService) : ControllerBase
             { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
 
-        var ds = await atsService.GetAts(parameters);
+        var ds = await atsService.GetAsync(parameters);
         if (!ds.Tables[0].Columns.Contains("code"))
         {
             byte[] xmlAts = null;
