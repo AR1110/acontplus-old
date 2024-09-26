@@ -670,6 +670,17 @@ export class ProductAddEditModalComponent {
       showWarning("El valor mínimo en el precio de costo es 0.01");
       return;
     }
+    return true;
+  }
+
+  save(){
+
+    if(!this.isValidForm()) return
+
+
+
+
+
   }
 
 
