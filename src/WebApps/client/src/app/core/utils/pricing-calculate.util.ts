@@ -1,3 +1,6 @@
+import { DECIMALS } from "@core/constants/global.constants";
+import { div, minus, mul, plus } from "./decimal.util";
+
 export const pricingCalculateUtil = {
 
 
@@ -25,6 +28,29 @@ export const pricingCalculateUtil = {
   },
 
 
+
+  /**
+   * Función que se emplea en documentos de venta
+   * @param priceWithVAT
+   * @param discountPercentage
+   * @returns
+   */
+  getDiscountedVATPrice: function (priceWithVAT: number, discountPercentage: number): number {
+    try {
+      const resultPercentage = Number(discountPercentage) / 100;
+      const discount = Number(resultPercentage) * Number(priceWithVAT);
+      return Number(priceWithVAT) - Number(discount);
+    } catch (error) {
+      console.log('pricingUtils -> getPrecioIvaConDescuento', error);
+      return -1;
+    }
+
+  },
+
+
+
+
+  //calculos con lib decimal js
   /**
    *
    * @param price
@@ -33,11 +59,11 @@ export const pricingCalculateUtil = {
    */
   calculateTaxValue(price: number, percentage: number) {
     try {
-      const tax = (price * percentage) / 100;
+      let multiplo = mul(price, percentage, DECIMALS.CINCO) as number;
+      const tax = div(multiplo, 100, DECIMALS.CINCO) as number;
       return tax;
     } catch (error) {
-      console.log('pricingUtils -> CALCULO PRECIO CON IVA', error);
-      return -1;
+      throw new Error('pricingUtils -> CALCULO PRECIO CON IVA' + error)
     }
   },
 
@@ -49,12 +75,11 @@ export const pricingCalculateUtil = {
    */
   calculatePriceWithVat: function (salePrice: number, percentage: number): number {
     try {
-      const resultPercentage = percentage / 100;
-      const result = salePrice * resultPercentage;
+      const cociente = div(percentage, 100, DECIMALS.CINCO) as number;
+      const result = mul(salePrice, cociente, DECIMALS.CINCO) as number;
       return result + salePrice;
     } catch (error) {
-      console.log('pricingUtils -> CALCULO PRECIO CON IVA', error);
-      return -1;
+      throw new Error('pricingUtils -> CALCULO PRECIO CON IVA' + error)
     }
   },
 
@@ -67,8 +92,9 @@ export const pricingCalculateUtil = {
    */
   calculatePriceSale: function (priceWithVat: number, percentage: number): number {
     try {
-      const resultPercentage = percentage / 100 + 1;
-      return priceWithVat / resultPercentage;
+      let cociente = div(percentage, 100, DECIMALS.CINCO) as number;
+      const resultPercentage = cociente + 1;
+      return div(priceWithVat, resultPercentage, 5) as number;
     } catch (error) {
       console.log('pricingUtils -> CALCULO PRECIO Unitario', error);
       return -1;
@@ -115,7 +141,7 @@ export const pricingCalculateUtil = {
    * @param discountPercentage
    * @returns
    */
-  getDiscountedVATPrice: function (priceWithVAT: number, discountPercentage: number): number {
+  getDiscountedVatPrice: function (priceWithVAT: number, discountPercentage: number): number {
     try {
       const resultPercentage = Number(discountPercentage) / 100;
       const discount = Number(resultPercentage) * Number(priceWithVAT);
@@ -162,8 +188,33 @@ export const pricingCalculateUtil = {
 
   getValueUtility: (priceSale: number, unitPrice: number): number => {
     return (priceSale - unitPrice);
+  },
+
+  // Función para calcular el total antes de aplicar descuentos
+  calcularTotalAntesDescuento: function (precioUnitario: number, cantidad: number) {
+    let valorTotal = mul(precioUnitario, cantidad, DECIMALS.CINCO);
+    return valorTotal as number;
+  },
+
+  calcularSubtotalSinImpuesto: function (precioUnitario: number, cantidad: number, descuento: number) {
+    let totalAntesDescuento = this.calcularTotalAntesDescuento(precioUnitario, cantidad);
+    let subtotalSinImpuesto = minus(totalAntesDescuento, descuento, DECIMALS.CINCO);
+    return subtotalSinImpuesto as number;
+  },
+
+  // Calcular el total con impuesto
+  calcularTotalConImpuesto: function (subtotalSinImpuesto: number, valorImpuesto: number) {
+
+    // Sumar el subtotal sin impuestos y el valor del impuesto
+    let totalConImpuesto = plus(subtotalSinImpuesto, valorImpuesto, DECIMALS.CINCO);
+    return totalConImpuesto as number;
+
   }
 
 
+
 }
+
+
+
 

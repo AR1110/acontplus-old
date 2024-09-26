@@ -201,35 +201,33 @@ export class ProductPageComponent {
 
 
 
-  ngOnInit() {
-    this.resetDataAfterFetch()
-    this.initLoad()
-      .pipe(
-        finalize(() => {
-          this.isLoadingResults = false;
-          this.toggleSelectsState();
-        })
-      )
-      .subscribe({
-        next: response => {
-          const [dataForm, responseProduct] = response;
+  // ngOnInit() {
+  //   this.resetDataAfterFetch()
+  //   this.initLoad()
+  //     .pipe(
+  //       finalize(() => {
+  //         this.isLoadingResults = false;
+  //         this.toggleSelectsState();
+  //       })
+  //     )
+  //     .subscribe({
+  //       next: response => {
+  //         const [dataForm, responseProduct] = response;
+  //         this.subCategorias.set(dataForm.subCategorias)
+  //         this.medidas.set(dataForm.medidas)
+  //         this.marcas.set(dataForm.marcas)
+  //         this.modelos.set(dataForm.modelos)
+  //         this.tiposIva.set(dataForm.tiposIva)
 
-          console.log(dataForm)
-          this.subCategorias.set(dataForm.subCategorias)
-          this.medidas.set(dataForm.medidas)
-          this.marcas.set(dataForm.marcas)
-          this.modelos.set(dataForm.modelos)
-          this.tiposIva.set(dataForm.tiposIva)
+  //         this.successResponseProductAll(responseProduct)
 
-          this.successResponseProductAll(responseProduct)
+  //       },
+  //       error: err => {
+  //         console.error('Error load data form and products:', err);
+  //       }
+  //     })
 
-        },
-        error: err => {
-          console.error('Error load data form and products:', err);
-        }
-      })
-
-  }
+  // }
 
   onSearch(event: Event): void {
     const target = event.target as HTMLInputElement;
@@ -366,7 +364,6 @@ export class ProductPageComponent {
     modalRef.componentInstance.params = data;
 
     modalRef.result.then(result => {
-      console.log(result)
       if (result && typeof result === 'object' && result.isRefresh) {
         this.refresh()
       }

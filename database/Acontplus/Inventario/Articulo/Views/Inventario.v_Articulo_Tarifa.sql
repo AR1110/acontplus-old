@@ -9,9 +9,11 @@ CREATE OR ALTER VIEW Inventario.v_Articulo_Tarifa WITH SCHEMABINDING AS (
 		  ,pv.precioPredeterminado
 	      ,ar.idEntidad
 		  ,ar.idSubFamilia
+          ,ar.idMarca 
 		  ,ar.descripcion
 		  ,ar.codigo
 		  ,ar.stock
+          ,ar.stockMinimo
 		  ,ar.estado
 		  ,ar.caducidad
 		  ,ar.fechaCaducidad

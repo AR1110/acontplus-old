@@ -190,3 +190,9 @@ export enum TIPO_TRANSACCION {
   C='C',
   V='V'
 }
+
+
+export const DECIMALS = {
+  DOS: 2,
+  CINCO: 5
+}
