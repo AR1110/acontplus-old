@@ -197,13 +197,13 @@
                     convertToDoc: $scope.dataSearch.convertToDoc
                 }
 
-                showLoader();
+            
                 $scope.notaEntregas = [];
                 $scope.cloneNotaEntregas = [];
                 getTotales();
 
                 notaEntregaSvc.getAll(dataSearch).then(response => {
-                    hideLoader();
+                    
                     let { notaEntregas, dataTotals } = response;
                     $scope.notaEntregas = notaEntregas;
                     $scope.cloneNotaEntregas = structuredClone($scope.notaEntregas);
@@ -212,12 +212,10 @@
                     getTotales();
 
                 }).catch(error => {
-                    $scope.dataSearch.totalRecords = 0;
-                    hideLoader();
+                    $scope.dataSearch.totalRecords = 0; 
                     console.log(error)
                 })
-            } catch (error) {
-                hideLoader();
+            } catch (error) { 
                 $scope.dataSearch.totalRecords = 0;
                 console.log(error)
             }
@@ -229,10 +227,10 @@
 
 
         initiload();
-        async function initiload() {
-            showLoader();
+         function initiload() {
+          
             notaEntregaSvc.getDataFilter().then(response => {
-                hideLoader();
+               
                 $scope.establecimientos = response.estabs;
                 $scope.estadoDocumentos = response.estadosDoc;
 
@@ -245,15 +243,13 @@
                 } else {
                     tS.toastr('warning', 'No tienes asignado Establecimiento!')
                 }
-            }).catch(() => {
-                hideLoader();
-            })
+            }) 
 
-            showLoader()
+           
             notaEntregaSvc.getDataForm().then(response => {
                 mainDataForm = structuredClone(response);
                 $scope.permisoEditarDoc = response.permisoEditarDoc;
-            }).finally(() => hideLoader())
+            }) 
 
         }
 
@@ -2391,6 +2387,26 @@
             return true;
         }
 
+ 
+
+        // Función para registrar el documento
+        const registerAndUpdateNotaEntrega = async (query) => {  
+
+            if (isRegister()) {
+                const response = await notaEntregaSvc.save(query);
+                return response; // Retornar la respuesta para su manejo posterior
+            }
+
+            if (isUpdate()) {
+                const response = await notaEntregaSvc.update($scope.data.idNotaEntrega, query);
+                return response; // Retornar la respuesta para su manejo posterior
+            }
+        }; 
+
+        
+
+
+
         $scope.onSave = async function () {
             try {
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
@@ -2406,12 +2422,10 @@
 
                 if (cuotas && cuotas.length === 0) return
 
-                if (isRegister()) {
-                    showLoader();
+                if (isRegister()) { 
                     serieComprobante = await notaEntregaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
-                    })
-                    hideLoader();
+                    }) 
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
                     titleSwal = '<small>Guardar Nota de Entrega</small>';
@@ -2448,6 +2462,13 @@
 
                 if (!isConfirmed) return
 
+
+                // Usar fetchManager para manejar el registro
+              
+               
+
+
+
                 let query = notaEntregaSvc.queryMapper({
                     data: $scope.data,
                     cliente: $scope.cliente,
@@ -2460,41 +2481,81 @@
 
                 //Registar Doc
                 if (isRegister()) {
-                    showLoader();
-                    notaEntregaSvc.save(query).then(response => {
-                        if (response.code === '0') {
-                            fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {
-                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
-                            let mainData = {
-                                isRegister: true,
-                                data: response.dataResponse,
+                    const managedRegister = fS.fetchManager(registerAndUpdateNotaEntrega);
+
+                    // Llamar a la función gestionada para registrar
+                    managedRegister(query).then(response => {
+                        if (response) { // Verificar si hay respuesta
+                            if (response.code === '0') {
+                                fS.sweetAlert('warning', response.message, response.titleSms);
                             }
-                            $uibModalInstance.close(mainData)
+                            if (response.code === "1") {
+                                fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                let mainData = {
+                                    isRegister: true,
+                                    data: response.dataResponse,
+                                };
+                                $uibModalInstance.close(mainData);
+                            }
                         }
                     }).catch(error => {
-                        hideLoader();
-                        console.log(error)
-                    }).finally(() => hideLoader())
+                        console.log(error); // Manejo de errores
+                    }) 
+
+                    // showLoader();
+                    // notaEntregaSvc.save(query).then(response => {
+                    //     if (response.code === '0') {
+                    //         fS.sweetAlert('warning', response.message, response.titleSms);
+                    //     }
+                    //     if (response.code === "1") {
+                    //         fS.sweetAlert('success', response.message, response.titleSms, 1000);
+
+                    //         let mainData = {
+                    //             isRegister: true,
+                    //             data: response.dataResponse,
+                    //         }
+                    //         $uibModalInstance.close(mainData)
+                    //     }
+                    // }).catch(error => {
+                    //     hideLoader();
+                    //     console.log(error)
+                    // }).finally(() => hideLoader())
                 }
 
                 //Update Doc 
                 if (isUpdate()) {
-                    showLoader()
-                    notaEntregaSvc.update($scope.data.idNotaEntrega, query).then(response => {
-                        if (response.code === '0') {
-                            fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {
-                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                            $uibModalInstance.close(response)
+
+                    const managedUpdate = fS.fetchManager(registerAndUpdateNotaEntrega);  
+                    // Llamar a la función gestionada para actualizar
+                    managedUpdate(query).then(response => {
+                        if (response) { // Verificar si hay respuesta
+                            if (response.code === '0') {
+                                fS.sweetAlert('warning', response.message, response.titleSms);
+                            }
+                            if (response.code === "1") {
+                                fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                $uibModalInstance.close(response);
+                            }
                         }
                     }).catch(error => {
-                        hideLoader();
-                        console.log(error)
-                    }).finally(() => hideLoader())
+                        console.log(error); // Manejo de errores
+                    }) 
+
+
+                    // showLoader()
+                    // notaEntregaSvc.update($scope.data.idNotaEntrega, query).then(response => {
+                    //     if (response.code === '0') {
+                    //         fS.sweetAlert('warning', response.message, response.titleSms);
+                    //     }
+                    //     if (response.code === "1") {
+                    //         fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                    //         $uibModalInstance.close(response)
+                    //     }
+                    // }).catch(error => {
+                    //     hideLoader();
+                    //     console.log(error)
+                    // }).finally(() => hideLoader())
 
 
                 }
