@@ -15,6 +15,7 @@ import { groupSubCategoryUtil } from '../utils/group-sub-category.util';
 import { mergeMeasureUtil } from '../utils/merge-measure.util';
 import { ProductSale } from './../models/product.model';
 import { GroupedSubFamilia } from './../models/sub-category.model';
+import { C } from '@angular/cdk/keycodes';
 
 @Injectable({
   providedIn: 'root',
@@ -41,8 +42,8 @@ export class ProductService {
           modelos: [],
           tiposIva: []
         };
-        if (response.code==="1") {
-          let { subCategorias,medidas,marcas,modelos,tiposIva} = JSON.parse(response.payload as string);
+        if (response.code === "1") {
+          let { subCategorias, medidas, marcas, modelos, tiposIva } = JSON.parse(response.payload as string);
           data = {
             subCategorias: groupSubCategoryUtil(subCategorias),
             medidas,
@@ -60,11 +61,11 @@ export class ProductService {
     let params = {
       json: JSON.stringify({ tipo: 5 })
     }
-    return this.http.get(`${this.url}`, {
+    return this.http.get<ApiResponse>(`${this.url}`, {
       params
     }).pipe(
-      map((response: any) => {
-        let data = {
+      map((response) => {
+        let result = {
           categorias: [],
           decimal: {},
           estabs: [] as GroupedEstab[],
@@ -73,34 +74,50 @@ export class ProductService {
           medidas: [],
           modelos: [],
           subCategorias: [],
-          subCategoriesGroupOptions: [] as GroupedSubFamilia[],
+          subCategoriasGroup: [] as GroupedSubFamilia[],
           tarifas: [],
           tiposArticulo: [],
           tiposIce: [],
           tiposIva: [],
         }
-        if (response !== null && typeof response === 'object') {
-          data.categorias = response.categorias;
-          data.decimal = response.decimal[0],
-            data.estabs = groupEstabUtil({
-              bodegas: response.estabs,
-              isGroupBodega: true
-            })
 
-          data.etiquetas = response.etiquetas;
-          data.marcas = response.marcas;
-          data.medidas = response.medidas;
-          data.modelos = response.modelos;
-          data.subCategorias = response.subCategorias;
+        if (response.code === "1") {
+          const {
+            estabBodegas,
+            decimal,
+            categorias,
+            subCategorias,
+            medidas,
+            modelos,
+            marcas,
+            tiposArticulo,
+            tiposIva,
+            tiposIce,
+            tarifas,
+            etiquetas
+          } = JSON.parse(response.payload as string);
 
-          data.subCategoriesGroupOptions = groupSubCategoryUtil(response.subCategorias)
+          result.categorias = categorias;
+          result.decimal = decimal[0];
+          result.estabs = groupEstabUtil({
+            bodegas: estabBodegas,
+            isGroupBodega: true
+          })
 
-          data.tarifas = response.tarifas;
-          data.tiposArticulo = response.tiposArticulo;
-          data.tiposIce = response.tiposIce;
-          data.tiposIva = response.tiposIva;
+          result.etiquetas = etiquetas;
+          result.marcas = marcas;
+          result.medidas = medidas;
+          result.modelos = modelos;
+          result.subCategorias = subCategorias;
+
+          result.subCategoriasGroup = groupSubCategoryUtil(subCategorias)
+
+          result.tarifas = tarifas;
+          result.tiposArticulo = tiposArticulo;
+          result.tiposIce = tiposIce;
+          result.tiposIva = tiposIva;
         }
-        return data;
+        return result;
       })
     )
   }
@@ -117,7 +134,7 @@ export class ProductService {
         products: [] as any[]
       }
       if (response.code === "1") {
-        let {articulos} = JSON.parse(response.payload as string);
+        let { articulos } = JSON.parse(response.payload as string);
 
         let products = articulos || [];
 
