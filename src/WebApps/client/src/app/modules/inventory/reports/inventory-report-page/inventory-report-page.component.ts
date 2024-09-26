@@ -101,7 +101,6 @@ export class InventoryReportPageComponent {
 
   getDatFormReport() {
     this.productSvc.getDataReport().subscribe(response => {
-      console.log(response)
 
       const { estabs, subCategorias, marcas } = response;
       this.estabs = estabs;
@@ -331,7 +330,7 @@ export class InventoryReportPageComponent {
 
     if (this.activeTab === 2) {
       if (this.dataSearch.checkboxObtenerRentabilidad) {
-        if(!getValidId(this.dataSearch.idTarifa)){
+        if (!getValidId(this.dataSearch.idTarifa)) {
           this.tS.toastr({
             type: 'warning',
             message: 'La Tarifa es obligatorio'
@@ -484,9 +483,14 @@ export class InventoryReportPageComponent {
   getReportArticuloPVP() {
     try {
 
+      let bySubFamilia = this.dataSearch.checkboxSubCategoryFilter ? isValidField(this.dataSearch.idSubFamilia) : null
+
       let dataSearch = {
         tipo: 2,
-        bySubFamilia: isValidField(this.dataSearch.idSubFamilia),
+        bySubFamilia,
+        stockStatusCode: isValidField(this.dataSearch.stockStatusCode),
+        idTarifa: getValidId(this.dataSearch.idTarifa),
+        idMarca: isValidField(this.dataSearch.idMarca),
       }
       const parameters = {
         reportParams: JSON.stringify({

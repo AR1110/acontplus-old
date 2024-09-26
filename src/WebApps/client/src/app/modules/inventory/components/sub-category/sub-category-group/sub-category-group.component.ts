@@ -1,12 +1,12 @@
-import { Component, inject, Input, output, SimpleChanges } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, inject, input, Input, output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { isValidField } from '@core/utils/utils';
 import { Observable, tap } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { AsyncPipe } from '@angular/common';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { isValidField } from '@core/utils/utils';
 
 interface SubCategoryGroup {
   familia: string;
@@ -37,6 +37,7 @@ const _filter = (opt: any[], value: string): string[] => {
 })
 export class SubCategoryGroupComponent {
   @Input({ required: true }) subCategoryGroups: SubCategoryGroup[] = [];
+
   onSelected = output<number>();
   onEmptyData = output();
   _formBuilder = inject(FormBuilder);
