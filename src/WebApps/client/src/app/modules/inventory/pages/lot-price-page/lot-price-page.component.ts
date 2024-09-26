@@ -1,29 +1,26 @@
 import { Component, inject, ViewChild } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { LotPriceService } from '@modules/inventory/services/lot-price.service';
-import { SubCategorySelectMultipleComponent } from '@modules/inventory/components/sub-category/sub-category-select-multiple/sub-category-select-multiple.component';
-import { SupplierSearchComponent } from '@modules/purchase/components/supplier-search/supplier-search.component';
-import { TarifaSelectHtmlOnly } from '@modules/inventory/models/tarifa.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
-import {
-  LotPrice,
-  LotPriceTarifa,
-} from '@modules/inventory/models/lot-price.model';
-import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
-import { roundNumber } from '@core/utils/round-number.utils';
-import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { GroupedSubFamilia } from '@modules/inventory/models/sub-category.model';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import Swal from 'sweetalert2';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
+import { ToasterService } from '@core/services/toaster.service';
+import { hideLoader, showLoader } from '@core/utils/loader';
+import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { isValidField } from '@core/utils/utils';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
+import { SubCategorySelectMultipleComponent } from '@modules/inventory/components/sub-category/sub-category-select-multiple/sub-category-select-multiple.component';
+import { LotPrice, LotPriceTarifa } from '@modules/inventory/models/lot-price.model';
+import { GroupedSubFamilia } from '@modules/inventory/models/sub-category.model';
+import { TarifaSelectHtmlOnly } from '@modules/inventory/models/tarifa.model';
+import { LotPriceService } from '@modules/inventory/services/lot-price.service';
+import { SupplierSearchComponent } from '@modules/purchase/components/supplier-search/supplier-search.component';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
+import Swal from 'sweetalert2';
 
 enum OptionsCalculateEnum {
   A = 'A',
@@ -103,14 +100,14 @@ export class LotPricePageComponent {
     const isSamePvPProduct =
       data.idArticuloPvP === dataProductModified.idArticuloPvP ||
       data.idArticuloFraccionadoPvP ===
-        dataProductModified.idArticuloFraccionadoPvP;
+      dataProductModified.idArticuloFraccionadoPvP;
 
     const isSameProduct =
       (data.idArticulo > 0 &&
         data.idArticulo === dataProductModified.idArticulo) ||
       (data.idArticuloFraccionado > 0 &&
         dataProductModified.idArticuloFraccionado ===
-          data.idArticuloFraccionado);
+        data.idArticuloFraccionado);
 
     const isSamePvP = data.idTarifa === dataProductModified.idTarifa;
 
@@ -413,7 +410,7 @@ export class LotPricePageComponent {
           value,
           porcentajeImpuesto,
         );
-        porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(
+        porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
           precioVenta,
           precioCosto,
         );
@@ -429,7 +426,7 @@ export class LotPricePageComponent {
       );
       if (precioVentaValidar >= precioCosto) {
         precioVenta = precioVentaValidar;
-        porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(
+        porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
           precioVenta,
           precioCosto,
         );
@@ -748,7 +745,7 @@ export class LotPricePageComponent {
                     porcentajeImpuesto,
                   );
                   porcentajeUtilidad =
-                    pricingCalculateUtil.getValuePercentageUtility(
+                    pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
                       item.precioCosto,
                     );
@@ -768,7 +765,7 @@ export class LotPricePageComponent {
                   precioConIva = precioConIvaSumado;
                   precioVenta = precioVentaCalculado;
                   porcentajeUtilidad =
-                    pricingCalculateUtil.getValuePercentageUtility(
+                    pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
                       item.precioCosto,
                     );
@@ -793,7 +790,7 @@ export class LotPricePageComponent {
                     porcentajeImpuesto,
                   );
                   porcentajeUtilidad =
-                    pricingCalculateUtil.getValuePercentageUtility(
+                    pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
                       item.precioCosto,
                     );
@@ -815,7 +812,7 @@ export class LotPricePageComponent {
                   precioConIva = valorPrecioConIva;
                   precioVenta = precioVentaCalculado;
                   porcentajeUtilidad =
-                    pricingCalculateUtil.getValuePercentageUtility(
+                    pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
                       item.precioCosto,
                     );
@@ -837,7 +834,7 @@ export class LotPricePageComponent {
                   porcentajeImpuesto,
                 );
                 porcentajeUtilidad =
-                  pricingCalculateUtil.getValuePercentageUtility(
+                  pricingCalculateUtil.calculateProfitMarginPercentage(
                     precioVenta,
                     item.precioCosto,
                   );
@@ -852,7 +849,7 @@ export class LotPricePageComponent {
                 );
                 if (precioVenta >= item.precioCosto) {
                   porcentajeUtilidad =
-                    pricingCalculateUtil.getValuePercentageUtility(
+                    pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
                       item.precioCosto,
                     );
@@ -882,7 +879,7 @@ export class LotPricePageComponent {
                     porcentajeImpuesto,
                   );
                   porcentajeUtilidad =
-                    pricingCalculateUtil.getValuePercentageUtility(
+                    pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
                       item.precioCosto,
                     );
@@ -905,7 +902,7 @@ export class LotPricePageComponent {
                   precioVenta = precioVentaValidar;
                   precioConIva = precioConImpuestos;
                   porcentajeUtilidad =
-                    pricingCalculateUtil.getValuePercentageUtility(
+                    pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
                       item.precioCosto,
                     );
