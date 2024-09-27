@@ -57,7 +57,6 @@ BEGIN
        ,identificacionReceptor VARCHAR(300) NOT NULL
        ,importeTotal NUMERIC(18,5) NOT NULL DEFAULT 0
        ,serieComprobante AS estab + '-' + ptoEmi + '-' + secuencial
-       ,tipoEmision VARCHAR(25) DEFAULT 'NORMAL'  
     )
 
 	BEGIN TRY
@@ -210,8 +209,8 @@ BEGIN
 
 		BEGIN TRAN
 			INSERT  INTO Recepcion.DocumentoRecibido
-                   (idEstablecimiento, codEstab,comprobante,codDoc, serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,importeTotal,xmlCompressed,versionComp,idUsuario,fechaRegistro,downloaded,subcategoryId)
-			SELECT @idEstablecimiento,@codEstab,comprobante,@codDoc,serieComprobante,rucEmisor,razonSocialEmisior,@fechaEmision,@fechaAutorizacion,tipoEmision,identificacionReceptor,@claveAcceso,@claveAcceso,importeTotal,@xmlCompressed, @versionComp,@idUsuario,dbo.ufnGetDateEcuador(),'DE',@subcategoryId
+                   (idEstablecimiento,comprobante,codDoc, serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,identificacionReceptor,claveAcceso,importeTotal,xmlCompressed,versionComp,idUsuario,fechaRegistro,downloaded,subcategoryId)
+			SELECT @idEstablecimiento,comprobante,@codDoc,serieComprobante,rucEmisor,razonSocialEmisior,@fechaEmision,@fechaAutorizacion,identificacionReceptor,@claveAcceso,importeTotal,@xmlCompressed, @versionComp,@idUsuario,dbo.ufnGetDateEcuador(),'DE',@subcategoryId
             FROM @tbDocumento
 
 			SET @idDocumento = SCOPE_IDENTITY()
