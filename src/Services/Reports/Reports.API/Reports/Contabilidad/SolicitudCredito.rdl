@@ -1,5 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:ap="http://schemas.microsoft.com/sqlserver/reporting/accessibilityproperties">
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:ap="http://schemas.microsoft.com/sqlserver/reporting/accessibilityproperties" xmlns:am="http://schemas.microsoft.com/sqlserver/reporting/authoringmetadata">
+  <am:AuthoringMetadata>
+    <am:CreatedBy>
+      <am:Name>MSRB</am:Name>
+      <am:Version>15.0.20283.0</am:Version>
+    </am:CreatedBy>
+    <am:UpdatedBy>
+      <am:Name>MSRB</am:Name>
+      <am:Version>15.0.20283.0</am:Version>
+    </am:UpdatedBy>
+    <am:LastModifiedTimestamp>2024-09-27T15:29:39.2733685Z</am:LastModifiedTimestamp>
+  </am:AuthoringMetadata>
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
     <DataSource Name="mainDs">
@@ -4164,14 +4175,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="descTemplate">
+                        <Textbox Name="descripcion1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!descTemplate.Value</Value>
+                                  <Value>=Fields!descripcion.Value</Value>
                                   <MarkupType>HTML</MarkupType>
                                   <Style />
                                 </TextRun>
@@ -4181,7 +4192,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>descTemplate</rd:DefaultName>
+                          <rd:DefaultName>descripcion1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
