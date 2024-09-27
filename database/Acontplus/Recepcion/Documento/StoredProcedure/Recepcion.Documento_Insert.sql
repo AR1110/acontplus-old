@@ -1,6 +1,6 @@
 USE AcontPlus
 GO
-/****** Object:  StoredProcedure [Recepcion].[ASPComprobanteImportacionInsert]    Script Date: 8/4/2022 9:30:34 PM ******/
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10,34 +10,36 @@ GO
 -- Create date: 2022-07-31
 -- Description:	SP PARA IMPORTAR LOS COMPROBANTES ELECTRONICOS DEL SRI
 -- =============================================
-CREATE OR ALTER PROCEDURE Recepcion.Documento_Insert @userRoleId INT ,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Recepcion.Documento_Insert @userRoleId INT
+,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
     --> Global
-	DECLARE @idUsuario INT ,@idEntidad INT ,@identificacionReceptor AS VARCHAR(20) ,@idEstab INT
+	DECLARE @idUsuario INT,
+        @idEntidad INT,
+        @identificacionReceptor VARCHAR(20),
+        @idEstab INT;
 	
     --> Data Json
     DECLARE @codEstab VARCHAR(50),
         @jsonData NVARCHAR(MAX),
-        @subcategoryId INT
+        @subcategoryId INT;
 
 
 	DECLARE @Comprobantes AS TABLE( 
-	     comprobante VARCHAR(50)  NULL 
-	    ,serieComprobante VARCHAR(50)  NULL
-	    ,rucEmisor VARCHAR(15)  NULL
-	    ,razonSocialEmisior VARCHAR(250)  NULL
-	    ,fechaEmision VARCHAR(50)  NULL
-	    ,fechaAutorizacion VARCHAR(50)   NULL
-	    ,tipoEmision VARCHAR(20)   NULL
-	    ,identificacionReceptor VARCHAR(15) NULL
-	    ,claveAcceso VARCHAR(50) UNIQUE  NULL
-	    ,numeroAutorizacion VARCHAR(50)  NULL
-	    ,importeTotal VARCHAR(50) NULL
-	)
+	     comprobante VARCHAR(50)  
+	    ,serieComprobante VARCHAR(50)
+	    ,rucEmisor VARCHAR(15)
+	    ,razonSocialEmisior VARCHAR(250)
+	    ,fechaEmision VARCHAR(50)
+	    ,fechaAutorizacion VARCHAR(50) 
+	    ,identificacionReceptor VARCHAR(15)
+	    ,claveAcceso VARCHAR(50) UNIQUE NOT  NULL
+	    ,importeTotal VARCHAR(50)
+	);
 
 	BEGIN TRY
         
@@ -55,8 +57,8 @@ BEGIN
                                     subcategoryId INT)
 
         INSERT INTO @Comprobantes
-              (comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,importeTotal)
-		SELECT comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,ISNULL(identificacionReceptor,@identificacionReceptor),claveAcceso,numeroAutorizacion,CASE WHEN LEN(Ltrim(rtrim(importeTotal))) > 0 THEN Ltrim(rtrim(importeTotal)) ELSE NULL END
+              (comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,identificacionReceptor,claveAcceso,importeTotal)
+		SELECT comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,ISNULL(identificacionReceptor,@identificacionReceptor),claveAcceso,CASE WHEN LEN(Ltrim(rtrim(importeTotal))) > 0 THEN Ltrim(rtrim(importeTotal)) ELSE NULL END
 		FROM OPENJSON(@jsonData) WITH
         ( 
 			 comprobante            VARCHAR(50) 
@@ -65,7 +67,6 @@ BEGIN
 			,razonSocialEmisior     VARCHAR(250) 
 			,fechaEmision           VARCHAR(50) 
 			,fechaAutorizacion      VARCHAR(50) 
-			,tipoEmision            VARCHAR(20) 
 			,identificacionReceptor VARCHAR(15)
 			,claveAcceso            VARCHAR(50) 
 			,numeroAutorizacion     VARCHAR(50) 
@@ -85,13 +86,13 @@ BEGIN
 
 		BEGIN TRAN
 			
-			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [codEstab], [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], [idUsuario], [fechaRegistro], downloaded)
-			SELECT @idEstab, @codEstab, comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, CONVERT(DECIMAL(18,2), Ltrim(rtrim(ISNULL(importeTotal, 0)))), @idUsuario, dbo.ufnGetDateEcuador(), 'ND'
+			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [identificacionReceptor], [claveAcceso], [importeTotal], [idUsuario], [fechaRegistro], downloaded)
+			SELECT @idEstab, comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, identificacionReceptor, claveAcceso, CONVERT(DECIMAL(18,2), Ltrim(rtrim(ISNULL(importeTotal, 0)))), @idUsuario, dbo.ufnGetDateEcuador(), 'ND'
 			FROM @Comprobantes t
 			WHERE t.identificacionReceptor = @identificacionReceptor  
 
-			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [codEstab], [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], [idUsuario], [fechaRegistro], downloaded)
-			SELECT @idEstab, @codEstab, comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, CONVERT(DECIMAL(18,2), Ltrim(rtrim(ISNULL(importeTotal, 0)))), @idUsuario, dbo.ufnGetDateEcuador(), 'ND'
+			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [identificacionReceptor], [claveAcceso], [importeTotal], [idUsuario], [fechaRegistro], downloaded)
+			SELECT @idEstab, comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, identificacionReceptor, claveAcceso, CONVERT(DECIMAL(18,2), Ltrim(rtrim(ISNULL(importeTotal, 0)))), @idUsuario, dbo.ufnGetDateEcuador(), 'ND'
 			FROM @Comprobantes t
 			WHERE t.identificacionReceptor = SUBSTRING(ltrim(rtrim(@identificacionReceptor)), 1, 10) 
 
