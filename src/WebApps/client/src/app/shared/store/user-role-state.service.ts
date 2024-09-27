@@ -1,7 +1,6 @@
-
 import { Injectable } from '@angular/core';
+import { CODE_ROLE } from "@core/constants/global.constants";
 import { GenericStoreBehaviorSubjectService } from '@shared/services/generic-store-behaviorSubject.service';
-import {CODE_ROLE} from "@core/constants/global.constants";
 
 type ActionState = {
   crear: boolean
@@ -21,6 +20,11 @@ export class PermissionCashAccounting  {
   reporteTransaccionPendiente: boolean = false;
   reporteDetalleControlCaja: boolean = false;
 }
+
+export class ProductPermission {
+  precio = false;
+}
+
 export class UserPermission  {
   // "sales": {
   //   "comprobante": {
@@ -57,6 +61,10 @@ export class UserPermission  {
     enterKey: false,
     reporteTransaccionPendiente: false,
     reporteDetalleControlCaja: false
+  }
+
+  product: ProductPermission = {
+    precio: false
   }
 }
 

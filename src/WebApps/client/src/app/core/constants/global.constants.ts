@@ -194,5 +194,6 @@ export enum TIPO_TRANSACCION {
 
 export const DECIMALS = {
   DOS: 2,
-  CINCO: 5
+  CINCO: 5,
+  GENERAL: 6
 }

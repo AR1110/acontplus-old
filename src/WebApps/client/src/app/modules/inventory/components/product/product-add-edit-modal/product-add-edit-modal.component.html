@@ -179,21 +179,24 @@
       <div class="col">
         <div class="form-group">
           <label for="tipoIva">Tipo Iva: <span class="text-danger">*</span> </label>
-          <select class="form-select" [(ngModel)]="data.idTipoIva" ng-change="recalculateTarifaAdd()"
-            ng-disabled="!articlePermission.isUpdatePrice">
+          <select class="form-select" [(ngModel)]="data.idTipoIva" (change)="onChangeTipoIva()"
+            [disabled]="!isChangePrecio">
             @for (item of tiposIva(); track $index) {
             <option [ngValue]="item.idTipoIva">{{ item.descripcion }}</option>
             }
           </select>
         </div>
       </div>
-      <div class="col">
-        <div class="form-group">
-          <label for="precioCosto">Precio Costo: <span class="text-danger">*</span></label>
-          <input type="number" class="form-control" [(ngModel)]="data.precioCosto" ng-blur="redondearPrecioCosto()"
-            ng-change="recalculateTarifaAdd()" placeholder="0.00" />
+      @if ((isUpdate() || isAdd()) && isChangePrecio) {
+        <div class="col">
+          <div class="form-group">
+            <label for="precioCosto">Precio Costo: <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" [(ngModel)]="data.precioCosto"
+              (keyup)="onChangePrecioCosto()" placeholder="0.00" />
+          </div>
         </div>
-      </div>
+
+      }
       <div class="col">
         <div class="form-group ">
           <label for="">Precio Sin Subsidio:</label>
@@ -206,7 +209,10 @@
 
     <div class="row">
       <div class="col-lg-10 col-md-10 col-12">
-        <app-tabulator [tableData]="productTarifa" [options]="tabulatorOptions"></app-tabulator>
+        <app-tabulator [tableData]="productTarifa" [options]="tabulatorOptions"
+
+          (cellEdited)="cellEdited($event)"
+        ></app-tabulator>
       </div>
     </div>
     }

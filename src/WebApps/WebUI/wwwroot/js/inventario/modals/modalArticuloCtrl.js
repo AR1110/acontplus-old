@@ -1859,7 +1859,7 @@ function ModalArticuloGeneralCtrl(
     modalSvc,
     nombreModal
 ) {
-    console.log("init");
+
     $scope.articulos = [];
     $scope.selectedArticulos = [];
     //Filtro
@@ -1869,12 +1869,11 @@ function ModalArticuloGeneralCtrl(
         pageIndex: 1,
         maxSize: 5,
         totalRecords: 0,
-        busqueda: "",
-
+        bySearch: null,
         byColumn: "DESC",
     };
 
-    $scope.activated = false;
+
 
     $scope.tipoBusquedas = [
         {
@@ -1895,81 +1894,78 @@ function ModalArticuloGeneralCtrl(
         },
     ];
 
-    $scope.dynamicPopover = {
-        content: "Hello, World!",
-        templateUrl: "myPopoverTemplate.html",
-        title: "Title",
-    };
 
     $scope.options = {
         rowSelection: true,
-        multiSelect: false,
+        multiSelect: true,
         autoSelect: false,
         decapitate: false,
-        largeEditDialog: false,
         boundaryLinks: false,
         limitSelect: true,
         pageSelect: true,
+
     };
 
     $uibModalInstance.rendered.then(() => {
         $("#inputTextSearch").focus();
     });
 
-    $scope.consultarPrecioSearchText = function () {
-        $scope.articulos = []; //Vaciar el array (Lista de Articulos);
-        if ($scope.dataSearch.busqueda && $scope.dataSearch.busqueda.length < 2)
-            return;
-        $scope.querySearchArticulo();
+    $scope.onSearchText = onSearchText;
+    $scope.pageChanged = pageChanged;
+    $scope.changePageSize = changePageSize;
+    $scope.onEnter = onEnter
+
+
+    function pageChanged() {
+        refresh();
+    }
+
+    function changePageSize() {
+        $scope.dataSearch.pageIndex = 1;
+        refresh();
+    }
+
+    function onEnter($event) {
+        if ($scope.dataSearch.bySearch && $event.key === "Enter") {
+            refresh()
+            $scope.dataSearch.bySearch = null;
+        }
     };
 
-    $scope.querySearchArticulo = function () {
+    function onSearchText() {
+        $scope.articulos = [];
+        if ($scope.dataSearch.bySearch && $scope.dataSearch.bySearch.length > 2){
+            getArticulos()
+        }
+
+    }
+
+    function getArticulos() {
         try {
             $scope.articulos = [];
-            if ($scope.dataSearch.bySearch.length < 2) {
-                $scope.dataSearch.totalRecords = 0;
-                return;
-            }
-            $scope.activated = true;
-            $scope.dataSearch.checkBoxStock = [1, 2].includes(
-                $scope.dataSearch.byStock
-            );
-            artSvc
-                .getAllWithPrices($scope.dataSearch)
-                .then((response) => {
-                    let { articulos, totalRecords } = response;
-                    $scope.activated = false;
 
-                    $scope.articulos = articulos;
-                    $scope.dataSearch.totalRecords = totalRecords;
-                    $scope.tarifas =
-                        $scope.articulos.length > 0 ? $scope.articulos[0].tarifas : [];
-                })
-                .catch((err) => {
-                    $scope.activated = false;
-                    console.log(err);
-                });
+            $scope.dataSearch.totalRecords = 0;
+            $scope.dataSearch.checkBoxStock = [1, 2].includes($scope.dataSearch.byStock);
+            artSvc.getAllWithPrices($scope.dataSearch).then((response) => {
+                let { articulos, totalRecords } = response;
+
+                $scope.articulos = articulos;
+                $scope.dataSearch.totalRecords = totalRecords;
+                $scope.tarifas = $scope.articulos.length > 0 ? $scope.articulos[0].tarifas : [];
+            }).catch((err) => {
+                console.log(err);
+            });
         } catch (error) {
-            $scope.activated = false;
             console.log(error);
         }
-    };
 
-    $scope.pagechanged = function () {
-        $scope.querySearchArticulo();
-    };
+    }
 
-    $scope.changePageSize = function () {
-        $scope.dataSearch.pageIndex = 1;
-        $scope.querySearchArticulo();
-    };
+    function refresh() {
+        getArticulos();
+    }
 
-    $scope.consultarPrecioEnter = function ($event) {
-        if ($scope.dataSearch.bySearch && $event.key === "Enter") {
-            $scope.querySearchArticulo();
-            $scope.dataSearch.bySearch = "";
-        }
-    };
+
 
     $scope.onChangeCheckBoxItem = (item) => {
         const data = {
@@ -1980,6 +1976,10 @@ function ModalArticuloGeneralCtrl(
         };
         $uibModalInstance.close(data);
     };
+
+    // $scope.onChangeCheckBoxItem =  (item)=>{
+    //     console.log(item)
+    // }
 
     $scope.previewImg = function (item) {
         productPhotoSvc.previewImg(item.idArticulo)

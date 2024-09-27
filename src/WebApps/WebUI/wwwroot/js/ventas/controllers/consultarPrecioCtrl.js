@@ -31,9 +31,7 @@
 
 			byColumn: "DESC",
 		};
-
-		$scope.activated = false;
-
+  
 		$scope.tipoBusquedas = [
 			{
 				codigo: "DESC",
@@ -82,8 +80,7 @@
 				if ($scope.dataSearch.bySearch.length < 2) {
 					$scope.dataSearch.totalRecords = 0;
 					return;
-				}
-				$scope.activated = true;
+				} 
 
 				const dataSearch = {
 					tipo: 3,
@@ -98,16 +95,14 @@
 				artSvc
 					.getAllWithPrices(dataSearch)
 					.then((response) => {
-						let { articulos, totalRecords } = response;
-						$scope.activated = false;
+						let { articulos, totalRecords } = response; 
 
 						$scope.articulos = articulos;
 						$scope.dataSearch.totalRecords = totalRecords;
 						$scope.tarifas =
 							$scope.articulos.length > 0 ? $scope.articulos[0].tarifas : [];
 					})
-					.catch((err) => {
-						$scope.activated = false;
+					.catch((err) => { 
 						console.log(err);
 					});
 			} catch (error) {

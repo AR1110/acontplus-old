@@ -1,27 +1,28 @@
-
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, Input, signal } from '@angular/core'
+import { Component, computed, inject, Input, signal } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { TabulatorTableComponent } from '@core/components/tabulator-table/tabulator-table.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { TAX_RATE_CODE } from '@core/constants/global.constants';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
+import { ToasterService } from '@core/services/toaster.service';
+import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { getValidId, isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SubCategoryModalDirective } from '@inventory/directives/sub-category.directive'
 import { MeasureAddEditDirective } from '@modules/inventory/directives/measure-add-edit.directive';
+import { TagsAddEditModalDirective } from '@modules/inventory/directives/tags-add-edit-modal.directive';
 import { TarifaSelectHtmlOnly } from '@modules/inventory/models/tarifa.model';
 import { TipoIvaSelectHtmlOnly } from '@modules/inventory/models/tipo-iva.model';
 import { ProductService } from '@modules/inventory/services/product.service';
 import { NgbActiveModal, NgbNavChangeEvent, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { SubCategoryGroupComponent } from '../../sub-category/sub-category-group/sub-category-group.component';
-import { roundNumber } from '@core/utils/round-number.utils';
+import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import Swal from 'sweetalert2';
-import { TagsAddEditModalDirective } from '@modules/inventory/directives/tags-add-edit-modal.directive';
-import { getValidId } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
-import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
+
+import { SubCategoryGroupComponent } from '../../sub-category/sub-category-group/sub-category-group.component';
 
 interface ProductTarifa {
   tipoIva: string
@@ -30,7 +31,7 @@ interface ProductTarifa {
   precioConIva: number
   porcentajeUtilidad: number
   porcentajeIva: number
-
+  utilidad: number
 }
 @Component({
   selector: 'app-product-add-edit-modal',
@@ -67,6 +68,7 @@ export class ProductAddEditModalComponent {
 
   private productSvc = inject(ProductService)
   private tS = inject(ToasterService)
+  private userRoleStateSvc = inject(UserRoleStateService)
 
 
 
@@ -106,12 +108,19 @@ export class ProductAddEditModalComponent {
     idMedida: 0,
     idTipoArticulo: 0,
     idTipoIva: 0,
-    precioCosto: 0,
+    precioCosto: 0.1,
     precioSinSubsidio: 0,
     llevaInventario: false,
     datosAdicionales: false,
     productoFraccionable: false,
-    fraccionable: false
+    fraccionable: false,
+    caducidad: false,
+    fechaCaducidad: null,
+
+    datosLote: false,
+    lote: null,
+    fechaCreacion: null,
+    fechaCaducidadLote: null
   }
 
 
@@ -135,21 +144,26 @@ export class ProductAddEditModalComponent {
       title: "P. Venta",
       field: "precioVenta",
       headerSort: false,
-      resizable: true
+      resizable: true,
+      editor: "input",
+      validator: ["required", "min:0", "numeric"]
     },
     {
       title: "P. IVA",
       field: "precioConIva",
       headerSort: false,
-      resizable: true
+      resizable: true,
+      editor: true,
+      validator: ["required", "min:0", "numeric"]
 
     },
     {
       title: "% Utilidad",
       field: "porcentajeUtilidad",
       headerSort: false,
-      resizable: true
-
+      resizable: true,
+      editor: true,
+      validator: ["required", "min:0", "numeric"]
     },
     {
       title: "Utilidad",
@@ -176,19 +190,24 @@ export class ProductAddEditModalComponent {
 
   productTarifa: ProductTarifa[] = []
 
-  // constructor(private tabulatorTable: TabulatorTableComponent) { }
 
-  onNavChange(changeEvent: NgbNavChangeEvent) {
-    console.log(changeEvent)
-    if (changeEvent.nextId === 1) {
-      //changeEvent.preventDefault();
-      setTimeout(() => {
-        // this.drawTable();
-      })
-    }
+  isChangePrecio = false;
+
+  isUpdate() {
+    return this.params.idArticulo > 0
+  }
+
+  isAdd() {
+    return !(this.params.idArticulo > 0)
+
   }
 
   ngOnInit() {
+
+    this.userRoleStateSvc.select("permission").subscribe(p => {
+      this.isChangePrecio = p?.product?.precio
+    })
+
     this.productSvc.getDataForm().subscribe({
       next: (response) => {
         const {
@@ -415,92 +434,256 @@ export class ProductAddEditModalComponent {
     }
   }
 
+  private validateCalculateTarifa() {
+    if (this.isUpdate() && !this.isChangePrecio) {
+      this.tS.toastr({
+        type: 'warning',
+        message: "No tienes permiso para realizar esta acción"
+      })
+      return
+    }
+    if (!(this.data.precioCosto > 0) || isNaN(this.data.precioCosto)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese un número válido'
+      })
+      return
+    }
 
-  recalculateTarifaAdd() {
-    // if (!getValidId(this.data.precioCosto) || isNaN(this.data.precioCosto)) {
-    //   this.tS.toastr({
-    //     type: 'warning',
-    //     message: "Ingrese un número válido"
-    //   })
-    //   return;
-    // }
-    // if (this.data.precioCosto === 0) {
-    //   this.tS.toastr({
-    //     type: 'warning',
-    //     message: "El valor mínimo en el precio de costo es 0.01"
-    //   })
-    //   return;
-    // }
+    if (this.data.precioCosto === 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: "El valor mínimo en el precio de costo es 0.01"
+      })
+      return;
+    }
 
-    // let dataTipoIva =this.tiposIva().find( (item) => item.idTipoIva ===this.data.idTipoIva );
-    // if(!dataTipoIva){
-    //   this.tS.toastr({
-    //     type: 'warning',
-    //     message: "No se pudo recuperar la data de tipo iva"
-    //   })
-    //   return
-    // }
-    // try {
-    //   let index = 0;
-    //   for (let item of this.productTarifa) {
-    //     item.porcentajeIva = dataTipoIva.porcentaje;
-
-    //     let precioVenta = pricingCalculateUtil.calculatePriceSale(item.precioConIva, item.porcentajeIva);
-    //     let precioConIva = pricingCalculateUtil.calculatePriceWithVat(item.precioVenta, item.porcentajeIva) ;
-
-    //     let porcentajeUtilidad = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility .campoPorcentajeUtilidad(
-    //       $scope.data.precioCosto,
-    //       precioVenta
-    //     );
-
-    //     item.precioVenta = roundNumber( precioVenta, this.decimal.nroPrecio );
-
-
-    //     item.precioConIva = fS.roundNumber(
-    //       precioConIva,
-    //       $scope.decimal.nroPrecio
-    //     );
-
-
-    //     item.porcentajeUtilidad = fS.roundNumber(
-    //       porcentajeUtilidad,
-    //       pricingUtils.precisionMaxima
-    //     );
-
-    //     let ganancia = getTarifaGanacia(
-    //       val.precioVenta,
-    //       $scope.data.precioCosto
-    //     );
-    //     item.ganancia = fS.roundNumber(ganancia, 5);
-    //     index++;
-    //   }
-    // } catch (error) {
-    //   toastr.error(error);
-    // }
+    this.data.precioCosto = roundNumber(this.data.precioCosto, this.decimal.nroPrecio);
+    return true;
   }
-
 
   onChangeTipoIva() {
-    // if ($scope.tipoRegistro === 2 && !$scope.articlePermission.isUpdatePrice) {
-    //   tS.toastr("warning", "No tienes permiso para realizar esta acción");
-    //   return;
-    // }
+    if (!this.validateCalculateTarifa()) return
 
-    // if (
-    //   [null, undefined, "", 0].includes($scope.data.precioCosto) ||
-    //   isNaN($scope.data.precioCosto)
-    // )
-    //   return;
 
-    // $scope.data.precioCosto = fS.roundNumber(
-    //   $scope.data.precioCosto,
-    //   $scope.decimal.nroPrecio
-    // );
 
-    // recalculateTarifaRegister();
+
+    this.recalculateTarifaAdd()
+
+  }
+
+  private recalculateTarifaAdd() {
+
+    let dataTipoIva = this.tiposIva().find((item) => item.idTipoIva === this.data.idTipoIva);
+    if (!dataTipoIva) {
+      this.tS.toastr({
+        type: 'warning',
+        message: "No se pudo recuperar la data de tipo iva"
+      })
+      return
+    }
+    try {
+      for (let item of this.productTarifa) {
+
+        item.tipoIva = dataTipoIva.descripcion;
+        item.porcentajeIva = dataTipoIva.porcentaje;
+
+        let precioVenta = pricingCalculateUtil.calculatePriceSale(item.precioConIva, item.porcentajeIva);
+        let precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, item.porcentajeIva);
+
+        let porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(precioVenta, this.data.precioCosto)
+        let utilidad = pricingCalculateUtil.getValueUtility(precioVenta, this.data.precioCosto)
+
+        item.precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
+
+
+        item.precioConIva = roundNumber(precioConIva, this.decimal.nroPrecio);
+
+
+        item.porcentajeUtilidad = porcentajeUtilidad;
+        item.utilidad = utilidad
+      }
+    } catch (error) {
+      this.tS.toastr({
+        type: 'warning',
+        message: error as string
+      })
+    }
+  }
+
+  onChangePrecioCosto() {
+    if (!this.validateCalculateTarifa()) return
+    this.recalculateTarifaAdd()
+  }
+
+
+
+  cellEdited(cell: any) {
+    let row = cell.getRow();
+    let column = cell.getColumn().getField();
+    let oldValue = parseFloat(cell.getOldValue());
+    let value = parseFloat(cell.getValue());
+
+    let data = cell.getData();
+    let precioVenta = parseFloat(data.precioVenta);
+    let porcentajeIva = parseFloat(data.porcentajeIva);
+    let precioConIva = parseFloat(data.precioConIva);
+    let porcentajeUtilidad = parseFloat(data.porcentajeUtilidad);
+
+    console.log(row)
+    console.log(column)
+    console.log(oldValue)
+    console.log(value)
+    if (oldValue === value) {
+      return
+    }
+
+    //Validacion de Campos
+    if ([null, undefined, "", 0].includes(this.data.precioCosto) || isNaN(this.data.precioCosto)) {
+      cell.setValue(oldValue);
+      this.tS.toastr({
+        type: 'warning',
+        message: "Ingrese el Precio de Costo"
+      })
+      return;
+    }
+
+    if (column === "precioVenta" && value > 0) {
+      if (value < this.data.precioCosto) {
+        cell.setValue(oldValue);
+      }
+    }
+
+    if (column === "precioConIva" && value > 0) {
+      if (value < this.data.precioCosto) {
+        cell.setValue(oldValue);
+      }
+    }
+    //Calculos
+    switch (column) {
+      case "precioVenta":
+        precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeIva)
+
+        porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(precioVenta, this.data.precioCosto);
+
+        break;
+
+      case "precioConIva":
+        precioVenta = pricingCalculateUtil.calculatePriceSale(precioConIva, porcentajeIva);
+        porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(precioVenta, this.data.precioCosto);
+
+        break;
+      case "porcentajeUtilidad":
+        precioVenta = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(this.data.precioCosto, porcentajeUtilidad)
+        precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeIva);
+        break;
+    }
+
+
+
+    let utilidad = pricingCalculateUtil.getValueUtility(
+      precioVenta,
+      this.data.precioCosto,
+    );
+    console.log(utilidad)
+
+    precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
+    precioConIva = roundNumber(precioConIva, this.decimal.nroPrecio);
+
+    let obj = {
+      precioVenta,
+      precioConIva,
+      porcentajeUtilidad,
+      utilidad,
+    };
+    row.update({
+      ...row,
+      ...obj,
+    });
+
+  }
+
+
+  private isValidForm() {
+    const showWarning = (message: string) => {
+      this.tS.toastr({
+        type: 'warning',
+        message
+      });
+    };
+
+    const isFieldInvalid = (field: any, message: string) => {
+      if (!isValidField(field)) {
+        showWarning(message);
+        return true;
+      }
+      return false;
+    };
+
+    const isIdInvalid = (id: any, message: string) => {
+      if (!getValidId(id)) {
+        showWarning(message);
+        return true;
+      }
+      return false;
+    };
+
+    // Validaciones para agregar un artículo
+    if (this.isAdd()) {
+      if (isFieldInvalid(this.data.descripcion, "Ingrese la Descripción del Articulo")) return;
+      if (isFieldInvalid(this.data.codigoBarra, "Ingrese el Código de Barra del Articulo")) return;
+      if (isIdInvalid(this.data.idTipoArticulo, "Seleccione el Tipo Articulo")) return;
+      if (isIdInvalid(this.data.idMedida, "Seleccione la Medida")) return;
+
+      if (isFieldInvalid(this.data.precioCosto, "Ingrese el precio costo") || isNaN(this.data.precioCosto)) {
+        showWarning("El precio costo tiene que ser un número");
+        return;
+      }
+
+      if (this.data.datosAdicionales && isIdInvalid(this.data.idEtiqueta, "Seleccione la Etiqueta")) return;
+    }
+
+    // Validaciones comunes para agregar o actualizar un artículo
+    if (this.isAdd() || this.isUpdate()) {
+      if (isFieldInvalid(this.data.descripcion, "Ingrese la Descripción del Articulo")) return;
+      if (isIdInvalid(this.data.idSubFamilia, "Seleccione la Sub Familia del Articulo")) return;
+      if (isFieldInvalid(this.data.codigo, "Ingrese el Código del Articulo")) return;
+      if (isIdInvalid(this.data.idTipoArticulo, "Seleccione el Tipo Articulo")) return;
+      if (isIdInvalid(this.data.idMedida, "Seleccione la Medida")) return;
+
+      if (this.data.caducidad && isFieldInvalid(this.data.fechaCaducidad, "Ingrese la fecha de Caducidad del Articulo")) return;
+
+      if (this.data.datosLote) {
+        if (isFieldInvalid(this.data.lote, "Ingrese el Lote")) return;
+        if (isFieldInvalid(this.data.fechaCreacion, "Ingrese la fecha de Creación")) return;
+        if (isFieldInvalid(this.data.fechaCaducidadLote, "Ingrese la fecha de Caducidad del Lote")) return;
+      }
+    }
+
+    // Validaciones finales para el precio
+    if (isNaN(this.data.precioCosto)) {
+      showWarning("Ingrese el Precio de Costo del Articulo");
+      return;
+    }
+
+    if (this.data.precioCosto < 0.01) {
+      showWarning("El valor mínimo en el precio de costo es 0.01");
+      return;
+    }
+    return true;
+  }
+
+  save(){
+
+    if(!this.isValidForm()) return
+
+
+
 
 
   }
+
+
 
   closeModal() {
     this.activeModal.close();
