@@ -191,7 +191,7 @@ BEGIN
 							,dr.fechaAutorizacion
 							,dr.identificacionReceptor
 							,dr.claveAcceso
-							,dr.numeroAutorizacion
+							,dr.claveAcceso
 							,dr.idUsuario	
                             
                             ,ds.codDocSustento

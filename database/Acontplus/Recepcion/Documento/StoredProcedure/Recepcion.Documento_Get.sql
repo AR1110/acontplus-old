@@ -26,6 +26,7 @@ BEGIN
     
     --> Filter
 	DECLARE @codEstab VARCHAR(50),
+        @idEstablecimiento INT,
         @codDoc VARCHAR(2),
         @startDate DATETIME,
         @endDate DATETIME,
@@ -47,12 +48,10 @@ BEGIN
     --> Get
     IF @tipo = 1
         BEGIN
-            
-            DECLARE @estado BIT = 1
 
             SET @tableNames = 'documentos'
 
-            SET @params = '@codEstab         VARCHAR(50)
+            SET @params = '@idEstablecimiento   INT
 						  ,@codDoc           VARCHAR(2)
 						  ,@startDate        DATETIME2
 						  ,@endDate          DATETIME2
@@ -61,22 +60,20 @@ BEGIN
                           ,@pageIndex        INT
                           ,@pageSize         INT
                           ,@serieComprobante VARCHAR(20)
-                          ,@subcategoryId    INT
-                          ,@estado           BIT '
+                          ,@subcategoryId    INT '
 
             SET @sql = 'SELECT dr.[idDocumento]
-		                      ,dr.[codEstab]
+	                          ,e.idEstablecimiento
+		                      ,e.[codEstab]
 		                      ,dr.[comprobante]
 		                      ,dr.[codDoc]
 		                      ,dr.[serieComprobante]
-		                      ,dr.[rucEmisor]
-		                      ,dr.[razonSocialEmisior] razonSocialEmisor
+		                      ,c.IDCard [rucEmisor]
+		                      ,c.businessName razonSocialEmisor
 		                      ,dr.[fechaEmision]
 		                      ,dr.[fechaAutorizacion]
-		                      ,dr.[tipoEmision]
 		                      ,dr.[identificacionReceptor]
 		                      ,dr.[claveAcceso]
-		                      ,dr.[numeroAutorizacion]
 		                      ,dr.[importeTotal]
 		                      ,CASE WHEN xmlCompressed IS NOT NULL THEN 1 ELSE 0 END hasXml
 		                      ,ISNULL(complete, 0) complete
@@ -92,9 +89,11 @@ BEGIN
                               ,ISNULL(s.[Name], '''') subcategoryName
                               ,ISNULL(dr.subcategoryId, 0) subcategoryId
 	                    FROM Recepcion.DocumentoRecibido       dr WITH (NOLOCK)
+						INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON dr.idEstablecimiento = e.idEstablecimiento
                         LEFT JOIN Contabilidad.CuentaPorPagar cpp WITH (NOLOCK) ON dr.claveAcceso = cpp.uniqueId
                         LEFT JOIN Contabilidad.Subcategory      s WITH (NOLOCK) ON dr.subcategoryId = s.Id
-	                    WHERE dr.codEstab = @codEstab '
+						LEFT JOIN Customer.Customer c WITH(NOLOCK) ON dr.customerId = c.Id
+	                    WHERE dr.idEstablecimiento = @idEstablecimiento '
 
             SELECT @codDoc       = codDoc
 		          ,@ckBoxFecha   = ckBoxFecha
@@ -122,6 +121,8 @@ BEGIN
                 ,subcategoryId INT
 			)
 
+            SET @idEstablecimiento = (SELECT idEstablecimiento FROM Sri.Establecimiento WHERE codEstab = @codEstab)
+
             IF @ckBoxFecha = 1 AND @serieComprobante IS NULL
                 BEGIN
                     SET @sql = @sql + 'AND CAST(dr.fechaEmision AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
@@ -138,18 +139,9 @@ BEGIN
 	            END
 
             IF @claveAcceso IS NOT NULL
-                BEGIN 
-                    
-                    SET @estado = NULL
-
+                BEGIN
                     SET @sql = @sql + 'AND dr.claveAcceso = @claveAcceso '
                 END
-
-            
-            IF @estado IN (1,0)
-                BEGIN
-                    SET @sql = @sql + 'AND dr.estado = @estado '
-                END 
 
 
             IF @serieComprobante IS NOT NULL
@@ -167,7 +159,7 @@ BEGIN
 
             EXEC sp_executesql @sql
 		                      ,@params
-		                      ,@codEstab         = @codEstab
+		                      ,@idEstablecimiento         = @idEstablecimiento
 		                      ,@codDoc           = @codDoc
 		                      ,@startDate        = @startDate
 		                      ,@endDate          = @endDate
@@ -177,7 +169,6 @@ BEGIN
                               ,@pageSize         = @pageSize
                               ,@serieComprobante = @serieComprobante
                               ,@subcategoryId    = @subcategoryId
-                              ,@estado           = @estado
 
             RETURN 
         END 

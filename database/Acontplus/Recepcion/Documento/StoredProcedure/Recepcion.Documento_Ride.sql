@@ -1,6 +1,6 @@
 USE [AcontPlus]
-GO
-/****** Object:  StoredProcedure [dbo].[ASPFacturaCompraReport]    Script Date: 10/8/2022 10:51:53 AM ******/
+GO 
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
