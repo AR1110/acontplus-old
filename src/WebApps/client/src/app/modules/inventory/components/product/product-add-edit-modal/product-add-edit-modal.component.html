@@ -1,204 +1,223 @@
 <div class="modal-header">
-  	<h4 class="modal-title">{{titleModal}}</h4>
-		<button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+  <h4 class="modal-title">{{titleModal}}</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
 </div>
 
 <div class="modal-body">
 
-   <ul class="nav nav-tabs">
-      <li class="nav-item" style="cursor: pointer;">
-        <a class="nav-link" [class.active]="selectedTab() === 0" (click)="selectTab(0)">Generales</a>
-      </li>
-      <li class="nav-item"  style="cursor: pointer;">
-        <a class="nav-link" [class.active]="selectedTab() === 1" (click)="selectTab(1)">Datos Adicionales</a>
-      </li>
+  <ul class="nav nav-tabs">
+    <li class="nav-item" style="cursor: pointer;">
+      <a class="nav-link" [class.active]="selectedTab() === 0" (click)="selectTab(0)">Generales</a>
+    </li>
+    <li class="nav-item" style="cursor: pointer;">
+      <a class="nav-link" [class.active]="selectedTab() === 1" (click)="selectTab(1)">Datos Adicionales</a>
+    </li>
 
-      <li class="nav-item" style="cursor: pointer;">
-        <a class="nav-link" [class.active]="selectedTab() === 2" (click)="selectTab(2)">Código de Barras</a>
-      </li>
-      <li class="nav-item" style="cursor: pointer;">
-        <a class="nav-link" [class.active]="selectedTab() === 3" (click)="selectTab(3)">Ubicación</a>
-      </li>
+    <li class="nav-item" style="cursor: pointer;">
+      <a class="nav-link" [class.active]="selectedTab() === 2" (click)="selectTab(2)">Código de Barras</a>
+    </li>
+    <li class="nav-item" style="cursor: pointer;">
+      <a class="nav-link" [class.active]="selectedTab() === 3" (click)="selectTab(3)">Ubicación</a>
+    </li>
 
-    </ul>
+  </ul>
 
-    <div class="tab-content mt-3">
-      @if(selectedTab()===0){
-        <div class="row">
-          <div class="colxl-6 col-lg-6 col-md-6 col-12">
-            <div class="form-group">
-              <label for="description">Descripción: <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" placeholder="..." [(ngModel)]="data.descripcion" appToUpperCase />
-            </div>
-          </div>
-          <div class="colxl-6 col-lg-6 col-md-6 col-12">
-            <form [formGroup]="subCategoryForm">
+  <div class="tab-content mt-3">
+    @if(selectedTab()===0){
+    <div class="form-group">
+      <label for="description">Descripción: <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" placeholder="..." [(ngModel)]="data.descripcion" appToUpperCase />
+    </div>
 
-              <div class="form-group">
-                <label>Ciudad</label>
-                <input type="text" matInput class="form-control" formControlName="subCategoryGroup" placeholder="Ej: Mouse..."
-                  [matAutocomplete]="autoGroup">
-                <mat-autocomplete #autoGroup="matAutocomplete">
-                  @for (group of subCategoriesGroupOptions | async ; track group) {
-                  <mat-optgroup style="font-weight: 700;" [label]="group.provincia">
-                    @for (name of group.ciudades; track $index) {
-                    <mat-option [value]="name.descripcion">{{name.descripcion}}</mat-option>
-                    }
-                  </mat-optgroup>
-                  }
-                </mat-autocomplete>
-              </div>
-            </form>
+    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
 
-            <div class="form-group">
-              <label for="subcategoría">SubCategoría: <span class="text-danger">*</span></label>
+      <div class="col">
+        <div class="form-group ">
+          <label class="control-label">Sub Familia: <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <select [(ngModel)]="data.idSubFamilia" class="form-select" (change)="onChangeSubCategoria()">
+              @for (item of subCategoriesGroup(); track $index) {
+              <optgroup [label]="item.familia">
+                @for (sf of item.subFamilias; track $index) {
+                <option [ngValue]="sf.idSubFamilia">
+                  {{ sf.subFamilia }}
+                </option>
+                }
+              </optgroup>
 
-              <div class="input-group">
-                <select id="subcategoría" class="form-select" name="subcategoría">
-                  <!-- @for (group of groupedArrayCategories; track $index) {
-                            <optgroup [attr.label]="group.category">
-                              @for (item of group.subCategories; track $index) {
-                              <option [value]="item.idSubFamilia">
-                                {{ item.subFamilia }}
-                              </option>
-                              }
-                            </optgroup>
-                            } -->
-                </select>
-
-                <button class="btn btn-outline-secondary btn-sm" type="button" tabindex="-1">
-                  <fa-icon [icon]="'plus'"></fa-icon>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-            <div class="row">
-              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                <div class="form-group">
-                  <label for="codigo">Código: <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" placeholder="Ej: COM050" />
-                </div>
-              </div>
-
-              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                <div class="form-group">
-                  <label for="codigoAuxiliar">Código Aux: </label>
-                  <input type="text" class="form-control" placeholder="Ej: COM050" />
-                </div>
-              </div>
-
-              <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-                <div class="form-group">
-                  <label for="codigoBarra">Código de Barra: <span class="text-danger">*</span>
-                  </label>
-
-                  <input type="text" class="form-control" ng-model="data.codigoBarra" touppercase placeholder="H20089" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-            <div class="row">
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                <div class="form-group">
-                  <label for="">Tipo Artículo: <span class="text-danger">*</span>
-                  </label>
-                  <select class="form-select">
-                    @for (item of tiposArticulo; track $index) {
-                    <option [value]="item.idTipoArticulo">
-                      {{ item.descripcion }}
-                    </option>
-                    }
-                  </select>
-                </div>
-              </div>
-
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                <div class="form-group">
-                  <label for="medida">Medida: <span class="text-danger">*</span></label>
-                  <div class="input-group">
-                    <select class="form-select">
-                      @for (item of medidas; track $index) {
-                      <option [value]="item.idMedida">
-                        {{ item.descripcion }}
-                      </option>
-                      }
-                    </select>
-
-                    <button class="btn btn-outline-secondary btn-sm" appMeasureAddEdit results="resultModalMedida(item)"
-                      tabindex="-1">
-                      <fa-icon [icon]="'plus'"></fa-icon>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row" ng-show="tipoRegistro === 1">
-          <div class="form-group col-lg-2 col-md-6 col-sm-6 col-12">
-            <label for="tipoIVA">Tipo Iva: <span class="text-danger">*</span> </label>
-            <select class="form-select" ng-change="recalculateTarifaAdd()" ng-disabled="!articlePermission.isUpdatePrice">
-              @for (item of tiposIva; track $index) {
-              <option [value]="item.idTipoIva">{{ item.descripcion }}</option>
               }
             </select>
-          </div>
-          <div class="col-lg-2 col-md-6 col-sm-6 col-xs-6">
-            <div class="form-group">
-              <label for="">Precio Costo: <span class="text-danger">*</span></label>
-              <input type="number" class="form-control" decimal ng-focus="delayFocus('.precioCosto')"
-                ng-model="data.precioCosto" ng-blur="redondearPrecioCosto()" ng-change="recalculateTarifaAdd()"
-                placeholder="0.00" />
-            </div>
-          </div>
-          <div class="form-group col-lg-2 col-md-6 col-sm-6 col-xs-6">
-            <label for="">Precio Sin Subsidio:</label>
-            <input type="number" class="form-control" decimal placeholder="0.00" />
-          </div>
-          <div class="col-lg-2 col-md-6 col-sm-6 col-12">
-            <div class="row align-items-center">
-              <div class="col-12"></div>
-              <div class="col-12"></div>
-            </div>
-          </div>
-          <div class="col-lg-2 col-md-3 col-sm-6 col-12">
-            <div class="form-group text-center">
-              <label>Adicionales: </label>
-            </div>
-          </div>
-          <div class="col-lg-2 col-md-3 col-sm-6 col-12">
-            <!-- @if (dataForm.get('datosAdicionales')?.value) {
-                      <div class="form-group">
-                        <label>Etiqueta: </label>
-                        <select
-                          class="form-control "
 
-                        >
-                          @for (item of etiquetaActividades; track $index) {
-                          <option [value]="item.idEtiqueta">
-                            {{ item.descripcion }}
-                          </option>
-                          }
-                        </select>
-                      </div>
-                      } -->
-          </div>
-        </div>
 
-        <div class="row">
-          <div class="col-lg-10 col-12">
+            <button class="btn btn-outline-secondary btn-sm" appSubCategoryModal
+              (onResult)="resultModalSubFamilia($event)" type="button" tabindex="-1">
+              +
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" (click)="refreshSubFamilia()" type="button" tabindex="-1">
+              &#8635;
+            </button>
 
           </div>
         </div>
-      }
+      </div>
+
+
+      <div class="col">
+        <div class="form-group">
+          <label for="medida">Medida: <span class="text-danger">*</span> </label>
+          <div class="input-group">
+            <select class="form-select" [(ngModel)]="data.idMedida">
+              @for (item of medidas(); track $index) {
+              <option [ngValue]="item.idMedida">
+                {{item.descripcion}}
+              </option>
+              }
+            </select>
+
+            <button class="btn btn-outline-secondary btn-sm" appMeasureAddEdit
+              (onResultModal)="resultModalMedida($event)" tabindex="-1">
+              +
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" (click)="refreshMedida()" type="button" tabindex="-1">
+              &#8635;
+            </button>
+
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col">
+        <div class="form-group">
+          <label for="tipoArticulo">Tipo Artículo: <span class="text-danger">*</span>
+          </label>
+          <select class="form-select" [(ngModel)]="data.idTipoArticulo">
+            @for (item of tiposArticulo(); track $index) {
+            <option [ngValue]="item.idTipoArticulo">
+              {{ item.descripcion }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="form-group">
+          <label for="Adicionales">Adicionales</label>
+
+          <div class="input-group mb-3">
+            <div class="input-group-text">
+              <input class="form-check-input mt-0" type="checkbox" [(ngModel)]="data.datosAdicionales"
+                aria-label="Adicionales">
+            </div>
+            <select [(ngModel)]="data.idEtiqueta" class="form-select">
+              <option [ngValue]="0">Ninguno</option>
+              @for (item of etiquetas(); track $index) {
+              <option [ngValue]="item.idEtiqueta">{{item.descripcion}}</option>
+              }
+            </select>
+            <button class="btn btn-outline-secondary btn-sm" appTagsAddEditModal (onResultModal)="resultModalTag($event)"
+              tabindex="-1">
+              +
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" (click)="refreshTag()" type="button" tabindex="-1">
+              &#8635;
+            </button>
+          </div>
+        </div>
+      </div>
 
     </div>
+
+
+
+    <div class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
+      <div class="col">
+        <div class="form-group">
+          <label for="codigo">Código: <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" [(ngModel)]="data.codigo" placeholder="Ej: COM050" />
+        </div>
+
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="codigoAuxiliar">Código Aux: </label>
+          <input type="text" class="form-control" [(ngModel)]="data.codigoAuxiliar" placeholder="Ej: COM050" />
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="codigoBarra">Código de Barra: <span class="text-danger">*</span>
+          </label>
+
+          <input type="text" class="form-control" [(ngModel)]="data.codigoBarra" touppercase placeholder="H20089" />
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group   text-center ">
+          <label>Inventario: </label>
+          <div class="icheck-primary ">
+            <input type="checkbox" id="llevarInventario" name="llevarInventario" [(ngModel)]="data.llevaInventario" />
+            <label for="llevarInventario"></label>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group   text-center">
+          <label for="">Fraccionable: </label>
+          <div class="icheck-primary">
+            <input type="checkbox" id="productoFraccionable" name="productoFraccionable"
+              [(ngModel)]="data.productoFraccionable" />
+            <label for="productoFraccionable"></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
+      <div class="col">
+        <div class="form-group">
+          <label for="tipoIva">Tipo Iva: <span class="text-danger">*</span> </label>
+          <select class="form-select" [(ngModel)]="data.idTipoIva" (change)="onChangeTipoIva()"
+            [disabled]="!isChangePrecio">
+            @for (item of tiposIva(); track $index) {
+            <option [ngValue]="item.idTipoIva">{{ item.descripcion }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      @if ((isUpdate() || isAdd()) && isChangePrecio) {
+        <div class="col">
+          <div class="form-group">
+            <label for="precioCosto">Precio Costo: <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" [(ngModel)]="data.precioCosto"
+              (keyup)="onChangePrecioCosto()" placeholder="0.00" />
+          </div>
+        </div>
+
+      }
+      <div class="col">
+        <div class="form-group ">
+          <label for="">Precio Sin Subsidio:</label>
+          <input type="number" class="form-control" [(ngModel)]="data.precioSinSubsidio" placeholder="0.00" />
+        </div>
+      </div>
+      <div class="col"></div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-lg-10 col-md-10 col-12">
+        <app-tabulator [tableData]="productTarifa" [options]="tabulatorOptions"
+
+          (cellEdited)="cellEdited($event)"
+        ></app-tabulator>
+      </div>
+    </div>
+    }
+
+  </div>
 
 </div>
 

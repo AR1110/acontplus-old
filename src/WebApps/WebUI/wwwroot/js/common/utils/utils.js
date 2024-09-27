@@ -71,7 +71,7 @@
     angular.module('acontPlusApp')
         .factory('pricingUtils', function () {
             let service = {}
-             
+
             service.max_seis = 6;
             service.max_cinco = 5;
             service.max_dos = 2;
@@ -212,22 +212,22 @@
                 }
             }
 
-            
+
             /**
              *Función para calcular el valor total del descuento 
              * @param {*} cantidad 
              * @param {*} valorDescuento 
              * @returns 
              */
-            service.calcularValorTotalDescuento = function(cantidad, valorDescuento) {
+            service.calcularValorTotalDescuento = function (cantidad, valorDescuento) {
                 // Calcular el valor total del descuento
-                let valorTotalDescuento = decMul(cantidad , valorDescuento, service.precisionMaxima);
-                
+                let valorTotalDescuento = decMul(cantidad, valorDescuento, service.precisionMaxima);
+
                 return valorTotalDescuento;
             }
 
             // Función para calcular el total antes de aplicar descuentos
-            service.calcularTotalAntesDescuento = function(precioUnitario, cantidad) {
+            service.calcularTotalAntesDescuento = function (precioUnitario, cantidad) {
                 let valorTotal = decMul(precioUnitario, cantidad, service.precisionMaxima);
                 return valorTotal;
             }
@@ -269,14 +269,14 @@
              * @param {*} descuento 
              * @returns 
              */
-            service.calcularSubtotalSinImpuesto = function(precioUnitario, cantidad, descuento) {
+            service.calcularSubtotalSinImpuesto = function (precioUnitario, cantidad, descuento) {
                 let totalAntesDescuento = service.calcularTotalAntesDescuento(precioUnitario, cantidad);
                 let subtotalSinImpuesto = decMinus(totalAntesDescuento, descuento, service.precisionMaxima);
                 return subtotalSinImpuesto;
             }
 
             // Calcular el total con impuesto
-            service.calcularTotalConImpuesto = function(subtotalSinImpuesto, valorImpuesto) {
+            service.calcularTotalConImpuesto = function (subtotalSinImpuesto, valorImpuesto) {
                 try {
                     // Sumar el subtotal sin impuestos y el valor del impuesto
                     let totalConImpuesto = decPlus(subtotalSinImpuesto, valorImpuesto, service.precisionMaxima);
@@ -373,7 +373,7 @@
         //     if (typeof max !== 'number' || isNaN(max)) {
         //         throw new TypeError('Máximo de dígitos inválido: ' + max);
         //     }
- 
+
 
         //     let factor = Math.pow(10, max);
         //     let tempNumber = number * factor;
@@ -381,7 +381,7 @@
         //     return roundedTempNumber / factor; 
 
         // }
-        formSvc.roundNumber = function(number, max = 2) {
+        formSvc.roundNumber = function (number, max = 2) {
             if (typeof number !== 'number' || isNaN(number)) {
                 throw new TypeError('Número inválido: ' + number);
             }
@@ -396,7 +396,7 @@
             return Math.round((number + Number.EPSILON) * factor) / factor;
         }
 
-        formSvc.truncateNumber = function(number, decimals) {
+        formSvc.truncateNumber = function (number, decimals) {
             const factor = Math.pow(10, decimals);
             return Math.floor(number * factor) / factor;
         }
@@ -1288,24 +1288,119 @@
         }
 
 
-        formSvc.cellTooltipGrid = function(entity, field){
+        formSvc.cellTooltipGrid = function (entity, field) {
             var originalValue = 0;
-            if(entity && typeof entity ==='object'){
+            if (entity && typeof entity === 'object') {
                 originalValue = entity[field];
-            }else{
+            } else {
                 originalValue = entity;
             }
             var roundedValue = formSvc.roundNumber(originalValue, DECIMAL_DOS);
             return 'Original: ' + originalValue + '\nRedondeado: ' + roundedValue;
         }
 
-        formSvc.cellFilterRoundToNumber = function(){
+        formSvc.cellFilterRoundToNumber = function () {
             return `roundTo:${DECIMAL_DOS}`;
         }
+
+
+
+        formSvc.fetchManager = function (fn) {
+            let executing = false;
+
+            return async (...args) => {
+               
+                if (executing) {
+                    console.log("Otra solicitud ya está en ejecución. Espera a que se complete.");
+                    return; // Puedes optar por retornar un valor específico o lanzar un error
+                }
+
+                executing = true; // Marcar como en ejecución
+                try {
+                    const result = await fn(...args); // Llamar a la función con los argumentos
+                    return result; // Retornar el resultado de la función
+                } catch (error) {
+                    console.error('Error al ejecutar la función:', error); // Manejo de errores
+                    throw error; // Lanzar el error para que pueda ser manejado por el llamador
+                } finally {
+                    executing = false; // Restablecer el estado después de la ejecución
+                }
+            };
+        };
+
 
 
         return formSvc;
 
     }
+
+
+
+    app.factory('productUtil', function () {
+
+
+        return {
+            mergeStockQty,
+            calculateCantidadStock
+        }
+        function mergeStockQty(items, dataItem) {
+            // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
+            let foundItemByArticuloAndBodega = items.filter(item => (
+                item.productId === dataItem.idArticulo &&
+                item.bodegaId === dataItem.idBodega
+            ))
+
+            let { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce((total, item) => {
+                let medidaFraccionado = item.medidas.find(medida => medida.idMedida === item.medidaId && medida.tipo === 'FRACCIONADO')
+                let medidaPrincipal = item.medidas.find(medida => medida.idMedida === item.medidaId && medida.tipo === 'PRINCIPAL')
+                if (medidaFraccionado) {
+                    total.totalCantidadFraccionada += item.quantity * medidaFraccionado.conversion;
+                }
+                if (medidaPrincipal) {
+                    total.totalCantidadPrincipal += item.quantity * medidaPrincipal.conversion;
+                }
+                return total;
+            }, {
+                totalCantidadFraccionada: 0,
+                totalCantidadPrincipal: 0
+            });
+
+
+            // Devuelve el objeto resultante de la fusión. 
+            return {
+                cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
+            };
+        }
+
+
+        function calculateCantidadStock(data) {
+            let fechaEmisionValidate = data.fechaEmision;
+            let cantidadStock = data.cantidadStock;
+
+            let dataConsolidacionFecha = data.productoConsolidaciones.find(
+                cdataFecha => cdataFecha.idBodega === data.idBodega
+            )
+
+            if (dataConsolidacionFecha && dataConsolidacionFecha.fechaConsolidacion) {
+                if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+                    return 0;
+                }
+            }
+
+            return cantidadStock < 0 ? cantidadStock : -cantidadStock;
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+    })
 
 })(window.angular)

@@ -48,18 +48,21 @@ BEGIN
     IF @tipo = 1
         BEGIN
             
+            DECLARE @estado BIT = 1
+
             SET @tableNames = 'documentos'
 
-            SET @params = '@codEstab     VARCHAR(50)
-						  ,@codDoc       VARCHAR(2)
-						  ,@startDate    DATETIME2
-						  ,@endDate      DATETIME2
-						  ,@rucProveedor VARCHAR(25)
-                          ,@claveAcceso  VARCHAR(49)
-                          ,@pageIndex    INT
-                          ,@pageSize     INT
+            SET @params = '@codEstab         VARCHAR(50)
+						  ,@codDoc           VARCHAR(2)
+						  ,@startDate        DATETIME2
+						  ,@endDate          DATETIME2
+						  ,@rucProveedor     VARCHAR(25)
+                          ,@claveAcceso      VARCHAR(49)
+                          ,@pageIndex        INT
+                          ,@pageSize         INT
                           ,@serieComprobante VARCHAR(20)
-                          ,@subcategoryId INT'
+                          ,@subcategoryId    INT
+                          ,@estado           BIT '
 
             SET @sql = 'SELECT dr.[idDocumento]
 		                      ,dr.[codEstab]
@@ -91,8 +94,7 @@ BEGIN
 	                    FROM Recepcion.DocumentoRecibido       dr WITH (NOLOCK)
                         LEFT JOIN Contabilidad.CuentaPorPagar cpp WITH (NOLOCK) ON dr.claveAcceso = cpp.uniqueId
                         LEFT JOIN Contabilidad.Subcategory      s WITH (NOLOCK) ON dr.subcategoryId = s.Id
-	                    WHERE dr.codEstab = @codEstab
-                          AND dr.estado = 1 '
+	                    WHERE dr.codEstab = @codEstab '
 
             SELECT @codDoc       = codDoc
 		          ,@ckBoxFecha   = ckBoxFecha
@@ -137,34 +139,45 @@ BEGIN
 
             IF @claveAcceso IS NOT NULL
                 BEGIN 
+                    
+                    SET @estado = NULL
+
                     SET @sql = @sql + 'AND dr.claveAcceso = @claveAcceso '
                 END
 
-             IF @serieComprobante IS NOT NULL
+            
+            IF @estado IN (1,0)
+                BEGIN
+                    SET @sql = @sql + 'AND dr.estado = @estado '
+                END 
+
+
+            IF @serieComprobante IS NOT NULL
                 BEGIN
                     SET @sql = @sql + ' AND dr.serieComprobante LIKE ''%' + @serieComprobante + '%'' ' 
                 END
 
-            IF (@subcategoryId > 0)
+
+            IF @subcategoryId > 0
                 BEGIN
                      SET @sql = @sql + ' AND dr.subcategoryId = @subcategoryId ' 
                 END
-
 
             SET @sql = @sql + ' ORDER BY idDocumento DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
             EXEC sp_executesql @sql
 		                      ,@params
-		                      ,@codEstab     = @codEstab
-		                      ,@codDoc       = @codDoc
-		                      ,@startDate    = @startDate
-		                      ,@endDate      = @endDate
-		                      ,@rucProveedor = @rucProveedor
-                              ,@claveAcceso  = @claveAcceso
-                              ,@pageIndex    = @pageIndex
-                              ,@pageSize     = @pageSize
+		                      ,@codEstab         = @codEstab
+		                      ,@codDoc           = @codDoc
+		                      ,@startDate        = @startDate
+		                      ,@endDate          = @endDate
+		                      ,@rucProveedor     = @rucProveedor
+                              ,@claveAcceso      = @claveAcceso
+                              ,@pageIndex        = @pageIndex
+                              ,@pageSize         = @pageSize
                               ,@serieComprobante = @serieComprobante
-                              ,@subcategoryId = @subcategoryId
+                              ,@subcategoryId    = @subcategoryId
+                              ,@estado           = @estado
 
             RETURN 
         END 
