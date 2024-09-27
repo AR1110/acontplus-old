@@ -20,7 +20,7 @@
         <div class="form-group">
           <label>Rango Fechas: </label>
           <app-date-range-selection
-            (onChangeDateRange)="onDateRangeSelection($event)" [inputGroupDateChecked]="dateChecked"/>
+            (onChangeDateRange)="onDateRangeSelection($event)" [inputGroupDateChecked]="true"/>
         </div>
       </div>
       <div class="col">
@@ -40,7 +40,7 @@
               <button (click)="onClickBtnMore()" class="btn btn-primary m-l-5" type="button">
                 <fa-icon [icon]="extraOptionsIcon" matTooltip="{{extraOptionsTooltip}}"></fa-icon>
               </button>
-              <button (click)="refresh()" class="btn btn-success m-l-5" matTooltip="Recargar"
+              <button (click)="loadData()" class="btn btn-success m-l-5" matTooltip="Recargar"
                       type="button">
                 <fa-icon [icon]="'refresh'"></fa-icon>
               </button>
@@ -75,7 +75,7 @@
           <div class="form-group">
             <label for="subcategoryId">Subcategoría:</label>
             <select class="form-select border-select" id="subcategoryId" [(ngModel)]="dataSearch.subcategoryId"
-                    (change)="getComprobantes()">
+                    (change)="loadData()">
               <option [ngValue]="">Todos</option>
               @for (item of subcategories; track $index) {
                 <option [ngValue]="item.id">
@@ -109,11 +109,28 @@
         </div>
       </div>
     </div>
+
     <div class="row mt-3">
-      <div class="col">
-        <app-mat-dynamic-table [dataList]="documentos" [displayColumnDefs]="columnsDefs"
+      <div class="col"> @if (this.documents.length > 0) {
+        <app-mat-dynamic-table [dataList]="documents" [displayColumnDefs]="columnsDefs"
                                [displayedColumns]="columns"></app-mat-dynamic-table>
+        <mat-paginator
+          #paginator
+          [length]="pagination().totalRecords"
+          [pageIndex]="pagination().pageIndex"
+          [pageSize]="pagination().pageSize"
+          [pageSizeOptions]="pagination().pageSizeOptions"
+          (page)="onPageChanged($event)"
+          showFirstLastButtons
+          aria-label="Select page"
+        >
+        </mat-paginator>
+      } @else {
+        <h5>No hay registros</h5>
+      }
       </div>
     </div>
+
+
   </mat-card-content>
 </mat-card>

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -18,6 +18,10 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { ModalService } from '@core/services/modal.service';
 import { DocManualUploadComponent } from '@purchase/components/document-received/doc-manual-upload/doc-manual-upload.component';
 import { SharedService } from '@core/services/shared.service';
+import { DocumentoReceived } from '@purchase/models/document-received.model';
+import { DocumentReceivedService } from '@purchase/services/document-received.service';
+import { MatPagination } from '@shared/models/pagination.model';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-documento-received-page',
@@ -34,20 +38,35 @@ import { SharedService } from '@core/services/shared.service';
     FaIconComponent,
     InputNumberDirective,
     MatButton,
+    MatPaginator,
   ],
   templateUrl: './document-received-page.component.html',
   styles: ``,
 })
 export class DocumentReceivedPageComponent {
-  documentos: any[] = [];
-  columnsDefs: ColumnDefinition[] = [];
-  columns: string[] = ['serie'];
-  dateChecked: boolean = true;
+  documents: DocumentoReceived[] = [];
+  columnsDefs: ColumnDefinition[] = [
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'fechaEmision', label: 'Subcategoría', type: 'string' },
+    { key: 'subcategoryName', label: 'Fecha Emisión', type: 'string' },
+    { key: 'serieComprobante', label: 'Serie', type: 'string' },
+    { key: 'importeTotal', label: 'Total', type: 'number' },
+    { key: 'rucEmisor', label: 'Ruc Emisor', type: 'string' },
+    { key: 'razonSocialEmisor', label: 'Razón Social Emisor', type: 'string' },
+    { key: 'claveAcceso', label: 'No. Aut.', type: 'string' },
+    { key: 'fechaAutorizacion', label: 'F. Aut.', type: 'string' },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+
   dataSearch = {
     codDoc: '',
     codEstab: '',
     serieComprobante: '',
     subcategoryId: 0,
+    startDate: '',
+    endDate: '',
+    claveAcceso: '',
+    rucProveedor: '',
   };
   tipoComprobantes: any[] = [];
   extraOptionsIcon: IconProp = 'eye';
@@ -55,6 +74,8 @@ export class DocumentReceivedPageComponent {
   moreOptionsFilter: boolean = false;
   subcategories: Subcategory[] = [];
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
+  pagination = signal(new MatPagination());
+  private readonly _documentReceivedService = inject(DocumentReceivedService);
   private readonly _modalService = inject(ModalService);
   private readonly _sharedService = inject(SharedService);
   private readonly _tS = inject(ToasterService);
@@ -94,21 +115,42 @@ export class DocumentReceivedPageComponent {
       )?.codEstab;
       if (codEstabFound) {
         this.dataSearch.codEstab = codEstabFound;
+        this.loadData();
       }
     });
   }
 
+  loadData() {
+    const dataSearch = {
+      pageIndex: this.pagination().pageIndex + 1,
+      pageSize: this.pagination().pageSize,
+      codEstab: this.dataSearch.codEstab,
+      rucProveedor: this.dataSearch.rucProveedor,
+      claveAcceso: this.dataSearch.claveAcceso,
+      ckBoxFecha: true,
+      startDate: this.dataSearch.startDate,
+      endDate: this.dataSearch.endDate,
+      codDoc: this.dataSearch.codDoc,
+      serieComprobante: this.dataSearch.serieComprobante,
+      subcategoryId: this.dataSearch.subcategoryId,
+      tipo: 1,
+    };
+    this._documentReceivedService.get(dataSearch).subscribe((response) => {
+      this.documents = response.documents;
+      this.pagination().totalRecords = this.documents[0]?.totalRecords ?? 0;
+    });
+  }
+
   ngOnInit() {
-    this.documentos = [
-      {
-        serie: '001-001-000000009',
-      },
-    ];
-    this.columnsDefs = [{ key: 'serie', label: 'Serie', type: 'string' }];
     this.getEstabs();
   }
 
-  onDateRangeSelection($event: { from: string; to: string }) {}
+  onDateRangeSelection($event: { from: string; to: string }) {
+    console.log('selecting dates');
+    this.dataSearch.startDate = $event.from;
+    this.dataSearch.endDate = $event.to;
+    this.loadData();
+  }
 
   onSupplierSelected($event: { data: any }) {}
 
@@ -125,11 +167,7 @@ export class DocumentReceivedPageComponent {
     }
   }
 
-  refresh() {}
-
   onChangeSerieComprobante() {}
-
-  getComprobantes() {}
 
   openModalAutomaticUpload() {}
 
@@ -158,4 +196,10 @@ export class DocumentReceivedPageComponent {
   editSubcategory() {}
 
   onChangeEstab() {}
+
+  onPageChanged($event: PageEvent) {
+    this.pagination().pageIndex = $event.pageIndex;
+    this.pagination().pageSize = $event.pageSize;
+    this.loadData();
+  }
 }

@@ -12,19 +12,10 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import {
-  MatCell,
-  MatCellDef,
   MatColumnDef,
-  MatFooterCell,
-  MatFooterCellDef,
-  MatFooterRow,
   MatFooterRowDef,
-  MatHeaderCell,
-  MatHeaderCellDef,
-  MatHeaderRow,
   MatHeaderRowDef,
   MatNoDataRow,
-  MatRow,
   MatRowDef,
   MatTable,
   MatTableDataSource,
@@ -33,8 +24,8 @@ import {
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TableCellIndex } from '@shared/models/mat-table-models/table-cell-index.model';
-import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSortModule } from '@angular/material/sort';
 import { CommonModule, DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import { GetTotalPipe } from '@shared/pipe/get-total.pipe';
 
@@ -81,6 +72,7 @@ export class MatDynamicTableComponent<T> {
   rows!: QueryList<ViewContainerRef>; // Query for ViewContainerRefs
 
   @Input() templateOp!: TemplateRef<any> | null;
+
   constructor() {}
 
   ngAfterContentInit(): void {
@@ -188,5 +180,9 @@ export class MatDynamicTableComponent<T> {
     if (focused != null) {
       this.showElement(this.highlightRowIndex, 35); // $table-row-height = 35px // rect.height
     }
+  }
+
+  getRowColor(element: any): string {
+    return element.colorRow ? element.colorRow : ''; // Return empty string if no color is defined
   }
 }
