@@ -28,6 +28,7 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, params) 
         let params = {
             idCuentaPorCobrar: $scope.dataForm.idCuentaPorCobrar
         }
+        $scope.guarantors = [];
         creditoGaranteSvc.getAll(params).then(response => { 
             $scope.guarantors = response.guarantors;
         })
@@ -201,7 +202,9 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, params) 
                         type: 'success',
                         message: response.message
                     })
-                    $uibModalInstance.close(response)
+                    $scope.guarantorsDeleted = [];
+                    initiload()
+                  //  $uibModalInstance.close(response)
                 }
             })
                 .catch(error => {
