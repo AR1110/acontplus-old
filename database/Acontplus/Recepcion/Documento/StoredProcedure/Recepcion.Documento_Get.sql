@@ -28,8 +28,8 @@ BEGIN
 	DECLARE @codEstab VARCHAR(50),
         @idEstablecimiento INT,
         @codDoc VARCHAR(2),
-        @startDate DATETIME,
-        @endDate DATETIME,
+        @startDate DATETIME2,
+        @endDate DATETIME2,
         @claveAcceso VARCHAR(50),
         @serieComprobante VARCHAR(20),
         @rucProveedor VARCHAR(25),
@@ -95,31 +95,34 @@ BEGIN
 						LEFT JOIN Customer.Customer c WITH(NOLOCK) ON dr.customerId = c.Id
 	                    WHERE dr.idEstablecimiento = @idEstablecimiento '
 
-            SELECT @codDoc       = codDoc
-		          ,@ckBoxFecha   = ckBoxFecha
-                  ,@startDate    = startDate
-		          ,@endDate      = endDate
-		          ,@claveAcceso  = claveAcceso
-		          ,@codEstab     = codEstab
-		          ,@rucProveedor = rucProveedor
-                  ,@pageSize     = pageSize
-				  ,@pageIndex    = pageIndex
-                  ,@serieComprobante = serieComprobante
-                  ,@subcategoryId = subcategoryId
-	        FROM OPENJSON(@JSON) WITH 
-            (
-			     codDoc       VARCHAR(2) 
-			    ,ckBoxFecha   BIT
-                ,startDate    DATETIME2 
-			    ,endDate      DATETIME2
-			    ,claveAcceso  VARCHAR(50) 
-			    ,codEstab     VARCHAR(50) 
-			    ,rucProveedor VARCHAR(25)
-                ,pageSize     INT
-                ,pageIndex    INT
-                ,serieComprobante VARCHAR(20)
-                ,subcategoryId INT
-			)
+                SELECT 
+                    @codDoc          = NULLIF(LTRIM(RTRIM(codDoc)), ''),
+                    @ckBoxFecha      = ckBoxFecha,
+                    @startDate       = startDate,
+                    @endDate         = endDate,
+                    @claveAcceso     = NULLIF(LTRIM(RTRIM(claveAcceso)), ''),
+                    @codEstab        = NULLIF(LTRIM(RTRIM(codEstab)), ''),
+                    @rucProveedor    = NULLIF(LTRIM(RTRIM(rucProveedor)), ''),
+                    @pageSize        = pageSize,
+                    @pageIndex       = pageIndex,
+                    @serieComprobante = NULLIF(LTRIM(RTRIM(serieComprobante)), ''),
+                    @subcategoryId   = subcategoryId
+                FROM OPENJSON(@JSON) WITH 
+                (
+                    codDoc           VARCHAR(2),
+                    ckBoxFecha       BIT,
+                    startDate        DATETIME2,
+                    endDate          DATETIME2,
+                    claveAcceso      VARCHAR(50),
+                    codEstab         VARCHAR(50),
+                    rucProveedor     VARCHAR(25),
+                    pageSize         INT,
+                    pageIndex        INT,
+                    serieComprobante VARCHAR(20),
+                    subcategoryId    INT
+                );
+
+            print LEN(@rucProveedor)
 
             SET @idEstablecimiento = (SELECT idEstablecimiento FROM Sri.Establecimiento WHERE codEstab = @codEstab)
 
@@ -134,7 +137,7 @@ BEGIN
                 END 
 
             IF @rucProveedor IS NOT NULL
-	            BEGIN
+	            BEGIN print 'inside prove'
 		            SET @sql = @sql + 'AND rucEmisor = @rucProveedor '
 	            END
 
@@ -255,10 +258,6 @@ BEGIN
 
             RETURN 
 	    END
-
-    SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
-    RETURN 
-
 END
 GO
 
