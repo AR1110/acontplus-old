@@ -68,11 +68,15 @@ BEGIN
         ) 
 
         --> Recuperando Informacion
+        SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
         SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion 
                     ,@numeroIdentificacion = LTRIM(RTRIM(numeroIdentificacion)) 
                     ,@nombreComercial      = LTRIM(RTRIM(nombreComercial)) 
                     ,@nombreFiscal         = LTRIM(RTRIM(nombreFiscal)) 
         FROM @tbProveedor 
+
+        SELECT TOP 1 @customerId = CustomerId FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @id
 
         --> Validacion de informacion 
         IF NOT EXISTS(SELECT 1 FROM @tbProveedor) 
@@ -83,28 +87,11 @@ BEGIN
 
 		BEGIN TRAN 
             
-            IF EXISTS (SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @numeroIdentificacion)
-				BEGIN
-					SELECT TOP 1 @customerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @numeroIdentificacion 
-
-                    UPDATE Customer.Customer WITH (ROWLOCK) 
-                        SET BusinessName = LTRIM(RTRIM(@nombreFiscal)) 
-                           ,TradeName    = LTRIM(RTRIM(@nombreComercial))
-                    WHERE Id = @customerId
-
-				END
-            ELSE
-				BEGIN
-					SELECT TOP 1 @IDType = codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion
-
-					INSERT INTO Customer.Customer WITH (ROWLOCK)
-                           (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation)
-					SELECT @IDType,LTRIM(RTRIM(numeroIdentificacion)), LTRIM(RTRIM(nombreFiscal)), LTRIM(RTRIM(nombreComercial)), LTRIM(RTRIM(correo)),LTRIM(RTRIM(telefono)),LTRIM(RTRIM(direccion)),validationSri
-					FROM @tbProveedor
-
-                    SET @customerId = @@IDENTITY
-				END
-
+            UPDATE Customer.Customer WITH (ROWLOCK) 
+                SET BusinessName = LTRIM(RTRIM(@nombreFiscal)) 
+                   ,TradeName    = LTRIM(RTRIM(@nombreComercial))
+            WHERE Id = @customerId
+            
 			UPDATE pr SET 
 				   pr.idCiudad               = tp.idCiudad
 				  ,pr.direccion              = tp.direccion
@@ -115,7 +102,8 @@ BEGIN
 				  ,pr.idSubContribuyente     = tp.idSubContribuyente
 				  ,pr.idTiempoCredito        = tp.idTiempoCredito
 				  ,pr.estado                 = tp.estado
-                  ,pr.CustomerId             = @customerId
+                  ,pr.UdpatedAt              = GETDATE()
+                  ,pr.UpdatedByUserId        = @idUsuario
             FROM dbo.Proveedor      pr WITH (ROWLOCK)
             INNER JOIN @tbProveedor tp ON tp.id = pr.idProveedor 
 			WHERE idProveedor = @id 

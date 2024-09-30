@@ -48,15 +48,16 @@ BEGIN
 
 	SELECT cl.idCliente
           ,cl.FormaPagoSriId       as idFormaPagoSri
-		  ,cl.nombreComercial
-		  ,cl.nombreFiscal
-		  ,cl.numeroIdentificacion
-		  ,direccion = ISNULL(cl.direccion,'')
-	      ,tipoIdentificacion = ti.codigoSri 
+		  ,cu.BusinessName         as nombreComercial
+		  ,cu.TradeName            as nombreFiscal
+		  ,cu.IDCard               as numeroIdentificacion
+		  ,ISNULL(cl.direccion,'') as direccion
+	      ,ti.codigoSri            as tipoIdentificacion
           ,cl.idTipoIdentificacion
 	FROM Ventas.Aprob_Document    ad
-	INNER JOIN Cliente            cl WITH(NOLOCK) ON cl.idCliente            = ad.idCliente
-	 LEFT JOIN TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
+	INNER JOIN Cliente            cl WITH (NOLOCK) ON cl.idCliente            = ad.idCliente
+	INNER JOIN Customer.Customer  cu WITH (NOLOCK) ON cu.Id                   = cl.CustomerId
+    INNER JOIN TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
 	WHERE ad.idAprob_Document = @id
 
 	SELECT dt.idAprob_Document_Detailt
