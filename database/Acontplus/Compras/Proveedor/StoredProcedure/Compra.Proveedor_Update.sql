@@ -51,20 +51,20 @@ BEGIN
         SELECT @id,idCiudad,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,validationSri, estado
         FROM OPENJSON(@json) WITH
         (
-            idCiudad                     INT '$.idCiudad'
-           ,idTipoIdentificacion         INT '$.idTipoIdentificacion' 
-           ,idTipoClienteProveedor       INT '$.idTipoClienteProveedor'
-           ,idTipoEntidad                INT '$.idTipoEntidad'
-           ,idSubContribuyente           INT '$.idSubContribuyente' 
-           ,idTiempoCredito              INT '$.idTiempoCredito'
-           ,numeroIdentificacion VARCHAR(20) '$.numeroIdentificacion' 
-           ,nombreFiscal        VARCHAR(300) '$.nombreFiscal' 
-           ,nombreComercial     VARCHAR(300) '$.nombreComercial' 
-           ,direccion           VARCHAR(300) '$.direccion' 
-           ,telefono            VARCHAR(300) '$.telefono' 
-           ,correo              VARCHAR(300) '$.correo' 
-           ,validationSri                BIT '$.validationSri'
-           ,estado                       BIT
+            idCiudad               INT 
+           ,idTipoIdentificacion   INT  
+           ,idTipoClienteProveedor INT 
+           ,idTipoEntidad          INT 
+           ,idSubContribuyente     INT 
+           ,idTiempoCredito        INT 
+           ,numeroIdentificacion   VARCHAR(20) 
+           ,nombreFiscal           VARCHAR(300) 
+           ,nombreComercial        VARCHAR(300) 
+           ,direccion              VARCHAR(300) 
+           ,telefono               VARCHAR(300) 
+           ,correo                 VARCHAR(300) 
+           ,validationSri          BIT 
+           ,estado                 BIT
         ) 
 
         --> Recuperando Informacion
@@ -107,8 +107,6 @@ BEGIN
 
 			UPDATE pr SET 
 				   pr.idCiudad               = tp.idCiudad
-				  ,pr.nombreFiscal           = LTRIM(RTRIM(tp.nombreFiscal))
-				  ,pr.nombreComercial        = LTRIM(RTRIM(tp.nombreComercial))
 				  ,pr.direccion              = tp.direccion
 				  ,pr.telefono               = tp.telefono
 				  ,pr.correo                 = tp.correo
@@ -117,7 +115,6 @@ BEGIN
 				  ,pr.idSubContribuyente     = tp.idSubContribuyente
 				  ,pr.idTiempoCredito        = tp.idTiempoCredito
 				  ,pr.estado                 = tp.estado
-				  ,pr.validationSri          = tp.validationSri
                   ,pr.CustomerId             = @customerId
             FROM dbo.Proveedor      pr WITH (ROWLOCK)
             INNER JOIN @tbProveedor tp ON tp.id = pr.idProveedor 
@@ -129,13 +126,15 @@ BEGIN
 
 	BEGIN CATCH
 		IF @@TRANCOUNT > 0
-		BEGIN
-			ROLLBACK TRAN ;
-		END 
-		SELECT Common.ufnSpResponse('0','Info: Error en el procedimiento', NULL)
+		    BEGIN
+			    ROLLBACK TRAN ;
+		    END 
+		
 		INSERT INTO ErroresSistema
 		       (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'/Proveedor/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+
+        SELECT Common.ufnSpResponse('0','Info: Error en el procedimiento', NULL)
 	END CATCH 
 
 END
