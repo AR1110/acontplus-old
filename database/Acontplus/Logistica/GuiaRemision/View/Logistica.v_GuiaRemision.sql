@@ -18,7 +18,7 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
 		,gr.estableDestino
 		,gr.entregar
         ,gr.motivo
-        ,de.nroDocumento as secuencial
+        ,de.nroDocumento         as secuencial
         ,de.idPuntoEmision
         ,de.fechaEmision
         ,de.fechaAutorizacion
@@ -30,8 +30,8 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
         ,es.nombreComercial
         ,es.estab
         ,pt.ambiente
-        ,cl.nombreFiscal         as razonSocialDestinatario
-        ,cl.numeroIdentificacion as identificacionDestinatario
+        ,cu.TradeName            as razonSocialDestinatario
+        ,cu.IDCard               as identificacionDestinatario
         ,se.codigo               as codEstado
         ,ts.nombre               as razonSocialTransportista
         ,us.nombreUsuario        as usuario
@@ -46,4 +46,5 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
     INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pt.idEstablecimiento
     INNER JOIN FactElect.EstadoServicio se WITH (NOLOCK) ON se.idEstadoServicio       = de.idEstadoServicio
      LEFT JOIN dbo.DocumentoElectronico df WITH (NOLOCK) ON df.idDocumentoElectronico = fa.idDocumentoElectronico
+    INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = cl.CustomerId
 )
