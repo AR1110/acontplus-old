@@ -24,8 +24,8 @@ CREATE OR ALTER VIEW Ventas.v_NotaEntrega WITH SCHEMABINDING AS (
           ,es.nombreComercial
           ,es.idEstablecimiento
 		  ,pe.ptoEmi
-          ,cl.nombreFiscal         as razonSocialComprador
-          ,cl.numeroIdentificacion as identificacionComprador
+          ,cu.TradeName                                                                                   as razonSocialComprador
+          ,cu.IDCard                                                                                      as identificacionComprador
           ,us.nombreUsuario
           ,ne.observacion
           ,cc.idCuentaPorCobrar
@@ -47,6 +47,7 @@ CREATE OR ALTER VIEW Ventas.v_NotaEntrega WITH SCHEMABINDING AS (
      LEFT JOIN dbo.EstadoPago               ep WITH (NOLOCK) ON ep.idEstadoPago      = cc.idEstadoPago
      LEFT JOIN dbo.TiempoCredito            tc WITH (NOLOCK) ON tc.idTiempoCredito   = cc.idTiempoCredito
     INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+    INNER JOIN Customer.Customer            cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
     
 
 )

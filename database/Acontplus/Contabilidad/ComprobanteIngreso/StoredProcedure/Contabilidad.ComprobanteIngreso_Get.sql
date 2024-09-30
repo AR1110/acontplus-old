@@ -512,6 +512,7 @@ BEGIN
 	        WHERE ef.codigo = 'CHE'
               AND ci.estado = 1
               AND ci.idEntidad = @idEntidad
+              AND co.posfechado = 1
 
             RETURN 
         END 
