@@ -160,6 +160,21 @@ BEGIN
                     WHERE ne.idNotaEntrega = @id
                 END 
 
+            --> Proforma.
+            IF @codDoc = 'PF'
+                BEGIN
+                    SELECT TOP 1 cl.correo
+                                ,cl.telefono
+                                ,telefonoEstab  = se.telefono
+                                ,correoEstab    = se.correo
+                                ,nombreEstab    = se.nombreComercial
+                    FROM dbo.Proforma                   pf WITH(NOLOCK)
+                    INNER JOIN dbo.Cliente              cl WITH(NOLOCK) ON cl.idCliente         = pf.idCliente
+                    INNER JOIN dbo.PuntoEmision         pe WITH(NOLOCK) ON pe.idPuntoEmision    = pf.idPuntoEmision
+                    INNER JOIN Sri.Establecimiento      se WITH(NOLOCK) ON se.idEstablecimiento = pe.idEstablecimiento 
+                    WHERE pf.idProforma = @id
+                END
+
             RETURN 
         END 
 
