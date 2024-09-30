@@ -14,7 +14,7 @@ import { MeasureRead } from '@modules/inventory/models/measure.model';
 import { MeasureService } from '@modules/inventory/services/measure.service';
 import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { MatPagination } from '@shared/models/pagination.model';
-import { PrimaryStatusPipe } from '@shared/pipe/primary-status.pipe';
+import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -29,63 +29,49 @@ import Swal from 'sweetalert2';
     MatCardModule,
     MatIconModule,
     MatTableModule,
-    CustomTableContainerComponent
+    CustomTableContainerComponent,
   ],
   templateUrl: './measure-page.component.html',
-  styles: ``
+  styles: ``,
 })
 export class MeasurePageComponent {
   measureSvc = inject(MeasureService);
-  private tS = inject(ToasterService)
-  private sharedSvc = inject(SharedService)
   pagination = signal(new MatPagination());
-
-
   displayedColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
-
-  dataSource = signal<MeasureRead[]>([])
-
+  dataSource = signal<MeasureRead[]>([]);
   isLoadingResults = false;
-
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-
-
-
-
   pageEvent!: PageEvent;
-
-
-
+  private tS = inject(ToasterService);
+  private sharedSvc = inject(SharedService);
 
   getMeasures() {
     let params = {
       pageIndex: this.pagination().pageIndex + 1,
-      pageSize: this.pagination().pageSize
-    }
+      pageSize: this.pagination().pageSize,
+    };
     this.isLoadingResults = true;
     this.measureSvc.getAll(params).subscribe({
-      next: response => {
+      next: (response) => {
         this.isLoadingResults = false;
-        this.dataSource.set(response)
+        this.dataSource.set(response);
         if (this.dataSource().length > 0) {
-          this.pagination.update(e => {
+          this.pagination.update((e) => {
             return {
               ...e,
-              totalRecords: this.dataSource()[0].totalRecords
-            }
-          })
+              totalRecords: this.dataSource()[0].totalRecords,
+            };
+          });
         }
       },
-      error: () => this.isLoadingResults = false
-    })
-
+      error: () => (this.isLoadingResults = false),
+    });
   }
 
   ngOnInit() {
     this.getMeasures();
   }
-
 
   refresh() {
     this.getMeasures();
@@ -93,17 +79,16 @@ export class MeasurePageComponent {
 
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,
         pageSize: e.pageSize,
         pageIndex: e.pageIndex,
-      }
-    })
+      };
+    });
     this.getMeasures();
   }
-
 
   askToDelete(data: any) {
     try {
@@ -114,29 +99,28 @@ export class MeasurePageComponent {
         confirmButtonText: 'Si, eliminar',
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
-        allowOutsideClick: false
-      }).then(result => {
+        allowOutsideClick: false,
+      }).then((result) => {
         if (result.isConfirmed) {
-          this.measureSvc.updateStatus(data.idMedida).subscribe(response => {
-            if (response.code == "0") {
+          this.measureSvc.updateStatus(data.idMedida).subscribe((response) => {
+            if (response.code == '0') {
               this.tS.toastr({
                 type: 'warning',
-                message: response.message
-              })
+                message: response.message,
+              });
             }
-            if (response.code == "1") {
+            if (response.code == '1') {
               this.tS.toastr({
                 type: 'success',
-                message: response.message
-              })
-              this.refresh()
+                message: response.message,
+              });
+              this.refresh();
             }
-          })
-
+          });
         }
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -146,10 +130,9 @@ export class MeasurePageComponent {
         idMedida: item.idMedida,
         descripcion: item.descripcion,
         codigo: item.codigo,
-      }
-    })
+      };
+    });
 
-    this.sharedSvc.exportToExcel(results, 'Listado de Medidas')
+    this.sharedSvc.exportToExcel(results, 'Listado de Medidas');
   }
-
 }

@@ -109,7 +109,7 @@ export class AuthService {
   // User profile
   // getUserProfile(id: any): Observable<any> {
   //   let api = `${this.URL}/user-profile/${id}`;
-  //   return this.http.get(api, { headers: this.headers }).pipe(
+  //   return this.http.get(api, { headers: this.headers }).pipes(
   //     map((res) => {
   //       return res || {};
   //     }),

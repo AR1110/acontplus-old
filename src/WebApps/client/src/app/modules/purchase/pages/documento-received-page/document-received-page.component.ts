@@ -11,7 +11,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { Subcategory } from '@accounting/models/subcategory';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { ToasterService } from '@core/services/toaster.service';
 import Swal from 'sweetalert2';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
@@ -22,6 +22,8 @@ import { DocumentoReceived } from '@purchase/models/document-received.model';
 import { DocumentReceivedService } from '@purchase/services/document-received.service';
 import { MatPagination } from '@shared/models/pagination.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-documento-received-page',
@@ -39,6 +41,11 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
     InputNumberDirective,
     MatButton,
     MatPaginator,
+    MatIcon,
+    MatIconButton,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
   ],
   templateUrl: './document-received-page.component.html',
   styles: ``,
@@ -202,4 +209,27 @@ export class DocumentReceivedPageComponent {
     this.pagination().pageSize = $event.pageSize;
     this.loadData();
   }
+
+  getById(item: any) {
+    this._documentReceivedService
+      .getById(item.idDocumento)
+      .subscribe((response) => {
+        if (!response.payload) {
+          this._tS.toastr({
+            type: 'warning',
+            message: 'Aun no se actualizado el Xml del SRI',
+          });
+        }
+      });
+  }
+
+  getMergedDocs(item: any) {}
+
+  putXml(item: any) {}
+
+  downloadXml(item: any) {}
+
+  askToDelete(item: any) {}
+
+  getRide(item: any) {}
 }

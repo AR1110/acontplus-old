@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IDENTIFICATION_CODE, PATHS_API } from '@core/constants/global.constants';
+import { PATHS_API } from '@core/constants/global.constants';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { CompanyCustomerSearch } from '@modules/customer/company-customer/models/company-customer';
@@ -12,26 +12,26 @@ import { map, Observable } from 'rxjs';
 export class CompanyCustomerService {
   //For customers of Acontplus Customers (cliente)
   private url = `${PATHS_API.FACT_ELECT}CompanyCustomer/`;
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getAll<T extends {pageIndex:number;pageSize:number}>(obj:T){
+  getAll<T extends { pageIndex: number; pageSize: number }>(obj: T) {
     let json = JSON.stringify({
       ...obj,
       tipo: 1,
       pageIndex: obj.pageIndex,
-      pageSize: obj.pageSize
-    })
+      pageSize: obj.pageSize,
+    });
     return this.http.get(`${this.url}?json=${json}`).pipe(
-      map(response=>{
+      map((response) => {
         let results = [];
-        if(isApiResponse(response)){
-          if(response.code==="0"){
-            console.log(response)
+        if (isApiResponse(response)) {
+          if (response.code === '0') {
+            console.log(response);
           }
-          if(response.code==="1"){
+          if (response.code === '1') {
             let mainData = JSON.parse(response.payload as string)[0];
 
-            results = mainData.map((item:any)=>{
+            results = mainData.map((item: any) => {
               let obj = {
                 idCliente: item.idCliente,
                 idTipoIdentificacion: item.idTipoIdentificacion,
@@ -48,14 +48,14 @@ export class CompanyCustomerService {
                 estado: item.estado,
                 esConsumidorFinal: item.codTipoIdentificacion === 'CF',
                 totalRecords: item.totalRecords,
-              }
+              };
               return obj;
-            })
+            });
           }
         }
         return results;
-      })
-    )
+      }),
+    );
   }
 
   async checkExistence(params: any) {
@@ -82,10 +82,10 @@ export class CompanyCustomerService {
       map((response) => {
         let result = {} as any;
         if (isApiResponse(response)) {
-          if (response.code === "0") {
-            console.log(response)
+          if (response.code === '0') {
+            console.log(response);
           }
-          if (response.code === "1") {
+          if (response.code === '1') {
             let dataRepository = JSON.parse(response.payload as string)[0];
 
             result = {
@@ -113,24 +113,30 @@ export class CompanyCustomerService {
               idCargo: dataRepository.idCargo,
               placa: dataRepository.placa,
               validationSri: dataRepository.validationSri,
-              correos: dataRepository.correo ? dataRepository.correo.split('|') : [],
-              telefonos: dataRepository.telefono ? dataRepository.telefono.split('|') : [],
-              placas: dataRepository.placa !== '' ? dataRepository.placa.split('|') : [],
-              idFormaPagoSri: dataRepository.idFormaPagoSri
-            }
+              correos: dataRepository.correo
+                ? dataRepository.correo.split('|')
+                : [],
+              telefonos: dataRepository.telefono
+                ? dataRepository.telefono.split('|')
+                : [],
+              placas:
+                dataRepository.placa !== ''
+                  ? dataRepository.placa.split('|')
+                  : [],
+              idFormaPagoSri: dataRepository.idFormaPagoSri,
+            };
           }
-
         }
 
         return result;
-      })
+      }),
     );
   }
 
   // getDataForm() {
   //   return this.http
   //     .get(this.url + '?json=' + JSON.stringify({ tipo: 2 }))
-  //     .pipe(map((response) => response));
+  //     .pipes(map((response) => response));
   // }
 
   /**
@@ -139,11 +145,11 @@ export class CompanyCustomerService {
    */
   getDataForm() {
     let json = JSON.stringify({
-      tipo: 2
-    })
-    console.log('kjdhkjdhkjhk')
+      tipo: 2,
+    });
+    console.log('kjdhkjdhkjhk');
     return this.http.get(`${this.url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         let result = {
           tipoIdentificacion: [],
           tipoContribuyentes: [],
@@ -153,9 +159,9 @@ export class CompanyCustomerService {
           empresas: [],
           cargos: [],
           formasPagoSri: [],
-        }
+        };
         if (isApiResponse(response)) {
-          if (response.code === "1") {
+          if (response.code === '1') {
             let mainData = JSON.parse(response.payload as string);
 
             result.tipoIdentificacion = mainData[0];
@@ -166,28 +172,27 @@ export class CompanyCustomerService {
             result.empresas = mainData[5] || [];
             result.cargos = mainData[6] || [];
             result.formasPagoSri = mainData[7] || [];
-
           }
         }
         return result;
-      })
-    )
+      }),
+    );
   }
 
   post(data: any) {
-    return this.http
-      .post(this.url, { data: data })
-      .pipe(map((response) => {
-        let result = {} as ApiResponse
-        if(isApiResponse(response)){
-          let payload = JSON.parse(response.payload as string)[0]
+    return this.http.post(this.url, { data: data }).pipe(
+      map((response) => {
+        let result = {} as ApiResponse;
+        if (isApiResponse(response)) {
+          let payload = JSON.parse(response.payload as string)[0];
           result = response;
           result.payload = {
-            id: payload.idCliente
-          }
+            id: payload.idCliente,
+          };
         }
-        return result
-      }));
+        return result;
+      }),
+    );
   }
 
   put(id: number, data: any) {
@@ -197,14 +202,14 @@ export class CompanyCustomerService {
   }
 
   search<T extends { textSearch: string }>(
-    data: T
+    data: T,
   ): Observable<Array<CompanyCustomerSearch>> {
     let query = {
       textSearch: data.textSearch,
     };
     return this.http
       .get(`${this.url}Search?json=${JSON.stringify(query)}`, {
-        context: getNoLoader()
+        context: getNoLoader(),
       })
       .pipe(
         map((response) => {
@@ -215,11 +220,11 @@ export class CompanyCustomerService {
             return customers || [];
           }
           return [];
-        })
+        }),
       );
   }
 
-  updateState(id:number){
-    return this.http.delete(`${this.url}${id}`)
+  updateState(id: number) {
+    return this.http.delete(`${this.url}${id}`);
   }
 }

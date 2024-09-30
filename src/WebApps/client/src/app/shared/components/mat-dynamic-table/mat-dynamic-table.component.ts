@@ -27,7 +27,7 @@ import { TableCellIndex } from '@shared/models/mat-table-models/table-cell-index
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSortModule } from '@angular/material/sort';
 import { CommonModule, DatePipe, DecimalPipe, NgClass } from '@angular/common';
-import { GetTotalPipe } from '@shared/pipe/get-total.pipe';
+import { GetTotalPipe } from '@shared/pipes/get-total.pipe';
 
 @Component({
   selector: 'app-mat-dynamic-table',
