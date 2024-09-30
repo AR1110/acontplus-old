@@ -64,7 +64,7 @@ BEGIN
 
 		    -- C - create
 			INSERT INTO Ventas.CreditoGarante 
-				   (idCuentaPorCobrar, idCliente, idUsuario, fechaRegistro)
+				  (idCuentaPorCobrar, idCliente, idUsuario, fechaRegistro)
 			SELECT idCuentaPorCobrar, idCliente, @idUsuario,@fechaRegistro 
 			FROM @tbCreditoGarante  tb
 			WHERE tb.tipoAccion='C'

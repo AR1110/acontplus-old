@@ -22,7 +22,7 @@ BEGIN
 	DECLARE @idUsuario INT,@idEntidad INT ,@payload VARCHAR(MAX) ,@idCliente INT
 
     --> Data Cliente
-    DECLARE @IDType VARCHAR(10) ,@idTipoIdentificacion INT ,@numeroIdentificacion NVARCHAR(15) ,@customerId INT
+    DECLARE @idTipoIdentificacion INT ,@numeroIdentificacion NVARCHAR(15) ,@customerId INT
 
     DECLARE @tblCliente AS TABLE(
         idTipoClienteProveedor INT NULL
@@ -34,7 +34,7 @@ BEGIN
        ,idEmpleado INT NULL
        ,idEmpresa INT NULL
        ,idCargo INT NULL
-       ,idFormaPagoSri INT NULL
+       ,FormaPagoSriId INT NULL
        ,numeroIdentificacion VARCHAR(20) UNIQUE NOT NULL
        ,nombreFiscal VARCHAR(300) NOT NULL
        ,nombreComercial VARCHAR(300) NOT NULL
@@ -55,8 +55,8 @@ BEGIN
 
         --> Data Json 
         INSERT INTO @tblCliente 
-              (idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri,infoCrediticia)
-	    SELECT idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri,infoCrediticia
+              (idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri,infoCrediticia)
+	    SELECT idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri,infoCrediticia
 	    FROM OPENJSON(@json) WITH
         (
              idEmpleado             INT 
@@ -68,7 +68,7 @@ BEGIN
 	        ,idTiempoCredito        INT 
 	        ,idEmpresa              INT
 	        ,idCargo			    INT
-            ,idFormaPagoSri         INT
+            ,FormaPagoSriId         INT '$.idFormaPagoSri'
 		    ,numeroIdentificacion   VARCHAR(50) 
 		    ,nombreFiscal           VARCHAR(100) 
 		    ,nombreComercial        VARCHAR(100) 
@@ -85,6 +85,8 @@ BEGIN
         --> Recuperando Informacion
         SELECT TOP 1 @numeroIdentificacion = LTRIM(RTRIM(numeroIdentificacion)) , @idTipoIdentificacion = idTipoIdentificacion FROM @tblCliente 
 
+        SELECT TOP 1 @customerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @numeroIdentificacion
+
         --> Validacion de informacion 
         IF NOT EXISTS(SELECT 1 FROM @tblCliente)
             BEGIN
@@ -92,7 +94,7 @@ BEGIN
                 RETURN
             END
 
-	    IF EXISTS (SELECT 1 FROM Cliente WITH (NOLOCK) WHERE numeroIdentificacion = @numeroIdentificacion AND idEntidad = @idEntidad)
+	    IF EXISTS (SELECT 1 FROM Cliente WITH (NOLOCK) WHERE  CustomerId = @customerId AND idEntidad = @idEntidad)
 		    BEGIN
 			    SELECT [Common].[ufnSpResponse]('0','El cliente ya se encuentra registrado', DEFAULT)
 			    RETURN 
@@ -102,6 +104,8 @@ BEGIN
 
 			IF NOT EXISTS(SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @numeroIdentificacion)
 				BEGIN
+                    DECLARE @IDType VARCHAR(10)
+
 					SELECT TOP 1 @IDType = codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion
 
 					INSERT INTO Customer.Customer WITH (ROWLOCK)
@@ -117,10 +121,8 @@ BEGIN
 				END
 			
 			INSERT INTO Cliente WITH (ROWLOCK)
-			      (idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,
-                  idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,montoCredito,nota,validationSri,idUsuario,idEntidad,customerId)
-			SELECT idTipoIdentificacion,idEmpleado,IIF(idTipoClienteProveedor = 0, NULL, idTipoClienteProveedor),idTipoEntidad,idCiudad,IIF(idSubContribuyente = 0, NULL, idSubContribuyente),
-                IIF(idTiempoCredito = 0, NULL, idTiempoCredito),IIF(idEmpresa = 0, NULL, idEmpresa), IIF(idCargo = 0, NULL, idCargo),idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,montoCredito,nota,validationSri,@idUsuario,@idEntidad,@customerId
+			      (idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,direccion,telefono,correo,placa,montoCredito,nota,idUsuario,idEntidad,customerId)
+			SELECT idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,direccion,telefono,correo,placa,montoCredito,nota,@idUsuario,@idEntidad,@customerId
             FROM @tblCliente
 
 		    SET @idCliente = @@IDENTITY
