@@ -235,21 +235,21 @@ BEGIN
 			IF @codDoc IN ('01','04')
 				BEGIN	
                     --> Proveedor
-					IF NOT EXISTS(SELECT 1 FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@rucEmisor)))
+					IF NOT EXISTS(SELECT 1 FROM dbo.Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @customerId )
 						BEGIN
                             
                             SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '04'
 
-							INSERT INTO Proveedor WITH (ROWLOCK)
-                                   (idTipoIdentificacion,nombreFiscal,nombreComercial,numeroIdentificacion,direccion,idEntidad,CustomerId,validationSri)
-							SELECT @idTipoIdentificacion,razonSocialEmisior,nombreComercial,rucEmisor,dirMatriz,@idEntidad,@customerId,1
+							INSERT INTO dbo.Proveedor 
+                                   (idTipoIdentificacion,direccion,idEntidad,CustomerId)
+							SELECT @idTipoIdentificacion,dirMatriz,@idEntidad,@customerId
                             FROM @tbDocumento 
 
                             SELECT @idProveedor = SCOPE_IDENTITY()
 						END
                     ELSE 
                         BEGIN
-                            SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@rucEmisor)) 
+                            SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @customerId 
                         END 
 
                     --> Contabilidad

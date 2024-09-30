@@ -14,11 +14,11 @@ CREATE OR ALTER VIEW v_CuentaPorPagar WITH SCHEMABINDING AS (
           ,es.codEstab
 		  ,cp.codDoc
 		  ,cp.uniqueId
-		  ,razonSocialProveedor = pr.nombreFiscal
-		  ,identificacionProveedor = pr.numeroIdentificacion
+		  ,cu.TradeName                                                                as razonSocialProveedor
+		  ,cu.IDCard                                                                   as identificacionProveedor
           ,pr.CustomerId
 		  ,cp.serieComprobante
-		  ,secuencial = REPLACE(LTRIM(REPLACE(SUBSTRING(cp.serieComprobante,9,9),'0',' ')),' ','0')
+		  ,REPLACE(LTRIM(REPLACE(SUBSTRING(cp.serieComprobante,9,9),'0',' ')),' ','0') as secuencial
 		  ,cp.fechaEmision
 		  ,cp.fechaVencimiento
 		  ,cp.importeTotal
@@ -43,4 +43,5 @@ CREATE OR ALTER VIEW v_CuentaPorPagar WITH SCHEMABINDING AS (
 	INNER JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario         = cp.idUsuario
      LEFT JOIN dbo.TiempoCredito        tc WITH (NOLOCK) ON tc.idTiempoCredito   = cp.idTiempoCredito
      LEFT JOIN Contabilidad.Subcategory sc WITH (NOLOCK) ON sc.Id                = cp.SubcategoryId 
+    INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                = pr.CustomerId
 )

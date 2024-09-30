@@ -275,6 +275,7 @@ BEGIN
             WHERE ef.codigo = 'CHE'
               AND ce.estado = 1
               AND ce.idEntidad = @idEntidad
+              AND pa.posfechado = 1
 
             RETURN 
         END 

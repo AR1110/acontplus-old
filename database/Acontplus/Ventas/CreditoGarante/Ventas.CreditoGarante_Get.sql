@@ -15,30 +15,36 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH 
-	DECLARE @idCuentaPorCobrar INT 
+
+	
     DECLARE @tipo INT  
 
-    SELECT @tipo = tipo, @idCuentaPorCobrar=idCuentaPorCobrar FROM OPENJSON(@json) WITH(tipo INT, idCuentaPorCobrar INT)
+    SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT)
 
     --> Get
     IF @tipo = 1
         BEGIN 
+            DECLARE @idCuentaPorCobrar INT 
+
+            SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH(idCuentaPorCobrar INT)
+
             SET @tableNames='guarantors'
-	        SELECT  
-                cg.idCreditoGarante
-				,cg.idCuentaPorCobrar
-				,c.idCliente
-				,razonSocialComprador = cc.BusinessName
-				,nombreComercial      = cc.TradeName
-				,identificacionComprador = cc.IDCard
-				,c.direccion
-				,c.correo
-				,c.telefono
-                ,tipoAccion = 'U'
+
+	        SELECT cg.idCreditoGarante
+				  ,cg.idCuentaPorCobrar
+				  ,cl.idCliente
+				  ,cl.nombreFiscal         as razonSocialComprador
+				  ,cl.nombreComercial
+				  ,cl.numeroIdentificacion as identificacionComprador
+				  ,cl.direccion
+				  ,cl.correo
+				  ,cl.telefono
+                  ,tipoAccion = 'U'
 	         FROM Ventas.CreditoGarante cg WITH (NOLOCK)
-			 INNER JOIN dbo.Cliente c WITH (NOLOCK) ON c.idCliente  = cg.idCliente
-			 INNER JOIN Customer.Customer cc WITH (NOLOCK) ON cc.Id = c.customerId
-	         WHERE cg.estado = 1 AND cg.idCuentaPorCobrar = @idCuentaPorCobrar
+			 INNER JOIN dbo.Cliente     cl WITH (NOLOCK) ON cl.idCliente  = cg.idCliente
+	         WHERE cg.estado = 1 
+               AND cg.idCuentaPorCobrar = @idCuentaPorCobrar
+
              RETURN
         END 
 		 
