@@ -188,14 +188,13 @@ BEGIN
 
 		SELECT TOP 1 @docOrigen = docOrigen , @docDestino = docDestino FROM @tbComprobante
 
-		SELECT	
-			@idPuntoEmision          = dt.idPuntoEmision 
-		   ,@identificacionComprador = numeroIdentificacion
-		   ,@estab                   = es.estab
-		   ,@ptoEmi                  = pt.ptoEmi
-		   ,@ambiente                = pt.ambiente
-		   ,@fechaEmision            = dt.fechaEmision
-           ,@idUsuario               = dt.idUsuario
+		SELECT @idPuntoEmision          = dt.idPuntoEmision 
+		      ,@identificacionComprador = numeroIdentificacion
+		      ,@estab                   = es.estab
+		      ,@ptoEmi                  = pt.ptoEmi
+		      ,@ambiente                = pt.ambiente
+		      ,@fechaEmision            = dt.fechaEmision
+              ,@idUsuario               = dt.idUsuario
 		FROM @tbComprobante dt 
 		INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = dt.idPuntoEmision
 		INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pt.idEstablecimiento
