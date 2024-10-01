@@ -1,20 +1,20 @@
-import { Component, inject, signal, ViewChild } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
-import { MatIconModule } from "@angular/material/icon";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
-import { MatTableDataSource, MatTableModule } from "@angular/material/table";
-import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
-import { CustomTableContainerComponent } from "@core/components/custom-table-container/custom-table-container.component";
-import { SharedService } from "@core/services/shared.service";
-import { ToasterService } from "@core/services/toaster.service";
-import { SubCategoryModalDirective } from "@modules/inventory/directives/sub-category.directive";
-import { SubCategoryService } from "@modules/inventory/services/sub-category.service";
-import { ActionAddDirective } from "@shared/directives/permission/action-add.directive";
-import { MatPagination } from "@shared/models/pagination.model";
-import { PrimaryStatusPipe } from "@shared/pipe/primary-status.pipe";
-import Swal from "sweetalert2";
+import { Component, inject, signal, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
+import { SharedService } from '@core/services/shared.service';
+import { ToasterService } from '@core/services/toaster.service';
+import { SubCategoryModalDirective } from '@modules/inventory/directives/sub-category.directive';
+import { SubCategoryService } from '@modules/inventory/services/sub-category.service';
+import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
+import { MatPagination } from '@shared/models/pagination.model';
+import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-subcategory-page',
@@ -28,42 +28,40 @@ import Swal from "sweetalert2";
     MatIconModule,
     MatTableModule,
     CustomTableContainerComponent,
-    SubCategoryModalDirective
+    SubCategoryModalDirective,
   ],
   templateUrl: './sub-category-page.component.html',
-
 })
 export class SubCategoryPageComponent {
-
-  private subCategorySvc = inject(SubCategoryService);
-  private tS = inject(ToasterService)
-  private sharedSvc = inject(SharedService)
   pagination = signal(new MatPagination());
-
-
-  displayedColumns: string[] = ['index', 'op', 'nombreFamilia', 'img', 'code', 'siglas', 'description', 'estado'];
-
+  displayedColumns: string[] = [
+    'index',
+    'op',
+    'nombreFamilia',
+    'img',
+    'code',
+    'siglas',
+    'description',
+    'estado',
+  ];
   dataSource = new MatTableDataSource<any>();
-
   isLoadingResults = false;
-
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-
-
-
-
   pageEvent!: PageEvent;
+  private subCategorySvc = inject(SubCategoryService);
+  private tS = inject(ToasterService);
+  private sharedSvc = inject(SharedService);
 
   onResultModal($event: any) {
-    this.refresh()
+    this.refresh();
   }
 
   getSubcategories() {
     let params = {
       pageIndex: this.pagination().pageIndex + 1,
-      pageSize: this.pagination().pageSize
-    }
+      pageSize: this.pagination().pageSize,
+    };
     this.isLoadingResults = true;
 
     this.subCategorySvc.getAll(params).subscribe({
@@ -74,23 +72,23 @@ export class SubCategoryPageComponent {
         this.dataSource.sort = this.sort;
 
         if (this.dataSource.data.length > 0) {
-          this.pagination.update(e => {
+          this.pagination.update((e) => {
             return {
               ...e,
-              totalRecords: this.dataSource.data[0].totalRecords
-            }
-          })
+              totalRecords: this.dataSource.data[0].totalRecords,
+            };
+          });
         }
       },
       error: (err) => {
         this.isLoadingResults = false;
-        console.log(err)
+        console.log(err);
       },
-    })
+    });
   }
 
   ngOnInit() {
-    this.getSubcategories()
+    this.getSubcategories();
   }
 
   refresh() {
@@ -98,14 +96,14 @@ export class SubCategoryPageComponent {
   }
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,
         pageSize: e.pageSize,
         pageIndex: e.pageIndex,
-      }
-    })
+      };
+    });
     this.getSubcategories();
   }
 
@@ -117,33 +115,34 @@ export class SubCategoryPageComponent {
         confirmButtonText: 'Si, eliminar',
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
-        allowOutsideClick: false
+        allowOutsideClick: false,
       });
 
       if (isConfirmed) {
-
-        this.subCategorySvc.updateStatus(obj.idSubFamilia).subscribe(response=>{
-          if(response.code==="0"){
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message
-            })
-          }
-          if (response.code === "1") {
-            this.tS.toastr({
-              type: 'success',
-              message: response.message
-            })
-            this.getSubcategories()
-          }
-        })
+        this.subCategorySvc
+          .updateStatus(obj.idSubFamilia)
+          .subscribe((response) => {
+            if (response.code === '0') {
+              this.tS.toastr({
+                type: 'warning',
+                message: response.message,
+              });
+            }
+            if (response.code === '1') {
+              this.tS.toastr({
+                type: 'success',
+                message: response.message,
+              });
+              this.getSubcategories();
+            }
+          });
       }
     } catch (error) {
       console.log(error);
     }
   }
 
-  exportToExcel(){
+  exportToExcel() {
     const results = this.dataSource.data.map((category: any) => {
       return {
         descripcion: category.descripcion,
@@ -151,11 +150,9 @@ export class SubCategoryPageComponent {
         codigo: category.codigo,
         nombreFamilia: category.nombreFamilia,
         ultimoSecuencial: category.ultimoSecuencial,
-      }
-    })
+      };
+    });
 
-    this.sharedSvc.exportToExcel(results, 'Listado de SubCategorias')
+    this.sharedSvc.exportToExcel(results, 'Listado de SubCategorias');
   }
-
-
 }

@@ -4,48 +4,41 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { CategoryRead } from '@modules/inventory/models/category.model';
 import { CategoryService } from '@modules/inventory/services/category.service';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
-import { PrimaryStatusPipe } from '@shared/pipe/primary-status.pipe';
+import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 
 @Component({
   selector: 'app-category-page',
   standalone: true,
-  imports: [
-    FormsModule,
-    NgbPagination,
-    BreadcrumbComponent,
-    PrimaryStatusPipe
-  ],
+  imports: [FormsModule, NgbPagination, BreadcrumbComponent, PrimaryStatusPipe],
   templateUrl: './category-page.component.html',
-  styles: ``
+  styles: ``,
 })
 export class CategoryPageComponent {
-  private categorySvc = inject(CategoryService)
-
   dataSearch = {
     pageIndex: 1,
     pageSize: 25,
     maxSize: 5,
-    totalRecords: 0
-  }
-  recordsQuantity = [25, 50, 100]
-
+    totalRecords: 0,
+  };
+  recordsQuantity = [25, 50, 100];
   categories: Array<CategoryRead> = [];
+  private categorySvc = inject(CategoryService);
 
   getCatgories() {
     let params = {
       pageIndex: this.dataSearch.pageIndex,
-      pageSize: this.dataSearch.pageSize
-    }
+      pageSize: this.dataSearch.pageSize,
+    };
 
-    this.categorySvc.getAll(params).subscribe( (categories) => {
-        this.categories = categories;
-        this.dataSearch.totalRecords = this.categories.length > 0 ? this.categories[0].totalRecords : 0
-
-    })
+    this.categorySvc.getAll(params).subscribe((categories) => {
+      this.categories = categories;
+      this.dataSearch.totalRecords =
+        this.categories.length > 0 ? this.categories[0].totalRecords : 0;
+    });
   }
 
   ngOnInit() {
-    this.getCatgories()
+    this.getCatgories();
   }
 
   pageChanged(): void {
@@ -56,5 +49,4 @@ export class CategoryPageComponent {
     this.dataSearch.pageIndex = 1;
     this.getCatgories();
   }
-
 }

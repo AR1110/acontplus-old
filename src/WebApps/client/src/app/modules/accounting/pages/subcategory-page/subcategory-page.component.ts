@@ -7,7 +7,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ModalService } from '@core/services/modal.service';
 import { SubcategoryModalComponent } from '@modules/accounting/pages/subcategory-page/subcategory-modal/subcategory-modal.component';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import { SecondaryStatusPipe } from '@shared/pipe/secondary-status.pipe';
+import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
 
 @Component({
   selector: 'app-subcategory-page',

@@ -58,4 +58,10 @@ export class DocumentReceivedService {
         }),
       );
   }
+
+  getById(id: number) {
+    return this.#http
+      .get<ApiResponse>(`${this.#url}${id}`)
+      .pipe(map((response) => response));
+  }
 }
