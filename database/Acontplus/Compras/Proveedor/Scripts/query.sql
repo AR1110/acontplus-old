@@ -14,7 +14,7 @@ go
 
 --alter table proveedor drop column nombreFiscal
 
---alter table proveedor add idUserUpdate INT CONSTRAINT fk_User_ProveedorUpdate FOREIGN KEY (idUserUpdate) references dbo.Usuario(idUsuario)
+--alter table proveedor add UpdatedByUserId INT CONSTRAINT fk_User_ProveedorUpdate FOREIGN KEY (UpdatedByUserId) references dbo.Usuario(idUsuario)
 
 --alter table proveedor add UdpatedAt DATETIME2 
 

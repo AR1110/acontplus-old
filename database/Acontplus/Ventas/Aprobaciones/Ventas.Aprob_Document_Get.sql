@@ -274,14 +274,15 @@ BEGIN
              WHERE d.idAprob_Document = @id
 
              SELECT cl.idCliente
-		           ,cl.nombreComercial
-		           ,cl.nombreFiscal
-		           ,cl.numeroIdentificacion
+		           ,cu.BusinessName         as nombreComercial
+		           ,cu.TradeName            as nombreFiscal
+		           ,cu.IDCard               as numeroIdentificacion
 		           ,ISNULL(cl.direccion,'') as direccion
 		           ,ti.codigoSri            as tipoIdentificacion
-	         FROM Ventas.Aprob_Document        ad
-	         INNER JOIN dbo.Cliente            cl WITH(NOLOCK) ON cl.idCliente            = ad.idCliente
-	          LEFT JOIN dbo.TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
+	         FROM Ventas.Aprob_Document        ad WITH (NOLOCK)
+	         INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente            = ad.idCliente
+	         INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                   = cl.CustomerId
+             INNER JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
 	         WHERE ad.idAprob_Document = @id
 
              SELECT dt.idAprob_Document_Detailt
