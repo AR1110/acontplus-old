@@ -35,7 +35,7 @@ export class ReceptionReportsPageComponent {
   establecimientos: Array<
     Omit<EstablecimientoSelectHtmlOnly, 'predeterminado'>
   > = [];
-  tiposComprobante: Array<Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>> = [];
+  documentTypes: Array<Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>> = [];
   subcategories: Subcategory[] = [];
   isSearchSupplierSimple = true;
   dataSearch = {
@@ -72,16 +72,16 @@ export class ReceptionReportsPageComponent {
 
   ngOnInit() {
     this.docReceivedSvc.getDataFilter().subscribe((response) => {
-      const { establecimientos, tiposComprobante, subcategories } = response;
+      const { establecimientos, documentTypes, subcategories } = response;
       this.establecimientos = establecimientos;
-      this.tiposComprobante = tiposComprobante;
+      this.documentTypes = documentTypes;
       this.subcategories = subcategories;
       if (this.establecimientos.length > 0) {
         this.dataSearch.codEstab = this.establecimientos[0].codEstab;
       }
-      if (this.tiposComprobante.length > 0) {
+      if (this.documentTypes.length > 0) {
         this.dataSearch.codDoc =
-          this.tiposComprobante.find(
+          this.documentTypes.find(
             (tipoDoc) => tipoDoc.codigoSri === DOC_TYPE_SRI.F,
           )?.codigoSri || '';
       }

@@ -40,7 +40,7 @@
             id="tipoComprobante"
             name="tipoComprobante"
           >
-            @for (item of tiposComprobante; track $index) {
+            @for (item of documentTypes; track $index) {
               <option [ngValue]="item.codigoSri">{{ item.descripcion }}</option>
             }
           </select>

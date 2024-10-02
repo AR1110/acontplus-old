@@ -30,8 +30,8 @@
             <select (change)="onChangeTipoDoc()" [(ngModel)]="dataSearch.codDoc"
                     class="form-select border-select" id="tipoComprobante">
               <option [ngValue]="">Todos</option>
-              @for (item of tipoComprobantes; track $index) {
-                <option [ngValue]="item.codDoc">
+              @for (item of documentTypes; track $index) {
+                <option [ngValue]="item.codigoSri">
                   {{ item.descripcion }}
                 </option>
               }
@@ -136,7 +136,7 @@
 
     <ng-template #templateOp let-item="item">
       <mat-menu #menu="matMenu">
-        <button (click)="getById(item)" mat-menu-item>
+        <button (click)="openModalDocument(item)" mat-menu-item>
           <mat-icon>upload</mat-icon>
           Visualizar Comprobante
         </button>

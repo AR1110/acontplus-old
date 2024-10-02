@@ -24,6 +24,10 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { RetencionHtmlComponent } from '@billing/components/documents/retencion-html/retencion-html.component';
+import { TipoDoc } from '@core/models/tipo-doc.model';
+import { InvoiceHtmlComponent } from '@billing/components/documents/invoice-html/invoice-html.component';
+import { CreditNoteHtmlComponent } from '@billing/components/documents/credit-note-html/credit-note-html.component';
 
 @Component({
   selector: 'app-documento-received-page',
@@ -75,7 +79,7 @@ export class DocumentReceivedPageComponent {
     claveAcceso: '',
     rucProveedor: '',
   };
-  tipoComprobantes: any[] = [];
+  documentTypes: TipoDoc[] = [];
   extraOptionsIcon: IconProp = 'eye';
   extraOptionsTooltip: string = 'Ver más filtros';
   moreOptionsFilter: boolean = false;
@@ -114,9 +118,10 @@ export class DocumentReceivedPageComponent {
     return false;
   }
 
-  getEstabs() {
-    this._sharedService.getEstabAsign().subscribe((response) => {
-      this.establecimientos = response;
+  loadFilters() {
+    this._documentReceivedService.getDataFilter().subscribe((response) => {
+      this.establecimientos = response.establecimientos;
+      this.documentTypes = response.documentTypes;
       let codEstabFound = this.establecimientos.find(
         (x) => x.predeterminado,
       )?.codEstab;
@@ -149,7 +154,7 @@ export class DocumentReceivedPageComponent {
   }
 
   ngOnInit() {
-    this.getEstabs();
+    this.loadFilters();
   }
 
   onDateRangeSelection($event: { from: string; to: string }) {
@@ -210,17 +215,37 @@ export class DocumentReceivedPageComponent {
     this.loadData();
   }
 
-  getById(item: any) {
-    this._documentReceivedService
-      .getById(item.idDocumento)
-      .subscribe((response) => {
-        if (!response.payload) {
-          this._tS.toastr({
-            type: 'warning',
-            message: 'Aun no se actualizado el Xml del SRI',
-          });
-        }
-      });
+  openModalDocument(item: any) {
+    switch (item.codDoc) {
+      case '07':
+        this._modalService.openModalCustom(RetencionHtmlComponent, {
+          centered: true,
+          size: 'xl',
+        });
+        break;
+      case '04':
+        this._modalService.openModalCustom(CreditNoteHtmlComponent, {
+          centered: true,
+          size: 'xl',
+        });
+        break;
+      default:
+        this._modalService.openModalCustom(InvoiceHtmlComponent, {
+          centered: true,
+          size: 'xl',
+        });
+        break;
+    }
+    // this._documentReceivedService
+    //   .getById(item.idDocumento)
+    //   .subscribe((response) => {
+    //     if (!response.payload) {
+    //       this._tS.toastr({
+    //         type: 'warning',
+    //         message: 'Aun no se actualizado el Xml del SRI',
+    //       });
+    //     }
+    //   });
   }
 
   getMergedDocs(item: any) {}
