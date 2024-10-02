@@ -21,7 +21,7 @@ export class DocumentReceivedService {
       map((response) => {
         if (isApiResponse(response)) {
           let mainData = JSON.parse(response.payload as string);
-          const tiposComprobante = mainData.tipoComprobantes.map(
+          const documentTypes = mainData.tipoComprobantes.map(
             (tipoDoc: any) => {
               return {
                 descripcion: tipoDoc.descripcion,
@@ -32,12 +32,12 @@ export class DocumentReceivedService {
           return {
             establecimientos: mainData.establecimientos,
             subcategories: mainData.subcategories,
-            tiposComprobante,
+            documentTypes: documentTypes,
           };
         }
         return {
           establecimientos: [],
-          tiposComprobante: [],
+          documentTypes: [],
         };
       }),
     );
