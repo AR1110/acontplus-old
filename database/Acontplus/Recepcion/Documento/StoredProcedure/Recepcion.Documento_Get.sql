@@ -182,9 +182,9 @@ BEGIN
             
             SET @tableNames = 'establecimientos,tipoComprobantes,subcategories'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
+            SELECT idEstablecimiento,codEstab,nombreComercial, predeterminado FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
 
-            SELECT descripcion,codigoSri as codDoc FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','04','07') ORDER BY codigoSri
+            SELECT descripcion,codigoSri as codDoc, codigoSri FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','04','07') ORDER BY codigoSri
 
             SELECT * FROM Contabilidad.subcategory  WITH (NOLOCK) WHERE companyId = @idEntidad AND Enabled = 1
 
@@ -238,7 +238,7 @@ BEGIN
 			        FROM FactElect.RetAtsDocSustento retDoc
 			        INNER JOIN FactElect.RetencionAts rAts ON rAts.idRetencionAts       = retDoc.idRetencionAts
                     INNER JOIN dbo.DocumentoElectronico de ON de.idDocumentoElectronico = rAts.idDocumentoElectronico
-                    INNER JOIN dbo.Proveedor            pr ON pr.idProveedor            = rAts.idProveedor
+                    INNER JOIN Compra.v_Proveedor            pr ON pr.idProveedor            = rAts.idProveedor
 			        WHERE retDoc.numAutDocSustento = @claveAcceso
 			          AND rAts.anuladaSri = 0
 		        END
