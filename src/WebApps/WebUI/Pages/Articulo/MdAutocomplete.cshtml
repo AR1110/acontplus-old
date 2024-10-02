@@ -74,23 +74,23 @@
  
  
 @* <div ng-submit="$event.preventDefault()"> *@
-        <!-- md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"  -->
+        <!-- md-search-text-change="searchTextChange(searchText)"  -->
 <div class="mb-1" id="">
     <md-autocomplete id="mainContentMdAutocomplete" 
     input-focus md-input-id="custom-template-md-autocomplete-articulo"
         uib-tooltip="Buscar Artículo por descripción o Código " 
         tooltip-placement="top" 
         tooltip-trigger="'mouseenter'"
-        ng-enter="$ctrl.getDataArticuloByEnterCode();" 
+        ng-enter="getDataArticuloByEnterCode();" 
         md-no-cache="false"
-        md-selected-item="$ctrl.selectedItem"
-        md-search-text="$ctrl.searchText"
-        md-selected-item-change="$ctrl.selectArticleSearch(item)" 
-        md-items="item in $ctrl.searchTextChange($ctrl.searchText)"
+        md-selected-item="selectedItem"
+        md-search-text="searchText"
+        md-selected-item-change="selectArticleSearch(item)" 
+        md-items="item in searchTextChange(searchText)"
         md-item-text="item.descripcion"
-        ng-focus="$ctrl.focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')" 
+        ng-focus="focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')" 
         md-escape-options="clear"
-        input-aria-label="Buscador Articulo" placeholder="{{$ctrl.placeholder}}"
+        input-aria-label="Buscador Articulo" placeholder="{{placeholder}}"
         md-menu-class="autocomplete-standard-template" 
         md-menu-container-class="standard-container" md-mode="standard"
         md-clear-button="false">
@@ -121,7 +121,7 @@
                             </td>
                             <td class="column-articulo-descripcion text-left" uib-tooltip="{{item.descripcion}}"
                                 tooltip-placement="bottom" tooltip-trigger="focus">
-                                <img ng-if="item.s3ObjectUrl" ng-click="$ctrl.previewImg($event, item)" src="{{item.s3ObjectUrl}}" class="img-thumbnail" width="30">
+                                <img ng-if="item.s3ObjectUrl" ng-click="previewImg($event, item)" src="{{item.s3ObjectUrl}}" class="img-thumbnail" width="30">
                                 <span class="item-desc font-weight-bold">
                                     {{item.descripcion}}
                                 </span>
@@ -159,18 +159,18 @@
             </div>
         </md-item-template>
         <md-not-found>
-            No se encontraron estados que coincidan con "{{$ctrl.searchText}}".
+            No se encontraron estados que coincidan con "{{searchText}}".
         </md-not-found>
         @* <md-not-found>
         No hay estados coincidentes con "{{searchText}}"
         </md-not-found> *@
     </md-autocomplete> 
     <a href="javascript:void(0)" class="btn btn-success btn-xs mt-1" ng-if="$parent.articlePermission.crear"
-        tabindex="-1" ng-click="$ctrl.openModalArticulo()">
+        tabindex="-1" ng-click="openModalArticulo()">
         <i class="fas fa-plus"></i> Nuevo
     </a>
     <a href="javascript:void(0)" class="btn btn-info btn-xs mt-1" tabindex="-1"
-        ng-click="$ctrl.openModalArticuloGeneral()">
+        ng-click="openModalArticuloGeneral()">
         <i class="fas fa-search"></i> Lista
     </a>
 </div>

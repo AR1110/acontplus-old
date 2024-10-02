@@ -197,13 +197,13 @@
                     convertToDoc: $scope.dataSearch.convertToDoc
                 }
 
-            
+
                 $scope.notaEntregas = [];
                 $scope.cloneNotaEntregas = [];
                 getTotales();
 
                 notaEntregaSvc.getAll(dataSearch).then(response => {
-                    
+
                     let { notaEntregas, dataTotals } = response;
                     $scope.notaEntregas = notaEntregas;
                     $scope.cloneNotaEntregas = structuredClone($scope.notaEntregas);
@@ -212,10 +212,10 @@
                     getTotales();
 
                 }).catch(error => {
-                    $scope.dataSearch.totalRecords = 0; 
+                    $scope.dataSearch.totalRecords = 0;
                     console.log(error)
                 })
-            } catch (error) { 
+            } catch (error) {
                 $scope.dataSearch.totalRecords = 0;
                 console.log(error)
             }
@@ -227,10 +227,10 @@
 
 
         initiload();
-         function initiload() {
-          
+        function initiload() {
+
             notaEntregaSvc.getDataFilter().then(response => {
-               
+
                 $scope.establecimientos = response.estabs;
                 $scope.estadoDocumentos = response.estadosDoc;
 
@@ -243,13 +243,13 @@
                 } else {
                     tS.toastr('warning', 'No tienes asignado Establecimiento!')
                 }
-            }) 
+            })
 
-           
+
             notaEntregaSvc.getDataForm().then(response => {
                 mainDataForm = structuredClone(response);
                 $scope.permisoEditarDoc = response.permisoEditarDoc;
-            }) 
+            })
 
         }
 
@@ -744,8 +744,11 @@
         let articuloSvc = $injector.get('articuloService');
         let facturaSvc = $injector.get('facturaService');
         let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+        let productUtil = $injector.get('productUtil');
         let infoAdicionalConfig = [];
         let isSetInfoAdicionalConfig = true;
+
+        console.log(productUtil)
 
 
         $scope.tipoDoc = TIPO_DOC_NE;
@@ -810,6 +813,8 @@
 
         $scope.indexRow = null; //Indice del items del detalle 
 
+        $scope.refProductoVenta = new productUtil.ProductoVenta({}, onCallbackDataArticulo, editColCantidad)
+
         //GridOptions Invoice 
         $scope.gridOptions = {
             enableColumnMenus: false,
@@ -860,20 +865,22 @@
                 if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue) return
 
                 //Verificacion del stock
-                if (["idMedida", "cantidad"].includes(colDef.field)) {
+                if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
                     checkNotificationStock(colDef.field, rowEntity, oldValue);
                     return
                 }
-                // if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
-                //     checkNotificationStock(colDef.field, rowEntity, oldValue);
-                //     return
-                // }
+                if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue && rowEntity.cantidad > oldValue) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
+                }
                 if (colDef.field === 'idBodega' && rowEntity.idBodega !== oldValue) {
                     checkNotificationStock(colDef.field, rowEntity, oldValue);
                     return
                 }
 
                 setCalculoTotales(colDef.field, rowEntity, oldValue);
+                updateRefProductoVenta()
+
             })
         }
 
@@ -894,65 +901,71 @@
                     return;
                 }
 
-                // Clona el objeto de la fila y la lista de artículos para evitar modificaciones directas.
-                let rowItemClone = structuredClone(rowEntity);
-                let gridOptionsClone = structuredClone($scope.gridOptions.data);
-
-                // Realiza la fusión de elementos en la lista de artículos clonada.
-                let dataItemMerge = fS.mergeItemStock(gridOptionsClone, rowItemClone);
-
-                // Si la cantidad no ha cambiado, no realizar más acciones.
-                if (dataItemMerge.cantidad == oldValue) return;
-
-
-                // Llama a un servicio para verificar la notificación de stock.
-                let cantidadStock = fS.getCantidadStock(dataItemMerge, $scope.data.fechaEmision);
-                if (cantidadStock === 0) {
-                    setCalculoTotales(field, rowEntity, oldValue);
-                    return;
-                }
-
-                showLoader();
-                articuloSvc.checkNotificationStock({
-                    idArticulo: rowEntity.idArticulo,
-                    cantidad: cantidadStock,
-                    idBodega: rowEntity.idBodega,
-                    idMedida: rowEntity.idMedida
-                }).then(async responseApi => {
-                    hideLoader();
-                    let { code, message, titleSms } = responseApi;
-                    if (code === "1") {
-
-                        setCalculoTotales(field, rowEntity, oldValue);
-                        return
-                    }
-
-                    let { isConfirmed } = await Swal.fire({
-                        title: `<small>${titleSms}</small>`,
-                        icon: 'warning',
-                        html: `<small>${message}</small>`,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                    })
-
-                    if (isConfirmed) {
-                        if (code === "0") {
-                            rowEntity[field] = oldValue;
-                            setCalculoTotales(field, rowEntity, oldValue);
-                            $("#custom-template-md-autocomplete-articulo").focus();
-                        }
-                        if (code === "2") {
-                            setCalculoTotales(field, rowEntity, oldValue);
-                        }
-                    }
-
-                }).catch(error => {
-                    hideLoader();
-                    console.log(error)
+                $scope.refProductoVenta.onCantidadEdit({
+                    items: $scope.gridOptions.data,
+                    row: rowEntity,
+                    oldValue,
+                    field
                 })
 
+
+                // // Clona el objeto de la fila y la lista de artículos para evitar modificaciones directas.
+                // let rowItemClone = structuredClone(rowEntity);
+                // let gridOptionsClone = structuredClone($scope.gridOptions.data);
+
+                // // Realiza la fusión de elementos en la lista de artículos clonada.
+                // let dataItemMerge = fS.mergeItemStock(gridOptionsClone, rowItemClone);
+
+                // // Si la cantidad no ha cambiado, no realizar más acciones.
+                // if (dataItemMerge.cantidad == oldValue) return;
+
+
+                // // Llama a un servicio para verificar la notificación de stock.
+                // let cantidadStock = fS.getCantidadStock(dataItemMerge, $scope.data.fechaEmision);
+                // if (cantidadStock === 0) {
+                //     setCalculoTotales(field, rowEntity, oldValue);
+                //     return;
+                // }
+
+                // articuloSvc.checkNotificationStock({
+                //     idArticulo: rowEntity.idArticulo,
+                //     cantidad: cantidadStock,
+                //     idBodega: rowEntity.idBodega,
+                //     idMedida: rowEntity.idMedida
+                // }).then(async responseApi => {
+
+                //     let { code, message, titleSms } = responseApi;
+                //     if (code === "1") {
+
+                //         setCalculoTotales(field, rowEntity, oldValue);
+                //         return
+                //     }
+
+                //     let { isConfirmed } = await Swal.fire({
+                //         title: `<small>${titleSms}</small>`,
+                //         icon: 'warning',
+                //         html: `<small>${message}</small>`,
+                //         allowOutsideClick: false,
+                //         allowEscapeKey: false,
+                //     })
+
+                //     if (isConfirmed) {
+                //         if (code === "0") {
+                //             rowEntity[field] = oldValue;
+                //             setCalculoTotales(field, rowEntity, oldValue);
+                //             $("#custom-template-md-autocomplete-articulo").focus();
+                //         }
+                //         if (code === "2") {
+                //             setCalculoTotales(field, rowEntity, oldValue);
+                //         }
+                //     }
+
+                // }).catch(error => {
+                //     hideLoader();
+                //     console.log(error)
+                // })
+
             } catch (error) {
-                hideLoader();
                 console.log(error);
             }
         }
@@ -1014,15 +1027,156 @@
         }
 
         function calculateTotalItems(items) {
-            return items.map(item => {  
+            return items.map(item => {
                 return {
                     ...item,
                     idNotaEntregaDetalle: params.action === "DUPLICAR" ? 0 : item.idNotaEntregaDetalle,
-                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),  
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
                 }
 
             })
         }
+
+
+        /**
+         * 
+         * @param {*} nuevaFilaAgregada 
+         */
+        function addItem(nuevaFilaAgregada) {
+            $scope.gridOptions.data.push(nuevaFilaAgregada)
+            setCalculoTotales('precioUnitario', nuevaFilaAgregada, 0);
+            //   focusColumnCantidad();
+            updateRefProductoVenta()
+            tS.toastr({
+                type: 'success',
+                message: 'Agregado Correctamente'
+            })
+        }
+
+        function updateItem(nuevaFilaAgregada) {
+            console.log(nuevaFilaAgregada)
+            $scope.gridOptions.data = $scope.gridOptions.data.map(item => {
+                console.log()
+                if (item.uniqueRowDetalle === nuevaFilaAgregada.uniqueRowDetalle) {
+                    return {
+                        ...item,
+                        ...nuevaFilaAgregada
+                    }
+                }
+                return item;
+            });
+
+            let dataActualizarFile = $scope.gridOptions.data.find(item => item.uniqueRowDetalle === nuevaFilaAgregada.uniqueRowDetalle)
+            if (dataActualizarFile) {
+                setCalculoTotales('precioUnitario', dataActualizarFile, 0)
+
+            }
+            //   focusColumnCantidad();
+            updateRefProductoVenta()
+            tS.toastr({
+                type: 'success',
+                message: 'Actualizado la fila correctamente'
+            })
+        }
+
+        // Función para manejar la confirmación del usuario y el código de respuesta
+        /**
+         * @param {string} code
+         * @param {any} nuevaFilaAgregada
+         * @param {any} agregarFila
+         * @param {undefined} [focusSearch]
+         */
+        function handleConfirmation(code, nuevaFilaAgregada, agregarFila, focusSearch) {
+            if (code === "0" && focusSearch) {
+                setFocusArticulo();
+            }
+            if (code === "2") {
+                if (agregarFila) {
+                    addItem(nuevaFilaAgregada);
+                } else {
+                    updateItem(nuevaFilaAgregada);
+                }
+            }
+        };
+
+
+        async function onCallbackDataArticulo(data) {
+
+            const { nuevaFilaAgregada, verificarStockResponse, agregarFila, focusSearch } = data;
+
+            if (!nuevaFilaAgregada.llevaInventario && agregarFila) {
+                addItem(nuevaFilaAgregada)
+                return;
+            }
+
+
+            const { code, message, titleSms } = verificarStockResponse;
+            // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
+            if (code === "1") {
+                if (agregarFila) {
+                    addItem(nuevaFilaAgregada)
+                } else {
+                    updateItem(nuevaFilaAgregada);
+                }
+                return;
+            }
+
+            // Muestra un mensaje de advertencia y espera la confirmación del usuario.
+            const { isConfirmed } = await Swal.fire({
+                title: `<small>${titleSms}</small>`,
+                icon: 'warning',
+                html: `<small>${message}</small>`,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+            });
+
+            // Según la confirmación, realiza acciones adicionales.
+            if (isConfirmed) {
+                handleConfirmation(code, nuevaFilaAgregada, agregarFila, focusSearch);
+            }
+        }
+
+        async function editColCantidad(data) {
+            const {
+                row,
+                verificarStockResponse,
+                oldValue,
+                field
+            } = data;
+
+            const { code, message, titleSms } = verificarStockResponse;
+
+            if (code === "1") {
+                setCalculoTotales(field, row, oldValue);
+                updateRefProductoVenta()
+                return
+            }
+
+            let { isConfirmed } = await Swal.fire({
+                title: `<small>${titleSms}</small>`,
+                icon: 'warning',
+                html: `<small>${message}</small>`,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+            })
+
+            if (isConfirmed) {
+                if (code === "0") {
+                    row[field] = oldValue;
+                    setCalculoTotales(field, row, oldValue);
+                    let el = document.getElementById("#custom-template-md-autocomplete-articulo")
+                    if (el) {
+                        el.focus();
+                    }
+                }
+                if (code === "2") {
+                    setCalculoTotales(field, row, oldValue);
+                }
+                updateRefProductoVenta()
+
+            }
+        }
+
 
         initiload();
         setColumnDefs();
@@ -1205,11 +1359,19 @@
                 $scope.dataClone.idTarifa = $scope.data.idTarifa;
             }
 
+
+
+            updateRefProductoVenta();
+
+
             $uibModalInstance.rendered.then(() => {
-                if ($scope.config.searchCode) {
-                    $("#inputBarcode").focus();
-                } else {
-                    $("#custom-template-md-autocomplete-articulo").focus();
+                let inputBarcodeEle = document.getElementById("inputBarcode");
+                let customTempArticuloSearch = document.getElementById("custom-template-md-autocomplete-articulo");
+                if ($scope.config.searchCode && inputBarcodeEle) {
+                    inputBarcodeEle.focus();
+
+                } else if (customTempArticuloSearch) {
+                    customTempArticuloSearch.focus();
                 }
             });
 
@@ -1229,12 +1391,33 @@
                     })
                 }
             }
+
+
+
+
             $scope.setInfoEstabPtoEmi();
 
             $uibModalInstance.rendered.then(() => {
                 drawInfoGeneralNotaEntrega();
             });
         }
+
+
+
+
+        function updateRefProductoVenta() {
+            $scope.refProductoVenta.setOptions({
+                items: $scope.gridOptions.data,
+                nroPrecio: $scope.decimal.nroPrecio,
+                idTarifa: $scope.data.idTarifa,
+                idBodega: $scope.data.idBodega,
+                tiposIva: $scope.tarifasImpuesto,
+                fechaEmision: $scope.data.fechaEmision,
+                duplicarItem: $scope.config.detailDuplicate,
+                addRow
+            })
+        }
+
 
 
 
@@ -1541,13 +1724,19 @@
 
         function setFocusInputBarcode() {
             $timeout(function () {
-                document.querySelector('#inputBarcode').focus();
+                let el = document.getElementById('inputBarcode')
+                if (el) {
+                    el.focus();
+                }
             }, 100);
         }
 
         function setFocusArticulo() {
             $timeout(function () {
-                document.querySelector('#custom-template-md-autocomplete-articulo').focus();
+                let el = document.getElementById('custom-template-md-autocomplete-articulo')
+                if (el) {
+                    el.focus();
+                }
             }, 100);
         }
 
@@ -1563,7 +1752,7 @@
 
         /**
          * 
-         * @param {*} entity Datos del Articulo 
+         * @param {*} rowEntity 
          */
         $scope.deleteRow = async function (rowEntity) {
             try {
@@ -1925,7 +2114,7 @@
                 codigo: "",
                 idArticulo: 0,
                 descripcion: "",
-                cantidad: 1,
+                cantidad: 0,
                 cantidadStock: 0,
                 codigoPorcentaje: "",
                 tarifa: 0,
@@ -1939,14 +2128,14 @@
                 totalDescuento: 0,
                 ice: 0,
                 idBodega: 0,
-                subTotal: 0,
                 total: 0,
                 nota: null,
                 llevaInventario: false,
                 datosAdicionales: false,
                 estado: 1
             }
-            $scope.gridOptions.data.push(obj)
+            //   $scope.gridOptions.data.push(obj)
+            return structuredClone(obj);
         }
 
         $scope.setItemArticuloEnDetalle = function (dataArticulo) {
@@ -2100,6 +2289,7 @@
 
             objCalculo["calculoTotalDetalle"]();
             recalculateTotalsSimple();
+            return rowEntity;
         }
 
         /**
@@ -2191,13 +2381,13 @@
                     tarifasImpuesto: $scope.tarifasImpuesto.slice(),
                 });
                 let {
-                    subTotalSinImpuestos, 
-                    irbpnr, 
+                    subTotalSinImpuestos,
+                    irbpnr,
                     importeTotal,
                     totalDescuento,
                     porcentajeDescuento,
                     propina,
-                } = dataImpuestoTotales; 
+                } = dataImpuestoTotales;
 
                 const htmlTemplate = gridOptionsSvc.impuestoTotalesHtml(dataImpuestoTotales);
                 const element = document.getElementById('draw-dynamic-subtotal');
@@ -2387,10 +2577,10 @@
             return true;
         }
 
- 
+
 
         // Función para registrar el documento
-        const registerAndUpdateNotaEntrega = async (query) => {  
+        const registerAndUpdateNotaEntrega = async (query) => {
 
             if (isRegister()) {
                 const response = await notaEntregaSvc.save(query);
@@ -2401,9 +2591,9 @@
                 const response = await notaEntregaSvc.update($scope.data.idNotaEntrega, query);
                 return response; // Retornar la respuesta para su manejo posterior
             }
-        }; 
+        };
 
-        
+
 
 
 
@@ -2422,10 +2612,10 @@
 
                 if (cuotas && cuotas.length === 0) return
 
-                if (isRegister()) { 
+                if (isRegister()) {
                     serieComprobante = await notaEntregaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
-                    }) 
+                    })
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
                     titleSwal = '<small>Guardar Nota de Entrega</small>';
@@ -2464,8 +2654,8 @@
 
 
                 // Usar fetchManager para manejar el registro
-              
-               
+
+
 
 
 
@@ -2501,7 +2691,7 @@
                         }
                     }).catch(error => {
                         console.log(error); // Manejo de errores
-                    }) 
+                    })
 
                     // showLoader();
                     // notaEntregaSvc.save(query).then(response => {
@@ -2526,7 +2716,7 @@
                 //Update Doc 
                 if (isUpdate()) {
 
-                    const managedUpdate = fS.fetchManager(registerAndUpdateNotaEntrega);  
+                    const managedUpdate = fS.fetchManager(registerAndUpdateNotaEntrega);
                     // Llamar a la función gestionada para actualizar
                     managedUpdate(query).then(response => {
                         if (response) { // Verificar si hay respuesta
@@ -2540,7 +2730,7 @@
                         }
                     }).catch(error => {
                         console.log(error); // Manejo de errores
-                    }) 
+                    })
 
 
                     // showLoader()
