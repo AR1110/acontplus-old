@@ -54,6 +54,11 @@ export enum GlobalRoutes {
   InventarioTarifa = 'inventory/tarifa',
   Etiqueta = 'inventory/tags',
 
+
   //**Recepcion**//
   ComprasDocumentoRecibido = 'purchase/documento-recibido',
+
+  //VENTAS
+  Proforma = 'sale/proforma',
+  NotaEntrega='sale/nota-entrega'
 }

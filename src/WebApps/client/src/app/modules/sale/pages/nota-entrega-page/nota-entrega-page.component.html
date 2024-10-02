@@ -1,0 +1,62 @@
+<app-breadcrumb />
+
+<mat-card>
+  <mat-card-content>
+
+    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4">
+
+      <div class="col">
+        <div class="w-17">
+          <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4">
+            <div class="col">
+              <div class="form-group">
+                <label for="estab">Estab:</label>
+                <select name="" id="" class="form-select"></select>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="dateRange">Rango Fecha</label>
+                <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" [inputGroupDateChecked]="true"
+                [requiredDate]="true"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col  ">
+        <div class="d-flex flex-row gap-2 justify-content-end">
+          <button mat-flat-button appMeasureAddEdit (onResultModal)="refresh()">
+            <mat-icon>add</mat-icon>
+            Nuevo
+          </button>
+          <button mat-icon-button (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())">
+            <mat-icon>filter_list</mat-icon>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+
+    <app-custom-table-container [pagination]="pagination()" [isLoadingResults]="isLoadingResults()"
+      (onPageEvent)="handlePageEvent($event)">
+
+      <app-mat-dynamic-table [templateOp]="templateOp" [dataList]="dataSource.data" [displayColumnDefs]="columnsDefs"
+        [displayedColumns]="columns"></app-mat-dynamic-table>
+
+    </app-custom-table-container>
+
+    <ng-template #templateOp let-item="item">
+
+
+    </ng-template>
+
+
+  </mat-card-content>
+</mat-card>
