@@ -16,35 +16,38 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @uniqueId VARCHAR(300)
 
-	DECLARE @idTipoDocumento INT 
-    DECLARE @idEntidad INT 
-	
-	SELECT TOP 1 @uniqueId = uniqueId,  @idEntidad = idEntidad   FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
+	DECLARE @idTipoDocumento INT ,@idEntidad INT 
 
 	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
-	SELECT d.idAprob_Document
-	      ,d.uniqueId
-	      ,idTiempoCredito = ISNULL(cl.idTiempoCredito, 0)
-	      ,d.idPuntoEmision
-	      ,d.estab
-	      ,d.ptoEmi
-	      ,serieComprobante = d.estab+'-'+d.ptoEmi+'-'+Helper.F_Auto_Sequential(d.secuencial)
-	      ,d.identificacionComprador
-	      ,d.codDoc
-	      ,d.docOrigen
-	      ,d.fechaEmision	 
-	      ,d.observacion
-	      ,totalSinImpuestos
-	      ,totalDescuento
-	      ,propina
-	      ,importeTotal	  
-          ,d.idUsuario
-	FROM Ventas.Aprob_Document d WITH (NOLOCK)
-	INNER JOIN Cliente        cl WITH (NOLOCK) ON cl.idCliente = d.idCliente
-	WHERE d.idAprob_Document = @id
+    SELECT TOP 1 @idEntidad = es.idEntidad 
+    FROM Ventas.Aprob_Document     ad WITH (NOLOCK)
+    INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON ad.idPuntoEmision    = pe.idPuntoEmision
+    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+
+	SELECT ad.idAprob_Document
+	      ,ad.idUsuario
+          ,ISNULL(cl.idTiempoCredito, 0) as idTiempoCredito
+	      ,ad.idPuntoEmision
+	      ,ad.serieComprobante 
+	      ,ad.codDoc
+	      ,ad.docOrigen
+	      ,ad.fechaEmision	 
+	      ,ad.observacion
+	      ,ad.totalSinImpuestos
+	      ,ad.totalDescuento
+	      ,ad.propina
+	      ,ad.importeTotal
+          ,cu.IDCard                     as identificacionComprador
+          ,pe.ptoEmi
+          ,es.estab
+	FROM Ventas.Aprob_Document     ad WITH (NOLOCK)
+	INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente         = ad.idCliente
+    INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = ad.idPuntoEmision
+    INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
+    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+	WHERE ad.idAprob_Document = @id
 
 	SELECT cl.idCliente
           ,cl.FormaPagoSriId       as idFormaPagoSri
@@ -144,7 +147,7 @@ BEGIN
 	INNER JOIN dbo.Articulo             a WITH (NOLOCK) ON a.idArticulo = dt.idArticulo
 	INNER JOIN dbo.Medida               m WITH (NOLOCK) ON m.idMedida   = dt.idMedida
 	INNER JOIN dbo.TipoIva              t WITH (NOLOCK) ON t.idTipoIva  = dt.idTipoIva
-	WHERE dt.uniqueId = @uniqueId 
+	WHERE dt.idAprob_Document = @id
       AND dt.estado = 1 
     ORDER BY dt.idAprob_Document_Detailt ASC 
 
@@ -152,7 +155,8 @@ BEGIN
 			               WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
 			               ELSE '' END 
 		  ,serieComprobante = serie
-	FROM Ventas.Aprob_Document_Hist WHERE uniqueId = @uniqueId
+	FROM Ventas.Aprob_Document_Hist 
+    WHERE idAprob_Document = @id
 	
 	SELECT 
 		ia.idInfoAdicionalDoc,

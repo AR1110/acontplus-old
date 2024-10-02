@@ -22,8 +22,8 @@ CREATE OR ALTER VIEW v_CuentaPorCobrar AS (
 		  ,cc.secuencial
 		  ,cc.fechaEmision
 		  ,cc.fechaVencimiento
-		  ,identificacionComprador = cl.numeroIdentificacion
-		  ,razonSocialComprador    = cl.nombreFiscal
+		  ,identificacionComprador = cu.IDCard
+		  ,razonSocialComprador    = cu.TradeName
 		  ,correo                  = cl.correo
 		  ,telefono                = cl.telefono
           ,cl.CustomerId
@@ -50,6 +50,7 @@ CREATE OR ALTER VIEW v_CuentaPorCobrar AS (
      LEFT JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision    = cc.idPuntoEmision
      LEFT JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pt.idEstablecimiento
      LEFT JOIN dbo.Entidad            en WITH (NOLOCK) ON en.idEntidad         = es.idEntidad
+    INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
      
 
 )

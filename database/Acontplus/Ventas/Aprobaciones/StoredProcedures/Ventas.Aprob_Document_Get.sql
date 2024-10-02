@@ -22,11 +22,10 @@ BEGIN
     DECLARE @tipo INT ,@idEntidad INT
 
     --> Sql
-	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
+	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) 
 	
-    --> Filters 
-    DECLARE @checkBoxFecha BIT ,@codEstab VARCHAR(25) ,@byCliente INT ,@codEstado VARCHAR(5) ,@byUsuario INT ,@dateStart DATETIME2 
-           ,@dateEnd DATETIME2 ,@secuencial VARCHAR(100) ,@id INT ,@uniqueId VARCHAR(500)
+    --> Filters Generales
+    DECLARE @byUsuario INT
 
     --> Global
 	SELECT TOP 1 @idEntidad = idEntidad ,@byUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
@@ -37,6 +36,18 @@ BEGIN
     IF @tipo = 1
         BEGIN 
             
+            --> Filters
+            DECLARE @checkBoxFecha BIT 
+                   ,@codEstab      VARCHAR(25) 
+                   ,@byCliente     INT 
+                   ,@codEstado     VARCHAR(5)
+                   ,@dateStart     DATETIME2 
+                   ,@dateEnd       DATETIME2 
+                   ,@secuencial    VARCHAR(100) 
+
+            --> Sql
+            DECLARE @pageIndex INT ,@pageSize INT
+
             SET @params = '@idEntidad INT
 						  ,@codEstab  VARCHAR(25)
 						  ,@idCliente INT
@@ -79,8 +90,7 @@ BEGIN
 						INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision    = ad.idPuntoEmision
 						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento 
                         INNER JOIN dbo.Usuario         u  WITH (NOLOCK) ON u.idUsuario          = ad.idUsuario  
-						WHERE ad.idEntidad = @idEntidad 
-                          AND es.codEstab = @codEstab '
+						WHERE ad.idEntidad = @idEntidad  '
 
 	        SELECT @checkBoxFecha = checkBoxFecha
 		          ,@codEstab      = codEstab
@@ -111,6 +121,11 @@ BEGIN
                 BEGIN 
                     SELECT TOP 1 @byUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @idUsuarioRol
                 END
+
+            IF @codEstab IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND es.codEstab = @codEstab '
+                END 
 
 	        IF @secuencial IS NOT NULL
 		        BEGIN
@@ -252,26 +267,28 @@ BEGIN
     --> Ver Documento
     IF @tipo = 4
         BEGIN
+            DECLARE @id INT
+
             SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
 
-            SELECT TOP 1 @uniqueId = uniqueId FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
-
-            SELECT d.estab+'-'+d.ptoEmi+'-'+Helper.F_Auto_Sequential(d.secuencial) as serieComprobante
-                  ,e.nombreComercial
-                  ,d.ptoEmi
-	              ,d.identificacionComprador
-	              ,d.codDoc
-	              ,d.docOrigen
-	              ,d.fechaEmision	 
-	              ,d.observacion
-	              ,totalSinImpuestos
-	              ,totalDescuento
-	              ,propina
-	              ,importeTotal	   
-             FROM Ventas.Aprob_Document     d WITH (NOLOCK)
-             INNER JOIN dbo.PuntoEmision   pe WITH (NOLOCK) ON pe.idPuntoEmision = d.idPuntoEmision 
-             INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON e.idEstablecimiento = pe.idEstablecimiento
-             WHERE d.idAprob_Document = @id
+            SELECT ad.serieComprobante
+	              ,ad.codDoc
+	              ,ad.docOrigen
+	              ,ad.fechaEmision	 
+	              ,ad.observacion
+	              ,ad.totalSinImpuestos
+	              ,ad.totalDescuento
+	              ,ad.propina
+	              ,ad.importeTotal
+                  ,es.nombreComercial
+                  ,pe.ptoEmi
+                  ,cu.IDCard as identificacionComprador
+             FROM Ventas.Aprob_Document     ad WITH (NOLOCK)
+             INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente         = ad.idCliente
+             INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = ad.idPuntoEmision 
+             INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+             INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
+             WHERE ad.idAprob_Document = @id
 
              SELECT cl.idCliente
 		           ,cu.BusinessName         as nombreComercial
@@ -306,7 +323,7 @@ BEGIN
              INNER JOIN dbo.Tarifa              ta WITH (NOLOCK) ON ta.idTarifa   = dt.idTarifa
              INNER JOIN dbo.Medida              me WITH (NOLOCK) ON me.idMedida   = dt.idMedida
              INNER JOIn dbo.TipoIva             ti WITH (NOLOCK) ON ti.idTipoIva  = dt.idTipoIva
-             WHERE dt.uniqueId = @uniqueId 
+             WHERE dt.idAprob_Document = @id 
                AND dt.estado = 1 
              ORDER BY dt.idAprob_Document_Detailt ASC
 
@@ -315,7 +332,7 @@ BEGIN
 			            WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
 			            ELSE '' END  as tipoDoc
 		          ,serie             as serieComprobante
-	        FROM Ventas.Aprob_Document_Hist WHERE uniqueId = @uniqueId
+	        FROM Ventas.Aprob_Document_Hist WHERE idAprob_Document = @id
             
             SELECT idTipoIva
                   ,idImpuesto
