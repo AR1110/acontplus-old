@@ -1849,6 +1849,7 @@ ModalArticuloGeneralCtrl.$inject = [
     "productPhotoService",
     "modalService",
     "nombreModal",
+    "params"
 ];
 
 function ModalArticuloGeneralCtrl(
@@ -1857,7 +1858,8 @@ function ModalArticuloGeneralCtrl(
     artSvc,
     productPhotoSvc,
     modalSvc,
-    nombreModal
+    nombreModal,
+    params
 ) {
 
     $scope.articulos = [];
@@ -1913,7 +1915,11 @@ function ModalArticuloGeneralCtrl(
     $scope.onSearchText = onSearchText;
     $scope.pageChanged = pageChanged;
     $scope.changePageSize = changePageSize;
-    $scope.onEnter = onEnter
+    $scope.onEnter = onEnter;
+    $scope.refresh = refresh;
+    $scope.askToSelect = askToSelect;
+
+    
 
 
     function pageChanged() {
@@ -1980,6 +1986,89 @@ function ModalArticuloGeneralCtrl(
     // $scope.onChangeCheckBoxItem =  (item)=>{
     //     console.log(item)
     // }
+
+    // const dataMergeStockQty = mergeStockQty(cloneOrderItems, {
+    //     idArticulo: $event.productId,
+    //     idBodega: $event.bodegaId
+    // });
+
+    // const cantidad = calculateCantidadStock({
+    //     cantidadStock: dataMergeStockQty.cantidadStock,
+    //     idBodega: $event.bodegaId,
+    //     fechaEmision: this.posStoreSvc.state().order.createdAt,
+    //     productoConsolidaciones: $event.consolidacionesFecha
+    // });
+
+    // const paramsStock = {
+    //     idArticulo: $event.productId,
+    //     idBodega: $event.bodegaId,
+    //     cantidad
+    // };
+
+    function askToSelect(item){
+
+        if(params && typeof params==='object' && params.items.length>0 && params.validarStock){
+
+            let articulosDuplicados = params.items.filter(i=>i.idArticulo===item.idArticulo && i.llevaInventario);
+
+            if(articulosDuplicados.length>1){
+                //validaciones 
+            }
+
+            let data
+
+
+
+
+        }
+
+        console.log(item)
+        console.log(params.refProductoVenta)
+        params.refProductoVenta.onInventario(item.idArticulo) 
+
+
+    }
+
+    function askToAdd(item){
+        Swal.fire({ 
+            text: '¿Qué deseas hacer?',
+            icon: 'question',
+            input: 'number', // Campo de entrada de tipo número
+            inputLabel: 'Ingresa una cantidad',
+            inputValue: 1, // Valor predeterminado: 1
+            inputPlaceholder: 'Escribe un número',
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: 'Añadir y continuar',
+            denyButtonText: 'Añadir y cerrar',
+            cancelButtonText: 'Cancelar',
+            preConfirm: (value) => {
+                // Validar si el valor es menor a 1
+                if (value < 1) {
+                    Swal.showValidationMessage('La cantidad debe ser mayor o igual a 1');
+                    return false; // Retorna false para no permitir el cierre
+                }
+                return value; // Si es válido, retorna el valor
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Acción para "Añadir y continuar" (la validación ya se realizó en inputValidator)
+                console.log('Has elegido: Añadir y continuar, valor ingresado:', result.value);
+                // Aquí puedes ejecutar cualquier otra lógica cuando se añada y continúe
+            } else if (result.isDenied) {
+                // Acción para "Añadir y cerrar" sin validar
+                console.log('Has elegido: Añadir y cerrar, valor ingresado:', result.value);
+                // Aquí puedes ejecutar cualquier otra lógica cuando se añada y cierre
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                // Acción para "Cancelar"
+                console.log('Has cancelado la acción');
+            }
+        });
+
+
+
+
+    }
 
     $scope.previewImg = function (item) {
         productPhotoSvc.previewImg(item.idArticulo)

@@ -297,9 +297,9 @@
     angular.module('acontPlusApp')
         .factory('formulario', formulario);
 
-    formulario.$inject = ['pricingUtils', 'uuid2'];
+    formulario.$inject = ['pricingUtils', 'uuid2', '$q'];
 
-    function formulario(pricingUtils, uuid2) {
+    function formulario(pricingUtils, uuid2, $q) {
         let formSvc = {};
 
         formSvc.max_dos = DECIMAL_DOS;
@@ -1308,25 +1308,31 @@
         formSvc.fetchManager = function (fn) {
             let executing = false;
 
-            return async (...args) => {
-               
+            return function (...args) {
+                const deferred = $q.defer();
+
                 if (executing) {
                     console.log("Otra solicitud ya está en ejecución. Espera a que se complete.");
-                    return; // Puedes optar por retornar un valor específico o lanzar un error
+                    deferred.reject("Solicitud en curso"); // Rechazar si ya hay una ejecución en curso
+                    return deferred.promise;
                 }
 
-                executing = true; // Marcar como en ejecución
-                try {
-                    const result = await fn(...args); // Llamar a la función con los argumentos
-                    return result; // Retornar el resultado de la función
-                } catch (error) {
-                    console.error('Error al ejecutar la función:', error); // Manejo de errores
-                    throw error; // Lanzar el error para que pueda ser manejado por el llamador
-                } finally {
+                executing = true;
+
+                // Ejecutar la función con los argumentos y manejar la promesa
+                fn(...args).then(result => {
+                    deferred.resolve(result); // Resolver la promesa con el resultado
+                }).catch(error => {
+                    console.error('Error al ejecutar la función:', error);
+                    deferred.reject(error); // Rechazar la promesa con el error
+                }).finally(() => {
                     executing = false; // Restablecer el estado después de la ejecución
-                }
+                });
+
+                return deferred.promise; // Retornar la promesa
             };
         };
+
 
 
 
@@ -1336,71 +1342,6 @@
 
 
 
-    app.factory('productUtil', function () {
-
-
-        return {
-            mergeStockQty,
-            calculateCantidadStock
-        }
-        function mergeStockQty(items, dataItem) {
-            // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
-            let foundItemByArticuloAndBodega = items.filter(item => (
-                item.productId === dataItem.idArticulo &&
-                item.bodegaId === dataItem.idBodega
-            ))
-
-            let { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce((total, item) => {
-                let medidaFraccionado = item.medidas.find(medida => medida.idMedida === item.medidaId && medida.tipo === 'FRACCIONADO')
-                let medidaPrincipal = item.medidas.find(medida => medida.idMedida === item.medidaId && medida.tipo === 'PRINCIPAL')
-                if (medidaFraccionado) {
-                    total.totalCantidadFraccionada += item.quantity * medidaFraccionado.conversion;
-                }
-                if (medidaPrincipal) {
-                    total.totalCantidadPrincipal += item.quantity * medidaPrincipal.conversion;
-                }
-                return total;
-            }, {
-                totalCantidadFraccionada: 0,
-                totalCantidadPrincipal: 0
-            });
-
-
-            // Devuelve el objeto resultante de la fusión. 
-            return {
-                cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
-            };
-        }
-
-
-        function calculateCantidadStock(data) {
-            let fechaEmisionValidate = data.fechaEmision;
-            let cantidadStock = data.cantidadStock;
-
-            let dataConsolidacionFecha = data.productoConsolidaciones.find(
-                cdataFecha => cdataFecha.idBodega === data.idBodega
-            )
-
-            if (dataConsolidacionFecha && dataConsolidacionFecha.fechaConsolidacion) {
-                if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
-                    return 0;
-                }
-            }
-
-            return cantidadStock < 0 ? cantidadStock : -cantidadStock;
-
-        }
-
-
-
-
-
-
-
-
-
-
-
-    })
+    
 
 })(window.angular)

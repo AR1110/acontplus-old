@@ -22,11 +22,18 @@
             <tbody md-body>
                 <tr md-row   ng-repeat="item in articulos track by $index">
                     <td md-cell> 
-                        <div class="d-flex ">
+                        <div class="d-flex "> 
+                            <button 
+                                type="button" 
+                                class="btn btn-success btn-xs mr-2" 
+                                ng-if="options.multiSelect" 
+                                ng-click="askToSelect(item)"
+                                placeholder="Hover over this for a tooltip until this is filled"
+                                uib-tooltip="Agregar artículo en el detalle del documento"
                             
-                                <button type="button" class="btn btn-success btn-xs mr-2" ng-if="options.multiSelect" ng-click="onChangeCheckBoxItem(item)">
-                                    <i class="fas fa-cart-arrow-down"></i>
-                                </button> 
+                            >
+                                <i class="fas fa-cart-arrow-down"></i>
+                            </button> 
                             <view-kardex params="item"></view-kardex>
                         </div>
                     </td>
