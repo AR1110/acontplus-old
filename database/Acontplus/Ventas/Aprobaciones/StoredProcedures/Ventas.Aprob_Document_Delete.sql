@@ -28,29 +28,20 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idEstadoDocumento INT
 	DECLARE @idUsuario INT
-	DECLARE @codEstado VARCHAR(5) = 'A'
 	DECLARE @docOrigen VARCHAR(5) 
-	DECLARE @uniqueId VARCHAR(150)
 
 	BEGIN TRY 
 		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT @docOrigen = docOrigen,@uniqueId = uniqueId FROM Ventas.Aprob_Document WHERE idAprob_Document = @id
+		SELECT @docOrigen = docOrigen FROM Ventas.Aprob_Document WHERE idAprob_Document = @id
 
 		SELECT @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WHERE codigo = 'PE'
 
 		BEGIN TRAN 
 			
-			INSERT INTO Ventas.Aprob_Document_Anul(uniqueId,idUsuario,fechaRegistro)
-			SELECT @uniqueId,@idUsuario,dbo.ufnGetDateEcuador()
-
-			UPDATE Ventas.Aprob_Document SET codEstado = @codEstado WHERE idAprob_Document = @id
+			UPDATE Ventas.Aprob_Document SET codEstado = 'A' ,UpdatedByUserId = @idUsuario ,UpdatedAt = GETDATE()  WHERE idAprob_Document = @id
 			
-			--UPDATE infoAdd  SET estado = 1
-			--FROM Compra.InfoAdicional infoAdd
-			--INNER JOIN Ventas.HistoryInfoAdicional h WITH(NOLOCK) ON h.idInfoAdicional = infoAdd.idInfoAdicional
-			--WHERE h.codDoc ='APR' AND h.idDocumento = @id
-
+			
 			IF @docOrigen = 'NE'
 				BEGIN
 					
@@ -58,12 +49,12 @@ BEGIN
 
 					DECLARE cursor_inventory CURSOR LOCAL FOR
 					SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
-				    WHERE dt.uniqueId = @uniqueId
+				    WHERE dt.idAprob_Document = @id
 
 					
 					UPDATE dbo.NotaEntrega WITH (ROWLOCK) SET convertToDoc = 0
                     WHERE idNotaEntrega IN (
-                                              SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId  
+                                              SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.idAprob_Document = @id  
                                            )
 
 
@@ -87,7 +78,7 @@ BEGIN
 				BEGIN
 					UPDATE pr SET pr.idEstadoDocumento = @idEstadoDocumento
 					FROM dbo.Proforma pr WITH(NOLOCK) 
-					JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = pr.idProforma
+					JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.idAprob_Document = @id) dt ON dt.idDocumento = pr.idProforma
 				END 
 
 		COMMIT TRAN 
@@ -95,8 +86,16 @@ BEGIN
 	END TRY 
 
 	BEGIN CATCH 
-		SELECT '0' code,'Error en el procedimiento: '+ERROR_MESSAGE() as 'message'
-		RETURN 
+		IF @@TRANCOUNT > 0 
+			BEGIN
+				ROLLBACK TRAN; 
+			END
+
+		SELECT '0'code,'Info: Error en el procedimiento: ' + ERROR_MESSAGE() as  'message'
+
+		INSERT INTO ErroresSistema
+		    (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'/Aprobacion/Delete',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario 
 	END CATCH 
 
 END

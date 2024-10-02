@@ -11,8 +11,8 @@ BEGIN
     --> Global
     DECLARE @tipo INT
 
-    --> Filters
-    DECLARE @id INT ,@codDoc VARCHAR(10) ,@uniqueId VARCHAR(200) ,@idTipoDocumento INT ,@fechaEmision DATETIME2
+    --> Filters Generales
+    DECLARE @id INT ,@codDoc VARCHAR(10)
 
     --> Variables
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
@@ -21,11 +21,14 @@ BEGIN
     IF @tipo = 1
         BEGIN 
             
+            DEClARE @fechaEmision    DATETIME2
+                   ,@idTipoDocumento INT 
+
             SELECT @id = id ,@codDoc = codDoc FROM OPENJSON(@json) WITH (id INT, codDoc VARCHAR(10))
 
             SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
-            SELECT TOP 1 @uniqueId = uniqueId, @fechaEmision = fechaEmision FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
+            SELECT TOP 1 @fechaEmision = fechaEmision FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
 
             IF @codDoc = '01'
                 BEGIN
@@ -33,7 +36,7 @@ BEGIN
 		                  ,av.claveAcceso
 		                  ,av.claveAcceso                                                       as codigoAutorizacion
                           ,CASE WHEN pe.ambiente = '1' THEN 'Pruebas' ELSE 'Producción' END     as ambiente
-		                  ,CASE WHEN av.tipoEmision = '1' THEN 'NORMAL' ELSE '' END             as emision
+		                  ,'NORMAL'                                                             as emision
                           ,en.razonSocial
                           ,en.ruc
 		                  ,es.nombreComercial
@@ -42,10 +45,10 @@ BEGIN
 		                  ,es.telefono                                                         as telefonoEstablecimiento 
 		                  ,es.contribuyenteRimpe
                           ,es.obligadoContabilidad
-		                  ,CONVERT(NVARCHAR, FORMAT(av.fechaEmision, 'dd/MM/yyyy hh:mm:ss'))   as fechaEmision
-                          ,dbo.AFTGenerarNroDocumento(es.estab+pe.ptoEmi,av.secuencial)        as serieComprobante	
-		                  ,cl.nombreFiscal                                                     as razonSocialComprador
-		                  ,cl.numeroIdentificacion                                             as identificacionComprador
+		                  ,FORMAT(av.fechaEmision, 'dd/MM/yyyy hh:mm:ss')                      as fechaEmision
+                          ,av.serieComprobante	
+		                  ,cu.TradeName                                                        as razonSocialComprador
+		                  ,cu.IDCard                                                           as identificacionComprador
 		                  ,cl.direccion                                                        as direccionComprador
 		                  ,REPLACE(ISNULL(cl.correo , 'S/N'),';',',')                          as emailComprador
 		                  ,REPLACE(ISNULL(cl.telefono, 'S/N'),';',',')                         as telefonoComprador
@@ -58,10 +61,11 @@ BEGIN
                           ,CAST(0 as numeric(18,2))                                            as irbpnr
 		                  ,av.observacion
 	                FROM Ventas.Aprob_Document        av WITH (NOLOCK)
-                    INNER JOIN dbo.Entidad            en WITH (NOLOCK) ON en.idEntidad         = av.idEntidad
-	                INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision    = av.idPuntoEmision 
-	                INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
 	                INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente         = av.idCliente
+                    INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision    = av.idPuntoEmision 
+	                INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+                    INNER JOIN dbo.Entidad            en WITH (NOLOCK) ON en.idEntidad         = es.idEntidad
+                    INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
                      LEFT JOIN dbo.Ciudad             ci WITH (NOLOCK) ON ci.idCiudad          = cl.idCiudad 
 	                WHERE av.idAprob_Document = @id
                 END 
@@ -76,10 +80,10 @@ BEGIN
 		                  ,es.telefono                                                         as telefonoEstablecimiento 
 		                  ,es.contribuyenteRimpe
                           ,es.obligadoContabilidad
-		                  ,CONVERT(NVARCHAR, FORMAT(av.fechaEmision, 'dd/MM/yyyy hh:mm:ss'))   as fechaEmision
-                          ,dbo.AFTGenerarNroDocumento(es.estab+pe.ptoEmi,av.secuencial)        as serieComprobante	
-		                  ,cl.nombreFiscal                                                     as razonSocialComprador
-		                  ,cl.numeroIdentificacion                                             as identificacionComprador
+		                  ,FORMAT(av.fechaEmision, 'dd/MM/yyyy hh:mm:ss')   as fechaEmision
+                          ,av.serieComprobante	
+		                  ,cu.TradeName                                                     as razonSocialComprador
+		                  ,cu.IDCard                                             as identificacionComprador
 		                  ,cl.direccion                                                        as direccionComprador
 		                  ,REPLACE(ISNULL(cl.correo , 'S/N'),';',',')                          as emailComprador
 		                  ,REPLACE(ISNULL(cl.telefono, 'S/N'),';',',')                         as telefonoComprador
@@ -92,10 +96,11 @@ BEGIN
                           ,CAST(0 as numeric(18,2))                                            as irbpnr
 		                  ,av.observacion 
 	                FROM Ventas.Aprob_Document        av WITH (NOLOCK)
-                    INNER JOIN dbo.Entidad            en WITH (NOLOCK) ON en.idEntidad         = av.idEntidad
-	                INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision    = av.idPuntoEmision 
-	                INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
 	                INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente         = av.idCliente
+                    INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision    = av.idPuntoEmision 
+	                INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+                    INNER JOIN dbo.Entidad            en WITH (NOLOCK) ON en.idEntidad         = es.idEntidad
+                    INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
                      LEFT JOIN dbo.Ciudad             ci WITH (NOLOCK) ON ci.idCiudad          = cl.idCiudad 
 	                WHERE av.idAprob_Document = @id
                 END 
@@ -113,7 +118,9 @@ BEGIN
 	        FROM Ventas.Aprob_Document_Detailt ad WITH (NOLOCK)
 	        INNER JOIN dbo.Medida              me WITH (NOLOCK) ON me.idMedida   = ad.idMedida
 	        INNER JOIN dbo.Articulo            ar WITH (NOLOCK) ON ar.idArticulo = ad.idArticulo 
-	        WHERE ad.uniqueId = @uniqueId AND ad.estado = 1 ORDER BY ad.idAprob_Document_Detailt ASC
+	        WHERE ad.idAprob_Document = @id 
+              AND ad.estado = 1
+            ORDER BY ad.idAprob_Document_Detailt ASC
 
             IF @codDoc = '01'
                 BEGIN
@@ -169,12 +176,9 @@ BEGIN
             
             SELECT @id = id  FROM OPENJSON(@json) WITH (id INT, codDoc VARCHAR(10))
 
-            SELECT TOP 1 @uniqueId = uniqueId FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
-
-
-            SELECT uniqueId
-                  ,cl.numeroIdentificacion                    as identificacionCompador
-                  ,cl.nombreFiscal                            as razonSocialComprador
+            SELECT ad.idAprob_Document                        as uniqueId
+                  ,cu.IDCard                                  as identificacionCompador
+                  ,cu.TradeName                               as razonSocialComprador
                   ,FORMAT(ad.fechaEmision,'dd/MM/yyyy HH:mm') as fechaEmision
                   ,CASE ad.docOrigen WHEN 'NE' THEN 'Nota Entrega' 
                                      WHEN 'PR' THEN 'Proforma'
@@ -184,9 +188,10 @@ BEGIN
                    END                                        as docDestino
                   ,CAST(ad.importeTotal as numeric(18,2))     as importeTotal
                   ,us.nombreUsuario                           as usuario
-            FROM Ventas.Aprob_Document ad WITH (NOLOCK)
-            INNER JOIN dbo.Cliente     cl WITH (NOLOCK) ON cl.idCliente = ad.idCliente
-            INNER JOIN dbo.Usuario     us WITH (NOLOCK) ON us.idUsuario = ad.idUsuario
+            FROM Ventas.Aprob_Document   ad WITH (NOLOCK)
+            INNER JOIN dbo.Cliente       cl WITH (NOLOCK) ON cl.idCliente = ad.idCliente
+            INNER JOIN dbo.Usuario       us WITH (NOLOCK) ON us.idUsuario = ad.idUsuario
+            INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id        = cl.CustomerId
             WHERE ad.idAprob_Document = @id
 
             SELECT serie        as seriComprobante
@@ -194,7 +199,7 @@ BEGIN
 	                                 WHEN 'PR' THEN (SELECT TOP 1 FORMAT(pr.fechaEmision,'dd/MM/yyyy HH:mm') FROM dbo.Proforma pr WITH (NOLOCK) WHERE pr.idProforma = hv.idDocumento) 
                    END          as fechaEmision
             FROM Ventas.Aprob_Document_Hist hv WITH (NOLOCK)
-            WHERE uniqueId = @uniqueId
+            WHERE hv.idAprob_Document = @id
             ORDER BY hv.serie ASC
 
             SELECT us.nombreUsuario                                               as usuario
@@ -202,7 +207,7 @@ BEGIN
                   ,FORMAT(va.fechaRegistro,'dd/MM/yyyy HH:mm')                    as fechaRegistro
             FROM Ventas.Aprob_Document_Audit va WITH (NOLOCK)
             INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = va.idUsuario
-            WHERE va.uniqueId = @uniqueId
+            WHERE va.idAprob_Document = @id
 
             RETURN 
         END 

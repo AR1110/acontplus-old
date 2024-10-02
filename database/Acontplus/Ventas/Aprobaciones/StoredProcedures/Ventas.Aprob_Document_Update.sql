@@ -24,12 +24,12 @@ CREATE OR ALTER PROCEDURE Ventas.Aprob_Document_Update @userRoleId INT ,@id INT 
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
+	-- interfering with SELECT statements. 
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
     --> Globales 
-    DECLARE @idTipoDocumento INT ,@idEntidad INT ,@idUsuario INT ,@uniqueId VARCHAR(150) = NEWID()
+    DECLARE @idTipoDocumento INT ,@idEntidad INT ,@idUsuario INT 
 
     -- Data Json
     DECLARE @comprobante VARCHAR(MAX) ,@detalles VARCHAR(MAX) ,@impuestos VARCHAR(MAX) ,@infoAdicionalArticulo VARCHAR(MAX) ,@infoAdicional VARCHAR(MAX)
@@ -37,8 +37,6 @@ BEGIN
     -->Fact.Elect
     DECLARE @fechaEmision DATETIME2 ,@codDoc VARCHAR(5) ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@ruc VARCHAR(20) ,@ambiente VARCHAR(5) ,@secuencial INT ,@claveAcceso VARCHAR(50)
 
-     --> Aprob.ventas
-	DECLARE @identificacionComprador VARCHAR(20)
 
 	DECLARE @tbComprobante  AS TABLE (
 		 idCliente INT NOT NULL
@@ -166,18 +164,16 @@ BEGIN
 		
         SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
-		SELECT @uniqueId     = uniqueId
-		      ,@secuencial   = secuencial 
-		      ,@estab        = estab
-		      ,@ptoEmi       = ptoEmi
-		      ,@ambiente     = ambiente
-		FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
+		SELECT @secuencial   = ad.secuencial 
+		      ,@estab        = es.estab
+		      ,@ptoEmi       = pe.ptoEmi
+		      ,@ambiente     = pe.ambiente
+		FROM Ventas.Aprob_Document     ad WITH (NOLOCK) 
+        INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = ad.idPuntoEmision
+        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+        WHERE idAprob_Document = @id
 
-		SELECT @identificacionComprador = cl.numeroIdentificacion
-		      ,@fechaEmision            = dt.fechaEmision
-		FROM @tbComprobante dt
-		INNER JOIN dbo.Cliente cl WITH (NOLOCK) ON cl.idCliente = dt.idCliente 
-		
+		SELECT @fechaEmision = dt.fechaEmision FROM @tbComprobante dt
 
 		SELECT @claveAcceso = dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab)
 													   ,'01'
@@ -189,13 +185,13 @@ BEGIN
 													   ,dbo.AFTAutoComplete(@secuencial))
 
 
-		IF (SELECT COUNT(*) FROM @tbComprobante) = 0 
+		IF NOT EXISTS(SELECT 1FROM @tbComprobante)
 			BEGIN
 				SELECT '0'code,'Erro en la informacion del comprobante' as 'message'
 				RETURN
 			END 
 
-		IF (SELECT COUNT(*) FROM @tbDetalle) = 0 
+		IF NOT EXISTS(SELECT 1 FROM @tbDetalle) 
 			BEGIN
 				SELECT '0'code,'Erro en la informacion del detalle' as 'message'
 				RETURN
@@ -216,64 +212,39 @@ BEGIN
 		BEGIN TRAN 
 
 			UPDATE ap SET 
-			    ap.idCliente               = tb.idCliente
-               ,ap.fechaEmision            = tb.fechaEmision
-			   ,ap.identificacionComprador = @identificacionComprador
-			   ,ap.claveAcceso             = @claveAcceso
-               ,ap.totalSinImpuestos       = tb.totalSinImpuestos
-               ,ap.totalDescuento          = tb.totalDescuento
-               ,ap.propina                 = tb.propina
-               ,ap.importeTotal            = tb.importeTotal
-               ,ap.observacion             = tb.observacion 
-               ,ap.idUsuario               = tb.idUsuario
+			       ap.idCliente         = tb.idCliente
+                  ,ap.fechaEmision      = tb.fechaEmision
+			      ,ap.claveAcceso       = @claveAcceso
+                  ,ap.totalSinImpuestos = tb.totalSinImpuestos
+                  ,ap.totalDescuento    = tb.totalDescuento
+                  ,ap.propina           = tb.propina
+                  ,ap.importeTotal      = tb.importeTotal
+                  ,ap.observacion       = tb.observacion 
+                  ,ap.idUsuario         = tb.idUsuario
+                  ,ap.UpdatedByUserId   = @idUsuario
+                  ,ap.UpdatedAt         = GETDATE()
             FROM Ventas.Aprob_Document ap
-			INNER JOIN @tbComprobante tb ON idAprob_Document  = @id
+			INNER JOIN @tbComprobante  tb ON idAprob_Document  = @id
 
             --> Detalles 
-			DELETE FROM Ventas.Aprob_Document_Detailt WHERE uniqueId = @uniqueId
+            UPDATE Ventas.Aprob_Document_Detailt SET estado = 0 WHERE idAprob_Document = @id
 
 			INSERT INTO Ventas.Aprob_Document_Detailt
-                   (uniqueId,idArticulo,idTarifa,idBodega,idTipoIva,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision, nota)
-			SELECT @uniqueId,idArticulo,idTarifa,idBodega,idTipoIva,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision, nota
+                   (idAprob_Document,idArticulo,idTarifa,idBodega,idTipoIva,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision,nota)
+			SELECT @id              ,idArticulo,idTarifa,idBodega,idTipoIva,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision,nota
 			FROM @tbDetalle 
 			ORDER BY orderIndex ASC
 
             --> Impuestos
 
-            DELETE FROM Ventas.AprobVentasImpuesto WHERE AprobDocumentId = @id 
+            UPDATE Ventas.AprobVentasImpuesto SET [Enabled] = 0 WHERE AprobDocumentId = @id 
 
             INSERT INTO Ventas.AprobVentasImpuesto
                    (AprobDocumentId,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount)
             SELECT @id             ,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount FROM @tbTaxes
 
-		---------------------------------------------START-INFO-ADICIONAL-ARTICULO-------------------------------------------
-			--UPDATE infoAdd  SET estado = 1
-			--FROM Compra.InfoAdicional infoAdd
-			--INNER JOIN Ventas.HistoryInfoAdicional h WITH(NOLOCK) ON h.idInfoAdicional = infoAdd.idInfoAdicional
-			--WHERE h.codDoc ='APR' AND h.idDocumento = @id
-
-			--DELETE FROM Ventas.HistoryInfoAdicional WHERE codDoc='APR' AND idDocumento = @id;
-
-			--INSERT INTO Ventas.HistoryInfoAdicional(idInfoAdicional, codDoc, idDocumento, secuencial, ptoEmi, estab)
-			--SELECT idInfoAdicional, 'APR', @id, @secuencial, @ptoEmi, @estab FROM @historyInfoAdicional
-			
-			--UPDATE infoAdd  SET estado = 2 
-			--FROM Compra.InfoAdicional infoAdd
-			--INNER JOIN @historyInfoAdicional h ON h.idInfoAdicional = infoAdd.idInfoAdicional
-			--------------------------------------------END-INFO-ADICIONAL-ARTICULO------------------------------
-			 
-			--INSERT INTO @tblInfoAdicional
-			--SELECT j.[key] as nombre, ar.codigo + ' : ' +  STRING_AGG(j.[value], ', ') WITHIN GROUP (ORDER BY j.[value]) AS valor
-			--FROM Compra.InfoAdicional t WITH (NOLOCK)
-			--INNER JOIN Ventas.HistoryInfoAdicional h WITH (NOLOCK) ON t.idInfoAdicional = h.idInfoAdicional
-			--INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = t.idArticulo
-			--CROSS APPLY OPENJSON(t.jsonAdicional) j
-			--WHERE h.codDoc = 'APR' AND h.idDocumento = @id
-			--GROUP BY j.[key],ar.codigo
-
-			
-			--informacion Adiciomal--
-			DELETE FROM dbo.InfoAdicionalDoc WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
+		    --> Info Adicioanal --
+			UPDATE dbo.InfoAdicionalDoc SET estado = 0 WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
 
 			INSERT INTO dbo.InfoAdicionalDoc (idComprobante,idTipoDocumento,nombre,valor)
 									      SELECT @id,@idTipoDocumento,nombre,valor FROM @tblInfoAdicional
@@ -289,12 +260,12 @@ BEGIN
 			BEGIN
 				ROLLBACK TRAN; 
 			END
-			SELECT '0'code,'Info: Error en el procedimiento: ' + ERROR_MESSAGE() as  'message'
 
-			INSERT INTO ErroresSistema
-		      (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		    SELECT NEWID(),'/Aprobacion/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+		SELECT '0'code,'Info: Error en el procedimiento: ' + ERROR_MESSAGE() as  'message'
 
+		INSERT INTO ErroresSistema
+		    (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'/Aprobacion/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
 	END CATCH 
 
 END
