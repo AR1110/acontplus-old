@@ -2,8 +2,10 @@ import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
@@ -20,7 +22,8 @@ import { finalize } from 'rxjs';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-
+    MatMenuModule,
+    MatTooltipModule,
     //components
     BreadcrumbComponent,
     CustomTableContainerComponent,
@@ -47,6 +50,8 @@ export class NotaEntregaPageComponent {
     { key: 'total', label: 'Total', type: 'number' },
     { key: 'abono', label: 'Abono', type: 'number' },
     { key: 'saldo', label: 'Saldo', type: 'number' },
+    { key: 'estadoNom', label: 'Estado', type: 'string' },
+    { key: 'usuario', label: 'Usuario', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
@@ -70,6 +75,7 @@ export class NotaEntregaPageComponent {
 
     this.dataSource = new MatTableDataSource(response.data);
 
+    console.log(this.dataSource.data)
     this.pagination.update((p) => ({
       ...p,
       totalRecords: response.totalRecords,
@@ -109,7 +115,15 @@ export class NotaEntregaPageComponent {
 
 
   handlePageEvent(e: PageEvent) {
-
+    this.pagination.update((pag) => {
+      return {
+        ...pag,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
+      };
+    });
+    this.refresh();
   }
 
 

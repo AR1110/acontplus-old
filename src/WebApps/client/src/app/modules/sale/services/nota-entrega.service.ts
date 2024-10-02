@@ -1,10 +1,11 @@
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { SALE_PATHS } from '../enums/sale.enum';
-import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ApiResponse } from '@core/models/api-response';
+import { map } from 'rxjs';
+
+import { SALE_PATHS } from '../enums/sale.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +42,7 @@ export class NotaEntregaService {
               serieComprobante: item.serieComprobante,
               razonSocialComprador: item.nombreFiscal,
               identificacionComprador: item.identificacionComprador,
-              estadoFinanciero: item.estadoFinanciero,
+              estadoNom: item.estadoFinanciero,
               total: item.total,
               abono: item.abono,
               saldo: item.saldo,
