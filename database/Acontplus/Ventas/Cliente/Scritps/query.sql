@@ -22,7 +22,7 @@ go
 
     --alter table Cliente add UpdatedByUserId INT CONSTRAINT fk_User_ClienterUpdate FOREIGN KEY (UpdatedByUserId) references dbo.Usuario(idUsuario)
 
-    --alter table Cliente add UdpatedAt DATETIME2 
+    --alter table Cliente add UpdatedAt DATETIME2 
     
     --alter table cliente drop column nombreComercial
    
@@ -30,7 +30,6 @@ go
     
     --alter table cliente drop column numeroIdentificacion
 
-    select top 10 * from Cliente
-
+    
     
 
