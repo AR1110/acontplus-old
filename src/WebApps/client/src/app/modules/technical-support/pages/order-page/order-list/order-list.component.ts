@@ -12,7 +12,7 @@ import {
   NgbDropdownModule,
   NgbPaginationModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import { PrimaryStatusPipe } from '@shared/pipe/primary-status.pipe';
+import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import swal from 'sweetalert2';
 
 import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';

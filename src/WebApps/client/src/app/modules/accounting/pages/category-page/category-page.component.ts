@@ -7,7 +7,7 @@ import { Category } from '@modules/accounting/models/category';
 import { CategoryService } from '@modules/accounting/services/category.service';
 import { isApiResponse } from '@core/models/api-response';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import { SecondaryStatusPipe } from '@shared/pipe/secondary-status.pipe';
+import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
 import { CompanyCustomerAddEditDirective } from '@company-customer/directives/company-customer-add-edit.directive';
 
 @Component({

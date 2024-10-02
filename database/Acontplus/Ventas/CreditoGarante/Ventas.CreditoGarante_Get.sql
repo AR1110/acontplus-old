@@ -16,7 +16,7 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH 
 
-	
+    --> Variables Globales
     DECLARE @tipo INT  
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT)
@@ -33,15 +33,16 @@ BEGIN
 	        SELECT cg.idCreditoGarante
 				  ,cg.idCuentaPorCobrar
 				  ,cl.idCliente
-				  ,cl.nombreFiscal         as razonSocialComprador
-				  ,cl.nombreComercial
-				  ,cl.numeroIdentificacion as identificacionComprador
+				  ,cu.TradeName    as razonSocialComprador
+				  ,cu.BusinessName as nombreComercial
+				  ,cu.IDCard       as identificacionComprador
 				  ,cl.direccion
 				  ,cl.correo
 				  ,cl.telefono
                   ,tipoAccion = 'U'
-	         FROM Ventas.CreditoGarante cg WITH (NOLOCK)
-			 INNER JOIN dbo.Cliente     cl WITH (NOLOCK) ON cl.idCliente  = cg.idCliente
+	         FROM Ventas.CreditoGarante   cg WITH (NOLOCK)
+			 INNER JOIN dbo.Cliente       cl WITH (NOLOCK) ON cl.idCliente  = cg.idCliente
+             INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id         = cl.CustomerId
 	         WHERE cg.estado = 1 
                AND cg.idCuentaPorCobrar = @idCuentaPorCobrar
 

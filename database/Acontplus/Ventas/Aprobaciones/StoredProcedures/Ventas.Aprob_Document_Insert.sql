@@ -29,13 +29,13 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
     --> Globales 
-    DECLARE @idAprobacion INT ,@idTipoDocumento INT ,@idEntidad INT ,@idUsuario INT ,@uniqueId VARCHAR(150) = NEWID()
+    DECLARE @idAprob_Document INT ,@idTipoDocumento INT ,@idEntidad INT ,@idUsuario INT
 
     -- Data Json
     DECLARE @comprobante VARCHAR(MAX) ,@detalles VARCHAR(MAX) ,@impuestos VARCHAR(MAX) ,@historial VARCHAR(MAX) ,@infoAdicionalArticulo VARCHAR(MAX) ,@infoAdicional VARCHAR(MAX)
 
     --> Aprob.ventas
-	DECLARE @idPuntoEmision INT ,@docOrigen VARCHAR(5) ,@docDestino VARCHAR(5) ,@idEstadoDocumento INT , @identificacionComprador VARCHAR(20)
+	DECLARE @idPuntoEmision INT ,@docOrigen VARCHAR(5) ,@docDestino VARCHAR(5) ,@idEstadoDocumento INT
 
     -->Fact.Elect
     DECLARE @fechaEmision DATETIME2 ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@ruc VARCHAR(20) ,@ambiente VARCHAR(5) ,@secuencial INT ,@claveAcceso VARCHAR(50)
@@ -122,43 +122,43 @@ BEGIN
 		INSERT INTO @tbComprobante
 		      (idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,docDestino,observacion,idUsuario)
 		SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,docDestino,observacion,idUsuario
-		FROM OPENJSON(@comprobante)
-		WITH (
-				idCliente                   INT '$.idCliente' 
-			   ,idPuntoEmision              INT '$.idPuntoEmision' 
-			   ,fechaEmision          DATETIME2 '$.fechaEmision'
-			   ,codDoc               VARCHAR(5) '$.codDoc'
-			   ,totalSinImpuestos NUMERIC(18,5) '$.subTotalSinImpuestos' 
-			   ,totalDescuento    NUMERIC(18,5) '$.totalDescuento'
-			   ,propina           NUMERIC(18,5) '$.propina'
-			   ,importeTotal      NUMERIC(18,5) '$.total' 
-			   ,docOrigen           VARCHAR(15) '$.docOrigen'
-			   ,docDestino          VARCHAR(15) '$.docDestino'
-			   ,observacion        VARCHAR(300) '$.observacion'
-               ,idUsuario        INT 
-		     )
+		FROM OPENJSON(@comprobante) WITH 
+        (
+		     idCliente         INT  
+		    ,idPuntoEmision    INT 
+		    ,fechaEmision      DATETIME2 
+		    ,codDoc            VARCHAR(5)
+		    ,totalSinImpuestos NUMERIC(18,5) 
+		    ,totalDescuento    NUMERIC(18,5)
+		    ,propina           NUMERIC(18,5) 
+		    ,importeTotal      NUMERIC(18,5) 
+		    ,docOrigen         VARCHAR(15)
+		    ,docDestino        VARCHAR(15)
+		    ,observacion       VARCHAR(300)
+            ,idUsuario         INT 
+		)
 
 		INSERT INTO @tbDetalle 
 			  (orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision, nota)
 		SELECT orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision, nota
-		FROM OPENJSON(@detalles)
-		WITH (
-				orderIndex                       INT '$.orderIndex',
-				idTarifa                         INT '$.idTarifa'
-			   ,idArticulo                       INT '$.idArticulo'
-		       ,idBodega                         INT '$.idBodega'
-			   ,idMedida                         INT '$.idMedida' 
-			   ,idTipoIva                        INT '$.idTipoIva' 
-		       ,cantidad               NUMERIC(18,5) '$.cantidad' 
-		       ,descripcion             VARCHAR(300) '$.descripcion' 
-		       ,precioUnitario         NUMERIC(18,5) '$.precioUnitario' 
-		       ,descuento              NUMERIC(18,5) '$.descuento'
-		       ,precioTotalSinImpuesto NUMERIC(18,5) '$.precioTotalSinImpuesto' 
-		       ,codigoPorcentaje          VARCHAR(5) '$.codigoPorcentaje'
-		       ,tarifa                 NUMERIC(18,5) '$.tarifa'
-               ,valorImpuesto          NUMERIC(18,5) '$.valorImpuesto'
-               ,fechaEmision               DATETIME2 '$.fechaEmision'
-               ,nota                    VARCHAR(200) '$.nota'
+		FROM OPENJSON(@detalles) WITH 
+        (
+		     orderIndex             INT
+		    ,idTarifa               INT
+		    ,idArticulo             INT 
+		    ,idBodega               INT 
+		    ,idMedida               INT
+		    ,idTipoIva              INT 
+		    ,cantidad               NUMERIC(18,5) 
+		    ,descripcion            VARCHAR(300)
+		    ,precioUnitario         NUMERIC(18,5) 
+		    ,descuento              NUMERIC(18,5)
+		    ,precioTotalSinImpuesto NUMERIC(18,5)
+		    ,codigoPorcentaje       VARCHAR(5)
+		    ,tarifa                 NUMERIC(18,5) 
+            ,valorImpuesto          NUMERIC(18,5) 
+            ,fechaEmision           DATETIME2
+            ,nota                   VARCHAR(200)
 		 )
 
         INSERT INTO @tbTaxes
@@ -166,12 +166,12 @@ BEGIN
         SELECT TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount
         FROM OPENJSON(@impuestos) WITH 
         (
-            taxId               INT 
-	       ,taxPercentId        INT
-	       ,[percent] NUMERIC(18,5)
-	       ,taxBase   NUMERIC(18,5) 
-	       ,taxValue  NUMERIC(18,5) 
-           ,discount  NUMERIC(18,5)
+            taxId        INT 
+	       ,taxPercentId INT
+	       ,[percent]    NUMERIC(18,5)
+	       ,taxBase      NUMERIC(18,5) 
+	       ,taxValue     NUMERIC(18,5) 
+           ,discount     NUMERIC(18,5)
         )
 
 		INSERT INTO @tbHistorial  (idDocumento,serie) SELECT idDocumento,serie FROM OPENJSON(@historial) WITH (idDocumento INT '$.idDocumento' ,serie VARCHAR(30) '$.serie')
@@ -188,18 +188,15 @@ BEGIN
 
 		SELECT TOP 1 @docOrigen = docOrigen , @docDestino = docDestino FROM @tbComprobante
 
-		SELECT	
-			@idPuntoEmision          = dt.idPuntoEmision 
-		   ,@identificacionComprador = numeroIdentificacion
-		   ,@estab                   = es.estab
-		   ,@ptoEmi                  = pt.ptoEmi
-		   ,@ambiente                = pt.ambiente
-		   ,@fechaEmision            = dt.fechaEmision
-           ,@idUsuario               = dt.idUsuario
+		SELECT @idPuntoEmision          = dt.idPuntoEmision 
+		      ,@estab                   = es.estab
+		      ,@ptoEmi                  = pt.ptoEmi
+		      ,@ambiente                = pt.ambiente
+		      ,@fechaEmision            = dt.fechaEmision
+              ,@idUsuario               = dt.idUsuario
 		FROM @tbComprobante dt 
 		INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = dt.idPuntoEmision
 		INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pt.idEstablecimiento
-		INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente         = dt.idCliente 
 		
 		SELECT @secuencial =  COUNT(*) + 1 FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision
 
@@ -221,25 +218,25 @@ BEGIN
 		
 		-- ========================= VALIDADACIONES =====================================================	
 
-		IF (SELECT COUNT(*) FROM @tbComprobante) = 0 
+		IF NOT EXISTS(SELECT 1 FROM @tbComprobante)
 			BEGIN
 				SELECT '0'code,'Erro en la informacion del comprobante' as 'message'
 				RETURN
 			END 
 
-		IF (SELECT COUNT(*) FROM @tbDetalle) = 0 
+		IF NOT EXISTS(SELECT 1 FROM @tbDetalle) 
 			BEGIN
 				SELECT '0'code,'Error en la informacion del detalle' as 'message'
 				RETURN
 			END 
 
-		IF (SELECT COUNT(*) FROM @tbHistorial) = 0 
+		IF NOT EXISTS(SELECT 1 FROM @tbHistorial) 
 			BEGIN
 				SELECT '0'code,'Erro en la informacion del historial' as 'message'
 				RETURN
 			END 
 
-        IF (SELECT COUNT(*) FROM @tbTaxes) = 0 
+        IF NOT EXISTS(SELECT 1 FROM @tbTaxes)
             BEGIN
                 SELECT '0' code,'Error en los impuestos' AS 'message'
 				RETURN
@@ -261,29 +258,30 @@ BEGIN
             
             --> Comprobante
 			INSERT INTO Ventas.Aprob_Document
-                   (uniqueId,idCliente,idPuntoEmision,fechaEmision, identificacionComprador,codDoc,estab,ptoEmi,ruc,ambiente,tipoEmision,secuencial,claveAcceso,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,observacion,idEntidad,idUsuario)
-			SELECT @uniqueId,idCliente,idPuntoEmision,fechaEmision,@identificacionComprador,codDoc,@estab,@ptoEmi,@ruc,@ambiente,'1',@secuencial,@claveAcceso,totalSinImpuestos,totalDescuento,propina,importeTotal,@docOrigen,observacion,@idEntidad,@idUsuario
+                  (idCliente,idPuntoEmision,fechaEmision,codDoc,secuencial,claveAcceso,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,observacion,idUsuario)
+			SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,@secuencial,@claveAcceso,totalSinImpuestos,totalDescuento,propina,importeTotal,@docOrigen,observacion,@idUsuario
 			FROM @tbComprobante
 
-			SET @idAprobacion = @@IDENTITY
+			SET @idAprob_Document = @@IDENTITY
 
             --> Detalles 
 			INSERT INTO Ventas.Aprob_Document_Detailt
-                   (uniqueId,idArticulo,idTarifa,idBodega,idTipoIva,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision, nota)
-			SELECT @uniqueId,idArticulo,idTarifa,idBodega,idTipoIva,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision, nota
+                   (idAprob_Document,idArticulo,idTarifa,idBodega,idTipoIva,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision, nota)
+			SELECT @idAprob_Document,idArticulo,idTarifa,idBodega,idTipoIva,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision, nota
 			FROM @tbDetalle 
 			ORDER BY orderIndex ASC
 
             -->Impuestos
             INSERT INTO Ventas.AprobVentasImpuesto
-                   (AprobDocumentId,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount)
-            SELECT @idAprobacion,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount FROM @tbTaxes
+                    (AprobDocumentId,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount)
+            SELECT @idAprob_Document,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount FROM @tbTaxes
 
-			INSERT INTO Ventas.Aprob_Document_Hist(uniqueId,idDocumento,codDocumento,serie)
-			SELECT @uniqueId,idDocumento,@docOrigen,serie FROM @tbHistorial 
+			INSERT INTO Ventas.Aprob_Document_Hist
+                   (idAprob_Document,idDocumento,codDocumento,serie)
+			SELECT @idAprob_Document,idDocumento,@docOrigen,serie FROM @tbHistorial 
 
-			INSERT INTO InfoAdicionalDoc (idComprobante,idTipoDocumento,nombre,valor)
-						          SELECT @idAprobacion,@idTipoDocumento,nombre,valor FROM @tbInfoAdicional
+			INSERT INTO InfoAdicionalDoc(idComprobante,idTipoDocumento,nombre,valor)
+						          SELECT @idAprob_Document,@idTipoDocumento,nombre,valor FROM @tbInfoAdicional
 
 
 			IF @docOrigen = 'NE'
@@ -292,7 +290,7 @@ BEGIN
 
                     UPDATE dbo.NotaEntrega WITH (ROWLOCK) SET convertToDoc = 1 
                     WHERE idNotaEntrega IN (
-                                              SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId  
+                                              SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.idAprob_Document = @idAprob_Document  
                                            )
 
 				END 
@@ -305,7 +303,7 @@ BEGIN
 						pr.idEstadoDocumento = @idEstadoDocumento
 					FROM dbo.Proforma pr WITH(NOLOCK)
 				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
-					       WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = pr.idProforma
+					       WHERE dt.idAprob_Document = @idAprob_Document) dt ON dt.idDocumento = pr.idProforma
 				END 
 
 		COMMIT TRAN 
