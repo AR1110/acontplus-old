@@ -398,7 +398,7 @@
 
         formSvc.truncateNumber = function (number, decimals) {
             const factor = Math.pow(10, decimals);
-            return Math.floor(number * factor) / factor;
+            return Math.round(number * factor) / factor;
         }
 
 

@@ -349,8 +349,7 @@ function modalArticuloCtrl(
                 if ($scope.establecimientos.length > 0) {
                     let dataEstab = $scope.establecimientos.find(
                         (estab) => estab.defaultEstab === true
-                    );
-                    console.log($scope.establecimientos)
+                    ); 
                     $scope.bodegas = dataEstab.bodegas;
                     $scope.dataUbicacion.idEstablecimiento = dataEstab.idEstablecimiento;
                     if ($scope.bodegas.length > 0) {
@@ -1818,8 +1817,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         }
     }
 
-    function successReponse(response) {
-        console.log(response)
+    function successReponse(response) { 
         if (response.code == "0") {
             tS.toastr('warning', response.message, response.titleSms);
         }
@@ -1919,7 +1917,7 @@ function ModalArticuloGeneralCtrl(
     $scope.refresh = refresh;
     $scope.askToSelect = askToSelect;
 
-    
+
 
 
     function pageChanged() {
@@ -1940,7 +1938,7 @@ function ModalArticuloGeneralCtrl(
 
     function onSearchText() {
         $scope.articulos = [];
-        if ($scope.dataSearch.bySearch && $scope.dataSearch.bySearch.length > 2){
+        if ($scope.dataSearch.bySearch && $scope.dataSearch.bySearch.length > 2) {
             getArticulos()
         }
 
@@ -2005,69 +2003,72 @@ function ModalArticuloGeneralCtrl(
     //     cantidad
     // };
 
-    function askToSelect(item){
+    function askToSelect(item) {
 
-        if(params && typeof params==='object' && params.items.length>0 && params.validarStock){
+        if (params && typeof params === 'object' && params.esVenta) {
+            askToAdd(item);
+            return 
+        } 
 
-            let articulosDuplicados = params.items.filter(i=>i.idArticulo===item.idArticulo && i.llevaInventario);
-
-            if(articulosDuplicados.length>1){
-                //validaciones 
-            }
-
-            let data
-
-
-
-
-        }
-
-        console.log(item)
-        console.log(params.refProductoVenta)
-        params.refProductoVenta.onInventario(item.idArticulo) 
+        const data = {
+            idArticulo: item.idArticulo,  
+        };
+        $uibModalInstance.close(data);
 
 
     }
 
-    function askToAdd(item){
-        Swal.fire({ 
-            text: '¿Qué deseas hacer?',
-            icon: 'question',
-            input: 'number', // Campo de entrada de tipo número
-            inputLabel: 'Ingresa una cantidad',
-            inputValue: 1, // Valor predeterminado: 1
-            inputPlaceholder: 'Escribe un número',
+    /**
+     * 
+     * @param {*} item 
+     */
+    function askToAdd(item) {
+        Swal.fire({
+            title: '¿Qué deseas hacer?',
+            html: `
+        <label for="cantidadInput" style="display: block; margin-bottom: 5px;">Ingresa una cantidad:</label>
+        <input id="cantidadInput" type="number" class="swal2-input" placeholder="Escribe un número" min="1" value="1">
+    `,
+            focusConfirm: false,
             showCancelButton: true,
             showDenyButton: true,
             confirmButtonText: 'Añadir y continuar',
             denyButtonText: 'Añadir y cerrar',
             cancelButtonText: 'Cancelar',
-            preConfirm: (value) => {
-                // Validar si el valor es menor a 1
-                if (value < 1) {
-                    Swal.showValidationMessage('La cantidad debe ser mayor o igual a 1');
+            preConfirm: () => {
+                const cantidadInput = document.getElementById('cantidadInput').value;
+
+                // Validar si el valor es un número y mayor que 0
+                if (isNaN(cantidadInput) || cantidadInput <= 0) {
+                    Swal.showValidationMessage('La cantidad debe ser un número mayor a 0.');
                     return false; // Retorna false para no permitir el cierre
                 }
-                return value; // Si es válido, retorna el valor
+
+                return cantidadInput; // Retorna el valor si es válido
+            },
+            preDeny: () => {
+                const cantidadInput = document.getElementById('cantidadInput').value;
+
+                // Validar si el valor es un número y mayor que 0
+                if (isNaN(cantidadInput) || cantidadInput <= 0) {
+                    Swal.showValidationMessage('La cantidad debe ser un número mayor a 0.');
+                    return false; // Retorna false para no permitir el cierre
+                }
+
+                return cantidadInput; // Retorna el valor si es válido
             }
         }).then((result) => {
+            let cantidadInput = document.getElementById('cantidadInput').value; // Obtener el valor del input
+            cantidadInput = Number(cantidadInput)
+
             if (result.isConfirmed) {
-                // Acción para "Añadir y continuar" (la validación ya se realizó en inputValidator)
-                console.log('Has elegido: Añadir y continuar, valor ingresado:', result.value);
-                // Aquí puedes ejecutar cualquier otra lógica cuando se añada y continúe
+                params.refProductoVenta.onInventario(item.idArticulo, cantidadInput)
+
             } else if (result.isDenied) {
-                // Acción para "Añadir y cerrar" sin validar
-                console.log('Has elegido: Añadir y cerrar, valor ingresado:', result.value);
-                // Aquí puedes ejecutar cualquier otra lógica cuando se añada y cierre
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                // Acción para "Cancelar"
-                console.log('Has cancelado la acción');
+                params.refProductoVenta.onInventario(item.idArticulo, cantidadInput)
+                $uibModalInstance.close()
             }
-        });
-
-
-
-
+        })
     }
 
     $scope.previewImg = function (item) {

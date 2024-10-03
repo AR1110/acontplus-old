@@ -746,10 +746,7 @@
         let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
         let productUtil = $injector.get('productUtil');
         let infoAdicionalConfig = [];
-        let isSetInfoAdicionalConfig = true;
-
-        console.log(productUtil)
-
+        let isSetInfoAdicionalConfig = true; 
 
         $scope.tipoDoc = TIPO_DOC_NE;
         $scope.cuotas = [];
@@ -1038,6 +1035,9 @@
         }
 
 
+        function getIndexRow(row) {
+            return $scope.gridOptions.data.findIndex(item => item.uniqueRowDetalle === row.uniqueRowDetalle)
+        }
         /**
          * 
          * @param {*} nuevaFilaAgregada 
@@ -1045,7 +1045,7 @@
         function addItem(nuevaFilaAgregada) {
             $scope.gridOptions.data.push(nuevaFilaAgregada)
             setCalculoTotales('precioUnitario', nuevaFilaAgregada, 0);
-            //   focusColumnCantidad();
+            focusColumnCantidad(getIndexRow(nuevaFilaAgregada), nuevaFilaAgregada.llevaInventario);
             updateRefProductoVenta()
             tS.toastr({
                 type: 'success',
@@ -1054,30 +1054,36 @@
         }
 
         function updateItem(nuevaFilaAgregada) {
-            console.log(nuevaFilaAgregada)
-            $scope.gridOptions.data = $scope.gridOptions.data.map(item => {
-                console.log()
-                if (item.uniqueRowDetalle === nuevaFilaAgregada.uniqueRowDetalle) {
-                    return {
-                        ...item,
-                        ...nuevaFilaAgregada
-                    }
-                }
-                return item;
-            });
+            console.log(nuevaFilaAgregada);
 
-            let dataActualizarFile = $scope.gridOptions.data.find(item => item.uniqueRowDetalle === nuevaFilaAgregada.uniqueRowDetalle)
+            // Actualizar el elemento en los datos de gridOptions basado en uniqueRowDetalle
+            $scope.gridOptions.data = $scope.gridOptions.data.map(item =>
+                item.uniqueRowDetalle === nuevaFilaAgregada.uniqueRowDetalle
+                    ? { ...item, ...nuevaFilaAgregada }  // Actualiza la fila si coincide el uniqueRowDetalle
+                    : item  // Mantiene el item sin cambios si no coincide
+            );
+
+            // Buscar la fila actualizada
+            const dataActualizarFile = $scope.gridOptions.data.find(item =>
+                item.uniqueRowDetalle === nuevaFilaAgregada.uniqueRowDetalle
+            );
+
             if (dataActualizarFile) {
-                setCalculoTotales('precioUnitario', dataActualizarFile, 0)
-
+                // Realiza el cálculo de los totales basándose en 'precioUnitario'
+                setCalculoTotales('precioUnitario', dataActualizarFile, 0);
+                focusColumnCantidad(getIndexRow(nuevaFilaAgregada), nuevaFilaAgregada.llevaInventario);
             }
-            //   focusColumnCantidad();
-            updateRefProductoVenta()
+
+            // Actualiza la referencia del producto vendido
+            updateRefProductoVenta();
+
+            // Muestra una notificación de éxito
             tS.toastr({
                 type: 'success',
-                message: 'Actualizado la fila correctamente'
-            })
+                message: 'Fila actualizada correctamente'
+            });
         }
+
 
         // Función para manejar la confirmación del usuario y el código de respuesta
         /**
@@ -1122,21 +1128,20 @@
             }
 
             // Muestra un mensaje de advertencia y espera la confirmación del usuario.
-            const { isConfirmed } = await Swal.fire({
+            Swal.fire({
                 title: `<small>${titleSms}</small>`,
                 icon: 'warning',
                 html: `<small>${message}</small>`,
                 allowOutsideClick: false,
                 allowEscapeKey: false,
-            });
-
-            // Según la confirmación, realiza acciones adicionales.
-            if (isConfirmed) {
-                handleConfirmation(code, nuevaFilaAgregada, agregarFila, focusSearch);
-            }
+            }).then(r => {
+                if (r.isConfirmed) {
+                    handleConfirmation(code, nuevaFilaAgregada, agregarFila, focusSearch);
+                }
+            })
         }
 
-        async function editColCantidad(data) {
+        function editColCantidad(data) {
             const {
                 row,
                 verificarStockResponse,
@@ -1152,29 +1157,30 @@
                 return
             }
 
-            let { isConfirmed } = await Swal.fire({
+            Swal.fire({
                 title: `<small>${titleSms}</small>`,
                 icon: 'warning',
                 html: `<small>${message}</small>`,
                 allowOutsideClick: false,
                 allowEscapeKey: false,
+            }).then(result => {
+                if (result.isConfirmed) {
+                    if (code === "0") {
+                        row[field] = oldValue;
+                        setCalculoTotales(field, row, oldValue);
+                        let el = document.getElementById("#custom-template-md-autocomplete-articulo")
+                        if (el) {
+                            el.focus();
+                        }
+                    }
+                    if (code === "2") {
+                        setCalculoTotales(field, row, oldValue);
+                    }
+                    updateRefProductoVenta()
+                    $scope.$apply()
+                }
             })
 
-            if (isConfirmed) {
-                if (code === "0") {
-                    row[field] = oldValue;
-                    setCalculoTotales(field, row, oldValue);
-                    let el = document.getElementById("#custom-template-md-autocomplete-articulo")
-                    if (el) {
-                        el.focus();
-                    }
-                }
-                if (code === "2") {
-                    setCalculoTotales(field, row, oldValue);
-                }
-                updateRefProductoVenta()
-
-            }
         }
 
 
@@ -1384,7 +1390,7 @@
 
                             storageSvc.setObject("notaEntregaDetail", result.dataInvoiceDetail)
 
-                            recalculateTotalsSimple();
+                            drawInfoGeneralNotaEntrega();
                             $scope.$apply();
                         }
 
@@ -1414,7 +1420,8 @@
                 tiposIva: $scope.tarifasImpuesto,
                 fechaEmision: $scope.data.fechaEmision,
                 duplicarItem: $scope.config.detailDuplicate,
-                addRow
+                addRow,
+                updateItem
             })
         }
 
@@ -1521,7 +1528,6 @@
                 name: 'Cant.',
                 field: 'cantidad',
                 enableCellEditOnFocus: true,
-                min: 1,
                 type: 'number',
                 width: '6%',
                 minWidth: '50'
@@ -1748,6 +1754,8 @@
             let indexBodega = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
             $scope.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = $scope.tarifasImpuesto;
             $scope.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = $scope.bodegas;
+
+            updateRefProductoVenta()
         }
 
         /**
@@ -1774,6 +1782,7 @@
                     //Recalculamos los totales 
                     setCalculoTotales("cantidad", rowEntity, 0);
                     counterGridOptions();
+                    updateRefProductoVenta()
                     $scope.$apply();
                 }
 
@@ -1796,23 +1805,24 @@
 
 
         $scope.openModalArticle = function (item) {
-            if ($scope.config.detailDuplicate) {
-                fS.sweetAlert('warning', 'No disponible para editar el artículo cuando se ha seleccionado <b>Duplicar Artículo</b>.');
-                return
-            }
+            // if ($scope.config.detailDuplicate) {
+            //     fS.sweetAlert('warning', 'No disponible para editar el artículo cuando se ha seleccionado <b>Duplicar Artículo</b>.');
+            //     return
+            // }
             $scope.gridApi.cellNav.scrollToFocus(
                 $scope.gridOptions.data[0],
                 $scope.gridOptions.columnDefs[2]
             )
 
-            $scope.indexRow = $scope.gridOptions.data.indexOf(item);
-            $scope.$broadcast("editArticulo", item)
+            $scope.refProductoVenta.openModalArticulo(item);
         }
 
         function setIdBodegaInDetalle() {
             for (let item of $scope.gridOptions.data) {
                 item.idBodega = $scope.data.idBodega;
             }
+
+            updateRefProductoVenta()
         }
 
 
@@ -1906,6 +1916,8 @@
                 console.log(error)
                 $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
             }
+
+            updateRefProductoVenta()
         }
 
         //==============================START CUSTOMER===========================
@@ -2031,6 +2043,8 @@
                     $scope.data.idBodega = $scope.dataClone.idBodega;
                     $scope.$apply();
                 }
+
+                updateRefProductoVenta()
             } catch (error) {
                 console.log(error)
             }
@@ -2054,7 +2068,7 @@
                     objCalculo["cantidad"] && objCalculo["cantidad"]();
                     objCalculo["calculoTotalDetalle"]();
                 }
-                recalculateTotalsSimple();
+                drawInfoGeneralNotaEntrega();
             } catch (error) {
                 console.log(error);
             }
@@ -2095,7 +2109,7 @@
                     gridOptionsSvc.calculoColDef
                 )
                 ) {
-                    recalculateTotalsSimple();
+                    drawInfoGeneralNotaEntrega();
                 }
                 $scope.$apply();
 
@@ -2103,6 +2117,7 @@
                 $scope.data.idTarifa = $scope.dataClone.idTarifa;
                 $scope.$apply();
             }
+            updateRefProductoVenta()
         }
 
         //=================================START PRODUCT=======================================
@@ -2138,112 +2153,112 @@
             return structuredClone(obj);
         }
 
-        $scope.setItemArticuloEnDetalle = function (dataArticulo) {
-            try {
-                $scope.dataArticulo = dataArticulo;
-                const {
-                    articulo,
-                    medidas,
-                    datosAdicionalesArticulo,
-                    consolidacionesFecha
-                } = $scope.dataArticulo;
+        // $scope.setItemArticuloEnDetalle = function (dataArticulo) {
+        //     try {
+        //         $scope.dataArticulo = dataArticulo;
+        //         const {
+        //             articulo,
+        //             medidas,
+        //             datosAdicionalesArticulo,
+        //             consolidacionesFecha
+        //         } = $scope.dataArticulo;
 
-                let index = 0, entity = {}, tarifaImpuesto = {}, cantidad = 0;
+        //         let index = 0, entity = {}, tarifaImpuesto = {}, cantidad = 0;
 
-                //verificar si hay un articulo que lleva inventario mas de uno 
-                let itemsDuplicated = $scope.gridOptions.data.filter(item => (
-                    item.llevaInventario && item.idArticulo === articulo.idArticulo
-                ))
-
-
-                let findIndexById = $scope.gridOptions.data.findIndex(
-                    item => item.llevaInventario && item.idArticulo === articulo.idArticulo
-                );
-
-                if ($scope.config.detailDuplicate) {
-                    addRow();
-                    index = $scope.gridOptions.data.length - 1;
-                    entity = $scope.gridOptions.data[index];
-                    entity.cantidad = 1;
-                } else {
-
-                    if (itemsDuplicated.length > 1) {
-                        fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
-                        return
-                    }
-
-                    if (findIndexById === -1) {
-                        addRow();
-                        index = $scope.gridOptions.data.length - 1;
-                        entity = $scope.gridOptions.data[index];
-                        entity.cantidad = 1;
-                    } else {
-                        index = findIndexById;
-                        entity = $scope.gridOptions.data[index];
-                        cantidad = entity.cantidad;
-                        entity.cantidad = cantidad + 1;
-                    }
-                }
+        //         //verificar si hay un articulo que lleva inventario mas de uno 
+        //         let itemsDuplicated = $scope.gridOptions.data.filter(item => (
+        //             item.llevaInventario && item.idArticulo === articulo.idArticulo
+        //         ))
 
 
+        //         let findIndexById = $scope.gridOptions.data.findIndex(
+        //             item => item.llevaInventario && item.idArticulo === articulo.idArticulo
+        //         );
 
-                let dataMedida = medidas.find(medida => (medida.defaultMedida));
+        //         if ($scope.config.detailDuplicate) {
+        //             addRow();
+        //             index = $scope.gridOptions.data.length - 1;
+        //             entity = $scope.gridOptions.data[index];
+        //             entity.cantidad = 1;
+        //         } else {
 
-                entity.idArticulo = articulo.idArticulo;
-                entity.codigo = articulo.codigoArticulo;
-                entity.descripcion = articulo.descripcion;
+        //             if (itemsDuplicated.length > 1) {
+        //                 fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+        //                 return
+        //             }
 
-                tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
-
-                entity.idImpuesto = tarifaImpuesto.idImpuesto;
-                entity.idTipoIva = articulo.idTipoIva;
-                entity.codigoPorcentaje = articulo.codigoPorcentaje;
-                entity.tarifa = articulo.tarifa;
-
-
-                entity.ice = articulo.valorIce;
-                entity.idBodega = $scope.data.idBodega;
-                entity.llevaInventario = articulo.llevaInventario;
-                entity.datosAdicionales = articulo.datosAdicionales;
-                entity.productoFraccionable = articulo.productoFraccionable;
-                entity.medidas = medidas; //Lista Medida 
-                entity.idMedida = dataMedida.idMedida; //Medida por defecto 
-                entity.conversion = dataMedida.conversion;
-                entity.precioCosto = dataMedida.precioCosto;
-                entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
+        //             if (findIndexById === -1) {
+        //                 addRow();
+        //                 index = $scope.gridOptions.data.length - 1;
+        //                 entity = $scope.gridOptions.data[index];
+        //                 entity.cantidad = 1;
+        //             } else {
+        //                 index = findIndexById;
+        //                 entity = $scope.gridOptions.data[index];
+        //                 cantidad = entity.cantidad;
+        //                 entity.cantidad = cantidad + 1;
+        //             }
+        //         }
 
 
-                entity.datosAdicionalesArticulo = datosAdicionalesArticulo.map(daa => {
-                    return {
-                        ...daa,
-                        uniqueRowDetalle: entity.uniqueRowDetalle
-                    }
-                });
 
-                entity.consolidacionesFecha = consolidacionesFecha;
+        //         let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
-                entity.articuloTarifas = dataMedida.tarifas;
+        //         entity.idArticulo = articulo.idArticulo;
+        //         entity.codigo = articulo.codigoArticulo;
+        //         entity.descripcion = articulo.descripcion;
 
-                let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
-                entity.idTarifa = $scope.data.idTarifa;
-                entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
-                entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
-                entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
-                $scope.indexRow = index;
-                setCalculoTotales('precioUnitario', entity, 0);
-                focusColumnCantidad();
-            } catch (error) {
-                console.log(error)
-            }
-        }
+        //         tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
-        function focusColumnCantidad() {
-            let index = 0;
+        //         entity.idImpuesto = tarifaImpuesto.idImpuesto;
+        //         entity.idTipoIva = articulo.idTipoIva;
+        //         entity.codigoPorcentaje = articulo.codigoPorcentaje;
+        //         entity.tarifa = articulo.tarifa;
 
-            if ($scope.dataArticulo.articulo.llevaInventario) {
-                index = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'cantidad')
+
+        //         entity.ice = articulo.valorIce;
+        //         entity.idBodega = $scope.data.idBodega;
+        //         entity.llevaInventario = articulo.llevaInventario;
+        //         entity.datosAdicionales = articulo.datosAdicionales;
+        //         entity.productoFraccionable = articulo.productoFraccionable;
+        //         entity.medidas = medidas; //Lista Medida 
+        //         entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+        //         entity.conversion = dataMedida.conversion;
+        //         entity.precioCosto = dataMedida.precioCosto;
+        //         entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
+
+
+        //         entity.datosAdicionalesArticulo = datosAdicionalesArticulo.map(daa => {
+        //             return {
+        //                 ...daa,
+        //                 uniqueRowDetalle: entity.uniqueRowDetalle
+        //             }
+        //         });
+
+        //         entity.consolidacionesFecha = consolidacionesFecha;
+
+        //         entity.articuloTarifas = dataMedida.tarifas;
+
+        //         let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
+        //         entity.idTarifa = $scope.data.idTarifa;
+        //         entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
+        //         entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
+        //         entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
+        //         $scope.indexRow = index;
+        //         setCalculoTotales('precioUnitario', entity, 0);
+        //         focusColumnCantidad();
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
+        // }
+
+        function focusColumnCantidad(index, llevaInventario) {
+            let indexCol = 0;
+
+            if (llevaInventario) {
+                indexCol = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'cantidad')
             } else {
-                index = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'descripcion')
+                indexCol = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'descripcion')
             }
             $scope.gridApi.cellNav.scrollToFocus(
                 $scope.gridOptions.data[0],
@@ -2251,10 +2266,9 @@
             )
             $timeout(() => {
                 $scope.gridApi.cellNav.scrollToFocus(
-                    $scope.gridOptions.data[$scope.indexRow],
-                    $scope.gridOptions.columnDefs[index]
+                    $scope.gridOptions.data[index],
+                    $scope.gridOptions.columnDefs[indexCol]
                 );
-                $scope.indexRow = null;
             }, 30)
 
             counterGridOptions()
@@ -2263,7 +2277,7 @@
         //=================================END PRODUCT=======================================
 
         function counterGridOptions() {
-            angular.forEach($scope.gridOptions.data, (item, index) => {
+            $scope.gridOptions.data.forEach((item, index) => {
                 item.n = index + 1;
             })
         }
@@ -2288,26 +2302,8 @@
             objCalculo[colField] && objCalculo[colField]();
 
             objCalculo["calculoTotalDetalle"]();
-            recalculateTotalsSimple();
-            return rowEntity;
-        }
-
-        /**
-         * Calculamos todos los totales y subtotales del comprobantes
-         */
-        function recalculateTotalsSimple() {
-            // $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
-            //     items: $scope.gridOptions.data,
-            //     decimal: $scope.decimal,
-            //     dataTarifaImpuesto: $scope.tarifaImpuestoVigente,
-            //     TAX_RATE_CODE
-            // }))
-
-            // $scope.dataClone.porcentajeDescuento = $scope.data.porcentajeDescuento;
-            // $scope.dataClone.totalDescuento = $scope.data.totalDescuento;
-
-            // * Call to function to draw general totals
             drawInfoGeneralNotaEntrega();
+            return rowEntity;
         }
 
 
@@ -2333,7 +2329,7 @@
                 )
                 //redondeo del numero porcentaje 
                 $scope.data.porcentajeDescuento = fS.roundNumber($scope.data.porcentajeDescuento, $scope.decimal.nroTotalSubTotal)
-                recalculateTotalsSimple();
+                drawInfoGeneralNotaEntrega();
             } else {
                 tS.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
             }
@@ -2363,7 +2359,7 @@
                     gridOptionsSvc.setPorcentajeDescuentoAll(
                         $scope.gridOptions, $scope.data, $scope.decimal, gridOptionsSvc.calculoColDef
                     )
-                    recalculateTotalsSimple();
+                    drawInfoGeneralNotaEntrega();
                 } else {
                     tS.toastr('warning', 'El Valor Descuento no puede ser mayor al total');
                 }
@@ -2583,13 +2579,11 @@
         const registerAndUpdateNotaEntrega = async (query) => {
 
             if (isRegister()) {
-                const response = await notaEntregaSvc.save(query);
-                return response; // Retornar la respuesta para su manejo posterior
+                return await notaEntregaSvc.save(query);
             }
 
             if (isUpdate()) {
-                const response = await notaEntregaSvc.update($scope.data.idNotaEntrega, query);
-                return response; // Retornar la respuesta para su manejo posterior
+                return await notaEntregaSvc.update($scope.data.idNotaEntrega, query);
             }
         };
 
@@ -2652,13 +2646,6 @@
 
                 if (!isConfirmed) return
 
-
-                // Usar fetchManager para manejar el registro
-
-
-
-
-
                 let query = notaEntregaSvc.queryMapper({
                     data: $scope.data,
                     cliente: $scope.cliente,
@@ -2692,25 +2679,6 @@
                     }).catch(error => {
                         console.log(error); // Manejo de errores
                     })
-
-                    // showLoader();
-                    // notaEntregaSvc.save(query).then(response => {
-                    //     if (response.code === '0') {
-                    //         fS.sweetAlert('warning', response.message, response.titleSms);
-                    //     }
-                    //     if (response.code === "1") {
-                    //         fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                    //         let mainData = {
-                    //             isRegister: true,
-                    //             data: response.dataResponse,
-                    //         }
-                    //         $uibModalInstance.close(mainData)
-                    //     }
-                    // }).catch(error => {
-                    //     hideLoader();
-                    //     console.log(error)
-                    // }).finally(() => hideLoader())
                 }
 
                 //Update Doc 
@@ -2733,21 +2701,6 @@
                     })
 
 
-                    // showLoader()
-                    // notaEntregaSvc.update($scope.data.idNotaEntrega, query).then(response => {
-                    //     if (response.code === '0') {
-                    //         fS.sweetAlert('warning', response.message, response.titleSms);
-                    //     }
-                    //     if (response.code === "1") {
-                    //         fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    //         $uibModalInstance.close(response)
-                    //     }
-                    // }).catch(error => {
-                    //     hideLoader();
-                    //     console.log(error)
-                    // }).finally(() => hideLoader())
-
-
                 }
             } catch (error) {
                 hideLoader();
@@ -2758,7 +2711,10 @@
 
         function setDataChangeFormaPago() {
             let dataFormaPago = $scope.formasPago.find(item => item.idFormaPagoSri === $scope.dataFormaPago.idFormaPagoSri);
-            document.getElementById('infoReferenciaFormaPago').innerHTML = dataFormaPago.infoReferencia;
+            let el = document.getElementById('infoReferenciaFormaPago')
+            if (el) {
+                el.innerHTML = dataFormaPago.infoReferencia;
+            }
         }
         $scope.onSaveInvoice = async function () {
             try {
@@ -2817,14 +2773,16 @@
                         if ($scope.cliente.idFormaPagoSri > 0) {
                             $scope.dataFormaPago.idFormaPagoSri = $scope.cliente.idFormaPagoSri;
                         }
-                        el.value = $scope.dataFormaPago.idFormaPagoSri;
-
-                        setDataChangeFormaPago();
-
-                        el.addEventListener('change', () => {
-                            $scope.dataFormaPago.idFormaPagoSri = Number(el.value);
+                        if (el) {
+                            el.value = $scope.dataFormaPago.idFormaPagoSri;
                             setDataChangeFormaPago();
-                        })
+
+                            el.addEventListener('change', () => {
+                                $scope.dataFormaPago.idFormaPagoSri = Number(el.value);
+                                setDataChangeFormaPago();
+                            })
+                        }
+
                     },
                     preConfirm: () => {
                         let idFormaPagoSri = document.getElementById('formaDePago').value;
@@ -2895,8 +2853,10 @@
 
                             //Registar Doc 
                             if (isRegister()) {
-                                showLoader();
-                                facturaSvc.save(params).then(response => {
+
+                                const managedRegister = fS.fetchManager(facturaSvc.save);
+
+                                managedRegister(params).then(response => {
                                     if (response.code === '0') {
                                         fS.sweetAlert('warning', response.message, response.titleSms);
                                     }
