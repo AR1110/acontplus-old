@@ -30,8 +30,6 @@ function inputSearchArticuloCtrl($scope, $rootScope, $injector, $timeout, $q) {
     }
 
     $scope.productsFound = [];
-
-    let dataArticulo = {};
     let isUpdateProduct = false;
 
 
@@ -39,24 +37,53 @@ function inputSearchArticuloCtrl($scope, $rootScope, $injector, $timeout, $q) {
     $scope.searchTextChange = searchTextChange;
     $scope.selectArticleSearch = selectArticleSearch;
     $scope.getDataArticuloByEnterCode = getDataArticuloByEnterCode;
+    $scope.openModalArticulo = openModalArticulo;
     $scope.openModalArticuloGeneral = openModalArticuloGeneral;
 
-    $scope.$on("editArticulo", (e, itemArticulo) => {
-        //validacion de sum cantidad en el detalle cantidad consolidaci
-        isUpdateProduct = itemArticulo.isUpdate;
-        $scope.openModalArticulo(itemArticulo)
-    })
+    async function openModalArticulo(item) {
+        try {
+            const { fileCtrl, controllers, templates } = nombreModalInventario.ARTICULO;
+            let ctrl = (await import(fileCtrl))[controllers['M']];
+            let template = templates['M'];
+            const modalDialogRef = modalSvc.open({
+                controller: ctrl,
+                template,
+                size: 'xl',
+                params: item || {},
+                isRenderRazorPartial: true
+            })
 
+            modalDialogRef.result.then(response => {
+                if (response && typeof response === 'object') {
+                    validarGetDataArticulo(response.idArticulo);
+                }
+            })
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    function focusSearchCustomer() {
+        let el = $("#clienteSearchInvoice")
+        if (el) {
+            el.focus();
+        }
+    }
 
     setTimeout(() => {
 
         //buscador principal 
-        $("#custom-template-md-autocomplete-articulo").on('keyup', e => {
-            let keyCode = e.keyCode || e.which;
-            if (!$scope.searchText && keyCode === 13) {
-                $("#clienteSearchInvoice").focus();
-            }
-        })
+        let el = $("#custom-template-md-autocomplete-articulo")
+
+        if (el) {
+            el.on('keyup', e => {
+                let keyCode = e.keyCode || e.which;
+                if (!$scope.searchText && keyCode === 13) {
+                    focusSearchCustomer()
+                }
+            })
+        }
 
         //buscador por enter
 
@@ -84,13 +111,17 @@ function inputSearchArticuloCtrl($scope, $rootScope, $injector, $timeout, $q) {
 
     setTimeout(() => {
 
-        $("#inputBarcode").on('keyup', e => {
-            var keyCode = e.keyCode || e.which;
+        let el = $("#inputBarcode")
 
-            if (!$scope.searchText && keyCode === 13) {
-                $("#clienteSearchInvoice").focus();
-            }
-        })
+        if (el) {
+            el.on('keyup', e => {
+                var keyCode = e.keyCode || e.which;
+
+                if (!$scope.searchText && keyCode === 13) {
+                    focusSearchCustomer()
+                }
+            })
+        }
 
     }, 800)
 
@@ -141,20 +172,16 @@ function inputSearchArticuloCtrl($scope, $rootScope, $injector, $timeout, $q) {
         }
         if (!item || !("idArticulo" in item)) return
 
-        dataArticulo = {
-            idArticulo: item.idArticulo,
-            llevaInventario: item.llevaInventario
-        }
         $scope.selectedItem = null
 
-        validarGetDataArticulo();
+        validarGetDataArticulo(item.idArticulo);
     }
 
 
-    function validarGetDataArticulo() {
+    function validarGetDataArticulo(idArticulo) {
 
-        if($ctrl.esVenta){
-            $ctrl.refProductoVenta.onInventario(dataArticulo.idArticulo)  
+        if ($ctrl.esVenta) {
+            $ctrl.refProductoVenta.onInventario(idArticulo)
         }
         console.log($ctrl)
 
@@ -163,25 +190,25 @@ function inputSearchArticuloCtrl($scope, $rootScope, $injector, $timeout, $q) {
         //     return
         // }
 
-        // if (['CIV'].includes($ctrl.tipoDoc.codigo)) {
-        //     getId()
-        //     return
-        // }
+        if (['CIV'].includes($ctrl.tipoDoc.codigo)) {
+            getId(idArticulo)
+            return
+        }
 
 
-        // if (["C"].includes($ctrl.tipoDoc.codigo)) {
-        //     getDataArticuloParaCompra();
-        //     return
-        // }
+        if (["C"].includes($ctrl.tipoDoc.codigo)) {
+            getDataArticuloParaCompra(idArticulo);
+            return
+        }
 
-        // if (['FC', 'IB', 'LC', 'NCP', 'OC', 'TRA', 'GR'].includes($ctrl.tipoDoc.codigo)) {
-        //     getDataArticuloParaCompra();
-        // }
+        if (['FC', 'IB', 'LC', 'NCP', 'OC', 'TRA', 'GR'].includes($ctrl.tipoDoc.codigo)) {
+            getDataArticuloParaCompra(idArticulo);
+        }
 
     }
 
 
-    function getDataArticuloParaVenta() {
+    function getDataArticuloParaVenta(dataArticulo) {
         try {
             dataArticulo.idBodega = $ctrl.idBodega;
             /**
@@ -253,18 +280,16 @@ function inputSearchArticuloCtrl($scope, $rootScope, $injector, $timeout, $q) {
         }
     }
 
-    async function getDataArticuloParaCompra() {
+    async function getDataArticuloParaCompra(idArticulo) {
         try {
 
             let spParams = {
-                idArticulo: dataArticulo.idArticulo
+                idArticulo
             }
             articuloSvc.getForPurchase(spParams).then(response => {
                 $ctrl.setItemArticuloEnDetalle({
                     item: response
                 })
-            }).catch(error => {
-                console.log(error);
             })
 
         } catch (error) {
@@ -272,16 +297,17 @@ function inputSearchArticuloCtrl($scope, $rootScope, $injector, $timeout, $q) {
         }
     }
 
-    function getId() {
+    function getId(idArticulo) {
         try {
-            dataArticulo.idBodega = $ctrl.idBodega;
-            articuloSvc.getId(dataArticulo.idArticulo).then(response => {
+            let params = {
+                idArticulo,
+                idBodega: $ctrl.idBodega
+            }
+            articuloSvc.getId(params).then(response => {
                 $ctrl.setItemArticuloEnDetalle({
                     item: { ...response, isUpdateProduct }
                 })
                 isUpdateProduct = false;
-            }).catch(error => {
-                console.log(error);
             })
         } catch (e) {
             console.log(e)
@@ -390,42 +416,6 @@ function inputSearchArticuloCtrl($scope, $rootScope, $injector, $timeout, $q) {
     }
 
 
-
-
-    async function openModalArticulo(item) {
-        try {
-
-            const { fileCtrl, controllers, templates } = nombreModalInventario.ARTICULO;
-            let ctrl = (await import(fileCtrl))[controllers['M']];
-            let template = templates['M'];
-            const modalDialogRef = modalSvc.open({
-                controller: ctrl,
-                template,
-                size: 'xl',
-                params: item || {},
-                isRenderRazorPartial: true
-            })
-
-            modalDialogRef.result.then(response => {
-                if (typeof response !== 'object') {
-                    isUpdateProduct = false;
-                    return
-                }
-                dataArticulo = {
-                    idArticulo: response.idArticulo,
-                    idPresentacion: response.idPresentacion,
-                    presentacion: 'A'
-                }
-                //Funcion pasada como referencia desde el controlador                 
-                validarGetDataArticulo();
-            })
-        } catch (error) {
-            console.log(error);
-        }
-
-    }
-
-
     async function openModalArticuloGeneral() {
         try {
             const { fileCtrl, controllers, templates } = nombreModalInventario.ARTICULO;
@@ -443,14 +433,9 @@ function inputSearchArticuloCtrl($scope, $rootScope, $injector, $timeout, $q) {
             })
 
             modalRef.result.then(response => {
-                if (typeof response !== 'object') return
-                dataArticulo = {
-                    idArticulo: response.idArticulo,
-                    idPresentacion: response.idPresentacion,
-                    presentacion: 'A'
+                if (response && typeof response === 'object') {
+                    validarGetDataArticulo(response.idArticulo);
                 }
-                //Funcion pasada como referencia desde el controlador                 
-                validarGetDataArticulo();
             })
         } catch (error) {
             console.log(error)
@@ -498,13 +483,9 @@ function inputSearchArticuloCtrl($scope, $rootScope, $injector, $timeout, $q) {
         }
         if (!item || !("idArticulo" in item)) return
 
-        dataArticulo = {
-            idArticulo: item.idArticulo,
-            llevaInventario: item.llevaInventario
-        }
         $scope.selectedItem = null
 
-        validarGetDataArticulo();
+        validarGetDataArticulo(item.idArticulo);
     }
 
 }
@@ -522,7 +503,7 @@ app.component('mdAutocompleteArticuloComponent', {
         isDefaultArticle: '=?',
         idBodega: '=',
 
-        esVenta:"=",
+        esVenta: "=",
         onSelect: "&",
         items: "=",
         fechaEmision: "=",
