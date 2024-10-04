@@ -272,7 +272,7 @@ export class PosPageComponent {
           totalRecords: 0
         }
       })
-      this.dataItemSearch.update(e => ({ ...e, idSubFamilia: dataSubcategory.idSubFamilia }));
+      this.dataItemSearch.update(e => ({ ...e, idSubFamilia: dataSubcategory.idSubFamilia, textSearch: null }));
       this.refresh()
     }
   }
