@@ -24,8 +24,11 @@
                   </div>
                   <div class="col-xl-5 col-lg-5 col-md-6">
                     <div class="d-flex flex-row gap-1">
-                      <input type="text" [disabled]="loading()" class="form-control" placeholder="..."
-                        aria-label="Recipient's username with two button addons">
+                      <input type="text" [ngModel]="dataItemSearch().textSearch"
+                      (keydown.enter)="onEnterInputSearch($event)"
+                     matTooltip="Presiona 'Enter' para buscar o haz clic en el botón recargar"
+                         [disabled]="loading()" class="form-control" placeholder="..."
+                        aria-label="Search Items ">
                       <button mat-icon-button [disabled]="loading()" aria-label="icon button refresh" (click)="refresh()">
                         <mat-icon>refresh</mat-icon>
                       </button>
