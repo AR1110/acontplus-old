@@ -185,6 +185,7 @@ export class ProductAddEditModalComponent {
     columns: this.columnNames,
     layout: "fitColumns",
     resizableColumnFit: true,
+    reactiveData: true,
     height: null // Elimina la altura fija para que sea auto
   }
 
@@ -192,6 +193,8 @@ export class ProductAddEditModalComponent {
 
 
   isChangePrecio = false;
+
+  private timeoutIdNav: any; // Para almacenar el ID del setTimeout
 
   isUpdate() {
     return this.params.idArticulo > 0
@@ -276,7 +279,18 @@ export class ProductAddEditModalComponent {
   }
 
   selectTab(index: number) {
+    if (this.timeoutIdNav) {
+      clearTimeout(this.timeoutIdNav);
+    }
+    this.tabulatorOptions.reactiveData = false;
+
+    if (index === 0) {
+      this.timeoutIdNav = setTimeout(() => {
+        this.tabulatorOptions.reactiveData = true;
+      }, 100);
+    }
     this.selectedTab.set(index)
+
   }
 
   setDataSubCategoria() {
@@ -673,9 +687,9 @@ export class ProductAddEditModalComponent {
     return true;
   }
 
-  save(){
+  save() {
 
-    if(!this.isValidForm()) return
+    if (!this.isValidForm()) return
 
 
 
