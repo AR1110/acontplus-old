@@ -20,6 +20,10 @@
       <a class="nav-link" [class.active]="selectedTab() === 3" (click)="selectTab(3)">Ubicación</a>
     </li>
 
+    <li class="nav-item" style="cursor: pointer;">
+      <a class="nav-link" [class.active]="selectedTab() === 4" (click)="selectTab(4)">Fraccionado</a>
+    </li>
+
   </ul>
 
   <div class="tab-content mt-3">
@@ -116,8 +120,8 @@
               <option [ngValue]="item.idEtiqueta">{{item.descripcion}}</option>
               }
             </select>
-            <button class="btn btn-outline-secondary btn-sm" appTagsAddEditModal (onResultModal)="resultModalTag($event)"
-              tabindex="-1">
+            <button class="btn btn-outline-secondary btn-sm" appTagsAddEditModal
+              (onResultModal)="resultModalTag($event)" tabindex="-1">
               +
             </button>
             <button class="btn btn-outline-secondary btn-sm" (click)="refreshTag()" type="button" tabindex="-1">
@@ -188,13 +192,13 @@
         </div>
       </div>
       @if ((isUpdate() || isAdd()) && isChangePrecio) {
-        <div class="col">
-          <div class="form-group">
-            <label for="precioCosto">Precio Costo: <span class="text-danger">*</span></label>
-            <input type="number" class="form-control" [(ngModel)]="data.precioCosto"
-              (keyup)="onChangePrecioCosto()" placeholder="0.00" />
-          </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="precioCosto">Precio Costo: <span class="text-danger">*</span></label>
+          <input type="number" class="form-control" [(ngModel)]="data.precioCosto" (keyup)="onChangePrecioCosto()"
+            placeholder="0.00" />
         </div>
+      </div>
 
       }
       <div class="col">
@@ -210,18 +214,15 @@
     <div class="row">
       <div class="col-lg-10 col-md-10 col-12">
         <app-tabulator [tableData]="productTarifa" [options]="tabulatorOptions"
-
-          (cellEdited)="cellEdited($event)"
-        ></app-tabulator>
+          (cellEdited)="cellEdited($event)"></app-tabulator>
       </div>
     </div>
     }
 
 
-    @if(selectedTab()===1){
+    @if(selectedTab()===4){
 
-
-
+    <app-fracc-product-list />
     }
 
   </div>

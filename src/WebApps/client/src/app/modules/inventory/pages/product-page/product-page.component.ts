@@ -144,31 +144,31 @@ export class ProductPageComponent {
     });
   }
 
-  ngOnInit() {
-    this.resetDataAfterFetch();
-    this.initLoad()
-      .pipe(
-        finalize(() => {
-          this.isLoadingResults = false;
-          this.toggleSelectsState();
-        }),
-      )
-      .subscribe({
-        next: (response) => {
-          const [dataForm, responseProduct] = response;
-          this.subCategorias.set(dataForm.subCategorias);
-          this.medidas.set(dataForm.medidas);
-          this.marcas.set(dataForm.marcas);
-          this.modelos.set(dataForm.modelos);
-          this.tiposIva.set(dataForm.tiposIva);
+  // ngOnInit() {
+  //   this.resetDataAfterFetch();
+  //   this.initLoad()
+  //     .pipe(
+  //       finalize(() => {
+  //         this.isLoadingResults = false;
+  //         this.toggleSelectsState();
+  //       }),
+  //     )
+  //     .subscribe({
+  //       next: (response) => {
+  //         const [dataForm, responseProduct] = response;
+  //         this.subCategorias.set(dataForm.subCategorias);
+  //         this.medidas.set(dataForm.medidas);
+  //         this.marcas.set(dataForm.marcas);
+  //         this.modelos.set(dataForm.modelos);
+  //         this.tiposIva.set(dataForm.tiposIva);
 
-          this.successResponseProductAll(responseProduct);
-        },
-        error: (err) => {
-          console.error('Error load data form and products:', err);
-        },
-      });
-  }
+  //         this.successResponseProductAll(responseProduct);
+  //       },
+  //       error: (err) => {
+  //         console.error('Error load data form and products:', err);
+  //       },
+  //     });
+  // }
 
   onSearch(event: Event): void {
     const target = event.target as HTMLInputElement;
