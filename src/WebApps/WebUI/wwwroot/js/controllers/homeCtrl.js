@@ -21,6 +21,7 @@
         $scope.alertIsOpened = false;
         $scope.releases = [];
         $scope.stepsConfig = [];
+        $scope.expiredSignatures = [];
 
         $scope.openAlert = () => {
             $scope.alertIsOpened = true;
@@ -282,11 +283,12 @@
                     });
                 }
                 if (dashboardData) {
-                    const { statistics, licenses, releases, stepsConfig } = dashboardData;
+                    const { statistics, licenses, releases, stepsConfig, expiredSignatures } = dashboardData;
                     $scope.cantidad = angular.fromJson(statistics);
                     $scope.licenses = angular.fromJson(licenses) || [];
                     $scope.releases = angular.fromJson(releases) || [];
                     $scope.stepsConfig = angular.fromJson(stepsConfig) || [];
+                    $scope.expiredSignatures = angular.fromJson(expiredSignatures) || [];
 
                     if ($scope.stepsConfig.length > 0) {
                         location.href = '/Config/WizardConfig/Index'
@@ -348,6 +350,24 @@
                                 template: "~/Pages/Shared/_LicensesModal.cshtml",
                             });
                         }
+                    }
+
+                    if ($scope.expiredSignatures.length > 0) {
+                        swal.fire({
+                            icon: 'warning',
+                            title: 'Firma Electronica',
+                            text: $scope.expiredSignatures[0].message,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonText: 'Solicitar soporte',
+                            showCancelButton: true,
+                            showConfirmButton: true,
+                        }).then(response => {
+                            if (response.isConfirmed) {
+                                window.open('https://api.whatsapp.com/send?phone=593986669930', '_blank')
+                            }
+                        })
                     }
                 }
             });
