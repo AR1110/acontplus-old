@@ -1,20 +1,6 @@
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  Output,
-  SimpleChanges,
-  ViewEncapsulation,
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
-import {
-  PageModule,
-  ReactiveDataModule,
-  TabulatorFull as Tabulator,
-} from 'tabulator-tables';
+import { PageModule, ReactiveDataModule, TabulatorFull as Tabulator } from 'tabulator-tables';
 
 Tabulator.registerModule([PageModule, ReactiveDataModule]);
 
@@ -49,22 +35,18 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tableData'] && !changes['tableData'].isFirstChange()) {
+      console.log('ngOnChanges tabulator ')
       // Efficiently update the data without redrawing the table
       this.updateTableData();
     }
   }
 
   ngAfterViewInit(): void {
-    // Initialize the table after the view has been fully rendered
-    this.initializeTable();
+      this.initializeTable();
   }
 
-  ngOnDestroy(): void {
-    // Clean up the Tabulator instance to prevent memory leaks
-    if (this.refTabulator) {
-      this.refTabulator.destroy();
-    }
-  }
+
+
 
   private initializeTable(): void {
     const tableElement = document.getElementById(this.uniqueIdTabulator);
@@ -113,6 +95,13 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
     // Efficiently update table data without redrawing the entire table
     if (this.refTabulator) {
       this.refTabulator.replaceData(this.tableData);
+    }
+  }
+
+
+  ngOnDestroy(): void {
+    if (this.refTabulator) {
+      this.refTabulator.destroy();
     }
   }
 }
