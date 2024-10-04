@@ -11,8 +11,10 @@ import { BrandPageComponent } from "./pages/brand-page/brand-page.component";
 import { InvModelPageComponent } from "./pages/inv-model-page/inv-model-page.component";
 import { TarifaPageComponent } from "./pages/tarifa-page/tarifa-page.component";
 import { TagsPageComponent } from "./pages/tags-page/tags-page.component";
+import { FraccProductPageComponent } from "./pages/fracc-product-page/fracc-product-page.component";
 
 export const routes: Route[] = [
+
   {
     path: 'category-page',
     title: 'Categoria',
@@ -36,6 +38,14 @@ export const routes: Route[] = [
     component: ProductPageComponent,
     data: {
       breadcrumb: 'Productos'
+    },
+  },
+  {
+    path: 'fracc-product',
+    title: 'Productos Fraccionados',
+    component: FraccProductPageComponent,
+    data: {
+      breadcrumb: 'Productos Fraccionados'
     },
   },
   {

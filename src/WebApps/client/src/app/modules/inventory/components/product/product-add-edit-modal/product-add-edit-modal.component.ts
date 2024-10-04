@@ -23,6 +23,7 @@ import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import Swal from 'sweetalert2';
 
 import { SubCategoryGroupComponent } from '../../sub-category/sub-category-group/sub-category-group.component';
+import { FraccProductListComponent } from '../fracc-product-list/fracc-product-list.component';
 
 interface ProductTarifa {
   tipoIva: string
@@ -51,6 +52,7 @@ interface ProductTarifa {
     TabulatorComponent,
     TabulatorTableComponent,
     SubCategoryGroupComponent,
+    FraccProductListComponent,
 
     //Directivas
     SubCategoryModalDirective,
@@ -205,78 +207,78 @@ export class ProductAddEditModalComponent {
 
   }
 
-  ngOnInit() {
+  // ngOnInit() {
 
-    this.userRoleStateSvc.select("permission").subscribe(p => {
-      this.isChangePrecio = p?.product?.precio
-    })
+  //   this.userRoleStateSvc.select("permission").subscribe(p => {
+  //     this.isChangePrecio = p?.product?.precio
+  //   })
 
-    this.productSvc.getDataForm().subscribe({
-      next: (response) => {
-        const {
-          categorias,
-          decimal,
-          estabs,
-          etiquetas,
-          marcas,
-          medidas,
-          modelos,
-          subCategorias,
-          tarifas,
-          tiposArticulo,
-          tiposIce,
-          tiposIva,
-        } = response;
+  //   this.productSvc.getDataForm().subscribe({
+  //     next: (response) => {
+  //       const {
+  //         categorias,
+  //         decimal,
+  //         estabs,
+  //         etiquetas,
+  //         marcas,
+  //         medidas,
+  //         modelos,
+  //         subCategorias,
+  //         tarifas,
+  //         tiposArticulo,
+  //         tiposIce,
+  //         tiposIva,
+  //       } = response;
 
-        this.estabs.set(estabs)
-        this.subCategories.set(subCategorias)
-        this.subCategoriesGroup.set(response.subCategoriasGroup)
-        this.tiposArticulo.set(tiposArticulo)
-        this.medidas.set(medidas);
-        this.tiposIva.set(tiposIva);
-        this.tarifas = tarifas;
-        this.etiquetas.set(etiquetas)
+  //       this.estabs.set(estabs)
+  //       this.subCategories.set(subCategorias)
+  //       this.subCategoriesGroup.set(response.subCategoriasGroup)
+  //       this.tiposArticulo.set(tiposArticulo)
+  //       this.medidas.set(medidas);
+  //       this.tiposIva.set(tiposIva);
+  //       this.tarifas = tarifas;
+  //       this.etiquetas.set(etiquetas)
 
-        if (!(this.params.idArticulo > 0)) {
+  //       if (!(this.params.idArticulo > 0)) {
 
-          //default data
-          if (this.tiposArticulo().length > 0) {
-            this.data.idTipoArticulo = this.tiposArticulo()[0].idTipoArticulo;
-          }
+  //         //default data
+  //         if (this.tiposArticulo().length > 0) {
+  //           this.data.idTipoArticulo = this.tiposArticulo()[0].idTipoArticulo;
+  //         }
 
-          if (this.medidas().length > 0) {
-            this.data.idMedida = this.medidas()[0].idMedida;
-          }
+  //         if (this.medidas().length > 0) {
+  //           this.data.idMedida = this.medidas()[0].idMedida;
+  //         }
 
-          if (this.tiposIva().length > 0) {
-            let dataTipoIva = this.tiposIva().find((ti: any) => ti.codigoPorcentaje.toString() === TAX_RATE_CODE.FIVE_PERCENT)
-            this.data.idTipoIva = dataTipoIva?.idTipoIva ?? 0;
+  //         if (this.tiposIva().length > 0) {
+  //           let dataTipoIva = this.tiposIva().find((ti: any) => ti.codigoPorcentaje.toString() === TAX_RATE_CODE.FIVE_PERCENT)
+  //           this.data.idTipoIva = dataTipoIva?.idTipoIva ?? 0;
 
-          }
-          console.log(this.data)
+  //         }
+  //         console.log(this.data)
 
-          this.setDataSubCategoria()
-          this.setProductPvpAdd();
+  //         this.setDataSubCategoria()
+  //         this.setProductPvpAdd();
 
-          //Registro de artículo desde Importación
-          if (this.params && this.params.isImport) {
-            this.setDataRecepcion()
-          }
-        }
-
-
-        //editar
-        if (this.params.idArticulo > 0) {
+  //         //Registro de artículo desde Importación
+  //         if (this.params && this.params.isImport) {
+  //           this.setDataRecepcion()
+  //         }
+  //       }
 
 
-
-        }
+  //       //editar
+  //       if (this.params.idArticulo > 0) {
 
 
 
-      },
-    })
-  }
+  //       }
+
+
+
+  //     },
+  //   })
+  // }
 
   selectTab(index: number) {
     if (this.timeoutIdNav) {

@@ -179,11 +179,13 @@ function inputSearchArticuloCtrl($scope, $rootScope, $injector, $timeout, $q) {
 
 
     function validarGetDataArticulo(idArticulo) {
+        
+
 
         if ($ctrl.esVenta) {
             $ctrl.refProductoVenta.onInventario(idArticulo)
+            return
         }
-        console.log($ctrl)
 
         // if (['FV', 'NE', 'PR', 'NC'].includes($ctrl.tipoDoc.codigo)) {
         //     getDataArticuloParaVenta();
@@ -465,7 +467,7 @@ function inputSearchArticuloCtrl($scope, $rootScope, $injector, $timeout, $q) {
              * return object {idArticulo: 0}
              */
             articuloSvc.findByEnterCode({ textSearch: $scope.searchText, isSearchByCode: true }).then(response => {
-                selectArticleSearch(response)
+                validarGetDataArticulo(response.idArticulo);
                 $scope.searchText = null
             }).catch(error => {
                 console.log(error);
@@ -499,8 +501,7 @@ app.component('mdAutocompleteArticuloComponent', {
         placeholder: '=',
         // abrirModalArticulo: '&',
         // getDataArticulo:'&',
-        setItemArticuloEnDetalle: '&',
-        isDefaultArticle: '=?',
+        setItemArticuloEnDetalle: '&', 
         idBodega: '=',
 
         esVenta: "=",
@@ -527,10 +528,11 @@ app.component("articuloSearchBarcode", {
         setItemArticuloEnDetalle: '&',
         idBodega: '=',
 
-        validatarStock: "=",
+        esVenta: "=",
         onSelect: "&",
         items: "=",
-        fechaEmision: "="
+        fechaEmision: "=",
+        refProductoVenta: '='
     },
     controller: inputSearchArticuloCtrl
 
