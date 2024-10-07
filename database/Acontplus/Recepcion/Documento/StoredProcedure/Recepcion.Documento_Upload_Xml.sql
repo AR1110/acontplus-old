@@ -57,7 +57,6 @@ BEGIN
        ,identificacionReceptor VARCHAR(300) NOT NULL
        ,importeTotal NUMERIC(18,5) NOT NULL DEFAULT 0
        ,serieComprobante AS estab + '-' + ptoEmi + '-' + secuencial
-       ,tipoEmision VARCHAR(25) DEFAULT 'NORMAL'  
     )
 
 	BEGIN TRY
@@ -210,8 +209,8 @@ BEGIN
 
 		BEGIN TRAN
 			INSERT  INTO Recepcion.DocumentoRecibido
-                   (idEstablecimiento, codEstab,comprobante,codDoc, serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,importeTotal,xmlCompressed,versionComp,idUsuario,fechaRegistro,downloaded,subcategoryId)
-			SELECT @idEstablecimiento,@codEstab,comprobante,@codDoc,serieComprobante,rucEmisor,razonSocialEmisior,@fechaEmision,@fechaAutorizacion,tipoEmision,identificacionReceptor,@claveAcceso,@claveAcceso,importeTotal,@xmlCompressed, @versionComp,@idUsuario,dbo.ufnGetDateEcuador(),'DE',@subcategoryId
+                   (idEstablecimiento,comprobante,codDoc, serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,identificacionReceptor,claveAcceso,importeTotal,xmlCompressed,versionComp,idUsuario,fechaRegistro,downloaded,subcategoryId)
+			SELECT @idEstablecimiento,comprobante,@codDoc,serieComprobante,rucEmisor,razonSocialEmisior,@fechaEmision,@fechaAutorizacion,identificacionReceptor,@claveAcceso,importeTotal,@xmlCompressed, @versionComp,@idUsuario,dbo.ufnGetDateEcuador(),'DE',@subcategoryId
             FROM @tbDocumento
 
 			SET @idDocumento = SCOPE_IDENTITY()
@@ -236,21 +235,21 @@ BEGIN
 			IF @codDoc IN ('01','04')
 				BEGIN	
                     --> Proveedor
-					IF NOT EXISTS(SELECT 1 FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@rucEmisor)))
+					IF NOT EXISTS(SELECT 1 FROM dbo.Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @customerId )
 						BEGIN
                             
                             SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '04'
 
-							INSERT INTO Proveedor WITH (ROWLOCK)
-                                   (idTipoIdentificacion,nombreFiscal,nombreComercial,numeroIdentificacion,direccion,idEntidad,CustomerId,validationSri)
-							SELECT @idTipoIdentificacion,razonSocialEmisior,nombreComercial,rucEmisor,dirMatriz,@idEntidad,@customerId,1
+							INSERT INTO dbo.Proveedor 
+                                   (idTipoIdentificacion,direccion,idEntidad,CustomerId)
+							SELECT @idTipoIdentificacion,dirMatriz,@idEntidad,@customerId
                             FROM @tbDocumento 
 
                             SELECT @idProveedor = SCOPE_IDENTITY()
 						END
                     ELSE 
                         BEGIN
-                            SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@rucEmisor)) 
+                            SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @customerId 
                         END 
 
                     --> Contabilidad

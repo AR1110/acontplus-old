@@ -4,6 +4,7 @@ import { OrderItem } from '@/models/order.model';
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, input, model, output, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-cart',
@@ -11,6 +12,7 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     FormsModule,
+    MatCardModule,
     InputNumberDirective
   ],
   templateUrl: './cart.component.html',

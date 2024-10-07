@@ -44,4 +44,22 @@ export enum GlobalRoutes {
   VentasReportVentaReporte = 'sale/reports/sale-report',
   FactElectReport = 'billing/fact-elect-report',
   ContabilidadAccountingSummary = 'accounting/accounting-movement',
+
+  //Inventarios
+  Articulo = 'inventory/product',
+  InventarioSubFamilia = 'inventory/subcategory',
+  InventarioMedida = 'inventory/measure',
+  InventarioMarca = 'inventory/brand',
+  InventarioModelo = 'inventory/model',
+  InventarioTarifa = 'inventory/tarifa',
+  Etiqueta = 'inventory/tags',
+  ArticuloFraccionado='inventory/fracc-product',
+
+
+  //**Recepcion**//
+  ComprasDocumentoRecibido = 'purchase/documento-recibido',
+
+  //VENTAS
+  Proforma = 'sale/proforma',
+  NotaEntrega='sale/nota-entrega'
 }

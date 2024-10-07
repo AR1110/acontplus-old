@@ -100,6 +100,9 @@ app.component("appCuentaPorCobrarComponent", {
                 }).catch(error => {
                     console.log(error)
                 }).finally(() => hideLoader());
+
+                comprobanteIngresoSvc.getPosfechadoCobrosModal()
+
             } catch (error) {
                 console.log(error)
             }

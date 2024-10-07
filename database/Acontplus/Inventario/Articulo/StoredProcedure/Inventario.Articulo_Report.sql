@@ -38,6 +38,8 @@ BEGIN
 	       ,@estado         VARCHAR(5)
 	       ,@usuario      VARCHAR(150)
            ,@codEstab     VARCHAR(100) 
+           ,@idMarca              INT
+           ,@idTarifa INT  
            
 
 	SELECT TOP 1  @idEntidad = idEntidad, @usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
@@ -113,14 +115,22 @@ BEGIN
 			
             SELECT @idSubFamilia  = bySubFamilia
 				  ,@rucClienteProveedor  = numeroIdentificacion
+                  ,@stockStatusCode = stockStatusCode
+                   ,@idMarca      = idMarca
+                     ,@idTarifa     = idTarifa 
 			FROM OPENJSON(@json) WITH 
             ( 
               bySubFamilia                 INT  
              ,numeroIdentificacion VARCHAR(25)
+             ,stockStatusCode VARCHAR(5)
+              ,idMarca              INT
+               ,idTarifa             INT 
 		    ) AS dt
 
 			SET @params = '@idEntidad    INT									
-						  ,@idSubFamilia INT'
+						  ,@idSubFamilia INT
+                          ,@idMarca      INT 
+                          ,@idTarifa     INT'
 
 			SET @sql = 'SELECT ar.idArticulo
 							  ,ar.descripcion
@@ -129,6 +139,7 @@ BEGIN
 							  ,ar.tarifa
 							  ,FORMAT(ar.fechaCaducidad, ''dd/MM/yyyy'') as fechaCaducidad 
 							  ,ISNULL(CAST(ar.precioConIva as numeric(15,2)),0) as precioIva
+                              ,ar.stock 
 						FROM Inventario.v_Articulo_Tarifa ar WITH (NOLOCK)
 						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '
 
@@ -136,6 +147,33 @@ BEGIN
 				BEGIN
 					SET @sql = @sql + 'AND ar.idSubFamilia = @idSubFamilia '
 				END
+
+            IF @idMarca > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND ar.idMarca  = @idMarca '
+                END 
+
+            IF @idTarifa > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND ar.idTarifa  = @idTarifa '
+                END 
+
+            IF @stockStatusCode IS NOT NULL
+                --con stock 
+                IF @stockStatusCode='CS'
+                    BEGIN
+                        SET @sql = @sql + 'AND ar.stock > 0 '
+                    END
+                --sin stock 
+                 IF @stockStatusCode='SS'
+                     BEGIN
+                         SET @sql = @sql + 'AND ar.stock <= 0 '
+                     END
+                --stock minimo 
+                IF @stockStatusCode='SM'
+                 BEGIN
+                     SET @sql = @sql + ' AND ar.stock <= ar.stockMinimo '
+                 END
 
 			SET @sql = @sql + ' ORDER BY ar.idArticulo '
 		
@@ -154,6 +192,8 @@ BEGIN
 							  ,@params
 							  ,@idEntidad    = @idEntidad
 							  ,@idSubFamilia = @idSubFamilia
+                              ,@idMarca      = @idMarca 
+                              ,@idTarifa     = @idTarifa 
 
 			RETURN 
 		END 
@@ -168,6 +208,7 @@ BEGIN
                   ,@idBodega     = idBodega
                   ,@codEstab     = codEstab
                   ,@stockStatusCode = stockStatusCode
+                  ,@idMarca         = idMarca 
 			FROM OPENJSON(@json) WITH 
             (      
                  bySubFamilia                 INT 	
@@ -175,13 +216,15 @@ BEGIN
                 ,idBodega                     INT
                 ,codEstab             VARCHAR(50)
                 ,stockStatusCode VARCHAR(5)
+                ,idMarca INT 
 			) AS dt
 
 			SET @params = '@idEntidad    INT									
 						  ,@idSubFamilia INT
 						  ,@idBodega     INT
                           ,@codEstab     VARCHAR(50)
-						  ,@rucClienteProveedor VARCHAR(25)'
+						  ,@rucClienteProveedor VARCHAR(25)
+                          ,@idMarca      INT '
 
 			SET @sql = 'SELECT ar.idArticulo
 							  ,ar.descripcion
@@ -221,6 +264,13 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND ar.codEstab = @codEstab '
                 END 
+
+
+            IF @idMarca > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND ar.idMarca  = @idMarca '
+                END 
+
             IF @stockStatusCode IS NOT NULL
                 --con stock 
                 IF @stockStatusCode='CS'
@@ -259,6 +309,7 @@ BEGIN
 							  ,@idBodega     = @idBodega
 							  ,@rucClienteProveedor = @rucClienteProveedor
                               ,@codEstab     = @codEstab
+                              ,@idMarca      = @idMarca
 
 			RETURN 
 		END
@@ -522,8 +573,7 @@ BEGIN
 
     IF @tipo = 6
         BEGIN 
-            DECLARE @idTarifa INT
-            DECLARE @idMarca INT 
+          
             
             
 

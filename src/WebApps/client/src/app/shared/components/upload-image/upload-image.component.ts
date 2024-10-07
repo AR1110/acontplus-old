@@ -1,0 +1,42 @@
+import { CommonModule } from '@angular/common';
+import { Component, Input, input, output, signal } from '@angular/core';
+import { imgDefault } from '@core/utils/utils';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
+@Component({
+  selector: 'app-upload-image',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FontAwesomeModule
+  ],
+  templateUrl: './upload-image.component.html',
+  styleUrl: `./upload-image.component.scss`
+})
+export class UploadImageComponent {
+  onSelected = output<File | null>()
+
+  @Input() imageUrl: string | ArrayBuffer | null =  imgDefault()
+
+  file: File | null = null;
+
+  onFileChange(event: any): void {
+    const file = event.target.files[0];
+    this.file = file;
+    this.onSelected.emit(this.file)
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imageUrl = reader.result
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onDelete(): void {
+    this.imageUrl = imgDefault()
+    this.file = null;
+    this.onSelected.emit(null)
+  }
+
+}

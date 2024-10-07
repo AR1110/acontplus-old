@@ -382,7 +382,7 @@ BEGIN
               AND cc.idCliente = @idCliente
               AND cc.codEstado = 'PE'
             
-            SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP','CBR','PFC')
+            SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP','CBR')
 
             SELECT cc.idCuentaPorCobrar
 				  ,cc.idCliente
@@ -486,6 +486,33 @@ BEGIN
             WHERE co.idComprobanteIngreso = @idComprobanteIngreso
 
             SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP')
+
+            RETURN 
+        END 
+
+    --> Get para las notificacions de cheques posfechados 
+    IF @tipo = 8 
+        BEGIN
+
+            SET @tableNames = 'cheques'
+            
+            SELECT co.idCobro                                                                              as id
+		          ,co.idComprobanteIngreso                                                                 as idComprobante
+		          ,'CI' + '-' + es.estab + '-' + RIGHT('000000000' + CONVERT(VARCHAR, ci.nroDocumento), 9) as nroDocumento
+		          ,cu.BusinessName                                                                         as persona
+		          ,cu.IDCard                                                                               as nroIdentificacion
+		          ,co.valor
+		          ,JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro')                                   as nro
+		          ,FORMAT(co.fechaEmision, 'dd/MM/yyyy HH:mm')                                             as fechaEmision
+	        FROM dbo.Cobro                    co WITH (NOLOCK)
+	        INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
+	        INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = co.idEntidadFinanciera
+            INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                   = ci.CustomerId
+            INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento    = ci.idEstablecimiento
+	        WHERE ef.codigo = 'CHE'
+              AND ci.estado = 1
+              AND ci.idEntidad = @idEntidad
+              AND co.posfechado = 1
 
             RETURN 
         END 

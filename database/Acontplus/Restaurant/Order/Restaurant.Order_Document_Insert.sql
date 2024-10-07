@@ -146,7 +146,12 @@ BEGIN
     FROM dbo.EstadoPago WITH(NOLOCK) 
     WHERE codigo = 'PE'
 
-    SELECT TOP 1 @CustomerId = ISNULL(CustomerId,0) FROM Cliente WITH (NOLOCK) WHERE idCliente = @customerCompanyId
+    SELECT TOP 1 @CustomerId = CustomerId FROM dbo.Cliente WITH (NOLOCK) WHERE idCliente = @customerCompanyId
+
+    IF (@customerId IS NULL)
+        BEGIN
+            SET @CustomerId = (SELECT TOP 1 Id FROM Customer.Customer WHERE IDTYPE = '07' AND IDCard = '9999999999999')
+        END
 
     IF (ISJSON(@itemsToPay) = 1 AND LEN(RTRIM(LTRIM(@itemsToPay))) > 0)
         BEGIN
@@ -337,10 +342,11 @@ BEGIN
                      
     IF (@customerCompanyId = 0)
         BEGIN 
-            SELECT TOP 1 @customerCompanyId = idCliente FROM v_Cliente WHERE codIdentSri = '07'
+            SELECT TOP 1 @customerCompanyId = idCliente FROM v_Cliente 
+            WHERE codIdentSri = '07'
+                AND customerId IS NOT NULL
+	            AND idEntidad = @companyId
         END
-
-  
     
     ---------- INSERT NEW ---------------
     INSERT INTO @FacturaDetalleInsert(idArticulo, idTarifa, idBodega, medidaId, ice, cantidad, precioUnitario, precioSinSubsidio    

@@ -1,109 +1,100 @@
 <app-breadcrumb />
-<div class="card">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-6 d-flex justify-content-start">
-        <span class="form-group pull-left page-size form-inline">
-          <select
-            class="form-select control-color"
-            [(ngModel)]="dataSearch.pageSize"
-            (change)="changePageSize()"
-          >
-            @for(item of recordsQuantity; track $index){
-            <option [ngValue]="item">{{ item }}</option>
-            }
-          </select>
-        </span>
-      </div>
 
-      <div class="col-6 d-flex justify-content-end">
-        <div class="input-group mb-3">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="..."
-            aria-label="Recipient's username"
-            aria-describedby="button-addon2"
-          />
-          <button
-            type="button"
-            class="btn btn-outline-success"
-            (click)="getSubcategories()"
-          >
-            <fa-icon [icon]="'redo'"></fa-icon>
-          </button>
-        </div>
+
+<mat-card>
+  <mat-card-header>
+    <mat-card-title-group>
+      <mat-card-title></mat-card-title>
+      <div class="d-flex flex-row gap-2">
+        <button mat-flat-button appSubCategoryModal (onResult)="onResultModal($event)">
+          <mat-icon>add</mat-icon>
+          Nuevo
+        </button>
+        <button mat-raised-button (click)="exportToExcel()">
+          <mat-icon>save_alt</mat-icon>
+          Exportar
+        </button>
+        <button mat-icon-button (click)="refresh()">
+          <mat-icon>refresh</mat-icon>
+        </button>
       </div>
-    </div>
-    <div class="table-responsive">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th></th>
-            <th>N°</th>
-            <th>Imagen</th>
-            <th>Familia</th>
-            <th>Código</th>
-            <th>SubFamilia</th>
-            <th>Monto Objetivo</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (item of subcategories; track $index) {
-          <tr>
-            <td>
-              <div class="d-flex justify-content-center mr-2">
-                <button type="button" class="d-inline btn btn-info btn-sm ms-2" appSubCategoryModal>
-                  <fa-icon [icon]="'edit'"></fa-icon>
-                </button>
-                <button type="button" class="d-inline btn btn-danger btn-sm">
-                  <fa-icon [icon]="'trash'"></fa-icon>
-                </button>
-              </div>
-            </td>
-            <td>{{ $index + 1 }}</td>
-            <td>
-              <div class="d-flex align-items-center">
-                <img
-                  [src]="item.s3ObjectUrl"
-                  alt=""
-                  style="width: 45px; height: 45px"
-                  class="rounded-circle"
-                  fill
-                />
-                <!-- <div class="ms-3">
-                  <p class="fw-bold mb-1">John Doe</p>
-                  <p class="text-muted mb-0">john.doegmail.com</p>
-                </div> -->
-              </div>
-            </td>
-            <td>{{ item.nombreFamilia }}</td>
-            <td>{{ item.siglas }}</td>
-            <td>{{ item.descripcion }}</td>
-            <td>{{ item.montoObjetivo }}</td>
-            <td>
-              <div [innerHTML]="item.estado | primaryStatus"></div>
-            </td>
-          </tr>
-          }
-        </tbody>
-        <tfoot>
-          <tr>
-            <td align="center" colspan="6">
-              <ngb-pagination
-                [collectionSize]="dataSearch.totalRecords"
-                [(page)]="dataSearch.pageIndex"
-                [maxSize]="dataSearch.maxSize"
-                [pageSize]="dataSearch.pageSize"
-                [rotate]="true"
-                (pageChange)="pageChanged()"
-                [boundaryLinks]="true"
-              />
-            </td>
-          </tr>
-        </tfoot>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <!-- setting outline form field appearance -->
+    <app-custom-table-container [pagination]="pagination()" [isLoadingResults]="isLoadingResults"
+      (onPageEvent)="handlePageEvent($event)">
+      <table mat-table [dataSource]="dataSource" matSort matSortActive="descripcion" matSortDisableClear
+        matSortDirection="desc">
+        <!-- Number Column -->
+        <ng-container matColumnDef="index">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let element; let i = index">
+            {{ i + 1 }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="op">
+          <th mat-header-cell *matHeaderCellDef>Op.</th>
+          <td mat-cell *matCellDef="let row">
+            <div class="d-flex flex-row gap-1">
+              <button mat-icon-button appSubCategoryModal [params]="row" (onResult)="onResultModal($event)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button (click)="askToUpdateStatus(row)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+
+          </td>
+        </ng-container>
+
+
+        <!-- Title Column -->
+        <ng-container matColumnDef="nombreFamilia">
+          <th mat-header-cell *matHeaderCellDef>Categoria</th>
+          <td mat-cell *matCellDef="let row">{{row.nombreFamilia
+            }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="img">
+          <th *matHeaderCellDef mat-header-cell>Imagen</th>
+          <td *matCellDef="let element" mat-cell>
+            <img [src]="element.s3ObjectUrl" class="img-fluid img-thumbnail" width="50" />
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef>Código</th>
+          <td mat-cell *matCellDef="let row">{{row.codigo
+            }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="siglas">
+          <th mat-header-cell *matHeaderCellDef>Sigla</th>
+          <td mat-cell *matCellDef="let row">{{row.siglas}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Descripción</th>
+          <td mat-cell *matCellDef="let row">{{row.descripcion
+            }}</td>
+        </ng-container>
+
+
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let row">
+            <div [innerHTML]="row.estado | primaryStatus"></div>
+          </td>
+        </ng-container>
+
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
-    </div>
-  </div>
-</div>
+    </app-custom-table-container>
+
+  </mat-card-content>
+</mat-card>

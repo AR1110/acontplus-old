@@ -20,8 +20,8 @@ CREATE OR ALTER VIEW Ventas.v_NotaCredito WITH SCHEMABINDING AS (
         ,es.codEstab
         ,es.nombreComercial
         ,es.estab
-        ,cl.nombreFiscal         as razonSocialComprador
-        ,cl.numeroIdentificacion as identificacionComprador
+        ,cu.TradeName            as razonSocialComprador
+        ,cu.IDCard               as identificacionComprador
         ,cc.idEstadoPago
         ,ep.descripcion          as estadoCuenta
         ,ep.codigo               as codCuenta
@@ -46,5 +46,6 @@ CREATE OR ALTER VIEW Ventas.v_NotaCredito WITH SCHEMABINDING AS (
      LEFT JOIN dbo.EstadoPago               ep WITH (NOLOCK) ON ep.idEstadoPago           = cc.idEstadoPago 
      LEFT JOIN FactElect.EstadoServicio     sf WITH (NOLOCK) ON sf.idEstadoServicio       = de.idEstadoServicio
     INNER JOIN dbo.DocumentoElectronico     df WITH (NOLOCK) ON df.idDocumentoElectronico = fe.idDocumentoElectronico
+    INNER JOIN Customer.Customer            cu WITH (NOLOCK) ON cu.Id                     = cl.CustomerId
 
 )

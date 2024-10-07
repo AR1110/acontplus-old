@@ -54,16 +54,15 @@
                 }
             } catch (error) {
                 console.error("Error decoding token:", error);
-               return alertEndSession();
+                return alertEndSession();
             }
         } else {
-           return alertEndSession();
+            return alertEndSession();
         }
 
         const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
         mS.detectDevice();
-
-        let frontend = document.getElementById('frontend').value
+        let frontend = window.angularAppUrl;
         let div = document.querySelector('.container-fluid'); // Select the div by class
         div.classList.remove('container-fluid'); // Remove the div
         // Get the current URL
@@ -82,6 +81,7 @@
         }
         else {
             route = pathname.split('/')[1]
+            //route = pathname
         }
         async function getSrc() {
             if (!frontend) { return; }

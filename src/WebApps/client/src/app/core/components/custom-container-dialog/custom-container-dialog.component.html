@@ -1,0 +1,15 @@
+<div class="m3-dialog-header">
+  <h6 mat-dialog-title>{{matDialogTitle()}}
+
+    <button mat-icon-button class="close-button" (click)="close.emit()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </h6>
+</div>
+
+<mat-dialog-content  >
+  <ng-container *ngTemplateOutlet="containerTemplate"></ng-container>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>
+</mat-dialog-actions>

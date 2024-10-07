@@ -2,8 +2,8 @@ import { NavUserInfoToggleComponent } from '@/core/components/nav-user-info-togg
 import { NavUserToggleComponent } from '@/core/components/nav-user-toggle/nav-user-toggle.component';
 import { MainStoreService } from '@/store/main-store.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { AsyncPipe, DOCUMENT } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -38,8 +38,10 @@ import { menusRoutes } from './menus-routes';
 export class MainLayoutComponent {
   private breakpointObserver = inject(BreakpointObserver);
   mainStore = inject(MainStoreService)
+  private document = inject(DOCUMENT);
   rootRoutes = menusRoutes;
 
+  isDark = signal(false)
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Web)
     .pipe(
@@ -47,4 +49,10 @@ export class MainLayoutComponent {
       shareReplay()
     );
 
+
+  changeTheme(){
+    this.document.documentElement.classList.toggle('dark-theme');
+
+    this.isDark.set(!this.isDark())
+  }
 }

@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 
 import { ModalService } from './modal.service';
 import { ToasterService } from './toaster.service';
-
+import * as XLSX from 'xlsx';
 @Injectable({
   providedIn: 'root',
 })
@@ -233,4 +233,13 @@ export class SharedService {
     const modalRef = this.modalSvc.openModalCustom(SendMailModalComponent);
     modalRef.componentInstance.params = params || {};
   }
+
+
+  exportToExcel(data: any[], fileName: string): void {
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, `${fileName}.xlsx`);
+  }
+
 }

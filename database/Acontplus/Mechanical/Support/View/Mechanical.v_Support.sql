@@ -14,23 +14,23 @@ CREATE OR ALTER VIEW Mechanical.v_Support WITH SCHEMABINDING AS (
           ,st.Deleted
           ,st.[Sequence]
           ,st.Obs
-          ,ct.idCard
           ,ve.LicensePlate
           ,ve.Brand
           ,ve.[Model]
           ,ve.Color
           ,ve.Engine
-          ,ct.TradeName
-          ,ct.BusinessName
-          ,ct.[Address]
-          ,ct.Telephone
-          ,ct.Email
+          --,ct.idCard
+          --,ct.TradeName
+          --,ct.BusinessName
+          --,ct.[Address]
+          --,ct.Telephone
+          --,ct.Email
           ,pt.ptoEmi
           ,es.codEstab
           ,es.estab
           ,es.nombreComercial
           ,es.idEstablecimiento as EstablecimientoId
-          ,''         as nameAssigned
+          ,''                   as nameAssigned
           ,us.nombreUsuario     as UserAssigned
           ,vt.[Description]     as VehicleType
           ,ts.[Name]            as [Status]
@@ -44,5 +44,5 @@ CREATE OR ALTER VIEW Mechanical.v_Support WITH SCHEMABINDING AS (
     INNER JOIN Sri.Establecimiento       es WITH (NOLOCK) ON es.idEstablecimiento  = pt.idEstablecimiento
     INNER JOIN Mechanical.Vehicle        ve WITH (NOLOCK) ON ve.Id                 = vc.VehicleId
     INNER JOIN Mechanical.VehicleType    vt WITH (NOLOCK) ON vt.Id                 = ve.VehicleTypeId
-     LEFT JOIN Customer.Customer         ct WITH (NOLOCK) ON ct.Id                 = cl.CustomerId 
+    --INNER JOIN Customer.Customer         ct WITH (NOLOCK) ON ct.Id                 = cl.CustomerId 
  )

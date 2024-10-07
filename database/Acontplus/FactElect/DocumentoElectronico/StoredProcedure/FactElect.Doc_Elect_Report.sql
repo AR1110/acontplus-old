@@ -58,8 +58,11 @@ BEGIN
                           ,@codEstado       INT
                           ,@identificacion  VARCHAR(20)
                           ,@idUsuario       INT'
+            
+            --> Comprobantes
 
-            SET @sql = 'SELECT f.nombreComercial
+            SET @sql = 'SELECT f.idFactura
+                              ,f.nombreComercial
                               ,f.idEstablecimiento
                               ,f.serieComprobante
                               ,f.claveAcceso
@@ -72,16 +75,25 @@ BEGIN
 	                          ,CAST(SUM(fi.TaxBase) as numeric(18,2))		     as subTotal
 	                          ,CAST(SUM(fi.TaxValue) as numeric(18,2))		     as iva
 	                          ,CAST(nc.total as numeric(18,2))				     as devolucion
-	                          ,IIF(di.Code = 1,''Renta'',''Iva'')				 as tipoImpuesto
-	                          ,ISNULL(CAST(di.TaxValue as numeric(18,2)),0)      as valorRetenido
+	                          ,(
+                                    SELECT SUM(CAST(di.TaxValue as numeric(18,2))) 
+                                    FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+                                    WHERE di.DocumentoRecibidoId = dr.idDocumentoRecibido
+                                      AND di.code = ''1''
+                               )                                                 as retRenta
+                              ,(
+                                    SELECT SUM(CAST(di.TaxValue as numeric(18,2))) 
+                                    FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+                                    WHERE di.DocumentoRecibidoId = dr.idDocumentoRecibido
+                                      AND di.code = ''1''
+                               )                                                 as retIva
 	                          ,CAST(f.totalDescuento as numeric(18,2))           as totalDescuento
                               ,CAST(f.total as numeric(18,2))                    as total
 	                          ,f.estadoSri
                         FROM Ventas.v_Factura			       f WITH (NOLOCK) 
-                        INNER JOIN Ventas.v_FacturaImpuesto    fi WITH (NOLOCK) ON fi.FacturaId           = f.idFactura
-                         LEFT JOIN Ventas.v_NotaCredito        nc WITH (NOLOCK) ON nc.idFactura           = f.idFactura
-                         LEFT JOIN FactElect.DocRelacionado    dr WITH (NOLOCK) ON dr.claveAcceso         = f.claveAcceso
-                         LEFT JOIN Recepcion.DocumentoImpuesto di WITH (NOLOCK) ON di.DocumentoRecibidoId = dr.idDocumentoRecibido
+                        INNER JOIN Ventas.v_FacturaImpuesto    fi WITH (NOLOCK) ON fi.FacturaId   = f.idFactura
+                         LEFT JOIN Ventas.v_NotaCredito        nc WITH (NOLOCK) ON nc.idFactura   = f.idFactura
+                         LEFT JOIN FactElect.DocRelacionado    dr WITH (NOLOCK) ON dr.claveAcceso = f.claveAcceso
                         WHERE f.idEntidad = @idEntidad
                           AND fi.[Enabled] = 1 '
 
@@ -132,8 +144,8 @@ BEGIN
                     SET @sql = @sql + 'AND dr.idDocRelacionado > 0 '
                 END 
 
-
-            SET @sql = @sql + 'GROUP BY f.nombreComercial
+            SET @sql = @sql + 'GROUP BY f.idFactura
+                                       ,f.nombreComercial
                                        ,f.serieComprobante
                                        ,f.claveAcceso
 	                                   ,f.fechaEmision
@@ -148,9 +160,9 @@ BEGIN
 		                               ,dr.valorRetenido
                                        ,nc.total
 		                               ,fi.tax
-                                       ,di.Code
-                                       ,di.TaxValue
-                               ORDER BY f.fechaEmision,f.identificacionComprador DESC '
+                                       ,dr.idDocumentoRecibido 
+                                       ORDER BY f.fechaEmision,f.identificacionComprador DESC ' 
+            
 
             SELECT entidad as razonSocial 
                   ,rucEmpresa as ruc
@@ -171,6 +183,7 @@ BEGIN
                               ,@codEstado      = @codEstado
                               ,@identificacion = @identificacion
                               ,@idUsuario      = @idUsuario
+           
            
            RETURN 
         END 

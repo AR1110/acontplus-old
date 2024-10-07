@@ -274,17 +274,30 @@
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <label for="">Buscar por Artículo</label>
-                        <md-autocomplete-articulo-component tipo-doc="tipoDoc"
-                            set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)" id-bodega="data.idBodega">
+                        <md-autocomplete-articulo-component  
+                            id-bodega="data.idBodega"
+                            on-select="onSelect(params)"
+                            es-venta="true"
+                            items="gridOptions.data"
+                            fecha-emision="data.fechaEmision"
+                            ref-producto-venta="refProductoVenta"
+                            >
                         </md-autocomplete-articulo-component>
                     </div>
 
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="searchBarcode">Buscar por Código</label>
-                            <articulo-search-barcode tipo-doc="tipoDoc"
-                                set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)"
-                                id-bodega="data.idBodega"></articulo-search-barcode>
+                            <articulo-search-barcode 
+                                  es-venta="true"
+                                 id-bodega="data.idBodega"
+                            on-select="onSelect(params)"
+                            es-venta="true"
+                            items="gridOptions.data"
+                            fecha-emision="data.fechaEmision"
+                            ref-producto-venta="refProductoVenta"
+                                
+                                ></articulo-search-barcode>
                         </div>
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="config.multipleVendedor">

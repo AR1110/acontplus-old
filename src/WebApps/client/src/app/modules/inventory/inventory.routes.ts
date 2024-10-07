@@ -7,8 +7,14 @@ import { MeasurePageComponent } from "./pages/measure-page/measure-page.componen
 import { ProductPageComponent } from "./pages/product-page/product-page.component";
 import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
 import {InventoryReportPageComponent} from "@inventory/reports/inventory-report-page/inventory-report-page.component";
+import { BrandPageComponent } from "./pages/brand-page/brand-page.component";
+import { InvModelPageComponent } from "./pages/inv-model-page/inv-model-page.component";
+import { TarifaPageComponent } from "./pages/tarifa-page/tarifa-page.component";
+import { TagsPageComponent } from "./pages/tags-page/tags-page.component";
+import { FraccProductPageComponent } from "./pages/fracc-product-page/fracc-product-page.component";
 
 export const routes: Route[] = [
+
   {
     path: 'category-page',
     title: 'Categoria',
@@ -18,20 +24,28 @@ export const routes: Route[] = [
     }
   },
   {
-    path: 'subcategory-page',
+    path: 'subcategory',
     title: 'SubCategoria',
     component: SubCategoryPageComponent,
     data: {
-      breadcrumb: 'Reporte Compras'
+      breadcrumb: 'Sub Categorias'
     }
   },
 
   {
-    path: 'product-page',
+    path: 'product',
     title: 'Productos',
     component: ProductPageComponent,
     data: {
       breadcrumb: 'Productos'
+    },
+  },
+  {
+    path: 'fracc-product',
+    title: 'Productos Fraccionados',
+    component: FraccProductPageComponent,
+    data: {
+      breadcrumb: 'Productos Fraccionados'
     },
   },
   {
@@ -57,6 +71,38 @@ export const routes: Route[] = [
     component: MeasurePageComponent,
     data: {
       breadcrumb: 'Medida'
+    },
+  },
+  {
+    path: 'brand',
+    title: 'Marca',
+    component: BrandPageComponent,
+    data: {
+      breadcrumb: 'Marca'
+    },
+  },
+  {
+    path: 'model',
+    title: 'Modelo',
+    component: InvModelPageComponent,
+    data: {
+      breadcrumb: 'Modelo'
+    },
+  },
+  {
+    path: 'tarifa',
+    title: 'Tarifa',
+    component: TarifaPageComponent,
+    data: {
+      breadcrumb: 'Tarifa'
+    },
+  },
+  {
+    path: 'tags',
+    title: 'Etiquetas',
+    component: TagsPageComponent,
+    data: {
+      breadcrumb: 'Etiquetas'
     },
   },
   {

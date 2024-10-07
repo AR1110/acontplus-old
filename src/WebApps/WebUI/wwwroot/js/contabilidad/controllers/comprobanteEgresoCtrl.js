@@ -47,6 +47,9 @@
             }).catch(error => {
                 console.log(error)
             }).finally(() => hideLoader());
+
+            comprobanteEgresoSvc.getPosfechadoPagosModal()
+
         }
 
         function getComprobantesEgreso() {
@@ -182,7 +185,8 @@
             // Agrupa cuentas por pagar
             const cuentasPorPagarAgrupado = cuentasPorPagar.reduce((acc, curr) => {
                 let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorPagar === curr.idCuentaPorPagar);
-                let abono = curr.cobro ? curr.abono : 0;
+             //   let abono = curr.cobro ? curr.abono : 0;
+                let abono =   curr.abono  ;
 
                 if (!existeDato) {
                     acc.push({
@@ -191,7 +195,7 @@
                         abono,
                     });
                 } else {
-                    existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
+                    existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono).toNumber();
                 }
                 return acc;
             }, []);
@@ -220,8 +224,10 @@
                 let valorResiduo = fS.instanceDecimal(item.abonoDoc).minus(item.abono).toNumber();
 
                 //quitar cuando se haya validado bien tema de decimales en compras 
-                let valorResiduoValidar = fS.minus(fS.roundNumber(item.abonoDoc, 2), fS.roundNumber(item.abono, 2), 2);
-                console.log(valorResiduoValidar)
+                let abonoDocRounded = fS.roundNumber(item.abonoDoc, 2);
+                let abonoRounded = fS.roundNumber(item.abono, 2)
+                let valorResiduoValidar = fS.minus(abonoDocRounded, abonoRounded, 2);
+                
                 return {
                     idCuentaPorPagar: item.idCuentaPorPagar,
                     abono: valorResiduo,
@@ -275,6 +281,7 @@
                             observacion: result.value,
                             ...dataParams
                         };  
+                        
                        
                         showLoader();
                         comprobanteEgresoSvc.anular(item.idComprobanteEgreso, data).then(response => {

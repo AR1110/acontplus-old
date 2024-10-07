@@ -6,6 +6,7 @@ using Newtonsoft.Json.Serialization;
 using Restaurant.API.Data;
 using Restaurant.API.Extensions;
 using Services.Common.Extensions;
+using System.Runtime.InteropServices;
 
 namespace Restaurant.API;
 
@@ -40,7 +41,7 @@ internal class Program
 
         var app = builder.Build();
 
-        if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             app.Urls.Add("http://*:5011"); // Linux Port
         }

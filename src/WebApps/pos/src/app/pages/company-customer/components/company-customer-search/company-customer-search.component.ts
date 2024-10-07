@@ -1,26 +1,27 @@
-import { computed, SimpleChanges } from '@angular/core';
-import { Component, inject, input, model, output, signal } from '@angular/core';
-import { debounceTime, distinctUntilChanged, Observable } from "rxjs";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { catchError, map, startWith, switchMap } from "rxjs/operators";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatInputModule } from "@angular/material/input";
-import { MatIconModule } from "@angular/material/icon";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { AsyncPipe } from "@angular/common";
-import { MatButtonModule } from "@angular/material/button";
+import { ActionCompanyCustomerAddEditModalDirective } from '@/directives/action-company-customer-add-edit.directive';
+import { SRI_IDENTIFICATION_CODE } from '@/enums/main.enum';
 import { CompanyCustomerSearch } from "@/models/company-customer.model";
 import { CompanyCustomerService } from "@/services/company-customer.service";
-import { isValidField } from "@core/utils/utils";
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ActionCompanyCustomerAddEditModalDirective } from '@/directives/action-company-customer-add-edit.directive';
-
-import { OverlayModule } from '@angular/cdk/overlay';
-import { MatCardModule } from '@angular/material/card';
-import { ToasterService } from '@/services/toaster.service';
 import { DialogService } from '@/services/dialog.service';
+import { ToasterService } from '@/services/toaster.service';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { AsyncPipe } from "@angular/common";
+import { computed, SimpleChanges } from '@angular/core';
+import { Component, inject, input, model, output, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { isValidField } from "@core/utils/utils";
+import { debounceTime, distinctUntilChanged, Observable } from "rxjs";
+import { catchError, map, startWith, switchMap } from "rxjs/operators";
+
 import { CompanyCustomerAddEditModalComponent } from '../company-customer-add-edit-modal/company-customer-add-edit-modal.component';
-import { SRI_IDENTIFICATION_CODE } from '@/enums/main.enum';
 
 export interface State {
   flag: string;
@@ -40,6 +41,7 @@ export interface State {
     AsyncPipe,
     MatButtonModule,
     MatProgressSpinnerModule,
+    MatSelectModule,
     OverlayModule,
     MatCardModule,
     ActionCompanyCustomerAddEditModalDirective,

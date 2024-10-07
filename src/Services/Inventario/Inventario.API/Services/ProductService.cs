@@ -10,24 +10,30 @@ public class ProductService : IProductService
         _repository = repository;
     }
 
-    public async Task<object> GetAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters);
-        if (ds.Tables.Count == 0)
+        if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
         {
-            return null;
+            return new ApiResponse { Code = "0", Message = "Sin registros", Payload = null };
         }
 
-        return DataConverters.DataSetToJson(ds);
+
+        return new ApiResponse
+        {
+            Code = "1",
+            Message = "Listado exitosamente",
+            Payload = DataConverters.DataSetToJson(ds)
+        };
     }
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Insert", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Update", parameters);
     }
 }

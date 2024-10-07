@@ -35,6 +35,8 @@ BEGIN
     ,@anio INT 
     ,@deleted BIT
     ,@isEnabled BIT
+    ,@typeSearchCustomer CHAR(5)
+    ,@puntoEmisionId INT 
 
     DECLARE @params    NVARCHAR(MAX) = N'@pageIndex INT
                                          ,@pageSize INT
@@ -46,7 +48,8 @@ BEGIN
                                          ,@finished BIT 
                                          ,@estabId INT
                                          ,@deleted BIT 
-                                         ,@isEnabled BIT'
+                                         ,@isEnabled BIT
+                                         ,@puntoEmisionId INT'
     SET @sql = N'SELECT Id		    = o.Id	
 	                    ,EstablecimientoId	= o.EstablecimientoId
                         ,sri_e.codEstab    
@@ -75,7 +78,7 @@ BEGIN
                         ,totalRecords       = COUNT(*) OVER()
                         ,o.Divided
                         ,o.Finished
-                        ,ISNULL(vt.roomDescription,'''') + '' - '' + CONVERT(VARCHAR, ISNULL(vt.[NumberTable],0)) + '' '' + ISNULL(vt.[Description], '''') tableName
+                        ,ISNULL(vt.roomDescription,'''') + '' - '' + ISNULL(vt.[Description], '''') tableName
                     FROM Restaurant.[Order] o WITH(NOLOCK)
                     INNER JOIN Sri.Establecimiento sri_e WITH(NOLOCK) ON sri_e.idEstablecimiento = o.establecimientoId 
                     LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId
@@ -100,6 +103,8 @@ BEGIN
             ,@anio              = anio 
             ,@deleted           = deleted
             ,@isEnabled         = isEnabled
+            ,@typeSearchCustomer = typeSearchCustomer
+            ,@puntoEmisionId     = puntoEmisionId
     FROM OPENJSON(@json) 
     WITH ( tipo      INT         '$.tipo',
             id        INT         '$.id',
@@ -114,17 +119,21 @@ BEGIN
             estabId INT,
             anio INT,
             deleted BIT,
-            isEnabled BIT
+            isEnabled BIT,
+            typeSearchCustomer CHAR(5),
+            puntoEmisionId INT
     )
 
     SELECT @idEntidad = idEntidad, @rucEmpresa = rucEmpresa FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
     IF (@tipo = 1)
         BEGIN
-            IF (@customerCompanyId > 0)
+            
+            IF @puntoEmisionId > 0
                 BEGIN
-                    SET @sql = @sql + ' AND o.CustomerCompanyId = @customerCompanyId '
-                END
+                    SET @sql = @sql + ' AND o.PuntoEmisionId = @puntoEmisionId '
+                END 
+                 
             IF (@tableId > 0)
                 SET @sql = @sql + ' AND o.TableId = @tableId'
 
@@ -140,7 +149,20 @@ BEGIN
                 END
 
 
-        --    SET @sql = @sql + ' AND o.Deleted = @deleted' 
+            IF (@typeSearchCustomer = 'OR' AND @customerCompanyId > 0)
+                BEGIN
+                    SET @sql = @sql + ' AND o.CustomerCompanyId = @customerCompanyId '
+                END
+
+            IF (@typeSearchCustomer = 'DOC' AND @customerCompanyId > 0)
+                BEGIN 
+                    SET @sql = @sql + ' AND EXISTS (
+                                                    SELECT 1 
+                                                    FROM Restaurant.OrderDocument od WITH(NOLOCK)
+                                                    INNER JOIN v_CuentaPorCobrar v_cpc WITH(NOLOCK) ON v_cpc.idDocumento = od.DocumentoId 
+                                                    WHERE od.orderId = o.Id AND v_cpc.idCliente = @customerCompanyId
+                                                ) '
+                END 
 
 
 
@@ -162,6 +184,7 @@ BEGIN
                                 ,@deleted = @deleted
                                 ,@isEnabled = @isEnabled
                                 ,@finished = @finished
+                                ,@puntoEmisionId = @puntoEmisionId
         END
     
     --Editar Orden

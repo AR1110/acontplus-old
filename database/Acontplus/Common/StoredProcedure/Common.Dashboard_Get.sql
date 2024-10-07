@@ -23,6 +23,7 @@ BEGIN
         @licenses VARCHAR(MAX) = '[]',
         @releases VARCHAR(MAX) = '[]',
         @stepsConfig VARCHAR(MAX) = '[]',
+        @expiredSignatures VARCHAR(MAX) = '[]',
         @userId INT;
 
     -- Use a temporary table to store intermediate results
@@ -71,7 +72,7 @@ BEGIN
           AND dr.complete = 1) + ISNULL((SELECT COUNT(*) FROM dbo.FacturaCompra WHERE idEntidad = @idEntidad AND estado = 1), 0));
 
         -- Check subscription status
-        DECLARE @subscriptionCount INT, @maxPaymentDateCount INT;
+        DECLARE @subscriptionCount INT, @freeSuscriptions INT, @maxPaymentDateCount INT;
         SET @subscriptionCount = (
             SELECT COUNT(*)
             FROM App.UsuarioRol ur WITH (NOLOCK)
@@ -84,6 +85,21 @@ BEGIN
               AND s.Deleted IS NULL
               AND ur.estado = 1
         );
+
+        SET @freeSuscriptions = (
+            SELECT COUNT(*)
+            FROM App.UsuarioRol ur WITH (NOLOCK)
+            INNER JOIN Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
+            INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
+            INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
+            INNER JOIN AcontplusAdmin.Config.SubscriptionType st WITH(NOLOCK) ON s.SubscriptionTypeId = st.Id
+            WHERE ur.idUsuarioRol = @userRoleId 
+              AND s.[Enabled] = 1 
+              AND s.Deleted IS NULL
+              AND ur.estado = 1
+              AND st.Code = 'G'
+        );
+
 
         SET @maxPaymentDateCount = (
             SELECT COUNT(*)
@@ -99,7 +115,7 @@ BEGIN
               AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate
         );
 
-        IF @maxPaymentDateCount = 0 AND @subscriptionCount > 0
+        IF (@maxPaymentDateCount = 0 AND @subscriptionCount > 0) AND @freeSuscriptions = 0
         BEGIN
             SET @expired = 1;
             SET @licenses = (
@@ -158,7 +174,7 @@ BEGIN
             END
 
         -- Check for new releases
-        IF (SELECT COUNT(*) FROM AcontplusAdmin.Common.Release WITH (NOLOCK)) <> 
+        IF (SELECT COUNT(*) FROM AcontplusAdmin.Common.Release WITH (NOLOCK) WHERE Deleted IS NULL AND Enabled = 1) <> 
            (SELECT COUNT(*) FROM AcontplusAdmin.Common.UserReleaseRead WITH (NOLOCK) WHERE userId = @userId)
         BEGIN
             SET @releases = (
@@ -169,9 +185,32 @@ BEGIN
                     version, 
                     CONVERT(VARCHAR, FORMAT(ReleaseDate, 'dd/MM/yyyy')) AS releaseDate
                 FROM AcontplusAdmin.Common.Release r WITH (NOLOCK)
-                WHERE r.Id NOT IN (SELECT Id FROM AcontplusAdmin.Common.UserReleaseRead WHERE UserId = @userId) 
+                WHERE r.Id NOT IN (SELECT ReleaseId FROM AcontplusAdmin.Common.UserReleaseRead WHERE UserId = @userId) 
                 FOR JSON PATH
             );
+        END
+
+       IF EXISTS (
+            SELECT 1
+            FROM dbo.FirmaElectronica WITH(NOLOCK)
+            WHERE idEntidad = @idEntidad 
+            AND DATEDIFF(DAY, GETDATE(), fechaCaducidad) <= 5
+            --AND DATEDIFF(DAY, GETDATE(), fechaCaducidad) >= 0
+        )
+        BEGIN
+          SET @expiredSignatures = (
+          SELECT nombreArchivo,
+                CASE 
+                    WHEN DATEDIFF(DAY, GETDATE(), fechaCaducidad) < 0 THEN 
+                        'Su firma electrónica ha caducado, por favor renuevela de inmediato, para poder seguir firmando los documentos electrónicos'
+                    WHEN DATEDIFF(DAY, GETDATE(), fechaCaducidad) <= 5 THEN 
+                        'Su firma electrónica está a ' + CAST(DATEDIFF(DAY, GETDATE(), fechaCaducidad) AS VARCHAR) + ' día(s) de expirar, por favor renuevela de inmediato'
+                END AS message
+            FROM dbo.FirmaElectronica WITH(NOLOCK)
+            WHERE idEntidad = @idEntidad
+            AND DATEDIFF(DAY, GETDATE(), fechaCaducidad) <= 5
+            --AND DATEDIFF(DAY, GETDATE(), fechaCaducidad) >= 0
+            FOR JSON PATH);
         END
 
         -- Construct the JSON response
@@ -190,7 +229,8 @@ BEGIN
                         FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) AS 'statistics',
                        ISNULL(@licenses, '[]') AS licenses,
                        ISNULL(@releases, '[]') AS releases,
-                       ISNULL(@stepsConfig, '[]') AS stepsConfig
+                       ISNULL(@stepsConfig, '[]') AS stepsConfig,
+                       @expiredSignatures AS expiredSignatures
                    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
                );
 

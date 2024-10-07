@@ -197,13 +197,13 @@
                     convertToDoc: $scope.dataSearch.convertToDoc
                 }
 
-                showLoader();
+
                 $scope.notaEntregas = [];
                 $scope.cloneNotaEntregas = [];
                 getTotales();
 
                 notaEntregaSvc.getAll(dataSearch).then(response => {
-                    hideLoader();
+
                     let { notaEntregas, dataTotals } = response;
                     $scope.notaEntregas = notaEntregas;
                     $scope.cloneNotaEntregas = structuredClone($scope.notaEntregas);
@@ -213,11 +213,9 @@
 
                 }).catch(error => {
                     $scope.dataSearch.totalRecords = 0;
-                    hideLoader();
                     console.log(error)
                 })
             } catch (error) {
-                hideLoader();
                 $scope.dataSearch.totalRecords = 0;
                 console.log(error)
             }
@@ -229,10 +227,10 @@
 
 
         initiload();
-        async function initiload() {
-            showLoader();
+        function initiload() {
+
             notaEntregaSvc.getDataFilter().then(response => {
-                hideLoader();
+
                 $scope.establecimientos = response.estabs;
                 $scope.estadoDocumentos = response.estadosDoc;
 
@@ -245,15 +243,13 @@
                 } else {
                     tS.toastr('warning', 'No tienes asignado Establecimiento!')
                 }
-            }).catch(() => {
-                hideLoader();
             })
 
-            showLoader()
+
             notaEntregaSvc.getDataForm().then(response => {
                 mainDataForm = structuredClone(response);
                 $scope.permisoEditarDoc = response.permisoEditarDoc;
-            }).finally(() => hideLoader())
+            })
 
         }
 
@@ -748,9 +744,9 @@
         let articuloSvc = $injector.get('articuloService');
         let facturaSvc = $injector.get('facturaService');
         let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+        let productUtil = $injector.get('productUtil');
         let infoAdicionalConfig = [];
-        let isSetInfoAdicionalConfig = true;
-
+        let isSetInfoAdicionalConfig = true; 
 
         $scope.tipoDoc = TIPO_DOC_NE;
         $scope.cuotas = [];
@@ -814,6 +810,8 @@
 
         $scope.indexRow = null; //Indice del items del detalle 
 
+        $scope.refProductoVenta = new productUtil.ProductoVenta({}, onCallbackDataArticulo, editColCantidad)
+
         //GridOptions Invoice 
         $scope.gridOptions = {
             enableColumnMenus: false,
@@ -864,20 +862,22 @@
                 if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue) return
 
                 //Verificacion del stock
-                if (["idMedida", "cantidad"].includes(colDef.field)) {
+                if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
                     checkNotificationStock(colDef.field, rowEntity, oldValue);
                     return
                 }
-                // if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
-                //     checkNotificationStock(colDef.field, rowEntity, oldValue);
-                //     return
-                // }
+                if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue && rowEntity.cantidad > oldValue) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
+                }
                 if (colDef.field === 'idBodega' && rowEntity.idBodega !== oldValue) {
                     checkNotificationStock(colDef.field, rowEntity, oldValue);
                     return
                 }
 
                 setCalculoTotales(colDef.field, rowEntity, oldValue);
+                updateRefProductoVenta()
+
             })
         }
 
@@ -898,65 +898,71 @@
                     return;
                 }
 
-                // Clona el objeto de la fila y la lista de artículos para evitar modificaciones directas.
-                let rowItemClone = structuredClone(rowEntity);
-                let gridOptionsClone = structuredClone($scope.gridOptions.data);
-
-                // Realiza la fusión de elementos en la lista de artículos clonada.
-                let dataItemMerge = fS.mergeItemStock(gridOptionsClone, rowItemClone);
-
-                // Si la cantidad no ha cambiado, no realizar más acciones.
-                if (dataItemMerge.cantidad == oldValue) return;
-
-
-                // Llama a un servicio para verificar la notificación de stock.
-                let cantidadStock = fS.getCantidadStock(dataItemMerge, $scope.data.fechaEmision);
-                if (cantidadStock === 0) {
-                    setCalculoTotales(field, rowEntity, oldValue);
-                    return;
-                }
-
-                showLoader();
-                articuloSvc.checkNotificationStock({
-                    idArticulo: rowEntity.idArticulo,
-                    cantidad: cantidadStock,
-                    idBodega: rowEntity.idBodega,
-                    idMedida: rowEntity.idMedida
-                }).then(async responseApi => {
-                    hideLoader();
-                    let { code, message, titleSms } = responseApi;
-                    if (code === "1") {
-
-                        setCalculoTotales(field, rowEntity, oldValue);
-                        return
-                    }
-
-                    let { isConfirmed } = await Swal.fire({
-                        title: `<small>${titleSms}</small>`,
-                        icon: 'warning',
-                        html: `<small>${message}</small>`,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                    })
-
-                    if (isConfirmed) {
-                        if (code === "0") {
-                            rowEntity[field] = oldValue;
-                            setCalculoTotales(field, rowEntity, oldValue);
-                            $("#custom-template-md-autocomplete-articulo").focus();
-                        }
-                        if (code === "2") {
-                            setCalculoTotales(field, rowEntity, oldValue);
-                        }
-                    }
-
-                }).catch(error => {
-                    hideLoader();
-                    console.log(error)
+                $scope.refProductoVenta.onCantidadEdit({
+                    items: $scope.gridOptions.data,
+                    row: rowEntity,
+                    oldValue,
+                    field
                 })
 
+
+                // // Clona el objeto de la fila y la lista de artículos para evitar modificaciones directas.
+                // let rowItemClone = structuredClone(rowEntity);
+                // let gridOptionsClone = structuredClone($scope.gridOptions.data);
+
+                // // Realiza la fusión de elementos en la lista de artículos clonada.
+                // let dataItemMerge = fS.mergeItemStock(gridOptionsClone, rowItemClone);
+
+                // // Si la cantidad no ha cambiado, no realizar más acciones.
+                // if (dataItemMerge.cantidad == oldValue) return;
+
+
+                // // Llama a un servicio para verificar la notificación de stock.
+                // let cantidadStock = fS.getCantidadStock(dataItemMerge, $scope.data.fechaEmision);
+                // if (cantidadStock === 0) {
+                //     setCalculoTotales(field, rowEntity, oldValue);
+                //     return;
+                // }
+
+                // articuloSvc.checkNotificationStock({
+                //     idArticulo: rowEntity.idArticulo,
+                //     cantidad: cantidadStock,
+                //     idBodega: rowEntity.idBodega,
+                //     idMedida: rowEntity.idMedida
+                // }).then(async responseApi => {
+
+                //     let { code, message, titleSms } = responseApi;
+                //     if (code === "1") {
+
+                //         setCalculoTotales(field, rowEntity, oldValue);
+                //         return
+                //     }
+
+                //     let { isConfirmed } = await Swal.fire({
+                //         title: `<small>${titleSms}</small>`,
+                //         icon: 'warning',
+                //         html: `<small>${message}</small>`,
+                //         allowOutsideClick: false,
+                //         allowEscapeKey: false,
+                //     })
+
+                //     if (isConfirmed) {
+                //         if (code === "0") {
+                //             rowEntity[field] = oldValue;
+                //             setCalculoTotales(field, rowEntity, oldValue);
+                //             $("#custom-template-md-autocomplete-articulo").focus();
+                //         }
+                //         if (code === "2") {
+                //             setCalculoTotales(field, rowEntity, oldValue);
+                //         }
+                //     }
+
+                // }).catch(error => {
+                //     hideLoader();
+                //     console.log(error)
+                // })
+
             } catch (error) {
-                hideLoader();
                 console.log(error);
             }
         }
@@ -1018,15 +1024,165 @@
         }
 
         function calculateTotalItems(items) {
-            return items.map(item => {  
+            return items.map(item => {
                 return {
                     ...item,
                     idNotaEntregaDetalle: params.action === "DUPLICAR" ? 0 : item.idNotaEntregaDetalle,
-                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),  
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
                 }
 
             })
         }
+
+
+        function getIndexRow(row) {
+            return $scope.gridOptions.data.findIndex(item => item.uniqueRowDetalle === row.uniqueRowDetalle)
+        }
+        /**
+         * 
+         * @param {*} nuevaFilaAgregada 
+         */
+        function addItem(nuevaFilaAgregada) {
+            $scope.gridOptions.data.push(nuevaFilaAgregada)
+            setCalculoTotales('precioUnitario', nuevaFilaAgregada, 0);
+            focusColumnCantidad(getIndexRow(nuevaFilaAgregada), nuevaFilaAgregada.llevaInventario);
+            updateRefProductoVenta()
+            tS.toastr({
+                type: 'success',
+                message: 'Agregado Correctamente'
+            })
+        }
+
+        function updateItem(nuevaFilaAgregada) {
+            console.log(nuevaFilaAgregada);
+
+            // Actualizar el elemento en los datos de gridOptions basado en uniqueRowDetalle
+            $scope.gridOptions.data = $scope.gridOptions.data.map(item =>
+                item.uniqueRowDetalle === nuevaFilaAgregada.uniqueRowDetalle
+                    ? { ...item, ...nuevaFilaAgregada }  // Actualiza la fila si coincide el uniqueRowDetalle
+                    : item  // Mantiene el item sin cambios si no coincide
+            );
+
+            // Buscar la fila actualizada
+            const dataActualizarFile = $scope.gridOptions.data.find(item =>
+                item.uniqueRowDetalle === nuevaFilaAgregada.uniqueRowDetalle
+            );
+
+            if (dataActualizarFile) {
+                // Realiza el cálculo de los totales basándose en 'precioUnitario'
+                setCalculoTotales('precioUnitario', dataActualizarFile, 0);
+                focusColumnCantidad(getIndexRow(nuevaFilaAgregada), nuevaFilaAgregada.llevaInventario);
+            }
+
+            // Actualiza la referencia del producto vendido
+            updateRefProductoVenta();
+
+            // Muestra una notificación de éxito
+            tS.toastr({
+                type: 'success',
+                message: 'Fila actualizada correctamente'
+            });
+        }
+
+
+        // Función para manejar la confirmación del usuario y el código de respuesta
+        /**
+         * @param {string} code
+         * @param {any} nuevaFilaAgregada
+         * @param {any} agregarFila
+         * @param {undefined} [focusSearch]
+         */
+        function handleConfirmation(code, nuevaFilaAgregada, agregarFila, focusSearch) {
+            if (code === "0" && focusSearch) {
+                setFocusArticulo();
+            }
+            if (code === "2") {
+                if (agregarFila) {
+                    addItem(nuevaFilaAgregada);
+                } else {
+                    updateItem(nuevaFilaAgregada);
+                }
+            }
+        };
+
+
+        async function onCallbackDataArticulo(data) {
+
+            const { nuevaFilaAgregada, verificarStockResponse, agregarFila, focusSearch } = data;
+
+            if (!nuevaFilaAgregada.llevaInventario && agregarFila) {
+                addItem(nuevaFilaAgregada)
+                return;
+            }
+
+
+            const { code, message, titleSms } = verificarStockResponse;
+            // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
+            if (code === "1") {
+                if (agregarFila) {
+                    addItem(nuevaFilaAgregada)
+                } else {
+                    updateItem(nuevaFilaAgregada);
+                }
+                return;
+            }
+
+            // Muestra un mensaje de advertencia y espera la confirmación del usuario.
+            Swal.fire({
+                title: `<small>${titleSms}</small>`,
+                icon: 'warning',
+                html: `<small>${message}</small>`,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+            }).then(r => {
+                if (r.isConfirmed) {
+                    handleConfirmation(code, nuevaFilaAgregada, agregarFila, focusSearch);
+                }
+            })
+        }
+
+        function editColCantidad(data) {
+            const {
+                row,
+                verificarStockResponse,
+                oldValue,
+                field
+            } = data;
+
+            const { code, message, titleSms } = verificarStockResponse;
+
+            if (code === "1") {
+                setCalculoTotales(field, row, oldValue);
+                updateRefProductoVenta()
+                return
+            }
+
+            Swal.fire({
+                title: `<small>${titleSms}</small>`,
+                icon: 'warning',
+                html: `<small>${message}</small>`,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+            }).then(result => {
+                if (result.isConfirmed) {
+                    if (code === "0") {
+                        row[field] = oldValue;
+                        setCalculoTotales(field, row, oldValue);
+                        let el = document.getElementById("#custom-template-md-autocomplete-articulo")
+                        if (el) {
+                            el.focus();
+                        }
+                    }
+                    if (code === "2") {
+                        setCalculoTotales(field, row, oldValue);
+                    }
+                    updateRefProductoVenta()
+                    $scope.$apply()
+                }
+            })
+
+        }
+
 
         initiload();
         setColumnDefs();
@@ -1209,11 +1365,19 @@
                 $scope.dataClone.idTarifa = $scope.data.idTarifa;
             }
 
+
+
+            updateRefProductoVenta();
+
+
             $uibModalInstance.rendered.then(() => {
-                if ($scope.config.searchCode) {
-                    $("#inputBarcode").focus();
-                } else {
-                    $("#custom-template-md-autocomplete-articulo").focus();
+                let inputBarcodeEle = document.getElementById("inputBarcode");
+                let customTempArticuloSearch = document.getElementById("custom-template-md-autocomplete-articulo");
+                if ($scope.config.searchCode && inputBarcodeEle) {
+                    inputBarcodeEle.focus();
+
+                } else if (customTempArticuloSearch) {
+                    customTempArticuloSearch.focus();
                 }
             });
 
@@ -1226,19 +1390,41 @@
 
                             storageSvc.setObject("notaEntregaDetail", result.dataInvoiceDetail)
 
-                            recalculateTotalsSimple();
+                            drawInfoGeneralNotaEntrega();
                             $scope.$apply();
                         }
 
                     })
                 }
             }
+
+
+
+
             $scope.setInfoEstabPtoEmi();
 
             $uibModalInstance.rendered.then(() => {
                 drawInfoGeneralNotaEntrega();
             });
         }
+
+
+
+
+        function updateRefProductoVenta() {
+            $scope.refProductoVenta.setOptions({
+                items: $scope.gridOptions.data,
+                nroPrecio: $scope.decimal.nroPrecio,
+                idTarifa: $scope.data.idTarifa,
+                idBodega: $scope.data.idBodega,
+                tiposIva: $scope.tarifasImpuesto,
+                fechaEmision: $scope.data.fechaEmision,
+                duplicarItem: $scope.config.detailDuplicate,
+                addRow,
+                updateItem
+            })
+        }
+
 
 
 
@@ -1342,7 +1528,6 @@
                 name: 'Cant.',
                 field: 'cantidad',
                 enableCellEditOnFocus: true,
-                min: 1,
                 type: 'number',
                 width: '6%',
                 minWidth: '50'
@@ -1545,13 +1730,19 @@
 
         function setFocusInputBarcode() {
             $timeout(function () {
-                document.querySelector('#inputBarcode').focus();
+                let el = document.getElementById('inputBarcode')
+                if (el) {
+                    el.focus();
+                }
             }, 100);
         }
 
         function setFocusArticulo() {
             $timeout(function () {
-                document.querySelector('#custom-template-md-autocomplete-articulo').focus();
+                let el = document.getElementById('custom-template-md-autocomplete-articulo')
+                if (el) {
+                    el.focus();
+                }
             }, 100);
         }
 
@@ -1563,11 +1754,13 @@
             let indexBodega = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
             $scope.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = $scope.tarifasImpuesto;
             $scope.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = $scope.bodegas;
+
+            updateRefProductoVenta()
         }
 
         /**
          * 
-         * @param {*} entity Datos del Articulo 
+         * @param {*} rowEntity 
          */
         $scope.deleteRow = async function (rowEntity) {
             try {
@@ -1589,6 +1782,7 @@
                     //Recalculamos los totales 
                     setCalculoTotales("cantidad", rowEntity, 0);
                     counterGridOptions();
+                    updateRefProductoVenta()
                     $scope.$apply();
                 }
 
@@ -1611,23 +1805,24 @@
 
 
         $scope.openModalArticle = function (item) {
-            if ($scope.config.detailDuplicate) {
-                fS.sweetAlert('warning', 'No disponible para editar el artículo cuando se ha seleccionado <b>Duplicar Artículo</b>.');
-                return
-            }
+            // if ($scope.config.detailDuplicate) {
+            //     fS.sweetAlert('warning', 'No disponible para editar el artículo cuando se ha seleccionado <b>Duplicar Artículo</b>.');
+            //     return
+            // }
             $scope.gridApi.cellNav.scrollToFocus(
                 $scope.gridOptions.data[0],
                 $scope.gridOptions.columnDefs[2]
             )
 
-            $scope.indexRow = $scope.gridOptions.data.indexOf(item);
-            $scope.$broadcast("editArticulo", item)
+            $scope.refProductoVenta.openModalArticulo(item);
         }
 
         function setIdBodegaInDetalle() {
             for (let item of $scope.gridOptions.data) {
                 item.idBodega = $scope.data.idBodega;
             }
+
+            updateRefProductoVenta()
         }
 
 
@@ -1721,6 +1916,8 @@
                 console.log(error)
                 $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
             }
+
+            updateRefProductoVenta()
         }
 
         //==============================START CUSTOMER===========================
@@ -1846,6 +2043,8 @@
                     $scope.data.idBodega = $scope.dataClone.idBodega;
                     $scope.$apply();
                 }
+
+                updateRefProductoVenta()
             } catch (error) {
                 console.log(error)
             }
@@ -1869,7 +2068,7 @@
                     objCalculo["cantidad"] && objCalculo["cantidad"]();
                     objCalculo["calculoTotalDetalle"]();
                 }
-                recalculateTotalsSimple();
+                drawInfoGeneralNotaEntrega();
             } catch (error) {
                 console.log(error);
             }
@@ -1910,7 +2109,7 @@
                     gridOptionsSvc.calculoColDef
                 )
                 ) {
-                    recalculateTotalsSimple();
+                    drawInfoGeneralNotaEntrega();
                 }
                 $scope.$apply();
 
@@ -1918,6 +2117,7 @@
                 $scope.data.idTarifa = $scope.dataClone.idTarifa;
                 $scope.$apply();
             }
+            updateRefProductoVenta()
         }
 
         //=================================START PRODUCT=======================================
@@ -1929,7 +2129,7 @@
                 codigo: "",
                 idArticulo: 0,
                 descripcion: "",
-                cantidad: 1,
+                cantidad: 0,
                 cantidadStock: 0,
                 codigoPorcentaje: "",
                 tarifa: 0,
@@ -1943,122 +2143,122 @@
                 totalDescuento: 0,
                 ice: 0,
                 idBodega: 0,
-                subTotal: 0,
                 total: 0,
                 nota: null,
                 llevaInventario: false,
                 datosAdicionales: false,
                 estado: 1
             }
-            $scope.gridOptions.data.push(obj)
+            //   $scope.gridOptions.data.push(obj)
+            return structuredClone(obj);
         }
 
-        $scope.setItemArticuloEnDetalle = function (dataArticulo) {
-            try {
-                $scope.dataArticulo = dataArticulo;
-                const {
-                    articulo,
-                    medidas,
-                    datosAdicionalesArticulo,
-                    consolidacionesFecha
-                } = $scope.dataArticulo;
+        // $scope.setItemArticuloEnDetalle = function (dataArticulo) {
+        //     try {
+        //         $scope.dataArticulo = dataArticulo;
+        //         const {
+        //             articulo,
+        //             medidas,
+        //             datosAdicionalesArticulo,
+        //             consolidacionesFecha
+        //         } = $scope.dataArticulo;
 
-                let index = 0, entity = {}, tarifaImpuesto = {}, cantidad = 0;
+        //         let index = 0, entity = {}, tarifaImpuesto = {}, cantidad = 0;
 
-                //verificar si hay un articulo que lleva inventario mas de uno 
-                let itemsDuplicated = $scope.gridOptions.data.filter(item => (
-                    item.llevaInventario && item.idArticulo === articulo.idArticulo
-                ))
-
-
-                let findIndexById = $scope.gridOptions.data.findIndex(
-                    item => item.llevaInventario && item.idArticulo === articulo.idArticulo
-                );
-
-                if ($scope.config.detailDuplicate) {
-                    addRow();
-                    index = $scope.gridOptions.data.length - 1;
-                    entity = $scope.gridOptions.data[index];
-                    entity.cantidad = 1;
-                } else {
-
-                    if (itemsDuplicated.length > 1) {
-                        fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
-                        return
-                    }
-
-                    if (findIndexById === -1) {
-                        addRow();
-                        index = $scope.gridOptions.data.length - 1;
-                        entity = $scope.gridOptions.data[index];
-                        entity.cantidad = 1;
-                    } else {
-                        index = findIndexById;
-                        entity = $scope.gridOptions.data[index];
-                        cantidad = entity.cantidad;
-                        entity.cantidad = cantidad + 1;
-                    }
-                }
+        //         //verificar si hay un articulo que lleva inventario mas de uno 
+        //         let itemsDuplicated = $scope.gridOptions.data.filter(item => (
+        //             item.llevaInventario && item.idArticulo === articulo.idArticulo
+        //         ))
 
 
+        //         let findIndexById = $scope.gridOptions.data.findIndex(
+        //             item => item.llevaInventario && item.idArticulo === articulo.idArticulo
+        //         );
 
-                let dataMedida = medidas.find(medida => (medida.defaultMedida));
+        //         if ($scope.config.detailDuplicate) {
+        //             addRow();
+        //             index = $scope.gridOptions.data.length - 1;
+        //             entity = $scope.gridOptions.data[index];
+        //             entity.cantidad = 1;
+        //         } else {
 
-                entity.idArticulo = articulo.idArticulo;
-                entity.codigo = articulo.codigoArticulo;
-                entity.descripcion = articulo.descripcion;
+        //             if (itemsDuplicated.length > 1) {
+        //                 fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+        //                 return
+        //             }
 
-                tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
-
-                entity.idImpuesto = tarifaImpuesto.idImpuesto;
-                entity.idTipoIva = articulo.idTipoIva;
-                entity.codigoPorcentaje = articulo.codigoPorcentaje;
-                entity.tarifa = articulo.tarifa;
-
-
-                entity.ice = articulo.valorIce;
-                entity.idBodega = $scope.data.idBodega;
-                entity.llevaInventario = articulo.llevaInventario;
-                entity.datosAdicionales = articulo.datosAdicionales;
-                entity.productoFraccionable = articulo.productoFraccionable;
-                entity.medidas = medidas; //Lista Medida 
-                entity.idMedida = dataMedida.idMedida; //Medida por defecto 
-                entity.conversion = dataMedida.conversion;
-                entity.precioCosto = dataMedida.precioCosto;
-                entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
+        //             if (findIndexById === -1) {
+        //                 addRow();
+        //                 index = $scope.gridOptions.data.length - 1;
+        //                 entity = $scope.gridOptions.data[index];
+        //                 entity.cantidad = 1;
+        //             } else {
+        //                 index = findIndexById;
+        //                 entity = $scope.gridOptions.data[index];
+        //                 cantidad = entity.cantidad;
+        //                 entity.cantidad = cantidad + 1;
+        //             }
+        //         }
 
 
-                entity.datosAdicionalesArticulo = datosAdicionalesArticulo.map(daa => {
-                    return {
-                        ...daa,
-                        uniqueRowDetalle: entity.uniqueRowDetalle
-                    }
-                });
 
-                entity.consolidacionesFecha = consolidacionesFecha;
+        //         let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
-                entity.articuloTarifas = dataMedida.tarifas;
+        //         entity.idArticulo = articulo.idArticulo;
+        //         entity.codigo = articulo.codigoArticulo;
+        //         entity.descripcion = articulo.descripcion;
 
-                let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
-                entity.idTarifa = $scope.data.idTarifa;
-                entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
-                entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
-                entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
-                $scope.indexRow = index;
-                setCalculoTotales('precioUnitario', entity, 0);
-                focusColumnCantidad();
-            } catch (error) {
-                console.log(error)
-            }
-        }
+        //         tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
-        function focusColumnCantidad() {
-            let index = 0;
+        //         entity.idImpuesto = tarifaImpuesto.idImpuesto;
+        //         entity.idTipoIva = articulo.idTipoIva;
+        //         entity.codigoPorcentaje = articulo.codigoPorcentaje;
+        //         entity.tarifa = articulo.tarifa;
 
-            if ($scope.dataArticulo.articulo.llevaInventario) {
-                index = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'cantidad')
+
+        //         entity.ice = articulo.valorIce;
+        //         entity.idBodega = $scope.data.idBodega;
+        //         entity.llevaInventario = articulo.llevaInventario;
+        //         entity.datosAdicionales = articulo.datosAdicionales;
+        //         entity.productoFraccionable = articulo.productoFraccionable;
+        //         entity.medidas = medidas; //Lista Medida 
+        //         entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+        //         entity.conversion = dataMedida.conversion;
+        //         entity.precioCosto = dataMedida.precioCosto;
+        //         entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
+
+
+        //         entity.datosAdicionalesArticulo = datosAdicionalesArticulo.map(daa => {
+        //             return {
+        //                 ...daa,
+        //                 uniqueRowDetalle: entity.uniqueRowDetalle
+        //             }
+        //         });
+
+        //         entity.consolidacionesFecha = consolidacionesFecha;
+
+        //         entity.articuloTarifas = dataMedida.tarifas;
+
+        //         let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
+        //         entity.idTarifa = $scope.data.idTarifa;
+        //         entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
+        //         entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
+        //         entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
+        //         $scope.indexRow = index;
+        //         setCalculoTotales('precioUnitario', entity, 0);
+        //         focusColumnCantidad();
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
+        // }
+
+        function focusColumnCantidad(index, llevaInventario) {
+            let indexCol = 0;
+
+            if (llevaInventario) {
+                indexCol = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'cantidad')
             } else {
-                index = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'descripcion')
+                indexCol = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'descripcion')
             }
             $scope.gridApi.cellNav.scrollToFocus(
                 $scope.gridOptions.data[0],
@@ -2066,10 +2266,9 @@
             )
             $timeout(() => {
                 $scope.gridApi.cellNav.scrollToFocus(
-                    $scope.gridOptions.data[$scope.indexRow],
-                    $scope.gridOptions.columnDefs[index]
+                    $scope.gridOptions.data[index],
+                    $scope.gridOptions.columnDefs[indexCol]
                 );
-                $scope.indexRow = null;
             }, 30)
 
             counterGridOptions()
@@ -2078,7 +2277,7 @@
         //=================================END PRODUCT=======================================
 
         function counterGridOptions() {
-            angular.forEach($scope.gridOptions.data, (item, index) => {
+            $scope.gridOptions.data.forEach((item, index) => {
                 item.n = index + 1;
             })
         }
@@ -2103,25 +2302,8 @@
             objCalculo[colField] && objCalculo[colField]();
 
             objCalculo["calculoTotalDetalle"]();
-            recalculateTotalsSimple();
-        }
-
-        /**
-         * Calculamos todos los totales y subtotales del comprobantes
-         */
-        function recalculateTotalsSimple() {
-            // $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
-            //     items: $scope.gridOptions.data,
-            //     decimal: $scope.decimal,
-            //     dataTarifaImpuesto: $scope.tarifaImpuestoVigente,
-            //     TAX_RATE_CODE
-            // }))
-
-            // $scope.dataClone.porcentajeDescuento = $scope.data.porcentajeDescuento;
-            // $scope.dataClone.totalDescuento = $scope.data.totalDescuento;
-
-            // * Call to function to draw general totals
             drawInfoGeneralNotaEntrega();
+            return rowEntity;
         }
 
 
@@ -2147,7 +2329,7 @@
                 )
                 //redondeo del numero porcentaje 
                 $scope.data.porcentajeDescuento = fS.roundNumber($scope.data.porcentajeDescuento, $scope.decimal.nroTotalSubTotal)
-                recalculateTotalsSimple();
+                drawInfoGeneralNotaEntrega();
             } else {
                 tS.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
             }
@@ -2177,7 +2359,7 @@
                     gridOptionsSvc.setPorcentajeDescuentoAll(
                         $scope.gridOptions, $scope.data, $scope.decimal, gridOptionsSvc.calculoColDef
                     )
-                    recalculateTotalsSimple();
+                    drawInfoGeneralNotaEntrega();
                 } else {
                     tS.toastr('warning', 'El Valor Descuento no puede ser mayor al total');
                 }
@@ -2195,13 +2377,13 @@
                     tarifasImpuesto: $scope.tarifasImpuesto.slice(),
                 });
                 let {
-                    subTotalSinImpuestos, 
-                    irbpnr, 
+                    subTotalSinImpuestos,
+                    irbpnr,
                     importeTotal,
                     totalDescuento,
                     porcentajeDescuento,
                     propina,
-                } = dataImpuestoTotales; 
+                } = dataImpuestoTotales;
 
                 const htmlTemplate = gridOptionsSvc.impuestoTotalesHtml(dataImpuestoTotales);
                 const element = document.getElementById('draw-dynamic-subtotal');
@@ -2391,6 +2573,24 @@
             return true;
         }
 
+
+
+        // Función para registrar el documento
+        const registerAndUpdateNotaEntrega = async (query) => {
+
+            if (isRegister()) {
+                return await notaEntregaSvc.save(query);
+            }
+
+            if (isUpdate()) {
+                return await notaEntregaSvc.update($scope.data.idNotaEntrega, query);
+            }
+        };
+
+
+
+
+
         $scope.onSave = async function () {
             try {
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
@@ -2407,11 +2607,9 @@
                 if (cuotas && cuotas.length === 0) return
 
                 if (isRegister()) {
-                    showLoader();
                     serieComprobante = await notaEntregaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
                     })
-                    hideLoader();
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
                     titleSwal = '<small>Guardar Nota de Entrega</small>';
@@ -2460,41 +2658,47 @@
 
                 //Registar Doc
                 if (isRegister()) {
-                    showLoader();
-                    notaEntregaSvc.save(query).then(response => {
-                        if (response.code === '0') {
-                            fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {
-                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
-                            let mainData = {
-                                isRegister: true,
-                                data: response.dataResponse,
+                    const managedRegister = fS.fetchManager(registerAndUpdateNotaEntrega);
+
+                    // Llamar a la función gestionada para registrar
+                    managedRegister(query).then(response => {
+                        if (response) { // Verificar si hay respuesta
+                            if (response.code === '0') {
+                                fS.sweetAlert('warning', response.message, response.titleSms);
                             }
-                            $uibModalInstance.close(mainData)
+                            if (response.code === "1") {
+                                fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                let mainData = {
+                                    isRegister: true,
+                                    data: response.dataResponse,
+                                };
+                                $uibModalInstance.close(mainData);
+                            }
                         }
                     }).catch(error => {
-                        hideLoader();
-                        console.log(error)
-                    }).finally(() => hideLoader())
+                        console.log(error); // Manejo de errores
+                    })
                 }
 
                 //Update Doc 
                 if (isUpdate()) {
-                    showLoader()
-                    notaEntregaSvc.update($scope.data.idNotaEntrega, query).then(response => {
-                        if (response.code === '0') {
-                            fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {
-                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                            $uibModalInstance.close(response)
+
+                    const managedUpdate = fS.fetchManager(registerAndUpdateNotaEntrega);
+                    // Llamar a la función gestionada para actualizar
+                    managedUpdate(query).then(response => {
+                        if (response) { // Verificar si hay respuesta
+                            if (response.code === '0') {
+                                fS.sweetAlert('warning', response.message, response.titleSms);
+                            }
+                            if (response.code === "1") {
+                                fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                $uibModalInstance.close(response);
+                            }
                         }
                     }).catch(error => {
-                        hideLoader();
-                        console.log(error)
-                    }).finally(() => hideLoader())
+                        console.log(error); // Manejo de errores
+                    })
 
 
                 }
@@ -2507,7 +2711,10 @@
 
         function setDataChangeFormaPago() {
             let dataFormaPago = $scope.formasPago.find(item => item.idFormaPagoSri === $scope.dataFormaPago.idFormaPagoSri);
-            document.getElementById('infoReferenciaFormaPago').innerHTML = dataFormaPago.infoReferencia;
+            let el = document.getElementById('infoReferenciaFormaPago')
+            if (el) {
+                el.innerHTML = dataFormaPago.infoReferencia;
+            }
         }
         $scope.onSaveInvoice = async function () {
             try {
@@ -2566,14 +2773,16 @@
                         if ($scope.cliente.idFormaPagoSri > 0) {
                             $scope.dataFormaPago.idFormaPagoSri = $scope.cliente.idFormaPagoSri;
                         }
-                        el.value = $scope.dataFormaPago.idFormaPagoSri;
-
-                        setDataChangeFormaPago();
-
-                        el.addEventListener('change', () => {
-                            $scope.dataFormaPago.idFormaPagoSri = Number(el.value);
+                        if (el) {
+                            el.value = $scope.dataFormaPago.idFormaPagoSri;
                             setDataChangeFormaPago();
-                        })
+
+                            el.addEventListener('change', () => {
+                                $scope.dataFormaPago.idFormaPagoSri = Number(el.value);
+                                setDataChangeFormaPago();
+                            })
+                        }
+
                     },
                     preConfirm: () => {
                         let idFormaPagoSri = document.getElementById('formaDePago').value;
@@ -2644,8 +2853,10 @@
 
                             //Registar Doc 
                             if (isRegister()) {
-                                showLoader();
-                                facturaSvc.save(params).then(response => {
+
+                                const managedRegister = fS.fetchManager(facturaSvc.save);
+
+                                managedRegister(params).then(response => {
                                     if (response.code === '0') {
                                         fS.sweetAlert('warning', response.message, response.titleSms);
                                     }

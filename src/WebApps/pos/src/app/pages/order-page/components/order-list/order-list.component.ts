@@ -1,37 +1,37 @@
 import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
 import { CustomTableContainerComponent } from '@/core/components/custom-table-container/custom-table-container.component';
+import { DateRangeSelectionComponent } from '@/core/components/date-range-selection/date-range-selection.component';
+import { getValidId } from '@/core/utils/utils';
 import { ActionWhatsappSendDirective } from '@/directives/action-whatsapp-send.directive';
+import { CODE_REPORT, STATUS_ORDER } from '@/enums/main.enum';
 import { OrderRead } from '@/models/order.model';
 import { Pagination } from '@/models/pagination.model';
+import { UserSelectHtmlOnly } from '@/models/user.model';
+import { CompanyCustomerSearchComponent } from '@/pages/company-customer/components/company-customer-search/company-customer-search.component';
 import { DialogService } from '@/services/dialog.service';
 import { OrderService } from '@/services/order.service';
+import { SharedService } from '@/services/shared.service';
 import { ToasterService } from '@/services/toaster.service';
+import { MainStoreService } from '@/store/main-store.service';
+import { PosStoreService } from '@/store/pos-store.service';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, Input, input, model, output, signal, ViewEncapsulation } from '@angular/core';
+import { Component, computed, inject, input, Input, model, output, signal, ViewEncapsulation } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { PageEvent } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
-import { OrderDivideModalComponent } from '../order-divide-modal/order-divide-modal.component'; 
-import { MatButtonModule } from '@angular/material/button';
-import { SharedService } from '@/services/shared.service';
-import { CODE_REPORT, STATUS_ORDER } from '@/enums/main.enum';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatTabsModule } from '@angular/material/tabs';
-import { FormsModule } from '@angular/forms';
-import { DateRangeSelectionComponent } from '@/core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@/pages/company-customer/components/company-customer-search/company-customer-search.component';
-import { MainStoreService } from '@/store/main-store.service';
-import { getValidId } from '@/core/utils/utils';
-import { UserSelectHtmlOnly } from '@/models/user.model';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { PageEvent } from '@angular/material/paginator';
-import { PosStoreService } from '@/store/pos-store.service';
-import { Router } from '@angular/router';
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import { OrderDivideModalComponent } from '../order-divide-modal/order-divide-modal.component';
 import { OrderDocListComponent } from '../order-doc-list/order-doc-list.component';
 
 @Component({
@@ -69,21 +69,22 @@ import { OrderDocListComponent } from '../order-doc-list/order-doc-list.componen
 })
 export class OrderListComponent {
 
-  @Input({required: true}) dataSearch= {} as any;
+  @Input({ required: true }) dataSearch = {} as any;
   isComingOfPos = input(false)
   closeDialog = output()
- 
-  pagination = signal(new Pagination()) 
-  
+
+  pagination = signal(new Pagination())
+
 
   private mainStore = inject(MainStoreService)
-  
+
   private dialogSvc = inject(DialogService)
   private orderSvc = inject(OrderService)
   private tS = inject(ToasterService)
   private sharedSvc = inject(SharedService);
   private posStoreSvc = inject(PosStoreService)
   private router = inject(Router)
+
 
   displayedColumns: string[] = ['index', 'op', 'nroDoc', 'fechaEmision', 'customer', 'importeTotal', 'tableName', 'obs', 'userName'];
 
@@ -95,17 +96,18 @@ export class OrderListComponent {
 
   statusOrder = signal([
     { code: STATUS_ORDER.PENDIENTE, description: 'Pendiente' },
-   // { code: STATUS_ORDER.PROCESO, description: 'En Proceso' },
+    // { code: STATUS_ORDER.PROCESO, description: 'En Proceso' },
     { code: STATUS_ORDER.FINALIZADO, description: 'Finalizado' },
     { code: STATUS_ORDER.ANULADO, description: 'Anulado' },
   ])
- 
+
+
 
   users: UserSelectHtmlOnly[] = [];
   tablesGroup: any[] = [];
-  
+
   dataSource = signal<OrderRead[]>([])
-  
+
   selectedStatus = model('')
 
   isPending = computed(() => this.selectedStatus() === STATUS_ORDER.PENDIENTE)
@@ -130,17 +132,18 @@ export class OrderListComponent {
       isEnabled: !this.isDeleted(),
       finished: this.isFinished(),
       divided: this.isDividing(),
-      deleted: this.isDeleted()
+      deleted: this.isDeleted(),
+      typeSearchCustomer: this.dataSearch.typeSearchCustomer
     }
     this.isLoadingResults.set(true)
 
     this.dataSource.set([])
     this.orderSvc.getAll(params).subscribe({
       next: (response) => {
-        this.dataSource.set(response.map((_, i)=>({..._, index: i+1})))
-        this.pagination.update(e=>({
+        this.dataSource.set(response.map((_, i) => ({ ..._, index: i + 1 })))
+        this.pagination.update(e => ({
           ...e,
-          totalRecords : this.dataSource().length > 0 ? this.dataSource()[0].totalRecords : 0
+          totalRecords: this.dataSource().length > 0 ? this.dataSource()[0].totalRecords : 0
         }))
       },
       error: () => this.isLoadingResults.set(false),
@@ -158,6 +161,12 @@ export class OrderListComponent {
       this.users = response.users;
       this.getOrders()
     })
+  }
+
+  onChangeTypeSearchCustomer(){
+    if (getValidId(this.dataSearch.customerCompanyId)){
+      this.refresh()
+    }
   }
 
   refresh() {
@@ -180,20 +189,20 @@ export class OrderListComponent {
     this.refresh()
   }
 
-  selectionChangeStatusOrder(){
+  selectionChangeStatusOrder() {
     this.refresh()
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(dt=>{
+    this.pagination.update(dt => {
       return {
         ...dt,
-        totalRecords : e.length,
-        pageSize : e.pageSize,
-        pageIndex : e.pageIndex,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
       }
     })
-   
+
     this.refresh()
   }
 
@@ -210,11 +219,11 @@ export class OrderListComponent {
           orderItems: response.order.items
         }));
 
-        if (this.isComingOfPos()){
+        if (this.isComingOfPos()) {
           this.closeDialog.emit()
-        }else{
+        } else {
           this.navigateToPos()
-        } 
+        }
       },
       error: err => {
         console.error('Error fetching order:', err);
@@ -222,7 +231,7 @@ export class OrderListComponent {
     });
   }
 
- 
+
 
   async askToAnul(row: OrderRead) {
     let { isConfirmed } = await Swal.fire({
@@ -289,6 +298,19 @@ export class OrderListComponent {
     })
 
   };
+
+
+  printOrder(data: OrderRead) {
+    try {
+      this.sharedSvc.askToPrint({
+        id: data.id,
+        documentoId: 0,
+        tipo: 2
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
 

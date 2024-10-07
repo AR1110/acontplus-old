@@ -132,13 +132,21 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
         }
         if (dataEstab) {
             $scope.puntosEmision = dataEstab.puntosEmision;
+            let dataPuntoEmision = {};
+ 
 
-            let dataPuntoEmision = $scope.puntosEmision.find(p => p.defaultPtoEmi);
+            if((idDocumentoElectronico>0)){
+                dataPuntoEmision = $scope.puntosEmision.find(p => p.idPuntoEmision === $scope.infoCompRet.idPuntoEmision);  
+            }else{
+                dataPuntoEmision = $scope.puntosEmision.find(p => p.defaultPtoEmi);
+            }
+             
             if (!dataPuntoEmision) {
                 console.log('not found data pto emision')
                 return
             }
-            $scope.infoCompRet.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
+ 
+             $scope.infoCompRet.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
             $scope.infoCompRet.ptoEmi = dataPuntoEmision.ptoEmi;
             $scope.infoCompRet.codEstab = dataEstab.codEstab
             $scope.infoCompRet.estab = dataEstab.estab

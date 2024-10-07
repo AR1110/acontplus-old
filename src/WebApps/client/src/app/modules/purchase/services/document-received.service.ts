@@ -1,26 +1,27 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { PURCHASE_PATHS } from '../constants/purchase.constants';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
-import { isApiResponse } from '@core/models/api-response';
+import { ApiResponse, isApiResponse } from '@core/models/api-response';
+import { DocumentoReceived } from '@purchase/models/document-received.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DocumentReceivedService {
-  private url = `${PATHS_API.PURCHASE}${PURCHASE_PATHS.DOCUMENT_RECEIVED}`;
-  private http = inject(HttpClient);
+  #url = `${PATHS_API.PURCHASE}${PURCHASE_PATHS.DOCUMENT_RECEIVED}`;
+  #http = inject(HttpClient);
 
   getDataFilter() {
     let query = {
       tipo: 2,
     };
-    return this.http.get(`${this.url}?json=${JSON.stringify(query)}`).pipe(
+    return this.#http.get(`${this.#url}?json=${JSON.stringify(query)}`).pipe(
       map((response) => {
         if (isApiResponse(response)) {
           let mainData = JSON.parse(response.payload as string);
-          const tiposComprobante = mainData.tipoComprobantes.map(
+          const documentTypes = mainData.tipoComprobantes.map(
             (tipoDoc: any) => {
               return {
                 descripcion: tipoDoc.descripcion,
@@ -31,14 +32,36 @@ export class DocumentReceivedService {
           return {
             establecimientos: mainData.establecimientos,
             subcategories: mainData.subcategories,
-            tiposComprobante,
+            documentTypes: documentTypes,
           };
         }
         return {
           establecimientos: [],
-          tiposComprobante: [],
+          documentTypes: [],
         };
       }),
     );
+  }
+
+  get<T>(params: T) {
+    return this.#http
+      .get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`)
+      .pipe(
+        map((response) => {
+          if (response.code !== '1') {
+            return { documents: [] as DocumentoReceived[] };
+          }
+          const { documentos } = JSON.parse(response.payload as string);
+          return {
+            documents: (documentos as DocumentoReceived[]) || [],
+          };
+        }),
+      );
+  }
+
+  getById(id: number) {
+    return this.#http
+      .get<ApiResponse>(`${this.#url}${id}`)
+      .pipe(map((response) => response));
   }
 }

@@ -2,6 +2,7 @@
 using Common.AppSettings;
 using Reports.API.Extensions;
 using Services.Common.Middleware;
+using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,7 @@ app.UseSwaggerVersionedDocumentation();
 app.UseRouting();
 
 
-if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
     app.Urls.Add("http://*:5010"); // Linux Port
 }

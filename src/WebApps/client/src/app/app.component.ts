@@ -2,19 +2,16 @@ import { CommonModule, DOCUMENT } from '@angular/common';
 import { Component, effect, inject, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { GlobalRoutes } from '@core/constants/global-routes';
+import { THEME_OPTIONS } from '@core/theme/theme-options';
+import { ThemeService } from '@core/theme/theme.service';
+import { ThemeClass } from '@core/theme/types';
 import { getEnumValueByKey } from '@core/utils/constant-value';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '@modules/auth/services/auth.service';
-import {
-  UserPermission,
-  UserRoleStateService,
-} from '@shared/store/user-role-state.service';
-import { THEME_OPTIONS } from '@core/theme/theme-options';
-import { ThemeService } from '@core/theme/theme.service';
-import { ThemeClass } from '@core/theme/types';
+import { UserPermission, UserRoleStateService } from '@shared/store/user-role-state.service';
 
 @Component({
   selector: 'app-root',
@@ -66,6 +63,7 @@ export class AppComponent implements OnInit {
     });
 
     this.route.queryParams.subscribe((params) => {
+      console.log(params)
       let { token, route, permission: dataPermission, userRoleData } = params;
 
       console.log(route);
@@ -77,8 +75,11 @@ export class AppComponent implements OnInit {
         let getUserRoleData = localStorage.getItem('userRoleData');
         if (getPermission && getUserRoleData) {
           let { acciones } = JSON.parse(getPermission);
+
+
           let permission = JSON.parse(dataPermission);
           let userRoleData = JSON.parse(getUserRoleData);
+          console.log(permission)
 
           let instancePermission = new UserPermission();
           this.userRoleState.setState({
@@ -109,6 +110,7 @@ export class AppComponent implements OnInit {
           localStorage.removeItem('access_token');
         }
         let route_page = getEnumValueByKey(GlobalRoutes, route);
+        console.log(route_page)
 
         localStorage.setItem('access_token', token);
         self.router.navigate(['/', ...route_page.split('/')]);

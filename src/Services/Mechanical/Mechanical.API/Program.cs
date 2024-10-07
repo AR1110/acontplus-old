@@ -5,6 +5,7 @@ using Common.Core.Utils;
 using Mechanical.API.Extensions;
 using Newtonsoft.Json.Serialization;
 using Services.Common.Extensions;
+using System.Runtime.InteropServices;
 
 
 
@@ -56,7 +57,7 @@ internal class Program
             options.WithOrigins("https://localhost:7111");
         });
 
-        if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             app.Urls.Add("http://*:5009"); // Linux Port
         }

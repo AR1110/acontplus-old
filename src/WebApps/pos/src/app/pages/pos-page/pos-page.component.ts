@@ -1,6 +1,6 @@
 
-import { Component, computed, inject, signal } from '@angular/core';
-import { MatTabChangeEvent, MatTabsModule } from "@angular/material/tabs";
+import { Component, computed, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from "@angular/material/tabs";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { AsyncPipe, CommonModule } from "@angular/common";
@@ -26,12 +26,16 @@ import { PromotionsComponent } from './components/promotions/promotions.componen
 import { SUB_CATEGORY_CODE } from '@/enums/main.enum';
 import { Dialog } from '@angular/cdk/dialog';
 import { TableModalComponent } from './components/table-modal/table-modal.component';
+import { FormsModule } from '@angular/forms';
+import { isValidField } from '@/core/utils/utils';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-pos-page',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MatTabsModule,
     MatButtonModule,
     MatIconModule,
@@ -40,7 +44,7 @@ import { TableModalComponent } from './components/table-modal/table-modal.compon
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-
+    MatTooltipModule,
     AsyncPipe,
     PromotionsComponent,
     ItemsComponent,
@@ -65,6 +69,11 @@ export class PosPageComponent {
   private establecimientoId = this.mainStore.select("establecimientoId");
   private codEstab = this.mainStore.select("codEstab");
 
+  @ViewChild('tabGroup', { static: false }) tabGroup!: MatTabGroup;
+
+  private startX: number = 0;
+  private endX: number = 0;
+
   subCategorias = signal<SubCategory[]>([{
     idSubFamilia: 0,
     codigo: "",
@@ -85,7 +94,8 @@ export class PosPageComponent {
   dataPagination = signal(new Pagination())
 
   dataItemSearch = signal({
-    idSubFamilia: 0
+    idSubFamilia: 0,
+    textSearch: null
   })
   loading = computed(() => {
     return (this.posStoreSvc.state().isLoading || this.posStoreSvc.state().isSelectedItem)
@@ -135,7 +145,8 @@ export class PosPageComponent {
     let params = {
       pageIndex: this.dataPagination().pageIndex + 1,
       pageSize: this.dataPagination().pageSize,
-      idSubFamilia: this.dataItemSearch().idSubFamilia
+      idSubFamilia: this.dataItemSearch().idSubFamilia,
+      textSearch: isValidField(this.dataItemSearch().textSearch)
     }
 
     this.items.set([]);
@@ -158,7 +169,8 @@ export class PosPageComponent {
     let params = {
       pageIndex: this.dataPagination().pageIndex + 1,
       pageSize: this.dataPagination().pageSize,
-      idSubFamilia: this.dataItemSearch().idSubFamilia
+      idSubFamilia: this.dataItemSearch().idSubFamilia,
+      textSearch: isValidField(this.dataItemSearch().textSearch)
     }
 
     this.items.set([]);
@@ -221,7 +233,7 @@ export class PosPageComponent {
             ...e.order,
             puntoEmisionId: this.mainStore.state().puntoEmisionId,
             establecimientoId: this.mainStore.state().establecimientoId,
-            userId: orderId > 0 ? orderId: dataForm.vendedores.find((u: any) => u.predeterminado)?.idUsuario ?? 0
+            userId: orderId > 0 ? orderId : dataForm.vendedores.find((u: any) => u.predeterminado)?.idUsuario ?? 0
           }
           return {
             ...e,
@@ -260,7 +272,7 @@ export class PosPageComponent {
           totalRecords: 0
         }
       })
-      this.dataItemSearch.update(e => ({ ...e, idSubFamilia: dataSubcategory.idSubFamilia }));
+      this.dataItemSearch.update(e => ({ ...e, idSubFamilia: dataSubcategory.idSubFamilia, textSearch: null }));
       this.refresh()
     }
   }
@@ -275,6 +287,75 @@ export class PosPageComponent {
       }
     })
     this.getItems()
+  }
+
+
+  private hasReloadedForNullSearch = false; // Nueva variable para rastrear recarga
+
+  onEnterInputSearch($event: any) {
+    this.dataItemSearch.update(e => {
+      return {
+        ...e,
+        textSearch: $event.target.value
+      };
+    });
+
+    let textSearch = isValidField(this.dataItemSearch().textSearch)
+
+    // Si textSearch es válido
+    if (textSearch) {
+      this.refresh();
+      this.hasReloadedForNullSearch = false;
+    }
+    else if (!textSearch && !this.hasReloadedForNullSearch) {
+      this.refresh(); // Recarga la búsqueda
+      this.hasReloadedForNullSearch = true; // Marca como recargado para evitar recargas adicionales
+    }
+  }
+
+
+
+
+  ngAfterViewInit() {
+    const element = this.tabGroup._elementRef.nativeElement;
+
+    if (element) {
+      element.addEventListener('touchstart', this.onTouchStart.bind(this));
+      element.addEventListener('touchend', this.onTouchEnd.bind(this));
+    } else {
+      console.error('Tab group element not found');
+    }
+  }
+
+  private onTouchStart(event: TouchEvent) {
+    this.startX = event.touches[0].clientX;
+  }
+
+  private onTouchEnd(event: TouchEvent) {
+    this.endX = event.changedTouches[0].clientX;
+    this.handleSwipe();
+  }
+
+  private handleSwipe() {
+    if (this.endX - this.startX < -50) {
+      this.nextTab();  // Swipe left
+    } else if (this.endX - this.startX > 50) {
+      this.previousTab();  // Swipe right
+    }
+  }
+
+  private nextTab() {
+    const index = this.tabGroup.selectedIndex ?? 0;
+    if (index < this.tabGroup._tabs.length - 1) {
+      this.tabGroup.selectedIndex = index + 1;
+    }
+  }
+
+  private previousTab() {
+    const index = this.tabGroup.selectedIndex ?? 0;
+    if (index > 0) {
+      this.tabGroup.selectedIndex = index - 1;
+    }
   }
 
 

@@ -13,7 +13,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
-import { isValidField } from '@core/utils/utils';
+import { getValidId, isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { SALE_CODE_REPORT } from '@modules/sale/enums/sale.enum';
 import { GroupedSubFamilia } from '@modules/inventory/models/sub-category.model';
@@ -248,7 +248,7 @@ export class RentabilidadPageComponent {
         (this.dataSearch.productChecked &&
           isValidField(this.dataSearch.idArticulo)) ||
         null,
-      idTarifa: isValidField(this.dataSearch.idTarifa),
+      idTarifa: getValidId(this.dataSearch.idTarifa),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       subFamiliasChecked:

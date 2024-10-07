@@ -1,9 +1,6 @@
  
- <center ng-if="activated"><md-progress-circular  ng-disabled="!activated" md-diameter="96"></md-progress-circular></center>
-<div ng-show="articulos.length>0">
     <md-table-container style="max-height: 400px;">
-        <table resize master md-table md-row-select="options.rowSelection"
-            multiple="{{options.multiSelect}}" ng-model="selectedArticulos">
+        <table resize master md-table   >
             <thead md-head>
                 <tr md-row>
                     <th md-column><span>Op.</span></th>
@@ -23,10 +20,22 @@
                 </tr>
             </thead>
             <tbody md-body>
-                <tr md-row md-select="item" md-on-select="onChangeCheckBoxItem"
-                    md-auto-select="options.autoSelect" ng-repeat="item in articulos track by $index">
+                <tr md-row   ng-repeat="item in articulos track by $index">
                     <td md-cell> 
-                        <view-kardex params="item"></view-kardex>
+                        <div class="d-flex "> 
+                            <button 
+                                type="button" 
+                                class="btn btn-success btn-xs mr-2" 
+                                ng-if="options.multiSelect" 
+                                ng-click="askToSelect(item)"
+                                placeholder="Hover over this for a tooltip until this is filled"
+                                uib-tooltip="Agregar artículo en el detalle del documento"
+                            
+                            >
+                                <i class="fas fa-cart-arrow-down"></i>
+                            </button> 
+                            <view-kardex params="item"></view-kardex>
+                        </div>
                     </td>
                      <td md-cell style="vertical-align: middle">
                         <img class="img-fluid img-thumbnail" ng-click="previewImg(item)" 

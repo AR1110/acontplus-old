@@ -26,9 +26,10 @@ BEGIN
     
     --> Filter
 	DECLARE @codEstab VARCHAR(50),
+        @idEstablecimiento INT,
         @codDoc VARCHAR(2),
-        @startDate DATETIME,
-        @endDate DATETIME,
+        @startDate DATETIME2,
+        @endDate DATETIME2,
         @claveAcceso VARCHAR(50),
         @serieComprobante VARCHAR(20),
         @rucProveedor VARCHAR(25),
@@ -47,33 +48,32 @@ BEGIN
     --> Get
     IF @tipo = 1
         BEGIN
-            
+
             SET @tableNames = 'documentos'
 
-            SET @params = '@codEstab     VARCHAR(50)
-						  ,@codDoc       VARCHAR(2)
-						  ,@startDate    DATETIME2
-						  ,@endDate      DATETIME2
-						  ,@rucProveedor VARCHAR(25)
-                          ,@claveAcceso  VARCHAR(49)
-                          ,@pageIndex    INT
-                          ,@pageSize     INT
+            SET @params = '@idEstablecimiento   INT
+						  ,@codDoc           VARCHAR(2)
+						  ,@startDate        DATETIME2
+						  ,@endDate          DATETIME2
+						  ,@rucProveedor     VARCHAR(25)
+                          ,@claveAcceso      VARCHAR(49)
+                          ,@pageIndex        INT
+                          ,@pageSize         INT
                           ,@serieComprobante VARCHAR(20)
-                          ,@subcategoryId INT'
+                          ,@subcategoryId    INT '
 
             SET @sql = 'SELECT dr.[idDocumento]
-		                      ,dr.[codEstab]
+	                          ,e.idEstablecimiento
+		                      ,e.[codEstab]
 		                      ,dr.[comprobante]
 		                      ,dr.[codDoc]
 		                      ,dr.[serieComprobante]
-		                      ,dr.[rucEmisor]
-		                      ,dr.[razonSocialEmisior] razonSocialEmisor
+		                      ,c.IDCard [rucEmisor]
+		                      ,c.businessName razonSocialEmisor
 		                      ,dr.[fechaEmision]
 		                      ,dr.[fechaAutorizacion]
-		                      ,dr.[tipoEmision]
 		                      ,dr.[identificacionReceptor]
 		                      ,dr.[claveAcceso]
-		                      ,dr.[numeroAutorizacion]
 		                      ,dr.[importeTotal]
 		                      ,CASE WHEN xmlCompressed IS NOT NULL THEN 1 ELSE 0 END hasXml
 		                      ,ISNULL(complete, 0) complete
@@ -88,36 +88,43 @@ BEGIN
                               ,COUNT(*) OVER()                                                   as totalRecords
                               ,ISNULL(s.[Name], '''') subcategoryName
                               ,ISNULL(dr.subcategoryId, 0) subcategoryId
-	                    FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
-                            LEFT JOIN Contabilidad.CuentaPorPagar cpp ON dr.claveAcceso = cpp.uniqueId
-                            LEFT JOIN Contabilidad.Subcategory s ON dr.subcategoryId = s.Id
-	                    WHERE dr.codEstab = @codEstab '
+	                    FROM Recepcion.DocumentoRecibido       dr WITH (NOLOCK)
+						INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON dr.idEstablecimiento = e.idEstablecimiento
+                        LEFT JOIN Contabilidad.CuentaPorPagar cpp WITH (NOLOCK) ON dr.claveAcceso = cpp.uniqueId
+                        LEFT JOIN Contabilidad.Subcategory      s WITH (NOLOCK) ON dr.subcategoryId = s.Id
+						LEFT JOIN Customer.Customer c WITH(NOLOCK) ON dr.customerId = c.Id
+	                    WHERE dr.idEstablecimiento = @idEstablecimiento '
 
-            SELECT @codDoc       = codDoc
-		          ,@ckBoxFecha   = ckBoxFecha
-                  ,@startDate    = startDate
-		          ,@endDate      = endDate
-		          ,@claveAcceso  = claveAcceso
-		          ,@codEstab     = codEstab
-		          ,@rucProveedor = rucProveedor
-                  ,@pageSize     = pageSize
-				  ,@pageIndex    = pageIndex
-                  ,@serieComprobante = serieComprobante
-                  ,@subcategoryId = subcategoryId
-	        FROM OPENJSON(@JSON) WITH 
-            (
-			     codDoc       VARCHAR(2) 
-			    ,ckBoxFecha   BIT
-                ,startDate    DATETIME2 
-			    ,endDate      DATETIME2
-			    ,claveAcceso  VARCHAR(50) 
-			    ,codEstab     VARCHAR(50) 
-			    ,rucProveedor VARCHAR(25)
-                ,pageSize     INT
-                ,pageIndex    INT
-                ,serieComprobante VARCHAR(20)
-                ,subcategoryId INT
-			)
+                SELECT 
+                    @codDoc          = NULLIF(LTRIM(RTRIM(codDoc)), ''),
+                    @ckBoxFecha      = ckBoxFecha,
+                    @startDate       = startDate,
+                    @endDate         = endDate,
+                    @claveAcceso     = NULLIF(LTRIM(RTRIM(claveAcceso)), ''),
+                    @codEstab        = NULLIF(LTRIM(RTRIM(codEstab)), ''),
+                    @rucProveedor    = NULLIF(LTRIM(RTRIM(rucProveedor)), ''),
+                    @pageSize        = pageSize,
+                    @pageIndex       = pageIndex,
+                    @serieComprobante = NULLIF(LTRIM(RTRIM(serieComprobante)), ''),
+                    @subcategoryId   = subcategoryId
+                FROM OPENJSON(@JSON) WITH 
+                (
+                    codDoc           VARCHAR(2),
+                    ckBoxFecha       BIT,
+                    startDate        DATETIME2,
+                    endDate          DATETIME2,
+                    claveAcceso      VARCHAR(50),
+                    codEstab         VARCHAR(50),
+                    rucProveedor     VARCHAR(25),
+                    pageSize         INT,
+                    pageIndex        INT,
+                    serieComprobante VARCHAR(20),
+                    subcategoryId    INT
+                );
+
+            print LEN(@rucProveedor)
+
+            SET @idEstablecimiento = (SELECT idEstablecimiento FROM Sri.Establecimiento WHERE codEstab = @codEstab)
 
             IF @ckBoxFecha = 1 AND @serieComprobante IS NULL
                 BEGIN
@@ -130,40 +137,41 @@ BEGIN
                 END 
 
             IF @rucProveedor IS NOT NULL
-	            BEGIN
+	            BEGIN print 'inside prove'
 		            SET @sql = @sql + 'AND rucEmisor = @rucProveedor '
 	            END
 
             IF @claveAcceso IS NOT NULL
-                BEGIN 
+                BEGIN
                     SET @sql = @sql + 'AND dr.claveAcceso = @claveAcceso '
                 END
 
-             IF @serieComprobante IS NOT NULL
+
+            IF @serieComprobante IS NOT NULL
                 BEGIN
                     SET @sql = @sql + ' AND dr.serieComprobante LIKE ''%' + @serieComprobante + '%'' ' 
                 END
 
-            IF (@subcategoryId > 0)
+
+            IF @subcategoryId > 0
                 BEGIN
                      SET @sql = @sql + ' AND dr.subcategoryId = @subcategoryId ' 
                 END
-
 
             SET @sql = @sql + ' ORDER BY idDocumento DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
             EXEC sp_executesql @sql
 		                      ,@params
-		                      ,@codEstab     = @codEstab
-		                      ,@codDoc       = @codDoc
-		                      ,@startDate    = @startDate
-		                      ,@endDate      = @endDate
-		                      ,@rucProveedor = @rucProveedor
-                              ,@claveAcceso  = @claveAcceso
-                              ,@pageIndex    = @pageIndex
-                              ,@pageSize     = @pageSize
+		                      ,@idEstablecimiento         = @idEstablecimiento
+		                      ,@codDoc           = @codDoc
+		                      ,@startDate        = @startDate
+		                      ,@endDate          = @endDate
+		                      ,@rucProveedor     = @rucProveedor
+                              ,@claveAcceso      = @claveAcceso
+                              ,@pageIndex        = @pageIndex
+                              ,@pageSize         = @pageSize
                               ,@serieComprobante = @serieComprobante
-                              ,@subcategoryId = @subcategoryId
+                              ,@subcategoryId    = @subcategoryId
 
             RETURN 
         END 
@@ -174,9 +182,9 @@ BEGIN
             
             SET @tableNames = 'establecimientos,tipoComprobantes,subcategories'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
+            SELECT idEstablecimiento,codEstab,nombreComercial, predeterminado FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
 
-            SELECT descripcion,codigoSri as codDoc FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','04','07') ORDER BY codigoSri
+            SELECT descripcion,codigoSri as codDoc, codigoSri FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','04','07') ORDER BY codigoSri
 
             SELECT * FROM Contabilidad.subcategory  WITH (NOLOCK) WHERE companyId = @idEntidad AND Enabled = 1
 
@@ -230,7 +238,7 @@ BEGIN
 			        FROM FactElect.RetAtsDocSustento retDoc
 			        INNER JOIN FactElect.RetencionAts rAts ON rAts.idRetencionAts       = retDoc.idRetencionAts
                     INNER JOIN dbo.DocumentoElectronico de ON de.idDocumentoElectronico = rAts.idDocumentoElectronico
-                    INNER JOIN dbo.Proveedor            pr ON pr.idProveedor            = rAts.idProveedor
+                    INNER JOIN Compra.v_Proveedor            pr ON pr.idProveedor            = rAts.idProveedor
 			        WHERE retDoc.numAutDocSustento = @claveAcceso
 			          AND rAts.anuladaSri = 0
 		        END
@@ -250,10 +258,6 @@ BEGIN
 
             RETURN 
 	    END
-
-    SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
-    RETURN 
-
 END
 GO
 

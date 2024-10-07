@@ -1,5 +1,5 @@
 USE AcontPlus
-
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18,22 +18,27 @@ BEGIN
     SET LANGUAGE SPANISH;
 
     --> GLOBAL
-	DECLARE @idUsuario INT,@idEntidad INT
-
-    --> Facturacion Electronica
-	DECLARE @ruc NVARCHAR(100) ,@fechaEmision DATETIME2 ,@ambiente INT ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@claveAcceso NVARCHAR(50) ,@isAutomatic INT ,@uniqueId VARCHAR(150) ,@secuencial INT
-           ,@idEstadoServicio INT ,@CustomerId INT ,@idDocumentoElectronico INT
-
-    --> RetencionAts
-	DECLARE @tipoEmision TINYINT = 1 ,@idPuntoEmision INT ,@idTipoDocumento INT ,@idProveedor INT  ,@idRentencionAts INT
+	DECLARE @idUsuario INT,
+        @idEntidad INT,
+        @ruc NVARCHAR(100),
+        @fechaEmision DATETIME2,
+        @ambiente INT,
+        @claveAcceso NVARCHAR(50),
+        @secuencial INT,
+        @idEstadoServicio INT,
+        @customerId INT,
+        @idDocumentoElectronico INT,
+        @tipoEmision TINYINT = 1,
+        @idPuntoEmision INT,
+        @idTipoDocumento INT,
+        @idProveedor INT,
+        @idRentencionAts INT
 
 			
 	DECLARE @tblInfoCompRet AS TABLE(
          idRetencionAts INT NOT NULL
         ,fechaEmision DATETIME2 NOT NULL
 		,codEstab VARCHAR(25) NOT NULL
-		,estab VARCHAR(5) NOT NULL
-		,ptoEmi VARCHAR(5) NOT NULL
 		,contribuyentEspecial VARCHAR(13) NULL
 		,obligadoContabilidad VARCHAR(2) NULL
 		,tipoIdentificacionSujetoRetenido VARCHAR(2) NULL
@@ -51,13 +56,11 @@ BEGIN
 
         --> Info Json
         INSERT INTO @tblInfoCompRet
-              (idRetencionAts,codEstab,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
-		SELECT @id           ,codEstab,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
+              (idRetencionAts,codEstab,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
+		SELECT @id           ,codEstab,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
 		FROM OPENJSON(@infoCompRet) WITH
         (
              codEstab                         VARCHAR(25)
-            ,estab                            VARCHAR(5)
-            ,ptoEmi                           VARCHAR(5)
             ,secuencial                       VARCHAR(6)
             ,fechaEmision                     DATETIME2
             ,contribuyentEspecial             VARCHAR(13)
@@ -86,7 +89,7 @@ BEGIN
 
         SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = (SELECT LTRIM(RTRIM(identificacionSujetoRetenido))  FROM @tblInfoCompRet)
 
-        SELECT TOP 1 @CustomerId = ISNULL(CustomerId,0) FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
+        SELECT TOP 1 @customerId = ISNULL(CustomerId,0) FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
 
         SELECT TOP 1 @claveAcceso = dbo.ufnGeneraClaveAcceso (
                                                                 dbo.AFTDeleteCero(estab)   
@@ -97,11 +100,19 @@ BEGIN
 			                                                   ,@ruc                                             
 			                                                   ,estab+ptoEmi                                                     
 			                                                   ,Helper.F_Auto_Sequential(@secuencial)
-                                                             ) 
-                   ,@fechaEmision = fechaEmision
-		FROM @tblInfoCompRet 
+                                                             )
+        ,@fechaEmision = fechaEmision
+		FROM @tblInfoCompRet           tb
+        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab          = tb.codEstab
+        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento 
         
         --> Validaciones 
+
+        IF (@claveAcceso IS NULL OR LEN(LTRIM(RTRIM(@claveAcceso))) = 0)
+            BEGIN
+                SELECT '0' code, 'No se pudo generar la clave de acceso' as 'message'
+				RETURN
+            END
 
         IF NOT EXISTS (SELECT 1 FROM @tblInfoCompRet)
 			BEGIN
@@ -157,7 +168,7 @@ BEGIN
                SET claveAcceso      = @claveAcceso
 			      ,fechaEmision     = @fechaEmision
 			      ,idEstadoServicio = @idEstadoServicio
-			      ,CustomerId       = @CustomerId
+			      ,CustomerId       = @customerId
 			WHERE idDocumentoElectronico = @idDocumentoElectronico
 
             --> InfoComprobanteRetencion

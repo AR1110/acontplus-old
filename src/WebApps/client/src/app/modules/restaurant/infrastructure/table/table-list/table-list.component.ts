@@ -184,7 +184,9 @@ export class TableListComponent {
       TableAddEditModalComponent,
       { size: 'sm', centered: true },
     );
-    modalRef.componentInstance.data = { codEstab: this.establecimientoId };
+    modalRef.componentInstance.data = {
+      establecimientoId: this.establecimientoId,
+    };
     modalRef.result.then((response) => {
       if (typeof response === 'object') {
         this.loadData(this.establecimientoId);

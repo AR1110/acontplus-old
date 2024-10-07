@@ -180,6 +180,8 @@
             "userCustomerPermissionService"
         );
 
+        const tS = $injector.get("toastService");
+
         let service = {
             data: {},
         };
@@ -533,11 +535,22 @@
                 .then((response) => {
                     if (response.code === "0") {
                         console.warn(response);
+                        tS.toastr({
+                            type: 'warning',
+                            message: response.message
+                        })
                         throw null;
                     }
                     if (response.code === "1") {
                         let mainData = JSON.parse(response.payload);
                         let data = mainData[0][0];
+                        if (!data) {
+                            tS.toastr({
+                                type: 'warning',
+                                message: "No se ha configurado secuencial doc."
+                            })
+                            throw null;
+                        }
                         return data.serieComprobante;
                     }
                 });
@@ -1097,6 +1110,8 @@
         const userCustomerPermissionSvc = $injector.get(
             "userCustomerPermissionService"
         );
+        const tS = $injector.get("toastService");
+
 
         const URL = "FactElect/NotaCredito/";
         const service = {};
@@ -1253,11 +1268,24 @@
                 .then((response) => {
                     if (response.code === "0") {
                         console.warn(response);
+                        tS.toastr({
+                            type:'warning',
+                            message: response.message
+                        })
                         throw null;
                     }
                     if (response.code === "1") {
                         let mainData = JSON.parse(response.payload);
                         let data = mainData[0][0];
+
+                        if(!data){
+                            tS.toastr({
+                                type: 'warning',
+                                message: "No se ha configurado secuencial doc."
+                            })
+                            throw null;
+                        }
+
                         return data.serieComprobante;
                     }
                 });

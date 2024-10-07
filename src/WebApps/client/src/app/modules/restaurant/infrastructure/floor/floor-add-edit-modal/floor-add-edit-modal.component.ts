@@ -19,6 +19,7 @@ import { ApiResponse } from '@core/models/api-response';
 import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
+import { RoomService } from '@restaurant/services/room.service';
 
 @Component({
   selector: 'app-floor-add-edit-modal',
@@ -88,18 +89,13 @@ export class FloorAddEditModalComponent {
         delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
         delBtn.title = 'Eliminar Sala';
         delBtn.addEventListener('click', () => {
-          const rowData = cell.getRow().getData();
-          console.log(rowData);
-          if (rowData.id > 0) {
-            // this.askToDeleteDetail(rowData);
-          } else {
-            this.deleteRoom(rowData.deviceId);
-          }
+          const rowData = cell.getRow();
+          this.deleteRoom(rowData);
         });
 
         let buttonHolder = document.createElement('span');
         buttonHolder.appendChild(delBtn);
-        if (rowDataMain.id > 0) {
+        if (rowDataMain.id > 0 && this.data.id > 0) {
           buttonHolder.appendChild(editBtn);
         }
         return buttonHolder;
@@ -124,17 +120,27 @@ export class FloorAddEditModalComponent {
   modalIcon: IconProp = 'plus';
   modalTitle: string = 'Registrar Piso';
   rooms: Room[] = [];
-  #modalRef = inject(NgbActiveModal);
-  #floorService = inject(FloorService);
-  #sharedService = inject(SharedService);
-  #tS = inject(ToasterService);
+  _floorService = inject(FloorService);
+  _modalRef = inject(NgbActiveModal);
+  _roomService = inject(RoomService);
+  _sharedService = inject(SharedService);
+  _tS = inject(ToasterService);
 
-  deleteRoom(id: number) {
-    this.rooms = this.rooms.filter((room) => room.id !== id);
+  deleteRoom(row: any) {
+    const rowData = row.getData();
+
+    // Find the index of the room to delete in the array
+    const index = this.rooms.findIndex((room) => room.id === rowData.id);
+    if (index > -1) {
+      // Remove the room from the array
+      this.rooms.splice(index, 1);
+      // Delete the row from the Tabulator table
+      row.delete();
+    }
   }
 
   getEstabAsign() {
-    this.#sharedService.getEstabAsign().subscribe((response) => {
+    this._sharedService.getEstabAsign().subscribe((response) => {
       if (response) {
         this.establecimientos = response;
       }
@@ -156,33 +162,33 @@ export class FloorAddEditModalComponent {
 
   onSave() {
     if (this.floorForm.invalid) {
-      return this.#tS.toastr({
+      return this._tS.toastr({
         type: 'warning',
         message: 'Revise los datos correctos',
       });
     }
     if (!(this.rooms.length > 0)) {
-      return this.#tS.toastr({
+      return this._tS.toastr({
         type: 'warning',
         message: 'Debe agregar al menos una sala',
       });
     }
 
-    const dataToSave = {
+    let dataToSave = {
       ...this.floorForm.value,
       codEstab:
         this.establecimientos.find(
           (x) => x.idEstablecimiento === this.data.establecimientoId,
         )?.codEstab || null,
-      rooms: this.rooms,
+      rooms: this.data.id > 0 ? [] : this.rooms, //solo añade si es nueva
     };
 
     if (this.data.id > 0) {
-      this.#floorService.put(this.data.id, dataToSave).subscribe((response) => {
+      this._floorService.put(this.data.id, dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     } else {
-      this.#floorService.post(dataToSave).subscribe((response) => {
+      this._floorService.post(dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     }
@@ -198,31 +204,52 @@ export class FloorAddEditModalComponent {
   }
 
   successResponse(response: ApiResponse) {
-    this.#tS.toastr({
+    this._tS.toastr({
       type: response.code == '1' ? 'success' : 'warning',
       message: response.message,
     });
     if (response.code == '1') {
-      this.#modalRef.close(response);
+      this._modalRef.close(response);
     }
   }
 
   onModalClose() {
-    this.#modalRef.close();
+    this._modalRef.close();
   }
 
   addRoom() {
+    const maxId =
+      this.rooms.length > 0
+        ? Math.max(...this.rooms.map((room) => room.id))
+        : 0;
     const code =
       this.rooms.length > 0
         ? `${Math.max(...this.rooms.map((room) => parseInt(room.code))) + 1}`
         : '1';
-    const newRoom: Room = {
-      id: 0,
+    let newRoom: Room = {
+      id: maxId + 1, // Auto-increment the id based on the highest current id;
       code: code,
       description: `Sala ${code}`,
       capacity: 1,
       enabled: true,
+      floorId: this.data.id,
     };
-    this.rooms.push(newRoom);
+    if (this.data.id > 0) {
+      newRoom.id = 0;
+      this._roomService.post(newRoom).subscribe((response) => {
+        this._tS.toastr({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+        if (response.code === '1') {
+          const { id } = response.payload as Room;
+          newRoom.id = id;
+          console.log(newRoom);
+          this.rooms.push(newRoom);
+        }
+      });
+    } else {
+      this.rooms.push(newRoom);
+    }
   }
 }

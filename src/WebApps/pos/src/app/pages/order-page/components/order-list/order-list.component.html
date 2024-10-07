@@ -1,15 +1,38 @@
 <div class="row gx-1 mt-2">
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+    <div class="row">
+      <div class="col-xl-2 col-lg-2 col-md-3 col-sm-3 col-12">
 
-  <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="typeSearchCustomer" id="pedido" [(ngModel)]="dataSearch.typeSearchCustomer" value="OR" (change)="onChangeTypeSearchCustomer()">
+          <label class="form-check-label" for="pedido">
+            Pedido
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="typeSearchCustomer" id="doc" [(ngModel)]="dataSearch.typeSearchCustomer" value="DOC" (change)="onChangeTypeSearchCustomer()">
+          <label class="form-check-label" for="doc">
+            Doc
+          </label>
+        </div>
+      </div>
+      <div class="col-xl-10 col-lg-10 col-md-9 col-sm-9 col-12">
+        <app-company-customer-search [isSimple]="true" (onSelect)="onSelectCustomer($event)"
+          (clearInput)="clearCustomer()">
+        </app-company-customer-search>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
     <app-date-range-selection (onChangeDateRange)="onChangeDateRange($event)" />
   </div>
 
-  <div class="col-xl-3 col-lg-3 col-md-4 col-sm-12 col-12">
-    <app-company-customer-search [isSimple]="true" (onSelect)="onSelectCustomer($event)"
-      (clearInput)="clearCustomer()" />
-  </div>
 
-  <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+
+
+  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
     <mat-form-field appearance="outline" class="m3-input-full-width">
       <mat-label>Mesa</mat-label>
       <mat-select [(ngModel)]="dataSearch.tableId" (selectionChange)="refresh()">
@@ -26,7 +49,7 @@
   </div>
 
 
-  <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+  <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
     <mat-form-field appearance="outline" class="m3-input-full-width">
       <mat-label>Usuario</mat-label>
       <mat-select [(ngModel)]="dataSearch.userId" (selectionChange)="refresh()">
@@ -38,14 +61,14 @@
     </mat-form-field>
   </div>
 </div>
-<div class="hstack gap-3 justify-content-between">
+<div class=" d-flex flex-column flex-md-row gap-3 justify-content-between">
   <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
     @for(item of statusOrder();track $index){
 
 
     <input type="radio" class="btn-check" name="btnradio" [id]="'statusId'+$index" [value]="item.code"
-      [disabled]="isLoadingResults()"
-      [(ngModel)]="selectedStatus" autocomplete="off" (change)="selectionChangeStatusOrder()">
+      [disabled]="isLoadingResults()" [(ngModel)]="selectedStatus" autocomplete="off"
+      (change)="selectionChangeStatusOrder()">
     <label class="btn btn-outline-primary" [for]="'statusId'+$index">{{item.description}}</label>
     }
   </div>
@@ -83,6 +106,10 @@
           </button>
           }
 
+          <button mat-icon-button (click)="printOrder(row)" matTooltip="Imprimir">
+            <mat-icon>print</mat-icon>
+
+          </button>
         </div>
 
         <mat-menu #menu="matMenu">
@@ -180,11 +207,11 @@
       <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
         <div class="element-detail my-2" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
           @if(expandedElement === element){
-            <div class="card border-info">
-              <div class="card-body">
-                <app-order-doc-list [data]="element" />
-              </div>
+          <div class="card border-info">
+            <div class="card-body">
+              <app-order-doc-list [data]="element" />
             </div>
+          </div>
 
           }
 
@@ -201,7 +228,7 @@
 
     <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
     <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="example-element-row"
-      [class.example-expanded-row]="expandedElement === element" >
+      [class.example-expanded-row]="expandedElement === element">
     </tr>
     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 

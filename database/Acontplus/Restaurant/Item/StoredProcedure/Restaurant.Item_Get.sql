@@ -144,6 +144,13 @@ BEGIN
                     SET @sql = @sql + ' AND a.siglaSubFamilia NOT IN(''COM'') '
                 END
 
+            IF @textSearch IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + ' AND a.descripcion LIKE ''%''+@textSearch+''%'' 
+                                        OR ri.Summary LIKE ''%''+@textSearch+''%'' 
+                                        OR ri.Content LIKE ''%''+@textSearch+''%'' '
+                END
+
             SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
 
             SET @tableNames = 'items'

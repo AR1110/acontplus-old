@@ -5,6 +5,13 @@ type ToastrProps = {
   type: 'success' | 'warning' | 'info' | 'error';
   message: string;
   title?: string;
+  positionClass?:
+    | 'toast-bottom-center'
+    | 'toast-bottom-right'
+    | 'toast-bottom-left'
+    | 'toast-top-center'
+    | 'toast-top-right'
+    | 'toast-top-left';
 };
 
 @Injectable({
@@ -14,12 +21,12 @@ export class ToasterService {
   constructor(private tS: ToastrService) {}
 
   toastr(props: ToastrProps) {
-    const { type, message, title } = props;
+    const { type, message, title, positionClass } = props;
     const options = {
       closeButton: true,
       newestOnTop: true,
       progressBar: true,
-      positionClass: 'toast-bottom-center',
+      positionClass: positionClass ? positionClass : 'toast-bottom-center',
       timeOut: 5000,
       extendedTimeOut: 1500,
     };
