@@ -2,7 +2,7 @@
     <div class="modal-header">
         <div class="d-flex float-left align-items-center">
             <button type="button" class="btn btn-secondary btn-sm mr-2" tooltip-placement="right"
-                            uib-tooltip="Opción para recargar los permisos del documento." ng-click="refreshUserPermission()">
+                uib-tooltip="Opción para recargar los permisos del documento." ng-click="refreshUserPermission()">
                 <i class="fas fa-redo"></i>
             </button>
             <div class="custom-control custom-checkbox">
@@ -96,16 +96,10 @@
                     <label>Cliente: <span class="text-danger">*</span></label>
                     <!--Start Nuevo - duplicar-->
                     <div class="input-group" ng-if="!(data.idNotaEntrega>0)">
-                        <input type="text" 
-                            id="clienteSearchInvoice" 
-                            name="clienteSearchInvoice"
-                            class="form-control border-select" 
-                            ng-model="cliente.nombreFiscal" 
-                            customer-search-sale-drtv
-                            on-select="onSelectedClienteChange(result)" 
-                            on-keyup="onKeyupCustomer()"
-                             tipos-identificacion="tiposIdentificacion"
-                            function-trigger="receiveDataCustomerSRI(result)"
+                        <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice"
+                            class="form-control border-select" ng-model="cliente.nombreFiscal" customer-search-sale-drtv
+                            on-select="onSelectedClienteChange(result)" on-keyup="onKeyupCustomer()"
+                            tipos-identificacion="tiposIdentificacion" function-trigger="receiveDataCustomerSRI(result)"
                             placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
                         <div class="input-group-append">
@@ -124,10 +118,7 @@
                                 <i class="fa fa-search fa-xs"></i>
                             </button>
 
-                            <button type="button" 
-                                cliente-info-popover 
-                                customer="cliente" 
-                                popover-placement='top'
+                            <button type="button" cliente-info-popover customer="cliente" popover-placement='top'
                                 info-adicional-documento="infoAdicionalDocumento"
                                 class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0" tabindex="-1">
                                 <i class="fa fa-info fa-xs"></i>
@@ -157,11 +148,8 @@
                                 <i class="fa fa-search fa-xs"></i>
                             </button>
 
-                            <button type="button" 
-                            cliente-info-popover 
-                            customer="cliente" 
-                                info-adicional-documento="infoAdicionalDocumento"
-                            popover-placement='top'
+                            <button type="button" cliente-info-popover customer="cliente"
+                                info-adicional-documento="infoAdicionalDocumento" popover-placement='top'
                                 class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0" tabindex="-1">
                                 <i class="fa fa-info fa-xs"></i>
                             </button>
@@ -274,30 +262,19 @@
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <label for="">Buscar por Artículo</label>
-                        <md-autocomplete-articulo-component  
-                            id-bodega="data.idBodega"
-                            on-select="onSelect(params)"
-                            es-venta="true"
-                            items="gridOptions.data"
-                            fecha-emision="data.fechaEmision"
-                            ref-producto-venta="refProductoVenta"
-                            >
-                        </md-autocomplete-articulo-component>
+                        <custom-search-articulo id-bodega="data.idBodega" on-select="onSelect(params)" es-venta="true"
+                            items="gridOptions.data" fecha-emision="data.fechaEmision"
+                            ref-producto-venta="refProductoVenta">
+                        </custom-search-articulo>
                     </div>
 
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="searchBarcode">Buscar por Código</label>
-                            <articulo-search-barcode 
-                                  es-venta="true"
-                                 id-bodega="data.idBodega"
-                            on-select="onSelect(params)"
-                            es-venta="true"
-                            items="gridOptions.data"
-                            fecha-emision="data.fechaEmision"
-                            ref-producto-venta="refProductoVenta"
-                                
-                                ></articulo-search-barcode>
+                            <custom-search-articulo-barcode es-venta="true" id-bodega="data.idBodega"
+                                on-select="onSelect(params)" es-venta="true" items="gridOptions.data"
+                                fecha-emision="data.fechaEmision"
+                                ref-producto-venta="refProductoVenta"></custom-search-articulo-barcode>
                         </div>
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="config.multipleVendedor">
@@ -342,7 +319,7 @@
         </div>
 
         <div class="row mt-1">
-            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12"> 
+            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
                 <div class="row mt-2">
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
@@ -353,7 +330,7 @@
                                     decimal class="form-control border-select" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm"
-                                    ng-disabled="!permisoComprobanteVenta.porcentajeDescuento || gridOptions.data.length==0"
+                                        ng-disabled="!permisoComprobanteVenta.porcentajeDescuento || gridOptions.data.length==0"
                                         ng-click="calcularPorcentajeDescuento()">
                                         <i class="fa fa-calculator fa-xs"></i>
                                     </button>
@@ -378,7 +355,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div> 
+                    </div>
 
                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
@@ -447,8 +424,8 @@
 
     <div class="modal-footer">
         @* <div class="icheck-success icheck-inline">
-            <input type="checkbox" ng-model="showSubtotales" id="showSubTotales" />
-            <label for="showSubTotales">Mas datos</label>
+        <input type="checkbox" ng-model="showSubtotales" id="showSubTotales" />
+        <label for="showSubTotales">Mas datos</label>
         </div> *@
         <button type="button" class="btn btn-dark" id="btnCloseModalDocument" ng-click="closeModal()">
             &times; Cerrar

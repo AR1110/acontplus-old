@@ -178,10 +178,12 @@ app.factory('productUtil', [
                 fila.idArticulo = articulo.idArticulo;
                 fila.codigo = articulo.codigoArticulo;
                 fila.descripcion = articulo.descripcion;
+
                 fila.idImpuesto = tipoIva.idImpuesto;
                 fila.idTipoIva = articulo.idTipoIva;
                 fila.codigoPorcentaje = articulo.codigoPorcentaje;
                 fila.tarifa = articulo.tarifa;
+
                 fila.ice = articulo.valorIce;
                 fila.idBodega = this.idBodega;
                 fila.llevaInventario = articulo.llevaInventario;
@@ -189,20 +191,29 @@ app.factory('productUtil', [
                 fila.productoFraccionable = articulo.productoFraccionable;
                 fila.medidas = medidas;
                 fila.idMedida = medidaDefault.idMedida;
+
                 fila.conversion = medidaDefault.conversion;
                 fila.precioCosto = medidaDefault.precioCosto;
+
                 fila.precioCostoFraccionado = medidaDefault.precioCostoFraccionado;
+                
                 fila.datosAdicionalesArticulo = datosAdicionalesArticulo.map(daa => ({
                     ...daa,
                     uniqueRowDetalle: fila.uniqueRowDetalle
                 }));
+
                 fila.consolidacionesFecha = consolidacionesFecha;
                 fila.articuloTarifas = medidaDefault.tarifas;
                 fila.idTarifa = this.idTarifa;
 
                 let tarifa = fila.articuloTarifas.find(item => item.idTarifa === fila.idTarifa);
+
+                fila.precioSinSubsidio = articulo.precioSinSubsidio || 0;
+
                 fila.precioUnitario = fS.roundNumber(tarifa.precioVenta, this.nroPrecio);
+
                 fila.precioConIva = fS.roundNumber(tarifa.precioConIva, this.nroPrecio);
+
                 fila.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor || 0;
             },
 
@@ -258,8 +269,7 @@ app.factory('productUtil', [
                     let articulosDuplicadosConInventario = this.items.filter(item => this.esArticuloConInventario(item, articulo));
 
                     let indiceArticuloEnInventario = articulosDuplicadosConInventario.findIndex(item => this.esArticuloConInventario(item, articulo));
-
-
+ 
                     if (this.duplicarItem) {
                         agregarFila = true;
                         this.incrementarCantidad(nuevaFilaAgregada, cantidad);
