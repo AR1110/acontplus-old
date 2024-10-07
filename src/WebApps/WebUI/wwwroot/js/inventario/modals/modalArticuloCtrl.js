@@ -2018,17 +2018,21 @@ function ModalArticuloGeneralCtrl(
 
     }
 
+    function getElementQty(){
+        return document.getElementById('cantidadInput');
+    }
+
     /**
      * 
      * @param {*} item 
      */
-    function askToAdd(item) {
+    function askToAdd(item) { 
         Swal.fire({
             title: '¿Qué deseas hacer?',
             html: `
-        <label for="cantidadInput" style="display: block; margin-bottom: 5px;">Ingresa una cantidad:</label>
-        <input id="cantidadInput" type="number" class="swal2-input" placeholder="Escribe un número" min="1" value="1">
-    `,
+                <label for="cantidadInput" style="display: block; margin-bottom: 5px;">Ingresa una cantidad:</label>
+                <input id="cantidadInput" type="number" class="swal2-input" placeholder="Escribe un número" min="1" value="1" autofocus>
+            `,
             focusConfirm: false,
             showCancelButton: true,
             showDenyButton: true,
@@ -2036,39 +2040,50 @@ function ModalArticuloGeneralCtrl(
             denyButtonText: 'Añadir y cerrar',
             cancelButtonText: 'Cancelar',
             preConfirm: () => {
-                const cantidadInput = document.getElementById('cantidadInput').value;
-
+                const cantidadInput = getElementQty().value;
+        
                 // Validar si el valor es un número y mayor que 0
                 if (isNaN(cantidadInput) || cantidadInput <= 0) {
                     Swal.showValidationMessage('La cantidad debe ser un número mayor a 0.');
                     return false; // Retorna false para no permitir el cierre
                 }
-
+        
                 return cantidadInput; // Retorna el valor si es válido
             },
             preDeny: () => {
-                const cantidadInput = document.getElementById('cantidadInput').value;
-
+                const cantidadInput = getElementQty().value;
+        
                 // Validar si el valor es un número y mayor que 0
                 if (isNaN(cantidadInput) || cantidadInput <= 0) {
                     Swal.showValidationMessage('La cantidad debe ser un número mayor a 0.');
                     return false; // Retorna false para no permitir el cierre
                 }
-
+        
                 return cantidadInput; // Retorna el valor si es válido
+            },
+            didOpen: () => {
+                // Detectar la tecla Enter
+                const cantidadInputElement = getElementQty();
+                 cantidadInputElement.select() 
+                cantidadInputElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        Swal.clickConfirm(); // Simula el clic en "Añadir y continuar"
+                    }
+                });
             }
         }).then((result) => {
-            let cantidadInput = document.getElementById('cantidadInput').value; // Obtener el valor del input
-            cantidadInput = Number(cantidadInput)
-
+            let cantidadInput = getElementQty().value; // Obtener el valor del input
+            cantidadInput = Number(cantidadInput);
+        
             if (result.isConfirmed) {
-                params.refProductoVenta.onInventario(item.idArticulo, cantidadInput)
-
+                params.refProductoVenta.onInventario(item.idArticulo, cantidadInput);
+        
             } else if (result.isDenied) {
-                params.refProductoVenta.onInventario(item.idArticulo, cantidadInput)
-                $uibModalInstance.close()
+                params.refProductoVenta.onInventario(item.idArticulo, cantidadInput);
+                $uibModalInstance.close();
             }
-        })
+        });
+        
     }
 
     $scope.previewImg = function (item) {

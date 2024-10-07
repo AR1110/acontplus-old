@@ -1,9 +1,9 @@
 <div class="modal-header">
     <div class="d-flex float-left align-items-center">
-         <button type="button" class="btn btn-secondary btn-sm mr-2" tooltip-placement="right"
-                            uib-tooltip="Opción para recargar los permisos del documento." ng-click="refreshUserPermission()">
-                <i class="fas fa-redo"></i>
-            </button>
+        <button type="button" class="btn btn-secondary btn-sm mr-2" tooltip-placement="right"
+            uib-tooltip="Opción para recargar los permisos del documento." ng-click="refreshUserPermission()">
+            <i class="fas fa-redo"></i>
+        </button>
 
         <div class="custom-control custom-checkbox">
             <input type="checkbox" class="custom-control-input" ng-model="showHeader" id="checkbox0" value="check">
@@ -94,19 +94,11 @@
                 <label>Cliente: <span class="text-danger">*</span></label>
                 <!--Start Nuevo - duplicar-->
                 <div class="input-group" ng-if="!(data.idFactura>0)">
-                    <input type="text" id="clienteSearchInvoice" 
-                        name="clienteSearchInvoice"
-                        class="form-control border-select" 
-                        ng-model="cliente.nombreFiscal" 
-                        customer-search-sale-drtv
-                        on-select="onSelectedClienteChange(result)" 
-                        on-keyup="onKeyupCustomer()"
-
-                        tipos-identificacion="tiposIdentificacion"
-                        function-trigger="receiveDataCustomerSRI(result)" 
-                        autocomplete="off"
-                        placeholder="Ingrese C.I o Nombre Comercial" 
-                        onclick="select();">
+                    <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice"
+                        class="form-control border-select" ng-model="cliente.nombreFiscal" customer-search-sale-drtv
+                        on-select="onSelectedClienteChange(result)" on-keyup="onKeyupCustomer()"
+                        tipos-identificacion="tiposIdentificacion" function-trigger="receiveDataCustomerSRI(result)"
+                        autocomplete="off" placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary btn-xs border-select"
@@ -123,13 +115,10 @@
                             <i class="fa fa-search fa-xs"></i>
                         </button>
 
-                    
 
-                        <button type="button" 
-                        cliente-info-popover 
-                        customer="cliente" 
-                          info-adicional-documento="infoAdicionalDocumento"
-                        popover-placement='top'
+
+                        <button type="button" cliente-info-popover customer="cliente"
+                            info-adicional-documento="infoAdicionalDocumento" popover-placement='top'
                             class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0" tabindex="-1">
                             <i class="fa fa-info fa-xs"></i>
                         </button>
@@ -157,11 +146,8 @@
                             <i class="fa fa-search fa-xs"></i>
                         </button>
 
-                        <button type="button" 
-                        cliente-info-popover 
-                        customer="cliente"
-                            info-adicional-documento="infoAdicionalDocumento"
-                         popover-placement='top'
+                        <button type="button" cliente-info-popover customer="cliente"
+                            info-adicional-documento="infoAdicionalDocumento" popover-placement='top'
                             class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0" tabindex="-1">
                             <i class="fa fa-info fa-xs"></i>
                         </button>
@@ -270,17 +256,26 @@
             <div class="row">
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                     <label for="">Buscar por Artículo</label>
-                    <md-autocomplete-articulo-component tipo-doc="tipoDoc"
-                        set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)" id-bodega="data.idBodega">
-                    </md-autocomplete-articulo-component>
+
+                    <custom-search-articulo id-bodega="data.idBodega" on-select="onSelect(params)" es-venta="true"
+                        items="gridOptions.data" fecha-emision="data.fechaEmision"
+                        ref-producto-venta="refProductoVenta">
+                    </custom-search-articulo>
+                    @* <md-autocomplete-articulo-component tipo-doc="tipoDoc"
+                    set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)" id-bodega="data.idBodega">
+                    </md-autocomplete-articulo-component> *@
                 </div>
 
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label for="searchBarcode">Buscar por Código</label>
-                        <articulo-search-barcode tipo-doc="tipoDoc"
-                            set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)"
-                            id-bodega="data.idBodega"></articulo-search-barcode>
+                        <custom-search-articulo-barcode es-venta="true" id-bodega="data.idBodega"
+                            on-select="onSelect(params)" es-venta="true" items="gridOptions.data"
+                            fecha-emision="data.fechaEmision"
+                            ref-producto-venta="refProductoVenta"></custom-search-articulo-barcode>
+                        @* <articulo-search-barcode tipo-doc="tipoDoc"
+                        set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)"
+                        id-bodega="data.idBodega"></articulo-search-barcode> *@
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="config.multipleVendedor">
@@ -318,7 +313,7 @@
     <!--SubTotales-->
     <div class="row mt-1">
         <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
-             <div class="row mt-2">
+            <div class="row mt-2">
                 <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label>% Descuento</label>
@@ -327,7 +322,8 @@
                                 ng-disabled="!permisoComprobanteVenta.porcentajeDescuento || gridOptions.data.length==0"
                                 decimal class="form-control border-select" />
                             <div class="input-group-append">
-                                <button type="button" class="btn btn-secondary btn-sm" ng-disabled="!permisoComprobanteVenta.porcentajeDescuento || gridOptions.data.length==0"
+                                <button type="button" class="btn btn-secondary btn-sm"
+                                    ng-disabled="!permisoComprobanteVenta.porcentajeDescuento || gridOptions.data.length==0"
                                     ng-click="calcularPorcentajeDescuento()">
                                     <i class="fa fa-calculator fa-xs"></i>
                                 </button>
@@ -344,7 +340,9 @@
                                 ng-disabled="!permisoComprobanteVenta.descuento || gridOptions.data.length==0" decimal
                                 placeholder="0.00" class="form-control border-select" />
                             <div class="input-group-append">
-                                <button type="button" class="btn btn-secondary btn-sm"  ng-disabled="!permisoComprobanteVenta.descuento || gridOptions.data.length==0" ng-click="calcularDescuento()">
+                                <button type="button" class="btn btn-secondary btn-sm"
+                                    ng-disabled="!permisoComprobanteVenta.descuento || gridOptions.data.length==0"
+                                    ng-click="calcularDescuento()">
                                     <i class="fa fa-calculator fa-xs"></i>
                                 </button>
                             </div>
@@ -353,19 +351,19 @@
                 </div>
 
                 @* <div class="col-lg-2 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <label>Transporte</label>
-                        <input type="text" decimal ng-model="data.transporte" class="form-control border-select"
-                            placeholder="0.00" />
-                    </div>
+                <div class="form-group">
+                <label>Transporte</label>
+                <input type="text" decimal ng-model="data.transporte" class="form-control border-select"
+                placeholder="0.00" />
+                </div>
                 </div>
 
                 <div class="col-lg-2 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <label>Rercargo</label>
-                        <input type="text" decimal ng-model="data.recargo" class="form-control border-select"
-                            placeholder="0.00" />
-                    </div>
+                <div class="form-group">
+                <label>Rercargo</label>
+                <input type="text" decimal ng-model="data.recargo" class="form-control border-select"
+                placeholder="0.00" />
+                </div>
                 </div> *@
 
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
@@ -383,7 +381,7 @@
                         <!-- <div class="card-header">
                             <span class="card-title">FORMA DE PAGO</span>
                         </div> -->
-                        <div class="card-body"> 
+                        <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
@@ -395,42 +393,41 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td> 
-                                                <select 
-                                                ng-model="dataFormaPago.idFormaPagoSri" 
-                                                id="formadepago"  
-                                                ng-change="onChangeFormaPago()"
-                                                class="form-control border-select" 
-                                                name="formadepago"> 
-                                                    <option ng-value="item.idFormaPagoSri" ng-repeat="item in formasPago" >
+                                            <td>
+                                                <select ng-model="dataFormaPago.idFormaPagoSri" id="formadepago"
+                                                    ng-change="onChangeFormaPago()" class="form-control border-select"
+                                                    name="formadepago">
+                                                    <option ng-value="item.idFormaPagoSri"
+                                                        ng-repeat="item in formasPago">
                                                         {{item.descripcion}}
-                                                    </option> 
-                                                </select> 
-                                                <span class="d-flex justify-content-center text-info">{{dataFormaPago.infoReferencia}}</span> 
+                                                    </option>
+                                                </select>
+                                                <span
+                                                    class="d-flex justify-content-center text-info">{{dataFormaPago.infoReferencia}}</span>
                                             </td>
                                             <td width="100px">
                                                 {{dataFormaPago.plazo}} {{dataFormaPago.plazo>1?'Días': 'Día'}}
                                             </td>
                                             <td width="100px">
                                                 ${{dataFormaPago.total}}
-                                            </td> 
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div> 
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                 </div>
-            </div> 
-           
+            </div>
+
         </div>
 
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-            <div class="card border p-2"> 
-                <div id="drawImpuestoTotales"></div> 
-            </div> 
+            <div class="card border p-2">
+                <div id="drawImpuestoTotales"></div>
+            </div>
             <div class="mt-2">
                 <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block"
                     open-modal-additional-data-document datos-adicionales="infoAdicionalDocumento"
@@ -444,7 +441,7 @@
 
 </div>
 
-<div class="modal-footer"> 
+<div class="modal-footer">
 
     <button type="button" class="btn btn-dark" id="btnCloseModalDocument" ng-click="closeModal()">
         &times; Cerrar
