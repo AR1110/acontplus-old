@@ -182,9 +182,9 @@ BEGIN
             
             SET @tableNames = 'establecimientos,tipoComprobantes,subcategories'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial, predeterminado FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
+            SELECT idEstablecimiento,codEstab,nombreComercial FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
 
-            SELECT descripcion,codigoSri as codDoc, codigoSri FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','04','07') ORDER BY codigoSri
+            SELECT descripcion,codigoSri as codDoc FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','04','07') ORDER BY codigoSri
 
             SELECT * FROM Contabilidad.subcategory  WITH (NOLOCK) WHERE companyId = @idEntidad AND Enabled = 1
 
@@ -230,15 +230,16 @@ BEGIN
 
 			        SELECT 'Retención'                                                           as comprobante
 				           ,de.serieComprobante
-				           ,pr.numeroIdentificacion                                              as rucEmisor
-				           ,pr.nombreComercial                                                   as razonSocialEmisor
+				           ,cu.IDCard                                                            as rucEmisor
+				           ,cu.TradeName                                                         as razonSocialEmisor
 				           ,CONVERT(NVARCHAR, FORMAT(de.fechaEmision, 'dd/MM/yyyy HH:mm'))       as fechaEmision
 				           ,de.claveAcceso
 				           ,0                                                                    as importeTotal
 			        FROM FactElect.RetAtsDocSustento retDoc
-			        INNER JOIN FactElect.RetencionAts rAts ON rAts.idRetencionAts       = retDoc.idRetencionAts
-                    INNER JOIN dbo.DocumentoElectronico de ON de.idDocumentoElectronico = rAts.idDocumentoElectronico
-                    INNER JOIN Compra.v_Proveedor            pr ON pr.idProveedor            = rAts.idProveedor
+			        INNER JOIN FactElect.RetencionAts rAts WITH (NOLOCK) ON rAts.idRetencionAts       = retDoc.idRetencionAts
+                    INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = rAts.idDocumentoElectronico
+                    INNER JOIN dbo.Proveedor            pr WITH (NOLOCK) ON pr.idProveedor            = rAts.idProveedor
+                    INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = pr.CustomerId
 			        WHERE retDoc.numAutDocSustento = @claveAcceso
 			          AND rAts.anuladaSri = 0
 		        END

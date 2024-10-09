@@ -102,7 +102,7 @@ BEGIN
 				  ,pr.idSubContribuyente     = tp.idSubContribuyente
 				  ,pr.idTiempoCredito        = tp.idTiempoCredito
 				  ,pr.estado                 = tp.estado
-                  ,pr.UdpatedAt              = GETDATE()
+                  ,pr.UpdatedAt              = GETDATE()
                   ,pr.UpdatedByUserId        = @idUsuario
             FROM dbo.Proveedor      pr WITH (ROWLOCK)
             INNER JOIN @tbProveedor tp ON tp.id = pr.idProveedor 

@@ -31,5 +31,7 @@ go
     --alter table cliente drop column numeroIdentificacion
 
     
+
+    select top 1 * from dbo.Cliente
     
 

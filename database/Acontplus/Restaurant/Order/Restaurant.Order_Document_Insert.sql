@@ -323,7 +323,7 @@ BEGIN
     AND estado  = 1
     AND diasCredito = 0
 
-     IF (@userId = 0)
+     IF (@userId = 0) OR @userId IS NULL
         BEGIN
             SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
         END

@@ -257,12 +257,13 @@ BEGIN
 			WHERE di.idDocumentoIngreso = @id
 
 			SELECT di.idProveedor
-				  ,nombreComercial = ISNULL(pr.nombreComercial,'')
-				  ,nombreFiscal = ISNULL(pr.nombreFiscal,'')
-				  ,direccion = ISNULL(pr.direccion,'')
-				  ,pr.numeroIdentificacion
+				  ,cu.BusinessName         as nombreComercial
+				  ,cu.TradeName            as nombreFiscal
+				  ,ISNULL(pr.direccion,'') as direccion
+				  ,cu.IDCard               as numeroIdentificacion
 			FROM Compra.Documento_Ingreso di WITH (NOLOCK)
 			INNER JOIN dbo.Proveedor      pr WITH (NOLOCK) ON pr.idProveedor = di.idProveedor
+            INNER JOIN Customer.Customer  cu WITH (NOLOCK) ON cu.Id          = pr.CustomerId
 			WHERE di.idDocumentoIngreso = @id
 
 			SELECT idDetalle = dt.idDocumentoIngresoDetail 
@@ -400,12 +401,13 @@ BEGIN
             WHERE di.idDocumentoIngreso = @id
 
             SELECT di.idProveedor
-				  ,nombreComercial = ISNULL(pr.nombreComercial,'')
-				  ,nombreFiscal = ISNULL(pr.nombreFiscal,'')
-				  ,direccion = ISNULL(pr.direccion,'')
-				  ,pr.numeroIdentificacion
+				  ,cu.BusinessName         as nombreComercial
+				  ,cu.TradeName            as nombreFiscal
+				  ,ISNULL(pr.direccion,'') as direccion
+				  ,cu.IDCard               as numeroIdentificacion
 			FROM Compra.Documento_Ingreso di WITH (NOLOCK)
 			INNER JOIN dbo.Proveedor      pr WITH (NOLOCK) ON pr.idProveedor = di.idProveedor
+            INNER JOIN Customer.Customer  cu WITH (NOLOCK) ON cu.Id          = pr.CustomerId
 			WHERE di.idDocumentoIngreso = @id
 
             SELECT dd.idDocumentoIngresoDetail
