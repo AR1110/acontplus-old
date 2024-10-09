@@ -231,6 +231,7 @@ BEGIN
                                 INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab  = dr.codEstab
                                 INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = dr.idUsuario
                                 WHERE dr.codDoc = ''01''
+                                  AND dr.estado = 1
                                   AND dr.xmlCompressed IS NOT NULL
                                   AND dr.identificacionReceptor = @identificacionReceptor
 
