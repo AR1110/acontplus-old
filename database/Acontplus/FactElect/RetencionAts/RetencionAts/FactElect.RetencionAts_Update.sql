@@ -87,9 +87,9 @@ BEGIN
 
         SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1
 
-        SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = (SELECT LTRIM(RTRIM(identificacionSujetoRetenido))  FROM @tblInfoCompRet)
+        SELECT TOP 1 @CustomerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = (SELECT LTRIM(RTRIM(identificacionSujetoRetenido))  FROM @tblInfoCompRet)
 
-        SELECT TOP 1 @customerId = ISNULL(CustomerId,0) FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
+        SELECT TOP 1 @idProveedor = idProveedor FROM dbo.Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @CustomerId
 
         SELECT TOP 1 @claveAcceso = dbo.ufnGeneraClaveAcceso (
                                                                 dbo.AFTDeleteCero(estab)   

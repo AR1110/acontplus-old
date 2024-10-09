@@ -16,8 +16,8 @@ go
 
 --alter table proveedor add UpdatedByUserId INT CONSTRAINT fk_User_ProveedorUpdate FOREIGN KEY (UpdatedByUserId) references dbo.Usuario(idUsuario)
 
---alter table proveedor add UdpatedAt DATETIME2 
+--alter table proveedor add UpdatedAt DATETIME2 
 
-SELECT top 100 * FROM dbo.Proveedor
+SELECT top 10 * FROM dbo.Proveedor
 
 --select top 1 * from Customer.Customer
