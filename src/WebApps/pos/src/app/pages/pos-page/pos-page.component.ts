@@ -233,7 +233,7 @@ export class PosPageComponent {
             ...e.order,
             puntoEmisionId: this.mainStore.state().puntoEmisionId,
             establecimientoId: this.mainStore.state().establecimientoId,
-            userId: orderId > 0 ? orderId : dataForm.vendedores.find((u: any) => u.predeterminado)?.idUsuario ?? 0
+            userId: orderId > 0 ? e.order.userId : dataForm.vendedores.find((u: any) => u.predeterminado)?.idUsuario ?? 0
           }
           return {
             ...e,
