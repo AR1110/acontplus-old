@@ -1,6 +1,6 @@
 
-import { Component, computed, ElementRef, inject, signal, ViewChild } from '@angular/core';
-import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from "@angular/material/tabs";
+import { Component, computed,   inject, signal,   } from '@angular/core';
+import {   MatTabsModule } from "@angular/material/tabs";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { AsyncPipe, CommonModule } from "@angular/common";
@@ -29,6 +29,8 @@ import { TableModalComponent } from './components/table-modal/table-modal.compon
 import { FormsModule } from '@angular/forms';
 import { isValidField } from '@/core/utils/utils';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
+import { CategoriesTabComponent } from './components/categories-tab/categories-tab.component';
 
 @Component({
   selector: 'app-pos-page',
@@ -36,7 +38,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   imports: [
     CommonModule,
     FormsModule,
-    MatTabsModule,
+
     MatButtonModule,
     MatIconModule,
     MatPaginatorModule,
@@ -45,7 +47,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatFormFieldModule,
     MatInputModule,
     MatTooltipModule,
+    OverlayscrollbarsModule,
     AsyncPipe,
+
+    CategoriesTabComponent,
     PromotionsComponent,
     ItemsComponent,
     CartHeaderComponent,
@@ -69,10 +74,8 @@ export class PosPageComponent {
   private establecimientoId = this.mainStore.select("establecimientoId");
   private codEstab = this.mainStore.select("codEstab");
 
-  @ViewChild('tabGroup', { static: false }) tabGroup!: MatTabGroup;
 
-  private startX: number = 0;
-  private endX: number = 0;
+  currentTabIndex: number = 0;
 
   subCategorias = signal<SubCategory[]>([{
     idSubFamilia: 0,
@@ -111,7 +114,11 @@ export class PosPageComponent {
     })
   }
 
+
+
   refresh() {
+    if(this.loading()) return;
+
     if (this.posStoreSvc.state().codeSubCategory === SUB_CATEGORY_CODE.PROM) {
       this.getPromotions()
     } else if (this.posStoreSvc.state().codeSubCategory === SUB_CATEGORY_CODE.COM) {
@@ -255,7 +262,10 @@ export class PosPageComponent {
     })
   }
 
-  onTabChange(event: MatTabChangeEvent) {
+  onTabChange(event: any) {
+    if(this.loading()) return
+
+    this.currentTabIndex = event.index;
     let dataSubcategory = this.subCategorias()[event.index];
     if (dataSubcategory) {
       this.posStoreSvc.state.update(e => {
@@ -315,48 +325,6 @@ export class PosPageComponent {
 
 
 
-
-  ngAfterViewInit() {
-    const element = this.tabGroup._elementRef.nativeElement;
-
-    if (element) {
-      element.addEventListener('touchstart', this.onTouchStart.bind(this));
-      element.addEventListener('touchend', this.onTouchEnd.bind(this));
-    } else {
-      console.error('Tab group element not found');
-    }
-  }
-
-  private onTouchStart(event: TouchEvent) {
-    this.startX = event.touches[0].clientX;
-  }
-
-  private onTouchEnd(event: TouchEvent) {
-    this.endX = event.changedTouches[0].clientX;
-    this.handleSwipe();
-  }
-
-  private handleSwipe() {
-    if (this.endX - this.startX < -50) {
-      this.nextTab();  // Swipe left
-    } else if (this.endX - this.startX > 50) {
-      this.previousTab();  // Swipe right
-    }
-  }
-
-  private nextTab() {
-    const index = this.tabGroup.selectedIndex ?? 0;
-    if (index < this.tabGroup._tabs.length - 1) {
-      this.tabGroup.selectedIndex = index + 1;
-    }
-  }
-
-  private previousTab() {
-    const index = this.tabGroup.selectedIndex ?? 0;
-    if (index > 0) {
-      this.tabGroup.selectedIndex = index - 1;
-    }
-  }
 
 
 }
