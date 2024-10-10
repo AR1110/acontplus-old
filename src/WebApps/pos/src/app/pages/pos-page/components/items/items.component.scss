@@ -1,0 +1,27 @@
+// .pos-widgets {
+//   display: grid;
+//   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+//   grid-auto-rows: 300px;
+//   gap: 16px;
+
+// }
+
+.pos-widgets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+
+  grid-auto-rows: auto;
+  gap: 16px;
+
+  // justify-content: center;
+  // align-content: center;
+}
+
+@media (max-width: 600px) {
+  .pos-widgets {
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* Mantener dos columnas en móviles */
+  }
+}

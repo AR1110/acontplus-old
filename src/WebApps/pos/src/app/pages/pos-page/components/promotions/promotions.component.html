@@ -1,35 +1,46 @@
-<div class="container-promotions">
+@if(promotions().length>0){
+<dl class="tree">
+  @for(node of promotions(); track $index) {
+  <div class="tree-node" [class.expanded]="node.expanded">
+    <dt
+      class="tree-header d-flex flex-row align-items-center"
+      (click)="toggleNode(node)"
+    >
+      <button mat-icon-button>
+        @if(node.expanded) {
+        <mat-icon
+          aria-hidden="false"
+          aria-label="Example home icon"
+          fontIcon="keyboard_arrow_down"
+        ></mat-icon>
+        } @else {
+        <mat-icon
+          aria-hidden="false"
+          aria-label="Example home icon"
+          fontIcon="keyboard_arrow_right"
+        ></mat-icon>
+        }
+      </button>
+      <div class="d-flex flex-row align-items-center gap-1">
+        <img
+          [src]="node.img"
+          alt="{{ node.descripcion }}"
+          onerror="this.onerror=null;this.src='product-default.png';"
+        />
+        <span class="node-label">{{ node.description }}</span>
+      </div>
+    </dt>
 
-
-  <dl class="tree">
-    @for(node of promotions(); track $index) {
-    <div class="tree-node" [class.expanded]="node.expanded">
-      <dt class="tree-header d-flex flex-row align-items-center" (click)="toggleNode(node)">
-        <button mat-icon-button>
-          @if(node.expanded) {
-          <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="keyboard_arrow_down"></mat-icon>
-          } @else {
-          <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="keyboard_arrow_right"></mat-icon>
-          }
-        </button>
-        <div class="d-flex flex-row align-items-center gap-1">
-          <img [src]="node.img" alt="{{node.descripcion}}"
-            onerror="this.onerror=null;this.src='product-default.png';" />
-          <span class="node-label">{{node.description}}</span>
-        </div>
-      </dt>
-
-      @if(node.expanded) {
-      <dd class="tree-children">
-        <app-promotions-item [promotionId]="node.id" />
-      </dd>
-      }
-    </div>
-    } @empty {
-    <div class="d-flex justify-content-center align-items-center"
-      style="height: calc(90dvh - 50px - 100px); overflow: auto;">
-      <p>Sin Datos</p>
-    </div>
+    @if(node.expanded) {
+    <dd class="tree-children">
+      <app-promotions-item [promotionId]="node.id" />
+    </dd>
     }
-  </dl>
+  </div>
+  }
+</dl>
+} @else {
+<div class="d-flex h-100 justify-content-center align-items-center">
+  <p>Sin Datos</p>
 </div>
+}
