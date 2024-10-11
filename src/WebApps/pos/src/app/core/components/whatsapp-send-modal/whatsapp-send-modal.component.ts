@@ -162,7 +162,7 @@ export class WhatsappSendModalComponent {
   private contentFile(responseFile: any) {
     const responseHeaders = responseFile.headers;
     const fileName = this.sharedSvc.getFileName(responseFile)
-    const file = new File([responseFile.data], fileName, { type: responseHeaders["content-type"] })
+    const file = new File([responseFile.body], fileName, { type: responseHeaders["content-type"] })
     return {
       file,
       fileName
@@ -342,7 +342,6 @@ export class WhatsappSendModalComponent {
 
   send() {
     try {
-      console.log(this.data)
       this.totalMessages = 0
       if (!this.validatePhoneNumber()) return;
 
