@@ -324,6 +324,14 @@ export class PosPageComponent {
   }
 
 
+  onBlurTextSearch($event: any) {
+    this.dataItemSearch.update(e => {
+      return {
+        ...e,
+        textSearch: $event.target.value
+      }
+    })
+  }
 
 
 

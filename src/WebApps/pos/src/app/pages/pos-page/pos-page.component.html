@@ -27,6 +27,7 @@
               type="text"
               [ngModel]="dataItemSearch().textSearch"
               (keydown.enter)="onEnterInputSearch($event)"
+              (blur)="onBlurTextSearch($event)"
               matTooltip="Presiona 'Enter' para buscar o haz clic en el botón recargar"
               [disabled]="loading()"
               class="form-control"
