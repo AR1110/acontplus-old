@@ -39,6 +39,8 @@ import { CommonModule } from '@angular/common';
 import { PaymentComponent } from '@/core/components/payment/payment.component';
 import { SharedService } from '@/services/shared.service';
 import { orderInitialState } from '@/store/pos-store.service';
+import { ResponsiveService } from '@/services/responsive.service';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 @Component({
@@ -55,6 +57,7 @@ import { orderInitialState } from '@/store/pos-store.service';
     MatIconModule,
     MatButtonModule,
     FormsModule,
+    MatMenuModule,
     CustomTableContainerComponent,
     CustomContainerDialogComponent,
     InputRemainingQtyComponent,
@@ -68,6 +71,7 @@ export class OrderDivideModalComponent {
   readonly dialogRef = inject(MatDialogRef<OrderDivideModalComponent>);
   readonly matDialogData = inject<{ orderId: 0 }>(MAT_DIALOG_DATA);
 
+  private responsiveService = inject(ResponsiveService)
   private authSvc = inject(AuthService)
   private configSvc = inject(ConfigService);
   private orderSvc = inject(OrderService);
@@ -85,6 +89,8 @@ export class OrderDivideModalComponent {
   cloneOrderDivideItems: OrderDivideItem[] = [];
 
   isLoadingResults = false;
+
+  isHandset = computed(() => this.responsiveService.isHandset());
 
   displayedColumns: string[] = [
     'checkbox',

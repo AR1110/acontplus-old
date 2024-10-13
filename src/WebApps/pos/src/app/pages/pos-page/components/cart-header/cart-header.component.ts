@@ -1,7 +1,6 @@
 import { Order } from '@/models/order.model';
 import { CompanyCustomerSearchComponent } from '@/pages/company-customer/components/company-customer-search/company-customer-search.component';
 import { TableModalComponent } from "@/pages/pos-page/components/table-modal/table-modal.component";
-import { DialogService } from "@/services/dialog.service";
 import { PosStoreService } from '@/store/pos-store.service';
 import { Dialog } from '@angular/cdk/dialog';
 import { Component, computed, inject } from '@angular/core';
@@ -18,9 +17,6 @@ import { FormsModule } from "@angular/forms";
   styleUrl: './cart-header.component.scss'
 })
 export class CartHeaderComponent {
-
-
-  private dialogSvc = inject(DialogService)
   private posStoreSvc = inject(PosStoreService);
   public dialog = inject(Dialog)
 
@@ -61,7 +57,6 @@ export class CartHeaderComponent {
   }
 
   onSelectCustomerCompany(event: any): void {
-    console.log(event)
     const {
       razonSocialComprador: customerName, idCliente: customerCompanyId,
       codigoSri: tipoIdentificacionSri
