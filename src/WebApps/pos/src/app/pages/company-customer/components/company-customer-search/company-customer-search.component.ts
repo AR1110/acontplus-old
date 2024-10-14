@@ -19,7 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { isValidField } from "@core/utils/utils";
 import { debounceTime, distinctUntilChanged, Observable } from "rxjs";
-import { catchError, map, startWith, switchMap } from "rxjs/operators";
+import { catchError, finalize, map, startWith, switchMap } from "rxjs/operators";
 
 import { CompanyCustomerAddEditModalComponent } from '../company-customer-add-edit-modal/company-customer-add-edit-modal.component';
 import { ResponsiveService } from '@/services/responsive.service';
@@ -63,7 +63,7 @@ export class CompanyCustomerSearchComponent {
   clearInput = output()
 
   textName = model<string>('')
-  control = new FormControl('');
+  control = new FormControl<null | string>(null);
   filteredCustomers!: Observable<any[]>;
 
   companyCustomers: CompanyCustomerSearch[] = [];
@@ -83,13 +83,11 @@ export class CompanyCustomerSearchComponent {
 
   ngOnInit() {
     this.filteredCustomers = this.control.valueChanges.pipe(
-      startWith(''),
       debounceTime(100),
       distinctUntilChanged(),
       switchMap((val) => {
         this.isLoadingResults = false;
         if (val && val.length > 2) {
-          this.isLoadingResults = true;
           return this._filter(val);
         }
         if (!isValidField(val)) {
@@ -104,21 +102,22 @@ export class CompanyCustomerSearchComponent {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["textName"]) {
       this.control.setValue(this.textName())
-
+      console.log(changes)
     }
 
   }
 
   private _filter(value: string) {
+    this.isLoadingResults = true;
     return this.companyCustomerSvc.search({ textSearch: value }).pipe(
       map((response) => {
-
-        this.isLoadingResults = false;
         return response;
       }),
       catchError(() => {
-        this.isLoadingResults = false;
         return []
+      }),
+      finalize(() => {
+        this.isLoadingResults = false;
       })
     );
   }

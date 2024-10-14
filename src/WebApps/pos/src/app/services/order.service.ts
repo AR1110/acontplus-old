@@ -3,12 +3,10 @@ import { getNoLoader } from '@/core/interceptors/loader.interceptor';
 import { groupRoomTableUtil } from '@/core/utils/group-room-table.util';
 import { DOC_TYPE, PATHS, PATHS_API } from "@/enums/main.enum";
 import { ApiResponse } from "@/models/api-response";
-import { GroupedEstab } from "@/models/estab.model";
 import { OrderRead } from "@/models/order.model";
 import { UserSelectHtmlOnly } from "@/models/user.model";
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from '@angular/core';
-import { groupEstabUtil } from "@core/utils/group-estab.util";
 import { map } from "rxjs/operators";
 
 @Injectable({
@@ -29,17 +27,11 @@ export class OrderService {
     }).pipe(
       map((response) => {
         let data = {
-          estabs: [] as GroupedEstab[],
           tablesGroup: [] as any[],
           users: [] as UserSelectHtmlOnly[]
         }
         if (response.code === "1") {
-          const { establecimientos, tables, usuarios } = JSON.parse(response.payload as string);
-
-          data.estabs = groupEstabUtil({
-            puntosEmisionEstab: establecimientos,
-            isGroupPuntoEmision: true
-          })
+          const { tables, usuarios } = JSON.parse(response.payload as string);
 
           const groupedItemsArray = groupRoomTableUtil(tables)
           data.tablesGroup = groupedItemsArray;
@@ -66,9 +58,7 @@ export class OrderService {
               id: item.id,
               codDoc: DOC_TYPE.OR,
               codEstab: item.codEstab,
-              sequence: item.sequence,
               serie: item.serie,
-              tax: item.tax,
               discount: item.discount,
               tip: item.tip,
               total: item.total,
@@ -86,6 +76,7 @@ export class OrderService {
             }
           })
         }
+        console.log(orders)
 
         return orders;
       })
