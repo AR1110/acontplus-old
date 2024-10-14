@@ -96,8 +96,7 @@
 
         $scope.usuarioSearch = function (textSearch) {
             try {
-                let query = {
-                    idRol: idUsuarioRol,
+                let query = { 
                     busqueda: textSearch
                 }
 
