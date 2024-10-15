@@ -11,24 +11,24 @@ export const menusRoutes: MenusRoute[] = [
   {
     path: 'dashboard',
     title: 'Dashboard',
-    icon: 'cogs',
+    icon: 'home',
 
   },
   {
     path: 'pos',
     title: 'POS',
-    icon: 'lock',
+    icon: 'shopping_cart',
 
   },
   {
     path: 'order',
     title: 'Ordenes',
-    icon: 'money-check-dollar',
+    icon: 'list_alt',
   },
   {
     path: 'customer',
     title: 'Clientes',
-    icon: 'money-check-dollar',
+    icon: 'people',
   },
 
 ];

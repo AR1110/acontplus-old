@@ -1,6 +1,6 @@
 <form autocomplete="off">
     <div class="modal-header">
-        <h5 class="modal-title">Detalle Nota Crédito Cliente</h5>       
+        <h5 class="modal-title">Detalle Nota Crédito Cliente</h5>
         <div class="pull-right text-right">
             <span class="h3"><b>Total:</b> {{data.total}} </span>
         </div>
@@ -10,77 +10,70 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
-                    <input type="text" ng-model="data.establecimiento" disabled class="form-control border-select"> 
-                </div>            
+                    <input type="text" ng-model="data.establecimiento" disabled class="form-control border-select">
+                </div>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
-                    <input type="text" ng-model="data.ptoEmi" disabled class="form-control border-select">  
+                    <input type="text" ng-model="data.ptoEmi" disabled class="form-control border-select">
                 </div>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Fecha Emisión <span class="text-danger">*</span></label>
                     <input type="date" ng-model="data.fechaEmision" disabled class="form-control border-select">
-                </div> 
+                </div>
             </div>
         </div>
 
         <div class="row">
-            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">            
+            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Cliente: <span class="text-danger">*</span></label>
-                    <input type="text" ng-value="cliente.razonSocialComprador" class="form form-control" disabled>                    
-                </div>                       
+                    <input type="text" ng-value="cliente.razonSocialComprador" class="form form-control" disabled>
+                </div>
             </div>
 
             <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="nroIndentificacion" class="">Nro. Identificación:</label>
-                    <input type="text" name="nroIndentificacion" id="nroIndentificacion" class="form-control" readonly 
+                    <input type="text" name="nroIndentificacion" id="nroIndentificacion" class="form-control" readonly
                         ng-value="cliente.identificacionComprador" placeholder="..." />
                 </div>
             </div>
 
             <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
-                    <label for="Facturas">Factura</label>                    
+                    <label for="Facturas">Factura</label>
                     <input type="text" class="form-control border-select" ng-value="factura.serieComprobante" disabled>
                     <button type="button" class="btn btn-info btn-xs mt-1" ng-click="getDetalleFactura()">
                         <i class="fa fa-file-pdf"></i> Ver documento
-                    </button>                               
-                </div>      
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div ui-grid="gridOptions"
-           
-            ui-grid-resize-columns
-            ui-grid-cellNav
-            ui-grid-auto-resize
-            ui-grid-validate
-            ui-grid-save-state
-            class="grid">
-        </div> 
+        <div ui-grid="gridOptions" ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize ui-grid-validate
+            ui-grid-save-state class="grid">
+        </div>
 
         <div class="row mt-1">
             <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
-                <div class="row" >             
-                </div> 
+                <div class="row">
+                </div>
                 <div class="row mt-2">
                     <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>% Descuento</label>
                             <div class="input-group">
-                                <input ng-model="data.porcentajeDescuento" disabled 
-                                decimal class="form-control" />
+                                <input ng-model="data.porcentajeDescuento" disabled decimal class="form-control" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm">
                                         <i class="fa fa-calculator fa-xs"></i>
-                                    </button>                                            
+                                    </button>
                                 </div>
-                            </div>                    
+                            </div>
                         </div>
                     </div>
 
@@ -88,59 +81,61 @@
                         <div class="form-group">
                             <label>Descuento</label>
                             <div class="input-group">
-                                <input ng-model="data.totalDescuento" id="totalDescuento" disabled decimal placeholder="0.00" class="form-control" />
+                                <input ng-model="data.totalDescuento" id="totalDescuento" disabled decimal
+                                    placeholder="0.00" class="form-control" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm">
                                         <i class="fa fa-calculator fa-xs"></i>
                                     </button>
                                 </div>
-                            </div>                                    
+                            </div>
                         </div>
                     </div>
 
                     @* <div class="col-lg-2 col-md-6 col-sm-12 col-12">
-                        <div class="form-group">
-                            <label>Transporte</label>
-                            <input type="text" decimal ng-model="data.transporte" disabled class="form-control border-select" placeholder="0.00" />
-                        </div>
+                    <div class="form-group">
+                    <label>Transporte</label>
+                    <input type="text" decimal ng-model="data.transporte" disabled class="form-control border-select"
+                    placeholder="0.00" />
+                    </div>
                     </div>
 
                     <div class="col-lg-2 col-md-6 col-sm-12 col-12">
-                        <div class="form-group">
-                            <label>Rercargo</label>
-                            <input type="text" decimal ng-model="data.recargo" disabled class="form-control border-select" placeholder="0.00" />
-                        </div>
+                    <div class="form-group">
+                    <label>Rercargo</label>
+                    <input type="text" decimal ng-model="data.recargo" disabled class="form-control border-select"
+                    placeholder="0.00" />
+                    </div>
                     </div> *@
 
                     <div class="col-lg-4">
                         <div class="form-group">
                             <label>Observacion</label>
-                            <textarea class="form-control border-select" ng-model="data.observacion" disabled touppercase placeholder="..."></textarea>
+                            <textarea class="form-control border-select" ng-model="data.observacion" disabled
+                                touppercase placeholder="..."></textarea>
                         </div>
                     </div>
-                </div> 
+                </div>
             </div>
 
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">             
-                 
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="card border p-2">
+                    <div id="draw-dynamic-subtotal"></div>
+                </div>
                 <div class="mt-2">
-                     <button type="button" 
-                            class="btn btn-secondary btn-sm btn-lg btn-block" 
-                            open-modal-additional-data-document
-                            datos-adicionales="infoAdicionalDocumento"
-                            is-view="true"
-                            get-data-additional-document="getDataAdditionalDocument(result)"
-                            >
+                    <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block"
+                        open-modal-additional-data-document datos-adicionales="infoAdicionalDocumento" is-view="true"
+                        get-data-additional-document="getDataAdditionalDocument(result)">
                         <i class="fas fa-info-circle text-info"></i> Dato Adicional
                     </button>
-                </div>                        
+                </div>
             </div>
         </div>
-        
+
 
 
     </div>
-    <div class="modal-footer">    
+    <div class="modal-footer">
         <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
     </div>
-</form>    
+</form>

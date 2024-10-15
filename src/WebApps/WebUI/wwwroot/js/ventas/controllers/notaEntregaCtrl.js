@@ -740,8 +740,7 @@
         let ventaSvc = $injector.get('ventaService');
         let clienteSvc = $injector.get('clienteService');
         let gridOptionsSvc = $injector.get('gridOptionsService');
-        let storageSvc = $injector.get('storageService');
-        let articuloSvc = $injector.get('articuloService');
+        let storageSvc = $injector.get('storageService'); 
         let facturaSvc = $injector.get('facturaService');
         let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
         let productUtil = $injector.get('productUtil');
@@ -967,8 +966,7 @@
             }
         }
 
-        $scope.refreshUserPermission = function () {
-            showLoader();
+        $scope.refreshUserPermission = function () { 
             userCustomerPermissionSvc.fetchUserPermission().then(response => {
                 const { porcentajeDescuento, descuento } = response.detalle;
 
@@ -985,7 +983,7 @@
                 $scope.gridApi.core.refresh();
             }).catch(error => {
                 console.log(error)
-            }).finally(() => hideLoader())
+            }) 
         }
 
         $scope.setInfoEstabPtoEmi = function () {
@@ -1053,8 +1051,7 @@
             })
         }
 
-        function updateItem(nuevaFilaAgregada) {
-            console.log(nuevaFilaAgregada);
+        function updateItem(nuevaFilaAgregada) { 
 
             // Actualizar el elemento en los datos de gridOptions basado en uniqueRowDetalle
             $scope.gridOptions.data = $scope.gridOptions.data.map(item =>
@@ -1389,6 +1386,8 @@
                             delete result.dataInvoiceDetail[result.value];
 
                             storageSvc.setObject("notaEntregaDetail", result.dataInvoiceDetail)
+
+                            updateRefProductoVenta();
 
                             drawInfoGeneralNotaEntrega();
                             $scope.$apply();
@@ -1868,7 +1867,7 @@
                     $scope.$apply();
                     return
                 }
-                if ((!$scope.bodegas.length > 0)) {
+                if (!($scope.bodegas.length > 0)) {
                     tS.toastr('info', 'No tienes bodegas asignado a este establecimiento');
                     $scope.data.codEstab = $scope.dataClone.codEstab;
                     $scope.$apply();
@@ -2111,13 +2110,15 @@
                 ) {
                     drawInfoGeneralNotaEntrega();
                 }
+                updateRefProductoVenta()
+
                 $scope.$apply();
 
             } else {
                 $scope.data.idTarifa = $scope.dataClone.idTarifa;
+                updateRefProductoVenta()
                 $scope.$apply();
             }
-            updateRefProductoVenta()
         }
 
         //=================================START PRODUCT=======================================
@@ -2400,6 +2401,8 @@
 
                 //Forma Pago
                 $scope.dataFormaPago.total = importeTotal;
+
+                updateRefProductoVenta()
 
             } catch (error) {
                 console.log(error);

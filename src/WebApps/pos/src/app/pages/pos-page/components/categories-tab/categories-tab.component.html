@@ -1,0 +1,21 @@
+<div class="main-category-container">
+  <overlay-scrollbars [options]="{ scrollbars: { autoHide: 'leave',  } }">
+    <div class="category-container">
+      @for (item of tabs; track $index) {
+      <div
+        class="category-item active"
+        [ngClass]="getClass($index)"
+        (click)="selectTab.emit({ index: $index, item })"
+      >
+        <div class="icon">
+          <img
+            [src]="item.img || 'product-default.png'"
+            [alt]="item.descripcion"
+          />
+        </div>
+        <span>{{ item.descripcion }}</span>
+      </div>
+      }
+    </div>
+  </overlay-scrollbars>
+</div>

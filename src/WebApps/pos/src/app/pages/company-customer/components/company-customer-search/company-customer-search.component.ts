@@ -4,9 +4,9 @@ import { CompanyCustomerSearch } from "@/models/company-customer.model";
 import { CompanyCustomerService } from "@/services/company-customer.service";
 import { DialogService } from '@/services/dialog.service';
 import { ToasterService } from '@/services/toaster.service';
-import { OverlayModule } from '@angular/cdk/overlay';
+import { CdkOverlayOrigin, FlexibleConnectedPositionStrategy, Overlay, OverlayModule } from '@angular/cdk/overlay';
 import { AsyncPipe } from "@angular/common";
-import { computed, SimpleChanges } from '@angular/core';
+import { computed, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, inject, input, model, output, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
@@ -19,15 +19,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { isValidField } from "@core/utils/utils";
 import { debounceTime, distinctUntilChanged, Observable } from "rxjs";
-import { catchError, map, startWith, switchMap } from "rxjs/operators";
+import { catchError, finalize, map, startWith, switchMap } from "rxjs/operators";
 
 import { CompanyCustomerAddEditModalComponent } from '../company-customer-add-edit-modal/company-customer-add-edit-modal.component';
-
-export interface State {
-  flag: string;
-  name: string;
-  population: string;
-}
+import { ResponsiveService } from '@/services/responsive.service';
+import {  MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-company-customer-search',
@@ -42,15 +38,18 @@ export interface State {
     MatButtonModule,
     MatProgressSpinnerModule,
     MatSelectModule,
-    OverlayModule,
     MatCardModule,
+    MatMenuModule,
+    OverlayModule,
     ActionCompanyCustomerAddEditModalDirective,
-
   ],
   templateUrl: './company-customer-search.component.html',
   styleUrl: './company-customer-search.component.scss'
 })
 export class CompanyCustomerSearchComponent {
+
+  private responsiveService = inject(ResponsiveService)
+
   private companyCustomerSvc = inject(CompanyCustomerService)
   private tS = inject(ToasterService);
   private dialogSvc = inject(DialogService)
@@ -64,27 +63,31 @@ export class CompanyCustomerSearchComponent {
   clearInput = output()
 
   textName = model<string>('')
-  control = new FormControl('');
+  control = new FormControl<null | string>(null);
   filteredCustomers!: Observable<any[]>;
 
   companyCustomers: CompanyCustomerSearch[] = [];
 
   isLoadingResults = false;
 
+
+  isTablet = computed(() => this.responsiveService.isTablet());
+  isHandset = computed(() => this.responsiveService.isHandset());
+
+  @ViewChild(CdkOverlayOrigin) trigger!: CdkOverlayOrigin;
   isOpenDetail = signal(false)
+  positionStrategy!: FlexibleConnectedPositionStrategy;
+  private overlay = inject(Overlay)
 
-  dataDetail = {} as any
-
+  dataDetail = {} as any;
 
   ngOnInit() {
     this.filteredCustomers = this.control.valueChanges.pipe(
-      startWith(''),
       debounceTime(100),
       distinctUntilChanged(),
       switchMap((val) => {
         this.isLoadingResults = false;
         if (val && val.length > 2) {
-          this.isLoadingResults = true;
           return this._filter(val);
         }
         if (!isValidField(val)) {
@@ -99,23 +102,22 @@ export class CompanyCustomerSearchComponent {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["textName"]) {
       this.control.setValue(this.textName())
-
+      console.log(changes)
     }
-    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
-    //Add '${implements OnChanges}' to the class.
 
   }
 
   private _filter(value: string) {
+    this.isLoadingResults = true;
     return this.companyCustomerSvc.search({ textSearch: value }).pipe(
       map((response) => {
-
-        this.isLoadingResults = false;
         return response;
       }),
       catchError(() => {
-        this.isLoadingResults = false;
         return []
+      }),
+      finalize(() => {
+        this.isLoadingResults = false;
       })
     );
   }
@@ -231,19 +233,27 @@ export class CompanyCustomerSearchComponent {
     }
   }
 
-  onClickOpenDetail($event: any) {
+
+
+  toggleOverlay($event:any){
     $event.stopPropagation();
     this.isOpenDetail.set(!this.isOpenDetail())
 
     if (this.isOpenDetail()) {
+      this.positionStrategy = this.overlay.position()
+      .flexibleConnectedTo(this.trigger.elementRef) // Usar el elemento de origen
+      .withPositions([
+        { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' },
+        { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+        { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top' },
+        { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom' },
+      ]);
       this.companyCustomerSvc.getId(this.id(), true).subscribe(response => {
         this.dataDetail = response;
-        console.log(response)
       })
 
     } else {
       this.dataDetail = {}
     }
   }
-
 }

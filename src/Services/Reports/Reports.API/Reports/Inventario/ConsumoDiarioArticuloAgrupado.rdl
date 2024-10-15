@@ -1,5 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily">
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily" xmlns:am="http://schemas.microsoft.com/sqlserver/reporting/authoringmetadata">
+  <am:AuthoringMetadata>
+    <am:CreatedBy>
+      <am:Name>MSRB</am:Name>
+      <am:Version>15.0.20283.0</am:Version>
+    </am:CreatedBy>
+    <am:UpdatedBy>
+      <am:Name>MSRB</am:Name>
+      <am:Version>15.0.20283.0</am:Version>
+    </am:UpdatedBy>
+    <am:LastModifiedTimestamp>2024-10-08T20:27:35.2247859Z</am:LastModifiedTimestamp>
+  </am:AuthoringMetadata>
   <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
@@ -1307,7 +1318,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!precioUnitario.Value</Value>
+                                  <Value>=Code.AddGroupTotalPrecio(Fields!precioUnitario.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1362,7 +1373,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!precioTotalSinImpuestos.Value</Value>
+                                  <Value>=Sum(Fields!precioTotalSinImpuestos.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1538,7 +1549,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!precioUnitario.Value)</Value>
+                                  <Value>=Code.GetOverallTotalPrecio()</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1586,14 +1597,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox20">
+                        <Textbox Name="precioTotalSinImpuestos1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Sum(Fields!precioTotalSinImpuestos.Value)</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1605,7 +1616,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox20</rd:DefaultName>
+                          <rd:DefaultName>precioTotalSinImpuestos1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1689,7 +1700,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>61.9125mm</Height>
+        <Height>59.16083mm</Height>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1842,7 +1853,9 @@
       <NumberOfRows>2</NumberOfRows>
     </GridLayoutDefinition>
   </ReportParametersLayout>
-  <Code>Dim GroupCounter as Integer=0
+  <Code>Dim GroupTotalsPrecio As New System.Collections.Generic.List(Of Decimal)
+
+Dim GroupCounter as Integer=0
 
 Function GetGroupCounter() as String
 	GroupCounter=GroupCounter+1
@@ -1866,8 +1879,19 @@ End function
 
 
 
+Public Function AddGroupTotalPrecio(ByVal Precio As Decimal) As Decimal
+    GroupTotalsPrecio.Add(Precio)
+    Return Precio
+End Function
 
 
+Public Function GetOverallTotalPrecio() As Decimal
+    Dim TotalSum As Decimal = 0
+    For Each total As Decimal In GroupTotalsPrecio
+        TotalSum += total
+    Next
+    Return TotalSum
+End Function
 
 
 

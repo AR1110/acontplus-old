@@ -135,6 +135,9 @@ export class OrderListComponent {
       deleted: this.isDeleted(),
       typeSearchCustomer: this.dataSearch.typeSearchCustomer
     }
+
+    console.log('init')
+
     this.isLoadingResults.set(true)
 
     this.dataSource.set([])
@@ -176,15 +179,20 @@ export class OrderListComponent {
   onChangeDateRange($event: any) {
     this.dataSearch.startDate = $event.from;
     this.dataSearch.endDate = $event.to;
+    console.log('date')
     this.refresh()
   }
 
   clearCustomer() {
+    console.log('customer')
+
     this.dataSearch.customerCompanyId = 0;
     this.refresh()
   }
 
   onSelectCustomer($event: any) {
+    console.log('customer')
+
     this.dataSearch.customerCompanyId = $event.idCliente;
     this.refresh()
   }

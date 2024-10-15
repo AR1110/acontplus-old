@@ -1,12 +1,23 @@
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #drawer class="sidenav "   fixedInViewport [mode]="'over'" [opened]="false"
-    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'">
+  <mat-sidenav
+    #drawer
+    class="sidenav"
+    fixedInViewport
+    [mode]="'over'"
+    [opened]="false"
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+  >
     <!-- Sidebar cerrado por defecto -->
 
     <div class="d-flex flex-column h-100">
       <mat-toolbar class="d-flex justify-content-between">
-
-        <span>Menu</span>
+        <img
+          src="./img/logo-icon.jpg"
+          class="img-responsive"
+          alt="Home"
+          height="50"
+          width="50"
+        />
         <!-- Botón para cerrar el sidebar, visible solo cuando el drawer está abierto -->
         @if(drawer.opened){
 
@@ -19,24 +30,31 @@
 
       <mat-nav-list class="flex-grow-1">
         @for (item of rootRoutes; track $index) {
-        <a mat-list-item [routerLink]="item.path" #link="routerLinkActive" routerLinkActive [activated]="link.isActive">
-          {{ item.title }}
+        <a
+          mat-list-item
+          [routerLink]="item.path"
+          #link="routerLinkActive"
+          routerLinkActive
+          [activated]="link.isActive"
+          class="d-flex align-items-center"
+        >
+          <div class="d-flex align-items-center">
+            <mat-icon>{{ item.icon }}</mat-icon> {{ item.title }}
+          </div>
         </a>
         }
-
       </mat-nav-list>
 
       <!-- Footer en el sidenav -->
       <div class="align-self-end">
-        <mat-toolbar >
+        <mat-toolbar>
           <span></span>
 
           <button mat-icon-button aria-label="High" (click)="changeTheme()">
             @if(isDark()){
-              <mat-icon>brightness_low</mat-icon>
-            }
-            @else {
-              <mat-icon>brightness_high</mat-icon>
+            <mat-icon>brightness_low</mat-icon>
+            } @else {
+            <mat-icon>brightness_high</mat-icon>
 
             }
           </button>
@@ -47,8 +65,12 @@
 
   <mat-sidenav-content>
     <mat-toolbar color="primary">
-
-      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+      >
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <span class="d-none d-xl-block d-lg-block">AcontPlus POS</span>
