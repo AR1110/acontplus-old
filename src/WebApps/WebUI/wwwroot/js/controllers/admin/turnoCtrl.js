@@ -79,7 +79,7 @@
         $scope.saveUpdate = function(tipoRegistro) {
             let tituloModal = tipoRegistro==1?'Guardar':'Actualizar';
 
-            if (form.isValidField($scope.data.descripcion)) {
+            if (!form.isValidField($scope.data.descripcion)) {
                 toast.toastr('warning', 'Ingrese la Descripción', tituloModal);
                 return;
             }
