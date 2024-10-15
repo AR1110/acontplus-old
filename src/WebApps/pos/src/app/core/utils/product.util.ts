@@ -1,4 +1,5 @@
-import {OrderItem} from "@/models/order.model";
+
+import { OrderItem } from "@/features/orders/models/order.interface";
 import {ConsolidacionFecha} from "@/models/inventory/medida.model";
 import {isValidDate} from "rxjs/internal/util/isDate";
 
@@ -30,11 +31,11 @@ export const mergeStockQty = function <T extends {
 //  let dataItemMerge = foundItemByArticuloAndBodega.reduce((itemPrevious, itemCurrent) => {
 //    itemPrevious.cantidad += itemCurrent.cantidad;
 //    return itemPrevious;
-//  }, { 
+//  }, {
 //    cantidad: 0,
 //  });
 
-  // Devuelve el objeto resultante de la fusión. 
+  // Devuelve el objeto resultante de la fusión.
   return {
     cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
   };

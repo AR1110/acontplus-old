@@ -1,5 +1,5 @@
 import {environment} from "@/env/environment";
-import {AuthService} from '@/services/auth.service';
+import {AuthService} from '@/features/auth/services/auth.service';
 import {HttpContext, HttpContextToken, HttpInterceptorFn} from '@angular/common/http';
 import {inject} from '@angular/core';
 
