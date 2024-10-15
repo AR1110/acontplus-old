@@ -37,7 +37,7 @@ BEGIN
     ,@codDoc                VARCHAR(2)
     ,@fechaEmision          DATETIME2 
     ,@discount              NUMERIC(18,5)
-    ,@tip                   NUMERIC(18,5)
+    ,@tip                   NUMERIC(18,5) 
     ,@total                 NUMERIC(18,5)
     ,@establecimientoId     INT
     ,@obs                   VARCHAR(500)
@@ -115,7 +115,7 @@ BEGIN
         ,@customerCompanyId     = customerCompanyId
         ,@subtotalSinImpuestos  = subtotalSinImpuestos 
         ,@discount              = discount
-        ,@tip                   = tip
+        ,@tip                   = ISNULL(tip,0)
         ,@total                 = total
         ,@obs                   = obs
         ,@codDoc                = codDoc       

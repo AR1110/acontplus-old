@@ -37,9 +37,9 @@ SELECT cl.[idCliente]
       ,ti.codigoSri                                                 as codIdentSri
       ,cs.SriValidation                                             as validationSri
       ,cs.IDType
-      ,cs.IDCard
-      ,cs.BusinessName
-      ,cs.TradeName
+      ,cs.IDCard                                                    
+      ,cs.BusinessName                                              
+      ,cs.TradeName                                                 
       ,c2.descripcion                                               as ciudadNom
 FROM dbo.Cliente                   cl WITH (NOLOCK)
 INNER JOIN dbo.Entidad             en WITH (NOLOCK) ON en.idEntidad            = cl.idEntidad
