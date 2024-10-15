@@ -1310,11 +1310,13 @@
                             mainDataCliente,
                             mainDetalle,
                             mainInfoAdicional,
+                           tarifasImpuesto  
                         ] = JSON.parse(response.payload);
 
-                        let { fechaEmision, ...restData } = mainData[0];
+                        let { fechaEmision,nombreComercial, ...restData } = mainData[0];
                         let comprobante = {
                             ...restData,
+                            establecimiento: nombreComercial,
                             fechaEmision: fS.formatDate(fechaEmision),
                             fechaEmisionEscrita: fS.getFechaEscrita(
                                 fS.formatDate(fechaEmision)
@@ -1338,6 +1340,7 @@
                             cliente: mainDataCliente[0],
                             items: resultsItems,
                             infoAdicionalDocumento: mainInfoAdicional,
+                            tarifasImpuesto
                         };
                     }
                 });

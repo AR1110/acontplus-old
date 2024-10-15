@@ -54,13 +54,13 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         return items.map((item, index) => {
             let precioConIva = typeof item.precioConIva === 'number' ? item.precioConIva : item.precioUnitario + item.valorImpuesto;
            // let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
-            let total = fS.roundNumber(item.precioTotalSinImpuesto, 2) + fS.roundNumber(item.valorImpuesto, 2)
+            let total = fS.roundNumber(item.precioTotalSinImpuesto, 5) + fS.roundNumber(item.valorImpuesto, 5)
             return {
                 n: index + 1,
                 ...item,
                 precioConIva: fS.roundNumber(precioConIva, 5),
               //  precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
-                total: fS.roundNumber(total, 2)
+                total: fS.roundNumber(total, 5)
             }
         })
     }
@@ -142,13 +142,15 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     if (codDoc === DOC_TYPE['NC_SRI']) {
         try {
             showLoader();
-            notaCreditoSvc.getIdForInfo(id).then(response => {
-                let { data, cliente, items, factura, infoAdicionalDocumento } = response;
+            notaCreditoSvc.getIdForInfo(id).then(response => { 
+                let { data, cliente, items, factura, infoAdicionalDocumento,tarifasImpuesto } = response;
                 $scope.data = data;
                 $scope.cliente = cliente;
-                $scope.gridOptions.data = items;
+                $scope.gridOptions.data = calculateTotalItems(items);
                 $scope.factura = factura;
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+                $scope.tarifasImpuesto = tarifasImpuesto;
+                renderedModal();
             }).catch(error => {
                 console.error(error)
             }).finally(() => {
@@ -307,8 +309,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
 
 
     $scope.getDetalleFactura = async function () {
-        try {
-            console.log($scope.factura)
+        try { 
             if (!($scope.factura.idDocumento > 0)) return
 
 
