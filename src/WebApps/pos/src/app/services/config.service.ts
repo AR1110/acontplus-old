@@ -4,7 +4,7 @@ import { groupRoomTableUtil } from "@/core/utils/group-room-table.util";
 import { indexById } from "@/core/utils/utils";
 import { PATHS, PATHS_API } from "@/enums/main.enum";
 import { ApiResponse } from "@/models/api-response";
-import { CompanyCustomerDefault } from "@/models/company-customer.model";
+import { CompanyCustomerDefault } from "@/features/company-customers/models/company-customer.model";
 import { ConfigVenta } from "@/models/config-sistema.model";
 import { DecimalVenta } from "@/models/decimal.model";
 import { GroupedEstab } from "@/models/estab.model";
@@ -28,7 +28,7 @@ export class ConfigService {
     return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
       context: getNoLoader()
     }).pipe(
-      map(response => { 
+      map(response => {
         let result = {
           estabs: [] as GroupedEstab[]
         }

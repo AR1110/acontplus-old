@@ -1,4 +1,4 @@
-import { AuthService } from '@/services/auth.service';
+import { AuthService } from '@/features/auth/services/auth.service';
 import { MainStoreService } from '@/store/main-store.service';
 import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';

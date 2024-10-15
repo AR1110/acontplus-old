@@ -32,7 +32,22 @@
       ],
       "@core/*": [
         "src/app/core/*"
-      ]
+      ],
+      "@dashboard/*": [
+        "src/app/features/dasboard/*"
+      ],
+      "@orders/*": [
+        "src/app/features/orders/*"
+      ],
+      "@auth/*": [
+        "src/app/features/auth/*"
+      ],
+      "@company-customers/*": [
+        "src/app/features/company-customers/*"
+      ],
+      "@pos/*": [
+        "src/app/features/pos/*"
+      ],
 
 
     }

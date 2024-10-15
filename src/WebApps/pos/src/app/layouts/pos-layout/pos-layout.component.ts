@@ -1,7 +1,7 @@
 import { NavUserInfoToggleComponent } from "@/core/components/nav-user-info-toggle/nav-user-info-toggle.component";
 import { ActionOrderDialogDirective } from "@/directives/action-order-dialog.directive";
- 
-import { CartPopupComponent } from "@/pages/pos-page/components/cart-popup/cart-popup.component";
+import { CartPopupComponent } from "@/features/pos/components/cart-popup/cart-popup.component";
+
 import { DialogService } from "@/services/dialog.service";
 import { PosStoreService } from "@/store/pos-store.service";
 import { OverlayModule } from "@angular/cdk/overlay";
@@ -55,6 +55,6 @@ export class PosLayoutComponent {
     this.router.navigateByUrl('/dashboard')
   }
 
- 
+
 
 }

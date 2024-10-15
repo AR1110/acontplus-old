@@ -1,0 +1,16 @@
+<mat-card>
+  <mat-card-header class="m-2">
+    <mat-card-title-group>
+      <mat-card-title>Ordenes</mat-card-title>
+      <div class="d-flex flex-row gap-2">
+        <button mat-flat-button (click)="navigateToPos()">
+          <mat-icon>add</mat-icon>
+          Nuevo
+        </button>
+      </div>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <app-order-list [dataSearch]="dataSearch" />
+  </mat-card-content>
+</mat-card>

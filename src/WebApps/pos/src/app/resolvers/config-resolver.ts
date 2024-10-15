@@ -1,4 +1,4 @@
-import {AuthService} from "@/services/auth.service"
+import {AuthService} from "@/features/auth/services/auth.service"
 import {ConfigService} from "@/services/config.service"
 import {MainStoreService} from "@/store/main-store.service"
 import {inject} from "@angular/core"
@@ -27,7 +27,7 @@ export const configDataResolver: ResolveFn<any> = (route, state) => {
           establecimientos: response.estabs,
           puntosEmision: dataEstabNew.puntosEmision,
           bodegas: dataEstabNew.bodegas,
-          codEstab:dataEstabNew.codEstab, 
+          codEstab:dataEstabNew.codEstab,
           establecimientoId: dataEstabNew.idEstablecimiento,
           puntoEmisionId: dataPuntoEmision?.idPuntoEmision ?? 0,
           bodegaId: dataBodega?.idBodega ?? 0
