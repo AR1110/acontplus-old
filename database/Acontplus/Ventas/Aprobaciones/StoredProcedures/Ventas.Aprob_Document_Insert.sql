@@ -35,7 +35,7 @@ BEGIN
     DECLARE @comprobante VARCHAR(MAX) ,@detalles VARCHAR(MAX) ,@impuestos VARCHAR(MAX) ,@historial VARCHAR(MAX) ,@infoAdicionalArticulo VARCHAR(MAX) ,@infoAdicional VARCHAR(MAX)
 
     --> Aprob.ventas
-	DECLARE @idPuntoEmision INT ,@docOrigen VARCHAR(5) ,@docDestino VARCHAR(5) ,@idEstadoDocumento INT
+	DECLARE @idPuntoEmision INT ,@docOrigen VARCHAR(5) ,@docDestino VARCHAR(5) ,@idEstadoDocumento INT ,@serieComprobante VARCHAR(50)
 
     -->Fact.Elect
     DECLARE @fechaEmision DATETIME2 ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@ruc VARCHAR(20) ,@ambiente VARCHAR(5) ,@secuencial INT ,@claveAcceso VARCHAR(50)
@@ -128,7 +128,7 @@ BEGIN
 		    ,idPuntoEmision    INT 
 		    ,fechaEmision      DATETIME2 
 		    ,codDoc            VARCHAR(5)
-		    ,totalSinImpuestos NUMERIC(18,5) 
+		    ,totalSinImpuestos NUMERIC(18,5) '$.subTotalSinImpuestos'
 		    ,totalDescuento    NUMERIC(18,5)
 		    ,propina           NUMERIC(18,5) 
 		    ,importeTotal      NUMERIC(18,5) 
@@ -200,6 +200,8 @@ BEGIN
 		
 		SELECT @secuencial =  COUNT(*) + 1 FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision
 
+        SELECT @serieComprobante   = @estab + '-' + @ptoEmi + '-' +  Helper.F_Auto_Sequential(@secuencial)
+
 		IF @docDestino = '01'
 			BEGIN
 				SET @claveAcceso = dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab)
@@ -258,8 +260,8 @@ BEGIN
             
             --> Comprobante
 			INSERT INTO Ventas.Aprob_Document
-                  (idCliente,idPuntoEmision,fechaEmision,codDoc,secuencial,claveAcceso,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,observacion,idUsuario)
-			SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,@secuencial,@claveAcceso,totalSinImpuestos,totalDescuento,propina,importeTotal,@docOrigen,observacion,@idUsuario
+                  (idCliente,idPuntoEmision,fechaEmision,codDoc,secuencial,claveAcceso,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,observacion,idUsuario,serieComprobante)
+			SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,@secuencial,@claveAcceso,totalSinImpuestos,totalDescuento,propina,importeTotal,@docOrigen,observacion,@idUsuario,@serieComprobante
 			FROM @tbComprobante
 
 			SET @idAprob_Document = @@IDENTITY

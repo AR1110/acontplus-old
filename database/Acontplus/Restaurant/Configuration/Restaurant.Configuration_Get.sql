@@ -96,14 +96,15 @@ BEGIN
             INNER JOIN Sri.Impuesto i WITH(NOLOCK) ON i.codigo = ti.codImpuesto 
 
              --CUSTOMER DEFAULT      
-	        SELECT 
-		        cl.idCliente
-	           ,cl.numeroIdentificacion
-	           ,cl.nombreComercial
-	           ,cl.nombreFiscal
-	           ,cl.direccion
-	           ,cl.correo
-	        FROM dbo.Cliente cl WITH (NOLOCK) WHERE cl.idCliente = @customerCompanyId 
+	        SELECT cl.idCliente
+	              ,cu.IDCard       as numeroIdentificacion
+	              ,cu.BusinessName as nombreComercial
+	              ,cu.TradeName    as nombreFiscal
+	              ,cl.direccion
+	              ,cl.correo
+	        FROM dbo.Cliente             cl WITH (NOLOCK) 
+            INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = cl.CustomerId
+            WHERE cl.idCliente = @customerCompanyId 
 
              SELECT CAST(searchCode AS BIT)       as searchCode
 	            ,CAST(printerAutomatic AS BIT) as printerAutomatic
@@ -168,16 +169,17 @@ BEGIN
 
     SELECT id, code, [description], capacity, floorId 
     FROM Restaurant.v_room WHERE codEstab = @codEstab
-
-    --CUSTOMER DEFAULT      
-	SELECT 
-		cl.idCliente
-	   ,cl.numeroIdentificacion
-	   ,cl.nombreComercial
-	   ,cl.nombreFiscal
-	   ,cl.direccion
-	   ,cl.correo
-	FROM dbo.Cliente cl WITH (NOLOCK) WHERE cl.idCliente = @customerCompanyId 
+    
+	--CUSTOMER DEFAULT      
+	SELECT cl.idCliente
+	        ,cu.IDCard       as numeroIdentificacion
+	        ,cu.BusinessName as nombreComercial
+	        ,cu.TradeName    as nombreFiscal
+	        ,cl.direccion
+	        ,cl.correo
+	FROM dbo.Cliente             cl WITH (NOLOCK) 
+    INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = cl.CustomerId
+    WHERE cl.idCliente = @customerCompanyId 
             
 	SELECT idTarifaImpuesto, descripcion, codigo, porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo IN ('4') AND estado = 1 ORDER BY codigo DESC
 

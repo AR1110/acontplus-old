@@ -78,7 +78,7 @@ BEGIN
 	    SELECT TOP 1 @idEstab = idEstablecimiento FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
         --> Validacion de informacion
-        IF (SELECT COUNT(*) FROM @Comprobantes) = 0 
+        IF NOT EXISTS(SELECT 1 FROM @Comprobantes) 
             BEGIN
                 SELECT '0' code,'Los comprobantes ya se encuentran registrados' as 'message'
                 RETURN
