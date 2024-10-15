@@ -137,9 +137,23 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
             numeroIdentificacionPasaporte.style.display = 'none';
         }
     }
+    $scope.refreshGetDataSri = refreshGetDataSri;
+    $scope.onKeyupNumeroIdentificacion =   onKeyupNumeroIdentificacion
 
-    $scope.onKeyupNumeroIdentificacion = function () {
-        if ($scope.data.idProveedor > 0) return;
+      function refreshGetDataSri(){
+        if(!fS.isValidField($scope.data.numeroIdentificacion)){
+            tS.toastr({
+                type: 'warning',
+                  message: 'Ingrese número de identificación'
+            })
+            return 
+        }
+        onKeyupNumeroIdentificacion()
+
+    }
+
+      function   onKeyupNumeroIdentificacion() {
+        //if ($scope.data.idProveedor > 0) return;
 
         let dataTipoIdentificacion = $scope.tiposIdentificacion.find(data => data.idTipoIdentificacion === $scope.data.idTipoIdentificacion);
         $scope.numeroIdentificacionValidationMessage = '';
@@ -147,6 +161,14 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
 
         if (!dataTipoIdentificacion) {
             tS.toastr('error', 'Tipo Identificacion no encontrada!')
+        }
+
+        if(!["C", "R"].includes(dataTipoIdentificacion.codigo)){
+            tS.toastr({
+                type: 'warning',
+                  message: 'La validación en el SRI es únicamente para Cédula y RUC.'
+            })
+            return 
         }
 
         if (dataTipoIdentificacion.codigo === "C") {
