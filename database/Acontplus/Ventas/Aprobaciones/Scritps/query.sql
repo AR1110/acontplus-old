@@ -59,7 +59,6 @@ go
     --ALTER TABLE Ventas.[Aprob_Document_Hist] DROP COLUMN fechaRegistro
 
 
-
 --> NORMALIZACION DE LA TABLA Ventas.Aprob_Document COLUMNAS DE AUDITORIAS 
 
     --ALTER TABLE Ventas.Aprob_Document add UpdatedByUserId INT CONSTRAINT fk_User_ClienterUpdate FOREIGN KEY (UpdatedByUserId) references dbo.Usuario(idUsuario)
