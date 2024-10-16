@@ -112,7 +112,7 @@ BEGIN
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,abono))        OVER() as totalAbono
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,saldo))        OVER() as totalSaldo
                               ,codEstado
-                              ,1                                                   as tipo
+                              ,1                                                               as tipo
                         FROM v_CuentaPorCobrar cc WITH (NOLOCK)
                         WHERE idEntidad = @idEntidad '
 
@@ -208,8 +208,8 @@ BEGIN
 
             SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT)
 
-		    SELECT TOP 1 cl.numeroIdentificacion
-						,cl.nombreFiscal
+		    SELECT TOP 1 cu.IDCard       as numeroIdentificacion
+						,cu.TradeName    as nombreFiscal
 						,fechaEmision
                         ,fechaVencimiento
 						,serieComprobante = cc.serieComprobante 
@@ -224,6 +224,7 @@ BEGIN
 			INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision    = cc.idPuntoEmision
 			INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pt.idEstablecimiento
 			INNER JOIN dbo.EstadoPago         ep WITH (NOLOCK) ON ep.idEstadoPago      = cc.idEstadoPago
+            INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
 			WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar
 			
 			SELECT idTiempoCredito,descripcion,diasCredito,numeroCuota,tiempoCredito = tipo FROM dbo.TiempoCredito WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND gestion = 1
@@ -266,6 +267,7 @@ BEGIN
               AND codEstado IN ('PP','PE')
               AND convertToDoc = 0
             GROUP BY codDoc
+
             RETURN 
         END 
 

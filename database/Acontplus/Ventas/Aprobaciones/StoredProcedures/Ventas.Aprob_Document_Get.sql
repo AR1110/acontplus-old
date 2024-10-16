@@ -58,39 +58,39 @@ BEGIN
                           ,@pageSize  INT
 						  ,@pageIndex INT'
 
-            SET @sql = 'SELECT idAprob_Document        = ad.idAprob_Document
-							  ,uniqueId                = ad.uniqueId
-							  ,es.codEstab
+            SET @sql = 'SELECT ad.idAprob_Document
+							  ,ad.idAprob_Document                           as uniqueId
 							  ,ad.docOrigen  
 							  ,ad.codDoc
-							  ,docOrigenDesc           = CASE ad.docOrigen WHEN ''PR'' THEN ''Proforma''
-																		   WHEN ''NE'' THEN ''Nota Entrega''
-																		   ELSE '''' 
-														END
-							  ,docDestinoDesc          = CASE ad.codDoc WHEN ''01'' THEN ''Factura''
-																		WHEN ''NE'' THEN ''Nota Entrega''
-																		ELSE '''' 
-														END
-							  ,fechaEmision            = CONVERT(NVARCHAR,FORMAT(ad.fechaEmision, ''dd/MM/yyyy HH:mm''))
-							  ,serie                   = ad.estab+''-''+ad.ptoEmi+''-''+Helper.F_Auto_Sequential(ad.secuencial)
-							  ,identificacionComprador = ad.identificacionComprador
-							  ,razonSocialComprador	   = cl.nombreFiscal
-							  ,total                   = ad.importeTotal
-							  ,codEstado               = ad.codEstado
-							  ,estado			         = ep.descripcion
-							  ,colorFila               = CASE ad.codEstado WHEN ''A''   THEN ''table-danger'' 
-																			WHEN ''APR'' THEN ''table-success''
-																			ELSE ''''
-														END 
-                              ,count(*) over() as totalRecords
-                              ,userName                = u.nombreUsuario 
+							  ,es.codEstab
+                              ,CASE ad.docOrigen WHEN ''PR'' THEN ''Proforma''
+												 WHEN ''NE'' THEN ''Nota Entrega'' ELSE '''' 
+							   END                                           as docOrigenDesc
+							  ,CASE ad.codDoc WHEN ''01'' THEN ''Factura''
+											  WHEN ''NE'' THEN ''Nota Entrega''
+														  ELSE '''' 
+							   END                                           as docDestinoDesc
+							  ,FORMAT(ad.fechaEmision, ''dd/MM/yyyy HH:mm'') as fechaEmision
+							  ,ad.SerieComprobante                           as serie
+							  ,cu.IDCard                                     as identificacionComprador
+							  ,cu.TradeName                                  as razonSocialComprador
+							  ,ad.importeTotal                               as total
+							  ,ad.codEstado                                  as codEstado
+							  ,ep.descripcion                                as estado
+							  ,CASE ad.codEstado WHEN ''A''   THEN ''table-danger'' 
+												 WHEN ''APR'' THEN ''table-success''
+												 ELSE ''''
+							   END                                           as colorFila 
+                              ,count(*) over()                               as totalRecords
+                              ,us.nombreUsuario                              as userName
 						FROM Ventas.Aprob_Document     ad WITH (NOLOCK) 
 						INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.codigo            = ad.codEstado
 						INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente         = ad.idCliente
-						INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision    = ad.idPuntoEmision
-						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento 
-                        INNER JOIN dbo.Usuario         u  WITH (NOLOCK) ON u.idUsuario          = ad.idUsuario  
-						WHERE ad.idEntidad = @idEntidad  '
+						INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = ad.idUsuario 
+                        INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = ad.idPuntoEmision
+						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+                        INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
+						WHERE es.idEntidad = @idEntidad  '
 
 	        SELECT @checkBoxFecha = checkBoxFecha
 		          ,@codEstab      = codEstab

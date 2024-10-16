@@ -232,8 +232,8 @@ BEGIN
 
 			SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT)
 
-			SELECT cl.numeroIdentificacion
-				  ,cl.nombreFiscal
+			SELECT cu.IDCard                                  as numeroIdentificacion
+				  ,cu.TradeName                               as nombreFiscal
 				  ,cc.serieComprobante                        as serieComprobante
 				  ,FORMAT(cc.fechaEmision,'dd/MM/yyyy hh:mm') as fechaEmision
 				  ,cc.importeTotal
@@ -243,6 +243,7 @@ BEGIN
 			INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente         = cc.idCliente
 			INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision    = cc.idPuntoEmision
 			INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pt.idEstablecimiento
+            INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
 			WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar
 
 			SELECT ci.idComprobanteIngreso 
@@ -387,8 +388,8 @@ BEGIN
             SELECT cc.idCuentaPorCobrar
 				  ,cc.idCliente
                   ,es.codEstab
-                  ,cl.nombreFiscal         as razonSocialComprador
-                  ,cl.numeroIdentificacion as identificacionComprador
+                  ,cu.TradeName            as razonSocialComprador
+                  ,cu.IDCard               as identificacionComprador
                   ,cc.serieComprobante 
 				  ,cc.codDoc
 				  ,fechaEmision
@@ -426,6 +427,7 @@ BEGIN
 			INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pt.idEstablecimiento
 			INNER JOIN dbo.EstadoPago         ep WITH (NOLOCK) ON ep.idEstadoPago      = cc.idEstadoPago
             INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente         = cc.idCliente
+            INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
 			WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar 
               AND ep.codigo IN ('PP','PE')
 
