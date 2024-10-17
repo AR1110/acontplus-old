@@ -14,7 +14,7 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
 		  ,fa.recargo
 		  ,fa.transporte
 		  ,fa.total
-		  ,ISNULL(fa.observacion, '') as observacion
+		  ,ISNULL(fa.observacion,'') as observacion
           ,fa.notaCredito
           ,fa.guiaRemision
           ,fa.estado 

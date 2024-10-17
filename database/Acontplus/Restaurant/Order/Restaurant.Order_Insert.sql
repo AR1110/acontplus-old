@@ -10,216 +10,282 @@ GO
 -- Description:	sp for insert order restaurant
 -- =============================================
 -- Restaurant.Order_Insert 139, '{"orderId":0,"establecimientoId":454,"puntoEmisionId":124,"bodegaId":128,"tableId":3,"customerCompanyId":11752,"subtotalSinImpuestos":8.7,"tax":1.04,"taxPercent":0,"discount":0,"total":9.74,"items":[{"orderItemId":0,"uuid":"92423d48-93a3-4a98-84f9-4131a65b156c","itemId":29,"feeId":528,"taxId":1,"taxPercentId":2,"productId":77508,"taxValue":0.6,"quantity":1,"cost":1.5,"price":5,"discount":0,"total":5,"obs":"","itemTypeCode":"ITEM","menuId":0,"bodegaId":128,"envioSri":false},{"orderItemId":0,"uuid":"0f3755df-249f-46fa-b48a-adf08bcd773c","itemId":28,"feeId":528,"taxId":1,"taxPercentId":2,"productId":77507,"taxValue":0.44400000000000006,"quantity":1,"cost":3,"price":3.7,"discount":0,"total":3.7,"obs":"","itemTypeCode":"ITEM","menuId":0,"bodegaId":128,"envioSri":false}],"taxes":[{"uuid":"92423d48-93a3-4a98-84f9-4131a65b156c","taxId":1,"taxPercentId":2,"taxBase":5,"taxValue":0.6},{"uuid":"0f3755df-249f-46fa-b48a-adf08bcd773c","taxId":1,"taxPercentId":2,"taxBase":3.7,"taxValue":0.44400000000000006}],"payments":{},"tip":0,"obs":"","codDoc":"OR","quickSale":false,"fechaEmision":"2023-09-24T18:02:22.152Z","uuid":"799ec59e-03b3-4c26-9cd9-07191e91df44","updateOrder":false,"saveDoc":false}'
-CREATE OR ALTER PROCEDURE Restaurant.Order_Insert @userRoleId INT ,@json NVARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Restaurant.Order_Insert @userRoleId INT
+,@json NVARCHAR(MAX)
 AS
 BEGIN 
-    SET NOCOUNT ON;
-	SET LANGUAGE SPANISH
+	SET NOCOUNT ON;
 
-    --> GLOBAL
-	DECLARE @UserId INT,@CompanyId INT ,@orderId INT ,@payload NVARCHAR(MAX) ,@idTipoDocumento INT
+	DECLARE @uuid UNIQUEIDENTIFIER
+    ,@itemsJson NVARCHAR(MAX)
+    ,@establecimientoId INT
+    ,@puntoEmisionId INT   
+    ,@tableId INT
+    ,@sequence INT
+    ,@serie VARCHAR(18)    
+    ,@customerCompanyId INT   
+    ,@discount NUMERIC(18,5)
+    ,@tip NUMERIC(18,5)
+    ,@total NUMERIC(18,5)
+    ,@obs VARCHAR(500)    
+    ,@quickSale BIT
+    ,@userId INT
+    ,@bodegaId INT
+    ,@payload NVARCHAR(MAX)
+    ,@TaxPercentId INT
 
-    --> DataJson
-    DECLARE @orderDocument VARCHAR(MAX) ,@items VARCHAR(MAX)
+    SELECT @uuid                = uuid
+        ,@itemsJson             = items
+        ,@establecimientoId     = establecimientoId
+        ,@puntoEmisionId        = puntoEmisionId       
+        ,@tableId               = tableId        
+        ,@customerCompanyId     = customerCompanyId 
+        ,@discount              = discount
+        ,@tip                   = tip
+        ,@total                 = total
+        ,@obs                   = obs       
+        ,@quickSale             = quickSale
+        ,@bodegaId              = bodegaId
+        ,@userId                = userId
+     --   ,@TaxPercentId          = TaxPercentId
+    FROM OPENJSON(@json)
+        WITH(
+            uuid UNIQUEIDENTIFIER '$.uuid',
+            items NVARCHAR(MAX) '$.items' AS JSON,
+            establecimientoId INT '$.establecimientoId',
+            puntoEmisionId INT '$.puntoEmisionId',
+            tableId INT '$.tableId',
+            customerCompanyId INT '$.customerCompanyId',
+            tax NUMERIC(18,5) '$.tax',
+            discount NUMERIC(18,5) '$.discount',
+            tip NUMERIC(18,5) '$.tip',
+            total NUMERIC(18,5) '$.total',
+            obs VARCHAR(500) '$.obs',
+            quickSale BIT '$.quickSale',
+            bodegaId INT '$.bodegaId',
+            userId              INT '$.userId'
+        --    TaxPercentId INT '$.taxPercentId'
+        )
 
-    --> Order 
-    DECLARE @uuid UNIQUEIDENTIFIER
-           ,@puntoEmisionId INT  
-           ,@sequence INT
-           ,@serie VARCHAR(18) 
-           ,@estab VARCHAR(10)
-           ,@ptoEmi VARCHAR(10)
+    IF NOT EXISTS (SELECT TOP 1 1 FROM Config.v_ConfigDocumento cd
+				                  INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
+			                      WHERE pa.idUsuarioRol = @userRoleId
+			                      AND cd.codDoc = 'OR')
+        BEGIN       
+            SELECT '0' code, 'Aun no se ha configurado el secuencial, para ordenes de restaurante'  as 'message'
+            RETURN
+        END
+        
+    IF (ISJSON(@itemsJson) = 1)
+        BEGIN
+            DECLARE @tblItems AS TABLE(
+                uuid UNIQUEIDENTIFIER NOT NULL,
+                itemTypeCode VARCHAR(8) NOT NULL,
+                menuId INT NULL,
+                itemId INT NULL,
+                taxId INT NOT NULL,
+                taxPercentId INT NOT NULL,
+                feeId INT NOT NULL,
+                taxValue NUMERIC (18,5) NOT NULL,
+                quantity NUMERIC (18,5) NOT NULL,
+                cost NUMERIC(18,5) NOT NULL,
+                price NUMERIC(18,5) NOT NULL,
+                discount NUMERIC(18,5),
+                total NUMERIC(18,5) NOT NULL,
+                obs VARCHAR(500) NULL,
+                bodegaId int not null,
+                medidaId INT NOT NULL
+            )
 
-    DECLARE @tbOrder AS TABLE(
-        Uuid UNIQUEIDENTIFIER NOT NULL 
-       ,PuntoEmisionId INT NOT NULL 
-       ,TableId INT NULL
-       ,CustomerCompanyId INT NOT NULL  
-       ,Discount NUMERIC(18,5) NOT NULL
-       ,Tip NUMERIC(18,5) NULL
-       ,Total NUMERIC(18,5) NOT NULL
-       ,Obs VARCHAR(500) NULL
-       ,QuickSale BIT
-       ,UserId INT
-       ,BodegaId INT
-       ,TaxPercentId INT
-    )
+            INSERT INTO @tblItems(uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId, medidaId)
+            SELECT uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId, medidaId
+            FROM OPENJSON(@itemsJson)
+                WITH (
+                        uuid UNIQUEIDENTIFIER '$.uuid',
+                        itemTypeCode VARCHAR(8) '$.itemTypeCode',
+                        menuId INT '$.menuId',
+                        itemId INT '$.itemId',
+                        taxId INT '$.taxId',
+                        taxPercentId INT '$.taxPercentId',
+                        feeId INT '$.feeId',
+                        taxValue NUMERIC (18,5)'$.taxValue',
+                        quantity NUMERIC (18,5) '$.quantity',
+                        cost NUMERIC(18,5) '$.cost',
+                        price NUMERIC(18,5) '$.price',
+                        discount NUMERIC(18,5) '$.discount',
+                        total NUMERIC(18,5) '$.total',
+                        feeId INT         '$.feeId',
+                        obs NVARCHAR(500) '$.obs',
+                        bodegaId int '$.bodegaId',
+                        medidaId INT '$.medidaId'
+                      )
 
-    DECLARE @tblItems AS TABLE(
-        Uuid UNIQUEIDENTIFIER NOT NULL
-       ,ItemTypeId INT NOT NULL
-       ,MenuId INT NULL
-       ,ItemId INT NULL
-       ,TaxId INT NOT NULL
-       ,TaxPercentId INT NOT NULL
-       ,FeeId INT NOT NULL
-       ,TaxValue NUMERIC(18,5) NOT NULL
-       ,Quantity NUMERIC(18,5) NOT NULL
-       ,Cost NUMERIC(18,5) NOT NULL
-       ,Price NUMERIC(18,5) NOT NULL
-       ,Discount NUMERIC(18,5)
-       ,Total NUMERIC(18,5) NOT NULL
-       ,RemainingQuantity NUMERIC(18,5) NOT NULL
-       ,Obs VARCHAR(500) NULL
-       ,BodegaId INT NOT NULL
-       ,MedidaId INT NOT NULL
-       ,Cooking BIT NOT NULL
-    )
+            IF NOT EXISTS(SELECT 1 FROM @tblItems)
+                BEGIN
+                    SELECT '0' code, 'No se pudo recuperar el detalle'  as 'message'
+                    RETURN
+                END
 
+        END
+    ELSE
+        BEGIN
+            SELECT '0' code, 'El detalle no es valido'  as 'message'
+            RETURN
+        END
+        
+    DECLARE @companyId INT
+    ,@ruc VARCHAR(13)
+    ,@estab VARCHAR(3)
+    ,@ptoEmi VARCHAR(3)
+    ,@idTipoDocumento INT
+    ,@orderId INT 
+    ,@tiempoCreditoId INT = 1
+    ,@tipoDocumentoId INT
+
+    SELECT @sequence        = cd.secuencial
+        , @estab            = pa.estab
+        , @ptoEmi           = pa.ptoEmi
+        , @idTipoDocumento  = cd.idTipoDocumento
+	FROM Config.v_ConfigDocumento cd
+    INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
+    WHERE pa.idUsuarioRol = @userRoleId AND cd.codDoc = 'OR'
+
+    SELECT @companyId   = idEntidad
+            , @ruc      = rucEmpresa
+    FROM v_usuario
+    WHERE idUsuarioRol = @userRoleId
     
+    
+    IF (@userId = 0)
+        BEGIN
+            SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
+        END
+
 	BEGIN TRY
-        
-        --> DataJson
-        SELECT @orderDocument = orderDocument
-              ,@items         = items
-        FROM OPENJSON(@json) WITH 
-        (
-             orderDocument NVARCHAR(MAX) as json
-            ,items         NVARCHAR(MAX) as json 
-        )
-        
-        --> OrderDocument
-        INSERT INTO @tbOrder 
-              (uuid,PuntoEmisionId,TableId,CustomerCompanyId,Discount,Tip,Total,Obs,QuickSale,UserId)
-        SELECT uuid,PuntoEmisionId,TableId,CustomerCompanyId,Discount,Tip,Total,Obs,QuickSale,UserId
-        FROM OPENJSON(@json)WITH
-        (
-             uuid              UNIQUEIDENTIFIER 
-            ,puntoEmisionId    INT 
-            ,tableId           INT 
-            ,customerCompanyId INT 
-            ,tax               NUMERIC(18,5) 
-            ,discount          NUMERIC(18,5) 
-            ,tip               NUMERIC(18,5) 
-            ,total             NUMERIC(18,5) 
-            ,obs               VARCHAR(500) 
-            ,quickSale         BIT 
-            ,userId            INT
-        )
-
-        --> Item Detailt
-        INSERT INTO @tblItems
-              (uuid,ItemTypeId,menuId,itemId,taxId,taxPercentId,feeId,taxValue,quantity,cost,price,discount,total,obs,bodegaId,medidaId)
-        SELECT uuid,ItemTypeId,menuId,itemId,taxId,taxPercentId,feeId,taxValue,quantity,cost,price,discount,total,obs,bodegaId,medidaId
-        FROM OPENJSON(@items) WITH 
-        (
-             uuid         UNIQUEIDENTIFIER
-            ,ItemTypeId   INT
-            ,menuId       INT
-            ,itemId       INT
-            ,taxId        INT
-            ,taxPercentId INT
-            ,feeId        INT
-            ,taxValue     NUMERIC(18,5)
-            ,quantity     NUMERIC(18,5)
-            ,cost         NUMERIC(18,5)
-            ,price        NUMERIC(18,5)
-            ,discount     NUMERIC(18,5)
-            ,total        NUMERIC(18,5)
-            ,obs          NVARCHAR(500)
-            ,bodegaId     INT
-            ,medidaId     INT
-        )
-
-        --> Capturando Variables
-        SELECT TOP 1 @puntoEmisionId = PuntoEmisionId 
-                    ,@uuid           = Uuid 
-                    ,@estab          = es.estab
-                    ,@ptoEmi         = pe.ptoEmi
-        FROM @tbOrder ot
-        INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = ot.PuntoEmisionId
-        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
-        
-        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM TipoDocumento WITH (NOLOCK) WHERE codigo = 'OR'
-
-        SELECT TOP 1 @sequence = ultimaSecuencia FROM dbo.ConfiguracionDocumento WITH (NOLOCK) WHERE idPuntoEmision = @puntoEmisionId AND idTipoDocumento = @idTipoDocumento
-
-        SELECT @serie = @estab + '-' + @ptoEmi + '-' +  Helper.F_Auto_Sequential(@sequence)
-
-        --> Validando Informacion 
-        IF NOT EXISTS(SELECT 1 FROM @tbOrder)
-            BEGIN
-                SELECT '0' code,'Error en la info del pedido' AS 'message'
-				RETURN
-            END 
-
-        IF NOT EXISTS(SELECT 1 FROM @tblItems)
-            BEGIN
-                SELECT '0' code,'Error en la info del detalle' AS 'message'
-				RETURN
-            END 
-
-        IF @sequence IS NULL
-            BEGIN
-                SELECT '0' code, 'Aun no se ha configurado el secuencial, para ordenes de restaurante'  as 'message'
-                RETURN
-            END 
-
-        IF EXISTS (SELECT 1 FROM Restaurant.[Order] WITH (NOLOCK) WHERE PuntoEmisionId = @puntoEmisionId AND [Sequence] = @sequence )
-            BEGIN
-                SELECT '0' code,'Este número de orden ya se encuentra registrado' as 'message'
-				RETURN
-            END 
-
 		BEGIN TRAN
             ----------------ORDER------------------
             IF NOT EXISTS (SELECT 1 FROM Restaurant.[Order] WHERE Uuid = @uuid)
                 BEGIN
-                    INSERT INTO Restaurant.[Order] 
-                          (puntoEmisionId,TableId,CustomerCompanyId,Discount,Total,UserId,obs,Uuid,[Sequence],Serie)
-                    SELECT puntoEmisionId,TableId,CustomerCompanyId,Discount,Total,UserId,obs,Uuid,@sequence,@Serie
-                    FROM @tbOrder
+                    SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @sequence, DEFAULT)) 
+                    
+                  INSERT INTO Restaurant.[Order] (
+                            EstablecimientoId, 
+                            puntoEmisionId, 
+                            TableId, 
+                            [Sequence], 
+                            Serie, 
+                            CustomerCompanyId, 
+                            Discount, 
+                            Total, 
+                            [Enabled], 
+                            UserId, 
+                            obs, 
+                            CreatedAt, 
+                            Uuid
+                        ) 
+                        VALUES (
+                                @establecimientoId, @puntoEmisionId, @tableId, @sequence, @serie, @customerCompanyId,  @discount, @total, 1, @userId, 
+                                ISNULL(@obs, NULL), dbo.ufnGetDateEcuador(), @uuid
+                                );
+
 
 	                SET @orderId = (SELECT SCOPE_IDENTITY())
                     
-                    INSERT INTO Restaurant.OrderItem
-                           (OrderId,Uuid,ItemId,TaxId,TaxPercentId,TaxValue,Quantity,Cost,Price,Discount,Total,FeeId,Obs,BodegaId,ItemTypeId,MenuId,RemainingQuantity,medidaId)
-                    SELECT @orderId,Uuid,ItemId,TaxId,TaxPercentId,TaxValue,Quantity,Cost,Price,Discount,Total,FeeId,Obs,BodegaId,ItemTypeId,MenuId,RemainingQuantity,medidaId
-                    FROM @tblItems 
-
-                    IF EXISTS(SELECT 1 FROM @tblItems WHERE Cooking = 1)
+                    IF (@tableId > 0)
                         BEGIN
-                            INSERT INTO Restaurant.[OrderKitchen] (OrderId, [Enabled], Completed)
-                            VALUES(@orderId, 1, 0)
-                        END 
-                           
-                    --> Mesa Asignada
-                    IF EXISTS (SELECT 1 FROM @tbOrder WHERE TableId > 0)
-                        BEGIN
-                            DECLARE @tableId INT
-
-                            SELECT TOP 1 @tableId = TableId FROM @tbOrder
-
                             UPDATE Restaurant.[Table] SET Assigned = 1 WHERE Id = @tableId
                         END
 
-                    --> Actualizacion Secuencial
-			        UPDATE ConfiguracionDocumento SET ultimaSecuencia = ultimaSecuencia + 1 WHERE idPuntoEmision = @puntoEmisionId AND idTipoDocumento = @idTipoDocumento 
+                    INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
+                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId
+                                                    , MenuId, RemainingQuantity, medidaId)
+                    SELECT @orderId
+                            ,uuid
+                            ,IIF(itemId = 0, NULL, itemId)
+                            ,taxId
+                            ,taxPercentId
+                            ,taxValue
+                            ,quantity
+                            ,cost
+                            ,price
+                            ,discount
+                            ,total
+                            ,1
+                            ,@userId
+                            ,feeId
+                            ,obs
+                            ,i.bodegaId
+                            ,mt.Id
+                            ,IIF(i.menuId = 0, NULL, i.menuId)
+                            ,i.quantity
+                            ,i.medidaId
+                    FROM @tblItems i
+                    INNER JOIN Restaurant.ItemType mt ON mt.Code = i.itemTypeCode
 
+
+                    IF NOT EXISTS (SELECT 1 FROM Restaurant.OrderItem WHERE OrderId = @orderId)
+                        BEGIN
+                            ROLLBACK TRAN
+                            SELECT '0' code, 'Error al guardar items'  as 'message', (SELECT * FROM @tblItems for json path) payload
+                            RETURN
+                        END
+                    
+                    DECLARE @totalCook INT = 0
+
+                    SET @totalCook = (SELECT COUNT(*) 
+                                      FROM Restaurant.Item i 
+                                      INNER JOIN @tblItems ii ON i.Id = ii.ItemId 
+                                      WHERE i.Cooking = 1)
+
+                    IF (@totalCook > 0)
+                        BEGIN
+                            INSERT INTO Restaurant.[OrderKitchen] (OrderId, [Enabled], Completed, UserId)
+                            VALUES(@orderId, 1, 0, @userId)
+                        END
+                                            
+                    UPDATE cf 
+                    SET cf.ultimaSecuencia = vcf.secuencial + 1 
+                    FROM ConfiguracionDocumento cf WITH (ROWLOCK)
+                    JOIN (SELECT cd.idConfiguracionDocumento
+                                    , cd.secuencial
+			                FROM Config.v_ConfigDocumento cd
+				            INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
+			                WHERE pa.idUsuarioRol = @userRoleId
+			                AND cd.codDoc = 'OR'
+                    ) AS vcf ON cf.idConfiguracionDocumento = vcf.idConfiguracionDocumento
+                    
                     SET @payload = (SELECT orderId = @orderId)
+                END
+            ELSE
+                BEGIN
+                   SET @orderId = (SELECT Id FROM Restaurant.[Order] WHERE Uuid = @uuid)
+                   
+                   SET @payload = (SELECT orderId = @orderId)
                 END
             -----------------END ORDER -----------------
             
             ----------------VENTA RAPIDA------------
-            IF EXISTS (SELECT 1 FROM @tbOrder WHERE QuickSale = 1)
+            IF @quickSale = 1
                 BEGIN
                     EXEC Restaurant.Order_Document_Insert @userRoleId, @orderId, @json, @payload OUTPUT
                 END
             ----------------END VENTA RAPIDA--------
 		COMMIT TRAN
-        SELECT '1' code, 'Exitos al guardar'  as 'message', @payload payload
+        IF (@orderId > 0)
+            SELECT '1' code, 'Exitos al guardar'  as 'message', @payload payload
+        ELSE
+            SELECT '0' code, 'No se pudo guardar la orden' as 'message'
     END TRY
 	BEGIN CATCH
-        IF @@TRANCOUNT > 0
-		    BEGIN
-			    ROLLBACK TRAN;
-		    END
+		 SELECT '0' code, 'Error al guardar el orden' as 'message'
+        
+        IF (@@TRANCOUNT > 0)
+            ROLLBACK TRAN
 
-		INSERT INTO ErroresSistema WITH (ROWLOCK)
-              (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		SELECT NEWID(),'/Order/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@userId
-
-        SELECT '0' code,'Info: Error en el procedimiento ' as 'message'
+       INSERT INTO ErroresSistema
+        (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
+		VALUES
+        (NEWID(), 'Order/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
 	END CATCH
 END
 GO
