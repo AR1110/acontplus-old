@@ -1,29 +1,26 @@
-<app-breadcrumb/>
-<div class="card">
-  <div class="card-body">
-    <div class="row">
-      <div class="col">
-        <mat-tab-group (selectedTabChange)="onTabChange($event)">
-          <mat-tab label="Productos">
-            <app-item-list></app-item-list>
-          </mat-tab>
-          <mat-tab label="Menus">
-            @if (isMenuTabActive) {
-              <app-menu-list></app-menu-list>
-            }
-          </mat-tab>
-          <mat-tab label="Promociones">
-            @if (isPromotionTabActive) {
-              <app-promotion-list></app-promotion-list>
-            }
-          </mat-tab>
-          <mat-tab label="Ingredientes">
-            @if (isIngredientTabActive) {
-              <app-ingredient-list></app-ingredient-list>
-            }
-          </mat-tab>
-        </mat-tab-group>
-      </div>
-    </div>
-  </div>
-</div>
+<app-breadcrumb />
+
+<mat-card>
+  <mat-card-content>
+    <mat-tab-group (selectedTabChange)="onTabChange($event)">
+      <mat-tab label="Productos">
+        <app-item-list></app-item-list>
+      </mat-tab>
+      <mat-tab label="Menus">
+        @if (isMenuTabActive) {
+        <app-menu-list></app-menu-list>
+        }
+      </mat-tab>
+      <mat-tab label="Promociones">
+        @if (isPromotionTabActive) {
+        <app-promotion-list></app-promotion-list>
+        }
+      </mat-tab>
+      <mat-tab label="Ingredientes">
+        @if (isIngredientTabActive) {
+        <app-ingredient-list></app-ingredient-list>
+        }
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
