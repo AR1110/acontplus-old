@@ -9,7 +9,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent:()=> import('@/pages/auth-page/auth-page.component').then(c=>c.AuthPageComponent)
+        loadComponent:()=> import('@auth/auth-page/auth-page.component').then(c=>c.AuthPageComponent)
       }
     ]
   }

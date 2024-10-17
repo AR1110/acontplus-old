@@ -2,7 +2,6 @@ import { Routes } from "@angular/router";
 
 import { MainLayoutComponent } from "./main-layout.component";
 import {PosLayoutComponent} from "@/layouts/pos-layout/pos-layout.component";
-import { PosPageComponent } from "@/pages/pos-page/pos-page.component";
 
 export const routes: Routes = [
   {
@@ -14,19 +13,19 @@ export const routes: Routes = [
         path: 'dashboard',
         title: 'Dashboad',
         loadComponent: () =>
-          import('@/pages/dashboard-page/dashboard-page.component').then((c) => c.DashboardPageComponent),
+          import('@dashboard/dashboard-page/dashboard-page.component').then((c) => c.DashboardPageComponent),
       },
       {
         path: 'order',
         title: 'Order',
         loadComponent: () =>
-          import('@/pages/order-page/order-page.component').then((c) => c.OrderPageComponent),
+          import('@orders/order-page/order-page.component').then((c) => c.OrderPageComponent),
       },
       {
         path: 'customer',
-        title: 'Order',
+        title: 'Clientes',
         loadComponent: () =>
-          import('@/pages/company-customer/company-customer.component').then((c) => c.CompanyCustomerComponent),
+          import('@company-customers/company-customer-page/company-customer-page.component').then((c) => c.CompanyCustomerPageComponent),
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
@@ -38,7 +37,7 @@ export const routes: Routes = [
       {
         path: '',
         title: 'Pos',
-        loadComponent: () => import('@/pages/pos-page/pos-page.component').then(m => m.PosPageComponent),
+        loadComponent: () => import('@pos/pos-page/pos-page.component').then(m => m.PosPageComponent),
       },
       // {
       //   path: 'scheme-table',
