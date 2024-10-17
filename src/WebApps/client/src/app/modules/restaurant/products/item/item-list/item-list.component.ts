@@ -9,6 +9,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalService } from '@core/services/modal.service';
 import { ItemAddEditModalComponent } from '@restaurant/products/item/item-add-edit-modal/item-add-edit-modal.component';
+import { isValidField } from '@core/utils/utils';
 
 @Component({
   selector: 'app-item-list',
@@ -34,6 +35,7 @@ export class ItemListComponent {
       pageIndex: this.pagination.pageIndex,
       pageSize: this.pagination.pageSize,
       tipo: 1,
+      textSearch: isValidField(this.dataSearch.textSearch)
     };
     this.#itemService.get(obj).subscribe((response) => {
       this.items = response.items;
@@ -41,8 +43,16 @@ export class ItemListComponent {
     });
   }
 
+  dataSearch = {
+    textSearch: null as string | null
+  }
+
   ngOnInit() {
     this.loadData();
+  }
+
+  refresh(){
+    this.loadData()
   }
 
   onEdit(item: Item) {

@@ -1,6 +1,6 @@
 import { generateUuidv4 } from "@/core/utils/generate-uuidv4";
 import { SRI_IDENTIFICATION_CODE } from "@/enums/main.enum";
-import { Order, OrderItem } from "@/models/order.model";
+import { Order, OrderItem } from "@/features/orders/models/order.interface";
 import { Tax, TaxRate } from "@/models/tax.model";
 import { GenericStoreSignalService } from "@/services/generic-store-signal.service";
 import { PromotionService } from "@/services/promotion.service";
@@ -124,20 +124,20 @@ export class PosStoreService extends GenericStoreSignalService<PosStoreState> {
 
   public getPromotions(estabId:number) {
     let params = {
-      estabId 
+      estabId
     }
-    this.setLoading(true) 
+    this.setLoading(true)
     this.state.update(e => ({
       ...e,
       promotionsMenu: []
-    })) 
+    }))
     this.promotionSvc.getPromotions(params).subscribe({
       next: response => {
         this.setLoading(false)
         this.state.update(e => ({
           ...e,
           promotionsMenu: response
-        })) 
+        }))
       },
       error: err => {
         this.setLoading(false)
@@ -183,7 +183,7 @@ export class PosStoreService extends GenericStoreSignalService<PosStoreState> {
     return data;
   }
 
-  
+
 
 
 }

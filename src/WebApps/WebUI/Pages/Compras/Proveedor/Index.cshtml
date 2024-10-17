@@ -3,7 +3,7 @@
 
 @{
     ViewData["Title"] = "Proveedor";
-    
+
 }
 
 <div ng-controller="proveedorCtrl">
@@ -13,7 +13,8 @@
         </div>
         <div class="col-lg-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
-                <button class="btn btn-info m-l-15" ng-if="accion.crear" btn-proveedor-add-update result-modal="resultModal(result)"><i class="fa fa-plus-circle"></i> Nuevo</button>
+                <button class="btn btn-info m-l-15" ng-if="accion.crear" btn-proveedor-add-update
+                    result-modal="resultModal(result)"><i class="fa fa-plus-circle"></i> Nuevo</button>
             </div>
         </div>
     </div>
@@ -26,14 +27,15 @@
                         <div class="col-3">
                             <span class="form-group pull-left page-size form-inline">
                                 <select class="form-control border-color control-color" ng-model="dataSearch.pageSize"
-                                        ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                                    ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
                                 </select>
                             </span>
                         </div>
                         <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                             <form class="form-material">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" ng-model="dataSearch.textSearch" ng-keyup="onKeyupSearchProveedor()" placeholder="Buscar Proveedor" />
+                                    <input type="text" class="form-control" ng-model="dataSearch.textSearch"
+                                        ng-keyup="onKeyupSearchProveedor()" placeholder="Buscar Proveedor" />
                                     <div class="input-group-append" ng-click="reloadProveedores()">
                                         <button class="btn btn-info">
                                             <i class="fas fa-redo"></i>
@@ -48,25 +50,23 @@
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
-                            <th ng-show="accion.editar || accion.eliminar">Op.</th>
-                            <th>N°</th>
-                            <th>Ruc</th>
-                            <th>Nombre Fiscal</th>
-                            <th>Dirección</th>
-                            <th>Teléfono</th>
-                            <th>Estado</th>
+                                <th ng-show="accion.editar || accion.eliminar">Op.</th>
+                                <th>N°</th>
+                                <th>Ruc</th>
+                                <th>Nombre Fiscal</th>
+                                <th>Dirección</th>
+                                <th>Teléfono</th>
+                                <th>Estado</th>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="item in proveedores">
                                     <td ng-show="accion.editar || accion.eliminar">
                                         <div layout="row" layout-align="start center">
-                                            <button 
-                                            class="btn btn-info btn-xs" 
-                                            ng-if="accion.editar"  
-                                            btn-proveedor-add-update result-modal="resultModal(result)"
-                                            params = 'item'
-                                            > <i class="ti-pencil"></i></button>
-                                            <button class="btn btn-danger btn-xs ml-2" ng-if="accion.eliminar" ng-click="askToDelete(item)"> <i class="ti-trash"></i></button>
+                                            <button class="btn btn-info btn-xs" ng-if="accion.editar"
+                                                btn-proveedor-add-update result-modal="resultModal(result)"
+                                                params='item'> <i class="ti-pencil"></i></button>
+                                            <button class="btn btn-danger btn-xs ml-2" ng-if="accion.eliminar"
+                                                ng-click="askToDelete(item)"> <i class="ti-trash"></i></button>
                                         </div>
                                     </td>
                                     <td>{{$index+1}}</td>
@@ -84,13 +84,14 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="7"> 
-                                        <ul uib-pagination total-items="totalRecords" items-Per-Page="dataSearch.pageSize"
-                                            ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="maxSize"
-                                            class="pagination" boundary-links="true" rotate="false"></ul>
+                                    <td colspan="7">
+                                        <ul uib-pagination total-items="totalRecords"
+                                            items-Per-Page="dataSearch.pageSize" ng-change="pagechanged()"
+                                            ng-model="dataSearch.pageIndex" max-size="maxSize" class="pagination"
+                                            boundary-links="true" rotate="false"></ul>
                                     </td>
                                 </tr>
-                            <tfoot>
+                                <tfoot>
                         </table>
                     </div>
                 </div>

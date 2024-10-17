@@ -4,12 +4,12 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideRouter } from '@angular/router';
 import { errorInterceptor } from "@core/interceptors/error.interceptor";
 import { injectSessionInterceptor } from "@core/interceptors/inject-session.interceptor";
-import { BarController, Colors, Legend } from 'chart.js';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { provideToastr } from 'ngx-toastr';
-
 import { routes } from './app.routes';
 import { loaderInterceptor } from './core/interceptors/loader.interceptor';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,6 +26,11 @@ export const appConfig: ApplicationConfig = {
     provideToastr({
       preventDuplicates: true,
     }),
-    provideCharts(withDefaultRegisterables())
+    provideCharts(withDefaultRegisterables()),
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+    //  useValue: {appearance: 'outline', subscriptSizing: 'dynamic'}
+      useValue: {appearance: 'outline', subscriptSizing: 'dynamic'}
+    }
   ]
 };

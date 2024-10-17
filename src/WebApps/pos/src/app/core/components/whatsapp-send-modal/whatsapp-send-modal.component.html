@@ -1,18 +1,32 @@
-<app-custom-container-dialog [containerTemplate]="containerTemplate" [actionsTemplate]="actionsTemplate"
-  [matDialogTitle]="'Envío de notificación por WhatsApp'" (close)="closeDialog()" />
-
+<app-custom-container-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [matDialogTitle]="'Envío de notificación por WhatsApp'"
+  (close)="closeDialog()"
+/>
 
 <ng-template #containerTemplate>
-  <mat-form-field appearance="outline" class="m3-input-full-width mt-3">
-    <mat-label>Número de teléfono</mat-label>
-    <input type="tel" matInput [(ngModel)]="whatsapp.number" placeholder="Ej: 0959889745">
-  </mat-form-field>
+  <div class="vstack gap-1">
+    <mat-form-field class="w-100">
+      <mat-label>Número de teléfono</mat-label>
+      <input
+        type="tel"
+        matInput
+        [(ngModel)]="whatsapp.number"
+        placeholder="Ej: 0959889745"
+      />
+    </mat-form-field>
 
-  <mat-form-field appearance="outline" class="m3-input-full-width mt-3">
-    <mat-label>Mensaje: </mat-label>
-    <input type="tel" matInput [(ngModel)]="whatsapp.message" placeholder="Ej: ...">
-  </mat-form-field>
-
+    <mat-form-field class="w-100">
+      <mat-label>Mensaje: </mat-label>
+      <input
+        type="tel"
+        matInput
+        [(ngModel)]="whatsapp.message"
+        placeholder="Ej: ..."
+      />
+    </mat-form-field>
+  </div>
 </ng-template>
 
 <ng-template #actionsTemplate>
@@ -22,4 +36,3 @@
   </button>
   <button mat-raised-button (click)="closeDialog()">Cerrar</button>
 </ng-template>
-

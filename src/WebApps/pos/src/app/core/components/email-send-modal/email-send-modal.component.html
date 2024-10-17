@@ -1,43 +1,40 @@
-<h6 mat-dialog-title>Envío de notificación por Correo</h6>
+<app-custom-container-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [matDialogTitle]="'Envío de notificación por Correo'"
+  (close)="closeDialog()"
+/>
 
-<mat-dialog-content class="mat-typography">
+<ng-template #containerTemplate>
   <p>Ingrese el o los correos destinatarios</p>
   @for (item of emails;track $index){
   <mat-form-field appearance="outline" class="m3-input-full-width">
     <mat-label>Correo</mat-label>
-      <input 
-        type="email"
-        matInput
-        [id]="'email'+$index"
-        [name]="'email'+$index"
-        [(ngModel)]="emails[$index]"
-        placeholder="Ej: example@gmail.com">
-        @if(emails.length!==1){
-          <button
-            mat-icon-button
-            matSuffix
-            (click)="removeEmail($event, $index)"
-          >
-            <mat-icon>remove</mat-icon>
-          </button>
-        }
-
-        @if(lastIndex===$index){
-        <button
-            mat-icon-button
-            matSuffix
-            (click)="addEmail($event)"
-          >
-            <mat-icon>add</mat-icon>
-          </button>
-        }
-  </mat-form-field>
+    <input
+      type="email"
+      matInput
+      [id]="'email' + $index"
+      [name]="'email' + $index"
+      [(ngModel)]="emails[$index]"
+      placeholder="Ej: example@gmail.com"
+    />
+    @if(emails.length!==1){
+    <button mat-icon-button matSuffix (click)="removeEmail($event, $index)">
+      <mat-icon>remove</mat-icon>
+    </button>
+    } @if(lastIndex===$index){
+    <button mat-icon-button matSuffix (click)="addEmail($event)">
+      <mat-icon>add</mat-icon>
+    </button>
     }
-</mat-dialog-content>
-<mat-dialog-actions align="end">
+  </mat-form-field>
+  }
+</ng-template>
+
+<ng-template #actionsTemplate>
   <button mat-flat-button (click)="send()">
-    <mat-icon  fontIcon="send"></mat-icon>
+    <mat-icon fontIcon="send"></mat-icon>
     Enviar
   </button>
   <button mat-raised-button (click)="closeDialog()">Cerrar</button>
-</mat-dialog-actions>
+</ng-template>

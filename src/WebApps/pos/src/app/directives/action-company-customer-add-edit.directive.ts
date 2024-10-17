@@ -2,7 +2,7 @@ import { DialogService } from '@/services/dialog.service';
 import {Directive, HostListener, inject, input, Input, output} from '@angular/core';
 import {
   CompanyCustomerAddEditModalComponent
-} from "@/pages/company-customer/components/company-customer-add-edit-modal/company-customer-add-edit-modal.component"; 
+} from "@company-customers/components/company-customer-add-edit-modal/company-customer-add-edit-modal.component";
 @Directive({
   selector: '[appActionCompanyCustomerAddEditModal]',
   standalone: true
@@ -22,7 +22,7 @@ export class ActionCompanyCustomerAddEditModalDirective {
       data,
       size: 'lg'
     })
-   
+
    dialogRef.subscribe(result=>{
      if(result && typeof result==='object'){
        this.onResult.emit(result)
