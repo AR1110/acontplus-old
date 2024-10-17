@@ -1,0 +1,9 @@
+<app-breadcrumb></app-breadcrumb>
+
+<div class="row">
+  @for (item of manuals; track $index) {
+    <div class="col">
+      <div [innerHTML]="item.embedCode"></div>
+    </div>
+  }
+</div>
