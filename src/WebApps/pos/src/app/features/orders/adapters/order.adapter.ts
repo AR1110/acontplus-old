@@ -109,12 +109,13 @@ export class OrderAdapter {
 
   //datos que recibe bd
   toApiParams(obj:any){
-    const {items, taxes, ...rest} = obj;
-    return {
-      orderDocument: rest,
-      taxes,
-      items
-    }
+    // const {items, taxes, ...rest} = obj;
+    // return {
+    //   orderDocument: rest,
+    //   taxes,
+    //   items
+    // }
+    return structuredClone(obj)
   }
 
 

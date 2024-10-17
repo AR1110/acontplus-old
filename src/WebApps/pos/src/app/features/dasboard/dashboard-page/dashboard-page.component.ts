@@ -8,6 +8,7 @@ import { MainStoreService } from '@/store/main-store.service';
 import { FormsModule } from '@angular/forms';
 import { SaleStatsComponent } from '../components/sale-stats/sale-stats.component';
 import { BestSellingProductStatsComponent } from '../components/best-selling-product-stats/best-selling-product-stats.component';
+import { MatSelectModule } from '@angular/material/select';
 
 
 function getAnios() {
@@ -26,6 +27,7 @@ function getAnios() {
   imports: [
     FormsModule,
     MatIconModule,
+    MatSelectModule,
     SaleStatsComponent,
     BestSellingProductStatsComponent
   ],

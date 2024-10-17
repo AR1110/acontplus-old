@@ -42,8 +42,46 @@ import {Pagination} from "@/models/pagination.model";
     MatTable,
     CustomMatSpinnerComponent
   ],
-  templateUrl: './custom-table-container.component.html',
-  styleUrl: './custom-table-container.component.scss'
+  template: `<div class="custom-main-container">
+  <app-custom-mat-spinner
+    [isLoadingResults]="isLoadingResults()"
+    [isRateLimitReached]="isRateLimitReached()"
+  />
+
+ <div class="custom-table-container mt-2" [style.height]="valueHeight()">
+   <ng-content></ng-content>
+ </div>
+
+
+ @if(pagination() ){
+   <mat-paginator #paginator
+                  (page)="handlePageEvent($event)"
+                  [length]="pagination()?.totalRecords"
+                  [pageSize]="pagination()?.pageSize"
+                  [pageSizeOptions]="pagination()?.pageSizeOptions??[]"
+                  [showFirstLastButtons]="true"
+                  [pageIndex]="pagination()?.pageIndex"
+                  aria-label="Select page">
+   </mat-paginator>
+ }
+
+</div>
+`,
+  styles: `.custom-main-container {
+    position: relative;
+  }
+
+  .custom-table-container {
+    position: relative;
+    min-height: 200px;
+    max-height: 400px;
+    overflow: auto;
+  }
+
+  table {
+    width: 100%;
+  }
+  `
 })
 export class CustomTableContainerComponent {
 

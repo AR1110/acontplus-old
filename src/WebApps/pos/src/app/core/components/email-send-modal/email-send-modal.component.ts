@@ -8,9 +8,10 @@ import { ToasterService } from '@/services/toaster.service'
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA , MatDialogRef  } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { CustomContainerDialogComponent } from '../custom-container-dialog/custom-container-dialog.component';
 
 type Props = {
   idDocumento: number,
@@ -46,9 +47,7 @@ function createDataParamDoc({idDocumento, codDoc}:Props) {
     MatButtonModule,
     MatIconModule,
     MatInputModule,
-    MatDialogContent,
-    MatDialogTitle,
-    MatDialogActions,
+    CustomContainerDialogComponent
   ],
   templateUrl: './email-send-modal.component.html',
   styleUrl: './email-send-modal.component.scss'

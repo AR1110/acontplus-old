@@ -11,12 +11,14 @@ import { pricingCalculateUtil } from '@/core/utils/princing-calculate.util';
 import { roundNumber } from '@/core/utils/round-number.util';
 import { OrderItem } from '@/features/orders/models/order.interface';
 import { CartInfoComponent } from '../cart-info/cart-info.component';
+import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 
 @Component({
   selector: 'app-cart-items',
   standalone: true,
   imports: [
-    CartComponent
+    OverlayscrollbarsModule,
+    CartComponent,
   ],
   templateUrl: './cart-items.component.html',
   styleUrl: './cart-items.component.scss'
