@@ -82,6 +82,8 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
         [DOC_TYPE.R_SRI]: createDataParamDocSri(),
         [DOC_TYPE.NC_SRI]: createDataParamDocSri(),
         [DOC_TYPE.NE]: createDataParamDoc(),
+        [DOC_TYPE.PR]: createDataParamDoc(),
+        ["09"]: createDataParamDoc(),
 
 
     };
@@ -108,12 +110,13 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
         [DOC_TYPE.NC_SRI]: createDataParamSenFile(CODE_REPORT.RNC),
         [DOC_TYPE.NE]: createDataParamSenFile(CODE_REPORT.RNE),
         [DOC_TYPE.PR]: createDataParamSenFile(CODE_REPORT.PR),
+        ["09"]: createDataParamSenFile(CODE_REPORT.PR),
         [DOC_TYPE.CI]: createDataParamSenFile(CODE_REPORT.RCINGR), 
     };
 
 
     getDataForm();
-    function getDataForm() {
+    function getDataForm() { 
 
         let params = dataParamGetDataForm[data.codDoc];
         if (!params) {
