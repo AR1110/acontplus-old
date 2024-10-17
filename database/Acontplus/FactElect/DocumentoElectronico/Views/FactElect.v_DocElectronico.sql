@@ -29,7 +29,7 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
           ,se.nombreComercial
           ,se.estado                                                                                      as estadoEstablecimiento
           ,pe.ptoEmi
-          ,cs.BusinessName razonSocial 
+          ,cs.BusinessName                                                                                as razonSocial 
           ,cs.IDCard rucReceptor
           ,es.codigo AS codEstado
           ,es.descripcion estado
