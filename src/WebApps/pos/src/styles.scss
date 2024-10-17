@@ -54,14 +54,32 @@ $danger-color: #d32f2f;
 $error-color: #f44336;
 $warning-color: #ffa000;
 $success-color: #4caf50;
+$pink-color: #d61672;
 
 $button-padding: 8px 16px;
 $button-border-radius: 4px;
 $button-font-size: 14px;
 $button-font-weight: 500;
 
+$compact-theme: mat.define-theme(
+  (
+    density: (
+      scale: -4,
+    ),
+  )
+);
+
+.mat-mdc-form-field-subscript-wrapper {
+  min-height: 10px;
+}
+.mat-mdc-form-field-subscript-wrapper.mat-mdc-form-field-subscript-dynamic-size {
+  height: auto;
+  transition: height 0.3s ease;
+}
+
 :root {
   @include mat.all-component-themes($theme);
+  @include mat.form-field-density($compact-theme);
 
   // Components themes
   @include layout-component.theme($theme);

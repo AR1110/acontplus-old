@@ -17,16 +17,15 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { M3InputChipComponent } from "@core/components/m3-input-chip/m3-input-chip.component";
 import { forkJoin, Observable } from 'rxjs';
+import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
 
 @Component({
   selector: 'app-company-customer-add-edit-modal',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    MatDialogModule,
     MatIconModule,
     MatButtonModule,
-    MatTabsModule,
     MatSelectModule,
     MatInputModule,
     MatFormFieldModule,
@@ -34,6 +33,7 @@ import { forkJoin, Observable } from 'rxjs';
     MatSlideToggleModule,
     MatTooltipModule,
     M3InputChipComponent,
+    CustomContainerDialogComponent
   ],
   templateUrl: './company-customer-add-edit-modal.component.html',
 })

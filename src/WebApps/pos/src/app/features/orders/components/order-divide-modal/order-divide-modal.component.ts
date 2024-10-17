@@ -433,7 +433,7 @@ export class OrderDivideModalComponent {
 
     const orderResult = this.orderAdapter.formatOrderForApi(cloneOrder);
 
-    const data = {
+    const objData = {
       ...orderResult,
       updateOrder: false,
       saveDoc: true,
@@ -443,7 +443,7 @@ export class OrderDivideModalComponent {
       itemsToPay: orderResult.items,
       taxes: orderResult.taxes
     }
-    let params = this.orderAdapter.toApiParams(data);
+    let params = this.orderAdapter.toApiParams(objData);
 
     this.orderSvc.fetchPutData(cloneOrder.orderId, params).subscribe(response => {
       if (response.code === "0") {

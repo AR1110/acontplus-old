@@ -1,18 +1,18 @@
-<mat-form-field class="m3-input-full-width" appearance="outline">
-  <mat-label>{{labelText()}}</mat-label>
+<mat-form-field class="m3-input-full-width">
+  <mat-label>{{ labelText() }}</mat-label>
   <mat-chip-grid #chipGrid aria-label="Enter fruits">
     @for (chip of chips(); track $index) {
-      <mat-chip-row
-        (removed)="remove(chip)"
-        [editable]="true"
-        (edited)="edit(chip, $event)"
-        [aria-description]="'press enter to edit ' + chip"
-      >
-        {{chip}}
-        <button matChipRemove [attr.aria-label]="'remove ' + chip">
-          <mat-icon>cancel</mat-icon>
-        </button>
-      </mat-chip-row>
+    <mat-chip-row
+      (removed)="remove(chip)"
+      [editable]="true"
+      (edited)="edit(chip, $event)"
+      [aria-description]="'press enter to edit ' + chip"
+    >
+      {{ chip }}
+      <button matChipRemove [attr.aria-label]="'remove ' + chip">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </mat-chip-row>
     }
     <input
       [placeholder]="placelholder()"
@@ -22,5 +22,7 @@
       (matChipInputTokenEnd)="add($event)"
     />
   </mat-chip-grid>
-    <mat-hint align="start"><strong>Ingrese {{labelText()}} y dale "Enter"</strong> </mat-hint>
+  <mat-hint align="start"
+    ><strong>Ingrese {{ labelText() }} y dale "Enter"</strong>
+  </mat-hint>
 </mat-form-field>

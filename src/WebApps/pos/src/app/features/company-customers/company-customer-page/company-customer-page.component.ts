@@ -51,7 +51,6 @@ export class CompanyCustomerPageComponent {
     this.companyCustomerSvc.getAll(params).subscribe({
       next: response=>{
         this.isLoadingResults = false;
-        console.log(response)
         this.data = response;
         this.pagination.totalRecords = this.data.length>0?this.data[0].totalRecords: 0
       },
@@ -60,7 +59,7 @@ export class CompanyCustomerPageComponent {
   }
 
   ngOnInit(){
-    this.getCompanyCustomers()
+     this.getCompanyCustomers()
   }
 
   refresh(){

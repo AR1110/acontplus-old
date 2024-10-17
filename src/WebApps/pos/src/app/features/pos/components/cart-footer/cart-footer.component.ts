@@ -205,11 +205,12 @@ export class CartFooterComponent {
     // this.dialogSvc.open(TableModalComponent, {
     //   size: 'md'
     // })
-    this.dialog.open(TableModalComponent, {
+    let modalRef = this.dialog.open(TableModalComponent, {
       width: '600px',
       height: '80vh',
       panelClass: 'full-screen-cdk-dialog',
     });
+
   }
 
   async save(codDoc: string) {
@@ -317,7 +318,10 @@ export class CartFooterComponent {
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: `${order.orderId > 0 ? 'Actualizar' : 'Guardar'}`,
-        cancelButtonText: 'No, cancelar!'
+        cancelButtonText: 'No, cancelar!',
+        didOpen(){
+
+        }
       })
 
       if (!isConfirmed) return
@@ -386,7 +390,6 @@ export class CartFooterComponent {
               // Se ha guardado la orden + el documento (Nota Entrega, Factura)
               if (Array.isArray(response.payload)) {
                 const dataSave = response.payload[0] as any;
-
                 // Si el pago es automático
                 if (dataSave.payAutomatic) {
                   const modalRef = this.dialogSvc.open(PaymentComponent, {
@@ -398,11 +401,11 @@ export class CartFooterComponent {
                   });
 
                   modalRef.subscribe(result => {
-                    if (result && typeof result === 'object') {
+                   // if (result && typeof result === 'object') {
                       if (dataSave.printerAutomatic) {
                         this.sharedSvc.printerDoc(dataSave, codDoc);
                       }
-                    }
+                   // }
                     this.clean();
                   });
                   return;

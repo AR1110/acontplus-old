@@ -22,7 +22,13 @@ import {MatInputModule} from "@angular/material/input";
     FormsModule,
     MatInputModule
   ],
-  templateUrl: './date-range-selection.component.html',
+  template:`<mat-form-field appearance="outline" class="m3-input-full-width" [floatLabel]="'always'">
+  <mat-label>Rango Fecha</mat-label>
+  <input matInput placeholder="Placeholder" id="date-range-selection-input" #dateRangeInput>
+</mat-form-field>
+
+
+`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DateRangeSelectionComponent {

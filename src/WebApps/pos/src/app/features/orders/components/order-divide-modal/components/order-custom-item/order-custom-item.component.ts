@@ -101,42 +101,42 @@ export class OrderCustomItemComponent {
         const price = pricingCalculateUtil.calculatePriceSale(totalIncluidoIva, porcentaje);
         const taxValue = totalIncluidoIva - price;
 
-        // this.orderItemCustom.set({
-        //   uuid: generateUuidv4(),
-        //   itemTypeCode: ITEM_TYPE_CODE.ITEM,
-        //   id: 0,
-        //   itemId: 0,
-        //   menuId: 0,
-        //   taxId,
-        //   taxPercentId: idTarifaImpuesto,
-        //   feeId: dataTarifa?.idTarifa || 0,
-        //   taxValue: roundNumber(taxValue, DECIMALS.CINCO),
-        //   quantity: 1,
-        //   cost: dataMedida.precioCosto,
-        //   price,
-        //   discount: this.matDialogData.orderData.order.discount,
-        //   total: totalIncluidoIva,
-        //   obs: "",
-        //   bodegaId: orderData.order.items[0]?.bodegaId || 0,
-        //   medidaId: dataMedida?.idMedida || 0,
-        //   medida: '',
+        this.orderItemCustom.set({
+          uuid: generateUuidv4(),
+          itemTypeCode: ITEM_TYPE_CODE.ITEM,
+          id: 0,
+          itemId: 0,
+          menuId: 0,
+          taxId,
+          taxPercentId: idTarifaImpuesto,
+          feeId: dataTarifa?.idTarifa || 0,
+          taxValue: roundNumber(taxValue, DECIMALS.CINCO),
+          quantity: 1,
+          cost: dataMedida.precioCosto,
+          price,
+          discount: this.matDialogData.orderData.order.discount,
+          total: totalIncluidoIva,
+          obs: "",
+          bodegaId: orderData.order.items[0]?.bodegaId || 0,
+          medidaId: dataMedida?.idMedida || 0,
+          medida: '',
 
-        //   codigoTarifaImpuesto: codigo,
-        //   taxPercent: porcentaje,
-        //   //Campos adicionales
-        //   productId: product.idArticulo,
-        //   code: product.codigoArticulo,
-        //   precioConIva: totalIncluidoIva,
-        //   precioTotalSinImpuesto: price,
-        //   descripcion: product.descripcion,
-        //   medidas,
-        //   pvps: [],
-        //   llevaInventario: false,
-        //   consolidacionesFecha: [],
-        //   costoFraccionado: dataMedida.precioCostoFraccionado,
-        //   conversion: dataMedida.conversion,
-        //   itemTypeId: 0
-        // })
+          codigoTarifaImpuesto: codigo,
+          taxPercent: porcentaje,
+          //Campos adicionales
+          productId: product.idArticulo,
+          code: product.codigoArticulo,
+          precioConIva: totalIncluidoIva,
+          precioTotalSinImpuesto: price,
+          descripcion: product.descripcion,
+          medidas,
+          pvps: [],
+          llevaInventario: false,
+          consolidacionesFecha: [],
+          costoFraccionado: dataMedida.precioCostoFraccionado,
+          conversion: dataMedida.conversion,
+          itemTypeId: 0
+        })
 
         this.descriptionCustom.set(product.descripcion)
 
