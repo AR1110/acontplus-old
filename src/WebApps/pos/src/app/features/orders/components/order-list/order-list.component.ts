@@ -317,5 +317,8 @@ export class OrderListComponent {
   }
 
 
+  getTotalCost() {
+    return this.dataSource().map(t => t.total).reduce((acc, value) => acc + value, 0);
+  }
 
 }

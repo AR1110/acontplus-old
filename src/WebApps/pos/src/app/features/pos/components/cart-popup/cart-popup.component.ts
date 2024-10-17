@@ -3,11 +3,13 @@ import { MatCardModule } from '@angular/material/card';
 import { CartHeaderComponent } from '../cart-header/cart-header.component';
 import { CartFooterComponent } from '../cart-footer/cart-footer.component';
 import { CartItemsComponent } from '../cart-items/cart-items.component';
+import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 
 @Component({
   selector: 'app-cart-popup',
   standalone: true,
   imports: [
+    OverlayscrollbarsModule,
     MatCardModule,
     CartHeaderComponent,
     CartItemsComponent,

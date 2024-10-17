@@ -27,7 +27,7 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     bottom: 56px;
     right: 0;
     background: rgba(0, 0, 0, 0.15);
-    z-index: 1;
+    z-index: 11;
     display: flex;
     align-items: center;
     justify-content: center;
