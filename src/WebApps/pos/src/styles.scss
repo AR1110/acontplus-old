@@ -366,3 +366,7 @@ body {
   border: 2px solid var(--foreground-color);
   box-shadow: rgb(var(--foreground-color-rgb) / 0.14) 0 0.875rem 3.125rem;
 }
+
+tr.mat-mdc-footer-row {
+  font-weight: bold;
+}
