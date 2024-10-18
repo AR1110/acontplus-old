@@ -4,9 +4,9 @@ import { CartPopupComponent } from "@/features/pos/components/cart-popup/cart-po
 
 import { DialogService } from "@/services/dialog.service";
 import { PosStoreService } from "@/store/pos-store.service";
-import { OverlayModule } from "@angular/cdk/overlay";
+import { CdkOverlayOrigin, FlexibleConnectedPositionStrategy, Overlay, OverlayModule } from "@angular/cdk/overlay";
 import { AsyncPipe } from "@angular/common";
-import { Component, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, ViewChild } from "@angular/core";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -19,7 +19,6 @@ import { Router, RouterLinkActive, RouterOutlet } from "@angular/router";
   selector: 'app-pos-layout',
   standalone: true,
   imports: [
-    OverlayModule,
     RouterOutlet,
     AsyncPipe,
     MatSidenavModule,
@@ -29,6 +28,7 @@ import { Router, RouterLinkActive, RouterOutlet } from "@angular/router";
     MatTooltipModule,
     MatButtonModule,
     MatIconModule,
+    OverlayModule,
     NavUserInfoToggleComponent,
     CartPopupComponent,
     ActionOrderDialogDirective
@@ -38,9 +38,25 @@ import { Router, RouterLinkActive, RouterOutlet } from "@angular/router";
 })
 export class PosLayoutComponent {
   private posStoreSvc = inject(PosStoreService);
-  private dialogSvc = inject(DialogService)
   private router = inject(Router)
   isOverlayOpen = signal(false);
+
+  // @ViewChild(CdkOverlayOrigin) trigger!: CdkOverlayOrigin;
+  positionStrategy!: FlexibleConnectedPositionStrategy;
+  private overlay = inject(Overlay)
+
+
+  // ngAfterViewChild(){
+  //   this.positionStrategy = this.overlay.position()
+  //   .flexibleConnectedTo(this.trigger.elementRef) // Usar el elemento de origen
+  //   .withPositions([
+  //     { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' },
+  //     { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+  //     { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top' },
+  //     { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom' }, // Modificado aquí
+  //     { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom' }, // Nueva posición
+  //   ]);
+  // }
 
   totalOrderItems = computed(() => {
     let quantity = this.posStoreSvc.state().orderItems?.reduce((acc, curr) => {

@@ -105,10 +105,10 @@ export class CartFooterComponent {
         return totalIva > 0 ? `
         <div class="d-flex justify-content-between">
           <div class="flex-fill">
-            <small class="text-muted">${tarifa.descripcion}</small>
+            <small  >${tarifa.descripcion}</small>
           </div>
           <div>
-            <small class="text-muted">$${roundNumber(totalIva, 2)}</small>
+            <small  " >$${roundNumber(totalIva, 2)}</small>
           </div>
         </div>` : '';
       })
@@ -119,30 +119,34 @@ export class CartFooterComponent {
     const htmlSubtotalImpuesto = `
     <div class="d-flex justify-content-between">
       <div class="flex-fill">
-        <small class="text-muted">Subtotal:</small>
+        <small  >Subtotal:</small>
       </div>
       <div>
-        <small class="text-muted">$${roundNumber(totalPrecioTotalSinImpuesto)}</small>
+        <small  >$${roundNumber(totalPrecioTotalSinImpuesto)}</small>
       </div>
     </div>`;
 
     const htmlDiscount = `
     <div class="d-flex justify-content-between">
       <div class="flex-fill">
-        <small class="text-danger">Desc:</small>
+        <span class="text-danger">Desc:</span>
       </div>
       <div>
-        <small class="text-danger">$${roundNumber(totalDescuento)}</small>
+        <span class="text-danger">$${roundNumber(totalDescuento)}</span>
       </div>
     </div>`;
 
     const htmlTotal = `
     <div class="d-flex justify-content-between">
       <div class="flex-fill">
-        <span class="fw-semibold">Total:</span>
+        <span class="importe-total">
+        <b>Total: </b>
+        </span>
       </div>
-      <div>
-        <span class="fw-semibold">$${roundNumber(importeTotal)}</span>
+      <div class="importe-total">
+        <span   >
+        <b>$${roundNumber(importeTotal)}</b>
+        </span>
       </div>
     </div>`;
 
