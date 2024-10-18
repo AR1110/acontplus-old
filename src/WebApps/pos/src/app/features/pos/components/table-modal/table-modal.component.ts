@@ -9,7 +9,8 @@ import { PosStoreService } from '@/store/pos-store.service';
 import { DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button'; 
+import { MatButtonModule } from '@angular/material/button';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { ToastrService } from 'ngx-toastr';
 
@@ -20,6 +21,7 @@ import { ToastrService } from 'ngx-toastr';
     CommonModule,
     MatButtonModule,
     MatIconModule,
+    MatExpansionModule,
     CustomContainerDialogComponent,
     ActionOrderDialogDirective
   ],
@@ -29,13 +31,15 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class TableModalComponent {
 
+  readonly panelOpenState = signal(false);
+
   constructor(public dialogRef: DialogRef<TableModalComponent>) { }
 
   close(): void {
     this.dialogRef.close();
   }
 
- 
+
 
  // readonly dialogRef = inject(MatDialogRef<TableModalComponent>);
   private configSvc = inject(ConfigService)
@@ -49,14 +53,20 @@ export class TableModalComponent {
   roomTables = signal<any>([]);
   tableId = signal(0)
   private floorColors: { [key: string]: string } = {};
-  private colors: string[] = ['#FFB6C1', '#FFD700', '#87CEFA', '#98FB98'];
+  private lightColors: string[] = ['#FFB6C1', '#FFD700', '#87CEFA', '#98FB98'];
+  private darkColors: string[] = ['#FF69B4', '#FFA500', '#00BFFF', '#32CD32'];
 
-  // Obtener o asignar un color para un floorName
   getColorForFloor(floorName: string): string {
     if (!this.floorColors[floorName]) {
-      this.floorColors[floorName] = this.colors[Object.keys(this.floorColors).length % this.colors.length];
+      const currentThemeColors = this.getCurrentThemeColors();
+      this.floorColors[floorName] = currentThemeColors[Object.keys(this.floorColors).length % currentThemeColors.length];
     }
     return this.floorColors[floorName];
+  }
+
+  private getCurrentThemeColors(): string[] {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return isDarkMode ? this.darkColors : this.lightColors;
   }
 
   private getDataForm() {
@@ -64,7 +74,7 @@ export class TableModalComponent {
       idEstablecimiento: this.mainStore.state().dataEstab.idEstablecimiento,
       codEstab: this.mainStore.state().dataEstab.codEstab
     }
-    this.configSvc.getDataForm(params).subscribe(response => { 
+    this.configSvc.getDataForm(params).subscribe(response => {
       this.roomTables.set(response.roomTables.map(item=>{
         return {
           ...item,

@@ -6,12 +6,16 @@ import { Dialog } from '@angular/cdk/dialog';
 import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from "@angular/forms";
 import { TableModalComponent } from '../table-modal/table-modal.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-cart-header',
   standalone: true,
   imports: [
     FormsModule,
+    MatSelectModule,
+    MatButtonModule,
     CompanyCustomerSearchComponent,
   ],
   templateUrl: './cart-header.component.html',
@@ -28,16 +32,12 @@ export class CartHeaderComponent {
   order = computed(() => this.posStoreSvc.state().order)
   userId = computed(() => this.posStoreSvc.state().order?.userId)
 
-  onClickTable() {
-    // this.dialogSvc.open(TableModalComponent, {
-    //   size: 'md',
-    //   isFullScreen: true
-    // })
+  onClickTable( ) {
 
     const dialogRef = this.dialog.open(TableModalComponent, {
       width: '100vw',
       height: '100vh',
-      panelClass: 'full-screen-cdk-dialog',
+   //   panelClass: 'full-screen-cdk-dialog',
     });
   }
 
@@ -52,8 +52,8 @@ export class CartHeaderComponent {
   }
 
 
-  onChangeVendedor(event: Event): void {
-    const userId = Number((event.target as HTMLSelectElement).value);
+  onChangeVendedor(event: any): void {
+    const userId = event.value;
     this.updateOrder({ userId });
   }
 

@@ -67,15 +67,21 @@ import {Pagination} from "@/models/pagination.model";
 
 </div>
 `,
-  styles: `.custom-main-container {
+  styles: `
+  .custom-main-container {
     position: relative;
+    display: flex;
+  flex-direction: column;
+  //height: 100vh; /* Ocupa el 100% de la altura del viewport */
   }
 
   .custom-table-container {
     position: relative;
-    min-height: 200px;
-    max-height: 400px;
-    overflow: auto;
+  flex-grow: 1; /* Se expande para llenar el espacio disponible */
+  min-height: 200px; /* Altura mínima que quieres asegurar */
+  max-height: 400px; /* Altura mínima que quieres asegurar */
+ // height: calc(77dvh - 200px); /* Altura dinámica según el tamaño de la pantalla */
+  overflow: auto; /* Añade scroll si el contenido supera el contenedor */
   }
 
   table {

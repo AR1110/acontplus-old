@@ -17,6 +17,7 @@ import { ToUpperCaseDirective } from '@/directives/to-upper-case.directive';
 import { generateUuidv4 } from '@/core/utils/generate-uuidv4';
 import { TableModalComponent } from '../table-modal/table-modal.component';
 import { Dialog } from '@angular/cdk/dialog';
+import { MatInputModule } from '@angular/material/input';
 
 const messageSave: { [key: string]: string } = {
   [DOC_TYPE.FV]: `
@@ -34,6 +35,7 @@ const messageSave: { [key: string]: string } = {
   standalone: true,
   imports: [
     FormsModule,
+    MatInputModule,
     ToUpperCaseDirective
   ],
   templateUrl: './cart-footer.component.html',
