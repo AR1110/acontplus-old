@@ -33,6 +33,7 @@ import Swal from 'sweetalert2';
 import { OrderDivideModalComponent } from '../order-divide-modal/order-divide-modal.component';
 import { OrderDocListComponent } from '../order-doc-list/order-doc-list.component';
 import { OrderRead } from '@orders/models/order.interface';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-order-list',
@@ -49,6 +50,7 @@ import { OrderRead } from '@orders/models/order.interface';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatCardModule,
     CustomContainerDialogComponent,
     CustomTableContainerComponent,
     ActionWhatsappSendDirective,

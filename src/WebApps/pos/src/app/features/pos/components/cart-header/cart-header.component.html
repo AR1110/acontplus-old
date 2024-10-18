@@ -1,24 +1,19 @@
-<div class="d-flex flex-row gap-1 mb-2">
-  <div class="form-group w-50">
-    <select
-      class="form-select"
+<div class="d-flex flex-row gap-1">
+  <mat-form-field class="w-50">
+    <mat-label>Usuario</mat-label>
+    <mat-select
       [ngModel]="userId()"
-      (change)="onChangeVendedor($event)"
+      (selectionChange)="onChangeVendedor($event)"
     >
       @for(item of vendedores();track $index){
-      <option [value]="item.idUsuario">{{ item.nombreUsuario }}</option>
+      <mat-option [value]="item.idUsuario">{{ item.nombreUsuario }}</mat-option>
       }
-    </select>
-  </div>
-  <div class="form-group w-50">
-    <!-- <label>Mesa</label> -->
-    <input
-      type="button"
-      [value]="tableDesc()"
-      class="form-select"
-      (click)="onClickTable()"
-    />
-  </div>
+    </mat-select>
+  </mat-form-field>
+
+  <button mat-stroked-button class="w-50" (click)="onClickTable()">
+    {{ tableDesc() }}
+  </button>
 </div>
 
 <app-company-customer-search
