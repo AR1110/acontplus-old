@@ -1,4 +1,4 @@
-DECLARE @uuid UNIQUEIDENTIFIER = '9D57F4EB-C708-4171-8018-042628EC0483'
+DECLARE @uuid UNIQUEIDENTIFIER = '5D90294F-3613-4339-9A98-A3CEAE313F0F'
 
 DELETE pea FROM Acontplus.Config.PtoEmi_Asig pea WITH (ROWLOCK)
 INNER JOIN  Acontplus.dbo.PuntoEmision pe WITH (NOLOCK) ON pea.idPuntoEmision = pe.idPuntoEmision
@@ -95,6 +95,9 @@ inner join Acontplus.dbo.Entidad e on c.idEntidad = e.identidad WHERE e.Uuid = @
 
 DELETE t FROM Acontplus.dbo.turno t inner join Acontplus.dbo.Entidad e on t.idEntidad = e.identidad WHERE e.Uuid = @uuid
  
+ DELETE t FROM Acontplus.dbo.SubFamilia t inner join Acontplus.dbo.Entidad e on t.idEntidad = e.identidad WHERE e.Uuid = @uuid
+ 
+
 DELETE FROM Acontplus.dbo.Entidad WHERE Uuid = @uuid
 
 DELETE u FROM Acontplus.dbo.Usuario u WITH (ROWLOCK)
