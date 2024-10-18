@@ -9,6 +9,7 @@ import { inject, Injectable } from "@angular/core";
 type PosStoreState = {
   isLoading: boolean
   isSelectedItem: boolean
+  idTarifa: 0,
   order: Order
   orderItems: OrderItem[]
   vendedores: any[];
@@ -18,6 +19,7 @@ type PosStoreState = {
   isRefreshPromotion: boolean
   promotionsMenu: any[]
   codeSubCategory: string
+  tarifas: any[]
 }
 export const orderInitialState = () => {
 
@@ -55,6 +57,7 @@ export const posStoreStateInitial = (): PosStoreState => {
   return {
     isLoading: false,
     isSelectedItem: false,
+    idTarifa: 0,
     order: structuredClone(orderInitialState()),
     orderItems: [],
     vendedores: [],
@@ -101,7 +104,8 @@ export const posStoreStateInitial = (): PosStoreState => {
     },
     isRefreshPromotion: false,
     promotionsMenu: [],
-    codeSubCategory: ''
+    codeSubCategory: '',
+    tarifas: []
   }
 }
 

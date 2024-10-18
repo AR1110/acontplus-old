@@ -1,18 +1,34 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav-content>
     <mat-toolbar color="primary">
-      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="navigateDashboard()">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="navigateDashboard()"
+      >
         <mat-icon aria-label="Side nav toggle icon">arrow_back</mat-icon>
       </button>
       <span class="navbar-spacer"></span>
       <div class="d-flex gap-1">
         <app-nav-user-info-toggle [isOfPos]="true" />
-        <button mat-icon-button aria-label="pedidos" appActionOrderDialog   matTooltip="Pedidos Recientes">
+        <button
+          mat-icon-button
+          aria-label="pedidos"
+          appActionOrderDialog
+          matTooltip="Pedidos Recientes"
+        >
           <mat-icon>av_timer</mat-icon>
         </button>
 
-        <button [matBadge]="totalOrderItems()" mat-icon-button aria-label="total" cdkOverlayOrigin
-          #trigger="cdkOverlayOrigin" (click)="isOverlayOpen.set(!isOverlayOpen())">
+        <button
+          [matBadge]="totalOrderItems()"
+          mat-icon-button
+          aria-label="total"
+          cdkOverlayOrigin
+          #trigger="cdkOverlayOrigin"
+          (click)="isOverlayOpen.set(!isOverlayOpen())"
+        >
           <mat-icon>add_shopping_cart</mat-icon>
         </button>
       </div>
@@ -25,11 +41,14 @@
   </mat-sidenav-content>
 </mat-sidenav-container>
 
-
-<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="isOverlayOpen()"
-  hasBackdrop="true">
-  <div class="overlay-content">
-
-    <app-cart-popup />
-  </div>
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOverlayOpen()"
+  hasBackdrop="true"
+  cdkConnectedOverlay
+  cdkConnectedOverlayPush="true"
+  [cdkConnectedOverlayPositionStrategy]="positionStrategy"
+>
+  <app-cart-popup />
 </ng-template>
