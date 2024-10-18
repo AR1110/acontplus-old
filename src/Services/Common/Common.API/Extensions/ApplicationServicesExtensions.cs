@@ -23,7 +23,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IAdoSqlServer, AdoSqlServer>();
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<INotificacionService, NotificacionService>();
-        services.AddScoped<ICustomLogger, CustomLogger>();
+        services.AddScoped<IUserManualService, UserManualService>();
         services.AddScoped<IUserReleaseReadService, UserReleaseReadService>();
         return services;
     }

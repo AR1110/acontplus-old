@@ -107,6 +107,15 @@ export const routes: Routes = [
           breadcrumb: 'Vet',
         },
       },
+      {
+        path: 'common',
+        title: 'App - Common',
+        loadChildren: () =>
+          import('@modules/common/common.routes').then((r) => r.routes),
+        data: {
+          breadcrumb: 'Common',
+        },
+      },
     ],
   },
 ];

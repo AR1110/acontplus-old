@@ -4,7 +4,11 @@
 @using System.Text.Json
 
 @{
-    var youtubeUrl = "https://www.youtube.com/@acontplusweb/playlists";
+    var facebook = Configuration["SocialNetworks:Facebook"];
+    var googlePlay = Configuration["SocialNetworks:GooglePlay"];
+    var businessUrl = Configuration["SocialNetworks:BusinessUrl"];
+    var whatsapp = Configuration["SocialNetworks:Whatsapp"];
+    var youtube = Configuration["SocialNetworks:Youtube"];
 }
 <!DOCTYPE html>
 <html lang="es">
@@ -166,15 +170,15 @@
                                     <icon class="ti-user"></icon> Mi perfil
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a href="https://api.whatsapp.com/send?phone=593986669930" target="_blank"
+                                <a href="@whatsapp" target="_blank"
                                     class="dropdown-item text-success" data-bs-toggle="tooltip"
                                     title="Si requiere ayuda personalizada comuniquese al siguiente número!"> <i
                                         aria-hidden="true" class="fab fa-whatsapp"></i> Soporte </a>
 
                                 <div class="dropdown-divider"></div>
-                                <a href="@youtubeUrl" target="_blank" class="dropdown-item text-danger"
-                                    data-bs-toggle="tooltip" title="Ver tutoriales en Youtube">
-                                    <i aria-hidden="true" class="fab fa-youtube"></i> Tutoriales
+                                <a href="/Common/UserManual/Index" class="dropdown-item text-danger"
+                                    data-bs-toggle="tooltip" title="Ver tutoriales">
+                                    <i aria-hidden="true" class="fa fa-clipboard-list"></i> Tutoriales
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <a href="javascript:void(0)" ng-click="logout()" class="dropdown-item">
@@ -273,23 +277,23 @@
                 <div class="col-12 col-sm-4 col-md-4 col-lg-3 col-xl-3">
                     <p class="mb-0">
                         Copyright &copy; 2021 - <a class="text-decoration-none fs-4 me-4 text-danger"
-                            href="https://acontplus.com.ec" target="_blank">Acontplus</a>
+                            href="@businessUrl" target="_blank">Acontplus</a>
                     </p>
                 </div>
                 <div class="col-12 col-sm-8 col-md-8 col-lg-9 col-xl-9">
                     <div class="social float-right">
-                        <a href="https://api.whatsapp.com/send?phone=593986669930" target="_blank"
+                        <a href="@whatsapp" target="_blank"
                             class="btn btn-success" data-bs-toggle="tooltip"
                             title="Si requiere ayuda personalizada comuniquese al siguiente número!"> <i
                                 aria-hidden="true" class="fab fa-whatsapp"></i> </a>
-                        <a href="https://www.facebook.com/acontplus.ec" target="_blank" class="btn btn-facebook"
+                        <a href="@facebook" target="_blank" class="btn btn-facebook"
                             data-bs-toggle="tooltip" title="Visita nuestra página en Facebook"> <i aria-hidden="true"
                                 class="fab fa-facebook-f"></i> </a>
-                        <a href="@youtubeUrl" target="_blank" class="btn btn-youtube" data-bs-toggle="tooltip"
+                        <a href="@youtube" target="_blank" class="btn btn-youtube" data-bs-toggle="tooltip"
                             title="Visita nuestro canal en Youtube">
                             <i aria-hidden="true" class="fab fa-youtube"></i>
                         </a>
-                        <a href="https://play.google.com/store/apps/details?id=com.acontplus_facturacion&hl=es_EC"
+                        <a href="@googlePlay"
                             target="_blank" class="btn btn-playstore" data-bs-toggle="tooltip"
                             title="Descargar desde Google Play">
                             <i aria-hidden="true" class="fab fa-google-play"></i>
