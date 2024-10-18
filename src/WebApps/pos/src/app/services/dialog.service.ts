@@ -19,7 +19,7 @@ export class DialogService {
   open(component: any, options: DialogOptions): Observable<any> {
 
     const dialogConfig = new MatDialogConfig();
-   
+
     if(options.isFullScreen){
       dialogConfig.width = '100vw';
       dialogConfig.height = '100vh';
@@ -32,7 +32,7 @@ export class DialogService {
       dialogConfig.height = 'auto'
     }
 
-    dialogConfig.data = options.data; 
+    dialogConfig.data = options.data;
     dialogConfig.hasBackdrop = true;
     dialogConfig.autoFocus =false
     dialogConfig.scrollStrategy = this.overlay.scrollStrategies.reposition()

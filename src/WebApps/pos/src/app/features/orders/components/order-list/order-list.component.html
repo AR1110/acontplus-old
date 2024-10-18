@@ -150,7 +150,6 @@
           <button
             mat-icon-button
             (click)="openOrderDivideDialog(row)"
-            class="text-success"
             matTooltip="Completar Venta"
           >
             <img
@@ -275,17 +274,17 @@
         [attr.colspan]="columnsToDisplayWithExpand.length"
       >
         <div
-          class="element-detail my-2"
+          class="element-detail"
           [@detailExpand]="
             element == expandedElement ? 'expanded' : 'collapsed'
           "
         >
           @if(expandedElement === element){
-          <div class="card border-info">
-            <div class="card-body">
+          <mat-card class="card-border-doc border-0 my-3 mx-3">
+            <mat-card-content>
               <app-order-doc-list [data]="element" />
-            </div>
-          </div>
+            </mat-card-content>
+          </mat-card>
 
           }
         </div>
