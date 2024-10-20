@@ -64,6 +64,7 @@ export class ConfigService {
           configVenta: {} as ConfigVenta,
           decimal: {} as DecimalVenta,
           vendedores: [] as any[],
+          tarifas: []
         }
         if (response.code === "1") {
           let {
@@ -75,6 +76,7 @@ export class ConfigService {
             customer,
             config,
             vendedores,
+            tarifas
           } = JSON.parse(response.payload as string);
 
           const roomTables = groupRoomTableUtil(tables);
@@ -98,6 +100,7 @@ export class ConfigService {
           resultData.configVenta = configVenta;
           resultData.decimal = decimal;
           resultData.vendedores = vendedores;
+          resultData.tarifas = tarifas;
         }
         return resultData;
       })

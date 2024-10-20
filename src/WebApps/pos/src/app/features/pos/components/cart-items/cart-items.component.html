@@ -1,16 +1,11 @@
-<div
-  style="height: calc(54dvh - 64px - 0px); overflow: auto"
-  overlay-scrollbars
->
-  @for(item of orderItems();track $index){
-  <app-cart
-    [orderItem]="item"
-    (onClickCartInfo)="onClickCartInfo($event)"
-    (onClickRemove)="onClickRemove($event)"
-    (onClickDecreaseQty)="onClickDecreaseQty($event)"
-    (onClickIncreaseQty)="onClickIncreaseQty($event)"
-    (changeInputQty)="changeInputQty($event)"
-    [isSelectedItem]="isSelectedItem()"
-  />
-  }
-</div>
+@for(item of orderItems();track $index){
+<app-cart
+  [orderItem]="item"
+  (onClickCartInfo)="onClickCartInfo($event)"
+  (onClickRemove)="onClickRemove($event)"
+  (onClickDecreaseQty)="onClickDecreaseQty($event)"
+  (onClickIncreaseQty)="onClickIncreaseQty($event)"
+  (changeInputQty)="changeInputQty($event)"
+  [isSelectedItem]="isSelectedItem()"
+/>
+}

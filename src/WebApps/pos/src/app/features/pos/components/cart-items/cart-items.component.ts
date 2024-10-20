@@ -26,7 +26,6 @@ import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 export class CartItemsComponent {
   private dialogSvc = inject(DialogService)
   private posStoreSvc = inject(PosStoreService);
-  private mainStore = inject(MainStoreService)
   private productSvc = inject(ProductService)
 
   orderItems = computed(() => this.posStoreSvc.state().orderItems);

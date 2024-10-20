@@ -12,6 +12,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
+import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -22,6 +23,7 @@ import { ToastrService } from 'ngx-toastr';
     MatButtonModule,
     MatIconModule,
     MatExpansionModule,
+    OverlayscrollbarsModule,
     CustomContainerDialogComponent,
     ActionOrderDialogDirective
   ],

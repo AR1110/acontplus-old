@@ -95,7 +95,6 @@ successResponse = (response:object)=>{
 }
 
   getDataForm(){
-    console.log(this.data)
     let params = this.dataParamGetDataForm[this.data.codDoc];
       if (!params) {
           console.error(`No se encontraron parámetros para el tipo de documento: ${this.data.codDoc}`);
