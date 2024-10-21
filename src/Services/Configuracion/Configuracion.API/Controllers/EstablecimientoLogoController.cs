@@ -59,6 +59,7 @@ public class EstablecimientoLogoController : BaseApiController
     {
         try
         {
+            if (file == null) { return BadRequest("File not found"); }
             var logo = new FileModel();
             logo.CreateBytesCompressed(file);
             var estabLogo = _mapper.Map<EstablecimientoLogo>(logo);
