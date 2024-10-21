@@ -23,17 +23,17 @@
         </div>
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-6">
           <div class="d-flex flex-row gap-1">
-            <input
-              type="text"
-              [ngModel]="dataItemSearch().textSearch"
-              (keydown.enter)="onEnterInputSearch($event)"
-              (blur)="onBlurTextSearch($event)"
-              matTooltip="Presiona 'Enter' para buscar o haz clic en el botón recargar"
-              [disabled]="loading()"
-              class="form-control"
-              placeholder="..."
-              aria-label="Search Items "
-            />
+            <mat-form-field class="w-100">
+              <input
+                matInput
+                [ngModel]="dataItemSearch().textSearch"
+                (keydown.enter)="onEnterInputSearch($event)"
+                (blur)="onBlurTextSearch($event)"
+                matTooltip="Presiona 'Enter' para buscar o haz clic en el botón recargar"
+                [disabled]="loading()"
+                placeholder="..."
+              />
+            </mat-form-field>
             <button
               mat-icon-button
               [disabled]="loading()"

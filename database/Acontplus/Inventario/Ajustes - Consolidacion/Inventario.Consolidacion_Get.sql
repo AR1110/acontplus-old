@@ -271,16 +271,37 @@ BEGIN
 
             IF @opcion = 6
                 BEGIN
-                    SET @sql = @sql + 'AND a.importacion = 1 
-                                       AND a.stock > 0
-                                       AND a.idArticulo NOT IN (
-                                                                SELECT cd.idArticulo
-                                                                FROM dbo.ConsolidacionInventario              ci WITH (NOLOCK)
-                                                                INNER JOIN dbo.EstadoPago                     ep WITH (NOLOCK) ON ep.idEstadoPago              = ci.idEstadoDocumento
-                                                                INNER JOIN dbo.ConsolidacionInventarioDetalle cd WITH (NOLOCK) ON cd.idConsolidacionInventario = ci.idConsolidacionInventario
-                                                                WHERE ci.idEntidad = @idEntidad
-                                                                  AND ep.codigo = ''AC''
-                                                               ) '
+
+                     -- Crear tabla temporal para almacenar artículos sin consolidar
+					CREATE TABLE #ArticulosSinConsolidar (idArticulo INT);
+
+					-- Insertar artículos que no están consolidados en la tabla temporal
+					INSERT INTO #ArticulosSinConsolidar (idArticulo)
+					SELECT cd.idArticulo
+					FROM dbo.ConsolidacionInventario ci WITH (NOLOCK)
+					INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = ci.idEstadoDocumento
+					INNER JOIN dbo.ConsolidacionInventarioDetalle cd WITH (NOLOCK) ON cd.idConsolidacionInventario = ci.idConsolidacionInventario
+					WHERE ci.idEntidad = @idEntidad 
+					AND ep.codigo = 'AC';
+
+					-- Agregar condiciones para filtrar artículos que no están en la tabla temporal
+					SET @sql += ' AND a.importacion = 1 
+									AND a.stock > 0
+									AND NOT EXISTS (
+										SELECT 1 FROM #ArticulosSinConsolidar tc WHERE tc.idArticulo = a.idArticulo
+									) ';
+
+               --     SET @sql = @sql + 'AND a.importacion = 1 
+               --                        AND a.stock > 0
+               --                         AND NOT EXISTS (
+													  -- SELECT 1 
+													  -- FROM   dbo.ConsolidacionInventario ci WITH (NOLOCK)
+													  -- INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = ci.idEstadoDocumento
+													  -- INNER JOIN dbo.ConsolidacionInventarioDetalle cd WITH (NOLOCK) ON cd.idConsolidacionInventario = ci.idConsolidacionInventario
+													  -- WHERE  ci.idEntidad = @idEntidad 
+													  -- AND    ep.codigo = ''AC'' 
+													  -- AND    cd.idArticulo = a.idArticulo
+												   --) '
                 END 
 
 		    SET @sql = @sql + 'ORDER BY a.idArticulo ASC '
@@ -291,6 +312,9 @@ BEGIN
 							       ,@idSubFamilia = @idSubFamilia
 							       ,@rucProveedor = @rucProveedor
 							       ,@nroDocumento = @nroDocumento
+
+            -- Limpiar la tabla temporal si ya no es necesaria
+				DROP TABLE IF EXISTS #ArticulosSinConsolidar;
             RETURN 
 		END
     

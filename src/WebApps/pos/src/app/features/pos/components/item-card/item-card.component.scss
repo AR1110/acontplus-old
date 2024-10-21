@@ -9,11 +9,6 @@
 
   //  background-image: linear-gradient(315deg, #f9ea8f 0%, #aff1da 74%);
 }
-.disabled-card {
-  opacity: 0.5;
-  pointer-events: none;
-  background-color: #f0f0f0;
-}
 
 .card:hover {
   box-shadow: 0 3px 10px rgb(0 0 0 / 0.3);
@@ -70,7 +65,8 @@ mat-card-header {
   bottom: 100%; /* Posiciona el contenido justo encima del texto */
   left: 0;
   right: 0;
-  background-color: white;
+  background-color: var(--card-bg-color);
+  color: var(--primary-text-color);
   border: 1px solid #ddd;
   z-index: 1000;
   overflow-y: auto;
@@ -94,7 +90,7 @@ mat-card-header {
 }
 
 .product-image {
-  width: 100%; /* Make image responsive to the container */
+  //width: 100%;
   max-width: 170px; /* Limit the maximum size of the image */
   height: 170px; /* Maintain aspect ratio */
   border-radius: 50%; /* Make the image circular */
@@ -123,6 +119,7 @@ mat-card-header {
   text-overflow: ellipsis;
   overflow: hidden;
   font-weight: bold;
+  color: var(--primary-text-color);
 }
 
 .price {
@@ -145,9 +142,13 @@ mat-card-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--overlay-background);
+  pointer-events: none;
+  opacity: var(--overlay-opacity);
+  pointer-events: none;
+  cursor: not-allowed;
+  //filter: grayscale(100%);
   z-index: 10;
-  pointer-events: none; /* Evita que se pueda interactuar con elementos bajo el loader */
 }
 
 .small-spinner {

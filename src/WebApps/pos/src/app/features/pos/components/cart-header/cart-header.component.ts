@@ -8,6 +8,7 @@ import { FormsModule } from "@angular/forms";
 import { TableModalComponent } from '../table-modal/table-modal.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cart-header',
@@ -28,9 +29,11 @@ export class CartHeaderComponent {
 
   vendedores = computed(() => this.posStoreSvc.state().vendedores);
   tableDesc = computed(() => this.posStoreSvc.state().order.tableDesc ?? 'Seleccionar Mesa...')
+  tarifas = computed(() => this.posStoreSvc.state().tarifas )
 
   order = computed(() => this.posStoreSvc.state().order)
   userId = computed(() => this.posStoreSvc.state().order?.userId)
+  idTarifa = computed(() => this.posStoreSvc.state().idTarifa)
 
   onClickTable( ) {
 
@@ -57,6 +60,16 @@ export class CartHeaderComponent {
     this.updateOrder({ userId });
   }
 
+  onChangeTarifa(event:any){
+    Swal.fire({
+      icon: 'warning',
+      html:  	`¿Estás seguro de aplicar esta tarifa en todo los items de detalle?`,
+      showCancelButton: true,
+      cancelButtonText: 'No',
+      confirmButtonText: 'Si'
+    })
+  }
+
   onSelectCustomerCompany(event: any): void {
     const {
       razonSocialComprador: customerName, idCliente: customerCompanyId,
@@ -64,6 +77,8 @@ export class CartHeaderComponent {
     } = event;
     this.updateOrder({ customerName, customerCompanyId, tipoIdentificacionSri });
   }
+
+
 
 
 }
