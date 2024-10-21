@@ -79,7 +79,6 @@ export class ConfigService {
             vendedores,
             tarifas
           } = JSON.parse(response.payload as string);
-          console.log(JSON.parse(response.payload as string))
 
           const roomTables = groupRoomTableUtil(tables);
           const taxes = indexById<Tax>(impuesto, d => d.codigo);

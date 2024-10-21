@@ -232,10 +232,8 @@ export class PosPageComponent {
     if(this.posStoreSvc.state().isLoading) return
 
     this.setLoading(true)
-    console.log('data formi init')
     this.getDataFormInit()?.subscribe({
       next: response => {
-        console.log(response)
         this.setLoading(false)
         const [dataForm, dataItem] = response;
 
