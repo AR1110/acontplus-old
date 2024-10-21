@@ -1,26 +1,25 @@
 
 import { Component, computed,   inject, signal,   } from '@angular/core';
-import {   MatTabsModule } from "@angular/material/tabs";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { AsyncPipe, CommonModule } from "@angular/common";
-import { ConfigService } from '@/services/config.service';
-import { forkJoin } from 'rxjs';
-import { ItemService } from '@/services/item.service';
-import { Pagination } from "@/models/pagination.model";
-import { ItemRead } from "@/models/item.model";
+import { ConfigService } from '@/shared/services/config.service';
+import { forkJoin, Observable } from 'rxjs';
+import { ItemService } from '@/features/pos/services/item.service';
+import { Pagination } from "@/shared/models/pagination.model";
+import { ItemRead } from "@/features/pos/models/item.model";
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { SubCategory } from "@/models/inventory/subcategory.model";
+import { SubCategory } from "@/shared/models/inventory/subcategory.model";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from "@angular/material/card";
-import { PosStoreService, posStoreStateInitial } from "@/store/pos-store.service";
+import { PosStoreService, posStoreStateInitial } from "@/features/pos/store/pos-store.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MainStoreService } from "@/store/main-store.service";
-import { SUB_CATEGORY_CODE } from '@/enums/main.enum';
+import { SUB_CATEGORY_CODE } from '@/shared/enums/main.enum';
 import { Dialog } from '@angular/cdk/dialog';
 import { FormsModule } from '@angular/forms';
-import { isValidField } from '@/core/utils/utils';
+import { isValidField } from '@/shared/utils/utils';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 import { Order } from '@/features/orders/models/order.interface';
@@ -129,6 +128,7 @@ export class PosPageComponent {
 
   }
 
+  private dataForm$!: Observable<any>;
   getDataFormInit() {
     if (!this.codEstab() || !(this.establecimientoId() > 0)) {
       console.log('no se encontró datos del establecimiento')
@@ -142,6 +142,7 @@ export class PosPageComponent {
       pageIndex: this.dataPagination().pageIndex + 1,
       pageSize: this.dataPagination().pageSize
     }
+
     return forkJoin([
       this.configSvc.getDataForm(params),
       this.itemSvc.getAll(paramsItem)
@@ -221,33 +222,41 @@ export class PosPageComponent {
   ngOnInit() {
     let orderId = this.posStoreSvc.state().order?.orderId || 0;
     if (!(orderId > 0)) {
-      const dialogRef = this.dialog.open(TableModalComponent, {
+        this.dialog.open(TableModalComponent, {
         width: '100vw',
         height: '100vh',
         panelClass: 'full-screen-cdk-dialog',
       });
 
     }
+    if(this.posStoreSvc.state().isLoading) return
 
     this.setLoading(true)
+    console.log('data formi init')
     this.getDataFormInit()?.subscribe({
       next: response => {
+        console.log(response)
         this.setLoading(false)
         const [dataForm, dataItem] = response;
 
         this.posStoreSvc.state.update(e => {
+
+          let tarifaId = dataForm.tarifas.find(t=>t.defaultTarifa)?.idTarifa ?? 0;
           let orderData: Order = {
             ...e.order,
             puntoEmisionId: this.mainStore.state().puntoEmisionId,
             establecimientoId: this.mainStore.state().establecimientoId,
-            userId: orderId > 0 ? e.order.userId : dataForm.vendedores.find((u: any) => u.predeterminado)?.idUsuario ?? 0
+            userId: orderId > 0 ? e.order.userId : dataForm.vendedores.find((u: any) => u.predeterminado)?.idUsuario ?? 0,
           }
           return {
             ...e,
             order: orderData,
             vendedores: dataForm.vendedores,
             taxes: dataForm.taxes,
-            taxRates: dataForm.taxRates
+            taxRates: dataForm.taxRates,
+            tarifas: dataForm.tarifas,
+            tarifaId,
+            oldTarifaId: tarifaId
           }
         })
 

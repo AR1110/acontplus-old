@@ -11,32 +11,32 @@ import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { OrderService } from "@/features/orders/services/order.service";
-import { CustomTableContainerComponent } from '@/core/components/custom-table-container/custom-table-container.component';
+import { CustomTableContainerComponent } from '@/shared/components/custom-table-container/custom-table-container.component';
 import { InputRemainingQtyComponent } from './components/input-remaining-qty/input-remaining-qty.component';
-import { pricingCalculateUtil } from '@/core/utils/princing-calculate.util';
-import { roundNumber } from '@/core/utils/round-number.util';
-import { DialogService } from '@/services/dialog.service';
+import { pricingCalculateUtil } from '@/shared/utils/princing-calculate.util';
+import { roundNumber } from '@/shared/utils/round-number.util';
+import { DialogService } from '@/shared/services/dialog.service';
 
 import {
   CustomContainerDialogComponent
-} from "@core/components/custom-container-dialog/custom-container-dialog.component";
+} from "@/shared/components/custom-container-dialog/custom-container-dialog.component";
 import {
   CompanyCustomerSearchComponent
 } from '@company-customers/components/company-customer-search/company-customer-search.component';
-import { consumirFinalSuperaElValorPermitido, messageSuperaElValorTotalPermitido } from "@core/utils/utils";
-import { ToasterService } from '@/services/toaster.service';
+import { consumirFinalSuperaElValorPermitido, messageSuperaElValorTotalPermitido } from "@/shared/utils/utils";
+import { ToasterService } from '@/shared/services/toaster.service';
 import Swal from 'sweetalert2';
-import { DECIMALS, DOC_TYPE } from "@/enums/main.enum";
-import { ConfigService } from "@/services/config.service";
+import { DECIMALS, DOC_TYPE } from "@/shared/enums/main.enum";
+import { ConfigService } from "@/shared/services/config.service";
 import { AuthService } from "@/features/auth/services/auth.service";
-import { plus } from "@core/utils/decimal.util";
+import { plus } from "@/shared/utils/decimal.util";
 import { OrderAdapter } from '@/features/orders/adapters/order.adapter';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { PaymentComponent } from '@/core/components/payment/payment.component';
-import { SharedService } from '@/services/shared.service';
-import { orderInitialState } from '@/store/pos-store.service';
-import { ResponsiveService } from '@/services/responsive.service';
+import { PaymentComponent } from '@/shared/components/payment/payment.component';
+import { SharedService } from '@/shared/services/shared.service';
+import { orderInitialState } from '@/features/pos/store/pos-store.service';
+import { ResponsiveService } from '@/shared/services/responsive.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { OrderCustomItemComponent } from './components/order-custom-item/order-custom-item.component';
 import { OrderData, OrderDivideItem } from '@orders/models/order.interface';
@@ -63,7 +63,6 @@ import { OrderData, OrderDivideItem } from '@orders/models/order.interface';
     CompanyCustomerSearchComponent
   ],
   templateUrl: './order-divide-modal.component.html',
-  styleUrl: './order-divide-modal.component.scss'
 })
 export class OrderDivideModalComponent {
 

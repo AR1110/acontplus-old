@@ -1,9 +1,9 @@
-import { ActionCompanyCustomerAddEditModalDirective } from '@/directives/action-company-customer-add-edit.directive';
-import { SRI_IDENTIFICATION_CODE } from '@/enums/main.enum';
+import { ActionCompanyCustomerAddEditModalDirective } from '@/shared/directives/action-company-customer-add-edit.directive';
+import { SRI_IDENTIFICATION_CODE } from '@/shared/enums/main.enum';
 import { CompanyCustomerSearch } from "@/features/company-customers/models/company-customer.model";
 import { CompanyCustomerService } from "@/features/company-customers/services/company-customer.service";
-import { DialogService } from '@/services/dialog.service';
-import { ToasterService } from '@/services/toaster.service';
+import { DialogService } from '@/shared/services/dialog.service';
+import { ToasterService } from '@/shared/services/toaster.service';
 import { CdkOverlayOrigin, FlexibleConnectedPositionStrategy, Overlay, OverlayModule } from '@angular/cdk/overlay';
 import { AsyncPipe } from "@angular/common";
 import { computed, SimpleChanges, ViewChild } from '@angular/core';
@@ -17,12 +17,12 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { isValidField } from "@core/utils/utils";
+import { isValidField } from "@/shared/utils/utils";
 import { debounceTime, distinctUntilChanged, Observable } from "rxjs";
 import { catchError, finalize, map,  switchMap } from "rxjs/operators";
 
 import { CompanyCustomerAddEditModalComponent } from '../company-customer-add-edit-modal/company-customer-add-edit-modal.component';
-import { ResponsiveService } from '@/services/responsive.service';
+import { ResponsiveService } from '@/shared/services/responsive.service';
 import {  MatMenuModule } from '@angular/material/menu';
 
 @Component({
@@ -44,7 +44,24 @@ import {  MatMenuModule } from '@angular/material/menu';
     ActionCompanyCustomerAddEditModalDirective,
   ],
   templateUrl: './company-customer-search.component.html',
-  styleUrl: './company-customer-search.component.scss'
+  styles:`
+  .loading-option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px; /* Ajusta esta altura según tus necesidades */
+  }
+
+  .overlay-content {
+    width: 280px;
+    // max-height: 300px;
+    border-radius: 5px;
+    margin: 0;
+    // box-shadow: 0 0 5px 0px rgba(0, 0, 0, 0.4);
+    // background: #fff;
+    padding: 10px;
+  }
+  `
 })
 export class CompanyCustomerSearchComponent {
 

@@ -1,5 +1,5 @@
-import { ConsolidacionFecha, MedidaProducto } from "@/models/inventory/medida.model"
-import { TarifaProducto } from "@/models/inventory/tarifa.model"
+import { ConsolidacionFecha, MedidaProducto } from "@/shared/models/inventory/medida.model"
+import { TarifaProducto } from "@/shared/models/inventory/tarifa.model"
 
 
 

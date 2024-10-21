@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { PosStoreService } from '@/store/pos-store.service';
+import { PosStoreService } from '@/features/pos/store/pos-store.service';
 
 @Component({
   selector: 'app-cart-popup',

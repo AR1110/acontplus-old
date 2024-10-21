@@ -33,6 +33,9 @@
       "@core/*": [
         "src/app/core/*"
       ],
+      "@shared/*": [
+        "src/app/core/*"
+      ],
       "@dashboard/*": [
         "src/app/features/dasboard/*"
       ],

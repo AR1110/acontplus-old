@@ -19,7 +19,7 @@
     <mat-form-field>
       <mat-label>Tarifa</mat-label>
       <mat-select
-        [ngModel]="idTarifa()"
+        [value]="tarifaId()"
         (selectionChange)="onChangeTarifa($event)"
       >
         @for(item of tarifas();track $index){

@@ -2,9 +2,9 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PromotionsItemComponent } from './promotions-item/promotions-item.component';
-import { PromotionService } from '@/services/promotion.service';
+import { PromotionService } from '@/features/pos/services/promotion.service';
 import { MainStoreService } from '@/store/main-store.service';
-import { PosStoreService } from '@/store/pos-store.service';
+import { PosStoreService } from '@/features/pos/store/pos-store.service';
 
 @Component({
   selector: 'app-promotions',
@@ -22,7 +22,7 @@ export class PromotionsComponent {
   private promotionSvc = inject(PromotionService)
   private mainStoreSvc = inject(MainStoreService)
   private posStoreSvc = inject(PosStoreService)
- 
+
   promotions = computed(()=>this.posStoreSvc.state().promotionsMenu)
 
   setLoading(isLoading: boolean) {
@@ -38,7 +38,7 @@ export class PromotionsComponent {
   //   }
   //   this.setLoading(true)
   //   this.promotionSvc.getPromotions(params).subscribe({
-  //     next: response => { 
+  //     next: response => {
   //       this.setLoading(false)
   //       this.promotions.set(response)
   //     },
@@ -48,8 +48,8 @@ export class PromotionsComponent {
   //     }
   //   })
   // }
-  
- 
+
+
 
   ngOnInit() {
   //  this.getPromotions()
@@ -62,7 +62,7 @@ export class PromotionsComponent {
     this.posStoreSvc.state.update(e => {
 
       let promotionsMenu = structuredClone(e.promotionsMenu);
-      
+
 
       return  {
         ...e,
@@ -78,9 +78,9 @@ export class PromotionsComponent {
         })
 
       }
-      
-      
-    }) 
+
+
+    })
   }
 
 }
