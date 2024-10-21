@@ -1,5 +1,5 @@
-import { generateUuidv4 } from '@/core/utils/generate-uuidv4';
-import { InputNumberDirective } from '@/directives/input-number.directive';
+
+import { InputNumberDirective } from '@/shared/directives/input-number.directive';
 import { OrderItem } from '@/features/orders/models/order.interface';
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, input, model, output, signal, ViewChild } from '@angular/core';

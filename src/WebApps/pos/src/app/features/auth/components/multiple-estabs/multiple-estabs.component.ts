@@ -1,13 +1,12 @@
 import {Component, inject, signal} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {
-  CustomContainerDialogComponent
-} from "@core/components/custom-container-dialog/custom-container-dialog.component";
+
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatExpansionModule} from "@angular/material/expansion";
-import {ToasterService} from "@/services/toaster.service";
+import {ToasterService} from "@/shared/services/toaster.service";
 import {AuthService} from "@/features/auth/services/auth.service";
+import { CustomContainerDialogComponent } from '@/shared/components/custom-container-dialog/custom-container-dialog.component';
 @Component({
   selector: 'app-multiple-estabs',
   standalone: true,
@@ -18,7 +17,6 @@ import {AuthService} from "@/features/auth/services/auth.service";
     CustomContainerDialogComponent
   ],
   templateUrl: './multiple-estabs.component.html',
-  styleUrl: './multiple-estabs.component.scss'
 })
 export class MultipleEstabsComponent {
   readonly dialogRef = inject(MatDialogRef<MultipleEstabsComponent>);

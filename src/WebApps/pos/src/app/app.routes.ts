@@ -1,4 +1,4 @@
-import { configDataResolver } from "@/resolvers/config-resolver";
+import { configDataResolver } from "@/core/resolvers/config-resolver";
 import { Routes } from '@angular/router';
 import { sessionGuard } from "@core/guards/session.guard";
 
