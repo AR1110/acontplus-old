@@ -73,7 +73,7 @@ BEGIN
 							  ,FORMAT(ad.fechaEmision, ''dd/MM/yyyy HH:mm'') as fechaEmision
 							  ,ad.SerieComprobante                           as serie
 							  ,cu.IDCard                                     as identificacionComprador
-							  ,cu.TradeName                                  as razonSocialComprador
+							  ,cu.BusinessName                               as razonSocialComprador
 							  ,ad.importeTotal                               as total
 							  ,ad.codEstado                                  as codEstado
 							  ,ep.descripcion                                as estado
@@ -291,8 +291,8 @@ BEGIN
              WHERE ad.idAprob_Document = @id
 
              SELECT cl.idCliente
-		           ,cu.BusinessName         as nombreComercial
-		           ,cu.TradeName            as nombreFiscal
+		           ,cu.BusinessName         as nombreFiscal
+		           ,cu.TradeName            as nombreComercial
 		           ,cu.IDCard               as numeroIdentificacion
 		           ,ISNULL(cl.direccion,'') as direccion
 		           ,ti.codigoSri            as tipoIdentificacion

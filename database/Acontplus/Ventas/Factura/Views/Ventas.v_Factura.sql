@@ -25,7 +25,7 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
           ,de.nroDocumento		       as secuencial
           ,de.serieComprobante
           ,de.fechaAutorizacion
-          ,cu.TradeName                as razonSocialComprador
+          ,cu.BusinessName             as razonSocialComprador
           ,cu.IDCard                   as identificacionComprador
           ,cl.correo                        
           ,cl.telefono

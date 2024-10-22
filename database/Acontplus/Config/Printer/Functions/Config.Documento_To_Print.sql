@@ -108,8 +108,8 @@ BEGIN
 						        ,labelObligadoContabilidad = 'Obligado Contabilidad: ' + s.obligadoContabilidad
 						        ,labelAgenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'') 
 						        ,s.agenteRetencion 
-						        ,razonSocialComprador = REPLACE(cl.nombreFiscal  , '&', '%26')  
-						        ,nroIdentificacion = cl.numeroIdentificacion
+						        ,razonSocialComprador = REPLACE(cu.BusinessName  , '&', '%26')  
+						        ,nroIdentificacion = cu.IDCard
 						        ,direccionComprador = REPLACE(cl.direccion  , '&', '%26')  
 						        ,propina = CAST(f.propina as numeric(15,2))  
 						        ,importeTotal = CAST(f.total as numeric(15,2)) 
@@ -130,6 +130,7 @@ BEGIN
                             INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision 
                             INNER JOIN Sri.Establecimiento       s WITH (NOLOCK) ON s.idEstablecimiento       = pe.idEstablecimiento
 					        INNER JOIN dbo.Entidad               e WITH (NOLOCK) ON e.idEntidad               = s.idEntidad
+                            INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = cl.CustomerId
 					        WHERE f.idFactura = @idDocument 
 					        FOR JSON PATH
 				        )
@@ -206,8 +207,8 @@ BEGIN
 							,s.dirEstablecimiento  
 							,s.contribuyenteEspecial
 						    ,s.obligadoContabilidad
-							,cliente = REPLACE(cl.nombreFiscal   , '&', '%26')  
-							,nroIdentificacion = cl.numeroIdentificacion
+							,cliente = REPLACE(cu.BusinessName   , '&', '%26')  
+							,nroIdentificacion = cu.IDCard
 							,direccionCliente = REPLACE(cl.direccion   , '&', '%26')  
 							,correoCliente = REPLACE(ISNULL(cl.correo , 'S/N'),';',',')
 							,telefonoCliente = REPLACE(ISNULL(cl.telefono, 'S/N'),';',',')
@@ -228,6 +229,7 @@ BEGIN
 						LEFT  JOIN dbo.Ciudad           c WITH (NOLOCK) ON c.idCiudad        = cl.idCiudad 
 						INNER JOIN dbo.Entidad          e WITH (NOLOCK) ON e.idEntidad       = ne.idEntidad
 						INNER JOIN dbo.Usuario          u WITH (NOLOCK) ON u.idUsuario	     = ne.idUsuario
+                        INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id             = cl.CustomerId
 						WHERE ne.idNotaEntrega = @idDocument FOR JSON PATH )
 
 			SET @detail = (SELECT 
@@ -299,8 +301,8 @@ BEGIN
                                 ,dirMatriz = REPLACE(ISNULL(s.dirEstablecimiento, 'S/N'), '&', '%26') 
 								,telefonoEntidad = ISNULL(s.telefono, 'S/N')  
 								,emailEntidad = s.correo 	
-								,razonSocialCliente = REPLACE(cl.nombreFiscal   , '&', '%26')   
-								,nroIdentificacion = cl.numeroIdentificacion 
+								,razonSocialCliente = REPLACE(cu.BusinessName   , '&', '%26')   
+								,nroIdentificacion = cu.IDCard 
 								,direccionCliente = REPLACE(ISNULL(cl.direccion, ''), '&', '%26')   
 								,correoCliente = ISNULL(cl.correo, '')
 								,s.dirEstablecimiento
@@ -327,6 +329,7 @@ BEGIN
 							INNER JOIN dbo.TipoIdentificacion ti  ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
 							 LEFT JOIN dbo.Ciudad             c   ON c.idCiudad              = cl.idCiudad
 							INNER JOIN dbo.Entidad            e   ON e.idEntidad             = pr.idEntidad
+                            INNER JOIN Customer.Customer     cu WITH (NOLOCK) ON cu.Id             = cl.CustomerId
 							WHERE pr.idProforma = @idDocument FOR JSON PATH  
 						)
 

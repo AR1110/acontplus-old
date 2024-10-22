@@ -33,7 +33,7 @@ BEGIN
         ,o.Obs
         , tradeName = e.nombreComercial
         ,tableName = r.[description] + ' - ' + ISNULL(t.[Description], '') 
-        ,customer = ISNULL(c.nombreFiscal, 'Consumidor Final') 
+        ,customer = ISNULL(cu.BusinessName, 'Consumidor Final') 
         ,username = u.nombreUsuario 
         ,discount = ISNULL(CAST(o.Discount as numeric(18,2)), 0)
         ,total = CAST(o.Total AS numeric(18,2))
@@ -49,6 +49,7 @@ BEGIN
             LEFT JOIN dbo.Usuario          u WITH(NOLOCK) ON u.idUsuario = o.UserId
             LEFT JOIN Restaurant.[Table]   t WITH(NOLOCK) ON o.TableId = t.Id
             LEFT JOIN Restaurant.[v_room]  r WITH(NOLOCK) ON r.Id = t.RoomId
+            LEFT JOIN Customer.Customer   cu WITH(NOLOCK) ON cu.Id = c.CustomerId
     WHERE o.Id = @id 
 
 	--OrderItems

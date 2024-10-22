@@ -233,7 +233,7 @@ BEGIN
 			SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT)
 
 			SELECT cu.IDCard                                  as numeroIdentificacion
-				  ,cu.TradeName                               as nombreFiscal
+				  ,cu.BusinessName                            as nombreFiscal
 				  ,cc.serieComprobante                        as serieComprobante
 				  ,FORMAT(cc.fechaEmision,'dd/MM/yyyy hh:mm') as fechaEmision
 				  ,cc.importeTotal

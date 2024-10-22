@@ -18,9 +18,9 @@ BEGIN
 
 	DECLARE @idEntidad INT
 
-	SET @idEntidad = (SELECT idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId)
+	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-	SELECT  *, COUNT(*) totalRecords
+	SELECT  *, COUNT(*) OVER() totalRecords
 	FROM dbo.Turno WHERE idEntidad = @idEntidad
 
 END

@@ -30,7 +30,7 @@ CREATE OR ALTER VIEW Compra.v_Liquidacion WITH SCHEMABINDING AS (
         ,es.codEstab
         ,es.nombreComercial
         ,es.estab
-        ,cu.TradeName         as razonSocialProveedor
+        ,cu.BusinessName      as razonSocialProveedor
         ,cu.IDCard            as identificacionProveedor
         ,se.codigo            as codEstado
         ,cp.abono

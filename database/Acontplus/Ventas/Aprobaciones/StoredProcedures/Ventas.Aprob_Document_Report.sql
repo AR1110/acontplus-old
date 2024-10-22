@@ -47,7 +47,7 @@ BEGIN
                           ,es.obligadoContabilidad
 		                  ,FORMAT(av.fechaEmision, 'dd/MM/yyyy hh:mm:ss')                      as fechaEmision
                           ,av.serieComprobante	
-		                  ,cu.TradeName                                                        as razonSocialComprador
+		                  ,cu.BusinessName                                                     as razonSocialComprador
 		                  ,cu.IDCard                                                           as identificacionComprador
 		                  ,cl.direccion                                                        as direccionComprador
 		                  ,REPLACE(ISNULL(cl.correo , 'S/N'),';',',')                          as emailComprador
@@ -80,10 +80,10 @@ BEGIN
 		                  ,es.telefono                                                         as telefonoEstablecimiento 
 		                  ,es.contribuyenteRimpe
                           ,es.obligadoContabilidad
-		                  ,FORMAT(av.fechaEmision, 'dd/MM/yyyy hh:mm:ss')   as fechaEmision
+		                  ,FORMAT(av.fechaEmision, 'dd/MM/yyyy hh:mm:ss')                      as fechaEmision
                           ,av.serieComprobante	
-		                  ,cu.TradeName                                                     as razonSocialComprador
-		                  ,cu.IDCard                                             as identificacionComprador
+		                  ,cu.BusinessName                                                     as razonSocialComprador
+		                  ,cu.IDCard                                                           as identificacionComprador
 		                  ,cl.direccion                                                        as direccionComprador
 		                  ,REPLACE(ISNULL(cl.correo , 'S/N'),';',',')                          as emailComprador
 		                  ,REPLACE(ISNULL(cl.telefono, 'S/N'),';',',')                         as telefonoComprador
@@ -178,7 +178,7 @@ BEGIN
 
             SELECT ad.idAprob_Document                        as uniqueId
                   ,cu.IDCard                                  as identificacionCompador
-                  ,cu.TradeName                               as razonSocialComprador
+                  ,cu.BusinessName                            as razonSocialComprador
                   ,FORMAT(ad.fechaEmision,'dd/MM/yyyy HH:mm') as fechaEmision
                   ,CASE ad.docOrigen WHEN 'NE' THEN 'Nota Entrega' 
                                      WHEN 'PR' THEN 'Proforma'

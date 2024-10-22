@@ -24,7 +24,7 @@ CREATE OR ALTER VIEW Ventas.v_NotaEntrega WITH SCHEMABINDING AS (
           ,es.nombreComercial
           ,es.idEstablecimiento
 		  ,pe.ptoEmi
-          ,cu.TradeName                                                                                   as razonSocialComprador
+          ,cu.BusinessName                                                                                as razonSocialComprador
           ,cu.IDCard                                                                                      as identificacionComprador
           ,us.nombreUsuario
           ,ne.observacion

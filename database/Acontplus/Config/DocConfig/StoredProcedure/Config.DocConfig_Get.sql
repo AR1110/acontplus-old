@@ -54,7 +54,7 @@ BEGIN
               AND idTipoDocumento NOT IN  (SELECT idTipoDocumento FROM ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision)
 			
 
-            ORDER BY descripcion ASC
+            ORDER BY idConfiguracionDocumento ASC
 
             RETURN 
 		END 

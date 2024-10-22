@@ -51,8 +51,8 @@ BEGIN
 
 	SELECT cl.idCliente
           ,cl.FormaPagoSriId       as idFormaPagoSri
-		  ,cu.BusinessName         as nombreComercial
-		  ,cu.TradeName            as nombreFiscal
+		  ,cu.BusinessName         as nombreFiscal
+		  ,cu.TradeName            as nombreComercial
 		  ,cu.IDCard               as numeroIdentificacion
 		  ,ISNULL(cl.direccion,'') as direccion
 	      ,ti.codigoSri            as tipoIdentificacion
