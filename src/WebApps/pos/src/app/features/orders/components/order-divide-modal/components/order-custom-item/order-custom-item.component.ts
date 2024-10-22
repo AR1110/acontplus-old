@@ -5,27 +5,27 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 
-import { ProductSearchComponent } from "@core/components/product-search/product-search.component";
+import { ProductSearchComponent } from "@/shared/components/product-search/product-search.component";
 import {
   CustomContainerDialogComponent
-} from '@/core/components/custom-container-dialog/custom-container-dialog.component';
+} from '@/shared/components/custom-container-dialog/custom-container-dialog.component';
 
-import { ProductService } from '@/services/external/product.service';
-import { ToasterService } from "@/services/toaster.service";
-import { ToUpperCaseDirective } from '@/directives/to-upper-case.directive';
+import { ProductService } from '@/shared/services/external/product.service';
+import { ToasterService } from "@/shared/services/toaster.service";
+import { ToUpperCaseDirective } from '@/shared/directives/to-upper-case.directive';
 
-import { getValidId, isValidField } from '@/core/utils/utils';
-import { roundNumber } from '@/core/utils/round-number.util';
-import { pricingCalculateUtil } from '@/core/utils/princing-calculate.util';
-import { generateUuidv4 } from '@/core/utils/generate-uuidv4';
+import { getValidId, isValidField } from '@/shared/utils/utils';
+import { roundNumber } from '@/shared/utils/round-number.util';
+import { pricingCalculateUtil } from '@/shared/utils/princing-calculate.util';
+import { generateUuidv4 } from '@/shared/utils/generate-uuidv4';
 
-import { DECIMALS, DOC_TYPE, ITEM_TYPE_CODE } from '@/enums/main.enum';
+import { DECIMALS, DOC_TYPE, ITEM_TYPE_CODE } from '@/shared/enums/main.enum';
 import { FormsModule } from "@angular/forms";
 import Swal from "sweetalert2";
 import { OrderAdapter } from "@/features/orders/adapters/order.adapter";
 import { OrderService } from "@/features/orders/services/order.service";
-import { DialogService } from '@/services/dialog.service';
-import { PaymentComponent } from '@/core/components/payment/payment.component';
+import { DialogService } from '@/shared/services/dialog.service';
+import { PaymentComponent } from '@/shared/components/payment/payment.component';
 import { OrderData, OrderDivideItem, OrderItem } from '@/features/orders/models/order.interface';
 
 type Props = {

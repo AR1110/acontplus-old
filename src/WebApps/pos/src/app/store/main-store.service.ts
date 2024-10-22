@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import {GenericStoreSignalService} from "@/services/generic-store-signal.service";
-import {GroupedEstab, GroupedEstabBodega, GroupedEstabPuntoEmision} from '@/models/estab.model';
+import {GenericStoreSignalService} from "@/shared/services/generic-store-signal.service";
+import {GroupedEstab, GroupedEstabBodega, GroupedEstabPuntoEmision} from '@/shared/models/estab.model';
 
 type MainStoreState = {
   isRoutePos: boolean

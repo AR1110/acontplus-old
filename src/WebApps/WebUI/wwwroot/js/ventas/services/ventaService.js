@@ -2338,8 +2338,7 @@
                 if (response.code === "1") {
                     let { empresa } = JSON.parse(response.payload);
                     data = empresa[0];
-                }
-                console.log(data)
+                } 
                 return data;
             })
         }
@@ -2356,7 +2355,8 @@
                 email,
                 telephone,
                 address: fS.isValidField(data.direccion),
-                sriValidation: data.sriValidation
+                sriValidation: data.sriValidation,
+                estado: true
             }
         }
 

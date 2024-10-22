@@ -41,7 +41,7 @@ function ModalEmpresaCtrl($scope, $uibModalInstance, $injector, $q, params){
         item = textChip.toLowerCase();
     }
 
-    function loadDataForm(){
+    function loadDataForm(){ 
         if(params.id>0){       
             return $q.all([
                 empresaSvc.getDataForm(),
@@ -61,6 +61,7 @@ function ModalEmpresaCtrl($scope, $uibModalInstance, $injector, $q, params){
                 let [dataUno, dataDos] = response; 
                 $scope.tiposIdentificacion = dataUno.tiposIdentificacion;
                 $scope.data = dataDos;
+                $scope.data.numeroIdentificacion = $scope.data.ruc; 
             }else{
                 $scope.tiposIdentificacion = response.tiposIdentificacion;
             } 
@@ -207,7 +208,8 @@ function ModalEmpresaCtrl($scope, $uibModalInstance, $injector, $q, params){
             ...$scope.data,
             telefonos: $scope.telefonos,
             correos: $scope.correos,
-            codigoSri: dataTipoIdentificacion.codigoSri
+            codigoSri: dataTipoIdentificacion.codigoSri,
+            estado:true
         }
            showLoader();
            if ($scope.data.idEmpresa > 0) {

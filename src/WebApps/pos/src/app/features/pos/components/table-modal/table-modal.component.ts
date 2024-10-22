@@ -1,11 +1,11 @@
 
-import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
-import { playBeepSound } from '@/core/utils/sound.util';
-import { ActionOrderDialogDirective } from '@/directives/action-order-dialog.directive';
-import { ConfigService } from '@/services/config.service';
-import { TableService } from '@/services/table.service';
+import { CustomContainerDialogComponent } from '@/shared/components/custom-container-dialog/custom-container-dialog.component';
+import { playBeepSound } from '@/shared/utils/sound.util';
+import { ActionOrderDialogDirective } from '@/shared/directives/action-order-dialog.directive';
+import { ConfigService } from '@/shared/services/config.service';
+import { TableService } from '@/features/pos/services/table.service';
 import { MainStoreService } from '@/store/main-store.service';
-import { PosStoreService } from '@/store/pos-store.service';
+import { PosStoreService } from '@/features/pos/store/pos-store.service';
 import { DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';

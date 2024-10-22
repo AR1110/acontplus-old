@@ -1,4 +1,4 @@
-import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
+import { CustomContainerDialogComponent } from '@/shared/components/custom-container-dialog/custom-container-dialog.component';
 import { Component, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -7,15 +7,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { TarifaProducto } from '@/models/inventory/tarifa.model';
-import { MedidaProducto } from '@/models/inventory/medida.model';
+import { TarifaProducto } from '@/shared/models/inventory/tarifa.model';
+import { MedidaProducto } from '@/shared/models/inventory/medida.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { TaxRate } from '@/models/tax.model';
-import { pricingCalculateUtil } from '@/core/utils/princing-calculate.util';
-import { roundNumber } from '@/core/utils/round-number.util';
-import { ToUpperCaseDirective } from '@/directives/to-upper-case.directive';
+import { TaxRate } from '@/shared/models/tax.model';
+import { pricingCalculateUtil } from '@/shared/utils/princing-calculate.util';
+import { roundNumber } from '@/shared/utils/round-number.util';
+import { ToUpperCaseDirective } from '@/shared/directives/to-upper-case.directive';
 import { OrderItem } from '@/features/orders/models/order.interface';
+import { DECIMALS } from '@/shared/enums/main.enum';
 
 @Component({
   selector: 'app-cart-info',
@@ -33,7 +34,17 @@ import { OrderItem } from '@/features/orders/models/order.interface';
     ToUpperCaseDirective
   ],
   templateUrl: './cart-info.component.html',
-  styleUrl: './cart-info.component.scss'
+  styles: `
+  .img-cart {
+  background: rgba(0, 0, 0, 0.2);
+  width: 100%; /* Make image responsive to the container */
+  max-width: 100px; /* Limit the maximum size of the image */
+  height: 100px; /* Maintain aspect ratio */
+  border-radius: 20%; /* Make the image circular */
+  object-fit: cover; /* Cover the container while preserving aspect ratio */
+}
+
+  `
 })
 export class CartInfoComponent {
 
@@ -82,8 +93,8 @@ export class CartInfoComponent {
     this.data.taxValue = pricingCalculateUtil.calculateTaxValue(subtotalSinImpuesto, this.data.taxPercent);
     let total = pricingCalculateUtil.calcularTotalConImpuesto(subtotalSinImpuesto, this.data.taxValue);
 
-    this.data.precioTotalSinImpuesto = roundNumber(subtotalSinImpuesto, 5)
-    this.data.total = roundNumber(total, 5);
+    this.data.precioTotalSinImpuesto = roundNumber(subtotalSinImpuesto, DECIMALS.GENERAL)
+    this.data.total = roundNumber(total, DECIMALS.GENERAL);
   }
 
   changeApply() {

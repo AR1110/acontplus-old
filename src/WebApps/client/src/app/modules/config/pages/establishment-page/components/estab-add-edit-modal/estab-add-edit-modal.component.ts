@@ -136,8 +136,6 @@ export class EstabAddEditModalComponent {
           this.emails = data.emails;
           this.telephones = data.telephones
         }
-
-        console.log(response)
       })
     } catch (error) {
       console.log(error)
@@ -250,7 +248,6 @@ export class EstabAddEditModalComponent {
 
   async save() {
     try {
-
       if (!isValidField(this.data.nombreComercial)) {
         this.tS.toastr({
           type: 'warning',
@@ -307,7 +304,6 @@ export class EstabAddEditModalComponent {
           })
           return
         }
-        return
       }
 
 

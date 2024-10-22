@@ -1,11 +1,11 @@
-import {PaymentComponent} from '@/core/components/payment/payment.component';
-import {ActionEmailSendDirective} from '@/directives/action-email-send.directive';
-import {ActionWhatsappSendDirective} from '@/directives/action-whatsapp-send.directive';
-import {CODE_REPORT, DOC_TYPE} from '@/enums/main.enum';
+import {PaymentComponent} from '@/shared/components/payment/payment.component';
+import {ActionEmailSendDirective} from '@/shared/directives/action-email-send.directive';
+import {ActionWhatsappSendDirective} from '@/shared/directives/action-whatsapp-send.directive';
+import {CODE_REPORT, DOC_TYPE} from '@/shared/enums/main.enum';
 import {OrderDocRed} from '@/features/orders/models/order-doc.model';
-import {DialogService} from '@/services/dialog.service';
+import {DialogService} from '@/shared/services/dialog.service';
 import {OrderService} from '@/features/orders/services/order.service';
-import {SharedService} from '@/services/shared.service';
+import {SharedService} from '@/shared/services/shared.service';
 import {Component, inject, input} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
@@ -26,7 +26,6 @@ import {MatTooltip} from "@angular/material/tooltip";
     MatTooltip
   ],
   templateUrl: './order-doc-list.component.html',
-  styleUrl: './order-doc-list.component.scss'
 })
 export class OrderDocListComponent {
   readonly data = input.required<{ id: 0 }>();
