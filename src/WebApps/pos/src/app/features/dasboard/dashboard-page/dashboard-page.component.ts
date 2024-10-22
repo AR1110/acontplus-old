@@ -3,12 +3,10 @@ import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { OrderService } from '@/features/orders/services/order.service';
 import { MainStoreService } from '@/store/main-store.service';
-
-
-import { FormsModule } from '@angular/forms';
-import { SaleStatsComponent } from '../components/sale-stats/sale-stats.component';
-import { BestSellingProductStatsComponent } from '../components/best-selling-product-stats/best-selling-product-stats.component';
-import { MatSelectModule } from '@angular/material/select';
+import { WidgetComponent } from '../components/widget/widget.component';
+import { MatButtonModule } from '@angular/material/button';
+import { DashboardStore } from '../store/dashboard.store';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 function getAnios() {
@@ -25,11 +23,10 @@ function getAnios() {
   selector: 'app-dashboard-page',
   standalone: true,
   imports: [
-    FormsModule,
+    MatButtonModule,
+    MatMenuModule,
     MatIconModule,
-    MatSelectModule,
-    SaleStatsComponent,
-    BestSellingProductStatsComponent
+    WidgetComponent
   ],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.scss'
@@ -38,6 +35,7 @@ export class DashboardPageComponent {
   private router = inject(Router)
   private orderSvc = inject(OrderService)
   private mainStoreSvc = inject(MainStoreService)
+    dashboardStore = inject(DashboardStore)
 
 
   anios = signal(getAnios())
@@ -50,30 +48,20 @@ export class DashboardPageComponent {
   })
 
   onLoad(){
-    let {
-      codEstab,
-      establecimientoId
-    } = this.mainStoreSvc.state();
-
-    let params = {
-      estabId: establecimientoId,
-      anio: this.dataSearch().anio
-    }
-    this.orderSvc.getStats(params).subscribe(response => {
-      //sales
-      this.sales.set(response.sales);
-      //products mas vendidos
-      this.bestSellingProduct.set(response.productsTop);
-
-
-    })
-  }
-  ngOnInit(): void {
-    if (!(this.mainStoreSvc.state().establecimientoId>0)){
-      console.error("estab id", this.mainStoreSvc.state().establecimientoId)
+    let estabId = this.mainStoreSvc.state().establecimientoId;
+    if (!(estabId)){
+      console.error("estab id", estabId)
       return
     }
-    this.onLoad()
+    this.dashboardStore.getStats(estabId)
+  }
+  ngOnInit(): void {
+    let estabId = this.mainStoreSvc.state().establecimientoId;
+    if (!(estabId)){
+      console.error("estab id", estabId)
+      return
+    }
+    this.dashboardStore.getStats(estabId)
   }
 
   refresh(){
