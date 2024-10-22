@@ -33,8 +33,8 @@ BEGIN
 	        SELECT cg.idCreditoGarante
 				  ,cg.idCuentaPorCobrar
 				  ,cl.idCliente
-				  ,cu.TradeName    as razonSocialComprador
-				  ,cu.BusinessName as nombreComercial
+				  ,cu.BusinessName as razonSocialComprador
+				  ,cu.TradeName    as nombreComercial
 				  ,cu.IDCard       as identificacionComprador
 				  ,cl.direccion
 				  ,cl.correo

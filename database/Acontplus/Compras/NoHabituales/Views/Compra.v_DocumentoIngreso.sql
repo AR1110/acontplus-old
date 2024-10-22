@@ -12,8 +12,8 @@ CREATE OR ALTER VIEW Compra.v_DocumentoIngreso WITH SCHEMABINDING AS (
           ,es.estab + '-' + pe.ptoEmi + '-' +  RIGHT('000000000' + CAST(di.secuencial AS VARCHAR(9)), 9) as serieComprobante
           ,ep.descripcion                                                                                as estadoCuenta
           ,ep.codigo                                                                                     as codCuenta
-          ,cu.TradeName                                                                                  as identificacionProveedor
-          ,cu.IDCard                                                                                     as razonSocialProveedor
+          ,cu.IDCard                                                                                     as identificacionProveedor
+          ,cu.BusinessName                                                                               as razonSocialProveedor
           ,cp.abono
           ,cp.saldo
           ,us.nombreUsuario                                                                              as usuario

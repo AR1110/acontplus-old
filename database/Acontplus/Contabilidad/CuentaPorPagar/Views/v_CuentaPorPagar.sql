@@ -14,7 +14,7 @@ CREATE OR ALTER VIEW v_CuentaPorPagar WITH SCHEMABINDING AS (
           ,es.codEstab
 		  ,cp.codDoc
 		  ,cp.uniqueId
-		  ,cu.TradeName                                                                as razonSocialProveedor
+		  ,cu.BusinessName                                                             as razonSocialProveedor
 		  ,cu.IDCard                                                                   as identificacionProveedor
           ,pr.CustomerId
 		  ,cp.serieComprobante

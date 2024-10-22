@@ -20,7 +20,7 @@ CREATE OR ALTER VIEW Ventas.v_NotaCredito WITH SCHEMABINDING AS (
         ,es.codEstab
         ,es.nombreComercial
         ,es.estab
-        ,cu.TradeName            as razonSocialComprador
+        ,cu.BusinessName         as razonSocialComprador
         ,cu.IDCard               as identificacionComprador
         ,cc.idEstadoPago
         ,ep.descripcion          as estadoCuenta

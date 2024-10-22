@@ -187,7 +187,11 @@ BEGIN
 
 	        IF @idCliente > 0
 		        BEGIN
-                    SELECT TOP 1 @nroIdentificacion = numeroIdentificacion FROM dbo.Cliente WITH (NOLOCK) WHERE idCliente = @idCliente
+                    DECLARE @CustomerId INT
+
+                    SELECT TOP 1 @CustomerId = CustomerId FROM dbo.Cliente WITH (NOLOCK) WHERE idCliente = @idCliente
+                    
+                    SELECT TOP 1 @nroIdentificacion = IDCard FROM Customer.Customer WITH (NOLOCK) WHERE Id = @CustomerId
 
 			        SET @sql = @sql + 'AND tb.nroIdentificacion = @nroIdentificacion '
 		        END 

@@ -75,7 +75,7 @@ BEGIN
         --> Validaciones
         IF EXISTS(SELECT 1 FROM dbo.Proveedor WITH (NOLOCK) WHERE CustomerId = @customerId AND idEntidad = @idEntidad)
 		    BEGIN
-			    SELECT Common.ufnSpResponse('0','El Ruc: '+ @numeroIdentificacion+ 'ya se encuentra registrado',NULL)
+			    SELECT Common.ufnSpResponse('0','El Ruc: ' + @numeroIdentificacion + ' ya se encuentra registrado',NULL)
 			    RETURN 
 		    END 
 

@@ -257,8 +257,8 @@ BEGIN
 			WHERE di.idDocumentoIngreso = @id
 
 			SELECT di.idProveedor
-				  ,cu.BusinessName         as nombreComercial
-				  ,cu.TradeName            as nombreFiscal
+				  ,cu.TradeName            as nombreComercial
+				  ,cu.BusinessName         as nombreFiscal
 				  ,ISNULL(pr.direccion,'') as direccion
 				  ,cu.IDCard               as numeroIdentificacion
 			FROM Compra.Documento_Ingreso di WITH (NOLOCK)
@@ -401,8 +401,8 @@ BEGIN
             WHERE di.idDocumentoIngreso = @id
 
             SELECT di.idProveedor
-				  ,cu.BusinessName         as nombreComercial
-				  ,cu.TradeName            as nombreFiscal
+				  ,cu.TradeName            as nombreComercial
+				  ,cu.BusinessName         as nombreFiscal
 				  ,ISNULL(pr.direccion,'') as direccion
 				  ,cu.IDCard               as numeroIdentificacion
 			FROM Compra.Documento_Ingreso di WITH (NOLOCK)
