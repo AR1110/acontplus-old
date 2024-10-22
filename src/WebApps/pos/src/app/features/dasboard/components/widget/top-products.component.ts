@@ -32,7 +32,12 @@ export class TopProductsComponent {
   public barChartOptions: any = {
     //responsive: false,
     indexAxis: 'y',
-    maintainAspectRatio: false
+    responsive: true,
+    maintainAspectRatio: false, // To ensure it adapts to the container size
+    scales: {
+      x: {},
+      y: { beginAtZero: true },
+    },
   };
   public barChartLabels: string[] = [];
   public barChartType: any = 'bar';

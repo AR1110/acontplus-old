@@ -1,7 +1,6 @@
 import { Component, inject, model, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { OrderService } from '@/features/orders/services/order.service';
 import { MainStoreService } from '@/store/main-store.service';
 import { WidgetComponent } from '../components/widget/widget.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -33,7 +32,6 @@ function getAnios() {
 })
 export class DashboardPageComponent {
   private router = inject(Router)
-  private orderSvc = inject(OrderService)
   private mainStoreSvc = inject(MainStoreService)
     dashboardStore = inject(DashboardStore)
 

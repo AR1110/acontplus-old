@@ -1,6 +1,6 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, Injector, input, signal } from '@angular/core';
 import { Widget } from '../../interfaces/widget.interface';
-import { NgComponentOutlet, NgStyle } from '@angular/common';
+import { CommonModule, NgComponentOutlet, NgStyle } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { WidgetOptionsComponent } from './widget-options.component';
@@ -9,17 +9,19 @@ import { WidgetOptionsComponent } from './widget-options.component';
   selector: 'app-widget',
   standalone: true,
   imports: [
+    CommonModule,
     MatIconModule,
     MatButtonModule,
     NgComponentOutlet,
+
     NgStyle,
     WidgetOptionsComponent
   ],
   template: `
   <div class="w-container mat-elevation-z3"
   [ngStyle]="{
-    'background-color': data().backgroundColor || 'white',
-    'color': data().color || 'white'
+    'background-color': data().backgroundColor || 'inherit',
+    'color': data().color || 'inherit'
     }"
   >
     <h6 class="m-0">
@@ -32,7 +34,12 @@ import { WidgetOptionsComponent } from './widget-options.component';
      >
       <mat-icon>settings</mat-icon>
     </button>
-    <ng-container [ngComponentOutlet]="data().content"></ng-container>
+    @if(data().input){
+      <ng-container *ngComponentOutlet="data().content; injector: createInjector()"></ng-container>
+    }@else {
+      <ng-template *ngComponentOutlet="data().content;"  ></ng-template>
+
+    }
 
     @if(showOptions()){
 
@@ -70,4 +77,17 @@ export class WidgetComponent {
   data = input.required<Widget>()
 
   showOptions = signal(false)
+
+
+
+    createInjector() {
+      return Injector.create({
+        providers: [
+          {
+            provide: 'input', // Proveer un valor usando una clave
+            useValue: this.data().input ?? null, // Usar null si no hay valor
+          },
+        ],
+      });
+    }
 }

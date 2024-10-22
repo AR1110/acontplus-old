@@ -16,12 +16,12 @@
 </div>
 <div class="d-flex flex-column gap-4">
   <div class="dashboard-widgets">
-    @for (item of dashboardStore.totalSummaries(); track $index) {
+    @for (item of dashboardStore.documentCounts(); track $index) {
     <app-widget [data]="item"></app-widget>
     }
   </div>
   <div class="dashboard-widgets">
-    @for (item of dashboardStore.stats(); track $index) {
+    @for (item of dashboardStore.addedWidgets(); track $index) {
     <app-widget [data]="item"></app-widget>
     }
   </div>

@@ -404,7 +404,12 @@ BEGIN
     --> Estadisticas 
     IF @tipo = 5
         BEGIN 
-            SET @tableNames = 'order,docs,productsTop'
+              SET @tableNames = 'order,docs,productsTop,documentCounts'
+
+			DECLARE @tbTotalSummary AS TABLE(
+				descripcion VARCHAR(100) NOT NULL
+				,cantidad INT NOT NULL
+			)
             
             DECLARE @anio INT
 
@@ -456,6 +461,48 @@ BEGIN
             WHERE ro.EstablecimientoId = @estabId AND   YEAR(ro.CreatedAt) = @anio
             group by ri.Id, ar.descripcion, roi.ItemId
             order by count(ri.Id) desc; 
+
+
+            
+			INSERT INTO @tbTotalSummary (descripcion, cantidad)
+			SELECT 
+				'Ordenes' AS descripcion, 
+				COUNT(*) AS cantidad  -- Contar el número de órdenes
+			FROM 
+				Restaurant.[Order] ro
+			WHERE 
+				ro.establecimientoId = @estabId 
+				AND YEAR(ro.CreatedAt) = @anio;
+
+			INSERT INTO @tbTotalSummary (descripcion, cantidad)
+			SELECT 
+               'Facturas' AS descripcion, 
+                COUNT(*) AS cantidad   
+            FROM 
+                Restaurant.OrderDocument od WITH(NOLOCK)
+            INNER JOIN 
+                v_CuentaPorCobrar v_cpc WITH(NOLOCK) 
+                ON v_cpc.idDocumento = od.DocumentoId
+            WHERE  
+                v_cpc.idEstablecimiento = @estabId AND
+                YEAR(od.CreatedAt) = @anio AND
+                v_cpc.codDoc =  '01' 
+
+			INSERT INTO @tbTotalSummary (descripcion, cantidad)
+			SELECT 
+               'Notas de Entrega' AS descripcion, 
+                COUNT(*) AS cantidad   
+            FROM 
+                Restaurant.OrderDocument od WITH(NOLOCK)
+            INNER JOIN 
+                v_CuentaPorCobrar v_cpc WITH(NOLOCK) 
+                ON v_cpc.idDocumento = od.DocumentoId
+            WHERE  
+                v_cpc.idEstablecimiento = @estabId AND
+                YEAR(od.CreatedAt) = @anio AND
+                v_cpc.codDoc =  'NE' 
+
+			SELECT * FROM @tbTotalSummary
         END
 
 

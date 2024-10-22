@@ -30,8 +30,7 @@ function generarColorAleatorio() {
   <div class="chart-container">
   <canvas
     baseChart
-    width="600"
-    height="300"
+
     [type]="'line'"
     [data]="lineChartData"
     [options]="lineChartOptions"
@@ -57,18 +56,19 @@ export class SaleChartComponent {
     datasets: []
   };
   public lineChartOptions: ChartOptions<'line'> = {
-    responsive: true
+    responsive: true,
+    maintainAspectRatio: false, // To ensure it adapts to the container size
+    scales: {
+      x: {},
+      y: { beginAtZero: true },
+    },
   };
 
   public lineChartLegend = true;
 
-  ngOnInit(){
-    console.log('kjhkhk')
-  }
   constructor() {
-    console.log('kjkhkjhjkhk')
     effect(() => {
-      console.log(this.dashStore.sales())
+
 
       // Extraer tipos de documentos únicos
       const tiposDocumentos = [...new Set(this.dashStore.sales().map(item => item.docNom))];
