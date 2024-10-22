@@ -8,5 +8,5 @@ export interface Widget {
   columns?:number
   backgroundColor?: string
   color?: string
-
+  input?: any
 }

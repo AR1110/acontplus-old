@@ -19,89 +19,71 @@ function getAnios() {
   return years;
 }
 
+ export interface DocumentCounts  {
+  totalOrdenes: number,
+  totalNotasEntrega: number,
+  totalFacturas: number,
+}
 export interface DashboardStata {
   widgets: Widget[]
   addedWidgets: Widget[],
   totalSummaries:Widget[]
-  stats:Widget[]
   anios: number[],
   anio: number
   sales: any[],
   topProducts: any[]
-
+  documentCounts: Widget[]
 }
 const initialDashboardState: DashboardStata = {
-  widgets: [
-
-  ],
+  widgets: [],
   totalSummaries: [
-    {
-      id: 1,
-      label: 'Ordenes',
-      content: TotalSummaryComponent,
-      backgroundColor: "#525CEB",
-      color: 'whitesmoke'
-    },
-    {
-      id: 2,
-      label: 'Notas de Entrega',
-      content: TotalSummaryComponent,
-      backgroundColor: "#1679AB",
-      color: 'whitesmoke'
-    },
-    {
-      id: 3,
-      label: 'Facturas',
-      content: TotalSummaryComponent,
-      backgroundColor: "#1679AB",
-      color: 'whitesmoke'
-    },
+    // {
+    //   id: 1,
+    //   label: 'Ordenes',
+    //   content: TotalSummaryComponent,
+    //   backgroundColor: "#525CEB",
+    //   color: 'whitesmoke'
+    // },
+    // {
+    //   id: 2,
+    //   label: 'Notas de Entrega',
+    //   content: TotalSummaryComponent,
+    //   backgroundColor: "#1679AB",
+    //   color: 'whitesmoke'
+    // },
+    // {
+    //   id: 3,
+    //   label: 'Facturas',
+    //   content: TotalSummaryComponent,
+    //   backgroundColor: "#1679AB",
+    //   color: 'whitesmoke'
+    // },
   ],
   addedWidgets: [
     {
       id: 4,
       label: 'Ventas',
       content: SaleChartComponent,
-      backgroundColor: "white",
+      backgroundColor: "var(--mdc-elevated-card-container-color)",
       columns: 2,
-      rows: 2,
-      color: 'black'
+      rows: 3,
     },
     {
       id: 5,
       label: 'Productos más vendidos',
       content: TopProductsComponent,
-      backgroundColor: "white",
+      backgroundColor: "var(--mdc-elevated-card-container-color)",
       columns: 2,
-      rows: 2,
-      color: 'black'
+      rows: 3,
+    //  color: 'in'
     }
   ],
-  stats: [
 
-    {
-      id: 4,
-      label: 'Ventas',
-      content: SaleChartComponent,
-      backgroundColor: "white",
-      columns: 2,
-      rows: 2,
-      color: 'black'
-    },
-    {
-      id: 5,
-      label: 'Productos más vendidos',
-      content: TopProductsComponent,
-      backgroundColor: "white",
-      columns: 2,
-      rows: 2,
-      color: 'black'
-    }
-  ],
   anios: getAnios(),
-  anio:  new Date().getFullYear(),
+  anio: new Date().getFullYear(),
   sales: [],
-  topProducts: []
+  topProducts: [],
+  documentCounts: []
 }
 
 export const DashboardStore = signalStore(
@@ -114,7 +96,9 @@ export const DashboardStore = signalStore(
       const addedIds = store.addedWidgets().map(w=>w.id);
 
       return store.widgets().filter(w=>!addedIds.includes(w.id))
-    })
+    }),
+
+
 
 
   })),
@@ -151,10 +135,20 @@ export const DashboardStore = signalStore(
         anio: store.anio()
       }
       orderSvc.getStats(params).subscribe(response => {
-        console.log(response)
+        let documentCounts = response.documentCounts.map((item, index)=>{
+          return {
+            id: index+1,
+                label: item.descripcion,
+               content: TotalSummaryComponent,
+               backgroundColor: "#1679AB",
+               color: 'whitesmoke',
+               input: item.cantidad
+          }
+        })
         patchState(store, ( )=>({
           sales: response.sales,
-          topProducts: response.productsTop
+          topProducts: response.productsTop,
+          documentCounts: documentCounts
         }))
 
 

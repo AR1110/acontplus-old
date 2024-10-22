@@ -37,8 +37,8 @@ import { DashboardStore } from '../../store/dashboard.store';
    :host {
     position:absolute;
     z-index: 2;
-    background:whitesmoke;
-    color:black;
+    background:var(--mdc-elevated-card-container-color);
+    color:inherit;
     top:0;
     left:0;
     border-radius: inherit;

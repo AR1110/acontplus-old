@@ -13,9 +13,9 @@ export const routes: Routes = [
     path: '',
     canActivate: [sessionGuard],
     loadChildren: () => import('./layouts/main-layout/main-layout.routes').then(m => m.routes),
-    // resolve: {
-    //   configData: configDataResolver
-    // }
+    resolve: {
+      configData: configDataResolver
+    }
   },
 
   {
