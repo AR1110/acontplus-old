@@ -12,9 +12,9 @@ export class UserManualService {
   #http = inject(HttpClient);
   #url = `${PATHS_API.COMMON}${API_ENDPOINTS.USER_MANUAL}`;
 
-  get() {
+  get<T>(params: T) {
     return this.#http
-      .get<ApiResponse>(`${this.#url}`)
+      .get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`)
       .pipe(map((response) => response));
   }
 }
