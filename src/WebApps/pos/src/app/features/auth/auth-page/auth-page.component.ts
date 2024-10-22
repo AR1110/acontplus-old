@@ -6,8 +6,8 @@ import {MatIconModule} from "@angular/material/icon";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthService} from "@/features/auth/services/auth.service";
 import {Router} from "@angular/router";
-import {ToasterService} from "@/services/toaster.service";
-import {DialogService} from '@/services/dialog.service';
+import {ToasterService} from "@/shared/services/toaster.service";
+import {DialogService} from '@/shared/services/dialog.service';
 import {MultipleEstabsComponent} from "@auth/components/multiple-estabs/multiple-estabs.component";
 
 @Component({

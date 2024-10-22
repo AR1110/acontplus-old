@@ -1,23 +1,23 @@
-import { isValidField } from '@/core/utils/utils';
-import { SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE } from '@/enums/main.enum';
-import { ApiResponse } from "@/models/api-response";
+
+import { ApiResponse } from "@/shared/models/api-response";
 import { CompanyCustomerService } from "@/features/company-customers/services/company-customer.service";
-import { ToasterService } from '@/services/toaster.service';
+import { ToasterService } from '@/shared/services/toaster.service';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA,  MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { M3InputChipComponent } from "@core/components/m3-input-chip/m3-input-chip.component";
 import { forkJoin, Observable } from 'rxjs';
-import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { M3InputChipComponent } from "@/shared/components/m3-input-chip/m3-input-chip.component";
+import { CustomContainerDialogComponent } from "@/shared/components/custom-container-dialog/custom-container-dialog.component";
+import { SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE } from "@/shared/enums/main.enum";
+import { isValidField } from "@/shared/utils/utils";
 
 @Component({
   selector: 'app-company-customer-add-edit-modal',

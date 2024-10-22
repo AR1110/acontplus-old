@@ -1,12 +1,12 @@
-import { CustomContainerDialogComponent } from '@/core/components/custom-container-dialog/custom-container-dialog.component';
-import { formatDateToString } from '@/core/utils/date.util';
+import { CustomContainerDialogComponent } from '@/shared/components/custom-container-dialog/custom-container-dialog.component';
+import { formatDateToString } from '@/shared/utils/date.util';
 import { Component, inject  } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
 import { OrderListComponent } from '../order-list/order-list.component';
-import { STATUS_ORDER } from '@/enums/main.enum';
+import { STATUS_ORDER } from '@/shared/enums/main.enum';
 
 @Component({
   selector: 'app-order-list-modal',
@@ -18,7 +18,6 @@ import { STATUS_ORDER } from '@/enums/main.enum';
     CustomContainerDialogComponent
   ],
   templateUrl: './order-list-modal.component.html',
-  styleUrl: './order-list-modal.component.scss'
 })
 export class OrderListModalComponent {
   readonly matDialogData = inject<{ tableId: 0 }>(MAT_DIALOG_DATA);

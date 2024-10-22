@@ -1,7 +1,7 @@
 import {getCustomUrlContext} from '@/core/interceptors/inject-session.interceptor';
-import {isValidField} from '@/core/utils/utils';
-import {PATHS, PATHS_API} from "@/enums/main.enum";
-import {ApiResponse} from "@/models/api-response";
+import {isValidField} from '@/shared/utils/utils';
+import {PATHS, PATHS_API} from "@/shared/enums/main.enum";
+import {ApiResponse} from "@/shared/models/api-response";
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
