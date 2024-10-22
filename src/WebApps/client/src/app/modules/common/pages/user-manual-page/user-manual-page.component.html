@@ -1,9 +1,12 @@
-<app-breadcrumb></app-breadcrumb>
+<app-breadcrumb/>
 
 <div class="row">
   @for (item of manuals; track $index) {
     <div class="col">
-      <div [innerHTML]="item.embedCode"></div>
+      <div [innerHTML]="item.safeEmbedCode"></div>
+      <!--      <div [innerHTML]="item.safeEmbedCode"></div>-->
+      <!--      <iframe width="100%" height="100%" [src]="item.safeEmbedCode"></iframe>-->
+
     </div>
   }
 </div>

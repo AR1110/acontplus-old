@@ -1,10 +1,28 @@
 {
-    "angular-schematics.schematicsDefaultOptions": {
-        "angular-*": {
-            "externalTemplate": true
-        },
-        "angular-component": {
-            "ngOnInit": true
-        }
+  //Angular
+  "angular-schematics.schematicsDefaultOptions": {
+    "angular-*": {
+      "externalTemplate": true
+    },
+    "angular-component": {
+      "ngOnInit": true
     }
+  },
+  "typescript.preferences.autoImportFileExcludePatterns": [],
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  "typescript.suggestionActions.enabled": true,
+  "editor.snippetSuggestions": "top",
+  "typescript.suggest.autoImports": true,
+  "javascript.suggest.autoImports": true,
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  },
+
+  "prettier.singleQuote": true,
+  "editor.acceptSuggestionOnCommitCharacter": true,
+  "editor.acceptSuggestionOnEnter": "on",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always"
 }
