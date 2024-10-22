@@ -1,12 +1,11 @@
 import { NavUserInfoToggleComponent } from "@/core/components/nav-user-info-toggle/nav-user-info-toggle.component";
-import { ActionOrderDialogDirective } from "@/directives/action-order-dialog.directive";
+import { ActionOrderDialogDirective } from "@/shared/directives/action-order-dialog.directive";
 import { CartPopupComponent } from "@/features/pos/components/cart-popup/cart-popup.component";
 
-import { DialogService } from "@/services/dialog.service";
-import { PosStoreService } from "@/store/pos-store.service";
-import { CdkOverlayOrigin, FlexibleConnectedPositionStrategy, Overlay, OverlayModule } from "@angular/cdk/overlay";
+import { PosStoreService } from "@/features/pos/store/pos-store.service";
+import {  FlexibleConnectedPositionStrategy, Overlay, OverlayModule } from "@angular/cdk/overlay";
 import { AsyncPipe } from "@angular/common";
-import { Component, computed, inject, signal, ViewChild } from "@angular/core";
+import { Component, computed, inject, signal  } from "@angular/core";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";

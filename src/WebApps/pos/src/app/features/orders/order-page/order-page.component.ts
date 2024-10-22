@@ -4,8 +4,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { OrderListComponent } from '../components/order-list/order-list.component';
 import { Router } from '@angular/router';
-import { formatDateToString } from '@/core/utils/date.util';
-import { STATUS_ORDER } from '@/enums/main.enum';
+import { formatDateToString } from '@/shared/utils/date.util';
+import { STATUS_ORDER } from '@/shared/enums/main.enum';
 
 @Component({
   selector: 'app-order-page',

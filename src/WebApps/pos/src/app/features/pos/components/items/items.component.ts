@@ -1,19 +1,20 @@
-import { pricingCalculateUtil } from '@/core/utils/princing-calculate.util';
-import { calculateCantidadStock, mergeStockQty } from '@/core/utils/product.util';
-import { roundNumber } from '@/core/utils/round-number.util';
-import { playBeepSound } from '@/core/utils/sound.util';
-import { DECIMALS } from '@/enums/main.enum';
+import { pricingCalculateUtil } from '@/shared/utils/princing-calculate.util';
+import { calculateCantidadStock, mergeStockQty } from '@/shared/utils/product.util';
+import { roundNumber } from '@/shared/utils/round-number.util';
+import { playBeepSound } from '@/shared/utils/sound.util';
+import { DECIMALS } from '@/shared/enums/main.enum';
 import { OrderItem } from '@/features/orders/models/order.interface';
-import { ItemRead } from '@/models/item.model';
-import { ProductService } from "@/services/external/product.service";
-import { ToasterService } from "@/services/toaster.service";
+import { ItemRead } from '@/features/pos/models/item.model';
+import { ProductService } from "@/shared/services/external/product.service";
+import { ToasterService } from "@/shared/services/toaster.service";
 import { MainStoreService } from "@/store/main-store.service";
-import { PosStoreService } from '@/store/pos-store.service';
+import { PosStoreService } from '@/features/pos/store/pos-store.service';
 import { Component, computed, inject, input, signal } from '@angular/core';
-import { generateUuidv4 } from "@core/utils/generate-uuidv4";
+import { generateUuidv4 } from "@/shared/utils/generate-uuidv4";
 import { map, of, switchMap } from "rxjs";
 import Swal from 'sweetalert2';
 import { ItemCardComponent } from '../item-card/item-card.component';
+import { TarifaProducto } from '@/shared/models/inventory/tarifa.model';
 
 @Component({
   selector: 'app-items',
@@ -119,8 +120,12 @@ export class ItemsComponent {
         dataAdded.pvps = dataMedida?.pvps ?? [];
         dataAdded.consolidacionesFecha = firstResponse.productoConsolidaciones;
 
-
-        const dataTarifa = dataMedida?.pvps.find(pvp => (pvp.default));
+        let dataTarifa = {} as TarifaProducto | undefined;
+        if(this.posStoreSvc.state().tarifaId>0){
+          dataTarifa = dataMedida?.pvps.find(pvp => pvp.idTarifa===this.posStoreSvc.state().tarifaId);
+        }else{
+           dataTarifa = dataMedida?.pvps.find(pvp => (pvp.default));
+        }
         dataAdded.conversion = dataMedida?.conversion ?? 1;
         dataAdded.cost = dataMedida?.precioCosto ?? 0;
         dataAdded.costoFraccionado = dataMedida?.precioCostoFraccionado ?? 0;

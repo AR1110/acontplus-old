@@ -1,13 +1,13 @@
 import { OrderAdapter } from "@/features/orders/adapters/order.adapter";
 import { getNoLoader } from '@/core/interceptors/loader.interceptor';
-import { groupRoomTableUtil } from '@/core/utils/group-room-table.util';
-import { DOC_TYPE, PATHS, PATHS_API } from "@/enums/main.enum";
-import { ApiResponse } from "@/models/api-response";
-import { UserSelectHtmlOnly } from "@/models/user.model";
+import { groupRoomTableUtil } from '@/shared/utils/group-room-table.util';
+import { DOC_TYPE, PATHS, PATHS_API } from "@/shared/enums/main.enum";
+import { ApiResponse } from "@/shared/models/api-response";
+import { UserSelectHtmlOnly } from "@/shared/models/user.model";
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from '@angular/core';
 import { map } from "rxjs/operators";
-import { fetchLimitUtil } from '@/core/utils/fetch-limit.util'; // Asegúrate de que la ruta sea correcta
+import { fetchLimitUtil } from '@/shared/utils/fetch-limit.util'; // Asegúrate de que la ruta sea correcta
 import { OrderRead } from "../models/order.interface";
 
 @Injectable({

@@ -1,10 +1,10 @@
 
 import { Injectable } from '@angular/core';
-import { formatDate } from '@/core/utils/date.util';
-import { imgDefault, isValidField } from '@/core/utils/utils';
-import { mergeMeasureFromAdapter } from "@/adapters/medida.adapter";
-import { plus } from '@/core/utils/decimal.util';
-import { DECIMALS, SRI_IDENTIFICATION_CODE } from '@/enums/main.enum';
+import { formatDate } from '@/shared/utils/date.util';
+import { imgDefault, isValidField } from '@/shared/utils/utils';
+import { mergeMeasureFromAdapter } from "@/shared/adapters/medida.adapter";
+import { plus } from '@/shared/utils/decimal.util';
+import { DECIMALS, SRI_IDENTIFICATION_CODE } from '@/shared/enums/main.enum';
 import { Order, OrderItem } from '../models/order.interface';
 import { OrderApi, OrderItemApi } from '../models/order-api.interface';
 
