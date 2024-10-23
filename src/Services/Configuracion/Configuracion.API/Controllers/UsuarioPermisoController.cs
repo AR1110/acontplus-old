@@ -1,18 +1,13 @@
 ﻿namespace Configuracion.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class UsuarioPermisoController : ControllerBase
+public class UsuarioPermisoController : BaseApiController
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
-
-    public UsuarioPermisoController(IConfiguration configuration, ICustomLogger log)
+    public UsuarioPermisoController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        _log = log;
     }
 
     [HttpGet("Get/{json}")]
@@ -28,7 +23,6 @@ public class UsuarioPermisoController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error  getting user permission: \n" + ex);
             _response.Create("0", "Error getting user permission");
         }
         finally
@@ -53,7 +47,6 @@ public class UsuarioPermisoController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error  updating user permission: \n" + ex);
             _response.Create("0", "Error updating user permission");
         }
         finally
@@ -79,7 +72,6 @@ public class UsuarioPermisoController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error while checking permission user: \n" + ex);
             _response.Create("0", "Error while checking permission user");
         }
         finally
@@ -89,26 +81,4 @@ public class UsuarioPermisoController : ControllerBase
 
         return Ok(_response);
     }
-
-
-    //[HttpPost]
-    //public async Task<IActionResult> Post(UsuarioPemisoDto data)
-    //{
-    //    
-    //    var _response = new ApiResponse();
-    //    try
-    //    {
-    //        int idUsuarioRol = User.GetUserRoleId();
-    //        await _db.SPExecute("Config.UserPermission_Update");
-    //        _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-    //        _db.AddDynamicParam("jsonPermission", SqlValidation.ValidateSqlString(data.jsonPermission));
-    //        _response = await _db.GetDataTableAsync();
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _log.LogError("Error  updating user permission: \n" + ex.ToString());
-    //        _response.Create(code: "0", message: "Error updating user permission");
-    //    }
-    //    return Ok(_response);
-    //}
 }

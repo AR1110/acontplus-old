@@ -1,16 +1,12 @@
 ﻿namespace Configuracion.API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class TipoEntidadController : ControllerBase
+public class TipoEntidadController : BaseApiController
 {
     public readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
 
-    public TipoEntidadController(IConfiguration configuration, ICustomLogger log)
+    public TipoEntidadController(IConfiguration configuration)
     {
         _configuration = configuration;
-        _log = log;
     }
 
     [HttpGet]
@@ -28,7 +24,6 @@ public class TipoEntidadController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al listar tipo entidad: \n" + ex);
             _response.Create("0", "Error al listar tipo entidad");
         }
         finally
@@ -54,7 +49,6 @@ public class TipoEntidadController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al crear tipo entidad: \n" + ex);
             _response.Create("0", "Error al crear tipo entidad");
         }
         finally
@@ -82,7 +76,6 @@ public class TipoEntidadController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al actualizar tipo entidad: \n" + ex);
             _response.Create("0", "Error al actualizar tipo entidad");
         }
         finally
@@ -109,7 +102,6 @@ public class TipoEntidadController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al eliminar tipo entidad: \n" + ex);
             _response.Create("0", "Error al eliminar tipo entidad");
         }
         finally
@@ -135,7 +127,6 @@ public class TipoEntidadController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al lista tipo entidad para el formulario: \n" + ex);
             _response.Create("0", "Error al lista tipo entidad para el formulario");
         }
         finally
