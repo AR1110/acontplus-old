@@ -73,7 +73,7 @@ BEGIN
 		          ,IIF(cc.codDoc = '01','FV',cc.codDoc)
 		          ,cc.serieComprobante 
 		          ,cc.fechaEmision
-		          ,cl.nombreFiscal
+		          ,cu.BusinessName                                                           as nombreFiscal
 		          ,cc.importeTotal
                   ,hc.saldo
 				  ,IIF(co.cobro = 1,hc.abono,0)                                              as abono
@@ -89,6 +89,7 @@ BEGIN
             INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente			  = cc.idCliente
             INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idCobro                = hc.idCobro
 			 LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
+            INNER JOIN Customer.Customer            cu WITH (NOLOCK) ON cu.Id                     = cl.CustomerId
 			WHERE ci.idControlCaja = @idControlCaja  
               AND ci.estado = 1
 	        
@@ -226,13 +227,14 @@ BEGIN
 	          SELECT cc.codDoc                                             as tipoDoc
 	                ,JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro') as nroDoc
 		            ,FORMAT(cc.fechaEmision, 'dd/MM/yyyy HH:mm')           as fechaEmision
-		            ,cl.nombreFiscal                                       as cliente
+		            ,cu.BusinessName                                       as cliente
 		            ,CAST(co.abono as numeric(18,2))                       as total
 	         FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
 	         INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
 	         INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = co.idEntidadFinanciera
              INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = co.idCuentaPorCobrar
              INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente            = cc.idCliente
+             INNER JOIN Customer.Customer            cu WITH (NOLOCK) ON cu.Id                   = cl.CustomerId
 	         WHERE ci.idControlCaja = @idControlCaja 
                AND ci.estado = 1 
                AND ef.codigo = 'DOC' 
@@ -293,7 +295,7 @@ BEGIN
 		                          ,IIF(cc.codDoc = ''01'',''FV'',cc.codDoc)                                          as doc
 		                          ,cc.serieComprobante                                                               as nroDoc
 		                          ,FORMAT(cc.fechaEmision, ''dd/MM/yyyy HH:mm'')                                     as fechaEmision
-		                          ,cl.nombreFiscal                                                                   as agenteEconomico
+		                          ,cu.BusinessName                                                                   as agenteEconomico
 		                          ,CAST(cc.importeTotal as numeric(18,2))                                            as total
                                   ,CAST(hc.saldo as numeric(18,2))                                                   as saldoAnterior
 				                  ,CAST(IIF(co.cobro = 1,hc.abono,0) as numeric(18,2))                               as abono
@@ -308,6 +310,7 @@ BEGIN
 			                INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar      = hc.idCuentaPorCobrar
 			                INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente			  = cc.idCliente
 			                 LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
+                            INNER JOIN Customer.Customer            cu WITH (NOLOCK) ON cu.Id                     = cl.CustomerId
 			                WHERE ci.idControlCaja = @idControlCaja  
                               AND ci.estado = 1
 

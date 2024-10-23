@@ -60,8 +60,8 @@ BEGIN
 		  ,gr.docAduanero
 		  ,gr.estableDestino
 		  ,gr.ruta 
-		  ,cl.nombreFiscal                                                              as razonSocialDestinatario
-		  ,cl.numeroIdentificacion                                                      as identificacionDestinatario
+		  ,cu.BusinessName                                                              as razonSocialDestinatario
+		  ,cu.IDCard                                                                    as identificacionDestinatario
 		  ,cl.direccion                                                                 as direccionDestinatario
           ,df.serieComprobante                                                          as numDocSustento
 	FROM dbo.GuiaRemision               gr WITH (NOLOCK)
@@ -74,6 +74,7 @@ BEGIN
     INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
     INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad              = es.idEntidad
      LEFT JOIN dbo.DocumentoElectronico df WITH (NOLOCK) ON df.idDocumentoElectronico = fa.idDocumentoElectronico
+    INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = cl.CustomerId
 	WHERE gr.idGuiaRemision = @id
 
     SELECT ar.codigo 

@@ -109,11 +109,11 @@ BEGIN
 			--INFO RETENCION
 			SELECT ra.*
                   ,pe.idPuntoEmision
-                  ,sb.descripcion as subContribuyente 
+                  ,sb.descripcion    as subContribuyente 
                   ,es.codEstab 
-                  ,cu.IDCard      as identificacionSujetoRetenido
-                  ,cu.TradeName   as razonSocialSujetoRetenido
-                  ,ti.codigoSri   as tipoIdentificacionSujetoRetenido
+                  ,cu.IDCard         as identificacionSujetoRetenido
+                  ,cu.BusinessName   as razonSocialSujetoRetenido
+                  ,ti.codigoSri      as tipoIdentificacionSujetoRetenido
             FROM FactElect.RetencionAts         ra WITH (NOLOCK) 
             INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = ra.idDocumentoElectronico
             INNER JOIN Proveedor                pr WITH (NOLOCK) ON pr.idProveedor            = ra.idProveedor

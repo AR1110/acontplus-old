@@ -31,7 +31,8 @@ BEGIN
 	DECLARE @idEntidad INT
 	DECLARE @rucProv VARCHAR(20)
 	DECLARE @idProveedor INT
-		DECLARE @payload VARCHAR(MAX)
+	DECLARE @payload VARCHAR(MAX)
+    DECLARE @CustomerId INT
 
 	DECLARE @tmp TABLE(
 	idDocumento INT NOT NULL
@@ -80,7 +81,10 @@ BEGIN
 
 	    SELECT @rucProv = rucEmisor  FROM Recepcion.DocumentoRecibido WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
 
-	    SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
+        SELECT TOP 1 @CustomerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @rucProv
+
+	    SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WHERE idEntidad = @idEntidad AND CustomerId = @CustomerId
+
 		    IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento =  (SELECT TOP 1 idDocumento FROM @tmp) AND codDoc = '01' AND complete = 1)
 		    BEGIN
 			    SELECT '1' code, '' AS 'message'
