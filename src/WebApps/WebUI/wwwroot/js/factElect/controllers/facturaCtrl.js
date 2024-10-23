@@ -1322,14 +1322,16 @@
 
                 //Articulo Predeterminado
                 if (articuloDefault.idArticulo > 0) {
-                    articuloSvc
-                        .getForSale({
-                            idArticulo: articuloDefault.idArticulo,
-                            idBodega: $scope.data.idBodega,
-                        })
-                        .then((dataArticuloApi) => {
-                            $scope.setItemArticuloEnDetalle(dataArticuloApi);
-                        });
+                    updateRefProductoVenta();
+                    $scope.refProductoVenta.onInventario(articuloDefault.idArticulo)
+                    // articuloSvc
+                    //     .getForSale({
+                    //         idArticulo: articuloDefault.idArticulo,
+                    //         idBodega: $scope.data.idBodega,
+                    //     })
+                    //     .then((dataArticuloApi) => {
+                    //         $scope.setItemArticuloEnDetalle(dataArticuloApi);
+                    //     });
                 }
 
                 getFechaVencimiento();
@@ -1439,12 +1441,20 @@
 
             updateRefProductoVenta();
 
+           
+
 
             $uibModalInstance.rendered.then(() => {
                 if ($scope.config.searchCode) {
-                    $("#inputBarcode").focus();
+                    let el = document.getElementById("#inputBarcode");
+                    if(el){
+                        el.focus();
+                    } 
                 } else {
-                    $("#custom-template-md-autocomplete-articulo").focus();
+                    let el = document.getElementById("#custom-template-md-autocomplete-articulo");
+                    if(el){
+                        el.focus()
+                    } 
                 }
             });
 
@@ -1796,7 +1806,7 @@
 
         function setFocusInputBarcode() {
             $timeout(function () {
-                let inputBarcode = document.querySelector("#inputBarcode");
+                let inputBarcode = document.getElementById("#inputBarcode");
                 if (inputBarcode) {
                     inputBarcode.focus();
                 }
@@ -1805,7 +1815,7 @@
 
         function setFocusArticulo() {
             $timeout(function () {
-                let el = document.querySelector(
+                let el = document.getElementById(
                     "#custom-template-md-autocomplete-articulo"
                 );
                 if (el) {
@@ -1954,7 +1964,7 @@
                     $scope.$apply();
                     return;
                 }
-                if (!$scope.bodegas.length > 0) {
+                if (!($scope.bodegas.length > 0)) {
                     tS.toastr(
                         "info",
                         "No tienes bodegas asignado a este establecimiento"

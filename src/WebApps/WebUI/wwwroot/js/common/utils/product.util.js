@@ -248,7 +248,7 @@ app.factory('productUtil', [
 
             },
 
-            onInventario: function (/** @type {number} */ idArticulo, cantidad) {
+            onInventario: function (/** @type {number} */ idArticulo, cantidad) { 
 
                 const managedFetch = fS.fetchManager(artSvc.getForSale);
 
@@ -297,7 +297,7 @@ app.factory('productUtil', [
 
                     this.asignarDatosFila(nuevaFilaAgregada, articulo, medidas, datosAdicionalesArticulo, consolidacionesFecha);
 
-
+ 
                     if (articulo.llevaInventario) {
 
                         const managedFetchStock = fS.fetchManager(artSvc.checkNotificationStock);
