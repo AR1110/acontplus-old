@@ -8,5 +8,4 @@ IF EXISTS (SELECT name FROM sys.indexes
 GO 
 CREATE NONCLUSTERED INDEX idx_Cliente_Filtering
 ON dbo.Cliente (idEntidad, CustomerId,idUsuario)
-INCLUDE (numeroIdentificacion);
 GO

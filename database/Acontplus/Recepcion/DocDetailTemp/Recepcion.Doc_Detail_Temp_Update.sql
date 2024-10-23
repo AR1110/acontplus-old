@@ -93,10 +93,14 @@ BEGIN
 
 	    IF (@idProveedor = 0 AND @rucProv IS NOT NULL)
 	        BEGIN
+                 DECLARE @CustomerId INT
+                 
+                 SELECT TOP 1 @CustomerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @rucProv
+
 		        SELECT TOP 1 @idProveedor = idProveedor
 		        FROM Proveedor
 		        WHERE idEntidad = @idEntidad
-			        AND numeroIdentificacion = @rucProv
+			      AND CustomerId = @CustomerId
 	        END
 
 	    IF (SELECT TOP 1 idArticulo FROM @tmp) > 0

@@ -25,6 +25,7 @@ BEGIN
     DECLARE @idEntidad INT
     DECLARE @rucProv VARCHAR(20)
     DECLARE @idProveedor INT
+    DECLARE @CustomerId INT
 
     DECLARE @tmp TABLE(
         idDocumento INT NOT NULL
@@ -92,7 +93,9 @@ BEGIN
 
         SELECT @rucProv = rucEmisor FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento 
 
-        SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
+        SELECT TOP 1 @CustomerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @rucProv
+
+        SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @CustomerId
 
         BEGIN TRAN
 
