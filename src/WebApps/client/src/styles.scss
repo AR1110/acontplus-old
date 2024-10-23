@@ -1,4 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+@use "@angular/material" as mat;
+@use "sass:map";
 @import "ngx-toastr/toastr";
 @import "bootstrap/dist/css/bootstrap.css";
 @import "assets/template/css/style.css";
@@ -6,6 +8,17 @@
 @import "perfect-scrollbar";
 // @import "theme";
 @import "@angular/material/prebuilt-themes/azure-blue.css";
+
+$compact-theme: mat.define-theme(
+  (
+    density: (
+      scale: -4,
+    ),
+  )
+);
+:root {
+  @include mat.form-field-density($compact-theme);
+}
 
 html,
 body {
@@ -17,10 +30,7 @@ html,
 input,
 select,
 textarea {
-  font-family:
-    Roboto,
-    Helvetica Neue,
-    sans-serif !important;
+  font-family: Roboto, Helvetica Neue, sans-serif !important;
 }
 
 table {

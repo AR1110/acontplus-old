@@ -38,6 +38,20 @@ export class DocElectService {
       })
 
     )
+  }
+
+  getAll<T>(obj:T){
+    let json = JSON.stringify({
+      tipo: 1,
+      ...obj
+    })
+      return this.http.get<ApiResponse>(`${this.url}?json=${json}`).pipe(
+        map(response=>{
+
+
+          console.log(response)
+        })
+      )
 
   }
 
