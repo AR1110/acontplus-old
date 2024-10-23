@@ -64,4 +64,7 @@ export enum GlobalRoutes {
 
   //COMMON
   CommonUserManual = 'common/user-manual',
+
+  //Facturación
+  FactElectDocumentoElectronico='billing/doc-elect'
 }
