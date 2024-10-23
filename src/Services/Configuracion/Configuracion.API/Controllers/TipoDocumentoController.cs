@@ -1,16 +1,12 @@
 ﻿namespace Configuracion.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class TipoDocumentoController : ControllerBase
+public class TipoDocumentoController : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
+    private readonly IConfiguration _configuration; 
 
-    public TipoDocumentoController(IConfiguration configuration, ICustomLogger log)
+    public TipoDocumentoController(IConfiguration configuration)
     {
         _configuration = configuration;
-        _log = log;
     }
 
     [HttpGet("Get")]
@@ -28,7 +24,6 @@ public class TipoDocumentoController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al listar docs: \n" + ex);
             _response.Create("0", "Error al listar docs");
         }
         finally
