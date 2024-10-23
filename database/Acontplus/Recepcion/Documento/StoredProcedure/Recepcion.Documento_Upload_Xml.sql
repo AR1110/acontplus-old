@@ -209,8 +209,8 @@ BEGIN
 
 		BEGIN TRAN
 			INSERT  INTO Recepcion.DocumentoRecibido
-                   (idEstablecimiento,comprobante,codDoc, serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,identificacionReceptor,claveAcceso,importeTotal,xmlCompressed,versionComp,idUsuario,fechaRegistro,downloaded,subcategoryId)
-			SELECT @idEstablecimiento,comprobante,@codDoc,serieComprobante,rucEmisor,razonSocialEmisior,@fechaEmision,@fechaAutorizacion,identificacionReceptor,@claveAcceso,importeTotal,@xmlCompressed, @versionComp,@idUsuario,dbo.ufnGetDateEcuador(),'DE',@subcategoryId
+                   (codEstab,idEstablecimiento,comprobante,codDoc, serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,identificacionReceptor,claveAcceso,importeTotal,xmlCompressed,versionComp,idUsuario,fechaRegistro,downloaded,subcategoryId)
+			SELECT @codEstab,@idEstablecimiento,comprobante,@codDoc,serieComprobante,rucEmisor,razonSocialEmisior,@fechaEmision,@fechaAutorizacion,identificacionReceptor,@claveAcceso,importeTotal,@xmlCompressed, @versionComp,@idUsuario,dbo.ufnGetDateEcuador(),'DE',@subcategoryId
             FROM @tbDocumento
 
 			SET @idDocumento = SCOPE_IDENTITY()
@@ -266,21 +266,21 @@ BEGIN
                 IF @codDoc = '07'
                     BEGIN
                         --> Cliente
-					    IF NOT EXISTS(SELECT 1 FROM dbo.Cliente WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@rucEmisor)))
+					    IF NOT EXISTS(SELECT 1 FROM dbo.Cliente WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @customerId)
 						    BEGIN
 
                                 SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '04'
 
 							    INSERT INTO dbo.Cliente WITH (ROWLOCK)
-                                       (idTipoIdentificacion,nombreFiscal,nombreComercial,numeroIdentificacion,direccion,idEntidad,CustomerId,validationSri)
-							    SELECT @idTipoIdentificacion,razonSocialEmisior,nombreComercial,rucEmisor,dirMatriz,@idEntidad,@customerId,1
+                                       (idTipoIdentificacion,direccion,idEntidad,CustomerId)
+							    SELECT @idTipoIdentificacion,dirMatriz,@idEntidad,@customerId
                                 FROM @tbDocumento 
 
                                 SELECT @idCliente = SCOPE_IDENTITY()
 						    END
                         ELSE 
                             BEGIN
-                                SELECT TOP 1 @idCliente = idCliente FROM dbo.Cliente WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = LTRIM(RTRIM(@rucEmisor)) 
+                                SELECT TOP 1 @idCliente = idCliente FROM dbo.Cliente WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @customerId
                             END
 
                         INSERT INTO Contabilidad.CuentaPorCobrar

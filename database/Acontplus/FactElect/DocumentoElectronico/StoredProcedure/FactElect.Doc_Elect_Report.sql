@@ -85,7 +85,7 @@ BEGIN
                                     SELECT SUM(CAST(di.TaxValue as numeric(18,2))) 
                                     FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
                                     WHERE di.DocumentoRecibidoId = dr.idDocumentoRecibido
-                                      AND di.code = ''1''
+                                      AND di.code = ''2''
                                )                                                 as retIva
 	                          ,CAST(f.totalDescuento as numeric(18,2))           as totalDescuento
                               ,CAST(f.total as numeric(18,2))                    as total

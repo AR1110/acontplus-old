@@ -246,8 +246,8 @@ BEGIN
 	                                  ,fc.nroAutorizacion
 	                                  ,Format(fc.fechaEmision,''dd/MM/yyyy'')
                                       ,Format(fc.fechaEmision,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion  
-	                                  ,pr.numeroIdentificacion
-	                                  ,pr.nombreFiscal
+	                                  ,cu.IDCard                                     as numeroIdentificacion
+	                                  ,cu.BusinessName                               as nombreFiscal
                                       ,''FF'' as tipoDoc
 	                                  ,ISNULL
 	                                  ((
@@ -407,6 +407,7 @@ BEGIN
                                 INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab    = fc.codEstab
                                 INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor = fc.idProveedor
                                 INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario   = fc.idUsuario
+                                INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id          = pr.CustomerId
                                 WHERE fc.estado =  1
                                   AND fc.idEntidad = @idEntidad
                                   AND fc.nroAutorizacion NOT IN (SELECT claveAcceso FROM Recepcion.DocumentoRecibido where identificacionReceptor = @identificacionReceptor)

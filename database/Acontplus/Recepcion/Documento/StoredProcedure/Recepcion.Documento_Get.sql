@@ -8,7 +8,7 @@ GO
 -- =============================================
 -- Author:		Ivan Fernando Paz
 -- Create date: 2022-07-31
--- Description:	SP PARA LISTAR LOS COMPROBANTES ELECTRONICOS DEL SRI IMPORTADOS
+-- Description:	SP PARA LISTAR LOS COMPROBANTES ELECTRONICOS DEL SRI IMPORTADOS 
 -- =============================================
 CREATE OR ALTER PROCEDURE Recepcion.Documento_Get
      @userRoleId INT
@@ -122,7 +122,7 @@ BEGIN
                     subcategoryId    INT
                 );
 
-            print LEN(@rucProveedor)
+            print LEN(@rucProveedor )
 
             SET @idEstablecimiento = (SELECT idEstablecimiento FROM Sri.Establecimiento WHERE codEstab = @codEstab)
 
