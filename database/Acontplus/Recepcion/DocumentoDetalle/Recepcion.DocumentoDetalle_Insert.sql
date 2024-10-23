@@ -43,7 +43,7 @@ BEGIN
 		
 		SELECT TOP 1 @serieComprobante = serieComprobante ,@rucProv = rucEmisor, @fechaEmision = CAST(fechaEmision AS date), @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento 
 		
-		SELECT TOP 1 @idProveedor = idProveedor,@CustomerId = ISNULL(CustomerId,0) FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
+        SELECT TOP 1 @CustomerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @rucProv
 
 		IF NOT EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento)
 			BEGIN

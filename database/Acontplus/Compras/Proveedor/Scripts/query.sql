@@ -20,4 +20,9 @@ go
 
 SELECT top 10 * FROM dbo.Proveedor
 
+--update pr set
+--       pr.CustomerId = (select top 1 cu.Id from Customer.Customer cu where cu.IDCard = pr.numeroIdentificacion)
+--from dbo.Proveedor pr
+--where pr.CustomerId is null
+
 --select top 1 * from Customer.Customer
