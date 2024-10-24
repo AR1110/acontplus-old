@@ -14,6 +14,7 @@ import { DocElectService } from '@modules/billing/services/doc-elect.service';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
+import { finalize, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-doc-elect-page',
@@ -41,13 +42,14 @@ export class DocElectPageComponent {
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'serieComprobante', label: 'Estado', type: 'string' },
-    { key: 'fechaEmision', label: 'Comprobante', type: 'string' },
-    { key: 'fechaVencimiento', label: 'Fecha Emisión', type: 'string' },
-    { key: 'razonSocialComprador', label: 'Serie Comprobante', type: 'string' },
-    { key: 'total', label: 'Ruc Receptor', type: 'number' },
-    { key: 'abono', label: 'Razón Social Receptor	', type: 'number' },
-    { key: 'saldo', label: 'Clave de acceso/Nro. autorización', type: 'number' },
+    { key: 'estado', label: 'Estado', type: 'string' },
+    { key: 'comprobante', label: 'Comprobante', type: 'string' },
+    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
+    { key: 'fechaAutorizacion', label: 'Fecha Autorización', type: 'string' },
+    { key: 'serieComprobante', label: 'Serie Comprobante', type: 'string' },
+    { key: 'rucReceptor', label: 'Ruc Receptor', type: 'string' },
+    { key: 'razonSocialReceptor', label: 'Razón Social Receptor	', type: 'string' },
+    { key: 'claveAcceso', label: 'Clave de acceso/Nro. autorización', type: 'string' },
     { key: 'usuario', label: 'Usuario', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
@@ -58,7 +60,7 @@ export class DocElectPageComponent {
 
 
   dataSearch = model({
-    fromDate:  formatDateToString(new Date()),
+    fromDate: formatDateToString(new Date()),
     toDate: formatDateToString(new Date()),
     codDoc: null,
     codEstado: null as number | null,
@@ -70,45 +72,97 @@ export class DocElectPageComponent {
   })
 
 
-  refresh(){
+  refresh() {
     this.getDocElects()
   }
 
-  getDocElects(){
+  private getDataParams() {
     let obj = {
 
       codDoc: this.dataSearch().codDoc,
       codEstado: this.dataSearch().codEstado,
       checkBoxDate: this.dataSearch().checkBoxDate,
-      dateStart:  this.dataSearch().fromDate,
-      dateEnd:  this.dataSearch().toDate,
+      dateStart: this.dataSearch().fromDate,
+      dateEnd: this.dataSearch().toDate,
       codEstab: this.dataSearch().codEstab,
       idPuntoEmision: this.dataSearch().idPuntoEmision,
       identificacionReceptor: this.dataSearch().identificacionReceptor,
       idUsuario: this.dataSearch().idUsuario,
-      pageIndex: this.pagination().pageIndex+1,
+      pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
-    //  nroSecuencial: fS.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial)
+      //  nroSecuencial: fS.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial)
+    }
+    return obj;
   }
-    this.docElectSvc.getAll(obj).subscribe({
-      next: response=>{
+
+
+  private successResponseList(response: any) {
+
+    this.dataSource = new MatTableDataSource(response.data);
+
+    console.log(this.dataSource.data)
+    this.pagination.update((p) => ({
+      ...p,
+      totalRecords: this.dataSource.data.length > 0 ? this.dataSource.data[0].totalRecords : 0,
+    }));
+
+  }
+
+  private getDocElects() {
+    if (this.isLoadingResults()) return; // Prevenir múltiples llamadas
+
+    this.isLoadingResults.set(true)
+    this.docElectSvc
+      .getAll(this.getDataParams())
+      .pipe(
+        finalize(() => {
+          this.isLoadingResults.set(false);
+        }),
+      )
+      .subscribe((response) => {
+        this.successResponseList(response);
+      });
+  }
+
+  private initLoad() {
+    return forkJoin([
+      this.docElectSvc.getDataFilter(),
+      this.docElectSvc.getAll(this.getDataParams()),
+    ]);
+  }
+
+
+
+  ngOnInit() {
+    this.initLoad()
+    .pipe(
+      finalize(() => {
+        this.isLoadingResults.set(false);
+      }),
+    )
+    .subscribe({
+      next: (response) => {
+        const [dataForm, responseList] = response;
         console.log(response)
-      }
-    })
-  }
+        // this.subCategorias.set(dataForm.subCategorias);
+        // this.medidas.set(dataForm.medidas);
+        // this.marcas.set(dataForm.marcas);
+        // this.modelos.set(dataForm.modelos);
+        // this.tiposIva.set(dataForm.tiposIva);
 
-  ngOnInit(){
-
-
-
-    this.getDocElects()
+         this.successResponseList(responseList);
+      },
+      error: (err) => {
+        console.error('Load Data :', err);
+      },
+    });
   }
 
   onDateRangeSelection(range: { from: string; to: string }) {
-    this.dataSearch.update(e=>{
+    this.dataSearch.update(e => {
       return {
         ...e,
-        fromDate:range.from,
+        fromDate: range.from,
         toDate: range.to
       }
     })

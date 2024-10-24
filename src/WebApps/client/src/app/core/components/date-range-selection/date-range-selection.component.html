@@ -19,17 +19,26 @@
 } @else if(showInputMaterial()){
 <mat-form-field class="w-100" [floatLabel]="'always'">
   <mat-label>Rango Fecha</mat-label>
+  @if(showMatPrefix()){
+  <mat-checkbox
+    matPrefix
+    [(ngModel)]="checkbox"
+    (click)="onCheckboxClick($event)"
+  ></mat-checkbox>
+  }
   <input
     matInput
     placeholder="Placeholder"
     id="date-range-selection-input"
     #dateRangeInput
   />
+  @if(showMatSuffix()){
   <mat-checkbox
     matSuffix
     [(ngModel)]="checkbox"
     (click)="onCheckboxClick($event)"
   ></mat-checkbox>
+  }
 </mat-form-field>
 } @else {
 <input

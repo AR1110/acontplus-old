@@ -5,6 +5,8 @@ import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
 import {groupEstabUtil} from "@core/utils/group-estab.util";
 import {ApiResponse} from "@core/models/api-response";
+import { DocElectAdapter } from '../doc-elect/doc-elect.adapter';
+import { getNoLoader } from '@core/interceptors/loader.interceptor';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +14,7 @@ import {ApiResponse} from "@core/models/api-response";
 export class DocElectService {
   private url = `${PATHS_API.FACT_ELECT}${BILLING_PATHS.DOC_ELECT}`
   private http = inject(HttpClient)
+  private docElectAdapter = inject(DocElectAdapter)
 
 
   getDataFilter  () {
@@ -45,11 +48,22 @@ export class DocElectService {
       tipo: 1,
       ...obj
     })
-      return this.http.get<ApiResponse>(`${this.url}?json=${json}`).pipe(
+      return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
+        context: getNoLoader()
+      }).pipe(
         map(response=>{
+          let result = {
+            data: [] as any[]
+          }
+          if(response.code==="1"){
+            let [results] = JSON.parse(response.payload as string);
+            console.log(results)
 
+            result.data = this.docElectAdapter.fromApiList(results)
 
-          console.log(response)
+          }
+
+          return result;
         })
       )
 
