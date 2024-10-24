@@ -21,7 +21,8 @@ import { MatInputModule } from "@angular/material/input";
 })
 export class DateRangeSelectionComponent {
   showInputMaterial  = input(false);
-  showSuffix = input(false)
+  showMatSuffix = input(false)
+  showMatPrefix = input(false)
   checkbox = model(false)
 
 
