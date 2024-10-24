@@ -90,7 +90,7 @@
                 </div>
             </div>
 
-            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <div class="co-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="nroIndentificacion" class="">Nro. Identificación:</label>
                     <input type="text" name="nroIndentificacion" id="nroIndentificacion" class="form-control" readonly
@@ -98,27 +98,24 @@
                 </div>
             </div>
 
-            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <div class="co-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
-                    <label for="Facturas"><code>{{facturas.length}}</code> Facturas</label>
+                    <label for="facturas"  >Facturas <span class="text-danger">*</span></label>
+
                     <div class="input-group">
-                         <input type="text" class="form-control border-select" ng-disabled="!(cliente.idCliente>0)"
-                        ng-model="textSearchFactura" placeholder="Buscar Nro. Factura" ng-keyup="onKeyupInvoice()"
-                        uib-typeahead="item as item.serieComprobante for item in facturas | filter:{serieComprobante:$viewValue}"
-                        typeahead-show-hint="true" typeahead-min-length="0"
-                        typeahead-on-select="selectedInvoiceChange($item)" typeahead-editable="false" onClick="select()">
+                        <input type="text" class="form-control" ng-value="factura.serieComprobante" readonly>
                         <div class="input-group-append">
-                             
-      
-                            <button type="button" class="btn btn-secondary" ng-click="getDetalleDoc()">
-                        <i class="ti-eye"></i>
-                    </button> 
+                            <button type="button" class="btn btn-outline-secondary btn-xs" ng-click="openModalFacturas()">
+                                <i class="ti-search"></i>
+                                Buscar Factura
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-xs" ng-click="previewFactura()">
+                                <i class="ti-eye"></i>
+                                Ver Factura
+                            </button>
                         </div>
                     </div>
-                   
-                    
-
-                </div>
+                </div> 
             </div>
         </div>
 

@@ -1,0 +1,66 @@
+<div class="modal-header">
+    <h5 class="modal-title">Buscar Facturas</h5>
+    <button type="button" class="close" ng-click="closeModal()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="d-flex">
+        <div>
+            <b>Cliente: </b> {{razonSocialComprador}}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <md-table-container>
+                <table resize master md-table>
+                    <thead md-head md-trim-column-names>
+                        <tr md-row>
+                            <th md-column></th>
+                            <th md-column>Serie Comprobante</th>
+                            <th md-column>Fecha Emision</th>
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row ng-repeat="item in facturas">
+                            <td md-cell>
+                                <div class="d-flex">
+                                    <button type="button" class="btn btn-success btn-xs" title="Seleccionar la factura"
+                                        ng-click="onSelect(item)">
+                                        <i class="ti-check"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-xs mx-2"
+                                        title="Ver Detalle del Documento" ng-click="previewFactura(item.idDocumento)">
+                                        <i class="ti-eye"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td md-cell>{{item.serieComprobante}}</td>
+                            <td md-cell>{{item.fechaEmision}}</td>
+                        </tr>
+                        <tr class="text-center" ng-if="facturas.length===0">
+                            <td colspan="3">No hay registros</td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </md-table-container>
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-center align-items-center">
+                <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                    ng-change="pageChanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                    class="pagination" boundary-links="true" rotate="false"></ul>
+                <span class="form-group pull-left page-size form-inline mx-2" style="margin-bottom: auto;">
+                    <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                        ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                    </select>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
+</div>
