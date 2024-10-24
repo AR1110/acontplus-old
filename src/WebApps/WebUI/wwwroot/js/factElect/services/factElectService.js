@@ -433,6 +433,8 @@
                             return {
                                 idDocumento: item.idFactura,
                                 serieComprobante: item.serieComprobante,
+                                fechaEmision: item.fechaEmision,
+                                usuario: item.usuario
                             };
                         });
                         return {
@@ -767,7 +769,7 @@
                         throw response;
                     }
                     if (response.code === "1") {
-                        let [itemsApi] = JSON.parse(response.payload);
+                        let [itemsApi] = JSON.parse(response.payload); 
 
                         let items = itemsApi.map((itemPrincipal, index) => {
                             const { fraccionado, principal, consolidacion, ...restItem } =
@@ -809,17 +811,8 @@
                                 itemPrincipal.precioUnitario,
                                 itemPrincipal.tarifa
                             );
-
-                            let precioTotalSinImpuesto =
-                                itemPrincipal.precioUnitario * itemPrincipal.cantidad -
-                                itemPrincipal.valorDescuento;
-                            let total = pricingUtils.decPlus(
-                                fS.roundNumber(precioTotalSinImpuesto, pricingUtils.max_dos),
-                                fS.roundNumber(
-                                    itemPrincipal.valorImpuesto,
-                                    pricingUtils.max_dos
-                                )
-                            );
+ 
+                            let total = pricingUtils.decPlus(restItem.precioTotalSinImpuesto,  itemPrincipal.valorImpuesto, pricingUtils.precisionMaxima,);
 
                             let obj = {
                                 n: index + 1,
@@ -854,10 +847,7 @@
                                 datosAdicionalesArticulo:
                                     restItem.datosAdicionalesArticulo || [],
                                 precioConIva: fS.roundNumber(precioConIva, 3),
-                                precioTotalSinImpuesto: fS.roundNumber(
-                                    precioTotalSinImpuesto,
-                                    5
-                                ),
+                                precioTotalSinImpuesto: restItem.precioTotalSinImpuesto,
                                 total,
                             };
 

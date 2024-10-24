@@ -197,9 +197,7 @@
                     infoAdicional: $scope.dataSearch.infoAdicional
                         ? $scope.dataSearch.infoAdicional
                         : null,
-                };
-
-                showLoader();
+                }; 
                 $scope.facturas = [];
                 $scope.getTotales();
                 facturaSvc
@@ -210,26 +208,22 @@
                         $scope.cloneFacturas = structuredClone($scope.facturas);
 
                         $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                        $scope.getTotales();
-                        hideLoader();
+                        $scope.getTotales(); 
                     })
                     .catch((error) => {
-                        $scope.dataSearch.totalRecords = 0;
-                        hideLoader();
+                        $scope.dataSearch.totalRecords = 0; 
                         console.log(error);
                     });
-            } catch (error) {
-                hideLoader();
+            } catch (error) { 
                 console.log(error);
             }
         };
 
         $scope.initiload = async function () {
-            showLoader();
+          
             facturaSvc
                 .getDataFilter()
-                .then((response) => {
-                    hideLoader();
+                .then((response) => { 
                     $scope.establecimientos = response.estabs;
                     $scope.estadoDocumentos = response.estadosDoc;
 
@@ -246,10 +240,7 @@
                     } else {
                         tS.toastr("warning", "No tienes asignado Establecimiento!");
                     }
-                })
-                .catch(() => {
-                    hideLoader();
-                });
+                }) 
 
             facturaSvc.getDataForm().then((response) => {
                 mainDataForm = response;
