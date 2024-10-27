@@ -97,7 +97,11 @@
         }
 
         service.getAll = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            let json = {
+                tipo: 1,
+                ...query
+            }
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(json), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -105,8 +109,14 @@
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
 
-                    let articulos = mainData[0];
-                    let totalRecords = mainData[0][0].totalRecords;
+                    let articulos = mainData[0] || [];
+                    let totalRecords =0;
+
+                    if(articulos.length>0){ 
+                       totalRecords = articulos[0].totalRecords;
+                    }
+                    
+
 
                     //Listado de articulos 
                     return {

@@ -39,6 +39,9 @@ BEGIN
 	IF @tipo = 1
 		BEGIN
 			
+			DECLARE @filterMode INT;   
+			DECLARE @dynamicFilterCondition VARCHAR(500); -- Condición de filtro que se generará dinámicamente
+			
 			SELECT @bySearch            = REPLACE(bySearch,SPACE(1),'%')
 				  ,@idSubFamilia        = bySubFamilia
 				  ,@idMedida            = byMedida
@@ -51,6 +54,7 @@ BEGIN
 				  ,@checkBoxInventario  = checkBoxInventario
 				  ,@pageIndex           = pageIndex
 				  ,@pageSize            = pageSize
+				  ,@filterMode          = filterMode
 			FROM OPENJSON(@json) WITH 
 			(   bySearch   VARCHAR(500) '$.bySearch'
 			   ,bySubFamilia        INT '$.bySubFamilia'
@@ -64,6 +68,7 @@ BEGIN
 			   ,checkBoxInventario  BIT '$.checkBoxInventario'
 			   ,pageIndex			INT '$.pageIndex'
 			   ,pageSize            INT '$.pageSize'
+			   ,filterMode          INT 
 			)
 
 			SET @params  = '@idEntidad INT
@@ -100,66 +105,30 @@ BEGIN
 							   ,a.s3ObjectUrl
 						   FROM Inventario.v_Articulo a
 						   WHERE a.idEntidad = @idEntidad  '
-
-			IF @idSubFamilia > 0
-				BEGIN 
-					SET @sql = @sql + 'AND a.idSubFamilia = @idSubFamilia '
-				END 
-
-			IF @idMedida > 0
-				BEGIN
-					SET @sql = @sql + 'AND a.idMedida = @idMedida '
-				END
-
-			IF @idMarca > 0
-				BEGIN
-					SET @sql = @sql + 'AND a.idMarca = @idMarca '
-				END
-
-			IF @idModelo > 0 
-				BEGIN
-					SET @sql = @sql + 'AND a.idModelo = @idModelo '
-				END 
-
-			IF @idTipoIva > 0
-				BEGIN
-					SET @sql = @sql + 'AND a.idTipoIva = @idTipoIva '
-				END 
-
-			IF @estado IN (1,0)
-				BEGIN
-					SET @sql = @sql + 'AND a.estado  = @estado '
-				END
-
-			IF @checkBoxFraccionado = 1 
-				BEGIN
-					SET @sql = @sql + 'AND a.fraccionado = 1 '
-				END 
-
-			IF @checkBoxInventario = 1
-				BEGIN
-					SET @sql = @sql + 'AND a.llevaInventario = 1 '
-				END 
-
-			
-			IF @byStock = 1
-				BEGIN 
-					SET @sql = @sql + 'AND a.stock > 0 AND a.llevaInventario = 1 '
-				END
-					
-			IF @byStock = 2
-				BEGIN 
-					SET @sql = @sql + 'AND a.stock <= 0 AND a.llevaInventario = 1 '
-				END 
-				
-			IF @bySearch IS NOT NULL
-				BEGIN
-					SET @sql = @sql + 'AND (a.descripcion LIKE''%''+ @bySearch +''%'' OR a.codigo LIKE''%'' + @bySearch +''%'' OR a.codigoBarra LIKE''%'' + @bySearch +''%'') '	
-				END 
-			
-			SET @sql = @sql+ 'ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY ' 
-
-			
+						    
+			SET @dynamicFilterCondition = CHOOSE(
+				ISNULL(@filterMode, 1),
+				' AND (a.descripcion LIKE ''%'' + @bySearch + ''%'' OR a.codigo LIKE ''%'' + @bySearch + ''%'' OR a.codigoBarra LIKE ''%'' + @bySearch + ''%'') ',
+				' AND a.codigo LIKE ''%'' + @bySearch + ''%'' ',
+				' AND a.codigoBarra LIKE ''%'' + @bySearch + ''%'' ',
+				' AND a.descripcion LIKE ''%'' + @bySearch + ''%'' '
+			);
+			 
+			 
+			SET @sql = @sql 
+				+ IIF(@idSubFamilia > 0, ' AND a.idSubFamilia = @idSubFamilia ', '') 
+				+ IIF(@idMedida > 0, ' AND a.idMedida = @idMedida ', '') 
+				+ IIF(@idMarca > 0, ' AND a.idMarca = @idMarca ', '') 
+				+ IIF(@idModelo > 0, ' AND a.idModelo = @idModelo ', '') 
+				+ IIF(@idTipoIva > 0, ' AND a.idTipoIva = @idTipoIva ', '') 
+				+ IIF(@estado IN (1, 0), ' AND a.estado = @estado ', '') 
+				+ IIF(@checkBoxFraccionado = 1, ' AND a.fraccionado = 1 ', '') 
+				+ IIF(@checkBoxInventario = 1, ' AND a.llevaInventario = 1 ', '') 
+				+ COALESCE(CHOOSE(@byStock, ' AND a.stock > 0 AND a.llevaInventario = 1 ', ' AND a.stock <= 0 AND a.llevaInventario = 1 '), '')
+				+ IIF(@bySearch IS NOT NULL, @dynamicFilterCondition, ' ')
+                + 'ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY ' 
+      
+       
 			EXEC sp_executesql  @sql
 						       ,@params 
 						       ,@idEntidad    = @idEntidad
