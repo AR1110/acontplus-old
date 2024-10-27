@@ -144,7 +144,7 @@ namespace Reports.Application.Services
                     if (Convert.ToBoolean(item["isPicture"]))
                     {
                         byte[] imageBytes = item.Field<bool>("isCompressed")
-                            ? CompressionHelper.Decompress((byte[])item["paramValue"])
+                            ? CompressionUtils.DecompressDeflate((byte[])item["paramValue"])
                             : (byte[])item["paramValue"];
 
                         paramValue = Convert.ToBase64String(imageBytes);
