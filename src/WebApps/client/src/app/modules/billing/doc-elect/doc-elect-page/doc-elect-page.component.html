@@ -27,9 +27,10 @@
           </div>
           <div class="col">
             <app-date-range-selection
+              (onChangeDateRange)="onDateRangeSelection($event)"
               [(checkbox)]="dataSearch().checkBoxDate"
               [showInputMaterial]="true"
-              [showSuffix]="true"
+              [showMatPrefix]="true"
             />
           </div>
         </div>
@@ -77,34 +78,26 @@
 
       <mat-menu #menu="matMenu">
         <button mat-menu-item>
-          <mat-icon>clear</mat-icon>
-          <span>Anular</span>
-        </button>
-
-        <button mat-menu-item>
-          <mat-icon>file_copy</mat-icon>
-          <span>Duplicar</span>
-        </button>
-
-        <button mat-menu-item>
-          <mat-icon>payment</mat-icon>
-          <span>Cobro</span>
+          <mat-icon>download</mat-icon>
+          <span>Pdf</span>
         </button>
 
         <button mat-menu-item>
           <mat-icon>list_alt</mat-icon>
-          <span>Cuota</span>
-        </button>
-
-        <button mat-menu-item>
-          <mat-icon>swap_horiz</mat-icon>
-          <span>Convertir a FV</span>
-        </button>
-        <button mat-menu-item>
-          <mat-icon> attach_money</mat-icon>
-          <span>Cuenta por cobrar</span>
+          <span>Detalle</span>
         </button>
       </mat-menu>
+
+      <button mat-icon-button aria-label="Icon Email">
+        <mat-icon>email</mat-icon>
+      </button>
+      <button mat-icon-button aria-label="Icon Email">
+        <img
+          src="assets/icons/icons8/svg/whatsapp.svg"
+          alt="WhatsApp Icon"
+          style="width: 24px; height: 24px"
+        />
+      </button>
     </ng-template>
   </mat-card-content>
 </mat-card>
