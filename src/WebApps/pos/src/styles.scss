@@ -425,3 +425,25 @@ tr.mat-mdc-footer-row {
   margin: 0;
   height: 100%;
 }
+
+.stat {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.stat-subtext {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.text-green {
+  color: #2ba640;
+}
+
+.stat-text-dim-gray {
+  color: #d3d3d3;
+}
+
+.text-dim-dark-gray {
+  color: var(--sys-inverse-surface);
+}

@@ -169,6 +169,7 @@ function inputSearchArticuloCtrl($scope,   $injector,   ) {
 
 
     function validarGetDataArticulo(idArticulo) { 
+        console.log($ctrl)
         if ($ctrl.esVenta) {
             $ctrl.refProductoVenta.onInventario(idArticulo)
             return

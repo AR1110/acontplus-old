@@ -1,9 +1,7 @@
-import { Component, effect, input } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
+import { DashboardStore } from '@/features/dasboard/store/dashboard.store';
+import { Component, effect, inject } from '@angular/core';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-
-
 const paletaColores = [
   'rgba(255, 99, 132, 0.5)',  // Rojo
   'rgba(54, 162, 235, 0.5)',  // Azul
@@ -22,36 +20,58 @@ function generarColorAleatorio() {
   return color;
 }
 
-
 @Component({
-  selector: 'app-sale-stats',
+  selector: 'app-sale-chart',
   standalone: true,
   imports: [
-    MatCardModule,
     BaseChartDirective
   ],
-  templateUrl: './sale-stats.component.html',
-  styleUrl: './sale-stats.component.scss'
+  template: `
+  <div class="chart-container">
+  <canvas
+    baseChart
+
+    [type]="'line'"
+    [data]="lineChartData"
+    [options]="lineChartOptions"
+    [legend]="lineChartLegend"
+  >
+  </canvas>
+</div>
+
+  `,
+   styles: `
+   .chart-container {
+     height: calc(100% - 100px);
+     width: 100%;
+   }
+   `,
 })
-export class SaleStatsComponent {
-  sales = input.required<any[]>()
+export class SaleChartComponent {
+  dashStore = inject(DashboardStore)
+
+
   public lineChartData: ChartConfiguration<'line'>['data'] = {
     labels: [],
     datasets: []
   };
   public lineChartOptions: ChartOptions<'line'> = {
-    responsive: true
+    responsive: true,
+    maintainAspectRatio: false, // To ensure it adapts to the container size
+    scales: {
+      x: {},
+      y: { beginAtZero: true },
+    },
   };
 
   public lineChartLegend = true;
-
 
   constructor() {
     effect(() => {
 
 
       // Extraer tipos de documentos únicos
-      const tiposDocumentos = [...new Set(this.sales().map(item => item.docNom))];
+      const tiposDocumentos = [...new Set(this.dashStore.sales().map(item => item.docNom))];
 
       // Crear un objeto para almacenar los datos por tipo de documento y mes
       const datosPorTipoYMes = tiposDocumentos.reduce((acc, tipo) => {
@@ -60,7 +80,7 @@ export class SaleStatsComponent {
       }, {});
 
       // Actualizar datosPorTipoYMes con los datos proporcionados
-      this.sales().forEach(item => {
+      this.dashStore.sales().forEach(item => {
         datosPorTipoYMes[item.docNom][item.mes - 1] = item.totalVendido;
       });
 
@@ -88,5 +108,4 @@ export class SaleStatsComponent {
       this.lineChartData = lineChartData;
     })
   }
-
 }

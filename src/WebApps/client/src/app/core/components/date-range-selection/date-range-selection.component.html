@@ -1,14 +1,41 @@
 @if (inputGroupDateChecked) {
-  <div class="input-group ">
-    <div class="input-group-text">
-      <input class="form-check-input "
-             type="checkbox"
-             [(ngModel)]="requiredDate"
-             (change)="onChangeRequiredDate()"
-             aria-label="Checkbox for following text input">
-    </div>
-    <input type="text" class="form-control" id="date-range-selection-input-checked" #dateRangeInput>
+<div class="input-group">
+  <div class="input-group-text">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      [(ngModel)]="requiredDate"
+      (change)="onChangeRequiredDate()"
+      aria-label="Checkbox for following text input"
+    />
   </div>
+  <input
+    type="text"
+    class="form-control"
+    id="date-range-selection-input-checked"
+    #dateRangeInput
+  />
+</div>
+} @else if(showInputMaterial()){
+<mat-form-field class="w-100" [floatLabel]="'always'">
+  <mat-label>Rango Fecha</mat-label>
+  <input
+    matInput
+    placeholder="Placeholder"
+    id="date-range-selection-input"
+    #dateRangeInput
+  />
+  <mat-checkbox
+    matSuffix
+    [(ngModel)]="checkbox"
+    (click)="onCheckboxClick($event)"
+  ></mat-checkbox>
+</mat-form-field>
 } @else {
-  <input type="text" class="form-control" id="date-range-selection-input" #dateRangeInput>
+<input
+  type="text"
+  class="form-control"
+  id="date-range-selection-input"
+  #dateRangeInput
+/>
 }

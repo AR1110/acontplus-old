@@ -1,23 +1,35 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, input, Input, model, Output, ViewChild } from "@angular/core";
 
 declare var DateRangePicker: any;
 import moment from 'moment';
 import { formatDateMoment } from "@core/utils/format-date-moment";
 import { FormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatInputModule } from "@angular/material/input";
 
 @Component({
   selector: 'app-date-range-selection',
   standalone: true,
   imports: [
-    FormsModule
+    FormsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatCheckboxModule
   ],
   templateUrl: './date-range-selection.component.html',
 })
 export class DateRangeSelectionComponent {
+  showInputMaterial  = input(false);
+  showSuffix = input(false)
+  checkbox = model(false)
+
+
+  @Input() requiredDate = false;
+
   @Input() from: string | null = null;
   @Input() to: string | null = null;
   @Input() inputGroupDateChecked = false;
-  @Input() requiredDate = false;
   @Output() valueChangeRequiredDate = new EventEmitter<boolean>()
   @Input() options = {
     timePicker: false,
@@ -115,6 +127,11 @@ export class DateRangeSelectionComponent {
       });
     })(DateRangePicker);
   }
+
+  onCheckboxClick(event: MouseEvent): void {
+    event.stopPropagation();  // Detener la propagación del evento de clic
+  }
+
 
   onChangeRequiredDate() {
     this.valueChangeRequiredDate.emit(this.requiredDate);

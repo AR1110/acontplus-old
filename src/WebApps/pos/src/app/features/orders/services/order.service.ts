@@ -111,13 +111,23 @@ export class OrderService {
       map(response => {
         const result = {
           sales: [] as any[],
-          productsTop: [] as any[]
+          productsTop: [] as any[],
+          documentCounts: [] as any[],
         };
+
         if (response.code === "1" && response.payload) {
           const mainData = JSON.parse(response.payload as string);
-          result.sales = [...mainData.order, ...(mainData.docs || [])];
-          result.productsTop = mainData.productsTop || [];
+          // Desestructuración para mejorar la legibilidad
+          const { order = [], docs = [], productsTop = [], documentCounts = [] } = mainData;
+
+          // Asignación de datos
+          result.sales = [...order, ...docs];
+          result.productsTop = productsTop;
+
+
+          result.documentCounts =  documentCounts;
         }
+
         return result;
       })
     );

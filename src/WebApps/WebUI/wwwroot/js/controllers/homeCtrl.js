@@ -219,7 +219,7 @@
             $q.all([dashboardPromises, documentsPromises]).then((response) => {
                 const [responseDashboard, comprobantesElectronicos] = response;
                 let dashboardData = JSON.parse(responseDashboard.payload);
-                if (comprobantesElectronicos.length > 0) {
+                if (comprobantesElectronicos && comprobantesElectronicos.length > 0) {
                     modalService.openModalCustom({
                         controller: [
                             "$uibModalInstance",

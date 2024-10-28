@@ -1,68 +1,26 @@
 ﻿namespace Configuracion.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class WhatsappMessageController : ControllerBase
-{
-    private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
-
-    public WhatsappMessageController(IConfiguration configuration, ICustomLogger log)
-    {
-        _configuration = configuration;
-        _log = log;
-    }
-
+public class WhatsappMessageController (IWhatsappMessageService whatsappMessageService): BaseApiController
+{ 
     [HttpPost("Post")]
-    public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
+    public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
+        var parameters = new Dictionary<string, object>() 
         {
-            var idUsuarioRol = User.GetUserRoleId();
-            await _db.SpExecuteAsync("Config.WhatsAppMessage_Insert");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-            _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
-            _response = await _db.GetDefaultAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error while insert whatsapp message: \n" + ex);
-            _response.Create("0", "Error al insertar el whatsapp");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            {"idUsuarioRol",  User.GetUserRoleId()} ,
+            {"json", DataConverters.SerializeDictionary(data.Data) }
+        };
+        return Ok(await whatsappMessageService.AddAsync(parameters));
     }
-
 
     [HttpPost("PostApp")]
-    public async Task<IActionResult> PostApp([FromBody] ApiRequest parameters)
+    public async Task<IActionResult> PostApp([FromBody] ApiRequest data)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
+        var parameters = new Dictionary<string, object>()
         {
-            var idUsuarioRol = User.GetUserRoleId();
-            await _db.SpExecuteAsync("Config.WhatsAppMessage_Insert_v2");
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-            _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
-            _response = await _db.GetDefaultAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error while insert whatsapp message: \n" + ex);
-            _response.Create("0", "Error al insertar el whatsapp");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            {"idUsuarioRol",  User.GetUserRoleId()} ,
+            {"json", DataConverters.SerializeDictionary(data.Data) }
+        };
+        return Ok(await whatsappMessageService.AddDeprecatedAsync(parameters));
     }
 }

@@ -1,5 +1,4 @@
-﻿using Configuracion.API.Interfaces.WizardConfig;
-using Configuracion.API.Services.WizardConfig;
+﻿using Scrutor;
 
 namespace Configuracion.API.Extensions;
 
@@ -19,33 +18,25 @@ public static class ApplicationServicesExtensions
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
 
-        services.AddScoped<ICompanyDemoStepService, CompanyDemoStepService>();
-        services.AddScoped<IDemoStepService, DemoStepService>();
-        services.AddScoped<IEmailConfigService, EmailConfigService>();
-        services.AddScoped<IEstablecimientoAsignacionService, EstablecimientoAsignacionService>();
-        services.AddScoped<IEstadoDocumentoService, EstadoDocumentoService>();
-        services.AddScoped<IFirmaElectronicaService, FirmaElectronicaService>();
-        services.AddScoped<IPrinterService, PrinterService>();
-        services.AddScoped<IPrintService, PrintService>();
-        services.AddScoped<IEstablecimientoLogoService, EstablecimientoLogoService>();
-        services.AddScoped<IPuntoEmisionAsignacionService, PuntoEmisionAsignacionService>();
-        services.AddScoped<IBodegaAsignacionService, BodegaAsignacionService>();
-        services.AddScoped<IGeneralConfigService, GeneralConfigService>();
-        services.AddScoped<IDocConfigService, DocConfigService>();
-        services.AddScoped<IUserCustomerService, UserCustomerService>();
-        services.AddScoped<IUserCustomerRoleService, UserCustomerRoleService>();
-        services.AddScoped<IUserCustomerRequestService, UserCustomerRequestService>();
-        services.AddScoped<IUserCustomerPermissionService, UserCustomerPermissionService>();
-        services.AddScoped<IUserProfileService, UserProfileService>();
-        services.AddScoped<IEstablishmentService, EstablishmentService>();
-        services.AddScoped<IPtoEmisionService, PtoEmisionService>();
-        services.AddScoped<ICompanyService, CompanyService>();
-        services.AddScoped<ITiempoCreditoService, TiempoCreditoService>();
-        services.AddScoped<ICustomLogger, CustomLogger>();
-        services.AddScoped<ITurnoService, TurnoService>();
-        services.AddScoped<IWhatsappUsageService, WhatsappUsageService>();
-
         services.AddAutoMapper(typeof(MappingProfiles));
+
+        string[] nameSpaces = 
+            [
+                "Common.Application.Services",
+                "Common.Infrastructure.Repository",
+                "Configuracion.API.Services",
+                "Configuracion.API.Services.Sri",
+                "Configuracion.API.Services.WizardConfig",
+            ];
+
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(nameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithTransientLifetime()
+            );
+
         return services;
     }
 }

@@ -1,18 +1,14 @@
 ﻿namespace Configuracion.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class SolicitudController : ControllerBase
+public class SolicitudController : BaseApiController
 {
     private readonly IConfiguration _configuration;
     private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
 
-    public SolicitudController(IConfiguration configuration, ICustomLogger log)
+    public SolicitudController(IConfiguration configuration)
     {
         _configuration = configuration;
         _db = new DbAccess(_configuration);
-        _log = log;
     }
 
     [HttpGet("Get/{json}")]
@@ -29,7 +25,6 @@ public class SolicitudController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al obtener datos de solicitud: \n" + ex);
             _response.Create("0", "Error al obtener datos de solicitud");
         }
         finally
@@ -54,7 +49,6 @@ public class SolicitudController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al insertar datos de solicitud: \n" + ex);
             _response.Create("0", "Error al insertar datos de solicitud");
         }
         finally
@@ -79,7 +73,6 @@ public class SolicitudController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al actualizar datos de solicitud: \n" + ex);
             _response.Create("0", "Error al actualizar datos de solicitud");
         }
         finally
@@ -104,7 +97,6 @@ public class SolicitudController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al eliminar datos de solicitud: \n" + ex);
             _response.Create("0", "Error al verificar datos de solicitud");
         }
         finally
@@ -129,7 +121,6 @@ public class SolicitudController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al verificar datos de solicitud: \n" + ex);
             _response.Create("0", "Error al verificar datos de solicitud");
         }
         finally

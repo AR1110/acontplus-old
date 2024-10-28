@@ -125,8 +125,8 @@ BEGIN
 									   telefono     = ISNULL(e.telefono, ''),
 									   razonSocial  = e.razonSocial
 								FROM dbo.Proforma pr 
-								INNER JOIN Cliente               cl ON cl.idCliente         = pr.idCliente 
-								INNER JOIN dbo.PuntoEmision      pe ON pe.idPuntoEmision    = pr.idPuntoEmision
+								INNER JOIN Cliente               cl ON cl.idCliente      = pr.idCliente 
+								INNER JOIN dbo.PuntoEmision      pe ON pe.idPuntoEmision = pr.idPuntoEmision
 								INNER JOIN Sri.Establecimiento    s ON s.idEstablecimiento  = pe.idEstablecimiento
 								INNER JOIN dbo.Entidad            e ON e.idEntidad          = pr.idEntidad
                                 INNER JOIN Customer.Customer     cu ON cu.Id                = cl.CustomerId 
@@ -147,7 +147,7 @@ BEGIN
 
 				
 					SET @body = (
-									SELECT cliente       = cu.BusinessName, 
+									SELECT cliente      = cl.nombreComercial, 
 											documento    = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento),
 											fechaEmision = dbo.AFTConvertDate(ne.fechaEmision)+dbo.AFTConvertHora(ne.fechaEmision),
 											importeTotal = CAST(ne.total as numeric(18,2)),																   
@@ -156,6 +156,7 @@ BEGIN
 										
 									FROM dbo.NotaEntrega ne 
 									INNER JOIN Cliente               cl ON cl.idCliente      = ne.idCliente 
+                                    INNER JOIN Customer.Customer     cc ON cc.Id             = cl.CustomerId
 									INNER JOIN dbo.PuntoEmision      pe ON pe.idPuntoEmision = ne.idPuntoEmision
 									INNER JOIN Sri.Establecimiento    s ON s.idEstablecimiento  = pe.idEstablecimiento
 									INNER JOIN dbo.Entidad            e ON e.idEntidad       = ne.idEntidad
