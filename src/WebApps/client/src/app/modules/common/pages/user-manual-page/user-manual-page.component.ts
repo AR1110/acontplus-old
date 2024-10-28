@@ -1,59 +1,124 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { UserManualService } from '@modules/common/services/user-manual.service';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { SafeHtmlPipe } from '@shared/pipes/safe-html.pipe';
+import { MatCardModule } from '@angular/material/card';
+import { Menu } from '@core/models/menu.model';
+import {
+  MatOption,
+  MatSelect,
+  MatSelectChange,
+} from '@angular/material/select';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { NgStyle } from '@angular/common';
+import { MatInput } from '@angular/material/input';
+import { MatPagination } from '@shared/models/pagination.model';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 interface Manual {
+  id: number;
+  title: string;
+  description: string;
   content: string;
   safeEmbedCode?: SafeHtml;
+  totalRecords?: number;
 }
 
 @Component({
   selector: 'app-user-manual-page',
   standalone: true,
-  imports: [BreadcrumbComponent, SafeHtmlPipe],
+  imports: [
+    BreadcrumbComponent,
+    MatCardModule,
+    SafeHtmlPipe,
+    MatSelect,
+    MatOption,
+    MatExpansionModule,
+    NgStyle,
+    MatInput,
+    MatPaginator,
+  ],
   templateUrl: './user-manual-page.component.html',
-  styles: `
-    .iframe-container {
-      position: relative;
-      overflow: hidden;
-      padding-top: 56.25%; /* 16:9 Aspect Ratio */
-    }
-
-    :host ::ng-deep .iframe-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
-  `,
+  styles: ``,
 })
 export class UserManualPageComponent {
-  manuals: Manual[] = [];
+  data = {
+    menuId: 0,
+    textSearch: '',
+    pageIndex: 0,
+    pageSize: 0,
+  };
+  modules: Menu[] = [];
+  manuals: any[] = [];
+  pagination = signal(new MatPagination());
+  pageEvent!: PageEvent;
 
   constructor(
     private sanitizer: DomSanitizer,
     private _userManualService: UserManualService,
   ) {}
 
-  ngOnInit() {
-    this._userManualService.get({}).subscribe((response) => {
-      let tempArray = JSON.parse(response.payload as string) as Manual[];
-      this.manuals = tempArray.map((manual: Manual) => ({
+  loadData() {
+    this.data.pageIndex = this.pagination().pageIndex + 1;
+    this.data.pageSize = this.pagination().pageSize;
+    this._userManualService.get(this.data).subscribe((response) => {
+      this.modules = response.modules;
+      // console.log(response.userManuals);
+      this.manuals = response.userManuals.map((manual: Manual) => ({
         ...manual,
         safeEmbedCode: this.sanitizer.bypassSecurityTrustHtml(
-          manual.content
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .replace(/&amp;lt;/g, '&lt;')
-            .replace(/&amp;gt;/g, '&gt;')
-            .replace(/&quot;/g, '"'),
+          manual.content,
+          // .replace(/&lt;/g, '<')
+          // .replace(/&gt;/g, '>')
+          // .replace(/&amp;lt;/g, '&lt;')
+          // .replace(/&amp;gt;/g, '&gt;')
+          // .replace(/&quot;/g, '"'),
         ),
+        expanded: false,
       }));
-      console.log(this.manuals);
+
+      this.pagination.update((e) => {
+        return {
+          ...e,
+          totalRecords: this.manuals[0].totalRecords,
+        };
+      });
+      // console.log(this.manuals);
     });
+  }
+
+  ngOnInit() {
+    this.loadData();
+  }
+
+  onMenuChange($event: MatSelectChange) {
+    this.data.menuId = $event.value;
+    this.loadData();
+  }
+
+  onSearch($event: any) {
+    const textSearch = $event.target.value;
+    if (textSearch.length >= 3) {
+      this.data.textSearch = textSearch;
+      this.loadData();
+    }
+    if (!textSearch || textSearch.length === 0) {
+      this.loadData();
+    }
+  }
+
+  onPageChanged($event: PageEvent) {
+    this.pageEvent = $event;
+    this.pagination.update((pag) => {
+      return {
+        ...pag,
+        totalRecords: $event.length,
+        pageSize: $event.pageSize,
+        pageIndex: $event.pageIndex,
+      };
+    });
+
+    this.loadData();
   }
 }
