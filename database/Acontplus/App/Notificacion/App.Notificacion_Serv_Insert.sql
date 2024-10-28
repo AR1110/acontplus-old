@@ -118,20 +118,18 @@ BEGIN
 
 				
 				SET @body = (
-								SELECT cliente      = cc.TradeName, 
-										documento    = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,pr.nroDocumento),
-										fechaEmision = dbo.AFTConvertDate(pr.fechaEmision)+dbo.AFTConvertHora(pr.fechaEmision),
-										importeTotal = Herramientas.Round_Out(pr.total, cd.nroTotalSubTotal),																   
-										telefono     = ISNULL(e.telefono, ''),
-										razonSocial  = e.razonSocial
-										
+								SELECT cliente      = cu.BusinessName, 
+									   documento    = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,pr.nroDocumento),
+									   fechaEmision = dbo.AFTConvertDate(pr.fechaEmision)+dbo.AFTConvertHora(pr.fechaEmision),
+									   importeTotal = CAST(pr.total as numeric(18,2)),																   
+									   telefono     = ISNULL(e.telefono, ''),
+									   razonSocial  = e.razonSocial
 								FROM dbo.Proforma pr 
 								INNER JOIN Cliente               cl ON cl.idCliente      = pr.idCliente 
-                                INNER JOIN Customer.Customer     cc ON cc.Id             = cl.CustomerId
 								INNER JOIN dbo.PuntoEmision      pe ON pe.idPuntoEmision = pr.idPuntoEmision
 								INNER JOIN Sri.Establecimiento    s ON s.idEstablecimiento  = pe.idEstablecimiento
-								INNER JOIN dbo.Entidad            e ON e.idEntidad       = pr.idEntidad
-								INNER JOIN @tlDecimal            cd ON cd.idEntidad      = pr.idEntidad
+								INNER JOIN dbo.Entidad            e ON e.idEntidad          = pr.idEntidad
+                                INNER JOIN Customer.Customer     cu ON cu.Id                = cl.CustomerId 
 								WHERE pr.idProforma = @id
 								FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 							 )
@@ -149,10 +147,10 @@ BEGIN
 
 				
 					SET @body = (
-									SELECT cliente      = cc.TradeName, 
+									SELECT cliente      = cl.nombreComercial, 
 											documento    = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento),
 											fechaEmision = dbo.AFTConvertDate(ne.fechaEmision)+dbo.AFTConvertHora(ne.fechaEmision),
-											importeTotal = Herramientas.Round_Out(ne.total, cd.nroTotalSubTotal),																   
+											importeTotal = CAST(ne.total as numeric(18,2)),																   
 											telefono     = ISNULL(e.telefono, ''),
 											razonSocial  = e.razonSocial
 										
@@ -162,7 +160,7 @@ BEGIN
 									INNER JOIN dbo.PuntoEmision      pe ON pe.idPuntoEmision = ne.idPuntoEmision
 									INNER JOIN Sri.Establecimiento    s ON s.idEstablecimiento  = pe.idEstablecimiento
 									INNER JOIN dbo.Entidad            e ON e.idEntidad       = ne.idEntidad
-									INNER JOIN @tlDecimal            cd ON cd.idEntidad      = ne.idEntidad
+									 INNER JOIN Customer.Customer    cu ON cu.Id                = cl.CustomerId 
 									WHERE ne.idNotaEntrega = @id
 									FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 								 )

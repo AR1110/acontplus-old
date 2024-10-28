@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- Test       : EXEC Importaciones.Valid_Datos_Get  38,'AF','[{"codigo":"AVVB1","codBarras":"ACC0","codigoAuxiliar":"AUX-ACC0","codIva":2,"codMedida":"1UNI","codSubFamilia":"IMP0","descripcion":"CAMARA WEB XTRATECH X20 HD 1080P \/ 30FPS USB \/ MICROFONO INTEGRADO","precioCosto":90.00000,"stock":-2.00000,"llevaInventario":"SI"},{"codigo":"AVVB4","codBarras":"ACC1","codigoAuxiliar":"AUX-ACC1","codIva":2,"codMedida":"1UNI","codSubFamilia":"IMP0","descripcion":"BOTELLA DE TINTA EPSON T664120 NEGRO 70ML - L220,L380,L355,L395,L495,L575,L565,L1455,L655,L1300","precioCosto":50.00000,"stock":-14.00000,"llevaInventario":"SI"},{"codigo":"AVVB5","codBarras":"ACC2","codigoAuxiliar":"AUX-ACC2","codIva":2,"codMedida":"1UNI","codSubFamilia":"IMP0","descripcion":"AUDIFONO + MICROFONO HP ON EAR CONECTOR USB + 1 CONECTOR","precioCosto":20.00000,"stock":18.00000,"llevaInventario":"SI"},{"codigo":"AVVB135","codBarras":"864322052676817","codigoAuxiliar":"AUX-TEL0","codIva":2,"codMedida":"1UNI","codSubFamilia":"IMP0","descripcion":"TELÉFONO CELULAR MODELO RMX3231","precioCosto":185.00000,"stock":-24.00000,"llevaInventario":"SI"},{"codigo":"AVVB146","codBarras":"COM0","codigoAuxiliar":"AUX-COM0","codIva":2,"codMedida":"1UNI","codSubFamilia":"IMP0","descripcion":"COMPUTADOR PORTATIL DELL INSPIRON","precioCosto":10.00000,"stock":-2.00000,"llevaInventario":"SI"}]'
-IF OBJECT_ID(N'Importaciones.Valid_Datos_Get', N'P') IS NOT NULL
-DROP PROCEDURE Importaciones.Valid_Datos_Get 
-GO
-CREATE PROCEDURE Importaciones.Valid_Datos_Get @idRol INT,@codImportacion VARCHAR(5), @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Importaciones.Valid_Datos_Get @idRol INT,@codImportacion VARCHAR(5), @json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -92,9 +89,15 @@ BEGIN
 			IF @codImportacion = 'CL' OR @codImportacion = 'PR'
 				BEGIN
 					INSERT INTO @tableClienteExists (id,numeroIdentificacion)
-					SELECT idCliente,numeroIdentificacion FROM dbo.Cliente WHERE idEntidad = @idEntidad AND @codImportacion = 'CL'
+					SELECT idCliente,cu.IDCard 
+                    FROM dbo.Cliente             cl WITH (NOLOCK)
+                    INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = cl.CustomerId
+                    WHERE idEntidad = @idEntidad AND @codImportacion = 'CL'
 					UNION ALL
-					SELECT idProveedor,numeroIdentificacion FROM dbo.Proveedor WHERE idEntidad = @idEntidad AND @codImportacion = 'PR'
+					SELECT idProveedor,cu.IDCard 
+                    FROM dbo.Proveedor            pr  WITH (NOLOCK)
+                     INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = pr.CustomerId
+                    WHERE idEntidad = @idEntidad AND @codImportacion = 'PR'
 
 					INSERT @tableCliente (
 						idSubContribuyente

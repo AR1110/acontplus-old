@@ -40,13 +40,15 @@ BEGIN
             DECLARE @verOtrasCajas BIT 
 
 			SELECT @verOtrasCajas = (SELECT TOP 1 verOtrasCajas FROM Config.v_User_Permission_CashAccounting WHERE idUsuarioRol = @userRoleId)
+            
             SET @params = '@idEntidad   INT
 						  ,@IDCard      VARCHAR(50) 
 						  ,@fechaInicio DATETIME2
 						  ,@fechaFin    DATETIME2
 						  ,@codEstado   VARCHAR(20)
                           ,@pageIndex   INT
-                           ,@idUsuario   INT'
+                          ,@pageSize    INT
+                          ,@idUsuario   INT'
 
             SET @sql = 'SELECT mc.idMovimientoCaja
 						      ,td.idTipoDocumento									
@@ -131,7 +133,7 @@ BEGIN
 				              ,@codEstado   = @codEstado
                               ,@pageIndex   = @pageIndex
                               ,@pageSize    = @pageSize
-                               ,@idUsuario   = @idUsuario
+                              ,@idUsuario   = @idUsuario
 
 	
             RETURN 
