@@ -5,7 +5,7 @@
     app.controller('articuloCtrl', articuloCtrl)
 
     articuloCtrl.$inject = [
-        '$scope',
+        '$scope', 
         'mainService',
         'articuloService',
         'productPhotoService',
@@ -15,7 +15,7 @@
     ];
 
 
-    function articuloCtrl($scope, mS, articuloSvc, productPhotoSvc, modalSvc, nombreModalInventario, form) {
+    function articuloCtrl($scope,  mS, articuloSvc, productPhotoSvc, modalSvc, nombreModalInventario, form) {
         const { fileCtrl, controllers, templates } = nombreModalInventario.ARTICULO
 
         $scope.recordsQuantity = [10, 25, 50, 100];
@@ -26,7 +26,8 @@
             maxSize: 5,
             totalRecords: 0,
             busqueda: "",
-            status: 1
+            status: 1,
+            filterMode: 1
         };
 
         $scope.subFamilias = []
@@ -54,6 +55,9 @@
             return [""].includes(campo) ? null : campo
         }
 
+        
+
+
         $scope.getArticulos = () => {
             try {
 
@@ -61,6 +65,7 @@
 
                 const dataSearch = {
                     tipo: 1,
+                    filterMode: $scope.dataSearch.filterMode,
                     bySearch: $scope.dataSearch.bySearch,
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
@@ -74,9 +79,8 @@
 
                     checkBoxFraccionado: $scope.dataSearch.checkBoxFraccionado,
                     checkBoxInventario: $scope.dataSearch.checkBoxInventario,
-                }
-
-                showLoader();
+                } 
+ 
                 articuloSvc.getAll(dataSearch).then(response => {
                     hideLoader();
                     let {
@@ -88,7 +92,7 @@
                 }).catch(error => {
                     $scope.dataSearch.totalRecords = 0;
                     console.log(error);
-                }).finally(() => hideLoader())
+                }) 
             } catch (error) {
                 $scope.dataSearch.totalRecords = 0;
                 hideLoader();
@@ -129,6 +133,10 @@
             $scope.dataSearch.pageIndex = 1;
             $scope.getArticulos();
         };
+
+        $scope.onChangeFilterMode= function(){
+           $scope.refresh()
+        }
 
         $scope.openModal = ({
             controller,

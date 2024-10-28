@@ -1,12 +1,62 @@
 <app-breadcrumb/>
-
-<div class="row">
-  @for (item of manuals; track $index) {
-    <div class="col">
-      <div [innerHTML]="item.safeEmbedCode"></div>
-      <!--      <div [innerHTML]="item.safeEmbedCode"></div>-->
-      <!--      <iframe width="100%" height="100%" [src]="item.safeEmbedCode"></iframe>-->
-
+<mat-card class="mb-3">
+  <mat-card-content>
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <label for="menuId">Módulo:</label>
+        <mat-select (selectionChange)="onMenuChange($event)" class="form-control" id="menuId">
+          <mat-option>Seleccione un módulo</mat-option>
+          @for (item of modules; track $index) {
+            <mat-option [value]="item.id">{{ item.name }}</mat-option>
+          }
+        </mat-select>
+      </div>
+      <div class="col-md-6">
+        <label for="textSearch">Buscar: </label>
+        <input (keydown)="onSearch($event)" class="form-control" id="textSearch" matInput>
+      </div>
     </div>
-  }
-</div>
+    <div class="row">
+      <div class="col">
+        <mat-accordion multi>
+          @for (item of manuals; track $index) {
+            <mat-expansion-panel [expanded]="item.expanded">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="d-flex flex-row gap-1">
+                    <span>{{ item.title }}</span>
+                    @if (item.code == 'CD') {
+                      <span class="node-label">-</span>
+                      <span class="node-label">{{ item.description }}</span>
+                    }
+                  </div>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              @switch (item.code) {
+                @case ('CD') {
+                  <div [innerHTML]="item.safeEmbedCode"></div>
+                }
+                @default {
+                  <p>{{ item.description }}</p>
+                }
+              }
+            </mat-expansion-panel>
+          } @empty {
+            <p>No existen Datos</p>
+          }
+        </mat-accordion>
+        <mat-paginator #paginator
+                       (page)="onPageChanged($event)"
+                       [length]="pagination()?.totalRecords"
+                       [pageIndex]="pagination()?.pageIndex"
+                       [pageSizeOptions]="pagination()?.pageSizeOptions??[]"
+                       [pageSize]="pagination()?.pageSize"
+                       [showFirstLastButtons]="true"
+                       aria-label="Select page">
+        </mat-paginator>
+      </div>
+    </div>
+
+  </mat-card-content>
+</mat-card>
