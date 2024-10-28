@@ -113,7 +113,7 @@ export const routes: Routes = [
         loadChildren: () =>
           import('@modules/common/common.routes').then((r) => r.routes),
         data: {
-          breadcrumb: 'Common',
+          breadcrumb: 'General',
         },
       },
     ],
