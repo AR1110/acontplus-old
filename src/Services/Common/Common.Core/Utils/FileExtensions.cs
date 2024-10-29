@@ -10,6 +10,7 @@ public static class FileExtensions
         var response = Regex.Replace(fileName.Trim(), "[^A-Za-z0-9_. ]+", "");
         return response.Replace(" ", string.Empty);
     }
+
     public static string GetBase64FromByte(byte[] valueByte)
     {
         if (valueByte == null)
@@ -37,6 +38,7 @@ public static class FileExtensions
             file.CopyTo(ms);
             fileBytes = ms.ToArray();
         }
+
         return fileBytes;
     }
 }

@@ -1,8 +1,8 @@
 ﻿global using Asp.Versioning;
 global using Autofac;
-global using Common.Application.Services;
+global using Common.S3Application.Services;
 global using Common.Core.Entities;
-global using Common.Core.Interfaces;
+global using Common.S3Application.Interfaces;
 global using Common.Core.Models;
 global using Common.Core.Utils;
 global using Common.Infrastructure.Data;

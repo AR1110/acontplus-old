@@ -14,7 +14,7 @@ public static class DataValidation
 
     public static bool DataTableIsNull(DataTable dt)
     {
-        bool isNull = dt is not { Rows.Count: > 0 };
+        var isNull = dt is not { Rows.Count: > 0 };
         return isNull;
     }
 
@@ -23,16 +23,16 @@ public static class DataValidation
         switch (removeEmptyDt)
         {
             case true:
+            {
+                var tablesToRemove = ds.Tables.Cast<DataTable>().Where(dt => dt.Rows.Count == 0).ToList();
+
+                foreach (var dt in tablesToRemove)
                 {
-                    var tablesToRemove = ds.Tables.Cast<DataTable>().Where(dt => dt.Rows.Count == 0).ToList();
-
-                    foreach (var dt in tablesToRemove)
-                    {
-                        ds.Tables.Remove(dt);
-                    }
-
-                    break;
+                    ds.Tables.Remove(dt);
                 }
+
+                break;
+            }
         }
 
         return ds == null || ds.Tables.Count == 0;
@@ -72,12 +72,14 @@ public static class DataValidation
             return false;
         }
     }
+
     public static string ValidateIpAddress(string ipAddress)
     {
         if (string.IsNullOrEmpty(ipAddress))
         {
             return "0.0.0.0";
         }
+
         if (ipAddress.Length > 13)
         {
             var extractedIpAddress = ipAddress.Substring(13);
@@ -85,18 +87,13 @@ public static class DataValidation
             {
                 return extractedIpAddress;
             }
-            else
-            {
-                return "0.0.0.0";
-            }
+
+            return "0.0.0.0";
         }
-        else
-        {
-            return ipAddress ?? "0.0.0.0";
-        }
+
+        return ipAddress ?? "0.0.0.0";
         // Extract the relevant part of the IP address if necessary
 
         // Check if the extracted part is a valid IP address
-       
     }
 }
