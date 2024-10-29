@@ -98,7 +98,7 @@ BEGIN
 							   ,totalRecords = COUNT(*) OVER()
 							   ,a.s3ObjectKey
 							   ,a.s3ObjectUrl
-						   FROM Inventario.v_Articulo a
+						   FROM Inventario.v_Articulo a WITH (NOLOCK)
 						   WHERE a.idEntidad = @idEntidad  '
 
 			IF @idSubFamilia > 0
