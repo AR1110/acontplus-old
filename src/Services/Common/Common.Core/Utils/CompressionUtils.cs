@@ -37,6 +37,7 @@ public static class CompressionUtils
             return decompressedStream.ToArray();
         }
     }
+
     // GZip Compression
     public static byte[] CompressGZip(byte[] data)
     {

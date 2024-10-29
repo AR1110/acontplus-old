@@ -7,16 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\GestionFinanciera\**" />
-    <EmbeddedResource Remove="Models\GestionFinanciera\**" />
-    <None Remove="Models\GestionFinanciera\**" />
+    <Compile Remove="Models\GestionFinanciera\**"/>
+    <EmbeddedResource Remove="Models\GestionFinanciera\**"/>
+    <None Remove="Models\GestionFinanciera\**"/>
   </ItemGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="BarcodeLib" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
-    <PackageReference Include="Newtonsoft.Json" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    <PackageReference Include="BarcodeLib"/>
+    <PackageReference Include="Microsoft.Extensions.Configuration"/>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json"/>
+    <PackageReference Include="Newtonsoft.Json"/>
   </ItemGroup>
 </Project>

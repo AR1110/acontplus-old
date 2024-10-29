@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-
-namespace Common.Core.ViewModels;
+﻿namespace Common.Core.ViewModels;
 
 public class HorarioViewModel
 {

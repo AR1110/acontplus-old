@@ -23,4 +23,4 @@ global using Common.Core.Entities;
 global using Common.Infrastructure.Data;
 global using Configuracion.API.Services;
 global using Configuracion.API.Services.Sri;
-global using Common.Core.Interfaces;
+global using Common.S3Application.Interfaces;
