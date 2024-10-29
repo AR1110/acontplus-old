@@ -98,6 +98,8 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "client", "WebApps\client\cl
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "pos", "WebApps\pos\pos.esproj", "{20FEC48D-2D41-4E37-A6CF-7E6E4B54904E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.S3Application", "Services\Common\Common.S3Application\Common.S3Application.csproj", "{B7D52ED7-6246-46F7-A6B3-9DC43D1C86D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -208,6 +210,10 @@ Global
 		{20FEC48D-2D41-4E37-A6CF-7E6E4B54904E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20FEC48D-2D41-4E37-A6CF-7E6E4B54904E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{20FEC48D-2D41-4E37-A6CF-7E6E4B54904E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B7D52ED7-6246-46F7-A6B3-9DC43D1C86D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7D52ED7-6246-46F7-A6B3-9DC43D1C86D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7D52ED7-6246-46F7-A6B3-9DC43D1C86D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7D52ED7-6246-46F7-A6B3-9DC43D1C86D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -251,6 +257,7 @@ Global
 		{063A03D4-E96C-4DBB-8B21-516972B30286} = {8489F03A-21B6-4434-9151-E11DF256305C}
 		{787E450D-A9B5-4B69-809B-89787ACB1BE7} = {DF6E6387-BEAD-4C32-AC66-04F69A582929}
 		{20FEC48D-2D41-4E37-A6CF-7E6E4B54904E} = {DF6E6387-BEAD-4C32-AC66-04F69A582929}
+		{B7D52ED7-6246-46F7-A6B3-9DC43D1C86D5} = {8489F03A-21B6-4434-9151-E11DF256305C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA9DF437-2C4E-4B51-A33F-8A6B93E9A018}

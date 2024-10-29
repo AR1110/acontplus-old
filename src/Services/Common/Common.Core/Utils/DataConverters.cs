@@ -10,8 +10,7 @@ public static class DataConverters
         var contractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
         var options = new JsonSerializerSettings
         {
-            ContractResolver = contractResolver,
-            Formatting = Formatting.Indented
+            ContractResolver = contractResolver, Formatting = Formatting.Indented
         };
         return JsonConvert.SerializeObject(table, options);
     }
@@ -25,7 +24,7 @@ public static class DataConverters
             foreach (DataTable dt in ds.Tables)
             {
                 var table = (from DataRow dr in dt.Rows
-                             select dt.Columns.Cast<DataColumn>().ToDictionary(col => col.ColumnName, col => dr[col])).ToList();
+                    select dt.Columns.Cast<DataColumn>().ToDictionary(col => col.ColumnName, col => dr[col])).ToList();
 
                 root.Add(table);
             }
@@ -36,8 +35,7 @@ public static class DataConverters
         var contractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
         var options = new JsonSerializerSettings
         {
-            ContractResolver = contractResolver,
-            Formatting = Formatting.Indented
+            ContractResolver = contractResolver, Formatting = Formatting.Indented
         };
         return JsonConvert.SerializeObject(ds, options);
     }
@@ -68,8 +66,7 @@ public static class DataConverters
         var contractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
         var options = new JsonSerializerSettings
         {
-            ContractResolver = contractResolver,
-            Formatting = Formatting.Indented
+            ContractResolver = contractResolver, Formatting = Formatting.Indented
         };
         return JsonConvert.SerializeObject(data, options);
     }
