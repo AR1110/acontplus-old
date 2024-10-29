@@ -53,7 +53,6 @@ BEGIN
 	    SELECT umt.Code
         ,umt.Name
         ,m.Name + '' - '' + um.Title AS Title
-        ,um.Description
         ,CONVERT(VARCHAR(MAX), DECOMPRESS(CompressedContent)) Content
 		,COUNT(*) OVER()                                                   as totalRecords
         FROM AcontplusAdmin.Common.UserManual um WITH(NOLOCK)
@@ -61,8 +60,6 @@ BEGIN
             	ON um.UserManualTypeId = umt.Id
 			LEFT JOIN AcontplusAdmin.Config.Menu m WITH(NOLOCK) ON um.menuId = m.Id
 		WHERE um.Enabled = CAST(1 AS BIT) '
-       
-        print @textSearch
       	
        	IF (@menuId > 0)
         	BEGIN
@@ -71,7 +68,6 @@ BEGIN
         IF (@textSearch IS NOT NULL AND LEN(LTRIM(RTRIM(@textSearch))) > 0)
         	BEGIN 
         		 SET @query = @query + 'AND (CONVERT(VARCHAR(MAX), DECOMPRESS(um.CompressedContent)) LIKE ''%' + @textSearch + '%''
-										OR um.Description LIKE ''%' + @textSearch + '%''
 										OR um.Title LIKE ''%' + @textSearch + '%'')'
         	END
         	

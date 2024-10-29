@@ -25,22 +25,10 @@
                 <mat-panel-title>
                   <div class="d-flex flex-row gap-1">
                     <span>{{ item.title }}</span>
-                    @if (item.code == 'CD') {
-                      <span class="node-label">-</span>
-                      <span class="node-label">{{ item.description }}</span>
-                    }
                   </div>
                 </mat-panel-title>
               </mat-expansion-panel-header>
-
-              @switch (item.code) {
-                @case ('CD') {
-                  <div [innerHTML]="item.safeEmbedCode"></div>
-                }
-                @default {
-                  <p>{{ item.description }}</p>
-                }
-              }
+              <div [innerHTML]="item.safeEmbedCode"></div>
             </mat-expansion-panel>
           } @empty {
             <p>No existen Datos</p>
@@ -48,10 +36,10 @@
         </mat-accordion>
         <mat-paginator #paginator
                        (page)="onPageChanged($event)"
-                       [length]="pagination()?.totalRecords"
-                       [pageIndex]="pagination()?.pageIndex"
-                       [pageSizeOptions]="pagination()?.pageSizeOptions??[]"
-                       [pageSize]="pagination()?.pageSize"
+                       [length]="pagination().totalRecords"
+                       [pageIndex]="pagination().pageIndex"
+                       [pageSizeOptions]="pagination().pageSizeOptions"
+                       [pageSize]="pagination().pageSize"
                        [showFirstLastButtons]="true"
                        aria-label="Select page">
         </mat-paginator>
