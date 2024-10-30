@@ -1,0 +1,92 @@
+<app-custom-container-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [matDialogTitle]="'Detalle Nota Entrega'"
+  (close)="closeDialog()"
+/>
+
+<ng-template #containerTemplate>
+  <div class="d-flex flex-column gap-2">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+    >
+      <div class="col">
+        <div class="border border-dark rounded-3 p-2">
+          <div class="d-flex flex-column gap-1">
+            <div class="vstack">
+              <small class="fw-semibold">Establecimiento</small>
+              <small class="">. text</small>
+            </div>
+            <div class="vstack">
+              <small class="fw-semibold">. text</small>
+              <small class="">.fs-6 text</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="border border-dark rounded-3 p-2">
+          <div class="d-flex flex-column gap-2">
+            <h5 class="fw-semibold">Nota de Entrega</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border border-dark rounded-3 p-2">
+      <div
+        class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+      >
+        <div class="col-7">
+          <div class="d-flex">
+            <small class="fw-semibold me-2">Razón Social/ Nombres:</small>
+            <small class=" ">. text</small>
+          </div>
+          <div class="d-flex">
+            <small class="fw-semibold me-2">Identificación:</small>
+            <small class=" ">. text</small>
+          </div>
+          <div class="d-flex">
+            <small class="fw-semibold me-2">Dirección:</small>
+            <small class=" ">. text</small>
+          </div>
+          <div class="d-flex">
+            <small class="fw-semibold me-2">Teléfono:</small>
+            <small class=" ">. text</small>
+          </div>
+          <div class="d-flex">
+            <small class="fw-semibold me-2">Correo:</small>
+            <small class=" ">. text</small>
+          </div>
+        </div>
+        <div class="col-5">
+          <div
+            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2 align-items-center"
+          >
+            <div class="col d-flex">
+              <small class="fw-semibold me-2">Identificación:</small>
+              <small class=" ">.fs-6 text</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border border-dark rounded-3 p-2"></div>
+
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+    >
+      <div class="col-8">
+        <div class="border border-dark rounded-3 p-2"></div>
+      </div>
+      <div class="col-4">
+        <div class="border border-dark rounded-3 p-2"></div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #actionsTemplate>
+  <button mat-raised-button (click)="closeDialog()">Cerrar</button>
+</ng-template>

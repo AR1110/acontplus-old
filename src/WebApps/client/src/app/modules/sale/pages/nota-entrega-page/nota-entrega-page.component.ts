@@ -1,14 +1,19 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, model, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { PageEvent } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { NotaEntregaDetalleDialogDirective } from '@modules/sale/directives/nota-entrega-detalle-dialog.directive';
 import { NotaEntregaService } from '@modules/sale/services/nota-entrega.service';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
@@ -19,16 +24,22 @@ import { finalize } from 'rxjs';
   selector: 'app-nota-entrega-page',
   standalone: true,
   imports: [
+    FormsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,
+    MatFormFieldModule,
+    MatSelectModule,
     //components
     BreadcrumbComponent,
     CustomTableContainerComponent,
     MatDynamicTableComponent,
-    DateRangeSelectionComponent
+    DateRangeSelectionComponent,
+
+    //Directives
+    NotaEntregaDetalleDialogDirective
   ],
   templateUrl: './nota-entrega-page.component.html',
   styles: ``
@@ -37,6 +48,8 @@ export class NotaEntregaPageComponent {
 
   private notaEntregaSvc = inject(NotaEntregaService)
 
+  estabs:GroupedEstab[]=[];
+  puntosEmision:GroupedEstabPuntoEmision[]=[]
   isSearchAdvanced = signal(false)
   isLoadingResults = signal(false)
 
@@ -59,6 +72,11 @@ export class NotaEntregaPageComponent {
 
   pagination = signal(new MatPagination());
 
+  dataSearch = model({
+    codEstab: null as string | null,
+    idPuntoEmision: 0,
+    checkBoxDate: true
+  })
 
   private getDataParams() {
     let params = {
@@ -105,6 +123,10 @@ export class NotaEntregaPageComponent {
 
   ngOnInit(): void {
     this.getNotasEntrega()
+
+  }
+
+  onEstabChange(){
 
   }
 
