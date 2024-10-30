@@ -6,6 +6,7 @@ import { ApiResponse } from '@core/models/api-response';
 import { map } from 'rxjs';
 
 import { SALE_PATHS } from '../enums/sale.enum';
+import { NotaEntregaAdapter } from '../adapters/nota-entrega.adapter';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +33,7 @@ export class NotaEntregaService {
 
           notasEntrega = notasEntrega || [];
 
-          result.data = notasEntrega.map((item:any) => {
+          result.data = notasEntrega.map((item: any) => {
             return {
               idCuentaPorCobrar: item.idCuentaPorCobrar,
               idDocumento: item.idDocumento,
@@ -54,13 +55,35 @@ export class NotaEntregaService {
             }
           })
 
-          result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords: 0;
+          result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
         }
         console.log(result)
         return result;
       })
     )
   }
+
+
+  getDetalleCompleto(id: number) {
+    let json = JSON.stringify({
+      tipo: 5,
+      id
+    })
+    return this.#http.get<ApiResponse>(`${this.#url}Get?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
+      map(response=>{
+        let result = {} as any;
+         if(response.code==="1"){
+          let mainData = JSON.parse(response.payload as string)
+           result = NotaEntregaAdapter.fromApiDetalleCompleto(mainData)
+         }
+
+        return result
+      })
+    )
+  }
+
 
   post<T>(data: T) {
 
