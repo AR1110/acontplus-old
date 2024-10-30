@@ -3,5 +3,4 @@
 public interface ILoginHistoryService
 {
     Task AddAsync(LoginHistory loginHistory);
-    Task CleanExpiredTokensAsync();
 }
