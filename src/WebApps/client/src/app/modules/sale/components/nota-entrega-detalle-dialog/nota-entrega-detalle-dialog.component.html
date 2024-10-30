@@ -6,21 +6,21 @@
 />
 
 <ng-template #containerTemplate>
-  <div class="d-flex flex-column gap-2">
+  <div class="d-grid gap-2">
     <div
-      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2"
     >
       <div class="col">
         <div class="border border-dark rounded-3 p-2">
           <div class="d-flex flex-column gap-1">
             <div class="vstack">
               <small class="fw-semibold">Establecimiento</small>
-              <small class="">. text</small>
+              <small class="">{{ headerData.estabNombre }}</small>
             </div>
-            <div class="vstack">
+            <!-- <div class="vstack">
               <small class="fw-semibold">. text</small>
               <small class="">.fs-6 text</small>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -28,6 +28,10 @@
         <div class="border border-dark rounded-3 p-2">
           <div class="d-flex flex-column gap-2">
             <h5 class="fw-semibold">Nota de Entrega</h5>
+            <div class="hstack">
+              <small class="fw-semibold me-2">Nro.</small>
+              <small>{{ headerData.serieComprobante }}</small>
+            </div>
           </div>
         </div>
       </div>
@@ -40,48 +44,149 @@
         <div class="col-7">
           <div class="d-flex">
             <small class="fw-semibold me-2">Razón Social/ Nombres:</small>
-            <small class=" ">. text</small>
+            <small class=" ">{{ clienteData.razonSocialComprador }}</small>
           </div>
           <div class="d-flex">
             <small class="fw-semibold me-2">Identificación:</small>
-            <small class=" ">. text</small>
+            <small class=" ">{{ clienteData.identificacionComprador }}</small>
           </div>
           <div class="d-flex">
             <small class="fw-semibold me-2">Dirección:</small>
-            <small class=" ">. text</small>
+            <small class=" ">{{ clienteData.direccionComprador }}</small>
           </div>
           <div class="d-flex">
             <small class="fw-semibold me-2">Teléfono:</small>
-            <small class=" ">. text</small>
+            <small class=" ">{{ clienteData.telefonoComprador }}</small>
           </div>
           <div class="d-flex">
             <small class="fw-semibold me-2">Correo:</small>
-            <small class=" ">. text</small>
+            <small class=" ">{{ clienteData.correo }}</small>
           </div>
         </div>
         <div class="col-5">
-          <div
-            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2 align-items-center"
-          >
+          <div class="d-fex">
             <div class="col d-flex">
-              <small class="fw-semibold me-2">Identificación:</small>
-              <small class=" ">.fs-6 text</small>
+              <small class="fw-semibold me-2">Tiempo Crédito:</small>
+              <small class=" ">{{ headerData.tiempoCreditoNombre }}</small>
+            </div>
+            <div class="col d-flex">
+              <small class="fw-semibold me-2">Fecha Emisión:</small>
+              <small class=" ">{{ headerData.fechaEmision }}</small>
+            </div>
+            <div class="col d-flex">
+              <small class="fw-semibold me-2">Fecha Vencimiento:</small>
+              <small class=" ">{{ headerData.fechaEmision }}</small>
+            </div>
+            <div class="col d-flex">
+              <small class="fw-semibold me-2">Empleado:</small>
+              <small class=" ">{{ headerData.empleadoNombre }}</small>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="border border-dark rounded-3 p-2"></div>
+    <div class="border border-dark rounded-3 p-2">
+      <table style="width: 100%" class="table table-sm small">
+        <thead>
+          <tr>
+            <th class="fw-semibold">Nro.</th>
+            <th class="fw-semibold">Codigo</th>
+            <th class="fw-semibold">Descripción</th>
+            <th class="fw-semibold">Medida</th>
+            <th class="fw-semibold">Iva</th>
+            <th class="fw-semibold">Tarifa</th>
+            <th class="fw-semibold text-right">Cant</th>
+
+            <th class="fw-semibold text-right">Precio U.</th>
+            <th class="fw-semibold text-right">%</th>
+            <th class="fw-semibold text-right">Descto</th>
+            <th class="fw-semibold text-right">Subtotal</th>
+            <th class="fw-semibold text-right">Impuesto</th>
+            <th class="fw-semibold text-right">Total</th>
+            <th class="fw-semibold text-right">Nota</th>
+            <th class="fw-semibold">Bodega</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of detalles(); track $index) {
+          <tr>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ item.codigo }}</td>
+            <td [width]="250">{{ item.descripcion }}<br /></td>
+            <td>{{ item.medidaNombre }}<br /></td>
+            <td>{{ item.tipoIvaNombre }}<br /></td>
+            <td>{{ item.pvpNombre }}<br /></td>
+            <td class="text-right">{{ item.cantidad }}</td>
+            <td class="text-right">{{ item.precioUnitario }}</td>
+
+            <td class="text-right">{{ item.porcentajeDescuento }}</td>
+            <td class="text-right">{{ item.valorDescuento }}</td>
+            <td class="text-right">{{ item.precioTotalSinImpuesto }}</td>
+            <td class="text-right">{{ item.valorImpuesto }}</td>
+            <td class="text-right">{{ item.total }}</td>
+            <td class="text-right">{{ item.nota }}</td>
+            <td>{{ item.bodegaNombre }}</td>
+          </tr>
+          }@empty {
+          <tr>
+            <td colspan="15" class="text-center">
+              @if (isLoading()) {
+              <span>Cargando...</span>
+              }@else {
+              <span>Sin registro</span>
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
     <div
       class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
     >
       <div class="col-8">
-        <div class="border border-dark rounded-3 p-2"></div>
+        <div class="border border-dark rounded-3 p-2">
+          <!-- <table style="width: 100%" class="small">
+            <tbody>
+              <tr>
+                <th class="fw-semibold">Forma de Pago</th>
+                <th class="fw-semibold">Valor</th>
+                <th class="fw-semibold">Plazo</th>
+                <th class="fw-semibold">Tiempo</th>
+              </tr>
+
+              <tr>
+                <td>OTROS CON UTILIZACION DEL SISTEMA FINANCIERO</td>
+                <td>57.50</td>
+                <td></td>
+                <td>ninguno</td>
+              </tr>
+            </tbody>
+          </table> -->
+
+          <table style="width: 100%" class="small">
+            <tbody>
+              <tr>
+                <td colspan="2" class="fw-semibold">Información Adicional</td>
+              </tr>
+
+              <tr>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <div class="col-4">
-        <div class="border border-dark rounded-3 p-2"></div>
+        <div class="border border-dark rounded-3 p-2">
+          <app-tabla-resumen-totales
+            [detalles]="detalles()"
+            [tarifasImpuesto]="tiposIva()"
+          />
+        </div>
       </div>
     </div>
   </div>

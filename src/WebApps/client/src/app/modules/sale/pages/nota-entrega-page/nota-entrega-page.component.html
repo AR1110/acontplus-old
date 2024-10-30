@@ -94,7 +94,11 @@
       </button>
 
       <mat-menu #menu="matMenu">
-        <button mat-menu-item appNotaEntregaDetalleDialog>
+        <button
+          mat-menu-item
+          appNotaEntregaDetalleDialog
+          [id]="item.idDocumento"
+        >
           <mat-icon>list_alt</mat-icon>
           <span>Detalle</span>
         </button>
