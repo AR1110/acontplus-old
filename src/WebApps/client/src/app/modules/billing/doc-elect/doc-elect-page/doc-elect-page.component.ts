@@ -1,7 +1,11 @@
 import { Component, inject, model, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
@@ -9,22 +13,29 @@ import { MatTableDataSource } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
+import { getValidId, isValidField } from '@core/utils/utils';
 import { DocElectService } from '@modules/billing/services/doc-elect.service';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
-import { finalize, forkJoin } from 'rxjs';
+import { finalize, forkJoin, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-doc-elect-page',
   standalone: true,
   imports: [
+    FormsModule,
     MatCardModule,
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
     MatSelectModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatInputModule,
     BreadcrumbComponent,
     CustomTableContainerComponent,
     MatDynamicTableComponent,
@@ -36,6 +47,13 @@ import { finalize, forkJoin } from 'rxjs';
 export class DocElectPageComponent {
 
   private docElectSvc = inject(DocElectService)
+  private tS = inject(ToasterService)
+
+
+  estabs:GroupedEstab[] = [];
+  puntosEmision:GroupedEstabPuntoEmision[]=[]
+  tiposDoc:any[] = [];
+  estadosDoc:any[] = [];
 
   isLoadingResults = signal(false);
   isSearchAdvanced = signal(false);
@@ -54,18 +72,19 @@ export class DocElectPageComponent {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
+
   dataSource = new MatTableDataSource<any>();
 
   pagination = signal(new MatPagination());
 
 
   dataSearch = model({
+    codEstab: null as string | null | undefined,
     fromDate: formatDateToString(new Date()),
     toDate: formatDateToString(new Date()),
-    codDoc: null,
-    codEstado: null as number | null,
+    codDoc: 0 as string | number ,
+    codEstado: 0 as string | number | undefined,
     checkBoxDate: true,
-    codEstab: null as string | null,
     idPuntoEmision: 0,
     identificacionReceptor: null,
     idUsuario: 0
@@ -79,15 +98,15 @@ export class DocElectPageComponent {
   private getDataParams() {
     let obj = {
 
-      codDoc: this.dataSearch().codDoc,
-      codEstado: this.dataSearch().codEstado,
+      codDoc: isValidField(this.dataSearch().codDoc),
+      codEstado: isValidField(this.dataSearch().codEstado),
       checkBoxDate: this.dataSearch().checkBoxDate,
       dateStart: this.dataSearch().fromDate,
       dateEnd: this.dataSearch().toDate,
       codEstab: this.dataSearch().codEstab,
       idPuntoEmision: this.dataSearch().idPuntoEmision,
-      identificacionReceptor: this.dataSearch().identificacionReceptor,
-      idUsuario: this.dataSearch().idUsuario,
+      identificacionReceptor: isValidField(this.dataSearch().identificacionReceptor),
+      idUsuario: getValidId(this.dataSearch().idUsuario),
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
       //  nroSecuencial: fS.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial)
@@ -97,10 +116,7 @@ export class DocElectPageComponent {
 
 
   private successResponseList(response: any) {
-
     this.dataSource = new MatTableDataSource(response.data);
-
-    console.log(this.dataSource.data)
     this.pagination.update((p) => ({
       ...p,
       totalRecords: this.dataSource.data.length > 0 ? this.dataSource.data[0].totalRecords : 0,
@@ -124,38 +140,65 @@ export class DocElectPageComponent {
       });
   }
 
-  private initLoad() {
-    return forkJoin([
-      this.docElectSvc.getDataFilter(),
-      this.docElectSvc.getAll(this.getDataParams()),
-    ]);
-  }
-
-
 
   ngOnInit() {
-    this.initLoad()
+    this.isLoadingResults.set(true)
+    this.docElectSvc.getDataFilter().pipe(
+      switchMap(initialData=>{
+
+        this.estabs = initialData.estabs;
+        this.tiposDoc = initialData.tiposDoc;
+        this.estadosDoc = initialData.estadosDoc;
+
+        if (this.estabs.length > 0) {
+            let dataEstab = this.estabs.find(estab => (estab.defaultEstab));
+            this.puntosEmision = dataEstab?.puntosEmision || [];
+            this.dataSearch.update(e=>{
+              return {
+                ...e,
+                codEstab: dataEstab?.codEstab,
+                idPuntoEmision : this.puntosEmision.find(pto => (pto.defaultPtoEmi))?.idPuntoEmision || 0
+              }
+            })
+        }
+        return this.docElectSvc.getAll(this.getDataParams())
+      })
+    )
     .pipe(
       finalize(() => {
         this.isLoadingResults.set(false);
       }),
     )
-    .subscribe({
-      next: (response) => {
-        const [dataForm, responseList] = response;
-        console.log(response)
-        // this.subCategorias.set(dataForm.subCategorias);
-        // this.medidas.set(dataForm.medidas);
-        // this.marcas.set(dataForm.marcas);
-        // this.modelos.set(dataForm.modelos);
-        // this.tiposIva.set(dataForm.tiposIva);
+    .subscribe(response=>{
+      this.successResponseList(response)
+    })
+  }
 
-         this.successResponseList(responseList);
-      },
-      error: (err) => {
-        console.error('Load Data :', err);
-      },
+  setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(
+    key: K,
+    value: ReturnType<typeof this.dataSearch>[K],
+  ) {
+    this.dataSearch.update((ds) => {
+      return {
+        ...ds,
+        [key]: value,
+      };
     });
+  }
+
+  onEstabChange(){
+    let dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
+    this.puntosEmision = dataEstab?.puntosEmision || [];
+
+    if (this.puntosEmision.length > 0) {
+      this.setDataSearch("idPuntoEmision", this.puntosEmision.find(pto => (pto.defaultPtoEmi))?.idPuntoEmision || 0)
+        this.getDocElects();
+    } else {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'No tiene puntos de emisión asignados'
+        })
+    }
   }
 
   onDateRangeSelection(range: { from: string; to: string }) {

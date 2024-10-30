@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, input, Input, model, Output, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, input, Input, model, output, Output, ViewChild } from "@angular/core";
 
 declare var DateRangePicker: any;
 import moment from 'moment';
@@ -24,6 +24,8 @@ export class DateRangeSelectionComponent {
   showMatSuffix = input(false)
   showMatPrefix = input(false)
   checkbox = model(false)
+
+  onCheckboxChange = output<void>()
 
 
   @Input() requiredDate = false;
