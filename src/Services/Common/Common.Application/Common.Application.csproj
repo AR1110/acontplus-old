@@ -5,14 +5,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core" />
-    <PackageReference Include="AWSSDK.S3" />
+    <ProjectReference Include="..\Common.Core\Common.Core.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
+    <Folder Include="Services\"/>
   </ItemGroup>
 
 </Project>

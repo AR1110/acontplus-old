@@ -11,9 +11,9 @@
     <ProjectReference Include="..\..\..\WebApps\pos\pos.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\..\Common\Common.Application\Common.Application.csproj" />
     <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
     <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Common\Common.S3Application\Common.S3Application.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
   <ItemGroup>

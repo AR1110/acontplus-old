@@ -103,15 +103,15 @@ BEGIN
                                 ,@role VARCHAR(25)
                                  
                             
-                                SELECT @company = IIF(e.nombreComercial IS NULL, e.razonSocial, e.nombreComercial)
-                                    ,@role = r.[Name]
-                                    ,@username = u.nombreUsuario
+                                SELECT @company = IIF(en.nombreComercial IS NULL, en.razonSocial, en.nombreComercial)
+                                    ,@role = ro.[Name]
+                                    ,@username = us.nombreUsuario
                                     ,@requesting_user = UPPER(cu.BusinessName)
-                                FROM Acontplus.App.UsuarioRol             ur 
-                                INNER JOIN Acontplus.dbo.Entidad           e ON ur.idEntidad = e.idEntidad
-                                INNER JOIN AcontplusAdmin.Seguridad.[Role] r ON ur.RoleId = r.Id
-                                INNER JOIN Acontplus.dbo.Usuario           u ON ur.idUsuario = u.idUsuario
-                                INNER JOIN Customer.Customer              cu ON cu.Id       = u.CustomerId
+                                FROM Acontplus.App.UsuarioRol              ur WITH (NOLOCK) 
+                                INNER JOIN Acontplus.dbo.Entidad           en WITH (NOLOCK) ON en.idEntidad = ur.idEntidad
+                                INNER JOIN AcontplusAdmin.Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
+                                INNER JOIN Acontplus.dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
+                                INNER JOIN Customer.Customer               cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
                                 WHERE ur.idUsuarioRol = @userRoleId
 
                             INSERT INTO @userToSendEmail(emailData, params, receptor)
@@ -138,22 +138,11 @@ BEGIN
 									 ,'template'= @template FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 							   ),
                                (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
-                               u.correo
-								FROM Acontplus.dbo.Usuario u 
-                                    INNER JOIN Customer.Customer              cu ON cu.Id       = u.CustomerId
-                                    INNER JOIN Acontplus.App.UsuarioRol ur ON u.idUsuario = ur.idUsuario
-                                     INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
-                                     INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.Uuid = c.Uuid 
-                                    INNER JOIN AcontplusAdmin.Seguridad.[Role] r ON ur.RoleId = r.Id
-                                 WHERE  r.Code = 'ADM'
-                                    AND c.Id IN (SELECT cc.Id FROM Acontplus.App.UsuarioRol urr WITH (NOLOCK) 
-                                                            INNER JOIN Acontplus.dbo.Entidad ee WITH (NOLOCK) ON urr.idEntidad = ee.idEntidad
-                                                            INNER JOIN AcontplusAdmin.Config.Company cc WITH (NOLOCK) ON ee.Uuid = cc.Uuid 
-                                                            WHERE urr.idUsuarioRol = @userRoleId
-                                                            AND urr.estado = 1
-                                                )
-                                    AND u.correo IS NOT NULL
-                                    AND u.estado = 1
+                                       us.correo
+							   FROM Acontplus.dbo.Usuario us WITH (NOLOCK)
+                               INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = us.customerId
+                               WHERE us.idUsuario = @userId
+                                    
                             
 			                    INSERT INTO App.Notificacion(params, emailData, receptor, estado, idUsuario)
                                 SELECT params, emailData, receptor,  'NE', @userId FROM @userToSendEmail

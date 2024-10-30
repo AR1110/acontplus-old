@@ -19,7 +19,6 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 interface Manual {
   id: number;
   title: string;
-  description: string;
   content: string;
   safeEmbedCode?: SafeHtml;
   totalRecords?: number;
@@ -68,12 +67,12 @@ export class UserManualPageComponent {
       this.manuals = response.userManuals.map((manual: Manual) => ({
         ...manual,
         safeEmbedCode: this.sanitizer.bypassSecurityTrustHtml(
-          manual.content,
-          // .replace(/&lt;/g, '<')
-          // .replace(/&gt;/g, '>')
-          // .replace(/&amp;lt;/g, '&lt;')
-          // .replace(/&amp;gt;/g, '&gt;')
-          // .replace(/&quot;/g, '"'),
+          manual.content
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;lt;/g, '&lt;')
+            .replace(/&amp;gt;/g, '&gt;')
+            .replace(/&quot;/g, '"'),
         ),
         expanded: false,
       }));
@@ -81,7 +80,7 @@ export class UserManualPageComponent {
       this.pagination.update((e) => {
         return {
           ...e,
-          totalRecords: this.manuals[0].totalRecords,
+          totalRecords: this.manuals[0]?.totalRecords || 0,
         };
       });
       // console.log(this.manuals);
