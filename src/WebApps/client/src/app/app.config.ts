@@ -1,5 +1,9 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideRouter, withViewTransitions } from '@angular/router';
 import { errorInterceptor } from '@core/interceptors/error.interceptor';
 import { injectSessionInterceptor } from '@core/interceptors/inject-session.interceptor';
@@ -8,6 +12,8 @@ import { provideToastr } from 'ngx-toastr';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { routes } from './app.routes';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
+import { QuillModule } from 'ngx-quill';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,10 +30,33 @@ export const appConfig: ApplicationConfig = {
     provideToastr({
       preventDuplicates: true,
     }),
+    importProvidersFrom(
+      FormsModule,
+      QuillModule.forRoot({
+        modules: {
+          toolbar: [
+            ['bold', 'italic', 'underline', 'strike'],
+            ['blockquote', 'code-block'],
+            [{ header: 1 }, { header: 2 }],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            [{ script: 'sub' }, { script: 'super' }],
+            [{ indent: '-1' }, { indent: '+1' }],
+            [{ direction: 'rtl' }], // text direction
+            [{ size: ['small', false, 'large', 'huge'] }],
+            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+            [{ color: [] }, { background: [] }],
+            [{ font: [] }],
+            [{ align: [] }],
+            ['clean'],
+            ['link', 'image', 'video'],
+          ],
+        },
+      }),
+    ),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-    //  useValue: {appearance: 'outline', subscriptSizing: 'dynamic'}
-      useValue: {appearance: 'outline', subscriptSizing: 'dynamic'}
-    }
+      //  useValue: {appearance: 'outline', subscriptSizing: 'dynamic'}
+      useValue: { appearance: 'outline', subscriptSizing: 'dynamic' },
+    },
   ],
 };

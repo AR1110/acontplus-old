@@ -62,6 +62,9 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/quill/dist/quill.bubble.css",
+              "node_modules/quill/dist/quill.core.css",
+              "node_modules/quill/dist/quill.snow.css",
               "node_modules/sweetalert2/src/sweetalert2.scss",
               "node_modules/icheck-bootstrap/icheck-bootstrap.css",
               "src/styles.scss",
