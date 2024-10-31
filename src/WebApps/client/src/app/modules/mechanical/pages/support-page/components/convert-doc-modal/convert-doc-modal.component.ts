@@ -11,7 +11,6 @@ import { isDateValid } from '@core/utils/format-date-moment';
 import { isValidField } from '@core/utils/utils';
 import { CreditTime } from '@modules/accounting/models/credit-time.model';
 import { isValidGeneratorQuota } from '@modules/accounting/utils/calculate-quota.util';
-import { invoiceAdapter } from '@modules/billing/adapters/invoice/invoice.adapter';
 import { InvoiceService } from '@modules/billing/services/invoice.service';
 import { SupportDetail } from '@modules/mechanical/models/support.model';
 import { notaEntregaAdapter } from '@modules/sale/adapters/nota-entrega/nota-entrega.adapter';
@@ -23,6 +22,7 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 
 import Swal from 'sweetalert2';
 import { lastValueFrom } from 'rxjs';
+import { InvoiceAdapter } from '@modules/billing/adapters/invoice/invoice.adapter';
 
 @Component({
   selector: 'app-convert-doc-modal',
@@ -93,14 +93,14 @@ export class ConvertDocModalComponent {
 
   columns = [
     {
-      headerSort:false, 
+      headerSort:false,
       resizable: false,
-      frozen:true, 
+      frozen:true,
       headerHozAlign:"center",
-      hozAlign:"center", formatter:"rowSelection", 
+      hozAlign:"center", formatter:"rowSelection",
       titleFormatter:"rowSelection",
       cellClick:function(e :any, cell : any)
-      {      
+      {
         cell.getRow().toggleSelect();
       }
     },
@@ -156,7 +156,7 @@ export class ConvertDocModalComponent {
 
 
 
-  
+
   successResponse = (response: any) => {
     if (isApiResponse(response)) {
       if (response.code === "0") {
@@ -180,19 +180,19 @@ export class ConvertDocModalComponent {
     for(let item of data){
        for(let arr of Object.entries(item)){
          const [name, value] = arr;
-   
+
          adicionales.push({
            name,
            value
          })
-       } 
+       }
     }
     return adicionales;
   }
-  
-  ngAfterViewInit(): void { 
+
+  ngAfterViewInit(): void {
     setTimeout(() => {
-      const allRows = this.tabulatorComponent.refTabulator.getRows();    
+      const allRows = this.tabulatorComponent.refTabulator.getRows();
       this.tabulatorComponent.refTabulator.selectRow(allRows);
     });
   }
@@ -237,8 +237,8 @@ export class ConvertDocModalComponent {
     let adicionalVehicle = this.convertToKeyName(vehicle)
     let adicionalInspection = this.convertToKeyName(inspection)
     this.infoAdicionalDoc = [...adicionalVehicle,...adicionalInspection]
-    
-    
+
+
   }
 
 
@@ -489,7 +489,7 @@ export class ConvertDocModalComponent {
       }
 
       const selectedData = this.tabulatorComponent.refTabulator.getSelectedData();
-      
+
       let params = {
         comprobante,
         details,
@@ -498,7 +498,7 @@ export class ConvertDocModalComponent {
         infoAdicionalDoc: selectedData
       }
 
-      let senData = invoiceAdapter.mainAdapt(params)
+      let senData = InvoiceAdapter.mainAdapt(params)
 
 
       this.invoiceSvc.post(senData).subscribe(this.successResponse)

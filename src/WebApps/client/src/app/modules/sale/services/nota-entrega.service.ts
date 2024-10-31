@@ -7,6 +7,8 @@ import { map } from 'rxjs';
 
 import { SALE_PATHS } from '../enums/sale.enum';
 import { NotaEntregaAdapter } from '../adapters/nota-entrega.adapter';
+import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { GroupedEstab } from '@core/models/estab.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,36 @@ import { NotaEntregaAdapter } from '../adapters/nota-entrega.adapter';
 export class NotaEntregaService {
   #url = `${PATHS_API.SALES}${SALE_PATHS.NOTA_ENTREGA}`;
   #http = inject(HttpClient);
+
+  getDataFilter() {
+    let json = JSON.stringify({
+      tipo: 3
+    })
+    return this.#http.get<ApiResponse>(`${this.#url}Get?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(map(response => {
+
+      let resultData = {
+        estabs: [] as GroupedEstab[],
+        estadosDoc: [] as any[]
+      }
+
+      if (response.code === "1") {
+        let [tempEstabs, estadosDoc] = JSON.parse(response.payload as string);
+
+
+        let dataToGroup = {
+          estabs: tempEstabs,
+          isGroupPuntoEmision: true
+        }
+        resultData.estabs = groupEstabUtil(dataToGroup);
+        resultData.estadosDoc = estadosDoc;
+      }
+
+      return resultData;
+
+    }))
+  }
 
   getAll<T>(obj: T) {
     let json = JSON.stringify({
@@ -28,36 +60,14 @@ export class NotaEntregaService {
           data: [] as any[],
           totalRecords: 0
         }
-        if (response.code === "1") {
+        if (response && response.code === "1") {
           let [notasEntrega] = JSON.parse(response.payload as string)
 
           notasEntrega = notasEntrega || [];
 
-          result.data = notasEntrega.map((item: any) => {
-            return {
-              idCuentaPorCobrar: item.idCuentaPorCobrar,
-              idDocumento: item.idDocumento,
-              codEstab: item.codEstab,
-              fechaEmision: item.fechaEmision,
-              fechaVencimiento: item.fechaVencimiento,
-              serieComprobante: item.serieComprobante,
-              razonSocialComprador: item.nombreFiscal,
-              identificacionComprador: item.identificacionComprador,
-              estadoNom: item.estadoFinanciero,
-              total: item.total,
-              abono: item.abono,
-              saldo: item.saldo,
-              usuario: item.usuario,
-              tiempoCredito: item.tiempoCredito,
-              codEstado: item.codEstado,
-              convertToDoc: item.convertToDoc,
-              totalRecords: item.totalRecords,
-            }
-          })
-
+          result.data = NotaEntregaAdapter.fromApiAll(notasEntrega)
           result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
         }
-        console.log(result)
         return result;
       })
     )
@@ -72,12 +82,12 @@ export class NotaEntregaService {
     return this.#http.get<ApiResponse>(`${this.#url}Get?json=${json}`, {
       context: getNoLoader()
     }).pipe(
-      map(response=>{
+      map(response => {
         let result = {} as any;
-         if(response.code==="1"){
+        if (response.code === "1") {
           let mainData = JSON.parse(response.payload as string)
-           result = NotaEntregaAdapter.fromApiDetalleCompleto(mainData)
-         }
+          result = NotaEntregaAdapter.fromApiDetalleCompleto(mainData)
+        }
 
         return result
       })

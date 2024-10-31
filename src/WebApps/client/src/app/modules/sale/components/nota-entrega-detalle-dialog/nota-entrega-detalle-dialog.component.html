@@ -146,8 +146,12 @@
     <div
       class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
     >
-      <div class="col-8">
+      <div class="col-9">
         <div class="border border-dark rounded-3 p-2">
+          <div class="d-flex">
+            <small class="fw-semibold me-2">Observación:</small>
+            <small class=" ">{{ headerData.observacion }}</small>
+          </div>
           <!-- <table style="width: 100%" class="small">
             <tbody>
               <tr>
@@ -171,16 +175,17 @@
               <tr>
                 <td colspan="2" class="fw-semibold">Información Adicional</td>
               </tr>
-
               <tr>
-                <td></td>
-                <td></td>
+                @for (item of datosAdicionalesDoc; track $index) {
+                <td>{{ item.nombre }}</td>
+                <td>{{ item.valor }}</td>
+                }
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-      <div class="col-4">
+      <div class="col-3">
         <div class="border border-dark rounded-3 p-2">
           <app-tabla-resumen-totales
             [detalles]="detalles()"

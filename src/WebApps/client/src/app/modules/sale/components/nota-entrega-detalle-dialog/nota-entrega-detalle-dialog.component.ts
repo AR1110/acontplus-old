@@ -40,7 +40,6 @@ export class NotaEntregaDetalleDialogComponent {
         })
       )
       .subscribe((response) => {
-        console.log(response);
         const {
           headerData,
           clienteData,

@@ -66,5 +66,7 @@ export enum GlobalRoutes {
   CommonUserManual = 'common/user-manual',
 
   //Facturación
-  FactElectDocumentoElectronico='billing/doc-elect'
+  FactElectDocumentoElectronico='billing/doc-elect',
+  Factura='billing/invoice',
+
 }
