@@ -63,7 +63,27 @@ export class NotaEntregaAdapter {
     return result;
   }
 
-  static fromApiAll() {
-    // Implementación para obtener todas las notas de entrega o facturas
+  static fromApiAll(response: any[]) {
+    return response.map((item: any) => {
+      return {
+        idCuentaPorCobrar: item.idCuentaPorCobrar,
+        idDocumento: item.idDocumento,
+        codEstab: item.codEstab,
+        fechaEmision: item.fechaEmision,
+        fechaVencimiento: item.fechaVencimiento,
+        serieComprobante: item.serieComprobante,
+        razonSocialComprador: item.nombreFiscal,
+        identificacionComprador: item.identificacionComprador,
+        estadoNom: item.estadoFinanciero,
+        total: item.total,
+        abono: item.abono,
+        saldo: item.saldo,
+        usuario: item.usuario,
+        tiempoCredito: item.tiempoCredito,
+        codEstado: item.codEstado,
+        convertToDoc: item.convertToDoc,
+        totalRecords: item.totalRecords,
+      }
+    })
   }
 }

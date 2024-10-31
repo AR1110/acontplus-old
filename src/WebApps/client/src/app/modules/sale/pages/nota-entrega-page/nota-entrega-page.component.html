@@ -73,6 +73,74 @@
           </div>
         </div>
       </div>
+
+      @if(isSearchAdvanced()){
+      <div class="border-top">
+        <div class="d-flex justify-content-center gap-3 pb-2">
+          <mat-checkbox [(ngModel)]="dataSearch().esBuscarCliente"
+            >Ciente
+          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="dataSearch().esBuscarUsuario"
+            >Usuario</mat-checkbox
+          >
+          <mat-checkbox [(ngModel)]="dataSearch().esBuscarPorNro"
+            >Buscar por Nro. Doc</mat-checkbox
+          >
+          <mat-checkbox [(ngModel)]="dataSearch().esDatoAdicional"
+            >Dato Adicional</mat-checkbox
+          >
+          <mat-checkbox
+            [(ngModel)]="dataSearch().isTransferredToDoc"
+            (change)="refresh()"
+            >Doc. Transferida</mat-checkbox
+          >
+        </div>
+        <div
+          class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-1 gx-1"
+        >
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Cliente</mat-label>
+              <input matInput />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Usuario</mat-label>
+              <input matInput />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Buscar por Nro. Doc</mat-label>
+              <input matInput />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Datos Adicionales</mat-label>
+              <input matInput />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Estado</mat-label>
+              <mat-select
+                [(ngModel)]="dataSearch().idEstadoDoc"
+                (selectionChange)="refresh()"
+              >
+                <mat-option [value]="0">Todos</mat-option>
+                @for (item of estadosDoc; track $index) {
+                <mat-option [value]="item.idEstadoPago">{{
+                  item.descripcion
+                }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      }
     </div>
 
     <app-custom-table-container
