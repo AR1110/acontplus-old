@@ -2,7 +2,8 @@ import { Route } from '@angular/router';
 
 import { AtsPageComponent } from './pages/ats-page/ats-page.component';
 import {FactElectReportPageComponent} from "@billing/reports/fact-elect-report-page/fact-elect-report-page.component";
-import { DocElectPageComponent } from './doc-elect/doc-elect-page/doc-elect-page.component';
+import { DocElectPageComponent } from './pages/doc-elect-page/doc-elect-page.component';
+import { InvoicePageComponent } from './pages/invoice-page/invoice-page.component';
 
 export const routes : Route[] = [
   {
@@ -30,6 +31,15 @@ export const routes : Route[] = [
     component: DocElectPageComponent,
     data: {
       breadcrumb: 'Documento Electrónico',
+    }
+
+  },
+  {
+    path: 'invoice',
+    title: 'Factura',
+    component: InvoicePageComponent,
+    data: {
+      breadcrumb: 'Factura',
     }
 
   }
