@@ -22,7 +22,8 @@ BEGIN
 		@pageIndex INT,
 		@pageSize INT,
 		@params NVARCHAR(500),
-		@query NVARCHAR(MAX);
+		@query NVARCHAR(MAX),
+        @totalRecords INT;
 
     BEGIN TRY
     
@@ -38,7 +39,7 @@ BEGIN
     			pageSize INT
     		);
     	
-    	SET @params = '@menuId INT, @textSearch VARCHAR(100), @pageIndex INT, @pageSize INT '
+    	SET @params = '@menuId INT, @textSearch VARCHAR(100), @pageIndex INT, @pageSize INT, @totalRecords INT '
     	
         SET @tableNames = 'modules,userManuals'
 
@@ -49,17 +50,20 @@ BEGIN
         WHERE Enabled = CAST(1 AS BIT)
         ORDER BY Name
 
+        SET @totalRecords = (SELECT COUNT(*) FROM AcontplusAdmin.Common.UserManual WITH(NOLOCK))
+
         SET @query = '
-	    SELECT umt.Code
-        ,umt.Name
-        ,m.Name + '' - '' + um.Title AS Title
-        ,CONVERT(VARCHAR(MAX), DECOMPRESS(CompressedContent)) Content
-		,COUNT(*) OVER()                                                   as totalRecords
-        FROM AcontplusAdmin.Common.UserManual um WITH(NOLOCK)
-            INNER JOIN AcontplusAdmin.Common.UserManualType umt WITH(NOLOCK) 
-            	ON um.UserManualTypeId = umt.Id
-			LEFT JOIN AcontplusAdmin.Config.Menu m WITH(NOLOCK) ON um.menuId = m.Id
-		WHERE um.Enabled = CAST(1 AS BIT) '
+	        SELECT umt.Code
+            ,umt.Name
+            ,ISNULL(m.Name, ''General'') AS Module
+            ,um.Title
+            ,CONVERT(VARCHAR(MAX), DECOMPRESS(CompressedContent)) Content
+		    ,@totalRecords                                                   as totalRecords
+            FROM AcontplusAdmin.Common.UserManual um WITH(NOLOCK)
+                INNER JOIN AcontplusAdmin.Common.UserManualType umt WITH(NOLOCK) 
+            	    ON um.UserManualTypeId = umt.Id
+			    LEFT JOIN AcontplusAdmin.Config.Menu m WITH(NOLOCK) ON um.menuId = m.Id
+		    WHERE um.Enabled = CAST(1 AS BIT) '
       	
        	IF (@menuId > 0)
         	BEGIN
@@ -77,7 +81,8 @@ BEGIN
    									@menuId,
    									@textSearch,
    									@pageIndex,
-   									@pageSize;
+   									@pageSize,
+                                    @totalRecords;
     END TRY
     BEGIN CATCH
         
