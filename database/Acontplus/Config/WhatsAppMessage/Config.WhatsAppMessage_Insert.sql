@@ -43,7 +43,7 @@ BEGIN
 	BEGIN TRY
         
 	    INSERT INTO @tbl(browser, os, emisor, receptor, mensaje, totalMensajes, params)
-	    SELECT browser, os, emisor, receptor, mensaje, totalMensajes, params 
+	    SELECT browser, os, ISNULL(emisor, ''), receptor, mensaje, totalMensajes, params 
         FROM  OPENJSON(@JSON) 
 	    WITH (browser VARCHAR(MAX) '$.browser'
 		    ,os VARCHAR(MAX) '$.os'
