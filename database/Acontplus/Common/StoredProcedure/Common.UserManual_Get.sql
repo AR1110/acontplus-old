@@ -50,16 +50,17 @@ BEGIN
         ORDER BY Name
 
         SET @query = '
-	    SELECT umt.Code
-        ,umt.Name
-        ,m.Name + '' - '' + um.Title AS Title
-        ,CONVERT(VARCHAR(MAX), DECOMPRESS(CompressedContent)) Content
-		,COUNT(*) OVER()                                                   as totalRecords
-        FROM AcontplusAdmin.Common.UserManual um WITH(NOLOCK)
-            INNER JOIN AcontplusAdmin.Common.UserManualType umt WITH(NOLOCK) 
-            	ON um.UserManualTypeId = umt.Id
-			LEFT JOIN AcontplusAdmin.Config.Menu m WITH(NOLOCK) ON um.menuId = m.Id
-		WHERE um.Enabled = CAST(1 AS BIT) '
+	        SELECT umt.Code
+            ,umt.Name
+            ,ISNULL(m.Name, ''General'') AS Module
+            ,um.Title
+            ,CONVERT(VARCHAR(MAX), DECOMPRESS(CompressedContent)) Content
+		    ,COUNT(*) OVER()                                                   as totalRecords
+            FROM AcontplusAdmin.Common.UserManual um WITH(NOLOCK)
+                INNER JOIN AcontplusAdmin.Common.UserManualType umt WITH(NOLOCK) 
+            	    ON um.UserManualTypeId = umt.Id
+			    LEFT JOIN AcontplusAdmin.Config.Menu m WITH(NOLOCK) ON um.menuId = m.Id
+		    WHERE um.Enabled = CAST(1 AS BIT) '
       	
        	IF (@menuId > 0)
         	BEGIN

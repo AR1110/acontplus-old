@@ -1,13 +1,4 @@
 {
-  //Angular
-  "angular-schematics.schematicsDefaultOptions": {
-    "angular-*": {
-      "externalTemplate": true
-    },
-    "angular-component": {
-      "ngOnInit": true
-    }
-  },
   "typescript.preferences.autoImportFileExcludePatterns": [],
   "typescript.preferences.importModuleSpecifier": "shortest",
   "typescript.suggestionActions.enabled": true,
@@ -19,7 +10,6 @@
     "comments": false,
     "strings": true
   },
-
   "prettier.singleQuote": true,
   "editor.acceptSuggestionOnCommitCharacter": true,
   "editor.acceptSuggestionOnEnter": "on",

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { UserManualService } from '@modules/common/services/user-manual.service';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -15,6 +15,8 @@ import { NgStyle } from '@angular/common';
 import { MatInput } from '@angular/material/input';
 import { MatPagination } from '@shared/models/pagination.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatIcon } from '@angular/material/icon';
+import { MatIconButton } from '@angular/material/button';
 
 interface Manual {
   id: number;
@@ -37,9 +39,12 @@ interface Manual {
     NgStyle,
     MatInput,
     MatPaginator,
+    MatIcon,
+    MatIconButton,
   ],
   templateUrl: './user-manual-page.component.html',
   styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserManualPageComponent {
   data = {
@@ -52,10 +57,11 @@ export class UserManualPageComponent {
   manuals: any[] = [];
   pagination = signal(new MatPagination());
   pageEvent!: PageEvent;
+  panelOpenState = -1;
 
   constructor(
     private sanitizer: DomSanitizer,
-    private _userManualService: UserManualService,
+    private _userManualService: UserManualService
   ) {}
 
   loadData() {
@@ -72,7 +78,7 @@ export class UserManualPageComponent {
             .replace(/&gt;/g, '>')
             .replace(/&amp;lt;/g, '&lt;')
             .replace(/&amp;gt;/g, '&gt;')
-            .replace(/&quot;/g, '"'),
+            .replace(/&quot;/g, '"')
         ),
         expanded: false,
       }));
@@ -102,7 +108,8 @@ export class UserManualPageComponent {
       this.data.textSearch = textSearch;
       this.loadData();
     }
-    if (!textSearch || textSearch.length === 0) {
+    if (!textSearch || textSearch === '' || textSearch.length === 0) {
+      this.data.textSearch = '';
       this.loadData();
     }
   }
@@ -119,5 +126,14 @@ export class UserManualPageComponent {
     });
 
     this.loadData();
+  }
+
+  onSearchClear(inputElement: HTMLInputElement) {
+    inputElement.value = '';
+    this.data.textSearch = '';
+    this.loadData();
+  }
+  setPanelOpen(index: number) {
+    this.panelOpenState = index;
   }
 }
