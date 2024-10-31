@@ -57,7 +57,6 @@ export class DocElectService {
           }
           if(response.code==="1"){
             let [results] = JSON.parse(response.payload as string);
-            console.log(results)
 
             result.data = this.docElectAdapter.fromApiList(results)
 
