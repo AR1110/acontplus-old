@@ -1322,7 +1322,7 @@
                     cheques: []
                 }
                 if (response && typeof response === 'object') {
-                    console.log(response)
+                 
                     result.cheques = response.cheques.map(item => {
                         return {
                             id: item.id,
@@ -1816,7 +1816,8 @@
 
                     }
                     if (cobrosDetalleFiltered.length > 0) {
-                        if (totalAbonoCuenta !== fS.roundNumber(this._dataCuentaPorCobrar.saldoActualDoc, this.MAX_DECIMALS.GENERAL)) {
+                        
+                        if (fS.roundNumber(totalAbonoCuenta.toNumber(), this.MAX_DECIMALS.GENERAL) !== fS.roundNumber(this._dataCuentaPorCobrar.saldoActualDoc, this.MAX_DECIMALS.GENERAL)) {
 
                             let historialCuentasFiltered = this.getHistorialCuentas().filter(cd => (
                                 cd.idCuentaPorCobrar === this._dataCuentaPorCobrar.idCuentaPorCobrar
@@ -1832,7 +1833,7 @@
                                 valorMovimientoSaldo = fS.instanceDecimal(this._dataCuentaPorCobrar.saldoActualDoc).toNumber();
                             }
 
-                            if (this.getAbonoCuota() <= valorMovimientoSaldo) {
+                            if (this.getValorAbono() <= valorMovimientoSaldo) {
                                 historialAbono = this.getValorAbono();
 
                             } else {
@@ -2028,7 +2029,7 @@
                 dataCuota.abonoPosfechado = this.getEsAbonoPosfechado() ? fS.instanceDecimal(dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT) : 0;
 
                 let valorAbono = fS.minus(this.getValorAbono(), dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT);
-                console.log(valorAbono)
+               
                 //verificamos si la resta de valor abono es igual al total a cobrar 
                 //tomar mucha en cuenta, se agrega por temas de decimales 
                 if (fS.roundNumber(valorAbono, 2) === fS.roundNumber(dataCuota.saldoTotalActual, 2)){

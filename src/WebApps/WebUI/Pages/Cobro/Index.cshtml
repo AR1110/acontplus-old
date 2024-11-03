@@ -3,7 +3,7 @@
 
 @{
     ViewData["title"] = "Cobro";
-    
+
 }
 <div ng-controller="comprobanteIngresoCtrl">
     <div>
@@ -12,7 +12,7 @@
                 <h5 class="text-themecolor">Gestión de Cobros</h5>
             </div>
             <div class="col-md-7 align-self-center text-right">
-                <div class="d-flex justify-content-end align-self-center"> 
+                <div class="d-flex justify-content-end align-self-center">
                 </div>
             </div>
         </div>
@@ -40,9 +40,9 @@
                                         start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
                                         result-range-date="resultRangeFilter(result)"></date-range-filter>
                                 </div>
-                            </div> 
+                            </div>
                             <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
-                                <div class="form-group"  >
+                                <div class="form-group">
                                     <span>Cliente</span>
                                     <input type="text" id="customerInputSearchCliente"
                                         class="form-control border-select" ng-model="searchCliente.nombreCliente"
@@ -57,7 +57,7 @@
                                     </script>
                                 </div>
 
-                                 
+
                             </div>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                     </div>
                     <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
                         <div class="row">
-                            
+
                             <div class="col-xl-7 col-lg-7 col-md-12 col-12">
                                 <div class="form-group">
                                     <span>Nro. Doc. Ingreso:</span>
@@ -133,7 +133,7 @@
             </div>
         </div>
         <div class="card">
-            <div class="card-body"> 
+            <div class="card-body">
                 <div class="row">
                     <div class="col-6 d-flex justify-content-start">
                         <span class="form-group pull-left page-size form-inline">
@@ -144,7 +144,7 @@
                     </div>
 
                     <div class="col-6 d-flex justify-content-end">
-                        
+
                     </div>
                 </div>
                 <md-table-container style="max-height: 400px;">
@@ -183,27 +183,26 @@
                                         </md-button>
                                         <md-menu-content class="md-dense">
                                             <md-menu-item>
-                                                <md-button btn-historial-cobro params="c"  on-result="refresh()">
+                                                <md-button btn-historial-cobro params="c" on-result="refresh()">
                                                     <span md-menu-align-target><i class="ti-menu"></i>
                                                         Detalle</span>
                                                 </md-button>
                                             </md-menu-item>
 
-                                           <!-- ng-if="accion.anular && !c.esAnulado"-->
-                                            <md-menu-item >
-                                                <md-button btn-anular-comprobante-ingreso params="c" on-result="refresh()">
+                                            <!-- ng-if="accion.anular && !c.esAnulado"-->
+                                            <md-menu-item>
+                                                <md-button btn-anular-comprobante-ingreso params="c"
+                                                    on-result="refresh()">
                                                     <span md-menu-align-target>
                                                         <i class="ti-na"></i> Anular
                                                     </span>
                                                 </md-button>
                                             </md-menu-item>
 
-                                 
+
                                             <md-menu-item ng-if="accion.reporte">
-                                                <md-button  
-                                                btn-comprobante-ingreso-report 
-                                                unique="c.idComprobanteIngreso" 
-                                                cod-estab="c.codEstab"   >
+                                                <md-button btn-comprobante-ingreso-report
+                                                    unique="c.idComprobanteIngreso" cod-estab="c.codEstab">
                                                     <span md-menu-align-target>
                                                         <i class="fa fa-file-pdf"></i> Reporte
                                                     </span>
@@ -252,10 +251,10 @@
                 </md-table-container>
             </div>
             <div class="card-body">
-            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
-                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
-                class="pagination" boundary-links="true" rotate="false"></ul>
-        </div>
+                <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                    ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                    class="pagination" boundary-links="true" rotate="false"></ul>
+            </div>
         </div>
 
     </div>
@@ -263,11 +262,11 @@
 
 
 
-@section Scripts{
+@section Scripts {
     <environment include="Development">
-        <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script> 
+        <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script>
     </environment>
     <environment include="Staging,Production">
-    <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script>
+        <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script>
     </environment>
 }
