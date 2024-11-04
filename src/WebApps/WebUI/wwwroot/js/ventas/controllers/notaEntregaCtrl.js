@@ -1044,11 +1044,7 @@
             $scope.gridOptions.data.push(nuevaFilaAgregada)
             setCalculoTotales('precioUnitario', nuevaFilaAgregada, 0);
             focusColumnCantidad(getIndexRow(nuevaFilaAgregada), nuevaFilaAgregada.llevaInventario);
-            updateRefProductoVenta()
-            tS.toastr({
-                type: 'success',
-                message: 'Agregado Correctamente'
-            })
+            updateRefProductoVenta();
         }
 
         function updateItem(nuevaFilaAgregada) { 
