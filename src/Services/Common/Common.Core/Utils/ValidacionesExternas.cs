@@ -190,12 +190,12 @@ public class ValidacionesExternas
     {
         try
         {
-            int aux = 0;
+            var aux = 0;
             var veri = int.Parse(validarCedula[10].ToString()) + int.Parse(validarCedula[11].ToString()) +
                        int.Parse(validarCedula[12].ToString());
             if (veri > 0)
             {
-                var coeficiente = new int[] { 4, 3, 2, 7, 6, 5, 4, 3, 2 };
+                var coeficiente = new[] { 4, 3, 2, 7, 6, 5, 4, 3, 2 };
                 for (var i = 0; i < 9; i++)
                 {
                     var prod = int.Parse(validarCedula[i].ToString()) * coeficiente[i];
@@ -251,12 +251,12 @@ public class ValidacionesExternas
     {
         try
         {
-            int aux = 0;
+            var aux = 0;
             var veri = int.Parse(validarCedula[9].ToString()) + int.Parse(validarCedula[10].ToString()) +
                        int.Parse(validarCedula[11].ToString()) + int.Parse(validarCedula[12].ToString());
             if (veri > 0)
             {
-                var coeficiente = new int[] { 3, 2, 7, 6, 5, 4, 3, 2 };
+                var coeficiente = new[] { 3, 2, 7, 6, 5, 4, 3, 2 };
                 for (var i = 0; i < 8; i++)
                 {
                     var prod = int.Parse(validarCedula[i].ToString()) * coeficiente[i];

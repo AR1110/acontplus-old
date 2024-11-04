@@ -1,12 +1,78 @@
 <app-breadcrumb/>
-
-<div class="row">
-  @for (item of manuals; track $index) {
-    <div class="col">
-      <div [innerHTML]="item.safeEmbedCode"></div>
-      <!--      <div [innerHTML]="item.safeEmbedCode"></div>-->
-      <!--      <iframe width="100%" height="100%" [src]="item.safeEmbedCode"></iframe>-->
-
-    </div>
-  }
-</div>
+<mat-card class="mb-3">
+    <mat-card-content>
+        <div class="row mb-3">
+            <div class="col-md-4 col-12 d-flex align-items-center">
+                <label for="menuId" class="me-2">Módulo:</label>
+                <mat-select
+                        (selectionChange)="onMenuChange($event)"
+                        class="form-control"
+                        id="menuId"
+                >
+                    <mat-option>Seleccione un módulo</mat-option>
+                    @for (item of modules; track $index) {
+                        <mat-option [value]="item.id">{{ item.name }}</mat-option>
+                    }
+                </mat-select>
+            </div>
+            <div class="col-md-6 col-12 d-flex align-items-center">
+                <label for="textSearch" class="me-2">Buscar: </label>
+                <input
+                        (input)="onSearch($event)"
+                        class="form-control me-2"
+                        id="textSearch"
+                        #searchInput
+                />
+                <button
+                        mat-icon-button
+                        type="button"
+                        (click)="onSearchClear(searchInput)"
+                >
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-accordion multi>
+                    @for (item of manuals; track $index) {
+                        <mat-expansion-panel
+                                [expanded]="panelOpenState === $index"
+                                (opened)="setPanelOpen($index)"
+                                (closed)="setPanelOpen(-1)"
+                        >
+                            <mat-expansion-panel-header class="mb-5 mb-md-0">
+                                <mat-panel-title class="pt-5 pt-md-0"
+                                >{{ item.module }}
+                                </mat-panel-title>
+                                <mat-panel-description class="pt-5 pt-md-0">
+                                    <h5>{{ item.title }}</h5>
+                                </mat-panel-description>
+                            </mat-expansion-panel-header>
+                            <div class="table-responsive">
+                                <quill-view
+                                        [content]="item.safeEmbedCode"
+                                        theme="snow"
+                                        [sanitize]="true"
+                                ></quill-view>
+                            </div>
+                        </mat-expansion-panel>
+                    } @empty {
+                        <p>No existen Datos</p>
+                    }
+                </mat-accordion>
+                <mat-paginator
+                    #paginator
+                    (page)="onPageChanged($event)"
+                    [length]="pagination().totalRecords"
+                    [pageIndex]="pagination().pageIndex"
+                    [pageSizeOptions]="pagination().pageSizeOptions"
+                    [pageSize]="pagination().pageSize"
+                    [showFirstLastButtons]="true"
+                    aria-label="Select page"
+                >
+                </mat-paginator>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

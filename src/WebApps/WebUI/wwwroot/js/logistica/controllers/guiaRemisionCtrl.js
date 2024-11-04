@@ -905,7 +905,7 @@
                 $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(item => item.valor !== data.serieComprobante);
            
                 $scope.infoAdicionalDocumento.push({
-                    nombre: 'Comprobante',
+                    nombre: `${data.nameDoc}`,
                     valor: data.serieComprobante
                 })
                 $scope.dataDocumentoReferenciado = {

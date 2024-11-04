@@ -7,6 +7,7 @@
     var facebook = Configuration["SocialNetworks:Facebook"];
     var googlePlay = Configuration["SocialNetworks:GooglePlay"];
     var businessUrl = Configuration["SocialNetworks:BusinessUrl"];
+    var userManual = "/Common/UserManual/Index";
     var whatsapp = Configuration["SocialNetworks:Whatsapp"];
     var youtube = Configuration["SocialNetworks:Youtube"];
 }
@@ -39,7 +40,7 @@
     <link href="~/lib/limonte-sweetalert2/sweetalert2.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" />
     <link href="~/lib/jquery.perfect-scrollbar/css/perfect-scrollbar.min.css" rel="stylesheet"
-        asp-append-version="true" />
+          asp-append-version="true" />
     <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/dist/css/style.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/animate/animate.compat.min.css" rel="stylesheet" />
@@ -96,18 +97,18 @@
                         <b>
                             <!-- Dark Logo icon -->
                             <img src="~/assets/images/icon/logo-icon.png" width="190" alt="homepage"
-                                class="dark-logo img-fluid">
+                                 class="dark-logo img-fluid">
                             <!-- Light Logo icon -->
                             <img src="~/assets/images/icon/logo-icon.png" width="190" alt="homepage"
-                                class="light-logo img-fluid">
+                                 class="light-logo img-fluid">
                         </b>
 
                         <!-- dark Logo text -->
                         <span style="">
                             @* <!-- dark Logo text -->
-                            <img src="../assets/images/logo-text.png" alt="homepage" class="dark-logo">
-                            <!-- Light Logo text -->
-                            <img src="../assets/images/logo-light-text.png" class="light-logo" alt="homepage"> *@
+                                <img src="../assets/images/logo-text.png" alt="homepage" class="dark-logo">
+                                <!-- Light Logo text -->
+                                <img src="../assets/images/logo-light-text.png" class="light-logo" alt="homepage"> *@
                         </span>
                     </a>
                 </div>
@@ -125,14 +126,14 @@
                         <!-- This is  -->
                         <li class="nav-item">
                             <a class="nav-link nav-toggler d-block d-md-none waves-effect waves-dark"
-                                href="javascript:void(0)">
+                               href="javascript:void(0)">
                                 <icon class="ti-menu"></icon>
                             </a>
                         </li>
                         <li class="nav-item" id="toggleButton">
                             <a id="menu_toggle"
-                                class="nav-link sidebartoggler d-none d-lg-block d-md-block waves-effect waves-dark"
-                                href="javascript:void(0)">
+                               class="nav-link sidebartoggler d-none d-lg-block d-md-block waves-effect waves-dark"
+                               href="javascript:void(0)">
                                 <icon class="icon-menu"></icon>
                             </a>
                         </li>
@@ -158,7 +159,7 @@
 
                         <li class="nav-item dropdown u-pro">
                             <a class="nav-link dropdown-toggle waves-effect waves-dark profile-pic" href=""
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <img src="~/assets/images/user/user.png" alt="user" class="">
                                 <span class="hidden-md-down">
                                     Hola,
@@ -171,14 +172,15 @@
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <a href="@whatsapp" target="_blank"
-                                    class="dropdown-item text-success" data-bs-toggle="tooltip"
-                                    title="Si requiere ayuda personalizada comuniquese al siguiente número!"> <i
-                                        aria-hidden="true" class="fab fa-whatsapp"></i> Soporte </a>
+                                   class="dropdown-item text-success" data-bs-toggle="tooltip"
+                                   title="Si requiere ayuda personalizada comuniquese al siguiente número!">
+                                    <i aria-hidden="true" class="fab fa-whatsapp"></i> Soporte
+                                </a>
 
                                 <div class="dropdown-divider"></div>
-                                <a href="/Common/UserManual/Index" class="dropdown-item text-danger"
-                                    data-bs-toggle="tooltip" title="Ver tutoriales">
-                                    <i aria-hidden="true" class="fa fa-clipboard-list"></i> Tutoriales
+                                <a href="@userManual" class="dropdown-item text-danger"
+                                   data-bs-toggle="tooltip" title="Manual de Usuario">
+                                    <i aria-hidden="true" class="fa fa-book-reader"></i> Manual de Usuario
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <a href="javascript:void(0)" ng-click="logout()" class="dropdown-item">
@@ -232,7 +234,7 @@
                                 <li><b>Claros</b></li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-default"
-                                        class="default-theme working">1</a>
+                                       class="default-theme working">1</a>
                                 </li>
                                 <li><a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a></li>
                                 <li><a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a></li>
@@ -242,26 +244,26 @@
                                 <li class="d-block m-t-30"><b>Oscuros</b></li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-default-dark"
-                                        class="default-dark-theme ">7</a>
+                                       class="default-dark-theme ">7</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-green-dark"
-                                        class="green-dark-theme">8</a>
+                                       class="green-dark-theme">8</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-blue-dark"
-                                        class="blue-dark-theme">10</a>
+                                       class="blue-dark-theme">10</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-purple-dark"
-                                        class="purple-dark-theme">11</a>
+                                       class="purple-dark-theme">11</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-megna-dark"
-                                        class="megna-dark-theme ">12</a>
+                                       class="megna-dark-theme ">12</a>
                                 </li>
                             </ul>
                         </div>
@@ -277,25 +279,33 @@
                 <div class="col-12 col-sm-4 col-md-4 col-lg-3 col-xl-3">
                     <p class="mb-0">
                         Copyright &copy; 2021 - <a class="text-decoration-none fs-4 me-4 text-danger"
-                            href="@businessUrl" target="_blank">Acontplus</a>
+                                                   href="@businessUrl" target="_blank">Acontplus</a>
                     </p>
                 </div>
                 <div class="col-12 col-sm-8 col-md-8 col-lg-9 col-xl-9">
                     <div class="social float-right">
+                        <a href="@userManual"
+                           class="btn btn-info" data-bs-toggle="tooltip"
+                           title="Manual de Usuario">
+                            <i aria-hidden="true" class="fa fa-book-open-reader"></i>
+                        </a>
                         <a href="@whatsapp" target="_blank"
-                            class="btn btn-success" data-bs-toggle="tooltip"
-                            title="Si requiere ayuda personalizada comuniquese al siguiente número!"> <i
-                                aria-hidden="true" class="fab fa-whatsapp"></i> </a>
+                           class="btn btn-success" data-bs-toggle="tooltip"
+                           title="Si requiere ayuda personalizada comuniquese al siguiente número!">
+                            <i aria-hidden="true" class="fab fa-whatsapp"></i>
+                        </a>
                         <a href="@facebook" target="_blank" class="btn btn-facebook"
-                            data-bs-toggle="tooltip" title="Visita nuestra página en Facebook"> <i aria-hidden="true"
-                                class="fab fa-facebook-f"></i> </a>
+                           data-bs-toggle="tooltip" title="Visita nuestra página en Facebook">
+                            <i aria-hidden="true"
+                               class="fab fa-facebook-f"></i>
+                        </a>
                         <a href="@youtube" target="_blank" class="btn btn-youtube" data-bs-toggle="tooltip"
-                            title="Visita nuestro canal en Youtube">
+                           title="Visita nuestro canal en Youtube">
                             <i aria-hidden="true" class="fab fa-youtube"></i>
                         </a>
                         <a href="@googlePlay"
-                            target="_blank" class="btn btn-playstore" data-bs-toggle="tooltip"
-                            title="Descargar desde Google Play">
+                           target="_blank" class="btn btn-playstore" data-bs-toggle="tooltip"
+                           title="Descargar desde Google Play">
                             <i aria-hidden="true" class="fab fa-google-play"></i>
                         </a>
                     </div>
@@ -367,7 +377,7 @@
     <!--momment js-->
     <script src="~/lib/moment.js/moment.min.js" asp-append-version="true"></script>
     <script src="~/lib/moment-timezone/moment-timezone-with-data-10-year-range.min.js"
-        asp-append-version="true"></script>
+            asp-append-version="true"></script>
 
     <!--angular-file-upload by daniel farid-->
     <script src="~/lib/danialfarid-angular-file-upload/ng-file-upload-shim.min.js" asp-append-version="true"></script>

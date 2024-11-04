@@ -1,3 +1,4 @@
+import { format } from "@formkit/tempo";
 import moment from "moment";
 
 interface ResultadoComparacionFechas {
@@ -112,7 +113,12 @@ export const formatDateToString = function (date:Date){
   if (!isDateValid(date)) {
     throw new Error("La fecha es inválida");
   }
-  return moment(date).tz('America/Guayaquil').format('YYYY-MM-DD HH:mm:ss A')
+  return format({
+    date,
+    format: 'YYYY-MM-DD HH:mm:ss A',
+    tz: 'America/Guayaquil',
+  })
+ // return moment(date).tz('America/Guayaquil').format('YYYY-MM-DD HH:mm:ss A')
 }
 
 export const isDateValid = function (dateString: Date) {
@@ -121,4 +127,10 @@ export const isDateValid = function (dateString: Date) {
   }
   let date = new Date(dateString);
   return date instanceof Date;
+}
+
+
+export const fechaString = (t:Date)=>{
+  const l = "en"
+  return format(t,"DD/MM/YYYY", l)
 }

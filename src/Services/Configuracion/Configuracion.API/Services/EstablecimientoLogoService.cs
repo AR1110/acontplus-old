@@ -39,7 +39,7 @@ public class EstablecimientoLogoService : IEstablecimientoLogoService
 
         if (logo.IsCompressed == true)
         {
-            logo.Content = CompressionHelper.Decompress(logo.Content);
+            logo.Content = CompressionUtils.DecompressDeflate(logo.Content);
         }
 
         return logo;

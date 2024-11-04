@@ -20,7 +20,7 @@ public class FileModel
 
     public void CreateBytesCompressed(IFormFile file)
     {
-        Content = CompressionHelper.Compress(FileExtensions.GetBytes(file));
+        Content = CompressionUtils.CompressDeflate(FileExtensions.GetBytes(file));
         ContentType = file.ContentType;
         FileName = FileExtensions.SanitizeFileName(file.FileName);
     }

@@ -534,10 +534,14 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
                 let params = comprobanteIngresoSvc.mapperTo(data);
+ 
+               
                 
-                showLoader();
-                comprobanteIngresoSvc.post(params).then((response) => {
-                    hideLoader();
+                const managedRegister = fS.fetchManager(comprobanteIngresoSvc.post);
+                
+                managedRegister(params).then((response) => {
+                    if(!response) return;
+                  
                     if (response.code === '0') {
                         fS.sweetAlert('warning', response.message)
                     }
@@ -546,8 +550,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         $uibModalInstance.close(response);
 
                     }
-                }).catch(error => {
-                    hideLoader();
+                }).catch(error => { 
                     console.log(error)
                 })
 

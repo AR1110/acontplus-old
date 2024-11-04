@@ -24,6 +24,7 @@
     matPrefix
     [(ngModel)]="checkbox"
     (click)="onCheckboxClick($event)"
+    (change)="onCheckboxChange.emit()"
   ></mat-checkbox>
   }
   <input
@@ -37,6 +38,7 @@
     matSuffix
     [(ngModel)]="checkbox"
     (click)="onCheckboxClick($event)"
+    (change)="onCheckboxChange.emit()"
   ></mat-checkbox>
   }
 </mat-form-field>

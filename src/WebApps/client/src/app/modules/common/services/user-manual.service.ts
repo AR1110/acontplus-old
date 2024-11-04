@@ -15,6 +15,16 @@ export class UserManualService {
   get<T>(params: T) {
     return this.#http
       .get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`)
-      .pipe(map((response) => response));
+      .pipe(
+        map((response) => {
+          if (response.code !== '1') {
+            return { modules: [], userManuals: [] };
+          }
+          const { modules, userManuals } = JSON.parse(
+            response.payload as string,
+          );
+          return { modules: modules || [], userManuals: userManuals || [] };
+        }),
+      );
   }
 }

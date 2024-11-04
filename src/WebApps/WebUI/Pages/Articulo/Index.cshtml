@@ -155,19 +155,20 @@
                     <div class="input-group">
 
                         <div class="input-group-prepend">
-                            <select class="form-control" ng-model="dataSearch.filterMode"
-                                ng-change="onChangeFilterMode()">
-                                <option ng-value="1">Todos</option>
+                            <select class="form-control" ng-model="dataSearch.filterMode" >
+                                <option ng-value="4">Descripción</option>
                                 <option ng-value="2">Código</option>
                                 <option ng-value="3">Código Barra</option>
-                                <option ng-value="4">Descripción</option>
+                                <option ng-value="5">Código Auxiliar</option>
+                                <option ng-value="1">Todos</option>
                             </select>
                         </div>
 
                         <input type="text" class="form-control" ng-model="dataSearch.bySearch"
-                            ng-change="searchArticulo()" placeholder="Buscar Articulo" />
+                            ng-change="searchArticulo()" ng-keypress="checkEnter($event)"
+                            placeholder="Buscar Articulo" />
                         <div class="input-group-append">
-                            <button class="btn btn-secondary btn-sm" ng-click="searchArticulo()">
+                            <button class="btn btn-secondary btn-sm" ng-click="refresh()">
                                 <i class="fas fa-redo"></i>
                             </button>
                         </div>
@@ -454,6 +455,6 @@
 
 
 @section Scripts {
-    <script src="~/js/inventario/controllers/articuloCtrl.min.js" asp-append-version="true"></script>
+        <script src="~/js/inventario/controllers/articuloCtrl.min.js" asp-append-version="true"></script>
 
 }
