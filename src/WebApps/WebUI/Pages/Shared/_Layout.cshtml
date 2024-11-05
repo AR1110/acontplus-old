@@ -4,12 +4,24 @@
 @using System.Text.Json
 
 @{
-    var facebook = Configuration["SocialNetworks:Facebook"];
-    var googlePlay = Configuration["SocialNetworks:GooglePlay"];
-    var businessUrl = Configuration["SocialNetworks:BusinessUrl"];
-    var userManual = "/Common/UserManual/Index";
-    var whatsapp = Configuration["SocialNetworks:Whatsapp"];
-    var youtube = Configuration["SocialNetworks:Youtube"];
+    @* var facebook = Configuration["SocialNetworks:Facebook"];
+var googlePlay = Configuration["SocialNetworks:GooglePlay"];
+var businessUrl = Configuration["SocialNetworks:BusinessUrl"];
+var userManual = "/Common/UserManual/Index";
+var whatsapp = Configuration["SocialNetworks:Whatsapp"];
+var youtube = Configuration["SocialNetworks:Youtube"]; *@
+
+}
+@{
+    var socialLinks = new Dictionary<string, string>
+{
+{ "Facebook", Configuration["SocialNetworks:Facebook"] },
+{ "GooglePlay", Configuration["SocialNetworks:GooglePlay"] },
+{ "BusinessUrl", Configuration["SocialNetworks:BusinessUrl"] },
+{ "UserManual", "/Common/UserManual/Index" },
+{ "Whatsapp", Configuration["SocialNetworks:Whatsapp"] },
+{ "Youtube", Configuration["SocialNetworks:Youtube"] }
+};
 }
 <!DOCTYPE html>
 <html lang="es">
@@ -21,7 +33,7 @@
     <meta name="keywords" content="Acontplus, Contabilidad, Sistema Contable">
     <meta name="author" content="Acontplus">
 
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Acontplus">
     <meta name="apple-mobile-web-app-title" content="Acontplus">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -40,7 +52,7 @@
     <link href="~/lib/limonte-sweetalert2/sweetalert2.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" />
     <link href="~/lib/jquery.perfect-scrollbar/css/perfect-scrollbar.min.css" rel="stylesheet"
-          asp-append-version="true" />
+        asp-append-version="true" />
     <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/dist/css/style.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/animate/animate.compat.min.css" rel="stylesheet" />
@@ -73,6 +85,7 @@
     <link href="~/css/acontplus-style.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/spinners.min.css" rel="stylesheet" asp-append-version="true" />
     <!--Estilos especiales de librerias de svelte-->
+
 </head>
 
 <body class="skin-custom fixed-layout" ng-class="miniSidebar" ng-cloak ng-app="acontPlusApp">
@@ -87,116 +100,7 @@
     <img id="jsBarcodeImg" src="" alt="" style="display: none;">
 
     <div id="main-wrapper" ng-controller="layoutCtrl">
-        <header class="topbar">
-            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
-                <!-- ============================================================== -->
-                <!-- Logo -->
-                <!-- ============================================================== -->
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/Index">
-                        <b>
-                            <!-- Dark Logo icon -->
-                            <img src="~/assets/images/icon/logo-icon.png" width="190" alt="homepage"
-                                 class="dark-logo img-fluid">
-                            <!-- Light Logo icon -->
-                            <img src="~/assets/images/icon/logo-icon.png" width="190" alt="homepage"
-                                 class="light-logo img-fluid">
-                        </b>
-
-                        <!-- dark Logo text -->
-                        <span style="">
-                            @* <!-- dark Logo text -->
-                                <img src="../assets/images/logo-text.png" alt="homepage" class="dark-logo">
-                                <!-- Light Logo text -->
-                                <img src="../assets/images/logo-light-text.png" class="light-logo" alt="homepage"> *@
-                        </span>
-                    </a>
-                </div>
-
-                <!-- ============================================================== -->
-                <!-- End Logo -->
-                <!-- ============================================================== -->
-
-                <div class="navbar-collapse">
-
-                    <!-- ============================================================== -->
-                    <!-- toggle and nav items -->
-                    <!-- ============================================================== -->
-                    <ul class="navbar-nav mr-auto">
-                        <!-- This is  -->
-                        <li class="nav-item">
-                            <a class="nav-link nav-toggler d-block d-md-none waves-effect waves-dark"
-                               href="javascript:void(0)">
-                                <icon class="ti-menu"></icon>
-                            </a>
-                        </li>
-                        <li class="nav-item" id="toggleButton">
-                            <a id="menu_toggle"
-                               class="nav-link sidebartoggler d-none d-lg-block d-md-block waves-effect waves-dark"
-                               href="javascript:void(0)">
-                                <icon class="icon-menu"></icon>
-                            </a>
-                        </li>
-                        <!-- ============================================================== -->
-                        <li class="nav-item">
-                            <a class="nav-link d-lg-block m-md-block d-none text-white" href="javascript:void(0)">
-                                <span id="horaActual"></span>
-                            </a>
-                        </li>
-                    </ul>
-
-                    <div class="navbar-nav d-lg-block m-md-block d-none mx-auto text-white">
-                        <div class="d-flex flex-column">
-                            <div class="p-0 text-white">{{userData.tradeName}}</div>
-                            <div class="p-0 text-white"><small>{{userData.businessName}}</small></div>
-                        </div>
-                    </div>
-
-                    <!-- ============================================================== -->
-                    <!-- User profile and search -->
-                    <!-- ============================================================== -->
-                    <ul class="navbar-nav my-lg-0">
-
-                        <li class="nav-item dropdown u-pro">
-                            <a class="nav-link dropdown-toggle waves-effect waves-dark profile-pic" href=""
-                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="~/assets/images/user/user.png" alt="user" class="">
-                                <span class="hidden-md-down">
-                                    Hola,
-                                    {{userData.username}} &nbsp;<icon class="fa fa-angle-down"></icon>
-                                </span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right animated flipInY">
-                                <a href="/Config/UserProfile/Index" class="dropdown-item">
-                                    <icon class="ti-user"></icon> Mi perfil
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="@whatsapp" target="_blank"
-                                   class="dropdown-item text-success" data-bs-toggle="tooltip"
-                                   title="Si requiere ayuda personalizada comuniquese al siguiente número!">
-                                    <i aria-hidden="true" class="fab fa-whatsapp"></i> Soporte
-                                </a>
-
-                                <div class="dropdown-divider"></div>
-                                <a href="@userManual" class="dropdown-item text-danger"
-                                   data-bs-toggle="tooltip" title="Manual de Usuario">
-                                    <i aria-hidden="true" class="fa fa-book-reader"></i> Manual de Usuario
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="javascript:void(0)" ng-click="logout()" class="dropdown-item">
-                                    <icon class="fa fa-power-off"></icon> Cerrar Sesión
-                                </a>
-                            </div>
-                        </li>
-                        <li class="nav-item right-side-toggle">
-                            <a class="nav-link  waves-effect waves-light" href="javascript:void(0)">
-                                <icon class="ti-settings"></icon>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
+        <partial name="_TopbarHeader" model="socialLinks" />
         <!-- ============================================================== -->
         <!-- End Topbar header -->
         <!-- ============================================================== -->
@@ -222,99 +126,15 @@
                 @RenderBody()
 
                 <!-- .right-sidebar -->
-                <div class="right-sidebar">
-                    <div class="slimscrollright">
-                        <div class="rpanel-title">
-                            Configurar Temas <span>
-                                <i class="ti-close right-side-toggle"></i>
-                            </span>
-                        </div>
-                        <div class="r-panel-body">
-                            <ul id="themecolors" class="m-t-20">
-                                <li><b>Claros</b></li>
-                                <li>
-                                    <a href="javascript:void(0)" data-skin="skin-default"
-                                       class="default-theme working">1</a>
-                                </li>
-                                <li><a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-blue" class="blue-theme">4</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-purple" class="purple-theme">5</a></li>
-                                <li><a href="javascript:void(0)" data-skin="skin-megna" class="megna-theme">6</a></li>
-                                <li class="d-block m-t-30"><b>Oscuros</b></li>
-                                <li>
-                                    <a href="javascript:void(0)" data-skin="skin-default-dark"
-                                       class="default-dark-theme ">7</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" data-skin="skin-green-dark"
-                                       class="green-dark-theme">8</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" data-skin="skin-blue-dark"
-                                       class="blue-dark-theme">10</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" data-skin="skin-purple-dark"
-                                       class="purple-dark-theme">11</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" data-skin="skin-megna-dark"
-                                       class="megna-dark-theme ">12</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <partial name="_RightSidebar" model="socialLinks"></partial>
+
                 <!-- ============================================================== -->
                 <!-- End Right sidebar -->
                 <!-- ============================================================== -->
             </div>
         </div>
-        <footer class="footer">
-            <div class="row g-4">
-                <div class="col-12 col-sm-4 col-md-4 col-lg-3 col-xl-3">
-                    <p class="mb-0">
-                        Copyright &copy; 2021 - <a class="text-decoration-none fs-4 me-4 text-danger"
-                                                   href="@businessUrl" target="_blank">Acontplus</a>
-                    </p>
-                </div>
-                <div class="col-12 col-sm-8 col-md-8 col-lg-9 col-xl-9">
-                    <div class="social float-right">
-                        <a href="@userManual"
-                           class="btn btn-info" data-bs-toggle="tooltip"
-                           title="Manual de Usuario">
-                            <i aria-hidden="true" class="fa fa-book-open-reader"></i>
-                        </a>
-                        <a href="@whatsapp" target="_blank"
-                           class="btn btn-success" data-bs-toggle="tooltip"
-                           title="Si requiere ayuda personalizada comuniquese al siguiente número!">
-                            <i aria-hidden="true" class="fab fa-whatsapp"></i>
-                        </a>
-                        <a href="@facebook" target="_blank" class="btn btn-facebook"
-                           data-bs-toggle="tooltip" title="Visita nuestra página en Facebook">
-                            <i aria-hidden="true"
-                               class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="@youtube" target="_blank" class="btn btn-youtube" data-bs-toggle="tooltip"
-                           title="Visita nuestro canal en Youtube">
-                            <i aria-hidden="true" class="fab fa-youtube"></i>
-                        </a>
-                        <a href="@googlePlay"
-                           target="_blank" class="btn btn-playstore" data-bs-toggle="tooltip"
-                           title="Descargar desde Google Play">
-                            <i aria-hidden="true" class="fab fa-google-play"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
+        <partial name="_Footer" model="socialLinks"></partial>
     </div>
-    @* @await Html.PartialAsync("_ModalSession") *@
 
     <script src="~/lib/jquery/jquery.min.js" asp-append-version="true"></script>
     <script src="~/lib/popper/popper.min.js" asp-append-version="true"></script>
@@ -346,7 +166,7 @@
     <script src="~/lib/angular-filter/angular-filter.js" asp-append-version="true"></script>
     <script src="~/lib/angular-file-saver/angular-file-saver.min.js" asp-append-version="true"></script>
     <script src="~/lib/angular-file-saver/angular-file-saver.bundle.min.js" asp-append-version="true"></script>
-    @*<script src="~/lib/ng-idle/angular-idle.min.js" asp-append-version="true"></script>*@
+
     <script src="~/lib/angular-ui-router/angular-ui-router.min.js" asp-append-version="true"></script>
     <script src="~/lib/ngStorage/ngStorage.min.js" asp-append-version="true"></script>
     <script src="~/lib/angular-cookies/angular-cookies.min.js" asp-append-version="true"></script>
@@ -377,7 +197,7 @@
     <!--momment js-->
     <script src="~/lib/moment.js/moment.min.js" asp-append-version="true"></script>
     <script src="~/lib/moment-timezone/moment-timezone-with-data-10-year-range.min.js"
-            asp-append-version="true"></script>
+        asp-append-version="true"></script>
 
     <!--angular-file-upload by daniel farid-->
     <script src="~/lib/danialfarid-angular-file-upload/ng-file-upload-shim.min.js" asp-append-version="true"></script>
@@ -462,6 +282,8 @@
 
 
     <script src="~/js/common/utils/product.util.min.js" asp-append-version="true"></script>
+    <script src="~/bundle/bundle.min.js" asp-append-version="true"></script>
+
 
     <script>
 
@@ -503,7 +325,34 @@
         window.angularAppUrl = angularApp;
     </script>
 
+    @* <script>
+    function loadScript(url) {
+    return fetch(url)
+    .then(response => {
+    if (!response.ok) {
+    throw new Error('Network response was not ok');
+    }
+    return response.text();
+    })
+    .then(scriptText => {
+    const script = document.createElement('script');
+    script.text = scriptText;
+    document.head.appendChild(script);
+    });
+    }
+
+    // Cargar un script específico
+    loadScript('/js/inventario/articulo/articuloService.js')
+    .then(() => {
+    console.log("articuloService.js cargado");
+    // Cargar el siguiente script o ejecutar otra lógica aquí
+    })
+    .catch(error => console.error('Error al cargar el script:', error));
+
+    </script> *@
+
     @await RenderSectionAsync("Scripts", required: false)
+    <!-- Esta sección se cargará después de que todos los scripts anteriores se hayan cargado -->
 </body>
 
 </html>

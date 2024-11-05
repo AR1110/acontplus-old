@@ -42,7 +42,7 @@
         $scope.dataSearch = {
             order: "",
             tipo: 1,
-            pageSize: 50,
+            pageSize: 10,
             pageIndex: 1,
             maxSize: 5,
             totalRecords: 0,
@@ -833,15 +833,15 @@
             }
 
             gridApi.grid.element.on("keyup", function (ev) {
+                ev.stopPropagation(); 
                 if (ev.which == 13 || ev.keyCode == "13") {
-                    if ($scope.config.searchCode == 1) {
+                    if (!($scope.config.searchCode == 1)) {
                         setFocusInputBarcode();
                     } else {
                         setFocusArticulo();
                     }
 
                     $scope.gridApi.grid.cellNav.clearFocus();
-                    // ev.stopPropagation();
                 }
             });
 
@@ -1797,7 +1797,7 @@
 
         function setFocusInputBarcode() {
             $timeout(function () {
-                let inputBarcode = document.getElementById("#inputBarcode");
+                let inputBarcode = document.getElementById("inputBarcode"); 
                 if (inputBarcode) {
                     inputBarcode.focus();
                 }
@@ -1807,8 +1807,8 @@
         function setFocusArticulo() {
             $timeout(function () {
                 let el = document.getElementById(
-                    "#custom-template-md-autocomplete-articulo"
-                );
+                    "custom-template-md-autocomplete-articulo"
+                ); 
                 if (el) {
                     el.focus();
                 }
