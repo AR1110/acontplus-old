@@ -1906,7 +1906,8 @@
                 validationSri: data.validationSri,
                 idFormaPagoSri: fS.isValidField(data.idFormaPagoSri),
                 estado: data.estado || true,
-                infoCrediticia: data.dataInfoCred && JSON.stringify(data.dataInfoCred)
+                infoCrediticia: data.dataInfoCred && JSON.stringify(data.dataInfoCred),
+                configValorBruto : data.configValorBruto || null
             }
 
         }
