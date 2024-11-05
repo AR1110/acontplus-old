@@ -2,10 +2,11 @@
 @model WebUI.Pages.ConsultarPrecio.IndexModel
 
 @{
-    ViewData["title"] = "Factura";
+    ViewData["title"] = "Consultar Precio";
 
 }
-<div ng-controller="consultarPrecioCtrl">
+@* <div ng-controller="consultarPrecioCtrl"> *@
+<div>
     <div>
         <div class="row page-titles">
             <div class="col-md-5 align-self-center">
@@ -16,6 +17,7 @@
 
         <div class="card">
             <div class="card-body">
+                @* <articulo-lista-precio-comp check-cart="false"></articulo-lista-precio-comp> *@
                 <div class="row justify-content-between">
                     <div class="col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center">
                         <span class="form-group pull-left page-size form-inline">
