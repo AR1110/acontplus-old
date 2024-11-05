@@ -20,6 +20,7 @@ public static class ApplicationServicesExtensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IAnticipoService, AnticipoService>();
+        services.AddScoped<IBancoService, BancoService>();
         services.AddScoped<ICajaService, CajaService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IChequeService, ChequeService>();
