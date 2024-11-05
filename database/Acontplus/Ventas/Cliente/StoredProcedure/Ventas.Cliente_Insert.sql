@@ -46,6 +46,7 @@ BEGIN
 	   ,nota VARCHAR(300) NULL
 	   ,validationSri BIT NOT NULL
        ,infoCrediticia NVARCHAR(MAX) NULL
+       ,configValorBruto BIT
     )
 	
 	BEGIN TRY 
@@ -55,8 +56,8 @@ BEGIN
 
         --> Data Json 
         INSERT INTO @tblCliente 
-              (idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri,infoCrediticia)
-	    SELECT idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri,infoCrediticia
+              (idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri,infoCrediticia,configValorBruto)
+	    SELECT idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri,infoCrediticia,configValorBruto
 	    FROM OPENJSON(@json) WITH
         (
              idEmpleado             INT 
@@ -80,6 +81,7 @@ BEGIN
 		    ,nota                   VARCHAR(300) 
 		    ,validationSri          BIT
             ,infoCrediticia         NVARCHAR(MAX) 
+            ,configValorBruto       BIT
         )
 
         --> Recuperando Informacion
@@ -121,8 +123,8 @@ BEGIN
 				END
 			
 			INSERT INTO Cliente WITH (ROWLOCK)
-			      (idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,direccion,telefono,correo,placa,montoCredito,nota,idUsuario,idEntidad,customerId)
-			SELECT idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,direccion,telefono,correo,placa,montoCredito,nota,@idUsuario,@idEntidad,@customerId
+			      (idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,direccion,telefono,correo,placa,montoCredito,nota,configValorBruto,idUsuario,idEntidad,customerId)
+			SELECT idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,direccion,telefono,correo,placa,montoCredito,nota,configValorBruto,@idUsuario,@idEntidad,@customerId
             FROM @tblCliente
 
 		    SET @idCliente = @@IDENTITY
