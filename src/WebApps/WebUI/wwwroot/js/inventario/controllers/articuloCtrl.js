@@ -21,7 +21,7 @@
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
             tipo: 1,
-            pageSize: 50,
+            pageSize: 25,
             pageIndex: 1,
             maxSize: 5,
             totalRecords: 0,
@@ -38,10 +38,17 @@
 
         $scope.articulos = [];
 
+        $scope.showFilterAdvanced = false; 
+        $scope.onShowFilterAdvanced = onShowFilterAdvanced;
+
         $scope.resultModal = (result) => {
             if (typeof result === 'object') {
                 $scope.getArticulos();
             }
+        }
+
+        function onShowFilterAdvanced(){
+            $scope.showFilterAdvanced = !$scope.showFilterAdvanced
         }
 
 
@@ -57,6 +64,14 @@
             return [""].includes(campo) ? null : campo
         }
 
+        $scope.showPrecio = function(){
+            console.log('clic')
+            modalSvc.openWithComponent({
+                component: 'articuloListaPrecioModalComp',
+                size: 'xl',
+                 windowClass: 'uibModalFullScreen'
+            })
+        }
         
 
 
@@ -83,8 +98,7 @@
                     checkBoxInventario: $scope.dataSearch.checkBoxInventario,
                 } 
  
-                articuloSvc.getAll(dataSearch).then(response => {
-                    hideLoader();
+                articuloSvc.getAll(dataSearch).then(response => { 
                     let {
                         totalRecords,
                         articulos,
@@ -96,8 +110,7 @@
                     console.log(error);
                 }) 
             } catch (error) {
-                $scope.dataSearch.totalRecords = 0;
-                hideLoader();
+                $scope.dataSearch.totalRecords = 0; 
                 console.log(error);
             }
         }
