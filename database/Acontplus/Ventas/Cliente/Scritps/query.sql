@@ -31,7 +31,10 @@ go
     --alter table cliente drop column numeroIdentificacion
 
     
-
-    select top 1 * from dbo.Cliente
+    exec Ventas.Factura_Report '{"id":169451}'
+    select * from dbo.Cliente where configValorBruto = 1 
     
+
+    -- 11/01/204 --ALEXIS RAMIREZ
+    --ALTER TABLE dbo.Cliente ADD configValorBruto BIT
 
