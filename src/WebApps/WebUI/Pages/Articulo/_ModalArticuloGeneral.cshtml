@@ -1,7 +1,7 @@
 <form autocomplete="off">
     <div class="modal-header">
         <h4 class="modal-title">Lista de Articulos</h4>
-        <button type="button" class="close" ng-click="closeModal()">&times;</button> 
+        <button type="button" class="close" ng-click="closeModal()">&times;</button>
     </div>
 
     <div class="modal-body">
@@ -11,7 +11,7 @@
                     <select class="form-control control-color" ng-model="dataSearch.pageSize"
                         ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
                     </select>
-                </span> 
+                </span>
             </div>
 
             <div class="col-lg-6 col-md-6 col-sm-6 col-12">
@@ -21,12 +21,12 @@
                             <label for="inputTextSearch">Buscar Artículo</label>
                             <div class="input-group">
                                 <input type="text" id="inputTextSearch" class="form-control border-select"
-                                    ng-model="dataSearch.bySearch" ng-keyup="onSearchText()"
-                                    ng-keypress="onEnter($event)"
+                                    ng-model="dataSearch.bySearch" ng-keypress="onEnter($event)"
                                     placeholder="Ingrese la Descripcion o Código del Articulo" />
                                 <div class="input-group-append">
-                                <button class="btn btn-outline-secondary btn-sm" ng-click="refresh()" type="button" tabindex="-1">
-                                    &#8635;
+                                    <button class="btn btn-outline-secondary btn-sm" ng-click="refresh()" type="button"
+                                        tabindex="-1">
+                                        &#8635;
                                     </button>
                                 </div>
                             </div>
@@ -56,7 +56,7 @@
                             </select>
                         </div>
                     </div>
-                </div> 
+                </div>
             </div>
         </div>
 

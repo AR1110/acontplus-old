@@ -50,7 +50,7 @@
         $scope.dataSearch = {
             order: '',
             tipo: 1,
-            pageSize: 50,
+            pageSize: 10,
             pageIndex: 1,
             maxSize: 5,
             totalRecords: 0,
