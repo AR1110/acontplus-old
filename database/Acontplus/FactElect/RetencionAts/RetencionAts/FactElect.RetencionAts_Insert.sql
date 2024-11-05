@@ -21,23 +21,31 @@ AS
 BEGIN
 	SET NOCOUNT ON;
     SET LANGUAGE SPANISH;
+    SET XACT_ABORT ON;
 
     --> GLOBAL
 	DECLARE @idUsuario INT,@idEntidad INT
 
     --> Contabilidad
-    DECLARE @importeTotal NUMERIC(18,5) ,@idEstablecimiento INT ,@idEstadoPago INT ,@serieComprobante VARCHAR(20) ,@codEstab VARCHAR(50)
+    DECLARE @importeTotal NUMERIC(18,5),
+        @idEstablecimiento INT,
+        @idEstadoPago INT,
+        @serieComprobante VARCHAR(20);
 
     --> Facturacion Electronica
 	DECLARE @ruc NVARCHAR(100) ,@fechaEmision DATETIME ,@ambiente INT ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@claveAcceso NVARCHAR(50) ,@isAutomatic INT ,@uniqueId VARCHAR(150) ,@secuencial INT
            ,@idEstadoServicio INT ,@CustomerId INT ,@idDocumentoElectronico INT
 
     --> RetencionAts
-	DECLARE @idRetencionAts INT ,@tipoEmision TINYINT = 1 ,@idPuntoEmision INT ,@idTipoDocumento INT ,@idProveedor INT 
+	DECLARE @idRetencionAts INT,
+        @tipoEmision TINYINT = 1,
+        @idPuntoEmision INT,
+        @idTipoDocumento INT,
+        @idProveedor INT; 
 
 	DECLARE @tblInfoCompRet AS TABLE(
 		 fechaEmision DATETIME2 NOT NULL
-		,codEstab VARCHAR(25) NOT NULL
+        ,idPuntoEmision INT NOT NULL
 		,contribuyentEspecial VARCHAR(13) NULL
 		,obligadoContabilidad VARCHAR(2) NULL
 		,codDoc VARCHAR(10) NOT NULL DEFAULT '07' 
@@ -49,7 +57,7 @@ BEGIN
 		,razonSocialSujetoRetenido VARCHAR(300) NULL
 		,identificacionSujetoRetenido VARCHAR(13) NULL
 		,periodoFiscal VARCHAR(8) NULL
-	)
+	);
 
 	DECLARE @tblDocs AS TABLE(
 		 uniqueIdDoc UNIQUEIDENTIFIER NOT NULL
@@ -115,11 +123,11 @@ BEGIN
 
         --> Info Json
         INSERT INTO @tblInfoCompRet
-              (codEstab,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
-		SELECT codEstab,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
+              (idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
+		SELECT idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
 		FROM OPENJSON(@infoCompRet) WITH
         (
-             codEstab                         VARCHAR(25)
+             idPuntoEmision                     INT
             ,fechaEmision                     DATETIME2
             ,contribuyentEspecial             VARCHAR(13)
             ,obligadoContabilidad             VARCHAR(2)
@@ -216,15 +224,13 @@ BEGIN
 
         SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
-        SELECT TOP 1 @idPuntoEmision = idPuntoEmision
-                    ,@ambiente       = ambiente 
-                    ,@fechaEmision   = fechaEmision
-                    ,@codEstab       = tb.codEstab
-        FROM @tblInfoCompRet           tb
-        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab          = tb.codEstab
-        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento
+        SELECT TOP 1 @idPuntoEmision = tb.idPuntoEmision
+                    ,@ambiente       = pe.ambiente 
+                    ,@fechaEmision   = tb.fechaEmision
+        FROM @tblInfoCompRet           tb 
+        INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON tb.idPuntoEmision = pe.idPuntoEmision
 
-        SELECT TOP 1 @idEstablecimiento = idEstablecimiento FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
+        SELECT TOP 1 @idEstablecimiento = idEstablecimiento FROM dbo.PuntoEmision WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision
 
         SELECT @importeTotal = SUM(valorRetenido) FROM @tblRetenciones 
 
@@ -243,19 +249,19 @@ BEGIN
 	      AND td.codigoSri = '07'
 
         SELECT TOP 1 @claveAcceso = dbo.ufnGeneraClaveAcceso (
-                                                                dbo.AFTDeleteCero(estab)   
+                                                                dbo.AFTDeleteCero(es.estab)   
 			                                                   ,'07'
 												               ,CAST(@ambiente as nvarchar)
 												               ,CAST(@tipoEmision as nvarchar)                         
 			                                                   ,dbo.AFTConvertDate(@fechaEmision)                
 			                                                   ,@ruc                                             
-			                                                   ,estab+ptoEmi                                                     
+			                                                   ,es.estab + pe.ptoEmi                                                     
 			                                                   ,Helper.F_Auto_Sequential(@secuencial)
                                                              ) 
                    ,@serieComprobante = estab + '-' +  ptoEmi  + '-' + Helper.F_Auto_Sequential(@secuencial)
 		FROM @tblInfoCompRet           tb
-        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab          = tb.codEstab
-        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento
+        INNER JOIN dbo.PuntoEmision        pe WITH (NOLOCK) ON tb.idPuntoEmision = pe.idPuntoEmision
+        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento
 
         --> Validaciones
         IF NOT EXISTS (SELECT 1 FROM @tblInfoCompRet)
