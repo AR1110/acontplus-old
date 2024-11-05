@@ -115,18 +115,36 @@ BEGIN
 			);
 			 
 			 
-			SET @sql = @sql 
-				+ IIF(@idSubFamilia > 0, ' AND a.idSubFamilia = @idSubFamilia ', '') 
-				+ IIF(@idMedida > 0, ' AND a.idMedida = @idMedida ', '') 
-				+ IIF(@idMarca > 0, ' AND a.idMarca = @idMarca ', '') 
-				+ IIF(@idModelo > 0, ' AND a.idModelo = @idModelo ', '') 
-				+ IIF(@idTipoIva > 0, ' AND a.idTipoIva = @idTipoIva ', '') 
-				+ IIF(@estado IN (1, 0), ' AND a.estado = @estado ', '') 
-				+ IIF(@checkBoxFraccionado = 1, ' AND a.fraccionado = 1 ', '') 
-				+ IIF(@checkBoxInventario = 1, ' AND a.llevaInventario = 1 ', '') 
-				+ COALESCE(CHOOSE(@byStock, ' AND a.stock > 0 AND a.llevaInventario = 1 ', ' AND a.stock <= 0 AND a.llevaInventario = 1 '), '')
-				+ IIF(@bySearch IS NOT NULL, @dynamicFilterCondition, ' ')
-                + 'ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY ' 
+					-- Construcción dinámica de filtros con parámetros
+			IF @idSubFamilia > 0 
+				SET @sql += ' AND a.idSubFamilia = @idSubFamilia ';
+			IF @idMedida > 0 
+				SET @sql += ' AND a.idMedida = @idMedida ';
+			IF @idMarca > 0 
+				SET @sql += ' AND a.idMarca = @idMarca ';
+			IF @idModelo > 0 
+				SET @sql += ' AND a.idModelo = @idModelo ';
+			IF @idTipoIva > 0 
+				SET @sql += ' AND a.idTipoIva = @idTipoIva ';
+			IF @estado IN (1, 0) 
+				SET @sql += ' AND a.estado = @estado ';
+			IF @checkBoxFraccionado = 1 
+				SET @sql += ' AND a.fraccionado = 1 ';
+			IF @checkBoxInventario = 1 
+				SET @sql += ' AND a.llevaInventario = 1 ';
+
+			-- Condiciones adicionales basadas en el stock
+			IF @byStock = 1
+				SET @sql += ' AND a.stock > 0 AND a.llevaInventario = 1 ';
+			ELSE IF @byStock = 2
+				SET @sql += ' AND a.stock <= 0 AND a.llevaInventario = 1 ';
+
+			-- Filtro adicional de búsqueda dinámica
+			IF @bySearch IS NOT NULL 
+				SET @sql += ' ' + @dynamicFilterCondition;
+     
+			
+			SET @sql = @sql+ 'ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY ' 
       
        
 			EXEC sp_executesql  @sql
