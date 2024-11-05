@@ -50,7 +50,7 @@
         $scope.dataSearch = {
             order: '',
             tipo: 1,
-            pageSize: 50,
+            pageSize: 10,
             pageIndex: 1,
             maxSize: 5,
             totalRecords: 0,
@@ -1044,11 +1044,7 @@
             $scope.gridOptions.data.push(nuevaFilaAgregada)
             setCalculoTotales('precioUnitario', nuevaFilaAgregada, 0);
             focusColumnCantidad(getIndexRow(nuevaFilaAgregada), nuevaFilaAgregada.llevaInventario);
-            updateRefProductoVenta()
-            tS.toastr({
-                type: 'success',
-                message: 'Agregado Correctamente'
-            })
+            updateRefProductoVenta();
         }
 
         function updateItem(nuevaFilaAgregada) { 
