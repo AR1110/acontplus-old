@@ -17,6 +17,7 @@ public static class ApplicationServicesExtensions
 
         services.AddScoped<FileTxt>();
         services.AddScoped<IArticuloService, ArticuloService>();
+        services.AddScoped<ICategoriaCompraService, CategoriaCompraService>();
         services.AddScoped<ICompraHabitualService, CompraHabitualService>();
         services.AddScoped<ICompraNoHabitualService, CompraNoHabitualService>();
         services.AddScoped<ICustomLogger, CustomLogger>();

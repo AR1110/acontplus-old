@@ -1,71 +1,45 @@
 ﻿namespace Configuracion.API.Controllers
 {
-    public class WhatsappUsageController(IConfiguration configuration, IWhatsappUsageService whatsappUsageService) : BaseApiController
+    public class WhatsappUsageController(IWhatsappUsageService whatsappUsageService) : BaseApiController
     {
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             var parameters = new Dictionary<string, object>
             {
-                {"idUsuarioRol" , User.GetUserRoleId()},
-                {"json" , SqlStringParam.Sanitize(json)},
+                { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) },
             };
             return Ok(await whatsappUsageService.GetAsync(parameters));
         }
+
         [HttpPost]
-        public async Task<ActionResult<ApiResponseDeprecated>> Post([FromBody] ApiRequest parameters)
+        public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
-            var _response = new ApiResponseDeprecated();
-            var _db = new DbAccess(configuration);
-            try
+            var parameters = new Dictionary<string, object>
             {
-                await _db.SpExecuteAsync("Config.WhatsappUsage_Insert");
-                _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = await _db.GetDefaultAsync();
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return _response;
+                { "idUsuarioRol", User.GetUserRoleId() },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            };
+            return Ok(await whatsappUsageService.AddAsync(parameters));
         }
+
         [HttpPut]
-        public async Task<ActionResult<ApiResponseDeprecated>> Put(int id, [FromBody] ApiRequest parameters)
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
-            var _response = new ApiResponseDeprecated();
-            var _db = new DbAccess(configuration);
-            try
+            var parameters = new Dictionary<string, object>
             {
-                await _db.SpExecuteAsync("Config.WhatsappUsage_Update");
-                _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = await _db.GetDefaultAsync();
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return _response;
+                { "idUsuarioRol", User.GetUserRoleId() },
+                { "id", id },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            };
+            return Ok(await whatsappUsageService.UpdateAsync(parameters));
         }
+
         [HttpDelete]
-        public async Task<ActionResult<ApiResponseDeprecated>> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var _response = new ApiResponseDeprecated();
-            var _db = new DbAccess(configuration);
-            try
-            {
-                await _db.SpExecuteAsync("Config.WhatsappUsage_Delete");
-                _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-                _db.AddDynamicParam("id", id);
-                _response = await _db.GetDefaultAsync();
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return _response;
+            var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, };
+            return Ok(await whatsappUsageService.UpdateAsync(parameters));
         }
     }
 }

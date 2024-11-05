@@ -2,7 +2,5 @@
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BaseApiController : ControllerBase
-    {
-    }
+    public class BaseApiController : ControllerBase;
 }
