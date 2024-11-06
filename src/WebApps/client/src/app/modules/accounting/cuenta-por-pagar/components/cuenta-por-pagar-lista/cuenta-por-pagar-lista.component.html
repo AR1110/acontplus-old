@@ -20,21 +20,6 @@
           </mat-form-field>
         </div>
         <div class="col">
-          <mat-form-field class="w-100">
-            <mat-label>Punto Emisión</mat-label>
-            <mat-select
-              [(ngModel)]="dataSearch().idPuntoEmision"
-              (selectionChange)="refresh()"
-            >
-              @for (item of puntosEmision; track $index) {
-              <mat-option [value]="item.idPuntoEmision">{{
-                item.ptoEmi
-              }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <div class="col">
           <app-date-range-selection
             (onChangeDateRange)="onDateRangeSelection($event)"
             (onCheckboxChange)="refresh()"
@@ -43,10 +28,21 @@
             [showMatPrefix]="true"
           />
         </div>
+        <div class="col">
+          <app-supplier-search-mat [isSimpleMode]="true" />
+        </div>
       </div>
     </div>
     <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
       <div class="d-flex flex-row gap-2 justify-content-end align-items-center">
+        <button
+          mat-flat-button
+          (onResultModal)="refresh()"
+          [disabled]="isLoadingResults()"
+        >
+          <mat-icon>currency_exchange</mat-icon>
+          Pagar
+        </button>
         <button mat-icon-button (click)="refresh()">
           <mat-icon>refresh</mat-icon>
         </button>
@@ -143,14 +139,23 @@
 </app-custom-table-container>
 
 <ng-template #templateOp let-item="item">
-  <button mat-icon-button matTooltip="Cuotas" (click)="openCuotaModal(item)">
-    <mat-icon>attach_money</mat-icon>
+  <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
+    <mat-icon>more_vert</mat-icon>
   </button>
 
-  <button mat-icon-button matTooltip="Historial Movimiento">
-    <mat-icon>history</mat-icon>
-  </button>
-  <button mat-icon-button matTooltip="Descargar">
-    <mat-icon>save_alt</mat-icon>
-  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="openCuotaModal(item)">
+      <mat-icon>attach_money</mat-icon>
+      <span>Config. Cuota</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>history</mat-icon>
+      <span>Hist. Movimiento</span>
+    </button>
+
+    <button mat-menu-item>
+      <mat-icon>save_alt</mat-icon>
+      <span>Pdf</span>
+    </button>
+  </mat-menu>
 </ng-template>

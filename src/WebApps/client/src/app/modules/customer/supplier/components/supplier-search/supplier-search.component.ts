@@ -1,9 +1,9 @@
 import {Component, inject, Input, input, output} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
-import {SupplierService} from "@purchase/services/supplier.service";
 import {catchError, distinctUntilChanged, Observable, of, OperatorFunction, switchMap, tap} from "rxjs";
-import {SupplierSearch} from "@purchase/models/supplier.model";
+import { SupplierService } from '../../supplier.service';
+import { SupplierSearch } from '../../supplier.interface';
 
 @Component({
   selector: 'app-supplier-search',
@@ -59,8 +59,8 @@ export class SupplierSearchComponent {
     let customer: SupplierSearch = $event.item;
     this.onSelected.emit({
         ...customer,
-        razonSocialComprador: customer.razonSocial,
-        identificacionComprador: customer.numeroIdentificacion,
+        razonSocialComprador: customer.razonSocialComprador,
+        identificacionComprador: customer.identificacionComprador,
       });
 
   }

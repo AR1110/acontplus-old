@@ -2,17 +2,17 @@ import { Component, inject, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import {  MatFormFieldModule  } from '@angular/material/form-field';
+import {  MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {  MatMenuModule } from '@angular/material/menu';
 import { PageEvent } from '@angular/material/paginator';
-import { MatOption, MatSelect, MatSelectModule } from '@angular/material/select';
+import {  MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { GroupedEstab  } from '@core/models/estab.model';
 import { DialogService } from '@core/services/dialog.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
@@ -25,6 +25,7 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { finalize, switchMap, throwError } from 'rxjs';
 import { CuentaPorPagarCuotaModalComponent } from '../cuenta-por-pagar-cuota-modal/cuenta-por-pagar-cuota-modal.component';
 import { MODAL_SIZE } from '@core/constants/global.constants';
+import { SupplierSearchMatComponent } from '@modules/customer/supplier/components/supplier-search-mat/supplier-search-mat.component';
 
 @Component({
   selector: 'app-cuenta-por-pagar-lista',
@@ -41,10 +42,11 @@ import { MODAL_SIZE } from '@core/constants/global.constants';
     MatCheckboxModule,
     CustomTableContainerComponent,
     MatDynamicTableComponent,
-    DateRangeSelectionComponent
+    DateRangeSelectionComponent,
+    SupplierSearchMatComponent
   ],
   templateUrl: './cuenta-por-pagar-lista.component.html',
-  styles: ``
+
 })
 export class CuentaPorPagarListaComponent {
   private cpcSvc = inject(CuentaPorPagarService)
@@ -52,7 +54,6 @@ export class CuentaPorPagarListaComponent {
   private dialogSvc = inject(DialogService)
 
   estabs: GroupedEstab[] = [];
-  puntosEmision: GroupedEstabPuntoEmision[] = [];
   estadosDoc = [] as any[]
   isSearchAdvanced = signal(false)
   isLoadingResults = signal(false)
@@ -71,7 +72,7 @@ export class CuentaPorPagarListaComponent {
     { key: 'abono', label: 'Abono', type: 'number' },
     { key: 'saldo', label: 'Saldo', type: 'number' },
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
-    { key: 'usuario', label: 'Usuario', type: 'string' },
+    { key: 'nombreUsuario', label: 'Usuario', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
@@ -159,13 +160,11 @@ export class CuentaPorPagarListaComponent {
 
         if (this.estabs.length > 0) {
           let dataEstab = this.estabs.find(estab => (estab.defaultEstab));
-          this.puntosEmision = dataEstab?.puntosEmision || [];
 
           this.dataSearch.update(e => {
             return {
               ...e,
               codEstab: dataEstab?.codEstab,
-              idPuntoEmision: this.puntosEmision.find(pto => (pto.defaultPtoEmi))?.idPuntoEmision || 0
             }
 
           })
@@ -204,18 +203,7 @@ export class CuentaPorPagarListaComponent {
   }
 
   onEstabChange(){
-    let dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
-    this.puntosEmision = dataEstab?.puntosEmision || [];
-
-    if (this.puntosEmision.length > 0) {
-      this.setDataSearch("idPuntoEmision", this.puntosEmision.find(pto => (pto.defaultPtoEmi))?.idPuntoEmision || 0)
-        this.refresh();
-    } else {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'No tiene puntos de emisión asignados'
-        })
-    }
+     this.refresh()
   }
 
   onDateRangeSelection(range: { from: string; to: string }) {
