@@ -1,12 +1,12 @@
 import { formatDateMoment } from "@core/utils/format-date-moment";
 import { roundNumber } from "@core/utils/round-number.utils";
-import { CreditTime } from "@modules/accounting/models/credit-time.model";
+import { TiempoCredito } from "../interfaces/tiempo-credito.interface";
 
 // Función para calcular detalles de cuotas basadas en términos de crédito
 type QuotaProps = {
   id?: number
   fechaEmision: Date
-  tiemposCredito: CreditTime[]
+  tiemposCredito: TiempoCredito[]
   idTiempoCredito: number
   total: number
   cuotas: any[]
