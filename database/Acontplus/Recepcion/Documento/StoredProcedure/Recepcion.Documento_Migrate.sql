@@ -43,7 +43,6 @@ BEGIN
 	        SELECT idDocumento FROM OPENJSON(@jsonData) WITH (idDocumento INT '$.idDocumento')
 		BEGIN TRAN
 			UPDATE dr SET dr.idEstablecimiento = @idEstablecimiento
-                ,dr.codEstab = @codEstab
 			FROM Recepcion.DocumentoRecibido dr WITH(ROWLOCK)
 			JOIN (SELECT idDocumento FROM @tbl) as t ON dr.idDocumento = t.idDocumento
 			WHERE dr.complete = 0
