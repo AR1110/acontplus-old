@@ -52,7 +52,8 @@ BEGIN
 		                  ,cl.direccion                                                        as direccionComprador
 		                  ,REPLACE(ISNULL(cl.correo , 'S/N'),';',',')                          as emailComprador
 		                  ,REPLACE(ISNULL(cl.telefono, 'S/N'),';',',')                         as telefonoComprador
-		                  ,ci.descripcion                                                      as ciudadComprador
+		                  ,ISNULL(cl.configValorBruto,0)                                       as configValorBruto
+                          ,ci.descripcion                                                      as ciudadComprador
 		                  ,CAST(av.totalSinImpuestos as numeric(18,2))                         as subTotalSinImpuestos
 		                  ,CAST(av.totalDescuento as numeric(18,2))                            as totalDescuento
 		                  ,CAST(av.propina as numeric(18,2))                                   as propina
