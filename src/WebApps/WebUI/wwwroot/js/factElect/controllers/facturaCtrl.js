@@ -835,7 +835,7 @@
             gridApi.grid.element.on("keyup", function (ev) {
                 ev.stopPropagation(); 
                 if (ev.which == 13 || ev.keyCode == "13") {
-                    if (!($scope.config.searchCode == 1)) {
+                    if (($scope.config.searchCode == 1)) {
                         setFocusInputBarcode();
                     } else {
                         setFocusArticulo();
@@ -1055,11 +1055,7 @@
             $scope.gridOptions.data.push(nuevaFilaAgregada)
             setCalculoTotales('precioUnitario', nuevaFilaAgregada, 0);
             focusColumnCantidad(getIndexRow(nuevaFilaAgregada), nuevaFilaAgregada.llevaInventario);
-            updateRefProductoVenta()
-            tS.toastr({
-                type: 'success',
-                message: 'Agregado Correctamente'
-            })
+            updateRefProductoVenta() 
         }
 
         function updateItem(nuevaFilaAgregada) { 
@@ -1437,12 +1433,12 @@
 
             $uibModalInstance.rendered.then(() => {
                 if ($scope.config.searchCode) {
-                    let el = document.getElementById("#inputBarcode");
+                    let el = document.getElementById("inputBarcode");
                     if(el){
                         el.focus();
                     } 
                 } else {
-                    let el = document.getElementById("#custom-template-md-autocomplete-articulo");
+                    let el = document.getElementById("custom-template-md-autocomplete-articulo");
                     if(el){
                         el.focus()
                     } 
@@ -2409,6 +2405,11 @@
 
         function focusColumnCantidad(index, llevaInventario) {
             let indexCol = 0;
+
+            if (($scope.config.searchCode == 1)) {
+                setFocusInputBarcode();
+                return
+            }  
 
             if (llevaInventario) {
                 indexCol = $scope.gridOptions.columnDefs.findIndex(

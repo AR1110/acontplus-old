@@ -16,6 +16,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
     SET LANGUAGE SPANISH;
+    SET XACT_ABORT ON;
 
     --> GLOBAL
 	DECLARE @idUsuario INT,
@@ -29,16 +30,14 @@ BEGIN
         @customerId INT,
         @idDocumentoElectronico INT,
         @tipoEmision TINYINT = 1,
-        @idPuntoEmision INT,
         @idTipoDocumento INT,
         @idProveedor INT,
         @idRentencionAts INT
-
 			
 	DECLARE @tblInfoCompRet AS TABLE(
          idRetencionAts INT NOT NULL
+        ,idPuntoEmision INT NOT NULL
         ,fechaEmision DATETIME2 NOT NULL
-		,codEstab VARCHAR(25) NOT NULL
 		,contribuyentEspecial VARCHAR(13) NULL
 		,obligadoContabilidad VARCHAR(2) NULL
 		,tipoIdentificacionSujetoRetenido VARCHAR(2) NULL
@@ -56,11 +55,11 @@ BEGIN
 
         --> Info Json
         INSERT INTO @tblInfoCompRet
-              (idRetencionAts,codEstab,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
-		SELECT @id           ,codEstab,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
+              (idRetencionAts,idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
+		SELECT @id           ,idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
 		FROM OPENJSON(@infoCompRet) WITH
         (
-             codEstab                         VARCHAR(25)
+             idPuntoEmision                 INT
             ,secuencial                       VARCHAR(6)
             ,fechaEmision                     DATETIME2
             ,contribuyentEspecial             VARCHAR(13)
@@ -92,19 +91,19 @@ BEGIN
         SELECT TOP 1 @idProveedor = idProveedor FROM dbo.Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @CustomerId
 
         SELECT TOP 1 @claveAcceso = dbo.ufnGeneraClaveAcceso (
-                                                                dbo.AFTDeleteCero(estab)   
+                                                                dbo.AFTDeleteCero(es.estab)   
 			                                                   ,'07'
 												               ,CAST(@ambiente as nvarchar)
 												               ,CAST(@tipoEmision as nvarchar)                         
 			                                                   ,dbo.AFTConvertDate(fechaEmision)                
 			                                                   ,@ruc                                             
-			                                                   ,estab+ptoEmi                                                     
+			                                                   ,es.estab + pe.ptoEmi                                                     
 			                                                   ,Helper.F_Auto_Sequential(@secuencial)
                                                              )
         ,@fechaEmision = fechaEmision
 		FROM @tblInfoCompRet           tb
-        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab          = tb.codEstab
-        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento 
+        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON tb.idPuntoEmision = pe.idPuntoEmision
+        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento
         
         --> Validaciones 
 

@@ -1261,7 +1261,7 @@
 
         function setFocusInputBarcode() {
             $timeout(function () {
-                let el = document.getElementById('#inputBarcode');
+                let el = document.getElementById('inputBarcode');
                 if(el){
                     el.focus();
                 }
@@ -1270,7 +1270,7 @@
 
         function setFocusArticulo() {
             $timeout(function () {
-                let el = document.getElementById('#custom-template-md-autocomplete-articulo')
+                let el = document.getElementById('custom-template-md-autocomplete-articulo')
                 if(el){
                     el.focus(); 
                 }
@@ -1715,6 +1715,11 @@
         function focusColumnCantidad(index, llevaInventario) { 
 
             let indexCol = 0;
+
+            if ($scope.config.searchCode == 1) {
+                setFocusInputBarcode();
+                return 
+            }  
 
             if (llevaInventario) {
                 indexCol = $scope.gridOptions.columnDefs.findIndex(
