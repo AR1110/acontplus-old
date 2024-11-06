@@ -1968,7 +1968,8 @@
                         placas,
                         idFormaPagoSri: data.idFormaPagoSri,
                         dataInfoCred: JSON.parse(infoCrediticia) || {},
-                        nota: data.nota
+                        nota: data.nota,
+                        configValorBruto : data.configValorBruto || false
                     }
                 }
             })
