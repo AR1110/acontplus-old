@@ -143,8 +143,8 @@
 </app-custom-table-container>
 
 <ng-template #templateOp let-item="item">
-  <button mat-icon-button matTooltip="Cuotas">
-    <mat-icon>payment</mat-icon>
+  <button mat-icon-button matTooltip="Cuotas" (click)="openCuotaModal(item)">
+    <mat-icon>attach_money</mat-icon>
   </button>
 
   <button mat-icon-button matTooltip="Historial Movimiento">
@@ -154,8 +154,3 @@
     <mat-icon>save_alt</mat-icon>
   </button>
 </ng-template>
-
-<mat-menu #shared="matMenu">
-  <button mat-menu-item>Correo</button>
-  <button mat-menu-item>WhatsApp</button>
-</mat-menu>
