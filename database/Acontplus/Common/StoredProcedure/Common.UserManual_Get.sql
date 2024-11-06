@@ -57,7 +57,7 @@ BEGIN
             ,umt.Name
             ,ISNULL(m.Name, ''General'') AS Module
             ,um.Title
-            ,CONVERT(VARCHAR(MAX), DECOMPRESS(CompressedContent)) Content
+            ,um.CompressedContent
 		    ,@totalRecords                                                   as totalRecords
             FROM AcontplusAdmin.Common.UserManual um WITH(NOLOCK)
                 INNER JOIN AcontplusAdmin.Common.UserManualType umt WITH(NOLOCK) 
