@@ -180,12 +180,14 @@ BEGIN
             SET @releases = (
                 SELECT 
                     id, 
-                    description, 
+                    r.title,
+                    CONVERT(VARCHAR(MAX), DECOMPRESS(r.CompressedContent)) description, 
                     logoutRequired, 
                     version, 
                     CONVERT(VARCHAR, FORMAT(ReleaseDate, 'dd/MM/yyyy')) AS releaseDate
                 FROM AcontplusAdmin.Common.Release r WITH (NOLOCK)
-                WHERE r.Id NOT IN (SELECT ReleaseId FROM AcontplusAdmin.Common.UserReleaseRead WHERE UserId = @userId) 
+                WHERE r.Id NOT IN (SELECT ReleaseId FROM AcontplusAdmin.Common.UserReleaseRead WHERE UserId = @userId)
+                    AND r.Deleted IS NULL
                 FOR JSON PATH
             );
         END
