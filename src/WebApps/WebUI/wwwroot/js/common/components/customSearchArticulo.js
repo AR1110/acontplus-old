@@ -1,6 +1,6 @@
 //@ts-check
-inputSearchArticuloCtrl.$inject = ['$scope',  '$injector',  ]
-function inputSearchArticuloCtrl($scope,   $injector,   ) {
+inputSearchArticuloCtrl.$inject = ['$scope',  '$injector', '$timeout' ]
+function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
     let $ctrl = this;
     let articuloSvc = $injector.get('articuloService')  
 
@@ -13,6 +13,10 @@ function inputSearchArticuloCtrl($scope,   $injector,   ) {
     $scope.placeholder = $ctrl.placeholder || "Buscar articulo";
 
 
+
+    $scope.dataEnterSearch = {
+        textSearch: null
+    }
 
     $scope.searchText = null;
     $scope.selectedItem = null
@@ -27,6 +31,10 @@ function inputSearchArticuloCtrl($scope,   $injector,   ) {
 
     $scope.productsFound = []; 
 
+
+    let isFetchingByBarcode = false;
+    let enterPressCount = 0;
+    let enterPressTimer;
 
 
     $scope.searchTextChange = searchTextChange;
@@ -104,22 +112,35 @@ function inputSearchArticuloCtrl($scope,   $injector,   ) {
         });
 
     }, 500)
+ 
 
-    setTimeout(() => {
+    $scope.onKeyUpInputBarcode = function(event) { 
 
-        let el = $("#inputBarcode")
+        var keyCode = event.keyCode || event.which;
 
-        if (el) {
-            el.on('keyup', e => {
-                var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) { // Verifica si se presionó la tecla Enter
+            enterPressCount++;
+            if(isFetchingByBarcode){
+                enterPressCount = 0;
+            }
 
-                if (!$scope.searchText && keyCode === 13) {
-                    focusSearchCustomer()
-                }
-            })
+            // Reiniciar el temporizador si ya ha pasado el tiempo
+            if (enterPressTimer) {
+                $timeout.cancel(enterPressTimer);
+            }
+
+            // Reiniciar el temporizador para contar 1 segundo (o el tiempo que prefieras)
+            enterPressTimer = $timeout(() => {
+                enterPressCount = 0; // Reiniciar el contador después de un segundo
+            }, 1000); // Cambia 1000 a la duración deseada en milisegundos
+
+            // Si se presiona Enter dos veces
+            if (enterPressCount === 2) {
+                focusSearchCustomer(); 
+            }
         }
 
-    }, 800)
+    };
 
     function getProductPaginationSearch() {
         let cloneProductsFound = [...$scope.productsFound]
@@ -263,16 +284,20 @@ function inputSearchArticuloCtrl($scope,   $injector,   ) {
     function getDataArticuloByEnterCode() {
         try {
 
-            if (!$scope.searchText) {
-                $scope.searchText = null;
-                return
-            }
+            // if (!$scope.searchText) {
+            //     $scope.searchText = null;
+            //     return
+            // }
+            if(isFetchingByBarcode) return;
+
+            if(!$scope.searchText) return;
 
             if ($scope.searchText.length < 2) return
 
             /**
              * return object {idArticulo: 0}
              */
+            isFetchingByBarcode = true;
             articuloSvc.findByEnterCode({ textSearch: $scope.searchText, isSearchByCode: true }).then(response => {
                 if(!response) return;
 
@@ -280,14 +305,15 @@ function inputSearchArticuloCtrl($scope,   $injector,   ) {
                 $scope.searchText = null
             }).catch(error => {
                 console.log(error);
+            }).finally(()=>{
+                isFetchingByBarcode = false;
             })
         } catch (error) {
             console.log(error)
         }
     }
 
-    function selectArticleSearch(item) {
-
+    function selectArticleSearch(item) { 
         if (typeof item === 'object' && ("showHeader" in item)) {
             $scope.searchText = null
             return
@@ -329,6 +355,7 @@ app.component("customSearchArticuloBarcode", {
                        class="form-control border-select" 
                        ng-model="searchText"  
                        ng-enter="getDataArticuloByEnterCode()"     
+                       ng-keyup="onKeyUpInputBarcode($event)"
                        id="inputBarcode"
                        placeholder="Ej: COMP1"> 
                 `,

@@ -1,0 +1,173 @@
+<div class="row justify-content-between">
+  <div class="col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center">
+    <span class="form-group pull-left page-size form-inline">
+      <select
+        class="form-control control-color"
+        ng-model="dataSearch.pageSize"
+        ng-change="changePageSize()"
+        ng-options="ra for ra in recordsQuantity"
+      ></select>
+    </span>
+  </div>
+
+  <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 r">
+        <div class="form-group">
+          <label for="inputTextSearch">Buscar Artículo</label>
+          <div class="input-group">
+            <input
+              type="text"
+              id="inputTextSearch"
+              class="form-control border-select"
+              ng-model="dataSearch.bySearch"
+              ng-keypress="onEnter($event)"
+              placeholder="Ingrese la Descripcion o Código del Articulo"
+            />
+            <div class="input-group-append">
+              <button
+                class="btn btn-outline-secondary btn-sm"
+                ng-click="refresh()"
+                type="button"
+                tabindex="-1"
+              >
+                &#8635;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="">Buscar por:</label>
+          <select
+            class="form-control border-select"
+            ng-model="dataSearch.byColumn"
+            ng-change="refresh()"
+          >
+            <option ng-value="item.codigo" ng-repeat="item in tipoBusquedas">
+              {{item.descripcion}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="opcion">Opción</label>
+          <select
+            class="form-control border-select"
+            ng-model="dataSearch.byStock"
+            ng-change="refresh()"
+          >
+            <option ng-value="">Todos</option>
+            <option ng-value="1">Con Stock</option>
+            <option ng-value="2">Sin Stock</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<md-table-container style="max-height: 400px">
+  <table resize master md-table>
+    <thead md-head>
+      <tr md-row>
+        <th md-column><span>Op.</span></th>
+        <th md-column><span>Img</span></th>
+        <th md-column><span>Código</span></th>
+        <th md-column><span>Descripción</span></th>
+        <th md-column>Cod. Barra</th>
+        <th md-column>Medida</th>
+        <th md-column><span>Iva</span></th>
+        <th md-column>Stock</th>
+        <th md-column ng-repeat="item in tarifas">{{item.tarifa}}</th>
+        <th md-column>Marca</th>
+        <th md-column>Modelo</th>
+        <th md-column>Obs.</th>
+      </tr>
+    </thead>
+    <tbody md-body>
+      <tr md-row ng-repeat="item in articulos track by $index">
+        <td md-cell>
+          <div class="d-flex">
+            <button
+              type="button"
+              class="btn btn-success btn-xs mr-2"
+              ng-if="options.multiSelect"
+              ng-click="askToSelect(item)"
+              placeholder="Hover over this for a tooltip until this is filled"
+              uib-tooltip="Agregar artículo en el detalle del documento"
+            >
+              <i class="fas fa-cart-arrow-down"></i>
+            </button>
+            <view-kardex params="item"></view-kardex>
+          </div>
+        </td>
+        <td md-cell style="vertical-align: middle">
+          <img
+            class="img-fluid img-thumbnail"
+            ng-click="previewImg(item)"
+            width="50"
+            src="{{item.s3ObjectUrl}}"
+          />
+        </td>
+        <td md-cell>{{item.codigo}}</td>
+        <td md-cell>
+          <a
+            tooltip
+            uib-tooltip="{{item.observaciones}}"
+            tooltip-trigger="'mouseenter'"
+            tooltip-placement="top"
+            href="javascript:void(0)"
+          >
+            {{item.descripcion}}
+          </a>
+        </td>
+        <td md-cell>{{item.codigoBarra}}</td>
+        <td md-cell>{{item.medida}}</td>
+        <td md-cell>{{item.tipoIva}}</td>
+        <td md-cell>
+          <span
+            style="cursor: pointer"
+            estab-stock
+            article="item"
+            class="btn btn-default"
+          >
+            <h6>
+              <spna ng-class="item.color">{{item.stock}}</spna>
+            </h6>
+          </span>
+        </td>
+        <td md-cell ng-repeat="pvp in item.tarifas">{{pvp.precioConIva}}</td>
+        <td md-cell>{{item.marca}}</td>
+        <td md-cell>{{item.modelo}}</td>
+        <td md-cell>{{item.observaciones}}</td>
+      </tr>
+      <tr ng-show="articulos.length==0" class="text-center">
+        <td colspan="17">No hay registros en esta tabla :)</td>
+      </tr>
+    </tbody>
+  </table>
+</md-table-container>
+
+<div class="row justify-content-between mt-1">
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+    <ul
+      uib-pagination
+      total-items="dataSearch.totalRecords"
+      items-Per-Page="dataSearch.pageSize"
+      ng-change="pagechanged()"
+      ng-model="dataSearch.pageIndex"
+      max-size="dataSearch.maxSize"
+      class="pagination"
+      boundary-links="true"
+      rotate="false"
+    ></ul>
+  </div>
+  <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+    <span class="text-dark">Total {{dataSearch.totalRecords}} Artículos</span>
+  </div>
+</div>

@@ -2252,6 +2252,11 @@
         function focusColumnCantidad(index, llevaInventario) {
             let indexCol = 0;
 
+            if (($scope.config.searchCode == 1)) {
+                setFocusInputBarcode();
+                return
+            }  
+
             if (llevaInventario) {
                 indexCol = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'cantidad')
             } else {
