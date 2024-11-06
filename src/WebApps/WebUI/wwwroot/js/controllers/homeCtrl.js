@@ -98,52 +98,68 @@
                 for (const rel of releases) {
                     release += `<tr class="small">
                                                 <td style="vertical-align: middle;">${rel.version}</td>
-                                                <td>${rel.description}</td>
+                                                <td>${rel.content}</td>
                                             </tr>`;
                 }
             }
 
             release += `</tbody></table>`;
 
-            swal
-                .fire({
-                    icon: "info",
-                    title: `Nuevas Actualizaciones Disponibles</b>`,
-                    html: release,
-                    width: "800px",
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    showConfirmButton: true,
-                    confirmButtonText: "Confirmar Lectura",
-                })
-                .then((result) => {
-                    if (result.isConfirmed) {
-                        const dataToSave = {
-                            releases: JSON.stringify(
-                                $scope.releases.map((release) => ({ id: release.id })),
-                            ),
-                        };
-                        mS.getData("post", "Common/UserReleaseRead", {
-                            data: dataToSave,
-                        }).then((response) => {
-                            if (response.code == "1") {
-                                swal.fire({
-                                    icon: "info",
-                                    text: response.message,
-                                    allowOutsideClick: false,
-                                });
+            modalService.openModalCustom({
+                controller: [
+                    "$uibModalInstance",
+                    "$scope",
+                    "$timeout",
+                    "$sce",
+                    "mainService",
+                    "params",
+                    ($uibModalInstance, $scope, $timeout, $sce, mS, params) => {
+                        const { release, releases } = params;
 
-                                const hasLogoutRequired = $scope.releases.some(
-                                    (release) => release.logoutRequired === true,
-                                );
+                        $scope.releases = releases || [];
+                        $scope.releaseTable = $sce.trustAsHtml(release);
 
-                                if (hasLogoutRequired) {
-                                    $scope.logout();
+                        $scope.confirmRead = () => {
+                            const dataToSave = {
+                                releases: JSON.stringify(
+                                    $scope.releases.map((release) => ({ id: release.id })),
+                                ),
+                            };
+                            mS.getData("post", "Common/UserReleaseRead", {
+                                data: dataToSave,
+                            }).then((response) => {
+                                if (response.code == "1") {
+                                    swal.fire({
+                                        icon: "info",
+                                        text: response.message,
+                                        allowOutsideClick: false,
+                                    });
+
+                                    const hasLogoutRequired = $scope.releases.some(
+                                        (release) => release.logoutRequired === true,
+                                    );
+
+                                    if (hasLogoutRequired) {
+                                        $scope.logout();
+                                    } else {
+                                        $scope.onClose();
+                                    }
                                 }
-                            }
-                        });
-                    }
-                });
+                            });
+                        }
+
+                        $scope.onClose = () => {
+                            $uibModalInstance.close();
+                        };
+                    },
+                ],
+                params: {
+                    release,
+                    releases: $scope.releases
+                },
+                size: "lg",
+                template: "~/Pages/Shared/_ReleasesModal.cshtml",
+            });
         };
 
         $scope.timer = null;
@@ -193,6 +209,7 @@
                 }
             }, 1000);
         };
+
         function getDashboard() {
             return mS.getData(
                 "get",
@@ -209,6 +226,13 @@
             return docElectSvc.getAll(dataSearch);
         }
 
+        function getReleases() {
+            return mS.getData(
+                "get",
+                `Common/Release`
+            );
+        }
+
         function init() {
             const dashboardPromises = getDashboard().catch((error) => {
                 console.log(error);
@@ -216,8 +240,18 @@
             const documentsPromises = getDocs().catch((error) => {
                 console.log(error);
             });
-            $q.all([dashboardPromises, documentsPromises]).then((response) => {
-                const [responseDashboard, comprobantesElectronicos] = response;
+            const releasesPromise = getReleases().catch((error) => {
+                console.log(error);
+            });
+            $q.all([dashboardPromises, documentsPromises, releasesPromise]).then((response) => {
+                const [responseDashboard, comprobantesElectronicos, releases] = response;
+
+                $scope.releases = releases.payload || [];
+
+                if ($scope.releases.length > 0) {
+                    $scope.openReleases();
+                }
+
                 let dashboardData = JSON.parse(responseDashboard.payload);
                 if (comprobantesElectronicos && comprobantesElectronicos.length > 0) {
                     modalService.openModalCustom({
@@ -283,19 +317,14 @@
                     });
                 }
                 if (dashboardData) {
-                    const { statistics, licenses, releases, stepsConfig, expiredSignatures } = dashboardData;
+                    const { statistics, licenses, stepsConfig, expiredSignatures } = dashboardData;
                     $scope.cantidad = angular.fromJson(statistics);
                     $scope.licenses = angular.fromJson(licenses) || [];
-                    $scope.releases = angular.fromJson(releases) || [];
                     $scope.stepsConfig = angular.fromJson(stepsConfig) || [];
                     $scope.expiredSignatures = angular.fromJson(expiredSignatures) || [];
 
                     if ($scope.stepsConfig.length > 0) {
                         location.href = '/Config/WizardConfig/Index'
-                    }
-
-                    if ($scope.releases.length > 0) {
-                        $scope.openReleases();
                     }
 
                     if ($scope.licenses.length > 0) {

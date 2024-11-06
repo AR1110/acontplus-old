@@ -26,11 +26,8 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
                 await context.Database.OpenConnectionAsync();
             }
 
-            var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                response = DbDataReaderMapper.ToList<T>(reader);
-            }
+            await using var reader = await cmd.ExecuteReaderAsync();
+            response = DbDataReaderMapper.ToList<T>(reader);
         }
         finally
         {

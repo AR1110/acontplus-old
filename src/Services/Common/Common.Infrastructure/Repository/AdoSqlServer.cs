@@ -25,11 +25,8 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
                 await conn.OpenAsync();
             }
 
-            var reader = await cmd.ExecuteReaderAsync();
-            while (reader.Read())
-            {
-                response = DbDataReaderMapper.ToList<T>(reader);
-            }
+            await using var reader = await cmd.ExecuteReaderAsync();
+            response = DbDataReaderMapper.ToList<T>(reader);
         }
         finally
         {
