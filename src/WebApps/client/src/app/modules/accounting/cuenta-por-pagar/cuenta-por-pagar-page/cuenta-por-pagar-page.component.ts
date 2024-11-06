@@ -7,8 +7,8 @@ import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
-import { CuentaPorPagarListaComponent } from '@modules/accounting/components/cuenta-por-pagar/cuenta-por-pagar-lista/cuenta-por-pagar-lista.component';
-import { CuentaPorPagarService } from '@modules/accounting/services/cuenta-por-pagar.service';
+import { CuentaPorPagarListaComponent } from '@modules/accounting/cuenta-por-pagar/components/cuenta-por-pagar-lista/cuenta-por-pagar-lista.component';
+import { CuentaPorPagarService } from '@modules/accounting/cuenta-por-pagar/cuenta-por-pagar.service';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
 import { finalize, switchMap, throwError } from 'rxjs';

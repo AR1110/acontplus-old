@@ -1,4 +1,4 @@
-import { CuentaPorPagarLista } from "../interfaces/cuenta-por-pagar.interface"
+import { CuentaPorPagarLista } from "../cuenta-por-pagar/cuenta-por-pagar.interface"
 
 export class CuentaPorPagarAdapter {
 
