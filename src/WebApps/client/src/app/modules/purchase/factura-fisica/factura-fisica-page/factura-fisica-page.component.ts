@@ -1,50 +1,62 @@
 import { Component, inject, model, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MatButton, MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import {  MatMenuModule } from '@angular/material/menu';
+import { MatCardModule } from '@angular/material/card';
 import { PageEvent } from '@angular/material/paginator';
-import { MatOption, MatSelect, MatSelectModule } from '@angular/material/select';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { FacturaFisicaService } from '../factura-fisica.service';
 import { ToasterService } from '@core/services/toaster.service';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPagination } from '@shared/models/pagination.model';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
-import { CuentaPorPagarLista } from '@modules/accounting/interfaces/cuenta-por-pagar.interface';
-import { CuentaPorPagarService } from '@modules/accounting/services/cuenta-por-pagar.service';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
 import { finalize, switchMap, throwError } from 'rxjs';
+import { FacturaFisicaLista } from '../factura-fisica.interface';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { FacturaFisicaDetalleDirective } from '../factura-fisica-detalle.directive';
 
 @Component({
-  selector: 'app-cuenta-por-pagar-lista',
+  selector: 'app-factura-fisica-page',
   standalone: true,
   imports: [
+    //modules
     FormsModule,
+    MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatInputModule,
     MatCheckboxModule,
+    MatInputModule,
+
+    //components
+    BreadcrumbComponent,
     CustomTableContainerComponent,
     MatDynamicTableComponent,
-    DateRangeSelectionComponent
+    DateRangeSelectionComponent,
+
+    //Directives
+     FacturaFisicaDetalleDirective
   ],
-  templateUrl: './cuenta-por-pagar-lista.component.html',
+  templateUrl: './factura-fisica-page.component.html',
   styles: ``
 })
-export class CuentaPorPagarListaComponent {
-  private cpcSvc = inject(CuentaPorPagarService)
+export class FacturaFisicaPageComponent {
+
+  private facturaFisicaSvc = inject(FacturaFisicaService)
   private tS = inject(ToasterService)
 
   estabs: GroupedEstab[] = [];
@@ -56,29 +68,26 @@ export class CuentaPorPagarListaComponent {
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'index', label: 'Nro.', type: 'string' },
-    { key: 'nombreDoc', label: 'Doc.', type: 'string' },
-    { key: 'serieComprobante', label: 'Serie Doc.', type: 'string' },
-    { key: 'identificacionComprador', label: 'Identificación', type: 'string' },
-    { key: 'nombreComprador', label: 'Proveedor', type: 'string' },
+    { key: 'serieComprobante', label: 'Serie', type: 'string' },
     { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
     { key: 'fechaVencimiento', label: 'Fecha Vcto', type: 'string' },
+    { key: 'nombreComprador', label: 'Cliente', type: 'string' },
     { key: 'total', label: 'Total', type: 'number' },
     { key: 'abono', label: 'Abono', type: 'number' },
     { key: 'saldo', label: 'Saldo', type: 'number' },
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
-    { key: 'usuario', label: 'Usuario', type: 'string' },
+    { key: 'nombreUsuario', label: 'Usuario', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  dataSource = new MatTableDataSource<CuentaPorPagarLista>();
+  dataSource = new MatTableDataSource<FacturaFisicaLista>();
 
   pagination = signal(new MatPagination());
 
   dataSearch = model({
     codEstab: null as string | null | undefined,
     idPuntoEmision: 0,
-    checkBoxDate: true,
+    checkBoxDate: false,
     idCliente: 0,
     idUsuario: 0,
     idEstadoDoc: 0,
@@ -115,7 +124,7 @@ export class CuentaPorPagarListaComponent {
   }
 
 
-  private setResponseGetAll(response: any) {
+  private successResponseNotaEntregaAll(response: any) {
 
     this.dataSource = new MatTableDataSource(response.data);
     this.pagination.update((p) => ({
@@ -125,11 +134,11 @@ export class CuentaPorPagarListaComponent {
 
   }
 
-  private getAll() {
+  private getNotasEntrega() {
     if (this.isLoadingResults()) return; // Prevenir múltiples llamadas
 
     this.isLoadingResults.set(true)
-    this.cpcSvc
+    this.facturaFisicaSvc
       .getAll(this.getDataParams())
       .pipe(
         finalize(() => {
@@ -137,19 +146,19 @@ export class CuentaPorPagarListaComponent {
         }),
       )
       .subscribe((response) => {
-        this.setResponseGetAll(response);
+        this.successResponseNotaEntregaAll(response);
       });
   }
 
   refresh() {
-    this.getAll()
+    this.getNotasEntrega()
   }
 
   ngOnInit(): void {
     this.isLoadingResults.set(true)
-    this.cpcSvc.getDataFilter().pipe(
-      switchMap(initialData => {
-        console.log(initialData)
+    this.facturaFisicaSvc.getDataFilter().pipe(
+      switchMap((initialData:any) => {
+
         this.estabs = initialData.estabs;
         this.estadosDoc = initialData.estadosDoc;
 
@@ -171,9 +180,9 @@ export class CuentaPorPagarListaComponent {
             message: 'No tienes asignado Establecimiento!'
           })
           return throwError(() => new Error('No tienes asignado Establecimiento'));
-         }
+        }
 
-         return this.cpcSvc.getAll(this.getDataParams())
+        return this.facturaFisicaSvc.getAll(this.getDataParams())
 
       })
     )
@@ -181,7 +190,7 @@ export class CuentaPorPagarListaComponent {
         finalize(() => this.isLoadingResults.set(false))
       )
       .subscribe(response => {
-        this.setResponseGetAll(response);
+        this.successResponseNotaEntregaAll(response);
       })
 
 

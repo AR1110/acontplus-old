@@ -11,7 +11,7 @@ import { SubcategoryPageComponent } from '@modules/accounting/pages/subcategory-
 import { MovimientoCajaReportPageComponent } from '@accounting/reports/movimiento-caja-report-page/movimiento-caja-report-page.component';
 import { CarteraClientePageComponent } from '@accounting/reports/cartera-cliente-page/cartera-cliente-page.component';
 import { AccountingMovementPageComponent } from '@accounting/pages/accounting-movement-page/accounting-movement-page.component';
-import { CuentaPorPagarPageComponent } from './pages/cuenta-por-pagar-page/cuenta-por-pagar-page.component';
+import { CuentaPorPagarPageComponent } from './cuenta-por-pagar/cuenta-por-pagar-page/cuenta-por-pagar-page.component';
 
 export const routes: Routes = [
   {

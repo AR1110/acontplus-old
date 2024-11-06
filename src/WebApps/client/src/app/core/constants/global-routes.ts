@@ -70,6 +70,9 @@ export enum GlobalRoutes {
   Factura='billing/invoice',
 
   //Cuenta por pagar
-  ContabilidadCuentaPorPagar='accounting/cuenta-por-pagar'
+  ContabilidadCuentaPorPagar='accounting/cuenta-por-pagar',
+
+  //COMPRAS
+  ComprasFacturaCompra='purchase/factura-fisica'
 
 }

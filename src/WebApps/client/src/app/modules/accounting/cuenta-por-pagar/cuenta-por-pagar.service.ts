@@ -6,7 +6,7 @@ import { map } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { GroupedEstab } from '@core/models/estab.model';
-import { CuentaPorPagarLista } from '../interfaces/cuenta-por-pagar.interface';
+import { CuentaPorPagarLista } from './cuenta-por-pagar.interface';
 import { CuentaPorPagarAdapter } from '../adapters/cuenta-por-pagar.adapter';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 
