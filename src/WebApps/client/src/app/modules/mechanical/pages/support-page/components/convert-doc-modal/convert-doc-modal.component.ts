@@ -9,7 +9,6 @@ import { ToasterService } from '@core/services/toaster.service';
 import { addDayToDate, ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
 import { isDateValid } from '@core/utils/format-date-moment';
 import { isValidField } from '@core/utils/utils';
-import { CreditTime } from '@modules/accounting/models/credit-time.model';
 import { isValidGeneratorQuota } from '@modules/accounting/utils/calculate-quota.util';
 import { InvoiceService } from '@modules/billing/services/invoice.service';
 import { SupportDetail } from '@modules/mechanical/models/support.model';
@@ -23,6 +22,7 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 import Swal from 'sweetalert2';
 import { lastValueFrom } from 'rxjs';
 import { InvoiceAdapter } from '@modules/billing/adapters/invoice/invoice.adapter';
+import { TiempoCredito } from '@modules/accounting/interfaces/tiempo-credito.interface';
 
 @Component({
   selector: 'app-convert-doc-modal',
@@ -41,7 +41,7 @@ export class ConvertDocModalComponent {
     details: [],
     companyCustomer: {} as any,
     formasPagoSri: [] as FormaPagoSri[],
-    tiemposCredito: [] as CreditTime[],
+    tiemposCredito: [] as TiempoCredito[],
     vehicle: [] as any,
     inspection: [] as any,
     config: {

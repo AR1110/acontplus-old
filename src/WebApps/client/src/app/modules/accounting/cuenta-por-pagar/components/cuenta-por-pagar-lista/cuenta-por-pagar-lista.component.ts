@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { DialogService } from '@core/services/dialog.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
@@ -22,6 +23,8 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
 import { finalize, switchMap, throwError } from 'rxjs';
+import { CuentaPorPagarCuotaModalComponent } from '../cuenta-por-pagar-cuota-modal/cuenta-por-pagar-cuota-modal.component';
+import { MODAL_SIZE } from '@core/constants/global.constants';
 
 @Component({
   selector: 'app-cuenta-por-pagar-lista',
@@ -46,6 +49,7 @@ import { finalize, switchMap, throwError } from 'rxjs';
 export class CuentaPorPagarListaComponent {
   private cpcSvc = inject(CuentaPorPagarService)
   private tS = inject(ToasterService)
+  private dialogSvc = inject(DialogService)
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
@@ -237,4 +241,24 @@ export class CuentaPorPagarListaComponent {
     });
     this.refresh();
   }
+
+
+  openCuotaModal (item: CuentaPorPagarLista){
+
+    let modalRef = this.dialogSvc.open(CuentaPorPagarCuotaModalComponent,
+      {
+        size: MODAL_SIZE.XL,
+        data: {
+          idCuentaPorPagar: item.idCuentaPorPagar
+        }
+      }
+    )
+
+    modalRef.subscribe(result=>{
+      console.log(result)
+    })
+
+  }
+
+
 }

@@ -18,3 +18,15 @@ export interface CuentaPorPagarLista {
   numAutDocSustento: string
   totalRecords:number
 }
+
+export interface CuentaPorPagarCuotaConfig {
+    idCuotaPorPagar: number
+    idCuentaPorPagar: number
+    fechaVencimiento: string
+    nroCuota: number
+    cuota: number
+    abono: number
+    saldo: number
+    nombreEstado: string,
+    codigoEstado: string
+}

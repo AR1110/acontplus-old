@@ -43,6 +43,7 @@
     "moment-timezone": "^0.5.46",
     "ngx-cookie-service": "^18.0.0",
     "ngx-file-drop": "^16.0.0",
+    "ngx-mask": "^18.0.3",
     "ngx-quicklink": "^0.4.6",
     "ngx-quill": "^26.0.8",
     "ngx-toastr": "^18.0.0",
