@@ -15,18 +15,19 @@
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
-                                <div class="d-flex flex-row">
-                                    <label for="">Tipo Identificación: <span class="text-danger">*</span> </label>
-                                    <div class="pl-2" >
-                                        <input type="checkbox" id="isManual" ng-model="data.isManual" ng-change="askToManual()" />
-                                        <label for="isManual">Manual</label>
+                                    <div class="d-flex flex-row">
+                                        <label for="">Tipo Identificación: <span class="text-danger">*</span> </label>
+                                        <div class="pl-2">
+                                            <input type="checkbox" id="isManual" ng-model="data.isManual"
+                                                ng-change="askToManual()" />
+                                            <label for="isManual">Manual</label>
+                                        </div>
                                     </div>
-                                </div>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <select class="form-control border-select"
                                                 ng-model="data.idTipoIdentificacion"
-                                                ng-change="onChangeTipoIdentificacion()" name="tipoDocumento" 
+                                                ng-change="onChangeTipoIdentificacion()" name="tipoDocumento"
                                                 ng-disabled="isDisableSelectIdentificacion">
                                                 <option ng-value="ti.idTipoIdentificacion"
                                                     ng-repeat="ti in tiposIdentificacion">{{ti.descripcion}}
@@ -46,11 +47,12 @@
                                             ng-model="data.numeroIdentificacion"
                                             ng-disabled="isDisableInputIdentificacion" placeholder="Ej: EH123457">
 
-                                        <div class="input-group-append"> 
-                                            <button type="button" class="btn btn-info btn-sm" ng-click="getCompanyCustomerSri()">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-info btn-sm"
+                                                ng-click="getCompanyCustomerSri()">
                                                 <i class=" fas fa-sync"></i>
-                                            </button> 
-                                        </div>  
+                                            </button>
+                                        </div>
 
                                         <small class="invalid-feedback text-right">{{message}} </small>
                                         <small class="valid-feedback text-right">{{message}} </small>
@@ -75,7 +77,8 @@
                                 <div class="form-group">
                                     <label>Nombre Comercial: </label>
                                     <input type="text" class="form-control border-select" autocomplete="off"
-                                        ng-model="data.nombreComercial" touppercase placeholder="Ej: TECNOMEGA" ng-disabled="isDisableInput" />
+                                        ng-model="data.nombreComercial" touppercase placeholder="Ej: TECNOMEGA"
+                                        ng-disabled="isDisableInput" />
                                 </div>
                             </div>
 
@@ -148,7 +151,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            
+
 
                             <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
@@ -203,7 +206,7 @@
                                 <div class="form-group">
                                     <label>Tipo Cliente: </label>
                                     <select class="form-control border-select" ng-model="data.idTipoClienteProveedor">
-                                    <option ng-value="">Ninguno</option>
+                                        <option ng-value="">Ninguno</option>
                                         <option ng-value="item.idTipoClienteProveedor" ng-repeat="item in tiposCliente">
                                             {{item.descripcion}}</option>
                                     </select>
@@ -295,11 +298,11 @@
                         <div class="row ">
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="formaPagoSri">Forma pago: </label> 
-                                    <select ng-model="data.idFormaPagoSri" class="form-control border-select">                                            
+                                    <label for="formaPagoSri">Forma pago: </label>
+                                    <select ng-model="data.idFormaPagoSri" class="form-control border-select">
                                         <option ng-value="item.idFormaPagoSri" ng-repeat="item in formasPagoSri">
                                             {{item.descripcion}}</option>
-                                    </select>  
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -313,7 +316,21 @@
                                         input-aria-label="Placas"></md-chips>
                                 </div>
                             </div>
-                            
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="Placa">Configuración de Valor Bruto <span tooltip-placement="top"
+                                            uib-tooltip="valor total de un bien o servicio sin incluir impuestos, deducciones o descuentos (uso dentro del reporte)">
+                                            <i class="fas fa-info-circle"></i>
+                                        </span></label>
+                                    <div class="icheck-primary ">
+                                        <input type="checkbox" id="configValorBruto"
+                                            name="configValorBruto" ng-model="data.configValorBruto" />
+                                        <label for="configValorBruto"></label>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="barcode"> Código de Barras:</label>
@@ -346,9 +363,10 @@
                                     Compartir Tarjeta</button>
                             </div>
                         </div>
-                        </div>
                     </div>
+                </div>
             </uib-tab>
+
             <uib-tab index="2">
                 <uib-tab-heading>
                     <i class="far fa-money-bill-alt"></i> Información crediticia
@@ -372,13 +390,15 @@
                                     <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
                                         <div class="form-group">
                                             <label>Esposo(a):</label>
-                                            <input type="text" class="form-control border-select" ng-model="dataInfoCred.conyugeNombre">
+                                            <input type="text" class="form-control border-select"
+                                                ng-model="dataInfoCred.conyugeNombre">
                                         </div>
                                     </div>
                                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                                         <div class="form-group">
                                             <label>Teléfono:</label>
-                                            <input type="text" class="form-control border-select" valid-number ng-model="dataInfoCred.conyugeTel">
+                                            <input type="text" class="form-control border-select" valid-number
+                                                ng-model="dataInfoCred.conyugeTel">
                                         </div>
                                     </div>
                                 </div>
@@ -387,23 +407,25 @@
                                     <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
                                         <div class="form-group">
                                             <label>Referencia Familiar:</label>
-                                            <input type="text" class="form-control border-select" ng-model="dataInfoCred.refFamNombre">
+                                            <input type="text" class="form-control border-select"
+                                                ng-model="dataInfoCred.refFamNombre">
                                         </div>
                                     </div>
                                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                                         <div class="form-group">
                                             <label>Teléfono:</label>
-                                            <input type="text" class="form-control border-select" valid-number ng-model="dataInfoCred.refFamTel">
+                                            <input type="text" class="form-control border-select" valid-number
+                                                ng-model="dataInfoCred.refFamTel">
                                         </div>
                                     </div>
                                 </div>
-                               
+
                             </div>
-                             
+
                         </div>
                         <hr>
 
-                         <div class="row">
+                        <div class="row">
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label>Tipo Vivienda</label>
@@ -424,23 +446,25 @@
                                                     <i class="fas fa-info-circle"></i>
                                                 </span>
                                             </label>
-                                            <input type="text" class="form-control border-select" id="dirVivienda" ng-model="dataInfoCred.dirVivienda">
+                                            <input type="text" class="form-control border-select" id="dirVivienda"
+                                                ng-model="dataInfoCred.dirVivienda">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="refDomicilio">Descripción del punto de referencia:</label>
-                                            <input type="text" class="form-control border-select" id="refDomicilio" ng-model="dataInfoCred.refDomicilio">
+                                            <input type="text" class="form-control border-select" id="refDomicilio"
+                                                ng-model="dataInfoCred.refDomicilio">
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                             
+
                         </div>
                         <hr>
- 
-                    
+
+
                     </div>
                 </div>
 

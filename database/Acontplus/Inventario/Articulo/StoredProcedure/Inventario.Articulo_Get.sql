@@ -109,9 +109,9 @@ BEGIN
 			SET @dynamicFilterCondition = CHOOSE(
 				ISNULL(@filterMode, 1),
 				' AND (a.descripcion LIKE ''%'' + @bySearch + ''%'' OR a.codigo LIKE ''%'' + @bySearch + ''%'' OR a.codigoBarra LIKE ''%'' + @bySearch + ''%'') ',
-				' AND a.codigo LIKE ''%'' + @bySearch + ''%'' ',
-				' AND a.codigoBarra LIKE ''%'' + @bySearch + ''%'' ',
-				' AND a.descripcion LIKE ''%'' + @bySearch + ''%'' '
+				' AND a.codigo       LIKE ''%'' + @bySearch + ''%'' ',
+				' AND a.codigoBarra  LIKE ''%'' + @bySearch + ''%'' ',
+				' AND a.descripcion  LIKE ''%'' + @bySearch + ''%'' '
 			);
 			 
 			 
