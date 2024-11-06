@@ -1,10 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
-import { CompanyCustomerSearch } from '@modules/customer/company-customer/models/company-customer';
+import { CompanyCustomerSearch } from '@company-customer/company-customer';
 import { map, Observable } from 'rxjs';
+import { CompanyCustomerAdapter } from './company-customer.adapter';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ import { map, Observable } from 'rxjs';
 export class CompanyCustomerService {
   //For customers of Acontplus Customers (cliente)
   private url = `${PATHS_API.FACT_ELECT}CompanyCustomer/`;
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAll<T extends { pageIndex: number; pageSize: number }>(obj: T) {
     let json = JSON.stringify({
@@ -77,8 +78,11 @@ export class CompanyCustomerService {
   /**
    * mejora
    */
-  getId(id: number) {
-    return this.http.get(`${this.url}GetId/${id}`).pipe(
+  getId(id: number, noLoader?: boolean) {
+    return this.http.get(`${this.url}GetId/${id}`, {
+      context: noLoader ? getNoLoader() : new HttpContext()
+    }
+    ).pipe(
       map((response) => {
         let result = {} as any;
         if (isApiResponse(response)) {
@@ -208,18 +212,18 @@ export class CompanyCustomerService {
       textSearch: data.textSearch,
     };
     return this.http
-      .get(`${this.url}Search?json=${JSON.stringify(query)}`, {
+      .get<ApiResponse>(`${this.url}Search?json=${JSON.stringify(query)}`, {
         context: getNoLoader(),
       })
       .pipe(
         map((response) => {
-          if (isApiResponse(response)) {
-            let customers =
-              (response.payload && JSON.parse(response.payload as string)) ||
-              [];
-            return customers || [];
+          let customers = [] as any[];
+          if (response && response.code === "1") {
+            let results = JSON.parse(response.payload as string) || [];
+
+            customers = CompanyCustomerAdapter.fromApiSearch(results)
           }
-          return [];
+          return customers;
         }),
       );
   }

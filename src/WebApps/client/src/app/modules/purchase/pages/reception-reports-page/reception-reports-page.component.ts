@@ -7,7 +7,6 @@ import {
   DOC_TYPE_SRI,
   FORMAT_REPORT,
 } from '@core/constants/global.constants';
-import { SupplierSearchComponent } from '@modules/purchase/components/supplier-search/supplier-search.component';
 import { UserSearchComponent } from '@core/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
 import { SharedService } from '@core/services/shared.service';
@@ -17,6 +16,7 @@ import { formatDateMoment } from '@core/utils/format-date-moment';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { Subcategory } from '@modules/accounting/models/subcategory';
+import { SupplierSearchComponent } from '@modules/customer/supplier/components/supplier-search/supplier-search.component';
 
 @Component({
   selector: 'app-reception-reports-page',

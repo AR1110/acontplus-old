@@ -20,7 +20,7 @@ import {
   MatChipRow,
 } from '@angular/material/chips';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { CompanyCustomerService } from '../../services/company-customer.service';
+import { CompanyCustomerService } from '../../company-customer.service';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { SriCustomerService } from '@modules/customer/sri-customer/services/sri-customer.service';
