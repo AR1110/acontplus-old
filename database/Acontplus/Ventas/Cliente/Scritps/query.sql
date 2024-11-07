@@ -32,7 +32,7 @@ go
 
     
     exec Ventas.Factura_Report '{"id":169451}'
-    select * from dbo.Cliente where configValorBruto = 1 
+    select top 1 * from dbo.Cliente where configValorBruto = 1 
     
 
     -- 11/01/204 --ALEXIS RAMIREZ

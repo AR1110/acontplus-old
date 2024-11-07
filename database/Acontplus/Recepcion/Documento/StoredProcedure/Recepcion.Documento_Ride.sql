@@ -11,7 +11,7 @@ GO
 -- Create date: 19 de abril del 2022
 -- Description:	ASP Reporte Factura Compra 
 -- =============================================
---exec ReporteCompras.Factura '{"id":10,"codigo":"RFC","format":"pdf", "isReportImported": false}'
+--exec Recepcion.Documento_Ride 463,'{"id":11207,"codDoc":"01","format":"pdf", "isReportImported": false}',''
 
 CREATE OR ALTER PROCEDURE Recepcion.Documento_Ride 
 	 @userRoleId INT
@@ -65,7 +65,8 @@ BEGIN
 		          ,''                                                                                                as obligadoContabilidad
                   ,''                                                                                                as contribuyenteRimpe
 		          ,''                                                                                                as agenteRetencion
-			      ,infoFactura.value('(fechaEmision)[1]', 'NVARCHAR(10)')                                            as fechaEmision
+			      ,CAST(0 as bit)                                                                                    as configValorBruto
+                  ,infoFactura.value('(fechaEmision)[1]', 'NVARCHAR(10)')                                            as fechaEmision
                   ,infoFactura.value('(razonSocialComprador)[1]', 'NVARCHAR(255)')                                   as razonSocialComprador
                   ,infoFactura.value('(identificacionComprador)[1]', 'NVARCHAR(13)')                                 as identificacionComprador
                   ,infoFactura.value('(direccionComprador)[1]', 'NVARCHAR(255)')                                     as direccionComprador
