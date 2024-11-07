@@ -1,16 +1,7 @@
 ﻿namespace Inventario.API.Controllers;
 
-public class TransaccionController : BaseApiController
+public class TransaccionController(ITransaccionService transaccionService) : BaseApiController
 {
-    private readonly ICustomLogger _logWriter;
-    private readonly ITransaccionService _transaccionService;
-
-    public TransaccionController(ITransaccionService transaccionService, ICustomLogger logWriter)
-    {
-        _transaccionService = transaccionService;
-        _logWriter = logWriter;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -20,7 +11,7 @@ public class TransaccionController : BaseApiController
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             };
-            var response = await _transaccionService.GetAsync(parameters);
+            var response = await transaccionService.GetAsync(parameters);
             if (response == null) { return NoContent(); }
 
             ;
@@ -28,7 +19,6 @@ public class TransaccionController : BaseApiController
         }
         catch (Exception ex)
         {
-            _logWriter.LogActivity("Error en Obtener Transferencias de bodegas" + ex.Message);
             return BadRequest("Error en get Transferencias de bodegas" + ex.Message);
         }
     }
@@ -38,7 +28,7 @@ public class TransaccionController : BaseApiController
     {
         try
         {
-            _transaccionService.Process(new Dictionary<string, object>
+            transaccionService.Process(new Dictionary<string, object>
             {
                 { "codTran", data.CodTran },
                 { "codDoc", data.CodDoc },
@@ -49,7 +39,6 @@ public class TransaccionController : BaseApiController
         }
         catch (Exception ex)
         {
-            _logWriter.LogActivity("Error activating inventario transacction handler: \n" + ex);
             return BadRequest(ex.Message);
         }
     }

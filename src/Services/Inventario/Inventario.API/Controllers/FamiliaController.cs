@@ -1,118 +1,42 @@
 ﻿namespace Inventario.API.Controllers;
 
-public class FamiliaController : BaseApiController
+public class FamiliaController(IFamiliaService familiaService) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    
-
-    public FamiliaController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-        
-    }
-
-    [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Almacen.Familia_Get");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await familiaService.GetAsync(parameters));
     }
 
-    [HttpPost("Insert")]
-    public async Task<IActionResult> Insert(ApiRequest request)
+    public async Task<IActionResult> Post([FromBody] ApiRequest request)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
+        var parameters = new Dictionary<string, object>
         {
-            var userRoleId = User.GetUserRoleId();
-            await _db.SpExecuteAsync("Almacen.Familia_Insert");
-            _db.AddDynamicParam("userRoleId", userRoleId);
-            _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
+        return Ok(await familiaService.AddAsync(parameters));
     }
 
-    [HttpPut("Update/{id}")]
-    public async Task<IActionResult> Update(int id, ApiRequest request)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest request)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
+        var parameters = new Dictionary<string, object>
         {
-            var userRoleId = User.GetUserRoleId();
-            await _db.SpExecuteAsync("Almacen.Familia_Update");
-            _db.AddDynamicParam("userRoleId", userRoleId);
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
+        return Ok(await familiaService.UpdateAsync(parameters));
     }
 
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
-        {
-            await _db.SpExecuteAsync("Almacen.Familia_Update_Cancel");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
-    }
-
-    [HttpGet("ListForSelect")]
-    public async Task<IActionResult> ListForSelect(string json)
-    {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
-        {
-            await _db.SpExecuteAsync("Almacen.Familia_For_Select");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _response = await _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        return Ok(await familiaService.DeleteAsync(parameters));
     }
 }
