@@ -26,17 +26,13 @@ BEGIN
     DECLARE @byEntidad INT
 
     -->Filter
-	DECLARE @byFraccionado BIT ,@byArticulo INT ,@bySearch VARCHAR(500) ,@idBodega INT ,@codEstab_Asig VARCHAR(150)
+	DECLARE @byFraccionado BIT ,@byArticulo INT ,@bySearch VARCHAR(500)
 
     --> Sql
 	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
 
     --> Recuperacion de informacion
 	SELECT TOP 1 @byEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
-
-	SELECT TOP 1 @codEstab_Asig = codEstab_Asig FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idRol AND predeterminado = 1
-
-	SELECT TOP 1 @idBodega = idBodega FROM Config.Bodeg_Asig WITH (NOLOCK) WHERE codEstab_Asig = @codEstab_Asig AND predeterminado = 1
 
 	SELECT @bySearch      = REPLACE(busqueda, space(1), '%')
 		  ,@byFraccionado = fraccionado
@@ -54,7 +50,6 @@ BEGIN
     --> Search
     SET @params  = '@idEntidad  INT
 				   ,@bySearch   VARCHAR(500)
-				   ,@idBodega   INT
                    ,@pageSize   INT
 				   ,@pageIndex  INT'
 
@@ -73,23 +68,22 @@ BEGIN
 			            ,CASE WHEN a.stock <= 0                            THEN ''badge badge-danger'' 
                             WHEN a.stock > 0 AND a.stock < a.stockMinimo THEN ''badge badge-warning'' 
                                                                             ELSE '''' 
-                        END as style
+                         END as style
 			            ,(
 				            SELECT t.descripcion  as tarifa
-                                    ,p.precioVenta as precioVenta
-					                ,p.precioConIva as precio
-				            FROM dbo.ArticuloPvP p WITH (NOLOCK)
+                                  ,p.precioVenta  as precioVenta
+					              ,p.precioConIva as precio
+				            FROM dbo.ArticuloPvP  p WITH (NOLOCK)
 				            INNER JOIN dbo.Tarifa t WITH (NOLOCK) ON t.idTarifa = p.idTarifa
 				            WHERE p.idArticulo = a.idArticulo
 				            ORDER BY t.codigo ASC
 				            FOR JSON PATH
 
 			            ) as priceSale
-			            ,(
-				            SELECT Helper.IsNullOrEmpty(au.ubicacion) as ubicacion
+			           ,(
+				            SELECT TOP 1 Helper.IsNullOrEmpty(au.ubicacion) as ubicacion
 				            FROM dbo.ArticuloUbicacion au WITH (NOLOCK)
 				            WHERE au.idArticulo = a.idArticulo
-					            AND au.idBodega = @idBodega
 				            FOR JSON PATH
 
 			            ) as warehouses
@@ -119,7 +113,6 @@ BEGIN
 		              ,@params
 		              ,@idEntidad = @byEntidad
                       ,@bySearch  = @bySearch
-                      ,@idBodega  = @idBodega
                       ,@pageIndex = @pageIndex
 				      ,@pageSize  = @pageSize
                       
