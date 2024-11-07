@@ -46,10 +46,11 @@ export class ProductService {
       tipo: 6
     })
 
-    return this.http.get<ApiResponse>(`${this.url}Get?json=${json}`, {
+    return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
       context: getNoLoader()
     }).pipe(
       map(response => {
+        console.log(JSON.parse(response.payload as string))
         let results = {
           product: {} as ProductSale,
           medidas: [] as MedidaProducto[],
@@ -57,6 +58,7 @@ export class ProductService {
         };
         if (response.code === "1") {
           const repositoryData = JSON.parse(response.payload as string);
+          console.log(repositoryData)
 
           const [
             productRepos,
@@ -87,7 +89,7 @@ export class ProductService {
       ...obj
     })
 
-    return this.http.get<ApiResponse>(`${this.url}Get?json=${json}`, {
+    return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
       context: getNoLoader()
     }).pipe(
       map(response => {

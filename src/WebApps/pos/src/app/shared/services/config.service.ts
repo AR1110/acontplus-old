@@ -56,6 +56,7 @@ export class ConfigService {
       context: getNoLoader()
     }).pipe(
       map(response => {
+        console.log(JSON.parse(response.payload as string))
         let resultData = {
           subCategorias: [] as SubCategory[],
           roomTables: [] as any[],

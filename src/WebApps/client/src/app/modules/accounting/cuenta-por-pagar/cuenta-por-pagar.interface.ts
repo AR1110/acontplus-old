@@ -30,3 +30,5 @@ export interface CuentaPorPagarCuotaConfig {
     nombreEstado: string,
     codigoEstado: string
 }
+
+
