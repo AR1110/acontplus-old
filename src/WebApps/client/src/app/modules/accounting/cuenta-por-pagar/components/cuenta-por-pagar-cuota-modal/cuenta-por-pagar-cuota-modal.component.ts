@@ -42,6 +42,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 
 
 
+
   `
 })
 export class CuentaPorPagarCuotaModalComponent {

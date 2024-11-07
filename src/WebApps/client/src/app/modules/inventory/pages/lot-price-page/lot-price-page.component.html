@@ -4,47 +4,61 @@
   <div class="card-body">
     <div class="row justify-content-between">
       <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
-        <select name="tipoArticulo" id="tipoArticulo" class="form-select" [(ngModel)]="mainForm.tipo">
+        <select
+          name="tipoArticulo"
+          id="tipoArticulo"
+          class="form-select"
+          [(ngModel)]="mainForm.tipo"
+        >
           @for (item of tiposArticulo; track $index) {
-            <option [ngValue]="item.code">{{item.description}}</option>
+          <option [ngValue]="item.code">{{ item.description }}</option>
           }
         </select>
       </div>
       @for (item of catalogs; track $index) {
       <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
         <div class="icheck-primary">
-          <input type="radio" [id]="item.code" [value]="item.code" name="someGroupCatalogo"
-            [(ngModel)]="mainForm.opcion" />
-          <label [for]="item.code">{{item.description}}</label>
+          <input
+            type="radio"
+            [id]="item.code"
+            [value]="item.code"
+            name="someGroupCatalogo"
+            [(ngModel)]="mainForm.opcion"
+          />
+          <label [for]="item.code">{{ item.description }}</label>
         </div>
       </div>
       }
     </div>
-    <hr>
+    <hr />
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
         <div class="form-group">
           <label for="subFamilias">SubFamilias</label>
           <app-sub-category-select-multiple
-          [checkedSubCategorias]="checkedSubCategorias"
-          [subCategorias]="subCategorias" />
+            [checkedSubCategorias]="checkedSubCategorias"
+            [subCategorias]="subCategorias"
+          />
         </div>
       </div>
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-
         <div class="form-group">
           <label>Artículo: </label>
-          <app-product-search [props]="productSearchProps" (onProductSelected)="onProductSelected($event)"
-            (emptyInput)="productResultEmptyInput($event)" />
+          <app-product-search
+            [props]="productSearchProps"
+            (onProductSelected)="onProductSelected($event)"
+            (emptyInput)="productResultEmptyInput($event)"
+          />
         </div>
       </div>
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-
         <div class="form-group">
           <label for="supplierSearch">Proveedor</label>
-          <app-supplier-search [isSearchSimple]="isSearchSupplierSimple"
-            (onSupplierSelected)="onSupplierSelected($event)"
-            (emptyInput)="supplierResultEmptyInput($event)"></app-supplier-search>
+          <app-supplier-search
+            [isSearchSimple]="isSearchSupplierSimple"
+            (onSelected)="onSupplierSelected($event)"
+            (onInputEmpty)="supplierResultEmptyInput($event)"
+          ></app-supplier-search>
         </div>
       </div>
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12"></div>
@@ -53,35 +67,54 @@
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="nroDocumento">N° de Documento:</label>
-          <input type="text" class="form-control" [(ngModel)]="mainForm.nroDocumento" pattern="[0-9]{3}-[0-9]{3}-[0-9]*" placeholder="000-000-XXXXXXXXXXX"
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="mainForm.nroDocumento"
+            pattern="[0-9]{3}-[0-9]{3}-[0-9]*"
+            placeholder="000-000-XXXXXXXXXXX"
             title="Formato: 000-000-XXXXXXXXXXX"
-            oninput="this.value=this.value.replace(/[^0-9-]/g,'').replace(/(\d{3})-?(\d{3})-?(.*)/, '$1-$2-$3')">
+            oninput="this.value=this.value.replace(/[^0-9-]/g,'').replace(/(\d{3})-?(\d{3})-?(.*)/, '$1-$2-$3')"
+          />
         </div>
       </div>
       <div
-        class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-center mt-xl-3 mtlg-3 mt-md-3">
+        class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-center mt-xl-3 mtlg-3 mt-md-3"
+      >
         <button type="button" class="btn btn-info" (click)="toSearch()">
           <fa-icon [icon]="'search'"></fa-icon> Buscar
         </button>
       </div>
       <div
-        class="col-xl-5 col-lg-5 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-end mt-xl-3 mtlg-3 mt-md-3">
-        <button type="button" class="btn btn-success btn-lg" (click)="askToSave()">
+        class="col-xl-5 col-lg-5 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-end mt-xl-3 mtlg-3 mt-md-3"
+      >
+        <button
+          type="button"
+          class="btn btn-success btn-lg"
+          (click)="askToSave()"
+        >
           Guardar
         </button>
       </div>
     </div>
-    <hr>
+    <hr />
     <div class="row">
       <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12 col-12">
         <div class="row">
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
             <div class="form-froup">
-              <label for="optionCalculate">Opción de cálculo: <span class="text-danger">*</span></label>
-              <select name="optionCalculate" id="optionCalculate" class="form-select" [(ngModel)]="mainForm.optionToCalculate"
-                (change)="onChangeOptionCalculate()">
+              <label for="optionCalculate"
+                >Opción de cálculo: <span class="text-danger">*</span></label
+              >
+              <select
+                name="optionCalculate"
+                id="optionCalculate"
+                class="form-select"
+                [(ngModel)]="mainForm.optionToCalculate"
+                (change)="onChangeOptionCalculate()"
+              >
                 @for (item of optionsCalculate; track $index) {
-                <option [ngValue]="item.code">{{item.description}}</option>
+                <option [ngValue]="item.code">{{ item.description }}</option>
                 }
               </select>
             </div>
@@ -89,20 +122,35 @@
 
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
             <div class="form-froup">
-              <label for="optionCalculate">Tarifa: <span class="text-danger">*</span></label>
-              <mat-select [formControl]="tarifasSelected" multiple class="form-select">
+              <label for="optionCalculate"
+                >Tarifa: <span class="text-danger">*</span></label
+              >
+              <mat-select
+                [formControl]="tarifasSelected"
+                multiple
+                class="form-select"
+              >
                 @for (item of tarifas; track $index) {
-                <mat-option [value]="item.idTarifa">{{item.descripcion}}</mat-option>
+                <mat-option [value]="item.idTarifa">{{
+                  item.descripcion
+                }}</mat-option>
                 }
               </mat-select>
             </div>
           </div>
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
             <div class="form-froup">
-              <label for="optionPvp">Opción PVP: <span class="text-danger">*</span></label>
-              <select name="optionPvp" id="optionPvp" class="form-select" [(ngModel)]="optionPvp">
+              <label for="optionPvp"
+                >Opción PVP: <span class="text-danger">*</span></label
+              >
+              <select
+                name="optionPvp"
+                id="optionPvp"
+                class="form-select"
+                [(ngModel)]="optionPvp"
+              >
                 @for (item of optionsPvps; track $index) {
-                <option [ngValue]="item.code">{{item.description}}</option>
+                <option [ngValue]="item.code">{{ item.description }}</option>
                 }
               </select>
             </div>
@@ -113,35 +161,56 @@
         <div class="row">
           <div class="col-12">
             <div class="form-group">
-              <label for="inputValueCalculate">Valor/Porcentaje: <span class="text-danger">*</span></label>
+              <label for="inputValueCalculate"
+                >Valor/Porcentaje: <span class="text-danger">*</span></label
+              >
               <div class="input-group">
-                <input type="number" name="inputValueCalculate" id="inputValueCalculate" [(ngModel)]="mainForm.valueToCalculate"
-                  class="form-control">
-                <button type="button" class="btn btn-info" (click)="calculate()">Calcular</button>
-                <button type="button" class="btn btn-success" (click)="calculateManual()">Modificación Manual</button>
+                <input
+                  type="number"
+                  name="inputValueCalculate"
+                  id="inputValueCalculate"
+                  [(ngModel)]="mainForm.valueToCalculate"
+                  class="form-control"
+                />
+                <button
+                  type="button"
+                  class="btn btn-info"
+                  (click)="calculate()"
+                >
+                  Calcular
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  (click)="calculateManual()"
+                >
+                  Modificación Manual
+                </button>
 
-                <button type="button" class="btn btn-danger" ngbTooltip="Deshacer cambios" (click)="refreshToNestedProducts()">
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  ngbTooltip="Deshacer cambios"
+                  (click)="refreshToNestedProducts()"
+                >
                   <fa-icon [icon]="'undo-alt'"></fa-icon>
                 </button>
               </div>
-
             </div>
           </div>
         </div>
       </div>
-
-
-
     </div>
     <div class="mt-2">
       <app-tabulator
-      [columnNames]="columns"
-      [dataTree]="true"
-      [tableData]="nestedProducts"
+        [columnNames]="columns"
+        [dataTree]="true"
+        [tableData]="nestedProducts"
         [dataTreeStartExpanded]="true"
         (cellEdited)="cellEdited($event)"
         (cellClick)="cellClick($event)"
-        height="400px" />
+        height="400px"
+      />
     </div>
   </div>
 </div>

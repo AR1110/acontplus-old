@@ -20,7 +20,7 @@ import { ACCOUNTING_PATHS } from '@modules/accounting/enums/accounting.constants
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { SupplierSearchComponent } from '@purchase/components/supplier-search/supplier-search.component';
+import { SupplierSearchComponent } from '@modules/customer/supplier/components/supplier-search/supplier-search.component';
 
 @Component({
   selector: 'app-supplier-accounts',

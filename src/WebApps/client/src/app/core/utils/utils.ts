@@ -39,3 +39,58 @@ export function isValidJSON(texto: string) {
 export const getValidId = (id:number) => id > 0 ? id : null;
 
 export const imgDefault = () => '/assets/images/img-default.png';
+
+const isNumber = (value: string | number): boolean => {
+  const regex = /^\d+$/;
+  // Convertimos el valor a string para evaluar con la expresión regular
+  return regex.test(value.toString());
+};
+
+
+
+export class ValidatorUtils {
+
+  static isValidField<T>(field: T): T | null {
+    let value: any = field;
+    if (typeof field === 'string') {
+      value = field.trim();
+    }
+    const invalidValues: ReadonlyArray<T | null | undefined | "" | 0> = ["", null, undefined, 0];
+    return invalidValues.includes(value) ? null : value;
+  }
+
+  static removeSpacesInValue(value: string): string {
+    return value.trim();
+  }
+
+  static isValidEmail(valor: string): boolean {
+    return /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i.test(valor);
+  }
+
+  static getPermisosLocal(): any {
+    let dataPermisos = localStorage.getItem("permisos");
+    return dataPermisos ? JSON.parse(dataPermisos) : null;
+  }
+
+  static isValidJSON(texto: string): boolean {
+    try {
+      JSON.parse(texto);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  static getValidId(id: number): number | null {
+    return id > 0 ? id : null;
+  }
+
+  static imgDefault(): string {
+    return '/assets/images/img-default.png';
+  }
+
+  static isNumber(value: string | number): boolean {
+    const regex = /^\d+$/;
+    return regex.test(value.toString());
+  }
+}
