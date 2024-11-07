@@ -38,12 +38,11 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
           ,us.nombreUsuario        as usuario
     FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
     INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision    = de.idPuntoEmision
-     LEFT JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario         = de.idUsuario
-     LEFT JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio  = de.idEstadoServicio
-     LEFT JOIN Customer.Customer        cs WITH (NOLOCK) ON cs.Id                = de.customerId
+    INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio  = de.idEstadoServicio
     INNER JOIN dbo.TipoDocumento        td WITH (NOLOCK) ON td.idTipoDocumento   = de.idTipoDocumento
-     LEFT JOIN Sri.Establecimiento      se WITH (NOLOCK) ON se.idEstablecimiento = pe.idEstablecimiento
-     LEFT JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad         = se.idEntidad
-     
+    INNER JOIN Sri.Establecimiento      se WITH (NOLOCK) ON se.idEstablecimiento = pe.idEstablecimiento
+    INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad         = se.idEntidad
+    INNER JOIN Customer.Customer        cs WITH (NOLOCK) ON cs.Id                = de.customerId
+    LEFT JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario         = de.idUsuario
 )
 GO

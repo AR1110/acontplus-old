@@ -252,7 +252,6 @@
                     $scope.openReleases();
                 }
 
-                let dashboardData = JSON.parse(responseDashboard.payload);
                 if (comprobantesElectronicos && comprobantesElectronicos.length > 0) {
                     modalService.openModalCustom({
                         controller: [
@@ -316,6 +315,8 @@
                         template: "~/Pages/Shared/_ComprobantesErroneos.cshtml",
                     });
                 }
+
+                let dashboardData = JSON.parse(responseDashboard.payload);
                 if (dashboardData) {
                     const { statistics, licenses, stepsConfig, expiredSignatures } = dashboardData;
                     $scope.cantidad = angular.fromJson(statistics);
