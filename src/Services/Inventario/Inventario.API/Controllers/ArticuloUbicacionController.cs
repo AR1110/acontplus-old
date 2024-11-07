@@ -3,7 +3,7 @@
 public class ArticuloUbicacionController(IArticuloUbicacionService articuloUbicacionService) : BaseApiController
 {
     [HttpPost]
-    public async Task<IActionResult> Insert(string json)
+    public async Task<IActionResult> Post(string json)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -13,7 +13,7 @@ public class ArticuloUbicacionController(IArticuloUbicacionService articuloUbica
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, string json)
+    public async Task<IActionResult> Put(int id, string json)
     {
         var parameters = new Dictionary<string, object>
         {
