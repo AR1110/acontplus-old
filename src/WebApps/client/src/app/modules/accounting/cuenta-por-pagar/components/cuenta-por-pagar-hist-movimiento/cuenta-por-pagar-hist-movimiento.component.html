@@ -1,0 +1,19 @@
+<app-custom-container-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [matDialogTitle]="'Cuotas'"
+  [loading]="loading()"
+  (close)="closeDialog()"
+/>
+
+<ng-template #containerTemplate> </ng-template>
+
+<ng-template #actionsTemplate>
+  <button mat-flat-button>
+    <mat-icon>save</mat-icon>
+    Guardar
+  </button>
+  <button mat-stroked-button color="accent" (click)="closeDialog()">
+    Cerrar
+  </button>
+</ng-template>

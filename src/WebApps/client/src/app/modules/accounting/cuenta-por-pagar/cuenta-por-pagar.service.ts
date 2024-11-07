@@ -62,12 +62,14 @@ export class CuentaPorPagarService {
     }).pipe(
       map(response=>{
         let result = {
-          data: [] as CuentaPorPagarLista[]
+          data: [] as CuentaPorPagarLista[],
+          totalRecords: 0
         }
         if(response.code==="1"){
           let [mainData] = JSON.parse(response.payload as string);
 
-          result.data = CuentaPorPagarAdapter.fromApiGetAll(mainData)
+          result.data = CuentaPorPagarAdapter.fromApiGetAll(mainData);
+          result.totalRecords = result.data.length>0 ? result.data[0].totalRecords : 0
 
         }
         return result;
