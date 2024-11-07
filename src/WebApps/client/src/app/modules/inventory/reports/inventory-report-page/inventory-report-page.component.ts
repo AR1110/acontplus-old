@@ -17,10 +17,10 @@ import { formatDateMoment } from "@core/utils/format-date-moment";
 import { getValidId, isValidField } from "@core/utils/utils";
 import { INVENTORY_CODE_REPORT } from "@inventory/enums/inventory.enum";
 import { SharedService } from "@core/services/shared.service";
-import { SupplierSearchComponent } from "@purchase/components/supplier-search/supplier-search.component";
 import {
   CompanyCustomerSearchComponent
 } from "@company-customer/components/company-customer-search/company-customer-search.component";
+import { SupplierSearchComponent } from '@modules/customer/supplier/components/supplier-search/supplier-search.component';
 
 @Component({
   selector: 'app-inventory-report-page',

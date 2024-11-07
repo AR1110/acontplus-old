@@ -1,4 +1,5 @@
 
-export enum PATHS {
-  CUSTOMER_COMPANY = 'CustomerCompany'
+export enum CUSTOMER_PATHS {
+  CUSTOMER_COMPANY = 'CustomerCompany',
+  PROVEEDOR = 'Proveedor'
 }

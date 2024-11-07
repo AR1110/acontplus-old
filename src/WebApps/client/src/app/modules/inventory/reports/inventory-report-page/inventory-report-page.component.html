@@ -1,71 +1,114 @@
 <app-breadcrumb />
 <div class="card">
   <div class="card-body">
-    <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs" (navChange)="onNavChange($event)">
+    <ul
+      ngbNav
+      #nav="ngbNav"
+      [(activeId)]="activeTab"
+      class="nav-tabs"
+      (navChange)="onNavChange($event)"
+    >
       <li [ngbNavItem]="1">
-        <button ngbNavLink>Consumo diario </button>
+        <button ngbNavLink>Consumo diario</button>
         <ng-template ngbNavContent>
           <div class="row">
             <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.checkboxArticuloFiltro" class="form-control"
-                  name="checkboxArticuloConsumoDiario" id="checkboxArticuloConsumoDiario">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.checkboxArticuloFiltro"
+                  class="form-control"
+                  name="checkboxArticuloConsumoDiario"
+                  id="checkboxArticuloConsumoDiario"
+                />
                 <label for="checkboxArticuloConsumoDiario">Articulo</label>
               </div>
             </div>
             <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.checkboxCompanyCustomer" class="form-control"
-                  name="checkboxCompanyCustomerConsumoDiario" id="checkboxCompanyCustomerConsumoDiario">
-                <label for="checkboxCompanyCustomerConsumoDiario">Cliente</label>
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.checkboxCompanyCustomer"
+                  class="form-control"
+                  name="checkboxCompanyCustomerConsumoDiario"
+                  id="checkboxCompanyCustomerConsumoDiario"
+                />
+                <label for="checkboxCompanyCustomerConsumoDiario"
+                  >Cliente</label
+                >
               </div>
             </div>
             <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.checkboxUsuarioFiltro" class="form-control"
-                  name="checkboxConsumoDiarioUsuario" id="checkboxConsumoDiarioUsuario">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.checkboxUsuarioFiltro"
+                  class="form-control"
+                  name="checkboxConsumoDiarioUsuario"
+                  id="checkboxConsumoDiarioUsuario"
+                />
                 <label for="checkboxConsumoDiarioUsuario">Usuario</label>
               </div>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.checkboxSubCategoryFilter" class="form-control"
-                  name="checkboxSubCategoryFilter" id="checkboxSubCategoryFilter">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.checkboxSubCategoryFilter"
+                  class="form-control"
+                  name="checkboxSubCategoryFilter"
+                  id="checkboxSubCategoryFilter"
+                />
                 <label for="checkboxSubCategoryFilter">Subfamilia</label>
               </div>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.checkboxAgruparArticulo" class="form-control"
-                  name="checkboxAgruparArticulo" id="checkboxAgruparArticulo">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.checkboxAgruparArticulo"
+                  class="form-control"
+                  name="checkboxAgruparArticulo"
+                  id="checkboxAgruparArticulo"
+                />
                 <label for="checkboxAgruparArticulo">Agrupar Artículos</label>
               </div>
             </div>
           </div>
-          <hr>
+          <hr />
           <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
               <div class="form-group">
                 <label for="estab">Estab.:</label>
-                <select name="estab" id="estab" class="form-select" [(ngModel)]="dataSearch.idEstablecimiento"
-                  (change)="onChangeEstab()">
+                <select
+                  name="estab"
+                  id="estab"
+                  class="form-select"
+                  [(ngModel)]="dataSearch.idEstablecimiento"
+                  (change)="onChangeEstab()"
+                >
                   <option [ngValue]="0">Todos</option>
                   @for(item of estabs; track $index){
                   <option [ngValue]="item.idEstablecimiento">
-                    {{item.nombreComercial}}
+                    {{ item.nombreComercial }}
                   </option>
                   }
-
                 </select>
               </div>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
               <div class="form-group">
                 <label>Bodega</label>
-                <select name="bodega" class="form-select" [(ngModel)]="dataSearch.idBodega">
+                <select
+                  name="bodega"
+                  class="form-select"
+                  [(ngModel)]="dataSearch.idBodega"
+                >
                   <option [ngValue]="0">Todos</option>
                   @for(item of bodegas;track $index){
-                  <option [ngValue]="item.idBodega">{{item.descripcion}}</option>
+                  <option [ngValue]="item.idBodega">
+                    {{ item.descripcion }}
+                  </option>
                   }
                 </select>
               </div>
@@ -74,8 +117,11 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
               <div class="form-group">
                 <label>SubFamilia</label>
-                <app-sub-category-group [subCategoryGroups]="subCategories" (onSelected)="onSelectedSubCategory($event)"
-                  (onEmptyData)="onEmptyDataSubCategory()" />
+                <app-sub-category-group
+                  [subCategoryGroups]="subCategories"
+                  (onSelected)="onSelectedSubCategory($event)"
+                  (onEmptyData)="onEmptyDataSubCategory()"
+                />
               </div>
             </div>
           </div>
@@ -84,39 +130,51 @@
             <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
               <div class="form-group">
                 <label>Rango Fechas</label>
-                <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" />
+                <app-date-range-selection
+                  (onChangeDateRange)="onDateRangeSelection($event)"
+                />
               </div>
             </div>
             <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
               <div class="form-group">
                 <label>Artículo: </label>
-                <app-product-search (onProductSelected)="onProductSelected($event)"
-                  (emptyInput)="onEmtyDataProduct($event)" />
+                <app-product-search
+                  (onProductSelected)="onProductSelected($event)"
+                  (emptyInput)="onEmtyDataProduct($event)"
+                />
               </div>
             </div>
 
             <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
               <div class="form-group">
                 <label class="form-control-label">Usuario</label>
-                <app-user-search (onUserSelected)="onUserSelected($event)" (emptyInput)="onEmptyInputUserSearch()" />
+                <app-user-search
+                  (onUserSelected)="onUserSelected($event)"
+                  (emptyInput)="onEmptyInputUserSearch()"
+                />
               </div>
             </div>
           </div>
 
           <div class="row">
-
             <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
               <div class="form-group">
                 <label>Cliente:</label>
-                <app-company-customer-search (resultEmptyInput)="resultEmptyInputCustomer()"
-                  (onCustomerSelected)="onCustomerSelected($event)" [isSearchSimple]="true" />
+                <app-company-customer-search
+                  (resultEmptyInput)="resultEmptyInputCustomer()"
+                  (onCustomerSelected)="onCustomerSelected($event)"
+                  [isSearchSimple]="true"
+                />
               </div>
             </div>
 
             <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
               <div class="form-group">
                 <label>Tipo Transacción:</label>
-                <select class="form-select" [(ngModel)]="dataSearch.codTransaccion">
+                <select
+                  class="form-select"
+                  [(ngModel)]="dataSearch.codTransaccion"
+                >
                   <option value="S">Salida</option>
                   <option value="E">Entrada</option>
                 </select>
@@ -125,14 +183,19 @@
           </div>
 
           <div class="d-flex flex-row gap-1">
-            <button type="button" class="btn btn-info" (click)="getReportPDF()">PDF</button>
-            <button type="button" class="btn btn-success" (click)="getReportExcel()">Excel</button>
-
+            <button type="button" class="btn btn-info" (click)="getReportPDF()">
+              PDF
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              (click)="getReportExcel()"
+            >
+              Excel
+            </button>
           </div>
-
         </ng-template>
       </li>
-
 
       <li [ngbNavItem]="2">
         <button ngbNavLink>Stock</button>
@@ -140,41 +203,65 @@
           <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.chkProveedor" class="form-control"
-                  (change)="onChangeCheckProveedor()" name="chkProveedor" id="chkProveedor">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.chkProveedor"
+                  class="form-control"
+                  (change)="onChangeCheckProveedor()"
+                  name="chkProveedor"
+                  id="chkProveedor"
+                />
                 <label for="chkProveedor">Proveedor</label>
               </div>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.checkboxSubCategoryFilter" class="form-control"
-                  name="checkboxObtenerRentabilidad" id="checkboxSubCategoryTabStock">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.checkboxSubCategoryFilter"
+                  class="form-control"
+                  name="checkboxObtenerRentabilidad"
+                  id="checkboxSubCategoryTabStock"
+                />
                 <label for="checkboxSubCategoryTabStock">Subfamilia</label>
               </div>
             </div>
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.checkboxObtenerRentabilidad" class="form-control"
-                  name="checkboxSubCategoryTabStock" id="checkboxObtenerRentabilidad">
-                <label for="checkboxObtenerRentabilidad">Obtener Rentabilidad</label>
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.checkboxObtenerRentabilidad"
+                  class="form-control"
+                  name="checkboxSubCategoryTabStock"
+                  id="checkboxObtenerRentabilidad"
+                />
+                <label for="checkboxObtenerRentabilidad"
+                  >Obtener Rentabilidad</label
+                >
               </div>
             </div>
           </div>
-          <hr>
+          <hr />
           <div class="row">
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12" ng-if="isShowEstabStock">
+            <div
+              class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12"
+              ng-if="isShowEstabStock"
+            >
               <div class="form-group">
                 <label for="estab">Estab.:</label>
-                <select name="estab" class="form-select" [(ngModel)]="dataSearch.idEstablecimiento"
-                  (change)="onChangeEstab()">
+                <select
+                  name="estab"
+                  class="form-select"
+                  [(ngModel)]="dataSearch.idEstablecimiento"
+                  (change)="onChangeEstab()"
+                >
                   <option value="0">Todos</option>
                   @for(item of estabs;track $index){
                   <option [ngValue]="item.idEstablecimiento">
-                    {{item.nombreComercial}}
+                    {{ item.nombreComercial }}
                   </option>
                   }
-
                 </select>
               </div>
             </div>
@@ -182,16 +269,22 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label>Proveedor</label>
-                <app-supplier-search [isSearchSimple]="true" (onSupplierSelected)="onSupplierSelected($event)"
-                  (emptyInput)="supplierResultEmptyInput($event)"></app-supplier-search>
+                <app-supplier-search
+                  [isSearchSimple]="true"
+                  (onSelected)="onSupplierSelected($event)"
+                  (onInputEmpty)="supplierResultEmptyInput($event)"
+                ></app-supplier-search>
               </div>
             </div>
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label>SubFamilia</label>
-                <app-sub-category-group [subCategoryGroups]="subCategories" (onSelected)="onSelectedSubCategory($event)"
-                  (onEmptyData)="onEmptyDataSubCategory()" />
+                <app-sub-category-group
+                  [subCategoryGroups]="subCategories"
+                  (onSelected)="onSelectedSubCategory($event)"
+                  (onEmptyData)="onEmptyDataSubCategory()"
+                />
               </div>
             </div>
           </div>
@@ -200,15 +293,21 @@
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
               <div class="form-group">
                 <label for="bodegaStock">Bodega</label>
-                <select name="bodega" id="bodegaStock" class="form-select" [(ngModel)]="dataSearch.idBodega">
+                <select
+                  name="bodega"
+                  id="bodegaStock"
+                  class="form-select"
+                  [(ngModel)]="dataSearch.idBodega"
+                >
                   <option [ngValue]="0">Todos</option>
                   @for(item of bodegas;track $index){
-                  <option [ngValue]="item.idBodega">{{item.descripcion}}</option>
+                  <option [ngValue]="item.idBodega">
+                    {{ item.descripcion }}
+                  </option>
                   }
                 </select>
               </div>
             </div>
-
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
               <div class="form-group">
@@ -217,7 +316,7 @@
                   <option value="0">Todos</option>
                   @for(item of marcas;track $index){
                   <option [ngValue]="item.idMarca">
-                    {{item.descripcion}}
+                    {{ item.descripcion }}
                   </option>
                   }
                 </select>
@@ -227,93 +326,123 @@
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
               <div class="form-group">
                 <label for="stock-status">Stock</label>
-                <select name="stock-status" id="stock-status" class="form-select"
-                  [(ngModel)]="dataSearch.stockStatusCode">
-
+                <select
+                  name="stock-status"
+                  id="stock-status"
+                  class="form-select"
+                  [(ngModel)]="dataSearch.stockStatusCode"
+                >
                   @for(item of stockStatus;track $index){
-                  <option [ngValue]="item.code">{{item.description}}</option>
+                  <option [ngValue]="item.code">{{ item.description }}</option>
                   }
                 </select>
-
               </div>
             </div>
-
 
             @if(dataSearch.checkboxObtenerRentabilidad){
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
               <div class="form-group">
-                <label for="select-tarifa">Tarifa: <span class="text-danger">*</span></label>
-                <select name="select-tarifa" id="select-tarifa" class="form-select" [(ngModel)]="dataSearch.idTarifa">
+                <label for="select-tarifa"
+                  >Tarifa: <span class="text-danger">*</span></label
+                >
+                <select
+                  name="select-tarifa"
+                  id="select-tarifa"
+                  class="form-select"
+                  [(ngModel)]="dataSearch.idTarifa"
+                >
                   <option value="0">Seleccione::</option>
                   @for(item of tarifas;track $index){
-                  <option [ngValue]="item.idTarifa">{{item.descripcion}}</option>
+                  <option [ngValue]="item.idTarifa">
+                    {{ item.descripcion }}
+                  </option>
                   }
                 </select>
-
               </div>
             </div>
 
             }
-
-
           </div>
 
           <div class="d-flex flex-row gap-1">
-            <button type="button" class="btn btn-info" (click)="getReportPDF()">PDF</button>
-            <button type="button" class="btn btn-success" (click)="getReportExcel()">Excel</button>
-
+            <button type="button" class="btn btn-info" (click)="getReportPDF()">
+              PDF
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              (click)="getReportExcel()"
+            >
+              Excel
+            </button>
           </div>
-
-
         </ng-template>
       </li>
-
 
       <li [ngbNavItem]="3">
         <button ngbNavLink>PVPs</button>
         <ng-template ngbNavContent>
-
-          <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
-
+          <div
+            class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
+          >
             <div class="col">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.checkboxSubCategoryFilter" class="form-control"
-                  name="checkboxObtenerRentabilidad" id="checkboxSubCategoryTabStock">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.checkboxSubCategoryFilter"
+                  class="form-control"
+                  name="checkboxObtenerRentabilidad"
+                  id="checkboxSubCategoryTabStock"
+                />
                 <label for="checkboxSubCategoryTabStock">Subfamilia</label>
               </div>
             </div>
           </div>
-          <hr>
+          <hr />
 
-          <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
-
+          <div
+            class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
+          >
             <div class="col">
               <div class="form-group">
                 <label>SubFamilia</label>
-                <app-sub-category-group [subCategoryGroups]="subCategories" (onSelected)="onSelectedSubCategory($event)"
-                  (onEmptyData)="onEmptyDataSubCategory()" />
+                <app-sub-category-group
+                  [subCategoryGroups]="subCategories"
+                  (onSelected)="onSelectedSubCategory($event)"
+                  (onEmptyData)="onEmptyDataSubCategory()"
+                />
               </div>
             </div>
             <div class="col">
               <div class="form-group">
                 <label for="stock-status">Stock</label>
-                <select name="stock-status" id="stock-status" class="form-select" [(ngModel)]="dataSearch.stockStatusCode">
-
+                <select
+                  name="stock-status"
+                  id="stock-status"
+                  class="form-select"
+                  [(ngModel)]="dataSearch.stockStatusCode"
+                >
                   @for(item of stockStatus;track $index){
-                  <option [ngValue]="item.code">{{item.description}}</option>
+                  <option [ngValue]="item.code">{{ item.description }}</option>
                   }
                 </select>
-
               </div>
             </div>
 
             <div class="col">
               <div class="form-group">
                 <label for="tarifas">Tarifa: </label>
-                <select class="form-select" name="tarifas" id="tarifas" [(ngModel)]="dataSearch.idTarifa">
+                <select
+                  class="form-select"
+                  name="tarifas"
+                  id="tarifas"
+                  [(ngModel)]="dataSearch.idTarifa"
+                >
                   <option [ngValue]="0">Todos</option>
                   @for(item of tarifas; track $index){
-                  <option [ngValue]="item.idTarifa">{{ item.descripcion }}</option>
+                  <option [ngValue]="item.idTarifa">
+                    {{ item.descripcion }}
+                  </option>
                   }
                 </select>
               </div>
@@ -326,19 +455,25 @@
                   <option value="0">Todos</option>
                   @for(item of marcas;track $index){
                   <option [ngValue]="item.idMarca">
-                    {{item.descripcion}}
+                    {{ item.descripcion }}
                   </option>
                   }
                 </select>
               </div>
             </div>
-
           </div>
 
           <div class="d-flex flex-row gap-1">
-            <button type="button" class="btn btn-info" (click)="getReportPDF()">PDF</button>
-            <button type="button" class="btn btn-success" (click)="getReportExcel()">Excel</button>
-
+            <button type="button" class="btn btn-info" (click)="getReportPDF()">
+              PDF
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              (click)="getReportExcel()"
+            >
+              Excel
+            </button>
           </div>
         </ng-template>
       </li>
@@ -349,75 +484,112 @@
           <div class="row">
             <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.checkboxArticuloFiltro" class="form-control"
-                  name="checkboxTabArticuloFraccionado" id="checkboxTabArticuloFraccionado">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.checkboxArticuloFiltro"
+                  class="form-control"
+                  name="checkboxTabArticuloFraccionado"
+                  id="checkboxTabArticuloFraccionado"
+                />
                 <label for="checkboxTabArticuloFraccionado">Articulo</label>
               </div>
             </div>
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.chkProveedor" class="form-control"
-                  (change)="onChangeCheckProveedor()" name="chkProveedor" id="chkProveedorTabArticuloFraccionado">
-                <label for="chkProveedorTabArticuloFraccionado">Proveedor</label>
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.chkProveedor"
+                  class="form-control"
+                  (change)="onChangeCheckProveedor()"
+                  name="chkProveedor"
+                  id="chkProveedorTabArticuloFraccionado"
+                />
+                <label for="chkProveedorTabArticuloFraccionado"
+                  >Proveedor</label
+                >
               </div>
             </div>
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
               @if(!dataSearch.chkProveedor){
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.checkboxSubFamiliaFiltro" class="form-control"
-                  name="checkboxSubFamiliaFiltro" id="checkboxSubFamiliaFiltro">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.checkboxSubFamiliaFiltro"
+                  class="form-control"
+                  name="checkboxSubFamiliaFiltro"
+                  id="checkboxSubFamiliaFiltro"
+                />
                 <label for="checkboxSubFamiliaFiltro">SubFamilia</label>
               </div>
               }
             </div>
           </div>
-          <hr>
+          <hr />
           <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label>Proveedor</label>
-                <app-supplier-search [isSearchSimple]="true" (onSupplierSelected)="onSupplierSelected($event)"
-                  (emptyInput)="supplierResultEmptyInput($event)"></app-supplier-search>
+                <app-supplier-search
+                  [isSearchSimple]="true"
+                  (onSelected)="onSupplierSelected($event)"
+                  (onInputEmpty)="supplierResultEmptyInput($event)"
+                ></app-supplier-search>
               </div>
             </div>
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label>SubFamilia</label>
-                <app-sub-category-group [subCategoryGroups]="subCategories" (onSelected)="onSelectedSubCategory($event)"
-                  (onEmptyData)="onEmptyDataSubCategory()" />
+                <app-sub-category-group
+                  [subCategoryGroups]="subCategories"
+                  (onSelected)="onSelectedSubCategory($event)"
+                  (onEmptyData)="onEmptyDataSubCategory()"
+                />
               </div>
             </div>
 
             <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
               <div class="form-group">
                 <label>Artículo: </label>
-                <app-product-search (onProductSelected)="onProductSelected($event)"
-                  (emptyInput)="onEmtyDataProduct($event)" />
+                <app-product-search
+                  (onProductSelected)="onProductSelected($event)"
+                  (emptyInput)="onEmtyDataProduct($event)"
+                />
               </div>
             </div>
           </div>
 
           <div class="d-flex flex-row gap-1">
-            <button type="button" class="btn btn-info" (click)="getReportPDF()">PDF</button>
-            <button type="button" class="btn btn-success" (click)="getReportExcel()">Excel</button>
-
+            <button type="button" class="btn btn-info" (click)="getReportPDF()">
+              PDF
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              (click)="getReportExcel()"
+            >
+              Excel
+            </button>
           </div>
-
         </ng-template>
       </li>
 
       <li [ngbNavItem]="5">
         <button ngbNavLink>Caducidad</button>
         <ng-template ngbNavContent>
-
           <div class="row">
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.chkProveedor" class="form-control"
-                  (change)="onChangeCheckProveedor()" name="chkProveedor" id="chkProveedorCaducidad">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.chkProveedor"
+                  class="form-control"
+                  (change)="onChangeCheckProveedor()"
+                  name="chkProveedor"
+                  id="chkProveedorCaducidad"
+                />
                 <label for="chkProveedorCaducidad">Proveedor</label>
               </div>
             </div>
@@ -425,45 +597,67 @@
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
               @if (!dataSearch.chkProveedor){
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.checkboxSubFamiliaFiltro" class="form-control"
-                  name="checkboxTabCaducidadSubFamiliaFiltro" id="checkboxTabCaducidadSubFamiliaFiltro">
-                <label for="checkboxTabCaducidadSubFamiliaFiltro">SubFamilia</label>
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.checkboxSubFamiliaFiltro"
+                  class="form-control"
+                  name="checkboxTabCaducidadSubFamiliaFiltro"
+                  id="checkboxTabCaducidadSubFamiliaFiltro"
+                />
+                <label for="checkboxTabCaducidadSubFamiliaFiltro"
+                  >SubFamilia</label
+                >
               </div>
               }
             </div>
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.ckFechaCaducidad" class="form-control"
-                  name="chkFechaCaducidad" id="chkFechaCaducidad">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.ckFechaCaducidad"
+                  class="form-control"
+                  name="chkFechaCaducidad"
+                  id="chkFechaCaducidad"
+                />
                 <label for="chkFechaCaducidad">Fecha Caducidad</label>
               </div>
             </div>
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
               <div class="icheck-info">
-                <input type="checkbox" [(ngModel)]="dataSearch.chkUbicacion" class="form-control" name="chkUbicacion"
-                  id="chkUbicacion">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="dataSearch.chkUbicacion"
+                  class="form-control"
+                  name="chkUbicacion"
+                  id="chkUbicacion"
+                />
                 <label for="chkUbicacion">Ubicación</label>
               </div>
             </div>
-
           </div>
-          <hr>
+          <hr />
           <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label>Proveedor</label>
-                <app-supplier-search [isSearchSimple]="true" (onSupplierSelected)="onSupplierSelected($event)"
-                  (emptyInput)="supplierResultEmptyInput($event)"></app-supplier-search>
+                <app-supplier-search
+                  [isSearchSimple]="true"
+                  (onSelected)="onSupplierSelected($event)"
+                  (onInputEmpty)="supplierResultEmptyInput($event)"
+                ></app-supplier-search>
               </div>
             </div>
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label>SubFamilia</label>
-                <app-sub-category-group [subCategoryGroups]="subCategories" (onSelected)="onSelectedSubCategory($event)"
-                  (onEmptyData)="onEmptyDataSubCategory()" />
+                <app-sub-category-group
+                  [subCategoryGroups]="subCategories"
+                  (onSelected)="onSelectedSubCategory($event)"
+                  (onEmptyData)="onEmptyDataSubCategory()"
+                />
               </div>
             </div>
 
@@ -471,50 +665,63 @@
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label for="estab">Establecimiento</label>
-                <select name="estab" class="form-select" [(ngModel)]="dataSearch.idEstablecimiento"
-                  (change)="onChangeEstab()">
+                <select
+                  name="estab"
+                  class="form-select"
+                  [(ngModel)]="dataSearch.idEstablecimiento"
+                  (change)="onChangeEstab()"
+                >
                   @for(item of estabs; track $index){
                   <option [ngValue]="item.idEstablecimiento">
-                    {{item.nombreComercial}}
+                    {{ item.nombreComercial }}
                   </option>
                   }
                 </select>
               </div>
-
             </div>
-
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label for="bodega">Bodega</label>
-                <select name="bodega" id="bodega" class="form-select" [(ngModel)]="dataSearch.idBodega">
+                <select
+                  name="bodega"
+                  id="bodega"
+                  class="form-select"
+                  [(ngModel)]="dataSearch.idBodega"
+                >
                   @for (item of bodegas;track $index){
                   <option [ngValue]="item.idBodega">
-                    {{item.descripcion}}
+                    {{ item.descripcion }}
                   </option>
                   }
                 </select>
               </div>
-
             </div>
             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label for="input-ubicacion">Ubicación</label>
-                <input type="text" name="input-ubicacion" id="input-ubicacion" class="form-control border-select"
-                  [(ngModel)]="dataSearch.textUbicacion">
+                <input
+                  type="text"
+                  name="input-ubicacion"
+                  id="input-ubicacion"
+                  class="form-control border-select"
+                  [(ngModel)]="dataSearch.textUbicacion"
+                />
               </div>
             </div>
             }
 
-
-
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label for="expiredStatus">Estado</label>
-                <select class="form-select" name="expiredStatus" id="expiredStatus"
-                  [(ngModel)]="dataSearch.expiredStatusCode">
+                <select
+                  class="form-select"
+                  name="expiredStatus"
+                  id="expiredStatus"
+                  [(ngModel)]="dataSearch.expiredStatusCode"
+                >
                   @for(item of expirationStates;track $index){
-                  <option [ngValue]="item.code">{{item.description}}</option>
+                  <option [ngValue]="item.code">{{ item.description }}</option>
                   }
                 </select>
               </div>
@@ -525,22 +732,27 @@
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
               <div class="form-group">
                 <label>Rango Fechas</label>
-                <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" />
+                <app-date-range-selection
+                  (onChangeDateRange)="onDateRangeSelection($event)"
+                />
               </div>
             </div>
           </div>
 
           <div class="d-flex flex-row gap-1">
-            <button type="button" class="btn btn-info" (click)="getReportPDF()">PDF</button>
-            <button type="button" class="btn btn-success" (click)="getReportExcel()">Excel</button>
-
+            <button type="button" class="btn btn-info" (click)="getReportPDF()">
+              PDF
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              (click)="getReportExcel()"
+            >
+              Excel
+            </button>
           </div>
-
-
         </ng-template>
       </li>
-
-
     </ul>
 
     <div [ngbNavOutlet]="nav" class="mt-2"></div>

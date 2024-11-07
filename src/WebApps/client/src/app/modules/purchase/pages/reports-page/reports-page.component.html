@@ -1,4 +1,4 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
 <div class="card">
   <div class="card-body">
@@ -18,7 +18,7 @@
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
     </div>
-    <hr/>
+    <hr />
     <div class="row">
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="form-group">
@@ -31,7 +31,7 @@
           >
             <option value="">Todos</option>
             @for (item of tiposDoc; track $index) {
-              <option [ngValue]="item.codDoc">{{ item.descripcion }}</option>
+            <option [ngValue]="item.codDoc">{{ item.descripcion }}</option>
             }
           </select>
         </div>
@@ -47,9 +47,9 @@
           >
             <option value="">Todos</option>
             @for (estab of establecimientos; track $index) {
-              <option [ngValue]="estab.codEstab">
-                {{ estab.nombreComercial }}
-              </option>
+            <option [ngValue]="estab.codEstab">
+              {{ estab.nombreComercial }}
+            </option>
             }
           </select>
         </div>
@@ -65,7 +65,7 @@
           >
             <option value="">Todos</option>
             @for (item of estadosDoc; track $index) {
-              <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
+            <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
             }
           </select>
         </div>
@@ -82,25 +82,25 @@
           >
             <option [ngValue]="0">Todos</option>
             @for (ptoEmi of puntosEmision; track $index) {
-              <option [ngValue]="ptoEmi.idPuntoEmision">
-                {{ ptoEmi.ptoEmi }}
-              </option>
+            <option [ngValue]="ptoEmi.idPuntoEmision">
+              {{ ptoEmi.ptoEmi }}
+            </option>
             }
           </select>
         </div>
       </div>
       @if (dataSearch.supplierChecked) {
-        <div class="col-xl-4 col-lg-4 col-md-12 col-12">
-          <div class="form-group">
-            <label>Proveedor</label>
-            <app-supplier-search
-              [isSearchSimple]="isSearchSupplierSimple"
-              (onSupplierSelected)="onSupplierSelected($event)"
-              [textSearch]="dataSearch.supplierName"
-              (emptyInput)="supplierResultEmptyInput($event)"
-            ></app-supplier-search>
-          </div>
+      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+        <div class="form-group">
+          <label>Proveedor</label>
+          <app-supplier-search
+            [isSearchSimple]="isSearchSupplierSimple"
+            (onSelected)="onSupplierSelected($event)"
+            [textSearch]="dataSearch.supplierName"
+            (onInputEmpty)="supplierResultEmptyInput($event)"
+          ></app-supplier-search>
         </div>
+      </div>
       }
       <div class="col-xl-3 col-lg-3 col-md-4 col-sm-12 col-12">
         <div class="form-group">
@@ -114,12 +114,16 @@
       <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
         <div class="form-group">
           <label for="subcategoryId">Subcategoría:</label>
-          <select [(ngModel)]="dataSearch.subcategoryId" class="form-select border-select" id="subcategoryId">
+          <select
+            [(ngModel)]="dataSearch.subcategoryId"
+            class="form-select border-select"
+            id="subcategoryId"
+          >
             <option [ngValue]="0">Todas</option>
             @for (item of subcategories; track $index) {
-              <option [ngValue]="item.id">
-                {{ item.name }}
-              </option>
+            <option [ngValue]="item.id">
+              {{ item.name }}
+            </option>
             }
           </select>
         </div>
@@ -141,4 +145,3 @@
     </div>
   </div>
 </div>
-

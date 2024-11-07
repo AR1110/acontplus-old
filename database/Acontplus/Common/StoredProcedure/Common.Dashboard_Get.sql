@@ -16,12 +16,12 @@ CREATE OR ALTER PROCEDURE Common.Dashboard_Get
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET LANGUAGE SPANISH;
 
     DECLARE @idEntidad INT, 
         @uuid UNIQUEIDENTIFIER,
         @expired BIT = 0,
         @licenses VARCHAR(MAX) = '[]',
-        @releases VARCHAR(MAX) = '[]',
         @stepsConfig VARCHAR(MAX) = '[]',
         @expiredSignatures VARCHAR(MAX) = '[]',
         @userId INT;
@@ -173,25 +173,6 @@ BEGIN
                 )
             END
 
-        -- Check for new releases
-        IF (SELECT COUNT(*) FROM AcontplusAdmin.Common.Release WITH (NOLOCK) WHERE Deleted IS NULL AND Enabled = 1) <> 
-           (SELECT COUNT(*) FROM AcontplusAdmin.Common.UserReleaseRead WITH (NOLOCK) WHERE userId = @userId)
-        BEGIN
-            SET @releases = (
-                SELECT 
-                    id, 
-                    r.title,
-                    CONVERT(VARCHAR(MAX), DECOMPRESS(r.CompressedContent)) description, 
-                    logoutRequired, 
-                    version, 
-                    CONVERT(VARCHAR, FORMAT(ReleaseDate, 'dd/MM/yyyy')) AS releaseDate
-                FROM AcontplusAdmin.Common.Release r WITH (NOLOCK)
-                WHERE r.Id NOT IN (SELECT ReleaseId FROM AcontplusAdmin.Common.UserReleaseRead WHERE UserId = @userId)
-                    AND r.Deleted IS NULL
-                FOR JSON PATH
-            );
-        END
-
        IF EXISTS (
             SELECT 1
             FROM dbo.FirmaElectronica WITH(NOLOCK)
@@ -230,7 +211,6 @@ BEGIN
                         FROM @TempResults
                         FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) AS 'statistics',
                        ISNULL(@licenses, '[]') AS licenses,
-                       ISNULL(@releases, '[]') AS releases,
                        ISNULL(@stepsConfig, '[]') AS stepsConfig,
                        @expiredSignatures AS expiredSignatures
                    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER

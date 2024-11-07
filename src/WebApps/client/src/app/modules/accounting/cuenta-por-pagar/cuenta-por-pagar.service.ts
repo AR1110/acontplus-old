@@ -6,9 +6,10 @@ import { map } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { GroupedEstab } from '@core/models/estab.model';
-import { CuentaPorPagarLista } from './cuenta-por-pagar.interface';
-import { CuentaPorPagarAdapter } from '../adapters/cuenta-por-pagar.adapter';
+import { CuentaPorPagarCuotaConfig, CuentaPorPagarLista } from './cuenta-por-pagar.interface';
+import { CuentaPorPagarAdapter } from './cuenta-por-pagar.adapter';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
+import { TiempoCreditoSelectHtmlOnly } from '../interfaces/tiempo-credito.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -61,12 +62,14 @@ export class CuentaPorPagarService {
     }).pipe(
       map(response=>{
         let result = {
-          data: [] as CuentaPorPagarLista[]
+          data: [] as CuentaPorPagarLista[],
+          totalRecords: 0
         }
         if(response.code==="1"){
           let [mainData] = JSON.parse(response.payload as string);
 
-          result.data = CuentaPorPagarAdapter.fromApiGetAll(mainData)
+          result.data = CuentaPorPagarAdapter.fromApiGetAll(mainData);
+          result.totalRecords = result.data.length>0 ? result.data[0].totalRecords : 0
 
         }
         return result;
@@ -74,6 +77,48 @@ export class CuentaPorPagarService {
       })
     )
 
+  }
+
+
+  getCuotasData(){
+    let json = JSON.stringify({
+      tipo: 5,
+    })
+    return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
+      map(response=>{
+        let result = {
+          tiemposCredito: [] as TiempoCreditoSelectHtmlOnly[]
+        }
+        if(response.code==="1"){
+          let [tempTiemposCredito] = JSON.parse(response.payload as string);
+
+          result.tiemposCredito = tempTiemposCredito || []
+        }
+        return result
+      })
+    )
+  }
+  getCuotasConfigByIdCuentaPorPagar(idCuentaPorPagar:number){
+    let json = JSON.stringify({
+      tipo: 2,
+      idCuentaPorPagar
+    })
+    return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
+      map(response=>{
+        let result = {
+          data: [] as CuentaPorPagarCuotaConfig[]
+        }
+        if(response.code==="1"){
+          let [mainData] = JSON.parse(response.payload as string);
+          result.data = CuentaPorPagarAdapter.fromApiCuotaConfig(mainData);
+        }
+        return result;
+      })
+    )
   }
 
 

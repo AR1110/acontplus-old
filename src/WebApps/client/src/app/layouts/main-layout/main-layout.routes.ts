@@ -8,6 +8,11 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     children: [
       {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('@modules/dashboard/dashboard-page/dashboard-page.component').then((x) => x.DashboardPageComponent),
+      },
+      {
         path: 'purchase',
         title: 'App - Compras',
         loadChildren: () =>
