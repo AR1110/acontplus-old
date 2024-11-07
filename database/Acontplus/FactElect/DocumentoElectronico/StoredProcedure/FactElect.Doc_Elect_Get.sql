@@ -140,12 +140,7 @@ BEGIN
 		        BEGIN
                     IF @codEstado = 8 
                         BEGIN
-                             SET @sql = @sql +  'AND NOT EXISTS (
-													SELECT 1 
-													FROM FactElect.EstadoServicio es
-													WHERE es.idEstadoServicio = de.idEstadoServicio 
-													AND es.codigo IN (4, 6)
-												)  '
+                            SET @sql = @sql +  'AND de.codEstado NOT IN (4,6) '
                         END 
                     ELSE 
                         BEGIN
