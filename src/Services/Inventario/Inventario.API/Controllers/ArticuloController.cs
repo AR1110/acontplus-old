@@ -59,12 +59,12 @@ public class ArticuloController(
 
         return Ok(response);
     }
-
+    
     /**
      * Se agrega este metódo porque ocurre un montón de problemas
      * con métodos que aceptan argumentos de tipo archivo
      **/
-    [HttpPost]
+    [HttpPost("PostByApp")]
     public async Task<IActionResult> PostByApp(string json)
     {
         var data = JsonConvert.DeserializeObject<ApiRequest>(json);
