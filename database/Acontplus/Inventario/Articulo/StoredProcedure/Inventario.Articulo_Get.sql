@@ -442,7 +442,7 @@ BEGIN
 			
 			SELECT @idArticulo = idArticulo
                   ,@idBodega   = idBodega 
-                  ,@cantidad   = cantidad * -1
+                  ,@cantidad   = cantidad
             FROM OPENJSON(@json) WITH
             (
                 idArticulo INT          
