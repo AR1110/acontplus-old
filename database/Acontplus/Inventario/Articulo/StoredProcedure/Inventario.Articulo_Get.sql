@@ -31,7 +31,7 @@ BEGIN
 	DECLARE @ventaStockMinimo BIT ,@stockCantidad BIT ,@ventaStockCero BIT ,@stock NUMERIC(18,5) ,@stockMinimo NUMERIC(18,5) ,@cantidad NUMERIC(18,5)
 
     --> Recuperando Datos
-	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+	SELECT TOP 1  @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 	
@@ -168,19 +168,19 @@ BEGIN
 
 			SELECT @bySearch = bySearch FROM OPENJSON(@json) WITH (bySearch VARCHAR(500) '$.bySearch')
 
-			IF EXISTS (SELECT 1 FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigo = @bySearch )	
+			IF EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigo = @bySearch )	
 				BEGIN
 					SELECT idArticulo,llevaInventario FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigo = @bySearch
 					RETURN
 				END 
 
-			IF EXISTS (SELECT 1 FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigoBarra = @bySearch)	
+			IF EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigoBarra = @bySearch)	
 				BEGIN
 					SELECT idArticulo,llevaInventario FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigoBarra = @bySearch
 					RETURN
 				END 
 			
-			IF EXISTS (SELECT 1  FROM dbo.ArticuloCodigoBarra ac  WITH (NOLOCK) INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = ac.idArticulo WHERE a.idEntidad  = @idEntidad AND ac.codigoBarra = @bySearch AND a.estado = 1)
+			IF EXISTS (SELECT 1  FROM dbo.ArticuloCodigoBarra ac WITH (NOLOCK) INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = ac.idArticulo WHERE a.idEntidad  = @idEntidad AND ac.codigoBarra = @bySearch AND a.estado = 1)
 				BEGIN
 					SELECT ac.idArticulo,llevaInventario FROM dbo.ArticuloCodigoBarra ac WITH (NOLOCK) INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = ac.idArticulo WHERE a.idEntidad  = @idEntidad AND ac.codigoBarra = @bySearch AND a.estado = 1
 					RETURN 
