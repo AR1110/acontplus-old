@@ -1,28 +1,16 @@
 ﻿namespace Inventario.API.Controllers;
 
-public class SubcategoryPhotoController : BaseApiController
+public class SubcategoryPhotoController(
+    ISubcategoryPhotoService subcategoryPhoto,
+    IS3StorageService storageService,
+    S3ObjectCustom s3ObjectCustom)
+    : BaseApiController
 {
-
-    private readonly S3ObjectCustom _s3ObjectCustom;
-    private readonly IS3StorageService _storageService;
-    private readonly ISubcategoryPhotoService _subcategoryPhoto;
-
-    public SubcategoryPhotoController(ISubcategoryPhotoService subcategoryPhoto,
-        IS3StorageService storageService,
-        S3ObjectCustom s3ObjectCustom,
-        ICustomLogger log)
-    {
-        _subcategoryPhoto = subcategoryPhoto;
-        _storageService = storageService;
-        _s3ObjectCustom = s3ObjectCustom;
-
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
 
-        var response = await _subcategoryPhoto.GetAsync(new Dictionary<string, object>
+        var response = await subcategoryPhoto.GetAsync(new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             });
@@ -40,17 +28,17 @@ public class SubcategoryPhotoController : BaseApiController
             data.UserId = User.GetUserId();
             if (file != null)
             {
-                await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
+                await s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
             }
 
             data.SubcategoryId = subcategoryId;
-            data.S3ObjectKey = _s3ObjectCustom.S3ObjectKey;
-            data.S3ObjectUrl = _s3ObjectCustom.S3ObjectUrl;
-            var response = await _subcategoryPhoto.AddAsync(data);
+            data.S3ObjectKey = s3ObjectCustom.S3ObjectKey;
+            data.S3ObjectUrl = s3ObjectCustom.S3ObjectUrl;
+            var response = await subcategoryPhoto.AddAsync(data);
             if (response.code == "1" && file != null)
             {
-                var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
-                _s3ObjectCustom.Dispose();
+                var s3Response = await storageService.UploadAsync(s3ObjectCustom);
+                s3ObjectCustom.Dispose();
             }
 
             return Ok(response);
@@ -59,7 +47,7 @@ public class SubcategoryPhotoController : BaseApiController
         {
             if (file != null)
             {
-                _s3ObjectCustom.Dispose();
+                s3ObjectCustom.Dispose();
             }
             return BadRequest(ex.Message);
         }
@@ -75,15 +63,15 @@ public class SubcategoryPhotoController : BaseApiController
             data.UserId = User.GetUserId();
             if (file != null)
             {
-                await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file, data.S3ObjectKey,
+                await s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file, data.S3ObjectKey,
                     data.S3ObjectUrl);
             }
 
-            var response = await _subcategoryPhoto.UpdateAsync(id, data);
+            var response = await subcategoryPhoto.UpdateAsync(id, data);
             if (response.code == "1" && file != null)
             {
-                var s3Response = await _storageService.UpdateAsync(_s3ObjectCustom);
-                _s3ObjectCustom.Dispose();
+                var s3Response = await storageService.UpdateAsync(s3ObjectCustom);
+                s3ObjectCustom.Dispose();
             }
 
             return Ok(response);
@@ -92,7 +80,7 @@ public class SubcategoryPhotoController : BaseApiController
         {
             if (file != null)
             {
-                _s3ObjectCustom.Dispose();
+                s3ObjectCustom.Dispose();
             }
             return BadRequest(ex.Message);
         }
@@ -101,7 +89,7 @@ public class SubcategoryPhotoController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var response = await _subcategoryPhoto.DeleteAsync(id, User.GetUserId());
+        var response = await subcategoryPhoto.DeleteAsync(id, User.GetUserId());
         return Ok(response);
     }
 }
