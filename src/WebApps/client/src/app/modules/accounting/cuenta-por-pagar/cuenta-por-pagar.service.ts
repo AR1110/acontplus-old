@@ -10,6 +10,9 @@ import { CuentaPorPagarCuotaConfig, CuentaPorPagarLista } from './cuenta-por-pag
 import { CuentaPorPagarAdapter } from './cuenta-por-pagar.adapter';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { TiempoCreditoSelectHtmlOnly } from '../interfaces/tiempo-credito.interface';
+import {ComprobanteEgresoLista} from "@accounting/comprobante-egreso/comprobante-egreso.interface";
+import {HistorialPagoLista} from "@accounting/cuenta-por-pagar/historial-pago.interface";
+import {PagoDetalleLista} from "@accounting/cuenta-por-pagar/pago-detalle.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -121,6 +124,32 @@ export class CuentaPorPagarService {
     )
   }
 
+
+  getHistorialMovimientoByIdCuentaPorPagar(idCuentaPorPagar:number){
+    let json = JSON.stringify({
+      tipo: 4,
+      idCuentaPorPagar
+    })
+    return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
+      map(response=>{
+        let result = {
+          cuentaPorPagar: {} as Partial<CuentaPorPagarLista>,
+          comprobantesEgreso: [] as ComprobanteEgresoLista[],
+          historialPagos: [] as HistorialPagoLista[],
+          pagosDetalle: [] as PagoDetalleLista[]
+        }
+        if(response.code==="1"){
+          let mainData = JSON.parse(response.payload as string);
+          console.log(mainData)
+          result = CuentaPorPagarAdapter.fromApiHistMovimiento(mainData)
+        }
+        return result;
+      })
+    )
+
+  }
 
 
 }

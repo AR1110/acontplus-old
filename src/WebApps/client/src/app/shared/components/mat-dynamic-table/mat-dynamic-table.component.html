@@ -1,5 +1,5 @@
 <div class="table-container small-table">
-  <table #sort="matSort" [dataSource]="dataSource.data" mat-table matSort>
+  <table #sort="matSort" [dataSource]="dataSource.data" mat-table matSort multiTemplateDataRows>
     <!-- (matSortChange)="sortData($event)" -->
 
     @if (displayColumnDefs) {
@@ -29,32 +29,52 @@
 
     <ng-container [matColumnDef]="col.key">
       <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ col.label }}</th>
-
       <td
+        mat-cell
         *matCellDef="let element; let i = index"
         [ngClass]="{ highlighted: highlightRowIndex === i }"
-        mat-cell
       >
-        @if (col.key === 'op') {
-        <div class="d-flex flex-row gap-1">
-          <ng-container
-            *ngTemplateOutlet="templateOp; context: { item: element }"
-          ></ng-container>
-        </div>
+        @switch (col.key) {
+          @case ('op') {
+            <div class="d-flex flex-row gap-1">
+              <ng-container
+                *ngTemplateOutlet="templateOp; context: { item: element }"
+              ></ng-container>
+            </div>
+          }
+          @case ('image') {
+            <img
+              [src]="element[col.key]"
+              class="img-fluid img-thumbnail my-1"
+              width="50"
+              alt=""
+            />
+          }
 
-        } @if(col.type==="image"){
-        <img
-          [src]="element[col.key]"
-          class="img-fluid img-thumbnail my-1"
-          width="50"
-        />
-        } @if (col.type === 'number') {
-        <div>{{ element[col.key] | number : "1.2" : locale }}</div>
-        } @if (col.type === 'date') {
-        <div>{{ element[col.key] | date : "dd.MM.yyyy" }}</div>
-        } @if ((col.type !== 'number' && col.type !== 'date') &&
-        col.type!=='image') {
-        <div>{{ element[col.key] }}</div>
+          @case ('number') {
+            <div>{{ element[col.key] | number : "1.2" : locale }}</div>
+          }
+
+          @case ('date') {
+            <div>{{ element[col.key] | date : "dd.MM.yyyy" }}</div>
+          }
+          @case (showExpand && "expand" ){
+            <button
+              mat-icon-button
+              aria-label="expand row"
+              (click)="onExpand($event, element)  "
+            >
+              @if (expandedElement === element) {
+                <mat-icon>keyboard_arrow_up</mat-icon>
+              } @else {
+                <mat-icon>keyboard_arrow_down</mat-icon>
+              }
+            </button>
+          }
+          @default {
+            <div>{{ element[col.key] }}</div>
+
+          }
         }
       </td>
 
@@ -71,26 +91,45 @@
 
     }
 
-    <tr
-      *matHeaderRowDef="displayedColumns; sticky: true"
-      class="small-header"
-      mat-header-row
-    ></tr>
-    <tr
-      (click)="selectRow(row)"
-      *matRowDef="let row; columns: displayedColumns"
-      mat-row
-      [style]="getRowColor(row) ? getRowColor(row) : {}"
-    ></tr>
+      <!-- Expanded Content Column -->
+      @if(showExpand){
 
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
-        Sin Registro
-      </td>
-    </tr>
 
-    @if (showFooter && dataSource.data) {
-    <tr *matFooterRowDef="displayedColumns" mat-footer-row></tr>
-    } }
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+          <div class="m-0 p-0" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+            <ng-container *ngTemplateOutlet="expandedDetail; context: { row: element }"></ng-container>
+          </div>
+        </td>
+      </ng-container>
+
+      }
+
+      <!-- Rows -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="small-header"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        [class.example-expanded-row]="expandedElement === row"
+        (click)="selectRow(row)"
+        [style]="getRowColor(row) || {}"
+      ></tr>
+      @if(showExpand){
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+      }
+
+      <!-- No Data Row -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+          Sin Registro
+        </td>
+      </tr>
+
+      <!-- Footer Row -->
+      @if(showFooter && dataSource.data.length > 0) {
+        <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+      }
+    }
+
   </table>
 </div>

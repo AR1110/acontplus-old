@@ -1,13 +1,10 @@
-import { roundNumber } from "@core/utils/round-number.utils";
-import { FacturaFisicaLista } from "./factura-fisica.interface"
-import { fechaString } from "@core/utils/date.util";
+import { roundNumber } from '@core/utils/round-number.utils';
+import { FacturaFisicaLista } from './factura-fisica.interface';
+import { fechaString } from '@core/utils/date.util';
 
 export class FacturaFisicaAdapter {
-
-
   static fromApiGetAll(response: any[]): FacturaFisicaLista[] {
-    return response.map(item => {
-
+    return response.map((item) => {
       return {
         id: item.id,
         fechaEmision: item.fechaEmision,
@@ -21,16 +18,20 @@ export class FacturaFisicaAdapter {
         nombreEstado: item.estado,
         nombreUsuario: item.usuario,
         style: item.style,
-        totalRecords: item.totalRecords
-      }
-
-
-    })
+        totalRecords: item.totalRecords,
+      };
+    });
   }
 
-
   static fromApiDetalleCompleto(response: any) {
-    const {detalles, impuestos, infoAdicional, infoFactura, proveedor, tiempoCredito} = response;
+    const {
+      detalles,
+      impuestos,
+      infoAdicional,
+      infoFactura,
+      proveedor,
+      tiempoCredito,
+    } = response;
 
     const {
       idFacturaCompra: id,
@@ -47,26 +48,21 @@ export class FacturaFisicaAdapter {
       ...rest
     } = infoFactura[0];
 
-    const {
-      nombreTiempoCredito,
-      fechaVencimiento
-    } = tiempoCredito[0];
+    const { nombreTiempoCredito, fechaVencimiento } = tiempoCredito[0];
     const {
       idProveedor,
       nombreFiscal: razonSocialComprador,
       numeroIdentificacion: identificacionComprador,
       correo: correoComprador,
-      direccion: direccionComprador
-    }
-      = proveedor[0];
-
+      direccion: direccionComprador,
+    } = proveedor[0];
 
     let result = {
       infoTributaria: {
         nombreEstab,
         serieComprobante,
         numeroAutorizacion,
-        puntoEmision
+        puntoEmision,
       },
       infoFactura: {
         id,
@@ -84,12 +80,10 @@ export class FacturaFisicaAdapter {
         totalDescuento,
         porcentajeDescuento,
         ...rest,
-        pagos: []
+        pagos: [],
       },
       detalles: detalles.map((item: any, index: number) => {
-
         let total = item.precioTotalSinImpuesto + item.valorImpuesto;
-
 
         return {
           n: index + 1,
@@ -109,14 +103,13 @@ export class FacturaFisicaAdapter {
           nombreBodega: item.bodega,
           nombreTipoIva: item.tipoIva,
           nombreMedida: item.medida,
-          total: roundNumber(total)
-        }
+          total: roundNumber(total),
+        };
       }),
       datosAdicionalesDoc: infoAdicional,
-      tiposIva: impuestos
+      tiposIva: impuestos,
     };
 
     return result;
   }
-
 }
