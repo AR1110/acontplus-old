@@ -1,60 +1,46 @@
-﻿namespace Inventario.API.Services
+﻿namespace Inventario.API.Services;
+
+public class ArticuloService(IAdoRepository repository) : IArticuloService
 {
-    public class ArticuloService: IArticuloService
+    private const string ModuleName = "Inventario.Articulo_";
+
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        private readonly IAdoRepository _repository;
-        private readonly string nameSchema = "Inventario.Articulo_";
+        var ds = await repository.GetDataSetAsync($"{ModuleName}Get", parameters, true);
+        return DataValidation.DataSetIsNull(ds)
+            ? new ApiResponse { Code = "0", Message = "Data not found!" }
+            : new ApiResponse { Code = "0", Payload = DataConverters.DataSetToJson(ds) };
+    }
 
-        public ArticuloService(IAdoRepository repository)
-        {
-            _repository = repository;
-        }
+    public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
+    {
+        var dt = await repository.GetDataTableAsync($"{ModuleName}Get_Search", parameters);
 
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters, true);
+        return DataValidation.DataTableIsNull(dt)
+            ? new ApiResponse { Code = "0", Message = "No existen datos." }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
+    }
 
-            if (!DataValidation.DataSetIsNull(ds))
-            {
-                return DataConverters.DataSetToJson(ds, true);
-            }
+    public async Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await repository.GetDataSetAsync($"{ModuleName}Get_Id", parameters, true);
+        return DataValidation.DataSetIsNull(ds)
+            ? new ApiResponse { Code = "0", Message = "Data not found!" }
+            : new ApiResponse { Code = "0", Payload = DataConverters.DataSetToJson(ds) };
+    }
 
-            return null;
-        }
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    {
+        return await repository.SpExecuteAsync<ApiResponse>(ModuleName + "Insert", parameters);
+    }
 
-        public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
-        {
-            var dt = await _repository.GetDataTableAsync(nameSchema + "Get_Search", parameters);
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await repository.SpExecuteAsync<ApiResponse>(ModuleName + "Update", parameters);
+    }
 
-            if (!DataValidation.DataTableIsNull(dt))
-            {
-                return new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
-            }
-
-            return  new ApiResponse { Code = "0", Message = "No existen datos."};
-        }
-
-        public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync(nameSchema + "Get_Id", parameters, true);
-            if (ds.Tables[0].Rows.Count == 0) { return null; }
-
-            return DataConverters.DataSetToJson(ds, true);
-        }
-
-        public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Insert", parameters);
-        }
-
-        public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Update", parameters);
-        }
-
-        public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Delete", parameters);
-        }
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    {
+        return await repository.SpExecuteAsync<ApiResponse>(ModuleName + "Delete", parameters);
     }
 }
