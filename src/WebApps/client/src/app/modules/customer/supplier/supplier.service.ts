@@ -6,6 +6,7 @@ import { map } from "rxjs";
 import { ApiResponse } from "@core/models/api-response";
 import { SupplierAdapter } from "./supplier.adapter";
 import { SupplierSearch } from "./supplier.interface";
+import { getNoLoader } from "@core/interceptors/loader.interceptor";
 
 
 @Injectable({
@@ -22,7 +23,9 @@ export class SupplierService {
       textSearch: obj.textSearch
     })
 
-    return this.http.get<ApiResponse>(`${this.url}?json=${json}`).pipe(
+    return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
       map(response=>{
         let suppliers:SupplierSearch[] = [];
 
