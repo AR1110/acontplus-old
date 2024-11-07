@@ -22,7 +22,7 @@ public class ArticuloController(
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetId(int id)
+    public async Task<IActionResult> GetById(int id)
     {
         var parameters = new Dictionary<string, object> { { "id", id } };
         return Ok(await articuloService.GetByIdAsync(parameters));

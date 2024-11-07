@@ -6,7 +6,7 @@ public class ArticuloService(IAdoRepository repository) : IArticuloService
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync($"{ModuleName}Get", parameters, true);
+        var ds = await repository.GetDataSetAsync($"{ModuleName}Get", parameters);
         return DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "0", Message = "Data not found!" }
             : new ApiResponse { Code = "0", Payload = DataConverters.DataSetToJson(ds) };
@@ -23,7 +23,7 @@ public class ArticuloService(IAdoRepository repository) : IArticuloService
 
     public async Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync($"{ModuleName}Get_Id", parameters, true);
+        var ds = await repository.GetDataSetAsync($"{ModuleName}Get_Id", parameters);
         return DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "0", Message = "Data not found!" }
             : new ApiResponse { Code = "0", Payload = DataConverters.DataSetToJson(ds) };
