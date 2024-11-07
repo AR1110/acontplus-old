@@ -2,6 +2,7 @@
 
 public class FamiliaController(IFamiliaService familiaService) : BaseApiController
 {
+    [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
@@ -11,6 +12,7 @@ public class FamiliaController(IFamiliaService familiaService) : BaseApiControll
         return Ok(await familiaService.GetAsync(parameters));
     }
 
+    [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
