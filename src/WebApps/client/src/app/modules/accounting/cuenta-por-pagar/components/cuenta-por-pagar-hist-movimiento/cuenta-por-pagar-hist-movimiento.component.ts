@@ -9,8 +9,23 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { CustomContainerDialogComponent } from '@core/components/custom-container-dialog/custom-container-dialog.component';
+import { CuentaPorPagarService } from '../../cuenta-por-pagar.service';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { finalize } from 'rxjs';
+import {CuentaPorPagarLista} from "@accounting/cuenta-por-pagar/cuenta-por-pagar.interface";
+import {MatCardModule} from "@angular/material/card";
+import {HistorialPagoLista} from "@accounting/cuenta-por-pagar/historial-pago.interface";
+import {MatDivider} from "@angular/material/divider";
+import {DialogService} from "@core/services/dialog.service";
+import {
+  PagoDetalleModalComponent
+} from "@accounting/cuenta-por-pagar/components/pago-detalle-modal/pago-detalle-modal.component";
+import {ComprobanteEgresoLista} from "@accounting/comprobante-egreso/comprobante-egreso.interface";
+import {PagoDetalleLista} from "@accounting/cuenta-por-pagar/pago-detalle.interface";
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-cuenta-por-pagar-hist-movimiento',
@@ -26,7 +41,11 @@ import { CustomContainerDialogComponent } from '@core/components/custom-containe
     MatDatepickerModule,
     MatMenuModule,
     MatNativeDateModule,
+    MatCardModule,
+    MatDivider,
     CustomContainerDialogComponent,
+    MatDynamicTableComponent,
+    MatTooltip
   ],
   templateUrl: './cuenta-por-pagar-hist-movimiento.component.html',
   styles: ``
@@ -34,8 +53,60 @@ import { CustomContainerDialogComponent } from '@core/components/custom-containe
 export class CuentaPorPagarHistMovimientoComponent {
   readonly dialogRef = inject(MatDialogRef<CuentaPorPagarHistMovimientoComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
+  private readonly cuentaPorPagarSvc = inject(CuentaPorPagarService);
+  private dialogSvc = inject(DialogService)
 
-  loading = signal(false)
+  columnsDefs: ColumnDefinition[] = [
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'index', label: 'Nro.', type: 'string' },
+    { key: 'serieComprobante', label: 'Nro. Doc.', type: 'string' },
+    { key: 'fechaEmision', label: 'Fecha Registro', type: 'string' },
+    { key: 'total', label: 'Total', type: 'number',  },
+    { key: 'nombreEstado', label: 'Estado', type: 'string' },
+    { key: 'expand', label: '', type: 'string' },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+
+  cuentaPorPagar = {} as Partial<CuentaPorPagarLista>
+
+
+  comprobantesEgreso = new MatTableDataSource<ComprobanteEgresoLista>([]);
+  tempHistorialPagos = signal<HistorialPagoLista[]>([])
+  historialPagos = signal<HistorialPagoLista[]>([])
+  tempPagosDetalle = signal<PagoDetalleLista[]>([])
+
+  loading = signal(false);
+
+
+
+  ngOnInit(){
+    this.loading.set(true)
+    this.cuentaPorPagarSvc.getHistorialMovimientoByIdCuentaPorPagar(this.data.idCuentaPorPagar)
+    .pipe(
+      finalize(()=>this.loading.set(false))
+    )
+    .subscribe(response=>{
+        this.comprobantesEgreso = new MatTableDataSource(response.comprobantesEgreso);
+        this.tempHistorialPagos.set(response.historialPagos);
+        this.tempPagosDetalle.set(response.pagosDetalle)
+
+    })
+  }
+
+  onShowExpanded(row:ComprobanteEgresoLista){
+    this.historialPagos.set(this.tempHistorialPagos().filter(item=>item.idComprobanteEgreso===row.idComprobanteEgreso))
+  }
+  onHideExpanded(){
+    this.historialPagos.set([])
+  }
+
+
+  openPagoDetalle(item:HistorialPagoLista){
+    this.dialogSvc.open(PagoDetalleModalComponent, {
+      size: 'md',
+      data:  this.tempPagosDetalle().filter(pd=>pd.idPago===item.idPago)
+    })
+  }
 
 
   closeDialog() {

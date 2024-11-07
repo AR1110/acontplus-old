@@ -50,7 +50,6 @@
       <div class="d-flex flex-row gap-2 justify-content-end align-items-center">
         <button
           mat-flat-button
-          (onResultModal)="refresh()"
           [disabled]="isLoadingResults()"
         >
           <mat-icon>payments</mat-icon>
@@ -177,8 +176,7 @@
         }
 
         <!-- Texto u otros -->
-        @if ((col.type !== 'number' && col.type !== 'date') && col.type !==
-        'image') { @if (col.key==="nombreEstado") { @switch
+        @if ( col.type == 'string' ) { @if (col.key==="nombreEstado") { @switch
         (element.codigoEstado) { @case ("PA") {
         <span class="badge text-bg-success">
           {{ element[col.key] }}
@@ -241,7 +239,7 @@
       <mat-icon>attach_money</mat-icon>
       <span>Config. Cuota</span>
     </button>
-    <button mat-menu-item>
+    <button mat-menu-item (click)="openHistorialMovimientoModal(item)">
       <mat-icon>history</mat-icon>
       <span>Hist. Movimiento</span>
     </button>
