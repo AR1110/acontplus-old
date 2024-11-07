@@ -1,24 +1,11 @@
 ﻿namespace Inventario.API.Controllers;
 
-[Route("api/articulo/[action]")]
-[ApiController]
-[ApiVersion("1.0")]
-public class ArticuloController : ControllerBase
+public class ArticuloController(
+    S3ObjectCustom s3ObjectCustom,
+    IS3StorageService storageService,
+    IArticuloService articuloService)
+    : BaseApiController
 {
-    private readonly S3ObjectCustom _s3ObjectCustom;
-    private readonly IS3StorageService _storageService;
-    private readonly IArticuloService _svc;
-
-    public ArticuloController(IConfiguration configuration,
-        S3ObjectCustom s3ObjectCustom,
-        IS3StorageService storageService,
-        IArticuloService svc)
-    {
-        _s3ObjectCustom = s3ObjectCustom;
-        _storageService = storageService;
-        _svc = svc;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -26,24 +13,19 @@ public class ArticuloController : ControllerBase
         {
             return BadRequest("Caracteres de busqueda invalidos");
         }
-        var parameters = new Dictionary<string, object>{
-            { "idRol", User.GetUserRoleId() },
-            { "json", SqlStringParam.Sanitize(json) }
+
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
-        var response = await _svc.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
-        return Ok(new { code = "1", payload = response });
+        return Ok(await articuloService.GetAsync(parameters));
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetId(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var parameters = new Dictionary<string, object>{
-            { "id", id }
-        };
-        var response = await _svc.GetByIdAsync(parameters);
-        if (response == null) { return NoContent(); }
-        return Ok(new { code = "1", payload = response });
+        var parameters = new Dictionary<string, object> { { "id", id } };
+        return Ok(await articuloService.GetByIdAsync(parameters));
     }
 
     [HttpPost]
@@ -53,29 +35,33 @@ public class ArticuloController : ControllerBase
 
         if (file != null)
         {
-            await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
+            await s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
         }
 
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-            { "s3ObjectKey",  _s3ObjectCustom.S3ObjectKey ?? "" },
-            { "s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "" }
+            { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" },
+            { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" }
         };
-        var response = await _svc.AddAsync(parameters);
+        var response = await articuloService.AddAsync(parameters);
 
-        if (response.Code == "1" && file != null)
+        switch (response.Code)
         {
-            var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
-            _s3ObjectCustom.Dispose();
+            case "1" when file != null:
+            {
+                var s3Response = await storageService.UploadAsync(s3ObjectCustom);
+                s3ObjectCustom.Dispose();
+                break;
+            }
         }
 
         return Ok(response);
     }
 
     /**
-     * Se agrega este metódo porque ocurre un montón de problemas 
+     * Se agrega este metódo porque ocurre un montón de problemas
      * con métodos que aceptan argumentos de tipo archivo
      **/
     [HttpPost]
@@ -87,12 +73,11 @@ public class ArticuloController : ControllerBase
         {
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-            { "s3ObjectKey",  "" },
+            { "s3ObjectKey", "" },
             { "s3ObjectUrl", "" }
         };
-        var response = await _svc.AddAsync(parameters);
 
-        return Ok(response);
+        return Ok(await articuloService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
@@ -100,24 +85,22 @@ public class ArticuloController : ControllerBase
     {
         var data = JsonConvert.DeserializeObject<ApiRequest>(json);
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() },
-                { "id", id },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-            };
-        var response = await _svc.UpdateAsync(parameters);
-        return Ok(response);
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        return Ok(await articuloService.UpdateAsync(parameters));
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } };
-        var response = await _svc.DeleteAsync(parameters);
-        return Ok(response);
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        return Ok(await articuloService.DeleteAsync(parameters));
     }
 
-    [HttpGet]
+    [HttpGet("Search")]
     public async Task<IActionResult> Search(string json)
     {
         if (!DataValidation.IsValidJson(json))
@@ -125,14 +108,11 @@ public class ArticuloController : ControllerBase
             return BadRequest("Caracteres de busqueda invalidos");
         }
 
-        var parameters = new Dictionary<string, object>{
-            { "idRol", User.GetUserRoleId() },
-            { "json", SqlStringParam.Sanitize(json) }
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
 
-        return Ok(await _svc.SearchAsync(parameters));
-
+        return Ok(await articuloService.SearchAsync(parameters));
     }
-
-
 }
