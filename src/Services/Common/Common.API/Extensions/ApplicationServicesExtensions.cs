@@ -1,6 +1,6 @@
 ﻿using Common.API.Data;
-using Common.API.Services;
 using Microsoft.EntityFrameworkCore;
+using Scrutor;
 
 namespace Common.API.Extensions;
 
@@ -20,11 +20,20 @@ public static class ApplicationServicesExtensions
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
 
-        services.AddScoped<IAdoSqlServer, AdoSqlServer>();
-        services.AddScoped<IDashboardService, DashboardService>();
-        services.AddScoped<INotificacionService, NotificacionService>();
-        services.AddScoped<IUserManualService, UserManualService>();
-        services.AddScoped<IUserReleaseReadService, UserReleaseReadService>();
+        string[] nameSpaces =
+            [
+                "Common.Infrastructure.Repository",
+                "Common.API.Services",
+            ];
+
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(nameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithTransientLifetime()
+            );
+
         return services;
     }
 }
