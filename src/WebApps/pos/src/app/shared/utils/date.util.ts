@@ -1,4 +1,7 @@
-import moment from 'moment-timezone';
+import  {format, tzDate}   from "@formkit/tempo";
+
+export const zonaHorariaEcuador  = 'America/Guayaquil';
+export const language = 'en';
 
 interface ResultadoComparacionFechas {
   esMismaFecha: boolean;
@@ -34,24 +37,27 @@ export const isDatesEqual = function (fecha1: Date, fecha2: Date): ResultadoComp
 
 
 export const formatDate = function (fecha: any) {
-  var date = moment.tz(fecha, 'America/Guayaquil');
-  var htmlDateTime = date.format('YYYY-MM-DDTHH:mm:ss');
-  // let _getFecha = new Date(fecha);
-  // _getFecha.setMinutes(_getFecha.getMinutes() + _getFecha.getTimezoneOffset());
-  return new Date(htmlDateTime);
+  let dt = tzDate(fecha, zonaHorariaEcuador)
+  return dt;
 }
 
 
-export const dateIsAfterCurrentDate = function (fecha: any) {
-  const zonaHorariaEcuador = 'America/Guayaquil'; // Utilizamos la zona horaria de la Costa del Ecuador (ECT)
+export const dateIsAfterCurrentDate = function (fechaIngresada: any) {
 
-  const fechaActual = moment().tz(zonaHorariaEcuador); // Obtener la fecha actual en la zona horaria de Ecuador
-  const fechaIngresada = moment.tz(fecha, 'YYYY-MM-DD', zonaHorariaEcuador); // Utilizar la zona horaria de Ecuador para la fecha ingresada
+  const fechaActual = new Date();
+    const fechaActualFormat = format({
+      date: fechaActual,
+      format: { time: 'full' },
+      tz: zonaHorariaEcuador,
+    });
 
-  if (fechaIngresada.isValid() && fechaIngresada.isAfter(fechaActual, 'day')) {
-    return true;
-  }
-  return false;
+    const fechaIngresadaFormat = format({
+      date: fechaIngresada,
+      format: 'YYYY-MM-DD',
+      tz: zonaHorariaEcuador,
+    });
+
+    return fechaIngresadaFormat > fechaActualFormat
 }
 
 
@@ -109,30 +115,21 @@ export const addDayToDate = function (fechaEmision: Date, dia: number) {
 };
 
 
-export function isValidDate(value: any): value is Date {
+export function isDateValid(value: any): value is Date {
   return value instanceof Date && !isNaN(value as any);
 }
 
 
-// export const isDateValid = function (dateString: Date) {
-//   if (dateString === null) {
-//     return false;
-//   }
-//   let date = new Date(dateString);
-//   return date instanceof Date;
-// }
 
-export const formatDateMoment = function (dateString: Date) {
-  if (!isValidDate(dateString)) {
-    throw new Error("La fecha es inválida");
-  }
-  return moment(dateString).tz('America/Guayaquil').format('YYYY-MM-DD HH:mm:ss A')
-}
 
 
 export const formatDateToString = function (date:Date){
-  if (!isValidDate(date)) {
+  if (!isDateValid(date)) {
     throw new Error("La fecha es inválida");
   }
-  return moment(date).tz('America/Guayaquil').format('YYYY-MM-DD HH:mm:ss A')
+  return format ({
+    date,
+    format: 'YYYY-MM-DD HH:mm:ss A',
+    tz: zonaHorariaEcuador,
+  })
 }

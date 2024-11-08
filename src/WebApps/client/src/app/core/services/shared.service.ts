@@ -63,9 +63,7 @@ export class SharedService {
 
   /**
    *
-   * @param data
-   * @param format pdf | excel
-   * @param isOldVersion
+   * @param obj
    */
   getReport<T>(obj: ReportParams<T>) {
     const {
@@ -86,7 +84,7 @@ export class SharedService {
       .subscribe((response) => {
 
         if (format === 'pdf' && openInModal && response.body) {
-           this.openPdfInModal(response.body)
+          // this.openPdfInModal(response.body)
         } else {
           this.saveFile(response, format, downloadOnly);
         }
@@ -95,13 +93,16 @@ export class SharedService {
 
   private openPdfInModal(blob: Blob) {
 
-    // Abre el PDF en un modal
-    const blobUrl = URL.createObjectURL(blob);
-    let modalRef = this.modalSvc.open(PdfViewerComponent, {
-      size: 'xl'
-    });
 
-    modalRef.componentInstance.params =   { pdfSrc: blobUrl };
+    var blobURL = URL.createObjectURL(blob);
+
+
+    let modalRef = this.modalSvc.open(PdfViewerComponent, {
+        size: 'xl'
+      });
+
+    modalRef.componentInstance.params =   { pdfSrc: blobURL };
+
   }
 
   appNotificacionInsert<T>(data: T) {
