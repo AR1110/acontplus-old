@@ -2,8 +2,8 @@ import {
   Component,
   ContentChild,
   ContentChildren,
-  EventEmitter,
-  Input,
+  EventEmitter, input,
+  Input, output,
   Output,
   QueryList,
   SimpleChanges,
@@ -28,6 +28,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSortModule } from '@angular/material/sort';
 import { CommonModule, DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import { GetTotalPipe } from '@shared/pipes/get-total.pipe';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-mat-dynamic-table',
@@ -37,25 +40,41 @@ import { GetTotalPipe } from '@shared/pipes/get-total.pipe';
     MatTableModule,
     MatCheckboxModule,
     MatSortModule,
+    MatIconModule,
+    MatButtonModule,
     NgClass,
     GetTotalPipe,
     DatePipe,
     DecimalPipe,
   ],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed,void', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
   templateUrl: './mat-dynamic-table.component.html',
   styleUrl: `./mat-dynamic-table.component.scss`,
 })
 export class MatDynamicTableComponent<T> {
+  @Input() showExpand = false;
   @Input() showFooter: boolean = false;
   @Input() locale: string = '';
   @Input() highlightRowIndex: number = 0;
 
   @Input() displayedColumns: string[] = [];
   @Input() displayColumnDefs: ColumnDefinition[] = [];
+
+  //  columnsToDisplayWithExpand = this.showExpand ? [...this.displayedColumns, 'expand'] : this.displayedColumns
+
   @Input() showSelectBox: boolean = false;
   @Input() dataList: T[] = [];
   @Output() rowSelected = new EventEmitter<T>();
   @Output() copyRow = new EventEmitter<T>();
+  onShowExpanded = output<T>()
+  onHideExpanded = output<T>()
+
   dataSource = new MatTableDataSource<T>([]);
   selection: SelectionModel<T> = new SelectionModel<T>(true, []);
 
@@ -72,6 +91,9 @@ export class MatDynamicTableComponent<T> {
   rows!: QueryList<ViewContainerRef>; // Query for ViewContainerRefs
 
   @Input() templateOp!: TemplateRef<any> | null;
+  @Input() expandedDetail!: TemplateRef<any> | null;
+
+  expandedElement!: T | null;
 
   constructor() {}
 
@@ -185,4 +207,18 @@ export class MatDynamicTableComponent<T> {
   getRowColor(element: any): string {
     return element.colorRow ? element.colorRow : ''; // Return empty string if no color is defined
   }
+
+
+  onExpand($event:any, element:T){
+    $event.stopPropagation()
+    this.expandedElement = this.expandedElement === element ? null : element;
+    if(this.expandedElement){
+    this.onShowExpanded.emit(element)
+    }else{
+      this.onHideExpanded.emit(element)
+
+    }
+  }
+
+
 }

@@ -19,6 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrl: './custom-container-dialog.component.scss'
 })
 export class CustomContainerDialogComponent {
+  showHeader = input(true)
   loading = input(false)
   align = input<'start' | 'center' | 'end'>('end')
   matDialogTitle = input("");

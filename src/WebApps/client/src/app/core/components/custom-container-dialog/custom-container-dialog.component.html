@@ -1,3 +1,4 @@
+@if(showHeader()){
 <div class="m3-dialog-header">
   <h6 mat-dialog-title>
     {{ matDialogTitle() }}
@@ -7,6 +8,8 @@
     </button>
   </h6>
 </div>
+
+}
 
 <mat-dialog-content class="mat-typography">
   @if (loading()) {

@@ -128,7 +128,7 @@ export class PosPageComponent {
 
   }
 
-  private dataForm$!: Observable<any>;
+
   getDataFormInit() {
     if (!this.codEstab() || !(this.establecimientoId() > 0)) {
       console.log('no se encontró datos del establecimiento')
@@ -234,6 +234,7 @@ export class PosPageComponent {
     this.setLoading(true)
     this.getDataFormInit()?.subscribe({
       next: response => {
+        console.log(response)
         this.setLoading(false)
         const [dataForm, dataItem] = response;
 

@@ -1,3 +1,4 @@
+import { CuentaPorPagarHistMovimientoComponent } from './../cuenta-por-pagar-hist-movimiento/cuenta-por-pagar-hist-movimiento.component';
 // Angular Common Modules
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, inject, signal, model } from '@angular/core';
@@ -317,4 +318,19 @@ export class CuentaPorPagarListaComponent {
       console.log(result);
     });
   }
+
+  openHistorialMovimientoModal(item:CuentaPorPagarLista){
+    let modalRef = this.dialogSvc.open(CuentaPorPagarHistMovimientoComponent, {
+      size: MODAL_SIZE.XL,
+      data: {
+        idCuentaPorPagar: item.idCuentaPorPagar,
+      },
+    });
+
+    modalRef.subscribe((result) => {
+      console.log(result);
+    });
+  }
+
+
 }
