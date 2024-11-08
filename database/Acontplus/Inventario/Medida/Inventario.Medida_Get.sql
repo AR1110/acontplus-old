@@ -10,36 +10,37 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-	DECLARE @idEntidad INT 
-	DECLARE @pageIndex INT 
-	DECLARE @pageSize INT 
-	DECLARE @totalRecords INT 
+	
+    DECLARE @idEntidad INT
+
     DECLARE @tipo INT 
 
-	SELECT 
-        @tipo = tipo,  
-        @pageIndex = pageIndex, 
-        @pageSize = pageSize 
-    FROM OPENJSON(@json) 
-    WITH (pageIndex INT, pageSize INT, tipo INT)
+	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-	SELECT @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
+	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-	SET @totalRecords = (SELECT COUNT(*) FROM Medida WHERE idEntidad = @idEntidad)
-
+    --> Get
     IF @tipo = 1
         BEGIN 
             SET @tableNames='measures'
-	        SELECT 
-	             idMedida
-		        ,descripcion
-		        ,estado
-		        ,codigo
-		        ,totalRecords = @totalRecords
+
+	        DECLARE @pageIndex INT ,@pageSize INT ,@totalRecords INT
+
+            SET @totalRecords = (SELECT COUNT(*) FROM Medida WHERE idEntidad = @idEntidad)
+
+            SELECT @pageIndex = pageIndex ,@pageSize = pageSize FROM OPENJSON(@json) WITH (pageIndex INT, pageSize INT, tipo INT)
+
+	        SELECT idMedida
+		          ,descripcion
+		          ,estado
+		          ,codigo
+		          ,totalRecords = @totalRecords
 	        FROM Medida  
 	        WHERE idEntidad = @idEntidad
 	        ORDER BY idMedida DESC
-	        OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY        
+	        OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
+            
+            RETURN 
         END
 	
 
