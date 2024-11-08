@@ -1,11 +1,13 @@
 export interface CuentaPorPagarLista {
   idCuentaPorPagar: number
+  idDocumento: number
   idTiempoCredito: number
   idProveedor: number
   codEstab:string
   identificacionComprador: string
   nombreComprador: string
   nombreDoc: string
+  codDoc: string
   serieComprobante: string
   fechaEmision: string
   fechaVencimiento: string

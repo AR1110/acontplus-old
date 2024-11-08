@@ -56,6 +56,7 @@ BEGIN
 	IF @tipo = 1
 		BEGIN
 			SET @sql  = 'SELECT pp.idCuentaPorPagar
+                               ,pp.idDocumento
 							   ,ISNULL(pp.idTiempoCredito,0)                as idTiempoCredito
 							   ,pp.idProveedor                              as idProveedor
                                ,pp.codEstab
@@ -65,8 +66,9 @@ BEGIN
 											   WHEN ''03'' THEN ''Liquidacion'' 
 											   WHEN ''FC'' THEN ''F.Fisica'' 
 					                           WHEN ''DH'' THEN ''C.N.Habitual''
-								END                                         as codDoc
-							   ,pp.serieComprobante
+								END                                         as nombreDoc
+							   ,pp.codDoc
+                               ,pp.serieComprobante
 							   ,Format(pp.fechaEmision, ''yyyy-MM-dd'')     as fechaEmision
 							   ,Format(pp.fechaVencimiento, ''yyyy-MM-dd'') as fechaVencimiento 
 							   ,pp.importeTotal 
@@ -278,7 +280,12 @@ BEGIN
                 p.valor,
                 p.abono,
                 p.vuelto,
-                codigoFormaPago = ef.codigo                                                
+                codigoFormaPago = ef.codigo,
+                p.nro,
+                p.lote,
+                p.aprobacion,
+                p.referencia
+                
             FROM
                 Contabilidad.Historial_Pago hp WITH (NOLOCK) 
             INNER JOIN 

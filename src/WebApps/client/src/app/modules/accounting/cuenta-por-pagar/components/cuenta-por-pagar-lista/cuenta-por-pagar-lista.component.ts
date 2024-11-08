@@ -48,6 +48,8 @@ import { GroupedEstab } from '@core/models/estab.model';
 
 // RxJS Operators
 import { finalize, switchMap, throwError } from 'rxjs';
+import {ParameterReportUtil} from "@shared/utils/parameter-report.util";
+import {SharedService} from "@core/services/shared.service";
 
 
 @Component({
@@ -80,6 +82,7 @@ export class CuentaPorPagarListaComponent {
   private cpcSvc = inject(CuentaPorPagarService);
   private tS = inject(ToasterService);
   private dialogSvc = inject(DialogService);
+  private sharedSvc = inject(SharedService)
 
   estabs: GroupedEstab[] = [];
   estadosDoc = [] as any[];
@@ -210,6 +213,7 @@ export class CuentaPorPagarListaComponent {
         finalize(() => this.isLoadingResults.set(false)) // Marcar finalización de la carga
       )
       .subscribe((response) => {
+        console.log(response)
         this.setResponseGetAll(response);
       });
   }
@@ -330,6 +334,21 @@ export class CuentaPorPagarListaComponent {
     modalRef.subscribe((result) => {
       console.log(result);
     });
+  }
+
+
+  getReport(row:CuentaPorPagarLista){
+    let params = ParameterReportUtil.getParams(row.codDoc, {
+      id: row.idDocumento,
+      codEstab: row.codEstab
+    })
+
+    this.sharedSvc.getReport({
+      data: params,
+      isOldVersion: true,
+      openInModal: true
+    })
+    console.log(params)
   }
 
 
