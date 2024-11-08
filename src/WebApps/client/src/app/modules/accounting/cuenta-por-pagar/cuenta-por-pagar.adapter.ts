@@ -12,12 +12,14 @@ export class CuentaPorPagarAdapter {
       return {
         index: index + 1,
         idCuentaPorPagar: item.idCuentaPorPagar,
+        idDocumento: item.idDocumento,
         idTiempoCredito: item.idTiempoCredito,
         idProveedor: item.idProveedor,
         codEstab: item.codEstab,
         identificacionComprador: item.identificacion,
         nombreComprador: item.nombreFiscal,
-        nombreDoc: item.codDoc, //revisar ,
+        nombreDoc: item.nombreDoc, //revisar ,
+        codDoc: item.codDoc,
         serieComprobante: item.serieComprobante,
         fechaEmision: item.fechaEmision,
         fechaVencimiento: item.fechaVencimiento,
@@ -30,8 +32,6 @@ export class CuentaPorPagarAdapter {
         numAutDocSustento: item.numAutDocSustento,
         totalRecords: item.totalRecords
       }
-
-
     })
   }
 

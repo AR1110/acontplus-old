@@ -4,3 +4,7 @@ export const enum PURCHASE_PATHS {
   SUPPLIER = 'Proveedor/',
   FACTURA_FISICA='FacturaCompra/'
 }
+
+export  const enum PURCHASE_CODE_REPORT {
+  RCNH= 'RCNH', //Compra No Habitual
+}
