@@ -234,7 +234,7 @@ BEGIN
 
         SELECT TOP 1 @idProveedor = idProveedor FROM dbo.Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @CustomerId
 
-        SELECT TOP 1 @isAutomatic = autoSriAuth FROM  Config.v_ConfigDocumento WHERE codEstab = (SELECT TOP 1 codEstab FROM @tblInfoCompRet)
+        SELECT TOP 1 @isAutomatic = autoSriAuth FROM  Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = (SELECT TOP 1 codEstab FROM @tblInfoCompRet)
 
         SELECT TOP 1 @secuencial = ultimaSecuencia
 	    FROM ConfiguracionDocumento  cd WITH (NOLOCK)
