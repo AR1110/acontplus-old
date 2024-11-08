@@ -461,13 +461,15 @@ BEGIN
                 SET @tableNames = 'response'
 
 
-	            DECLARE @ventaStockMinimo BIT 
-                       ,@stockCantidad    BIT 
-                       ,@ventaStockCero   BIT 
-                       ,@stock            NUMERIC(18,5) 
-                       ,@stockMinimo      NUMERIC(18,5) 
-                       ,@cantidad         NUMERIC(18,5) 
-                       ,@idBodega         INT 
+	            DECLARE @stock       NUMERIC(18,5) 
+                       ,@stockMinimo NUMERIC(18,5) 
+                       ,@cantidad    NUMERIC(18,5) 
+                       ,@idBodega    INT 
+                       ,@descripcion VARCHAR(300)
+                       ,@bodega      VARCHAR(300)
+                       ,@notifNPS    BIT
+                       ,@notifMNS    BIT
+                       ,@notifMNM    BIT
 
 			    SELECT @idArticulo = idArticulo
                       ,@idBodega   = idBodega 
@@ -479,89 +481,51 @@ BEGIN
                    ,cantidad   NUMERIC(18,5)
                 )
 
-           
-			    SELECT TOP 1 @stock = cantidad - @cantidad FROM Inventario.Stock WITH (NOLOCK) WHERE idBodega = @idBodega AND idArticulo = @idArticulo
+			    SELECT TOP 1 @stock       = sb.cantidad - @cantidad
+                            ,@stockMinimo = ar.stockMinimo
+                            ,@descripcion = ar.descripcion
+                            ,@bodega      = bo.descripcion
+                FROM Inventario.Stock   sb WITH (NOLOCK)
+                INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = sb.idArticulo
+                INNER JOIN dbo.Bodega   bo WITH (NOLOCK) ON bo.idBodega   = sb.idBodega
+                WHERE sb.idBodega = @idBodega 
+                  AND sb.idArticulo = @idArticulo
 
-                --> No permitir la venta de artículos sin stock
-			    IF EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'NPS' AND idEntidad = @idEntidad AND estado = 1)
-				    BEGIN
-					    IF @stock < 0
-						    BEGIN
-							    SELECT '0' code
-							          ,descripcion + ' <b>(' + codigo + ')</b> stock de : ' + CAST(cantidad as varchar) + ' cantidad a vender es de: ' + CAST(@cantidad as varchar) as 'message'
-								      ,'ARTICULO SIN STOCK EN LA BODEGA ' + bodega as 'titleSms'
-							    FROM Inventario.v_Articulo_Stock WITH (NOLOCK) 
-							    WHERE idArticulo = @idArticulo 
-							      AND idBodega = @idBodega
 
-							    RETURN 
-						    END 
-				    END 
-	        
-                --> Mostrar notificacion de artículos sin stock 
-			    IF EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'MNS' AND idEntidad = @idEntidad AND estado = 1)
-				    BEGIN
-					    IF @stock <= 0
-						    BEGIN
-							    SELECT '2' as 'code'
-							          ,'EL ARTICULO: '+'<b>'+descripcion+'</b>'+' TIENE UN STOCK DE '+CAST(CAST(stock as numeric(18,2)) as varchar) as 'message'
-								      ,'ARTICULO CON STOCK CERO' as 'titleSms'
-							    FROM dbo.Articulo WITH (NOLOCK) 
-							    WHERE idArticulo = @idArticulo
-							    RETURN 
-						    END
-				    END 
+                SELECT @notifNPS = CASE WHEN EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WHERE codigo = 'NPS' AND idEntidad = @idEntidad AND estado = 1) THEN 1 ELSE 0 END
+                      ,@notifMNS = CASE WHEN EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WHERE codigo = 'MNS' AND idEntidad = @idEntidad AND estado = 1) THEN 1 ELSE 0 END
+                      ,@notifMNM = CASE WHEN EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WHERE codigo = 'MNM' AND idEntidad = @idEntidad AND estado = 1) THEN 1 ELSE 0 END
 
-                --> Mostrar notificacion de artículos con stock mínimo
-			    IF EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'MNM' AND idEntidad = @idEntidad AND estado = 1)
-				    BEGIN
-                    
-                        SELECT TOP 1 @stockMinimo = stockMinimo FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
+                
+                --> Verificación y notificación de stock negativo (NPS)
+                IF @notifNPS = 1 AND @stock < 0
+                    BEGIN
+                        SELECT '0' as code
+                               ,@descripcion + ' <b>(NPS)</b> stock de: ' + CAST(@stock AS varchar) + ', cantidad a vender: ' + CAST(@cantidad AS varchar) AS message
+                               ,'ARTICULO SIN STOCK EN LA BODEGA ' + @bodega as titleSms
+                        RETURN
+                    END
 
-					    IF @stock <= @stockMinimo 
-						    BEGIN
-							    SELECT '2' as 'code'
-							          ,'EL ARTICULO: '+'<b>'+descripcion+'</b>'+' TIENE UN STOCK DE '+CAST(stock AS nvarchar) as 'message'
-								      ,'ARTICULO BAJO STOCK MÍMINO' as 'titleSms'
-							    FROM dbo.Articulo WITH (NOLOCK) 
-							    WHERE idArticulo = @idArticulo
-							    RETURN 
-						    END 
-				    END 
+                --> Verificación y notificación de stock cero (MNS)
+                IF @notifMNS = 1 AND @stock <= 0
+                    BEGIN
+                        SELECT '2' AS code
+                              ,'EL ARTICULO: <b>' + @descripcion + '</b> TIENE UN STOCK DE ' + CAST(@stock AS nvarchar) AS message
+                              ,'ARTICULO CON STOCK CERO' AS titleSms;
+                        RETURN
+                    END
+
+                --> Verificación y notificación de stock mínimo (MNM)
+                IF @notifMNM = 1 AND @stock <= @stockMinimo
+                    BEGIN
+                        SELECT '2' AS code
+                              ,'EL ARTICULO: <b>' + @descripcion + '</b> TIENE UN STOCK DE ' + CAST(@stock AS nvarchar) AS message
+                              ,'ARTICULO BAJO STOCK MÍNIMO' AS titleSms;
+                        RETURN
+                    END
+
 			    SELECT '1'code,'Correct!' as 'message'
 			    RETURN
-		    END 
-
-	    --> Resturante 
-	    IF @tipo = 8
-		    BEGIN
-
-			    SELECT nroPrecio FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'CD'
-
-			    SELECT idFamilia
-                      ,descripcion 
-                FROM dbo.Familia WITH (NOLOCK) 
-                WHERE ActividadEconomicaId IN (SELECT ea.ActividadEconomicaId FROM v_Estab_Asign ea WITH (NOLOCK) WHERE ea.idUsuarioRol = @userRoleId)
-                  AND estado = 1
-			
-			    SELECT
-				     idFamilia    = f.idFamilia
-				    ,idSubFamilia = sf.idSubFamilia
-				    ,familia      = f.descripcion
-				    ,subFamilia   = sf.descripcion
-				    ,sf.siglas
-				    ,sf.ultimoSecuencial
-			    FROM dbo.SubFamilia sf  WITH (NOLOCK)
-			    INNER JOIN Familia f    WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
-			    WHERE sf.idEntidad = @idEntidad AND sf.estado = 1
-
-			    SELECT idMedida,codigo,descripcion FROM dbo.Medida  WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
-
-			    SELECT idTipoIva, descripcion, codigo, porcentaje FROM TipoIva WHERE estado = 1
-
-			    SELECT idTarifa,descripcion,codigo,predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY codigo ASC
-
-			    RETURN 
 		    END 
 
         --> Data Compra
@@ -705,7 +669,7 @@ BEGIN
     BEGIN CATCH 
         DECLARE @idUsuario INT
 
-        SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuairoRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+        SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 		INSERT INTO ErroresSistema(token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		VALUES(NEWID(),'/Articulo/Get',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario)
