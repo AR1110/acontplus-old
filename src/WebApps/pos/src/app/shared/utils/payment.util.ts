@@ -5,7 +5,7 @@ import { ToasterService } from "@/shared/services/toaster.service";
 import { minus, plus } from "./decimal.util";
 import { roundNumber } from "./round-number.util";
 import { getValidId, isValidField } from "./utils";
-import { isValidDate } from "./date.util";
+import { isDateValid } from "./date.util";
 
 export class PaymentUtil {
   #cuentasPorCobrar: CuentaPorCobrarCalculado[] = [];
@@ -210,7 +210,7 @@ export class PaymentUtil {
       })
       return
     }
-    if (!isValidDate(data.fechaEmision)) {
+    if (!isDateValid(data.fechaEmision)) {
       this.tS.toastr({
         type: 'warning',
         message: 'Ingrese una fecha válida'

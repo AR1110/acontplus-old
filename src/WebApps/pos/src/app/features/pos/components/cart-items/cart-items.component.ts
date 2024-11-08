@@ -5,7 +5,7 @@ import { DialogService } from "@/shared/services/dialog.service";
 import Swal from "sweetalert2";
 import { playBeepSound, playClearSound } from "@/shared/utils/sound.util";
 import { calculateCantidadStock, mergeStockQty } from '@/shared/utils/product.util';
-import { ProductService } from '@/shared/services/external/product.service';
+import { ProductService } from '@/shared/services/product/product.service';
 import { pricingCalculateUtil } from '@/shared/utils/princing-calculate.util';
 import { roundNumber } from '@/shared/utils/round-number.util';
 import { OrderItem } from '@/features/orders/models/order.interface';

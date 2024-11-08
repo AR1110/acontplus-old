@@ -10,7 +10,7 @@ import {
   CustomContainerDialogComponent
 } from '@/shared/components/custom-container-dialog/custom-container-dialog.component';
 
-import { ProductService } from '@/shared/services/external/product.service';
+import { ProductService } from '@/shared/services/product/product.service';
 import { ToasterService } from "@/shared/services/toaster.service";
 import { ToUpperCaseDirective } from '@/shared/directives/to-upper-case.directive';
 

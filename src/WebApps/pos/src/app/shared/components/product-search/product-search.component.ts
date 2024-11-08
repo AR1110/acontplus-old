@@ -1,5 +1,5 @@
 
-import { ProductService } from '@/shared/services/external/product.service';
+import { ProductService } from '@/shared/services/product/product.service';
 import { AsyncPipe } from '@angular/common';
 import { Component, inject, input, model, output } from '@angular/core';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';

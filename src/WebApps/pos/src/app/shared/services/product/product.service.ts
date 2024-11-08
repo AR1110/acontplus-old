@@ -7,7 +7,7 @@ import {ProductoConsolidacion, ProductSale, ProductSearchDto} from "@/shared/mod
 import {ApiResponse} from "@/shared/models/api-response";
 import {MedidaProducto} from "@/shared/models/inventory/medida.model";
 import { getNoLoader } from '@/core/interceptors/loader.interceptor';
-import { ProductAdapter } from '@/shared/adapters/product.adapter';
+import { ProductAdapter } from './product.adapter';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,6 @@ import { ProductAdapter } from '@/shared/adapters/product.adapter';
 export class ProductService {
   private url = `${PATHS_API.INVENTORY}${PATHS.PRODUCT}`
   private http = inject(HttpClient)
-  private productAdapter = inject(ProductAdapter)
 
 
   search<T extends { textSearch: string }>(obj: T) {
@@ -25,12 +24,14 @@ export class ProductService {
       busqueda: sanitizeAndEncodeURIComponent(obj.textSearch)
     })
 
-    return this.http.get<ApiResponse>(`${this.url}Search?json=${json}`).pipe(
+    return this.http.get<ApiResponse>(`${this.url}Search?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
       map(response => {
         let results: ProductSearchDto[] = []
         if (response.code == "1") {
           const productsFound = JSON.parse(response.payload as string) ?? [];
-          results = this.productAdapter.searchFrom(productsFound)
+          results = ProductAdapter.fromApiSearch(productsFound)
         }
         return results;
       })
@@ -50,7 +51,7 @@ export class ProductService {
       context: getNoLoader()
     }).pipe(
       map(response => {
-        console.log(JSON.parse(response.payload as string))
+
         let results = {
           product: {} as ProductSale,
           medidas: [] as MedidaProducto[],
@@ -58,23 +59,9 @@ export class ProductService {
         };
         if (response.code === "1") {
           const repositoryData = JSON.parse(response.payload as string);
-          console.log(repositoryData)
 
-          const [
-            productRepos,
-            medidasFraccionado,
-            medidasPrincipal,
-            productoConsolidaciones
-          ] = repositoryData;
+          results = ProductAdapter.fromApiGetSale(repositoryData)
 
-          const product = productRepos[0];
-
-          results = this.productAdapter.saleFrom({
-            product,
-            medidasPrincipal,
-            medidasFraccionado,
-            productoConsolidaciones
-          })
 
         }
         return results;
@@ -96,8 +83,7 @@ export class ProductService {
         if (response.code === "0") {
           throw response;
         }
-        let mainData = JSON.parse(response.payload as string);
-        return mainData[0][0]
+        return ProductAdapter.fromApiCheckStockNotificacion(response)
 
       })
     )
