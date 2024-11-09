@@ -26,7 +26,7 @@ BEGIN
 	DECLARE @idUsuario INT,@idEntidad INT
 
     --> Contabilidad
-    DECLARE @importeTotal NUMERIC(18,5) ,@idEstablecimiento INT ,@idEstadoPago INT ,@serieComprobante VARCHAR(20) ,@codEstab VARCHAR(50)
+    DECLARE @importeTotal NUMERIC(18,5) ,@idEstablecimiento INT ,@idEstadoPago INT ,@serieComprobante VARCHAR(20)
 
     --> Facturacion Electronica
 	DECLARE @ruc NVARCHAR(100) ,@fechaEmision DATETIME ,@ambiente INT ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@claveAcceso NVARCHAR(50) ,@isAutomatic INT ,@uniqueId VARCHAR(150) ,@secuencial INT
@@ -37,7 +37,7 @@ BEGIN
 
 	DECLARE @tblInfoCompRet AS TABLE(
 		 fechaEmision DATETIME2 NOT NULL
-		,codEstab VARCHAR(25) NOT NULL
+		,idPuntoEmision INT NOT NULL
 		,contribuyentEspecial VARCHAR(13) NULL
 		,obligadoContabilidad VARCHAR(2) NULL
 		,codDoc VARCHAR(10) NOT NULL DEFAULT '07' 
@@ -115,11 +115,11 @@ BEGIN
 
         --> Info Json
         INSERT INTO @tblInfoCompRet
-              (codEstab,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
-		SELECT codEstab,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
+              (idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
+		SELECT idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
 		FROM OPENJSON(@infoCompRet) WITH
         (
-             codEstab                         VARCHAR(25)
+             idPuntoEmision                   INT
             ,fechaEmision                     DATETIME2
             ,contribuyentEspecial             VARCHAR(13)
             ,obligadoContabilidad             VARCHAR(2)
@@ -216,15 +216,12 @@ BEGIN
 
         SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
-        SELECT TOP 1 @idPuntoEmision = idPuntoEmision
-                    ,@ambiente       = ambiente 
-                    ,@fechaEmision   = fechaEmision
-                    ,@codEstab       = tb.codEstab
+        SELECT TOP 1 @idPuntoEmision    = tb.idPuntoEmision
+                    ,@fechaEmision      = tb.fechaEmision
+                    ,@ambiente          = pe.ambiente
+                    ,@idEstablecimiento = pe.idEstablecimiento
         FROM @tblInfoCompRet           tb
-        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab          = tb.codEstab
-        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento
-
-        SELECT TOP 1 @idEstablecimiento = idEstablecimiento FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
+        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision = tb.idPuntoEmision
 
         SELECT @importeTotal = SUM(valorRetenido) FROM @tblRetenciones 
 
@@ -233,8 +230,6 @@ BEGIN
         SELECT TOP 1 @CustomerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = (SELECT LTRIM(RTRIM(identificacionSujetoRetenido))  FROM @tblInfoCompRet)
 
         SELECT TOP 1 @idProveedor = idProveedor FROM dbo.Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @CustomerId
-
-        SELECT TOP 1 @isAutomatic = autoSriAuth FROM  Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = (SELECT TOP 1 codEstab FROM @tblInfoCompRet)
 
         SELECT TOP 1 @secuencial = ultimaSecuencia
 	    FROM ConfiguracionDocumento  cd WITH (NOLOCK)
@@ -253,9 +248,10 @@ BEGIN
 			                                                   ,Helper.F_Auto_Sequential(@secuencial)
                                                              ) 
                    ,@serieComprobante = estab + '-' +  ptoEmi  + '-' + Helper.F_Auto_Sequential(@secuencial)
+                   ,@isAutomatic      = autoSriAuth
 		FROM @tblInfoCompRet           tb
-        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab          = tb.codEstab
-        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento
+        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision    = tb.idPuntoEmision
+        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
 
         --> Validaciones
         IF NOT EXISTS (SELECT 1 FROM @tblInfoCompRet)
@@ -343,7 +339,7 @@ BEGIN
 			--> DocumentoElectronico
 			INSERT INTO dbo.DocumentoElectronico
                    (idTipoDocumento,versionComp,fechaEmision,nroDocumento,idPuntoEmision,claveAcceso,isAutomatic,idUsuario,CustomerId,idEstadoServicio,serieComprobante)
-			SELECT @idTipoDocumento,versionComp,fechaEmision,@secuencial,@idPuntoEmision,@claveAcceso,@isAutomatic,@idUsuario,@CustomerId,@idEstadoServicio,@serieComprobante
+			SELECT @idTipoDocumento,versionComp,fechaEmision,@secuencial,idPuntoEmision,@claveAcceso,@isAutomatic,@idUsuario,@CustomerId,@idEstadoServicio,@serieComprobante
             FROM @tblInfoCompRet
 
             SET @idDocumentoElectronico = SCOPE_IDENTITY()
