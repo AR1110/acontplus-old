@@ -27,7 +27,7 @@ BEGIN
 	DECLARE @idUsuario INT,@idEntidad INT
 
     --> Contabilidad
-    DECLARE @importeTotal NUMERIC(18,5) ,@idEstablecimiento INT ,@idEstadoPago INT ,@serieComprobante VARCHAR(20) ,@codEstab VARCHAR(50)
+    DECLARE @importeTotal NUMERIC(18,5) ,@idEstablecimiento INT ,@idEstadoPago INT ,@serieComprobante VARCHAR(20) 
 
     --> Facturacion Electronica
 	DECLARE @ruc NVARCHAR(100) ,@fechaEmision DATETIME ,@ambiente INT ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@claveAcceso NVARCHAR(50) ,@isAutomatic INT ,@uniqueId VARCHAR(150) ,@secuencial INT
@@ -42,7 +42,7 @@ BEGIN
 
 	DECLARE @tblInfoCompRet AS TABLE(
 		 fechaEmision DATETIME2 NOT NULL
-		,codEstab VARCHAR(25) NOT NULL
+		,idPuntoEmision INT NOT NULL
 		,contribuyentEspecial VARCHAR(13) NULL
 		,obligadoContabilidad VARCHAR(2) NULL
 		,codDoc VARCHAR(10) NOT NULL DEFAULT '07' 
@@ -124,7 +124,7 @@ BEGIN
 		SELECT idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
 		FROM OPENJSON(@infoCompRet) WITH
         (
-             codEstab                         VARCHAR(25)
+             idPuntoEmision                   INT
             ,fechaEmision                     DATETIME2
             ,contribuyentEspecial             VARCHAR(13)
             ,obligadoContabilidad             VARCHAR(2)
@@ -221,15 +221,12 @@ BEGIN
 
         SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
-        SELECT TOP 1 @idPuntoEmision = idPuntoEmision
-                    ,@ambiente       = ambiente 
-                    ,@fechaEmision   = fechaEmision
-                    ,@codEstab       = tb.codEstab
+        SELECT TOP 1 @idPuntoEmision    = pe.idPuntoEmision
+                    ,@ambiente          = pe.ambiente 
+                    ,@idEstablecimiento = pe.idEstablecimiento
+                    ,@fechaEmision      = tb.fechaEmision
         FROM @tblInfoCompRet           tb
-        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab          = tb.codEstab
-        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento
-
-        SELECT TOP 1 @idEstablecimiento = idEstablecimiento FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
+        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision = tb.idPuntoEmision
 
         SELECT @importeTotal = SUM(valorRetenido) FROM @tblRetenciones 
 
@@ -258,8 +255,8 @@ BEGIN
                    ,@serieComprobante = estab + '-' +  ptoEmi  + '-' + Helper.F_Auto_Sequential(@secuencial)
                    ,@isAutomatic      = autoSriAuth
 		FROM @tblInfoCompRet           tb
-        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab          = tb.codEstab
-        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idEstablecimiento = es.idEstablecimiento
+        INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision    = tb.idPuntoEmision
+        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
 
         --> Validaciones
         IF NOT EXISTS (SELECT 1 FROM @tblInfoCompRet)
