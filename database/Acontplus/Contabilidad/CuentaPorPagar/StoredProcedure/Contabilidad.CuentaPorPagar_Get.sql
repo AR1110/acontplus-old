@@ -56,6 +56,7 @@ BEGIN
 	IF @tipo = 1
 		BEGIN
 			SET @sql  = 'SELECT pp.idCuentaPorPagar
+                               ,pp.idDocumento
 							   ,ISNULL(pp.idTiempoCredito,0)                as idTiempoCredito
 							   ,pp.idProveedor                              as idProveedor
                                ,pp.codEstab
@@ -65,8 +66,9 @@ BEGIN
 											   WHEN ''03'' THEN ''Liquidacion'' 
 											   WHEN ''FC'' THEN ''F.Fisica'' 
 					                           WHEN ''DH'' THEN ''C.N.Habitual''
-								END                                         as codDoc
-							   ,pp.serieComprobante
+								END                                         as nombreDoc
+							   ,pp.codDoc
+                               ,pp.serieComprobante
 							   ,Format(pp.fechaEmision, ''yyyy-MM-dd'')     as fechaEmision
 							   ,Format(pp.fechaVencimiento, ''yyyy-MM-dd'') as fechaVencimiento 
 							   ,pp.importeTotal 
@@ -221,20 +223,113 @@ BEGIN
         
              SELECT @idCuentaPorPagar = idCuentaPorPagar FROM OPENJSON(@json) WITH (idCuentaPorPagar INT)
 
-			SELECT cu.IdCard                                                           as nroIdentificacion
-				  ,cu.businessName                                                     as nombreFiscal
-				  ,ce.total
-				  ,'CE-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento)  as tipoDocumento
-				  ,us.nombreUsuario                                                    as usuario
-				  ,IIF(ce.estado = 1, 'ACTIVO', 'ANULADA')                             as estado
-				  ,FORMAT(ce.fechaRegistro, 'yyyy-MM-dd hh:mm')                        as fechaRegistro
-			FROM Contabilidad.Historial_Pago hp WITH (NOLOCK)
-			INNER JOIN ComprobanteEgreso     ce WITH (NOLOCK) ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
-			INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento   = ce.idEstablecimiento 
-			INNER JOIN Usuario               us WITH (NOLOCK) ON us.idUsuario           = ce.idUsuario
-            INNER JOIN Customer.Customer     cu WITH (NOLOCK) ON cu.Id                  = ce.CustomerId
-			WHERE hp.idCuentaPorPagar = @idCuentaPorPagar
-			ORDER BY fechaRegistro 
+			--SELECT cu.IdCard                                                           as nroIdentificacion
+			--	  ,cu.businessName                                                     as nombreFiscal
+			--	  ,ce.total
+			--	  ,'CE-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento)  as tipoDocumento
+			--	  ,us.nombreUsuario                                                    as usuario
+			--	  ,IIF(ce.estado = 1, 'ACTIVO', 'ANULADA')                             as estado
+			--	  ,FORMAT(ce.fechaRegistro, 'yyyy-MM-dd hh:mm')                        as fechaRegistro
+			--FROM Contabilidad.Historial_Pago hp WITH (NOLOCK)
+			--INNER JOIN ComprobanteEgreso     ce WITH (NOLOCK) ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
+			--INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento   = ce.idEstablecimiento 
+			--INNER JOIN Usuario               us WITH (NOLOCK) ON us.idUsuario           = ce.idUsuario
+   --         INNER JOIN Customer.Customer     cu WITH (NOLOCK) ON cu.Id                  = ce.CustomerId
+			--WHERE hp.idCuentaPorPagar = @idCuentaPorPagar
+			--ORDER BY fechaRegistro 
+
+            SELECT 
+                serieComprobante
+                ,fechaEmision
+                ,identificacionProveedor
+                ,razonSocialProveedor
+                ,importeTotal
+                ,abono
+                ,saldo
+            FROM v_CuentaPorPagar   WITH(NOLOCK)
+            WHERE idCuentaPorPagar = @idCuentaPorPagar
+
+         
+            SELECT 
+                ce.idComprobanteEgreso
+                ,fechaEmision = FORMAT(ce.fechaRegistro, 'dd/MM/yyyy hh:mm')  
+                ,serieComprobante = 'CE' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento)  
+                ,ce.total 
+                ,nombreEstado = CASE ce.estado WHEN 1 THEN 'ACTIVO' ELSE 'ANULADO' END  
+                ,ce.estado   
+                ,es.codEstab
+            FROM dbo.ComprobanteEgreso ce WITH (NOLOCK)
+            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) 
+                ON es.idEstablecimiento = ce.idEstablecimiento
+            WHERE EXISTS (
+                SELECT 1
+                FROM Contabilidad.Historial_Pago hp
+                WHERE hp.idComprobanteEgreso = ce.idComprobanteEgreso
+                AND hp.idCuentaPorPagar = @idCuentaPorPagar
+            ) 
+                AND ce.estado = 1;
+
+
+            SELECT 
+                ce.idComprobanteEgreso,
+                p.idPago,
+                nombrePosfechado = CASE p.posfechado WHEN 1 THEN 'SI' ELSE 'NO' END,     
+                fechaEmision = FORMAT(p.fechaEmision, 'dd/MM/yyyy hh:mm'),     
+                nombreFormaPago = ISNULL(sf.descripcion, ef.descripcion),              
+                nombreBanco = ISNULL(bc.descripcion, '-------------'),     
+                p.valor,
+                p.abono,
+                p.vuelto,
+                codigoFormaPago = ef.codigo,
+                p.nro,
+                p.lote,
+                p.aprobacion,
+                p.referencia
+                
+            FROM
+                Contabilidad.Historial_Pago hp WITH (NOLOCK) 
+            INNER JOIN 
+                dbo.ComprobanteEgreso ce WITH (NOLOCK) ON ce.idComprobanteEgreso = hp.idComprobanteEgreso 
+            INNER JOIN 
+                dbo.Pago p WITH (NOLOCK) ON p.idPago = hp.idPago
+            INNER JOIN 
+                dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = p.idEntidadFinanciera
+            LEFT JOIN 
+                dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = p.idSubEntidadFinanciera
+            LEFT JOIN 
+                dbo.Banco bc WITH (NOLOCK) ON bc.idBanco = p.idBanco
+            WHERE 
+                hp.idCuentaPorPagar = @idCuentaPorPagar
+                AND ce.estado = 1
+            ORDER BY 
+                p.secuencial ASC;
+
+
+            SELECT 
+                p.idPago
+                ,cxp.nroCuota
+                ,fechaVencimiento = FORMAT(cxp.fechaVencimiento, 'dd/MM/yyyy') 
+                ,cxp.cuota
+                ,pd.abono
+                ,saldo = pd.saldo - pd.abono
+            FROM dbo.PagoDetalle pd WITH (NOLOCK)
+            INNER JOIN dbo.Pago p WITH (NOLOCK) 
+                ON p.idPago = pd.idPago
+            INNER JOIN dbo.ComprobanteEgreso ce WITH (NOLOCK) 
+                ON ce.idComprobanteEgreso = p.idComprobanteEgreso
+            INNER JOIN Contabilidad.CuotaPorPagar cxp WITH (NOLOCK) 
+                ON cxp.idCuotaPorPagar = pd.idCuotaPorPagar
+            WHERE 
+                cxp.idCuentaPorPagar = @idCuentaPorPagar
+                AND ce.estado = 1
+            ORDER BY 
+                p.secuencial ASC,   
+                cxp.nroCuota ASC;    
+
+
+
+
+
 		END 
 	
     --> Data Form Cuotas 

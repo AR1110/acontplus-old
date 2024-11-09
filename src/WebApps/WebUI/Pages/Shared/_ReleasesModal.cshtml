@@ -1,0 +1,15 @@
+﻿
+<div class="modal-header">
+    <h5 class="modal-title"><i class="fa fa-info text-info"></i> Nuevos Lanzamientos</h5>
+    <button type="button" class="close" ng-click="onClose()">&times;</button>
+</div>
+<div class="modal-body">
+    <div id="tableReleases" class="table-responsive">
+        <div ng-bind-html="releaseTable"></div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="submit" class="btn btn-success btn-sm" ng-click="confirmRead()"><i class="fa fa-book-reader"></i> Confirmar Lectura</button>
+    <button type="button" class="btn btn-dark btn-sm" ng-click="onClose()">&times; Cerrar</button>
+</div>
+

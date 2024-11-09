@@ -1,5 +1,7 @@
 use acontplus
 go
+DROP VIEW IF EXISTS dbo.v_DocRecibido
+GO
 --SELECT TOP 1 * FROM Recepcion.DocumentoRecibido
 IF EXISTS (SELECT 1 
            FROM sys.columns 

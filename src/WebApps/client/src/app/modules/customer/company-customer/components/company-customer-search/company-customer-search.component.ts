@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { CompanyCustomerSearch } from '@modules/customer/company-customer/models/company-customer';
-import { CompanyCustomerService } from '@modules/customer/company-customer/services/company-customer.service';
+import { CompanyCustomerSearch } from '@company-customer/company-customer';
+import { CompanyCustomerService } from '@company-customer/company-customer.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import {
   Observable,
@@ -13,7 +13,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { CompanyCustomerAddEditDirective } from '@company-customer/directives/company-customer-add-edit.directive';
+import { CompanyCustomerAddEditDirective } from '@company-customer/company-customer-add-edit.directive';
 
 @Component({
   selector: 'app-company-customer-search',

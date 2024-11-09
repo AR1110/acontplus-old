@@ -1,78 +1,32 @@
 ﻿namespace Inventario.API.Controllers;
 
-public class ArticuloUbicacionController : BaseApiController
+public class ArticuloUbicacionController(IArticuloUbicacionService articuloUbicacionService) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    private readonly DbAccess _db;
-
-
-    public ArticuloUbicacionController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-        _db = new DbAccess(_configuration);
-
-    }
-
-
     [HttpPost]
-    public async Task<IActionResult> Insert(string json)
+    public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            var idUsuarioRol = User.GetUserRoleId();
-            await _db.SpExecuteAsync("Inventario.ArticuloUbicacion_Insert", true);
-            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await articuloUbicacionService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, string json)
+    public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Inventario.ArticuloUbicacion_Update", true);
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await articuloUbicacionService.UpdateAsync(parameters));
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SpExecuteAsync("Inventario.ArticuloUbicacion_Delete", true);
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        return Ok(await articuloUbicacionService.DeleteAsync(parameters));
     }
 }

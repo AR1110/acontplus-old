@@ -89,7 +89,7 @@
 
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label  >Rango Fechas</label>
+          <label>Rango Fechas</label>
 
           <app-date-range-selection
             (onChangeDateRange)="onDateRangeSelection($event)"
@@ -113,8 +113,6 @@
           </select>
         </div>
       </div>
-
-
     </div>
 
     <div class="row">
@@ -137,16 +135,15 @@
 
       <div class="col-xl-6 col-lg-6 col-md-12 col-12">
         <div class="form-group">
-          <label  >Proveedor</label>
+          <label>Proveedor</label>
           <app-supplier-search
             [isSearchSimple]="isSearchSupplierSimple"
-            (onSupplierSelected)="onSupplierSelected($event)"
+            (onSelected)="onSupplierSelected($event)"
             [textSearch]="dataSearch.supplierName"
-            (emptyInput)="supplierResultEmptyInput($event)"
+            (onInputEmpty)="supplierResultEmptyInput($event)"
           ></app-supplier-search>
         </div>
       </div>
-
     </div>
   </div>
   <div class="card-body">

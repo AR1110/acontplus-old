@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import {Component, Input, TemplateRef, input, output} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogActions, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-custom-container-dialog',
@@ -11,12 +12,16 @@ import { MatIconModule } from '@angular/material/icon';
     CommonModule,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './custom-container-dialog.component.html',
   styleUrl: './custom-container-dialog.component.scss'
 })
 export class CustomContainerDialogComponent {
+  showHeader = input(true)
+  loading = input(false)
+  align = input<'start' | 'center' | 'end'>('end')
   matDialogTitle = input("");
   close = output()
   @Input() containerTemplate!: TemplateRef<any> | null;

@@ -59,7 +59,7 @@ BEGIN
 							  ,de.usuario
 							  ,ISNULL(de.codEstab, '''')                 as codEstab
                               ,COUNT(*) OVER()                           as totalRecords
-						FROM FactElect.v_DocElectronico de WITH (NOLOCK)
+						FROM FactElect.v_DocElectronico de
 						WHERE de.idEntidad = @idEntidad '
 
 	        SELECT @codDoc                   = codDoc
@@ -133,14 +133,14 @@ BEGIN
 
 	        IF (@tipo = '3')
 		        BEGIN
-			        SET @sql = @sql +  'AND codEstado NOT IN (4,6) '
+			        SET @sql = @sql +  'AND de.codEstado NOT IN (4,6) '
 		        END
 	
 	        IF @codEstado >= 0
 		        BEGIN
                     IF @codEstado = 8 
                         BEGIN
-                            SET @sql = @sql +  'AND codEstado NOT IN (4,6) '
+                            SET @sql = @sql +  'AND de.codEstado NOT IN (4,6) '
                         END 
                     ELSE 
                         BEGIN

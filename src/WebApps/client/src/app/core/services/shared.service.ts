@@ -12,6 +12,16 @@ import Swal from 'sweetalert2';
 import { ModalService } from './modal.service';
 import { ToasterService } from './toaster.service';
 import * as XLSX from 'xlsx';
+import {PdfViewerComponent} from "@shared/components/pdf-viewer/pdf-viewer.component";
+
+interface ReportParams<T> {
+  data: T;
+  format?: string;
+  isOldVersion?: boolean;
+  downloadOnly?: boolean;
+  openInModal?: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -57,26 +67,41 @@ export class SharedService {
    * @param format pdf | excel
    * @param isOldVersion
    */
-  getReport<T>({
-    data,
-    format = 'pdf',
-    isOldVersion = false,
-    downloadOnly = false,
-  }: {
-    data: T;
-    format?: string;
-    isOldVersion?: boolean;
-    downloadOnly?: boolean;
-  }) {
+  getReport<T>(obj: ReportParams<T>) {
+    const {
+      data,
+      format = 'pdf',
+      isOldVersion = false,
+      downloadOnly = false,
+      openInModal
+    } = obj;
+
     const path = isOldVersion ? PATHS.DOWNLOAD_V1 : PATHS.DOWNLOAD;
+
     this.http
       .post(`${PATHS_API.REPORT}${path}`, data, {
         observe: 'response',
         responseType: 'blob',
       })
       .subscribe((response) => {
-        this.saveFile(response, format, downloadOnly);
+
+        if (format === 'pdf' && openInModal && response.body) {
+           this.openPdfInModal(response.body)
+        } else {
+          this.saveFile(response, format, downloadOnly);
+        }
       });
+  }
+
+  private openPdfInModal(blob: Blob) {
+
+    // Abre el PDF en un modal
+    const blobUrl = URL.createObjectURL(blob);
+    let modalRef = this.modalSvc.open(PdfViewerComponent, {
+      size: 'xl'
+    });
+
+    modalRef.componentInstance.params =   { pdfSrc: blobUrl };
   }
 
   appNotificacionInsert<T>(data: T) {

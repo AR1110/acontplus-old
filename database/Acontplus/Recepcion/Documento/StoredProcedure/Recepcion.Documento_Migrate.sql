@@ -23,6 +23,7 @@ BEGIN
 	    ,@jsonData NVARCHAR(MAX)
 	    ,@codEstab VARCHAR(50)
         ,@idEstablecimiento INT
+        ,@message VARCHAR(500);
 
 	DECLARE @tblMain AS TABLE (jsonData NVARCHAR(3000))
 
@@ -42,11 +43,17 @@ BEGIN
 	        SELECT idDocumento FROM OPENJSON(@jsonData) WITH (idDocumento INT '$.idDocumento')
 		BEGIN TRAN
 			UPDATE dr SET dr.idEstablecimiento = @idEstablecimiento
-			FROM Recepcion.DocumentoRecibido dr
+			FROM Recepcion.DocumentoRecibido dr WITH(ROWLOCK)
 			JOIN (SELECT idDocumento FROM @tbl) as t ON dr.idDocumento = t.idDocumento
 			WHERE dr.complete = 0
+
+            IF (@@ROWCOUNT > 0)
+                SET @message = 'Migración Exitosa: ' + ISNULL(@codEstab, 'NADA') 
+            ELSE
+                SET @message = 'Ningun registro se migro!'
+
 		COMMIT TRAN
-        SELECT '1' code, 'Migración Exitosa' as 'message'
+        SELECT '1' code, @message as 'message'
 	END TRY
 	BEGIN CATCH
 		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
