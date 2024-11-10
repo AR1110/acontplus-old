@@ -14,7 +14,7 @@ GO
 -- Description:	<Description,,>
 -- Test : EXEC [Almacen].[Articulo_Get_Search] 32 ,'[{"busqueda":"galle"}]'
 -- =============================================
-CREATE OR ALTER PROCEDURE Inventario.Articulo_Get_Search @idRol INT ,@json NVARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Inventario.Articulo_Get_Search @userRoleId INT ,@json NVARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -32,7 +32,7 @@ BEGIN
 	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
 
     --> Recuperacion de informacion
-	SELECT TOP 1 @byEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+	SELECT TOP 1 @byEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 	SELECT @bySearch      = REPLACE(busqueda, space(1), '%')
 		  ,@byFraccionado = fraccionado

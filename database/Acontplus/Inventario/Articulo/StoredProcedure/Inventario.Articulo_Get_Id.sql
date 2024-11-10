@@ -12,6 +12,7 @@ GO
 -- Inventario.Articulo_Get_Id 77554
 -- =============================================
 CREATE OR ALTER PROC Inventario.Articulo_Get_Id @id INT
+,@tableNames VARCHAR(500) OUT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -21,6 +22,7 @@ BEGIN
 
 	SELECT TOP 1 @idEntidad = idEntidad FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @id
 
+    SET @tableNames = 'products,productPvps,productBarcodes,productLocations,productMeasures'
 
 	SELECT
 		 idArticulo                 = a.idArticulo
