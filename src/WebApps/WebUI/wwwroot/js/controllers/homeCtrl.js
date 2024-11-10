@@ -22,6 +22,8 @@
         $scope.releases = [];
         $scope.stepsConfig = [];
         $scope.expiredSignatures = [];
+        $scope.emittedDocuments = [];
+        $scope.receivedDocuments = [];
 
         $scope.openAlert = () => {
             $scope.alertIsOpened = true;
@@ -318,11 +320,51 @@
 
                 let dashboardData = JSON.parse(responseDashboard.payload);
                 if (dashboardData) {
-                    const { statistics, licenses, stepsConfig, expiredSignatures } = dashboardData;
+                    const { statistics, licenses, stepsConfig, expiredSignatures, emittedDocuments, receivedDocuments } = dashboardData;
                     $scope.cantidad = angular.fromJson(statistics);
                     $scope.licenses = angular.fromJson(licenses) || [];
                     $scope.stepsConfig = angular.fromJson(stepsConfig) || [];
                     $scope.expiredSignatures = angular.fromJson(expiredSignatures) || [];
+                    $scope.emittedDocuments = angular.fromJson(emittedDocuments) || [];
+                    $scope.receivedDocuments = angular.fromJson(receivedDocuments) || [];
+
+                    if ($scope.emittedDocuments.length > 0) {
+                        // Prepare the data for the chart
+                        var labels = [];
+                        var totals = [];
+                        var backgroundColors = [];
+                        var borderColors = [];
+
+                        // Loop through the documents and extract the type and total for each
+                        $scope.emittedDocuments.forEach(function (doc) {
+                            labels.push(doc.document);          // Document type (e.g., "Invoices", "Credit Notes")
+                            totals.push(doc.total);          // Total for the document type
+                            backgroundColors.push(getRandomColor(0.2)); // Random background color with 0.2 opacity
+                            borderColors.push(getRandomColor(1));       // Random border color with full opacity
+                        });
+
+                        // Call the function to render the chart with the updated data
+                        $scope.renderChart(labels, totals, backgroundColors, borderColors);
+                    }
+
+                    if ($scope.receivedDocuments.length > 0) {
+                        // Prepare the data for the chart
+                        var labels = [];
+                        var totals = [];
+                        var backgroundColors = [];
+                        var borderColors = [];
+
+                        // Loop through the documents and extract the type and total for each
+                        $scope.receivedDocuments.forEach(function (doc) {
+                            labels.push(doc.document);          // Document type (e.g., "Invoices", "Credit Notes")
+                            totals.push(doc.total);          // Total for the document type
+                            backgroundColors.push(getRandomColor(0.2)); // Random background color with 0.2 opacity
+                            borderColors.push(getRandomColor(1));       // Random border color with full opacity
+                        });
+
+                        // Call the function to render the chart with the updated data
+                        $scope.renderChartReceived(labels, totals, backgroundColors, borderColors);
+                    }
 
                     if ($scope.stepsConfig.length > 0) {
                         location.href = '/Config/WizardConfig/Index'
@@ -403,5 +445,97 @@
             });
         }
         init();
+
+        // Function to render the chart
+        $scope.renderChart = function (labels, totals, backgroundColors, borderColors) {
+            var ctx = document.getElementById('documentChart').getContext('2d');
+
+            var chart = new Chart(ctx, {
+                type: 'bar', // You can change the chart type (e.g., 'line', 'pie', etc.)
+                data: {
+                    labels: labels, // X-axis labels (document types)
+                    datasets: [{
+                        label: 'Documentos Emitidos',
+                        data: totals, // Data values (totals for each document type)
+                        backgroundColor: backgroundColors, // Dynamic background colors
+                        borderColor: borderColors, // Dynamic border colors
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        // Enable the Data Labels plugin to show labels on bars
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            offset: -5,
+                            formatter: function (value, context) {
+                                return value; // Display the value of each bar
+                            },
+                            font: {
+                                weight: 'bold',
+                                size: 12
+                            },
+                            color: 'black'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true // Ensures the Y-axis starts from 0
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels] // Register the Data Labels plugin
+            });
+        };
+        $scope.renderChartReceived = function (labels, totals, backgroundColors, borderColors) {
+            var ctx = document.getElementById('documentReceivedChart').getContext('2d');
+
+            var chart = new Chart(ctx, {
+                type: 'bar', // You can change the chart type (e.g., 'line', 'pie', etc.)
+                data: {
+                    labels: labels, // X-axis labels (document types)
+                    datasets: [{
+                        label: 'Documentos Recibidos',
+                        data: totals, // Data values (totals for each document type)
+                        backgroundColor: backgroundColors, // Dynamic background colors
+                        borderColor: borderColors, // Dynamic border colors
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        // Enable the Data Labels plugin to show labels on bars
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            offset: -5,
+                            formatter: function (value, context) {
+                                return value; // Display the value of each bar
+                            },
+                            font: {
+                                weight: 'bold',
+                                size: 12
+                            },
+                            color: 'black'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true // Ensures the Y-axis starts from 0
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels] // Register the Data Labels plugin
+            });
+        };
+
+        // Helper function to generate random colors for the chart
+        function getRandomColor(opacity) {
+            var r = Math.floor(Math.random() * 255);
+            var g = Math.floor(Math.random() * 255);
+            var b = Math.floor(Math.random() * 255);
+            return 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
+        }
     }
 })(window.angular);
