@@ -1,7 +1,7 @@
 
 import { OrderItem } from "@/features/orders/models/order.interface";
 import {ConsolidacionFecha} from "@/shared/models/inventory/medida.model";
-import { isValidDate } from "./date.util";
+import { isDateValid } from "./date.util";
 
 export const mergeStockQty = function <T extends {
   idArticulo: number,
@@ -55,7 +55,7 @@ export const calculateCantidadStock = function <T extends {
     cdataFecha => cdataFecha.idBodega === data.idBodega
   )
 
-  if (dataConsolidacionFecha && isValidDate(dataConsolidacionFecha.fechaConsolidacion)) {
+  if (dataConsolidacionFecha && isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
     if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
       return 0;
     }

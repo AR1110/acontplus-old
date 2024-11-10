@@ -53,7 +53,6 @@ export class ComprobanteIngresoService {
             estadoPago,
             config
           } = JSON.parse(response.payload as string)
-          console.log(JSON.parse(response.payload as string))
 
           const resultEntidadesFinanciera = entidadFinanciera.map((ef: any) => {
             let filteredSubEntidadFinanciera = subEntidadFinanciera.filter((sef: any) => sef.idEntidadFinanciera === ef.idEntidadFinanciera)

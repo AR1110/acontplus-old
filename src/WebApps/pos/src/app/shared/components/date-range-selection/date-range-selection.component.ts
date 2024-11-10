@@ -10,10 +10,10 @@ import {
 } from "@angular/core";
 
 declare var DateRangePicker: any;
-import moment from 'moment';
-import { formatDateMoment } from "@/shared/utils/date.util";
 import { FormsModule } from "@angular/forms";
 import {MatInputModule} from "@angular/material/input";
+import { formatDateToString, zonaHorariaEcuador } from "@/shared/utils/date.util";
+import { addDay, format, monthEnd, monthStart,   weekEnd, weekStart } from "@formkit/tempo";
 
 @Component({
   selector: 'app-date-range-selection',
@@ -41,12 +41,69 @@ export class DateRangeSelectionComponent {
     format: "YYYY-MM-DD"
   }
 
+  private currentDate = new Date()
+  private formatCurrentDate = format({
+    date: this.currentDate,
+    format: "YYYY-MM-DD HH:mm:ss",
+    tz: zonaHorariaEcuador,
+  })
   onChangeDateRange = output<{ from: string, to: string }>();
 
   @ViewChild('dateRangeInput', { static: false }) dateRangeInput!: ElementRef;
 
+  private getDateAddDay(day:number){
+    return  addDay(this.currentDate, day)
+  }
+
   ngAfterViewInit() {
+
+
     const self = this;
+    const rangos = {
+      'Hoy': [
+        self.formatCurrentDate,
+       self.formatCurrentDate,
+
+      ],
+      'Ayer': [
+        self.getDateAddDay(-1),
+        self.getDateAddDay(-1),
+      ],
+      'Últimos 5 días': [
+        self.getDateAddDay(-4),
+        self.formatCurrentDate,
+      ],
+      'Últimos 10 días': [
+        self.getDateAddDay(-9),
+        self.formatCurrentDate,
+      ],
+      'Últimos 15 días': [
+        self.getDateAddDay(-14),
+        self.formatCurrentDate,
+
+      ],
+      'Últimos 30 días': [
+        self.getDateAddDay(-29),
+        self.formatCurrentDate,
+      ],
+      'Esta semana': [
+        weekStart(self.currentDate ),
+        weekEnd(self.currentDate ),
+      ],
+      'Última semana': [
+        weekStart(weekStart(this.currentDate, -1)),
+        weekStart(this.currentDate, -1 ) ,
+      ],
+      'Este mes': [
+        monthStart(self.currentDate),
+        monthEnd(self.currentDate),
+      ],
+      'El mes pasado': [
+        monthStart(addDay(monthStart(this.currentDate),-1)),
+        addDay(monthStart(this.currentDate),-1),
+
+      ]
+    };
     const valorInput = this.dateRangeInput.nativeElement;
     (function (DateRangePicker) {
       let drp = new DateRangePicker(valorInput,
@@ -56,8 +113,8 @@ export class DateRangeSelectionComponent {
           //minDate: '2021-07-15 15:00',
           //maxDate: '2021-08-16 15:00',
           //maxSpan: { "days": 9 },
-          //showDropdowns: true,
-          //minYear: 2020,
+          showDropdowns: true,
+          minYear: 2020,
           //maxYear: 2022,
           //showWeekNumbers: true,
           //showISOWeekNumbers: true,
@@ -79,18 +136,7 @@ export class DateRangeSelectionComponent {
           //    return "weekday-" + m.weekday();
           //},
           //autoUpdateInput: false,
-          ranges: {
-            'Hoy': [moment(), moment()],
-            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Últimos 5 días': [moment().subtract(4, 'days'), moment()],
-            'Últimos 10 días': [moment().subtract(9, 'days'), moment()],
-            'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
-            'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
-            'Esta semana': [moment().startOf('week'), moment().endOf('week')],
-            'Última semana': [moment().subtract(1, 'weeks').startOf('week'), moment().subtract(1, 'weeks').endOf('week')],
-            'Este Mes': [moment().startOf('month'), moment().endOf('month')],
-            'El mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-          },
+          ranges: rangos,
           locale: {
             applyLabel: "Aplicar",
             cancelLabel: 'Cancelar',
@@ -100,26 +146,9 @@ export class DateRangeSelectionComponent {
           }
         },
         function (start: any, end: any) {
-          const currentDate = new Date();
-          // if (isDatesEqual(new Date(start), new Date())) {
-          //   start.setHours(
-          //     currentDate.getHours(),
-          //     currentDate.getMinutes(),
-          //     currentDate.getSeconds(),
-          //     currentDate.getMilliseconds()
-          //   );
-          // }
-          // if (isDatesEqual(end, new Date())) {
-          //   end.setHours(
-          //     currentDate.getHours(),
-          //     currentDate.getMinutes(),
-          //     currentDate.getSeconds(),
-          //     currentDate.getMilliseconds()
-          //   );
-          // }
           const dateRange = {
-            from: formatDateMoment(new Date(start)),
-            to: formatDateMoment(new Date(end))
+            from: formatDateToString(new Date(start)),
+            to: formatDateToString(new Date(end))
           };
           self.onChangeDateRange.emit(dateRange);
         })

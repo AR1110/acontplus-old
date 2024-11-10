@@ -1,60 +1,49 @@
 
 import { Component, computed,   inject, signal,   } from '@angular/core';
-import { MatIconModule } from "@angular/material/icon";
-import { MatButtonModule } from "@angular/material/button";
-import { AsyncPipe, CommonModule } from "@angular/common";
+import {MatIcon, MatIconModule} from "@angular/material/icon";
 import { ConfigService } from '@/shared/services/config.service';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin,   } from 'rxjs';
 import { ItemService } from '@/features/pos/services/item.service';
 import { Pagination } from "@/shared/models/pagination.model";
 import { ItemRead } from "@/features/pos/models/item.model";
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import {MatPaginator,  PageEvent} from '@angular/material/paginator';
 import { SubCategory } from "@/shared/models/inventory/subcategory.model";
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatCardModule } from "@angular/material/card";
+import {MatProgressSpinner,  } from '@angular/material/progress-spinner';
+import {MatCard, MatCardContent, } from "@angular/material/card";
 import { PosStoreService, posStoreStateInitial } from "@/features/pos/store/pos-store.service";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
+import {  MatFormFieldModule} from "@angular/material/form-field";
 import { MainStoreService } from "@/store/main-store.service";
 import { SUB_CATEGORY_CODE } from '@/shared/enums/main.enum';
 import { Dialog } from '@angular/cdk/dialog';
 import { FormsModule } from '@angular/forms';
-import { isValidField } from '@/shared/utils/utils';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
+import { isValidField } from '@/shared/utils/utils'; ;
 import { Order } from '@/features/orders/models/order.interface';
 import { CategoriesTabComponent } from '../components/categories-tab/categories-tab.component';
 import { PromotionsComponent } from '../components/promotions/promotions.component';
 import { ItemsComponent } from '../components/items/items.component';
-import { CartHeaderComponent } from '../components/cart-header/cart-header.component';
-import { CartItemsComponent } from '../components/cart-items/cart-items.component';
-import { CartFooterComponent } from '../components/cart-footer/cart-footer.component';
 import { TableModalComponent } from '../components/table-modal/table-modal.component';
+import {CommonModule} from "@angular/common";
+import {MatInputModule} from "@angular/material/input";
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-pos-page',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-
-    MatButtonModule,
-    MatIconModule,
-    MatPaginatorModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
+    MatCard,
+    MatCardContent,
+    CategoriesTabComponent,
+    MatPaginator,
     MatFormFieldModule,
     MatInputModule,
-    MatTooltipModule,
-    OverlayscrollbarsModule,
-    AsyncPipe,
-
-    CategoriesTabComponent,
+    FormsModule,
+    MatButtonModule,
+    MatIcon,
     PromotionsComponent,
-    ItemsComponent,
-    CartHeaderComponent,
-    CartItemsComponent,
-    CartFooterComponent
+    MatProgressSpinner,
+    ItemsComponent
+
   ],
   templateUrl: './pos-page.component.html',
   styleUrl: './pos-page.component.scss'
@@ -234,7 +223,6 @@ export class PosPageComponent {
     this.setLoading(true)
     this.getDataFormInit()?.subscribe({
       next: response => {
-        console.log(response)
         this.setLoading(false)
         const [dataForm, dataItem] = response;
 
