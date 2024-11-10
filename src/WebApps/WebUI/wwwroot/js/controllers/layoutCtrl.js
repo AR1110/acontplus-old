@@ -106,11 +106,14 @@
 
 
         const pathname = $window.location.pathname;
+        console.log(pathname)
         if (/\/Config\/UserProfile\/Index/.test(pathname)) return;
+
+        if(pathname==='/Index')return 
 
         if (pathname) {
             if (pathname === "/") {
-                location.href = "/Index";
+                location.href = "/Index"; 
             }
             if (pathname.indexOf("/Home") == -1) {
                 let lengthPath = pathname.split("/").splice(1).length;
@@ -169,7 +172,7 @@
                         $rootScope.accion = structuredClone(namesObject)
                         $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
                     } else {
-                        //location.href = "/";
+                       location.href = "/Index";
                     }
                 }
             }
