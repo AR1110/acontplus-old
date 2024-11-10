@@ -173,6 +173,10 @@
     {
       "library": "material-design-iconic-font@2.2.0",
       "destination": "wwwroot/assets/icons/material-design-iconic-font/"
+    },
+    {
+      "library": "chartjs-plugin-datalabels@2.2.0",
+      "destination": "wwwroot/lib/chartjs-plugin-datalabels/"
     }
   ]
 }
