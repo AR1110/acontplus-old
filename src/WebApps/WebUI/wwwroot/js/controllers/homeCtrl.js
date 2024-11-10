@@ -24,6 +24,11 @@
         $scope.expiredSignatures = [];
         $scope.emittedDocuments = [];
         $scope.receivedDocuments = [];
+        $scope.anotherSalesDocs = [];
+
+        let chartEmittedDocs = null,
+            chartReceivedDocs = null,
+            chartAnoterSalesDocuments;
 
         $scope.openAlert = () => {
             $scope.alertIsOpened = true;
@@ -320,20 +325,21 @@
 
                 let dashboardData = JSON.parse(responseDashboard.payload);
                 if (dashboardData) {
-                    const { statistics, licenses, stepsConfig, expiredSignatures, emittedDocuments, receivedDocuments } = dashboardData;
+                    const { statistics, licenses, stepsConfig, expiredSignatures, emittedDocuments, receivedDocuments, anotherSalesDocs } = dashboardData;
                     $scope.cantidad = angular.fromJson(statistics);
                     $scope.licenses = angular.fromJson(licenses) || [];
                     $scope.stepsConfig = angular.fromJson(stepsConfig) || [];
                     $scope.expiredSignatures = angular.fromJson(expiredSignatures) || [];
                     $scope.emittedDocuments = angular.fromJson(emittedDocuments) || [];
                     $scope.receivedDocuments = angular.fromJson(receivedDocuments) || [];
+                    $scope.anotherSalesDocs = angular.fromJson(anotherSalesDocs) || [];
 
                     if ($scope.emittedDocuments.length > 0) {
                         // Prepare the data for the chart
-                        var labels = [];
-                        var totals = [];
-                        var backgroundColors = [];
-                        var borderColors = [];
+                        let labels = [];
+                        let totals = [];
+                        let backgroundColors = [];
+                        let borderColors = [];
 
                         // Loop through the documents and extract the type and total for each
                         $scope.emittedDocuments.forEach(function (doc) {
@@ -349,10 +355,10 @@
 
                     if ($scope.receivedDocuments.length > 0) {
                         // Prepare the data for the chart
-                        var labels = [];
-                        var totals = [];
-                        var backgroundColors = [];
-                        var borderColors = [];
+                        let labels = [];
+                        let totals = [];
+                        let backgroundColors = [];
+                        let borderColors = [];
 
                         // Loop through the documents and extract the type and total for each
                         $scope.receivedDocuments.forEach(function (doc) {
@@ -364,6 +370,24 @@
 
                         // Call the function to render the chart with the updated data
                         $scope.renderChartReceived(labels, totals, backgroundColors, borderColors);
+                    }
+                    if ($scope.anotherSalesDocs.length > 0) {
+                        // Prepare the data for the chart
+                        let labels = [];
+                        let totals = [];
+                        let backgroundColors = [];
+                        let borderColors = [];
+
+                        // Loop through the documents and extract the type and total for each
+                        $scope.anotherSalesDocs.forEach(function (doc) {
+                            labels.push(doc.document);          // Document type (e.g., "Invoices", "Credit Notes")
+                            totals.push(doc.total);          // Total for the document type
+                            backgroundColors.push(getRandomColor(0.2)); // Random background color with 0.2 opacity
+                            borderColors.push(getRandomColor(1));       // Random border color with full opacity
+                        });
+
+                        // Call the function to render the chart with the updated data
+                        $scope.renderAnotherSalesDocsChart(labels, totals, backgroundColors, borderColors);
                     }
 
                     if ($scope.stepsConfig.length > 0) {
@@ -448,9 +472,16 @@
 
         // Function to render the chart
         $scope.renderChart = function (labels, totals, backgroundColors, borderColors) {
-            var ctx = document.getElementById('documentChart').getContext('2d');
+            let ctx = document.getElementById('documentChart').getContext('2d');
 
-            var chart = new Chart(ctx, {
+            // If the chart instance already exists, destroy it before creating a new one
+            if (chartEmittedDocs && chartEmittedDocs !== null) {
+                chartEmittedDocs.destroy();
+            }
+
+            // Create the new chart instance
+
+            chartEmittedDocs = new Chart(ctx, {
                 type: 'bar', // You can change the chart type (e.g., 'line', 'pie', etc.)
                 data: {
                     labels: labels, // X-axis labels (document types)
@@ -480,19 +511,34 @@
                         }
                     },
                     scales: {
+                        x: {
+                            ticks: {
+                                autoSkip: false,
+                            },
+                        },
                         y: {
-                            beginAtZero: true // Ensures the Y-axis starts from 0
-                        }
+                            beginAtZero: true, // Ensures the Y-axis starts from 0
+                            ticks: {
+                                stepSize: 1,
+                            }
+                        },
                     }
                 },
                 plugins: [ChartDataLabels] // Register the Data Labels plugin
             });
         };
         $scope.renderChartReceived = function (labels, totals, backgroundColors, borderColors) {
-            var ctx = document.getElementById('documentReceivedChart').getContext('2d');
+            let ctx = document.getElementById('documentReceivedChart').getContext('2d');
 
-            var chart = new Chart(ctx, {
-                type: 'bar', // You can change the chart type (e.g., 'line', 'pie', etc.)
+            // If the chart instance already exists, destroy it before creating a new one
+            if (chartReceivedDocs && chartReceivedDocs !== null) {
+                chartReceivedDocs.destroy();
+            }
+
+            // Create the new chart instance
+
+            chartReceivedDocs = new Chart(ctx, {
+                type: 'line', // You can change the chart type (e.g., 'line', 'pie', etc.)
                 data: {
                     labels: labels, // X-axis labels (document types)
                     datasets: [{
@@ -521,9 +567,73 @@
                         }
                     },
                     scales: {
+                        x: {
+                            ticks: {
+                                autoSkip: false,
+                            },
+                        },
                         y: {
-                            beginAtZero: true // Ensures the Y-axis starts from 0
+                            beginAtZero: true, // Ensures the Y-axis starts from 0
+                            ticks: {
+                                stepSize: 1,
+                            }
+                        },
+                    }
+                },
+                plugins: [ChartDataLabels] // Register the Data Labels plugin
+            });
+        };
+        $scope.renderAnotherSalesDocsChart = function (labels, totals, backgroundColors, borderColors) {
+            let ctx = document.getElementById('anotherSalesDocsChart').getContext('2d');
+
+            // If the chart instance already exists, destroy it before creating a new one
+            if (chartAnoterSalesDocuments && chartAnoterSalesDocuments !== null) {
+                chartAnoterSalesDocuments.destroy();
+            }
+
+            // Create the new chart instance
+
+            chartAnoterSalesDocuments = new Chart(ctx, {
+                type: 'line', // You can change the chart type (e.g., 'line', 'pie', etc.)
+                data: {
+                    labels: labels, // X-axis labels (document types)
+                    datasets: [{
+                        label: 'Documentos No Tributarios',
+                        data: totals, // Data values (totals for each document type)
+                        backgroundColor: backgroundColors, // Dynamic background colors
+                        borderColor: borderColors, // Dynamic border colors
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        // Enable the Data Labels plugin to show labels on bars
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            offset: -5,
+                            formatter: function (value, context) {
+                                return value; // Display the value of each bar
+                            },
+                            font: {
+                                weight: 'bold',
+                                size: 12
+                            },
+                            color: 'black'
                         }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                autoSkip: false,
+                            },
+                        },
+                        y: {
+                            beginAtZero: true, // Ensures the Y-axis starts from 0
+                            ticks: {
+                                stepSize: 1,
+                            }
+                        },
                     }
                 },
                 plugins: [ChartDataLabels] // Register the Data Labels plugin
