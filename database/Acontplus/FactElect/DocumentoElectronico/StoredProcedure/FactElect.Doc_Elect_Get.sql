@@ -154,7 +154,7 @@ BEGIN
 		        END 
 
 
-            SET @sql = @sql + 'ORDER BY de.idDocumentoElectronico DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
+            SET @sql = @sql + 'ORDER BY de.fechaEmision DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
 	 
 	        EXEC sp_executesql @sql,@params
 				                   ,@idEntidad              = @idEntidad

@@ -130,6 +130,60 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Column -->
+                        <div class="col-md-6 col-lg-3 col-xlg-3">
+                            <div class="card">
+                                <a href="/Factura/Index">
+                                    <div class="box bg-info text-center">
+                                        <h1 class="font-light text-white"><i class="fa fa-file-invoice-dollar"></i></h1>
+                                        <h6 class="text-white">Factura Venta</h6>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Column -->
+                        <div class="col-md-6 col-lg-3 col-xlg-3">
+                            <div class="card">
+                                <a href="/NotaEntrega/Index">
+                                    <div class="box bg-primary text-center">
+                                        <h1 class="font-light text-white"><i class="fa fa-money-bills"></i></h1>
+                                        <h6 class="text-white">Nota Entrega</h6>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Column -->
+                        <div class="col-md-6 col-lg-3 col-xlg-3">
+                            <div class="card">
+                                <a href="/Proforma/Index">
+                                    <div class="box bg-success text-center">
+                                        <h1 class="font-light text-white"><i class="fa fa-money-bill-transfer"></i></h1>
+                                        <h6 class="text-white">Proforma</h6>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 col-xlg-3">
+                            <div class="card">
+                                <a href="/ConsultarPrecio/Index">
+                                    <div class="box bg-purple text-center">
+                                        <h1 class="font-light text-white"><i class=" fas fa-donate fa-lg"></i></h1>
+                                        <h6 class="text-white">Consultar Precio</h6>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row" ng-show="emittedDocuments.length > 0 || receivedDocuments.length > 0 || anotherSalesDocuments.length > 0 ">
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12" ng-show="emittedDocuments.length > 0">
             <div class="card">
@@ -150,7 +204,7 @@
                     <a href="/Compras/DocumentoRecibido/Index" title="Ir a Documentos Recibidos"><i class="fa fa-sign-in"></i> </a>
                 </div>
             </div>
-        </div> 
+        </div>
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12" ng-show="anotherSalesDocs.length > 0">
             <div class="card">
                 <div class="card-body w-100">
@@ -160,26 +214,6 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 col-lg-3 col-xlg-3">
-                            <div class="card">
-                                <a href="/ConsultarPrecio/Index">
-                                    <div class="box bg-purple text-center">
-                                        <h1 class="font-light text-white"><i class=" fas fa-donate fa-lg"></i></h1>
-                                        <h6 class="text-white">Consultar Precio</h6>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 @section Scripts {

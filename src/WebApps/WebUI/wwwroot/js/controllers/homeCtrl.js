@@ -326,13 +326,13 @@
                 let dashboardData = JSON.parse(responseDashboard.payload);
                 if (dashboardData) {
                     const { statistics, licenses, stepsConfig, expiredSignatures, emittedDocuments, receivedDocuments, anotherSalesDocs } = dashboardData;
-                    $scope.cantidad = angular.fromJson(statistics);
-                    $scope.licenses = angular.fromJson(licenses) || [];
-                    $scope.stepsConfig = angular.fromJson(stepsConfig) || [];
-                    $scope.expiredSignatures = angular.fromJson(expiredSignatures) || [];
-                    $scope.emittedDocuments = angular.fromJson(emittedDocuments) || [];
-                    $scope.receivedDocuments = angular.fromJson(receivedDocuments) || [];
-                    $scope.anotherSalesDocs = angular.fromJson(anotherSalesDocs) || [];
+                    $scope.cantidad = statistics[0] || [];
+                    $scope.licenses = licenses || [];
+                    $scope.stepsConfig = stepsConfig || [];
+                    $scope.expiredSignatures = expiredSignatures || [];
+                    $scope.emittedDocuments = emittedDocuments || [];
+                    $scope.receivedDocuments = receivedDocuments || [];
+                    $scope.anotherSalesDocs = anotherSalesDocs || [];
 
                     if ($scope.emittedDocuments.length > 0) {
                         // Prepare the data for the chart

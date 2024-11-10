@@ -1,9 +1,12 @@
 ﻿namespace Common.API.Services;
 
-public class DashboardService(IAdoSqlServer adoSqlServer) : IDashboardService
+public class DashboardService(IAdoRepository adoRepository) : IDashboardService
 {
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        return await adoSqlServer.SpExecuteAsync<ApiResponse>("Common.Dashboard_Get", parameters);
+        var ds = await adoRepository.GetDataSetAsync("Common.Dashboard_Get", parameters);
+        return DataValidation.DataSetIsNull(ds)
+            ? new ApiResponse { Code = "0", Message = "Data not found!" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }
