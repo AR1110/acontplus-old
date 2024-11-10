@@ -307,7 +307,7 @@ BEGIN
 	    IF @tipo = 4
 		    BEGIN
 			
-                SET @tableNames = 'fractionalProducts'
+                SET @tableNames = 'fractionedProduct'
 
 			    SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT )
 
@@ -328,7 +328,7 @@ BEGIN
 	    --> DataForm 
 	    IF @tipo = 5
 		    BEGIN
-                SET @tableNames  = 'warehouses,decimal,subfamilies,families,measurements,models,brands,productType,taxes,ice,rates,labels'
+                SET @tableNames  = 'warehouses,decimal,subcategories,categories,measures,models,brands,productTypes,taxes,ice,fees,tags'
 
 			    SELECT idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 
@@ -373,7 +373,7 @@ BEGIN
 	    --> Datos Articulo Venta Web
 	    IF @tipo = 6
 		    BEGIN
-                SET @tableNames = 'product,fractionalProducts,measurements,inventoryAdjustment,additionalInfo'
+                SET @tableNames = 'product,fractionedMeasures,measures,inventoryAdjustment,additionalInfo'
 
 		        SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT)
 
@@ -458,7 +458,7 @@ BEGIN
 	    --> Configuracion Stock
 	    IF @tipo = 7
 		    BEGIN
-                SET @tableNames = 'response'
+                SET @tableNames = 'stockCheckResponse'
 
 
 	            DECLARE @stock       NUMERIC(18,5) 
@@ -531,7 +531,7 @@ BEGIN
         --> Data Compra
         IF @tipo = 9
             BEGIN
-                SET @tableNames = 'product,measurements,fractionalProducts,labels'
+                SET @tableNames = 'product,measures,fractionedMeasures,tags'
 
                 SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT)
 
@@ -621,7 +621,7 @@ BEGIN
         --> Filters
         IF @tipo = 11
             BEGIN
-                SET @tableNames = 'subFamilies,measures,brands,models,taxes'
+                SET @tableNames = 'subcategories,measures,brands,models,taxes'
 
                 SELECT idSubFamilia,descripcion FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY descripcion ASC
 
@@ -639,7 +639,7 @@ BEGIN
         --> Filter Report
         IF @tipo = 13
             BEGIN
-                SET @tableNames = 'warehouses,subFamilies,brands,documentType,rates'
+                SET @tableNames = 'warehouses,subcategories,brands,documentTypes,fees'
 
                 SELECT codEstab,idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
            
