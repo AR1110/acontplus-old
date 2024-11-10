@@ -17,12 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "allowedCommonJsDependencies": [
-              "sweetalert2",
-              "file-saver",
-              "moment",
-              "moment-timezone"
-            ],
+            "allowedCommonJsDependencies": ["sweetalert2", "file-saver"],
             "outputPath": {
               "base": "../../Services/Restaurant/Restaurant.API/wwwroot",
               "browser": ""

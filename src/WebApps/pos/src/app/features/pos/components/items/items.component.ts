@@ -5,7 +5,7 @@ import { playBeepSound } from '@/shared/utils/sound.util';
 import { DECIMALS } from '@/shared/enums/main.enum';
 import { OrderItem } from '@/features/orders/models/order.interface';
 import { ItemRead } from '@/features/pos/models/item.model';
-import { ProductService } from "@/shared/services/external/product.service";
+import { ProductService } from "@/shared/services/product/product.service";
 import { ToasterService } from "@/shared/services/toaster.service";
 import { MainStoreService } from "@/store/main-store.service";
 import { PosStoreService } from '@/features/pos/store/pos-store.service';
