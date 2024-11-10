@@ -224,11 +224,11 @@
                                             </md-button>
                                         </md-menu-item>
 
-                                        <md-menu-item ng-if="accion.eliminar || !a.articulo.estado">
+                                        <md-menu-item ng-if="accion.eliminar">
                                             <md-button ng-click="askToDelete(a)">
                                                 <span md-menu-align-target>
                                                     <i class="ti-trash"></i>
-                                                    Eliminar
+                                                    Inactivar
                                                 </span>
                                             </md-button>
                                         </md-menu-item>
