@@ -1,9 +1,32 @@
-import { CuentaPorPagarCuotaConfig, CuentaPorPagarLista } from "../cuenta-por-pagar/cuenta-por-pagar.interface"
-import {ComprobanteEgresoLista} from "@accounting/comprobante-egreso/comprobante-egreso.interface";
-import {PagoDetalleLista} from "@accounting/cuenta-por-pagar/pago-detalle.interface";
-import {HistorialPagoLista} from "@accounting/cuenta-por-pagar/historial-pago.interface";
+import { CuentaPorPagarCuotaConfig, CuentaPorPagarLista } from "./interfaces/cuenta-por-pagar.interface"
+import { ComprobanteEgresoLista } from "@accounting/comprobante-egreso/comprobante-egreso.interface";
+import { PagoDetalleLista } from "@modules/accounting/cuenta-por-pagar/interfaces/pago-detalle.interface";
+import { HistorialPagoLista } from "@modules/accounting/cuenta-por-pagar/interfaces/historial-pago.interface";
+import { ApiResponse } from "@core/models/api-response";
+import { groupEstabUtil } from "@core/utils/group-estab.util";
 
 export class CuentaPorPagarAdapter {
+
+  static fromApiDataFilter(response: ApiResponse) {
+    let [tempEstabs, tempEstadosDoc, tempTiposDoc, tempCategorias] = JSON.parse(response.payload as string);
+
+
+    let dataToGroup = {
+      estabs: tempEstabs,
+      isGroupPuntoEmision: true
+    }
+
+
+    return {
+      estabs: groupEstabUtil(dataToGroup),
+      estadosDoc: tempEstadosDoc,
+      tiposDoc: tempTiposDoc,
+      categorias: tempCategorias,
+
+    }
+
+
+  }
 
   static fromApiGetAll(response: any[]): CuentaPorPagarLista[] {
 
@@ -57,7 +80,7 @@ export class CuentaPorPagarAdapter {
   }
 
 
-  static  fromApiHistMovimiento(response: any[]){
+  static fromApiHistMovimiento(response: any[]) {
     const [tempCuentaPorPagar, tempComprobanteEgreso, tempHistorialPagos, tempPagosDetalle] = response;
 
     const {
@@ -81,12 +104,12 @@ export class CuentaPorPagarAdapter {
         saldo
       } as Partial<CuentaPorPagarLista>,
 
-      comprobantesEgreso: tempComprobanteEgreso.map((item:any, index: number)=>{
+      comprobantesEgreso: tempComprobanteEgreso.map((item: any, index: number) => {
 
         return {
           index: index + 1,
           idComprobanteEgreso: item.idComprobanteEgreso,
-           fechaEmision: item.fechaEmision,
+          fechaEmision: item.fechaEmision,
           serieComprobante: item.serieComprobante,
           total: item.total,
           nombreEstado: item.nombreEstado,
@@ -97,18 +120,18 @@ export class CuentaPorPagarAdapter {
       }) as ComprobanteEgresoLista[],
 
 
-      historialPagos: tempHistorialPagos.map((item:any)=>{
+      historialPagos: tempHistorialPagos.map((item: any) => {
         return {
-           idComprobanteEgreso: item.idComprobanteEgreso,
+          idComprobanteEgreso: item.idComprobanteEgreso,
           idPago: item.idPago,
-          nombrePosfechado : item.nombrePosfechado,
-          fechaEmision : item.fechaEmision,
-          nombreFormaPago : item.nombreFormaPago,
-          nombreBanco : item.nombreBanco,
-           valor: item.valor,
-           abono: item.abono,
-           vuelto: item.vuelto,
-          codigoFormaPago : item.codigoFormaPago,
+          nombrePosfechado: item.nombrePosfechado,
+          fechaEmision: item.fechaEmision,
+          nombreFormaPago: item.nombreFormaPago,
+          nombreBanco: item.nombreBanco,
+          valor: item.valor,
+          abono: item.abono,
+          vuelto: item.vuelto,
+          codigoFormaPago: item.codigoFormaPago,
           nro: item.nro,
           lote: item.lote,
           referencia: item.referencia,
@@ -117,14 +140,14 @@ export class CuentaPorPagarAdapter {
         }
       }) as HistorialPagoLista[],
 
-      pagosDetalle: tempPagosDetalle.map((item:any)=>{
+      pagosDetalle: tempPagosDetalle.map((item: any) => {
         return {
-          idPago:item.idPago,
-          nroCuota:item.nroCuota,
-          fechaVencimiento:item.fechaVencimiento,
-          cuota:item.cuota,
-          abono:item.abono,
-          saldo:item.saldo,
+          idPago: item.idPago,
+          nroCuota: item.nroCuota,
+          fechaVencimiento: item.fechaVencimiento,
+          cuota: item.cuota,
+          abono: item.abono,
+          saldo: item.saldo,
         }
 
       }) as PagoDetalleLista[]
@@ -133,5 +156,17 @@ export class CuentaPorPagarAdapter {
 
 
   }
+
+
+
+
+  static toApiGenerarCuota(obj: any) {
+    return   {
+      idCuentaPorPagar: obj.id,
+      idTiempoCredito: obj.tiempoCreditoId,
+       codPago: obj.codigoEstado
+  };
+  }
+
 
 }

@@ -30,7 +30,7 @@ import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
 import { MODAL_SIZE } from '@core/constants/global.constants';
 
 // Accounting Module Components and Services
-import { CuentaPorPagarLista } from '@modules/accounting/cuenta-por-pagar/cuenta-por-pagar.interface';
+import { CuentaPorPagarLista } from '@modules/accounting/cuenta-por-pagar/interfaces/cuenta-por-pagar.interface';
 import { CuentaPorPagarService } from '@modules/accounting/cuenta-por-pagar/cuenta-por-pagar.service';
 import { CuentaPorPagarCuotaModalComponent } from '../cuenta-por-pagar-cuota-modal/cuenta-por-pagar-cuota-modal.component';
 
