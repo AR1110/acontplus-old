@@ -24,7 +24,9 @@ BEGIN
         @licenses VARCHAR(MAX) = '[]',
         @stepsConfig VARCHAR(MAX) = '[]',
         @expiredSignatures VARCHAR(MAX) = '[]',
-        @userId INT;
+        @userId INT,
+        @emittedDocuments VARCHAR(MAX) = '[]',
+        @receivedDocuments VARCHAR(MAX) = '[]';
 
     -- Use a temporary table to store intermediate results
     DECLARE @TempResults TABLE (
@@ -32,7 +34,6 @@ BEGIN
         cantidadCliente INT,
         cantidadProveedor INT,
         cantidadUsuario INT,
-        cantidadFacturaVenta INT,
         cantidadNotaEntrega INT,
         cantidadProforma INT,
         cantidadFacturaCompra INT
@@ -55,21 +56,57 @@ BEGIN
             (SELECT COUNT(*) FROM dbo.Cliente     WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
             (SELECT COUNT(*) FROM dbo.Proveedor   WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
             (SELECT COUNT(*) FROM dbo.Usuario     WITH (NOLOCK) WHERE idUsuario IN (SELECT idUsuario FROM App.UsuarioRol WHERE idEntidad = @idEntidad)),
-            (
-                SELECT COUNT(*) FROM dbo.Factura    fe
-                INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = fe.idDocumentoElectronico
-                INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
-                INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
-                WHERE es.idEntidad = @idEntidad
-                  AND fe.estado = 1
-            ),
             (SELECT COUNT(*) FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
             (SELECT COUNT(*) FROM dbo.Proforma    WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            ((SELECT COUNT(*) 
-        FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK) 
-        INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON dr.idEstablecimiento = e.idEstablecimiento
-        WHERE e.idEntidad = @idEntidad 
-          AND dr.complete = 1) + ISNULL((SELECT COUNT(*) FROM dbo.FacturaCompra WHERE idEntidad = @idEntidad AND estado = 1), 0));
+            (SELECT COUNT(*) FROM dbo.FacturaCompra WHERE idEntidad = @idEntidad AND estado = 1);
+
+
+    IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico de WITH(NOLOCK) INNER JOIN 
+            Acontplus.dbo.PuntoEmision pe WITH(NOLOCK) ON de.idPuntoEmision = pe.idPuntoEmision
+        INNER JOIN 
+             Acontplus.Sri.Establecimiento e WITH(NOLOCK) ON pe.idEstablecimiento = e.idEstablecimiento WHERE idEntidad = @identidad)
+        BEGIN
+            SET @emittedDocuments = (
+      
+            SELECT
+                td.descripcion document, 
+                COUNT(*) total
+            FROM 
+                Acontplus.dbo.DocumentoElectronico de WITH(NOLOCK)
+            INNER JOIN 
+                Acontplus.dbo.TipoDocumento td WITH(NOLOCK) ON de.idTipoDocumento = td.idTipoDocumento
+            INNER JOIN 
+                Acontplus.FactElect.EstadoServicio es WITH(NOLOCK) ON de.idEstadoServicio = es.idEstadoServicio
+            INNER JOIN 
+                Acontplus.dbo.PuntoEmision pe WITH(NOLOCK) ON de.idPuntoEmision = pe.idPuntoEmision
+            INNER JOIN 
+                 Acontplus.Sri.Establecimiento e WITH(NOLOCK) ON pe.idEstablecimiento = e.idEstablecimiento
+            WHERE 
+                e.idEntidad = @idEntidad
+		    GROUP BY  de.idTipoDocumento, 
+                td.descripcion, 
+                td.codigoSri
+            ORDER BY td.codigoSri
+            FOR JSON PATH
+            );
+        END
+
+        IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido dr INNER JOIN Sri.Establecimiento e On dr.idEstablecimiento = e.idEstablecimiento
+            WHERE e.idEntidad = @idEntidad)
+            BEGIN
+                
+                SET @receivedDocuments = (
+                SELECT dr.comprobante document
+                    ,count(*) total
+                FROM Recepcion.DocumentoRecibido dr INNER JOIN Sri.Establecimiento e On dr.idEstablecimiento = e.idEstablecimiento
+                WHERE 
+                    e.idEntidad = @idEntidad
+                GROUP BY dr.comprobante
+                    ,dr.codDoc
+                ORDER BY dr.codDoc
+
+                FOR JSON PATH);
+            END
 
         -- Check subscription status
         DECLARE @subscriptionCount INT, @freeSuscriptions INT, @maxPaymentDateCount INT;
@@ -204,15 +241,16 @@ BEGIN
                               cantidadArticulo,
                               cantidadCliente,
                               cantidadProveedor,
-                             cantidadFacturaVenta as cantidadFacturaV,
                                 cantidadFacturaCompra As  cantidadFacturaC,
-                              cantidadProforma,
-                              cantidadNotaEntrega 
+                                cantidadProforma,
+                                cantidadNotaEntrega
                         FROM @TempResults
                         FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) AS 'statistics',
                        ISNULL(@licenses, '[]') AS licenses,
                        ISNULL(@stepsConfig, '[]') AS stepsConfig,
-                       @expiredSignatures AS expiredSignatures
+                       @expiredSignatures AS expiredSignatures,
+                       @emittedDocuments AS emittedDocuments,
+                       @receivedDocuments AS receivedDocuments
                    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
                );
 
