@@ -130,18 +130,31 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+    <div class="row" ng-show="emittedDocuments.length > 0 || receivedDocuments.length > 0 || anotherSalesDocuments.length > 0 ">
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12" ng-show="emittedDocuments.length > 0">
             <div class="card">
                 <div class="card-body w-100">
                     <canvas id="documentChart"></canvas>
                 </div>
+                <div class="card-footer">
+                    <a href="/FactElect/DocumentoElectronico/Index" title="Ir a Documentos Electrónicos"><i class="fa fa-sign-in"></i> </a>
+                </div>
             </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12" ng-if="receivedDocuments.length > 0">
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12" ng-show="receivedDocuments.length > 0">
             <div class="card">
                 <div class="card-body w-100">
                     <canvas id="documentReceivedChart"></canvas>
+                </div>
+                <div class="card-footer">
+                    <a href="/Compras/DocumentoRecibido/Index" title="Ir a Documentos Recibidos"><i class="fa fa-sign-in"></i> </a>
+                </div>
+            </div>
+        </div> 
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12" ng-show="anotherSalesDocs.length > 0">
+            <div class="card">
+                <div class="card-body w-100">
+                    <canvas id="anotherSalesDocsChart"></canvas>
                 </div>
             </div>
         </div>
@@ -151,43 +164,6 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row">
-                        <!-- Column -->
-                        <div class="col-md-6 col-lg-3 col-xlg-3">
-                            <div class="card">
-                                <a href="/NotaEntrega/Index">
-                                    <div class="box bg-primary text-center">
-                                        <h1 class="font-light text-white">{{cantidad.cantidadNotaEntrega}}</h1>
-                                        <h6 class="text-white">Nota Entrega</h6>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <!-- Column -->
-                        <div class="col-md-6 col-lg-3 col-xlg-3">
-                            <div class="card">
-                                <a href="/Proforma/Index">
-                                    <div class="box bg-success text-center">
-                                        <h1 class="font-light text-white">{{cantidad.cantidadProforma}}</h1>
-                                        <h6 class="text-white">Proforma</h6>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <!-- Column -->
-                        <div class="col-md-6 col-lg-3 col-xlg-3">
-                            <div class="card">
-                                <a href="/Compras/FacturaCompra/Index">
-                                    <div class="box bg-dark text-center">
-                                        <h1 class="font-light text-white">{{cantidad.cantidadFacturaC}}</h1>
-                                        <h6 class="text-white">Facturas Físicas</h6>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <!-- Column -->
-                    </div>
-
                     <div class="row">
                         <div class="col-md-6 col-lg-3 col-xlg-3">
                             <div class="card">
