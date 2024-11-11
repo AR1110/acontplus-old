@@ -63,6 +63,15 @@ INCLUDE (xmlAcontPlus, fechaEmision, isAutomatic, nroDocumento, claveAcceso, fec
 WHERE idEstadoServicio = 9;
 GO
 
+IF EXISTS (SELECT name FROM sys.indexes  
+            WHERE name = N'idx_DocumentoElectronico_PtoEmision')   
+    DROP INDEX idx_DocumentoElectronico_PtoEmision ON dbo.DocumentoElectronico;  
+GO
+CREATE NONCLUSTERED INDEX idx_DocumentoElectronico_PtoEmision
+ON dbo.DocumentoElectronico (idPuntoEmision)
+INCLUDE (claveAcceso, fechaEmision, fechaAutorizacion, idUsuario, versionComp, customerId, idEstadoServicio, idTipoDocumento, serieComprobante)
+GO
+
 UPDATE STATISTICS dbo.DocumentoElectronico WITH FULLSCAN;
 GO
 
