@@ -15,16 +15,16 @@ import { CuentaPorPagarService } from '../../cuenta-por-pagar.service';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { finalize } from 'rxjs';
-import {CuentaPorPagarLista} from "@accounting/cuenta-por-pagar/cuenta-por-pagar.interface";
+import {CuentaPorPagarLista} from "@modules/accounting/cuenta-por-pagar/interfaces/cuenta-por-pagar.interface";
 import {MatCardModule} from "@angular/material/card";
-import {HistorialPagoLista} from "@accounting/cuenta-por-pagar/historial-pago.interface";
+import {HistorialPagoLista} from "@modules/accounting/cuenta-por-pagar/interfaces/historial-pago.interface";
 import {MatDivider} from "@angular/material/divider";
 import {DialogService} from "@core/services/dialog.service";
 import {
   PagoDetalleModalComponent
 } from "@accounting/cuenta-por-pagar/components/pago-detalle-modal/pago-detalle-modal.component";
 import {ComprobanteEgresoLista} from "@accounting/comprobante-egreso/comprobante-egreso.interface";
-import {PagoDetalleLista} from "@accounting/cuenta-por-pagar/pago-detalle.interface";
+import {PagoDetalleLista} from "@modules/accounting/cuenta-por-pagar/interfaces/pago-detalle.interface";
 import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({

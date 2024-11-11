@@ -4,7 +4,7 @@ import {
 } from "@core/components/custom-container-dialog/custom-container-dialog.component";
 import {MatButton} from "@angular/material/button";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {PagoDetalleLista} from "@accounting/cuenta-por-pagar/pago-detalle.interface";
+import {PagoDetalleLista} from "@modules/accounting/cuenta-por-pagar/interfaces/pago-detalle.interface";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";

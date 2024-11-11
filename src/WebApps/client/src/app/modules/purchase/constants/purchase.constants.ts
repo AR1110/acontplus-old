@@ -7,4 +7,5 @@ export const enum PURCHASE_PATHS {
 
 export  const enum PURCHASE_CODE_REPORT {
   RCNH= 'RCNH', //Compra No Habitual
+  RLC='RLC',//Liquidacion Compra
 }
