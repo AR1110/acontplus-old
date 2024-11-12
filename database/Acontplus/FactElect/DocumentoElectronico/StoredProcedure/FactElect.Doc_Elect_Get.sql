@@ -131,16 +131,11 @@ BEGIN
 			        SET @sql = @sql + 'AND de.rucReceptor = @identificacionReceptor '
 		        END 
 
-	        IF (@tipo = '3')
-		        BEGIN
-			        SET @sql = @sql +  'AND de.codEstado NOT IN (4,6) '
-		        END
-	
 	        IF @codEstado >= 0
 		        BEGIN
                     IF @codEstado = 8 
                         BEGIN
-                            SET @sql = @sql +  'AND de.codEstado NOT IN (4,6) '
+                            SET @sql = @sql +  'AND de.codEstado <> 4 AND de.codEstado <> 6 '
                         END 
                     ELSE 
                         BEGIN
