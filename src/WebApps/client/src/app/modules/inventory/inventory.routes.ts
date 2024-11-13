@@ -4,7 +4,6 @@ import { CategoryPageComponent } from "./pages/category-page/category-page.compo
 import { LotPricePageComponent } from "./pages/lot-price-page/lot-price-page.component";
 import { MassiveTaxPageComponent } from "./pages/massive-tax-page/massive-tax-page.component";
 import { MeasurePageComponent } from "./pages/measure-page/measure-page.component";
-import { ProductPageComponent } from "./pages/product-page/product-page.component";
 import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
 import {InventoryReportPageComponent} from "@inventory/reports/inventory-report-page/inventory-report-page.component";
 import { BrandPageComponent } from "./pages/brand-page/brand-page.component";
@@ -12,6 +11,7 @@ import { InvModelPageComponent } from "./pages/inv-model-page/inv-model-page.com
 import { TarifaPageComponent } from "./pages/tarifa-page/tarifa-page.component";
 import { TagsPageComponent } from "./pages/tags-page/tags-page.component";
 import { FraccProductPageComponent } from "./pages/fracc-product-page/fracc-product-page.component";
+import {ProductPageComponent} from "@inventory/product/product-page/product-page.component";
 
 export const routes: Route[] = [
 

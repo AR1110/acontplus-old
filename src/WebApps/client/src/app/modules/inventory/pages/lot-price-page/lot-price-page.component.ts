@@ -12,7 +12,7 @@ import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SupplierSearchComponent } from '@modules/customer/supplier/components/supplier-search/supplier-search.component';
-import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
+import { ProductSearchComponent } from '@inventory/product/components/product-search/product-search.component';
 import { SubCategorySelectMultipleComponent } from '@modules/inventory/components/sub-category/sub-category-select-multiple/sub-category-select-multiple.component';
 import { LotPrice, LotPriceTarifa } from '@modules/inventory/models/lot-price.model';
 import { GroupedSubFamilia } from '@modules/inventory/models/sub-category.model';
