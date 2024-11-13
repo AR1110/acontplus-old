@@ -104,16 +104,16 @@ BEGIN
                                ,ro.[Enabled]
                                ,ro.[Deleted]
                                ,us.nombreUsuario                           as UserName
-                               ,cu.TradeName                               as nameFiscal
+                               ,ISNULL(cu.TradeName,''CONSUMIDOR FINAL'')                  as nameFiscal
                                ,ta.[Description]                           as tableName
                                ,COUNT(*) OVER()                            as totalRecords
                          FROM Restaurant.[Order]         ro WITH (NOLOCK)
-                         INNER JOIN dbo.Cliente          cl WITH (NOLOCK) ON cl.idCliente         = ro.CustomerCompanyId
+                         LEFT JOIN dbo.Cliente          cl WITH (NOLOCK) ON cl.idCliente         = ro.CustomerCompanyId
                          INNER JOIN dbo.PuntoEmision     pe WITH (NOLOCK) ON pe.idPuntoEmision    = ro.PuntoEmisionId
                          INNER JOIN dbo.usuario          us WITH (NOLOCK) ON us.idUsuario         = ro.UserId
                           LEFT JOIN [Restaurant].[Table] ta WITH (NOLOCK) ON ta.Id                = ro.TableId
                          INNER JOIN Sri.Establecimiento  es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
-                         INNER JOIN Customer.Customer    cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
+                         LEFT JOIN Customer.Customer    cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
                          WHERE es.idEntidad = @CompanyId '
 
 
@@ -355,24 +355,49 @@ BEGIN
 
             SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
 
-            SELECT cc.codEstab
-                  ,cc.idCuentaPorCobrar 
-                  ,cc.idDocumento as DocumentoId
-                  ,IIF(cc.codDoc='01', 'FV', cc.codDoc)        as docType
-                  ,cc.serieComprobante                         as serie
-                  ,cc.serieComprobante                         as serieComprobante
-                  ,FORMAT(cc.fechaEmision, 'dd/MM/yyyy HH:mm') as createAt
-                  ,cc.razonSocialComprador                     as customerName
-                  ,cc.usuario                                  as userName
-                  ,cc.tiempoCredito
-                  ,cc.importeTotal
-                  ,cc.abono
-                  ,cc.saldo
-                  ,cc.estado
-                  ,ISNULL(cc.telefono, '')                     as telefono
-            FROM v_CuentaPorCobrar cc WITH (NOLOCK)
-            WHERE cc.codDoc IN ('01','NE')
-              AND cc.idDocumento IN (SELECT DocumentoId FROM Restaurant.OrderDocument WITH(NOLOCK) WHERE orderId = @id  ) 
+            --SELECT cc.codEstab
+            --      ,cc.idCuentaPorCobrar 
+            --      ,cc.idDocumento as DocumentoId
+            --      ,IIF(cc.codDoc='01', 'FV', cc.codDoc)        as docType
+            --      ,cc.serieComprobante                         as serie
+            --      ,cc.serieComprobante                         as serieComprobante
+            --      ,FORMAT(cc.fechaEmision, 'dd/MM/yyyy HH:mm') as createAt
+            --      ,cc.razonSocialComprador                     as customerName
+            --      ,cc.usuario                                  as userName
+            --      ,cc.tiempoCredito
+            --      ,cc.importeTotal
+            --      ,cc.abono
+            --      ,cc.saldo
+            --      ,cc.estado
+            --      ,ISNULL(cc.telefono, '')                     as telefono
+            --FROM v_CuentaPorCobrar cc WITH (NOLOCK)
+            --WHERE cc.codDoc IN ('01','NE')
+            --  AND cc.idDocumento IN (SELECT DocumentoId FROM Restaurant.OrderDocument WITH(NOLOCK) WHERE orderId = @id  )
+              
+              SELECT
+                v_cpc.codEstab
+                ,v_cpc.idCuentaPorCobrar 
+                ,od.DocumentoId
+                ,od.orderId
+                ,docType = IIF(v_cpc.codDoc='01', 'FV', v_cpc.codDoc)
+                ,serie = v_cpc.serieComprobante
+                ,serieComprobante = v_cpc.serieComprobante
+                ,createAt = FORMAT(v_cpc.fechaEmision, 'dd/MM/yyyy HH:mm')
+                ,customerName = v_cpc.razonSocialComprador
+                ,userName = v_cpc.usuario
+                ,v_cpc.tiempoCredito
+                ,v_cpc.importeTotal
+                ,v_cpc.abono
+                ,v_cpc.saldo
+                ,v_cpc.estado
+                ,telefono = ISNULL(v_cpc.telefono, '')
+                ,v_cpc.telefonoEstablecimiento
+                ,v_cpc.nombreComercial
+                ,v_cpc.codEstado
+            FROM Restaurant.OrderDocument od WITH(NOLOCK)
+            INNER JOIN v_CuentaPorCobrar v_cpc WITH(NOLOCK) ON v_cpc.idDocumento = od.DocumentoId
+            WHERE v_cpc.idEntidad = @idEntidad AND od.orderId = @id AND v_cpc.codDoc IN('01', 'NE') 
+
 
             RETURN
         END

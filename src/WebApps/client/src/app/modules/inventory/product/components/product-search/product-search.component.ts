@@ -17,9 +17,9 @@ import {
 } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { ProductService } from '@modules/inventory/services/product.service';
+import { ProductService } from '@inventory/product/product.service';
 import { MatTableModule } from '@angular/material/table';
-import { ProductSearch } from '@modules/inventory/models/product.model';
+import { ProductSearch } from '@inventory/product/product.model';
 
 type ProductSearchProps = {
   isSearchSimple?: boolean;
