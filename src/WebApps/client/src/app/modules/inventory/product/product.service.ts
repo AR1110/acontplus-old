@@ -23,7 +23,7 @@ import { C } from '@angular/cdk/keycodes';
 export class ProductService {
   private http = inject(HttpClient);
   private url_old = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.PRODUCT_OLD}`;
-  private url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.PRODUCT}`;
+  private url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.PRODUCT_OLD}`;
 
 
 

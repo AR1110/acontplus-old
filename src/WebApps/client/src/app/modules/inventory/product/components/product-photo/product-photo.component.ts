@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ToasterService } from '@core/services/toaster.service';
-import { ProductPhotoService } from '@modules/inventory/services/product-photo.service';
+import { ProductPhotoService } from '@inventory/services/product-photo.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 

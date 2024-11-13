@@ -1,8 +1,8 @@
 import { inject, Injectable } from "@angular/core";
 import { ModalService } from "@core/services/modal.service";
 
-import { ProductAddEditModalComponent } from "../components/product/product-add-edit-modal/product-add-edit-modal.component";
-import { ProductKardexModalComponent } from "../components/product/product-kardex-modal/product-kardex-modal.component";
+import { ProductAddEditModalComponent } from "@inventory/product/components/product-add-edit-modal/product-add-edit-modal.component";
+import { ProductKardexModalComponent } from "@inventory/product/components/product-kardex-modal/product-kardex-modal.component";
 
 @Injectable({
   providedIn: 'root'

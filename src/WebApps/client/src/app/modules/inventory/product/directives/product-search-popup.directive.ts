@@ -1,6 +1,6 @@
 import { Directive, EventEmitter, HostListener, inject, Input, Output } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
-import { ProductSearchPopupComponent } from '../../components/product/product-search-popup/product-search-popup.component';
+import { ProductSearchPopupComponent } from '@inventory/product/components/product-search-popup/product-search-popup.component';
 
 @Directive({
   selector: '[appProductSearchPopup]',

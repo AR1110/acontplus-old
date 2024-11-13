@@ -4,7 +4,7 @@ import { Component, EventEmitter, HostListener, inject, Input, Output, QueryList
 import { ReactiveFormsModule } from "@angular/forms";
 import { PageEvent } from "@angular/material/paginator";
 import { isValidField } from "@core/utils/utils";
-import { ProductService } from "@modules/inventory/services/product.service";
+import { ProductService } from "@inventory/product/product.service";
 import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
 import { ClickOutsideDirective } from "@shared/directives/click-outside.directive";
 import { Pagination } from "@shared/models/pagination.model";

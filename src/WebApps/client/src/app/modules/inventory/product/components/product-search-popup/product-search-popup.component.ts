@@ -3,7 +3,7 @@ import { Component, HostListener, inject, Input, QueryList, ViewChildren, ViewCo
 import { FormsModule } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatRow, MatTableModule } from '@angular/material/table';
-import { ProductService } from '@modules/inventory/services/product.service';
+import { ProductService } from '@inventory/product/product.service';
 import { NgbActiveModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { map } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
