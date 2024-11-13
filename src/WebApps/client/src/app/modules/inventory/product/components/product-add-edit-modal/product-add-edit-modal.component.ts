@@ -12,18 +12,18 @@ import { roundNumber } from '@core/utils/round-number.utils';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SubCategoryModalDirective } from '@inventory/directives/sub-category.directive'
-import { MeasureAddEditDirective } from '@modules/inventory/directives/measure-add-edit.directive';
-import { TagsAddEditModalDirective } from '@modules/inventory/directives/tags-add-edit-modal.directive';
-import { TarifaSelectHtmlOnly } from '@modules/inventory/models/tarifa.model';
-import { TipoIvaSelectHtmlOnly } from '@modules/inventory/models/tipo-iva.model';
-import { ProductService } from '@modules/inventory/services/product.service';
+import { MeasureAddEditDirective } from '@inventory/directives/measure-add-edit.directive';
+import { TagsAddEditModalDirective } from '@inventory/directives/tags-add-edit-modal.directive';
+import { TarifaSelectHtmlOnly } from '@inventory/models/tarifa.model';
+import { TipoIvaSelectHtmlOnly } from '@inventory/models/tipo-iva.model';
+import { ProductService } from '@inventory/product/product.service';
 import { NgbActiveModal, NgbNavChangeEvent, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import Swal from 'sweetalert2';
 
-import { SubCategoryGroupComponent } from '../../sub-category/sub-category-group/sub-category-group.component';
-import { FraccProductListComponent } from '../fracc-product-list/fracc-product-list.component';
+import { SubCategoryGroupComponent } from '../../../components/sub-category/sub-category-group/sub-category-group.component';
+import { FraccProductListComponent } from '@inventory/product/components/fracc-product-list/fracc-product-list.component';
 
 interface ProductTarifa {
   tipoIva: string

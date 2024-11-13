@@ -242,6 +242,7 @@ export class WhatsappSendModalComponent {
        */
       if (this.getCodeDoc() === DOC_TYPE.FV) {
         const dataParms = {
+          hasParams: true,
           id: this.data.documentoId,
           codEstab: this.data.codEstab,
           codigo: CODE_REPORT.FV,
@@ -262,7 +263,8 @@ export class WhatsappSendModalComponent {
 
         this.sharedSvc.getReport({
           data: parameters,
-          isReturnData: true
+          isReturnData: true,
+          isOldVersion: true
         })?.subscribe(response => {
           if (response) {
             const { file, fileName } = this.contentFile(response);

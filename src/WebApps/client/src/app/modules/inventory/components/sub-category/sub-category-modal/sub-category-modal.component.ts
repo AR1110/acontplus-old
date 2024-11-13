@@ -3,7 +3,7 @@ import { FormsModule } from "@angular/forms";
 import { ApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
 import { imgDefault, isValidField } from "@core/utils/utils";
-import { ProductService } from "@modules/inventory/services/product.service";
+import { ProductService } from "@inventory/product/product.service";
 import { SubCategoryService } from "@modules/inventory/services/sub-category.service";
 import { SubcategoryPhotoService } from "@modules/inventory/services/subcategory-photo.service";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";

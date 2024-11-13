@@ -1,6 +1,6 @@
 import { TAX_RATE_CODE } from "@core/constants/global.constants";
 
-import { TarifaProductSearch } from "./tarifa.model";
+import { TarifaProductSearch } from "../models/tarifa.model";
 
 export interface Product {
   descripcion: string;

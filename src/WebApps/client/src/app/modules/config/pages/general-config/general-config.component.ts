@@ -7,7 +7,7 @@ import { GeneralConfigService } from "@modules/config/services/general-config.se
 import { FormsModule } from "@angular/forms";
 import { ToasterService } from "@core/services/toaster.service";
 import { isApiResponse } from "@core/models/api-response";
-import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
+import { ProductSearchComponent } from '@inventory/product/components/product-search/product-search.component';
 import { CompanyCustomerSearchComponent } from "@modules/customer/company-customer/components/company-customer-search/company-customer-search.component";
 import {isValidEmail, isValidField} from "@core/utils/utils";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';

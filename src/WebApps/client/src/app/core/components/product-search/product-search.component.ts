@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { ProductSearch } from '@modules/inventory/models/product.model';
-import { ProductService } from '@modules/inventory/services/product.service';
+import { ProductSearch } from '@inventory/product/product.model';
+import { ProductService } from '@inventory/product/product.service';
 import {
   Observable,
   OperatorFunction,
