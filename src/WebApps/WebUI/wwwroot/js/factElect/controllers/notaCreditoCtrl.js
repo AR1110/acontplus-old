@@ -1111,7 +1111,7 @@
 
                     $scope.dataSearch = {
                         pageIndex: 1,
-                        pageSize: 15,
+                        pageSize: 25,
                         totalRecords: 0,
                         maxSize: 5
                     }
@@ -1123,7 +1123,7 @@
                             byCliente: params.idCliente,
                             codEstab: params.codEstab,
                             pageIndex: $scope.dataSearch.pageIndex,
-                            pageSize: $scope.dataSearch.pageIndex
+                            pageSize: $scope.dataSearch.pageSize
                         }
 
                         facturaSvc.getForCreditNote(json).then(response => {
