@@ -494,22 +494,22 @@
                     }]
                 },
                 options: {
-                    plugins: {
-                        // Enable the Data Labels plugin to show labels on bars
-                        datalabels: {
-                            anchor: 'end',
-                            align: 'top',
-                            offset: -5,
-                            formatter: function (value, context) {
-                                return value; // Display the value of each bar
-                            },
-                            font: {
-                                weight: 'bold',
-                                size: 12
-                            },
-                            color: 'black'
-                        }
-                    },
+                    //plugins: {
+                    //    // Enable the Data Labels plugin to show labels on bars
+                    //    datalabels: {
+                    //        anchor: 'end',
+                    //        align: 'top',
+                    //        offset: -5,
+                    //        formatter: function (value, context) {
+                    //            return value; // Display the value of each bar
+                    //        },
+                    //        font: {
+                    //            weight: 'bold',
+                    //            size: 12
+                    //        },
+                    //        color: 'black'
+                    //    }
+                    //},
                     scales: {
                         x: {
                             ticks: {
@@ -524,7 +524,7 @@
                         },
                     }
                 },
-                plugins: [ChartDataLabels] // Register the Data Labels plugin
+                //plugins: [ChartDataLabels] // Register the Data Labels plugin
             });
         };
         $scope.renderChartReceived = function (labels, totals, backgroundColors, borderColors) {
@@ -550,22 +550,22 @@
                     }]
                 },
                 options: {
-                    plugins: {
-                        // Enable the Data Labels plugin to show labels on bars
-                        datalabels: {
-                            anchor: 'end',
-                            align: 'top',
-                            offset: -5,
-                            formatter: function (value, context) {
-                                return value; // Display the value of each bar
-                            },
-                            font: {
-                                weight: 'bold',
-                                size: 12
-                            },
-                            color: 'black'
-                        }
-                    },
+                    //plugins: {
+                    //    // Enable the Data Labels plugin to show labels on bars
+                    //    datalabels: {
+                    //        anchor: 'end',
+                    //        align: 'top',
+                    //        offset: -5,
+                    //        formatter: function (value, context) {
+                    //            return value; // Display the value of each bar
+                    //        },
+                    //        font: {
+                    //            weight: 'bold',
+                    //            size: 12
+                    //        },
+                    //        color: 'black'
+                    //    }
+                    //},
                     scales: {
                         x: {
                             ticks: {
@@ -580,7 +580,7 @@
                         },
                     }
                 },
-                plugins: [ChartDataLabels] // Register the Data Labels plugin
+                //plugins: [ChartDataLabels] // Register the Data Labels plugin
             });
         };
         $scope.renderAnotherSalesDocsChart = function (labels, totals, backgroundColors, borderColors) {
@@ -606,22 +606,22 @@
                     }]
                 },
                 options: {
-                    plugins: {
-                        // Enable the Data Labels plugin to show labels on bars
-                        datalabels: {
-                            anchor: 'end',
-                            align: 'top',
-                            offset: -5,
-                            formatter: function (value, context) {
-                                return value; // Display the value of each bar
-                            },
-                            font: {
-                                weight: 'bold',
-                                size: 12
-                            },
-                            color: 'black'
-                        }
-                    },
+                    //plugins: {
+                    //    // Enable the Data Labels plugin to show labels on bars
+                    //    datalabels: {
+                    //        anchor: 'end',
+                    //        align: 'top',
+                    //        offset: -5,
+                    //        formatter: function (value, context) {
+                    //            return value; // Display the value of each bar
+                    //        },
+                    //        font: {
+                    //            weight: 'bold',
+                    //            size: 12
+                    //        },
+                    //        color: 'black'
+                    //    }
+                    //},
                     scales: {
                         x: {
                             ticks: {
@@ -636,7 +636,7 @@
                         },
                     }
                 },
-                plugins: [ChartDataLabels] // Register the Data Labels plugin
+                //plugins: [ChartDataLabels] // Register the Data Labels plugin
             });
         };
 
