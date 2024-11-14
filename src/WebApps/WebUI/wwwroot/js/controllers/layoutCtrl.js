@@ -106,8 +106,9 @@
 
 
         const pathname = $window.location.pathname;
-        console.log(pathname)
+
         if (/\/Config\/UserProfile\/Index/.test(pathname)) return;
+        if (/\/Common\/UserManual\/Index/.test(pathname)) return;
 
         if(pathname==='/Index')return 
 
