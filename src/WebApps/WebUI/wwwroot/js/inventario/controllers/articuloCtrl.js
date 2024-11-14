@@ -117,9 +117,9 @@
 
         $scope.checkEnter = function(event) {
             if (event.keyCode === 13) {  // keyCode 13 es la tecla Enter
-                if(![1,4].includes($scope.dataSearch.filterMode)){
+             //   if(![1,4].includes($scope.dataSearch.filterMode)){
                     $scope.getArticulos();
-                }
+            //    }
             }
           };
 
