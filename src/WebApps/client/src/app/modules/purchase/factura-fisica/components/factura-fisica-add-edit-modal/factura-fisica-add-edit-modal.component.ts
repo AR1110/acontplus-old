@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, model, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,11 +9,14 @@ import { CustomContainerDialogComponent } from '@core/components/custom-containe
 import { SupplierSearchMatComponent } from '@modules/customer/supplier/components/supplier-search-mat/supplier-search-mat.component';
 import { FacturaFisicaService } from '../../factura-fisica.service';
 import { finalize, Observable } from 'rxjs';
+import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-factura-fisica-add-edit-modal',
   standalone: true,
   imports: [
+    FormsModule,
     MatIconModule,
     MatButtonModule,
     MatFormFieldModule,
@@ -37,7 +40,29 @@ export class FacturaFisicaAddEditModalComponent {
 
   loading = signal(false);
 
-  sustentosTributario = signal<any[]>([])
+  dataForm = model({
+    idEstablecimiento: 0,
+    idBodega: 0
+  })
+
+  dataFormClone = model(structuredClone(this.dataForm()))
+
+  estabs = signal<GroupedEstab[]>([]);
+  sustentosTributario = signal<any[]>([]);
+  bodegas = signal<GroupedEstabBodega[]>([])
+
+
+  setDataForm<K extends keyof ReturnType<typeof this.dataForm>>(
+    key: K,
+    value: ReturnType<typeof this.dataForm>[K],
+  ) {
+    this.dataForm.update((ds) => {
+      return {
+        ...ds,
+        [key]: value,
+      };
+    });
+  }
 
   ngOnInit(){
 
@@ -45,10 +70,24 @@ export class FacturaFisicaAddEditModalComponent {
     this.facturaFisicaSvc.getDataForm()
     .pipe(finalize(()=>this.loading.set(false)))
     .subscribe(response=>{
-        this.sustentosTributario.set(response.sustentosTributario)
+        this.sustentosTributario.set(response.sustentosTributario);
+        this.estabs.set(response.estabs);
+
+
+        let dataEstab = this.estabs().find(item=>item.defaultEstab);
+
+
+        this.bodegas.set(dataEstab?.bodegas || []);
+
+        this.setDataForm("idEstablecimiento", dataEstab?.idEstablecimiento || 0)
+
+
     })
 
   }
+
+
+
 
   close(){
 

@@ -14,12 +14,12 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento: </mat-label>
-          <mat-select required="true">
-            <mat-option value="option1">Option 1</mat-option>
-            <mat-option value="option2" disabled
-              >Option 2 (disabled)</mat-option
-            >
-            <mat-option value="option3">Option 3</mat-option>
+          <mat-select [(ngModel)]="dataForm().idEstablecimiento">
+            @for (item of estabs(); track $index) {
+            <mat-option [value]="item.idEstablecimiento">{{
+              item.nombreEstab
+            }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </div>
@@ -41,7 +41,7 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Subcategoría: </mat-label>
-          <mat-select required="true">
+          <mat-select>
             <mat-option value="option1">Option 1</mat-option>
             <mat-option value="option2" disabled
               >Option 2 (disabled)</mat-option
@@ -90,7 +90,7 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tiempo Crédito: </mat-label>
-          <mat-select required="true">
+          <mat-select>
             <mat-option value="option1">Option 1</mat-option>
             <mat-option value="option2" disabled
               >Option 2 (disabled)</mat-option

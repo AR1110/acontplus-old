@@ -6,7 +6,7 @@ import { map } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
 import { CuentaPorPagarCuotaConfig, CuentaPorPagarLista } from './interfaces/cuenta-por-pagar.interface';
-import { CuentaPorPagarAdapter } from './cuenta-por-pagar.adapter';
+import { CuentaPorPagarRepositoryMapper } from './cuenta-por-pagar.repository.mapper';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { TiempoCreditoSelectHtmlOnly } from '../interfaces/tiempo-credito.interface';
 import {ComprobanteEgresoLista} from "@accounting/comprobante-egreso/comprobante-egreso.interface";
@@ -36,7 +36,7 @@ export class CuentaPorPagarRepository {
         }
 
         if (response.code === "1") {
-         resultData = CuentaPorPagarAdapter.fromApiDataFilter(response)
+         resultData = CuentaPorPagarRepositoryMapper.fromApiDataFilter(response)
         }
 
         return resultData;
@@ -59,7 +59,7 @@ export class CuentaPorPagarRepository {
         }
         if(response.code==="1"){
           let [mainData] = JSON.parse(response.payload as string);
-          result.data = CuentaPorPagarAdapter.fromApiGetAll(mainData);
+          result.data = CuentaPorPagarRepositoryMapper.fromApiGetAll(mainData);
           result.totalRecords = result.data.length>0 ? result.data[0].totalRecords : 0
 
         }
@@ -105,7 +105,7 @@ export class CuentaPorPagarRepository {
         }
         if(response.code==="1"){
           let [mainData] = JSON.parse(response.payload as string);
-          result.data = CuentaPorPagarAdapter.fromApiCuotaConfig(mainData);
+          result.data = CuentaPorPagarRepositoryMapper.fromApiCuotaConfig(mainData);
         }
         return result;
       })
@@ -131,7 +131,7 @@ export class CuentaPorPagarRepository {
         if(response.code==="1"){
           let mainData = JSON.parse(response.payload as string);
           console.log(mainData)
-          result = CuentaPorPagarAdapter.fromApiHistMovimiento(mainData)
+          result = CuentaPorPagarRepositoryMapper.fromApiHistMovimiento(mainData)
         }
         return result;
       })
@@ -141,9 +141,19 @@ export class CuentaPorPagarRepository {
 
 
   generarCuota(obj:any){
-    let params = CuentaPorPagarAdapter.toApiGenerarCuota(obj);
+    let params = CuentaPorPagarRepositoryMapper.toApiGenerarCuota(obj);
     let json = JSON.stringify(params)
-    return this.http.post<ApiResponse>(`${this.url}${json}`, null)
+    return this.http.post<ApiResponse>(`${this.url}${json}`, null, {
+      context: getNoLoader()
+    })
+
+  }
+
+
+  actualizarCuotas<T>(id:number, obj:T){
+    return this.http.post<ApiResponse>(`${this.url}${id}`, obj, {
+      context: getNoLoader()
+    })
 
   }
 

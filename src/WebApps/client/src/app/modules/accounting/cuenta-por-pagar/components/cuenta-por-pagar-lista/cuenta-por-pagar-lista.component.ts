@@ -224,41 +224,42 @@ export class CuentaPorPagarListaComponent {
   }
 
   ngOnInit(): void {
-    this.isLoadingResults.set(true);
-    this.cpcSvc
-      .getDataFilter()
-      .pipe(
-        switchMap((initialData) => {
-          this.estabs = initialData.estabs;
-          this.estadosDoc = initialData.estadosDoc;
-          this.tiposDoc = initialData.tiposDoc;
+    this.openCuotaModal()
+    // this.isLoadingResults.set(true);
+    // this.cpcSvc
+    //   .getDataFilter()
+    //   .pipe(
+    //     switchMap((initialData) => {
+    //       this.estabs = initialData.estabs;
+    //       this.estadosDoc = initialData.estadosDoc;
+    //       this.tiposDoc = initialData.tiposDoc;
 
-          if (this.estabs.length > 0) {
-            let dataEstab = this.estabs.find((estab) => estab.defaultEstab);
+    //       if (this.estabs.length > 0) {
+    //         let dataEstab = this.estabs.find((estab) => estab.defaultEstab);
 
-            this.dataSearch.update((e) => {
-              return {
-                ...e,
-                codEstab: dataEstab?.codEstab,
-              };
-            });
-          } else {
-            this.tS.toastr({
-              type: 'warning',
-              message: 'No tienes asignado Establecimiento!',
-            });
-            return throwError(
-              () => new Error('No tienes asignado Establecimiento')
-            );
-          }
+    //         this.dataSearch.update((e) => {
+    //           return {
+    //             ...e,
+    //             codEstab: dataEstab?.codEstab,
+    //           };
+    //         });
+    //       } else {
+    //         this.tS.toastr({
+    //           type: 'warning',
+    //           message: 'No tienes asignado Establecimiento!',
+    //         });
+    //         return throwError(
+    //           () => new Error('No tienes asignado Establecimiento')
+    //         );
+    //       }
 
-          return this.cpcSvc.getAll(this.getDataParams());
-        })
-      )
-      .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe((response) => {
-        this.setResponseGetAll(response);
-      });
+    //       return this.cpcSvc.getAll(this.getDataParams());
+    //     })
+    //   )
+    //   .pipe(finalize(() => this.isLoadingResults.set(false)))
+    //   .subscribe((response) => {
+    //     this.setResponseGetAll(response);
+    //   });
   }
 
   setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(
@@ -310,11 +311,15 @@ export class CuentaPorPagarListaComponent {
     this.refresh();
   }
 
-  openCuotaModal(item: CuentaPorPagarLista) {
+  openCuotaModal(item?: CuentaPorPagarLista) {
     let modalRef = this.dialogSvc.open(CuentaPorPagarCuotaModalComponent, {
       size: MODAL_SIZE.XL,
       data: {
-        idCuentaPorPagar: item.idCuentaPorPagar,
+     //   idCuentaPorPagar: item.idCuentaPorPagar,
+     idCuentaPorPagar: 10062,
+
+        codigoEstado: 'PE',
+        total: item?.total || 0
       },
     });
 

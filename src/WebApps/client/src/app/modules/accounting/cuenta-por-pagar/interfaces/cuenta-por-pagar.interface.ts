@@ -24,8 +24,8 @@ export interface CuentaPorPagarLista {
 export interface CuentaPorPagarCuotaConfig {
     idCuotaPorPagar: number
     idCuentaPorPagar: number
-    fechaVencimiento: string
-    nroCuota: number
+    fechaVencimiento: Date
+    nroCuota: number | string
     cuota: number
     abono: number
     saldo: number

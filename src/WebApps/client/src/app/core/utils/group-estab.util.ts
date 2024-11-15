@@ -13,7 +13,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
   const { estabs, bodegas, isGroupBodega, isGroupPuntoEmision } = obj;
 
   let groupEstabs: GroupedEstab[] = [];
- 
+
 
   if (isGroupPuntoEmision && estabs) {
     groupEstabs = estabs.reduce((acc, item) => {
@@ -25,6 +25,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
         acc.push({
           idEstablecimiento: item.idEstablecimiento,
           nombreComercial: item.nombreComercial,
+          nombreEstab: item.nombreComercial,
           codEstab: item.codEstab,
           defaultEstab: item.defaultEstab,
           puntosEmision: [
@@ -69,6 +70,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
         acc.push({
           idEstablecimiento: item.idEstablecimiento,
           nombreComercial: item.nombreComercial,
+          nombreEstab: item.nombreComercial,
           codEstab: item.codEstab,
           defaultEstab: item.defaultEstab,
           puntosEmision: [],
