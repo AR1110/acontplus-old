@@ -51,6 +51,7 @@
         <button
           mat-flat-button
           [disabled]="isLoadingResults()"
+          (click)="openPaymentModal()"
         >
           <mat-icon>payments</mat-icon>
           Pagar
@@ -156,11 +157,31 @@
 
     <ng-container [matColumnDef]="col.key">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        @if(col.key==='select'){
+        <mat-checkbox
+          (change)="$event ? toggleAllRows() : null"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()"
+          [aria-label]="checkboxLabel()"
+        >
+        </mat-checkbox>
+        }@else {
         {{ col.label }}
+        }
       </th>
 
       <!-- Celdas de datos -->
       <td mat-cell *matCellDef="let element; let i = index">
+        @if (col.key==="select") {
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(element) : null"
+          [checked]="selection.isSelected(element)"
+          [aria-label]="checkboxLabel(element)"
+        >
+        </mat-checkbox>
+        }
+
         <!-- Operaciones -->
         @if (col.key === 'op') {
         <div class="d-flex flex-row gap-1">

@@ -50,6 +50,8 @@ import { GroupedEstab } from '@core/models/estab.model';
 import { finalize, switchMap, throwError } from 'rxjs';
 import {ParameterReportUtil} from "@shared/utils/parameter-report.util";
 import {SharedService} from "@core/services/shared.service";
+import { SelectionModel } from '@angular/cdk/collections';
+import { ComprobanteEgresoLoteComponent } from '../comprobante-egreso-lote/comprobante-egreso-lote.component';
 
 
 @Component({
@@ -98,6 +100,8 @@ export class CuentaPorPagarListaComponent {
   isLoadingResults = signal(false);
 
   columnsDefs: ColumnDefinition[] = [
+
+    { key: 'select', label: ' ', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'index', label: 'Nro.', type: 'string' },
     { key: 'nombreDoc', label: 'Doc.', type: 'string' },
@@ -112,8 +116,12 @@ export class CuentaPorPagarListaComponent {
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
     { key: 'nombreUsuario', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
 
+
+
+
+  selection = new SelectionModel<CuentaPorPagarLista>(true, []);
   dataSource = new MatTableDataSource<CuentaPorPagarLista>();
 
   pagination = signal(new MatPagination());
@@ -223,44 +231,44 @@ export class CuentaPorPagarListaComponent {
     this.getAll();
   }
 
-  ngOnInit(): void {
-    this.openCuotaModal()
-    // this.isLoadingResults.set(true);
-    // this.cpcSvc
-    //   .getDataFilter()
-    //   .pipe(
-    //     switchMap((initialData) => {
-    //       this.estabs = initialData.estabs;
-    //       this.estadosDoc = initialData.estadosDoc;
-    //       this.tiposDoc = initialData.tiposDoc;
+  // ngOnInit(): void {
+  // //  this.openCuotaModal()
+  //   this.isLoadingResults.set(true);
+  //   this.cpcSvc
+  //     .getDataFilter()
+  //     .pipe(
+  //       switchMap((initialData) => {
+  //         this.estabs = initialData.estabs;
+  //         this.estadosDoc = initialData.estadosDoc;
+  //         this.tiposDoc = initialData.tiposDoc;
 
-    //       if (this.estabs.length > 0) {
-    //         let dataEstab = this.estabs.find((estab) => estab.defaultEstab);
+  //         if (this.estabs.length > 0) {
+  //           let dataEstab = this.estabs.find((estab) => estab.defaultEstab);
 
-    //         this.dataSearch.update((e) => {
-    //           return {
-    //             ...e,
-    //             codEstab: dataEstab?.codEstab,
-    //           };
-    //         });
-    //       } else {
-    //         this.tS.toastr({
-    //           type: 'warning',
-    //           message: 'No tienes asignado Establecimiento!',
-    //         });
-    //         return throwError(
-    //           () => new Error('No tienes asignado Establecimiento')
-    //         );
-    //       }
+  //           this.dataSearch.update((e) => {
+  //             return {
+  //               ...e,
+  //               codEstab: dataEstab?.codEstab,
+  //             };
+  //           });
+  //         } else {
+  //           this.tS.toastr({
+  //             type: 'warning',
+  //             message: 'No tienes asignado Establecimiento!',
+  //           });
+  //           return throwError(
+  //             () => new Error('No tienes asignado Establecimiento')
+  //           );
+  //         }
 
-    //       return this.cpcSvc.getAll(this.getDataParams());
-    //     })
-    //   )
-    //   .pipe(finalize(() => this.isLoadingResults.set(false)))
-    //   .subscribe((response) => {
-    //     this.setResponseGetAll(response);
-    //   });
-  }
+  //         return this.cpcSvc.getAll(this.getDataParams());
+  //       })
+  //     )
+  //     .pipe(finalize(() => this.isLoadingResults.set(false)))
+  //     .subscribe((response) => {
+  //       this.setResponseGetAll(response);
+  //     });
+  // }
 
   setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(
     key: K,
@@ -298,6 +306,43 @@ export class CuentaPorPagarListaComponent {
     event.stopPropagation();
     this.refresh()
   }
+
+
+  openPaymentModal(){
+    this.dialogSvc.open(ComprobanteEgresoLoteComponent, {
+      size: 'xxl'
+    })
+  }
+
+
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: CuentaPorPagarLista): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row  }`;
+  }
+
+
+
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {

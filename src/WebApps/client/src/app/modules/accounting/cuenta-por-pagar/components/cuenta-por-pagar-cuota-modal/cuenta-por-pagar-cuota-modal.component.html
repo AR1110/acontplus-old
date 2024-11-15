@@ -32,6 +32,8 @@
           <input
             matInput
             [matDatepicker]="picker"
+            (dateInput)="addConfigDate($event)"
+            (dateChange)="addConfigDate($event)"
             placeholder="DD/MM/YYYY"
             mask="00/00/0000"
             [dropSpecialCharacters]="false"
@@ -47,16 +49,24 @@
             <button
               mat-icon-button
               [matMenuTriggerFor]="menu"
-              aria-label="Example icon-button with a menu"
+              aria-label="option"
             >
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item>
+              <button
+                type="button"
+                mat-menu-item
+                (click)="configureEndOfMonthDate()"
+              >
                 <mat-icon>trending_flat</mat-icon>
                 <span>Fin de Mes</span>
               </button>
-              <button mat-menu-item>
+              <button
+                type="button"
+                mat-menu-item
+                (click)="configureSameDayDate()"
+              >
                 <mat-icon>calendar_today</mat-icon>
                 <span>Mismo día</span>
               </button>

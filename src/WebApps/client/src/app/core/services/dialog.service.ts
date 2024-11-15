@@ -4,7 +4,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 
 type DialogOptions = {
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
   data?: any,
   disableClose?: boolean,
   isFullScreen?: boolean
@@ -43,7 +43,7 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  private getDialogWidth(size?: 'default' | 'sm' | 'md' | 'lg' | 'xl'): string {
+  private getDialogWidth(size?: 'default' | 'sm' | 'md' | 'lg' | 'xl'| 'xxl'): string {
     switch (size) {
       case 'sm':
         return '300px';
@@ -53,6 +53,9 @@ export class DialogService {
         return '800px';
       case 'xl':
         return '1200px';
+
+        case 'xxl':
+          return '1400px';
       default:
         return '600px'; // Default size
     }
