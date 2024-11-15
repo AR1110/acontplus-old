@@ -1,10 +1,10 @@
 import { Component, inject, model, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
 import { CustomContainerDialogComponent } from '@core/components/custom-container-dialog/custom-container-dialog.component';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
@@ -34,6 +34,7 @@ import { DECIMALS } from '@core/constants/global.constants';
     MatTableModule,
     MatInputModule,
     MatButtonModule,
+    ReactiveFormsModule,
     CustomContainerDialogComponent,
     NgxMaskDirective
   ],
@@ -61,8 +62,10 @@ export class CuentaPorPagarCuotaModalComponent {
   displayedColumns: string[] = ['position', 'cuota', 'fechaVencimiento',];
   dataSource = signal<CuentaPorPagarCuotaConfig[]>([]);
 
+
   dataForm = model({
-    tiempoCreditoId: 0
+    tiempoCreditoId: 0,
+    configDate: null as null | Date
   })
   dataFormClone = model(structuredClone(this.dataForm()))
 
@@ -155,6 +158,19 @@ export class CuentaPorPagarCuotaModalComponent {
         this.dataSource.set(response.data)
 
       })
+  }
+
+  addConfigDate( event: MatDatepickerInputEvent<Date>) {
+    this.setDataForm("configDate",event.value )
+  }
+
+  configureEndOfMonthDate(){
+    console.log(this.dataForm())
+
+  }
+
+  configureSameDayDate(){
+
   }
 
 
