@@ -154,7 +154,16 @@ export class FacturaFisicaRepositoryMapper {
       subcategories
     } = response;
 
+    let dataToGroup = {
+      bodegas: bodegas,
+      isGroupBodega: true
+    }
+
+
+    const  estabs = groupEstabUtil(dataToGroup);
+
     return {
+      estabs,
       sustentosTributario
 
     }
