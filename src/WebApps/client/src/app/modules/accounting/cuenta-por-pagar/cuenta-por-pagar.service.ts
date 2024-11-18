@@ -1,9 +1,9 @@
 
 import { inject, Injectable } from '@angular/core';
-import { CuentaPorPagarRepository } from './cuenta-por-pagar.repository';
 import { CuentaPorPagarValidator } from './cuenta-por-pagar.validator';
 import { ToasterService } from '@core/services/toaster.service';
 import { fetchLimitUtil } from '@shared/utils/fetch-limit.util';
+import { CuentaPorPagarRepository } from './data/cuenta-por-pagar.repository';
 
 @Injectable({
   providedIn: 'root'

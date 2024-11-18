@@ -1,10 +1,11 @@
-import { CuentaPorPagarCuotaConfig, CuentaPorPagarLista } from "./interfaces/cuenta-por-pagar.interface"
+
 import { ComprobanteEgresoLista } from "@accounting/comprobante-egreso/comprobante-egreso.interface";
 import { PagoDetalleLista } from "@modules/accounting/cuenta-por-pagar/interfaces/pago-detalle.interface";
 import { HistorialPagoLista } from "@modules/accounting/cuenta-por-pagar/interfaces/historial-pago.interface";
 import { ApiResponse } from "@core/models/api-response";
 import { groupEstabUtil } from "@core/utils/group-estab.util";
 import { formatDate } from "@core/utils/date.util";
+import { CuentaPorPagarCuotaConfig, CuentaPorPagarLista } from "../interfaces/cuenta-por-pagar.interface";
 
 export class CuentaPorPagarRepositoryMapper {
 

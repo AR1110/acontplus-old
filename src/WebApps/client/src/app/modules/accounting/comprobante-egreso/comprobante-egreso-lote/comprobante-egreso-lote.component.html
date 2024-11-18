@@ -57,36 +57,39 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-xxl-8 col-xl-8 col-lg-6 col-md-12 col-12">
+      <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-12 col-12">
         <div class="d-flex flex-column gap-3">
-          <mat-accordion>
+          <mat-accordion multi>
+            @for (item of cuentasPorPagar(); track $index) {
             <mat-expansion-panel>
               <mat-expansion-panel-header>
-                <mat-panel-title> Factura </mat-panel-title>
+                <mat-panel-title>
+                  <div class="d-flex gap-2 small">
+                    <span class="fw-bold">{{ item.nombreDoc }}</span>
+                    <span class="text-success">{{
+                      item.serieComprobante
+                    }}</span>
+                  </div>
+                </mat-panel-title>
                 <mat-panel-description>
-                  This is a summary of the content
+                  {{ item.total | currency }}
                 </mat-panel-description>
               </mat-expansion-panel-header>
-              <p>This is the primary content of the panel.</p>
+              <app-mat-dynamic-table
+                [dataList]="item.cuotas"
+                [displayedColumns]="columns" [displayColumnDefs]="columnsDefs"/>
             </mat-expansion-panel>
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title
-                  >Nota Entrega #0203.02002.0202
-                </mat-panel-title>
-                <mat-panel-description> Currently I am </mat-panel-description>
-              </mat-expansion-panel-header>
-              <p>I'm visible because I am open</p>
-            </mat-expansion-panel>
+
+            }
           </mat-accordion>
 
           <mat-form-field class="w-100">
             <mat-label>Nota (Opcional)</mat-label>
-            <textarea matInput placeholder="Ex. It makes me feel..."></textarea>
+            <textarea matInput placeholder="..."></textarea>
           </mat-form-field>
         </div>
       </div>
-      <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-12 col-12">
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-12 col-12">
         <mat-card>
           <mat-card-header>
             <mat-card-title-group>
@@ -98,7 +101,7 @@
           <mat-card-content>
             <mat-list>
               <mat-divider></mat-divider>
-              @for (item of formasDePago(); track $index) {
+              @for (item of entidadesFinanciera(); track $index) {
               <mat-list-item style="cursor: pointer">
                 <div class="d-flex justify-content-between">
                   <div class="">{{ item.descripcion }}</div>

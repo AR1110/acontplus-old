@@ -12,3 +12,5 @@ export  interface  ComprobanteEgresoLista extends   ComprobanteEgreso {
   index: number
 
 }
+
+
