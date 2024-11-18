@@ -17,9 +17,11 @@ CREATE OR ALTER VIEW v_usuario AS (
 	,r.Code codRol
 	,r.[Name] rol
     ,r.Id RoleId
+    ,u.correo email
+    ,u.customerId
 	FROM dbo.Usuario u WITH (NOLOCK)
 	INNER JOIN App.UsuarioRol ur WITH (NOLOCK) ON u.idUsuario = ur.idUsuario
 	INNER JOIN dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
 	INNER JOIN AcontplusAdmin.Seguridad.[Role] r WITH (NOLOCK) ON ur.RoleId = r.Id
     LEFT JOIN Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
-) 
+)
