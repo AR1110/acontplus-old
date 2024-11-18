@@ -70,10 +70,10 @@ export class CuentaPorPagarCuotaModalComponent {
   dataFormClone = model(structuredClone(this.dataForm()))
 
   private initLoad() {
-    return forkJoin([
-      this.cuentaPorPagarSvc.getCuotasData(),
-      this.cuentaPorPagarSvc.getCuotasConfigByIdCuentaPorPagar(this.data.idCuentaPorPagar)
-    ]);
+    return forkJoin({
+      responseCuotaData$:  this.cuentaPorPagarSvc.getCuotasData(),
+      responseCuotaConfig$:  this.cuentaPorPagarSvc.getCuotasConfigByIdCuentaPorPagar(this.data.idCuentaPorPagar)
+    });
   }
 
 
@@ -85,10 +85,11 @@ export class CuentaPorPagarCuotaModalComponent {
         finalize(() => this.loading.set(false)),
       )
       .subscribe(result => {
-        const [responseCuotaData, responseCuotaConfig] = result;
-        this.tiemposCredito.set(responseCuotaData.tiemposCredito)
-        this.dataSource.set(responseCuotaConfig.data)
-        console.log(this.dataSource())
+        console.log(result)
+        // const [responseCuotaData, responseCuotaConfig] = result;
+        // this.tiemposCredito.set(responseCuotaData.tiemposCredito)
+        // this.dataSource.set(responseCuotaConfig.data)
+        // console.log(this.dataSource())
 
       })
   }
@@ -127,37 +128,37 @@ export class CuentaPorPagarCuotaModalComponent {
     }
 
 
-    this.cuentaPorPagarSvc.generarCuota({
-      idCuentaPorPagar: this.data.idCuentaPorPagar,
-      tiempoCreditoId: this.dataForm().tiempoCreditoId,
-      codigoEstado: this.data.codigoEstado
-    }).subscribe(response => {
-      if (response.code === "0") {
-        this.tS.toastr({
-          type: 'warning',
-          message: response.message
-        })
-      }
-      if (response.code === "1") {
-        this.tS.toastr({
-          type: 'success',
-          message: response.message
-        })
-        this.getDataConfigCuotas()
+    // this.cuentaPorPagarSvc.generarCuota({
+    //   idCuentaPorPagar: this.data.idCuentaPorPagar,
+    //   tiempoCreditoId: this.dataForm().tiempoCreditoId,
+    //   codigoEstado: this.data.codigoEstado
+    // }).subscribe(response => {
+    //   if (response.code === "0") {
+    //     this.tS.toastr({
+    //       type: 'warning',
+    //       message: response.message
+    //     })
+    //   }
+    //   if (response.code === "1") {
+    //     this.tS.toastr({
+    //       type: 'success',
+    //       message: response.message
+    //     })
+    //     this.getDataConfigCuotas()
 
-      }
-    })
+    //   }
+    // })
 
   }
 
   private getDataConfigCuotas() {
-    this.loading.set(true)
-    this.cuentaPorPagarSvc.getCuotasConfigByIdCuentaPorPagar(this.data.idCuentaPorPagar)
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe(response => {
-        this.dataSource.set(response.data)
+    // this.loading.set(true)
+    // this.cuentaPorPagarSvc.getCuotasConfigByIdCuentaPorPagar(this.data.idCuentaPorPagar)
+    //   .pipe(finalize(() => this.loading.set(false)))
+    //   .subscribe(response => {
+    //     this.dataSource.set(response.data)
 
-      })
+    //   })
   }
 
   addConfigDate( event: MatDatepickerInputEvent<Date>) {
@@ -255,25 +256,25 @@ export class CuentaPorPagarCuotaModalComponent {
     }).then(result => {
       if (result.isConfirmed) {
         this.loading.set(false)
-        this.cuentaPorPagarSvc.actualizarCuotas(this.data.idCuentaPorPagar, this.dataSource())
-        .pipe(finalize(()=>this.loading.set(false)))
-        .subscribe(response=>{
-          if(response.code==="0"){
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message
-            })
-          }
+        // this.cuentaPorPagarSvc.actualizarCuotas(this.data.idCuentaPorPagar, this.dataSource())
+        // .pipe(finalize(()=>this.loading.set(false)))
+        // .subscribe(response=>{
+        //   if(response.code==="0"){
+        //     this.tS.toastr({
+        //       type: 'warning',
+        //       message: response.message
+        //     })
+        //   }
 
-          if(response.code==="1"){
-            this.tS.toastr({
-              type: 'success',
-              message: response.message
-            })
-            this.getDataConfigCuotas()
-          }
+        //   if(response.code==="1"){
+        //     this.tS.toastr({
+        //       type: 'success',
+        //       message: response.message
+        //     })
+        //     this.getDataConfigCuotas()
+        //   }
 
-        })
+        // })
 
       }
     })

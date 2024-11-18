@@ -13,7 +13,6 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { isValidField, removeSpacesInValue } from '@core/utils/utils';
 import {
-  BancoSelectOnly,
   SubEntidadFinancieraSelectHtmlOnly,
 } from '@modules/accounting/models/subentidad-financiera.model';
 import { SharedService } from '@core/services/shared.service';
@@ -22,6 +21,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ComprobanteIngresoService } from '@modules/accounting/services/comprobante-ingreso.service';
+import {BancoSelectOnly} from "@accounting/interfaces/banco.interface";
 
 @Component({
   selector: 'app-reporte-cobros',

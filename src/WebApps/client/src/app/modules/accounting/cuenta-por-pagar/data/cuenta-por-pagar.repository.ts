@@ -1,17 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { ACCOUNTING_PATHS } from '../enums/accounting.constants';
 import { map } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
-import { CuentaPorPagarCuotaConfig, CuentaPorPagarLista } from './interfaces/cuenta-por-pagar.interface';
 import { CuentaPorPagarRepositoryMapper } from './cuenta-por-pagar.repository.mapper';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { TiempoCreditoSelectHtmlOnly } from '../interfaces/tiempo-credito.interface';
 import {ComprobanteEgresoLista} from "@accounting/comprobante-egreso/comprobante-egreso.interface";
 import {HistorialPagoLista} from "@modules/accounting/cuenta-por-pagar/interfaces/historial-pago.interface";
 import {PagoDetalleLista} from "@modules/accounting/cuenta-por-pagar/interfaces/pago-detalle.interface";
+import { ACCOUNTING_PATHS } from '@modules/accounting/enums/accounting.constants';
+import { CuentaPorPagarCuotaConfig, CuentaPorPagarLista } from '../interfaces/cuenta-por-pagar.interface';
+import { TiempoCreditoSelectHtmlOnly } from '@modules/accounting/interfaces/tiempo-credito.interface';
 
 @Injectable({
   providedIn: 'root'
