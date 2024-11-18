@@ -69,7 +69,7 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
     }
 
     function focusSearchCustomer() {
-        let el = $("#clienteSearchInvoice")
+        let el = document.getElementById("clienteSearchInvoice")
         if (el) {
             el.focus();
         }
@@ -78,7 +78,7 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
     setTimeout(() => {
 
         //buscador principal 
-        let el = $("#custom-template-md-autocomplete-articulo")
+        let el = document.getElementById("custom-template-md-autocomplete-articulo")
 
         if (el) {
             el.on('keyup', e => {
@@ -189,9 +189,12 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
     }
 
 
-    function validarGetDataArticulo(idArticulo) {  
+    function validarGetDataArticulo(idArticulo, textSearch) {  
         if ($ctrl.esVenta) {
-            $ctrl.refProductoVenta.onInventario(idArticulo)
+            $ctrl.refProductoVenta.onInventario({
+                idArticulo,
+                textSearch
+            })
             return
         } 
 
@@ -294,20 +297,22 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
 
             if ($scope.searchText.length < 2) return
 
+            validarGetDataArticulo(null,$scope.searchText )
+
             /**
              * return object {idArticulo: 0}
              */
-            isFetchingByBarcode = true;
-            articuloSvc.findByEnterCode({ textSearch: $scope.searchText, isSearchByCode: true }).then(response => {
-                if(!response) return;
+            // isFetchingByBarcode = true;
+            // articuloSvc.findByEnterCode({ textSearch: $scope.searchText, isSearchByCode: true }).then(response => {
+            //     if(!response) return;
 
-                validarGetDataArticulo(response.idArticulo);
-                $scope.searchText = null
-            }).catch(error => {
-                console.log(error);
-            }).finally(()=>{
-                isFetchingByBarcode = false;
-            })
+            //     validarGetDataArticulo(response.idArticulo);
+            //     $scope.searchText = null
+            // }).catch(error => {
+            //     console.log(error);
+            // }).finally(()=>{
+            //     isFetchingByBarcode = false;
+            // })
         } catch (error) {
             console.log(error)
         }
