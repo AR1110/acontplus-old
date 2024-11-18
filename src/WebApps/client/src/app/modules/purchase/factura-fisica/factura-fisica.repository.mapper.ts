@@ -1,8 +1,36 @@
 import { roundNumber } from '@core/utils/round-number.utils';
 import { FacturaFisicaLista } from './factura-fisica.interface';
 import { fechaString } from '@core/utils/date.util';
+import { groupEstabUtil } from '@core/utils/group-estab.util';
 
-export class FacturaFisicaAdapter {
+export class FacturaFisicaRepositoryMapper {
+
+  static fromApiDataFilter(response: any) {
+
+    const {
+      ptoEmision: tempEstabs,
+      estadoDocumento,
+      subcategories
+    } = response;
+
+    let dataToGroup = {
+      estabs: tempEstabs,
+      isGroupPuntoEmision: true
+    }
+
+    return {
+      estabs: groupEstabUtil(dataToGroup),
+      estadosDoc: estadoDocumento.map((item: any) => ({
+        idEstado: item.idEstadoPago,
+        descripcion: item.descripcion,
+        codigo: item.codigo
+      })),
+
+      subcategorias: subcategories
+
+    }
+  }
+
   static fromApiGetAll(response: any[]): FacturaFisicaLista[] {
     return response.map((item) => {
       return {
@@ -112,4 +140,34 @@ export class FacturaFisicaAdapter {
 
     return result;
   }
+
+
+  static fromApiDataForm(response: any) {
+    console.log(response)
+    const {
+      configDecimales,
+      impuestos,
+      tiempoCredito,
+      bodegas,
+      categoriasCompra,
+      sustentosTributario,
+      subcategories
+    } = response;
+
+    let dataToGroup = {
+      bodegas: bodegas,
+      isGroupBodega: true
+    }
+
+
+    const  estabs = groupEstabUtil(dataToGroup);
+
+    return {
+      estabs,
+      sustentosTributario
+
+    }
+
+  }
+
 }

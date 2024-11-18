@@ -4,8 +4,9 @@ import { PagoDetalleLista } from "@modules/accounting/cuenta-por-pagar/interface
 import { HistorialPagoLista } from "@modules/accounting/cuenta-por-pagar/interfaces/historial-pago.interface";
 import { ApiResponse } from "@core/models/api-response";
 import { groupEstabUtil } from "@core/utils/group-estab.util";
+import { formatDate } from "@core/utils/date.util";
 
-export class CuentaPorPagarAdapter {
+export class CuentaPorPagarRepositoryMapper {
 
   static fromApiDataFilter(response: ApiResponse) {
     let [tempEstabs, tempEstadosDoc, tempTiposDoc, tempCategorias] = JSON.parse(response.payload as string);
@@ -65,7 +66,7 @@ export class CuentaPorPagarAdapter {
       return {
         idCuotaPorPagar: item.idCuotaPorPagar,
         idCuentaPorPagar: item.idCuentaPorPagar,
-        fechaVencimiento: item.fechaVencimiento,
+        fechaVencimiento: formatDate( item.fechaVencimiento),
         nroCuota: item.nroCuota,
         cuota: item.cuota,
         abono: item.abono,
@@ -162,7 +163,7 @@ export class CuentaPorPagarAdapter {
 
   static toApiGenerarCuota(obj: any) {
     return   {
-      idCuentaPorPagar: obj.id,
+      idCuentaPorPagar: obj.idCuentaPorPagar,
       idTiempoCredito: obj.tiempoCreditoId,
        codPago: obj.codigoEstado
   };

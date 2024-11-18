@@ -1,5 +1,11 @@
 <div class="table-container small-table">
-  <table #sort="matSort" [dataSource]="dataSource.data" mat-table matSort multiTemplateDataRows>
+  <table
+    #sort="matSort"
+    [dataSource]="dataSource.data"
+    mat-table
+    matSort
+    multiTemplateDataRows
+  >
     <!-- (matSortChange)="sortData($event)" -->
 
     @if (displayColumnDefs) {
@@ -8,6 +14,7 @@
       <th *matHeaderCellDef mat-header-cell>
         <mat-checkbox
           (change)="$event ? masterToggle() : null"
+          (click)="$event.stopPropagation()"
           [aria-label]="checkboxLabel()"
           [checked]="selection.hasValue() && isAllSelected()"
           [indeterminate]="selection.hasValue() && !isAllSelected()"
@@ -34,48 +41,39 @@
         *matCellDef="let element; let i = index"
         [ngClass]="{ highlighted: highlightRowIndex === i }"
       >
-        @switch (col.key) {
-          @case ('op') {
-            <div class="d-flex flex-row gap-1">
-              <ng-container
-                *ngTemplateOutlet="templateOp; context: { item: element }"
-              ></ng-container>
-            </div>
+        @switch (col.key) { @case ('op') {
+        <div class="d-flex flex-row gap-1">
+          <ng-container
+            *ngTemplateOutlet="templateOp; context: { item: element }"
+          ></ng-container>
+        </div>
+        } @case ('image') {
+        <img
+          [src]="element[col.key]"
+          class="img-fluid img-thumbnail my-1"
+          width="50"
+          alt=""
+        />
+        } @case ('number') {
+        <div>{{ element[col.key] | number : "1.2" : locale }}</div>
+        } @case ('date') {
+        <div>{{ element[col.key] | date : "dd.MM.yyyy" }}</div>
+        } @case (showExpand && "expand" ){
+        <button
+          mat-icon-button
+          aria-label="expand row"
+          (click)="onExpand($event, element)"
+        >
+          @if (expandedElement === element) {
+          <mat-icon>keyboard_arrow_up</mat-icon>
+          } @else {
+          <mat-icon>keyboard_arrow_down</mat-icon>
           }
-          @case ('image') {
-            <img
-              [src]="element[col.key]"
-              class="img-fluid img-thumbnail my-1"
-              width="50"
-              alt=""
-            />
-          }
+        </button>
+        } @default {
+        <div>{{ element[col.key] }}</div>
 
-          @case ('number') {
-            <div>{{ element[col.key] | number : "1.2" : locale }}</div>
-          }
-
-          @case ('date') {
-            <div>{{ element[col.key] | date : "dd.MM.yyyy" }}</div>
-          }
-          @case (showExpand && "expand" ){
-            <button
-              mat-icon-button
-              aria-label="expand row"
-              (click)="onExpand($event, element)  "
-            >
-              @if (expandedElement === element) {
-                <mat-icon>keyboard_arrow_up</mat-icon>
-              } @else {
-                <mat-icon>keyboard_arrow_down</mat-icon>
-              }
-            </button>
-          }
-          @default {
-            <div>{{ element[col.key] }}</div>
-
-          }
-        }
+        } }
       </td>
 
       <td *matFooterCellDef mat-footer-cell>
@@ -91,45 +89,61 @@
 
     }
 
-      <!-- Expanded Content Column -->
-      @if(showExpand){
+    <!-- Expanded Content Column -->
+    @if(showExpand){
 
+    <ng-container matColumnDef="expandedDetail">
+      <td
+        mat-cell
+        *matCellDef="let element"
+        [attr.colspan]="displayedColumns.length"
+      >
+        <div
+          class="m-0 p-0"
+          [@detailExpand]="
+            element == expandedElement ? 'expanded' : 'collapsed'
+          "
+        >
+          <ng-container
+            *ngTemplateOutlet="expandedDetail; context: { row: element }"
+          ></ng-container>
+        </div>
+      </td>
+    </ng-container>
 
-      <ng-container matColumnDef="expandedDetail">
-        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-          <div class="m-0 p-0" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-            <ng-container *ngTemplateOutlet="expandedDetail; context: { row: element }"></ng-container>
-          </div>
-        </td>
-      </ng-container>
-
-      }
-
-      <!-- Rows -->
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="small-header"></tr>
-      <tr
-        mat-row
-        *matRowDef="let row; columns: displayedColumns"
-        [class.example-expanded-row]="expandedElement === row"
-        (click)="selectRow(row)"
-        [style]="getRowColor(row) || {}"
-      ></tr>
-      @if(showExpand){
-      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
-      }
-
-      <!-- No Data Row -->
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
-          Sin Registro
-        </td>
-      </tr>
-
-      <!-- Footer Row -->
-      @if(showFooter && dataSource.data.length > 0) {
-        <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
-      }
     }
 
+    <!-- Rows -->
+    <tr
+      mat-header-row
+      *matHeaderRowDef="displayedColumns; sticky: true"
+      class="small-header"
+    ></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      [class.example-expanded-row]="expandedElement === row"
+      (click)="selectRow(row)"
+      [style]="getRowColor(row) || {}"
+    ></tr>
+    @if(showExpand){
+    <tr
+      mat-row
+      *matRowDef="let row; columns: ['expandedDetail']"
+      class="example-detail-row"
+    ></tr>
+    }
+
+    <!-- No Data Row -->
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+        Sin Registro
+      </td>
+    </tr>
+
+    <!-- Footer Row -->
+    @if(showFooter && dataSource.data.length > 0) {
+    <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+    } }
   </table>
 </div>
