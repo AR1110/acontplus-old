@@ -1,3 +1,4 @@
+//@ts-check
 export {
     modalArticuloCtrl,
     modalArticuloFraccionadoCtrl,
@@ -2076,10 +2077,16 @@ function ModalArticuloGeneralCtrl(
             cantidadInput = Number(cantidadInput);
         
             if (result.isConfirmed) {
-                params.refProductoVenta.onInventario(item.idArticulo, cantidadInput);
+                params.refProductoVenta.onInventario({
+                   idArticulo: item.idArticulo,
+                   cantidad: cantidadInput
+                });
         
             } else if (result.isDenied) {
-                params.refProductoVenta.onInventario(item.idArticulo, cantidadInput);
+                params.refProductoVenta.onInventario({
+                   idArticulo: item.idArticulo,
+                   cantidad: cantidadInput
+                });
                 $uibModalInstance.close();
             }
         });
@@ -2107,8 +2114,7 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
 
     initialLoad();
     function initialLoad() {
-        try {
-            showLoader();
+        try { 
             //$scope.articleName = item.descripcion
             mS.getData('get', `${URL}Get?json=${JSON.stringify({
                 tipo: 3,
@@ -2123,7 +2129,7 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
                         $scope.articleName = $scope.historyComprasArticle[0].articulo;
                     }
                 }
-            ).finally(() => hideLoader())
+            ) 
         } catch (error) {
             console.log(error)
         }
