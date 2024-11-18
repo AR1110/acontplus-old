@@ -62,7 +62,7 @@ public class DocumentoXmlToHtml(IConfiguration configuration) : IDocumentoXmlToH
                                     <label>CLAVE DE ACCESSO</label><br />
 <div class=""text-center"">
                                     <img id=""barcodeImg"" src=" +
-                  $"data:image/png;base64,{Convert.ToBase64String(BarcodeGen.Create(data.infoTributaria.claveAcceso), 0, BarcodeGen.Create(data.infoTributaria.claveAcceso).Length)}" +
+                  $"data:image/png;base64,{Convert.ToBase64String(BarcodeGen.Create(new BarcodeConfig { Text = data.infoTributaria.claveAcceso }), 0, BarcodeGen.Create(new BarcodeConfig { Text = data.infoTributaria.claveAcceso }).Length)}" +
                   @" alt="""" align=""center"" class=""img-fluid"" height=""60"" width=""500"">
                                     <br><small> " + data.infoTributaria.claveAcceso + @"</small></div>
                                 </div>

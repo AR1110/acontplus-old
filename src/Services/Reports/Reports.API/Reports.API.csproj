@@ -239,6 +239,8 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="ReportViewerCore.NETCore" />
   </ItemGroup>
 
 </Project>
