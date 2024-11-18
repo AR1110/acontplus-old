@@ -460,7 +460,6 @@ BEGIN
 		    BEGIN
                 SET @tableNames = 'stockCheckResponse'
 
-
 	            DECLARE @stock       NUMERIC(18,5) 
                        ,@stockMinimo NUMERIC(18,5) 
                        ,@cantidad    NUMERIC(18,5) 
