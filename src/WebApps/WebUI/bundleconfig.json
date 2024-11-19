@@ -742,5 +742,11 @@
     "inputFiles": [
       "wwwroot/js/factElect/controllers/notaCreditoCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ventas/controllers/clienteCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/ventas/controllers/clienteCtrl.js"
+    ]
   }
 ]

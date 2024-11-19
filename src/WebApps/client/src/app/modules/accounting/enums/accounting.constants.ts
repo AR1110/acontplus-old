@@ -9,7 +9,8 @@ export const enum ACCOUNTING_PATHS {
   CUENTA_POR_COBRAR = 'CuentaPorCobrar/',
   CATEGORY = 'Category/',
   SUBCATEGORY = 'Subcategory/',
-  ACCOUNTING_MOVEMENT='AccountingMovement/'
+  ACCOUNTING_MOVEMENT='AccountingMovement/',
+  COMPROBANTE_EGRESO = 'ComprobanteEgreso/',
 }
 
 export const enum PaymentTypeCode {

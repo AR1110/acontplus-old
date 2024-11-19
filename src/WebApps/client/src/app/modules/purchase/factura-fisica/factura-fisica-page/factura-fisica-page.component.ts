@@ -25,6 +25,8 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FacturaFisicaDetalleDirective } from '../factura-fisica-detalle.directive';
+import { DialogService } from '@core/services/dialog.service';
+import { FacturaFisicaAddEditModalComponent } from '../components/factura-fisica-add-edit-modal/factura-fisica-add-edit-modal.component';
 
 @Component({
   selector: 'app-factura-fisica-page',
@@ -58,6 +60,7 @@ export class FacturaFisicaPageComponent {
 
   private facturaFisicaSvc = inject(FacturaFisicaService)
   private tS = inject(ToasterService)
+  private dialogSvc = inject(DialogService)
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
@@ -232,6 +235,17 @@ export class FacturaFisicaPageComponent {
       }
     })
     this.refresh()
+  }
+
+  openModalAddEdit(row?: FacturaFisicaLista){
+    let dialogSvc = this.dialogSvc.open(FacturaFisicaAddEditModalComponent, {
+      size: 'xl'
+    })
+    dialogSvc.subscribe(result=>{
+
+    })
+
+
   }
 
 

@@ -434,7 +434,8 @@
                                 idDocumento: item.idFactura,
                                 serieComprobante: item.serieComprobante,
                                 fechaEmision: item.fechaEmision,
-                                usuario: item.usuario
+                                usuario: item.usuario,
+                                totalRecords: item.totalRecords
                             };
                         });
                         return {

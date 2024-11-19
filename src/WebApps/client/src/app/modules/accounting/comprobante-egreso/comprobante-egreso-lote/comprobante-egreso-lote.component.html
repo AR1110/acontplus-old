@@ -1,0 +1,130 @@
+<app-custom-container-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [matDialogTitle]="'Nuevo Pago'"
+  [loading]="loading()"
+  (close)="closeDialog()"
+/>
+
+<ng-template #containerTemplate>
+  <div class="d-flex flex-column gap-2 mb-2">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+    >
+      <div class="col">
+        <mat-card>
+          <mat-card-content>
+            <div
+              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+            >
+              <div class="vstack">
+                <small class="fw-semibold">Proveedor: </small>
+                <small
+                  >iyiye iyeiuyiryiue riuyreiuyriu eiyriufyeiuyieuyui
+                  irueyuiryuieyuify yeiuyrfiruieyriuyui</small
+                >
+              </div>
+              <div class="vstack">
+                <small class="fw-semibold">Nro. Identificación</small>
+                <small>0</small>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col">
+        <mat-card>
+          <mat-card-content>
+            <div
+              class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
+            >
+              <div class="vstack">
+                <small class="fw-semibold">Total</small><small>50</small>
+              </div>
+              <div class="vstack">
+                <small class="fw-semibold">Abono</small><small>0</small>
+              </div>
+              <div class="vstack">
+                <small class="fw-semibold">Saldo</small><small>0</small>
+              </div>
+              <div class="vstack">
+                <small class="fw-semibold">Diferencia</small><small>0</small>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-12 col-12">
+        <div class="d-flex flex-column gap-3">
+          <mat-accordion multi>
+            @for (item of cuentasPorPagar(); track $index) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="d-flex gap-2 small">
+                    <span class="fw-bold">{{ item.nombreDoc }}</span>
+                    <span class="text-success">{{
+                      item.serieComprobante
+                    }}</span>
+                  </div>
+                </mat-panel-title>
+                <mat-panel-description>
+                  {{ item.total | currency }}
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <app-mat-dynamic-table
+                [dataList]="item.cuotas"
+                [displayedColumns]="columns" [displayColumnDefs]="columnsDefs"/>
+            </mat-expansion-panel>
+
+            }
+          </mat-accordion>
+
+          <mat-form-field class="w-100">
+            <mat-label>Nota (Opcional)</mat-label>
+            <textarea matInput placeholder="..."></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-12 col-12">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title-group>
+              <mat-card-subtitle
+                >Seleccione el Método de Pago</mat-card-subtitle
+              >
+            </mat-card-title-group>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-list>
+              <mat-divider></mat-divider>
+              @for (item of entidadesFinanciera(); track $index) {
+              <mat-list-item style="cursor: pointer">
+                <div class="d-flex justify-content-between">
+                  <div class="">{{ item.descripcion }}</div>
+                  <mat-icon>keyboard_arrow_right</mat-icon>
+                </div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+
+              }
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #actionsTemplate>
+  <button mat-flat-button>
+    <mat-icon>save</mat-icon>
+    Guardar
+  </button>
+  <button mat-stroked-button color="accent" (click)="closeDialog()">
+    Cerrar
+  </button>
+</ng-template>

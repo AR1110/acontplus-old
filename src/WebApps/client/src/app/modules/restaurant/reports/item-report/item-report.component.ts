@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab } from '@core/models/estab.model';
-import { ProductService } from '@modules/inventory/services/product.service';
+import { ProductService } from '@inventory/product/product.service';
 import { GroupedSubFamilia } from '@modules/inventory/models/sub-category.model';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';

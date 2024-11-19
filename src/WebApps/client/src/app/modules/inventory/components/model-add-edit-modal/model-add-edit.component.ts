@@ -5,7 +5,7 @@ import { ToasterService } from "@core/services/toaster.service";
 import { isValidField } from "@core/utils/utils";
 import { BrandAddEditDirective } from "@modules/inventory/directives/brand-add-edit.directive";
 import { InvModelService } from "@modules/inventory/services/inv-model.service";
-import { ProductService } from "@modules/inventory/services/product.service";
+import { ProductService } from "@inventory/product/product.service";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
 

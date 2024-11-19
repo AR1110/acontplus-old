@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { NgbNavModule } from "@ng-bootstrap/ng-bootstrap";
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
-import { ProductService } from "@inventory/services/product.service";
+import { ProductService } from "@inventory/product/product.service";
 import { GroupedEstab, GroupedEstabBodega } from "@core/models/estab.model";
 import { FormsModule } from "@angular/forms";
 import { Brand } from "@inventory/models/brand.model";
 import {
   SubCategoryGroupComponent
 } from "@inventory/components/sub-category/sub-category-group/sub-category-group.component";
-import { ProductSearchComponent } from "@inventory/components/product/product-search/product-search.component";
+import { ProductSearchComponent } from "@inventory/product/components/product-search/product-search.component";
 import { UserSearchComponent } from "@core/components/user-search/user-search.component";
 import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
 import { FORMAT_REPORT } from "@core/constants/global.constants";

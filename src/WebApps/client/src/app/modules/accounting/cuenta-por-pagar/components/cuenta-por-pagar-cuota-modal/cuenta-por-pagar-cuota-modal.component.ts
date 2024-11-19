@@ -1,12 +1,12 @@
 import { Component, inject, model, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
 import { CustomContainerDialogComponent } from '@core/components/custom-container-dialog/custom-container-dialog.component';
-import {   provideNativeDateAdapter } from '@angular/material/core';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
 import { CuentaPorPagarService } from '../../cuenta-por-pagar.service';
@@ -16,6 +16,10 @@ import { TiempoCreditoSelectHtmlOnly } from '@modules/accounting/interfaces/tiem
 import { NgxMaskDirective } from 'ngx-mask';
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { DECIMALS } from '@core/constants/global.constants';
 
 @Component({
   selector: 'app-cuenta-por-pagar-cuota-modal',
@@ -28,6 +32,9 @@ import { ToasterService } from '@core/services/toaster.service';
     MatMenuModule,
     MatIconModule,
     MatTableModule,
+    MatInputModule,
+    MatButtonModule,
+    ReactiveFormsModule,
     CustomContainerDialogComponent,
     NgxMaskDirective
   ],
@@ -55,16 +62,18 @@ export class CuentaPorPagarCuotaModalComponent {
   displayedColumns: string[] = ['position', 'cuota', 'fechaVencimiento',];
   dataSource = signal<CuentaPorPagarCuotaConfig[]>([]);
 
+
   dataForm = model({
-    tiempoCreditoId: 0
+    tiempoCreditoId: 0,
+    configDate: null as null | Date
   })
-  dataFormClone = structuredClone(this.dataForm)
+  dataFormClone = model(structuredClone(this.dataForm()))
 
   private initLoad() {
-    return forkJoin([
-      this.cuentaPorPagarSvc.getCuotasData(),
-      this.cuentaPorPagarSvc.getCuotasConfigByIdCuentaPorPagar(this.data.idCuentaPorPagar)
-    ]);
+    return forkJoin({
+      responseCuotaData$:  this.cuentaPorPagarSvc.getCuotasData(),
+      responseCuotaConfig$:  this.cuentaPorPagarSvc.getCuotasConfigByIdCuentaPorPagar(this.data.idCuentaPorPagar)
+    });
   }
 
 
@@ -76,11 +85,26 @@ export class CuentaPorPagarCuotaModalComponent {
         finalize(() => this.loading.set(false)),
       )
       .subscribe(result => {
-        const [responseCuotaData, responseCuotaConfig] = result;
-        this.tiemposCredito.set(responseCuotaData.tiemposCredito)
-        this.dataSource.set(responseCuotaConfig.data)
+        console.log(result)
+        // const [responseCuotaData, responseCuotaConfig] = result;
+        // this.tiemposCredito.set(responseCuotaData.tiemposCredito)
+        // this.dataSource.set(responseCuotaConfig.data)
+        // console.log(this.dataSource())
 
       })
+  }
+
+
+  setDataForm<K extends keyof ReturnType<typeof this.dataForm>>(
+    key: K,
+    value: ReturnType<typeof this.dataForm>[K],
+  ) {
+    this.dataForm.update((ds) => {
+      return {
+        ...ds,
+        [key]: value,
+      };
+    });
   }
 
   async onChangeTiempoCredito() {
@@ -90,7 +114,7 @@ export class CuentaPorPagarCuotaModalComponent {
 
     let { isConfirmed } = await Swal.fire({
       icon: 'warning',
-      html: `Está seguro/a de generar <b>${numeroCuota} </b>  ${numeroCuota > 1 ? 'Cuotas' : 'Cuota'}`,
+      html: `Está seguro/a de generar <b>${numeroCuota} </b>  ${numeroCuota > 1 ? 'cuotas' : 'cuota'}`,
       showDenyButton: true,
       confirmButtonText: `Si`,
       denyButtonText: `No`,
@@ -99,31 +123,163 @@ export class CuentaPorPagarCuotaModalComponent {
     })
 
     if (!isConfirmed) {
-      this.dataForm().tiempoCreditoId = this.dataFormClone().tiempoCreditoId;
+      this.setDataForm("tiempoCreditoId", this.dataFormClone().tiempoCreditoId)
       return
     }
 
 
-    this.cuentaPorPagarSvc.generarCuota({
-      id: this.data.id,
-      tiempoCreditoId: this.dataForm().tiempoCreditoId,
-      codigoEstado: this.data.codigoEstado
-    }).subscribe(response => {
-      if (response.code === "0") {
-        this.tS.toastr({
-          type: 'warning',
-          message: response.message
-        })
-      }
-      if (response.code === "1") {
-        this.tS.toastr({
-          type: 'success',
-          message: response.message
-        })
-      }
-    })
+    // this.cuentaPorPagarSvc.generarCuota({
+    //   idCuentaPorPagar: this.data.idCuentaPorPagar,
+    //   tiempoCreditoId: this.dataForm().tiempoCreditoId,
+    //   codigoEstado: this.data.codigoEstado
+    // }).subscribe(response => {
+    //   if (response.code === "0") {
+    //     this.tS.toastr({
+    //       type: 'warning',
+    //       message: response.message
+    //     })
+    //   }
+    //   if (response.code === "1") {
+    //     this.tS.toastr({
+    //       type: 'success',
+    //       message: response.message
+    //     })
+    //     this.getDataConfigCuotas()
+
+    //   }
+    // })
 
   }
+
+  private getDataConfigCuotas() {
+    // this.loading.set(true)
+    // this.cuentaPorPagarSvc.getCuotasConfigByIdCuentaPorPagar(this.data.idCuentaPorPagar)
+    //   .pipe(finalize(() => this.loading.set(false)))
+    //   .subscribe(response => {
+    //     this.dataSource.set(response.data)
+
+    //   })
+  }
+
+  addConfigDate( event: MatDatepickerInputEvent<Date>) {
+    this.setDataForm("configDate",event.value )
+  }
+
+  configureEndOfMonthDate(){
+    console.log(this.dataForm())
+
+  }
+
+  configureSameDayDate(){
+
+  }
+
+
+
+  calcularValorCuota($event: any, row: CuentaPorPagarCuotaConfig) {
+    $event.stopPropagation();
+
+
+    let cuotasIndexMenor = this.dataSource().filter((_, index) => {
+      const nroCuotaNumber = Number(row.nroCuota);
+
+      return !isNaN(nroCuotaNumber) && index <= nroCuotaNumber;
+    });
+
+
+    let cuotasIndexMayor = this.dataSource().filter((_, index) => {
+      const nroCuotaNumber = Number(row.nroCuota);
+
+      return !isNaN(nroCuotaNumber) && index > nroCuotaNumber;
+    });
+
+    let totalCuotaIndexMenor = cuotasIndexMenor.map(val => Number(val.cuota)).reduce((prev, curr) => prev + curr, 0);
+
+    if (totalCuotaIndexMenor > this.data.total) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'El valor de la cuota tiene que ser menor al Total del Documento'
+      })
+    }
+
+
+    if (cuotasIndexMayor.length > 0) {
+      let total = this.data.total - totalCuotaIndexMenor; //Total Cuota - total Factura
+
+      let numeroCuota = cuotasIndexMayor.length;
+      let valorCuota = total / numeroCuota;
+
+      const nroCuotaIndex = Number(row.nroCuota); // Convertir `nroCuota` a número para evitar problemas con el tipo
+
+      const resultsCuotas = this.dataSource().map((item, index) => {
+        let { cuota, ...restItem } = item;
+
+        // Asignar `cuota` solo si `index` es mayor que `nroCuotaIndex`
+        if (!isNaN(nroCuotaIndex) && index > nroCuotaIndex) {
+          cuota = roundNumber(valorCuota, DECIMALS.CINCO);
+        }
+
+        return {
+          ...restItem,
+          cuota
+        };
+      });
+
+      this.dataSource.set(resultsCuotas);
+
+    }
+
+
+  }
+
+
+
+  save() {
+    const [message, data] = this.cuentaPorPagarSvc.validarCamposActualizarCuota({ cuotas: this.dataSource() })
+
+    if (message) {
+      this.tS.toastr({
+        type: 'warning',
+        message
+      })
+      throw new Error(message);
+    }
+
+    Swal.fire({
+      icon: 'warning',
+      html: ` Está seguro/a de guardar las cuotas `,
+      showConfirmButton: true,
+      confirmButtonText: 'Si ',
+      showCancelButton: true,
+      cancelButtonText: 'No ',
+      allowOutsideClick: false
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.loading.set(false)
+        // this.cuentaPorPagarSvc.actualizarCuotas(this.data.idCuentaPorPagar, this.dataSource())
+        // .pipe(finalize(()=>this.loading.set(false)))
+        // .subscribe(response=>{
+        //   if(response.code==="0"){
+        //     this.tS.toastr({
+        //       type: 'warning',
+        //       message: response.message
+        //     })
+        //   }
+
+        //   if(response.code==="1"){
+        //     this.tS.toastr({
+        //       type: 'success',
+        //       message: response.message
+        //     })
+        //     this.getDataConfigCuotas()
+        //   }
+
+        // })
+
+      }
+    })
+  }
+
 
   closeDialog() {
     this.dialogRef.close();

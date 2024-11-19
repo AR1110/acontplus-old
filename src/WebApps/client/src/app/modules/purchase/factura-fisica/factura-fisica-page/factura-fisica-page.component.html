@@ -53,11 +53,7 @@
           <div
             class="d-flex flex-row gap-2 justify-content-end align-items-center"
           >
-            <button
-              mat-icon-button
-              appMeasureAddEdit
-              (onResultModal)="refresh()"
-            >
+            <button mat-icon-button (click)="openModalAddEdit()">
               <mat-icon>add</mat-icon>
             </button>
             <button mat-icon-button (click)="refresh()">

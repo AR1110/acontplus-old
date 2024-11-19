@@ -1,55 +1,64 @@
-import { CuentaPorPagarHistMovimientoComponent } from './../cuenta-por-pagar-hist-movimiento/cuenta-por-pagar-hist-movimiento.component';
+import {
+  CuentaPorPagarHistMovimientoComponent
+} from './../cuenta-por-pagar-hist-movimiento/cuenta-por-pagar-hist-movimiento.component';
 // Angular Common Modules
-import { CommonModule, DecimalPipe } from '@angular/common';
-import { Component, inject, signal, model } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {CommonModule, DecimalPipe} from '@angular/common';
+import {Component, inject, model, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
 
 // Angular Material Modules
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
-import { PageEvent } from '@angular/material/paginator';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSortModule } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatIconModule} from '@angular/material/icon';
+import {MatInputModule} from '@angular/material/input';
+import {MatMenuModule} from '@angular/material/menu';
+import {PageEvent} from '@angular/material/paginator';
+import {MatSelectModule} from '@angular/material/select';
+import {MatSortModule} from '@angular/material/sort';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 // External Libraries
-import { NgxMaskDirective } from 'ngx-mask';
+import {NgxMaskDirective} from 'ngx-mask';
 
 // Core Components and Services
-import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { DialogService } from '@core/services/dialog.service';
-import { ToasterService } from '@core/services/toaster.service';
-import { formatDateToString } from '@core/utils/date.util';
-import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
-import { MODAL_SIZE } from '@core/constants/global.constants';
+import {CustomTableContainerComponent} from '@core/components/custom-table-container/custom-table-container.component';
+import {DateRangeSelectionComponent} from '@core/components/date-range-selection/date-range-selection.component';
+import {DialogService} from '@core/services/dialog.service';
+import {ToasterService} from '@core/services/toaster.service';
+import {formatDateToString} from '@core/utils/date.util';
+import {getValidId, isValidField, ValidatorUtils} from '@core/utils/utils';
+import {MODAL_SIZE} from '@core/constants/global.constants';
 
 // Accounting Module Components and Services
-import { CuentaPorPagarLista } from '@modules/accounting/cuenta-por-pagar/interfaces/cuenta-por-pagar.interface';
-import { CuentaPorPagarService } from '@modules/accounting/cuenta-por-pagar/cuenta-por-pagar.service';
-import { CuentaPorPagarCuotaModalComponent } from '../cuenta-por-pagar-cuota-modal/cuenta-por-pagar-cuota-modal.component';
+import {CuentaPorPagarLista} from '@modules/accounting/cuenta-por-pagar/interfaces/cuenta-por-pagar.interface';
+import {CuentaPorPagarService} from '@modules/accounting/cuenta-por-pagar/cuenta-por-pagar.service';
+import {
+  CuentaPorPagarCuotaModalComponent
+} from '../cuenta-por-pagar-cuota-modal/cuenta-por-pagar-cuota-modal.component';
 
 // Customer Module Components
-import { SupplierSearchMatComponent } from '@modules/customer/supplier/components/supplier-search-mat/supplier-search-mat.component';
+import {
+  SupplierSearchMatComponent
+} from '@modules/customer/supplier/components/supplier-search-mat/supplier-search-mat.component';
 
 // Shared Components, Models, and Pipes
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
-import { GetTotalPipe } from '@shared/pipes/get-total.pipe';
+import {MatDynamicTableComponent} from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import {ColumnDefinition} from '@shared/models/mat-table-models/column-definition.model';
+import {MatPagination} from '@shared/models/pagination.model';
+import {GetTotalPipe} from '@shared/pipes/get-total.pipe';
 
 // Core Models
-import { GroupedEstab } from '@core/models/estab.model';
+import {GroupedEstab} from '@core/models/estab.model';
 
 // RxJS Operators
-import { finalize, switchMap, throwError } from 'rxjs';
+import {finalize, forkJoin, switchMap, throwError} from 'rxjs';
 import {ParameterReportUtil} from "@shared/utils/parameter-report.util";
 import {SharedService} from "@core/services/shared.service";
+import {SelectionModel} from '@angular/cdk/collections';
+import {ComprobanteEgresoLoteComponent} from '@accounting/comprobante-egreso/comprobante-egreso-lote/comprobante-egreso-lote.component';
+import {ComprobanteEgresoService} from "@accounting/comprobante-egreso/comprobante-egreso.service";
 
 
 @Component({
@@ -83,6 +92,7 @@ export class CuentaPorPagarListaComponent {
   private tS = inject(ToasterService);
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService)
+  private comprobanteEgresoSvc = inject(ComprobanteEgresoService)
 
   estabs: GroupedEstab[] = [];
   estadosDoc = [] as any[];
@@ -98,6 +108,8 @@ export class CuentaPorPagarListaComponent {
   isLoadingResults = signal(false);
 
   columnsDefs: ColumnDefinition[] = [
+
+    { key: 'select', label: ' ', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'index', label: 'Nro.', type: 'string' },
     { key: 'nombreDoc', label: 'Doc.', type: 'string' },
@@ -112,8 +124,12 @@ export class CuentaPorPagarListaComponent {
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
     { key: 'nombreUsuario', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
 
+
+
+
+  selection = new SelectionModel<CuentaPorPagarLista>(true, []);
   dataSource = new MatTableDataSource<CuentaPorPagarLista>();
 
   pagination = signal(new MatPagination());
@@ -135,20 +151,19 @@ export class CuentaPorPagarListaComponent {
   });
 
   private getDataParams() {
-    let params = {
+    return {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
       codEstab: this.dataSearch().codEstab,
       checkboxFecha: this.dataSearch().checkBoxDate,
       codEstado: isValidField(this.dataSearch().codigoEstado),
       codDoc: isValidField(this.dataSearch().codDoc),
-      idProveedor: this.dataSearch().esBuscarProveedor ? getValidId(this.dataSearch().idProveedor) : null ,
+      idProveedor: this.dataSearch().esBuscarProveedor ? getValidId(this.dataSearch().idProveedor) : null,
       dateStart: this.dataSearch().fromDate,
       dateEnd: this.dataSearch().toDate,
-      secuencial: this.dataSearch().esBuscarPorNro ? isValidField(this.dataSearch().secuencial): null,
+      secuencial: this.dataSearch().esBuscarPorNro ? isValidField(this.dataSearch().secuencial) : null,
       typeSearchNro: this.dataSearch().typeSearchNro,
     };
-    return params;
   }
 
   private setResponseGetAll(response: any) {
@@ -223,7 +238,7 @@ export class CuentaPorPagarListaComponent {
     this.getAll();
   }
 
-  ngOnInit(): void {
+  private onLoad() {
     this.isLoadingResults.set(true);
     this.cpcSvc
       .getDataFilter()
@@ -259,6 +274,11 @@ export class CuentaPorPagarListaComponent {
       .subscribe((response) => {
         this.setResponseGetAll(response);
       });
+  }
+
+  ngOnInit(): void {
+  //  this.openCuotaModal()
+  this.onLoad()
   }
 
   setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(
@@ -298,23 +318,121 @@ export class CuentaPorPagarListaComponent {
     this.refresh()
   }
 
-  handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
-    });
-    this.refresh();
+
+  // Función para verificar si los valores de razonSocialComprador son los mismos
+  private verificarProveedorIgual() {
+    const firstCustomerId = this.selection.selected[0]?.idProveedor;
+
+    // Verificar si todas las demás entradas tienen la misma idProveedor
+    return this.selection.selected.every(item => item.idProveedor === firstCustomerId);
   }
 
-  openCuotaModal(item: CuentaPorPagarLista) {
+  openPaymentModal(){
+    const selected = this.selection.selected;
+    if(selected.length===0){
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione al menos un documento'
+      })
+      return
+    }
+
+    if(this.verificarProveedorIgual()){
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione documentos que pertenezca al mismo proveedor'
+      })
+      return
+    }
+
+    console.log(this.selection.selected)
+
+    // Crear un array de observables para obtener las cuotas
+    const observables = selected.map((item) =>
+      this.comprobanteEgresoSvc.getCuotasByIdCuentaPorPagar(item.idCuentaPorPagar)
+    );
+
+
+    forkJoin(observables).subscribe(cuotasResponse=>{
+
+      let selectedMergeCuotas = selected.map((item) =>{
+
+        // Aplanamos las cuotas de la respuesta y las filtramos por idCuentaPorPagar
+        let filteredCuotas = cuotasResponse.flatMap(payment => payment.cuotas)
+          .filter(cuota => cuota.idCuentaPorPagar === item.idCuentaPorPagar);
+
+        // Devolvemos el documento combinado con las cuotas clonadas
+        return {
+          ...item,
+          cuotas: structuredClone(filteredCuotas), // Clonamos las cuotas
+          cuotasCopy: structuredClone(filteredCuotas) // Clonamos nuevamente si es necesario
+        };
+      })
+      console.log(selectedMergeCuotas)
+
+      if(selectedMergeCuotas.some(item=>item.cuotas.length===0)){
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Algunos de los documentos seleccionados no tienen cuotas'
+        })
+        return
+      }
+
+
+      this.dialogSvc.open(ComprobanteEgresoLoteComponent, {
+         size: 'xxl',
+        data: {
+           dataCuentaPorPagar: selectedMergeCuotas[0],
+           cuentasPorPagar: selectedMergeCuotas,
+        }
+      })
+    })
+
+
+
+  }
+
+
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: CuentaPorPagarLista): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row  }`;
+  }
+
+
+
+
+
+
+  openCuotaModal(item?: CuentaPorPagarLista) {
     let modalRef = this.dialogSvc.open(CuentaPorPagarCuotaModalComponent, {
       size: MODAL_SIZE.XL,
       data: {
-        idCuentaPorPagar: item.idCuentaPorPagar,
+     //   idCuentaPorPagar: item.idCuentaPorPagar,
+     idCuentaPorPagar: 10062,
+
+        codigoEstado: 'PE',
+        total: item?.total || 0
       },
     });
 
@@ -351,5 +469,18 @@ export class CuentaPorPagarListaComponent {
     console.log(params)
   }
 
+
+
+  handlePageEvent(e: PageEvent) {
+    this.pagination.update((pag) => {
+      return {
+        ...pag,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
+      };
+    });
+    this.refresh();
+  }
 
 }

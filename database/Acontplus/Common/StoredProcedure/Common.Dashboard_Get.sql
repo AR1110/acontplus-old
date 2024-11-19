@@ -24,13 +24,6 @@ BEGIN
         @expired BIT = 0,
         @userId INT;
 
-        --@licenses VARCHAR(MAX) = '[]',
-        --@stepsConfig VARCHAR(MAX) = '[]',
-        --@expiredSignatures VARCHAR(MAX) = '[]',
-        --@emittedDocuments VARCHAR(MAX) = '[]',
-        --@receivedDocuments VARCHAR(MAX) = '[]',
-        --@anotherSalesDocs VARCHAR(MAX) = '[]';
-
     -- Use a temporary table to store intermediate results
     DECLARE @TempResults TABLE (
         cantidadArticulo INT,
@@ -125,7 +118,7 @@ BEGIN
 
          INSERT INTO @SalesDocs
           VALUES('Nota de Entrega',  (SELECT COUNT(*) FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1)),
-          ('Proforma',  (SELECT COUNT(*) FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1));
+          ('Proforma',  (SELECT COUNT(*) FROM dbo.Proforma WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1));
 
         INSERT INTO @ReceivedDocsTbl
              SELECT td.descripcion document

@@ -25,11 +25,11 @@ import {
   faListAlt,
   faTrashAlt,
 } from '@fortawesome/free-regular-svg-icons';
-import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
-import { ProductService } from '@modules/inventory/services/product.service';
-import { ProductSearchOverlayComponent } from '@modules/inventory/components/product/product-search-overlay/product-search-overlay.component';
+import { ProductSearchComponent } from '@inventory/product/components/product-search/product-search.component';
+import { ProductService } from '@inventory/product/product.service';
+import { ProductSearchOverlayComponent } from '@inventory/product/components/product-search-overlay/product-search-overlay.component';
 import { Tarifa } from '@modules/inventory/models/tarifa.model';
-import { OpenModalProductService } from '@modules/inventory/services/open-modal-product.service';
+import { OpenModalProductService } from '@inventory/product/open-modal-product.service';
 import {
   getCantidadStock,
   mergeProductStock,

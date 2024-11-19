@@ -41,6 +41,7 @@ export interface GroupedEstab
     Establecimiento,
     'idEstablecimiento' | 'codEstab' | 'nombreComercial' | 'defaultEstab'
   > {
+    nombreEstab: string
   puntosEmision: Array<GroupedEstabPuntoEmision>;
   bodegas: Array<GroupedEstabBodega>;
 }

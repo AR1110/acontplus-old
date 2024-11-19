@@ -248,13 +248,14 @@ app.factory('productUtil', [
 
             },
 
-            onInventario: function (/** @type {number} */ idArticulo, cantidad) { 
+            onInventario: function ({ idArticulo, cantidad, textSearch}) { 
 
                 const managedFetch = fS.fetchManager(artSvc.getForSale);
 
                 managedFetch({
                     idArticulo,
-                    idBodega: this.idBodega
+                    idBodega: this.idBodega,
+                    textSearch
                 }).then(response => {
                     if (!response) return 
                     const {
