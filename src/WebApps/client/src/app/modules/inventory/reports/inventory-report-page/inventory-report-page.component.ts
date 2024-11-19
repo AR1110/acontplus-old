@@ -13,7 +13,6 @@ import { UserSearchComponent } from "@core/components/user-search/user-search.co
 import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
 import { FORMAT_REPORT } from "@core/constants/global.constants";
 import { ToasterService } from "@core/services/toaster.service";
-import { formatDateMoment } from "@core/utils/format-date-moment";
 import { getValidId, isValidField } from "@core/utils/utils";
 import { INVENTORY_CODE_REPORT } from "@inventory/enums/inventory.enum";
 import { SharedService } from "@core/services/shared.service";
@@ -21,6 +20,7 @@ import {
   CompanyCustomerSearchComponent
 } from "@company-customer/components/company-customer-search/company-customer-search.component";
 import { SupplierSearchComponent } from '@modules/customer/supplier/components/supplier-search/supplier-search.component';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-inventory-report-page',
@@ -69,8 +69,8 @@ export class InventoryReportPageComponent {
     byStock: 0,
     chkUbicacion: false,
     textUbicacion: null as string | null,
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     idMarca: 0,
     ckFechaCaducidad: false,
     byTipoReporte: 0,
@@ -128,8 +128,8 @@ export class InventoryReportPageComponent {
     this.dataSearch.ckFechaCaducidad = false;
     this.dataSearch.chkUbicacion = false;
 
-    this.dataSearch.fromDate = formatDateMoment(new Date())
-    this.dataSearch.toDate = formatDateMoment(new Date());
+    this.dataSearch.fromDate = formatDateToString(new Date())
+    this.dataSearch.toDate = formatDateToString(new Date());
   }
 
   onChangeEstab() {

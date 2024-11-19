@@ -1,0 +1,72 @@
+<app-custom-container-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [matDialogTitle]="' '"
+  (close)="close()"
+  [showHeader]="false"
+  [align]="'center'"
+/>
+
+<ng-template #containerTemplate>
+  <div class="d-flex justify-content-between mb-3">
+    <span class="h5 fw-bold">Total a pagar</span>
+    <span class="h5 fw-bold">{{ comprobanteEgresoStore.saldo() }}</span>
+  </div>
+
+  @if(esEfectivo()){
+  <div
+    class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+  >
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>SubEntidad Financiera</mat-label>
+        <mat-select
+          [(ngModel)]="
+            comprobanteEgresoStore.dataFormaPago().idSubEntidadFinanciera
+          "
+        >
+          @for (item of comprobanteEgresoStore.subEntidadesFinancieraFiltered();
+          track $index){
+
+          <mat-option [value]="item.idSubEntidadFinanciera">{{
+            item.descripcion
+          }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>Fecha Emisión</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [value]="comprobanteEgresoStore.dataFormaPago().fechaEmision"
+        />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker touchUi #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="col w-100">
+      <mat-form-field class="w-100">
+        <mat-label>Valor abono</mat-label>
+        <input
+          matInput
+          class="text-center"
+          [(ngModel)]="valorAbono"
+          onclick="select();"
+        />
+      </mat-form-field>
+    </div>
+  </div>
+
+  }
+</ng-template>
+
+<ng-template #actionsTemplate>
+  <button mat-flat-button color="accent" (click)="abonar()">Abonar</button>
+  <button mat-raised-button color="accent" (click)="close()">Cerrar</button>
+</ng-template>

@@ -6,7 +6,6 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
@@ -18,6 +17,7 @@ import { ProductSearchComponent } from '../product-search/product-search.compone
 import Swal from 'sweetalert2';
 import { SharedService } from '@core/services/shared.service';
 import { INVENTORY_CODE_REPORT } from '@inventory/enums/inventory.enum';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-product-kardex-modal',
@@ -66,8 +66,8 @@ export class ProductKardexModalComponent {
     tipoTransaccion: '',
     idArticulo: 0,
     checkBoxFecha: true,
-    fechaInicio: formatDateMoment(this.startOfMonth),
-    fechaFin: formatDateMoment(this.endOfMonth),
+    fechaInicio: formatDateToString(this.startOfMonth),
+    fechaFin: formatDateToString(this.endOfMonth),
   };
 
   dataArticulo = {

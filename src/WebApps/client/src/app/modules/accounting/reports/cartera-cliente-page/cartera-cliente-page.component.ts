@@ -9,7 +9,7 @@ import { CODE_ESTADO, DOC_TYPE, DOC_TYPE_SRI, FORMAT_REPORT } from "@core/consta
 import { GroupedEstab, GroupedEstabPuntoEmision } from "@core/models/estab.model";
 import { SharedService } from "@core/services/shared.service";
 import { ToasterService } from "@core/services/toaster.service";
-import { formatDateMoment } from "@core/utils/format-date-moment";
+import { formatDateToString } from "@core/utils/date.util";
 import { isValidField } from "@core/utils/utils";
 
 @Component({
@@ -41,8 +41,8 @@ export class CarteraClientePageComponent {
     codDoc: null as string|null,
     idEmpresa: 0,
     convertToDoc: false,
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     companyCustomerId: 0,
     dirViviendaCliente: '',
     checkBoxDirViviendaCliente: false

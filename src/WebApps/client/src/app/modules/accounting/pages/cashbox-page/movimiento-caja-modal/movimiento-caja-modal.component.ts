@@ -10,7 +10,6 @@ import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { isValidField } from '@core/utils/utils';
 import { ControlCaja } from '@modules/accounting/models/cashbox.model';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
@@ -33,6 +32,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { SendMailModalDirective } from '@shared/directives/send-mail-modal.directive';
 import { DetalleArqueoControlCajaModalComponent } from './components/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-movimiento-caja-modal',
@@ -66,8 +66,8 @@ export class MovimientoCajaModalComponent {
     pageIndex: 1,
     pageSize: 25,
     maxSize: 5,
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     statusMovement: '',
     codEstado: '',
     checkBoxDate: false,
@@ -439,8 +439,8 @@ export class MovimientoCajaModalComponent {
         codDoc: null,
         codEstab: null,
         codEstado: this.dataSearch.codEstado,
-        fechaInicio: formatDateMoment(convertedFromDate),
-        fechaFin: formatDateMoment(toDate),
+        fechaInicio: formatDateToString(convertedFromDate),
+        fechaFin: formatDateToString(toDate),
         identificacion: null,
         idUsuario: this.params.idUsuario,
         idCliente: null,

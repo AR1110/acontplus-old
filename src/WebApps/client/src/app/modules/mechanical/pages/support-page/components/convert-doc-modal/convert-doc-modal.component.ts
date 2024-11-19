@@ -1,13 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
-import { icon } from '@fortawesome/fontawesome-svg-core';
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+
 import { Component, inject, Input, ViewChild } from '@angular/core';
 import { FORMA_PAGO_SRI_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { addDayToDate, ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
-import { isDateValid } from '@core/utils/format-date-moment';
+import { addDayToDate, ajustarFechaEmisionModificada, dateIsAfterCurrentDate, isDateValid } from '@core/utils/date.util';
+
 import { isValidField } from '@core/utils/utils';
 import { isValidGeneratorQuota } from '@modules/accounting/utils/calculate-quota.util';
 import { InvoiceService } from '@modules/billing/services/invoice.service';
@@ -20,7 +19,6 @@ import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 
 import Swal from 'sweetalert2';
-import { lastValueFrom } from 'rxjs';
 import { InvoiceAdapter } from '@modules/billing/adapters/invoice/invoice.adapter';
 import { TiempoCredito } from '@modules/accounting/interfaces/tiempo-credito.interface';
 

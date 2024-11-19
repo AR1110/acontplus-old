@@ -4,8 +4,7 @@ import { Component, inject, Input, } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
-import { formatDateMoment, isDateValid } from '@core/utils/format-date-moment';
+import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate, formatDateToString, isDateValid } from '@core/utils/date.util';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SupportService } from '@modules/mechanical/services/support.service';
@@ -38,7 +37,7 @@ interface UserAssigned {
     CommonModule,
     FontAwesomeModule,
     FormsModule,
-    NgbTypeaheadModule, JsonPipe,
+    NgbTypeaheadModule,
     InputDateComponent,
     VehicleAddEditDirective
   ],
@@ -344,7 +343,7 @@ export class SupportAddEditModalComponent {
             supportTypeId: 0,
             userAssignedId: this.data.userAssignedId,
             obs: this.data.obs,
-            date: formatDateMoment(this.data.fechaEmision),
+            date: formatDateToString(this.data.fechaEmision),
 
           }
 

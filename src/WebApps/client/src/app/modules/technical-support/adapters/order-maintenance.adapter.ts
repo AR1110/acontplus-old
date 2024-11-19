@@ -1,5 +1,5 @@
+import { formatDateToString } from '@core/utils/date.util';
 import { OrderMaintenance } from './../models/order-maintenance.model';
-import { formatDateMoment } from "@core/utils/format-date-moment";
 
 type OrderMaintenanceTo = OrderMaintenance & { envioSri: boolean, isGroup: boolean }
 type ToProps = {
@@ -32,7 +32,7 @@ class OrderMaintenanceAdapter {
     let obj = {
       id: data.id,
       bodegaId: data.bodegaId,
-      fechaEmision: formatDateMoment(data.fechaEmision),
+      fechaEmision: formatDateToString(data.fechaEmision),
       establecimientoId: data.establecimientoId,
       customerCompanyId: data.customerCompanyId,
       percentageDiscount: data.percentageDiscount,

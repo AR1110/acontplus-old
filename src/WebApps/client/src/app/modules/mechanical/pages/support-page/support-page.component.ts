@@ -9,7 +9,6 @@ import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -29,6 +28,7 @@ import { InspectionModalComponent } from '../inspection-page/components/inspecti
 import { ConvertDocModalComponent } from './components/convert-doc-modal/convert-doc-modal.component';
 import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
 import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-support-page',
@@ -72,8 +72,8 @@ export class SupportPageComponent {
   statusTab = MECHANICAL_STATUS;
   dataSearch = {
     ckDate: true,
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     customerId: null as number | null,
     licensePlate: null as string | null,
     assigned: false,

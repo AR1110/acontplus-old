@@ -1,5 +1,7 @@
-import { format } from "@formkit/tempo";
-import moment from "moment";
+import { format, isAfter, tzDate } from "@formkit/tempo";
+
+export const zonaHorariaEcuador  = 'America/Guayaquil';
+export const language = 'en';
 
 interface ResultadoComparacionFechas {
   esMismaFecha: boolean;
@@ -35,24 +37,17 @@ export const isDatesEqual = function (fecha1: Date, fecha2: Date): ResultadoComp
 
 
 export const formatDate = function (fecha: any) {
-  var date = moment.tz(fecha, 'America/Guayaquil');
-  var htmlDateTime = date.format('YYYY-MM-DDTHH:mm:ss');
-  // let _getFecha = new Date(fecha);
-  // _getFecha.setMinutes(_getFecha.getMinutes() + _getFecha.getTimezoneOffset());
-  return new Date(htmlDateTime);
+  let dt = tzDate(fecha, zonaHorariaEcuador)
+  return dt;
 }
 
 
 export const dateIsAfterCurrentDate = function (fecha: any) {
-  const zonaHorariaEcuador = 'America/Guayaquil'; // Utilizamos la zona horaria de la Costa del Ecuador (ECT)
 
-  const fechaActual = moment().tz(zonaHorariaEcuador); // Obtener la fecha actual en la zona horaria de Ecuador
-  const fechaIngresada = moment.tz(fecha, 'YYYY-MM-DD', zonaHorariaEcuador); // Utilizar la zona horaria de Ecuador para la fecha ingresada
+  let currentDate =   format(new Date(), "YYYY-MM-DD", language)
+  let inputDate = format(fecha, "YYYY-MM-DD", language)
 
-  if (fechaIngresada.isValid() && fechaIngresada.isAfter(fechaActual, 'day')) {
-    return true;
-  }
-  return false;
+  return isAfter(inputDate, currentDate)
 }
 
 

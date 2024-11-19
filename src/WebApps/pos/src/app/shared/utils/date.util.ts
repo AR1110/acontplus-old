@@ -1,6 +1,6 @@
-import  {format, tzDate}   from "@formkit/tempo";
+import { format, tzDate } from "@formkit/tempo";
 
-export const zonaHorariaEcuador  = 'America/Guayaquil';
+export const zonaHorariaEcuador = 'America/Guayaquil';
 export const language = 'en';
 
 interface ResultadoComparacionFechas {
@@ -45,19 +45,19 @@ export const formatDate = function (fecha: any) {
 export const dateIsAfterCurrentDate = function (fechaIngresada: any) {
 
   const fechaActual = new Date();
-    const fechaActualFormat = format({
-      date: fechaActual,
-      format: { time: 'full' },
-      tz: zonaHorariaEcuador,
-    });
+  const fechaActualFormat = format({
+    date: fechaActual,
+    format: { time: 'full' },
+    tz: zonaHorariaEcuador,
+  });
 
-    const fechaIngresadaFormat = format({
-      date: fechaIngresada,
-      format: 'YYYY-MM-DD',
-      tz: zonaHorariaEcuador,
-    });
+  const fechaIngresadaFormat = format({
+    date: fechaIngresada,
+    format: 'YYYY-MM-DD',
+    tz: zonaHorariaEcuador,
+  });
 
-    return fechaIngresadaFormat > fechaActualFormat
+  return fechaIngresadaFormat > fechaActualFormat
 }
 
 
@@ -123,11 +123,11 @@ export function isDateValid(value: any): value is Date {
 
 
 
-export const formatDateToString = function (date:Date){
+export const formatDateToString = function (date: Date) {
   if (!isDateValid(date)) {
     throw new Error("La fecha es inválida");
   }
-  return format ({
+  return format({
     date,
     format: 'YYYY-MM-DD HH:mm:ss A',
     tz: zonaHorariaEcuador,

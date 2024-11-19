@@ -2,10 +2,10 @@ import { Component, Input, inject } from '@angular/core';
 import {FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
 
 @Component({
   selector: 'app-apertura-caja-modal',
