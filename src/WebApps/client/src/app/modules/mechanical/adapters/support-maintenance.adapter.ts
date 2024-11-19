@@ -1,5 +1,5 @@
-import { formatDateMoment } from "@core/utils/format-date-moment";
 
+import { formatDateToString } from "@core/utils/date.util";
 import { SupportMaintenanceDetail } from "../models/support-maintenance.model";
 import { isValidField } from "@core/utils/utils";
 
@@ -38,7 +38,7 @@ class SupportMaintenanceAdapter {
     let obj = {
       id: data.id,
       bodegaId: data.bodegaId,
-      fechaEmision: formatDateMoment(data.fechaEmision),
+      fechaEmision: formatDateToString(data.fechaEmision),
       establecimientoId: data.establecimientoId,
       customerCompanyId: data.customerCompanyId,
       percentageDiscount: data.percentageDiscount,

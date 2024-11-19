@@ -21,9 +21,9 @@ import { MatTableModule } from '@angular/material/table';
 import { Pagination } from '@shared/models/pagination.model';
 import { OrderDocumentComponent } from '../order-document/order-document.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { FormsModule } from '@angular/forms';
 import { OrderDeliveryModalComponent } from '../order-delivery-modal/order-delivery-modal.component';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-order-list',
@@ -50,8 +50,8 @@ export class OrderListComponent implements OnInit {
   dataSearch = {
     assignedUserId: 0,
     customer: '',
-    endDate: formatDateMoment(new Date()),
-    startDate: formatDateMoment(new Date()),
+    endDate: formatDateToString(new Date()),
+    startDate: formatDateToString(new Date()),
   };
   displayedColumns: string[] = [
     'position',

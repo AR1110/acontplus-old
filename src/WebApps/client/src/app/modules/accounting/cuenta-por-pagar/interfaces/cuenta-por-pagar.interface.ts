@@ -1,5 +1,8 @@
-export interface CuentaPorPagarLista {
+export interface CuentaPorPagar {
   idCuentaPorPagar: number
+}
+
+export interface CuentaPorPagarLista extends CuentaPorPagar {
   idDocumento: number
   idTiempoCredito: number
   idProveedor: number

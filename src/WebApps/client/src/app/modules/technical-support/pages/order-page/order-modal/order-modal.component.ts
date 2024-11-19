@@ -25,11 +25,12 @@ import {
   faTrashAlt,
 } from '@fortawesome/free-regular-svg-icons';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
-import { formatDateMoment, isDateValid } from '@core/utils/format-date-moment';
 import {
   ajustarFechaEmisionModificada,
   dateIsAfterCurrentDate,
   formatDate,
+  formatDateToString,
+  isDateValid,
 } from '@core/utils/date.util';
 import { CommonModule, DatePipe} from '@angular/common';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
@@ -45,7 +46,6 @@ import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
     DeviceSearchComponent,
     NgbAccordionModule,
     TabulatorComponent,
-    InputDateComponent,
   ],
   templateUrl: './order-modal.component.html',
   styles: ``,
@@ -409,7 +409,7 @@ export class OrderModalComponent {
     const dataToSave = {
       ...this.orderForm.value,
       orderDetails: this.orderDetails,
-      fechaEmision: formatDateMoment(ajusteFechaEmision),
+      fechaEmision: formatDateToString(ajusteFechaEmision),
     };
     if (this.data.id > 0) {
 

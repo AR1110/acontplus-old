@@ -12,12 +12,12 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { isValidField } from '@core/utils/utils';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
 import {NgbDropdownModule, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import { ActionAnularDirective } from '@shared/directives/permission/action-anular.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-anticipo',
@@ -45,8 +45,8 @@ export class AnticipoComponent {
     maxSize: 5,
     codEstab: '',
     customerId: 0,
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
   };
   totalRecords = 0;
   private modalSvc = inject(ModalService);

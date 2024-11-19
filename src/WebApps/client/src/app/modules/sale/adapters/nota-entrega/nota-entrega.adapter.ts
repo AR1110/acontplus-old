@@ -1,8 +1,9 @@
 
-import { formatDateMoment } from "@core/utils/format-date-moment";
+
 import { impuestoDetailAdapter } from "@shared/adapters/impuesto-detail.adapter";
 import { NotaEntregaComprobanteApi, NotaEntregaDetailApi } from "./nota-entrega-api.model";
 import { NotaEntregaDetail } from "@modules/sale/models/nota-entrega.model";
+import { formatDateToString } from "@core/utils/date.util";
 type MainAdapt = {
   comprobante: any
   details: NotaEntregaDetail[],
@@ -41,8 +42,8 @@ class NotaEntregaAdapter {
       idTiempoCredito: obj.idTiempoCredito,
       idPuntoEmision: obj.idPuntoEmision,
       idUsuario: obj.idUsuario,
-      fechaEmision: formatDateMoment(obj.fechaEmision),
-      fechaVencimiento: formatDateMoment(obj.fechaVencimiento),
+      fechaEmision: formatDateToString(obj.fechaEmision),
+      fechaVencimiento: formatDateToString(obj.fechaVencimiento),
       subTotalSinImpuestos: obj.subTotalSinImpuesto,
       totalDescuento: obj.totalDescuento || 0,
       porcentajeDescuento: obj.porcentajeDescuento || 0,

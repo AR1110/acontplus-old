@@ -4,7 +4,6 @@ import { FormsModule } from "@angular/forms";
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
 import { ModalService } from "@core/services/modal.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { EntidadFinancieraRead } from "@modules/accounting/models/entidad-financiera.model";
 import { SubEntidadFinancieraRead } from "@modules/accounting/models/subentidad-financiera.model";
 import { SubEntidadFinancieraService } from "@modules/accounting/services/sub-entidad-financiera.service";
 import { NgbAccordionModule } from "@ng-bootstrap/ng-bootstrap";
@@ -13,6 +12,7 @@ import { hideLoader, showLoader } from "@core/utils/loader";
 import Swal from "sweetalert2";
 import { isApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
+import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
 
 
 
@@ -32,7 +32,7 @@ export class SubEntidadFinancieraPageComponent {
   private readonly modalSvc = inject(ModalService);
   private readonly tS = inject(ToasterService)
 
-  entidadesFinanciera: Array<EntidadFinancieraRead> = [];
+  entidadesFinanciera: Array<EntidadFinanciera> = [];
   cloneSubEntidadesFinanciera: Array<SubEntidadFinancieraRead> = [];
   subEntidadesFinanciera: Array<SubEntidadFinancieraRead> = [];
 
@@ -70,7 +70,7 @@ export class SubEntidadFinancieraPageComponent {
     this.getData();
   }
 
-  openModal(dataEntidadFinanciera?: EntidadFinancieraRead, data?: SubEntidadFinancieraRead) {
+  openModal(dataEntidadFinanciera?: EntidadFinanciera, data?: SubEntidadFinancieraRead) {
     const modalRef = this.modalSvc.openModalCustom(
       SubEntidadFinancieraModalComponent
     )

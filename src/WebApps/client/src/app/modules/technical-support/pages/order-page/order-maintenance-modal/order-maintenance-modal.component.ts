@@ -13,8 +13,8 @@ import { ToasterService } from '@core/services/toaster.service';
 import {
   ajustarFechaEmisionModificada,
   dateIsAfterCurrentDate,
+  isDateValid,
 } from '@core/utils/date.util';
-import { isDateValid } from '@core/utils/format-date-moment';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
@@ -59,11 +59,9 @@ import Swal from 'sweetalert2';
     FontAwesomeModule,
     NgbAccordionModule,
     DrawTaxTotalComponent,
-    ProductSearchComponent,
     ReactiveFormsModule,
     TabulatorComponent,
     ProductSearchOverlayComponent,
-    ProductSearchComponent,
     InputDateComponent,
   ],
   templateUrl: './order-maintenance-modal.component.html',

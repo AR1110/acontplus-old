@@ -1,9 +1,8 @@
 
-import { formatDateMoment } from "@core/utils/format-date-moment";
 import { impuestoDetailAdapter } from "@shared/adapters/impuesto-detail.adapter";
 import { InvoiceDetail } from "@modules/billing/models/invoice.model";
 import { InvoiceComprobanteApi, InvoiceDetailApi } from "./invoice-api.model";
-import { fechaString, formatDate } from "@core/utils/date.util";
+import { fechaString, formatDate, formatDateToString } from "@core/utils/date.util";
 import { DECIMALS } from "@core/constants/global.constants";
 import { roundNumber } from "@core/utils/round-number.utils";
 type MainAdapt = {
@@ -134,8 +133,8 @@ export class InvoiceAdapter {
       idTiempoCredito: obj.idTiempoCredito,
       idPuntoEmision: obj.idPuntoEmision,
       idUsuario: obj.idUsuario,
-      fechaEmision: formatDateMoment(obj.fechaEmision),
-      fechaVencimiento: formatDateMoment(obj.fechaVencimiento),
+      fechaEmision: formatDateToString(obj.fechaEmision),
+      fechaVencimiento: formatDateToString(obj.fechaVencimiento),
       subTotalSinImpuestos: obj.subTotalSinImpuesto,
       totalDescuento: obj.totalDescuento || 0,
       porcentajeDescuento: obj.porcentajeDescuento || 0,

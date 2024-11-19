@@ -12,7 +12,6 @@ import {
   DOC_TYPE_SRI,
   FORMAT_REPORT,
 } from '@core/constants/global.constants';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
 import { UserSearchComponent } from '@core/components/user-search/user-search.component';
@@ -22,6 +21,7 @@ import { isValidField } from '@core/utils/utils';
 import { SALE_CODE_REPORT } from '@sale/enums/sale.enum';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { NgForOf } from '@angular/common';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-sale-report-page',
@@ -50,8 +50,8 @@ export class SaleReportPageComponent {
     codEstado: null as string | null,
     codDoc: null as string | null,
     convertToDoc: false,
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     companyCustomerId: 0,
     idEstadoDocumento: 0,
     userId: 0,

@@ -13,7 +13,6 @@ import {
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { isValidField } from '@core/utils/utils';
 import { ACCOUNTING_PATHS } from '@modules/accounting/enums/accounting.constants';
@@ -21,6 +20,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { SupplierSearchComponent } from '@modules/customer/supplier/components/supplier-search/supplier-search.component';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-supplier-accounts',
@@ -46,8 +46,8 @@ export class SupplierAccountsComponent {
     codDoc: '',
     idProveedor: 0,
     codEstado: '',
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     supplierChecked: false,
     supplierName: '',
     ckCxcVencida: false,

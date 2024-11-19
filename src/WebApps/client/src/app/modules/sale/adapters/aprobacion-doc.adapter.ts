@@ -1,4 +1,5 @@
-import { formatDateMoment } from "@core/utils/format-date-moment"
+import { formatDateToString } from "@core/utils/date.util"
+
 
 type Comprobante = {
   idCliente: number
@@ -108,7 +109,7 @@ class AprobacionDocAdapter {
         valorImpuesto: item.valorImpuesto,//✅
         llevaInventario: item.llevaInventario,
         idBodega: item.idBodega,
-        fechaEmision: formatDateMoment(item.fechaEmision),
+        fechaEmision: formatDateToString(item.fechaEmision),
         nota: item.nota
       }
       return obj;
