@@ -7,8 +7,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
@@ -22,8 +20,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
     imports: [
         FontAwesomeModule,
         FormsModule,
-        MatButton,
-        MatSlideToggle,
         ReactiveFormsModule,
     ],
     templateUrl: './room-add-edit-modal.component.html',

@@ -4,9 +4,9 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 
 import { AtsService } from '@modules/billing/services/ats.service';
-import moment from 'moment';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
+import { addDay, monthStart } from '@formkit/tempo';
 
 @Component({
     selector: 'app-ats-page',
@@ -15,8 +15,8 @@ import { formatDateToString } from '@core/utils/date.util';
     styles: ``
 })
 export class AtsPageComponent {
-  fromDate: any = moment().subtract(1, 'month').startOf('month');
-  toDate: any = moment().subtract(1, 'month').endOf('month');
+  fromDate: any =  monthStart(addDay(monthStart(new Date()),-1));
+  toDate: any =  addDay(monthStart(new Date()),-1);
   dataSearch = {
     fromDate: formatDateToString(this.fromDate),
     toDate: formatDateToString(this.toDate),

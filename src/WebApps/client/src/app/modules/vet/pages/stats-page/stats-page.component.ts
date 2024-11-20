@@ -1,13 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { StatsService } from '@modules/vet/services/stats.service';
 import { isApiResponse } from '@core/models/api-response';
 import { Chart } from 'chart.js';
 
 @Component({
     selector: 'app-stats-page',
-    imports: [BreadcrumbComponent, FaIconComponent],
+    imports: [BreadcrumbComponent ],
     templateUrl: './stats-page.component.html',
     styles: ``
 })

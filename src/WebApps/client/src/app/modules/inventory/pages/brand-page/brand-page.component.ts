@@ -11,7 +11,6 @@ import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { BrandAddEditDirective } from '@modules/inventory/directives/brand-add-edit.directive';
 import { IbrandService } from '@modules/inventory/services/ibrand.service';
-import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
@@ -21,7 +20,6 @@ import Swal from 'sweetalert2';
     templateUrl: './brand-page.component.html',
     imports: [
         BreadcrumbComponent,
-        ActionAddDirective,
         PrimaryStatusPipe,
         MatButtonModule,
         MatCardModule,

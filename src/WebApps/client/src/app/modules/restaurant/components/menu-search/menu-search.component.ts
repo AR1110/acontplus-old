@@ -6,7 +6,6 @@ import { PageEvent } from '@angular/material/paginator';
 import { isValidField } from '@core/utils/utils';
 import { MenuService } from '@modules/restaurant/services/menu.service';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { ClickOutsideDirective } from '@shared/directives/click-outside.directive';
 import { Pagination } from '@shared/models/pagination.model';
 import { map, Subject } from 'rxjs';
 import { MenuSearchListComponent } from '../menu-search-list/menu-search-list.component';
@@ -18,13 +17,12 @@ import { MenuSearchListComponent } from '../menu-search-list/menu-search-list.co
         OverlayModule,
         NgbPopoverModule,
         ReactiveFormsModule,
-        ClickOutsideDirective,
         MenuSearchListComponent
     ],
     templateUrl: './menu-search.component.html',
     styleUrl: './menu-search.component.scss'
 })
-export class MenuSearchComponent { 
+export class MenuSearchComponent {
 
   @Input() overlayHasFocus: boolean = true;
   optionSelected = output();
@@ -61,7 +59,7 @@ export class MenuSearchComponent {
   }
 
   applyFilter(value: string) {
-    this.dataSearch.textSearch = value; 
+    this.dataSearch.textSearch = value;
 
     this.dataSource = [];
     let text = this.dataSearch.textSearch.trim();
@@ -106,7 +104,7 @@ export class MenuSearchComponent {
         next: (response) => {
           this.openOverlay();
           let results =  structuredClone(response);
-          this.dataSource = results;   
+          this.dataSource = results;
           console.log(this.dataSource)
         },
         error: (err) => {
@@ -115,13 +113,13 @@ export class MenuSearchComponent {
         },
       })
   }
- 
+
 
   handleRows(rows: QueryList<ViewContainerRef>) {
     this.rows = rows;
   }
 
-  showElement(index: number, height: number): void { 
+  showElement(index: number, height: number): void {
     const row = this.rows.toArray()[index];
 
     if (row != null) {
@@ -130,7 +128,7 @@ export class MenuSearchComponent {
         row.element.nativeElement.scrollIntoView(false, { behavior: 'instant' });
       }
       return;
-    } 
+    }
   }
 
   onHighlightedRowChange(event: KeyboardEvent): void {
@@ -177,7 +175,7 @@ export class MenuSearchComponent {
   }
 
   backdropClick() {
-    if (this.focusedInput) return 
+    if (this.focusedInput) return
 
     if (this.clickedPaginator) return
     this.focusedInput = false;
@@ -235,7 +233,7 @@ export class MenuSearchComponent {
    * @param event
    */
   @HostListener('keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent): void { 
+  onKeyDown(event: KeyboardEvent): void {
   }
 
   /**
@@ -255,10 +253,10 @@ export class MenuSearchComponent {
       this.closeOverlay();
     }
     this.currentOption = row;
-    this.optionSelected.emit(row); 
+    this.optionSelected.emit(row);
 
   }
- 
+
   onClickPaginator() {
     this.clickedPaginator = true;
   }
@@ -267,13 +265,13 @@ export class MenuSearchComponent {
   openOverlay(): void {
     this.isOverlayOpen = true;
     this.highlightRowIndex = -1;
-    this.clickedPaginator = false; 
+    this.clickedPaginator = false;
   }
 
   closeOverlay(): void {
     this.clickedPaginator = false;
     this.isOverlayOpen = false;
-    this.highlightRowIndex = -1; 
+    this.highlightRowIndex = -1;
   }
 
 

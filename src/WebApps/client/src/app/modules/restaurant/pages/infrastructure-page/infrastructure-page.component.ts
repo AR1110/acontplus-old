@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatTab, MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
-import { MatCard } from '@angular/material/card';
+
 import { RoomListComponent } from '@restaurant/infrastructure/room/room-list/room-list.component';
 import { FloorListComponent } from '@restaurant/infrastructure/floor/floor-list/floor-list.component';
 import { TableListComponent } from '@restaurant/infrastructure/table/table-list/table-list.component';
-import { ProductionAreaListComponent } from '@restaurant/infrastructure/production-area/production-area-list/production-area-list.component';
+
 
 @Component({
     selector: 'app-infrastructure-page',
@@ -13,11 +13,9 @@ import { ProductionAreaListComponent } from '@restaurant/infrastructure/producti
         BreadcrumbComponent,
         MatTabGroup,
         MatTab,
-        MatCard,
         RoomListComponent,
         FloorListComponent,
         TableListComponent,
-        ProductionAreaListComponent,
     ],
     templateUrl: './infrastructure-page.component.html',
     styles: ``

@@ -5,7 +5,6 @@ import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
 import { TagsService } from '@modules/inventory/services/tags.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { InputChipComponent } from '@shared/components/input-chip/input-chip.component';
 import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 
@@ -13,7 +12,6 @@ import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.direct
     selector: 'app-tags-add-edit-modal',
     imports: [
         FormsModule,
-        InputChipComponent,
         ToUpperCaseDirective,
         M3InputChipComponent
     ],

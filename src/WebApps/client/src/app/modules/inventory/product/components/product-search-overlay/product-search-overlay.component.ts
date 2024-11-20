@@ -1,12 +1,11 @@
 import { OverlayModule } from "@angular/cdk/overlay";
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, HostListener, inject, Input, Output, QueryList, ViewChildren, ViewContainerRef } from "@angular/core";
+import { Component, EventEmitter, HostListener, inject, Input, Output, QueryList,   ViewContainerRef } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { PageEvent } from "@angular/material/paginator";
 import { isValidField } from "@core/utils/utils";
 import { ProductService } from "@inventory/product/product.service";
 import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
-import { ClickOutsideDirective } from "@shared/directives/click-outside.directive";
 import { Pagination } from "@shared/models/pagination.model";
 import { map, Subject } from "rxjs";
 
@@ -19,7 +18,6 @@ import { ProductSearchListComponent } from "../product-search-list/product-searc
         OverlayModule,
         NgbPopoverModule,
         ReactiveFormsModule,
-        ClickOutsideDirective,
         ProductSearchListComponent
     ],
     templateUrl: './product-search-overlay.component.html',
