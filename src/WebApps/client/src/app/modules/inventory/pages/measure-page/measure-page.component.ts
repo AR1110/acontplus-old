@@ -18,21 +18,20 @@ import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-measure-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    MeasureAddEditDirective,
-    ActionAddDirective,
-    PrimaryStatusPipe,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatTableModule,
-    CustomTableContainerComponent,
-  ],
-  templateUrl: './measure-page.component.html',
-  styles: ``,
+    selector: 'app-measure-page',
+    imports: [
+        BreadcrumbComponent,
+        MeasureAddEditDirective,
+        ActionAddDirective,
+        PrimaryStatusPipe,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatTableModule,
+        CustomTableContainerComponent,
+    ],
+    templateUrl: './measure-page.component.html',
+    styles: ``
 })
 export class MeasurePageComponent {
   measureSvc = inject(MeasureService);

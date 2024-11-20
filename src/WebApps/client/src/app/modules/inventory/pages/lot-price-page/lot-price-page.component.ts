@@ -32,22 +32,21 @@ enum OptionsCalculateEnum {
 type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
 
 @Component({
-  selector: 'app-lot-price-page',
-  standalone: true,
-  imports: [
-    FontAwesomeModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbTooltipModule,
-    BreadcrumbComponent,
-    TabulatorComponent,
-    SubCategorySelectMultipleComponent,
-    ProductSearchComponent,
-    SupplierSearchComponent,
-  ],
-  templateUrl: './lot-price-page.component.html',
+    selector: 'app-lot-price-page',
+    imports: [
+        FontAwesomeModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgbTooltipModule,
+        BreadcrumbComponent,
+        TabulatorComponent,
+        SubCategorySelectMultipleComponent,
+        ProductSearchComponent,
+        SupplierSearchComponent,
+    ],
+    templateUrl: './lot-price-page.component.html'
 })
 export class LotPricePageComponent {
   private readonly lotPriceSvc = inject(LotPriceService);

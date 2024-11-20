@@ -31,21 +31,20 @@ import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-add-edit-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    NgbNavModule,
-    FontAwesomeModule,
-    NgbTooltipModule,
-    MatChipGrid,
-    MatChipRow,
-    MatIcon,
-    MatChipInput,
-  ],
-  templateUrl: './add-edit-modal.component.html',
-  styles: ``,
+    selector: 'app-add-edit-modal',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        NgbNavModule,
+        FontAwesomeModule,
+        NgbTooltipModule,
+        MatChipGrid,
+        MatChipRow,
+        MatIcon,
+        MatChipInput,
+    ],
+    templateUrl: './add-edit-modal.component.html',
+    styles: ``
 })
 export class AddEditModalComponent {
   @Input() params = {

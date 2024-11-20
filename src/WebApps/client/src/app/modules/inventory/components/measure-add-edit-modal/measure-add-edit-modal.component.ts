@@ -8,13 +8,12 @@ import { MeasureService } from '@modules/inventory/services/measure.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-measure-add-edit-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-  ],
-  templateUrl: './measure-add-edit-modal.component.html',
-  styles: ``
+    selector: 'app-measure-add-edit-modal',
+    imports: [
+        FormsModule,
+    ],
+    templateUrl: './measure-add-edit-modal.component.html',
+    styles: ``
 })
 export class MeasureAddEditModalComponent {
   @Input() params = {

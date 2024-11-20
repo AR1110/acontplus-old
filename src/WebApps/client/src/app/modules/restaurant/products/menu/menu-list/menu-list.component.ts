@@ -9,11 +9,10 @@ import { ModalService } from '@core/services/modal.service';
 import { MenuAddEditModalComponent } from '@restaurant/products/menu/menu-add-edit-modal/menu-add-edit-modal.component';
 
 @Component({
-  selector: 'app-menu-list',
-  standalone: true,
-  imports: [FaIconComponent, NgOptimizedImage],
-  templateUrl: './menu-list.component.html',
-  styles: ``,
+    selector: 'app-menu-list',
+    imports: [FaIconComponent, NgOptimizedImage],
+    templateUrl: './menu-list.component.html',
+    styles: ``
 })
 export class MenuListComponent {
   menus: Menu[] = [];

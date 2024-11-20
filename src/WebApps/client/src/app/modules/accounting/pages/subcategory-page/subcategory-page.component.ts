@@ -10,16 +10,15 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
 
 @Component({
-  selector: 'app-subcategory-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    FaIconComponent,
-    NgbDropdownModule,
-    SecondaryStatusPipe,
-  ],
-  templateUrl: './subcategory-page.component.html',
-  styles: ``,
+    selector: 'app-subcategory-page',
+    imports: [
+        BreadcrumbComponent,
+        FaIconComponent,
+        NgbDropdownModule,
+        SecondaryStatusPipe,
+    ],
+    templateUrl: './subcategory-page.component.html',
+    styles: ``
 })
 export class SubcategoryPageComponent {
   data: Subcategory = {} as Subcategory;

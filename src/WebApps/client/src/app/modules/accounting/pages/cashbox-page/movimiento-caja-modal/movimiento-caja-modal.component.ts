@@ -35,18 +35,17 @@ import { DetalleArqueoControlCajaModalComponent } from './components/detalle-arq
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-movimiento-caja-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    NgbPagination,
-    NgbDropdownModule,
-    DateRangeSelectionComponent,
-    SendMailModalDirective,
-  ],
-  templateUrl: './movimiento-caja-modal.component.html',
-  encapsulation: ViewEncapsulation.None,
+    selector: 'app-movimiento-caja-modal',
+    imports: [
+        FormsModule,
+        FontAwesomeModule,
+        NgbPagination,
+        NgbDropdownModule,
+        DateRangeSelectionComponent,
+        SendMailModalDirective,
+    ],
+    templateUrl: './movimiento-caja-modal.component.html',
+    encapsulation: ViewEncapsulation.None
 })
 export class MovimientoCajaModalComponent {
   @Input('params') params = {

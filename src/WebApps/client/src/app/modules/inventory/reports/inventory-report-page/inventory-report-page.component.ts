@@ -23,21 +23,20 @@ import { SupplierSearchComponent } from '@modules/customer/supplier/components/s
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-inventory-report-page',
-  standalone: true,
-  imports: [
-    NgbNavModule,
-    FormsModule,
-    BreadcrumbComponent,
-    SubCategoryGroupComponent,
-    ProductSearchComponent,
-    UserSearchComponent,
-    DateRangeSelectionComponent,
-    SupplierSearchComponent,
-    CompanyCustomerSearchComponent,
-  ],
-  templateUrl: './inventory-report-page.component.html',
-  styles: ``
+    selector: 'app-inventory-report-page',
+    imports: [
+        NgbNavModule,
+        FormsModule,
+        BreadcrumbComponent,
+        SubCategoryGroupComponent,
+        ProductSearchComponent,
+        UserSearchComponent,
+        DateRangeSelectionComponent,
+        SupplierSearchComponent,
+        CompanyCustomerSearchComponent,
+    ],
+    templateUrl: './inventory-report-page.component.html',
+    styles: ``
 })
 export class InventoryReportPageComponent {
   productSvc = inject(ProductService)

@@ -30,22 +30,21 @@ export const _filter = (opt: any[], value: string): string[] => {
 };
 
 @Component({
-  selector: 'app-forma-cobro-modal',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    NgbAccordionModule,
-    FormsModule,
-    MatAutocompleteModule,
-    MatInputModule,
-    SubEntidadFinancieraComponent,
-    ValorAbonoComponent,
-    FechaEmisionComponent,
-    BancoSelectComponent,
-    AsyncPipe,
-  ],
-  templateUrl: './forma-cobro-modal.component.html',
-  styles: ``,
+    selector: 'app-forma-cobro-modal',
+    imports: [
+        ReactiveFormsModule,
+        NgbAccordionModule,
+        FormsModule,
+        MatAutocompleteModule,
+        MatInputModule,
+        SubEntidadFinancieraComponent,
+        ValorAbonoComponent,
+        FechaEmisionComponent,
+        BancoSelectComponent,
+        AsyncPipe,
+    ],
+    templateUrl: './forma-cobro-modal.component.html',
+    styles: ``
 })
 export class FormaCobroModalComponent {
   @Input() params = {

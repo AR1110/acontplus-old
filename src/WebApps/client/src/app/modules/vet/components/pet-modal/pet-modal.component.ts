@@ -19,16 +19,15 @@ import { Gender } from '@modules/vet/models/gender.model';
 import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
 
 @Component({
-  selector: 'app-pet-modal',
-  standalone: true,
-  imports: [
-    FaIconComponent,
-    FormsModule,
-    ReactiveFormsModule,
-    CompanyCustomerSearchComponent,
-  ],
-  templateUrl: './pet-modal.component.html',
-  styles: ``,
+    selector: 'app-pet-modal',
+    imports: [
+        FaIconComponent,
+        FormsModule,
+        ReactiveFormsModule,
+        CompanyCustomerSearchComponent,
+    ],
+    templateUrl: './pet-modal.component.html',
+    styles: ``
 })
 export class PetModalComponent {
   breeds: Breed[] = [];

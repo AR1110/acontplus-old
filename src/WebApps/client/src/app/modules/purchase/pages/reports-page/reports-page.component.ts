@@ -24,16 +24,15 @@ import { SupplierSearchComponent } from '@modules/customer/supplier/components/s
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-reports-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    SupplierSearchComponent,
-    DateRangeSelectionComponent,
-  ],
-  templateUrl: './reports-page.component.html',
-  styles: ``,
+    selector: 'app-reports-page',
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        SupplierSearchComponent,
+        DateRangeSelectionComponent,
+    ],
+    templateUrl: './reports-page.component.html',
+    styles: ``
 })
 export class ReportsPageComponent {
   http = inject(HttpClient);

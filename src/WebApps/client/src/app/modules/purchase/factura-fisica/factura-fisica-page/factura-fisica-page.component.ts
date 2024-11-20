@@ -29,32 +29,29 @@ import { DialogService } from '@core/services/dialog.service';
 import { FacturaFisicaAddEditModalComponent } from '../components/factura-fisica-add-edit-modal/factura-fisica-add-edit-modal.component';
 
 @Component({
-  selector: 'app-factura-fisica-page',
-  standalone: true,
-  imports: [
-    //modules
-    FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    MatTooltipModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatInputModule,
-
-    //components
-    BreadcrumbComponent,
-    CustomTableContainerComponent,
-    MatDynamicTableComponent,
-    DateRangeSelectionComponent,
-
-    //Directives
-     FacturaFisicaDetalleDirective
-  ],
-  templateUrl: './factura-fisica-page.component.html',
-  styles: ``
+    selector: 'app-factura-fisica-page',
+    imports: [
+        //modules
+        FormsModule,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        MatTooltipModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatInputModule,
+        //components
+        BreadcrumbComponent,
+        CustomTableContainerComponent,
+        MatDynamicTableComponent,
+        DateRangeSelectionComponent,
+        //Directives
+        FacturaFisicaDetalleDirective
+    ],
+    templateUrl: './factura-fisica-page.component.html',
+    styles: ``
 })
 export class FacturaFisicaPageComponent {
 

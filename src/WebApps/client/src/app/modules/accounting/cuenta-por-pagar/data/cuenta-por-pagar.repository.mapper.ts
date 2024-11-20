@@ -1,39 +1,35 @@
-
-import { ComprobanteEgresoLista } from "@accounting/comprobante-egreso/comprobante-egreso.interface";
-import { PagoDetalleLista } from "@modules/accounting/cuenta-por-pagar/interfaces/pago-detalle.interface";
-import { HistorialPagoLista } from "@modules/accounting/cuenta-por-pagar/interfaces/historial-pago.interface";
-import { ApiResponse } from "@core/models/api-response";
-import { groupEstabUtil } from "@core/utils/group-estab.util";
-import { formatDate } from "@core/utils/date.util";
-import { CuentaPorPagarCuotaConfig, CuentaPorPagarLista } from "../interfaces/cuenta-por-pagar.interface";
+import { ComprobanteEgresoLista } from '@accounting/comprobante-egreso/comprobante-egreso.interface';
+import { PagoDetalle } from '@modules/accounting/cuenta-por-pagar/interfaces/pago-detalle.interface';
+import { HistorialPagoLista } from '@modules/accounting/cuenta-por-pagar/interfaces/historial-pago.interface';
+import { ApiResponse } from '@core/models/api-response';
+import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { formatDate } from '@core/utils/date.util';
+import {
+  CuentaPorPagarCuotaConfig,
+  CuentaPorPagarLista,
+} from '../interfaces/cuenta-por-pagar.interface';
 
 export class CuentaPorPagarRepositoryMapper {
-
   static fromApiDataFilter(response: ApiResponse) {
-    let [tempEstabs, tempEstadosDoc, tempTiposDoc, tempCategorias] = JSON.parse(response.payload as string);
-
+    let [tempEstabs, tempEstadosDoc, tempTiposDoc, tempCategorias] = JSON.parse(
+      response.payload as string,
+    );
 
     let dataToGroup = {
       estabs: tempEstabs,
-      isGroupPuntoEmision: true
-    }
-
+      isGroupPuntoEmision: true,
+    };
 
     return {
       estabs: groupEstabUtil(dataToGroup),
       estadosDoc: tempEstadosDoc,
       tiposDoc: tempTiposDoc,
       categorias: tempCategorias,
-
-    }
-
-
+    };
   }
 
   static fromApiGetAll(response: any[]): CuentaPorPagarLista[] {
-
     return response.map((item, index: number) => {
-
       return {
         index: index + 1,
         idCuentaPorPagar: item.idCuentaPorPagar,
@@ -55,35 +51,34 @@ export class CuentaPorPagarRepositoryMapper {
         nombreEstado: item.estado,
         codigoEstado: item.codPago,
         numAutDocSustento: item.numAutDocSustento,
-        totalRecords: item.totalRecords
-      }
-    })
+        totalRecords: item.totalRecords,
+      };
+    });
   }
 
   static fromApiCuotaConfig(response: any[]): CuentaPorPagarCuotaConfig[] {
-
-    return response.map(item => {
-
+    return response.map((item) => {
       return {
         idCuotaPorPagar: item.idCuotaPorPagar,
         idCuentaPorPagar: item.idCuentaPorPagar,
-        fechaVencimiento: formatDate( item.fechaVencimiento),
+        fechaVencimiento: formatDate(item.fechaVencimiento),
         nroCuota: item.nroCuota,
         cuota: item.cuota,
         abono: item.abono,
         saldo: item.saldo,
         nombreEstado: item.descripcion,
         codigoEstado: item.codigo,
-      }
-
-    })
-
-
+      };
+    });
   }
 
-
   static fromApiHistMovimiento(response: any[]) {
-    const [tempCuentaPorPagar, tempComprobanteEgreso, tempHistorialPagos, tempPagosDetalle] = response;
+    const [
+      tempCuentaPorPagar,
+      tempComprobanteEgreso,
+      tempHistorialPagos,
+      tempPagosDetalle,
+    ] = response;
 
     const {
       serieComprobante,
@@ -92,7 +87,7 @@ export class CuentaPorPagarRepositoryMapper {
       razonSocialProveedor,
       importeTotal,
       abono,
-      saldo
+      saldo,
     } = tempCuentaPorPagar[0];
 
     return {
@@ -103,24 +98,23 @@ export class CuentaPorPagarRepositoryMapper {
         nombreComprador: razonSocialProveedor,
         total: importeTotal,
         abono,
-        saldo
+        saldo,
       } as Partial<CuentaPorPagarLista>,
 
-      comprobantesEgreso: tempComprobanteEgreso.map((item: any, index: number) => {
-
-        return {
-          index: index + 1,
-          idComprobanteEgreso: item.idComprobanteEgreso,
-          fechaEmision: item.fechaEmision,
-          serieComprobante: item.serieComprobante,
-          total: item.total,
-          nombreEstado: item.nombreEstado,
-          estado: item.estado,
-          codEstab: item.codEstab,
-        }
-
-      }) as ComprobanteEgresoLista[],
-
+      comprobantesEgreso: tempComprobanteEgreso.map(
+        (item: any, index: number) => {
+          return {
+            index: index + 1,
+            idComprobanteEgreso: item.idComprobanteEgreso,
+            fechaEmision: item.fechaEmision,
+            serieComprobante: item.serieComprobante,
+            total: item.total,
+            nombreEstado: item.nombreEstado,
+            estado: item.estado,
+            codEstab: item.codEstab,
+          };
+        },
+      ) as ComprobanteEgresoLista[],
 
       historialPagos: tempHistorialPagos.map((item: any) => {
         return {
@@ -138,8 +132,7 @@ export class CuentaPorPagarRepositoryMapper {
           lote: item.lote,
           referencia: item.referencia,
           aprobacion: item.aprobacion,
-
-        }
+        };
       }) as HistorialPagoLista[],
 
       pagosDetalle: tempPagosDetalle.map((item: any) => {
@@ -150,25 +143,16 @@ export class CuentaPorPagarRepositoryMapper {
           cuota: item.cuota,
           abono: item.abono,
           saldo: item.saldo,
-        }
-
-      }) as PagoDetalleLista[]
-
-    }
-
-
+        };
+      }) as PagoDetalle[],
+    };
   }
-
-
-
 
   static toApiGenerarCuota(obj: any) {
-    return   {
+    return {
       idCuentaPorPagar: obj.idCuentaPorPagar,
       idTiempoCredito: obj.tiempoCreditoId,
-       codPago: obj.codigoEstado
-  };
+      codPago: obj.codigoEstado,
+    };
   }
-
-
 }

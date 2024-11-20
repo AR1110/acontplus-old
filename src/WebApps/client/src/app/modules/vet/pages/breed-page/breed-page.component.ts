@@ -12,16 +12,15 @@ import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-breed-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    FontAwesomeModule,
-    SecondaryStatusPipe,
-    NgbDropdownModule,
-  ],
-  templateUrl: './breed-page.component.html',
-  styles: ``,
+    selector: 'app-breed-page',
+    imports: [
+        BreadcrumbComponent,
+        FontAwesomeModule,
+        SecondaryStatusPipe,
+        NgbDropdownModule,
+    ],
+    templateUrl: './breed-page.component.html',
+    styles: ``
 })
 export class BreedPageComponent {
   data = {} as Breed;

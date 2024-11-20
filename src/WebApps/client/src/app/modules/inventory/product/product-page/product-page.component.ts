@@ -41,27 +41,26 @@ import {ProductList} from "@inventory/product/product.interface";
 
 
 @Component({
-  selector: 'inventory-product-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    ActionAddDirective,
-    PrimaryStatusPipe,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatTableModule,
-    MatMenuModule,
-    MatTooltipModule,
-    MatCheckboxModule,
-    CustomTableContainerComponent,
-    SubCategoryGroupComponent,
-    ProductAddEditDirective,
-    CompraHabitualHistorialDirective,
-    ProductKardexModalDirective,
-  ],
-  templateUrl: './product-page.component.html',
+    selector: 'inventory-product-page',
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        ActionAddDirective,
+        PrimaryStatusPipe,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatTableModule,
+        MatMenuModule,
+        MatTooltipModule,
+        MatCheckboxModule,
+        CustomTableContainerComponent,
+        SubCategoryGroupComponent,
+        ProductAddEditDirective,
+        CompraHabitualHistorialDirective,
+        ProductKardexModalDirective,
+    ],
+    templateUrl: './product-page.component.html'
 })
 export class ProductPageComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;

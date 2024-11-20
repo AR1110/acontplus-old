@@ -12,14 +12,13 @@ import { UserBodegaPuntoEmisionModalComponent } from "../user-bodega-punto-emisi
 import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/user-customer-role-state.service";
 
 @Component({
-  selector: 'app-user-customer-role-estab',
-  standalone: true,
-  imports: [
-    MatSlideToggleModule,
-    FormsModule,
-    FontAwesomeModule
-  ],
-  templateUrl: './user-customer-role-estab.component.html'
+    selector: 'app-user-customer-role-estab',
+    imports: [
+        MatSlideToggleModule,
+        FormsModule,
+        FontAwesomeModule
+    ],
+    templateUrl: './user-customer-role-estab.component.html'
 })
 export class UserCustomerRoleEstabComponent {
 

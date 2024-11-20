@@ -15,14 +15,13 @@ import Swal from "sweetalert2";
 
 
 @Component({
-  selector: 'app-user-bodega-punto-emision-modal',
-  standalone: true,
-  imports: [
-    MatSlideToggleModule,
-    FontAwesomeModule,
-    FormsModule
-  ],
-  templateUrl: './user-bodega-punto-emision-modal.component.html'
+    selector: 'app-user-bodega-punto-emision-modal',
+    imports: [
+        MatSlideToggleModule,
+        FontAwesomeModule,
+        FormsModule
+    ],
+    templateUrl: './user-bodega-punto-emision-modal.component.html'
 })
 export class UserBodegaPuntoEmisionModalComponent {
   @Input() params: UserCustomerCustomerRoleEstab = {

@@ -10,13 +10,12 @@ import { isApiResponse } from '@core/models/api-response';
 
 
 @Component({
-  selector: "app-sub-entidad-financiera-modal",
-  standalone: true,
-  templateUrl: './sub-entidad-financiera-modal.component.html',
-  imports: [
-    ReactiveFormsModule,
-    FormsModule
-  ]
+    selector: "app-sub-entidad-financiera-modal",
+    templateUrl: './sub-entidad-financiera-modal.component.html',
+    imports: [
+        ReactiveFormsModule,
+        FormsModule
+    ]
 })
 export class SubEntidadFinancieraModalComponent {
 

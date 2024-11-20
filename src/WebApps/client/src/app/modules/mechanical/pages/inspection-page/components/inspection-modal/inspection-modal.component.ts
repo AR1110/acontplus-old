@@ -25,19 +25,18 @@ type VehiclePartTypeNode = VehiclePartType & {
   nodes: VehiclePartNode[]
 }
 @Component({
-  selector: 'app-inspection-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    NgbAccordionModule,
-    MatButtonToggleModule,
-    MatSlideToggleModule,
-    MatRadioModule,
-    InputDateComponent,
-    MatChipsModule
-  ],
-  templateUrl: './inspection-modal.component.html',
+    selector: 'app-inspection-modal',
+    imports: [
+        CommonModule,
+        FormsModule,
+        NgbAccordionModule,
+        MatButtonToggleModule,
+        MatSlideToggleModule,
+        MatRadioModule,
+        InputDateComponent,
+        MatChipsModule
+    ],
+    templateUrl: './inspection-modal.component.html'
 })
 export class InspectionModalComponent {
   @Input() params = {

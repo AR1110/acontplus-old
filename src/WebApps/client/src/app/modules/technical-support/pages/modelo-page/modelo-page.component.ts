@@ -9,11 +9,10 @@ import { ModeloModalComponent } from './modelo-modal/modelo-modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-  selector: 'app-modelo-page',
-  standalone: true,
-  imports: [BreadcrumbComponent, FontAwesomeModule],
-  templateUrl: './modelo-page.component.html',
-  styles: ``,
+    selector: 'app-modelo-page',
+    imports: [BreadcrumbComponent, FontAwesomeModule],
+    templateUrl: './modelo-page.component.html',
+    styles: ``
 })
 export class ModeloPageComponent {
   private modeloService = inject(ModeloService);

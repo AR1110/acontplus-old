@@ -19,16 +19,15 @@ import swal from 'sweetalert2';
 import { TableAddEditModalComponent } from '@restaurant/infrastructure/table/table-add-edit-modal/table-add-edit-modal.component';
 
 @Component({
-  selector: 'app-table-list',
-  standalone: true,
-  imports: [
-    FaIconComponent,
-    FormsModule,
-    MatButton,
-    TabulatorSemanticUiComponent,
-  ],
-  templateUrl: './table-list.component.html',
-  styles: ``,
+    selector: 'app-table-list',
+    imports: [
+        FaIconComponent,
+        FormsModule,
+        MatButton,
+        TabulatorSemanticUiComponent,
+    ],
+    templateUrl: './table-list.component.html',
+    styles: ``
 })
 export class TableListComponent {
   establecimientoId: number = 0;

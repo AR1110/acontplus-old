@@ -11,15 +11,14 @@ import {getValidId} from "@core/utils/utils";
 import {ACCOUNTING_CODE_REPORT} from "@accounting/enums/accounting.constants";
 
 @Component({
-  selector: 'app-accounting-movement-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent
-  ],
-  templateUrl: './accounting-movement-page.component.html',
-  styles: ``
+    selector: 'app-accounting-movement-page',
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent
+    ],
+    templateUrl: './accounting-movement-page.component.html',
+    styles: ``
 })
 export class AccountingMovementPageComponent {
   private accountingSummarySvc  = inject(AccountingMovementService);

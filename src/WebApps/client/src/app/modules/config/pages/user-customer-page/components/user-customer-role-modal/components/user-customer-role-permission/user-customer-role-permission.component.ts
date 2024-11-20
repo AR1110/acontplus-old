@@ -12,18 +12,17 @@ import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/
 
 
 @Component({
-  selector: 'app-user-customer-role-permission',
-  standalone: true,
-  imports: [
-    FontAwesomeModule,
-    MatCheckboxModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    ReactiveFormsModule
-  ],
-  templateUrl: './user-customer-role-permission.component.html',
-  styleUrl: 'user-customer-role-permission.component.scss'
+    selector: 'app-user-customer-role-permission',
+    imports: [
+        FontAwesomeModule,
+        MatCheckboxModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        ReactiveFormsModule
+    ],
+    templateUrl: './user-customer-role-permission.component.html',
+    styleUrl: 'user-customer-role-permission.component.scss'
 })
 export class UserCustomerRolePermissionComponent {
 

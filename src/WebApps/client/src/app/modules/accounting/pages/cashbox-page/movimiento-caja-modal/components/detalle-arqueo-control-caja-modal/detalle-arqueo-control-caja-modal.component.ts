@@ -7,11 +7,10 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-detalle-arqueo-control-caja-modal',
-  standalone: true,
-  imports: [FontAwesomeModule],
-  templateUrl: './detalle-arqueo-control-caja-modal.component.html',
-  styles: ``
+    selector: 'app-detalle-arqueo-control-caja-modal',
+    imports: [FontAwesomeModule],
+    templateUrl: './detalle-arqueo-control-caja-modal.component.html',
+    styles: ``
 })
 export class DetalleArqueoControlCajaModalComponent {
   activeModal = inject(NgbActiveModal);

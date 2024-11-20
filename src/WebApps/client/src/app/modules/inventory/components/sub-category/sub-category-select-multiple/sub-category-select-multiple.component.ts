@@ -6,15 +6,14 @@ import { GroupedSubFamilia } from "@modules/inventory/models/sub-category.model"
 
 
 @Component({
-  selector: 'app-sub-category-select-multiple',
-  standalone: true,
-  templateUrl: './sub-category-select-multiple.component.html',
-  imports: [
-    MatFormFieldModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    FormsModule
-  ]
+    selector: 'app-sub-category-select-multiple',
+    templateUrl: './sub-category-select-multiple.component.html',
+    imports: [
+        MatFormFieldModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        FormsModule
+    ]
 })
 
 export class SubCategorySelectMultipleComponent {

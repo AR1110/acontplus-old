@@ -15,17 +15,16 @@ import {UserSearchComponent} from "@core/components/user-search/user-search.comp
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-movimiento-caja-report-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent,
-    UserSearchComponent
-  ],
-  templateUrl: './movimiento-caja-report-page.component.html',
-  styles: ``
+    selector: 'app-movimiento-caja-report-page',
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent,
+        CompanyCustomerSearchComponent,
+        UserSearchComponent
+    ],
+    templateUrl: './movimiento-caja-report-page.component.html',
+    styles: ``
 })
 export class MovimientoCajaReportPageComponent {
 

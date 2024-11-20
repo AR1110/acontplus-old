@@ -5,11 +5,10 @@ import { ThemeService } from '@core/theme/theme.service';
 import { ThemeClass } from '@core/theme/types';
 
 @Component({
-  selector: 'app-main-layout',
-  standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.scss',
+    selector: 'app-main-layout',
+    imports: [RouterOutlet],
+    templateUrl: './main-layout.component.html',
+    styleUrl: './main-layout.component.scss'
 })
 export class MainLayoutComponent {
   themeOptions = THEME_OPTIONS;

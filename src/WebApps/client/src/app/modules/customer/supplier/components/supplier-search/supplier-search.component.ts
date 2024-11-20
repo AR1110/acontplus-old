@@ -6,14 +6,13 @@ import { SupplierService } from '../../supplier.service';
 import { SupplierSearch } from '../../supplier.interface';
 
 @Component({
-  selector: 'app-supplier-search',
-  standalone: true,
+    selector: 'app-supplier-search',
     imports: [
-         FormsModule,
-      NgbTypeaheadModule
+        FormsModule,
+        NgbTypeaheadModule
     ],
-  templateUrl: './supplier-search.component.html',
-  styles: ``
+    templateUrl: './supplier-search.component.html',
+    styles: ``
 })
 export class SupplierSearchComponent {
   onSelected = output<any>()

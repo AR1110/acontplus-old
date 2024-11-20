@@ -7,11 +7,10 @@ import { ModalService } from '@core/services/modal.service';
 import { CompanyAddEditModalComponent } from '@modules/config/pages/company-page/components/company-add-edit-modal/company-add-edit-modal.component';
 
 @Component({
-  selector: 'app-company-page',
-  standalone: true,
-  imports: [BreadcrumbComponent, PrimaryStatusPipe, FontAwesomeModule],
-  templateUrl: './company-page.component.html',
-  styles: ``,
+    selector: 'app-company-page',
+    imports: [BreadcrumbComponent, PrimaryStatusPipe, FontAwesomeModule],
+    templateUrl: './company-page.component.html',
+    styles: ``
 })
 export class CompanyPageComponent {
   companySvc = inject(CompanyService);

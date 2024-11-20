@@ -12,15 +12,13 @@ import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.direct
 import { NgxFileDropEntry } from "ngx-file-drop";
 
 @Component({
-  selector: 'app-sub-category-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    UploadImageComponent,
-    ToUpperCaseDirective
-  ],
-  templateUrl: './sub-category-modal.component.html',
-
+    selector: 'app-sub-category-modal',
+    imports: [
+        FormsModule,
+        UploadImageComponent,
+        ToUpperCaseDirective
+    ],
+    templateUrl: './sub-category-modal.component.html'
 })
 
 export class SubCategoryModalComponent {

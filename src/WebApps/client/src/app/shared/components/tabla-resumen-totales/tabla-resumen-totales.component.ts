@@ -2,11 +2,10 @@ import { Component, computed, effect, input, signal } from '@angular/core';
 import { TotalizadorUtil } from '@core/utils/totalizador.util';
 
 @Component({
-  selector: 'app-tabla-resumen-totales',
-  standalone: true,
-  imports: [],
-  templateUrl: './tabla-resumen-totales.component.html',
-  styles: ``,
+    selector: 'app-tabla-resumen-totales',
+    imports: [],
+    templateUrl: './tabla-resumen-totales.component.html',
+    styles: ``
 })
 export class TablaResumenTotalesComponent {
   // Use input to get details and tax rates as signals

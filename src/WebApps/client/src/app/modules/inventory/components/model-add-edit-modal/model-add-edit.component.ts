@@ -11,14 +11,13 @@ import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.direct
 
 
 @Component({
-  selector: 'app-model-add-edit-modal',
-  standalone: true,
-  templateUrl: './model-add-edit.component.html',
-  imports: [
-    FormsModule,
-    BrandAddEditDirective,
-    ToUpperCaseDirective
-  ]
+    selector: 'app-model-add-edit-modal',
+    templateUrl: './model-add-edit.component.html',
+    imports: [
+        FormsModule,
+        BrandAddEditDirective,
+        ToUpperCaseDirective
+    ]
 })
 export class ModelAddEditComponent {
   @Input() params = {

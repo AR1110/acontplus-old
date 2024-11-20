@@ -26,24 +26,23 @@ import { OrderDeliveryModalComponent } from '../order-delivery-modal/order-deliv
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-order-list',
-  standalone: true,
-  imports: [
-    DateRangeSelectionComponent,
-    FontAwesomeModule,
-    FormsModule,
-    MatTableModule,
-    NgbDropdownModule,
-    NgbPaginationModule,
-    PrimaryStatusPipe,
-  ],
-  templateUrl: './order-list.component.html',
-  styles: `
+    selector: 'app-order-list',
+    imports: [
+        DateRangeSelectionComponent,
+        FontAwesomeModule,
+        FormsModule,
+        MatTableModule,
+        NgbDropdownModule,
+        NgbPaginationModule,
+        PrimaryStatusPipe,
+    ],
+    templateUrl: './order-list.component.html',
+    styles: `
     .row {
       display: flex;
       align-items: center;
     }
-  `,
+  `
 })
 export class OrderListComponent implements OnInit {
   @Input() orderStatusCode: any = '';

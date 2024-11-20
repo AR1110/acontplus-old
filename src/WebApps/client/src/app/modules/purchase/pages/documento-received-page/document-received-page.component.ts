@@ -30,29 +30,28 @@ import { InvoiceHtmlComponent } from '@billing/components/documents/invoice-html
 import { CreditNoteHtmlComponent } from '@billing/components/documents/credit-note-html/credit-note-html.component';
 
 @Component({
-  selector: 'app-documento-received-page',
-  standalone: true,
-  imports: [
-    MatDynamicTableComponent,
-    BreadcrumbComponent,
-    MatCard,
-    MatCardContent,
-    DateRangeSelectionComponent,
-    SupplierSearchComponent,
-    FormsModule,
-    MatTooltip,
-    FaIconComponent,
-    InputNumberDirective,
-    MatButton,
-    MatPaginator,
-    MatIcon,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-  ],
-  templateUrl: './document-received-page.component.html',
-  styles: ``,
+    selector: 'app-documento-received-page',
+    imports: [
+        MatDynamicTableComponent,
+        BreadcrumbComponent,
+        MatCard,
+        MatCardContent,
+        DateRangeSelectionComponent,
+        SupplierSearchComponent,
+        FormsModule,
+        MatTooltip,
+        FaIconComponent,
+        InputNumberDirective,
+        MatButton,
+        MatPaginator,
+        MatIcon,
+        MatIconButton,
+        MatMenu,
+        MatMenuItem,
+        MatMenuTrigger,
+    ],
+    templateUrl: './document-received-page.component.html',
+    styles: ``
 })
 export class DocumentReceivedPageComponent {
   documents: DocumentoReceived[] = [];

@@ -17,15 +17,14 @@ import {FormsModule} from "@angular/forms";
 import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-  selector: 'app-device-search',
-  standalone: true,
-  imports: [
-    FontAwesomeModule,
-    FormsModule,
-    NgbTypeaheadModule
-  ],
-  templateUrl: './device-search.component.html',
-  styles: ``,
+    selector: 'app-device-search',
+    imports: [
+        FontAwesomeModule,
+        FormsModule,
+        NgbTypeaheadModule
+    ],
+    templateUrl: './device-search.component.html',
+    styles: ``
 })
 export class DeviceSearchComponent {
   @Input() clearInput: boolean = false;

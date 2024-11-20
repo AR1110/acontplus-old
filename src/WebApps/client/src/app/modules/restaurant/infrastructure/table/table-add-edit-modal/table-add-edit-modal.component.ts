@@ -16,11 +16,10 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { TableService } from '@restaurant/services/table.service';
 
 @Component({
-  selector: 'app-table-add-edit-modal',
-  standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, FaIconComponent],
-  templateUrl: './table-add-edit-modal.component.html',
-  styles: ``,
+    selector: 'app-table-add-edit-modal',
+    imports: [FormsModule, ReactiveFormsModule, FaIconComponent],
+    templateUrl: './table-add-edit-modal.component.html',
+    styles: ``
 })
 export class TableAddEditModalComponent {
   establecimientoId: number = 0;

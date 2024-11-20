@@ -22,22 +22,21 @@ import { CashboxModalComponent } from './cashbox-modal/cashbox-modal.component';
 import { MovimientoCajaModalComponent } from './movimiento-caja-modal/movimiento-caja-modal.component';
 
 @Component({
-  selector: 'app-cashbox',
-  standalone: true,
-  imports: [
-    FontAwesomeModule,
-    NgbDropdownModule,
-    NgbTooltipModule,
-    BreadcrumbComponent,
-    FormsModule,
-    NgbPagination,
-    ActionAddDirective,
-    ActionEditDirective,
-    ActionDeleteDirective,
-    ActionAperturaCajaDirective,
-    ActionMovCajaDirective
-  ],
-  templateUrl: './cashbox-page.component.html',
+    selector: 'app-cashbox',
+    imports: [
+        FontAwesomeModule,
+        NgbDropdownModule,
+        NgbTooltipModule,
+        BreadcrumbComponent,
+        FormsModule,
+        NgbPagination,
+        ActionAddDirective,
+        ActionEditDirective,
+        ActionDeleteDirective,
+        ActionAperturaCajaDirective,
+        ActionMovCajaDirective
+    ],
+    templateUrl: './cashbox-page.component.html'
 })
 export class CashboxPageComponent {
 

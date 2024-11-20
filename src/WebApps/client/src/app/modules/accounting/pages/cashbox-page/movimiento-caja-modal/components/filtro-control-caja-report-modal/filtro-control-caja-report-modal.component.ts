@@ -1,5 +1,4 @@
 import { Component, inject, Input } from '@angular/core';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CODE_REPORT, FORMAT_REPORT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
@@ -14,13 +13,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-filtro-control-caja-report-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    NgbTimepickerModule,
-    DateRangeSelectionComponent,
-  ],
+  imports: [FormsModule, FontAwesomeModule, NgbTimepickerModule],
   templateUrl: './filtro-control-caja-report-modal.component.html',
 })
 export class FiltroControlCajaReportModal {

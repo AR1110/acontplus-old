@@ -9,11 +9,10 @@ import { CategoryService } from '@modules/technical-support/services/category.se
 import { CategoryModalComponent } from './category-modal/category-modal.component';
 
 @Component({
-  selector: 'app-category-page',
-  standalone: true,
-  imports: [BreadcrumbComponent, FontAwesomeModule],
-  templateUrl: './category-page.component.html',
-  styles: ``,
+    selector: 'app-category-page',
+    imports: [BreadcrumbComponent, FontAwesomeModule],
+    templateUrl: './category-page.component.html',
+    styles: ``
 })
 export class CategoryPageComponent {
   private categoryService = inject(CategoryService);

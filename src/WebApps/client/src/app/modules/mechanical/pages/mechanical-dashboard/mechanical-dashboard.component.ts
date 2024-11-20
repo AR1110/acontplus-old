@@ -7,14 +7,13 @@ import { SupportPageComponent } from '../support-page/support-page.component';
 import { MECHANICAL_STATUS } from '@modules/mechanical/enums/mechanical.enum';
 Chart.register(...registerables);
 @Component({
-  selector: 'app-mechanical-dashboard',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FontAwesomeModule,
-    SupportPageComponent
-  ],
-  templateUrl: './mechanical-dashboard.component.html',
+    selector: 'app-mechanical-dashboard',
+    imports: [
+        CommonModule,
+        FontAwesomeModule,
+        SupportPageComponent
+    ],
+    templateUrl: './mechanical-dashboard.component.html'
 })
 export class MechanicalDashboardComponent   {
   @Input() valueStatus: MECHANICAL_STATUS | null = null;

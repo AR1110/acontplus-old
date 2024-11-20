@@ -16,17 +16,16 @@ import {SharedService} from "@core/services/shared.service";
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-fact-elect-report-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent,
-    UserSearchComponent
-  ],
-  templateUrl: './fact-elect-report-page.component.html',
-  styles: ``
+    selector: 'app-fact-elect-report-page',
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent,
+        CompanyCustomerSearchComponent,
+        UserSearchComponent
+    ],
+    templateUrl: './fact-elect-report-page.component.html',
+    styles: ``
 })
 export class FactElectReportPageComponent {
   private docElectSvc = inject(DocElectService)

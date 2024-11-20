@@ -3,14 +3,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-dashboard-page',
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatIconModule
-  ],
-  templateUrl: './dashboard-page.component.html',
-  styles: `
+    selector: 'app-dashboard-page',
+    imports: [
+        MatCardModule,
+        MatIconModule
+    ],
+    templateUrl: './dashboard-page.component.html',
+    styles: `
   .top-img {
     position: absolute;
     right: 0;

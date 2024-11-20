@@ -6,13 +6,12 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
-  selector: 'app-device-list-modal',
-  standalone: true,
-  imports: [
-    FontAwesomeModule
-  ],
-  templateUrl: './device-list-modal.component.html',
-  styles: ``,
+    selector: 'app-device-list-modal',
+    imports: [
+        FontAwesomeModule
+    ],
+    templateUrl: './device-list-modal.component.html',
+    styles: ``
 })
 export class DeviceListModalComponent implements OnInit {
   private deviceService = inject(DeviceService);

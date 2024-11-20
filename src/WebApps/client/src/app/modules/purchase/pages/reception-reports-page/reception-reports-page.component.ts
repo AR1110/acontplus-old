@@ -19,17 +19,16 @@ import { SupplierSearchComponent } from '@modules/customer/supplier/components/s
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-reception-reports-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    SupplierSearchComponent,
-    DateRangeSelectionComponent,
-    UserSearchComponent,
-    BreadcrumbComponent,
-  ],
-  templateUrl: './reception-reports-page.component.html',
-  styles: ``,
+    selector: 'app-reception-reports-page',
+    imports: [
+        FormsModule,
+        SupplierSearchComponent,
+        DateRangeSelectionComponent,
+        UserSearchComponent,
+        BreadcrumbComponent,
+    ],
+    templateUrl: './reception-reports-page.component.html',
+    styles: ``
 })
 export class ReceptionReportsPageComponent {
   establecimientos: Array<

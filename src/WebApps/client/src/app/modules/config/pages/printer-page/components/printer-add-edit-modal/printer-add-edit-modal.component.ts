@@ -13,14 +13,13 @@ import {isValidField} from "@core/utils/utils";
 import {DOC_TYPE} from "@core/constants/global.constants";
 
 @Component({
-  selector: 'app-printer-add-edit-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatSlideToggleModule
-  ],
-  templateUrl: './printer-add-edit-modal.component.html',
-  styles: ``
+    selector: 'app-printer-add-edit-modal',
+    imports: [
+        FormsModule,
+        MatSlideToggleModule
+    ],
+    templateUrl: './printer-add-edit-modal.component.html',
+    styles: ``
 })
 export class PrinterAddEditModalComponent {
   @Input() params = {

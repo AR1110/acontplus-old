@@ -24,19 +24,18 @@ import { NgForOf } from '@angular/common';
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-sale-report-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent,
-    UserSearchComponent,
-    FaIconComponent,
-    NgForOf,
-  ],
-  templateUrl: './sale-report-page.component.html',
-  styles: ``,
+    selector: 'app-sale-report-page',
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent,
+        CompanyCustomerSearchComponent,
+        UserSearchComponent,
+        FaIconComponent,
+        NgForOf,
+    ],
+    templateUrl: './sale-report-page.component.html',
+    styles: ``
 })
 export class SaleReportPageComponent {
   isSelectedNotaEntrega = false;

@@ -21,21 +21,20 @@ import swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 
 @Component({
-  selector: 'app-floor-list',
-  standalone: true,
-  imports: [
-    FaIconComponent,
-    NgbAccordionModule,
-    MatExpansionModule,
-    MatButton,
-    NgClass,
-    NgbDropdown,
-    NgbDropdownMenu,
-    NgbDropdownItem,
-    NgbDropdownToggle,
-  ],
-  templateUrl: './floor-list.component.html',
-  styles: ``,
+    selector: 'app-floor-list',
+    imports: [
+        FaIconComponent,
+        NgbAccordionModule,
+        MatExpansionModule,
+        MatButton,
+        NgClass,
+        NgbDropdown,
+        NgbDropdownMenu,
+        NgbDropdownItem,
+        NgbDropdownToggle,
+    ],
+    templateUrl: './floor-list.component.html',
+    styles: ``
 })
 export class FloorListComponent {
   @ViewChild('accordionItem') accordionItem: NgbAccordionItem | undefined;

@@ -14,16 +14,15 @@ import Swal from "sweetalert2";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
-  selector: 'app-printer-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatSlideToggleModule,
-    BreadcrumbComponent,
-    FontAwesomeModule
-  ],
-  templateUrl: './printer-page.component.html',
-  styles: ``
+    selector: 'app-printer-page',
+    imports: [
+        FormsModule,
+        MatSlideToggleModule,
+        BreadcrumbComponent,
+        FontAwesomeModule
+    ],
+    templateUrl: './printer-page.component.html',
+    styles: ``
 })
 export class PrinterPageComponent {
   private printerSvc = inject(PrinterService)

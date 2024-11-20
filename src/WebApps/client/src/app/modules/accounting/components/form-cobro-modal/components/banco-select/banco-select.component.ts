@@ -2,13 +2,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-banco-select',
-  standalone: true,
-  imports: [
-      FormsModule
-  ],
-  templateUrl: './banco-select.component.html',
-  styles: ``
+    selector: 'app-banco-select',
+    imports: [
+        FormsModule
+    ],
+    templateUrl: './banco-select.component.html',
+    styles: ``
 })
 export class BancoSelectComponent {
   @Input() value = 0;

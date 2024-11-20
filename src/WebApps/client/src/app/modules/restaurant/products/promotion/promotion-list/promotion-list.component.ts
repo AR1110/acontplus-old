@@ -8,14 +8,13 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-promotion-list',
-  standalone: true,
-  imports: [
-    FontAwesomeModule,
-    NgbPaginationModule
-  ],
-  templateUrl: './promotion-list.component.html',
-  styles: ``
+    selector: 'app-promotion-list',
+    imports: [
+        FontAwesomeModule,
+        NgbPaginationModule
+    ],
+    templateUrl: './promotion-list.component.html',
+    styles: ``
 })
 export class PromotionListComponent {
   private restaurantStore = inject(RestaurantStoreService);

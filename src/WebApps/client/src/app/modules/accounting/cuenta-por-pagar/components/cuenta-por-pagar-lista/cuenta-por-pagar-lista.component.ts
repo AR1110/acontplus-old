@@ -62,30 +62,29 @@ import {ComprobanteEgresoService} from "@accounting/comprobante-egreso/comproban
 
 
 @Component({
-  selector: 'app-cuenta-por-pagar-lista',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    MatTooltipModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
-    MatCheckboxModule,
-    NgxMaskDirective,
-    MatTableModule,
-    MatSortModule,
-    DecimalPipe,
-    GetTotalPipe,
-    CustomTableContainerComponent,
-    MatDynamicTableComponent,
-    DateRangeSelectionComponent,
-    SupplierSearchMatComponent,
-  ],
-  templateUrl: './cuenta-por-pagar-lista.component.html',
+    selector: 'app-cuenta-por-pagar-lista',
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        MatTooltipModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatInputModule,
+        MatCheckboxModule,
+        NgxMaskDirective,
+        MatTableModule,
+        MatSortModule,
+        DecimalPipe,
+        GetTotalPipe,
+        CustomTableContainerComponent,
+        MatDynamicTableComponent,
+        DateRangeSelectionComponent,
+        SupplierSearchMatComponent,
+    ],
+    templateUrl: './cuenta-por-pagar-lista.component.html'
 })
 export class CuentaPorPagarListaComponent {
   private cpcSvc = inject(CuentaPorPagarService);

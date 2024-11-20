@@ -24,25 +24,24 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { finalize, forkJoin, switchMap } from 'rxjs';
 
 @Component({
-  selector: 'app-doc-elect-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatCardModule,
-    MatIconModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatFormFieldModule,
-    MatInputModule,
-    BreadcrumbComponent,
-    CustomTableContainerComponent,
-    MatDynamicTableComponent,
-    DateRangeSelectionComponent
-  ],
-  templateUrl: './doc-elect-page.component.html',
-  styles: ``
+    selector: 'app-doc-elect-page',
+    imports: [
+        FormsModule,
+        MatCardModule,
+        MatIconModule,
+        MatButtonModule,
+        MatMenuModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatFormFieldModule,
+        MatInputModule,
+        BreadcrumbComponent,
+        CustomTableContainerComponent,
+        MatDynamicTableComponent,
+        DateRangeSelectionComponent
+    ],
+    templateUrl: './doc-elect-page.component.html',
+    styles: ``
 })
 export class DocElectPageComponent {
 

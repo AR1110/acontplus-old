@@ -11,16 +11,15 @@ import { ColumnDefinition } from '@shared/models/mat-table-models/column-definit
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-compra-habitual-historial-modal',
-  standalone: true,
-  imports: [
-    MatDynamicTableComponent,
-    CustomTableContainerComponent,
-    MatIconModule,
-    MatButtonModule
-  ],
-  templateUrl: './compra-habitual-historial-modal.component.html',
-  styles: ``
+    selector: 'app-compra-habitual-historial-modal',
+    imports: [
+        MatDynamicTableComponent,
+        CustomTableContainerComponent,
+        MatIconModule,
+        MatButtonModule
+    ],
+    templateUrl: './compra-habitual-historial-modal.component.html',
+    styles: ``
 })
 export class CompraHabitualHistorialModalComponent {
   private modal = inject(NgbActiveModal)

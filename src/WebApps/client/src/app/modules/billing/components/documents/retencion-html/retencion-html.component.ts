@@ -4,11 +4,10 @@ import { AmbienteSriPipe } from '@shared/pipes/ambiente-sri.pipe';
 import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'app-retencion-html',
-  standalone: true,
-  imports: [FormsModule, AmbienteSriPipe, DatePipe],
-  templateUrl: './retencion-html.component.html',
-  styles: ``,
+    selector: 'app-retencion-html',
+    imports: [FormsModule, AmbienteSriPipe, DatePipe],
+    templateUrl: './retencion-html.component.html',
+    styles: ``
 })
 export class RetencionHtmlComponent {
   retencion: any = {};

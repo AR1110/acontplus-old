@@ -14,11 +14,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CategoryService } from '@modules/accounting/services/category.service';
 
 @Component({
-  selector: 'app-category-modal',
-  standalone: true,
-  imports: [FontAwesomeModule, ReactiveFormsModule],
-  templateUrl: './category-modal.component.html',
-  styles: ``,
+    selector: 'app-category-modal',
+    imports: [FontAwesomeModule, ReactiveFormsModule],
+    templateUrl: './category-modal.component.html',
+    styles: ``
 })
 export class CategoryModalComponent {
   categoryForm = new FormGroup({

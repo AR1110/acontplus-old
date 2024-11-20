@@ -15,11 +15,10 @@ import { CategoryService } from '@modules/technical-support/services/category.se
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-category-modal',
-  standalone: true,
-  imports: [FontAwesomeModule, ReactiveFormsModule],
-  templateUrl: './category-modal.component.html',
-  styles: ``,
+    selector: 'app-category-modal',
+    imports: [FontAwesomeModule, ReactiveFormsModule],
+    templateUrl: './category-modal.component.html',
+    styles: ``
 })
 export class CategoryModalComponent {
   private categoryService = inject(CategoryService);

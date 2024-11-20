@@ -51,20 +51,19 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-order-maintenance-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    FontAwesomeModule,
-    NgbAccordionModule,
-    DrawTaxTotalComponent,
-    ReactiveFormsModule,
-    TabulatorComponent,
-    ProductSearchOverlayComponent,
-    InputDateComponent,
-  ],
-  templateUrl: './order-maintenance-modal.component.html',
+    selector: 'app-order-maintenance-modal',
+    imports: [
+        CommonModule,
+        FormsModule,
+        FontAwesomeModule,
+        NgbAccordionModule,
+        DrawTaxTotalComponent,
+        ReactiveFormsModule,
+        TabulatorComponent,
+        ProductSearchOverlayComponent,
+        InputDateComponent,
+    ],
+    templateUrl: './order-maintenance-modal.component.html'
 })
 export class OrderMaintenanceModalComponent implements OnInit {
   params = {

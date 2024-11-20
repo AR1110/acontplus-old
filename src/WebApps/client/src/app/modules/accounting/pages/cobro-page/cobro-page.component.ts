@@ -15,19 +15,18 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-cobro-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    DateRangeSelectionComponent,
-    FontAwesomeModule,
-    EmployeeSearchComponent,
-    NgbPaginationModule,
-    CompanyCustomerSearchComponent,
-    BreadcrumbComponent,
-  ],
-  templateUrl: './cobro-page.component.html',
-  styles: ``,
+    selector: 'app-cobro-page',
+    imports: [
+        FormsModule,
+        DateRangeSelectionComponent,
+        FontAwesomeModule,
+        EmployeeSearchComponent,
+        NgbPaginationModule,
+        CompanyCustomerSearchComponent,
+        BreadcrumbComponent,
+    ],
+    templateUrl: './cobro-page.component.html',
+    styles: ``
 })
 export class CobroPageComponent {
   establecimientos: Array<EstablecimientoSelectHtmlOnly> = [];

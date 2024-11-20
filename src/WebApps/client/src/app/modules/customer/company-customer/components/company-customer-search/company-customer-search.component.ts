@@ -16,16 +16,15 @@ import {
 import { CompanyCustomerAddEditDirective } from '@company-customer/company-customer-add-edit.directive';
 
 @Component({
-  selector: 'app-company-customer-search',
-  standalone: true,
-  imports: [
-    FormsModule,
-    NgbTypeaheadModule,
-    FontAwesomeModule,
-    CompanyCustomerAddEditDirective
-  ],
-  templateUrl: './company-customer-search.component.html',
-  styles: `  `,
+    selector: 'app-company-customer-search',
+    imports: [
+        FormsModule,
+        NgbTypeaheadModule,
+        FontAwesomeModule,
+        CompanyCustomerAddEditDirective
+    ],
+    templateUrl: './company-customer-search.component.html',
+    styles: `  `
 })
 export class CompanyCustomerSearchComponent {
   @Output() onCustomerSelected = new EventEmitter<{ data: any }>();

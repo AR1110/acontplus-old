@@ -22,25 +22,24 @@ import { roundNumber } from '@core/utils/round-number.utils';
 import { DECIMALS } from '@core/constants/global.constants';
 
 @Component({
-  selector: 'app-cuenta-por-pagar-cuota-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatMenuModule,
-    MatIconModule,
-    MatTableModule,
-    MatInputModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-    CustomContainerDialogComponent,
-    NgxMaskDirective
-  ],
-  providers: [provideNativeDateAdapter()],
-  templateUrl: './cuenta-por-pagar-cuota-modal.component.html',
-  styles: `
+    selector: 'app-cuenta-por-pagar-cuota-modal',
+    imports: [
+        FormsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatMenuModule,
+        MatIconModule,
+        MatTableModule,
+        MatInputModule,
+        MatButtonModule,
+        ReactiveFormsModule,
+        CustomContainerDialogComponent,
+        NgxMaskDirective
+    ],
+    providers: [provideNativeDateAdapter()],
+    templateUrl: './cuenta-por-pagar-cuota-modal.component.html',
+    styles: `
 
 
 

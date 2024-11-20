@@ -12,11 +12,10 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-doc-config-info-adicional',
-  standalone: true,
-  imports: [FontAwesomeModule, FormsModule, TabulatorComponent],
-  templateUrl: './doc-config-info-adicional.component.html',
-  styles: ``
+    selector: 'app-doc-config-info-adicional',
+    imports: [FontAwesomeModule, FormsModule, TabulatorComponent],
+    templateUrl: './doc-config-info-adicional.component.html',
+    styles: ``
 })
 export class DocConfigInfoAdicionalComponent {
   @Input() params = {} as any;

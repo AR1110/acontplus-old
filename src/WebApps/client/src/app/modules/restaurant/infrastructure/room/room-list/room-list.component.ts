@@ -19,17 +19,16 @@ import { ToasterService } from '@core/services/toaster.service';
 import { ApiResponse } from '@core/models/api-response';
 
 @Component({
-  selector: 'app-room-list',
-  standalone: true,
-  imports: [
-    FaIconComponent,
-    MatButton,
-    NgClass,
-    FormsModule,
-    TabulatorSemanticUiComponent,
-  ],
-  templateUrl: './room-list.component.html',
-  styles: ``,
+    selector: 'app-room-list',
+    imports: [
+        FaIconComponent,
+        MatButton,
+        NgClass,
+        FormsModule,
+        TabulatorSemanticUiComponent,
+    ],
+    templateUrl: './room-list.component.html',
+    styles: ``
 })
 export class RoomListComponent {
   establecimientoId: number = 0;

@@ -31,21 +31,20 @@ import { SupportMaintenanceModalComponent } from './components/support-maintenan
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-support-page',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    FontAwesomeModule,
-    NgbDropdownModule,
-    NgbPagination,
-    MatTableModule,
-    MatCheckboxModule,
-    NgbPopoverModule,
-    DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent,
-  ],
-  templateUrl: './support-page.component.html',
+    selector: 'app-support-page',
+    imports: [
+        CommonModule,
+        FormsModule,
+        FontAwesomeModule,
+        NgbDropdownModule,
+        NgbPagination,
+        MatTableModule,
+        MatCheckboxModule,
+        NgbPopoverModule,
+        DateRangeSelectionComponent,
+        CompanyCustomerSearchComponent,
+    ],
+    templateUrl: './support-page.component.html'
 })
 export class SupportPageComponent {
   @Input() valueStatus: MECHANICAL_STATUS | null = null;

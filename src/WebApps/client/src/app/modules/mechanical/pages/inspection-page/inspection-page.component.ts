@@ -13,17 +13,16 @@ import { Pagination } from '@shared/models/pagination.model';
 import { InspectionModalComponent } from './components/inspection-modal/inspection-modal.component';
 
 @Component({
-  selector: 'app-inspection-page',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    NgbPagination,
-    FontAwesomeModule,
-    NgbDropdownModule,
-    MatTableModule,
-  ],
-  templateUrl: './inspection-page.component.html',
+    selector: 'app-inspection-page',
+    imports: [
+        CommonModule,
+        FormsModule,
+        NgbPagination,
+        FontAwesomeModule,
+        NgbDropdownModule,
+        MatTableModule,
+    ],
+    templateUrl: './inspection-page.component.html'
 })
 export class InspectionPageComponent {
   sharedSvc = inject(SharedService);

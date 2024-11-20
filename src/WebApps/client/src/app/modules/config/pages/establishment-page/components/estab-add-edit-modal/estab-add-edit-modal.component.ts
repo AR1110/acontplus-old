@@ -17,18 +17,17 @@ import { isApiResponse } from '@core/models/api-response';
 import { forkJoin, Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-estab-add-edit-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    FontAwesomeModule,
-    MatChipsModule,
-    MatRadioModule,
-    ToUpperCaseDirective
-  ],
-  templateUrl: './estab-add-edit-modal.component.html',
-  styles: ``
+    selector: 'app-estab-add-edit-modal',
+    imports: [
+        CommonModule,
+        FormsModule,
+        FontAwesomeModule,
+        MatChipsModule,
+        MatRadioModule,
+        ToUpperCaseDirective
+    ],
+    templateUrl: './estab-add-edit-modal.component.html',
+    styles: ``
 })
 export class EstabAddEditModalComponent {
   @Input() params = {

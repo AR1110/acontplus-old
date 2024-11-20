@@ -18,15 +18,14 @@ type Modeda = {
 }
 
 @Component({
-  selector: 'app-cashbox-close-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    FontAwesomeModule
-  ],
-  templateUrl: './cashbox-close-modal.component.html',
-  encapsulation: ViewEncapsulation.None,
+    selector: 'app-cashbox-close-modal',
+    imports: [
+        CommonModule,
+        FormsModule,
+        FontAwesomeModule
+    ],
+    templateUrl: './cashbox-close-modal.component.html',
+    encapsulation: ViewEncapsulation.None
 })
 export class CashboxCloseModalComponent {
   @Input('params') params = {

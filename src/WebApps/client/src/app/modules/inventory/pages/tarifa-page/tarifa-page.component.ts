@@ -13,19 +13,18 @@ import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { TarifaEditModalComponent } from './tarifa-edit-modal/tarifa-edit-modal.component';
 
 @Component({
-  selector: 'app-tarifa-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    PrimaryStatusPipe,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatTableModule,
-    CustomTableContainerComponent,
-  ],
-  templateUrl: './tarifa-page.component.html',
-  styles: ``,
+    selector: 'app-tarifa-page',
+    imports: [
+        BreadcrumbComponent,
+        PrimaryStatusPipe,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatTableModule,
+        CustomTableContainerComponent,
+    ],
+    templateUrl: './tarifa-page.component.html',
+    styles: ``
 })
 export class TarifaPageComponent {
   tarifaSvc = inject(TarifaService);
