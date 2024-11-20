@@ -6,7 +6,6 @@ import { MenuService } from '@restaurant/services/menu.service';
 import { MenuItemService } from '@restaurant/services/menu-item.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { IngredientSearchComponent } from '@restaurant/products/ingredient/ingredient-search/ingredient-search.component';
 import { ItemSearchComponent } from '@restaurant/products/item/item-search/item-search.component';
 import { Item } from '@restaurant/models/item.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -18,7 +17,6 @@ import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semanti
     imports: [
         ReactiveFormsModule,
         MatSlideToggle,
-        IngredientSearchComponent,
         ItemSearchComponent,
         FaIconComponent,
         TabulatorSemanticUiComponent,

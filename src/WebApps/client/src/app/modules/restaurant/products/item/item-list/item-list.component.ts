@@ -1,11 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { Item } from '@restaurant/models/item.model';
 import { ItemService } from '@restaurant/services/item.service';
-import { MatPagination, Pagination } from '@shared/models/pagination.model';
-import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import { MatPagination,  } from '@shared/models/pagination.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalService } from '@core/services/modal.service';
 import { ItemAddEditModalComponent } from '@restaurant/products/item/item-add-edit-modal/item-add-edit-modal.component';
@@ -19,10 +16,7 @@ import { PageEvent } from '@angular/material/paginator';
 @Component({
     selector: 'app-item-list',
     imports: [
-        BreadcrumbComponent,
-        NgbPagination,
         FaIconComponent,
-        NgOptimizedImage,
         FormsModule,
         CustomTableContainerComponent,
         MatDynamicTableComponent

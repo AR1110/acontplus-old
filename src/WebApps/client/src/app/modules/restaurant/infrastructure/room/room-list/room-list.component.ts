@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { MatButton } from '@angular/material/button';
 import { Room } from '@restaurant/models/room.model';
-import { NgClass } from '@angular/common';
 import { ModalService } from '@core/services/modal.service';
 import { RoomAddEditModalComponent } from '@restaurant/infrastructure/room/room-add-edit-modal/room-add-edit-modal.component';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
@@ -23,7 +22,6 @@ import { ApiResponse } from '@core/models/api-response';
     imports: [
         FaIconComponent,
         MatButton,
-        NgClass,
         FormsModule,
         TabulatorSemanticUiComponent,
     ],

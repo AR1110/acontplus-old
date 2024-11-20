@@ -44,7 +44,6 @@ import {
 } from '@modules/customer/supplier/components/supplier-search-mat/supplier-search-mat.component';
 
 // Shared Components, Models, and Pipes
-import {MatDynamicTableComponent} from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import {ColumnDefinition} from '@shared/models/mat-table-models/column-definition.model';
 import {MatPagination} from '@shared/models/pagination.model';
 import {GetTotalPipe} from '@shared/pipes/get-total.pipe';
@@ -80,7 +79,6 @@ import {ComprobanteEgresoService} from "@accounting/comprobante-egreso/comproban
         DecimalPipe,
         GetTotalPipe,
         CustomTableContainerComponent,
-        MatDynamicTableComponent,
         DateRangeSelectionComponent,
         SupplierSearchMatComponent,
     ],

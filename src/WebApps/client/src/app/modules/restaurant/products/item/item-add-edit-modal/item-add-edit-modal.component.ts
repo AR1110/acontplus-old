@@ -12,8 +12,6 @@ import { Recipe } from '@restaurant/models/recipe.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import {
   NgbActiveModal,
-  NgbHighlight,
-  NgbTypeahead,
 } from '@ng-bootstrap/ng-bootstrap';
 import { IngredientSearchComponent } from '@restaurant/products/ingredient/ingredient-search/ingredient-search.component';
 import { Ingredient } from '@restaurant/models/ingredient.model';
@@ -28,8 +26,6 @@ import { RecipeService } from '@restaurant/services/recipe.service';
         FaIconComponent,
         ReactiveFormsModule,
         TabulatorSemanticUiComponent,
-        NgbTypeahead,
-        NgbHighlight,
         IngredientSearchComponent,
     ],
     templateUrl: './item-add-edit-modal.component.html',

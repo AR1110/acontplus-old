@@ -12,12 +12,12 @@ import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TransactionService } from '@inventory/services/transaction.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import moment from 'moment';
 import { ProductSearchComponent } from '../product-search/product-search.component';
 import Swal from 'sweetalert2';
 import { SharedService } from '@core/services/shared.service';
 import { INVENTORY_CODE_REPORT } from '@inventory/enums/inventory.enum';
 import { formatDateToString } from '@core/utils/date.util';
+import { monthEnd, monthStart } from '@formkit/tempo';
 
 @Component({
     selector: 'app-product-kardex-modal',
@@ -54,8 +54,8 @@ export class ProductKardexModalComponent {
 
   tiposTransaccion: any[] = [];
 
-  startOfMonth: any = moment(moment()).startOf('month');
-  endOfMonth: any = moment(moment()).endOf('month');
+  startOfMonth: any = monthStart(new Date());
+  endOfMonth: any = monthEnd(new Date());
 
   dataSearch = {
     codEstab: '',

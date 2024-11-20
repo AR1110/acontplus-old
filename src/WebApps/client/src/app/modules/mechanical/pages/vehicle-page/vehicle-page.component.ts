@@ -11,7 +11,6 @@ import { VehicleRead } from '@modules/mechanical/models/vehicle.model';
 import { VehicleService } from '@modules/mechanical/services/vehicle.service';
 import { VehicleAddEditDirective } from '@modules/mechanical/directives/vehicle-add-edit.directive';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
-import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { Pagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 
@@ -24,7 +23,6 @@ import Swal from 'sweetalert2';
         MatSlideToggleModule,
         BreadcrumbComponent,
         VehicleAddEditDirective,
-        ActionAddDirective,
         NgbPagination
     ],
     templateUrl: './vehicle-page.component.html',

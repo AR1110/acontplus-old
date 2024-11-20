@@ -27,10 +27,7 @@ import { Pagination } from '@shared/models/pagination.model';
 import { FormsModule } from '@angular/forms';
 import { isValidField } from '@core/utils/utils';
 import { GroupedEstab } from '@core/models/estab.model';
-import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
 import { MatInput } from '@angular/material/input';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Pet } from '@modules/vet/models/pet.model';
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
@@ -46,13 +43,10 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
         MatTable,
         MatSort,
         MatColumnDef,
-        MatIcon,
-        MatIconButton,
         MatHeaderCell,
         MatCellDef,
         MatHeaderCellDef,
         MatCell,
-        MatSlideToggle,
         MatHeaderRowDef,
         MatHeaderRow,
         MatRowDef,
