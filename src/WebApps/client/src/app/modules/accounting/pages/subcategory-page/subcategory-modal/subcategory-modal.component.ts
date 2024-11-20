@@ -15,11 +15,10 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
-  selector: 'app-subcategory-modal',
-  standalone: true,
-  imports: [ReactiveFormsModule, FaIconComponent],
-  templateUrl: './subcategory-modal.component.html',
-  styles: ``,
+    selector: 'app-subcategory-modal',
+    imports: [ReactiveFormsModule, FaIconComponent],
+    templateUrl: './subcategory-modal.component.html',
+    styles: ``
 })
 export class SubcategoryModalComponent {
   data: Subcategory = {} as Subcategory;

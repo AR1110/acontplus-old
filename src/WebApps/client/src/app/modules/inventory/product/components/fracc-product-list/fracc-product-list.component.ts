@@ -12,20 +12,18 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 
 @Component({
-  selector: 'app-fracc-product-list',
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatMenuModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDynamicTableComponent,
-    CustomTableContainerComponent,
-
-    PrimaryStatusPipe
-  ],
-  templateUrl: './fracc-product-list.component.html',
-  styles: ``
+    selector: 'app-fracc-product-list',
+    imports: [
+        MatCardModule,
+        MatMenuModule,
+        MatButtonModule,
+        MatIconModule,
+        MatDynamicTableComponent,
+        CustomTableContainerComponent,
+        PrimaryStatusPipe
+    ],
+    templateUrl: './fracc-product-list.component.html',
+    styles: ``
 })
 export class FraccProductListComponent {
 

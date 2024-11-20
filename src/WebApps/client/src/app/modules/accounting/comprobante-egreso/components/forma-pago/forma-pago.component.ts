@@ -19,21 +19,20 @@ import { getValidId } from '@core/utils/utils';
 import { isDateValid } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-forma-pago',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    CustomContainerDialogComponent,
-    FormsModule,
-  ],
-  templateUrl: './forma-pago.component.html',
-  providers: [provideNativeDateAdapter()],
-  styles: ``
+    selector: 'app-forma-pago',
+    imports: [
+        MatButtonModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        CustomContainerDialogComponent,
+        FormsModule,
+    ],
+    templateUrl: './forma-pago.component.html',
+    providers: [provideNativeDateAdapter()],
+    styles: ``
 })
 export class FormaPagoComponent {
 

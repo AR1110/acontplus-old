@@ -9,11 +9,10 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-  selector: 'app-brand-page',
-  standalone: true,
-  imports: [BreadcrumbComponent, FontAwesomeModule],
-  templateUrl: './brand-page.component.html',
-  styles: ``,
+    selector: 'app-brand-page',
+    imports: [BreadcrumbComponent, FontAwesomeModule],
+    templateUrl: './brand-page.component.html',
+    styles: ``
 })
 export class BrandPageComponent {
   private brandService = inject(BrandService);

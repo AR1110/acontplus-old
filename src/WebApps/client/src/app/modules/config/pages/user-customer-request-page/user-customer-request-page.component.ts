@@ -17,16 +17,15 @@ import { Pagination } from "@shared/models/pagination.model";
 import Swal from "sweetalert2";
 
 @Component({
-  selector: 'app-user-customer-request-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    NgbTooltipModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent
-  ],
-  templateUrl: './user-customer-request-page.component.html'
+    selector: 'app-user-customer-request-page',
+    imports: [
+        FormsModule,
+        FontAwesomeModule,
+        NgbTooltipModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent
+    ],
+    templateUrl: './user-customer-request-page.component.html'
 })
 export class UserCustomerRequestPageComponent {
   private readonly userCustomerRequestSvc = inject(UserCustomerRequestService);

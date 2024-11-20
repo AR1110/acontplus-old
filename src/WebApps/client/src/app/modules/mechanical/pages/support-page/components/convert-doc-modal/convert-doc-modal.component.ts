@@ -23,13 +23,12 @@ import { InvoiceAdapter } from '@modules/billing/adapters/invoice/invoice.adapte
 import { TiempoCredito } from '@modules/accounting/interfaces/tiempo-credito.interface';
 
 @Component({
-  selector: 'app-convert-doc-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    TabulatorComponent,
-  ],
-  templateUrl: './convert-doc-modal.component.html',
+    selector: 'app-convert-doc-modal',
+    imports: [
+        CommonModule,
+        TabulatorComponent,
+    ],
+    templateUrl: './convert-doc-modal.component.html'
 })
 
 

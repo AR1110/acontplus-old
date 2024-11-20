@@ -7,11 +7,10 @@ import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 
 @Component({
-  selector: 'app-category-page',
-  standalone: true,
-  imports: [FormsModule, NgbPagination, BreadcrumbComponent, PrimaryStatusPipe],
-  templateUrl: './category-page.component.html',
-  styles: ``,
+    selector: 'app-category-page',
+    imports: [FormsModule, NgbPagination, BreadcrumbComponent, PrimaryStatusPipe],
+    templateUrl: './category-page.component.html',
+    styles: ``
 })
 export class CategoryPageComponent {
   dataSearch = {

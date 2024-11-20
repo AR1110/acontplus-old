@@ -36,21 +36,20 @@ import { CommonModule, DatePipe} from '@angular/common';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
-  selector: 'app-order-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FontAwesomeModule,
-    CompanyCustomerSearchComponent,
-    DeviceSearchComponent,
-    NgbAccordionModule,
-    TabulatorComponent,
-  ],
-  templateUrl: './order-modal.component.html',
-  styles: ``,
-  encapsulation: ViewEncapsulation.None,
-  providers: [DatePipe],
+    selector: 'app-order-modal',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FontAwesomeModule,
+        CompanyCustomerSearchComponent,
+        DeviceSearchComponent,
+        NgbAccordionModule,
+        TabulatorComponent,
+    ],
+    templateUrl: './order-modal.component.html',
+    styles: ``,
+    encapsulation: ViewEncapsulation.None,
+    providers: [DatePipe]
 })
 export class OrderModalComponent {
   @ViewChild('inputNameSpec') inputNameSpec: any;

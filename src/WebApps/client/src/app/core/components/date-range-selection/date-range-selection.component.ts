@@ -9,15 +9,14 @@ import { addDay, format, monthEnd, monthStart, weekEnd, weekStart } from "@formk
 import { formatDateToString, zonaHorariaEcuador } from "@core/utils/date.util";
 
 @Component({
-  selector: 'app-date-range-selection',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatCheckboxModule
-  ],
-  templateUrl: './date-range-selection.component.html',
+    selector: 'app-date-range-selection',
+    imports: [
+        FormsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatCheckboxModule
+    ],
+    templateUrl: './date-range-selection.component.html'
 })
 export class DateRangeSelectionComponent {
   showInputMaterial  = input(false);

@@ -23,18 +23,17 @@ import { IngredientService } from '@restaurant/services/ingredient.service';
 import { RecipeService } from '@restaurant/services/recipe.service';
 
 @Component({
-  selector: 'app-item-add-edit-modal',
-  standalone: true,
-  imports: [
-    FaIconComponent,
-    ReactiveFormsModule,
-    TabulatorSemanticUiComponent,
-    NgbTypeahead,
-    NgbHighlight,
-    IngredientSearchComponent,
-  ],
-  templateUrl: './item-add-edit-modal.component.html',
-  styles: ``,
+    selector: 'app-item-add-edit-modal',
+    imports: [
+        FaIconComponent,
+        ReactiveFormsModule,
+        TabulatorSemanticUiComponent,
+        NgbTypeahead,
+        NgbHighlight,
+        IngredientSearchComponent,
+    ],
+    templateUrl: './item-add-edit-modal.component.html',
+    styles: ``
 })
 export class ItemAddEditModalComponent {
   data = {} as Item;

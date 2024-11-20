@@ -26,30 +26,28 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { finalize, switchMap, throwError } from 'rxjs';
 
 @Component({
-  selector: 'app-nota-entrega-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    MatTooltipModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatInputModule,
-    //components
-    BreadcrumbComponent,
-    CustomTableContainerComponent,
-    MatDynamicTableComponent,
-    DateRangeSelectionComponent,
-
-    //Directives
-    NotaEntregaDetalleDialogDirective
-  ],
-  templateUrl: './nota-entrega-page.component.html',
-  styles: ``
+    selector: 'app-nota-entrega-page',
+    imports: [
+        FormsModule,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        MatTooltipModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatInputModule,
+        //components
+        BreadcrumbComponent,
+        CustomTableContainerComponent,
+        MatDynamicTableComponent,
+        DateRangeSelectionComponent,
+        //Directives
+        NotaEntregaDetalleDialogDirective
+    ],
+    templateUrl: './nota-entrega-page.component.html',
+    styles: ``
 })
 export class NotaEntregaPageComponent {
 

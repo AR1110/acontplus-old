@@ -9,15 +9,14 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
 
 @Component({
-  selector: 'app-punto-emision-add-edit-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    InputNumberDirective,
-    FormsModule
-  ],
-  templateUrl: './punto-emision-add-edit-modal.component.html',
-  styleUrl: './punto-emision-add-edit-modal.component.scss',
+    selector: 'app-punto-emision-add-edit-modal',
+    imports: [
+        CommonModule,
+        InputNumberDirective,
+        FormsModule
+    ],
+    templateUrl: './punto-emision-add-edit-modal.component.html',
+    styleUrl: './punto-emision-add-edit-modal.component.scss'
 })
 export class PuntoEmisionAddEditModalComponent {
   @Input() params = {

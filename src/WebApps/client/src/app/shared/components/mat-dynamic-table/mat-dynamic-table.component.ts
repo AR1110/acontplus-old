@@ -33,29 +33,28 @@ import { MatButtonModule } from '@angular/material/button';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
-  selector: 'app-mat-dynamic-table',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatCheckboxModule,
-    MatSortModule,
-    MatIconModule,
-    MatButtonModule,
-    NgClass,
-    GetTotalPipe,
-    DatePipe,
-    DecimalPipe,
-  ],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed,void', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
-  templateUrl: './mat-dynamic-table.component.html',
-  styleUrl: `./mat-dynamic-table.component.scss`,
+    selector: 'app-mat-dynamic-table',
+    imports: [
+        CommonModule,
+        MatTableModule,
+        MatCheckboxModule,
+        MatSortModule,
+        MatIconModule,
+        MatButtonModule,
+        NgClass,
+        GetTotalPipe,
+        DatePipe,
+        DecimalPipe,
+    ],
+    animations: [
+        trigger('detailExpand', [
+            state('collapsed,void', style({ height: '0px', minHeight: '0' })),
+            state('expanded', style({ height: '*' })),
+            transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+        ]),
+    ],
+    templateUrl: './mat-dynamic-table.component.html',
+    styleUrl: `./mat-dynamic-table.component.scss`
 })
 export class MatDynamicTableComponent<T> {
   @Input() showExpand = false;

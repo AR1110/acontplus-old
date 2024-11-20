@@ -13,18 +13,17 @@ import { map, Subject } from "rxjs";
 import { ProductSearchListComponent } from "../product-search-list/product-search-list.component";
 
 @Component({
-  selector: 'app-product-search-overlay',
-  standalone: true,
-  imports: [
-    CommonModule,
-    OverlayModule,
-    NgbPopoverModule,
-    ReactiveFormsModule,
-    ClickOutsideDirective,
-    ProductSearchListComponent
-  ],
-  templateUrl: './product-search-overlay.component.html',
-  styleUrl: './product-search-overlay.component.scss',
+    selector: 'app-product-search-overlay',
+    imports: [
+        CommonModule,
+        OverlayModule,
+        NgbPopoverModule,
+        ReactiveFormsModule,
+        ClickOutsideDirective,
+        ProductSearchListComponent
+    ],
+    templateUrl: './product-search-overlay.component.html',
+    styleUrl: './product-search-overlay.component.scss'
 })
 export class ProductSearchOverlayComponent {
   @Input() searchSale = false;

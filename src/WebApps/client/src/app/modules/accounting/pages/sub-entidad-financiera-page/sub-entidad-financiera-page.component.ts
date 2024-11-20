@@ -17,15 +17,14 @@ import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.inter
 
 
 @Component({
-  selector: 'app-sub-entidad-financiera-page',
-  standalone: true,
-  imports: [
-    FontAwesomeModule,
-    FormsModule,
-    NgbAccordionModule,
-    BreadcrumbComponent
-  ],
-  templateUrl: './sub-entidad-financiera-page.component.html'
+    selector: 'app-sub-entidad-financiera-page',
+    imports: [
+        FontAwesomeModule,
+        FormsModule,
+        NgbAccordionModule,
+        BreadcrumbComponent
+    ],
+    templateUrl: './sub-entidad-financiera-page.component.html'
 })
 export class SubEntidadFinancieraPageComponent {
   private readonly subEntidadFinancieraSvc = inject(SubEntidadFinancieraService);

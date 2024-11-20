@@ -14,14 +14,13 @@ import {NotificacionTributariaService} from "@billing/services/notificacion-trib
 
 
 @Component({
-  selector: 'app-send-mail-modal',
-  imports: [
-    CommonModule,
-    FontAwesomeModule,
-    FormsModule
-  ],
-  standalone: true,
-  templateUrl: './send-mail-modal.component.html'
+    selector: 'app-send-mail-modal',
+    imports: [
+        CommonModule,
+        FontAwesomeModule,
+        FormsModule
+    ],
+    templateUrl: './send-mail-modal.component.html'
 })
 
 export class SendMailModalComponent  {

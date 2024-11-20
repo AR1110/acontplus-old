@@ -19,21 +19,20 @@ import {FormaPagoComponent} from "@accounting/comprobante-egreso/components/form
 import {ComprobanteEgresoStore} from "@accounting/comprobante-egreso/comprobante-egreso.store";
 
 @Component({
-  selector: 'app-comprobante-ingreso-lote',
-  standalone: true,
-  imports: [
-    MatIconModule,
-    MatButtonModule,
-    MatCardModule,
-    MatExpansionModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatListModule, MatDividerModule,
-    CustomContainerDialogComponent, CurrencyPipe,
-    MatDynamicTableComponent
-  ],
-  templateUrl: './comprobante-egreso-lote.component.html',
-  styles: `
+    selector: 'app-comprobante-ingreso-lote',
+    imports: [
+        MatIconModule,
+        MatButtonModule,
+        MatCardModule,
+        MatExpansionModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatListModule, MatDividerModule,
+        CustomContainerDialogComponent, CurrencyPipe,
+        MatDynamicTableComponent
+    ],
+    templateUrl: './comprobante-egreso-lote.component.html',
+    styles: `
 
 
   `

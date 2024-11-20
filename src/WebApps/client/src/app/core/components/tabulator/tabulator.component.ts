@@ -5,12 +5,11 @@ import { PageModule, ReactiveDataModule, TabulatorFull as Tabulator } from 'tabu
 Tabulator.registerModule([PageModule, ReactiveDataModule]);
 
 @Component({
-  selector: 'app-tabulator',
-  standalone: true,
-  imports: [],
-  templateUrl: './tabulator.component.html',
-  styleUrls: ['./tabulator.component.scss'],
-  encapsulation: ViewEncapsulation.None,
+    selector: 'app-tabulator',
+    imports: [],
+    templateUrl: './tabulator.component.html',
+    styleUrls: ['./tabulator.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() tableData: any[] = [];

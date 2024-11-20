@@ -10,15 +10,14 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 
 @Component({
-  selector: 'app-pago-detalle-modal',
-  standalone: true,
-  imports: [
-    CustomContainerDialogComponent,
-    MatButton,
-    MatDynamicTableComponent
-  ],
-  templateUrl: './pago-detalle-modal.component.html',
-  styles: ``
+    selector: 'app-pago-detalle-modal',
+    imports: [
+        CustomContainerDialogComponent,
+        MatButton,
+        MatDynamicTableComponent
+    ],
+    templateUrl: './pago-detalle-modal.component.html',
+    styles: ``
 })
 export class PagoDetalleModalComponent {
   readonly dialogRef = inject(MatDialogRef<PagoDetalleModalComponent>);

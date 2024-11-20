@@ -23,19 +23,18 @@ import { ActionReportDirective } from '@shared/directives/permission/action-repo
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-egreso-ingreso-caja',
-  standalone: true,
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    NgbDropdownModule,
-    NgbPagination,
-    DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent,
-    ActionAnularDirective,
-    ActionReportDirective
-  ],
-  templateUrl: './egreso-ingreso-caja.component.html',
+    selector: 'app-egreso-ingreso-caja',
+    imports: [
+        FormsModule,
+        FontAwesomeModule,
+        NgbDropdownModule,
+        NgbPagination,
+        DateRangeSelectionComponent,
+        CompanyCustomerSearchComponent,
+        ActionAnularDirective,
+        ActionReportDirective
+    ],
+    templateUrl: './egreso-ingreso-caja.component.html'
 })
 export class EgresoIngresoCajaComponent {
   totalRecords = 0;

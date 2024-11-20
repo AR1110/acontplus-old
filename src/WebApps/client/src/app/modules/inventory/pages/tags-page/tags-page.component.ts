@@ -16,21 +16,20 @@ import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-tags-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    ActionAddDirective,
-    PrimaryStatusPipe,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatTableModule,
-    CustomTableContainerComponent,
-    TagsAddEditModalDirective,
-  ],
-  templateUrl: './tags-page.component.html',
-  styles: ``,
+    selector: 'app-tags-page',
+    imports: [
+        BreadcrumbComponent,
+        ActionAddDirective,
+        PrimaryStatusPipe,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatTableModule,
+        CustomTableContainerComponent,
+        TagsAddEditModalDirective,
+    ],
+    templateUrl: './tags-page.component.html',
+    styles: ``
 })
 export class TagsPageComponent {
   tagsSvc = inject(TagsService);

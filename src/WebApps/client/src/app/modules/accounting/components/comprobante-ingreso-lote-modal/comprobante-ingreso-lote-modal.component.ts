@@ -19,24 +19,23 @@ import { ComprobanteIngresoService } from '@modules/accounting/services/comproba
 import { isApiResponse } from '@core/models/api-response';
 
 @Component({
-  selector: 'app-comprobante-ingreso-lote-modal',
-  standalone: true,
-  imports: [
-    DatePipe,
-    MatTableModule,
-    MatIconModule,
-    FontAwesomeModule,
-    NgbAccordionModule,
-  ],
-  templateUrl: './comprobante-ingreso-lote-modal.component.html',
-  styleUrl: './comprobante-ingreso-lote-modal.component.scss',
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed,void', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
+    selector: 'app-comprobante-ingreso-lote-modal',
+    imports: [
+        DatePipe,
+        MatTableModule,
+        MatIconModule,
+        FontAwesomeModule,
+        NgbAccordionModule,
+    ],
+    templateUrl: './comprobante-ingreso-lote-modal.component.html',
+    styleUrl: './comprobante-ingreso-lote-modal.component.scss',
+    animations: [
+        trigger('detailExpand', [
+            state('collapsed,void', style({ height: '0px', minHeight: '0' })),
+            state('expanded', style({ height: '*' })),
+            transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+        ]),
+    ]
 })
 export class ComprobanteIngresoLoteModalComponent {
   @Input() params = {

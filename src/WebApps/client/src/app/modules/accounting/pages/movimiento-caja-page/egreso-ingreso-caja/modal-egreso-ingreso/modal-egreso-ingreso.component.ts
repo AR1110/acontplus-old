@@ -22,15 +22,14 @@ import { DOC_TYPE } from '@core/constants/global.constants';
 import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
 
 @Component({
-  selector: 'app-modal-egreso-ingreso',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    NgbTypeaheadModule,
-    CompanyCustomerSearchComponent,
-    SupplierSearchComponent,
-  ],
-  templateUrl: './modal-egreso-ingreso.component.html',
+    selector: 'app-modal-egreso-ingreso',
+    imports: [
+        ReactiveFormsModule,
+        NgbTypeaheadModule,
+        CompanyCustomerSearchComponent,
+        SupplierSearchComponent,
+    ],
+    templateUrl: './modal-egreso-ingreso.component.html'
 })
 export class ModalEgresoIngresoComponent {
   titleModal = 'Nuevo Egreso/Ingreso Caja';

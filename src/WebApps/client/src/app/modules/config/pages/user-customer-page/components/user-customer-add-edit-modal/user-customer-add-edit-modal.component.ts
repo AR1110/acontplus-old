@@ -18,10 +18,9 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { AuthService } from '@modules/auth/services/auth.service';
 
 @Component({
-  selector: 'app-user-customer-add-edit-modal',
-  standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, FaIconComponent],
-  templateUrl: './user-customer-add-edit-modal.component.html',
+    selector: 'app-user-customer-add-edit-modal',
+    imports: [FormsModule, ReactiveFormsModule, FaIconComponent],
+    templateUrl: './user-customer-add-edit-modal.component.html'
 })
 export class UserCustomerAddEditModalComponent {
   @Input() params = {

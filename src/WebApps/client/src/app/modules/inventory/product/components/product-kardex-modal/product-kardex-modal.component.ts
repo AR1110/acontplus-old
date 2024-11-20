@@ -20,19 +20,18 @@ import { INVENTORY_CODE_REPORT } from '@inventory/enums/inventory.enum';
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-product-kardex-modal',
-  standalone: true,
-  imports: [
-    FontAwesomeModule,
-    FormsModule,
-    MatSlideToggleModule,
-    MatChipsModule,
-    ProductSearchComponent,
-    DateRangeSelectionComponent,
-    TabulatorComponent,
-  ],
-  templateUrl: './product-kardex-modal.component.html',
-  styles: ``,
+    selector: 'app-product-kardex-modal',
+    imports: [
+        FontAwesomeModule,
+        FormsModule,
+        MatSlideToggleModule,
+        MatChipsModule,
+        ProductSearchComponent,
+        DateRangeSelectionComponent,
+        TabulatorComponent,
+    ],
+    templateUrl: './product-kardex-modal.component.html',
+    styles: ``
 })
 export class ProductKardexModalComponent {
   @Input() params = {

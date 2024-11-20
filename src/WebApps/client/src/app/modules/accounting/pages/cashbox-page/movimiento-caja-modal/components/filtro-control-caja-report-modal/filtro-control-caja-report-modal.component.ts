@@ -13,15 +13,14 @@ import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-  selector: 'app-filtro-control-caja-report-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    NgbTimepickerModule,
-    DateRangeSelectionComponent,
-  ],
-  templateUrl: './filtro-control-caja-report-modal.component.html',
+    selector: 'app-filtro-control-caja-report-modal',
+    imports: [
+        FormsModule,
+        FontAwesomeModule,
+        NgbTimepickerModule,
+        DateRangeSelectionComponent,
+    ],
+    templateUrl: './filtro-control-caja-report-modal.component.html'
 })
 export class FiltroControlCajaReportModal {
   @Input('params') params = {

@@ -9,16 +9,15 @@ import {CompanyService} from "@modules/config/services/company.service";
 import {isApiResponse} from "@core/models/api-response";
 
 @Component({
-  selector: 'app-company-add-edit-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    NgbTooltipModule,
-    ToUpperCaseDirective
-  ],
-  templateUrl: './company-add-edit-modal.component.html',
-  styles: ``
+    selector: 'app-company-add-edit-modal',
+    imports: [
+        FormsModule,
+        FontAwesomeModule,
+        NgbTooltipModule,
+        ToUpperCaseDirective
+    ],
+    templateUrl: './company-add-edit-modal.component.html',
+    styles: ``
 })
 export class CompanyAddEditModalComponent {
   @Input({required: true}) params = {} as any

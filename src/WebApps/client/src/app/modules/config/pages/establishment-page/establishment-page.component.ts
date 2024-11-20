@@ -22,19 +22,18 @@ import { EstablishmentLogoService } from '@modules/config/services/sri/establish
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-establishment-page',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FontAwesomeModule,
-    NgbAccordionModule,
-    NgbTooltipModule,
-    BreadcrumbComponent,
-    PrimaryStatusPipe,
-    FormsModule,
-  ],
-  templateUrl: './establishment-page.component.html',
-  styleUrl: './establishment-page.component.scss',
+    selector: 'app-establishment-page',
+    imports: [
+        CommonModule,
+        FontAwesomeModule,
+        NgbAccordionModule,
+        NgbTooltipModule,
+        BreadcrumbComponent,
+        PrimaryStatusPipe,
+        FormsModule,
+    ],
+    templateUrl: './establishment-page.component.html',
+    styleUrl: './establishment-page.component.scss'
 })
 export class EstablishmentPageComponent {
   establishments: EstablishmentRead[] = [];

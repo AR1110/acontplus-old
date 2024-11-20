@@ -14,18 +14,17 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 
 @Component({
-  selector: 'app-menu-add-edit-modal',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatSlideToggle,
-    IngredientSearchComponent,
-    ItemSearchComponent,
-    FaIconComponent,
-    TabulatorSemanticUiComponent,
-  ],
-  templateUrl: './menu-add-edit-modal.component.html',
-  styles: ``,
+    selector: 'app-menu-add-edit-modal',
+    imports: [
+        ReactiveFormsModule,
+        MatSlideToggle,
+        IngredientSearchComponent,
+        ItemSearchComponent,
+        FaIconComponent,
+        TabulatorSemanticUiComponent,
+    ],
+    templateUrl: './menu-add-edit-modal.component.html',
+    styles: ``
 })
 export class MenuAddEditModalComponent {
   menuForm = new FormGroup({

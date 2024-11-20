@@ -9,16 +9,15 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-product-photo',
-  standalone: true,
-  imports: [
-    NgClass,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule
-  ],
-  templateUrl: './product-photo.component.html',
-  styleUrl: './product-photo.component.scss'
+    selector: 'app-product-photo',
+    imports: [
+        NgClass,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule
+    ],
+    templateUrl: './product-photo.component.html',
+    styleUrl: './product-photo.component.scss'
 })
 export class ProductPhotoComponent {
   @Input() params = {} as any;

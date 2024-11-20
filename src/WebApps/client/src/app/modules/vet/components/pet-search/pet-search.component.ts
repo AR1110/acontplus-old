@@ -14,11 +14,10 @@ import { PetService } from '@modules/vet/services/pet.service';
 import { Pet } from '@modules/vet/models/pet.model';
 
 @Component({
-  selector: 'app-pet-search',
-  standalone: true,
-  imports: [FormsModule, NgbTypeahead, NgbHighlight],
-  templateUrl: './pet-search.component.html',
-  styles: ``,
+    selector: 'app-pet-search',
+    imports: [FormsModule, NgbTypeahead, NgbHighlight],
+    templateUrl: './pet-search.component.html',
+    styles: ``
 })
 export class PetSearchComponent {
   @Output() onPetSelected = new EventEmitter<{ data: any }>();

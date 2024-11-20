@@ -14,14 +14,13 @@ import Swal from "sweetalert2";
 
 
 @Component({
-  selector: 'app-massive-tax-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    BreadcrumbComponent
-  ],
-  templateUrl: './massive-tax-page.component.html'
+    selector: 'app-massive-tax-page',
+    imports: [
+        FormsModule,
+        FontAwesomeModule,
+        BreadcrumbComponent
+    ],
+    templateUrl: './massive-tax-page.component.html'
 })
 export class MassiveTaxPageComponent {
   private readonly massiveTaxSvc = inject(MassiveTaxService);

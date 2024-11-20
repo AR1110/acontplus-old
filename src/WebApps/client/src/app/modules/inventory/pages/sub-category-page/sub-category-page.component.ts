@@ -17,20 +17,19 @@ import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-subcategory-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    ActionAddDirective,
-    PrimaryStatusPipe,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatTableModule,
-    CustomTableContainerComponent,
-    SubCategoryModalDirective,
-  ],
-  templateUrl: './sub-category-page.component.html',
+    selector: 'app-subcategory-page',
+    imports: [
+        BreadcrumbComponent,
+        ActionAddDirective,
+        PrimaryStatusPipe,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatTableModule,
+        CustomTableContainerComponent,
+        SubCategoryModalDirective,
+    ],
+    templateUrl: './sub-category-page.component.html'
 })
 export class SubCategoryPageComponent {
   pagination = signal(new MatPagination());

@@ -16,11 +16,10 @@ import { ToasterService } from '@core/services/toaster.service';
 import { PetTypeService } from '@modules/vet/services/pet-type.service';
 
 @Component({
-  selector: 'app-breed-modal',
-  standalone: true,
-  imports: [FontAwesomeModule, ReactiveFormsModule],
-  templateUrl: './breed-modal.component.html',
-  styles: ``,
+    selector: 'app-breed-modal',
+    imports: [FontAwesomeModule, ReactiveFormsModule],
+    templateUrl: './breed-modal.component.html',
+    styles: ``
 })
 export class BreedModalComponent {
   data = {} as Breed;

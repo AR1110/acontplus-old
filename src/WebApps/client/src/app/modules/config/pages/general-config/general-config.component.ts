@@ -15,20 +15,19 @@ import {InputChipComponent} from "@shared/components/input-chip/input-chip.compo
 import {SEPARATOR_KEY_CODE} from "@core/constants/global.constants";
 
 @Component({
-  selector: 'app-general-config',
-  standalone: true,
-  imports: [
-    FormsModule,
-    NgbAccordionModule,
-    NgbTooltipModule,
-    BreadcrumbComponent,
-    DecimalSelectComponent,
-    FontAwesomeModule,
-    ProductSearchComponent,
-    CompanyCustomerSearchComponent,
-    InputChipComponent,
-  ],
-  templateUrl: './general-config.component.html'
+    selector: 'app-general-config',
+    imports: [
+        FormsModule,
+        NgbAccordionModule,
+        NgbTooltipModule,
+        BreadcrumbComponent,
+        DecimalSelectComponent,
+        FontAwesomeModule,
+        ProductSearchComponent,
+        CompanyCustomerSearchComponent,
+        InputChipComponent,
+    ],
+    templateUrl: './general-config.component.html'
 })
 
 export class GeneralConfigComponent {

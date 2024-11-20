@@ -12,18 +12,17 @@ import { map, Subject } from 'rxjs';
 import { MenuSearchListComponent } from '../menu-search-list/menu-search-list.component';
 
 @Component({
-  selector: 'app-menu-search',
-  standalone: true,
-  imports: [
-    CommonModule,
-    OverlayModule,
-    NgbPopoverModule,
-    ReactiveFormsModule,
-    ClickOutsideDirective,
-    MenuSearchListComponent
-  ],
-  templateUrl: './menu-search.component.html',
-  styleUrl: './menu-search.component.scss'
+    selector: 'app-menu-search',
+    imports: [
+        CommonModule,
+        OverlayModule,
+        NgbPopoverModule,
+        ReactiveFormsModule,
+        ClickOutsideDirective,
+        MenuSearchListComponent
+    ],
+    templateUrl: './menu-search.component.html',
+    styleUrl: './menu-search.component.scss'
 })
 export class MenuSearchComponent { 
 

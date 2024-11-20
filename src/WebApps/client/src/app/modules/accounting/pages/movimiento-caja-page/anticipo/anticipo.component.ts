@@ -20,19 +20,18 @@ import { ActionReportDirective } from '@shared/directives/permission/action-repo
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-anticipo',
-  standalone: true,
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    NgbDropdownModule,
-    CompanyCustomerSearchComponent,
-    NgbPagination,
-    DateRangeSelectionComponent,
-    ActionAnularDirective,
-    ActionReportDirective
-  ],
-  templateUrl: './anticipo.component.html',
+    selector: 'app-anticipo',
+    imports: [
+        FormsModule,
+        FontAwesomeModule,
+        NgbDropdownModule,
+        CompanyCustomerSearchComponent,
+        NgbPagination,
+        DateRangeSelectionComponent,
+        ActionAnularDirective,
+        ActionReportDirective
+    ],
+    templateUrl: './anticipo.component.html'
 })
 export class AnticipoComponent {
   establecimientos: Array<EstablecimientoSelectHtmlOnly> = [];

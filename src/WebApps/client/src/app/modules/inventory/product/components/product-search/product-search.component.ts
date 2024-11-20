@@ -32,17 +32,16 @@ type ProductSearchProps = {
  * @title Plain input autocomplete
  */
 @Component({
-  selector: 'app-product-search',
-  templateUrl: './product-search.component.html',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatAutocompleteModule,
-    ReactiveFormsModule,
-    MatTableModule,
-    AsyncPipe,
-  ],
-  styleUrl: './product-search.component.css',
+    selector: 'app-product-search',
+    templateUrl: './product-search.component.html',
+    imports: [
+        FormsModule,
+        MatAutocompleteModule,
+        ReactiveFormsModule,
+        MatTableModule,
+        AsyncPipe,
+    ],
+    styleUrl: './product-search.component.css'
 })
 export class ProductSearchComponent {
   @Input() props: ProductSearchProps = {

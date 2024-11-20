@@ -20,31 +20,30 @@ import { Pagination } from '@shared/models/pagination.model';
 
 
 @Component({
-  selector: 'app-custom-table-container',
-  standalone: true,
-  imports: [
-    DatePipe,
-    MatCell,
-    MatCellDef,
-    MatColumnDef,
-    MatHeaderCell,
-    MatHeaderRow,
-    MatHeaderRowDef,
-    MatIcon,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem,
-    MatPaginator,
-    MatProgressSpinner,
-    MatRow,
-    MatRowDef,
-    MatSort,
-    MatSortHeader,
-    MatTable,
-    CustomMatSpinnerComponent
-  ],
-  templateUrl: './custom-table-container.component.html',
-  styleUrl: './custom-table-container.component.scss'
+    selector: 'app-custom-table-container',
+    imports: [
+        DatePipe,
+        MatCell,
+        MatCellDef,
+        MatColumnDef,
+        MatHeaderCell,
+        MatHeaderRow,
+        MatHeaderRowDef,
+        MatIcon,
+        MatIconButton,
+        MatMenu,
+        MatMenuItem,
+        MatPaginator,
+        MatProgressSpinner,
+        MatRow,
+        MatRowDef,
+        MatSort,
+        MatSortHeader,
+        MatTable,
+        CustomMatSpinnerComponent
+    ],
+    templateUrl: './custom-table-container.component.html',
+    styleUrl: './custom-table-container.component.scss'
 })
 export class CustomTableContainerComponent {
 

@@ -9,11 +9,10 @@ import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-ats-page',
-  standalone: true,
-  imports: [FormsModule, BreadcrumbComponent, DateRangeSelectionComponent],
-  templateUrl: './ats-page.component.html',
-  styles: ``,
+    selector: 'app-ats-page',
+    imports: [FormsModule, BreadcrumbComponent, DateRangeSelectionComponent],
+    templateUrl: './ats-page.component.html',
+    styles: ``
 })
 export class AtsPageComponent {
   fromDate: any = moment().subtract(1, 'month').startOf('month');

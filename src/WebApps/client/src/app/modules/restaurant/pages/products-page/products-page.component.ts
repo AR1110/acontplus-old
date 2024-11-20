@@ -8,20 +8,19 @@ import { IngredientListComponent } from '@restaurant/products/ingredient/ingredi
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
-  selector: 'app-products-page',
-  standalone: true,
-  imports: [
-    MatCardModule,
-    BreadcrumbComponent,
-    MatTab,
-    MatTabGroup,
-    ItemListComponent,
-    MenuListComponent,
-    PromotionListComponent,
-    IngredientListComponent,
-  ],
-  templateUrl: './products-page.component.html',
-  styles: ``,
+    selector: 'app-products-page',
+    imports: [
+        MatCardModule,
+        BreadcrumbComponent,
+        MatTab,
+        MatTabGroup,
+        ItemListComponent,
+        MenuListComponent,
+        PromotionListComponent,
+        IngredientListComponent,
+    ],
+    templateUrl: './products-page.component.html',
+    styles: ``
 })
 export class ProductsPageComponent {
   isMenuTabActive: boolean = false;

@@ -10,17 +10,16 @@ import { OrderService } from '@modules/technical-support/services/order.service'
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-order-delivery-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    FontAwesomeModule,
-    MatCheckboxModule,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './order-delivery-modal.component.html',
-  styles: ``
+    selector: 'app-order-delivery-modal',
+    imports: [
+        CommonModule,
+        FormsModule,
+        FontAwesomeModule,
+        MatCheckboxModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './order-delivery-modal.component.html',
+    styles: ``
 })
 export class OrderDeliveryModalComponent implements OnInit {
 

@@ -17,19 +17,18 @@ import { MatTableDataSource } from '@angular/material/table';
 import { PageEvent } from '@angular/material/paginator';
 
 @Component({
-  selector: 'app-item-list',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    NgbPagination,
-    FaIconComponent,
-    NgOptimizedImage,
-    FormsModule,
-    CustomTableContainerComponent,
-    MatDynamicTableComponent
-  ],
-  templateUrl: './item-list.component.html',
-  styles: ``,
+    selector: 'app-item-list',
+    imports: [
+        BreadcrumbComponent,
+        NgbPagination,
+        FaIconComponent,
+        NgOptimizedImage,
+        FormsModule,
+        CustomTableContainerComponent,
+        MatDynamicTableComponent
+    ],
+    templateUrl: './item-list.component.html',
+    styles: ``
 })
 export class ItemListComponent {
   items: Item[] = [];

@@ -18,17 +18,16 @@ import { Floor } from '@restaurant/models/floor.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-room-add-edit-modal',
-  standalone: true,
-  imports: [
-    FontAwesomeModule,
-    FormsModule,
-    MatButton,
-    MatSlideToggle,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './room-add-edit-modal.component.html',
-  styles: ``,
+    selector: 'app-room-add-edit-modal',
+    imports: [
+        FontAwesomeModule,
+        FormsModule,
+        MatButton,
+        MatSlideToggle,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './room-add-edit-modal.component.html',
+    styles: ``
 })
 export class RoomAddEditModalComponent {
   establecimientoId: number = 0;

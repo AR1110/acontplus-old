@@ -12,15 +12,14 @@ import { UserCustomerAddEditModalComponent } from './components/user-customer-ad
 import { UserCustomerRoleModalComponent } from './components/user-customer-role-modal/user-customer-role-modal.component';
 
 @Component({
-  selector: 'app-user-customer-apge',
-  standalone: true,
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    NgbPaginationModule,
-    BreadcrumbComponent,
-  ],
-  templateUrl: './user-customer-page.component.html',
+    selector: 'app-user-customer-apge',
+    imports: [
+        FormsModule,
+        FontAwesomeModule,
+        NgbPaginationModule,
+        BreadcrumbComponent,
+    ],
+    templateUrl: './user-customer-page.component.html'
 })
 export class UserCustomerPageComponent {
   pagination = new Pagination();

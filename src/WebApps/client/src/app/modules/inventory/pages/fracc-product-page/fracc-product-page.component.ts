@@ -3,14 +3,13 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { FraccProductListComponent } from '@inventory/product/components/fracc-product-list/fracc-product-list.component';
 
 @Component({
-  selector: 'app-fracc-product-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    FraccProductListComponent
-  ],
-  templateUrl: './fracc-product-page.component.html',
-  styles: ``
+    selector: 'app-fracc-product-page',
+    imports: [
+        BreadcrumbComponent,
+        FraccProductListComponent
+    ],
+    templateUrl: './fracc-product-page.component.html',
+    styles: ``
 })
 export class FraccProductPageComponent {
 

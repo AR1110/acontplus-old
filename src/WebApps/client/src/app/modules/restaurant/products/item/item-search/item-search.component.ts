@@ -14,11 +14,10 @@ import { Item } from '@restaurant/models/item.model';
 import { ItemService } from '@restaurant/services/item.service';
 
 @Component({
-  selector: 'app-item-search',
-  standalone: true,
-  imports: [NgbHighlight, NgbTypeahead, FormsModule],
-  templateUrl: './item-search.component.html',
-  styles: ``,
+    selector: 'app-item-search',
+    imports: [NgbHighlight, NgbTypeahead, FormsModule],
+    templateUrl: './item-search.component.html',
+    styles: ``
 })
 export class ItemSearchComponent {
   searching = false;

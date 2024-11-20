@@ -11,14 +11,13 @@ import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 
 @Component({
-  selector: 'app-cashbox-modal',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    FontAwesomeModule
-  ],
-  templateUrl: './cashbox-modal.component.html',
-  styleUrl: './cashbox-modal.component.scss'
+    selector: 'app-cashbox-modal',
+    imports: [
+        ReactiveFormsModule,
+        FontAwesomeModule
+    ],
+    templateUrl: './cashbox-modal.component.html',
+    styleUrl: './cashbox-modal.component.scss'
 })
 export class CashboxModalComponent {
 

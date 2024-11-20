@@ -22,17 +22,16 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { RoomService } from '@restaurant/services/room.service';
 
 @Component({
-  selector: 'app-floor-add-edit-modal',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    FaIconComponent,
-    TabulatorSemanticUiComponent,
-    MatButton,
-    MatSlideToggle,
-  ],
-  templateUrl: './floor-add-edit-modal.component.html',
-  styles: ``,
+    selector: 'app-floor-add-edit-modal',
+    imports: [
+        ReactiveFormsModule,
+        FaIconComponent,
+        TabulatorSemanticUiComponent,
+        MatButton,
+        MatSlideToggle,
+    ],
+    templateUrl: './floor-add-edit-modal.component.html',
+    styles: ``
 })
 export class FloorAddEditModalComponent {
   data = {} as Floor;

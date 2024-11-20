@@ -7,19 +7,17 @@ import { RouterLink } from '@angular/router';
 import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 
 @Component({
-  selector: 'app-technical-support-page',
-  standalone: true,
-  imports: [
-
-    RouterLink,
-    BreadcrumbComponent,
-    DashboardComponent,
-    NgbNavModule,
-    OrderListComponent,
-    ActionAddDirective,
-  ],
-  templateUrl: './technical-support-page.component.html',
-  styles: ``,
+    selector: 'app-technical-support-page',
+    imports: [
+        RouterLink,
+        BreadcrumbComponent,
+        DashboardComponent,
+        NgbNavModule,
+        OrderListComponent,
+        ActionAddDirective,
+    ],
+    templateUrl: './technical-support-page.component.html',
+    styles: ``
 })
 export class TechnicalSupportPageComponent {
   @ViewChild(OrderListComponent) child!: OrderListComponent;

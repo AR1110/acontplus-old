@@ -13,20 +13,19 @@ import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-factura-fisica-add-edit-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
-    CustomContainerDialogComponent,
-    SupplierSearchMatComponent
-  ],
-  templateUrl: './factura-fisica-add-edit-modal.component.html',
-  styles: ``
+    selector: 'app-factura-fisica-add-edit-modal',
+    imports: [
+        FormsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatInputModule,
+        CustomContainerDialogComponent,
+        SupplierSearchMatComponent
+    ],
+    templateUrl: './factura-fisica-add-edit-modal.component.html',
+    styles: ``
 })
 export class FacturaFisicaAddEditModalComponent {
 

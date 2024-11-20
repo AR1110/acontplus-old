@@ -15,20 +15,19 @@ import { TimeInputFormat24Directive } from '@shared/directives/time-input-format
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 
 @Component({
-  selector: 'app-promotion-add-edit-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    FontAwesomeModule,
-    InputDateComponent,
-    ToUpperCaseDirective,
-    TimeInputFormat24Directive,
-    MenuSearchComponent
-  ],
-  templateUrl: './promotion-add-edit-modal.component.html',
-  styleUrl: './promotion-add-edit-modal.component.scss',
-  styles: ``
+    selector: 'app-promotion-add-edit-modal',
+    imports: [
+        CommonModule,
+        FormsModule,
+        FontAwesomeModule,
+        InputDateComponent,
+        ToUpperCaseDirective,
+        TimeInputFormat24Directive,
+        MenuSearchComponent
+    ],
+    templateUrl: './promotion-add-edit-modal.component.html',
+    styleUrl: './promotion-add-edit-modal.component.scss',
+    styles: ``
 })
 export class PromotionAddEditModalComponent {
   params = {} as any

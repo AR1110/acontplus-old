@@ -8,14 +8,13 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 
 @Component({
-  selector: 'app-tarifa-edit-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    ToUpperCaseDirective
-  ],
-  templateUrl: './tarifa-edit-modal.component.html',
-  styles: ``
+    selector: 'app-tarifa-edit-modal',
+    imports: [
+        FormsModule,
+        ToUpperCaseDirective
+    ],
+    templateUrl: './tarifa-edit-modal.component.html',
+    styles: ``
 })
 export class TarifaEditModalComponent {
   @Input() params = {

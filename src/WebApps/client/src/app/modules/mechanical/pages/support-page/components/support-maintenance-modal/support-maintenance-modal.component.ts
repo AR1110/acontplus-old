@@ -27,19 +27,18 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-support-maintenance-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    NgbTooltipModule,
-    NgbPopoverModule,
-    TabulatorComponent,
-    DrawTaxTotalComponent,
-    ProductSearchOverlayComponent,
-    InputDateComponent
-  ],
-  templateUrl: './support-maintenance-modal.component.html',
+    selector: 'app-support-maintenance-modal',
+    imports: [
+        FormsModule,
+        FontAwesomeModule,
+        NgbTooltipModule,
+        NgbPopoverModule,
+        TabulatorComponent,
+        DrawTaxTotalComponent,
+        ProductSearchOverlayComponent,
+        InputDateComponent
+    ],
+    templateUrl: './support-maintenance-modal.component.html'
 })
 export class SupportMaintenanceModalComponent {
   @Input() params = {
