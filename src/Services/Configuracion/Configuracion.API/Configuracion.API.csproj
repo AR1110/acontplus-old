@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="AutoMapper" />
@@ -23,16 +21,13 @@
     </PackageReference>
     <PackageReference Include="Scrutor" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
     <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Common\Common.S3Application\Common.S3Application.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
-
 </Project>
