@@ -176,27 +176,6 @@ BEGIN
 			    RETURN
 		    END 
 
-	    --> Codigo de barra 
-	    IF @tipo = 2
-		    BEGIN
-            
-                SET @tableNames = 'product'
-
-			    SELECT @bySearch = bySearch FROM OPENJSON(@json) WITH (bySearch VARCHAR(500))
-
-                SELECT TOP 1 ar.idArticulo, ar.llevaInventario 
-                FROM dbo.Articulo                 ar WITH (NOLOCK)
-                LEFT JOIN dbo.ArticuloCodigoBarra cb WITH (NOLOCK) ON cb.idArticulo = ar.idArticulo
-                WHERE ar.idEntidad = @idEntidad
-                  AND ar.estado = 1
-                  AND (
-                            ar.codigo      = @bySearch
-                         OR ar.codigoBarra = @bySearch
-                         OR cb.codigoBarra = @bySearch
-                      )
-			    RETURN 
-		    END 
-
 	    --> Lista de Precio
 	    IF @tipo = 3
 		    BEGIN 
@@ -376,6 +355,22 @@ BEGIN
                 SET @tableNames = 'product,fractionedMeasures,measures,inventoryAdjustment,additionalInfo'
 
 		        SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT)
+
+                IF @idArticulo IS NULL
+                    BEGIN 
+                        SELECT @bySearch = bySearch FROM OPENJSON(@json) WITH (bySearch VARCHAR(500))
+
+                        SELECT TOP 1 @idArticulo = ar.idArticulo
+                        FROM dbo.Articulo                 ar WITH (NOLOCK)
+                        LEFT JOIN dbo.ArticuloCodigoBarra cb WITH (NOLOCK) ON cb.idArticulo = ar.idArticulo
+                        WHERE ar.idEntidad = @idEntidad
+                          AND ar.estado = 1
+                          AND (
+                                    ar.codigo      = @bySearch
+                                 OR ar.codigoBarra = @bySearch
+                                 OR cb.codigoBarra = @bySearch
+                              )    
+                    END 
 
 			    SELECT ar.idArticulo
 				      ,ar.idMedida
