@@ -12,10 +12,6 @@ import { NgClass } from '@angular/common';
 import {
   NgbAccordionItem,
   NgbAccordionModule,
-  NgbDropdown,
-  NgbDropdownItem,
-  NgbDropdownMenu,
-  NgbDropdownToggle,
 } from '@ng-bootstrap/ng-bootstrap';
 import swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
@@ -28,10 +24,6 @@ import { ToasterService } from '@core/services/toaster.service';
         MatExpansionModule,
         MatButton,
         NgClass,
-        NgbDropdown,
-        NgbDropdownMenu,
-        NgbDropdownItem,
-        NgbDropdownToggle,
     ],
     templateUrl: './floor-list.component.html',
     styles: ``

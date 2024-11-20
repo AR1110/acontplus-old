@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+
 import { Component, inject, Input, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -11,7 +11,6 @@ import Swal from 'sweetalert2';
 @Component({
     selector: 'app-product-photo',
     imports: [
-        NgClass,
         MatCardModule,
         MatButtonModule,
         MatIconModule

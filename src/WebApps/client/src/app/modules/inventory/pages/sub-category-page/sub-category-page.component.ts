@@ -11,7 +11,6 @@ import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { SubCategoryModalDirective } from '@modules/inventory/directives/sub-category.directive';
 import { SubCategoryService } from '@modules/inventory/services/sub-category.service';
-import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
@@ -20,7 +19,6 @@ import Swal from 'sweetalert2';
     selector: 'app-subcategory-page',
     imports: [
         BreadcrumbComponent,
-        ActionAddDirective,
         PrimaryStatusPipe,
         MatButtonModule,
         MatCardModule,

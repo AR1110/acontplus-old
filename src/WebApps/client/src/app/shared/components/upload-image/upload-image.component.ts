@@ -4,13 +4,14 @@ import { imgDefault } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-    selector: 'app-upload-image',
-    imports: [
-        CommonModule,
-        FontAwesomeModule
-    ],
-    templateUrl: './upload-image.component.html',
-    styleUrl: `./upload-image.component.scss`
+  selector: 'app-upload-image',
+  imports: [
+    CommonModule,
+    FontAwesomeModule
+  ],
+  templateUrl: './upload-image.component.html',
+  standalone: true,
+  styleUrl: `./upload-image.component.scss`
 })
 export class UploadImageComponent {
   onSelected = output<File | null>()

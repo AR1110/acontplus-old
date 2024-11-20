@@ -3,9 +3,7 @@ import { TotalizadorUtil } from '@core/utils/totalizador.util';
 
 @Component({
     selector: 'app-tabla-resumen-totales',
-    imports: [],
-    templateUrl: './tabla-resumen-totales.component.html',
-    styles: ``
+    template: `<div [innerHTML]="htmlContentTotals()"></div>`,
 })
 export class TablaResumenTotalesComponent {
   // Use input to get details and tax rates as signals

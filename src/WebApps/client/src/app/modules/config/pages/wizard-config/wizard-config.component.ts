@@ -9,7 +9,6 @@ import {
   MatStepperPrevious,
 } from '@angular/material/stepper';
 import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import {
   MatChipEditedEvent,
   MatChipGrid,
@@ -39,8 +38,7 @@ import { CompanyDemoStepService } from '@modules/config/services/wizard-config/c
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
 import { DemoStep } from '@modules/config/models/wizard-config/demo-step.model';
 import { romanToInt } from '@modules/config/models/wizard-config/roman-to-index';
-import { EstabAddEditModalComponent } from '../establishment-page/components/estab-add-edit-modal/estab-add-edit-modal.component';
-import { EstablishmentPageComponent } from '../establishment-page/establishment-page.component';
+
 import Swal from 'sweetalert2';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { DocConfigService } from '@modules/config/services/doc-config.service';
@@ -65,10 +63,6 @@ import { faYoutube } from '@fortawesome/free-brands-svg-icons';
         MatButton,
         MatStepperNext,
         MatStepperPrevious,
-        MatCard,
-        MatCardContent,
-        EstabAddEditModalComponent,
-        EstablishmentPageComponent,
         FaIconComponent,
         MatRadioButton,
         NgbTooltip,

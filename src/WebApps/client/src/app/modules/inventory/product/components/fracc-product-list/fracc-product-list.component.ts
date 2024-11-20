@@ -4,12 +4,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { PageEvent } from '@angular/material/paginator';
-import { MatTableModule } from '@angular/material/table';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
-import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 
 @Component({
     selector: 'app-fracc-product-list',
@@ -20,7 +18,6 @@ import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
         MatIconModule,
         MatDynamicTableComponent,
         CustomTableContainerComponent,
-        PrimaryStatusPipe
     ],
     templateUrl: './fracc-product-list.component.html',
     styles: ``

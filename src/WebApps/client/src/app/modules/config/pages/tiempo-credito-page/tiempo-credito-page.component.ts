@@ -6,7 +6,7 @@ import { TiempoCredito } from '@modules/config/models/tiempo-credito.model';
 
 @Component({
     selector: 'app-tiempo-credito-page',
-    imports: [CommonModule, FormsModule, BreadcrumbComponent],
+    imports: [CommonModule, FormsModule ],
     templateUrl: './tiempo-credito-page.component.html',
     styles: ``
 })
