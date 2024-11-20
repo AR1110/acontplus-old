@@ -8,17 +8,15 @@ import { finalize } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-factura-fisica-detalle-modal',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    CustomContainerDialogComponent,
-
-    TablaResumenTotalesComponent
-  ],
-  templateUrl: './factura-fisica-detalle-modal.component.html',
-  styles: ``
+    selector: 'app-factura-fisica-detalle-modal',
+    imports: [
+        MatButtonModule,
+        MatIconModule,
+        CustomContainerDialogComponent,
+        TablaResumenTotalesComponent
+    ],
+    templateUrl: './factura-fisica-detalle-modal.component.html',
+    styles: ``
 })
 export class FacturaFisicaDetalleModalComponent {
 

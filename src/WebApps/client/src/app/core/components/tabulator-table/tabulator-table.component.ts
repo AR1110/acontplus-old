@@ -6,11 +6,10 @@ import {
 } from 'tabulator-tables';
 
 @Component({
-  selector: 'app-tabulator-table',
-  standalone: true,
-  imports: [],
-  templateUrl: './tabulator-table.component.html',
-  styles: ``
+    selector: 'app-tabulator-table',
+    imports: [],
+    templateUrl: './tabulator-table.component.html',
+    styles: ``
 })
 export class TabulatorTableComponent {
   @ViewChild('tabulatorTable', { static: false }) tabulatorTable!: ElementRef;

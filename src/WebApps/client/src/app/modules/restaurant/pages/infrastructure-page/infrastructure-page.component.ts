@@ -8,20 +8,19 @@ import { TableListComponent } from '@restaurant/infrastructure/table/table-list/
 import { ProductionAreaListComponent } from '@restaurant/infrastructure/production-area/production-area-list/production-area-list.component';
 
 @Component({
-  selector: 'app-infrastructure-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    MatTabGroup,
-    MatTab,
-    MatCard,
-    RoomListComponent,
-    FloorListComponent,
-    TableListComponent,
-    ProductionAreaListComponent,
-  ],
-  templateUrl: './infrastructure-page.component.html',
-  styles: ``,
+    selector: 'app-infrastructure-page',
+    imports: [
+        BreadcrumbComponent,
+        MatTabGroup,
+        MatTab,
+        MatCard,
+        RoomListComponent,
+        FloorListComponent,
+        TableListComponent,
+        ProductionAreaListComponent,
+    ],
+    templateUrl: './infrastructure-page.component.html',
+    styles: ``
 })
 export class InfrastructurePageComponent {
   isRoomTabActive: boolean = false;

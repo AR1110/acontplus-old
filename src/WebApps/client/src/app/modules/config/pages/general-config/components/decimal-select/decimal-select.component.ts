@@ -2,10 +2,9 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
 @Component({
-  selector: 'app-decimal-select',
-  standalone: true,
-  imports: [FormsModule],
-  templateUrl: './decimal-select.component.html'
+    selector: 'app-decimal-select',
+    imports: [FormsModule],
+    templateUrl: './decimal-select.component.html'
 })
 export class DecimalSelectComponent {
 

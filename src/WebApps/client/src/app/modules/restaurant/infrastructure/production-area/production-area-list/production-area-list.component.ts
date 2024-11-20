@@ -17,17 +17,16 @@ import { ProductionArea } from '@restaurant/models/production-area';
 import { NgClass } from '@angular/common';
 
 @Component({
-  selector: 'app-production-area-list',
-  standalone: true,
-  imports: [
-    FaIconComponent,
-    FormsModule,
-    MatButton,
-    NgbAccordionModule,
-    NgClass,
-  ],
-  templateUrl: './production-area-list.component.html',
-  styles: ``,
+    selector: 'app-production-area-list',
+    imports: [
+        FaIconComponent,
+        FormsModule,
+        MatButton,
+        NgbAccordionModule,
+        NgClass,
+    ],
+    templateUrl: './production-area-list.component.html',
+    styles: ``
 })
 export class ProductionAreaListComponent {
   @ViewChild('accordionItem') accordionItem: NgbAccordionItem | undefined;

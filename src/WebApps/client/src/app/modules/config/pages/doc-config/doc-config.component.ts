@@ -13,14 +13,13 @@ import { ModalService } from "@core/services/modal.service";
 import { DocConfigInfoAdicionalComponent } from "./components/doc-config-info-adicional/doc-config-info-adicional.component";
 
 @Component({
-  selector: 'app-doc-config-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    BreadcrumbComponent
-  ],
-  templateUrl: './doc-config.component.html'
+    selector: 'app-doc-config-page',
+    imports: [
+        FormsModule,
+        FontAwesomeModule,
+        BreadcrumbComponent
+    ],
+    templateUrl: './doc-config.component.html'
 })
 export class DocConfigPageComponent {
   private docConfigSvc = inject(DocConfigService);

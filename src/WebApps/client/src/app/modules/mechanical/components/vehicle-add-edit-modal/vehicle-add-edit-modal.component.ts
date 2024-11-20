@@ -9,14 +9,13 @@ import { VehicleService } from '@modules/mechanical/services/vehicle.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-vehicle-add-edit-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    CompanyCustomerSearchComponent
-  ],
-  templateUrl: './vehicle-add-edit-modal.component.html',
-  styles: ``
+    selector: 'app-vehicle-add-edit-modal',
+    imports: [
+        FormsModule,
+        CompanyCustomerSearchComponent
+    ],
+    templateUrl: './vehicle-add-edit-modal.component.html',
+    styles: ``
 })
 export class VehicleAddEditModalComponent {
   @Input() params = {

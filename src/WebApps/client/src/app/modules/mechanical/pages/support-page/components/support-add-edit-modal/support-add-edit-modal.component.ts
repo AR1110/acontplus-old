@@ -31,17 +31,16 @@ interface UserAssigned {
 }
 
 @Component({
-  selector: 'app-support-add-edit-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FontAwesomeModule,
-    FormsModule,
-    NgbTypeaheadModule,
-    InputDateComponent,
-    VehicleAddEditDirective
-  ],
-  templateUrl: './support-add-edit-modal.component.html',
+    selector: 'app-support-add-edit-modal',
+    imports: [
+        CommonModule,
+        FontAwesomeModule,
+        FormsModule,
+        NgbTypeaheadModule,
+        InputDateComponent,
+        VehicleAddEditDirective
+    ],
+    templateUrl: './support-add-edit-modal.component.html'
 })
 export class SupportAddEditModalComponent {
   @Input() params = {

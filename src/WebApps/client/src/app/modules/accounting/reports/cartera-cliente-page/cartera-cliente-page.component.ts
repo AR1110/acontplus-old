@@ -13,16 +13,15 @@ import { formatDateToString } from "@core/utils/date.util";
 import { isValidField } from "@core/utils/utils";
 
 @Component({
-  selector: 'app-cartera-cliente-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent
-  ],
-  templateUrl: './cartera-cliente-page.component.html',
-  styles: ``
+    selector: 'app-cartera-cliente-page',
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent,
+        CompanyCustomerSearchComponent
+    ],
+    templateUrl: './cartera-cliente-page.component.html',
+    styles: ``
 })
 export class CarteraClientePageComponent {
   private cuentaPorCobrarSvc = inject(CuentaPorCobrarService)

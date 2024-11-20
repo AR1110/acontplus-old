@@ -17,21 +17,20 @@ import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-inv-model-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    ActionAddDirective,
-    PrimaryStatusPipe,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatTableModule,
-    CustomTableContainerComponent,
-    ModelAddEditDirective,
-  ],
-  templateUrl: './inv-model-page.component.html',
-  styles: ``,
+    selector: 'app-inv-model-page',
+    imports: [
+        BreadcrumbComponent,
+        ActionAddDirective,
+        PrimaryStatusPipe,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatTableModule,
+        CustomTableContainerComponent,
+        ModelAddEditDirective,
+    ],
+    templateUrl: './inv-model-page.component.html',
+    styles: ``
 })
 export class InvModelPageComponent {
   invModelSvc = inject(InvModelService);

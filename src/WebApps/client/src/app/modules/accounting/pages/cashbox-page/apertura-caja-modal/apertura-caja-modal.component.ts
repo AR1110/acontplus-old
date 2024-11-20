@@ -8,14 +8,13 @@ import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
 
 @Component({
-  selector: 'app-apertura-caja-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    FontAwesomeModule
-  ],
-  templateUrl: './apertura-caja-modal.component.html',
+    selector: 'app-apertura-caja-modal',
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        FontAwesomeModule
+    ],
+    templateUrl: './apertura-caja-modal.component.html'
 })
 export class AperturaCajaModalComponent {
   private activeModal = inject(NgbActiveModal);

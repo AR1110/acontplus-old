@@ -5,16 +5,15 @@ import { AnticipoComponent } from './anticipo/anticipo.component';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 
 @Component({
-  selector: 'app-movimiento-caja-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    NgbNavModule,
-    EgresoIngresoCajaComponent,
-    AnticipoComponent
-  ],
-  templateUrl: './movimiento-caja-page.component.html',
-  styleUrl: './movimiento-caja-page.component.scss'
+    selector: 'app-movimiento-caja-page',
+    imports: [
+        BreadcrumbComponent,
+        NgbNavModule,
+        EgresoIngresoCajaComponent,
+        AnticipoComponent
+    ],
+    templateUrl: './movimiento-caja-page.component.html',
+    styleUrl: './movimiento-caja-page.component.scss'
 })
 export class MovimientoCajaPageComponent {
   active = 1;

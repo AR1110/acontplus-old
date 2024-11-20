@@ -9,19 +9,18 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
 
 @Component({
-  selector: 'app-menu-search-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatProgressSpinnerModule,
-    NgbPopoverModule,
-    MatSortModule
-  ],
-  templateUrl: './menu-search-list.component.html',
-  styleUrl: './menu-search-list.component.scss'
+    selector: 'app-menu-search-list',
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatProgressSpinnerModule,
+        NgbPopoverModule,
+        MatSortModule
+    ],
+    templateUrl: './menu-search-list.component.html',
+    styleUrl: './menu-search-list.component.scss'
 })
 export class MenuSearchListComponent<T> {
   @Input() dataList: any[] = [];

@@ -17,11 +17,10 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 @Component({
-  selector: 'app-production-area-add-edit-modal',
-  standalone: true,
-  imports: [ReactiveFormsModule, FaIconComponent, MatSlideToggle],
-  templateUrl: './production-area-add-edit-modal.component.html',
-  styles: ``,
+    selector: 'app-production-area-add-edit-modal',
+    imports: [ReactiveFormsModule, FaIconComponent, MatSlideToggle],
+    templateUrl: './production-area-add-edit-modal.component.html',
+    styles: ``
 })
 export class ProductionAreaAddEditModalComponent {
   establecimientoId: number = 0;

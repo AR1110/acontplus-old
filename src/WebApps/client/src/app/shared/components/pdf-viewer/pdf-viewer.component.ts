@@ -10,17 +10,16 @@ import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 
 @Component({
-  selector: 'app-pdf-viewer',
-  standalone: true,
-  imports: [
-    NgxExtendedPdfViewerModule,
-    SafeUrlPipe,
-    CustomContainerDialogComponent,
-    MatIconButton,
-    MatIcon
-  ],
-  templateUrl: './pdf-viewer.component.html',
-  styles: ``
+    selector: 'app-pdf-viewer',
+    imports: [
+        NgxExtendedPdfViewerModule,
+        SafeUrlPipe,
+        CustomContainerDialogComponent,
+        MatIconButton,
+        MatIcon
+    ],
+    templateUrl: './pdf-viewer.component.html',
+    styles: ``
 })
 export class PdfViewerComponent {
   @Input() params = {

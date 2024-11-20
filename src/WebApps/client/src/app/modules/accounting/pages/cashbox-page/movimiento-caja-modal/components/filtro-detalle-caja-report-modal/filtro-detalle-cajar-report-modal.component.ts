@@ -18,15 +18,14 @@ import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.inter
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-filtro-detalle-caja-report-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    FontAwesomeModule,
-    NgbTimepickerModule,
-  ],
-  templateUrl: './filtro-detalle-cajar-report-modal.component.html',
+    selector: 'app-filtro-detalle-caja-report-modal',
+    imports: [
+        CommonModule,
+        FormsModule,
+        FontAwesomeModule,
+        NgbTimepickerModule,
+    ],
+    templateUrl: './filtro-detalle-cajar-report-modal.component.html'
 })
 export class FiltroDetalleCajaReportModal {
   @Input('params') params = {

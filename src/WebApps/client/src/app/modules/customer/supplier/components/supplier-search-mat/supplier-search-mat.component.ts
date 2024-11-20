@@ -14,22 +14,21 @@ import { distinctUntilChanged, finalize, Observable, switchMap } from 'rxjs';
 import { SupplierService } from '../../supplier.service';
 
 @Component({
-  selector: 'app-supplier-search-mat',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    MatInputModule,
-    MatIconModule,
-    MatFormFieldModule,
-    AsyncPipe,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-    MatMenuModule,
-    MatCardModule
-  ],
-  templateUrl: './supplier-search-mat.component.html',
-  styles: ``
+    selector: 'app-supplier-search-mat',
+    imports: [
+        ReactiveFormsModule,
+        MatAutocompleteModule,
+        MatInputModule,
+        MatIconModule,
+        MatFormFieldModule,
+        AsyncPipe,
+        MatButtonModule,
+        MatProgressSpinnerModule,
+        MatMenuModule,
+        MatCardModule
+    ],
+    templateUrl: './supplier-search-mat.component.html',
+    styles: ``
 })
 export class SupplierSearchMatComponent {
 

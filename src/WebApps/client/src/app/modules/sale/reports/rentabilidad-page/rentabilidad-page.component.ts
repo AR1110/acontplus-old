@@ -22,19 +22,18 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-rentabilidad-page',
-  standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatSelectModule,
-    FormsModule,
-    ReactiveFormsModule,
-    BreadcrumbComponent,
-    ProductSearchComponent,
-    UserSearchComponent,
-    DateRangeSelectionComponent,
-  ],
-  templateUrl: './rentabilidad-page.component.html',
+    selector: 'app-rentabilidad-page',
+    imports: [
+        MatFormFieldModule,
+        MatSelectModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BreadcrumbComponent,
+        ProductSearchComponent,
+        UserSearchComponent,
+        DateRangeSelectionComponent,
+    ],
+    templateUrl: './rentabilidad-page.component.html'
 })
 export class RentabilidadPageComponent {
   estalecimientos: Array<GroupedEstab> = [];

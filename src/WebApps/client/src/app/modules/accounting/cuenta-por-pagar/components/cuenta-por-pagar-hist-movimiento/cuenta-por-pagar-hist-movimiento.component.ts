@@ -28,27 +28,26 @@ import {PagoDetalleLista} from "@modules/accounting/cuenta-por-pagar/interfaces/
 import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
-  selector: 'app-cuenta-por-pagar-hist-movimiento',
-  standalone: true,
-  imports: [
-    MatTableModule,
-    MatIconModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
-    FormsModule,
-    MatDatepickerModule,
-    MatMenuModule,
-    MatNativeDateModule,
-    MatCardModule,
-    MatDivider,
-    CustomContainerDialogComponent,
-    MatDynamicTableComponent,
-    MatTooltip
-  ],
-  templateUrl: './cuenta-por-pagar-hist-movimiento.component.html',
-  styles: ``
+    selector: 'app-cuenta-por-pagar-hist-movimiento',
+    imports: [
+        MatTableModule,
+        MatIconModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatInputModule,
+        FormsModule,
+        MatDatepickerModule,
+        MatMenuModule,
+        MatNativeDateModule,
+        MatCardModule,
+        MatDivider,
+        CustomContainerDialogComponent,
+        MatDynamicTableComponent,
+        MatTooltip
+    ],
+    templateUrl: './cuenta-por-pagar-hist-movimiento.component.html',
+    styles: ``
 })
 export class CuentaPorPagarHistMovimientoComponent {
   readonly dialogRef = inject(MatDialogRef<CuentaPorPagarHistMovimientoComponent>);

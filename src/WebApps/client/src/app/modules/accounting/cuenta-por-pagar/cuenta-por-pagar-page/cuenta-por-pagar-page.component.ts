@@ -14,16 +14,15 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { finalize, switchMap, throwError } from 'rxjs';
 
 @Component({
-  selector: 'app-cuenta-por-pagar-page',
-  standalone: true,
-  imports: [
-    MatCard,
-    MatCardContent,
-    BreadcrumbComponent,
-    CuentaPorPagarListaComponent
-  ],
-  templateUrl: './cuenta-por-pagar-page.component.html',
-  styles: ``
+    selector: 'app-cuenta-por-pagar-page',
+    imports: [
+        MatCard,
+        MatCardContent,
+        BreadcrumbComponent,
+        CuentaPorPagarListaComponent
+    ],
+    templateUrl: './cuenta-por-pagar-page.component.html',
+    styles: ``
 })
 export class CuentaPorPagarPageComponent {
 

@@ -22,11 +22,10 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-brand-modal',
-  standalone: true,
-  imports: [FontAwesomeModule, ReactiveFormsModule, TabulatorComponent],
-  templateUrl: './brand-modal.component.html',
-  styles: ``,
+    selector: 'app-brand-modal',
+    imports: [FontAwesomeModule, ReactiveFormsModule, TabulatorComponent],
+    templateUrl: './brand-modal.component.html',
+    styles: ``
 })
 export class BrandModalComponent {
   private brandService = inject(BrandService);

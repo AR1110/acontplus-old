@@ -11,17 +11,16 @@ import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
 import { CompanyCustomerAddEditDirective } from '@company-customer/company-customer-add-edit.directive';
 
 @Component({
-  selector: 'app-category-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    FontAwesomeModule,
-    NgbDropdownModule,
-    SecondaryStatusPipe,
-    CompanyCustomerAddEditDirective,
-  ],
-  templateUrl: './category-page.component.html',
-  styles: ``,
+    selector: 'app-category-page',
+    imports: [
+        BreadcrumbComponent,
+        FontAwesomeModule,
+        NgbDropdownModule,
+        SecondaryStatusPipe,
+        CompanyCustomerAddEditDirective,
+    ],
+    templateUrl: './category-page.component.html',
+    styles: ``
 })
 export class CategoryPageComponent {
   categories: Category[] = [];

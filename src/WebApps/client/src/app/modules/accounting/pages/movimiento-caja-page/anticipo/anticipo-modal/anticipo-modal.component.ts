@@ -19,14 +19,13 @@ import {
 import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
 
 @Component({
-  selector: 'app-anticipo-modal',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    CompanyCustomerSearchComponent
-  ],
-  templateUrl: './anticipo-modal.component.html',
-  styles: ``
+    selector: 'app-anticipo-modal',
+    imports: [
+        ReactiveFormsModule,
+        CompanyCustomerSearchComponent
+    ],
+    templateUrl: './anticipo-modal.component.html',
+    styles: ``
 })
 export class AnticipoModalComponent {
   private activeModal = inject(NgbActiveModal);

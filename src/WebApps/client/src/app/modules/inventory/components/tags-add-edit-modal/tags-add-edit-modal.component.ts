@@ -10,16 +10,15 @@ import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 
 @Component({
-  selector: 'app-tags-add-edit-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    InputChipComponent,
-    ToUpperCaseDirective,
-    M3InputChipComponent
-  ],
-  templateUrl: './tags-add-edit-modal.component.html',
-  styles: ``
+    selector: 'app-tags-add-edit-modal',
+    imports: [
+        FormsModule,
+        InputChipComponent,
+        ToUpperCaseDirective,
+        M3InputChipComponent
+    ],
+    templateUrl: './tags-add-edit-modal.component.html',
+    styles: ``
 })
 export class TagsAddEditModalComponent {
   @Input() params = {

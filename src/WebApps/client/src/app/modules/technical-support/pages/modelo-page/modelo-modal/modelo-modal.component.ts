@@ -19,11 +19,10 @@ import { SerieService } from '@modules/technical-support/services/serie.service'
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-modelo-modal',
-  standalone: true,
-  imports: [FontAwesomeModule, ReactiveFormsModule],
-  templateUrl: './modelo-modal.component.html',
-  styles: ``,
+    selector: 'app-modelo-modal',
+    imports: [FontAwesomeModule, ReactiveFormsModule],
+    templateUrl: './modelo-modal.component.html',
+    styles: ``
 })
 export class ModeloModalComponent {
   private modeloService = inject(ModeloService);

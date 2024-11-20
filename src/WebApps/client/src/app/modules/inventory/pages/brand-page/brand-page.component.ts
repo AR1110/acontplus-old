@@ -17,20 +17,19 @@ import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-brand-page',
-  standalone: true,
-  templateUrl: './brand-page.component.html',
-  imports: [
-    BreadcrumbComponent,
-    ActionAddDirective,
-    PrimaryStatusPipe,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatTableModule,
-    CustomTableContainerComponent,
-    BrandAddEditDirective,
-  ],
+    selector: 'app-brand-page',
+    templateUrl: './brand-page.component.html',
+    imports: [
+        BreadcrumbComponent,
+        ActionAddDirective,
+        PrimaryStatusPipe,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatTableModule,
+        CustomTableContainerComponent,
+        BrandAddEditDirective,
+    ]
 })
 export class BrandPageComponent {
   brandSvc = inject(IbrandService);

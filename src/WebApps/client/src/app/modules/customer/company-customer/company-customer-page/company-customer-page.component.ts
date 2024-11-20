@@ -16,20 +16,19 @@ import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-company-customer-page',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    FontAwesomeModule,
-    MatTableModule,
-    FontAwesomeModule,
-    MatPaginatorModule,
-    BreadcrumbComponent,
-    CompanyCustomerAddEditDirective,
-    PrimaryStatusPipe,
-  ],
-  templateUrl: './company-customer-page.component.html',
+    selector: 'app-company-customer-page',
+    imports: [
+        CommonModule,
+        FormsModule,
+        FontAwesomeModule,
+        MatTableModule,
+        FontAwesomeModule,
+        MatPaginatorModule,
+        BreadcrumbComponent,
+        CompanyCustomerAddEditDirective,
+        PrimaryStatusPipe,
+    ],
+    templateUrl: './company-customer-page.component.html'
 })
 export class CompanyCustomerPageComponent {
   companyCustomerSvc = inject(CompanyCustomerService);

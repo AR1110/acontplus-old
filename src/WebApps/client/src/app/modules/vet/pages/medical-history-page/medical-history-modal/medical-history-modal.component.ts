@@ -33,21 +33,20 @@ import { BehaviorTestService } from '@modules/vet/services/behavior-test.service
 import { HealthCheckService } from '@modules/vet/services/health-check.service';
 
 @Component({
-  selector: 'app-medical-history-modal',
-  standalone: true,
-  imports: [
-    FaIconComponent,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbTypeahead,
-    NgbHighlight,
-    PetSearchComponent,
-    MatInput,
-    MatRadioGroup,
-    MatRadioButton,
-  ],
-  templateUrl: './medical-history-modal.component.html',
-  styles: ``,
+    selector: 'app-medical-history-modal',
+    imports: [
+        FaIconComponent,
+        FormsModule,
+        ReactiveFormsModule,
+        NgbTypeahead,
+        NgbHighlight,
+        PetSearchComponent,
+        MatInput,
+        MatRadioGroup,
+        MatRadioButton,
+    ],
+    templateUrl: './medical-history-modal.component.html',
+    styles: ``
 })
 export class MedicalHistoryModalComponent {
   behaviors: Behavior[] = [];

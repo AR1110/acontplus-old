@@ -24,16 +24,15 @@ import {BancoSelectOnly} from "@accounting/interfaces/banco.interface";
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-reporte-cobros',
-  standalone: true,
-  templateUrl: './reporte-cobros.component.html',
-  styles: ``,
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent,
-  ],
+    selector: 'app-reporte-cobros',
+    templateUrl: './reporte-cobros.component.html',
+    styles: ``,
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent,
+        CompanyCustomerSearchComponent,
+    ]
 })
 export class ReporteCobrosComponent implements OnInit {
   http = inject(HttpClient);

@@ -19,19 +19,17 @@ import { formatDateToString } from '@core/utils/date.util';
 
 
 @Component({
-  selector: 'app-cuenta-por-cobrar',
-  standalone: true,
-  imports: [
-
-    MatTableModule,
-    MatCheckboxModule,
-    FormsModule,
-    FontAwesomeModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent
-  ],
-  templateUrl: './cuenta-por-cobrar-page.component.html',
-  styles: ``
+    selector: 'app-cuenta-por-cobrar',
+    imports: [
+        MatTableModule,
+        MatCheckboxModule,
+        FormsModule,
+        FontAwesomeModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent
+    ],
+    templateUrl: './cuenta-por-cobrar-page.component.html',
+    styles: ``
 })
 export class CuentaPorCobrarPageComponent {
 

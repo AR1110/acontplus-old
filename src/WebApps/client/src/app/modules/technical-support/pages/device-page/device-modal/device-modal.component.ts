@@ -29,16 +29,15 @@ import { CategoryModalComponent } from '../../category-page/category-modal/categ
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
-  selector: 'app-device-modal',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    FormsModule,
-    FontAwesomeModule,
-    NgbAccordionModule
-  ],
-  templateUrl: './device-modal.component.html',
-  styles: ``,
+    selector: 'app-device-modal',
+    imports: [
+        ReactiveFormsModule,
+        FormsModule,
+        FontAwesomeModule,
+        NgbAccordionModule
+    ],
+    templateUrl: './device-modal.component.html',
+    styles: ``
 })
 export class DeviceModalComponent implements OnInit {
   @ViewChild('inputNameSpec') inputNameSpec: any;

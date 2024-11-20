@@ -7,16 +7,12 @@ import { TablaResumenTotalesComponent } from '@shared/components/tabla-resumen-t
 import { finalize } from 'rxjs';
 
 @Component({
-  selector: 'app-nota-entrega-detalle-dialog',
-  standalone: true,
-  imports: [MatButtonModule, CustomContainerDialogComponent,
-
-    TablaResumenTotalesComponent
-
-
-  ],
-  templateUrl: './nota-entrega-detalle-dialog.component.html',
-  styles: ``,
+    selector: 'app-nota-entrega-detalle-dialog',
+    imports: [MatButtonModule, CustomContainerDialogComponent,
+        TablaResumenTotalesComponent
+    ],
+    templateUrl: './nota-entrega-detalle-dialog.component.html',
+    styles: ``
 })
 export class NotaEntregaDetalleDialogComponent {
   readonly dialogRef = inject(MatDialogRef<NotaEntregaDetalleDialogComponent>);

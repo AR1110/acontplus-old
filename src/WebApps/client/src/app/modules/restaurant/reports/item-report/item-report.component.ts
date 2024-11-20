@@ -23,18 +23,17 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
 
 @Component({
-  selector: 'app-item-report',
-  standalone: true,
-  templateUrl: './item-report.component.html',
-  imports: [
-    MatFormFieldModule,
-    MatSelectModule,
-    FormsModule,
-    ReactiveFormsModule,
-    BreadcrumbComponent,
-    MatAutocompleteModule,
-    AsyncPipe,
-  ],
+    selector: 'app-item-report',
+    templateUrl: './item-report.component.html',
+    imports: [
+        MatFormFieldModule,
+        MatSelectModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BreadcrumbComponent,
+        MatAutocompleteModule,
+        AsyncPipe,
+    ]
 })
 export class ItemReportComponent {
   checkedSubCategorias = new FormControl('');

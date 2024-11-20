@@ -11,20 +11,19 @@ import {IsAdminDirective} from "@shared/directives/permission/is-admin.directive
 
 
 @Component({
-  selector: 'app-user-customer-role-modal',
-  standalone: true,
-  imports: [
-    NgbAccordionModule,
-    NgbNavModule,
-    UserCustomerRoleEstabComponent,
-    UserCustomerRolePermissionComponent,
-    UserCustomerRoleAccessComponent,
-    IsAdminDirective
-  ],
-  templateUrl: './user-customer-role-modal.component.html',
-  providers: [
-    UserCustomerRoleStateService
-  ]
+    selector: 'app-user-customer-role-modal',
+    imports: [
+        NgbAccordionModule,
+        NgbNavModule,
+        UserCustomerRoleEstabComponent,
+        UserCustomerRolePermissionComponent,
+        UserCustomerRoleAccessComponent,
+        IsAdminDirective
+    ],
+    templateUrl: './user-customer-role-modal.component.html',
+    providers: [
+        UserCustomerRoleStateService
+    ]
 })
 
 export class UserCustomerRoleModalComponent {

@@ -35,31 +35,27 @@ interface ProductTarifa {
   utilidad: number
 }
 @Component({
-  selector: 'app-product-add-edit-modal',
-  standalone: true,
-  imports: [
-
-    //Modules
-    FormsModule,
-    ReactiveFormsModule,
-    NgbNavModule,
-    FontAwesomeModule,
-    MatAutocompleteModule,
-    ToUpperCaseDirective,
-    AsyncPipe,
-
-    //Components
-    TabulatorComponent,
-    TabulatorTableComponent,
-    SubCategoryGroupComponent,
-    FraccProductListComponent,
-
-    //Directivas
-    SubCategoryModalDirective,
-    MeasureAddEditDirective,
-    TagsAddEditModalDirective
-  ],
-  templateUrl: './product-add-edit-modal.component.html'
+    selector: 'app-product-add-edit-modal',
+    imports: [
+        //Modules
+        FormsModule,
+        ReactiveFormsModule,
+        NgbNavModule,
+        FontAwesomeModule,
+        MatAutocompleteModule,
+        ToUpperCaseDirective,
+        AsyncPipe,
+        //Components
+        TabulatorComponent,
+        TabulatorTableComponent,
+        SubCategoryGroupComponent,
+        FraccProductListComponent,
+        //Directivas
+        SubCategoryModalDirective,
+        MeasureAddEditDirective,
+        TagsAddEditModalDirective
+    ],
+    templateUrl: './product-add-edit-modal.component.html'
 })
 
 export class ProductAddEditModalComponent {

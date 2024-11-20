@@ -2,13 +2,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-valor-abono',
-  standalone: true,
-  imports: [
-    FormsModule
-  ],
-  templateUrl: './valor-abono.component.html',
-  styles: ``
+    selector: 'app-valor-abono',
+    imports: [
+        FormsModule
+    ],
+    templateUrl: './valor-abono.component.html',
+    styles: ``
 })
 export class ValorAbonoComponent {
   @Input() value = 0;

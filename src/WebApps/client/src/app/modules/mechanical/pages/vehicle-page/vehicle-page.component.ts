@@ -16,20 +16,19 @@ import { Pagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-vehicle-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatTableModule,
-    FontAwesomeModule,
-    MatSlideToggleModule,
-    BreadcrumbComponent,
-    VehicleAddEditDirective,
-    ActionAddDirective,
-    NgbPagination
-  ],
-  templateUrl: './vehicle-page.component.html',
-  styles: ``
+    selector: 'app-vehicle-page',
+    imports: [
+        FormsModule,
+        MatTableModule,
+        FontAwesomeModule,
+        MatSlideToggleModule,
+        BreadcrumbComponent,
+        VehicleAddEditDirective,
+        ActionAddDirective,
+        NgbPagination
+    ],
+    templateUrl: './vehicle-page.component.html',
+    styles: ``
 })
 export class VehiclePageComponent {
   vehicleSvc = inject(VehicleService);

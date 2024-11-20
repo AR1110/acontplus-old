@@ -7,14 +7,13 @@ import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
 
 
 @Component({
-  selector: 'app-employee-search',
-  standalone: true,
-  imports: [
-    FormsModule,
-    NgbTypeaheadModule
-  ],
-  templateUrl: './employee-search.component.html',
-  styles: ``
+    selector: 'app-employee-search',
+    imports: [
+        FormsModule,
+        NgbTypeaheadModule
+    ],
+    templateUrl: './employee-search.component.html',
+    styles: ``
 })
 export class EmployeeSearchComponent {
   @Output() onSupplierSelected = new EventEmitter<{ data: any }>();

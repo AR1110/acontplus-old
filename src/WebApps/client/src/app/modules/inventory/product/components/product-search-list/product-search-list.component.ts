@@ -9,19 +9,18 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
 
 @Component({
-  selector: 'app-product-search-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatProgressSpinnerModule,
-    NgbPopoverModule,
-    MatSortModule
-  ],
-  templateUrl: './product-search-list.component.html',
-  styleUrl: './product-search-list.component.scss',
+    selector: 'app-product-search-list',
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatProgressSpinnerModule,
+        NgbPopoverModule,
+        MatSortModule
+    ],
+    templateUrl: './product-search-list.component.html',
+    styleUrl: './product-search-list.component.scss'
 })
 export class ProductSearchListComponent<T>   {
 

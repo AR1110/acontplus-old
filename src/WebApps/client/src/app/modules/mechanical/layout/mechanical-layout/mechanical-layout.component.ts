@@ -9,18 +9,17 @@ import { SupportService } from '@modules/mechanical/services/support.service';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-mechanical-layout',
-  standalone: true,
-  imports: [
-    CommonModule,
-    NgbNavModule,
-    BreadcrumbComponent,
-    MechanicalDashboardComponent,
-    SupportPageComponent,
-    InspectionPageComponent
-  ],
-  templateUrl: './mechanical-layout.component.html',
-  styleUrl: './mechanical-layout.component.scss',
+    selector: 'app-mechanical-layout',
+    imports: [
+        CommonModule,
+        NgbNavModule,
+        BreadcrumbComponent,
+        MechanicalDashboardComponent,
+        SupportPageComponent,
+        InspectionPageComponent
+    ],
+    templateUrl: './mechanical-layout.component.html',
+    styleUrl: './mechanical-layout.component.scss'
 })
 export class MechanicalLayoutComponent implements OnInit {
 

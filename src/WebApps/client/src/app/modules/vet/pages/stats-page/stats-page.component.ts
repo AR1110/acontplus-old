@@ -6,11 +6,10 @@ import { isApiResponse } from '@core/models/api-response';
 import { Chart } from 'chart.js';
 
 @Component({
-  selector: 'app-stats-page',
-  standalone: true,
-  imports: [BreadcrumbComponent, FaIconComponent],
-  templateUrl: './stats-page.component.html',
-  styles: ``,
+    selector: 'app-stats-page',
+    imports: [BreadcrumbComponent, FaIconComponent],
+    templateUrl: './stats-page.component.html',
+    styles: ``
 })
 export class StatsPageComponent {
   totalPetTypes = [];

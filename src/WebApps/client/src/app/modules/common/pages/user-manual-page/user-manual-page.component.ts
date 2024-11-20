@@ -39,28 +39,27 @@ interface Manual {
 }
 
 @Component({
-  selector: 'app-user-manual-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    MatCardModule,
-    SafeHtmlPipe,
-    MatSelect,
-    MatOption,
-    MatExpansionModule,
-    NgStyle,
-    MatInput,
-    MatPaginator,
-    MatIcon,
-    MatIconButton,
-    QuillEditorComponent,
-    FormsModule,
-    QuillViewHTMLComponent,
-    QuillViewComponent,
-  ],
-  templateUrl: './user-manual-page.component.html',
-  styles: ``,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-user-manual-page',
+    imports: [
+        BreadcrumbComponent,
+        MatCardModule,
+        SafeHtmlPipe,
+        MatSelect,
+        MatOption,
+        MatExpansionModule,
+        NgStyle,
+        MatInput,
+        MatPaginator,
+        MatIcon,
+        MatIconButton,
+        QuillEditorComponent,
+        FormsModule,
+        QuillViewHTMLComponent,
+        QuillViewComponent,
+    ],
+    templateUrl: './user-manual-page.component.html',
+    styles: ``,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserManualPageComponent {
   data = {

@@ -1,11 +1,10 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 
 @Component({
-  selector: 'app-draw-tax-total',
-  standalone: true,
-  imports: [],
-  templateUrl: './draw-tax-total.component.html',
-  styles: ``
+    selector: 'app-draw-tax-total',
+    imports: [],
+    templateUrl: './draw-tax-total.component.html',
+    styles: ``
 })
 export class DrawTaxTotalComponent {
   @Input() subTotalSinImpuesto = 0;

@@ -22,18 +22,17 @@ const _filter = (opt: any[], value: string): string[] => {
 };
 
 @Component({
-  selector: 'app-sub-category-group',
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    AsyncPipe,
-  ],
-  templateUrl: './sub-category-group.component.html',
-  styles: ``,
+    selector: 'app-sub-category-group',
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        AsyncPipe,
+    ],
+    templateUrl: './sub-category-group.component.html',
+    styles: ``
 })
 export class SubCategoryGroupComponent {
   @Input({ required: true }) subCategoryGroups: SubCategoryGroup[] = [];
