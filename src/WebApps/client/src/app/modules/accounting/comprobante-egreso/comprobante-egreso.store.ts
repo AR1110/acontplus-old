@@ -14,6 +14,9 @@ import { ComprobanteEgresoService } from '@accounting/comprobante-egreso/comprob
 import { finalize } from 'rxjs/operators';
 import { PaymentTypeCode } from '@accounting/enums/accounting.constants';
 import { CuentaPorPagarLista } from '@accounting/cuenta-por-pagar/interfaces/cuenta-por-pagar.interface';
+import { PagoDetalle } from '../cuenta-por-pagar/interfaces/pago-detalle.interface';
+import { EstadoPago } from '../interfaces/estado-pago.interface';
+import { CuentaPorPagarCuota } from './comprobante-egreso.interface';
 
 // import { CuentaPorPagarCuota } from "@accounting/comprobante-egreso/comprobante-egreso-pago.interface";
 
@@ -28,20 +31,19 @@ interface ComprobanteEgresoStore {
   isLoading: boolean;
 
   dataCuentaPorPagar: Partial<CuentaPorPagarLista>;
-  cuentasPorPagar: any[];
-  cuentasPorPagarCopy: any[];
+  cuentasPorPagar: CuentaPorPagarCuota[];
+  cuentasPorPagarCopy: CuentaPorPagarCuota[];
+  pagosDetalle: PagoDetalle[]
 
   entidadesFinanciera: EntidadFinanciera[];
   subEntidadesFinanciera: SubEntidadFinancieraSelectHtmlOnly[];
   subEntidadesFinancieraFiltered: SubEntidadFinancieraSelectHtmlOnly[];
   bancos: BancoSelectOnly[];
   provinciaCiudades: ProvinciaCiudad[];
-
+  estadosPago: EstadoPago[]
   dataFormaPago: DataFormaPago;
 
-  total: number;
-  abono: number;
-  saldo: number;
+
 }
 
 let dataFormPagoState: DataFormaPago = {
@@ -55,32 +57,35 @@ let initialComprobanteEgresoState: ComprobanteEgresoStore = {
   dataCuentaPorPagar: {},
   cuentasPorPagar: [],
   cuentasPorPagarCopy: [],
+  pagosDetalle:[],
 
   entidadesFinanciera: [],
   bancos: [],
   provinciaCiudades: [],
   subEntidadesFinanciera: [],
   subEntidadesFinancieraFiltered: [],
+  estadosPago: [],
+
+
   dataFormaPago: dataFormPagoState,
 
-  total: 0,
-  abono: 0,
-  saldo: 0,
+
 };
 
 export const ComprobanteEgresoStore = signalStore(
   { providedIn: 'root' },
   withState(initialComprobanteEgresoState),
-  withComputed(({ cuentasPorPagar }) => ({
+  withComputed(({ cuentasPorPagar, pagosDetalle }) => ({
     total: computed(() =>
       cuentasPorPagar().reduce((prev, acc) => (prev += acc.total), 0),
     ),
     abono: computed(() =>
-      cuentasPorPagar().reduce((prev, acc) => (prev += acc.abono), 0),
+      cuentasPorPagar().flatMap(item=>item.cuotas).map(item=>item.abono).reduce((prev, acc) => (prev += acc), 0),
     ),
     saldo: computed(() =>
-      cuentasPorPagar().reduce((prev, acc) => (prev += acc.saldo), 0),
+      cuentasPorPagar().flatMap(item=>item.cuotas).map(item=>item.saldo).reduce((prev, acc) => (prev += acc), 0),
     ),
+    getSecuencialPagoDetalle: computed(()=>pagosDetalle().length),
   })),
 
   withMethods(
@@ -107,6 +112,7 @@ export const ComprobanteEgresoStore = signalStore(
               subEntidadesFinanciera: response.subEntidadesFinanciera,
               bancos: response.bancos,
               provinciaCiudades: response.provinciaCiudades,
+              estadosPago: response.estadosPago
             });
           });
       },

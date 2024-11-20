@@ -10,9 +10,6 @@ export class ComprobanteEgresoService {
   private comprobanteEgresoRepository = inject(ComprobanteEgresoRepository);
 
 
-
-
-
   getCuotasByIdCuentaPorPagar(idCuentaPorPagar:number){
     return this.comprobanteEgresoRepository.getCuotasByIdCuentaPorPagar(idCuentaPorPagar);
   }

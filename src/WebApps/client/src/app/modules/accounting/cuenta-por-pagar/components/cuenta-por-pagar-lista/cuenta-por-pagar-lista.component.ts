@@ -317,7 +317,7 @@ export class CuentaPorPagarListaComponent {
 
 
   // Función para verificar si los valores de razonSocialComprador son los mismos
-  private verificarProveedorIgual() {
+  private tienenMismoProveedorSeleccionado() {
     const firstCustomerId = this.selection.selected[0]?.idProveedor;
 
     // Verificar si todas las demás entradas tienen la misma idProveedor
@@ -334,7 +334,7 @@ export class CuentaPorPagarListaComponent {
       return
     }
 
-    if(this.verificarProveedorIgual()){
+    if(!this.tienenMismoProveedorSeleccionado()){
       this.tS.toastr({
         type: 'warning',
         message: 'Seleccione documentos que pertenezca al mismo proveedor'
