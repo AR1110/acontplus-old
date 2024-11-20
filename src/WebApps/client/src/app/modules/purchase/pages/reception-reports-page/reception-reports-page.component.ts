@@ -12,11 +12,11 @@ import { isValidField } from '@core/utils/utils';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { Subcategory } from '@modules/accounting/models/subcategory';
 import { SupplierSearchComponent } from '@modules/customer/supplier/components/supplier-search/supplier-search.component';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-reception-reports-page',
@@ -46,8 +46,8 @@ export class ReceptionReportsPageComponent {
     supplierName: '',
     userName: '',
     numeroIdentificacion: '',
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     userId: 0,
     ckRetencion: null,
     subcategoryId: 0,

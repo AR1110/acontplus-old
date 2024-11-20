@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component,  ElementRef, inject,   model,   signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
-import { formatDate } from '@core/utils/date.util';
-import { formatDateMoment } from '@core/utils/format-date-moment';
+import { formatDate, formatDateToString } from '@core/utils/date.util';
 import { imgDefault, isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MenuSearchComponent } from '@modules/restaurant/components/menu-search/menu-search.component';
@@ -236,15 +235,15 @@ export class PromotionAddEditModalComponent {
 
       let newPromotionMenu = this.promotionMenus().map((e) => ({
         id: e.id, promotionId: e.promotionId, menuId: e.menuId
-      })) 
+      }))
 
       let promotionDays = JSON.stringify(this.daysOfWeek());
       let newObject = {
         id: this.data.id,
         estabId: this.estabId(),
         description: this.data.description,
-        startDate: formatDateMoment(this.data.startDate),
-        endDate: formatDateMoment(this.data.endDate),
+        startDate: formatDateToString(this.data.startDate),
+        endDate: formatDateToString(this.data.endDate),
         promotionDays,
         promotionMenus: newPromotionMenu,
       };

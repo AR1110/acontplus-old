@@ -1,22 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CODE_REPORT } from '@core/constants/global.constants';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { hideLoader } from '@core/utils/loader';
 import { stringToDate } from '@core/utils/string-to-date';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
 import {
   NgbActiveModal,
   NgbTimepickerModule,
 } from '@ng-bootstrap/ng-bootstrap';
+import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-filtro-detalle-caja-report-modal',
@@ -26,7 +25,6 @@ import {
     FormsModule,
     FontAwesomeModule,
     NgbTimepickerModule,
-    DateRangeSelectionComponent,
   ],
   templateUrl: './filtro-detalle-cajar-report-modal.component.html',
 })
@@ -124,8 +122,8 @@ export class FiltroDetalleCajaReportModal {
         idEntidadFinanciera: isValidField(this.dataSearch.idEntidadFinanciera),
         codDoc: isValidField(this.dataSearch.codDoc),
         id: this.params.id,
-        horaInicio: formatDateMoment(this.dataSearch.fromDate),
-        horaFin: formatDateMoment(this.dataSearch.toDate),
+        horaInicio: formatDateToString(this.dataSearch.fromDate),
+        horaFin: formatDateToString(this.dataSearch.toDate),
         ckHora: this.dataSearch.ckHora,
       };
 

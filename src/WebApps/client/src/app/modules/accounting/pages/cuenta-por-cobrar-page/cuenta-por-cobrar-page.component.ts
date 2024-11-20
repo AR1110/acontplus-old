@@ -8,13 +8,13 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { DOC_TYPE, DOC_TYPE_SRI } from '@core/constants/global.constants';
 import { GroupedEstab } from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CuentaPorCobrarService } from '@modules/accounting/services/cuenta-por-cobrar.service';
 import { ComprobanteIngresoOpenModalService } from '@modules/accounting/services/comprobante-ingreso-open-modal.service';
 import { Pagination } from '@shared/models/pagination.model';
 import { forkJoin } from 'rxjs';
+import { formatDateToString } from '@core/utils/date.util';
 
 
 
@@ -63,8 +63,8 @@ export class CuentaPorCobrarPageComponent {
     checkBoxFecha: true,
     codEstado: null,
     codEstab: null as (string | null),
-    fechaInicio: formatDateMoment(new Date()),
-    fechaFin: formatDateMoment(new Date()),
+    fechaInicio: formatDateToString(new Date()),
+    fechaFin: formatDateToString(new Date()),
     idCliente: 0,
     ckCxcVencida: false,
     idTipoDocumento: 0

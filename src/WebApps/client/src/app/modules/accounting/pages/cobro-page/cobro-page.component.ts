@@ -3,7 +3,6 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { isValidField } from '@core/utils/utils';
 import { ComprobanteIngreso } from '@modules/accounting/models/comp-ingreso.model';
 import { ComprobanteIngresoService } from '@modules/accounting/services/comprobante-ingreso.service';
@@ -13,6 +12,7 @@ import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-cobro-page',
@@ -35,8 +35,8 @@ export class CobroPageComponent {
   dataSearch = {
     pageIndex: 1,
     pageSize: 25,
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     codEstab: '',
     totalRecords: 0,
     maxSize: 5,

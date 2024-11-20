@@ -8,6 +8,10 @@ import {
 } from "@accounting/comprobante-egreso/data/comprobante-egreso.repository.mapper";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
 import {EntidadFinanciera, EntidadFinancieraPago} from "@accounting/interfaces/entidad-financiera.interface";
+import {SubEntidadFinancieraSelectHtmlOnly} from "@accounting/interfaces/subentidad-financiera.interface";
+import {BancoSelectOnly} from "@accounting/interfaces/banco.interface";
+import {EstadoPago} from "@accounting/interfaces/estado-pago.interface";
+import {ProvinciaCiudad} from "@shared/models/ciudad.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -49,8 +53,12 @@ export class ComprobanteEgresoRepository {
       context: getNoLoader()
     }).pipe(
       map(response=>{
-        let results = {
-          entidadesFinanciera: [] as EntidadFinanciera[]
+        let  results = {
+          entidadesFinanciera: [] as EntidadFinanciera[],
+            subEntidadesFinanciera:[] as SubEntidadFinancieraSelectHtmlOnly[] ,
+            bancos: [] as BancoSelectOnly[],
+            estadosPago: [] as EstadoPago[],
+            provinciaCiudades: [] as ProvinciaCiudad[]
         }
         if(response && typeof response==='object'){
           results = ComprobanteEgresoRepositoryMapper.fromApiDataForm(response)

@@ -1,6 +1,7 @@
-import { formatDateMoment } from "@core/utils/format-date-moment";
+
 import { roundNumber } from "@core/utils/round-number.utils";
 import { TiempoCredito } from "../interfaces/tiempo-credito.interface";
+import { formatDateToString } from "@core/utils/date.util";
 
 // Función para calcular detalles de cuotas basadas en términos de crédito
 type QuotaProps = {
@@ -63,7 +64,7 @@ export const registerGenerateQuota = (obj: QuotaProps) => {
       return {
         nroCuota: nroCuota,
         cuota: 0,
-        fechaVencimiento: formatDateMoment(fechaEmision),
+        fechaVencimiento: formatDateToString(fechaEmision),
         entrada: 1
       };
     }
@@ -75,7 +76,7 @@ export const registerGenerateQuota = (obj: QuotaProps) => {
     return {
       nroCuota: nroCuota,
       cuota: roundNumber(valorCuota, 5),
-      fechaVencimiento: formatDateMoment(fechaVencimiento),
+      fechaVencimiento: formatDateToString(fechaVencimiento),
       entrada: 0
     };
   });
@@ -118,7 +119,7 @@ export const updateGeneratQCuota = (obj: QuotaProps) => {
       return {
         nroCuota: cuota.nroCuota,
         cuota: roundNumber(valorCuota, 5),
-        fechaVencimiento: formatDateMoment(fechaVencimiento),
+        fechaVencimiento: formatDateToString(fechaVencimiento),
         entrada: cuota.entrada,
         idCuotaPorPagar: cuota.idCuotaPorPagar,
         idCuotaPorCobrar: cuota.idCuotaPorCobrar
@@ -128,7 +129,7 @@ export const updateGeneratQCuota = (obj: QuotaProps) => {
     return {
       nroCuota: cuota.nroCuota,
       cuota: cuota.cuota,
-      fechaVencimiento: formatDateMoment(cuota.fechaVencimiento),
+      fechaVencimiento: formatDateToString(cuota.fechaVencimiento),
       entrada: cuota.entrada,
       idCuotaPorPagar: cuota.idCuotaPorPagar,
       idCuotaPorCobrar: cuota.idCuotaPorCobrar

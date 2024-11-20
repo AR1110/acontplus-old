@@ -9,13 +9,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {MatListModule} from '@angular/material/list';
 import { CustomContainerDialogComponent } from '@core/components/custom-container-dialog/custom-container-dialog.component';
-import {ComprobanteEgresoService} from "@accounting/comprobante-egreso/comprobante-egreso.service";
-import {pipe} from "rxjs";
-import {finalize} from "rxjs/operators";
+
 import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
 import {CurrencyPipe} from "@angular/common";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {DialogService} from "@core/services/dialog.service";
+import {FormaPagoComponent} from "@accounting/comprobante-egreso/components/forma-pago/forma-pago.component";
+import {ComprobanteEgresoStore} from "@accounting/comprobante-egreso/comprobante-egreso.store";
 
 @Component({
   selector: 'app-comprobante-ingreso-lote',
@@ -41,31 +42,8 @@ export class ComprobanteEgresoLoteComponent {
 
   readonly dialogRef = inject(MatDialogRef<ComprobanteEgresoLoteComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
-  private comprobanteEgresoSvc = inject(ComprobanteEgresoService)
-
-  loading = signal(false);
-
-  formasDePago = signal([
-    {
-      descripcion: 'EFECTIVO'
-    },
-    {
-      descripcion: 'TRANSFERENCIAS'
-    },
-    {
-      descripcion: 'TARJETA CREDITO'
-    },
-    {
-      descripcion: 'DOCUMENTOS'
-    }
-  ])
-
-  dataCuentaPorPagar = signal(this.data.dataCuentaPorPagar);
-  cuentasPorPagar = signal(structuredClone(this.data.cuentasPorPagar));
-  cuentasPorPagarCopy = signal(structuredClone(this.data.cuentasPorPagar));
-
-
-  entidadesFinanciera = signal<EntidadFinanciera[]>([])
+  private dialogSvc = inject(DialogService);
+  comprobanteEgresoStore = inject(ComprobanteEgresoStore)
 
 
   columnsDefs: ColumnDefinition[] = [
@@ -78,20 +56,21 @@ export class ComprobanteEgresoLoteComponent {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  private  getDatForm(){
-    this.loading.set(true)
-    this.comprobanteEgresoSvc.getDatForm(this.dataCuentaPorPagar().idProveedor)
-        .pipe(finalize(() => this.loading.set(false)))
-        .subscribe(response=>{
-      this.entidadesFinanciera.set(response.entidadesFinanciera)
-    })
-  }
 
   ngOnInit(){
-    console.log(this.cuentasPorPagar())
-    this.getDatForm()
+    this.comprobanteEgresoStore.updateCuentaPorPagar(this.data.dataCuentaPorPagar, this.data.cuentasPorPagar);
+    this.comprobanteEgresoStore.loadDataForm(this.data.dataCuentaPorPagar.idProveedor as number)
+
   }
 
+
+  openFormaPago(row: EntidadFinanciera){
+    this.comprobanteEgresoStore.updateDataEntidadFinanciera(row)
+    this.dialogSvc.open(FormaPagoComponent, {
+      size: 'md'
+    })
+
+  }
 
   closeDialog(){
     this.dialogRef.close()

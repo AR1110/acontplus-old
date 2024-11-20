@@ -17,9 +17,9 @@ import { getValidId, isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { SALE_CODE_REPORT } from '@modules/sale/enums/sale.enum';
 import { GroupedSubFamilia } from '@modules/inventory/models/sub-category.model';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { hideLoader, showLoader } from '@core/utils/loader';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-rentabilidad-page',
@@ -59,8 +59,8 @@ export class RentabilidadPageComponent {
     idTarifa: 0,
     idArticulo: 0,
     userName: '',
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     codDoc: '',
     idUsuario: 0,
     productChecked: false,

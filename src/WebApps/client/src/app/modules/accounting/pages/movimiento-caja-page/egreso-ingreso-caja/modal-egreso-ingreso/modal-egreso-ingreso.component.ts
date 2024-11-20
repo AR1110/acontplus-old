@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { CashboxSelectHtmlOnly } from '@modules/accounting/models/cashbox.model';
-import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
 import { SubEntidadFinanciera } from '@modules/accounting/models/subentidad-financiera.model';
 import { MovimientoCajaService } from '@modules/accounting/services/movimiento-caja.service';
 import { NgbActiveModal, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
@@ -20,6 +19,7 @@ import { isApiResponse } from '@core/models/api-response';
 import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
 import { SupplierSearchComponent } from '@customer/supplier/components/supplier-search/supplier-search.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
+import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
 
 @Component({
   selector: 'app-modal-egreso-ingreso',

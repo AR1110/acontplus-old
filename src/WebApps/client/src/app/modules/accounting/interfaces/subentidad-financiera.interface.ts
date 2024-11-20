@@ -1,6 +1,6 @@
 
 
-export interface SubentidadFinanciera {
+export interface SubEntidadFinanciera {
   idEntidadFinanciera: number,
   idSubEntidadFinanciera: number,
   descripcion: string,
@@ -8,4 +8,6 @@ export interface SubentidadFinanciera {
   controlCaja: boolean
 }
 
+export interface SubEntidadFinancieraSelectHtmlOnly extends SubEntidadFinanciera {
 
+}

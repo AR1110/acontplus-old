@@ -4,16 +4,15 @@ import {DateRangeSelectionComponent} from "@core/components/date-range-selection
 import {
   CompanyCustomerSearchComponent
 } from "@company-customer/components/company-customer-search/company-customer-search.component";
-import {EmployeeSearchComponent} from "@sale/components/employee-search/employee-search.component";
 import {SharedService} from "@core/services/shared.service";
 import {EstablecimientoSelectHtmlOnly} from "@core/models/estab.model";
 import {FormsModule} from "@angular/forms";
-import {formatDateMoment} from "@core/utils/format-date-moment";
 import {FORMAT_REPORT} from "@core/constants/global.constants";
 import {isValidField} from "@core/utils/utils";
 import {ToasterService} from "@core/services/toaster.service";
 import {ACCOUNTING_CODE_REPORT} from "@accounting/enums/accounting.constants";
 import {UserSearchComponent} from "@core/components/user-search/user-search.component";
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-movimiento-caja-report-page',
@@ -23,7 +22,6 @@ import {UserSearchComponent} from "@core/components/user-search/user-search.comp
     BreadcrumbComponent,
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
-    EmployeeSearchComponent,
     UserSearchComponent
   ],
   templateUrl: './movimiento-caja-report-page.component.html',
@@ -46,8 +44,8 @@ export class MovimientoCajaReportPageComponent {
   dataSearch = {
     codEstab: null as string | null | undefined,
     codDoc: "MC" as string | null,
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     companyCustomerId: 0,
     employeeId: 0,
     format: '',

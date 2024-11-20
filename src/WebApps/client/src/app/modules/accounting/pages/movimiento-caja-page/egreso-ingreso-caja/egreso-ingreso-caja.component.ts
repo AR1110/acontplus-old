@@ -6,7 +6,6 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MovimientoCajaRead } from '@modules/accounting/models/movimiento-caja.model';
@@ -21,6 +20,7 @@ import {
 import {ACCOUNTING_CODE_REPORT} from "@accounting/enums/accounting.constants";
 import { ActionAnularDirective } from '@shared/directives/permission/action-anular.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
@@ -44,8 +44,8 @@ export class EgresoIngresoCajaComponent {
     pageSize: 25,
     maxSize: 5,
     codEstab: '',
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     customerId: 0,
     codEstado: '',
   };

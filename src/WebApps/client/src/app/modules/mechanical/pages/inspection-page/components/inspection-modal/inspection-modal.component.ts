@@ -10,9 +10,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
-import { formatDateMoment, isDateValid } from '@core/utils/format-date-moment';
 import { ToasterService } from '@core/services/toaster.service';
-import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
+import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate, formatDateToString, isDateValid } from '@core/utils/date.util';
 import { isValidField } from '@core/utils/utils';
 import { isApiResponse } from '@core/models/api-response';
 import { MatChipsModule } from '@angular/material/chips';
@@ -262,7 +261,7 @@ export class InspectionModalComponent {
         supportId: this.support.supportId,
         mileage: this.data.mileage,
         fuelLevel: this.data.fuelLevel,
-        date: formatDateMoment(this.data.fechaEmision),
+        date: formatDateToString(this.data.fechaEmision),
         obs: isValidField(this.data.obs)
       }
       if (this.params.inspectionId > 0) {

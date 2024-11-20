@@ -57,7 +57,7 @@ import {finalize, forkJoin, switchMap, throwError} from 'rxjs';
 import {ParameterReportUtil} from "@shared/utils/parameter-report.util";
 import {SharedService} from "@core/services/shared.service";
 import {SelectionModel} from '@angular/cdk/collections';
-import {ComprobanteEgresoLoteComponent} from '@accounting/comprobante-egreso/comprobante-egreso-lote/comprobante-egreso-lote.component';
+import {ComprobanteEgresoLoteComponent} from '@accounting/comprobante-egreso/components/comprobante-egreso-lote/comprobante-egreso-lote.component';
 import {ComprobanteEgresoService} from "@accounting/comprobante-egreso/comprobante-egreso.service";
 
 
@@ -156,7 +156,7 @@ export class CuentaPorPagarListaComponent {
       pageSize: this.pagination().pageSize,
       codEstab: this.dataSearch().codEstab,
       checkboxFecha: this.dataSearch().checkBoxDate,
-      codEstado: isValidField(this.dataSearch().codigoEstado),
+      codEstado: isValidField(this.dataSearch().codigoEstado || 'NPA'),
       codDoc: isValidField(this.dataSearch().codDoc),
       idProveedor: this.dataSearch().esBuscarProveedor ? getValidId(this.dataSearch().idProveedor) : null,
       dateStart: this.dataSearch().fromDate,
@@ -345,8 +345,6 @@ export class CuentaPorPagarListaComponent {
       return
     }
 
-    console.log(this.selection.selected)
-
     // Crear un array de observables para obtener las cuotas
     const observables = selected.map((item) =>
       this.comprobanteEgresoSvc.getCuotasByIdCuentaPorPagar(item.idCuentaPorPagar)
@@ -368,7 +366,6 @@ export class CuentaPorPagarListaComponent {
           cuotasCopy: structuredClone(filteredCuotas) // Clonamos nuevamente si es necesario
         };
       })
-      console.log(selectedMergeCuotas)
 
       if(selectedMergeCuotas.some(item=>item.cuotas.length===0)){
         this.tS.toastr({

@@ -175,7 +175,8 @@ BEGIN
 				
             SELECT * FROM Banco WHERE estado = 1
 				
-            SELECT * FROM Ciudad WHERE estado = 1
+         --   SELECT * FROM Ciudad WHERE estado = 1
+            SELECT cd.idCiudad,provincia = pr.descripcion ,cd.descripcion,pr.codigo FROM dbo.Provincia pr WITH (NOLOCK) INNER JOIN dbo.Ciudad cd WITH (NOLOCK) ON cd.idProvincia = pr.idProvincia WHERE cd.estado = 1
 
             SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP','PA')
 

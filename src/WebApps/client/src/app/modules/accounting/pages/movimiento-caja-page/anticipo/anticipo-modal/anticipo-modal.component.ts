@@ -10,13 +10,13 @@ import {
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AnticipoService } from '@modules/accounting/services/anticipo.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
 import { SubEntidadFinanciera } from '@modules/accounting/models/subentidad-financiera.model';
 import { ToasterService } from '@core/services/toaster.service';
 import { isApiResponse } from '@core/models/api-response';
 import {
   CompanyCustomerSearchComponent
 } from "@company-customer/components/company-customer-search/company-customer-search.component";
+import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
 
 @Component({
   selector: 'app-anticipo-modal',

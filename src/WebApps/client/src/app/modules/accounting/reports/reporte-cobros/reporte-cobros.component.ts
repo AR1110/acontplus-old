@@ -10,7 +10,6 @@ import {
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { isValidField, removeSpacesInValue } from '@core/utils/utils';
 import {
   SubEntidadFinancieraSelectHtmlOnly,
@@ -22,6 +21,7 @@ import { CompanyCustomerSearchComponent } from '@company-customer/components/com
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ComprobanteIngresoService } from '@modules/accounting/services/comprobante-ingreso.service';
 import {BancoSelectOnly} from "@accounting/interfaces/banco.interface";
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-reporte-cobros',
@@ -51,8 +51,8 @@ export class ReporteCobrosComponent implements OnInit {
     customerId: 0,
     idBanco: 0,
     idSubEntidadFinanciera: 0,
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     supplierChecked: false,
     documentoChecked: true,
     dateChecked: true,
