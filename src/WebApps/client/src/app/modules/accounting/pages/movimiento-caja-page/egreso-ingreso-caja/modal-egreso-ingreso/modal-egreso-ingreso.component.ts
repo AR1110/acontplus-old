@@ -17,19 +17,17 @@ import { EmployeeService } from '@modules/sale/services/employee.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isApiResponse } from '@core/models/api-response';
 import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
-import { SupplierSearchComponent } from '@customer/supplier/components/supplier-search/supplier-search.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
-import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
+import { EntidadFinanciera } from '@accounting/interfaces/entidad-financiera.interface';
 
 @Component({
-    selector: 'app-modal-egreso-ingreso',
-    imports: [
-        ReactiveFormsModule,
-        NgbTypeaheadModule,
-        CompanyCustomerSearchComponent,
-        SupplierSearchComponent,
-    ],
-    templateUrl: './modal-egreso-ingreso.component.html'
+  selector: 'app-modal-egreso-ingreso',
+  imports: [
+    ReactiveFormsModule,
+    NgbTypeaheadModule,
+    CompanyCustomerSearchComponent,
+  ],
+  templateUrl: './modal-egreso-ingreso.component.html',
 })
 export class ModalEgresoIngresoComponent {
   titleModal = 'Nuevo Egreso/Ingreso Caja';
@@ -133,35 +131,36 @@ export class ModalEgresoIngresoComponent {
       this.dataForm.get('customerId')?.setValue(params.data.customerId);
     }
   }
+
   onEmptyCustomer() {
     this.dataForm.get('customerId')?.setValue(0);
     this.dataForm.get('customerName')?.setValue('');
   }
 
   /**  searchEmployee: OperatorFunction<string, Array<EmployeeSearchDto>> = (text$: Observable<string>) =>
-    text$.pipes(
-      debounceTime(200),
-      switchMap((term) => {
-        if (!term || term.length < 2) {
-          return [];
-        }
+     text$.pipes(
+     debounceTime(200),
+     switchMap((term) => {
+     if (!term || term.length < 2) {
+     return [];
+     }
 
-        return this.employeeSvc.search({ textSearch: term }).pipes(
-          catchError((err) => {
-            console.log(err);
-            return [];
-          })
-        );
-      })
-    );**/
+     return this.employeeSvc.search({ textSearch: term }).pipes(
+     catchError((err) => {
+     console.log(err);
+     return [];
+     })
+     );
+     })
+     );**/
 
   /**selectEmployee($event: any) {
-    let employee: EmployeeSearchDto = $event.item;
-    setTimeout(() => {
-      this.dataForm.get('employeeName')?.setValue(employee.nombreCompleto)
-      this.dataForm.get('idEmpleado')?.setValue(employee.idEmpleado)
-    })
-  }**/
+     let employee: EmployeeSearchDto = $event.item;
+     setTimeout(() => {
+     this.dataForm.get('employeeName')?.setValue(employee.nombreCompleto)
+     this.dataForm.get('idEmpleado')?.setValue(employee.idEmpleado)
+     })
+     }**/
 
   save() {
     try {
