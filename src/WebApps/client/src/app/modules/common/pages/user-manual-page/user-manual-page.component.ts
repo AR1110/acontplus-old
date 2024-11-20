@@ -7,7 +7,6 @@ import {
 import { UserManualService } from '@modules/common/services/user-manual.service';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { SafeHtmlPipe } from '@shared/pipes/safe-html.pipe';
 import { MatCardModule } from '@angular/material/card';
 import { Menu } from '@core/models/menu.model';
 import {
@@ -16,18 +15,11 @@ import {
   MatSelectChange,
 } from '@angular/material/select';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { NgStyle } from '@angular/common';
-import { MatInput } from '@angular/material/input';
 import { MatPagination } from '@shared/models/pagination.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
-import {
-  QuillEditorComponent,
-  QuillModules,
-  QuillViewComponent,
-  QuillViewHTMLComponent,
-} from 'ngx-quill';
+import { QuillModules, QuillViewComponent } from 'ngx-quill';
 import { FormsModule } from '@angular/forms';
 
 interface Manual {
@@ -39,27 +31,22 @@ interface Manual {
 }
 
 @Component({
-    selector: 'app-user-manual-page',
-    imports: [
-        BreadcrumbComponent,
-        MatCardModule,
-        SafeHtmlPipe,
-        MatSelect,
-        MatOption,
-        MatExpansionModule,
-        NgStyle,
-        MatInput,
-        MatPaginator,
-        MatIcon,
-        MatIconButton,
-        QuillEditorComponent,
-        FormsModule,
-        QuillViewHTMLComponent,
-        QuillViewComponent,
-    ],
-    templateUrl: './user-manual-page.component.html',
-    styles: ``,
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-user-manual-page',
+  imports: [
+    BreadcrumbComponent,
+    MatCardModule,
+    MatSelect,
+    MatOption,
+    MatExpansionModule,
+    MatPaginator,
+    MatIcon,
+    MatIconButton,
+    FormsModule,
+    QuillViewComponent,
+  ],
+  templateUrl: './user-manual-page.component.html',
+  styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserManualPageComponent {
   data = {

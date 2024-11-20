@@ -43,8 +43,6 @@
             "allowedCommonJsDependencies": [
               "sweetalert2",
               "file-saver",
-              "moment",
-              "moment-timezone",
               "quill-delta"
             ],
             "outputPath": {

@@ -1,5 +1,4 @@
 import { Component, inject, Input } from '@angular/core';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CODE_REPORT, FORMAT_REPORT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
@@ -13,14 +12,9 @@ import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-    selector: 'app-filtro-control-caja-report-modal',
-    imports: [
-        FormsModule,
-        FontAwesomeModule,
-        NgbTimepickerModule,
-        DateRangeSelectionComponent,
-    ],
-    templateUrl: './filtro-control-caja-report-modal.component.html'
+  selector: 'app-filtro-control-caja-report-modal',
+  imports: [FormsModule, FontAwesomeModule, NgbTimepickerModule],
+  templateUrl: './filtro-control-caja-report-modal.component.html',
 })
 export class FiltroControlCajaReportModal {
   @Input('params') params = {
