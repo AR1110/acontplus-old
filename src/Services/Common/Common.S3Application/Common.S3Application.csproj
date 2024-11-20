@@ -1,18 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core"/>
-    <PackageReference Include="AWSSDK.S3"/>
+    <PackageReference Include="AWSSDK.Core" />
+    <PackageReference Include="AWSSDK.S3" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\Common.Core\Common.Core.csproj"/>
+    <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
   </ItemGroup>
-
 </Project>
