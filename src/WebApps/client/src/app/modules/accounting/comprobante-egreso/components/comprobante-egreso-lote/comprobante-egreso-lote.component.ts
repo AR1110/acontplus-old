@@ -17,6 +17,7 @@ import {ColumnDefinition} from "@shared/models/mat-table-models/column-definitio
 import {DialogService} from "@core/services/dialog.service";
 import {FormaPagoComponent} from "@accounting/comprobante-egreso/components/forma-pago/forma-pago.component";
 import {ComprobanteEgresoStore} from "@accounting/comprobante-egreso/comprobante-egreso.store";
+import { ToasterService } from '@core/services/toaster.service';
 
 @Component({
     selector: 'app-comprobante-ingreso-lote',
@@ -42,6 +43,7 @@ export class ComprobanteEgresoLoteComponent {
   readonly dialogRef = inject(MatDialogRef<ComprobanteEgresoLoteComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private dialogSvc = inject(DialogService);
+  private tS = inject(ToasterService)
   comprobanteEgresoStore = inject(ComprobanteEgresoStore)
 
 
@@ -68,9 +70,18 @@ export class ComprobanteEgresoLoteComponent {
 
 
   openFormaPago(row: EntidadFinanciera){
+
+    if(this.comprobanteEgresoStore.saldo()===0){
+      this.tS.toastr({
+        type: 'warning',
+        message: 'No tienes saldo pendiente'
+      })
+      return
+    }
+
     this.comprobanteEgresoStore.updateDataEntidadFinanciera(row)
     this.dialogSvc.open(FormaPagoComponent, {
-      size: 'md'
+      size: this.comprobanteEgresoStore.esDoc()? 'xl' :'md'
     })
 
   }
