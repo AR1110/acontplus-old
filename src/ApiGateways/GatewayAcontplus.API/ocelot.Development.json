@@ -27,7 +27,7 @@
       "UpstreamHttpMethod": [
         "Post"
       ],
-      "UpstreamPathTemplate": "/gateway/Seguridad{everything}"
+      "UpstreamPathTemplate": "/gateway/seguridad{everything}"
     },
     {
       "AuthenticationOptions": {
