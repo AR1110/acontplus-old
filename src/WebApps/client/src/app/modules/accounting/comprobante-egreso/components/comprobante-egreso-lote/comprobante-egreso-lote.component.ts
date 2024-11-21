@@ -57,7 +57,11 @@ export class ComprobanteEgresoLoteComponent {
 
 
   ngOnInit(){
-    this.comprobanteEgresoStore.updateCuentaPorPagar(this.data.dataCuentaPorPagar, this.data.cuentasPorPagar);
+    this.comprobanteEgresoStore.updateMultipleFields({
+      dataCuentaPorPagar: this.data.dataCuentaPorPagar,
+      cuentasPorPagar: this.data.cuentasPorPagar,
+      cuentasPorPagarCopy: this.data.cuentasPorPagar
+    })
     this.comprobanteEgresoStore.loadDataForm(this.data.dataCuentaPorPagar.idProveedor as number)
 
   }

@@ -13,4 +13,5 @@ export interface CuotaPorPagarLista  extends CuotaPorPagar{
   nombreEstado: string
   codigoEstado: string
   esCuotaAbonado?: boolean
+  saldoInicial: number
 }

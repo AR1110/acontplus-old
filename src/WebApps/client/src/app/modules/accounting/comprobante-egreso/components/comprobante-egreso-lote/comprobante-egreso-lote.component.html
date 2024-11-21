@@ -19,14 +19,16 @@
             >
               <div class="vstack">
                 <small class="fw-semibold">Proveedor: </small>
-                <small
-                  >iyiye iyeiuyiryiue riuyreiuyriu eiyriufyeiuyieuyui
-                  irueyuiryuieyuify yeiuyrfiruieyriuyui</small
-                >
+                <small>{{
+                  comprobanteEgresoStore.dataCuentaPorPagar().nombreComprador
+                }}</small>
               </div>
               <div class="vstack">
                 <small class="fw-semibold">Nro. Identificación</small>
-                <small>0</small>
+                <small>{{
+                  comprobanteEgresoStore.dataCuentaPorPagar()
+                    .identificacionComprador
+                }}</small>
               </div>
             </div>
           </mat-card-content>
