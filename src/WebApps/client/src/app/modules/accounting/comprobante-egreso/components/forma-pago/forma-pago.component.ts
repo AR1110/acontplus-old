@@ -15,9 +15,7 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {ComprobanteEgresoStore} from "@accounting/comprobante-egreso/comprobante-egreso.store";
 import {FormsModule} from "@angular/forms";
 import { ToasterService } from '@core/services/toaster.service';
-import { getValidId } from '@core/utils/utils';
-import { isDateValid } from '@core/utils/date.util';
-import { ComprobanteEgresoUtil } from '../../utils/comprobante-egreso.util';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
     selector: 'app-forma-pago',
@@ -30,6 +28,7 @@ import { ComprobanteEgresoUtil } from '../../utils/comprobante-egreso.util';
         MatDatepickerModule,
         CustomContainerDialogComponent,
         FormsModule,
+        NgxMaskDirective
     ],
     templateUrl: './forma-pago.component.html',
     providers: [provideNativeDateAdapter()],
@@ -51,61 +50,6 @@ export class FormaPagoComponent {
 
     return true;
   })
-
-
-  isValidForm(){
-    const {idSubEntidadFinanciera, fechaEmision} = this.comprobanteEgresoStore.dataFormaPago()
-
-    if(!getValidId(idSubEntidadFinanciera)){
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Seleccione SubEntidad financiera'
-      })
-      return
-    }
-
-    if(!isDateValid(fechaEmision)){
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Ingrese una fecha válida'
-      })
-      return
-    }
-
-    if(!getValidId(this.valorAbono())){
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Ingrese el valor abono'
-      })
-      return
-    }
-
-    return true;
-
-  }
-
-
-  abonar(){
-
-    if(!this.isValidForm()){
-      throw new Error("Error");
-    }
-
-    let dataComprobanteEgresoUtil = new ComprobanteEgresoUtil({
-      cuentasPorPagar: this.comprobanteEgresoStore.cuentasPorPagar()
-    })
-
-
-    dataComprobanteEgresoUtil.setSecuencial(this.comprobanteEgresoStore.getSecuencialPagoDetalle());
-    dataComprobanteEgresoUtil.setValorAbono(this.valorAbono())
-    dataComprobanteEgresoUtil.setEstadosPago(this.comprobanteEgresoStore.estadosPago())
-
-    dataComprobanteEgresoUtil.abonar()
-
-
-    console.log(dataComprobanteEgresoUtil)
-  }
-
 
   close(){
     this.dialogRef.close()

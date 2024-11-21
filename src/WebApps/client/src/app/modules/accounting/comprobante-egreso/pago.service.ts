@@ -6,17 +6,17 @@ import { minus, plus } from "@core/utils/decimal.util";
 
 export class PagoService {
 
-  selectedDocumentos: any[] = [];
-  pagosDetalle: any[] = [];
-  historialCuentas: any[] = [];
-  estadosPago: any[] = [];
+  private selectedDocumentos: any[] = [];
+  private pagosDetalle: any[] = [];
+  private historialCuentas: any[] = [];
+  private estadosPago: any[] = [];
 
-  valorAbono = 0;
+  private valorAbono = 0;
 
-  esAbonoPosfechado = false;
+  private esAbonoPosfechado = false;
   secuencial = 0;
 
-  dataCuentaPorPagar: any = {}
+  private dataCuentaPorPagar: any = {}
 
   setEstadosPago(estadosPago: any[]) {
     this.estadosPago = estadosPago;
