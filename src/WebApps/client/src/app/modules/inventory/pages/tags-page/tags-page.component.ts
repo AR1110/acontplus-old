@@ -10,7 +10,6 @@ import { CustomTableContainerComponent } from '@core/components/custom-table-con
 import { ToasterService } from '@core/services/toaster.service';
 import { TagsAddEditModalDirective } from '@modules/inventory/directives/tags-add-edit-modal.directive';
 import { TagsService } from '@modules/inventory/services/tags.service';
-import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
@@ -19,7 +18,6 @@ import Swal from 'sweetalert2';
     selector: 'app-tags-page',
     imports: [
         BreadcrumbComponent,
-        ActionAddDirective,
         PrimaryStatusPipe,
         MatButtonModule,
         MatCardModule,

@@ -44,7 +44,6 @@ import {
 } from '@modules/customer/supplier/components/supplier-search-mat/supplier-search-mat.component';
 
 // Shared Components, Models, and Pipes
-import {MatDynamicTableComponent} from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import {ColumnDefinition} from '@shared/models/mat-table-models/column-definition.model';
 import {MatPagination} from '@shared/models/pagination.model';
 import {GetTotalPipe} from '@shared/pipes/get-total.pipe';
@@ -80,7 +79,6 @@ import {ComprobanteEgresoService} from "@accounting/comprobante-egreso/comproban
         DecimalPipe,
         GetTotalPipe,
         CustomTableContainerComponent,
-        MatDynamicTableComponent,
         DateRangeSelectionComponent,
         SupplierSearchMatComponent,
     ],
@@ -319,7 +317,7 @@ export class CuentaPorPagarListaComponent {
 
 
   // Función para verificar si los valores de razonSocialComprador son los mismos
-  private verificarProveedorIgual() {
+  private tienenMismoProveedorSeleccionado() {
     const firstCustomerId = this.selection.selected[0]?.idProveedor;
 
     // Verificar si todas las demás entradas tienen la misma idProveedor
@@ -336,7 +334,7 @@ export class CuentaPorPagarListaComponent {
       return
     }
 
-    if(this.verificarProveedorIgual()){
+    if(!this.tienenMismoProveedorSeleccionado()){
       this.tS.toastr({
         type: 'warning',
         message: 'Seleccione documentos que pertenezca al mismo proveedor'

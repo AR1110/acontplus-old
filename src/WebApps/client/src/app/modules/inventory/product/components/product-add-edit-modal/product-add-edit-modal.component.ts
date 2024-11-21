@@ -1,8 +1,7 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, computed, inject, Input, signal } from '@angular/core'
+
+import { Component,  inject, Input, signal } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { TabulatorTableComponent } from '@core/components/tabulator-table/tabulator-table.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { TAX_RATE_CODE } from '@core/constants/global.constants';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
@@ -17,12 +16,11 @@ import { TagsAddEditModalDirective } from '@inventory/directives/tags-add-edit-m
 import { TarifaSelectHtmlOnly } from '@inventory/models/tarifa.model';
 import { TipoIvaSelectHtmlOnly } from '@inventory/models/tipo-iva.model';
 import { ProductService } from '@inventory/product/product.service';
-import { NgbActiveModal, NgbNavChangeEvent, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal,  NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import Swal from 'sweetalert2';
 
-import { SubCategoryGroupComponent } from '../../../components/sub-category/sub-category-group/sub-category-group.component';
 import { FraccProductListComponent } from '@inventory/product/components/fracc-product-list/fracc-product-list.component';
 
 interface ProductTarifa {
@@ -44,11 +42,8 @@ interface ProductTarifa {
         FontAwesomeModule,
         MatAutocompleteModule,
         ToUpperCaseDirective,
-        AsyncPipe,
         //Components
         TabulatorComponent,
-        TabulatorTableComponent,
-        SubCategoryGroupComponent,
         FraccProductListComponent,
         //Directivas
         SubCategoryModalDirective,

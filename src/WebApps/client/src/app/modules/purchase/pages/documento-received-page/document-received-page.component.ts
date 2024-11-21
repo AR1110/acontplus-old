@@ -11,7 +11,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { Subcategory } from '@accounting/models/subcategory';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import {  MatIconButton } from '@angular/material/button';
 import { ToasterService } from '@core/services/toaster.service';
 import Swal from 'sweetalert2';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
@@ -42,7 +42,6 @@ import { CreditNoteHtmlComponent } from '@billing/components/documents/credit-no
         MatTooltip,
         FaIconComponent,
         InputNumberDirective,
-        MatButton,
         MatPaginator,
         MatIcon,
         MatIconButton,

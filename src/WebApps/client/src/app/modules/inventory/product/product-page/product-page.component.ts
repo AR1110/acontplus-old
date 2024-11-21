@@ -31,7 +31,7 @@ import { ProductAddEditDirective } from '@inventory/product/directives/product-l
 import { ProductService } from '@inventory/product/product.service';
 import { StockService } from '@modules/inventory/services/stock.service';
 import { CompraHabitualHistorialDirective } from '@modules/purchase/directives/compra-habitual-historial.directive';
-import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
+
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { finalize, forkJoin } from 'rxjs';
@@ -45,7 +45,6 @@ import {ProductList} from "@inventory/product/product.interface";
     imports: [
         FormsModule,
         BreadcrumbComponent,
-        ActionAddDirective,
         PrimaryStatusPipe,
         MatButtonModule,
         MatCardModule,

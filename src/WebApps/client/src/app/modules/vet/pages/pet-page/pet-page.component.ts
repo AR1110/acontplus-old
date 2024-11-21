@@ -28,10 +28,7 @@ import {
 } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { DatePipe } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
 import { ThemePalette } from '@angular/material/core';
-import { MatIconButton } from '@angular/material/button';
 import { MatInput } from '@angular/material/input';
 import { Pet } from '@modules/vet/models/pet.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -47,18 +44,15 @@ Chart.register(...registerables);
         FormsModule,
         MatPaginator,
         MatSlideToggle,
-        DatePipe,
         MatTable,
         MatHeaderCellDef,
         MatCellDef,
-        MatIcon,
         MatColumnDef,
         MatHeaderCell,
         MatCell,
         MatRowDef,
         MatNoDataRow,
         MatRow,
-        MatIconButton,
         MatHeaderRowDef,
         MatHeaderRow,
         MatInput,

@@ -12,7 +12,6 @@ import { ToasterService } from '@core/services/toaster.service';
 import { MeasureAddEditDirective } from '@modules/inventory/directives/measure-add-edit.directive';
 import { MeasureRead } from '@modules/inventory/models/measure.model';
 import { MeasureService } from '@modules/inventory/services/measure.service';
-import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
@@ -22,7 +21,6 @@ import Swal from 'sweetalert2';
     imports: [
         BreadcrumbComponent,
         MeasureAddEditDirective,
-        ActionAddDirective,
         PrimaryStatusPipe,
         MatButtonModule,
         MatCardModule,

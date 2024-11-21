@@ -1,22 +1,13 @@
-import {Component, inject, Input, input} from '@angular/core';
+import {Component, inject, Input,  } from '@angular/core';
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
-import {SafeUrlPipe} from "@shared/pipes/safe-url.pipe";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
-import {NgxExtendedPdfViewerModule, NgxExtendedPdfViewerService, PDFPrintRange} from "ngx-extended-pdf-viewer";
-import {
-  CustomContainerDialogComponent
-} from "@core/components/custom-container-dialog/custom-container-dialog.component";
-import {MatIconButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
+// import {NgxExtendedPdfViewerModule, NgxExtendedPdfViewerService, } from "ngx-extended-pdf-viewer";
+
 
 @Component({
     selector: 'app-pdf-viewer',
     imports: [
-        NgxExtendedPdfViewerModule,
-        SafeUrlPipe,
-        CustomContainerDialogComponent,
-        MatIconButton,
-        MatIcon
+        // NgxExtendedPdfViewerModule,
     ],
     templateUrl: './pdf-viewer.component.html',
     styles: ``
@@ -28,12 +19,12 @@ export class PdfViewerComponent {
 
   private activeModal = inject(NgbActiveModal)
   sanitizedPdfUrl: SafeResourceUrl | null = null;
-  constructor(private sanitizer: DomSanitizer, private printService: NgxExtendedPdfViewerService) {}
+  // constructor(private sanitizer: DomSanitizer, private printService: NgxExtendedPdfViewerService) {}
 
 
 
   public print(): void {
-    this.printService.print();
+   // this.printService.print();
   }
 
   closeModal() {
