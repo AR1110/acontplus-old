@@ -17,6 +17,7 @@ import {FormsModule} from "@angular/forms";
 import { ToasterService } from '@core/services/toaster.service';
 import { getValidId } from '@core/utils/utils';
 import { isDateValid } from '@core/utils/date.util';
+import { ComprobanteEgresoUtil } from '../../utils/comprobante-egreso.util';
 
 @Component({
     selector: 'app-forma-pago',
@@ -90,6 +91,19 @@ export class FormaPagoComponent {
       throw new Error("Error");
     }
 
+    let dataComprobanteEgresoUtil = new ComprobanteEgresoUtil({
+      cuentasPorPagar: this.comprobanteEgresoStore.cuentasPorPagar()
+    })
+
+
+    dataComprobanteEgresoUtil.setSecuencial(this.comprobanteEgresoStore.getSecuencialPagoDetalle());
+    dataComprobanteEgresoUtil.setValorAbono(this.valorAbono())
+    dataComprobanteEgresoUtil.setEstadosPago(this.comprobanteEgresoStore.estadosPago())
+
+    dataComprobanteEgresoUtil.abonar()
+
+
+    console.log(dataComprobanteEgresoUtil)
   }
 
 

@@ -16,5 +16,5 @@ export interface PagoDetalle {
   saldo: number
   secuencial: number
   saldoMovimiento: number
-
+  esPosfechado: boolean
 }

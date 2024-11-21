@@ -80,6 +80,7 @@
                 </mat-panel-description>
               </mat-expansion-panel-header>
               <app-mat-dynamic-table
+                [templateOp]="templateOp"
                 [dataList]="item.cuotas"
                 [displayedColumns]="columns"
                 [displayColumnDefs]="columnsDefs"
@@ -127,6 +128,14 @@
       </div>
     </div>
   </div>
+
+  <ng-template #templateOp let-item="item">
+    @if (item.esCuotaAbonado) {
+    <button mat-icon-button aria-hidden="false">
+      <mat-icon>visibility</mat-icon>
+    </button>
+    }
+  </ng-template>
 </ng-template>
 
 <ng-template #actionsTemplate>
