@@ -113,6 +113,7 @@
               @for (item of comprobanteEgresoStore.entidadesFinanciera(); track
               $index) {
               <mat-list-item
+                [disabled]="comprobanteEgresoStore.saldo() === 0"
                 style="cursor: pointer"
                 (click)="openFormaPago(item)"
               >

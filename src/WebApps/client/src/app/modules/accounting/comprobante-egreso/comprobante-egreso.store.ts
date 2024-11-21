@@ -18,7 +18,7 @@ import { PagoDetalle } from '../cuenta-por-pagar/interfaces/pago-detalle.interfa
 import { EstadoPago } from '../interfaces/estado-pago.interface';
 import { CuentaPorPagarCuota } from './comprobante-egreso.interface';
 import { ToasterService } from '@core/services/toaster.service';
-import { getValidId } from '@core/utils/utils';
+import { getValidId, isValidField } from '@core/utils/utils';
 import { isDateValid } from '@core/utils/date.util';
 import { PagoService } from './pago.service';
 import { ComprobanteEgresoUtil } from './utils/comprobante-egreso.util';
@@ -32,6 +32,13 @@ interface DataFormaPago {
   fechaEmision: Date;
   idEntidadFinanciera: number;
   idSubEntidadFinanciera: number;
+  idCiudad?: number
+  nro?:string
+  referencia?:string
+  aprobacion?:string
+  posfechado: boolean
+  idBanco?:number
+  lote?:string
 }
 
 interface ComprobanteEgresoStore {
@@ -48,17 +55,29 @@ interface ComprobanteEgresoStore {
   bancos: BancoSelectOnly[];
   provinciaCiudades: ProvinciaCiudad[];
   estadosPago: EstadoPago[]
+  documentos: any[]
   dataFormaPago: DataFormaPago;
 
 
 }
 
-let dataFormPagoState: DataFormaPago = {
-  codigoEntidadFinanciera: null,
-  fechaEmision: new Date(),
-  idEntidadFinanciera: 0,
-  idSubEntidadFinanciera: 0,
-};
+
+export const getDataFormaPagoState = (): DataFormaPago=>{
+  return structuredClone( {
+    codigoEntidadFinanciera: null,
+    fechaEmision: new Date(),
+    idEntidadFinanciera: 0,
+    idSubEntidadFinanciera: 0,
+    posfechado: false,
+    nro: undefined,
+    referencia: undefined,
+    aprobacion: undefined,
+    idBanco: 0,
+    idCiudad: 0,
+    lote: undefined
+  });
+}
+
 let initialComprobanteEgresoState: ComprobanteEgresoStore = {
   isLoading: false,
   dataCuentaPorPagar: {},
@@ -72,9 +91,9 @@ let initialComprobanteEgresoState: ComprobanteEgresoStore = {
   subEntidadesFinanciera: [],
   subEntidadesFinancieraFiltered: [],
   estadosPago: [],
+  documentos: [],
 
-
-  dataFormaPago: dataFormPagoState,
+  dataFormaPago: getDataFormaPagoState(),
 
 
 };
@@ -82,21 +101,41 @@ let initialComprobanteEgresoState: ComprobanteEgresoStore = {
 export const ComprobanteEgresoStore = signalStore(
   { providedIn: 'root' },
   withState(initialComprobanteEgresoState),
-  withComputed(({ cuentasPorPagar, pagosDetalle }) => ({
-    total: computed(() =>
-      cuentasPorPagar().reduce((prev, acc) => (prev += acc.total), 0),
-    ),
-    abono: computed(() =>
-      cuentasPorPagar().flatMap(item => item.cuotas).map(item => item.abono).reduce((prev, acc) => (prev += acc), 0),
-    ),
-    saldo: computed(() =>{
-      let total = cuentasPorPagar().flatMap(item => item.cuotas).map(item => item.saldo).reduce((prev, acc) => (prev += acc), 0);
-      return roundNumber(total, DECIMALS.DOS);
+  withComputed(({ cuentasPorPagar, pagosDetalle, dataFormaPago  }) => {
+    const obtenerCuotas = () => cuentasPorPagar().flatMap(item => item.cuotas);
 
-    }
-    ),
-    getSecuencialPagoDetalle: computed(() => pagosDetalle().length),
-  })),
+    const esTipoPago = (tipo: PaymentTypeCode) => dataFormaPago().codigoEntidadFinanciera === tipo;
+
+    return {
+
+      total: computed(() => {
+        let total = cuentasPorPagar().reduce((acumulado, cuenta) => acumulado + cuenta.total, 0)
+        return roundNumber(total, DECIMALS.DOS)
+      }
+
+      ),
+      abono: computed(() => {
+        let total = obtenerCuotas().reduce((acumulado, cuota) => acumulado + cuota.abono, 0)
+        return roundNumber(total, DECIMALS.DOS)
+
+      }
+      ),
+      saldo: computed(() => {
+        const totalSaldo = obtenerCuotas().reduce((acumulado, cuota) => acumulado + cuota.saldo, 0);
+        return roundNumber(totalSaldo, DECIMALS.DOS);
+      }),
+      getSecuencialPagoDetalle: computed(() => pagosDetalle().length),
+
+      esEfectivo: computed(() => esTipoPago(PaymentTypeCode.EFE)),
+      esTarjetaCreditoDebito: computed(() => esTipoPago(PaymentTypeCode.TAR)),
+      esTransferencia: computed(() => esTipoPago(PaymentTypeCode.TRA)),
+      esCheque: computed(() => esTipoPago(PaymentTypeCode.CHE)),
+      esDoc: computed(() => esTipoPago(PaymentTypeCode.DOC)),
+
+
+    };
+  }),
+
 
   withMethods(
     (store, comprobanteEgresoSvc = inject(ComprobanteEgresoService), tS = inject(ToasterService)) => ({
@@ -119,11 +158,13 @@ export const ComprobanteEgresoStore = signalStore(
           .getDatForm(idProveedor)
           .pipe(finalize(() => patchState(store, { isLoading: false })))
           .subscribe((response) => {
+            console.log(response)
             patchState(store, {
               entidadesFinanciera: response.entidadesFinanciera,
               subEntidadesFinanciera: response.subEntidadesFinanciera,
               bancos: response.bancos,
               provinciaCiudades: response.provinciaCiudades,
+              documentos: response.documentos,
               estadosPago: response.estadosPago
             });
           });
@@ -140,6 +181,7 @@ export const ComprobanteEgresoStore = signalStore(
             ? subEntidadesFinancieraFiltered[0]
             : null;
 
+
         patchState(store, {
           subEntidadesFinancieraFiltered: subEntidadesFinancieraFiltered || [],
           dataFormaPago: {
@@ -154,6 +196,7 @@ export const ComprobanteEgresoStore = signalStore(
 
       updateDataFormaPago: (dataFormaPago: Partial<DataFormaPago>) => {
         patchState(store, {
+
           dataFormaPago: {
             ...store.dataFormaPago(),
             ...dataFormaPago,
@@ -163,7 +206,7 @@ export const ComprobanteEgresoStore = signalStore(
 
 
       agregarAbono(valorAbono: number) {
-        const { idSubEntidadFinanciera, fechaEmision } = store.dataFormaPago();
+        const { idSubEntidadFinanciera, fechaEmision , nro, referencia, lote, aprobacion, idCiudad, idBanco} = store.dataFormaPago();
 
         if (!getValidId(idSubEntidadFinanciera)) {
           tS.toastr({
@@ -188,6 +231,40 @@ export const ComprobanteEgresoStore = signalStore(
           })
           return
         }
+        const validations = {
+          esTarjetaCreditoDebito: [
+            { condition: !isValidField(nro), message: 'Ingrese el número' },
+            { condition: !isValidField(referencia), message: 'Ingrese la referencia' },
+            { condition: !isValidField(lote), message: 'Ingrese el lote' },
+            { condition: !isValidField(aprobacion), message: 'Ingrese la aprobación' },
+            { condition: !getValidId(idCiudad as number), message: 'Seleccione la ciudad' },
+          ],
+          esTransferencia: [
+            { condition: !getValidId(idBanco as number), message: 'Seleccione el banco' },
+            { condition: !isValidField(nro), message: 'Ingrese el número' },
+          ],
+          esCheque: [
+            { condition: !getValidId(idCiudad as number), message: 'Seleccione la ciudad' },
+            { condition: !getValidId(idBanco as number), message: 'Seleccione el banco' },
+            { condition: !isValidField(nro), message: 'Ingrese el número' },
+            { condition: !isValidField(referencia), message: 'Ingrese la referencia' },
+          ],
+        };
+
+        Object.keys(validations).forEach(key => {
+          if (store[key as keyof typeof validations]()) {
+            for (const { condition, message } of validations[key as keyof typeof validations]) {
+              if (condition) {
+                tS.toastr({
+                  type: 'warning',
+                  message: message
+                })
+                return;
+              }
+            }
+          }
+        });
+
 
         let compEgresoUtil = new ComprobanteEgresoUtil(structuredClone(store.cuentasPorPagar()));
         compEgresoUtil.setSecuencial(store.getSecuencialPagoDetalle())

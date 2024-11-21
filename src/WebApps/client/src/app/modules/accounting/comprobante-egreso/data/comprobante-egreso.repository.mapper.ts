@@ -31,7 +31,9 @@ export class ComprobanteEgresoRepositoryMapper{
 
 
   static fromApiDataForm(response:any){
-    const {entidadFinanciera, subEntidadFinanciera, banco, estadoPago, ciudad
+    console.log(response)
+    const {entidadFinanciera, subEntidadFinanciera, banco, estadoPago, ciudad, documentos=[]
+
     } = response;
 
     let entidadesFinanciera = entidadFinanciera.map((item:any)=>{
@@ -76,12 +78,24 @@ export class ComprobanteEgresoRepositoryMapper{
 
     let provinciaCiudades = groupCitiesByProvinceUtil(ciudad);
 
+    let documentosTemp = documentos.map((item:any)=>{
+      return {
+        idCuentaPorPagar: item.idComprobante,
+        idTipoDocumento: item.idTipoDocumento,
+        nroDoc: item.nroDocumento,
+        nombreDoc: item.tipoDocumento,
+        saldo: item.saldo,
+        numAutDocSustento: item.numAutDocSustento,
+    }
+    })
+
     return {
       entidadesFinanciera,
       subEntidadesFinanciera,
       bancos,
       estadosPago,
-      provinciaCiudades
+      provinciaCiudades,
+      documentos: documentosTemp
     }
 
   }

@@ -59,7 +59,8 @@ export class ComprobanteEgresoRepository {
             subEntidadesFinanciera:[] as SubEntidadFinancieraSelectHtmlOnly[] ,
             bancos: [] as BancoSelectOnly[],
             estadosPago: [] as EstadoPago[],
-            provinciaCiudades: [] as ProvinciaCiudad[]
+            provinciaCiudades: [] as ProvinciaCiudad[],
+            documentos: []
         }
         if(response && typeof response==='object'){
           results = ComprobanteEgresoRepositoryMapper.fromApiDataForm(response)
