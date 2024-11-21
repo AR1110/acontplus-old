@@ -17,6 +17,13 @@ import { CuentaPorPagarLista } from '@accounting/cuenta-por-pagar/interfaces/cue
 import { PagoDetalle } from '../cuenta-por-pagar/interfaces/pago-detalle.interface';
 import { EstadoPago } from '../interfaces/estado-pago.interface';
 import { CuentaPorPagarCuota } from './comprobante-egreso.interface';
+import { ToasterService } from '@core/services/toaster.service';
+import { getValidId } from '@core/utils/utils';
+import { isDateValid } from '@core/utils/date.util';
+import { PagoService } from './pago.service';
+import { ComprobanteEgresoUtil } from './utils/comprobante-egreso.util';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { DECIMALS } from '@core/constants/global.constants';
 
 // import { CuentaPorPagarCuota } from "@accounting/comprobante-egreso/comprobante-egreso-pago.interface";
 
@@ -57,7 +64,7 @@ let initialComprobanteEgresoState: ComprobanteEgresoStore = {
   dataCuentaPorPagar: {},
   cuentasPorPagar: [],
   cuentasPorPagarCopy: [],
-  pagosDetalle:[],
+  pagosDetalle: [],
 
   entidadesFinanciera: [],
   bancos: [],
@@ -80,25 +87,30 @@ export const ComprobanteEgresoStore = signalStore(
       cuentasPorPagar().reduce((prev, acc) => (prev += acc.total), 0),
     ),
     abono: computed(() =>
-      cuentasPorPagar().flatMap(item=>item.cuotas).map(item=>item.abono).reduce((prev, acc) => (prev += acc), 0),
+      cuentasPorPagar().flatMap(item => item.cuotas).map(item => item.abono).reduce((prev, acc) => (prev += acc), 0),
     ),
-    saldo: computed(() =>
-      cuentasPorPagar().flatMap(item=>item.cuotas).map(item=>item.saldo).reduce((prev, acc) => (prev += acc), 0),
+    saldo: computed(() =>{
+      let total = cuentasPorPagar().flatMap(item => item.cuotas).map(item => item.saldo).reduce((prev, acc) => (prev += acc), 0);
+      return roundNumber(total, DECIMALS.DOS);
+
+    }
     ),
-    getSecuencialPagoDetalle: computed(()=>pagosDetalle().length),
+    getSecuencialPagoDetalle: computed(() => pagosDetalle().length),
   })),
 
   withMethods(
-    (store, comprobanteEgresoSvc = inject(ComprobanteEgresoService)) => ({
-      updateCuentaPorPagar: (
-        dataCuentaPorPagar: Partial<CuentaPorPagarLista>,
-        cuentasPorPagar: any[],
-      ) => {
+    (store, comprobanteEgresoSvc = inject(ComprobanteEgresoService), tS = inject(ToasterService)) => ({
+      updateStateProperty: function <K extends keyof ComprobanteEgresoStore>(
+        key: K,
+        value: ComprobanteEgresoStore[K],
+      ) {
         patchState(store, {
-          dataCuentaPorPagar: dataCuentaPorPagar,
-          cuentasPorPagar: cuentasPorPagar,
-          cuentasPorPagarCopy: cuentasPorPagar,
+          [key]: value,
         });
+      },
+
+      updateMultipleFields: function (updates: Partial<ComprobanteEgresoStore>) {
+        patchState(store, updates);
       },
 
       loadDataForm: (idProveedor: number) => {
@@ -148,6 +160,52 @@ export const ComprobanteEgresoStore = signalStore(
           },
         });
       },
+
+
+      agregarAbono(valorAbono: number) {
+        const { idSubEntidadFinanciera, fechaEmision } = store.dataFormaPago();
+
+        if (!getValidId(idSubEntidadFinanciera)) {
+          tS.toastr({
+            type: 'warning',
+            message: 'Seleccione SubEntidad financiera'
+          })
+          return
+        }
+
+        if (!isDateValid(fechaEmision)) {
+          tS.toastr({
+            type: 'warning',
+            message: 'Ingrese una fecha válida'
+          })
+          return
+        }
+
+        if (!getValidId(valorAbono)) {
+          tS.toastr({
+            type: 'warning',
+            message: 'Ingrese el valor abono'
+          })
+          return
+        }
+
+        let compEgresoUtil = new ComprobanteEgresoUtil(structuredClone(store.cuentasPorPagar()));
+        compEgresoUtil.setSecuencial(store.getSecuencialPagoDetalle())
+        compEgresoUtil.setValorAbono(valorAbono);
+        compEgresoUtil.setEstadosPago(store.estadosPago());
+        compEgresoUtil.setEsAbonoPosfechado(false)
+
+        compEgresoUtil.abonar()
+
+        patchState(store, {
+          pagosDetalle: compEgresoUtil.getPagosDetalle(),
+          cuentasPorPagar: compEgresoUtil.getCuentasPorPagar()
+        })
+
+
+        console.log(store.cuentasPorPagar())
+      }
+
     }),
   ),
 );

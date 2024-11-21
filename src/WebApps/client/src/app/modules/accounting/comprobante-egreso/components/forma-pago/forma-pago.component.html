@@ -57,6 +57,9 @@
           matInput
           class="text-center"
           [(ngModel)]="valorAbono"
+          mask="separator.3"
+          thousandSeparator=","
+          decimalMarker="."
           onclick="select();"
         />
       </mat-form-field>
@@ -67,6 +70,12 @@
 </ng-template>
 
 <ng-template #actionsTemplate>
-  <button mat-flat-button color="accent" (click)="abonar()">Abonar</button>
+  <button
+    mat-flat-button
+    color="accent"
+    (click)="comprobanteEgresoStore.agregarAbono(valorAbono())"
+  >
+    Abonar
+  </button>
   <button mat-raised-button color="accent" (click)="close()">Cerrar</button>
 </ng-template>

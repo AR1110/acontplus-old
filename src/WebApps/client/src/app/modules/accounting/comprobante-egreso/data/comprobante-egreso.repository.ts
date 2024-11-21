@@ -12,6 +12,7 @@ import {SubEntidadFinancieraSelectHtmlOnly} from "@accounting/interfaces/subenti
 import {BancoSelectOnly} from "@accounting/interfaces/banco.interface";
 import {EstadoPago} from "@accounting/interfaces/estado-pago.interface";
 import {ProvinciaCiudad} from "@shared/models/ciudad.interface";
+import { CuotaPorPagarLista } from '@modules/accounting/interfaces/cuota-por-pagar.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -30,12 +31,12 @@ export class ComprobanteEgresoRepository {
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map(response=>{
         let results = {
-          cuotas: [] as any[]
+          cuotas: [] as CuotaPorPagarLista[]
         }
         if(response && typeof response==='object'){
-          console.log(response)
           results.cuotas = ComprobanteEgresoRepositoryMapper.fromApiCuotasByICuentaPorPagar(response)
         }
+        console.log(results)
         return results;
       })
 
