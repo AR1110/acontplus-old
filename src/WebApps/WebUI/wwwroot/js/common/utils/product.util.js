@@ -58,7 +58,7 @@ app.factory('productUtil', [
                 }
             }
 
-            return cantidadStock < 0 ? cantidadStock : -cantidadStock;
+            return cantidadStock < 0 ? cantidadStock : cantidadStock;
 
         }
 
