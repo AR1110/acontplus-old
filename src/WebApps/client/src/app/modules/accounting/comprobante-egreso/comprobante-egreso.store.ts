@@ -25,10 +25,13 @@ import { ComprobanteEgresoUtil } from './utils/comprobante-egreso.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { DECIMALS } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { minus } from '@core/utils/decimal.util';
 
 // import { CuentaPorPagarCuota } from "@accounting/comprobante-egreso/comprobante-egreso-pago.interface";
 
 interface FormaPago {
+  uuid: string
   codigoEntidadFinanciera: PaymentTypeCode | null;
   fechaEmision: Date;
   idEntidadFinanciera: number;
@@ -54,7 +57,7 @@ interface ComprobanteEgresoStore {
 
   dataCuentaPorPagar: Partial<CuentaPorPagarLista>;
   cuentasPorPagar: CuentaPorPagarCuota[];
-  //cuentasPorPagarCopy: CuentaPorPagarCuota[];
+  cuentasPorPagarCopy: CuentaPorPagarCuota[];
   pagosDetalle: PagoDetalle[]
 
   entidadesFinanciera: EntidadFinanciera[];
@@ -73,6 +76,7 @@ interface ComprobanteEgresoStore {
 
 export const getDataFormaPagoState = (): FormaPago => {
   return structuredClone({
+    uuid: generateUuidv4(),
     codigoEntidadFinanciera: null,
     fechaEmision: new Date(),
     idEntidadFinanciera: 0,
@@ -94,7 +98,7 @@ let initialComprobanteEgresoState: ComprobanteEgresoStore = {
   isLoading: false,
   dataCuentaPorPagar: {},
   cuentasPorPagar: [],
-  // cuentasPorPagarCopy: [],
+  cuentasPorPagarCopy: [],
   pagosDetalle: [],
 
   entidadesFinanciera: [],
@@ -113,10 +117,12 @@ let initialComprobanteEgresoState: ComprobanteEgresoStore = {
 export const ComprobanteEgresoStore = signalStore(
   { providedIn: 'root' },
   withState(initialComprobanteEgresoState),
-  withComputed(({ cuentasPorPagar, formasPago, dataFormaPago }) => {
+  withComputed((store) => {
+    const { cuentasPorPagar, formasPago, dataFormaPago } = store;
     const obtenerCuotas = () => cuentasPorPagar().flatMap(item => item.cuotas);
 
-    const esTipoPago = (tipo: PaymentTypeCode) => dataFormaPago().codigoEntidadFinanciera === tipo;
+    const esTipoPago = (tipo: PaymentTypeCode | null) => dataFormaPago().codigoEntidadFinanciera === tipo;
+
 
     return {
 
@@ -127,8 +133,8 @@ export const ComprobanteEgresoStore = signalStore(
 
       ),
       abono: computed(() => {
-        let total = obtenerCuotas().reduce((acumulado, cuota) => acumulado + cuota.abono, 0)
-        return roundNumber(total, DECIMALS.DOS)
+        let valorAbonoInput = formasPago().reduce((acumulado, cuota) => acumulado + cuota.valorAbonoInput, 0)
+        return roundNumber(valorAbonoInput, DECIMALS.DOS)
 
       }
       ),
@@ -136,7 +142,19 @@ export const ComprobanteEgresoStore = signalStore(
         const totalSaldo = obtenerCuotas().reduce((acumulado, cuota) => acumulado + cuota.saldo, 0);
         return roundNumber(totalSaldo, DECIMALS.DOS);
       }),
-      getSecuencialFormasPago: computed(() => formasPago().length),
+
+      valorDiferencia: computed(() => {
+        let diferencia = 0;
+        let saldoInicial = store.cuentasPorPagarCopy().reduce((acc, curr) => acc + curr.saldo, 0);
+        let valorAbonoInput = formasPago().reduce((acumulado, cuota) => acumulado + cuota.valorAbonoInput, 0)
+
+        if (valorAbonoInput >= saldoInicial) {
+          diferencia = minus(valorAbonoInput, saldoInicial, DECIMALS.DOS) as number
+        }
+        return diferencia;
+      }),
+
+      getSecuencialFormasPago: computed(() => formasPago().length + 1),
 
       esEfectivo: computed(() => esTipoPago(PaymentTypeCode.EFE)),
       esTarjetaCreditoDebito: computed(() => esTipoPago(PaymentTypeCode.TAR)),
@@ -151,8 +169,12 @@ export const ComprobanteEgresoStore = signalStore(
   }),
 
 
+
   withMethods(
     (store, comprobanteEgresoSvc = inject(ComprobanteEgresoService), tS = inject(ToasterService)) => ({
+
+
+
       updateStateProperty: function <K extends keyof ComprobanteEgresoStore>(
         key: K,
         value: ComprobanteEgresoStore[K],
@@ -338,7 +360,7 @@ export const ComprobanteEgresoStore = signalStore(
 
         try {
           if (isConfirmed) {
-            let formasPago = store.formasPago().filter(item => item.secuencial !== data.secuencial)
+            let formasPago = store.formasPago().filter(item => item.uuid !== data.uuid)
 
             let cuentasPorPagar = store.cuentasPorPagar().map(item => {
               return {
