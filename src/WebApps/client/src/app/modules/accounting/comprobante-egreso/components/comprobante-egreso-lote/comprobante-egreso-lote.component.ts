@@ -11,13 +11,14 @@ import {MatListModule} from '@angular/material/list';
 import { CustomContainerDialogComponent } from '@core/components/custom-container-dialog/custom-container-dialog.component';
 
 import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
-import {CurrencyPipe} from "@angular/common";
+import {CurrencyPipe, DatePipe} from "@angular/common";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
 import {DialogService} from "@core/services/dialog.service";
 import {FormaPagoComponent} from "@accounting/comprobante-egreso/components/forma-pago/forma-pago.component";
 import {ComprobanteEgresoStore} from "@accounting/comprobante-egreso/comprobante-egreso.store";
 import { ToasterService } from '@core/services/toaster.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-comprobante-ingreso-lote',
@@ -29,7 +30,9 @@ import { ToasterService } from '@core/services/toaster.service';
         MatFormFieldModule,
         MatInputModule,
         MatListModule, MatDividerModule,
+        MatTooltipModule,
         CustomContainerDialogComponent, CurrencyPipe,
+        DatePipe,
         MatDynamicTableComponent
     ],
     templateUrl: './comprobante-egreso-lote.component.html',
@@ -62,7 +65,7 @@ export class ComprobanteEgresoLoteComponent {
     this.comprobanteEgresoStore.updateMultipleFields({
       dataCuentaPorPagar: this.data.dataCuentaPorPagar,
       cuentasPorPagar: this.data.cuentasPorPagar,
-      cuentasPorPagarCopy: this.data.cuentasPorPagar
+    //  cuentasPorPagarCopy: this.data.cuentasPorPagar
     })
     this.comprobanteEgresoStore.loadDataForm(this.data.dataCuentaPorPagar.idProveedor as number)
 
