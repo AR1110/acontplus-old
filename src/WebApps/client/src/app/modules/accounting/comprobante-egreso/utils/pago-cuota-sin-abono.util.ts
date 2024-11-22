@@ -25,8 +25,15 @@ export const pagoCuotaSinAbonoUtil = function ({ dataCuota, valorAbono, esAbonoP
     dataCuota.abono = esAbonoPosfechado ? 0 : valorAbono;
 
     // Actualizar el saldo de la cuota restando el abono
-    dataCuota.saldo = minus(dataCuota.saldo, valorAbono, DECIMALS.CINCO) as number;
+    //dataCuota.saldo = minus(dataCuota.saldo, valorAbono, DECIMALS.CINCO) as number;
+    let valorRestanteAbono = minus(dataCuota.saldo, valorAbono, DECIMALS.CINCO) as number;
 
+    console.log(valorRestanteAbono)
+    // Ajustar el valor del abono para evitar problemas de redondeo
+    // if (roundNumber(valorRestanteAbono, DECIMALS.DOS) === roundNumber(dataCuota.saldo, DECIMALS.DOS)) {
+    //   valorRestanteAbono = dataCuota.saldo;
+    // }
+    dataCuota.saldo = valorRestanteAbono;
     // Registrar el detalle del pago y ajustar el valor restante del abono
 
     agregarPagoDetalle(dataCuota, valorAbono, dataCuota.saldo)
@@ -44,6 +51,8 @@ export const pagoCuotaSinAbonoUtil = function ({ dataCuota, valorAbono, esAbonoP
     // Calcular el valor restante del abono
     let valorRestanteAbono = minus(valorAbono, dataCuota.saldo, DECIMALS.CINCO) as number;
 
+    console.log(valorRestanteAbono)
+    console.log(dataCuota.saldo)
     // Ajustar el valor del abono para evitar problemas de redondeo
     if (roundNumber(valorRestanteAbono, DECIMALS.DOS) === roundNumber(dataCuota.saldo, DECIMALS.DOS)) {
       valorRestanteAbono = dataCuota.saldo;

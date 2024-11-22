@@ -27,17 +27,28 @@ export class ComprobanteEgresoUtil {
   private secuencial!: number
 
   constructor(cuentasPorPagar: CuentaPorPagarCuota[]) {
-    this.cuentasPorPagar = cuentasPorPagar;
+    this.cuentasPorPagar = structuredClone(cuentasPorPagar);
     this.dataCuentaPorPagarCuota = {} as CuentaPorPagarCuota;
 
   }
 
+  //secuencial
   setSecuencial(value: number) {
     this.secuencial = value;
   }
 
+  getSecuencial() {
+    return this.secuencial;
+  }
+
+
+  //valor abono
   setValorAbono = (value: number) => {
     this.valorAbono = value;
+  }
+
+  getValorAbono() {
+    return this.valorAbono
   }
 
 
@@ -48,26 +59,19 @@ export class ComprobanteEgresoUtil {
   setEsAbonoPosfechado(value: boolean) {
     this.esAbonoPosfechado = value;
   }
-
-
-
-  getValorAbono() {
-    return this.valorAbono
-  }
-
   getEsAbonoPosfechado() {
     return this.esAbonoPosfechado;
   }
 
 
-
-  getSecuencial() {
-    return this.secuencial;
+  setPagosDetalle(pagosDetalle: PagoDetalle[]) {
+    this.pagosDetalle=pagosDetalle;
   }
 
   getPagosDetalle() {
     return this.pagosDetalle
   }
+
 
 
   getCuentasPorPagar(){

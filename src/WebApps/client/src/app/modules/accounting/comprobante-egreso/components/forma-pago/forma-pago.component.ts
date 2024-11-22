@@ -17,7 +17,6 @@ import { NgxMaskDirective } from 'ngx-mask';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { CitySearchComponent } from './city-search/city-search.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { CurrencyPipe } from '@angular/common';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatTableDataSource } from '@angular/material/table';
@@ -37,7 +36,6 @@ import { MatTableDataSource } from '@angular/material/table';
         FormsModule,
         MatSlideToggleModule,
         NgxMaskDirective,
-        CurrencyPipe,
         CitySearchComponent,
         MatDynamicTableComponent
     ],
