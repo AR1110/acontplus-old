@@ -1,4 +1,6 @@
-﻿namespace Compras.API.Extensions;
+﻿using Scrutor;
+
+namespace Compras.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
@@ -14,24 +16,22 @@ public static class ApplicationServicesExtensions
             });
         services.AddDbContextPool<ComprasContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        
+        string[] nameSpaces = 
+        [
+            "Common.Infrastructure.Repository",
+            "Compras.API.Services",
+            "FactElect.Application.Services",
+        ];
 
-        services.AddScoped<FileTxt>();
-        services.AddScoped<IArticuloService, ArticuloService>();
-        services.AddScoped<ICategoriaCompraService, CategoriaCompraService>();
-        services.AddScoped<ICompraHabitualService, CompraHabitualService>();
-        services.AddScoped<ICompraNoHabitualService, CompraNoHabitualService>();
-        services.AddScoped<ICustomLogger, CustomLogger>();
-        services.AddScoped<IDocumentoDetalleService, DocumentoDetalleService>();
-        services.AddScoped<IDocumentoXmlToHtml, DocumentoXmlToHtml>();
-        services.AddScoped<IDocumentoTempService, DocumentoTempService>();
-        services.AddScoped<IDocRecDetailTempService, DocRecDetailTempService>();
-        services.AddScoped<IProveedorService, ProveedorService>();
-        services.AddScoped<ILiquidacionCompraService, LiquidacionCompraService>();
-        services.AddScoped<IFacturaCompraService, FacturaCompraService>();
-        services.AddScoped<IOrdenCompraService, OrdenCompraService>();
-        services.AddScoped<INotaCreditoService, NotaCreditoService>();
-        services.AddScoped<IDocumentoRecibidoService, DocumentoRecibidoService>();
-        services.AddScoped<IWebServiceSri, WebServiceSri>();
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(nameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithTransientLifetime()
+        );
+        
         return services;
     }
 }
