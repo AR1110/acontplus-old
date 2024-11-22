@@ -19,6 +19,7 @@ import {FormaPagoComponent} from "@accounting/comprobante-egreso/components/form
 import {ComprobanteEgresoStore} from "@accounting/comprobante-egreso/comprobante-egreso.store";
 import { ToasterService } from '@core/services/toaster.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 
 @Component({
     selector: 'app-comprobante-ingreso-lote',
@@ -29,11 +30,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         MatExpansionModule,
         MatFormFieldModule,
         MatInputModule,
-        MatListModule, MatDividerModule,
+        MatListModule,
+        MatDividerModule,
         MatTooltipModule,
         CustomContainerDialogComponent, CurrencyPipe,
         DatePipe,
-        MatDynamicTableComponent
+        MatDynamicTableComponent,
     ],
     templateUrl: './comprobante-egreso-lote.component.html',
     styles: `
@@ -61,11 +63,21 @@ export class ComprobanteEgresoLoteComponent {
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
 
+
+  cuentaPorPagarColumnsDefs: ColumnDefinition[] = [
+    { key: 'nombreDoc', label: 'Op.', type: 'string' },
+    { key: 'nroDocumento', label: 'Nro.', type: 'string' },
+    { key: 'total', label: 'Total', type: 'number' },
+    { key: 'expand', label: '', type: 'string' },
+  ];
+  cuentaPorPagaeColumns: string[] = this.cuentaPorPagarColumnsDefs.map((colDef) => colDef.key);
+
+
   ngOnInit(){
     this.comprobanteEgresoStore.updateMultipleFields({
       dataCuentaPorPagar: this.data.dataCuentaPorPagar,
-      cuentasPorPagar: this.data.cuentasPorPagar,
-    //  cuentasPorPagarCopy: this.data.cuentasPorPagar
+      cuentasPorPagar: structuredClone(this.data.cuentasPorPagar),
+      cuentasPorPagarCopy: structuredClone(this.data.cuentasPorPagar)
     })
     this.comprobanteEgresoStore.loadDataForm(this.data.dataCuentaPorPagar.idProveedor as number)
 
