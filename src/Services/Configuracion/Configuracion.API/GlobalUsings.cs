@@ -8,10 +8,8 @@ global using Services.Common.Extensions;
 global using Common.Core.Models;
 global using Common.Infrastructure.Repository;
 global using Microsoft.AspNetCore.Mvc;
-
 global using Configuracion.API.Interfaces.Sri;
 global using Configuracion.API.Interfaces;
-global using Common.Core.Models.Administracion;
 global using Configuracion.API.Entities;
 global using Configuracion.API.Helpers;
 global using Newtonsoft.Json;

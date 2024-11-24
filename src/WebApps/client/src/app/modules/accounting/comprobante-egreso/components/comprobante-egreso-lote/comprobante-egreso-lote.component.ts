@@ -11,12 +11,15 @@ import {MatListModule} from '@angular/material/list';
 import { CustomContainerDialogComponent } from '@core/components/custom-container-dialog/custom-container-dialog.component';
 
 import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
-import {CurrencyPipe} from "@angular/common";
+import {CurrencyPipe, DatePipe} from "@angular/common";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
 import {DialogService} from "@core/services/dialog.service";
 import {FormaPagoComponent} from "@accounting/comprobante-egreso/components/forma-pago/forma-pago.component";
 import {ComprobanteEgresoStore} from "@accounting/comprobante-egreso/comprobante-egreso.store";
+import { ToasterService } from '@core/services/toaster.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 
 @Component({
     selector: 'app-comprobante-ingreso-lote',
@@ -27,9 +30,12 @@ import {ComprobanteEgresoStore} from "@accounting/comprobante-egreso/comprobante
         MatExpansionModule,
         MatFormFieldModule,
         MatInputModule,
-        MatListModule, MatDividerModule,
+        MatListModule,
+        MatDividerModule,
+        MatTooltipModule,
         CustomContainerDialogComponent, CurrencyPipe,
-        MatDynamicTableComponent
+        DatePipe,
+        MatDynamicTableComponent,
     ],
     templateUrl: './comprobante-egreso-lote.component.html',
     styles: `
@@ -42,6 +48,7 @@ export class ComprobanteEgresoLoteComponent {
   readonly dialogRef = inject(MatDialogRef<ComprobanteEgresoLoteComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private dialogSvc = inject(DialogService);
+  private tS = inject(ToasterService)
   comprobanteEgresoStore = inject(ComprobanteEgresoStore)
 
 
@@ -56,11 +63,21 @@ export class ComprobanteEgresoLoteComponent {
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
 
+
+  cuentaPorPagarColumnsDefs: ColumnDefinition[] = [
+    { key: 'nombreDoc', label: 'Op.', type: 'string' },
+    { key: 'nroDocumento', label: 'Nro.', type: 'string' },
+    { key: 'total', label: 'Total', type: 'number' },
+    { key: 'expand', label: '', type: 'string' },
+  ];
+  cuentaPorPagaeColumns: string[] = this.cuentaPorPagarColumnsDefs.map((colDef) => colDef.key);
+
+
   ngOnInit(){
     this.comprobanteEgresoStore.updateMultipleFields({
       dataCuentaPorPagar: this.data.dataCuentaPorPagar,
-      cuentasPorPagar: this.data.cuentasPorPagar,
-      cuentasPorPagarCopy: this.data.cuentasPorPagar
+      cuentasPorPagar: structuredClone(this.data.cuentasPorPagar),
+      cuentasPorPagarCopy: structuredClone(this.data.cuentasPorPagar)
     })
     this.comprobanteEgresoStore.loadDataForm(this.data.dataCuentaPorPagar.idProveedor as number)
 
@@ -68,9 +85,18 @@ export class ComprobanteEgresoLoteComponent {
 
 
   openFormaPago(row: EntidadFinanciera){
+
+    if(this.comprobanteEgresoStore.saldo()===0){
+      this.tS.toastr({
+        type: 'warning',
+        message: 'No tienes saldo pendiente'
+      })
+      return
+    }
+
     this.comprobanteEgresoStore.updateDataEntidadFinanciera(row)
     this.dialogSvc.open(FormaPagoComponent, {
-      size: 'md'
+      size: this.comprobanteEgresoStore.esDoc()? 'xl' :'md'
     })
 
   }

@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Controllers;
+﻿using FactElect.API.Services.Logistica;
+
+namespace FactElect.API.Controllers.Logistica;
 
 public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiController
 {

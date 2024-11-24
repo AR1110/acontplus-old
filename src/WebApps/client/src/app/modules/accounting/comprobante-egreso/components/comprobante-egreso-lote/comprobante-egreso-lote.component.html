@@ -7,12 +7,12 @@
 />
 
 <ng-template #containerTemplate>
-  <div class="d-flex flex-column gap-2 mb-2">
+  <div class="d-grid gap-4">
     <div
-      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
     >
       <div class="col">
-        <mat-card>
+        <mat-card appearance="outlined">
           <mat-card-content>
             <div
               class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
@@ -36,7 +36,7 @@
       </div>
 
       <div class="col">
-        <mat-card>
+        <mat-card appearance="outlined">
           <mat-card-content>
             <div
               class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
@@ -54,16 +54,17 @@
                 <small>{{ comprobanteEgresoStore.saldo() }}</small>
               </div>
               <div class="vstack">
-                <small class="fw-semibold">Diferencia</small><small>0</small>
+                <small class="fw-semibold">Diferencia</small>
+                <small>{{ comprobanteEgresoStore.valorDiferencia() }}</small>
               </div>
             </div>
           </mat-card-content>
         </mat-card>
       </div>
     </div>
-    <div class="row">
+    <div class="row g-4">
       <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-12 col-12">
-        <div class="d-flex flex-column gap-3">
+        <div class="d-grid gap-4">
           <mat-accordion multi>
             @for (item of comprobanteEgresoStore.cuentasPorPagar(); track
             $index) {
@@ -81,6 +82,7 @@
                   {{ item.total | currency }}
                 </mat-panel-description>
               </mat-expansion-panel-header>
+
               <app-mat-dynamic-table
                 [templateOp]="templateOp"
                 [dataList]="item.cuotas"
@@ -92,6 +94,101 @@
             }
           </mat-accordion>
 
+          @if(comprobanteEgresoStore.formasPago().length>0){
+          <div>
+            <div class="d-flex align-items-center">
+              <span class="fw-medium">Forma de pagos</span>
+            </div>
+            <div
+              class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2 justify-content-center"
+            >
+              @for (item of comprobanteEgresoStore.formasPago(); track $index) {
+              <div class="col">
+                <mat-card appearance="outlined">
+                  <mat-card-header class="d-flex justify-content-between">
+                    <mat-card-subtitle class="small">{{
+                      item.nombreFormaPago
+                    }}</mat-card-subtitle>
+
+                    <button
+                      mat-icon-button
+                      matTooltip="Eliminar forma de pago agregado"
+                      (click)="comprobanteEgresoStore.eliminarFormaPago(item)"
+                    >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="d-flex flex-column gap-1">
+                      <div class="hstack">
+                        <small class="fw-semibold me-2">Fecha Emisión</small>
+                        <small>
+                          {{
+                            item.fechaEmision | date : " dd-MM-yyyy HH:mm"
+                          }}</small
+                        >
+                      </div>
+
+                      <div class="d-flex flex-row">
+                        <div class="vstack">
+                          <small class="fw-semibold">Valor</small>
+                          <small>{{ item.valorAbonoInput | currency }}</small>
+                        </div>
+
+                        <div class="vstack">
+                          <small class="fw-semibold">Abono</small>
+                          <small>{{ item.abono | currency }}</small>
+                        </div>
+                      </div>
+                      <mat-divider></mat-divider>
+
+                      <div
+                        class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-1"
+                      >
+                        <div class="vstack">
+                          <small class="fw-semibold">Ciudad:</small>
+                          <small>{{ item.nombreCiudad }}</small>
+                        </div>
+
+                        <div class="vstack">
+                          <small class="fw-semibold">Banco:</small>
+                          <small>{{ item.nombreBanco }}</small>
+                        </div>
+
+                        <div class="vstack">
+                          <small class="fw-semibold">Referencia:</small>
+                          <small>{{ item.referencia }}</small>
+                        </div>
+
+                        <div class="vstack">
+                          <small class="fw-semibold">Nro:</small>
+                          <small>{{ item.nro }}</small>
+                        </div>
+
+                        <div class="vstack">
+                          <small class="fw-semibold">Lote:</small>
+                          <small>{{ item.lote }}</small>
+                        </div>
+
+                        <div class="vstack">
+                          <small class="fw-semibold">Aprobación:</small>
+                          <small>{{ item.aprobacion }}</small>
+                        </div>
+
+                        <div class="vstack">
+                          <small class="fw-semibold">Posfechado:</small>
+                          <small>{{ item.nombrePosfechado }}</small>
+                        </div>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+              }
+            </div>
+          </div>
+          }
+
           <mat-form-field class="w-100">
             <mat-label>Nota (Opcional)</mat-label>
             <textarea matInput placeholder="..."></textarea>
@@ -99,7 +196,7 @@
         </div>
       </div>
       <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-12 col-12">
-        <mat-card>
+        <mat-card appearance="outlined">
           <mat-card-header>
             <mat-card-title-group>
               <mat-card-subtitle
@@ -113,11 +210,12 @@
               @for (item of comprobanteEgresoStore.entidadesFinanciera(); track
               $index) {
               <mat-list-item
+                [disabled]="comprobanteEgresoStore.saldo() === 0"
                 style="cursor: pointer"
                 (click)="openFormaPago(item)"
               >
-                <div class="d-flex justify-content-between">
-                  <div class="">{{ item.descripcion }}</div>
+                <div class="d-inline-flex justify-content-between w-100 small">
+                  <div>{{ item.descripcion }}</div>
                   <mat-icon>keyboard_arrow_right</mat-icon>
                 </div>
               </mat-list-item>

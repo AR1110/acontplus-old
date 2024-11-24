@@ -19,41 +19,49 @@ type Props = {
  * @param {CuotaPorPagarLista} item - La cuota a procesar.
  */
 export const pagoCuotaSinAbonoUtil = function ({ dataCuota, valorAbono, esAbonoPosfechado, agregarPagoDetalle, setValorAbono }: Props): void {
+  // Validación inicial para evitar errores
+  if (!dataCuota || valorAbono == null || typeof agregarPagoDetalle !== 'function' || typeof setValorAbono !== 'function') {
+    console.error("Datos incompletos o inválidos.");
+    return;
+  }
 
+  // Si el saldo es suficiente para cubrir el abono
   if (dataCuota.saldo >= valorAbono) {
-    // Si el abono no es posfechado, asignar el valor al abono
+    // Determinar el abono (0 si es posfechado, valor completo si no lo es)
     dataCuota.abono = esAbonoPosfechado ? 0 : valorAbono;
 
-    // Actualizar el saldo de la cuota restando el abono
-    dataCuota.saldo = minus(dataCuota.saldo, valorAbono, DECIMALS.CINCO) as number;
+    // Calcular el saldo restante y ajustarlo si es necesario
+    let saldoRestante = minus(dataCuota.saldo, valorAbono, DECIMALS.CINCO) as number;
+    if (roundNumber(saldoRestante, DECIMALS.DOS) === 0) {
+      saldoRestante = 0;
+    }
 
-    // Registrar el detalle del pago y ajustar el valor restante del abono
+    // Actualizar saldo de la cuota y registrar el detalle del pago
+    dataCuota.saldo = saldoRestante;
+    agregarPagoDetalle(dataCuota, valorAbono, saldoRestante);
 
-    agregarPagoDetalle(dataCuota, valorAbono, dataCuota.saldo)
+    // Restablecer el valor del abono restante a 0
     setValorAbono(0);
   } else if (dataCuota.saldo < valorAbono) {
+    // Si el saldo no es suficiente, usar todo el saldo disponible
+    const saldoDisponible = roundNumber(dataCuota.saldo, DECIMALS.CINCO);
+    dataCuota.abono = esAbonoPosfechado ? 0 : saldoDisponible;
 
+    // Calcular el abono restante después de usar el saldo disponible
+    let abonoRestante = minus(valorAbono, dataCuota.saldo, DECIMALS.CINCO) as number;
 
-
-    const saldoDecimal = roundNumber(dataCuota.saldo, DECIMALS.CINCO);
-
-    // Asignar abono según si es posfechado o no
-    dataCuota.abono = esAbonoPosfechado ? 0 : saldoDecimal;
-    // dataCuota.abonoPosfechado = this.esAbonoPosfechado ? saldoDecimal : 0;
-
-    // Calcular el valor restante del abono
-    let valorRestanteAbono = minus(valorAbono, dataCuota.saldo, DECIMALS.CINCO) as number;
-
-    // Ajustar el valor del abono para evitar problemas de redondeo
-    if (roundNumber(valorRestanteAbono, DECIMALS.DOS) === roundNumber(dataCuota.saldo, DECIMALS.DOS)) {
-      valorRestanteAbono = dataCuota.saldo;
+    // Ajustar el abono restante si es casi igual al saldo (evitando problemas de redondeo)
+    if (roundNumber(abonoRestante, DECIMALS.DOS) === roundNumber(dataCuota.saldo, DECIMALS.DOS)) {
+      abonoRestante = dataCuota.saldo;
     }
 
     // Actualizar el valor del abono restante
-    setValorAbono(valorRestanteAbono);
+    setValorAbono(abonoRestante);
 
-    // Agregar el detalle del pago y actualizar el saldo de la cuota
+    // Registrar el detalle del pago con el saldo total utilizado
     agregarPagoDetalle(dataCuota, dataCuota.saldo, 0);
+
+    // Establecer el saldo de la cuota a 0
     dataCuota.saldo = 0;
   }
 }
