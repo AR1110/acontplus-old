@@ -16,7 +16,7 @@ public class CustomerConfiguration : IEntityTypeConfiguration<AppCustomer>
             .HasDefaultValueSql("1");
 
         //unique index -> not unique constraint
-        builder.HasIndex(x => x.IDCard)
+        builder.HasIndex(x => x.IdCard)
             .HasDatabaseName("UXC_Customer_IDCard")
             .IsUnique();
     }

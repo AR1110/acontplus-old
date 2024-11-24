@@ -1,4 +1,4 @@
-﻿namespace FactElect.API.Services;
+﻿namespace FactElect.API.Services.Sri;
 
 public interface IAtsService
 {
@@ -8,7 +8,8 @@ public interface IAtsService
 
 public class AtsService(IAdoRepository adoRepository) : IAtsService
 {
-    private string ModuleName = "FactElect.Ats_";
+    private readonly string ModuleName = "FactElect.Ats_";
+
     public async Task<ApiResponse> CheckValidationAsync(Dictionary<string, object> parameters)
     {
         return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}CheckValidation", parameters);

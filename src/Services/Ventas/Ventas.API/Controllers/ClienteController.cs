@@ -1,4 +1,4 @@
-﻿namespace Ventas.API.Controllers.v1;
+﻿namespace Ventas.API.Controllers;
 
 public class ClienteController(IConfiguration configuration, IClienteService clienteService) : BaseApiController
 {
@@ -6,10 +6,9 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-            {
-                {"idRol" , User.GetUserRoleId()},
-                {"json" , SqlStringParam.Sanitize(json)},
-            };
+        {
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
         return Ok(await clienteService.GetAsync(parameters));
     }
 
@@ -18,33 +17,25 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
     public async Task<IActionResult> GetDataForm(string json)
     {
         var parameters = new Dictionary<string, object>
-            {
-                {"idUsuarioRol" , User.GetUserRoleId()},
-                {"json" , SqlStringParam.Sanitize(json)},
-            };
+        {
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
         return Ok(await clienteService.GetDataFormAsync(parameters));
     }
 
     [HttpGet("Search")]
     public async Task<IActionResult> Search(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(configuration);
-        try
+        if (!DataValidation.IsValidJson(json))
         {
-            if (!DataValidation.IsValidJson(json))
-            {
-                return BadRequest("Caracteres de busqueda invalidos");
-            }
-
-            await _db.SpExecuteAsync("Ventas.Cliente_Get_Search");
-            _db.AddDynamicParam("idRol ", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDataTableAsync();
+            return BadRequest("Caracteres de busqueda invalidos");
         }
-        finally { _db.Close(); }
 
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>
+        {
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await clienteService.SearchAsync(parameters));
     }
 
 
@@ -55,7 +46,6 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
         var _db = new DbAccess(configuration);
         try
         {
-
             await _db.SpExecuteAsync("Ventas.Cliente_Insert");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("json", JsonConvert.SerializeObject(data));
@@ -76,7 +66,6 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
         var _db = new DbAccess(configuration);
         try
         {
-
             await _db.SpExecuteAsync("Ventas.Cliente_Update");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
@@ -98,7 +87,6 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
         var _db = new DbAccess(configuration);
         try
         {
-
             await _db.SpExecuteAsync("Ventas.Cliente_Delete");
             _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
             _db.AddDynamicParam("id", id);
@@ -113,21 +101,9 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> FindById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(configuration);
-        try
-        {
-            await _db.SpExecuteAsync("Ventas.Cliente_Get_Id");
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object> { { "id", id } };
+        return Ok(await clienteService.GetByIdAsync(parameters));
     }
 }

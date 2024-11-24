@@ -1,4 +1,13 @@
-﻿namespace FactElect.API.Services;
+﻿namespace FactElect.API.Services.Logistica;
+
+public interface IGuiaRemisionService
+{
+    Task<object> GetAsync(Dictionary<string, object> parameters);
+    Task<object> GetByIdAsync(Dictionary<string, object> parameters);
+    Task<string> AddAsync(Dictionary<string, object> parameters);
+    Task<string> UpdateAsync(Dictionary<string, object> parameters);
+    Task<string> DeleteAsync(Dictionary<string, object> parameters);
+}
 
 public class GuiaRemisionService(IAdoRepository repository) : IGuiaRemisionService
 {
