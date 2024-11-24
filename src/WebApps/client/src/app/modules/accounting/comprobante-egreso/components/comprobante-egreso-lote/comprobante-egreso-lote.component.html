@@ -54,7 +54,8 @@
                 <small>{{ comprobanteEgresoStore.saldo() }}</small>
               </div>
               <div class="vstack">
-                <small class="fw-semibold">Diferencia</small><small>0</small>
+                <small class="fw-semibold">Diferencia</small>
+                <small>{{ comprobanteEgresoStore.valorDiferencia() }}</small>
               </div>
             </div>
           </mat-card-content>
@@ -64,7 +65,7 @@
     <div class="row g-4">
       <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-12 col-12">
         <div class="d-grid gap-4">
-          <mat-accordion multi appearance="outlined">
+          <mat-accordion multi>
             @for (item of comprobanteEgresoStore.cuentasPorPagar(); track
             $index) {
             <mat-expansion-panel>
@@ -81,6 +82,7 @@
                   {{ item.total | currency }}
                 </mat-panel-description>
               </mat-expansion-panel-header>
+
               <app-mat-dynamic-table
                 [templateOp]="templateOp"
                 [dataList]="item.cuotas"
@@ -94,16 +96,15 @@
 
           @if(comprobanteEgresoStore.formasPago().length>0){
           <div>
-            <div class="d-flex">
-              <span class="fw-bold h6">Forma de pagos</span>
+            <div class="d-flex align-items-center">
+              <span class="fw-medium">Forma de pagos</span>
             </div>
-
             <div
               class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2 justify-content-center"
             >
               @for (item of comprobanteEgresoStore.formasPago(); track $index) {
               <div class="col">
-                <mat-card>
+                <mat-card appearance="outlined">
                   <mat-card-header class="d-flex justify-content-between">
                     <mat-card-subtitle class="small">{{
                       item.nombreFormaPago

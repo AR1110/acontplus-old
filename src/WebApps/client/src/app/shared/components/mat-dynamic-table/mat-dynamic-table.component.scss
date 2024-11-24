@@ -75,6 +75,15 @@
 //.highlighted {
 //  background-color: #e7cccc;
 //}
+.table-container {
+  position: relative;
+
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+}
 
 tr.example-detail-row {
   height: 0;
