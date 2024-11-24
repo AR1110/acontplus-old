@@ -79,30 +79,6 @@ public class DbAccess(IConfiguration config) : IDisposable
         return response;
     }
 
-    public async Task<ApiResponseDeprecated> GetDataTableAsync()
-    {
-        var dt = new DataTable();
-        var response = new ApiResponseDeprecated();
-        if (_command == null)
-        {
-            return response;
-        }
-
-        await using var reader = await _command.ExecuteReaderAsync();
-        dt.Load(reader);
-
-        if (DataValidation.DataTableIsNull(dt))
-        {
-            response.Create("0", "La transacción no devolvio respuesta");
-        }
-        else
-        {
-            response.Create("1", payload: DataConverters.DataTableToJson(dt));
-        }
-
-        return response;
-    }
-
     public void Close()
     {
         if (_connection.State == ConnectionState.Open)

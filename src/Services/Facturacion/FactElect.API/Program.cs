@@ -1,10 +1,10 @@
-﻿using Autofac.Extensions.DependencyInjection;
+﻿using System.Runtime.InteropServices;
+using Autofac.Extensions.DependencyInjection;
 using Common.AppSettings;
 using FactElect.API.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Services.Common.Middleware;
-using System.Runtime.InteropServices;
 
 namespace FactElect.API;
 
