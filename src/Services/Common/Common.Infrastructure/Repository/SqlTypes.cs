@@ -4,6 +4,9 @@ public static class SqlTypes
 {
     public static SqlDbType GetDbType(object obj)
     {
+        if (obj == DBNull.Value)
+            return SqlDbType.Variant; // Default or fallback type for DBNull
+
         var type = obj.GetType();
         return type.Name switch
         {

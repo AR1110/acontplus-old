@@ -13,10 +13,9 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             cmd.CommandText = spName;
             if (parameters.Count > 0)
             {
-                foreach (var parameter in parameters.Where(parameter =>
-                             !string.IsNullOrEmpty(parameter.Key) && parameter.Value != null))
+                foreach (var parameter in parameters.Where(p => !string.IsNullOrEmpty(p.Key)))
                 {
-                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value);
+                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value ?? DBNull.Value);
                 }
             }
 
@@ -55,10 +54,9 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             cmd.CommandText = spName;
             if (parameters.Count > 0)
             {
-                foreach (var parameter in parameters.Where(parameter =>
-                             !string.IsNullOrEmpty(parameter.Key) && parameter.Value != null))
+                foreach (var parameter in parameters.Where(p => !string.IsNullOrEmpty(p.Key)))
                 {
-                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value);
+                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value ?? DBNull.Value);
                 }
             }
 
@@ -129,10 +127,9 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             cmd.CommandText = spName;
             if (parameters.Count > 0)
             {
-                foreach (var parameter in parameters.Where(parameter =>
-                             !string.IsNullOrEmpty(parameter.Key) && parameter.Value != null))
+                foreach (var parameter in parameters.Where(p => !string.IsNullOrEmpty(p.Key)))
                 {
-                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value);
+                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value ?? DBNull.Value);
                 }
             }
 
@@ -170,12 +167,9 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             cmd.CommandText = spName;
             if (parameters.Count > 0)
             {
-                foreach (var parameter in parameters)
+                foreach (var parameter in parameters.Where(p => !string.IsNullOrEmpty(p.Key)))
                 {
-                    if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
-                    {
-                        ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value);
-                    }
+                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value ?? DBNull.Value);
                 }
             }
 
@@ -217,10 +211,9 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             cmd.CommandText = spName;
             if (parameters.Count > 0)
             {
-                foreach (var parameter in parameters.Where(parameter =>
-                             !string.IsNullOrEmpty(parameter.Key) && parameter.Value != null))
+                foreach (var parameter in parameters.Where(p => !string.IsNullOrEmpty(p.Key)))
                 {
-                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value);
+                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value ?? DBNull.Value);
                 }
             }
 
@@ -267,12 +260,9 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             cmd.CommandText = spName;
             if (parameters.Count > 0)
             {
-                foreach (var parameter in parameters)
+                foreach (var parameter in parameters.Where(p => !string.IsNullOrEmpty(p.Key)))
                 {
-                    if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
-                    {
-                        ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value);
-                    }
+                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value ?? DBNull.Value);
                 }
             }
 
