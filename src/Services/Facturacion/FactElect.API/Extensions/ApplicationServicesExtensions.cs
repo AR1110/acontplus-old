@@ -15,6 +15,7 @@ public static class ApplicationServicesExtensions
             "Common.Infrastructure.Repository",
             "FactElect.API.Services",
             "FactElect.API.Services.Logistica",
+            "FactElect.API.Services.RetencionAts",
             "FactElect.API.Services.Sri",
             "FactElect.Application.Services"
         ];

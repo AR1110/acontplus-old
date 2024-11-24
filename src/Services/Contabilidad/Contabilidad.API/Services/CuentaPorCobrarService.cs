@@ -1,42 +1,28 @@
 ﻿namespace Contabilidad.API.Services;
 
-public class CuentaPorCobrarService : ICuentaPorCobrarService
+public class CuentaPorCobrarService(IAdoRepository adoRepository) : ICuentaPorCobrarService
 {
-    private readonly ContabilidadContext _context;
-    private readonly IAdoRepository _repository;
-    private readonly ApiResponseDeprecated _response;
-
-    public CuentaPorCobrarService(IAdoRepository repository, ContabilidadContext context)
-    {
-        _repository = repository;
-        _context = context;
-        _response = new ApiResponseDeprecated();
-    }
+    private const string ModuleName = "Contabilidad.CuotaPorCobrar_";
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("Contabilidad.CuentaPorCobrar_Get", parameters);
-        if (ds.Tables.Count == 0)
-        {
-            return null;
-        }
-
-        return DataConverters.DataSetToJson(ds);
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters);
+        return ds.Tables.Count == 0 ? null : DataConverters.DataSetToJson(ds);
     }
 
 
-    public async Task<string> AddAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.CuotaPorCobrar_Insert", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Insert", parameters);
     }
 
-    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.CuotaPorCobrar_Update", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Update", parameters);
     }
 
-    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.Caja_Delete", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Delete", parameters);
     }
 }

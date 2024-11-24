@@ -5,14 +5,12 @@
 public class ProveedorController : ControllerBase
 {
     private readonly IConfiguration _configuration;
-    private readonly DbAccess _db;
     private readonly ICustomLogger _log;
     private readonly IProveedorService _proveedorService;
 
     public ProveedorController(IConfiguration configuration, ICustomLogger log, IProveedorService proveedorService)
     {
         _configuration = configuration;
-        _db = new DbAccess(_configuration);
         _log = log;
         _proveedorService = proveedorService;
     }
