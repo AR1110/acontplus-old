@@ -16,6 +16,7 @@
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\FolderProfile1.pubxml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
@@ -32,7 +33,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
-    <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Common\Common.S3Application\Common.S3Application.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>

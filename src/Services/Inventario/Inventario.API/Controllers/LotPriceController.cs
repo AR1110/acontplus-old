@@ -1,4 +1,6 @@
-﻿namespace Inventario.API.Controllers;
+﻿using Common.AppSettings;
+
+namespace Inventario.API.Controllers;
 
 public class LotPriceController : BaseApiController
 {

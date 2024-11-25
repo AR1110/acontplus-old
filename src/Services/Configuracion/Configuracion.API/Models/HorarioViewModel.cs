@@ -1,4 +1,4 @@
-﻿namespace Common.Core.ViewModels;
+﻿namespace Configuracion.API.Models;
 
 public class HorarioViewModel
 {

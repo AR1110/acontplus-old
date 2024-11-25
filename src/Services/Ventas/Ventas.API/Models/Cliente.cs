@@ -1,4 +1,4 @@
-﻿namespace Common.Core.Models;
+﻿namespace Ventas.API.Models;
 
 public class Cliente
 {

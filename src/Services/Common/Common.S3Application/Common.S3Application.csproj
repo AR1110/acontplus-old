@@ -5,10 +5,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Core" />
     <PackageReference Include="AWSSDK.Core" />
     <PackageReference Include="AWSSDK.S3" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
   </ItemGroup>
 </Project>

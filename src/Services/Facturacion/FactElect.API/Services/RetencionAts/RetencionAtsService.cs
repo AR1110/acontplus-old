@@ -1,4 +1,4 @@
-﻿namespace FactElect.API.Services;
+﻿namespace FactElect.API.Services.RetencionAts;
 
 public interface IRetencionAtsService
 {

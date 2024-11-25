@@ -12,7 +12,7 @@ public static class ApplicationServicesExtensions
 
         string[] nameSpaces =
         [
-            "Common.Infrastructure.Repository",
+            "Common.Infrastructure.Repository.Implementations",
             "FactElect.API.Services",
             "FactElect.API.Services.Logistica",
             "FactElect.API.Services.RetencionAts",

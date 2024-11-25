@@ -5,9 +5,7 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Core" />
     <PackageReference Include="Newtonsoft.Json" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
   </ItemGroup>
 </Project>

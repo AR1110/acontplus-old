@@ -1,6 +1,9 @@
 ﻿using Autofac;
 using Common.API.Data;
 using Common.Infrastructure.Data;
+using Common.Infrastructure.Data.Configurations;
+using Common.Infrastructure.Data.Configurations;
+using Common.Infrastructure.Repository.Implementations;
 
 namespace Common.API.Extensions;
 
