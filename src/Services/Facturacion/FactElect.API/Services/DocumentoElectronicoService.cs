@@ -6,7 +6,7 @@ public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocume
 {
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get", parameters, true);
+        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get", parameters, false);
         return !DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
@@ -14,7 +14,7 @@ public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocume
 
     public async Task<ApiResponse> GetByStatusAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_GetByStatus", parameters, true);
+        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_GetByStatus", parameters, false);
         return !DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };

@@ -42,7 +42,7 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
         return response;
     }
 
-    public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool oldSp,
+    public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool withTableNames,
         bool timeout)
     {
         DataSet ds = null;
@@ -61,7 +61,7 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
             }
 
             const string outParam = "@tableNames";
-            if (!oldSp)
+            if (withTableNames)
             {
                 ParametersUtils.AddSqlParameterOut(cmd, outParam, SqlDbType.VarChar, 500);
             }
@@ -84,7 +84,7 @@ public class AdoRepository(DbContextFactory contexts, IConfiguration configurati
                 await Task.Run(() => adapter.Fill(ds));
             }
 
-            if (!oldSp)
+            if (withTableNames)
             {
                 var tableNames = ParametersUtils.GetParameter(cmd, outParam).ToString()?.Split(',');
                 await Task.Run(() =>

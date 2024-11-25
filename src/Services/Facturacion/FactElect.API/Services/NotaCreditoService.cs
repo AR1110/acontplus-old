@@ -16,7 +16,7 @@ public class NotaCreditoService(IAdoRepository adoRepository) : INotaCreditoServ
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, true);
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, false);
         return !DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };

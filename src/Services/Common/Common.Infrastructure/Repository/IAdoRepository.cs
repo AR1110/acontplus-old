@@ -4,7 +4,7 @@ public interface IAdoRepository
 {
     public Task<List<T>> DynamicListAsync<T>(string spname, Dictionary<string, object> parameters);
 
-    public Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp = false,
+    public Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool withTableNames = true,
         bool timeout = true);
 
     public Task<DataTable> GetDataTableAsync(string spname, Dictionary<string, object> parameters);
