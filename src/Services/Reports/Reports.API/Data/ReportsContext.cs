@@ -1,4 +1,4 @@
-﻿using Common.Infrastructure.Data;
+﻿using Common.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Reports.API.Data

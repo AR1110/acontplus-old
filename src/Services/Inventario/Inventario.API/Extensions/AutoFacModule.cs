@@ -1,4 +1,7 @@
-﻿namespace Inventario.API.Extensions;
+﻿using Common.Infrastructure.Data;
+using Common.Infrastructure.Repository.Implementations;
+
+namespace Inventario.API.Extensions;
 
 public class AutoFacModule : Module
 {

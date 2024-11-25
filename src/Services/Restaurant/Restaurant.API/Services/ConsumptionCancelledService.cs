@@ -1,6 +1,6 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using Common.Infrastructure.Repository;
+using Common.Infrastructure.Repository.Interfaces;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services

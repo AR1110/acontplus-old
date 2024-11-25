@@ -1,6 +1,7 @@
-﻿using Common.Core.ViewModels;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Data;
+using Configuracion.API.Models;
+using Common.AppSettings;
 
 namespace Configuracion.API.Services;
 

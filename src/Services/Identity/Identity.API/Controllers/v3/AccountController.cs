@@ -1,4 +1,5 @@
-﻿using Identity.API.Helpers;
+﻿using Common.AppSettings;
+using Identity.API.Helpers;
 
 namespace Identity.API.Controllers.v3;
 

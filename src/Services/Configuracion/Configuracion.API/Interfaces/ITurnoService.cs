@@ -1,4 +1,7 @@
-﻿namespace Configuracion.API.Interfaces;
+﻿using Common.AppSettings;
+using Configuracion.API.Models;
+
+namespace Configuracion.API.Interfaces;
 
 public interface ITurnoService
 {

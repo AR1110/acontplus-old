@@ -12,7 +12,7 @@ public class EstablecimientoAsignacionService(IAdoRepository repository) : IEsta
 
     public async Task<ApiResponse> GetDataFormAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync("Config.Estab_Asig_Get_Data_Form", parameters, oldSp: true);
+        var ds = await repository.GetDataSetAsync("Config.Estab_Asig_Get_Data_Form", parameters, false);
         return DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "0", Message = "No Data" }
             : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) };

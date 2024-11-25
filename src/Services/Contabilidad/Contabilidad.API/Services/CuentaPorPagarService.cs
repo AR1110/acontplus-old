@@ -7,7 +7,7 @@ public class CuentaPorPagarService(IAdoRepository _repository) : ICuentaPorPagar
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var response = new ApiResponse();
-        var ds = await _repository.GetDataSetAsync($"{nameSp}Get", parameters, true);
+        var ds = await _repository.GetDataSetAsync($"{nameSp}Get", parameters, false);
         if (ds.Tables.Count == 0)
         {
             response.Code = "0";

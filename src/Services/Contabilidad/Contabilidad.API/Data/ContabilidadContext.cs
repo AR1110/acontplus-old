@@ -1,4 +1,6 @@
-﻿namespace Contabilidad.API.Data;
+﻿using Common.Infrastructure.Data.Configurations;
+
+namespace Contabilidad.API.Data;
 
 public class ContabilidadContext : BaseContext
 {

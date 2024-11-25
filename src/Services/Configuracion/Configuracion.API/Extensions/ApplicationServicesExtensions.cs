@@ -23,7 +23,7 @@ public static class ApplicationServicesExtensions
         string[] nameSpaces = 
             [
                 "Common.Application.Services",
-                "Common.Infrastructure.Repository",
+                "Common.Infrastructure.Repository.Implementations",
                 "Configuracion.API.Services",
                 "Configuracion.API.Services.Sri",
                 "Configuracion.API.Services.WizardConfig",

@@ -1,94 +1,35 @@
-﻿// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿using FactElect.API.Services.RetencionAts;
 
 namespace FactElect.API.Controllers.RetencionAts;
 
-[Route("api/[controller]")]
-[ApiController]
-public class DocSustentoController : ControllerBase
+public class DocSustentoController(IDocSustentoService docSustentoService) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    private readonly DbAccess _db;
-
-
-    public DocSustentoController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-        _db = new DbAccess(_configuration);
-    }
-
-    // GET: api/<DocSustentoController>
-    [HttpGet]
-    public IEnumerable<string> Get()
-    {
-        return new[] { "value1", "value2" };
-    }
-
-    // GET api/<DocSustentoController>/5
-    [HttpGet("{id}")]
-    public string Get(int id)
-    {
-        return "value";
-    }
-
-    // POST api/<DocSustentoController>
     [HttpPost("{idRetencionAts}")]
     public async Task<IActionResult> Post(int idRetencionAts, string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("FactElect.RetAts_Doc_Sust_Insert");
-            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-            _db.AddDynamicParam("idRetencionAts", idRetencionAts);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idRetencionAts", idRetencionAts },
+            { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await docSustentoService.AddAsync(parameters));
     }
 
-    // PUT api/<DocSustentoController>/5
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("FactElect.RetAts_Doc_Sust_Update");
-            _db.AddDynamicParam("idUsuarioRol ", User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await docSustentoService.UpdateAsync(parameters));
     }
 
-    // DELETE api/<DocSustentoController>/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SpExecuteAsync("FactElect.RetAts_Doc_Sust_Delete");
-            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        return Ok(await docSustentoService.DeleteAsync(parameters));
     }
 }

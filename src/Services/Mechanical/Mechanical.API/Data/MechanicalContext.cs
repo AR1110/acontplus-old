@@ -1,5 +1,6 @@
 ﻿using Common.Core.Entities;
-using Common.Infrastructure.Data;
+using Common.Infrastructure.Data.Configurations;
+using Common.Infrastructure.Data.Configurations;
 using Mechanical.API.Entities;
 using Microsoft.EntityFrameworkCore;
 

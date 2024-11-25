@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Common.Infrastructure.Data.Configurations;
 
 namespace Vet.API.Data;
 

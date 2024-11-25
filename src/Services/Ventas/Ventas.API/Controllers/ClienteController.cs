@@ -1,15 +1,16 @@
-﻿namespace Ventas.API.Controllers.v1;
+﻿using Ventas.API.Models;
 
-public class ClienteController(IConfiguration configuration, IClienteService clienteService) : BaseApiController
+namespace Ventas.API.Controllers;
+
+public class ClienteController(IClienteService clienteService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-            {
-                {"idRol" , User.GetUserRoleId()},
-                {"json" , SqlStringParam.Sanitize(json)},
-            };
+        {
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
         return Ok(await clienteService.GetAsync(parameters));
     }
 
@@ -18,116 +19,59 @@ public class ClienteController(IConfiguration configuration, IClienteService cli
     public async Task<IActionResult> GetDataForm(string json)
     {
         var parameters = new Dictionary<string, object>
-            {
-                {"idUsuarioRol" , User.GetUserRoleId()},
-                {"json" , SqlStringParam.Sanitize(json)},
-            };
+        {
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
         return Ok(await clienteService.GetDataFormAsync(parameters));
     }
 
     [HttpGet("Search")]
     public async Task<IActionResult> Search(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(configuration);
-        try
+        if (!DataValidation.IsValidJson(json))
         {
-            if (!DataValidation.IsValidJson(json))
-            {
-                return BadRequest("Caracteres de busqueda invalidos");
-            }
-
-            await _db.SpExecuteAsync("Ventas.Cliente_Get_Search");
-            _db.AddDynamicParam("idRol ", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDataTableAsync();
+            return BadRequest("Caracteres de busqueda invalidos");
         }
-        finally { _db.Close(); }
 
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>
+        {
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await clienteService.SearchAsync(parameters));
     }
 
 
     [HttpPost]
     public async Task<IActionResult> Insert([FromBody] Cliente data)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(configuration);
-        try
+        var parameters = new Dictionary<string, object>
         {
-
-            await _db.SpExecuteAsync("Ventas.Cliente_Insert");
-            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-            _db.AddDynamicParam("json", JsonConvert.SerializeObject(data));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", JsonConvert.SerializeObject(data) }
+        };
+        return Ok(await clienteService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] Cliente data)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(configuration);
-        try
+        var parameters = new Dictionary<string, object>
         {
-
-            await _db.SpExecuteAsync("Ventas.Cliente_Update");
-            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", JsonConvert.SerializeObject(data));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, { "json", JsonConvert.SerializeObject(data) }
+        };
+        return Ok(await clienteService.UpdateAsync(parameters));
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(configuration);
-        try
-        {
-
-            await _db.SpExecuteAsync("Ventas.Cliente_Delete");
-            _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, };
+        return Ok(await clienteService.DeleteAsync(parameters));
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> FindById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(configuration);
-        try
-        {
-            await _db.SpExecuteAsync("Ventas.Cliente_Get_Id");
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object> { { "id", id } };
+        return Ok(await clienteService.GetByIdAsync(parameters));
     }
 }
