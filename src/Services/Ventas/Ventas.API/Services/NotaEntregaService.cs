@@ -6,7 +6,7 @@ public class NotaEntregaService(IAdoSqlServer adoSqlServer) : INotaEntregaServic
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync(NameSchema + "Get", parameters, true, false);
+        var ds = await adoSqlServer.GetDataSetAsync(NameSchema + "Get", parameters, false, false);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
         return DataConverters.DataSetToJson(ds, true);
@@ -14,7 +14,7 @@ public class NotaEntregaService(IAdoSqlServer adoSqlServer) : INotaEntregaServic
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync(NameSchema + "GetId", parameters, true);
+        var ds = await adoSqlServer.GetDataSetAsync(NameSchema + "GetId", parameters, false);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
         return DataConverters.DataSetToJson(ds, true);

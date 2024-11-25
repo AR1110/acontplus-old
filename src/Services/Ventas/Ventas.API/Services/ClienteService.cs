@@ -16,7 +16,7 @@ public class ClienteService(IAdoSqlServer adoSqlServer) : IClienteService
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync($"{ModuleName}Get", parameters, true);
+        var ds = await adoSqlServer.GetDataSetAsync($"{ModuleName}Get", parameters, false);
         return !DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
@@ -32,7 +32,7 @@ public class ClienteService(IAdoSqlServer adoSqlServer) : IClienteService
 
     public async Task<ApiResponse> GetDataFormAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync($"{ModuleName}Data_Form", parameters, true);
+        var ds = await adoSqlServer.GetDataSetAsync($"{ModuleName}Data_Form", parameters, false);
         return !DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };

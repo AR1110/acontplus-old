@@ -38,7 +38,7 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
         return response;
     }
 
-    public async Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp,
+    public async Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool withTableNames,
         bool timeout, string connectionString)
     {
         DataSet ds = null;
@@ -56,7 +56,7 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
             }
 
             const string outParam = "@tableNames";
-            if (!oldSp)
+            if (!withTableNames)
             {
                 ParametersUtilsSqlServer.AddSqlParameterOut(cmd, outParam, SqlDbType.VarChar, 500);
             }
@@ -79,7 +79,7 @@ public class AdoSqlServer(IConfiguration configuration) : IAdoSqlServer
                 await Task.Run(() => adapter.Fill(ds));
             }
 
-            if (!oldSp)
+            if (!withTableNames)
             {
                 var tableNames = ParametersUtilsSqlServer.GetParameter(cmd, outParam).ToString()?.Split(',');
                 await Task.Run(() =>
