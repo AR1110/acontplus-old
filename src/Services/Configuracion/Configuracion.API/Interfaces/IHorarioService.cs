@@ -4,6 +4,6 @@ namespace Configuracion.API.Interfaces;
 
 public interface IHorarioService
 {
-    Task<ApiResponseDeprecated> GetAsync(int userRoleId, int turnoId);
-    Task<ApiResponseDeprecated> GetDaysAsync();
+    Task<LegacyApiResponse> GetAsync(int userRoleId, int turnoId);
+    Task<LegacyApiResponse> GetDaysAsync();
 }

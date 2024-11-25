@@ -26,7 +26,7 @@ public class DocumentoRecibidoController(
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var response = new ApiResponseDeprecated();
+        var response = new LegacyApiResponse();
         var ceXml = new ComprobanteElectronico();
         var sms = string.Empty;
         var getXmlSriData = new DataXmlComprobante();
@@ -59,7 +59,7 @@ public class DocumentoRecibidoController(
     [HttpPost("Read")]
     public async Task<IActionResult> Post(IFormFile file)
     {
-        var response = new ApiResponseDeprecated();
+        var response = new LegacyApiResponse();
 
         if (file.ContentType != "text/plain")
         {

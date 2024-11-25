@@ -1,12 +1,12 @@
 ﻿namespace Common.AppSettings;
 
-public static class EnvHelper
+public static class EnvironmentHelper
 {
-    public static Env GetEnvironment()
+    public static EnvironmentEnums GetEnvironment()
     {
         var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         ArgumentNullException.ThrowIfNull(environmentName);
 
-        return (Env)Enum.Parse(typeof(Env), environmentName);
+        return (EnvironmentEnums)Enum.Parse(typeof(EnvironmentEnums), environmentName);
     }
 }

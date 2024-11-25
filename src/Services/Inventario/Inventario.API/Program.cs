@@ -14,8 +14,8 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Limits.MaxRequestLineSize = 1048576;
 });
 
-builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
-ConfigHelper.AddJsonFiles(builder.Configuration);
+builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
+ConfigurationHelper.AddJsonFiles(builder.Configuration);
 
 builder.Services.AddApplicationServices(builder.Configuration);
 

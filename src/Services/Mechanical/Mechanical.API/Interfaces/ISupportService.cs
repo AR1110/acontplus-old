@@ -8,6 +8,6 @@ namespace Mechanical.API.Interfaces
         Task<string> AddAsync(Dictionary<string, object> parameters);
         Task<string> UpdateAsync(Dictionary<string, object> parameters);
         Task<string> DeleteAsync(Dictionary<string, object> parameters);
-        Task<ApiResponseDeprecated> UpdateStateAsync(int id, int SupportStatusId);
+        Task<LegacyApiResponse> UpdateStateAsync(int id, int SupportStatusId);
     }
 }
