@@ -1,5 +1,5 @@
 ﻿using Common.Core.Models;
-using Common.Infrastructure.Repository;
+using Common.Infrastructure.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;

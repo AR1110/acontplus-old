@@ -1,7 +1,8 @@
 ﻿using System.Reflection;
 using Common.API.Entities;
 using Common.Core.Entities;
-using Common.Infrastructure.Data;
+using Common.Infrastructure.Data.Configurations;
+using Common.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Common.API.Data;

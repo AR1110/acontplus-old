@@ -1,4 +1,7 @@
-﻿namespace Configuracion.API.Services;
+﻿using Common.AppSettings;
+using Configuracion.API.Models;
+
+namespace Configuracion.API.Services;
 
 public class EstadoDocumentoService : IEstadoDocumentoService
 {

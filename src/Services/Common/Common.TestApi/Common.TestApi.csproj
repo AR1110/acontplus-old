@@ -6,10 +6,8 @@
     <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

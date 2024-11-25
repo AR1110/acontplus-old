@@ -2,11 +2,21 @@
 
 public class ClienteService(IAdoSqlServer adoSqlServer) : IClienteService
 {
-    private const string ModuleName = "Ventas.Cliente_Get_";
+    private const string ModuleName = "Ventas.Cliente_";
+
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    {
+        return await adoSqlServer.SpExecuteAsync<ApiResponse>($"{ModuleName}Insert", parameters);
+    }
+
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    {
+        return await adoSqlServer.SpExecuteAsync<ApiResponse>($"{ModuleName}Delete", parameters);
+    }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync($"{ModuleName}Get", parameters, true);
+        var ds = await adoSqlServer.GetDataSetAsync($"{ModuleName}Get", parameters, false);
         return !DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
@@ -22,7 +32,7 @@ public class ClienteService(IAdoSqlServer adoSqlServer) : IClienteService
 
     public async Task<ApiResponse> GetDataFormAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync($"{ModuleName}Data_Form", parameters, true);
+        var ds = await adoSqlServer.GetDataSetAsync($"{ModuleName}Data_Form", parameters, false);
         return !DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
@@ -34,5 +44,10 @@ public class ClienteService(IAdoSqlServer adoSqlServer) : IClienteService
         return DataValidation.DataTableIsNull(dt)
             ? new ApiResponse { Code = "0", Message = "Data not found" }
             : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
+    }
+
+    public Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        throw new NotImplementedException();
     }
 }

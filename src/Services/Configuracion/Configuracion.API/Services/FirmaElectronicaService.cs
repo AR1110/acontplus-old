@@ -11,7 +11,7 @@
 
         public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, oldSp: true);
+            var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, false);
             return !DataValidation.DataSetIsNull(ds)
                 ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
                 : new ApiResponse { Code = "0", Message = "No data found" };

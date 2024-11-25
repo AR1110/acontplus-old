@@ -28,7 +28,7 @@ public class LiquidacionCompraService : ILiquidacionCompraService
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("Compra.Liquidacion_Get_Id", parameters, true);
+        var ds = await _repository.GetDataSetAsync("Compra.Liquidacion_Get_Id", parameters, false);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
         return DataConverters.DataSetToJson(ds, true);

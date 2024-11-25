@@ -1,4 +1,6 @@
-﻿namespace Contabilidad.API.Services;
+﻿using Common.AppSettings;
+
+namespace Contabilidad.API.Services;
 
 public class CajaService : ICajaService
 {

@@ -11,11 +11,12 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
-    <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Common\Common.S3Application\Common.S3Application.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Core" />
+    <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />

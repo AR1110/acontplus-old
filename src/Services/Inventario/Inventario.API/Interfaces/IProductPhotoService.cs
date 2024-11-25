@@ -1,4 +1,6 @@
-﻿namespace Inventario.API.Interfaces;
+﻿using Common.AppSettings;
+
+namespace Inventario.API.Interfaces;
 
 public interface IProductPhotoService
 {

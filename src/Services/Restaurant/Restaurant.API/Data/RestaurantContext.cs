@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using Common.Core.Entities;
-using Common.Infrastructure.Data;
+using Common.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

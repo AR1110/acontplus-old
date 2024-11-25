@@ -1,4 +1,5 @@
-﻿using Common.Infrastructure.Repository;
+﻿using Common.Infrastructure.Repository.Implementations;
+using Common.Infrastructure.Repository.Interfaces;
 using Common.TestApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

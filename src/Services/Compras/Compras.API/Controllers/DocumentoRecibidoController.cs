@@ -1,4 +1,5 @@
-﻿using Compras.API.Helpers;
+﻿using Common.AppSettings;
+using Compras.API.Helpers;
 
 namespace Compras.API.Controllers;
 

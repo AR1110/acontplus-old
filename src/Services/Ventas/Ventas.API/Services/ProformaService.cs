@@ -21,7 +21,7 @@ public class ProformaService(IAdoSqlServer adoSqlServer) : IProformaService
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync($"{NameSchema}Get", parameters, true);
+        var ds = await adoSqlServer.GetDataSetAsync($"{NameSchema}Get", parameters, false);
         return !DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
@@ -29,7 +29,7 @@ public class ProformaService(IAdoSqlServer adoSqlServer) : IProformaService
 
     public async Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync($"{NameSchema}GetId", parameters, true);
+        var ds = await adoSqlServer.GetDataSetAsync($"{NameSchema}GetId", parameters, false);
         return !DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
