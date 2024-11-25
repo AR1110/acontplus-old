@@ -29,7 +29,7 @@ public class AccountController(
         }
 
         var response =
-            JsonConvert.DeserializeObject<ApiResponseDeprecated>(
+            JsonConvert.DeserializeObject<LegacyApiResponse>(
                 await accountService.LoginRestaurantAsync(authRequest.Username, authRequest.Password));
 
         if (response.code == "1")

@@ -6,13 +6,13 @@ public class AnticipoService : IAnticipoService
 {
     private readonly ContabilidadContext _context;
     private readonly IAdoRepository _repository;
-    private readonly ApiResponseDeprecated _response;
+    private readonly LegacyApiResponse _response;
 
     public AnticipoService(IAdoRepository repository, ContabilidadContext context)
     {
         _repository = repository;
         _context = context;
-        _response = new ApiResponseDeprecated();
+        _response = new LegacyApiResponse();
     }
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
