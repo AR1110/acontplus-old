@@ -28,7 +28,7 @@ public class NotaCreditoService : INotaCreditoService
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("Compra.NotaCredito_GetId", parameters, true);
+        var ds = await _repository.GetDataSetAsync("Compra.NotaCredito_GetId", parameters, false);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
         return DataConverters.DataSetToJson(ds, true);

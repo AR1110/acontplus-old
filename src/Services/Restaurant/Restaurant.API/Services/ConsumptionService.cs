@@ -9,7 +9,7 @@ namespace Restaurant.API.Services
     {
         public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await adoRepository.GetDataSetAsync("Restaurant.ConsumoTpv_Get", parameters, true);
+            var ds = await adoRepository.GetDataSetAsync("Restaurant.ConsumoTpv_Get", parameters, false);
             return DataValidation.DataSetIsNull(ds, true)
                 ? new ApiResponse { Code = "0", Message = "Data not found" }
                 : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };

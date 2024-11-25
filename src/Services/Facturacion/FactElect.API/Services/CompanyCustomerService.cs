@@ -14,7 +14,7 @@ public class CompanyCustomerService(IAdoRepository repository) : ICompanyCustome
 
     public async Task<ApiResponseDeprecated> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync("Ventas.Cliente_Get", parameters, true);
+        var ds = await repository.GetDataSetAsync("Ventas.Cliente_Get", parameters, false);
         if (DataValidation.DataSetIsNull(ds))
         {
             return new ApiResponseDeprecated { code = "0", message = "No se encontraron clientes" };
