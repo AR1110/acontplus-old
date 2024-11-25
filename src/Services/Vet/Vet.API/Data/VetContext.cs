@@ -51,68 +51,11 @@ public class VetContext : BaseContext
             }
         }
 
-        //modelBuilder.Entity<t>().ToTable("TableName", schema: "Schema")
-        modelBuilder.Entity<PetType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<PetType>().Property(x => x.Enabled).HasDefaultValue(true);
-        modelBuilder.Entity<PetType>().HasIndex(x => x.Code).HasDatabaseName("UQ_PetType_Code").IsUnique();
-
-
-        modelBuilder.Entity<Breed>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<Breed>().Property(x => x.Enabled).HasDefaultValue(true);
-        modelBuilder.Entity<Breed>().HasIndex(x => x.Code).HasDatabaseName("UQ_Breed_Code").IsUnique();
-
-
-        modelBuilder.Entity<Gender>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<Gender>().Property(x => x.Enabled).HasDefaultValue(true);
-        modelBuilder.Entity<Gender>().HasIndex(x => x.Code).HasDatabaseName("UQ_Gender_Code").IsUnique();
-
-
-        modelBuilder.Entity<Pet>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<Pet>().Property(x => x.Enabled).HasDefaultValue(true);
-
-        modelBuilder.Entity<DiseaseStatus>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<DiseaseStatus>().Property(x => x.Enabled).HasDefaultValue(true);
-        modelBuilder.Entity<DiseaseStatus>().HasIndex(x => x.Code).HasDatabaseName("UQ_DiseaseStatus_Code").IsUnique();
-
-
-        modelBuilder.Entity<DiseaseType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        ;
-        modelBuilder.Entity<DiseaseType>().Property(x => x.Enabled).HasDefaultValue(true);
-        modelBuilder.Entity<DiseaseType>().HasIndex(x => x.Code).HasDatabaseName("UQ_DiseaseType_Code").IsUnique();
-
-        modelBuilder.Entity<Disease>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<Disease>().Property(x => x.Enabled).HasDefaultValue(true);
-        modelBuilder.Entity<Disease>().HasIndex(x => x.Code).HasDatabaseName("UQ_Disease_Code").IsUnique();
-
-
-        modelBuilder.Entity<HealthCheck>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<HealthCheck>().Property(x => x.Enabled).HasDefaultValue(true);
-
-        modelBuilder.Entity<BehaviorStatus>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<BehaviorStatus>().Property(x => x.Enabled).HasDefaultValue(true);
-        modelBuilder.Entity<BehaviorStatus>().HasIndex(x => x.Code).HasDatabaseName("UQ_BehaviorStatus_Code").IsUnique();
-
-
-        modelBuilder.Entity<Behavior>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<Behavior>().Property(x => x.Enabled).HasDefaultValue(true);
-        modelBuilder.Entity<Behavior>().HasIndex(x => x.Code).HasDatabaseName("UQ_Behavior_Code").IsUnique();
-
-
-        modelBuilder.Entity<BehaviorTest>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<BehaviorTest>().Property(x => x.Enabled).HasDefaultValue(true);
-
-        modelBuilder.Entity<MedicalHistory>()
-            .HasMany(i => i.HealthChecks)
-            .WithOne(d => d.MedicalHistory)
-            .HasForeignKey(d => d.MedicalHistoryId);
-
-        modelBuilder.Entity<MedicalHistory>()
-            .HasMany(i => i.BehaviorTests)
-            .WithOne(d => d.MedicalHistory)
-            .HasForeignKey(d => d.MedicalHistoryId);
-
-        modelBuilder.Entity<MedicalHistory>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<MedicalHistory>().Property(x => x.Enabled).HasDefaultValue(true);
+        SimpleEntityRegistration.RegisterEntities(modelBuilder,
+            typeof(BehaviorTest),
+            typeof(HealthCheck),
+            typeof(Pet)
+            );
     }
 
     public override int SaveChanges()
