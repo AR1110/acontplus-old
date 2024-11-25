@@ -1,4 +1,4 @@
-﻿namespace Common.Core.Models;
+﻿namespace FactElect.API.Models;
 
 public class Year
 {

@@ -1,4 +1,7 @@
-﻿namespace Contabilidad.API.Extensions;
+﻿using Common.Infrastructure.Data;
+using Common.Infrastructure.Repository.Implementations;
+
+namespace Contabilidad.API.Extensions;
 
 public class AutoFacModule : Module
 {

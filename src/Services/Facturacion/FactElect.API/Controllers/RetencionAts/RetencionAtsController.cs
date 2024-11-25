@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Controllers.RetencionAts;
+﻿using FactElect.API.Services.RetencionAts;
+
+namespace FactElect.API.Controllers.RetencionAts;
 
 public class RetencionAtsController(IRetencionAtsService retencionAtsService) : BaseApiController
 {

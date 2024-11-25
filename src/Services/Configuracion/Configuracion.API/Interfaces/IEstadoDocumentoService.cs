@@ -1,4 +1,6 @@
-﻿namespace Configuracion.API.Interfaces;
+﻿using Common.AppSettings;
+
+namespace Configuracion.API.Interfaces;
 
 public interface IEstadoDocumentoService
 {

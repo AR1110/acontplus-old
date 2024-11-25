@@ -1,4 +1,4 @@
-﻿namespace Common.Core.Models;
+﻿namespace Common.AppSettings;
 
 public class ApiResponseDeprecated
 {

@@ -1,4 +1,6 @@
-﻿namespace Contabilidad.API.Interfaces;
+﻿using Common.AppSettings;
+
+namespace Contabilidad.API.Interfaces;
 
 public interface ITipoService
 {

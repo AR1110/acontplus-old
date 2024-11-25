@@ -1,5 +1,6 @@
 ﻿using System.Data;
-using Common.Core.ViewModels;
+using Common.AppSettings;
+using Configuracion.API.Models;
 using Microsoft.Data.SqlClient;
 
 namespace Configuracion.API.Data;

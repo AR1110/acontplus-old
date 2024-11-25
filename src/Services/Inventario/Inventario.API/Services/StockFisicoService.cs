@@ -1,4 +1,6 @@
-﻿namespace Inventario.API.Services;
+﻿using Common.AppSettings;
+
+namespace Inventario.API.Services;
 
 public class StockFisicoService : IStockFisicoService
 {

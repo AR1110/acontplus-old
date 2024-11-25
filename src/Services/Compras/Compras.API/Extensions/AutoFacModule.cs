@@ -1,4 +1,8 @@
-﻿namespace Compras.API.Extensions;
+﻿using Common.Infrastructure.Data;
+using Common.Infrastructure.Data.Configurations;
+using Common.Infrastructure.Repository.Implementations;
+
+namespace Compras.API.Extensions;
 
 public class AutoFacModule : Module
 {

@@ -7,7 +7,7 @@ public interface IDocSustPagoService
     Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
 }
 
-public class DocSustPagoService (IAdoRepository adoRepository, IDocSustPagoService docSustPagoService)
+public class DocSustPagoService (IAdoRepository adoRepository)
 {
     private const string ModuleName = "FactElect.RetAts_Doc_Sust_Pago_";
 

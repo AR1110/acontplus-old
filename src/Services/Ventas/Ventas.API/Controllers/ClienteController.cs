@@ -1,4 +1,6 @@
-﻿namespace Ventas.API.Controllers;
+﻿using Ventas.API.Models;
+
+namespace Ventas.API.Controllers;
 
 public class ClienteController(IClienteService clienteService) : BaseApiController
 {

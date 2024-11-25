@@ -1,4 +1,4 @@
-﻿namespace Common.Core.Models;
+﻿namespace Configuracion.API.Models;
 
 public class ImportacionParams
 {

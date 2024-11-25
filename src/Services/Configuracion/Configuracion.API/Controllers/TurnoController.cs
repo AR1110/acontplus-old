@@ -1,4 +1,6 @@
-﻿namespace Configuracion.API.Controllers;
+﻿using Configuracion.API.Models;
+
+namespace Configuracion.API.Controllers;
 
 public class TurnoController(ITurnoService turnoSvc) : BaseApiController
 {

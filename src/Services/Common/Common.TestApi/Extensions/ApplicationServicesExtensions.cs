@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.TestApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Common.TestApi.Extensions
 {
