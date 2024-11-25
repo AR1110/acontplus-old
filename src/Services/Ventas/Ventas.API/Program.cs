@@ -1,6 +1,5 @@
-﻿ 
+﻿using System.Runtime.InteropServices;
 using Common.AppSettings;
-using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +16,7 @@ builder.Services.AddSwaggerDocumentation();
 
 builder.Services.AddApiVersioningConfig();
 
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()); 
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
 var app = builder.Build();
 

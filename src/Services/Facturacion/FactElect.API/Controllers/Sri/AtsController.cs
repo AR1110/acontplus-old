@@ -1,15 +1,18 @@
-﻿namespace FactElect.API.Controllers.Sri;
+﻿using FactElect.API.Models;
+using FactElect.API.Services.Sri;
+
+namespace FactElect.API.Controllers.Sri;
 
 public class AtsController(IAtsService atsService) : BaseApiController
 {
     private readonly AtsXml _atsXml = new();
+
     [HttpGet("CheckValidation")]
     public async Task<IActionResult> CheckValidation(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            {"userRoleId", User.GetUserRoleId() },
-            {"json", SqlStringParam.Sanitize(json)},
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await atsService.CheckValidationAsync(parameters));
     }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Common.TestApi;
+namespace Common.TestApi.Data;
 
 public class TestContext : DbContext
 {

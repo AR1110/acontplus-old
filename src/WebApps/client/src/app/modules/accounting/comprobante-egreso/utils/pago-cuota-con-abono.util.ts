@@ -22,7 +22,8 @@ export const pagoCuotaConAbonoUtil = function ({ dataCuota, valorAbono, esAbonoP
 
     } else {
       let totalAbonoCuota = plus(dataCuota.abono, valorAbono, DECIMALS.CINCO) as number;
-
+      console.log(totalAbonoCuota)
+      console.log(dataCuota.saldo)
       if (roundNumber(totalAbonoCuota, DECIMALS.DOS) === roundNumber(dataCuota.saldo, DECIMALS.DOS)) {
         dataCuota.abono = dataCuota.saldo;
       } else {
@@ -35,7 +36,7 @@ export const pagoCuotaConAbonoUtil = function ({ dataCuota, valorAbono, esAbonoP
 
     // Resta el valor del abono al saldo total actual de la cuota
     let saldoTotalActual = minus(dataCuota.saldo, valorAbono, DECIMALS.CINCO) as number;
-
+    console.log(saldoTotalActual)
     //se verifica antes  por temas de decimales porque al final queda milesimas
     if (roundNumber(saldoTotalActual, DECIMALS.DOS) === 0) {
       dataCuota.saldo = 0;

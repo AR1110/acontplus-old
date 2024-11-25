@@ -6,10 +6,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Core" />
     <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="ReportViewerCore.NETCore" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
   </ItemGroup>
 </Project>

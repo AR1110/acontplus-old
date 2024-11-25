@@ -1,23 +1,26 @@
-import {Component, computed, inject, model, signal} from '@angular/core';
+import {Component,  computed,  inject, model } from '@angular/core';
 import {
   CustomContainerDialogComponent
 } from "@core/components/custom-container-dialog/custom-container-dialog.component";
 
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {  MatDialogRef} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
-import {PaymentTypeCode} from "@accounting/enums/accounting.constants";
 import {MatInputModule} from "@angular/material/input";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {provideNativeDateAdapter} from "@angular/material/core";
 import {MatDatepickerModule} from "@angular/material/datepicker";
-import {ComprobanteEgresoStore} from "@accounting/comprobante-egreso/comprobante-egreso.store";
+import {ComprobanteEgresoStore, getDataFormaPagoState} from "@accounting/comprobante-egreso/comprobante-egreso.store";
 import {FormsModule} from "@angular/forms";
-import { ToasterService } from '@core/services/toaster.service';
-import { getValidId } from '@core/utils/utils';
-import { isDateValid } from '@core/utils/date.util';
-import { ComprobanteEgresoUtil } from '../../utils/comprobante-egreso.util';
+import { NgxMaskDirective } from 'ngx-mask';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { CitySearchComponent } from './city-search/city-search.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MatTableDataSource } from '@angular/material/table';
+
 
 @Component({
     selector: 'app-forma-pago',
@@ -28,8 +31,13 @@ import { ComprobanteEgresoUtil } from '../../utils/comprobante-egreso.util';
         MatInputModule,
         MatSelectModule,
         MatDatepickerModule,
+        MatAutocompleteModule,
         CustomContainerDialogComponent,
         FormsModule,
+        MatSlideToggleModule,
+        NgxMaskDirective,
+        CitySearchComponent,
+        MatDynamicTableComponent
     ],
     templateUrl: './forma-pago.component.html',
     providers: [provideNativeDateAdapter()],
@@ -38,76 +46,29 @@ import { ComprobanteEgresoUtil } from '../../utils/comprobante-egreso.util';
 export class FormaPagoComponent {
 
   readonly dialogRef = inject(MatDialogRef<FormaPagoComponent>);
-  readonly data = inject<any>(MAT_DIALOG_DATA);
-  private tS = inject(ToasterService)
-
   comprobanteEgresoStore = inject(ComprobanteEgresoStore)
 
-  codigoEntidadFinanciera = signal<keyof typeof PaymentTypeCode>(PaymentTypeCode.EFE)
+ title = computed(()=>`Total a pagar: $${this.comprobanteEgresoStore.saldo()}`)
 
   valorAbono = model(this.comprobanteEgresoStore.saldo())
 
-  esEfectivo = computed<boolean>(()=>{
+  docDataSource = new MatTableDataSource<any>([])
 
-    return true;
-  })
-
-
-  isValidForm(){
-    const {idSubEntidadFinanciera, fechaEmision} = this.comprobanteEgresoStore.dataFormaPago()
-
-    if(!getValidId(idSubEntidadFinanciera)){
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Seleccione SubEntidad financiera'
-      })
-      return
-    }
-
-    if(!isDateValid(fechaEmision)){
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Ingrese una fecha válida'
-      })
-      return
-    }
-
-    if(!getValidId(this.valorAbono())){
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Ingrese el valor abono'
-      })
-      return
-    }
-
-    return true;
-
-  }
-
-
-  abonar(){
-
-    if(!this.isValidForm()){
-      throw new Error("Error");
-    }
-
-    let dataComprobanteEgresoUtil = new ComprobanteEgresoUtil({
-      cuentasPorPagar: this.comprobanteEgresoStore.cuentasPorPagar()
-    })
-
-
-    dataComprobanteEgresoUtil.setSecuencial(this.comprobanteEgresoStore.getSecuencialPagoDetalle());
-    dataComprobanteEgresoUtil.setValorAbono(this.valorAbono())
-    dataComprobanteEgresoUtil.setEstadosPago(this.comprobanteEgresoStore.estadosPago())
-
-    dataComprobanteEgresoUtil.abonar()
-
-
-    console.log(dataComprobanteEgresoUtil)
-  }
+  columnsDefs: ColumnDefinition[] = [
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'nombreDoc', label: 'Tipo Doc.', type: 'string' },
+    { key: 'nroDoc', label: 'Nro. Doc.', type: 'string' },
+    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
+    { key: 'total', label: 'Total', type: 'number' },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
 
   close(){
+    this.comprobanteEgresoStore.updateDataFormaPago(getDataFormaPagoState())
+
     this.dialogRef.close()
   }
+
+
 }

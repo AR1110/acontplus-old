@@ -1,27 +1,14 @@
-﻿namespace Ventas.API.Controllers.v1;
+﻿namespace Ventas.API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class EstadisticaController(IConfiguration configuration) : ControllerBase
+public class EstadisticaController(IEstadisticaService estadisticaService) : BaseApiController
 {
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var db = new DbAccess(configuration);
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-
-            await db.SpExecuteAsync("Ventas.Estadisticas_Dashboard_Get");
-            db.AddDynamicParam("idRol", User.GetUserRoleId());
-            db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-           _response = await db.GetDataTableAsync();
-        }
-        finally
-        {
-            db.Close();
-        }
-
-        return Ok(_response);
+            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await estadisticaService.GetAsync(parameters));
     }
 }

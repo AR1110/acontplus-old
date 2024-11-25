@@ -6,10 +6,9 @@ public class ProformaController(IProformaService svc) : BaseApiController
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-            {
-                {"idUsuarioRol" , User.GetUserRoleId()},
-                {"json" , SqlStringParam.Sanitize(json)},
-            };
+        {
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
         return Ok(await svc.GetAsync(parameters));
     }
 
@@ -17,10 +16,10 @@ public class ProformaController(IProformaService svc) : BaseApiController
     public async Task<IActionResult> Insert(ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
-            {
-                {"userRoleId" , User.GetUserRoleId()},
-                {"json" , SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))},
-            }; 
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
 
         return Ok(await svc.AddAsync(parameters));
     }
@@ -28,13 +27,12 @@ public class ProformaController(IProformaService svc) : BaseApiController
     [HttpPut("Update/{id}")]
     public async Task<IActionResult> Update(int id, ApiRequest request)
     {
-
         var parameters = new Dictionary<string, object>
-            {
-                {"userRoleId" , User.GetUserRoleId()},
-                {"id",id },
-                {"json" , SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))},
-            }; 
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
 
         return Ok(await svc.UpdateAsync(parameters));
     }
@@ -43,11 +41,7 @@ public class ProformaController(IProformaService svc) : BaseApiController
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object>
-            {
-                {"idRol" , User.GetUserRoleId()},
-                {"id",id }, 
-            }; 
+        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } };
 
         return Ok(await svc.DeleteAsync(parameters));
     }
@@ -55,11 +49,7 @@ public class ProformaController(IProformaService svc) : BaseApiController
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var parameters = new Dictionary<string, object>
-            {
-                {"idRol" , User.GetUserRoleId()},
-                {"id" , id},
-            };
+        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } };
         return Ok(await svc.GetByIdAsync(parameters));
     }
 
@@ -67,10 +57,10 @@ public class ProformaController(IProformaService svc) : BaseApiController
     public async Task<IActionResult> ConvertToDoc(ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
-            {
-                {"userRoleId" , User.GetUserRoleId()},
-                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))},
-            }; 
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
 
         return Ok(await svc.ConvertToDoc(parameters));
     }

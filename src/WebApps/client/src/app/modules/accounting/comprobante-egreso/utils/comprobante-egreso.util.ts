@@ -12,9 +12,9 @@ import { EstadoPago } from "@modules/accounting/interfaces/estado-pago.interface
 import { CuotaPorPagarLista } from "@modules/accounting/interfaces/cuota-por-pagar.interface";
 import { determinadoEstadoPagoCuotaUtil } from "./determinado-estado-pago-cuota.util";
 
-interface ConstructorProps {
-  cuentasPorPagar: CuentaPorPagarCuota[]
-}
+/**
+ *
+ */
 export class ComprobanteEgresoUtil {
 
   private cuentasPorPagar: CuentaPorPagarCuota[]
@@ -26,31 +26,13 @@ export class ComprobanteEgresoUtil {
   private esAbonoPosfechado!: boolean;
   private secuencial!: number
 
-  constructor(props: ConstructorProps) {
-    this.cuentasPorPagar = props.cuentasPorPagar;
+  constructor(cuentasPorPagar: CuentaPorPagarCuota[]) {
+    this.cuentasPorPagar = structuredClone(cuentasPorPagar);
     this.dataCuentaPorPagarCuota = {} as CuentaPorPagarCuota;
 
   }
 
-  setValorAbono = (value: number)=> {
-    this.valorAbono = value;
-  }
-  getValorAbono() {
-    return this.valorAbono
-  }
-
-   setEstadosPago(estadosPago: EstadoPago[]) {
-    this.estadosPago = estadosPago;
-  }
-
-  set setEsAbonoPosfechado(value: boolean) {
-    this.esAbonoPosfechado = value;
-  }
-
-  private getEsAbonoPosfechado() {
-    return this.esAbonoPosfechado;
-  }
-
+  //secuencial
   setSecuencial(value: number) {
     this.secuencial = value;
   }
@@ -59,15 +41,47 @@ export class ComprobanteEgresoUtil {
     return this.secuencial;
   }
 
-  getPagosDetalle(){
+
+  //valor abono
+  setValorAbono = (value: number) => {
+    this.valorAbono = value;
+  }
+
+  getValorAbono() {
+    return this.valorAbono
+  }
+
+
+  setEstadosPago(estadosPago: EstadoPago[]) {
+    this.estadosPago = estadosPago;
+  }
+
+  setEsAbonoPosfechado(value: boolean) {
+    this.esAbonoPosfechado = value;
+  }
+  getEsAbonoPosfechado() {
+    return this.esAbonoPosfechado;
+  }
+
+
+  setPagosDetalle(pagosDetalle: PagoDetalle[]) {
+    this.pagosDetalle=pagosDetalle;
+  }
+
+  getPagosDetalle() {
     return this.pagosDetalle
   }
 
 
 
+  getCuentasPorPagar(){
+    return this.cuentasPorPagar;
+  }
+
+
   abonar() {
 
-    if(!Array.isArray(this.estadosPago) || this.estadosPago.length===0){
+    if (!Array.isArray(this.estadosPago) || this.estadosPago.length === 0) {
       throw new Error("Estado pago no válido");
     }
 
@@ -195,11 +209,11 @@ export class ComprobanteEgresoUtil {
   }
 
 
-   /**
- * Actualiza los valores y el estado de una cuota específica.
- * @param cuota - La cuota a actualizar.
- */
-   private actualizarEstadoCuota(cuota: CuotaPorPagarLista): void {
+  /**
+* Actualiza los valores y el estado de una cuota específica.
+* @param cuota - La cuota a actualizar.
+*/
+  private actualizarEstadoCuota(cuota: CuotaPorPagarLista): void {
     cuota.cuota = roundNumber(cuota.cuota, DECIMALS.CINCO);
     cuota.abono = roundNumber(cuota.abono, DECIMALS.CINCO);
     //cuota.abonoPosfechado = roundNumber(cuota.abonoPosfechado, this.DECIMAL_CINCO);
@@ -215,7 +229,7 @@ export class ComprobanteEgresoUtil {
   }
 
 
-  agregarPagoDetalle =(dataCuota: CuotaPorPagarLista, abono: number, saldo: number)=> {
+  agregarPagoDetalle = (dataCuota: CuotaPorPagarLista, abono: number, saldo: number) => {
 
     if (dataCuota.cuota === 0 || abono === 0) return;
 

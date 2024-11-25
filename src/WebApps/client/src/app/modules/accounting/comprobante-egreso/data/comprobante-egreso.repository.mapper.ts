@@ -3,11 +3,12 @@ import {SubEntidadFinancieraSelectHtmlOnly} from "@accounting/interfaces/subenti
 import {BancoSelectOnly} from "@accounting/interfaces/banco.interface";
 import {EstadoPago} from "@accounting/interfaces/estado-pago.interface";
 import {groupCitiesByProvinceUtil} from "@shared/utils/group-cities-by-province.util";
+import { CuotaPorPagarLista } from "@modules/accounting/interfaces/cuota-por-pagar.interface";
 
 
 export class ComprobanteEgresoRepositoryMapper{
 
-  static fromApiCuotasByICuentaPorPagar(response: any){
+  static fromApiCuotasByICuentaPorPagar(response: any): CuotaPorPagarLista[] {
     const {cuotas} = response;
     return cuotas.map((item:any)=>{
       return {
@@ -20,6 +21,7 @@ export class ComprobanteEgresoRepositoryMapper{
         saldo: item.saldo,
         nombreEstado: item.descripcion,
         codigoEstado: item.codigo,
+        saldoInicial: item.saldo
       }
     })
 
@@ -29,7 +31,9 @@ export class ComprobanteEgresoRepositoryMapper{
 
 
   static fromApiDataForm(response:any){
-    const {entidadFinanciera, subEntidadFinanciera, banco, estadoPago, ciudad
+    console.log(response)
+    const {entidadFinanciera, subEntidadFinanciera, banco, estadoPago, ciudad, documentos=[]
+
     } = response;
 
     let entidadesFinanciera = entidadFinanciera.map((item:any)=>{
@@ -74,12 +78,24 @@ export class ComprobanteEgresoRepositoryMapper{
 
     let provinciaCiudades = groupCitiesByProvinceUtil(ciudad);
 
+    let documentosTemp = documentos.map((item:any)=>{
+      return {
+        idCuentaPorPagar: item.idComprobante,
+        idTipoDocumento: item.idTipoDocumento,
+        nroDoc: item.nroDocumento,
+        nombreDoc: item.tipoDocumento,
+        saldo: item.saldo,
+        numAutDocSustento: item.numAutDocSustento,
+    }
+    })
+
     return {
       entidadesFinanciera,
       subEntidadesFinanciera,
       bancos,
       estadosPago,
-      provinciaCiudades
+      provinciaCiudades,
+      documentos: documentosTemp
     }
 
   }

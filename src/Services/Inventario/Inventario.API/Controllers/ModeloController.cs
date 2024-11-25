@@ -1,6 +1,4 @@
-﻿using Common.Core.Models.Almacen;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class ModeloController : BaseApiController
 {

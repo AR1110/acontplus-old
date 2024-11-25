@@ -46,7 +46,7 @@ namespace Reports.API.Controllers.v2
 
             dataParams["json"] = sanitizedDataParams;
 
-            using var ds = await reportService.GetDataAsync(storedProcedure, dataParams, connectionString, false);
+            using var ds = await reportService.GetDataAsync(storedProcedure, dataParams, connectionString, true);
 
             if (ds.Tables[0].Rows.Count == 0)
             {

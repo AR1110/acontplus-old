@@ -14,13 +14,14 @@
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Scrutor" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
-    <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
   <ItemGroup>

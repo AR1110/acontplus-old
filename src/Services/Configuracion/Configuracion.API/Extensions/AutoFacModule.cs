@@ -1,4 +1,8 @@
-﻿namespace Configuracion.API.Extensions;
+﻿using Common.Infrastructure.Data;
+using Common.Infrastructure.Data.Configurations;
+using Common.Infrastructure.Repository.Implementations;
+
+namespace Configuracion.API.Extensions;
 
 public class AutoFacModule : Module
 {

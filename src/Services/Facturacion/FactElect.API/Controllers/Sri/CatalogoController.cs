@@ -1,35 +1,13 @@
-﻿namespace FactElect.API.Controllers.Sri;
+﻿using FactElect.API.Services.Sri;
 
-[Route("api/[controller]")]
-[ApiController]
-public class CatalogoController : ControllerBase
+namespace FactElect.API.Controllers.Sri;
+
+public class CatalogoController(ICatalogoService catalogoService) : BaseApiController
 {
-    private readonly IConfiguration _config;
-
-    public CatalogoController(IConfiguration config)
-    {
-        _config = config;
-    }
-
     [HttpGet("Get")]
     public async Task<IActionResult> Get()
     {
-        var _response = new ApiResponseDeprecated();
-
-        try
-        {
-            using (var db = new DbAccess(_config))
-            {
-                await db.SpExecuteAsync("Sri.Catalogo_Get");
-                _response = await db.GetDataTableAsync();
-            }
-        }
-        catch (Exception)
-        {
-            _response.Create("0", "Error al obtener la lista de catalogos del SRI");
-            //LogWritter.LogError(_config.GetSection("CustomLogs").GetSection("dirLogs").Value, "Error getting sri catalogs:" + ex.Message);
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object>();
+        return Ok(await catalogoService.GetAsync(parameters));
     }
 }
