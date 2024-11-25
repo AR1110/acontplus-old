@@ -1,6 +1,8 @@
-﻿using Common.Core.ViewModels;
+﻿using System.Data;
+using Common.Core.ViewModels;
+using Microsoft.Data.SqlClient;
 
-namespace Common.Infrastructure.Repository;
+namespace Configuracion.API.Data;
 
 public class HorarioDao
 {
