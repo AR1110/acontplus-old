@@ -46,7 +46,7 @@
     <PackageVersion Include="RabbitMQ.Client" Version="7.0.0" />
     <PackageVersion Include="ReportViewerCore.NETCore" Version="15.1.25" />
     <PackageVersion Include="Scrutor" Version="5.0.2" />
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.0.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.1.0" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
     <PackageVersion Include="ZXing.Net" Version="0.16.9" />
     <PackageVersion Include="ZXing.Net.Bindings.SkiaSharp" Version="0.16.14" />

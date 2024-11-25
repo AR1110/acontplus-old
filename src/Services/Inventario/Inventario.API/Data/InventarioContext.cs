@@ -1,4 +1,6 @@
-﻿namespace Inventario.API.Data;
+﻿using System.Reflection;
+
+namespace Inventario.API.Data;
 
 public class InventarioContext : BaseContext
 {
@@ -15,6 +17,9 @@ public class InventarioContext : BaseContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
         foreach (var property in modelBuilder.Model.GetEntityTypes()
                      .SelectMany(t => t.GetProperties())
                      .Where(
