@@ -105,10 +105,6 @@ export class SharedService {
 
   }
 
-  appNotificacionInsert<T>(data: T) {
-    const url = `${PATHS_API.COMMON}${PATHS.APP_NOTIFICATION}`;
-    return this.http.post(`${url}?json=${JSON.stringify(data)}`, '');
-  }
 
   async askToPrint<T extends { parameters: string }>(obj: T) {
     const { parameters } = obj;

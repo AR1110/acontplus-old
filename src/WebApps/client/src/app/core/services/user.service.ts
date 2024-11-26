@@ -25,7 +25,7 @@ export class UserService {
     })
       .pipe(
         map((response:any) => {
-          let userCustomers = []; 
+          let userCustomers = [];
           if(response && typeof  response==='object'){
             userCustomers =  response.userCustomers.map((user: any) => {
               return {

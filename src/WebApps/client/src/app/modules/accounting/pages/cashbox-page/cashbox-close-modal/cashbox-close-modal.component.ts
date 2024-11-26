@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import {FormsModule} from "@angular/forms";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {CommonModule} from "@angular/common";
+import { NotificacionService } from '@shared/services/notificacion.service';
 
 type Modeda = {
   idMoneda: number
@@ -35,7 +36,7 @@ export class CashboxCloseModalComponent {
   private activeModal = inject(NgbActiveModal);
   private controlCajaSvc = inject(ControlCajaService);
   private sharedSvc = inject(SharedService)
-
+  private appNotifiSvc = inject(NotificacionService)
 
   monedas: Array<Modeda> = [];
   totalArqueo = 0
@@ -147,7 +148,7 @@ export class CashboxCloseModalComponent {
       }
 
 
-      this.sharedSvc.appNotificacionInsert(data).subscribe( (value) =>{
+      this.appNotifiSvc.post(data).subscribe( (value) =>{
           console.log(value)
       })
     } catch (error) {
