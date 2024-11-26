@@ -4,5 +4,5 @@ namespace Configuracion.API.Interfaces;
 
 public interface IEstadoDocumentoService
 {
-    Task<ApiResponseDeprecated> GetAsync(string json);
+    Task<LegacyApiResponse> GetAsync(string json);
 }

@@ -1,6 +1,6 @@
 ﻿namespace Common.AppSettings;
 
-public class ApiResponseDeprecated
+public class LegacyApiResponse
 {
     public string code { get; set; }
     public dynamic data { get; set; }

@@ -1,4 +1,5 @@
-﻿using Common.Infrastructure.Data.Configurations;
+﻿using System.Reflection;
+using Common.Infrastructure.Data.Configurations;
 
 namespace Contabilidad.API.Data;
 
@@ -15,6 +16,9 @@ public class ContabilidadContext : BaseContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
         foreach (var property in modelBuilder.Model.GetEntityTypes()
                      .SelectMany(t => t.GetProperties())
                      .Where(

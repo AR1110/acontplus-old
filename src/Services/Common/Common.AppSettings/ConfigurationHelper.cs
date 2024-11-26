@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace Common.AppSettings;
 
-public static class ConfigHelper
+public static class ConfigurationHelper
 {
-    public static IConfigurationRoot Load(Env? env = null)
+    public static IConfigurationRoot Load(EnvironmentEnums? env = null)
     {
         var configurationBuilder = new ConfigurationBuilder();
         AddJsonFiles(configurationBuilder, env);
@@ -13,10 +13,10 @@ public static class ConfigHelper
         return configurationBuilder.Build();
     }
 
-    public static void AddJsonFiles(IConfigurationBuilder configurationBuilder, Env? env = null)
+    public static void AddJsonFiles(IConfigurationBuilder configurationBuilder, EnvironmentEnums? env = null)
     {
         // Determine environment if not provided
-        env ??= EnvHelper.GetEnvironment();
+        env ??= EnvironmentHelper.GetEnvironment();
 
         // Add environment-specific appsettings file
         configurationBuilder.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true);
