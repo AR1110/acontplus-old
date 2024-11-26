@@ -3,8 +3,8 @@ using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
-ConfigHelper.AddJsonFiles(builder.Configuration);
+builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
+ConfigurationHelper.AddJsonFiles(builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);

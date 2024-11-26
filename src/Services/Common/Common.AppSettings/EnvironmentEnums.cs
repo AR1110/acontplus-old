@@ -1,6 +1,6 @@
 ﻿namespace Common.AppSettings;
 
-public enum Env
+public enum EnvironmentEnums
 {
     Development,
     IntegrationTests,

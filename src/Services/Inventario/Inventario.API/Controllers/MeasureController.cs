@@ -14,7 +14,7 @@ public class MeasureController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<ApiResponseDeprecated>> Get(string json)
+    public async Task<ActionResult<LegacyApiResponse>> Get(string json)
     {
         var parameters = new Dictionary<string, object>
             {
