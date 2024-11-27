@@ -28,29 +28,25 @@ public class TechnicalSupportContext : BaseContext
     {
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-        if (Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
+        foreach (var entityType in builder.Model.GetEntityTypes())
         {
-            foreach (var entityType in builder.Model.GetEntityTypes())
-            {
-                var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
+            var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
 
-                foreach (var property in properties)
-                {
-                    builder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
-                }
-            }
-
-            foreach (var property in builder.Model.GetEntityTypes()
-                         .SelectMany(t => t.GetProperties())
-                         .Where(
-                             p => p.ClrType == typeof(string)
-                                  && p.GetColumnType() == null
-                         ))
+            foreach (var property in properties)
             {
-                property.SetIsUnicode(false);
+                builder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
             }
         }
 
+        foreach (var property in builder.Model.GetEntityTypes()
+                     .SelectMany(t => t.GetProperties())
+                     .Where(
+                         p => p.ClrType == typeof(string)
+                              && p.GetColumnType() == null
+                     ))
+        {
+            property.SetIsUnicode(false);
+        }
         builder.Entity<Brand>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
         builder.Entity<Brand>().Property(x => x.Enabled).HasDefaultValue(true);
         builder.Entity<Brand>().HasMany(x => x.Series).WithOne(x => x.Brand).HasForeignKey(x => x.BrandId);
@@ -98,44 +94,5 @@ public class TechnicalSupportContext : BaseContext
 
         builder.Entity<WarrantyHistory>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
         builder.Entity<WarrantyHistory>().Property(x => x.Enabled).HasDefaultValue(true);
-    }
-
-    public override int SaveChanges()
-    {
-        var entries = ChangeTracker
-            .Entries()
-            .Where(e => e.Entity is BaseEntity && (
-                e.State == EntityState.Added
-                || e.State == EntityState.Modified));
-
-        foreach (var entityEntry in entries)
-        {
-            if (entityEntry.State == EntityState.Modified)
-            {
-                ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
-            }
-        }
-
-        return base.SaveChanges();
-    }
-
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        var entries = ChangeTracker
-            .Entries()
-            .Where(e => e.Entity is BaseEntity && (
-                e.State == EntityState.Added
-                || e.State == EntityState.Modified));
-
-        foreach (var entityEntry in entries)
-        {
-            if (entityEntry.State == EntityState.Modified)
-            {
-                ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
-            }
-        }
-
-        var result = await base.SaveChangesAsync(cancellationToken);
-        return result;
     }
 }
