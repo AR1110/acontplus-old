@@ -22,6 +22,7 @@ global using Newtonsoft.Json;
 global using Newtonsoft.Json.Serialization;
 global using Services.Common.Extensions;
 global using Services.Common.Middleware;
+global using Common.ApiDocumentation;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
 global using System.IdentityModel.Tokens.Jwt;
