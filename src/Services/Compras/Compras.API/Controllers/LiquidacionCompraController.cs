@@ -1,8 +1,6 @@
 ﻿namespace Compras.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class LiquidacionCompraController : ControllerBase
+public class LiquidacionCompraController : BaseApiController
 {
     private IConfiguration _configuration;
     private readonly ILiquidacionCompraService _liquidacionCompraSvc;

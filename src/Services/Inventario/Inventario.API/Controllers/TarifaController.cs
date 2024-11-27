@@ -1,28 +1,19 @@
 ﻿namespace Inventario.API.Controllers;
 
-public class TarifaController : BaseApiController
+public class TarifaController(ITarifaService tarifaService) : BaseApiController
 {
-    private readonly ITarifaService _service;
-
-    public TarifaController(ITarifaService service)
-    {
-        _service = service;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
-            { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
 
-        var response = await _service.GetAsync(parameters);
+        var response = await tarifaService.GetAsync(parameters);
         return Ok(response);
     }
 
-     
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
@@ -31,13 +22,11 @@ public class TarifaController : BaseApiController
         {
             { "userRoleId", User.GetUserRoleId() },
             { "id", id },
-             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-              { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
 
-        var response = await _service.UpdateAsync(parameters);
+        var response = await tarifaService.UpdateAsync(parameters);
         return Ok(response);
     }
-
-    
 }

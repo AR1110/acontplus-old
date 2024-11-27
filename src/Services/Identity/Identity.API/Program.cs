@@ -13,18 +13,24 @@ builder.Services.AddIdentityService(builder.Configuration);
 
 builder.Services.AddSwaggerDocumentation();
 
-builder.Services.AddApiVersioningConfig();
+builder.Services.AddVersioningAndSwagger();
+
+builder.Services.AddOpenApi();
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwaggerAndVersioning();
+    app.MapOpenApi();
+}
+
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseMiddleware<MobileRequestMiddleware>();
-
-app.UseSwaggerVersionedDocumentation();
 
 app.UseRouting();
 
@@ -40,15 +46,6 @@ else
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseEndpoints(endpoints =>
-{
-    _ = endpoints.MapGet("/", context =>
-    {
-        context.Response.Redirect("swagger");
-        return Task.CompletedTask;
-    });
-});
 
 app.MapControllers();
 
