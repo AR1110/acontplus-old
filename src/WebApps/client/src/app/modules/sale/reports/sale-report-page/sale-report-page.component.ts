@@ -29,6 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
+import { AuthService } from '@modules/auth/services/auth.service';
 
 const imports = [
   MatCardModule,
@@ -81,6 +82,7 @@ export class SaleReportPageComponent {
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
   private appNotifiSvc = inject(NotificacionService)
+  private authSvc = inject(AuthService)
 
   getDataFilter() {
     this.cuentaPorCobrarSvc.getDataFilter().subscribe((response) => {
@@ -144,7 +146,6 @@ export class SaleReportPageComponent {
   }
 
   onChangeTipoDoc() {
-    console.log(this.dataSearch.codDoc);
     this.isSelectedNotaEntrega = this.dataSearch.codDoc !== DOC_TYPE.FV;
   }
 
@@ -202,6 +203,7 @@ export class SaleReportPageComponent {
       (estado) => estado.idEstadoPago === this.dataSearch.idEstadoDocumento,
     );
 
+
     let identificacion = this.dataSearch.checkBoxCustomer
       ? isValidField(this.dataSearch.identificacion)
       : null;
@@ -211,6 +213,7 @@ export class SaleReportPageComponent {
     let idCliente = this.dataSearch.checkBoxCustomer
       ? isValidField(this.dataSearch.companyCustomerId)
       : null;
+
 
     let dataParams = {
       tipo: 2,
@@ -225,6 +228,8 @@ export class SaleReportPageComponent {
       idCliente,
       convertToDoc: this.dataSearch.convertToDoc,
       idCiudad: this.dataSearch.idCiudad,
+
+      userRoleId: this.authSvc.getUserRoleId()
     };
     return dataParams;
 
@@ -307,7 +312,8 @@ export class SaleReportPageComponent {
             codigo:SALE_CODE_REPORT.FG,
             format: FORMAT_REPORT.PDF
           },
-          spParams:  this.getDataParams()
+          spParams:  this.getDataParams(),
+          withTableNames: true,
         },
         codigo:SALE_CODE_REPORT.FG,
       }
