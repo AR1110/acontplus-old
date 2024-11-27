@@ -1,5 +1,5 @@
-﻿using Common.Core.Entities;
-using Common.Infrastructure.Data.Configurations;
+﻿using System.Reflection;
+using Common.Core.Entities;
 using Common.Infrastructure.Data.Configurations;
 using Mechanical.API.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +27,9 @@ namespace Mechanical.API.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
             foreach (var property in modelBuilder.Model.GetEntityTypes()
                     .SelectMany(t => t.GetProperties())
                     .Where(

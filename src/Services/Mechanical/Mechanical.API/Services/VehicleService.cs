@@ -43,22 +43,22 @@ namespace Mechanical.API.Services
         {
             return await _repository.SpExecuteDeprecatedAsync("Mechanical.VehicleCompany_Update", parameters);
         }
-        public async Task<ApiResponseDeprecated> DeleteAsync(int id)
+        public async Task<LegacyApiResponse> DeleteAsync(int id)
         {
             var vehicle = await _context.VehicleCompanys.FindAsync(id);
             vehicle.Enabled = false;
             vehicle.Deleted = true;
             _context.Update(vehicle);
             await _context.SaveChangesAsync();
-            return new ApiResponseDeprecated { code = "1", message = "Eliminada Exitosamente" };
+            return new LegacyApiResponse { code = "1", message = "Eliminada Exitosamente" };
         }
-        public async Task<ApiResponseDeprecated> UpdateStateAsync(int id, bool state)
+        public async Task<LegacyApiResponse> UpdateStateAsync(int id, bool state)
         {
             var vehicle = await _context.VehicleCompanys.FindAsync(id);
             vehicle.Enabled = state;
             _context.Update(vehicle);
             await _context.SaveChangesAsync();
-            return new ApiResponseDeprecated { code = "1", message = "Actualizado Exitosamente" };
+            return new LegacyApiResponse { code = "1", message = "Actualizado Exitosamente" };
         }
     }
 }

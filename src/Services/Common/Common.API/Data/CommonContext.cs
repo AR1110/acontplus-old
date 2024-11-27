@@ -2,7 +2,6 @@
 using Common.API.Entities;
 using Common.Core.Entities;
 using Common.Infrastructure.Data.Configurations;
-using Common.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Common.API.Data;
@@ -15,11 +14,11 @@ public class CommonContext : BaseContext
     public DbSet<MaritalStatus> MaritalStatuses { get; set; }
     public DbSet<HousingType> HousingTypes { get; set; }
 
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
         if (Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
@@ -44,15 +43,6 @@ public class CommonContext : BaseContext
                 property.SetIsUnicode(false);
             }
         }
-         
-        modelBuilder.Entity<MaritalStatus>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<MaritalStatus>().Property(x => x.Enabled).HasDefaultValue(true);
-        modelBuilder.Entity<MaritalStatus>().HasIndex(x => x.Code).HasDatabaseName("UI_MaritalStatus_Code").IsUnique();
-
-        modelBuilder.Entity<HousingType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<HousingType>().Property(x => x.Enabled).HasDefaultValue(true);
-        modelBuilder.Entity<HousingType>().HasIndex(x => x.Code).HasDatabaseName("UI_HousingType_Code").IsUnique();
-
 
     }
 

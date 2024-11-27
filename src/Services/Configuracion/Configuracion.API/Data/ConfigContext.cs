@@ -16,7 +16,9 @@ public class ConfigContext : BaseContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
         if (Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
         {
             foreach (var entityType in builder.Model.GetEntityTypes())
@@ -44,22 +46,7 @@ public class ConfigContext : BaseContext
             }
         }
 
-        builder.Entity<EstablecimientoLogo>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<EstablecimientoLogo>().Property(x => x.Enabled).HasDefaultValue(true);
-        builder.Entity<EstablecimientoLogo>().HasIndex(x => x.EstablecimientoId)
-            .HasDatabaseName("UI_EstabLogo_EstablecimientoId").IsUnique();
-
-        builder.Entity<Printer>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<Printer>().Property(x => x.Enabled).HasDefaultValue(true);
-        builder.Entity<Printer>().HasMany(i => i.Documents).WithOne(d => d.Printer).HasForeignKey(d => d.PrinterId);
-
-
-        builder.Entity<PrinterDocument>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<PrinterDocument>().Property(x => x.Enabled).HasDefaultValue(true);
-
-        builder.Entity<PrinterType>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<PrinterType>().Property(x => x.Enabled).HasDefaultValue(true);
-        builder.Entity<PrinterType>().HasIndex(x => x.Code).HasDatabaseName("UI_PrinterType").IsUnique();
+        SimpleEntityRegistration.RegisterEntities(builder, typeof(PrinterDocument));
     }
 
     public override int SaveChanges()

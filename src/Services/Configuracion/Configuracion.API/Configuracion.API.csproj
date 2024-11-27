@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Infrastructure" />
+    <PackageReference Include="Acontplus.Common.S3Application" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="AutoMapper" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
@@ -27,7 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
-    <ProjectReference Include="..\..\Common\Common.S3Application\Common.S3Application.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
 </Project>

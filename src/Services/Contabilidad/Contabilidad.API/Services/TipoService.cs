@@ -11,24 +11,24 @@ public class TipoService : ITipoService
         _context = context;
     }
 
-    public async Task<ApiResponseDeprecated> AddAsync(Tipo tipo)
+    public async Task<LegacyApiResponse> AddAsync(Tipo tipo)
     {
         if (await _context.Tipos.AnyAsync(x => x.Code == tipo.Code))
         {
-            return new ApiResponseDeprecated { code = "0", message = "Código ya existe" };
+            return new LegacyApiResponse { code = "0", message = "Código ya existe" };
         }
 
         _context.Tipos.Add(tipo);
         await _context.SaveChangesAsync();
-        return new ApiResponseDeprecated { code = "1", message = "Registrado exitosamente", payload = tipo };
+        return new LegacyApiResponse { code = "1", message = "Registrado exitosamente", payload = tipo };
     }
 
-    public async Task<ApiResponseDeprecated> DeleteAsync(int userId, int id)
+    public async Task<LegacyApiResponse> DeleteAsync(int userId, int id)
     {
         var tipo = await _context.Tipos.FindAsync(id);
         if (tipo == null)
         {
-            return new ApiResponseDeprecated { code = "0", message = "Tipo no existe" };
+            return new LegacyApiResponse { code = "0", message = "Tipo no existe" };
         }
 
         tipo.Enabled = false;
@@ -36,29 +36,29 @@ public class TipoService : ITipoService
         tipo.UserId = userId;
         _context.Update(tipo);
         await _context.SaveChangesAsync();
-        return new ApiResponseDeprecated { code = "1", message = "Eliminado exitosamente" };
+        return new LegacyApiResponse { code = "1", message = "Eliminado exitosamente" };
     }
 
-    public async Task<ApiResponseDeprecated> GetAsync(Dictionary<string, object> parameters)
+    public async Task<LegacyApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var tipos = await _context.Tipos.Where(x => x.Enabled == true).ToListAsync();
         if (tipos.Count == 0)
         {
-            return new ApiResponseDeprecated { code = "0", message = "Data no existe" };
+            return new LegacyApiResponse { code = "0", message = "Data no existe" };
         }
 
-        return new ApiResponseDeprecated
+        return new LegacyApiResponse
         {
             code = "1", payload = DataConverters.SerializeObjectCustom<List<Tipo>>(tipos)
         };
     }
 
-    public async Task<ApiResponseDeprecated> UpdateAsync(int id, Tipo tipo)
+    public async Task<LegacyApiResponse> UpdateAsync(int id, Tipo tipo)
     {
         var tipoFound = await _context.Tipos.FindAsync(id);
         if (tipoFound == null)
         {
-            return new ApiResponseDeprecated { code = "0", message = "Tipo no encontrado" };
+            return new LegacyApiResponse { code = "0", message = "Tipo no encontrado" };
         }
 
         tipoFound.Code = tipo.Code;
@@ -67,6 +67,6 @@ public class TipoService : ITipoService
         tipoFound.UserId = tipo.UserId;
         _context.Update(tipoFound);
         await _context.SaveChangesAsync();
-        return new ApiResponseDeprecated { code = "1", message = "Actualizado exitosamente" };
+        return new LegacyApiResponse { code = "1", message = "Actualizado exitosamente" };
     }
 }
