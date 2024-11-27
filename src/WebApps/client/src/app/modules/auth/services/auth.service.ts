@@ -99,6 +99,17 @@ export class AuthService {
     }
   }
 
+  getUserRoleId (){
+    let dataAuth = this.parseJwt();
+    if(!dataAuth){
+      throw new Error("Not found userRoleId");
+
+    }
+    return dataAuth.userRoleId
+
+  }
+
+
   logout() {
     let removeToken = localStorage.removeItem('access_token');
     if (removeToken == null) {

@@ -10,6 +10,11 @@
         <mat-checkbox [(ngModel)]="dataSearch.checkBoxUser"
           >Usuario</mat-checkbox
         >
+        @if (isSelectedNotaEntrega) {
+        <mat-checkbox [(ngModel)]="dataSearch.convertToDoc"
+          >Docs. Transferidas</mat-checkbox
+        >
+        }
       </div>
 
       <mat-divider></mat-divider>
@@ -35,7 +40,7 @@
           <mat-form-field class="w-100">
             <mat-label>Establecimiento: </mat-label>
             <mat-select
-              (change)="onChangeEstab()"
+              (selectionChange)="onChangeEstab()"
               [(ngModel)]="dataSearch.idEstablecimiento"
             >
               @for (item of establecimientos; track $index) {
@@ -87,6 +92,8 @@
         <div class="col">
           <app-company-customer-search-mat
             [isSimpleMode]="true"
+            (onSelect)="onCustomerSelected($event)"
+            (clearInput)="resultEmptyInputCustomer()"
           ></app-company-customer-search-mat>
         </div>
         <div class="col">
@@ -104,7 +111,10 @@
         </div>
 
         <div class="col">
-          <app-mat-user-search />
+          <app-mat-user-search
+            (onSelect)="onUserSelected($event)"
+            (clearInput)="emptyInputUser()"
+          />
         </div>
       </div>
     </div>
