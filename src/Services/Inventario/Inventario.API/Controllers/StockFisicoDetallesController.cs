@@ -1,36 +1,29 @@
 ﻿namespace Inventario.API.Controllers;
 
-public class StockFisicoDetallesController : BaseApiController
+public class StockFisicoDetallesController(InventarioContext context) : BaseApiController
 {
-    private readonly InventarioContext _context;
-
-    public StockFisicoDetallesController(InventarioContext context)
-    {
-        _context = context;
-    }
-
     // GET: api/StockFisicoDetalles
     [HttpGet]
     public async Task<ActionResult<IEnumerable<StockFisicoDetalle>>> GetStockFisicoDetalles()
     {
-        if (_context.StockFisicoDetalles == null)
+        if (context.StockFisicoDetalles == null)
         {
             return NotFound();
         }
 
-        return await _context.StockFisicoDetalles.ToListAsync();
+        return await context.StockFisicoDetalles.ToListAsync();
     }
 
     // GET: api/StockFisicoDetalles/5
     [HttpGet("{id}")]
     public async Task<ActionResult<StockFisicoDetalle>> GetStockFisicoDetalle(int id)
     {
-        if (_context.StockFisicoDetalles == null)
+        if (context.StockFisicoDetalles == null)
         {
             return NotFound();
         }
 
-        var stockFisicoDetalle = await _context.StockFisicoDetalles.FindAsync(id);
+        var stockFisicoDetalle = await context.StockFisicoDetalles.FindAsync(id);
 
         if (stockFisicoDetalle == null)
         {
@@ -50,11 +43,11 @@ public class StockFisicoDetallesController : BaseApiController
             return BadRequest();
         }
 
-        _context.Entry(stockFisicoDetalle).State = EntityState.Modified;
+        context.Entry(stockFisicoDetalle).State = EntityState.Modified;
 
         try
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -74,13 +67,13 @@ public class StockFisicoDetallesController : BaseApiController
     [HttpPost]
     public async Task<ActionResult<StockFisicoDetalle>> PostStockFisicoDetalle(StockFisicoDetalle stockFisicoDetalle)
     {
-        if (_context.StockFisicoDetalles == null)
+        if (context.StockFisicoDetalles == null)
         {
             return Problem("Entity set 'InventarioContext.StockFisicoDetalles'  is null.");
         }
 
-        _context.StockFisicoDetalles.Add(stockFisicoDetalle);
-        await _context.SaveChangesAsync();
+        context.StockFisicoDetalles.Add(stockFisicoDetalle);
+        await context.SaveChangesAsync();
 
         return CreatedAtAction("GetStockFisicoDetalle", new { id = stockFisicoDetalle.Id }, stockFisicoDetalle);
     }
@@ -89,25 +82,25 @@ public class StockFisicoDetallesController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteStockFisicoDetalle(int id)
     {
-        if (_context.StockFisicoDetalles == null)
+        if (context.StockFisicoDetalles == null)
         {
             return NotFound();
         }
 
-        var stockFisicoDetalle = await _context.StockFisicoDetalles.FindAsync(id);
+        var stockFisicoDetalle = await context.StockFisicoDetalles.FindAsync(id);
         if (stockFisicoDetalle == null)
         {
             return NotFound();
         }
 
-        _context.StockFisicoDetalles.Remove(stockFisicoDetalle);
-        await _context.SaveChangesAsync();
+        context.StockFisicoDetalles.Remove(stockFisicoDetalle);
+        await context.SaveChangesAsync();
 
         return NoContent();
     }
 
     private bool StockFisicoDetalleExists(int id)
     {
-        return (_context.StockFisicoDetalles?.Any(e => e.Id == id)).GetValueOrDefault();
+        return (context.StockFisicoDetalles?.Any(e => e.Id == id)).GetValueOrDefault();
     }
 }

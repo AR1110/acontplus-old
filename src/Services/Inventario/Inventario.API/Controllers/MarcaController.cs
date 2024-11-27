@@ -1,25 +1,16 @@
-﻿ 
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
-public class MarcaController : BaseApiController
+public class MarcaController(IMarcaService marcaService) : BaseApiController
 {
-    private readonly IMarcaService _service;
-
-    public MarcaController(IMarcaService service)
-    {
-        _service = service;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
-            { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
 
-        var response = await _service.GetAsync(parameters);
+        var response = await marcaService.GetAsync(parameters);
         return Ok(response);
     }
 
@@ -33,7 +24,7 @@ public class MarcaController : BaseApiController
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
 
-        var response = await _service.AddAsync(parameters);
+        var response = await marcaService.AddAsync(parameters);
 
         return Ok(response);
     }
@@ -45,24 +36,20 @@ public class MarcaController : BaseApiController
         {
             { "userRoleId", User.GetUserRoleId() },
             { "id", id },
-             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-              { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
 
-        var response = await _service.UpdateAsync(parameters);
+        var response = await marcaService.UpdateAsync(parameters);
         return Ok(response);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetUserRoleId() },
-            { "id", id },
-        };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id }, };
 
-        var response = await _service.DeleteAsync(parameters);
+        var response = await marcaService.DeleteAsync(parameters);
         return Ok(response);
     }
 }

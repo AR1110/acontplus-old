@@ -1,8 +1,6 @@
 ﻿namespace Compras.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class OrdenCompraController : ControllerBase
+public class OrdenCompraController : BaseApiController
 {
     private IConfiguration _configuration;
     private readonly ICustomLogger _log;

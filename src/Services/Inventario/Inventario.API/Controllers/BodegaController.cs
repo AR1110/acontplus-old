@@ -1,14 +1,7 @@
 ﻿namespace Inventario.API.Controllers;
 
-public class BodegaController : BaseApiController
+public class BodegaController(IBodegaService bodegaService) : BaseApiController
 {
-    private readonly IBodegaService _service;
-
-    public BodegaController(IBodegaService service)
-    {
-        _service = service;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -18,7 +11,7 @@ public class BodegaController : BaseApiController
             { "json", SqlStringParam.Sanitize(json) }
         };
 
-        var response = await _service.GetAsync(parameters);
+        var response = await bodegaService.GetAsync(parameters);
         return Ok(response);
     }
 
@@ -32,7 +25,7 @@ public class BodegaController : BaseApiController
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
 
-        var response = await _service.AddAsync(parameters);
+        var response = await bodegaService.AddAsync(parameters);
 
         return Ok(response);
     }
@@ -47,7 +40,7 @@ public class BodegaController : BaseApiController
             { "json",  SqlStringParam.Sanitize(json) }
         };
 
-        var response = await _service.UpdateAsync(parameters);
+        var response = await bodegaService.UpdateAsync(parameters);
         return Ok(response);
     }
 
@@ -60,7 +53,7 @@ public class BodegaController : BaseApiController
             { "id", id },
         };
 
-        var response = await _service.DeleteAsync(parameters);
+        var response = await bodegaService.DeleteAsync(parameters);
         return Ok(response);
     }
 }
