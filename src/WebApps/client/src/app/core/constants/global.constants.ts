@@ -24,7 +24,6 @@ export const enum PATHS {
   PRINT = 'Print',
   USER = 'Usuario/',
   ESTAB_ASIGN = 'EstabAsig/',
-  NOTIFICACION = 'Notificacion/',
 }
 
 export const enum DOC_TYPE {
