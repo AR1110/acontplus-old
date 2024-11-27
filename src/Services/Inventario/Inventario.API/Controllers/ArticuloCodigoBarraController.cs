@@ -1,16 +1,7 @@
 ﻿namespace Inventario.API.Controllers;
 
-public class ArticuloCodigoBarraController : BaseApiController
+public class ArticuloCodigoBarraController(IArticuloCodigoBarraService articuloCodigoBarraService) : BaseApiController
 {
-
-    private readonly IArticuloCodigoBarraService _service;
-
-    public ArticuloCodigoBarraController(IArticuloCodigoBarraService service)
-    {
-        _service = service;
-
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -18,7 +9,7 @@ public class ArticuloCodigoBarraController : BaseApiController
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             };
-        var response = await _service.GetAsync(parameters);
+        var response = await articuloCodigoBarraService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -33,7 +24,7 @@ public class ArticuloCodigoBarraController : BaseApiController
                 { "userRoleId", User.GetUserRoleId() },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-        var response = await _service.AddAsync(parameters);
+        var response = await articuloCodigoBarraService.AddAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -50,7 +41,7 @@ public class ArticuloCodigoBarraController : BaseApiController
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-        var response = await _service.UpdateAsync(parameters);
+        var response = await articuloCodigoBarraService.UpdateAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -62,7 +53,7 @@ public class ArticuloCodigoBarraController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await _service.DeleteAsync(parameters);
+        var response = await articuloCodigoBarraService.DeleteAsync(parameters);
         return Ok(response);
     }
 }

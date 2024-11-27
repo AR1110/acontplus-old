@@ -1,21 +1,12 @@
 ﻿namespace Inventario.API.Controllers;
 
-public class StockController : BaseApiController
+public class StockController(IStockService stockService) : BaseApiController
 {
-
-    private readonly IStockService _stockService;
-
-    public StockController(IStockService stockService)
-    {
-        _stockService = stockService;
-
-    }
-
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id)
     {
         var response =
-            await _stockService.UpdateAsync(new Dictionary<string, object>
+            await stockService.UpdateAsync(new Dictionary<string, object>
             {
                     { "userRoleId", User.GetUserRoleId() }, { "id", id }
             });

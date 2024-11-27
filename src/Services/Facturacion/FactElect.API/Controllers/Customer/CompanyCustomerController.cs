@@ -1,19 +1,11 @@
 ﻿namespace FactElect.API.Controllers.Customer;
 
-public class CompanyCustomerController : BaseApiController
+public class CompanyCustomerController(ICompanyCustomerService companyCustomer) : BaseApiController
 {
-    private readonly ICompanyCustomerService _companyCustomer;
-
-
-    public CompanyCustomerController(ICompanyCustomerService companyCustomer)
-    {
-        _companyCustomer = companyCustomer;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var response = await _companyCustomer.GetAsync(new Dictionary<string, object>
+        var response = await companyCustomer.GetAsync(new Dictionary<string, object>
         {
             { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         });
@@ -23,7 +15,7 @@ public class CompanyCustomerController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post(ApiRequest request)
     {
-        var response = await _companyCustomer.AddAsync(new Dictionary<string, object>
+        var response = await companyCustomer.AddAsync(new Dictionary<string, object>
         {
             { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(request.Data) }
         });
@@ -35,7 +27,7 @@ public class CompanyCustomerController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {
-        var response = await _companyCustomer.UpdateAsync(new Dictionary<string, object>
+        var response = await companyCustomer.UpdateAsync(new Dictionary<string, object>
         {
             { "userRoleId", User.GetUserRoleId() },
             { "id", id },
@@ -50,7 +42,7 @@ public class CompanyCustomerController : BaseApiController
     [HttpGet("Search")]
     public async Task<IActionResult> Search(string json)
     {
-        var response = await _companyCustomer.SearchAsync(new Dictionary<string, object>
+        var response = await companyCustomer.SearchAsync(new Dictionary<string, object>
         {
             { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         });
@@ -60,7 +52,7 @@ public class CompanyCustomerController : BaseApiController
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var response = await _companyCustomer.GetIdAsync(new Dictionary<string, object> { { "id", id } });
+        var response = await companyCustomer.GetIdAsync(new Dictionary<string, object> { { "id", id } });
         return Ok(response);
     }
 
@@ -69,7 +61,7 @@ public class CompanyCustomerController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await _companyCustomer.DeleteAsync(parameters);
+        var response = await companyCustomer.DeleteAsync(parameters);
         return Ok(response);
     }
 }
