@@ -1,8 +1,6 @@
 ﻿namespace Compras.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class NotaCreditoController : ControllerBase
+public class NotaCreditoController : BaseApiController
 {
     private IConfiguration _configuration;
     private readonly ICustomLogger _log;
