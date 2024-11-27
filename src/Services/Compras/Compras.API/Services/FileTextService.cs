@@ -1,8 +1,13 @@
 ﻿namespace Compras.API.Services;
 
-public sealed class FileTxt
+public interface IFileTextService
 {
-    public async Task<DataTable> GetDocs(byte[] fileTxt)
+    Task<DataTable> GetDocsAsync(byte[] fileTxt);
+}
+
+public class FileTextService : IFileTextService
+{
+    public async Task<DataTable> GetDocsAsync(byte[] fileTxt)
     {
         var dt = new DataTable();
         dt.Columns.Add("id", typeof(int));
@@ -18,18 +23,16 @@ public sealed class FileTxt
         dt.Columns.Add("claveAcceso", typeof(string));
         dt.Columns.Add("numeroAutorizacion", typeof(string));
         dt.Columns.Add("importeTotal", typeof(string));
-        string line;
 
         var reader = new StreamReader(new MemoryStream(fileTxt), Encoding.GetEncoding("iso-8859-1"), true);
-        DataRow row;
         var positionDr = 0;
         var index = 0;
-        while ((line = await reader.ReadLineAsync()) != null)
+        while (await reader.ReadLineAsync() is { } line)
         {
             var items = line.Split('\t');
             if (index > 0 && items.Length > 1)
             {
-                row = dt.NewRow();
+                var row = dt.NewRow();
                 row["id"] = positionDr;
                 row["uniqueId"] = Guid.NewGuid();
                 row["comprobante"] = items[0];
@@ -46,21 +49,26 @@ public sealed class FileTxt
                 positionDr++;
             }
 
-            if (items.Length == 12)
+            switch (items.Length)
             {
-                if (dt.Rows.Count == 1)
+                case 12:
                 {
-                    dt.Rows[0]["importeTotal"] = items[11];
-                }
+                    switch (dt.Rows.Count)
+                    {
+                        case 1:
+                            dt.Rows[0]["importeTotal"] = items[11];
+                            break;
+                        case > 1:
+                            dt.Rows[positionDr - 1]["importeTotal"] = items[11];
+                            break;
+                    }
 
-                if (dt.Rows.Count > 1)
-                {
-                    dt.Rows[positionDr - 1]["importeTotal"] = items[11];
+                    break;
                 }
-            }
-            else if (items.Length == 1 && items[0] != "IMPORTE_TOTAL") //
-            {
-                dt.Rows[positionDr - 1]["importeTotal"] = items[0];
+                //
+                case 1 when items[0] != "IMPORTE_TOTAL":
+                    dt.Rows[positionDr - 1]["importeTotal"] = items[0];
+                    break;
             }
 
             index++;
@@ -68,11 +76,6 @@ public sealed class FileTxt
 
         reader.Close();
         reader.Dispose();
-        if (dt.Rows.Count > 0)
-        {
-            return dt;
-        }
-
-        return null;
+        return dt.Rows.Count > 0 ? dt : null;
     }
 }
