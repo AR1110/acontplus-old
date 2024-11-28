@@ -33,6 +33,7 @@ import { FormsModule } from '@angular/forms';
 import { SendMailModalDirective } from '@shared/directives/send-mail-modal.directive';
 import { DetalleArqueoControlCajaModalComponent } from './components/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
+import { AuthService } from '@modules/auth/services/auth.service';
 
 @Component({
     selector: 'app-movimiento-caja-modal',
@@ -94,6 +95,7 @@ export class MovimientoCajaModalComponent {
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
   private pS = inject(UserRoleStateService);
+  private authSvc = inject(AuthService)
   private format = FORMAT_REPORT.PDF;
 
   getMovimientosCaja() {
@@ -443,6 +445,9 @@ export class MovimientoCajaModalComponent {
         identificacion: null,
         idUsuario: this.params.idUsuario,
         idCliente: null,
+
+        userRoleId: this.authSvc.getUserRoleId()
+
       };
 
       const parameters = {
