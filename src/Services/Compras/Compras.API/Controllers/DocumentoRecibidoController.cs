@@ -8,7 +8,7 @@ public class DocumentoRecibidoController(
     IConfiguration configuration,
     IDocumentoRecibidoService docRecibidoSvc,
     IDocumentoXmlToHtml documentoXmlToHtml,
-    FileTxt txtComp,
+    IFileTextService fileTextService,
     IDocumentoTempService documentoTemp,
     IWebServiceSri webServiceSri)
     : BaseApiController
@@ -70,7 +70,7 @@ public class DocumentoRecibidoController(
 
         var path = configuration.GetSection("ImportacionTxt").Value;
         FileData.SaveFile(path, file);
-        var dt = await txtComp.GetDocs(FileData.GetFileByte(file));
+        var dt = await fileTextService.GetDocsAsync(FileData.GetFileByte(file));
         if (!DataValidation.DataTableIsNull(dt))
         {
             var dtExistent = await adoRepository.GetDataTableAsync("Recepcion.Documento_Check_Existence",

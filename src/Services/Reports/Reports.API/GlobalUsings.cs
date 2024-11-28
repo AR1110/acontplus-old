@@ -6,3 +6,4 @@ global using Microsoft.AspNetCore.Mvc;
 global using Reports.API.Dtos;
 global using Reports.Application.Services;
 global using Services.Common.Extensions;
+global using Common.ApiDocumentation;
