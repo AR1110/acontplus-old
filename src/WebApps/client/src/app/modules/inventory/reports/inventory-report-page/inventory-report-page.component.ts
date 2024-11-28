@@ -451,7 +451,8 @@ export class InventoryReportPageComponent {
         idBodega: isValidField(this.dataSearch.idBodega),
         idMarca: isValidField(this.dataSearch.idMarca),
         filtroFecha,
-        stockStatusCode: isValidField(this.dataSearch.stockStatusCode)
+        stockStatusCode: isValidField(this.dataSearch.stockStatusCode),
+        userRoleId: this.authSvc.getUserRoleId()
       }
 
       const parameters = {
@@ -490,7 +491,8 @@ export class InventoryReportPageComponent {
         idMarca: isValidField(this.dataSearch.idMarca),
         idTarifa: getValidId(this.dataSearch.idTarifa),
         filtroFecha,
-        stockStatusCode: isValidField(this.dataSearch.stockStatusCode)
+        stockStatusCode: isValidField(this.dataSearch.stockStatusCode),
+        userRoleId: this.authSvc.getUserRoleId()
       }
 
       const parameters = {
@@ -526,6 +528,7 @@ export class InventoryReportPageComponent {
         stockStatusCode: isValidField(this.dataSearch.stockStatusCode),
         idTarifa: getValidId(this.dataSearch.idTarifa),
         idMarca: isValidField(this.dataSearch.idMarca),
+        userRoleId: this.authSvc.getUserRoleId()
       }
       const parameters = {
         reportParams: JSON.stringify({
@@ -562,6 +565,7 @@ export class InventoryReportPageComponent {
       numeroIdentificacion,
       checkboxSubFamiliaFiltro: this.dataSearch.checkboxSubFamiliaFiltro,
       bySubFamilia: idSubFamilia,
+      userRoleId: this.authSvc.getUserRoleId()
     }
     const parameters = {
       reportParams: JSON.stringify({
@@ -598,7 +602,8 @@ export class InventoryReportPageComponent {
       //estado: this.dataSearch.estado,
       byTipoFormato: this.format,
       byTipoReporte: this.dataSearch.byTipoReporte,
-      filtroFecha
+      filtroFecha,
+      userRoleId: this.authSvc.getUserRoleId()
     }
 
     const parameters = {
