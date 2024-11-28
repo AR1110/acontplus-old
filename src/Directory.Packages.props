@@ -4,8 +4,8 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Acontplus.Common.ApiDocumentation" Version="0.0.1" />
-    <PackageVersion Include="Acontplus.Common.Core" Version="1.1.5" />
+    <PackageVersion Include="Acontplus.Common.ApiDocumentation" Version="0.0.2" />
+    <PackageVersion Include="Acontplus.Common.Core" Version="1.1.6" />
     <PackageVersion Include="Acontplus.Common.Infrastructure" Version="1.1.6" />
     <PackageVersion Include="Acontplus.Common.S3Application" Version="1.1.3" />
     <PackageVersion Include="Acontplus.Reports.Application" Version="1.0.3" />
