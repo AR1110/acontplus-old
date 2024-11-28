@@ -316,6 +316,7 @@ export class SaleReportPageComponent {
           withTableNames: true,
         },
         codigo:SALE_CODE_REPORT.FG,
+
       }
 
 
