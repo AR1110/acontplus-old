@@ -3,45 +3,74 @@ import { NgbNavModule } from "@ng-bootstrap/ng-bootstrap";
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
 import { ProductService } from "@inventory/product/product.service";
 import { GroupedEstab, GroupedEstabBodega } from "@core/models/estab.model";
-import { FormsModule } from "@angular/forms";
+import { FormControl, FormsModule } from "@angular/forms";
 import { Brand } from "@inventory/models/brand.model";
 import {
   SubCategoryGroupComponent
 } from "@inventory/components/sub-category/sub-category-group/sub-category-group.component";
 import { ProductSearchComponent } from "@inventory/product/components/product-search/product-search.component";
-import { UserSearchComponent } from "@core/components/user-search/user-search.component";
 import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
 import { FORMAT_REPORT } from "@core/constants/global.constants";
 import { ToasterService } from "@core/services/toaster.service";
 import { getValidId, isValidField } from "@core/utils/utils";
 import { INVENTORY_CODE_REPORT } from "@inventory/enums/inventory.enum";
 import { SharedService } from "@core/services/shared.service";
-import {
-  CompanyCustomerSearchComponent
-} from "@company-customer/components/company-customer-search/company-customer-search.component";
 import { SupplierSearchComponent } from '@modules/customer/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
+import { MatCardModule } from '@angular/material/card';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
+import { CompanyCustomerSearchMatComponent } from '@company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
+import Swal from 'sweetalert2';
+import { NotificacionService } from '@shared/services/notificacion.service';
+import { AuthService } from '@modules/auth/services/auth.service';
+
+const imports = [
+
+  NgbNavModule,
+  FormsModule,
+  MatCardModule,
+  MatTabsModule,
+  MatButtonModule,
+  MatIconModule,
+  MatCheckboxModule,
+  MatDividerModule,
+  MatSelectModule,
+  MatFormFieldModule,
+  MatInputModule,
+  BreadcrumbComponent,
+  SubCategoryGroupComponent,
+  ProductSearchComponent,
+  DateRangeSelectionComponent,
+  SupplierSearchComponent,
+  MatUserSearchComponent,
+  CompanyCustomerSearchMatComponent
+]
 
 @Component({
     selector: 'app-inventory-report-page',
-    imports: [
-        NgbNavModule,
-        FormsModule,
-        BreadcrumbComponent,
-        SubCategoryGroupComponent,
-        ProductSearchComponent,
-        UserSearchComponent,
-        DateRangeSelectionComponent,
-        SupplierSearchComponent,
-        CompanyCustomerSearchComponent,
-    ],
+    imports ,
     templateUrl: './inventory-report-page.component.html',
-    styles: ``
+    styles: `
+
+    .mat-mdc-tab-body-content{
+      overflow: hidden;
+    }
+    `
 })
 export class InventoryReportPageComponent {
   productSvc = inject(ProductService)
   tS = inject(ToasterService)
   sharedSvc = inject(SharedService)
+  appNotifiSvc = inject(NotificacionService)
+  authSvc = inject(AuthService)
 
   activeTab = 1;
 
@@ -95,6 +124,8 @@ export class InventoryReportPageComponent {
   ]
 
   tarifas: any[] = []
+
+  selected = new FormControl(0);
 
   private format: FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL | null = null;
 
@@ -361,14 +392,12 @@ export class InventoryReportPageComponent {
     return null;
   }
 
-  // REPORTE DE CONSUMO DIARIO DE ARTICULOS
-  private getReportConsumoDiario() {
-
+  private getDataParamsConsumoDiario(){
     let idSubFamilia = this.dataSearch.checkboxSubCategoryFilter ? isValidField(this.dataSearch.idSubFamilia) : null;
     let numeroIdentificacion = this.dataSearch.checkboxCompanyCustomer ? isValidField(this.dataSearch.numeroIdentificacion) : null
 
 
-    let dataSearch = {
+    return {
       tipo: 4,
       checkBoxFecha: true,
       idUsuario: this.dataSearch.checkboxUsuarioFiltro ? isValidField(this.dataSearch.idUsuario) : null,
@@ -379,8 +408,15 @@ export class InventoryReportPageComponent {
       codEstab: this.getCodEstab(),
       idBodega: isValidField(this.dataSearch.idBodega),
       idSubFamilia,
-      numeroIdentificacion
+      numeroIdentificacion,
+      userRoleId: this.authSvc.getUserRoleId()
     }
+
+  }
+  // REPORTE DE CONSUMO DIARIO DE ARTICULOS
+  private getReportConsumoDiario() {
+
+
 
     const parameters = {
       reportParams: JSON.stringify({
@@ -388,7 +424,7 @@ export class InventoryReportPageComponent {
         format: this.format,
         aditionalParams: []
       }),
-      dataParams: JSON.stringify(dataSearch)
+      dataParams: JSON.stringify(this.getDataParamsConsumoDiario())
     }
 
 
@@ -579,10 +615,69 @@ export class InventoryReportPageComponent {
       format: this.format!,
       isOldVersion: true
     })
+
+
+
+
+
+
+
+
+
+
+
+
+
   }
 
 
 
+  async askToSendMail(){
+    let {isConfirmed} = await Swal.fire({
+      icon: 'warning',
+      html: '¿Estás seguro de enviar el reporte por correo electrónico de la empresa?',
+      confirmButtonText: 'Si',
+      cancelButtonText: 'No',
+      showCancelButton: true,
+      showConfirmButton: true
+    })
+
+
+    if(!isConfirmed) return
+
+     const params = {
+        subject: 'Reporte Consumo Diario',
+        params: {
+          hasFile: true,
+          isReport: "SI",
+          reportParams: {
+            hasParams: false,
+            codigo: this.dataSearch.checkboxAgruparArticulo ? INVENTORY_CODE_REPORT.CDAA : INVENTORY_CODE_REPORT.CDA,
+            format: FORMAT_REPORT.PDF
+          },
+          spParams:  this.getDataParamsConsumoDiario(),
+        //  withTableNames: true,
+        },
+
+      }
+
+
+      this.appNotifiSvc.post(params).subscribe( (response) =>{
+        if(response.code==="0"){
+          this.tS.toastr({
+            type: 'warning',
+            message: response.message
+          })
+        }
+        if(response.code==="1"){
+          this.tS.toastr({
+            type: 'success',
+            message: response.message
+          })
+        }
+      })
+
+  }
 
 
 

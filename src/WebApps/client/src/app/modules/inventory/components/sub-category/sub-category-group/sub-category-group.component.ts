@@ -36,7 +36,7 @@ const _filter = (opt: any[], value: string): string[] => {
 })
 export class SubCategoryGroupComponent {
   @Input({ required: true }) subCategoryGroups: SubCategoryGroup[] = [];
-
+  isInputMat = input(false)
   onSelected = output<number>();
   onEmptyData = output();
   _formBuilder = inject(FormBuilder);
