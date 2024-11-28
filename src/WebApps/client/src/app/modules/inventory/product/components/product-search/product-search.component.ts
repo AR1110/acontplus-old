@@ -5,6 +5,8 @@ import {
   OnInit,
   Output,
   inject,
+  input,
+  signal,
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -14,12 +16,16 @@ import {
   debounceTime,
   distinctUntilChanged,
   switchMap,
+  finalize,
 } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ProductService } from '@inventory/product/product.service';
 import { MatTableModule } from '@angular/material/table';
 import { ProductSearch } from '@inventory/product/product.model';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 type ProductSearchProps = {
   isSearchSimple?: boolean;
@@ -39,7 +45,10 @@ type ProductSearchProps = {
         MatAutocompleteModule,
         ReactiveFormsModule,
         MatTableModule,
+        MatFormFieldModule,
+        MatInputModule,
         AsyncPipe,
+        MatProgressSpinnerModule,
     ],
     styleUrl: './product-search.component.css'
 })
@@ -52,6 +61,7 @@ export class ProductSearchComponent {
   };
   @Input() isSearchSimple = true;
   @Input() textSearch = '';
+  isInputMat = input(false)
 
   @Output() onProductSelected = new EventEmitter<{ data: any }>();
   @Output() emptyInput = new EventEmitter();
@@ -59,6 +69,7 @@ export class ProductSearchComponent {
   private productSvc = inject(ProductService);
   control = new FormControl('');
   filteredProducts!: Observable<any[]>;
+  isLoading = signal(false)
 
   // products = [
   //   {
@@ -336,8 +347,6 @@ export class ProductSearchComponent {
 
   ngOnInit() {
     this.filteredProducts = this.control.valueChanges.pipe(
-      startWith(''),
-      debounceTime(400),
       distinctUntilChanged(),
       switchMap((val) => {
         if (val && val.length > 2) {
@@ -352,7 +361,9 @@ export class ProductSearchComponent {
 
   private _filter(value: string) {
     const filterValue = this._normalizeValue(value);
+    this.isLoading.set(true)
     return this.productSvc.search({ textSearch: value }).pipe(
+      finalize(()=>this.isLoading.set(false)),
       map((response) => {
         console.log(response);
         return response;

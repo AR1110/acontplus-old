@@ -62,6 +62,7 @@ BEGIN
 								SELECT dbo.AFTConvertDate(dbo.ufnGetDateEcuador())+dbo.AFTConvertHora(dbo.ufnGetDateEcuador()) as fechaEmision
 									  ,ISNULL(en.telefono, '')                                                                 as telefono
 									  ,en.razonSocial                                                                          as razonSocial
+                                      ,@subject         as title                                                                          
 								FROM dbo.Entidad en WHERE idEntidad = @idEntidad
 								FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 							)

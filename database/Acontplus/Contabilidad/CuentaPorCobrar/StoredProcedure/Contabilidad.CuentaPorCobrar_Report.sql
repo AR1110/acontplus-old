@@ -11,8 +11,9 @@ GO
 -- Description:	<Description,,>
 -- =============================================
 CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorCobrar_Report 
-     @userRoleId INT
-    ,@json VARCHAR(MAX)
+   --  @userRoleId INT
+   -- ,
+    @json VARCHAR(MAX)
 	,@tableNames VARCHAR(500) OUTPUT
 AS
 BEGIN
@@ -21,7 +22,7 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
     --> Global
-    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150) ,@idUsuario INT ,@nombreReporte VARCHAR(300)
+    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150) ,@idUsuario INT ,@nombreReporte VARCHAR(300),  @userRoleId INT
 
     --> Sql
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
@@ -32,7 +33,7 @@ BEGIN
            ,@fechaInicio        DATETIME2 
            ,@fechaFin           DATETIME2 
            ,@ckFecha            BIT 
-           ,@codEstado          VARCHAR(15) 
+           ,@codEstado          VARCHAR(15)  
            ,@ckCxcVencida       BIT
            ,@codDoc             VARCHAR(10) 
            ,@idPuntoEmision     INT 
@@ -50,9 +51,11 @@ BEGIN
            ,@dirViviendaCliente VARCHAR(150)
 
     --> Variables
-    SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+    --> Variables
 
-    SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
+    SELECT @tipo = tipo, @userRoleId = userRoleId FROM OPENJSON(@json) WITH (tipo INT, userRoleId INT)
+
+    SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
     --> Cartera Cliente
     IF @tipo = 1
