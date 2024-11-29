@@ -11,7 +11,7 @@ GO
 -- Description:	SP Para leer los datos de los tipos de reportes relacionado con artiuculos
 -- =============================================
 --Inventario.Articulo_Report 28, '{"tipo":10,"idArticulo":5}'
-CREATE OR ALTER PROCEDURE Inventario.Articulo_Report @idRol INT ,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Inventario.Articulo_Report  @json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -40,12 +40,13 @@ BEGIN
            ,@codEstab     VARCHAR(100) 
            ,@idMarca              INT
            ,@idTarifa INT  
+           ,@userRoleId INT
            
 
-	SELECT TOP 1  @idEntidad = idEntidad, @usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
+	SELECT @tipo = tipo, @userRoleId = userRoleId FROM OPENJSON(@json) WITH (tipo INT, userRoleId INT)
 	
+	SELECT TOP 1  @idEntidad = idEntidad, @usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 	--> Fraccionados
 	IF @tipo = 1
 		BEGIN
@@ -355,7 +356,7 @@ BEGIN
 						WHERE tt.idEntidad = @idEntidad 
                           AND tt.estado = 1 '
 
-			SELECT @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+			SELECT @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 			SELECT @checkBoxFecha  = checkBoxFecha
 				  ,@idArticulo     = idArticulo
