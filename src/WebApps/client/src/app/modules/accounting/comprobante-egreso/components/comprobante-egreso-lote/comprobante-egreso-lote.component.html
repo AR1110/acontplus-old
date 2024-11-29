@@ -231,7 +231,7 @@
 
   <ng-template #templateOp let-item="item">
     @if (item.esCuotaAbonado) {
-    <button mat-icon-button aria-hidden="false">
+    <button mat-icon-button aria-hidden="false" (click)="verPagoDetalle(item)">
       <mat-icon>visibility</mat-icon>
     </button>
     }

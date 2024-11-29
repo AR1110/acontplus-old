@@ -424,7 +424,8 @@ export class InventoryReportPageComponent {
         format: this.format,
         aditionalParams: []
       }),
-      dataParams: JSON.stringify(this.getDataParamsConsumoDiario())
+      dataParams: JSON.stringify(this.getDataParamsConsumoDiario()),
+      hasService: true
     }
 
 
@@ -461,7 +462,8 @@ export class InventoryReportPageComponent {
           format: this.format,
           aditionalParams: []
         }),
-        dataParams: JSON.stringify(dataSearch)
+        dataParams: JSON.stringify(dataSearch),
+        hasService: true
       }
 
       this.sharedSvc.getReport({
@@ -501,7 +503,8 @@ export class InventoryReportPageComponent {
           format: this.format,
           aditionalParams: []
         }),
-        dataParams: JSON.stringify(dataSearch)
+        dataParams: JSON.stringify(dataSearch),
+        hasService: true
       }
 
       this.sharedSvc.getReport({
@@ -536,7 +539,8 @@ export class InventoryReportPageComponent {
           format: this.format,
           aditionalParams: []
         }),
-        dataParams: JSON.stringify(dataSearch)
+        dataParams: JSON.stringify(dataSearch),
+        hasService: true
       }
 
       this.sharedSvc.getReport({
@@ -573,7 +577,8 @@ export class InventoryReportPageComponent {
         format: this.format,
         aditionalParams: []
       }),
-      dataParams: JSON.stringify(dataSearch)
+      dataParams: JSON.stringify(dataSearch),
+      hasService: true
     }
     this.sharedSvc.getReport({
       data: parameters,
@@ -612,7 +617,8 @@ export class InventoryReportPageComponent {
         format: this.format,
         aditionalParams: []
       }),
-      dataParams: JSON.stringify(dataSearch)
+      dataParams: JSON.stringify(dataSearch),
+      hasService: true
     }
 
     this.sharedSvc.getReport({

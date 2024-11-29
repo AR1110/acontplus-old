@@ -318,7 +318,6 @@ export const ComprobanteEgresoStore = signalStore(
 
         let dataCiudad = store.provinciaCiudades().flatMap(item => item.ciudades).find(item => item.idCiudad === idCiudad)
 
-        console.log(idBanco)
         let dataBanco = store.bancos().find(item => item.idBanco === idBanco);
 
 
