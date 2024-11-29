@@ -1,23 +1,46 @@
 @if (showHeader()) {
-  <div class="m3-dialog-header">
-    <h6 mat-dialog-title>
-      {{ matDialogTitle() }}
+    <div class="m3-dialog-header">
+        <h6 mat-dialog-title>
+            @if (icon()) {
+                <mat-icon
+                        aria-hidden="false"
+                        aria-label="Dialog Icon"
+                        fontIcon="{{ icon() }}"
+                ></mat-icon>
+            }
 
-      <button mat-icon-button class="close-button" (click)="close.emit()">
-        <mat-icon>close</mat-icon>
-      </button>
-    </h6>
-  </div>
+            {{ title() }}
+
+            <button mat-icon-button class="close-button" (click)="close.emit()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </h6>
+    </div>
 }
 
 <mat-dialog-content class="mat-typography">
-  @if (loading()) {
-    <div class="loading-overlay">
-      <mat-spinner></mat-spinner>
-    </div>
-  }
-  <ng-container *ngTemplateOutlet="containerTemplate"></ng-container>
+    @if (loading()) {
+        <div class="loading-overlay">
+            <mat-spinner></mat-spinner>
+        </div>
+    }
+    <ng-container *ngTemplateOutlet="containerTemplate"></ng-container>
 </mat-dialog-content>
 <mat-dialog-actions [align]="align()">
-  <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>
+    <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>
+    @if (this.options().showButtonClose) {
+        <button
+                type="button"
+                mat-raised-button
+                title="Cerrar"
+                (click)="close.emit()"
+        >
+            <mat-icon
+                    aria-hidden="false"
+                    aria-label="Close Icon"
+                    fontIcon="close"
+            ></mat-icon>
+            Cerrar
+        </button>
+    }
 </mat-dialog-actions>

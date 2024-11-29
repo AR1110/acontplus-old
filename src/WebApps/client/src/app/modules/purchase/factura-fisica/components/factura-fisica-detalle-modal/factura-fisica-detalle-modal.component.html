@@ -1,7 +1,7 @@
 <app-mat-custom-dialog
         [containerTemplate]="containerTemplate"
         [actionsTemplate]="actionsTemplate"
-        [matDialogTitle]="'Detalle Factura Física'"
+        [title]="'Detalle Factura Física'"
         (close)="closeDialog()"
 />
 
@@ -213,5 +213,4 @@
         <mat-icon>save_alt</mat-icon>
         Descargar Detalle
     </button>
-    <button mat-raised-button (click)="closeDialog()">Cerrar</button>
 </ng-template>

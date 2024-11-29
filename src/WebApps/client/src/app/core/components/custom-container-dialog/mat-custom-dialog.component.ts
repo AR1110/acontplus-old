@@ -5,6 +5,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+export interface MatCustomDialogOptions {
+  showButtonClose?: boolean | true | false;
+}
+
 @Component({
   selector: 'app-mat-custom-dialog',
   imports: [
@@ -21,7 +25,11 @@ export class MatCustomDialogComponent {
   showHeader = input(true);
   loading = input(false);
   align = input<'start' | 'center' | 'end'>('end');
-  matDialogTitle = input('');
+  title = input('');
+  icon = input('');
+  options = input<MatCustomDialogOptions>({
+    showButtonClose: true,
+  });
   close = output();
   @Input() containerTemplate!: TemplateRef<any> | null;
   @Input() actionsTemplate!: TemplateRef<any> | null;
