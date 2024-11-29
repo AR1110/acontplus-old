@@ -1,6 +1,4 @@
-﻿global using Asp.Versioning;
-global using Autofac;
-global using Common.S3Application.Services;
+﻿global using Autofac;
 global using Common.Core.Entities;
 global using Common.S3Application.Interfaces;
 global using Common.Core.Models;
@@ -17,7 +15,6 @@ global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Serialization;
 global using Services.Common.Extensions;
-
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
 global using System.Data;

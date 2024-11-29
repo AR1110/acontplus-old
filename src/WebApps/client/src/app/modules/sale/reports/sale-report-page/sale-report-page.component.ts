@@ -13,27 +13,41 @@ import {
   FORMAT_REPORT,
 } from '@core/constants/global.constants';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
-import { UserSearchComponent } from '@core/components/user-search/user-search.component';
 import { ToasterService } from '@core/services/toaster.service';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
 import { SALE_CODE_REPORT } from '@sale/enums/sale.enum';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { NgForOf } from '@angular/common';
 import { formatDateToString } from '@core/utils/date.util';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDividerModule } from '@angular/material/divider';
+import { CompanyCustomerSearchMatComponent } from '@company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
+import Swal from 'sweetalert2';
+import { NotificacionService } from '@shared/services/notificacion.service';
+import { AuthService } from '@modules/auth/services/auth.service';
 
+const imports = [
+  MatCardModule,
+  MatCheckboxModule,
+  MatFormFieldModule,
+  MatSelectModule,
+  MatDividerModule,
+  FormsModule,
+  MatButtonModule,
+  MatIconModule,
+  BreadcrumbComponent,
+  CompanyCustomerSearchMatComponent,
+  DateRangeSelectionComponent,
+  MatUserSearchComponent,
+]
 @Component({
     selector: 'app-sale-report-page',
-    imports: [
-        FormsModule,
-        BreadcrumbComponent,
-        DateRangeSelectionComponent,
-        CompanyCustomerSearchComponent,
-        UserSearchComponent,
-        FaIconComponent,
-        NgForOf,
-    ],
+    imports,
     templateUrl: './sale-report-page.component.html',
     styles: ``
 })
@@ -67,6 +81,8 @@ export class SaleReportPageComponent {
   private cuentaPorCobrarSvc = inject(CuentaPorCobrarService);
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
+  private appNotifiSvc = inject(NotificacionService)
+  private authSvc = inject(AuthService)
 
   getDataFilter() {
     this.cuentaPorCobrarSvc.getDataFilter().subscribe((response) => {
@@ -120,6 +136,8 @@ export class SaleReportPageComponent {
         (tipoDoc) => tipoDoc.codigo === DOC_TYPE.CDV,
       );
       this.dataSearch.codDoc = dataTipoDoc.codigo;
+
+      console.log(this.provinciasAgrupadas)
     });
   }
 
@@ -128,7 +146,6 @@ export class SaleReportPageComponent {
   }
 
   onChangeTipoDoc() {
-    console.log(this.dataSearch.codDoc);
     this.isSelectedNotaEntrega = this.dataSearch.codDoc !== DOC_TYPE.FV;
   }
 
@@ -168,14 +185,54 @@ export class SaleReportPageComponent {
     this.dataSearch.userId = data.idUsuario;
   }
 
-  getReportPdf() {
-    this.format = FORMAT_REPORT.PDF;
-    this.getReport();
+
+
+  getTipoDoc() {
+    if (this.dataSearch.codDoc === DOC_TYPE.FV) return DOC_TYPE_SRI.F;
+    if (this.dataSearch.codDoc === DOC_TYPE.CDV) return null;
+    return this.dataSearch.codDoc;
   }
 
-  getReportExcel() {
-    this.format = FORMAT_REPORT.EXCEL;
-    this.getReport();
+
+  private getDataParams (){
+    let dataEstab = this.establecimientos.find(
+      (estab) =>
+        estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
+    );
+    let dataEstado = this.estadosDoc.find(
+      (estado) => estado.idEstadoPago === this.dataSearch.idEstadoDocumento,
+    );
+
+
+    let identificacion = this.dataSearch.checkBoxCustomer
+      ? isValidField(this.dataSearch.identificacion)
+      : null;
+    let idUsuario = this.dataSearch.checkBoxUser
+      ? isValidField(this.dataSearch.userId)
+      : null;
+    let idCliente = this.dataSearch.checkBoxCustomer
+      ? isValidField(this.dataSearch.companyCustomerId)
+      : null;
+
+
+    let dataParams = {
+      tipo: 2,
+      ckFecha: true,
+      codDoc: this.getTipoDoc(),
+      codEstab: (dataEstab && dataEstab.codEstab) || null,
+      codEstado: (dataEstado && dataEstado.codigo) || null,
+      fechaInicio: this.dataSearch.fromDate,
+      fechaFin: this.dataSearch.toDate,
+      identificacion,
+      idUsuario,
+      idCliente,
+      convertToDoc: this.dataSearch.convertToDoc,
+      idCiudad: this.dataSearch.idCiudad,
+
+      userRoleId: this.authSvc.getUserRoleId()
+    };
+    return dataParams;
+
   }
 
   getReport() {
@@ -200,38 +257,7 @@ export class SaleReportPageComponent {
         });
         return;
       }
-      let dataEstab = this.establecimientos.find(
-        (estab) =>
-          estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
-      );
-      let dataEstado = this.estadosDoc.find(
-        (estado) => estado.idEstadoPago === this.dataSearch.idEstadoDocumento,
-      );
 
-      let identificacion = this.dataSearch.checkBoxCustomer
-        ? isValidField(this.dataSearch.identificacion)
-        : null;
-      let idUsuario = this.dataSearch.checkBoxUser
-        ? isValidField(this.dataSearch.userId)
-        : null;
-      let idCliente = this.dataSearch.checkBoxCustomer
-        ? isValidField(this.dataSearch.companyCustomerId)
-        : null;
-
-      let dataParams = {
-        tipo: 2,
-        ckFecha: true,
-        codDoc: this.getTipoDoc(),
-        codEstab: (dataEstab && dataEstab.codEstab) || null,
-        codEstado: (dataEstado && dataEstado.codigo) || null,
-        fechaInicio: this.dataSearch.fromDate,
-        fechaFin: this.dataSearch.toDate,
-        identificacion,
-        idUsuario,
-        idCliente,
-        convertToDoc: this.dataSearch.convertToDoc,
-        idCiudad: this.dataSearch.idCiudad,
-      };
 
       let reportParams = JSON.stringify({
         hasParams: false,
@@ -241,7 +267,7 @@ export class SaleReportPageComponent {
 
       const parameters = {
         reportParams,
-        dataParams: JSON.stringify(dataParams),
+        dataParams: JSON.stringify(this.getDataParams()),
       };
       this.sharedSvc.getReport({
         data: parameters,
@@ -252,9 +278,64 @@ export class SaleReportPageComponent {
     }
   }
 
-  getTipoDoc() {
-    if (this.dataSearch.codDoc === DOC_TYPE.FV) return DOC_TYPE_SRI.F;
-    if (this.dataSearch.codDoc === DOC_TYPE.CDV) return null;
-    return this.dataSearch.codDoc;
+  getReportPdf() {
+    this.format = FORMAT_REPORT.PDF;
+    this.getReport();
   }
+
+  getReportExcel() {
+    this.format = FORMAT_REPORT.EXCEL;
+    this.getReport();
+  }
+
+
+  async askToSendMail(){
+    let {isConfirmed} = await Swal.fire({
+      icon: 'warning',
+      html: '¿Estás seguro de enviar el reporte por correo electrónico de la empresa?',
+      confirmButtonText: 'Si',
+      cancelButtonText: 'No',
+      showCancelButton: true,
+      showConfirmButton: true
+    })
+
+
+    if(!isConfirmed) return
+
+     const params = {
+        subject: 'Reporte Ventas',
+        params: {
+          hasFile: true,
+          isReport: "SI",
+          reportParams: {
+            hasParams: false,
+            codigo:SALE_CODE_REPORT.FG,
+            format: FORMAT_REPORT.PDF
+          },
+          spParams:  this.getDataParams(),
+          withTableNames: true,
+        },
+        codigo:SALE_CODE_REPORT.FG,
+
+      }
+
+
+      this.appNotifiSvc.post(params).subscribe( (response) =>{
+        if(response.code==="0"){
+          this.tS.toastr({
+            type: 'warning',
+            message: response.message
+          })
+        }
+        if(response.code==="1"){
+          this.tS.toastr({
+            type: 'success',
+            message: response.message
+          })
+        }
+      })
+
+  }
+
+
 }

@@ -1,8 +1,6 @@
 ﻿namespace Compras.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ProveedorController : ControllerBase
+public class ProveedorController : BaseApiController
 {
     private readonly IConfiguration _configuration;
     private readonly ICustomLogger _log;

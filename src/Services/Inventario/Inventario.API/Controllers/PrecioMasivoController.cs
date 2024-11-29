@@ -2,17 +2,8 @@
 
 namespace Inventario.API.Controllers;
 
-public class PrecioMasivoController : BaseApiController
+public class PrecioMasivoController(IPrecioMasivoService precioMasivoService) : BaseApiController
 {
-
-    private readonly IPrecioMasivoService _service;
-
-    public PrecioMasivoController(IPrecioMasivoService service)
-    {
-        _service = service;
-
-    }
-
     [HttpGet]
     public async Task<ActionResult<LegacyApiResponse>> Get(string json)
     {
@@ -20,7 +11,7 @@ public class PrecioMasivoController : BaseApiController
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             };
-        var response = await _service.GetAsync(parameters);
+        var response = await precioMasivoService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -59,7 +50,7 @@ public class PrecioMasivoController : BaseApiController
                 { "userRoleId", User.GetUserRoleId() },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
             };
-        var response = await _service.UpdateAsync(parameters);
+        var response = await precioMasivoService.UpdateAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;

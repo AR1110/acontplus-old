@@ -1,8 +1,6 @@
 ﻿namespace Compras.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class CompraNoHabitualController : ControllerBase
+public class CompraNoHabitualController : BaseApiController
 {
     private readonly ICompraNoHabitualService _compraNoHabSvc;
     private IConfiguration _configuration;

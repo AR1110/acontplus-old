@@ -1,17 +1,29 @@
-﻿using Mechanical.API.Data;
+﻿using Common.Core.Utils;
+using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
 using Mechanical.API.Services;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Serialization;
 
 namespace Mechanical.API.Extensions
 {
     public static class ApplicationServicesExtensions
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+            IConfiguration configuration)
         {
-            services.AddDbContextPool<MechanicalContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            services.AddControllers()
+                .AddNewtonsoftJson(x =>
+                {
+                    x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    x.SerializerSettings.ContractResolver =
+                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+                });
 
+            services.AddDbContextPool<MechanicalContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<ICustomLogger, CustomLogger>();
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddScoped<ISupportService, SupportService>();
             services.AddScoped<ISupportDetailService, SupportDetailService>();

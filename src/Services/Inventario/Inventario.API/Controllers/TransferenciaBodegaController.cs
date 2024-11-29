@@ -1,16 +1,7 @@
 ﻿namespace Inventario.API.Controllers;
 
-public class TransferenciaBodegaController : BaseApiController
+public class TransferenciaBodegaController(ITransferenciaBodegaService transferenciaBodegaService) : BaseApiController
 {
-
-    private readonly ITransferenciaBodegaService _service;
-
-    public TransferenciaBodegaController(ITransferenciaBodegaService service)
-    {
-        _service = service;
-
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -18,7 +9,7 @@ public class TransferenciaBodegaController : BaseApiController
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             };
-        var response = await _service.GetAsync(parameters);
+        var response = await transferenciaBodegaService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -29,7 +20,7 @@ public class TransferenciaBodegaController : BaseApiController
     public async Task<IActionResult> GetId(int id)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await _service.GetIdAsync(parameters);
+        var response = await transferenciaBodegaService.GetIdAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -45,7 +36,7 @@ public class TransferenciaBodegaController : BaseApiController
                 { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(data.Data) }
             };
 
-        var response = await _service.AddAsync(parameters);
+        var response = await transferenciaBodegaService.AddAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -61,7 +52,7 @@ public class TransferenciaBodegaController : BaseApiController
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-        var response = await _service.UpdateAsync(parameters);
+        var response = await transferenciaBodegaService.UpdateAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -73,7 +64,7 @@ public class TransferenciaBodegaController : BaseApiController
     {
 
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await _service.DeleteAsync(parameters);
+        var response = await transferenciaBodegaService.DeleteAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;

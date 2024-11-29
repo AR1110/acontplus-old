@@ -1,8 +1,6 @@
 ﻿namespace Ventas.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class CreditoGaranteController(ICreditoGaranteService _svc) : BaseApiController
+public class CreditoGaranteController(ICreditoGaranteService creditoGaranteService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
@@ -12,7 +10,7 @@ public class CreditoGaranteController(ICreditoGaranteService _svc) : BaseApiCont
             { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
 
-        return Ok(await _svc.GetAsync(parameters));
+        return Ok(await creditoGaranteService.GetAsync(parameters));
     }
 
     [HttpPost]
@@ -24,7 +22,7 @@ public class CreditoGaranteController(ICreditoGaranteService _svc) : BaseApiCont
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
 
-        return Ok(await _svc.AddAsync(parameters));
+        return Ok(await creditoGaranteService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
@@ -37,6 +35,6 @@ public class CreditoGaranteController(ICreditoGaranteService _svc) : BaseApiCont
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
 
-        return Ok(await _svc.UpdateAsync(parameters));
+        return Ok(await creditoGaranteService.UpdateAsync(parameters));
     }
 }

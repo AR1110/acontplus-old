@@ -1,14 +1,7 @@
 ﻿namespace Inventario.API.Controllers;
 
-public class EtiquetaController : BaseApiController
+public class EtiquetaController(IEtiquetaService etiquetaService) : BaseApiController
 {
-    private readonly IEtiquetaService _service;
-
-    public EtiquetaController(IEtiquetaService service)
-    {
-        _service = service;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -18,7 +11,7 @@ public class EtiquetaController : BaseApiController
             { "json", SqlStringParam.Sanitize(json) }
         };
 
-        var response = await _service.GetAsync(parameters);
+        var response = await etiquetaService.GetAsync(parameters);
         return Ok(response);
     }
 
@@ -32,7 +25,7 @@ public class EtiquetaController : BaseApiController
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
 
-        var response = await _service.AddAsync(parameters);
+        var response = await etiquetaService.AddAsync(parameters);
 
         return Ok(response);
     }
@@ -48,7 +41,7 @@ public class EtiquetaController : BaseApiController
               { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
 
-        var response = await _service.UpdateAsync(parameters);
+        var response = await etiquetaService.UpdateAsync(parameters);
         return Ok(response);
     }
 
@@ -61,7 +54,7 @@ public class EtiquetaController : BaseApiController
             { "id", id },
         };
 
-        var response = await _service.DeleteAsync(parameters);
+        var response = await etiquetaService.DeleteAsync(parameters);
         return Ok(response);
     }
 }

@@ -1,26 +1,19 @@
 ﻿namespace Inventario.API.Controllers;
 
-public class MotivoDiscrepanciasController : BaseApiController
+public class MotivoDiscrepanciasController(InventarioContext context) : BaseApiController
 {
-    private readonly InventarioContext _context;
-
-    public MotivoDiscrepanciasController(InventarioContext context)
-    {
-        _context = context;
-    }
-
     // GET: api/MotivoDiscrepancias
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MotivoDiscrepancia>>> GetMotivoDiscrepancias()
     {
-        if (_context.MotivoDiscrepancias == null)
+        if (context.MotivoDiscrepancias == null)
         {
             return NotFound();
         }
 
         try
         {
-            return await _context.MotivoDiscrepancias.ToListAsync();
+            return await context.MotivoDiscrepancias.ToListAsync();
         }
         catch (Exception ex)
         {
@@ -32,12 +25,12 @@ public class MotivoDiscrepanciasController : BaseApiController
     [HttpGet("{id}")]
     public async Task<ActionResult<MotivoDiscrepancia>> GetMotivoDiscrepancia(int id)
     {
-        if (_context.MotivoDiscrepancias == null)
+        if (context.MotivoDiscrepancias == null)
         {
             return NotFound();
         }
 
-        var motivoDiscrepancia = await _context.MotivoDiscrepancias.FindAsync(id);
+        var motivoDiscrepancia = await context.MotivoDiscrepancias.FindAsync(id);
 
         if (motivoDiscrepancia == null)
         {
@@ -57,11 +50,11 @@ public class MotivoDiscrepanciasController : BaseApiController
             return BadRequest();
         }
 
-        _context.Entry(motivoDiscrepancia).State = EntityState.Modified;
+        context.Entry(motivoDiscrepancia).State = EntityState.Modified;
 
         try
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -81,13 +74,13 @@ public class MotivoDiscrepanciasController : BaseApiController
     [HttpPost]
     public async Task<ActionResult<MotivoDiscrepancia>> PostMotivoDiscrepancia(MotivoDiscrepancia motivoDiscrepancia)
     {
-        if (_context.MotivoDiscrepancias == null)
+        if (context.MotivoDiscrepancias == null)
         {
             return Problem("Entity set 'InventarioContext.MotivoDiscrepancias'  is null.");
         }
 
-        _context.MotivoDiscrepancias.Add(motivoDiscrepancia);
-        await _context.SaveChangesAsync();
+        context.MotivoDiscrepancias.Add(motivoDiscrepancia);
+        await context.SaveChangesAsync();
 
         return CreatedAtAction("GetMotivoDiscrepancia", new { id = motivoDiscrepancia.Id }, motivoDiscrepancia);
     }
@@ -96,12 +89,12 @@ public class MotivoDiscrepanciasController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteMotivoDiscrepancia(int id)
     {
-        if (_context.MotivoDiscrepancias == null)
+        if (context.MotivoDiscrepancias == null)
         {
             return NotFound();
         }
 
-        var motivoDiscrepancia = await _context.MotivoDiscrepancias.FindAsync(id);
+        var motivoDiscrepancia = await context.MotivoDiscrepancias.FindAsync(id);
         if (motivoDiscrepancia == null)
         {
             return NotFound();
@@ -110,10 +103,10 @@ public class MotivoDiscrepanciasController : BaseApiController
         //_context.MotivoDiscrepancias.Remove(motivoDiscrepancia);
         motivoDiscrepancia.Enabled = false;
         motivoDiscrepancia.Deleted = true;
-        _context.Entry(motivoDiscrepancia).State = EntityState.Modified;
+        context.Entry(motivoDiscrepancia).State = EntityState.Modified;
         try
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
         catch (Exception)
         {
@@ -130,6 +123,6 @@ public class MotivoDiscrepanciasController : BaseApiController
 
     private bool MotivoDiscrepanciaExists(int id)
     {
-        return (_context.MotivoDiscrepancias?.Any(e => e.Id == id)).GetValueOrDefault();
+        return (context.MotivoDiscrepancias?.Any(e => e.Id == id)).GetValueOrDefault();
     }
 }

@@ -87,10 +87,10 @@ export class DateRangeSelectionComponent {
         weekStart(self.currentDate ),
         weekEnd(self.currentDate ),
       ],
-      'Última semana': [
-        weekStart(weekStart(this.currentDate, -1)),
-        weekStart(this.currentDate, -1 ) ,
-      ],
+      // 'Última semana': [
+      //   weekStart(weekStart(this.currentDate, -1)),
+      //   weekStart(this.currentDate, -1 ) ,
+      // ],
       'Este mes': [
         monthStart(self.currentDate),
         monthEnd(self.currentDate),

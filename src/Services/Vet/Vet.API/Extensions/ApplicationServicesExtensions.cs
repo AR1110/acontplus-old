@@ -19,8 +19,6 @@ public static class ApplicationServicesExtensions
                 }
             );
 
-        services.AddSwaggerDocumentation();
-
         services.AddScoped<IBehaviorTestService, BehaviorTestService>();
         services.AddScoped<IBreedService, BreedService>();
         services.AddScoped<ICustomLogger, CustomLogger>();
