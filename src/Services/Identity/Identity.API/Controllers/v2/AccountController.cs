@@ -7,7 +7,7 @@ public class AccountController(
     IConfiguration config,
     ILoginFailedService loginFailedService,
     ILoginHistoryService loginHistoryService,
-    ITokenService tokenService,
+    IJwtTokenService tokenService,
     IAccountService accountService)
     : ControllerBase
 {
