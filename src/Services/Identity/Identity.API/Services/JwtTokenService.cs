@@ -1,9 +1,13 @@
 ﻿namespace Identity.API.Services;
 
-public class TokenService(IConfiguration configuration) : ITokenService
+public interface IJwtTokenService
+{
+    JwtResponse CreateToken(UserData data);
+}
+
+public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
 {
     private readonly int _exp = Convert.ToInt32(configuration["Token:Exp"]);
-    private readonly bool _expInDays = Convert.ToBoolean(configuration["Token:ExpInDays"]);
 
     private readonly SymmetricSecurityKey _key = new(
         Encoding.UTF8.GetBytes(configuration["Token:Key"] ?? throw new InvalidOperationException()));
@@ -11,7 +15,7 @@ public class TokenService(IConfiguration configuration) : ITokenService
     public JwtResponse CreateToken(UserData data)
     {
         var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
-        var expires = _expInDays ? DateTime.UtcNow.AddDays(_exp) : DateTime.UtcNow.AddMinutes(_exp);
+        var expires = DateTime.UtcNow.AddMinutes(_exp);
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Email, data.Email ?? ""),

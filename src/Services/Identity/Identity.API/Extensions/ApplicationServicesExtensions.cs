@@ -20,7 +20,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<ILoginFailedService, LoginFailedService>();
         services.AddScoped<ILoginHistoryService, LoginHistoryService>();
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IUserService, UserService>();
 
         return services;
