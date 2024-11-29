@@ -126,7 +126,6 @@ export class FiltroDetalleCajaReportModal {
         ckHora: this.dataSearch.ckHora,
       };
 
-      console.log(dataParams);
 
       const parameters = {
         hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
