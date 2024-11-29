@@ -5,51 +5,47 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { CustomContainerDialogComponent } from '@core/components/custom-container-dialog/custom-container-dialog.component';
+import { MatCustomDialogComponent } from '@core/components/custom-container-dialog/mat-custom-dialog.component';
 import { SupplierSearchMatComponent } from '@modules/customer/supplier/components/supplier-search-mat/supplier-search-mat.component';
 import { FacturaFisicaService } from '../../factura-fisica.service';
-import { finalize, Observable } from 'rxjs';
+import { finalize } from 'rxjs';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-    selector: 'app-factura-fisica-add-edit-modal',
-    imports: [
-        FormsModule,
-        MatIconModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatInputModule,
-        CustomContainerDialogComponent,
-        SupplierSearchMatComponent
-    ],
-    templateUrl: './factura-fisica-add-edit-modal.component.html',
-    styles: ``
+  selector: 'app-factura-fisica-add-edit-modal',
+  imports: [
+    FormsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatCustomDialogComponent,
+    SupplierSearchMatComponent,
+  ],
+  templateUrl: './factura-fisica-add-edit-modal.component.html',
+  styles: ``,
 })
 export class FacturaFisicaAddEditModalComponent {
-
   readonly dialogRef = inject(MatDialogRef<FacturaFisicaAddEditModalComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
-  private facturaFisicaSvc = inject(FacturaFisicaService)
+  private facturaFisicaSvc = inject(FacturaFisicaService);
 
-
-  title = signal('Nueva Factura Física')
-
+  title = signal('Nueva Factura Física');
 
   loading = signal(false);
 
   dataForm = model({
     idEstablecimiento: 0,
-    idBodega: 0
-  })
+    idBodega: 0,
+  });
 
-  dataFormClone = model(structuredClone(this.dataForm()))
+  dataFormClone = model(structuredClone(this.dataForm()));
 
   estabs = signal<GroupedEstab[]>([]);
   sustentosTributario = signal<any[]>([]);
-  bodegas = signal<GroupedEstabBodega[]>([])
-
+  bodegas = signal<GroupedEstabBodega[]>([]);
 
   setDataForm<K extends keyof ReturnType<typeof this.dataForm>>(
     key: K,
@@ -63,34 +59,27 @@ export class FacturaFisicaAddEditModalComponent {
     });
   }
 
-  ngOnInit(){
-
-    this.loading.set(true)
-    this.facturaFisicaSvc.getDataForm()
-    .pipe(finalize(()=>this.loading.set(false)))
-    .subscribe(response=>{
+  ngOnInit() {
+    this.loading.set(true);
+    this.facturaFisicaSvc
+      .getDataForm()
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe((response) => {
         this.sustentosTributario.set(response.sustentosTributario);
         this.estabs.set(response.estabs);
 
-
-        let dataEstab = this.estabs().find(item=>item.defaultEstab);
-
+        let dataEstab = this.estabs().find((item) => item.defaultEstab);
 
         this.bodegas.set(dataEstab?.bodegas || []);
 
-        this.setDataForm("idEstablecimiento", dataEstab?.idEstablecimiento || 0)
-
-
-    })
-
+        this.setDataForm(
+          'idEstablecimiento',
+          dataEstab?.idEstablecimiento || 0,
+        );
+      });
   }
 
-
-
-
-  close(){
-
-    this.dialogRef.close()
-
+  close() {
+    this.dialogRef.close();
   }
 }

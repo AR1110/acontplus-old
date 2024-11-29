@@ -1,125 +1,129 @@
-<app-custom-container-dialog
-  [containerTemplate]="containerTemplate"
-  [actionsTemplate]="actionsTemplate"
-  [matDialogTitle]="title()"
-  [loading]="loading()"
-  (close)="close()"
+<app-mat-custom-dialog
+        [containerTemplate]="containerTemplate"
+        [actionsTemplate]="actionsTemplate"
+        [matDialogTitle]="title()"
+        [loading]="loading()"
+        (close)="close()"
 />
 
 <ng-template #containerTemplate>
-  <div class="d-flex flex-column gap-2">
-    <div
-      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2"
-    >
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Establecimiento: </mat-label>
-          <mat-select [(ngModel)]="dataForm().idEstablecimiento">
-            @for (item of estabs(); track $index) {
-            <mat-option [value]="item.idEstablecimiento">{{
-              item.nombreEstab
-            }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Sustento Tributario: </mat-label>
-          <mat-select>
-            @for (item of sustentosTributario(); track $index) {
-            <mat-option [value]="item.idSustentoTributario">{{
-              item.descripcion
-            }}</mat-option>
-
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Subcategoría: </mat-label>
-          <mat-select>
-            <mat-option value="option1">Option 1</mat-option>
-            <mat-option value="option2" disabled
-              >Option 2 (disabled)</mat-option
-            >
-            <mat-option value="option3">Option 3</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-12">
+    <div class="d-flex flex-column gap-2">
         <div
-          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2"
+                class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2"
         >
-          <div class="col">
-            <mat-form-field class="w-100">
-              <mat-label>Punto Emisión:</mat-label>
-              <input matInput type="text" />
-            </mat-form-field>
-          </div>
+            <div class="col">
+                <mat-form-field class="w-100">
+                    <mat-label>Establecimiento:</mat-label>
+                    <mat-select [(ngModel)]="dataForm().idEstablecimiento">
+                        @for (item of estabs(); track $index) {
+                            <mat-option [value]="item.idEstablecimiento">{{
+                                    item.nombreEstab
+                                }}
+                            </mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
 
-          <div class="col">
-            <mat-form-field class="w-100">
-              <mat-label>Nro. Doc:</mat-label>
-              <input matInput type="text" />
-            </mat-form-field>
-          </div>
+            <div class="col">
+                <mat-form-field class="w-100">
+                    <mat-label>Sustento Tributario:</mat-label>
+                    <mat-select>
+                        @for (item of sustentosTributario(); track $index) {
+                            <mat-option [value]="item.idSustentoTributario">{{
+                                    item.descripcion
+                                }}
+                            </mat-option>
 
-          <div class="col">
-            <mat-form-field class="w-100">
-              <mat-label>Autorización SRI:</mat-label>
-              <input matInput type="text" />
-            </mat-form-field>
-          </div>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="col">
+                <mat-form-field class="w-100">
+                    <mat-label>Subcategoría:</mat-label>
+                    <mat-select>
+                        <mat-option value="option1">Option 1</mat-option>
+                        <mat-option value="option2" disabled
+                        >Option 2 (disabled)
+                        </mat-option
+                        >
+                        <mat-option value="option3">Option 3</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
         </div>
-      </div>
-      <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-12">
-        <app-supplier-search-mat [isAdvancedMode]="true" />
-      </div>
-    </div>
 
-    <div
-      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2"
-    >
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Tiempo Crédito: </mat-label>
-          <mat-select>
-            <mat-option value="option1">Option 1</mat-option>
-            <mat-option value="option2" disabled
-              >Option 2 (disabled)</mat-option
-            >
-            <mat-option value="option3">Option 3</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Fecha Emision:</mat-label>
-          <input matInput type="text" />
-        </mat-form-field>
-      </div>
+        <div class="row">
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-12">
+                <div
+                        class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2"
+                >
+                    <div class="col">
+                        <mat-form-field class="w-100">
+                            <mat-label>Punto Emisión:</mat-label>
+                            <input matInput type="text"/>
+                        </mat-form-field>
+                    </div>
 
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Fecha Vencimiento:</mat-label>
-          <input matInput type="text" />
-        </mat-form-field>
-      </div>
+                    <div class="col">
+                        <mat-form-field class="w-100">
+                            <mat-label>Nro. Doc:</mat-label>
+                            <input matInput type="text"/>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col">
+                        <mat-form-field class="w-100">
+                            <mat-label>Autorización SRI:</mat-label>
+                            <input matInput type="text"/>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-12">
+                <app-supplier-search-mat [isAdvancedMode]="true"/>
+            </div>
+        </div>
+
+        <div
+                class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2"
+        >
+            <div class="col">
+                <mat-form-field class="w-100">
+                    <mat-label>Tiempo Crédito:</mat-label>
+                    <mat-select>
+                        <mat-option value="option1">Option 1</mat-option>
+                        <mat-option value="option2" disabled
+                        >Option 2 (disabled)
+                        </mat-option
+                        >
+                        <mat-option value="option3">Option 3</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="w-100">
+                    <mat-label>Fecha Emision:</mat-label>
+                    <input matInput type="text"/>
+                </mat-form-field>
+            </div>
+
+            <div class="col">
+                <mat-form-field class="w-100">
+                    <mat-label>Fecha Vencimiento:</mat-label>
+                    <input matInput type="text"/>
+                </mat-form-field>
+            </div>
+        </div>
     </div>
-  </div>
 </ng-template>
 
 <ng-template #actionsTemplate>
-  <button mat-flat-button>
-    <mat-icon>save_alt</mat-icon>
-    Guardar
-  </button>
-  <button mat-raised-button (click)="close()">Cerrar</button>
+    <button mat-flat-button>
+        <mat-icon>save_alt</mat-icon>
+        Guardar
+    </button>
+    <button mat-raised-button (click)="close()">Cerrar</button>
 </ng-template>

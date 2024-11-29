@@ -1,7 +1,7 @@
 import {Component,  computed,  inject, model } from '@angular/core';
 import {
-  CustomContainerDialogComponent
-} from "@core/components/custom-container-dialog/custom-container-dialog.component";
+  MatCustomDialogComponent
+} from "@core/components/custom-container-dialog/mat-custom-dialog.component";
 
 import {  MatDialogRef} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
@@ -32,7 +32,7 @@ import { MatTableDataSource } from '@angular/material/table';
         MatSelectModule,
         MatDatepickerModule,
         MatAutocompleteModule,
-        CustomContainerDialogComponent,
+        MatCustomDialogComponent,
         FormsModule,
         MatSlideToggleModule,
         NgxMaskDirective,

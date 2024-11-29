@@ -1,217 +1,217 @@
-<app-custom-container-dialog
-  [containerTemplate]="containerTemplate"
-  [actionsTemplate]="actionsTemplate"
-  [matDialogTitle]="'Detalle Factura Física'"
-  (close)="closeDialog()"
+<app-mat-custom-dialog
+        [containerTemplate]="containerTemplate"
+        [actionsTemplate]="actionsTemplate"
+        [matDialogTitle]="'Detalle Factura Física'"
+        (close)="closeDialog()"
 />
 
 <ng-template #containerTemplate>
-  <div class="d-grid gap-2">
-    <div
-      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2"
-    >
-      <div class="col">
+    <div class="d-grid gap-2">
+        <div
+                class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2"
+        >
+            <div class="col">
+                <div class="border border-dark rounded-3 p-2">
+                    <div class="d-flex flex-column gap-1">
+                        <div class="vstack">
+                            <small class="fw-semibold">Establecimiento</small>
+                            <small>{{ infoTributaria.nombreEstab }}</small>
+                        </div>
+                        <div class="vstack">
+                            <small class="fw-semibold">Punto Emisión</small>
+                            <small class="">{{ infoTributaria.puntoEmision }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="border border-dark rounded-3 p-2">
+                    <div class="d-flex flex-column">
+                        <h6 class="fw-semibold">Factura Física</h6>
+                        <div class="hstack">
+                            <small class="fw-semibold me-2">Nro.</small>
+                            <small>{{ infoTributaria.serieComprobante }}</small>
+                        </div>
+                        <div class="hstack">
+                            <small class="fw-semibold me-2">Nro. Autorización</small>
+                            <small>{{ infoTributaria.numeroAutorizacion }}</small>
+                        </div>
+                        <div class="hstack">
+                            <small class="fw-semibold me-2">Sustento Tributario:</small>
+                            <small>{{ infoFactura.nombreSustentoTributario }}</small>
+                        </div>
+                        <div class="hstack">
+                            <small class="fw-semibold me-2">Categoria:</small>
+                            <small>{{ infoFactura.nombreCategoriaCompra }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="border border-dark rounded-3 p-2">
-          <div class="d-flex flex-column gap-1">
-            <div class="vstack">
-              <small class="fw-semibold">Establecimiento</small>
-              <small>{{ infoTributaria.nombreEstab }}</small>
+            <div
+                    class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+            >
+                <div class="col-7">
+                    <div class="d-flex">
+                        <small class="fw-semibold me-2">Razón Social/ Nombres:</small>
+                        <small class=" ">{{ infoFactura.razonSocialComprador }}</small>
+                    </div>
+                    <div class="d-flex">
+                        <small class="fw-semibold me-2">Identificación:</small>
+                        <small class=" ">{{ infoFactura.identificacionComprador }}</small>
+                    </div>
+                    <div class="d-flex">
+                        <small class="fw-semibold me-2">Dirección:</small>
+                        <small class=" ">{{ infoFactura.direccionComprador }}</small>
+                    </div>
+                    <div class="d-flex">
+                        <small class="fw-semibold me-2">Teléfono:</small>
+                        <small class=" ">{{ infoFactura.telefonoComprador }}</small>
+                    </div>
+                    <div class="d-flex">
+                        <small class="fw-semibold me-2">Correo:</small>
+                        <small class=" ">{{ infoFactura.correoComprador }}</small>
+                    </div>
+                </div>
+                <div class="col-5">
+                    <div class="d-fex">
+                        <div class="col d-flex">
+                            <small class="fw-semibold me-2">Tiempo Crédito:</small>
+                            <small class=" ">{{ infoFactura.nombreTiempoCredito }}</small>
+                        </div>
+                        <div class="col d-flex">
+                            <small class="fw-semibold me-2">Fecha Emisión:</small>
+                            <small class=" ">{{ infoFactura.fechaEmision }}</small>
+                        </div>
+                        <div class="col d-flex">
+                            <small class="fw-semibold me-2">Fecha Vencimiento:</small>
+                            <small class=" ">{{ infoFactura.fechaVencimiento }}</small>
+                        </div>
+                        <!-- <div class="col d-flex">
+                          <small class="fw-semibold me-2">Empleado:</small>
+                          <small class=" ">{{ infoFactura.empleadoNombre }}</small>
+                        </div> -->
+                    </div>
+                </div>
             </div>
-            <div class="vstack">
-              <small class="fw-semibold">Punto Emisión</small>
-              <small class="">{{ infoTributaria.puntoEmision }}</small>
-            </div>
-          </div>
         </div>
-      </div>
 
-      <div class="col">
         <div class="border border-dark rounded-3 p-2">
-          <div class="d-flex flex-column">
-            <h6 class="fw-semibold">Factura Física</h6>
-            <div class="hstack">
-              <small class="fw-semibold me-2">Nro.</small>
-              <small>{{ infoTributaria.serieComprobante }}</small>
-            </div>
-            <div class="hstack">
-              <small class="fw-semibold me-2">Nro. Autorización</small>
-              <small>{{ infoTributaria.numeroAutorizacion }}</small>
-            </div>
-            <div class="hstack">
-              <small class="fw-semibold me-2">Sustento Tributario:</small>
-              <small>{{ infoFactura.nombreSustentoTributario }}</small>
-            </div>
-            <div class="hstack">
-              <small class="fw-semibold me-2">Categoria:</small>
-              <small>{{ infoFactura.nombreCategoriaCompra }}</small>
-            </div>
-          </div>
+            <table style="width: 100%" class="table table-sm small">
+                <thead>
+                <tr>
+                    <th class="fw-semibold">Nro.</th>
+                    <th class="fw-semibold">Codigo</th>
+                    <th class="fw-semibold">Descripción</th>
+                    <th class="fw-semibold">Medida</th>
+                    <th class="fw-semibold">Iva</th>
+                    <th class="fw-semibold text-right">Cant</th>
+
+                    <th class="fw-semibold text-right">Precio U.</th>
+                    <th class="fw-semibold text-right">%</th>
+                    <th class="fw-semibold text-right">Descto</th>
+                    <th class="fw-semibold text-right">Subtotal</th>
+                    <th class="fw-semibold text-right">Impuesto</th>
+                    <th class="fw-semibold text-right">Total</th>
+                    <th class="fw-semibold text-right">Nota</th>
+                    <th class="fw-semibold">Bodega</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @for (item of detalles(); track $index) {
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ item.codigo }}</td>
+                            <td [width]="250">{{ item.descripcion }}<br/></td>
+                            <td>{{ item.nombreMedida }}<br/></td>
+                            <td>{{ item.nombreTipoIva }}<br/></td>
+                            <td class="text-right">{{ item.cantidad }}</td>
+                            <td class="text-right">{{ item.precioUnitario }}</td>
+
+                            <td class="text-right">{{ item.porcentajeDescuento }}</td>
+                            <td class="text-right">{{ item.valorDescuento }}</td>
+                            <td class="text-right">{{ item.precioTotalSinImpuesto }}</td>
+                            <td class="text-right">{{ item.valorImpuesto }}</td>
+                            <td class="text-right">{{ item.total }}</td>
+                            <td class="text-right">{{ item.nota }}</td>
+                            <td>{{ item.nombreBodega }}</td>
+                        </tr>
+                    } @empty {
+                        <tr>
+                            <td colspan="14" class="text-center">
+                                @if (isLoading()) {
+                                    <span>Cargando...</span>
+                                } @else {
+                                    <span>Sin registro</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-      </div>
+
+        <div
+                class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+        >
+            <div class="col-9">
+                <div class="border border-dark rounded-3 p-2">
+                    <div class="d-flex">
+                        <small class="fw-semibold me-2">Observación:</small>
+                        <small class=" ">{{ infoFactura.observacion }}</small>
+                    </div>
+                    <table style="width: 100%" class="small">
+                        <tbody>
+                        <tr>
+                            <th class="fw-semibold">Forma de Pago</th>
+                            <th class="fw-semibold">Valor</th>
+                            <th class="fw-semibold">Plazo</th>
+                            <th class="fw-semibold">Tiempo</th>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <table style="width: 100%" class="small">
+                        <tbody>
+                        <tr>
+                            <td colspan="2" class="fw-semibold">Información Adicional</td>
+                        </tr>
+                        <tr>
+                            @for (item of datosAdicionalesDoc; track $index) {
+                                <td>{{ item.nombre }}</td>
+                                <td>{{ item.valor }}</td>
+                            }
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="border border-dark rounded-3 p-2">
+                    <app-tabla-resumen-totales
+                            [detalles]="detalles()"
+                            [tarifasImpuesto]="tiposIva()"
+                    />
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="border border-dark rounded-3 p-2">
-      <div
-        class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
-      >
-        <div class="col-7">
-          <div class="d-flex">
-            <small class="fw-semibold me-2">Razón Social/ Nombres:</small>
-            <small class=" ">{{ infoFactura.razonSocialComprador }}</small>
-          </div>
-          <div class="d-flex">
-            <small class="fw-semibold me-2">Identificación:</small>
-            <small class=" ">{{ infoFactura.identificacionComprador }}</small>
-          </div>
-          <div class="d-flex">
-            <small class="fw-semibold me-2">Dirección:</small>
-            <small class=" ">{{ infoFactura.direccionComprador }}</small>
-          </div>
-          <div class="d-flex">
-            <small class="fw-semibold me-2">Teléfono:</small>
-            <small class=" ">{{ infoFactura.telefonoComprador }}</small>
-          </div>
-          <div class="d-flex">
-            <small class="fw-semibold me-2">Correo:</small>
-            <small class=" ">{{ infoFactura.correoComprador }}</small>
-          </div>
-        </div>
-        <div class="col-5">
-          <div class="d-fex">
-            <div class="col d-flex">
-              <small class="fw-semibold me-2">Tiempo Crédito:</small>
-              <small class=" ">{{ infoFactura.nombreTiempoCredito }}</small>
-            </div>
-            <div class="col d-flex">
-              <small class="fw-semibold me-2">Fecha Emisión:</small>
-              <small class=" ">{{ infoFactura.fechaEmision }}</small>
-            </div>
-            <div class="col d-flex">
-              <small class="fw-semibold me-2">Fecha Vencimiento:</small>
-              <small class=" ">{{ infoFactura.fechaVencimiento }}</small>
-            </div>
-            <!-- <div class="col d-flex">
-              <small class="fw-semibold me-2">Empleado:</small>
-              <small class=" ">{{ infoFactura.empleadoNombre }}</small>
-            </div> -->
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="border border-dark rounded-3 p-2">
-      <table style="width: 100%" class="table table-sm small">
-        <thead>
-          <tr>
-            <th class="fw-semibold">Nro.</th>
-            <th class="fw-semibold">Codigo</th>
-            <th class="fw-semibold">Descripción</th>
-            <th class="fw-semibold">Medida</th>
-            <th class="fw-semibold">Iva</th>
-            <th class="fw-semibold text-right">Cant</th>
-
-            <th class="fw-semibold text-right">Precio U.</th>
-            <th class="fw-semibold text-right">%</th>
-            <th class="fw-semibold text-right">Descto</th>
-            <th class="fw-semibold text-right">Subtotal</th>
-            <th class="fw-semibold text-right">Impuesto</th>
-            <th class="fw-semibold text-right">Total</th>
-            <th class="fw-semibold text-right">Nota</th>
-            <th class="fw-semibold">Bodega</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (item of detalles(); track $index) {
-          <tr>
-            <td>{{ $index + 1 }}</td>
-            <td>{{ item.codigo }}</td>
-            <td [width]="250">{{ item.descripcion }}<br /></td>
-            <td>{{ item.nombreMedida }}<br /></td>
-            <td>{{ item.nombreTipoIva }}<br /></td>
-            <td class="text-right">{{ item.cantidad }}</td>
-            <td class="text-right">{{ item.precioUnitario }}</td>
-
-            <td class="text-right">{{ item.porcentajeDescuento }}</td>
-            <td class="text-right">{{ item.valorDescuento }}</td>
-            <td class="text-right">{{ item.precioTotalSinImpuesto }}</td>
-            <td class="text-right">{{ item.valorImpuesto }}</td>
-            <td class="text-right">{{ item.total }}</td>
-            <td class="text-right">{{ item.nota }}</td>
-            <td>{{ item.nombreBodega }}</td>
-          </tr>
-          }@empty {
-          <tr>
-            <td colspan="14" class="text-center">
-              @if (isLoading()) {
-              <span>Cargando...</span>
-              }@else {
-              <span>Sin registro</span>
-              }
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-
-    <div
-      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
-    >
-      <div class="col-9">
-        <div class="border border-dark rounded-3 p-2">
-          <div class="d-flex">
-            <small class="fw-semibold me-2">Observación:</small>
-            <small class=" ">{{ infoFactura.observacion }}</small>
-          </div>
-          <table style="width: 100%" class="small">
-            <tbody>
-              <tr>
-                <th class="fw-semibold">Forma de Pago</th>
-                <th class="fw-semibold">Valor</th>
-                <th class="fw-semibold">Plazo</th>
-                <th class="fw-semibold">Tiempo</th>
-              </tr>
-
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-
-          <table style="width: 100%" class="small">
-            <tbody>
-              <tr>
-                <td colspan="2" class="fw-semibold">Información Adicional</td>
-              </tr>
-              <tr>
-                @for (item of datosAdicionalesDoc; track $index) {
-                <td>{{ item.nombre }}</td>
-                <td>{{ item.valor }}</td>
-                }
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="col-3">
-        <div class="border border-dark rounded-3 p-2">
-          <app-tabla-resumen-totales
-            [detalles]="detalles()"
-            [tarifasImpuesto]="tiposIva()"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
 </ng-template>
 
 <ng-template #actionsTemplate>
-  <button mat-flat-button>
-    <mat-icon>save_alt</mat-icon>
-    Descargar Detalle
-  </button>
-  <button mat-raised-button (click)="closeDialog()">Cerrar</button>
+    <button mat-flat-button>
+        <mat-icon>save_alt</mat-icon>
+        Descargar Detalle
+    </button>
+    <button mat-raised-button (click)="closeDialog()">Cerrar</button>
 </ng-template>
