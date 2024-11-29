@@ -1,7 +1,7 @@
 <app-mat-custom-dialog
         [containerTemplate]="containerTemplate"
         [actionsTemplate]="actionsTemplate"
-        [matDialogTitle]="title()"
+        [title]="title()"
         (close)="close()"
         [align]="'center'"
 />
@@ -265,5 +265,4 @@
     >
         Abonar
     </button>
-    <button mat-raised-button color="accent" (click)="close()">Cerrar</button>
 </ng-template>

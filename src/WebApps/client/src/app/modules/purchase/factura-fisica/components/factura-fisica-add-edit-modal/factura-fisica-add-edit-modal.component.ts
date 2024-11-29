@@ -32,6 +32,8 @@ export class FacturaFisicaAddEditModalComponent {
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private facturaFisicaSvc = inject(FacturaFisicaService);
 
+  icon = signal('add');
+
   title = signal('Nueva Factura Física');
 
   loading = signal(false);

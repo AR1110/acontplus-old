@@ -1,7 +1,7 @@
 <app-mat-custom-dialog
         [containerTemplate]="containerTemplate"
         [actionsTemplate]="actionsTemplate"
-        [matDialogTitle]="'Historial Movimiento'"
+        [title]="'Historial Movimiento'"
         [loading]="loading()"
         (close)="closeDialog()"
 />
@@ -124,7 +124,5 @@
 </ng-template>
 
 <ng-template #actionsTemplate>
-    <button mat-stroked-button color="accent" (click)="closeDialog()">
-        Cerrar
-    </button>
+   
 </ng-template>
