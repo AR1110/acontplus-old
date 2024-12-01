@@ -451,6 +451,7 @@ export class MovimientoCajaModalComponent {
       };
 
       const parameters = {
+        hasService: true,
         reportParams: JSON.stringify({
           hasParams: false,
           codigo: CODE_REPORT.FG,

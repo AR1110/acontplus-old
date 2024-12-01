@@ -1,20 +1,18 @@
-<app-custom-container-dialog
-  [containerTemplate]="containerTemplate"
-  [actionsTemplate]="actionsTemplate"
-  [showHeader]="false"
+<app-mat-custom-dialog
+        [containerTemplate]="containerTemplate"
+        [actionsTemplate]="actionsTemplate"
+        [showHeader]="false"
 />
 
 <ng-template #containerTemplate>
-  <app-mat-dynamic-table
+    <app-mat-dynamic-table
 
-    [displayColumnDefs]="columnsDefs"
-    [displayedColumns]="columns"
-    [dataList]="dataSource.data"
-  > </app-mat-dynamic-table>
+            [displayColumnDefs]="columnsDefs"
+            [displayedColumns]="columns"
+            [dataList]="dataSource.data"
+    ></app-mat-dynamic-table>
 </ng-template>
 
 <ng-template #actionsTemplate>
-  <button mat-stroked-button color="accent" (click)="closeDialog()">
-    Cerrar
-  </button>
+
 </ng-template>

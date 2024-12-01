@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
-import { CustomContainerDialogComponent } from '@core/components/custom-container-dialog/custom-container-dialog.component';
+import { MatCustomDialogComponent } from '@core/components/custom-container-dialog/mat-custom-dialog.component';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
@@ -34,7 +34,7 @@ import { DECIMALS } from '@core/constants/global.constants';
         MatInputModule,
         MatButtonModule,
         ReactiveFormsModule,
-        CustomContainerDialogComponent,
+        MatCustomDialogComponent,
         NgxMaskDirective
     ],
     providers: [provideNativeDateAdapter()],

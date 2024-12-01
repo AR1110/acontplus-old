@@ -13,7 +13,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  ├── custom-container-dialog
 |  |  |  |  ├── custom-container-dialog.component.html
 |  |  |  |  ├── custom-container-dialog.component.scss
-|  |  |  |  └── custom-container-dialog.component.ts
+|  |  |  |  └── mat-custom-dialog.component.ts
 |  |  |  ├── custom-mat-spinner
 |  |  |  |  ├── custom-mat-spinner.component.html
 |  |  |  |  ├── custom-mat-spinner.component.scss

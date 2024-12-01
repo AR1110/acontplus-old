@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CustomContainerDialogComponent } from '@core/components/custom-container-dialog/custom-container-dialog.component';
-import { MatButton } from '@angular/material/button';
+import { MatCustomDialogComponent } from '@core/components/custom-container-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatTableDataSource } from '@angular/material/table';
@@ -8,11 +7,7 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 
 @Component({
   selector: 'app-pago-detalle-modal',
-  imports: [
-    CustomContainerDialogComponent,
-    MatButton,
-    MatDynamicTableComponent,
-  ],
+  imports: [MatCustomDialogComponent, MatDynamicTableComponent],
   templateUrl: './pago-detalle-modal.component.html',
   styles: ``,
 })

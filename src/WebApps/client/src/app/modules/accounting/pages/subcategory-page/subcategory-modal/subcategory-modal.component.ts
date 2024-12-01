@@ -15,10 +15,10 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
-    selector: 'app-subcategory-modal',
-    imports: [ReactiveFormsModule, FaIconComponent],
-    templateUrl: './subcategory-modal.component.html',
-    styles: ``
+  selector: 'app-subcategory-modal',
+  imports: [ReactiveFormsModule, FaIconComponent],
+  templateUrl: './subcategory-modal.component.html',
+  styles: ``,
 })
 export class SubcategoryModalComponent {
   data: Subcategory = {} as Subcategory;
@@ -47,11 +47,7 @@ export class SubcategoryModalComponent {
 
   get() {
     this.subcategoryService.get({ tipo: 2 }).subscribe((response) => {
-      if (isApiResponse(response) && response.code == '1') {
-        const { categories, tipos } = JSON.parse(response.payload as string);
-        this.categories = categories;
-        this.tipos = tipos;
-      }
+      this.categories = response.categories;
     });
   }
 

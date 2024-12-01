@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { CustomContainerDialogComponent } from '@core/components/custom-container-dialog/custom-container-dialog.component';
+import { MatCustomDialogComponent } from '@core/components/custom-container-dialog/mat-custom-dialog.component';
 import { CuentaPorPagarService } from '../../cuenta-por-pagar.service';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
@@ -39,7 +39,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     MatNativeDateModule,
     MatCardModule,
     MatDivider,
-    CustomContainerDialogComponent,
+    MatCustomDialogComponent,
     MatDynamicTableComponent,
     MatTooltip,
   ],

@@ -11,7 +11,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { Subcategory } from '@accounting/models/subcategory';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
-import {  MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { ToasterService } from '@core/services/toaster.service';
 import Swal from 'sweetalert2';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
@@ -28,29 +28,30 @@ import { RetencionHtmlComponent } from '@billing/components/documents/retencion-
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { InvoiceHtmlComponent } from '@billing/components/documents/invoice-html/invoice-html.component';
 import { CreditNoteHtmlComponent } from '@billing/components/documents/credit-note-html/credit-note-html.component';
+import { SubcategoryService } from '@accounting/services/subcategory.service';
 
 @Component({
-    selector: 'app-documento-received-page',
-    imports: [
-        MatDynamicTableComponent,
-        BreadcrumbComponent,
-        MatCard,
-        MatCardContent,
-        DateRangeSelectionComponent,
-        SupplierSearchComponent,
-        FormsModule,
-        MatTooltip,
-        FaIconComponent,
-        InputNumberDirective,
-        MatPaginator,
-        MatIcon,
-        MatIconButton,
-        MatMenu,
-        MatMenuItem,
-        MatMenuTrigger,
-    ],
-    templateUrl: './document-received-page.component.html',
-    styles: ``
+  selector: 'app-documento-received-page',
+  imports: [
+    MatDynamicTableComponent,
+    BreadcrumbComponent,
+    MatCard,
+    MatCardContent,
+    DateRangeSelectionComponent,
+    SupplierSearchComponent,
+    FormsModule,
+    MatTooltip,
+    FaIconComponent,
+    InputNumberDirective,
+    MatPaginator,
+    MatIcon,
+    MatIconButton,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+  ],
+  templateUrl: './document-received-page.component.html',
+  styles: ``,
 })
 export class DocumentReceivedPageComponent {
   documents: DocumentoReceived[] = [];
@@ -87,6 +88,7 @@ export class DocumentReceivedPageComponent {
   private readonly _documentReceivedService = inject(DocumentReceivedService);
   private readonly _modalService = inject(ModalService);
   private readonly _sharedService = inject(SharedService);
+  private readonly _subcategoryService = inject(SubcategoryService);
   private readonly _tS = inject(ToasterService);
 
   async alertEstabSelected() {
@@ -183,22 +185,25 @@ export class DocumentReceivedPageComponent {
 
   async openModalManualUpload() {
     if (!(await this.alertEstabSelected())) return;
-    let subcategoriesFound = this.subcategories || [];
 
-    if (subcategoriesFound.length == 0) {
-      return this._tS.toastr({
-        type: 'warning',
-        message:
-          'Debe de registrar subcategorías de compra en el módulo de contabilidad',
-      });
-    }
-    const modalRef = this._modalService.openModalCustom(
-      DocManualUploadComponent,
-      {
-        size: 'xl',
-        centered: true,
-      },
-    );
+    this._subcategoryService.get({ tipo: 1 }).subscribe((response) => {
+      this.subcategories = response.subcategories;
+      if (this.subcategories.length > 0) {
+        const modalRef = this._modalService.openModalCustom(
+          DocManualUploadComponent,
+          {
+            size: 'xl',
+            centered: true,
+          },
+        );
+      } else {
+        return this._tS.toastr({
+          type: 'warning',
+          message:
+            'Debe de registrar subcategorías de compra en el módulo de contabilidad',
+        });
+      }
+    });
   }
 
   openModalChangeEstab() {}
