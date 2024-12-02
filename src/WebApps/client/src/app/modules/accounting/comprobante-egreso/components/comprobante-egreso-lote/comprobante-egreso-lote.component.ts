@@ -152,6 +152,69 @@ export class ComprobanteEgresoLoteComponent {
     });
   }
 
+
+  async save() {
+    const { formasPago, pagosDetalle } = this.comprobanteEgresoStore;
+
+    let valorAbonoInput = formasPago().reduce((acc, curr) => acc + curr.valorAbonoInput, 0)
+    let totalAbonoCuota = formasPago().reduce((acc, curr) => acc + curr.abono, 0)
+
+    if (formasPago().length === 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese al menos una forma de pago'
+      })
+      return
+    }
+
+    if (formasPago().some(item => pagosDetalle().some(pd => pd.secuencial !== item.secuencial))) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Secuencial de abono no corresponden con el abono realizado a las cuotas'
+      })
+      return
+    }
+
+    if (valorAbonoInput <= 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'El abono ingresado en las formas de pago no puede ser igual o menor a 0.'
+      });
+      return;
+    }
+
+    if (totalAbonoCuota <= 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'El abono de la cuota ingresado en las formas de pago no puede ser igual o menor a 0.'
+      });
+      return;
+    }
+
+
+
+    const { isConfirmed } = await Swal.fire({
+      title: '<small>Guardar Pago</small>',
+      html: "¿Estas seguro de guardar este pago ahora? ",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, guardar!',
+      cancelButtonText: 'No, cancelar!'
+    })
+
+    if (!isConfirmed) return
+
+
+
+
+
+
+
+
+  }
+
   closeDialog() {
     this.dialogRef.close();
   }
