@@ -1,18 +1,19 @@
-import {Component,  computed,  inject, model } from '@angular/core';
-import {
-  MatCustomDialogComponent
-} from "@core/components/custom-container-dialog/mat-custom-dialog.component";
+import { Component, computed, inject, model } from '@angular/core';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
-import {  MatDialogRef} from "@angular/material/dialog";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
-import {MatInputModule} from "@angular/material/input";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {provideNativeDateAdapter} from "@angular/material/core";
-import {MatDatepickerModule} from "@angular/material/datepicker";
-import {ComprobanteEgresoStore, getDataFormaPagoState} from "@accounting/comprobante-egreso/comprobante-egreso.store";
-import {FormsModule} from "@angular/forms";
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import {
+  ComprobanteEgresoStore,
+  getDataFormaPagoState,
+} from '@accounting/comprobante-egreso/comprobante-egreso.store';
+import { FormsModule } from '@angular/forms';
 import { NgxMaskDirective } from 'ngx-mask';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { CitySearchComponent } from './city-search/city-search.component';
@@ -21,38 +22,38 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatTableDataSource } from '@angular/material/table';
 
-
 @Component({
-    selector: 'app-forma-pago',
-    imports: [
-        MatButtonModule,
-        MatIconModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatDatepickerModule,
-        MatAutocompleteModule,
-        MatCustomDialogComponent,
-        FormsModule,
-        MatSlideToggleModule,
-        NgxMaskDirective,
-        CitySearchComponent,
-        MatDynamicTableComponent
-    ],
-    templateUrl: './forma-pago.component.html',
-    providers: [provideNativeDateAdapter()],
-    styles: ``
+  selector: 'app-forma-pago',
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatAutocompleteModule,
+    MatCustomDialogComponent,
+    FormsModule,
+    MatSlideToggleModule,
+    NgxMaskDirective,
+    CitySearchComponent,
+    MatDynamicTableComponent,
+  ],
+  templateUrl: './forma-pago.component.html',
+  providers: [provideNativeDateAdapter()],
+  styles: ``,
 })
 export class FormaPagoComponent {
-
   readonly dialogRef = inject(MatDialogRef<FormaPagoComponent>);
-  comprobanteEgresoStore = inject(ComprobanteEgresoStore)
+  comprobanteEgresoStore = inject(ComprobanteEgresoStore);
 
- title = computed(()=>`Total a pagar: $${this.comprobanteEgresoStore.saldo()}`)
+  title = computed(
+    () => `Total a pagar: $${this.comprobanteEgresoStore.saldo()}`,
+  );
 
-  valorAbono = model(this.comprobanteEgresoStore.saldo())
+  valorAbono = model(this.comprobanteEgresoStore.saldo());
 
-  docDataSource = new MatTableDataSource<any>([])
+  docDataSource = new MatTableDataSource<any>([]);
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -63,12 +64,9 @@ export class FormaPagoComponent {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
+  close() {
+    this.comprobanteEgresoStore.updateDataFormaPago(getDataFormaPagoState());
 
-  close(){
-    this.comprobanteEgresoStore.updateDataFormaPago(getDataFormaPagoState())
-
-    this.dialogRef.close()
+    this.dialogRef.close();
   }
-
-
 }
