@@ -7,10 +7,10 @@ public interface IJwtTokenService
 
 public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
 {
-    private readonly int _exp = Convert.ToInt32(configuration["Token:Exp"]);
+    private readonly int _exp = Convert.ToInt32(configuration["JwtSettings:ExpirationInMinutes"]);
 
     private readonly SymmetricSecurityKey _key = new(
-        Encoding.UTF8.GetBytes(configuration["Token:Key"] ?? throw new InvalidOperationException()));
+        Encoding.UTF8.GetBytes(configuration["JwtSettings:SecurityKey"] ?? throw new InvalidOperationException()));
 
     public JwtResponse CreateToken(UserData data)
     {

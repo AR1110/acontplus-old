@@ -1,4 +1,6 @@
 ﻿
+using Common.AppSettings.Extensions;
+
 namespace Configuracion.API.Controllers.Sri;
 
 public class EstablishmentController(IEstablishmentService service) : BaseApiController
