@@ -1,1 +1,60 @@
-<p>doc-manual-upload works!</p>
+<form [formGroup]="docUploadForm" (ngSubmit)="onSave()">
+    <app-mat-custom-dialog
+            [containerTemplate]="contentTemplate"
+            [actionsTemplate]="actionsTemplate"
+            [icon]="dialogIcon()"
+            [title]="dialogTitle()"
+            (close)="onClose()"
+    />
+    <ng-template #contentTemplate>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>Establecimiento:</label>
+                    <h5 class="text-info">{{ data.nombreComercial }}</h5>
+                </div>
+            </div>
+        </div>
+        <div
+                class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2 gap-3"
+        >
+            <div class="col">
+                <mat-form-field class="w-100">
+                    <mat-radio-group
+                            aria-label="Seleccione una opcion"
+                            formControlName="tipo"
+                    >
+                        <mat-radio-button value="1">Clave Acceso</mat-radio-button>
+                        <mat-radio-button value="2">Xml</mat-radio-button>
+                    </mat-radio-group>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="w-100">
+                    <mat-label>Subcategoría:</mat-label>
+                    <mat-select>
+                        @for (item of subcategories; track $index) {
+                            <mat-option [value]="item.id">{{ item.name }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        @if (docUploadForm.get("tipo")?.value === "1") {
+            <div class="row"></div>
+        }
+
+        <div class="row"></div>
+    </ng-template>
+    <ng-template #actionsTemplate>
+        <button mat-raised-button>
+            <mat-icon
+                    aria-hidden="false"
+                    aria-label="Save Icon"
+                    fontIcon="save"
+            ></mat-icon>
+            Guardar
+        </button>
+    </ng-template>
+</form>
