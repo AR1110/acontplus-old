@@ -1,4 +1,5 @@
-﻿using Configuracion.API.Models;
+﻿using Common.AppSettings.Extensions;
+using Configuracion.API.Models;
 
 namespace Configuracion.API.Controllers;
 

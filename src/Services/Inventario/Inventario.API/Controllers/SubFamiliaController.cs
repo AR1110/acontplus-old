@@ -1,4 +1,6 @@
-﻿namespace Inventario.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+
+namespace Inventario.API.Controllers;
 
 public class SubFamiliaController(
     S3ObjectCustom s3ObjectCustom,

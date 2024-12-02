@@ -1,4 +1,6 @@
-﻿namespace Configuracion.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+
+namespace Configuracion.API.Controllers;
 
 public class PrinterDocumentController(ConfigContext context) : BaseApiController
 {

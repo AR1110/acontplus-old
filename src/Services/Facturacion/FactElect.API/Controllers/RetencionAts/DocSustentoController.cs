@@ -1,4 +1,5 @@
-﻿using FactElect.API.Services.RetencionAts;
+﻿using Common.AppSettings.Extensions;
+using FactElect.API.Services.RetencionAts;
 
 namespace FactElect.API.Controllers.RetencionAts;
 

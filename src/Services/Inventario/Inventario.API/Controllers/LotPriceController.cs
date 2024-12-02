@@ -1,4 +1,5 @@
 ﻿using Common.AppSettings;
+using Common.AppSettings.Extensions;
 
 namespace Inventario.API.Controllers;
 

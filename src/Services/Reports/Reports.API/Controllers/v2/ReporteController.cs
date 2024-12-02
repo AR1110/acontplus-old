@@ -1,4 +1,5 @@
-﻿using Reports.API.Services;
+﻿using Common.AppSettings.Extensions;
+using Reports.API.Services;
 using Reports.Application.Interfaces;
 
 namespace Reports.API.Controllers.v2

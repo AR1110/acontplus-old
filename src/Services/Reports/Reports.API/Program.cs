@@ -32,7 +32,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerAndVersioning();
 }
 
-app.UseMiddleware<ConnStrRequestMiddleware>();
+//app.UseMiddleware<ConnStrRequestMiddleware>();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

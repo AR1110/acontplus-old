@@ -1,4 +1,6 @@
-﻿namespace Compras.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+
+namespace Compras.API.Controllers;
 
 public class ArticuloController(IArticuloService articuloService) : BaseApiController
 {
