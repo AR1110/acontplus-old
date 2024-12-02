@@ -1,4 +1,5 @@
 ﻿using Common.API.Services;
+using Common.AppSettings.Extensions;
 
 namespace Common.API.Controllers;
 public class UserManualController(IUserManualService userManualService) : BaseApiController

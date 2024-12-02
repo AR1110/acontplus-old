@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Controllers.Customer;
+﻿using Common.AppSettings.Extensions;
+
+namespace FactElect.API.Controllers.Customer;
 
 public class CompanyCustomerController(ICompanyCustomerService companyCustomer) : BaseApiController
 {

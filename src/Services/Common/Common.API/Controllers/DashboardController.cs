@@ -1,4 +1,6 @@
-﻿namespace Common.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+
+namespace Common.API.Controllers;
 
 public class DashboardController(IDashboardService dashboard) : BaseApiController
 {
