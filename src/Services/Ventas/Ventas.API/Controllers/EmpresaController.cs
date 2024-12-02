@@ -1,4 +1,6 @@
-﻿namespace Ventas.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+
+namespace Ventas.API.Controllers;
 
 public class EmpresaController(IEmpresaService _svc) : BaseApiController
 {

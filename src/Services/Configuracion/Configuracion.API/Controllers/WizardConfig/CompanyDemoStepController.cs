@@ -1,4 +1,5 @@
-﻿using Configuracion.API.Interfaces.WizardConfig;
+﻿using Common.AppSettings.Extensions;
+using Configuracion.API.Interfaces.WizardConfig;
 
 namespace Configuracion.API.Controllers.WizardConfig;
 

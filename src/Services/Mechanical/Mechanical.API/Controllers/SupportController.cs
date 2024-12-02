@@ -1,4 +1,5 @@
-﻿using Common.Core.Models;
+﻿using Common.AppSettings.Extensions;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Mechanical.API.Interfaces;
 using Mechanical.API.Services;

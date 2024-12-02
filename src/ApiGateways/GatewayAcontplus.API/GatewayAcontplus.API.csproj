@@ -6,6 +6,7 @@
     <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Services.Common" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
@@ -24,7 +25,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Services\Common\Common.AppSettings\Common.AppSettings.csproj" />
-    <ProjectReference Include="..\..\Services\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />

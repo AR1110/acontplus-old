@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+
+namespace FactElect.API.Controllers;
 
 public class DocumentoElectronicoController(IDocumentoElectronicoService documentoElectronicoService)
     : BaseApiController

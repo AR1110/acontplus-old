@@ -1,4 +1,6 @@
-﻿namespace Contabilidad.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+
+namespace Contabilidad.API.Controllers;
 
 public class CategoryController(ICategoryService categoryService) : BaseApiController
 {

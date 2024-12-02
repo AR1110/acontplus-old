@@ -1,14 +1,9 @@
 ﻿using System.Security.Claims;
 
-namespace Services.Common.Extensions;
+namespace Common.AppSettings.Extensions;
 
-public static class ClaimsPrincipleExtensions
+public static class CustomClaimsPrincipalExtensions
 {
-    public static string GetUsername(this ClaimsPrincipal user)
-    {
-        return user.FindFirst(ClaimTypes.Name)?.Value;
-    }
-
     public static int GetCompanyId(this ClaimsPrincipal user)
     {
         return Convert.ToInt32(user.FindFirst("companyId")?.Value);
@@ -22,10 +17,5 @@ public static class ClaimsPrincipleExtensions
     public static int GetUserRoleId(this ClaimsPrincipal user)
     {
         return Convert.ToInt32(user.FindFirst("userRoleId")?.Value);
-    }
-
-    public static int GetUserId(this ClaimsPrincipal user)
-    {
-        return int.Parse(user.FindFirst(ClaimTypes.NameIdentifier).Value);
     }
 }
