@@ -20,7 +20,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CuotaPorPagarLista } from '@modules/accounting/interfaces/cuota-por-pagar.interface';
 import Swal from 'sweetalert2';
-import { MatCustomDialogComponent } from '@core/components/custom-container-dialog/mat-custom-dialog.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-comprobante-ingreso-lote',
