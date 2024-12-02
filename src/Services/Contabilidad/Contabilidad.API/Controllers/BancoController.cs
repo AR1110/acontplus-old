@@ -1,4 +1,5 @@
-﻿using Contabilidad.API.Services;
+﻿using Common.AppSettings.Extensions;
+using Contabilidad.API.Services;
 
 namespace Contabilidad.API.Controllers;
 

@@ -1,4 +1,6 @@
-﻿namespace Vet.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+
+namespace Vet.API.Controllers;
 
 public class PetController(IPetService petService) : BaseApiController
 {

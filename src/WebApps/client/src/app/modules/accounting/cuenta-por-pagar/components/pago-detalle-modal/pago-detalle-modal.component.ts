@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { MatCustomDialogComponent } from '@core/components/custom-container-dialog/mat-custom-dialog.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatTableDataSource } from '@angular/material/table';

@@ -1,4 +1,5 @@
-﻿using Ventas.API.Models;
+﻿using Common.AppSettings.Extensions;
+using Ventas.API.Models;
 
 namespace Ventas.API.Controllers;
 
