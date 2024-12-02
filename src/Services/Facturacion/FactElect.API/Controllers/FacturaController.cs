@@ -52,11 +52,16 @@ public class FacturaController(IFacturaService service) : BaseApiController
     }
 
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Cancel(int id, ApiRequest data)
     {
-        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } };
-        var response = await service.DeleteAsync(parameters);
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        var response = await service.CancelAsync(parameters);
         return Ok(response);
     }
 }
