@@ -30,8 +30,8 @@ public class FacturaService(IAdoRepository repository) : IFacturaService
         return await repository.SpExecuteAsync<ApiResponse>(_nameSchema + "Update", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> CancelAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>(_nameSchema + "Delete", parameters);
+        return await repository.SpExecuteAsync<ApiResponse>(_nameSchema + "Cancel", parameters);
     }
 }
