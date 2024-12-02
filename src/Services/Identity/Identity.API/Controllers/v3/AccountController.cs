@@ -8,7 +8,7 @@ namespace Identity.API.Controllers.v3;
 [ApiVersion("3.0")]
 public class AccountController(
     IConfiguration config,
-    ITokenService tokenService,
+    IJwtTokenService tokenService,
     ILoginFailedService loginFailedService,
     ILoginHistoryService loginHistoryService,
     IAccountService accountService)

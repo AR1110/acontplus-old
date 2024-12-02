@@ -20,6 +20,7 @@ import { GroupedSubFamilia } from '@modules/inventory/models/sub-category.model'
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { formatDateToString } from '@core/utils/date.util';
+import { AuthService } from '@modules/auth/services/auth.service';
 
 @Component({
     selector: 'app-rentabilidad-page',
@@ -77,6 +78,7 @@ export class RentabilidadPageComponent {
   private productSvc = inject(ProductService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
+  private authSvc = inject(AuthService)
 
   ngOnInit() {
     showLoader();
@@ -254,10 +256,11 @@ export class RentabilidadPageComponent {
         (this.dataSearch.subCategoriaChecked && subCategoriasChecked) || null,
       porcentajeRenta: this.dataSearch.porcentajeRenta,
       porcentajeComision: this.dataSearch.porcentajeComision,
+      userRoleId: this.authSvc.getUserRoleId()
     };
 
     const parameters = {
-      hasIdUsuarioRol: true,
+      hasService: true,
       reportParams: JSON.stringify({
         codigo: this.dataSearch.checkboxRentabCustom
           ? SALE_CODE_REPORT.SRRC

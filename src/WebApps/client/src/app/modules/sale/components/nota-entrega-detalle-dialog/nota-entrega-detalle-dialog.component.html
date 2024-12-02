@@ -1,7 +1,7 @@
-<app-custom-container-dialog
+<app-mat-custom-dialog
   [containerTemplate]="containerTemplate"
   [actionsTemplate]="actionsTemplate"
-  [matDialogTitle]="'Detalle Nota Entrega'"
+  [title]="'Detalle Nota Entrega'"
   (close)="closeDialog()"
 />
 
@@ -18,9 +18,9 @@
               <small class="">{{ headerData.estabNombre }}</small>
             </div>
             <!-- <div class="vstack">
-              <small class="fw-semibold">. text</small>
-              <small class="">.fs-6 text</small>
-            </div> -->
+                          <small class="fw-semibold">. text</small>
+                          <small class="">.fs-6 text</small>
+                        </div> -->
           </div>
         </div>
       </div>
@@ -110,34 +110,34 @@
         </thead>
         <tbody>
           @for (item of detalles(); track $index) {
-          <tr>
-            <td>{{ $index + 1 }}</td>
-            <td>{{ item.codigo }}</td>
-            <td [width]="250">{{ item.descripcion }}<br /></td>
-            <td>{{ item.medidaNombre }}<br /></td>
-            <td>{{ item.tipoIvaNombre }}<br /></td>
-            <td>{{ item.pvpNombre }}<br /></td>
-            <td class="text-right">{{ item.cantidad }}</td>
-            <td class="text-right">{{ item.precioUnitario }}</td>
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td>{{ item.codigo }}</td>
+              <td [width]="250">{{ item.descripcion }}<br /></td>
+              <td>{{ item.medidaNombre }}<br /></td>
+              <td>{{ item.tipoIvaNombre }}<br /></td>
+              <td>{{ item.pvpNombre }}<br /></td>
+              <td class="text-right">{{ item.cantidad }}</td>
+              <td class="text-right">{{ item.precioUnitario }}</td>
 
-            <td class="text-right">{{ item.porcentajeDescuento }}</td>
-            <td class="text-right">{{ item.valorDescuento }}</td>
-            <td class="text-right">{{ item.precioTotalSinImpuesto }}</td>
-            <td class="text-right">{{ item.valorImpuesto }}</td>
-            <td class="text-right">{{ item.total }}</td>
-            <td class="text-right">{{ item.nota }}</td>
-            <td>{{ item.bodegaNombre }}</td>
-          </tr>
-          }@empty {
-          <tr>
-            <td colspan="15" class="text-center">
-              @if (isLoading()) {
-              <span>Cargando...</span>
-              }@else {
-              <span>Sin registro</span>
-              }
-            </td>
-          </tr>
+              <td class="text-right">{{ item.porcentajeDescuento }}</td>
+              <td class="text-right">{{ item.valorDescuento }}</td>
+              <td class="text-right">{{ item.precioTotalSinImpuesto }}</td>
+              <td class="text-right">{{ item.valorImpuesto }}</td>
+              <td class="text-right">{{ item.total }}</td>
+              <td class="text-right">{{ item.nota }}</td>
+              <td>{{ item.bodegaNombre }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="15" class="text-center">
+                @if (isLoading()) {
+                  <span>Cargando...</span>
+                } @else {
+                  <span>Sin registro</span>
+                }
+              </td>
+            </tr>
           }
         </tbody>
       </table>
@@ -153,22 +153,22 @@
             <small class=" ">{{ headerData.observacion }}</small>
           </div>
           <!-- <table style="width: 100%" class="small">
-            <tbody>
-              <tr>
-                <th class="fw-semibold">Forma de Pago</th>
-                <th class="fw-semibold">Valor</th>
-                <th class="fw-semibold">Plazo</th>
-                <th class="fw-semibold">Tiempo</th>
-              </tr>
+                      <tbody>
+                        <tr>
+                          <th class="fw-semibold">Forma de Pago</th>
+                          <th class="fw-semibold">Valor</th>
+                          <th class="fw-semibold">Plazo</th>
+                          <th class="fw-semibold">Tiempo</th>
+                        </tr>
 
-              <tr>
-                <td>OTROS CON UTILIZACION DEL SISTEMA FINANCIERO</td>
-                <td>57.50</td>
-                <td></td>
-                <td>ninguno</td>
-              </tr>
-            </tbody>
-          </table> -->
+                        <tr>
+                          <td>OTROS CON UTILIZACION DEL SISTEMA FINANCIERO</td>
+                          <td>57.50</td>
+                          <td></td>
+                          <td>ninguno</td>
+                        </tr>
+                      </tbody>
+                    </table> -->
 
           <table style="width: 100%" class="small">
             <tbody>
@@ -177,8 +177,8 @@
               </tr>
               <tr>
                 @for (item of datosAdicionalesDoc; track $index) {
-                <td>{{ item.nombre }}</td>
-                <td>{{ item.valor }}</td>
+                  <td>{{ item.nombre }}</td>
+                  <td>{{ item.valor }}</td>
                 }
               </tr>
             </tbody>
@@ -197,6 +197,4 @@
   </div>
 </ng-template>
 
-<ng-template #actionsTemplate>
-  <button mat-raised-button (click)="closeDialog()">Cerrar</button>
-</ng-template>
+<ng-template #actionsTemplate> </ng-template>

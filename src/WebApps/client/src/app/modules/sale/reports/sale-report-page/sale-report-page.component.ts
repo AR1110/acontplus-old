@@ -268,6 +268,7 @@ export class SaleReportPageComponent {
       const parameters = {
         reportParams,
         dataParams: JSON.stringify(this.getDataParams()),
+        hasService: true
       };
       this.sharedSvc.getReport({
         data: parameters,
