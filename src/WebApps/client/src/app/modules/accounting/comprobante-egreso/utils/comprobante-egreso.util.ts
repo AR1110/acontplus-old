@@ -19,8 +19,8 @@ export class ComprobanteEgresoUtil {
 
   private cuentasPorPagar: CuentaPorPagarCuota[]
   private dataCuentaPorPagarCuota: CuentaPorPagarCuota;
-  private pagosDetalle: PagoDetalle[] = [];
-  private cuentasPorPagarHistorial: CuentaPorPagarHistorial[] = []
+  private pagosDetalle: PagoDetalle[] ;
+  private cuentasPorPagarHistorial: CuentaPorPagarHistorial[]
   private estadosPago: EstadoPago[] = []
   private valorAbono: number = 0;
   private esAbonoPosfechado!: boolean;
@@ -29,6 +29,8 @@ export class ComprobanteEgresoUtil {
   constructor(cuentasPorPagar: CuentaPorPagarCuota[]) {
     this.cuentasPorPagar = structuredClone(cuentasPorPagar);
     this.dataCuentaPorPagarCuota = {} as CuentaPorPagarCuota;
+    this.pagosDetalle = [];
+    this.cuentasPorPagarHistorial = []
 
   }
 
