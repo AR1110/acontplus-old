@@ -15,7 +15,6 @@ import { MatIconButton } from '@angular/material/button';
 import { ToasterService } from '@core/services/toaster.service';
 import Swal from 'sweetalert2';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { ModalService } from '@core/services/modal.service';
 import { DocManualUploadComponent } from '@purchase/components/document-received/doc-manual-upload/doc-manual-upload.component';
 import { SharedService } from '@core/services/shared.service';
 import { DocumentoReceived } from '@purchase/models/document-received.model';
@@ -29,6 +28,7 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import { InvoiceHtmlComponent } from '@billing/components/documents/invoice-html/invoice-html.component';
 import { CreditNoteHtmlComponent } from '@billing/components/documents/credit-note-html/credit-note-html.component';
 import { SubcategoryService } from '@accounting/services/subcategory.service';
+import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-documento-received-page',
@@ -86,7 +86,7 @@ export class DocumentReceivedPageComponent {
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   pagination = signal(new MatPagination());
   private readonly _documentReceivedService = inject(DocumentReceivedService);
-  private readonly _modalService = inject(ModalService);
+  private readonly _dialogService = inject(DialogService);
   private readonly _sharedService = inject(SharedService);
   private readonly _subcategoryService = inject(SubcategoryService);
   private readonly _tS = inject(ToasterService);
@@ -189,13 +189,9 @@ export class DocumentReceivedPageComponent {
     this._subcategoryService.get({ tipo: 1 }).subscribe((response) => {
       this.subcategories = response.subcategories;
       if (this.subcategories.length > 0) {
-        const modalRef = this._modalService.openModalCustom(
-          DocManualUploadComponent,
-          {
-            size: 'xl',
-            centered: true,
-          },
-        );
+        const modalRef = this._dialogService.open(DocManualUploadComponent, {
+          size: 'xl',
+        });
       } else {
         return this._tS.toastr({
           type: 'warning',
@@ -221,20 +217,17 @@ export class DocumentReceivedPageComponent {
   openModalDocument(item: any) {
     switch (item.codDoc) {
       case '07':
-        this._modalService.openModalCustom(RetencionHtmlComponent, {
-          centered: true,
+        this._dialogService.open(RetencionHtmlComponent, {
           size: 'xl',
         });
         break;
       case '04':
-        this._modalService.openModalCustom(CreditNoteHtmlComponent, {
-          centered: true,
+        this._dialogService.open(CreditNoteHtmlComponent, {
           size: 'xl',
         });
         break;
       default:
-        this._modalService.openModalCustom(InvoiceHtmlComponent, {
-          centered: true,
+        this._dialogService.open(InvoiceHtmlComponent, {
           size: 'xl',
         });
         break;

@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatCustomDialogComponent } from '@core/components/custom-container-dialog/mat-custom-dialog.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { TablaResumenTotalesComponent } from '@shared/components/tabla-resumen-totales/tabla-resumen-totales.component';
 import { FacturaFisicaService } from '../../factura-fisica.service';
 import { finalize } from 'rxjs';
