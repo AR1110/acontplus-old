@@ -306,6 +306,7 @@ export const ComprobanteEgresoStore = signalStore(
 
         let secuencial = store.getSecuencialFormasPago();
         let compEgresoUtil = new ComprobanteEgresoUtil(structuredClone(store.cuentasPorPagar()));
+        console.log(compEgresoUtil)
         compEgresoUtil.setSecuencial(secuencial)
         compEgresoUtil.setValorAbono(valorAbono);
         compEgresoUtil.setEstadosPago(store.estadosPago());
@@ -335,6 +336,7 @@ export const ComprobanteEgresoStore = signalStore(
           abono: roundNumber(totalAbonoPagoDetalle, DECIMALS.DOS),
           secuencial
         }
+
 
 
         patchState(store, {
@@ -369,7 +371,7 @@ export const ComprobanteEgresoStore = signalStore(
             })
 
             let compEgresoUtil = new ComprobanteEgresoUtil(cuentasPorPagar);
-            compEgresoUtil.setPagosDetalle(store.pagosDetalle())
+            // compEgresoUtil.setPagosDetalle(store.pagosDetalle())
 
             let secuencial = 0;
             for (const item of formasPago) {
@@ -389,7 +391,7 @@ export const ComprobanteEgresoStore = signalStore(
 
 
             patchState(store, {
-              pagosDetalle,
+              pagosDetalle: pagosDetalle,
               formasPago,
               cuentasPorPagar: compEgresoUtil.getCuentasPorPagar(),
             })
