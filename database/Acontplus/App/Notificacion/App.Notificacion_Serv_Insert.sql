@@ -34,12 +34,6 @@ BEGIN
 			  ,@subject	 = js.subjectJson
 		FROM OPENJSON(@json)WITH
         (			
-			-- codDoc		 VARCHAR(6)		
-			--,codigo		 VARCHAR(5)		
-			--,id			 INT				 
-			--,receptor	 VARCHAR(100)	
-			--,params		 NVARCHAR(MAX) AS JSON
-			--,subjectJson VARCHAR(500)
             codDoc				VARCHAR(6)		'$.codDoc',
             serieComprobante	VARCHAR(50)		'$.serieComprobante',
             codigo				VARCHAR(5)		'$.params.reportParams.codigo',
@@ -57,7 +51,9 @@ BEGIN
 			BEGIN 
                 
                 SELECT TOP 1 @receptor = email FROM dbo.Entidad WHERE idEntidad = @idEntidad
+
                 SET @template = 'ReporteGenerado.html'
+
 				SET @body = (
 								SELECT dbo.AFTConvertDate(dbo.ufnGetDateEcuador())+dbo.AFTConvertHora(dbo.ufnGetDateEcuador()) as fechaEmision
 									  ,ISNULL(en.telefono, '')                                                                 as telefono
