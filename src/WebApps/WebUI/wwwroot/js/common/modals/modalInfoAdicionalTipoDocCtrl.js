@@ -3,23 +3,23 @@
 export {
     InfoAdicionalTipoDocCtrl
 }
-InfoAdicionalTipoDocCtrl.$inject = ['$scope','$uibModalInstance', 'params', 'formulario'];
+InfoAdicionalTipoDocCtrl.$inject = ['$scope', '$uibModalInstance', 'toastService', 'params', 'formulario'];
 
-function InfoAdicionalTipoDocCtrl($scope, $uibModalInstance, params, fS){
+function InfoAdicionalTipoDocCtrl($scope, $uibModalInstance, tS, params, fS) {
 
     $scope.params = params;
     $scope.gridOptions = {
         enableColumnMenus: false,
         enableColumnReordering: true,
-        columnDefs: columnDefsInfoAdicional(!params.isView),
+        columnDefs: columnDefs(!params.isView),
         showGridFooter: false,
     }
     $scope.gridOptions.data = params.infoAdicionalDocumento || [];
-    setEnumeracion(); 
+    setEnumeracion();
 
 
 
-    function columnDefsInfoAdicional(isRegister){
+    function columnDefs(isView) {
         return [
             {
                 name: 'Op.',
@@ -43,20 +43,20 @@ function InfoAdicionalTipoDocCtrl($scope, $uibModalInstance, params, fS){
             {
                 name: 'Nombre',
                 field: 'nombre',
-                enableCellEdit: isRegister,
-                allowCellFocus: isRegister,
-                enableCellEditOnFocus: isRegister,
+                enableCellEdit: isView,
+                allowCellFocus: isView,
+                enableCellEditOnFocus: isView,
                 type: 'string',
-                width: '30%',   
+                width: '30%',
             },
             {
                 name: 'Valor',
                 field: 'valor',
-                enableCellEdit: isRegister,
-                allowCellFocus: isRegister,
-                enableCellEditOnFocus: isRegister,
-                type: 'string', 
-                width: '59%', 
+                enableCellEdit: isView,
+                allowCellFocus: isView,
+                enableCellEditOnFocus: isView,
+                type: 'string',
+                width: '59%',
             },
         ]
     }
@@ -69,7 +69,7 @@ function InfoAdicionalTipoDocCtrl($scope, $uibModalInstance, params, fS){
         }
     }
 
-    $scope.addRow = function() {
+    $scope.addRow = function () {
         $scope.gridOptions.data.push({
             idInfoAdicionalDoc: 0,
             n: 0,
@@ -79,7 +79,7 @@ function InfoAdicionalTipoDocCtrl($scope, $uibModalInstance, params, fS){
         setEnumeracion();
     }
 
-    $scope.deleteRow = function(row) {
+    $scope.deleteRow = function (row) {
         let index = $scope.gridOptions.data.indexOf(row.entity);
         $scope.gridOptions.data.splice(index, 1);
         setEnumeracion();
@@ -87,11 +87,14 @@ function InfoAdicionalTipoDocCtrl($scope, $uibModalInstance, params, fS){
 
     let validacion = (val) => !fS.isValidField(val.nombre) || !fS.isValidField(val.valor);
 
-    $scope.closeModal = function(){
+    $scope.closeModal = function () {
         if (!params.isView) {
 
             if ($scope.gridOptions.data.some(validacion)) {
-                toastr.warning('Llene todos los campos', 'Cerrar');
+                tS.toastr({
+                    type: 'warning',
+                    message: 'Llene todos los campos'
+                })
                 return
             }
         }
@@ -100,4 +103,3 @@ function InfoAdicionalTipoDocCtrl($scope, $uibModalInstance, params, fS){
     }
 
 }
- 
