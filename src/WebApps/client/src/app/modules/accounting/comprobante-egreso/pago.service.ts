@@ -238,7 +238,7 @@ export class PagoService {
     if (!Array.isArray(this.estadosPago) || this.estadosPago.length === 0) {
       throw new Error("Estado pago no válido ");
     }
-    if(isNaN(this.valorAbono)){
+    if (isNaN(this.valorAbono)) {
       throw new Error("Valor abono no es un número");
 
     }

@@ -1,4 +1,4 @@
-export  interface PagoDetalleComprobanteEgreso {
+export interface PagoDetalleComprobanteEgreso {
   idPago: number
   nroCuota: number
   fechaVencimiento: string
