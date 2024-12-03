@@ -449,21 +449,33 @@
                     }
 
                     if ($scope.expiredSignatures.length > 0) {
-                        swal.fire({
-                            icon: 'warning',
-                            title: 'Firma Electronica',
-                            text: $scope.expiredSignatures[0].message,
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            cancelButtonText: 'Cancelar',
-                            confirmButtonText: 'Solicitar soporte',
-                            showCancelButton: true,
-                            showConfirmButton: true,
-                        }).then(response => {
-                            if (response.isConfirmed) {
-                                window.open('https://api.whatsapp.com/send?phone=593986669930', '_blank')
-                            }
-                        })
+                        modalService.openModalCustom({
+                            controller: [
+                                "$uibModalInstance",
+                                "$scope",
+                                "params",
+                                ($uibModalInstance, $scope, params) => {
+
+                                    const { message } = params;
+
+                                    $scope.message = message;
+
+                                    $scope.onClose = () => {
+                                        $uibModalInstance.close();
+                                    };
+
+                                    $scope.onSupport = () => {
+                                        window.open('https://api.whatsapp.com/send?phone=593986669930', '_blank');
+                                    }
+                                },
+                            ],
+                            scope: $scope,
+                            params: {
+                                message: $scope.expiredSignatures[0].message
+                            },
+                            size: "sm",
+                            template: "~/Pages/Shared/_SignatureModal.cshtml",
+                        });
                     }
                 }
             });
