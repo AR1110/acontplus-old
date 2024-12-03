@@ -101,7 +101,7 @@ export class ComprobanteEgresoRepositoryMapper {
 
 
   static toApiPost(params: any) {
-    const {formasPago, pagosDetalle, cuentasPorPagarHistorial} = params;
+    const { formasPago, pagosDetalle, cuentasPorPagarHistorial } = params;
 
     const comprobante = {
       idProveedor: 0,
@@ -110,67 +110,67 @@ export class ComprobanteEgresoRepositoryMapper {
       observacion: ''
     }
 
-    const pagos = formasPago.map((item:any)=>{
+    const pagos = formasPago.map((item: any) => {
 
 
       return {
-        idSubEntidadFinanciera : 0,
-        idEntidadFinanciera    : 0,
-        idBanco                : 0 ,
-        idCuentaBancaria       : 0,
-        idCuentaPorPagar       : 0,
-        fechaEmision          : 0,
-        nro                   : 0,
-        valor                  : 0,
-        posfechado            : 0,
-        cobro                  : 0,
-        secuencial             : 0,
-        lote                  : 0,
-        aprobacion            : 0,
-        referencia            : 0,
-        abono                 : 0,
-        controlCaja            : 0
+        idSubEntidadFinanciera: 0,
+        idEntidadFinanciera: 0,
+        idBanco: 0,
+        idCuentaBancaria: 0,
+        idCuentaPorPagar: 0,
+        fechaEmision: 0,
+        nro: 0,
+        valor: 0,
+        posfechado: 0,
+        cobro: 0,
+        secuencial: 0,
+        lote: 0,
+        aprobacion: 0,
+        referencia: 0,
+        abono: 0,
+        controlCaja: 0
       }
 
     })
 
-    const pagosDetalleMapper = pagosDetalle.map((item:any)=>{
+    const pagosDetalleMapper = pagosDetalle.map((item: any) => {
       return {
-        idCuotaPorPagar : item.idCuotaPorPagar,
-        saldo          : item.saldo,
-        abono           : item.abono,
-        secuencial     : item.secuencial
+        idCuotaPorPagar: item.idCuotaPorPagar,
+        saldo: item.saldo,
+        abono: item.abono,
+        secuencial: item.secuencial
       }
     })
 
 
-    const cuentasPorPagarHistorialMapper = cuentasPorPagarHistorial.map((item:any)=>{
+    const cuentasPorPagarHistorialMapper = cuentasPorPagarHistorial.map((item: any) => {
       return {
-        idCuentaPorPagar : item.idCuentaPorPagar,
-        saldo           : item.saldo,
-        abono          : item.abono,
-        secuencial    : item.secuencial
+        idCuentaPorPagar: item.idCuentaPorPagar,
+        saldo: item.saldo,
+        abono: item.abono,
+        secuencial: item.secuencial
       }
     })
 
-    const cuentasPorPagarDeterminarEstado = [].map(item=>{
+    const cuentasPorPagarDeterminarEstado = [].map(item => {
 
 
       return {
-        idCuentaPorPagar : 0,
-        idEstadoPago      : 0,
-        abono             : 0,
+        idCuentaPorPagar: 0,
+        idEstadoPago: 0,
+        abono: 0,
       }
 
     })
 
-    const cuotasPorPagarDeterminarEstado = [].map(item=>{
+    const cuotasPorPagarDeterminarEstado = [].map(item => {
 
 
       return {
-        idCuotaPorPagar : 0,
-        idEstadoPago      : 0,
-        abono             : 0,
+        idCuotaPorPagar: 0,
+        idEstadoPago: 0,
+        abono: 0,
       }
 
     })
@@ -178,11 +178,11 @@ export class ComprobanteEgresoRepositoryMapper {
 
     return {
       comprobante,
-       pagos,
-       pagoDetalle: pagosDetalleMapper,
-       historial: cuentasPorPagarHistorialMapper,
-       cuenta: cuentasPorPagarDeterminarEstado,
-       cuota: cuotasPorPagarDeterminarEstado
+      pagos,
+      pagoDetalle: pagosDetalleMapper,
+      historial: cuentasPorPagarHistorialMapper,
+      cuenta: cuentasPorPagarDeterminarEstado,
+      cuota: cuotasPorPagarDeterminarEstado
     }
 
 

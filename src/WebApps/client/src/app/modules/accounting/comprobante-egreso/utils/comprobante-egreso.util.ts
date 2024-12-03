@@ -12,14 +12,11 @@ import { EstadoPago } from "@modules/accounting/interfaces/estado-pago.interface
 import { CuotaPorPagarLista } from "@modules/accounting/interfaces/cuota-por-pagar.interface";
 import { determinadoEstadoPagoCuotaUtil } from "./determinado-estado-pago-cuota.util";
 
-/**
- *
- */
 export class ComprobanteEgresoUtil {
 
   private cuentasPorPagar: CuentaPorPagarCuota[]
   private dataCuentaPorPagarCuota: CuentaPorPagarCuota;
-  private pagosDetalle: PagoDetalle[] ;
+  private pagosDetalle: PagoDetalle[];
   private cuentasPorPagarHistorial: CuentaPorPagarHistorial[]
   private estadosPago: EstadoPago[] = []
   private valorAbono: number = 0;
@@ -67,7 +64,7 @@ export class ComprobanteEgresoUtil {
 
 
   setPagosDetalle(pagosDetalle: PagoDetalle[]) {
-    this.pagosDetalle=pagosDetalle;
+    this.pagosDetalle = pagosDetalle;
   }
 
   getPagosDetalle() {
@@ -76,7 +73,7 @@ export class ComprobanteEgresoUtil {
 
 
 
-  getCuentasPorPagar(){
+  getCuentasPorPagar() {
     return this.cuentasPorPagar;
   }
 
