@@ -1,5 +1,5 @@
-import {inject, Injectable} from "@angular/core";
-import {ComprobanteEgresoRepository} from "@accounting/comprobante-egreso/data/comprobante-egreso.repository";
+import { inject, Injectable } from "@angular/core";
+import { ComprobanteEgresoRepository } from "@accounting/comprobante-egreso/data/comprobante-egreso.repository";
 
 
 @Injectable({
@@ -10,11 +10,11 @@ export class ComprobanteEgresoService {
   private comprobanteEgresoRepository = inject(ComprobanteEgresoRepository);
 
 
-  getCuotasByIdCuentaPorPagar(idCuentaPorPagar:number){
+  getCuotasByIdCuentaPorPagar(idCuentaPorPagar: number) {
     return this.comprobanteEgresoRepository.getCuotasByIdCuentaPorPagar(idCuentaPorPagar);
   }
 
-  getDatForm(idProveedor: number){
+  getDatForm(idProveedor: number) {
     return this.comprobanteEgresoRepository.getDataFormPago(idProveedor)
   }
 
