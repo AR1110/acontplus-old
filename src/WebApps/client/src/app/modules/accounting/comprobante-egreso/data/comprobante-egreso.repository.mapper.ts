@@ -1,16 +1,16 @@
-import {EntidadFinanciera} from "@accounting/interfaces/entidad-financiera.interface";
-import {SubEntidadFinancieraSelectHtmlOnly} from "@accounting/interfaces/subentidad-financiera.interface";
-import {BancoSelectOnly} from "@accounting/interfaces/banco.interface";
-import {EstadoPago} from "@accounting/interfaces/estado-pago.interface";
-import {groupCitiesByProvinceUtil} from "@shared/utils/group-cities-by-province.util";
+import { EntidadFinanciera } from "@accounting/interfaces/entidad-financiera.interface";
+import { SubEntidadFinancieraSelectHtmlOnly } from "@accounting/interfaces/subentidad-financiera.interface";
+import { BancoSelectOnly } from "@accounting/interfaces/banco.interface";
+import { EstadoPago } from "@accounting/interfaces/estado-pago.interface";
+import { groupCitiesByProvinceUtil } from "@shared/utils/group-cities-by-province.util";
 import { CuotaPorPagarLista } from "@modules/accounting/interfaces/cuota-por-pagar.interface";
 
 
-export class ComprobanteEgresoRepositoryMapper{
+export class ComprobanteEgresoRepositoryMapper {
 
   static fromApiCuotasByICuentaPorPagar(response: any): CuotaPorPagarLista[] {
-    const {cuotas} = response;
-    return cuotas.map((item:any)=>{
+    const { cuotas } = response;
+    return cuotas.map((item: any) => {
       return {
         idCuentaPorPagar: item.idCuentaPorPagar,
         idCuotaPorPagar: item.idCuotaPorPagar,
@@ -30,14 +30,13 @@ export class ComprobanteEgresoRepositoryMapper{
 
 
 
-  static fromApiDataForm(response:any){
-    console.log(response)
-    const {entidadFinanciera, subEntidadFinanciera, banco, estadoPago, ciudad, documentos=[]
+  static fromApiDataForm(response: any) {
+    const { entidadFinanciera, subEntidadFinanciera, banco, estadoPago, ciudad, documentos = []
 
     } = response;
 
-    let entidadesFinanciera = entidadFinanciera.map((item:any)=>{
-      let obj: EntidadFinanciera =  {
+    let entidadesFinanciera = entidadFinanciera.map((item: any) => {
+      let obj: EntidadFinanciera = {
         idEntidadFinanciera: item.idEntidadFinanciera,
         descripcion: item.descripcion,
         codigo: item.codigo,
@@ -45,11 +44,11 @@ export class ComprobanteEgresoRepositoryMapper{
       return obj;
     })
 
-    let subEntidadesFinanciera = subEntidadFinanciera.map((item:any)=>{
+    let subEntidadesFinanciera = subEntidadFinanciera.map((item: any) => {
 
       let obj: SubEntidadFinancieraSelectHtmlOnly = {
         idSubEntidadFinanciera: item.idSubEntidadFinanciera,
-        idEntidadFinanciera:item.idEntidadFinanciera,
+        idEntidadFinanciera: item.idEntidadFinanciera,
         descripcion: item.descripcion,
         codigo: item.codigo,
 
@@ -58,7 +57,7 @@ export class ComprobanteEgresoRepositoryMapper{
       return obj;
     })
 
-    let bancos = banco.map((item:any)=>{
+    let bancos = banco.map((item: any) => {
       let obj: BancoSelectOnly = {
         idBanco: item.idBanco,
         descripcion: item.descripcion,
@@ -67,7 +66,7 @@ export class ComprobanteEgresoRepositoryMapper{
       return obj;
     })
 
-    let estadosPago = estadoPago.map((item:any)=>{
+    let estadosPago = estadoPago.map((item: any) => {
       let obj: EstadoPago = {
         idEstadoPago: item.idEstadoPago,
         descripcion: item.descripcion,
@@ -78,7 +77,7 @@ export class ComprobanteEgresoRepositoryMapper{
 
     let provinciaCiudades = groupCitiesByProvinceUtil(ciudad);
 
-    let documentosTemp = documentos.map((item:any)=>{
+    let documentosTemp = documentos.map((item: any) => {
       return {
         idCuentaPorPagar: item.idComprobante,
         idTipoDocumento: item.idTipoDocumento,
@@ -86,7 +85,7 @@ export class ComprobanteEgresoRepositoryMapper{
         nombreDoc: item.tipoDocumento,
         saldo: item.saldo,
         numAutDocSustento: item.numAutDocSustento,
-    }
+      }
     })
 
     return {
@@ -100,5 +99,93 @@ export class ComprobanteEgresoRepositoryMapper{
 
   }
 
+
+  static toApiPost(params: any) {
+    const { formasPago, pagosDetalle, cuentasPorPagarHistorial } = params;
+
+    const comprobante = {
+      idProveedor: 0,
+      total: 0,
+      codEstab: 0,
+      observacion: ''
+    }
+
+    const pagos = formasPago.map((item: any) => {
+
+
+      return {
+        idSubEntidadFinanciera: 0,
+        idEntidadFinanciera: 0,
+        idBanco: 0,
+        idCuentaBancaria: 0,
+        idCuentaPorPagar: 0,
+        fechaEmision: 0,
+        nro: 0,
+        valor: 0,
+        posfechado: 0,
+        cobro: 0,
+        secuencial: 0,
+        lote: 0,
+        aprobacion: 0,
+        referencia: 0,
+        abono: 0,
+        controlCaja: 0
+      }
+
+    })
+
+    const pagosDetalleMapper = pagosDetalle.map((item: any) => {
+      return {
+        idCuotaPorPagar: item.idCuotaPorPagar,
+        saldo: item.saldo,
+        abono: item.abono,
+        secuencial: item.secuencial
+      }
+    })
+
+
+    const cuentasPorPagarHistorialMapper = cuentasPorPagarHistorial.map((item: any) => {
+      return {
+        idCuentaPorPagar: item.idCuentaPorPagar,
+        saldo: item.saldo,
+        abono: item.abono,
+        secuencial: item.secuencial
+      }
+    })
+
+    const cuentasPorPagarDeterminarEstado = [].map(item => {
+
+
+      return {
+        idCuentaPorPagar: 0,
+        idEstadoPago: 0,
+        abono: 0,
+      }
+
+    })
+
+    const cuotasPorPagarDeterminarEstado = [].map(item => {
+
+
+      return {
+        idCuotaPorPagar: 0,
+        idEstadoPago: 0,
+        abono: 0,
+      }
+
+    })
+
+
+    return {
+      comprobante,
+      pagos,
+      pagoDetalle: pagosDetalleMapper,
+      historial: cuentasPorPagarHistorialMapper,
+      cuenta: cuentasPorPagarDeterminarEstado,
+      cuota: cuotasPorPagarDeterminarEstado
+    }
+
+
+  }
 
 }
