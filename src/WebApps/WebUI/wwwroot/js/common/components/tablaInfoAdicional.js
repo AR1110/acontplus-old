@@ -1,0 +1,126 @@
+//@ts-check
+
+app.component('tablaInfoAdicionalComponent', {
+    template: `
+         <div ui-grid="gridOptions"
+            ui-grid-edit
+            ui-grid-resize-columns
+            ui-grid-cellNav
+            ui-grid-auto-resize
+            ui-grid-validate
+            class="grid">
+        </div> 
+    `,
+    //controllerAs: '$ctrl',
+    bindings: {
+        data: '=',
+        isView: '='
+    },
+    controller: ['$scope', 'formulario', function ($scope, fS) {
+        const $ctrl = this;  
+        console.log($ctrl)
+        
+        
+        $ctrl.$onInit = function(){
+            $scope.gridOptions = {
+                enableColumnMenus: false,
+                enableColumnReordering: true,
+                columnDefs: columnDefs(!$ctrl.isView),
+                showGridFooter: false,
+            }
+            $scope.gridOptions.data = $ctrl.data || [];
+            setEnumeracion();
+
+        }
+
+
+
+
+        function columnDefs(isView) {
+            return [
+                {
+                    name: 'Op.',
+                    headerCellTemplate: `<button type="button" ng-click="grid.appScope.addRow()"  ng-disabled="grid.appScope.params.isView" class="btn btn-secondary btn-xs">
+                                        <i class="fa fa-plus-circle"></i>
+                                    </button>`,
+                    enableCellEdit: false,
+                    width: '10%',
+                    minWidth: 20,
+                    cellTemplate: `<button type="button" ng-click="grid.appScope.deleteRow(row)" style="cursor:pointer;"  ng-disabled="grid.appScope.params.isView" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada">
+                                    <i class="fa fa-trash"></i>
+                                </button>`,
+                },
+                // {
+                //     name: 'N°',
+                //     field: 'n',
+                //     enableCellEdit: false,
+                //     allowCellFocus: false,
+                //     width: '20%', maxWidth: 50, minWidth: 50
+                // },
+                {
+                    name: 'Nombre',
+                    field: 'nombre',
+                    enableCellEdit: isView,
+                    allowCellFocus: isView,
+                    enableCellEditOnFocus: isView,
+                    type: 'string',
+                    width: '45%',
+                },
+                {
+                    name: 'Valor',
+                    field: 'valor',
+                    enableCellEdit: isView,
+                    allowCellFocus: isView,
+                    enableCellEditOnFocus: isView,
+                    type: 'string',
+                    width: '45%',
+                },
+            ]
+        }
+
+        function setEnumeracion() {
+            let index = 0, counter = 1;
+            for (let _item of $scope.gridOptions.data) {
+                $scope.gridOptions.data[index].n = counter++
+                index++
+            }
+        }
+
+        $scope.addRow = function () {
+            $scope.gridOptions.data.push({
+                idInfoAdicionalDoc: 0,
+                n: 0,
+                nombre: '',
+                valor: ''
+            });
+            setEnumeracion();
+        }
+
+        $scope.deleteRow = function (row) {
+            let index = $scope.gridOptions.data.indexOf(row.entity);
+            $scope.gridOptions.data.splice(index, 1);
+            setEnumeracion();
+        }
+
+        let validacion = (val) => !fS.isValidField(val.nombre) || !fS.isValidField(val.valor);
+
+        // $scope.closeModal = function () {
+        //     if (!$ctrl.isView) {
+
+        //         if ($scope.gridOptions.data.some(validacion)) {
+        //             tS.toastr({
+        //                 type: 'warning',
+        //                 message: 'Llene todos los campos'
+        //             })
+        //             return
+        //         }
+        //     }
+
+        //     $uibModalInstance.close($scope.gridOptions.data)
+        // }
+
+
+
+    }]
+
+});

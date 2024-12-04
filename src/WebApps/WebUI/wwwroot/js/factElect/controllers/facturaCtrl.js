@@ -500,49 +500,66 @@
                     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return;
                 }
- 
 
-                let { isConfirmed } = await Swal.fire({
-                    title: "<small>Anular Factura?</small>",
-                    html: `<small>Esta Ud. seguro/a de anular este Factura de Venta <b>N° ${item.serieComprobante}</b></small>?`,
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    cancelButtonText: "No, cancelar!",
-                    confirmButtonText: "Si, anular!",
-                });
+                let modalRef = modalSvc.openWithComponent({
+                    component: 'modalEliminarComponent',
+                    size: 'md',
+                    params: {
+                        id: item.idDocumento
+                    }
+                })
+                modalRef.result.then(result => {
+                    if (result && typeof result === 'object' && result.esAnulado) {
 
-                if (isConfirmed) { 
-                    facturaSvc
-                        .delete(item.idDocumento)
-                        .then((response) => { 
-                            if (response.code === "0") {
-                                fS.sweetAlert("warning", response.message, response.titleSms);
-                            }
-                            if (response.code === "1") {
-                                fS.sweetAlert(
-                                    "success",
-                                    response.message,
-                                    response.titleSms,
-                                    1000
-                                );
+                        if (typeof $scope.permisoEditarDoc === "object" && $scope.permisoEditarDoc.requiereClave) {
+                            userCustomerPermissionSvc.updateRequestKey(paramsPermission);
+                            $scope.getFacturas();
+                        }
+                    }
+                })
 
-                                //Una vez actualizado el documento
-                                if (
-                                    typeof $scope.permisoEditarDoc === "object" &&
-                                    $scope.permisoEditarDoc.requiereClave
-                                ) {
-                                    userCustomerPermissionSvc.updateRequestKey(paramsPermission);
-                                }
-                                $scope.getFacturas();
-                            }
-                        })
-                        .catch((error) => { 
-                            console.log(error);
-                        }) 
-                }
-            } catch (error) { 
+
+                // let { isConfirmed } = await Swal.fire({
+                //     title: "<small>Anular Factura?</small>",
+                //     html: `<small>Esta Ud. seguro/a de anular este Factura de Venta <b>N° ${item.serieComprobante}</b></small>?`,
+                //     icon: "warning",
+                //     showCancelButton: true,
+                //     confirmButtonColor: "#3085d6",
+                //     cancelButtonColor: "#d33",
+                //     cancelButtonText: "No, cancelar!",
+                //     confirmButtonText: "Si, anular!",
+                // });
+
+                // if (isConfirmed) { 
+                //     facturaSvc
+                //         .delete(item.idDocumento)
+                //         .then((response) => { 
+                //             if (response.code === "0") {
+                //                 fS.sweetAlert("warning", response.message, response.titleSms);
+                //             }
+                //             if (response.code === "1") {
+                //                 fS.sweetAlert(
+                //                     "success",
+                //                     response.message,
+                //                     response.titleSms,
+                //                     1000
+                //                 );
+
+                //                 //Una vez actualizado el documento
+                //                 if (
+                //                     typeof $scope.permisoEditarDoc === "object" &&
+                //                     $scope.permisoEditarDoc.requiereClave
+                //                 ) {
+                //                     userCustomerPermissionSvc.updateRequestKey(paramsPermission);
+                //                 }
+                //                 $scope.getFacturas();
+                //             }
+                //         })
+                //         .catch((error) => { 
+                //             console.log(error);
+                //         }) 
+                // }
+            } catch (error) {
                 console.log(error);
             }
         };
