@@ -98,8 +98,7 @@ app.component("modalEliminarComponent", {
                 valor: null
             }]
 
-            const $ctrl = this;
-            console.log($ctrl)
+            const $ctrl = this; 
             let id = 0;
 
             $ctrl.$onInit = function () {
@@ -140,11 +139,12 @@ app.component("modalEliminarComponent", {
                     if (response.code === "1") {
                         fS.sweetAlert(
                             "success",
-                            response.message,
-                            1000
+                            response.message, '', 1000
                         );
                         $ctrl.close({
+                           $value:{
                             esAnulado: true
+                           }
                         });
                     }
 
