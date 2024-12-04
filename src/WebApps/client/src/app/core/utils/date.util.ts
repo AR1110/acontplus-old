@@ -1,7 +1,7 @@
 import { format, isAfter, tzDate } from "@formkit/tempo";
 
 export const zonaHorariaEcuador  = 'America/Guayaquil';
-export const language = 'en';
+export const language = 'es';
 
 interface ResultadoComparacionFechas {
   esMismaFecha: boolean;
@@ -108,11 +108,15 @@ export const formatDateToString = function (date:Date){
   if (!isDateValid(date)) {
     throw new Error("La fecha es inválida");
   }
-  return format({
-    date,
-    format: 'YYYY-MM-DD HH:mm:ss A',
-    tz: 'America/Guayaquil',
+  let dateZone = tzDate(date, zonaHorariaEcuador);
+  let dateFormat= format( {
+    date: dateZone,
+    format: 'YYYY-MM-DD h:mm:ss',
+      tz: zonaHorariaEcuador,
+
   })
+ // const dateFormat = format(dateZone, 'YYYY-MM-DD h:mm:ss A')
+  return dateFormat;
  // return moment(date).tz('America/Guayaquil').format('YYYY-MM-DD HH:mm:ss A')
 }
 
@@ -126,6 +130,5 @@ export const isDateValid = function (dateString: Date) {
 
 
 export const fechaString = (t:Date)=>{
-  const l = "en"
-  return format(t,"DD/MM/YYYY", l)
+  return format(t,"DD/MM/YYYY", language)
 }

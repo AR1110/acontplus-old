@@ -197,7 +197,7 @@
                     infoAdicional: $scope.dataSearch.infoAdicional
                         ? $scope.dataSearch.infoAdicional
                         : null,
-                }; 
+                };
                 $scope.facturas = [];
                 $scope.getTotales();
                 facturaSvc
@@ -208,22 +208,22 @@
                         $scope.cloneFacturas = structuredClone($scope.facturas);
 
                         $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                        $scope.getTotales(); 
+                        $scope.getTotales();
                     })
                     .catch((error) => {
-                        $scope.dataSearch.totalRecords = 0; 
+                        $scope.dataSearch.totalRecords = 0;
                         console.log(error);
                     });
-            } catch (error) { 
+            } catch (error) {
                 console.log(error);
             }
         };
 
         $scope.initiload = async function () {
-          
+
             facturaSvc
                 .getDataFilter()
-                .then((response) => { 
+                .then((response) => {
                     $scope.establecimientos = response.estabs;
                     $scope.estadoDocumentos = response.estadosDoc;
 
@@ -240,7 +240,7 @@
                     } else {
                         tS.toastr("warning", "No tienes asignado Establecimiento!");
                     }
-                }) 
+                })
 
             facturaSvc.getDataForm().then((response) => {
                 mainDataForm = response;
@@ -302,7 +302,9 @@
             $scope.getFacturas();
 
             //Focus New Invoice
-            btnNewInvoice.focus();
+            if (btnNewInvoice) {
+                btnNewInvoice.focus();
+            }
         };
 
         $scope.openModalInvoiceNew = async () => {
@@ -391,7 +393,6 @@
                     return;
                 }
 
-                showLoader();
                 facturaSvc
                     .getId(item.idDocumento)
                     .then((response) => {
@@ -423,16 +424,14 @@
                     .catch((error) => {
                         console.log(error);
                     })
-                    .finally(() => hideLoader());
+
             } catch (error) {
-                hideLoader();
                 console.log(error);
             }
         };
 
         $scope.openModalInvoiceDuplicate = async (item) => {
             try {
-                showLoader();
                 facturaSvc
                     .getId(item.idDocumento)
                     .then((response) => {
@@ -457,9 +456,7 @@
                     .catch((error) => {
                         console.log(error);
                     })
-                    .finally(() => hideLoader());
             } catch (error) {
-                hideLoader();
                 console.log(error);
             }
         };
@@ -493,10 +490,9 @@
                 }
 
                 let paramsPermission = getParamsPermission(item, "A");
-                let response =
-                    await userCustomerPermissionSvc.checkHasPermissionToDelete(
-                        paramsPermission
-                    );
+                let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(
+                    paramsPermission
+                );
 
                 if (!response) return;
 
@@ -504,6 +500,7 @@
                     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return;
                 }
+ 
 
                 let { isConfirmed } = await Swal.fire({
                     title: "<small>Anular Factura?</small>",
@@ -516,12 +513,10 @@
                     confirmButtonText: "Si, anular!",
                 });
 
-                if (isConfirmed) {
-                    showLoader();
+                if (isConfirmed) { 
                     facturaSvc
                         .delete(item.idDocumento)
-                        .then((response) => {
-                            hideLoader();
+                        .then((response) => { 
                             if (response.code === "0") {
                                 fS.sweetAlert("warning", response.message, response.titleSms);
                             }
@@ -543,20 +538,16 @@
                                 $scope.getFacturas();
                             }
                         })
-                        .catch((error) => {
-                            hideLoader();
+                        .catch((error) => { 
                             console.log(error);
-                        })
-                        .finally(() => hideLoader());
+                        }) 
                 }
-            } catch (error) {
-                hideLoader();
+            } catch (error) { 
                 console.log(error);
             }
         };
 
         $scope.getReport = function (item) {
-            showLoader();
             let format = "pdf";
             let dataParms = {
                 id: item.idDocumento,
@@ -833,7 +824,7 @@
             }
 
             gridApi.grid.element.on("keyup", function (ev) {
-                ev.stopPropagation(); 
+                ev.stopPropagation();
                 if (ev.which == 13 || ev.keyCode == "13") {
                     if (($scope.config.searchCode == 1)) {
                         setFocusInputBarcode();
@@ -857,26 +848,26 @@
                         "porcentajeDescuento"
                     ];
                     const stockFields = ["idMedida", "cantidad", "idBodega"];
-                    
+
                     // Validar campos vacíos
                     if (isEmpty(rowEntity[colDef.field])) {
                         rowEntity[colDef.field] = oldValue;
                     }
-                    
+
                     // Validación de números negativos
                     if (negativeFields.includes(colDef.field) && newValue < 0) {
                         rowEntity[colDef.field] = oldValue;
                     }
-                    
+
                     // Validación de cantidad igual a 0
                     if (colDef.field === "cantidad" && Number(rowEntity[colDef.field]) === 0) {
                         rowEntity[colDef.field] = 1;
                     }
-                    
+
                     // Evitar la validación redundante de 'idMedida' y 'cantidad' si no cambian
                     if (colDef.field === "idMedida" && rowEntity.idMedida === oldValue) return;
                     if (colDef.field === "cantidad" && rowEntity.cantidad === oldValue) return;
-                    
+
                     // Verificación del stock
                     if (stockFields.includes(colDef.field) && rowEntity[colDef.field] !== oldValue) {
                         if (colDef.field === "cantidad" && rowEntity.cantidad > oldValue) {
@@ -886,11 +877,11 @@
                         }
                         return;
                     }
-                    
+
                     // Cálculos y actualización del producto
                     setCalculoTotales(colDef.field, rowEntity, oldValue);
                     updateRefProductoVenta();
-                    
+
                 }
             );
         };
@@ -986,7 +977,7 @@
                 //         hideLoader();
                 //         console.log(error);
                 //     });
-            } catch (error) { 
+            } catch (error) {
                 console.log(error);
             }
         }
@@ -1055,10 +1046,10 @@
             $scope.gridOptions.data.push(nuevaFilaAgregada)
             setCalculoTotales('precioUnitario', nuevaFilaAgregada, 0);
             focusColumnCantidad(getIndexRow(nuevaFilaAgregada), nuevaFilaAgregada.llevaInventario);
-            updateRefProductoVenta() 
+            updateRefProductoVenta()
         }
 
-        function updateItem(nuevaFilaAgregada) { 
+        function updateItem(nuevaFilaAgregada) {
 
             // Actualizar el elemento en los datos de gridOptions basado en uniqueRowDetalle
             $scope.gridOptions.data = $scope.gridOptions.data.map(item =>
@@ -1428,20 +1419,20 @@
 
             updateRefProductoVenta();
 
-           
+
 
 
             $uibModalInstance.rendered.then(() => {
                 if ($scope.config.searchCode) {
                     let el = document.getElementById("inputBarcode");
-                    if(el){
+                    if (el) {
                         el.focus();
-                    } 
+                    }
                 } else {
                     let el = document.getElementById("custom-template-md-autocomplete-articulo");
-                    if(el){
+                    if (el) {
                         el.focus()
-                    } 
+                    }
                 }
             });
 
@@ -1793,7 +1784,7 @@
 
         function setFocusInputBarcode() {
             $timeout(function () {
-                let inputBarcode = document.getElementById("inputBarcode"); 
+                let inputBarcode = document.getElementById("inputBarcode");
                 if (inputBarcode) {
                     inputBarcode.focus();
                 }
@@ -1804,7 +1795,7 @@
             $timeout(function () {
                 let el = document.getElementById(
                     "custom-template-md-autocomplete-articulo"
-                ); 
+                );
                 if (el) {
                     el.focus();
                 }
@@ -1826,7 +1817,7 @@
             $scope.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray =
                 $scope.bodegas;
 
-                updateRefProductoVenta()
+            updateRefProductoVenta()
         }
 
         /**
@@ -1987,12 +1978,12 @@
             if (isUpdate()) {
                 tS.toastr("warning", "No disponible en actualizar!");
                 return;
-            } 
+            }
             facturaSvc
                 .getDataForm()
                 .then((response) => {
                     $scope.tiemposCredito = response.tiemposCredito;
-                }) 
+                })
         };
 
         $scope.onChangeTiempoCredito = function () {
@@ -2283,7 +2274,7 @@
                 llevaInventario: false,
                 datosAdicionales: false,
                 estado: 1,
-            }; 
+            };
             return structuredClone(obj)
         }
 
@@ -2409,7 +2400,7 @@
             if (($scope.config.searchCode == 1)) {
                 setFocusInputBarcode();
                 return
-            }  
+            }
 
             if (llevaInventario) {
                 indexCol = $scope.gridOptions.columnDefs.findIndex(
@@ -2876,8 +2867,8 @@
             return true;
         }
 
-         // Función para registrar el documento
-         const registerAndUpdate = async (query) => {
+        // Función para registrar el documento
+        const registerAndUpdate = async (query) => {
 
             if (isRegister()) {
                 return await facturaSvc.save(query)
@@ -2885,7 +2876,7 @@
 
             if (isUpdate()) {
                 return await facturaSvc
-                .update($scope.data.idFactura, query)
+                    .update($scope.data.idFactura, query)
             }
         };
 
@@ -2918,10 +2909,10 @@
                     return;
                 }
 
-                if (isRegister()) { 
+                if (isRegister()) {
                     serieComprobante = await facturaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
-                    }); 
+                    });
                     if (!serieComprobante)
                         throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
@@ -2969,11 +2960,11 @@
                 });
 
                 //Registar Doc
-                if (isRegister()) { 
+                if (isRegister()) {
                     const managedRegister = fS.fetchManager(registerAndUpdate);
 
-                    managedRegister(params).then(response=>{
-                        if(!response) return 
+                    managedRegister(params).then(response => {
+                        if (!response) return
 
                         if (response.code === "0") {
                             fS.sweetAlert("warning", response.message, response.titleSms);
@@ -2993,13 +2984,13 @@
                         }
 
 
-                    }) 
+                    })
                 }
                 if (isUpdate()) {
                     const managedUpdate = fS.fetchManager(registerAndUpdate);
 
-                    managedUpdate(params).then(response=>{
-                        if(!response) return;
+                    managedUpdate(params).then(response => {
+                        if (!response) return;
 
                         if (response.code === "0") {
                             fS.sweetAlert("warning", response.message, response.titleSms);
@@ -3015,11 +3006,11 @@
                                 ...response,
                                 isUpdate: true,
                             });
-                        } 
+                        }
 
-                    }) 
+                    })
                 }
-            } catch (error) { 
+            } catch (error) {
                 console.log(error);
             }
         };
