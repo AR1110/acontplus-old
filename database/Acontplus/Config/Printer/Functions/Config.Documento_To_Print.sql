@@ -154,30 +154,33 @@ BEGIN
 
             INSERT INTO @tbTaxes (descripcion,subTotal)
             SELECT 'Subtotal' + ' ' + ti.descripcion as descripcion
-                    ,ISNULL
-                    ((
-                    SELECT CAST(SUM(fi.TaxBase) as numeric(18,2)) 
-                    FROM Ventas.v_FacturaImpuesto fi 
-                    where FacturaId = @idDocument AND fi.TaxPercentId = ti.idTipoIva
-                    and fi.[Enabled] = 1
+                   ,ISNULL
+                   ((
+                    SELECT SUM(CAST(fi.TaxBase as numeric(18,2)))
+                    FROM Ventas.FacturaImpuesto fi WITH (NOLOCK)
+                    where fi.FacturaId = @idDocument 
+                      AND fi.TaxPercentId = ti.idTipoIva
+                      AND fi.[Enabled] = 1
 
-                    ),0) as subTotal
+                   ),0) as subTotal
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
 
             UNION ALL
 
-            SELECT ti.descripcion 
-                    ,ISNULL
-                    ((
-                    SELECT CAST(SUM(fi.TaxValue) as numeric(18,2)) 
-                    FROM Ventas.v_FacturaImpuesto fi 
-                    where FacturaId = @idDocument AND fi.TaxPercentId = ti.idTipoIva
-                    and fi.[Enabled] = 1
-                    ),0) 
+             SELECT ti.descripcion as descripcion
+                  ,CAST(ISNULL
+                  ((
+                       SELECT SUM(CAST(fi.TaxBase as numeric(18,2)))
+                       FROM Ventas.FacturaImpuesto fi WITH (NOLOCK)
+                       where fi.FacturaId = @idDocument 
+                         AND fi.TaxPercentId = ti.idTipoIva
+                         AND fi.[Enabled] = 1
+
+                  ),0) * porcentaje / 100 as numeric(18,2))
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE ti.porcentaje > 0 
-                AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
+              AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
 
             SET @taxesValue = (SELECT * FROM @tbTaxes FOR JSON PATH)
 
@@ -250,33 +253,32 @@ BEGIN
             
             INSERT INTO @tbTaxes (descripcion,subTotal)
             SELECT 'Subtotal' + ' ' + ti.descripcion as descripcion
-                    ,ISNULL
-                    ((
-                    SELECT  CAST(SUM(ni.TaxBase) as numeric(18,2)) 
+                  ,ISNULL
+                  ((
+                    SELECT SUM(CAST(ni.TaxBase as numeric(18,2)))
                     FROM Ventas.NotaEntregaImpuesto ni WITH (NOLOCK) 
                     WHERE ni.NotaEntregaId = @idDocument 
                       AND ni.TaxPercentId = ti.idTipoIva
                       AND ni.[Enabled] = 1
 
-                    ),0) as subTotal
+                  ),0) as subTotal
             FROM dbo.TipoIva ti WITH (NOLOCK)
-            WHERE CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
+            WHERE CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date) 
 
-            UNION ALL 
-
-            SELECT ti.descripcion 
-                  ,ISNULL
+            INSERT INTO @tbTaxes (descripcion,subTotal)
+            SELECT ti.descripcion as descripcion
+                  ,CAST(ISNULL
                   ((
-                    SELECT  CAST(SUM(ni.TaxValue) as numeric(18,2)) 
+                    SELECT SUM(CAST(ni.TaxBase as numeric(18,2)))
                     FROM Ventas.NotaEntregaImpuesto ni WITH (NOLOCK) 
                     WHERE ni.NotaEntregaId = @idDocument 
-                    AND ni.TaxPercentId = ti.idTipoIva
-                    AND ni.[Enabled] = 1
+                      AND ni.TaxPercentId = ti.idTipoIva
+                      AND ni.[Enabled] = 1
 
-                  ),0) 
+                  ),0) * porcentaje / 100 as numeric(18,2)) as iva
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE ti.porcentaje > 0
-              AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date) 
+              AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
 
             SET @taxesValue = (SELECT * FROM @tbTaxes FOR JSON PATH)
 

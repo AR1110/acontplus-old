@@ -54,7 +54,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
     }
 
 
-    [HttpPost("{id}")]
+    [HttpPut("Cancel/{id}")]
     public async Task<IActionResult> Cancel(int id, ApiRequest data)
     {
         var parameters = new Dictionary<string, object>
