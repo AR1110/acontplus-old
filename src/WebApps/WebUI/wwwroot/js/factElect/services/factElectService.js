@@ -415,7 +415,7 @@
                 throw "";
             }
             if (!("codEstab" in query)) {
-                fDs.sweetAlert("warning", "No se ha proporcionado el codEstab");
+                fS.sweetAlert("warning", "No se ha proporcionado el codEstab");
                 throw "";
             }
             query.tipo = 2;
@@ -907,9 +907,17 @@
                 });
         };
 
-        service.delete = function (id) {
-            return mS.getData("delete", `${url}${id}`, null, true);
-        };
+        // service.delete = function (id) {
+        //     return mS.getData("delete", `${url}${id}`, null, true);
+        // };
+
+        service.anular = function(id, infoAdicional){
+            let data = {
+                infoAdicional
+            }
+            return mS.getData('put',  `${url}Cancel/${id}`, {data})
+
+        }
 
         service.queryMapper = function (params) {
             let {
