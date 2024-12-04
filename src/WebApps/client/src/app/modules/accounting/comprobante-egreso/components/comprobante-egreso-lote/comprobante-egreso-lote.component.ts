@@ -166,11 +166,18 @@ export class ComprobanteEgresoLoteComponent {
       })
       return
     }
+    console.log(formasPago())
+    console.log(pagosDetalle())
 
-    if (formasPago().some(item => pagosDetalle().some(pd => pd.secuencial !== item.secuencial))) {
+    // Filtrar las secuencias que no existen en los datos de referencia
+    const secuenciasInvalidas = formasPago().filter(dato =>
+      !pagosDetalle().some(referencia => referencia.secuencial === dato.secuencial)
+    );
+
+    if (secuenciasInvalidas.length > 0) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Secuencial de abono no corresponden con el abono realizado a las cuotas'
+        message: 'Se encontraron secuencias inválidas'
       })
       return
     }

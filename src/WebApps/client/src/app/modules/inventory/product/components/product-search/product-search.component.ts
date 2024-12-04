@@ -365,7 +365,6 @@ export class ProductSearchComponent {
     return this.productSvc.search({ textSearch: value }).pipe(
       finalize(()=>this.isLoading.set(false)),
       map((response) => {
-        console.log(response);
         return response;
       })
     );
@@ -376,7 +375,6 @@ export class ProductSearchComponent {
   }
 
   onSelectionChange(product: ProductSearch) {
-    console.log(this.props);
     if (this.props.clearInput) {
       this.control.patchValue('');
     }

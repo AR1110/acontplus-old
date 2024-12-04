@@ -616,16 +616,16 @@
     </mat-tab-group>
   </mat-card-content>
   <mat-card-actions class="d-flex gap-2">
-    <button mat-flat-button (click)="getReportPDF()">
+    <button mat-flat-button (click)="getReportPDF()" appActionReport>
       <mat-icon>download</mat-icon>
       PDF
     </button>
-    <button mat-flat-button (click)="getReportExcel()">
+    <button mat-flat-button (click)="getReportExcel()" appActionReport>
       <mat-icon>download</mat-icon>
       Excel
     </button>
     @if(selected.value===0){
-    <button mat-stroked-button (click)="askToSendMail()">
+    <button mat-stroked-button (click)="askToSendMail()" appActionEnviarCorreo>
       <mat-icon>email</mat-icon>
       Enviar por correo
     </button>
