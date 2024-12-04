@@ -508,13 +508,13 @@
                         id: item.idDocumento
                     }
                 })
-                modalRef.result.then(result => {
+                modalRef.result.then(result => { 
                     if (result && typeof result === 'object' && result.esAnulado) {
 
                         if (typeof $scope.permisoEditarDoc === "object" && $scope.permisoEditarDoc.requiereClave) {
                             userCustomerPermissionSvc.updateRequestKey(paramsPermission);
-                            $scope.getFacturas();
                         }
+                        $scope.getFacturas();
                     }
                 })
 
