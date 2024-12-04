@@ -129,13 +129,11 @@ export class ProductSearchListComponent<T>   {
   }
 
   selectRow(row: T): void {
-    console.log(row)
     this.rowSelected.emit(row); // this.selection.selected
   }
 
   sortData($event:any){
     this.highlightRowIndex = -1;
-    console.log(this)
   }
 
 

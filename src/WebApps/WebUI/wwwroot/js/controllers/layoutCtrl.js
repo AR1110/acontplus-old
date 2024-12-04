@@ -119,7 +119,7 @@
             if (pathname.indexOf("/Home") == -1) {
                 let lengthPath = pathname.split("/").splice(1).length;
 
-                if ([1, 2, 3].includes(lengthPath)) {
+                if ([1, 2, 3, 4].includes(lengthPath)) {
                     let dataMenu = $scope.submenus.find((item) => item.url === pathname);
                     if (dataMenu) {
                         const { newUrl, newUrlExpiration } = dataMenu;
