@@ -1,4 +1,5 @@
-﻿using Common.AppSettings.Extensions;
+﻿using Azure.Core;
+using Common.AppSettings.Extensions;
 
 namespace Ventas.API.Controllers;
 
@@ -59,11 +60,16 @@ public class NotaEntregaController : BaseApiController
     }
 
 
-    [HttpDelete("Delete/{id}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpPut("Cancel/{id}")]
+    public async Task<IActionResult> Delete(int id, ApiRequest request)
     {
-        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } };
-        var response = await _svc.DeleteAsync(parameters);
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
+        var response = await _svc.UpdateAsync(parameters);
         return Ok(response);
     }
 
