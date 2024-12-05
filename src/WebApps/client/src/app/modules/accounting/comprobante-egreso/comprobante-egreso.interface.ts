@@ -2,6 +2,9 @@ import { CuentaPorPagar } from './../cuenta-por-pagar/interfaces/cuenta-por-paga
 
 import { CuentaPorPagarLista } from "@accounting/cuenta-por-pagar/interfaces/cuenta-por-pagar.interface";
 import { CuotaPorPagarLista } from "@accounting/interfaces/cuota-por-pagar.interface";
+import {PaymentTypeCode} from "@accounting/enums/accounting.constants";
+import {roundNumber} from "@core/utils/round-number.utils";
+import {DECIMALS} from "@core/constants/global.constants";
 
 interface ComprobanteEgreso {
   idComprobanteEgreso: number
@@ -33,4 +36,42 @@ export interface CuentaPorPagarHistorial extends Pick<CuentaPorPagar, "idCuentaP
 
   // diasMora: this.group.diasMora,
   // mora: this.group.mora,
+}
+
+
+
+export  interface FormaPago {
+  uuid: string
+  codigoEntidadFinanciera: PaymentTypeCode | null;
+  fechaEmision: Date;
+  idEntidadFinanciera: number;
+  idSubEntidadFinanciera: number;
+  idCiudad?: number
+  idCuentaPorPagar?: number
+  nro?: string
+  referencia?: string
+  aprobacion?: string
+  posfechado: boolean
+  idBanco?: number
+  lote?: string
+  nombreBanco?: string
+  nombreFormaPago?: string
+  nombrePosfechado?: string
+  nombreCiudad?: string
+  valorAbonoInput: number
+  abono: number
+  secuencial: number
+  controlCaja?: boolean
+}
+
+export interface CuentaPorPagarEstado {
+  idCuentaPorPagar: number
+  idEstadoPago: number
+  abono: number
+}
+
+export interface CuotaPorPagarEstado {
+  idEstadoPago: number
+  abono: number
+  idCuotaPorPagar: number
 }

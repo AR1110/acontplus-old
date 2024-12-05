@@ -1,5 +1,5 @@
 import { PagoDetalle } from "@modules/accounting/cuenta-por-pagar/interfaces/pago-detalle.interface";
-import { CuentaPorPagarHistorial } from "../comprobante-egreso.interface";
+import {CuentaPorPagarEstado, CuentaPorPagarHistorial} from "../comprobante-egreso.interface";
 import { minus } from "@core/utils/decimal.util";
 import { DECIMALS } from "@core/constants/global.constants";
 import { determinadoEstadoPagoCuotaUtil } from "./determinado-estado-pago-cuota.util";
@@ -20,7 +20,7 @@ type Props = {
 * @param {Array} param0.pagosDetalle - Detalles de los pagos realizados.
 * @returns {Array} - Lista con el estado de cada cuenta por pagar.
 */
-export const obtenerCuentasPorPagarEstado = function ({ cuentasPorPagarHistorial, pagosDetalle, estadosPago }: Props) {
+export const obtenerCuentasPorPagarEstado = function ({ cuentasPorPagarHistorial, pagosDetalle, estadosPago }: Props): CuentaPorPagarEstado[] {
   // Agrupando las cuentas por pagar y sumando los abonos para cada cuenta
   let cuentasPorPagarAgrupado = cuentasPorPagarHistorial.reduce((acc, curr) => {
     let existeDato = acc.find(item => item.idCuentaPorPagar === curr.idCuentaPorPagar);
@@ -41,7 +41,7 @@ export const obtenerCuentasPorPagarEstado = function ({ cuentasPorPagarHistorial
   }, [] as CuentaPorPagarHistorial[]);
 
 
-  let cuentasPorPagarEstado = [];
+  let cuentasPorPagarEstado: CuentaPorPagarEstado[] = [];
 
   for (let item of cuentasPorPagarAgrupado) {
     let valorSaldo = item.saldo;
@@ -78,7 +78,7 @@ export const obtenerCuentasPorPagarEstado = function ({ cuentasPorPagarHistorial
     // Agregar la información del estado de la cuenta por pagar
     cuentasPorPagarEstado.push({
       idCuentaPorPagar: item.idCuentaPorPagar,
-      idEstadoPago: dataEstadoPago.idEstadoPago,
+      idEstadoPago: dataEstadoPago.idEstadoPago ?? 0,
       abono: roundNumber(totalNoPosfechado, DECIMALS.DOS)
     });
   }

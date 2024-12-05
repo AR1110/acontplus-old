@@ -57,7 +57,7 @@ import {ParameterReportUtil} from "@shared/utils/parameter-report.util";
 import {SharedService} from "@core/services/shared.service";
 import {SelectionModel} from '@angular/cdk/collections';
 import {ComprobanteEgresoLoteComponent} from '@accounting/comprobante-egreso/components/comprobante-egreso-lote/comprobante-egreso-lote.component';
-import {ComprobanteEgresoService} from "@accounting/comprobante-egreso/comprobante-egreso.service";
+import {ComprobanteEgresoService} from "@accounting/comprobante-egreso/data/comprobante-egreso.service";
 
 
 @Component({
