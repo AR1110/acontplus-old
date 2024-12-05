@@ -77,6 +77,13 @@ export class ComprobanteEgresoUtil {
     return this.cuentasPorPagar;
   }
 
+  setCuentasPorPagarHistorial(values: CuentaPorPagarHistorial[]) {
+     this.cuentasPorPagarHistorial = values;
+  }
+  getCuentasPorPagarHistorial(){
+    return this.cuentasPorPagarHistorial
+  }
+
 
   abonar() {
 

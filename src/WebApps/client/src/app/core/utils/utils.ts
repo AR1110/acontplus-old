@@ -36,7 +36,7 @@ export function isValidJSON(texto: string) {
 }
 
 
-export const getValidId = (id:number) => id > 0 ? id : null;
+export const getValidId = (id?:number) => (typeof id==="number" && id > 0 )? id : null;
 
 export const imgDefault = () => '/assets/images/img-default.png';
 

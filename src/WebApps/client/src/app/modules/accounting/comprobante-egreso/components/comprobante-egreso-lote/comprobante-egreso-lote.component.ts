@@ -21,6 +21,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CuotaPorPagarLista } from '@modules/accounting/interfaces/cuota-por-pagar.interface';
 import Swal from 'sweetalert2';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import {PagoDetalle} from "@accounting/cuenta-por-pagar/interfaces/pago-detalle.interface";
+import {CuentaPorPagarHistorial} from "@accounting/comprobante-egreso/comprobante-egreso.interface";
+import {EstadoPago} from "@accounting/interfaces/estado-pago.interface";
+import {
+  obtenerCuotasPorPagarEstadoUtil,
+} from "@accounting/comprobante-egreso/utils/obtener-cuotas-por-pagar-estado.util";
+import {ComprobanteEgresoService} from "@accounting/comprobante-egreso/data/comprobante-egreso.service";
+import {obtenerCuentasPorPagarEstado} from "@accounting/comprobante-egreso/utils/obtener-cuentas-por-pagar-estado.util";
 
 @Component({
   selector: 'app-comprobante-ingreso-lote',
@@ -48,6 +56,7 @@ export class ComprobanteEgresoLoteComponent {
   private dialogSvc = inject(DialogService);
   private tS = inject(ToasterService);
   comprobanteEgresoStore = inject(ComprobanteEgresoStore);
+  private comprobanteEgresoSvc = inject(ComprobanteEgresoService)
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -154,7 +163,19 @@ export class ComprobanteEgresoLoteComponent {
 
 
   async save() {
-    const { formasPago, pagosDetalle } = this.comprobanteEgresoStore;
+    const { formasPago, pagosDetalle, cuentasPorPagarHistorial, estadosPago } = this.comprobanteEgresoStore;
+
+    const cuentasPorPagarEstado = obtenerCuentasPorPagarEstado({
+      pagosDetalle: pagosDetalle(),
+      cuentasPorPagarHistorial: cuentasPorPagarHistorial(),
+      estadosPago: estadosPago(),
+    })
+
+
+    let cuotasPorPagarEstado = obtenerCuotasPorPagarEstadoUtil({
+      pagosDetalle: pagosDetalle(),
+      estadosPago: estadosPago()
+    })
 
     let valorAbonoInput = formasPago().reduce((acc, curr) => acc + curr.valorAbonoInput, 0)
     let totalAbonoCuota = formasPago().reduce((acc, curr) => acc + curr.abono, 0)
@@ -166,8 +187,6 @@ export class ComprobanteEgresoLoteComponent {
       })
       return
     }
-    console.log(formasPago())
-    console.log(pagosDetalle())
 
     // Filtrar las secuencias que no existen en los datos de referencia
     const secuenciasInvalidas = formasPago().filter(dato =>
@@ -214,7 +233,37 @@ export class ComprobanteEgresoLoteComponent {
     if (!isConfirmed) return
 
 
+    let data = {
+      dataCuentaPorPagar: this.comprobanteEgresoStore.dataCuentaPorPagar(),
+      total: valorAbonoInput,
+      formasPago: formasPago(),
+      pagosDetalle: pagosDetalle(),
+      cuentasPorPagarEstado,
+      cuotasPorPagarEstado,
+      cuentasPorPagarHistorial: cuentasPorPagarHistorial()
+    }
 
+
+    this.comprobanteEgresoSvc.post(data).subscribe(response=>{
+      if(response.code==="0"){
+        this.tS.toastr({
+          type: 'warning',
+          message: response.message
+        })
+      }
+
+      if(response.code==="1"){
+        this.tS.toastr({
+          type: 'success',
+          message: response.message
+        })
+        this.dialogRef.close({
+          isSave: true
+        })
+      }
+
+
+    })
 
 
 

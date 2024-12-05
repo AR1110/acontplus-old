@@ -10,13 +10,13 @@ import {
 } from '@ngrx/signals';
 import { EntidadFinanciera } from '@accounting/interfaces/entidad-financiera.interface';
 import { computed, inject } from '@angular/core';
-import { ComprobanteEgresoService } from '@accounting/comprobante-egreso/comprobante-egreso.service';
+import { ComprobanteEgresoService } from '@accounting/comprobante-egreso/data/comprobante-egreso.service';
 import { finalize } from 'rxjs/operators';
 import { PaymentTypeCode } from '@accounting/enums/accounting.constants';
 import { CuentaPorPagarLista } from '@accounting/cuenta-por-pagar/interfaces/cuenta-por-pagar.interface';
 import { PagoDetalle } from '../cuenta-por-pagar/interfaces/pago-detalle.interface';
 import { EstadoPago } from '../interfaces/estado-pago.interface';
-import { CuentaPorPagarCuota } from './comprobante-egreso.interface';
+import {CuentaPorPagarCuota, CuentaPorPagarHistorial, FormaPago} from './comprobante-egreso.interface';
 import { ToasterService } from '@core/services/toaster.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { isDateValid } from '@core/utils/date.util';
@@ -30,28 +30,6 @@ import { minus } from '@core/utils/decimal.util';
 
 // import { CuentaPorPagarCuota } from "@accounting/comprobante-egreso/comprobante-egreso-pago.interface";
 
-interface FormaPago {
-  uuid: string
-  codigoEntidadFinanciera: PaymentTypeCode | null;
-  fechaEmision: Date;
-  idEntidadFinanciera: number;
-  idSubEntidadFinanciera: number;
-  idCiudad?: number
-  nro?: string
-  referencia?: string
-  aprobacion?: string
-  posfechado: boolean
-  idBanco?: number
-  lote?: string
-  nombreBanco?: string
-  nombreFormaPago?: string
-  nombrePosfechado?: string
-  nombreCiudad?: string
-  valorAbonoInput: number
-  abono: number
-  secuencial: number
-}
-
 interface ComprobanteEgresoStore {
   isLoading: boolean;
 
@@ -59,6 +37,10 @@ interface ComprobanteEgresoStore {
   cuentasPorPagar: CuentaPorPagarCuota[];
   cuentasPorPagarCopy: CuentaPorPagarCuota[];
   pagosDetalle: PagoDetalle[]
+  cuentasPorPagarHistorial: CuentaPorPagarHistorial[],
+
+  dataFormaPago: FormaPago;
+  formasPago: FormaPago[]
 
   entidadesFinanciera: EntidadFinanciera[];
   subEntidadesFinanciera: SubEntidadFinancieraSelectHtmlOnly[];
@@ -67,9 +49,6 @@ interface ComprobanteEgresoStore {
   provinciaCiudades: ProvinciaCiudad[];
   estadosPago: EstadoPago[]
   documentos: any[]
-  dataFormaPago: FormaPago;
-  formasPago: FormaPago[]
-
 
 }
 
@@ -91,6 +70,7 @@ export const getDataFormaPagoState = (): FormaPago => {
     valorAbonoInput: 0,
     abono: 0,
     secuencial: 0,
+    controlCaja: false
   });
 }
 
@@ -100,6 +80,7 @@ let initialComprobanteEgresoState: ComprobanteEgresoStore = {
   cuentasPorPagar: [],
   cuentasPorPagarCopy: [],
   pagosDetalle: [],
+  cuentasPorPagarHistorial: [],
 
   entidadesFinanciera: [],
   bancos: [],
@@ -227,6 +208,7 @@ export const ComprobanteEgresoStore = signalStore(
             codigoEntidadFinanciera: data.codigo,
             idSubEntidadFinanciera:
               dataSubEntidadFinanciera?.idSubEntidadFinanciera || 0,
+            controlCaja: dataSubEntidadFinanciera?.controlCaja
 
           },
         });
@@ -312,10 +294,12 @@ export const ComprobanteEgresoStore = signalStore(
         compEgresoUtil.setEstadosPago(store.estadosPago());
         compEgresoUtil.setEsAbonoPosfechado(false)
         compEgresoUtil.setPagosDetalle(store.pagosDetalle())
+        compEgresoUtil.setCuentasPorPagarHistorial(store.cuentasPorPagarHistorial())
 
         compEgresoUtil.abonar();
 
         let pagosDetalle = compEgresoUtil.getPagosDetalle();
+        let cuentasPorPagarHistorial = compEgresoUtil.getCuentasPorPagarHistorial()
 
         let dataCiudad = store.provinciaCiudades().flatMap(item => item.ciudades).find(item => item.idCiudad === idCiudad)
 
@@ -341,6 +325,7 @@ export const ComprobanteEgresoStore = signalStore(
 
         patchState(store, {
           pagosDetalle,
+          cuentasPorPagarHistorial,
           cuentasPorPagar: compEgresoUtil.getCuentasPorPagar(),
           formasPago: [...store.formasPago(), dataFormaPago]
         })
@@ -388,10 +373,12 @@ export const ComprobanteEgresoStore = signalStore(
 
 
             let pagosDetalle = compEgresoUtil.getPagosDetalle();
+            let cuentasPorPagarHistorial = compEgresoUtil.getCuentasPorPagarHistorial()
 
 
             patchState(store, {
-              pagosDetalle: pagosDetalle,
+              pagosDetalle,
+              cuentasPorPagarHistorial,
               formasPago,
               cuentasPorPagar: compEgresoUtil.getCuentasPorPagar(),
             })

@@ -13,6 +13,7 @@ import { BancoSelectOnly } from "@accounting/interfaces/banco.interface";
 import { EstadoPago } from "@accounting/interfaces/estado-pago.interface";
 import { ProvinciaCiudad } from "@shared/models/ciudad.interface";
 import { CuotaPorPagarLista } from '@modules/accounting/interfaces/cuota-por-pagar.interface';
+import {ApiResponse} from "@core/models/api-response";
 
 @Injectable({
   providedIn: 'root'
@@ -71,6 +72,14 @@ export class ComprobanteEgresoRepository {
     )
 
 
+  }
+
+  post(obj:any){
+    let params = ComprobanteEgresoRepositoryMapper.toApiPost(obj);
+
+    console.log(params)
+   throw new Error("params")
+    return this.http.post<ApiResponse>(`${this.url}`, params)
   }
 
 }
