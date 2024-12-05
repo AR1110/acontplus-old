@@ -189,8 +189,14 @@ export class DocumentReceivedPageComponent {
     this._subcategoryService.get({ tipo: 1 }).subscribe((response) => {
       this.subcategories = response.subcategories;
       if (this.subcategories.length > 0) {
-        const modalRef = this._dialogService.open(DocManualUploadComponent, {
-          size: 'xl',
+        const dialogRef = this._dialogService.open(DocManualUploadComponent, {
+          size: 'lg',
+          data: {
+            codEstab: this.dataSearch.codEstab,
+            nombreComercial: this.establecimientos.find(
+              (x) => x.codEstab == this.dataSearch.codEstab,
+            )?.nombreComercial,
+          },
         });
       } else {
         return this._tS.toastr({
