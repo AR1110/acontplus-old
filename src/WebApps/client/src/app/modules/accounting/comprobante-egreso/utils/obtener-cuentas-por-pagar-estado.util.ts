@@ -20,7 +20,7 @@ type Props = {
 * @param {Array} param0.pagosDetalle - Detalles de los pagos realizados.
 * @returns {Array} - Lista con el estado de cada cuenta por pagar.
 */
-export const obtenerEstadoCuentasPorPagar = function ({ cuentasPorPagarHistorial, pagosDetalle, estadosPago }: Props) {
+export const obtenerCuentasPorPagarEstado = function ({ cuentasPorPagarHistorial, pagosDetalle, estadosPago }: Props) {
   // Agrupando las cuentas por pagar y sumando los abonos para cada cuenta
   let cuentasPorPagarAgrupado = cuentasPorPagarHistorial.reduce((acc, curr) => {
     let existeDato = acc.find(item => item.idCuentaPorPagar === curr.idCuentaPorPagar);
