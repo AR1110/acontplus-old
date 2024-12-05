@@ -4,6 +4,7 @@ import { PagoDetalle } from "@modules/accounting/cuenta-por-pagar/interfaces/pag
 import { determinadoEstadoPagoCuotaUtil } from "./determinado-estado-pago-cuota.util";
 import { EstadoPago } from "@modules/accounting/interfaces/estado-pago.interface";
 import { minus } from "@core/utils/decimal.util";
+import {CuotaPorPagarEstado} from "@accounting/comprobante-egreso/comprobante-egreso.interface";
 
 
 interface PagoDetallePick extends Pick<PagoDetalle, "idCuentaPorPagar" | "idCuotaPorPagar" | "abono" | "saldo"> { }
@@ -19,7 +20,7 @@ type Props = {
  * @param {Array} param0.pagosDetalle - Detalles de los pagos realizados.
  * @returns {Array} - Lista con el estado de cada cuota por pagar.
  */
-export const obtenerEstadoCuotasPorPagarUtil = function ({ pagosDetalle, estadosPago }: Props) {
+export const obtenerCuotasPorPagarEstadoUtil = function ({ pagosDetalle, estadosPago }: Props): CuotaPorPagarEstado[] {
 
 
   let cuotasPorPagarAgrupado = pagosDetalle.reduce((acc, curr) => {
@@ -38,7 +39,7 @@ export const obtenerEstadoCuotasPorPagarUtil = function ({ pagosDetalle, estados
     return acc;
   }, [] as PagoDetallePick[]);
 
-  let cuotasPorPagarEstado = [];
+  let cuotasPorPagarEstado: CuotaPorPagarEstado[] = [];
 
   for (let item of cuotasPorPagarAgrupado) {
     let totalNoPosfechado = pagosDetalle.filter(cd => cd.idCuotaPorPagar === item.idCuotaPorPagar && !cd.esPosfechado)

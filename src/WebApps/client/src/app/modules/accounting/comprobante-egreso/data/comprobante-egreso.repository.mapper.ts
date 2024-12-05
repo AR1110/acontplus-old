@@ -4,7 +4,27 @@ import { BancoSelectOnly } from "@accounting/interfaces/banco.interface";
 import { EstadoPago } from "@accounting/interfaces/estado-pago.interface";
 import { groupCitiesByProvinceUtil } from "@shared/utils/group-cities-by-province.util";
 import { CuotaPorPagarLista } from "@modules/accounting/interfaces/cuota-por-pagar.interface";
+import {CuentaPorPagarLista} from "@accounting/cuenta-por-pagar/interfaces/cuenta-por-pagar.interface";
+import {
+  CuentaPorPagarEstado, CuentaPorPagarHistorial,
+  CuotaPorPagarEstado,
+  FormaPago
+} from "@accounting/comprobante-egreso/comprobante-egreso.interface";
+import {PagoDetalle} from "@accounting/cuenta-por-pagar/interfaces/pago-detalle.interface";
+import {getValidId, isValidField} from "@core/utils/utils";
+import {formatDateToString} from "@core/utils/date.util";
 
+type ParamsGuardar = {
+  dataCuentaPorPagar: CuentaPorPagarLista,
+  total: number,
+  formasPago: FormaPago[],
+  pagosDetalle: PagoDetalle[],
+  cuentasPorPagarEstado: CuentaPorPagarEstado[],
+  cuotasPorPagarEstado: CuotaPorPagarEstado[],
+  cuentasPorPagarHistorial: CuentaPorPagarHistorial[]
+  observacion?: string
+
+}
 
 export class ComprobanteEgresoRepositoryMapper {
 
@@ -100,36 +120,35 @@ export class ComprobanteEgresoRepositoryMapper {
   }
 
 
-  static toApiPost(params: any) {
-    const { formasPago, pagosDetalle, cuentasPorPagarHistorial } = params;
+  static toApiPost(params: ParamsGuardar) {
+    const {dataCuentaPorPagar, formasPago, pagosDetalle, cuentasPorPagarHistorial, total, observacion, cuentasPorPagarEstado, cuotasPorPagarEstado } = params;
 
+    console.log(params)
     const comprobante = {
-      idProveedor: 0,
-      total: 0,
-      codEstab: 0,
-      observacion: ''
+      idProveedor: dataCuentaPorPagar.idProveedor,
+      total ,
+      codEstab: dataCuentaPorPagar.codEstab,
+      observacion: isValidField(observacion)
     }
 
-    const pagos = formasPago.map((item: any) => {
-
+    const pagos = formasPago.map((item) => {
 
       return {
-        idSubEntidadFinanciera: 0,
-        idEntidadFinanciera: 0,
-        idBanco: 0,
-        idCuentaBancaria: 0,
-        idCuentaPorPagar: 0,
-        fechaEmision: 0,
-        nro: 0,
-        valor: 0,
-        posfechado: 0,
-        cobro: 0,
-        secuencial: 0,
-        lote: 0,
-        aprobacion: 0,
-        referencia: 0,
-        abono: 0,
-        controlCaja: 0
+        idSubEntidadFinanciera: item.idSubEntidadFinanciera,
+        idEntidadFinanciera: item.idEntidadFinanciera,
+        idBanco: getValidId(item.idBanco),
+        idCuentaPorPagar: getValidId(item.idCuentaPorPagar),
+        fechaEmision: formatDateToString(item.fechaEmision),
+        nro: isValidField(item.nro),
+        valor: item.valorAbonoInput,
+        posfechado: item.posfechado,
+        cobro:  !item.posfechado,
+        secuencial: item.secuencial,
+        lote: isValidField(item.lote),
+        aprobacion: isValidField(item.aprobacion),
+        referencia: isValidField(item.referencia),
+        abono: item.abono,
+        controlCaja: item.controlCaja
       }
 
     })
@@ -144,7 +163,7 @@ export class ComprobanteEgresoRepositoryMapper {
     })
 
 
-    const cuentasPorPagarHistorialMapper = cuentasPorPagarHistorial.map((item: any) => {
+    const cuentasPorPagarHistorialMapper = cuentasPorPagarHistorial.map((item) => {
       return {
         idCuentaPorPagar: item.idCuentaPorPagar,
         saldo: item.saldo,
@@ -153,24 +172,24 @@ export class ComprobanteEgresoRepositoryMapper {
       }
     })
 
-    const cuentasPorPagarDeterminarEstado = [].map(item => {
+    const cuentasPorPagarDeterminarEstado = cuentasPorPagarEstado.map(item => {
 
 
       return {
-        idCuentaPorPagar: 0,
-        idEstadoPago: 0,
-        abono: 0,
+        idCuentaPorPagar: item.idCuentaPorPagar,
+        idEstadoPago: item.idEstadoPago,
+        abono: item.abono,
       }
 
     })
 
-    const cuotasPorPagarDeterminarEstado = [].map(item => {
+    const cuotasPorPagarDeterminarEstado = cuotasPorPagarEstado.map(item => {
 
 
       return {
-        idCuotaPorPagar: 0,
-        idEstadoPago: 0,
-        abono: 0,
+        idCuotaPorPagar: item.idCuotaPorPagar,
+        idEstadoPago: item.idEstadoPago,
+        abono: item.abono,
       }
 
     })

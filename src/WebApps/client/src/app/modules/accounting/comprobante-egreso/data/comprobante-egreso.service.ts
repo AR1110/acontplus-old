@@ -1,5 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { ComprobanteEgresoRepository } from "@accounting/comprobante-egreso/data/comprobante-egreso.repository";
+import {fetchLimitUtil} from "@shared/utils/fetch-limit.util";
 
 
 @Injectable({
@@ -17,5 +18,9 @@ export class ComprobanteEgresoService {
   getDatForm(idProveedor: number) {
     return this.comprobanteEgresoRepository.getDataFormPago(idProveedor)
   }
+
+
+
+  post = fetchLimitUtil(<T>(data: T) => this.comprobanteEgresoRepository.post(data));
 
 }
