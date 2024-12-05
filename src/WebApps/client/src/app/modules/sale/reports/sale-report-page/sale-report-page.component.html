@@ -66,8 +66,8 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Ciudad</mat-label>
-            <mat-select>
-              <mat-option>-- Ninguna --</mat-option>
+            <mat-select [(ngModel)]="dataSearch.idCiudad">
+              <mat-option [value]="0">-- Ninguna --</mat-option>
               @for (group of provinciasAgrupadas; track $index) {
               <mat-optgroup [label]="group.nombre">
                 @for (sg of group.ciudades; track sg.idCiudad) {
@@ -100,7 +100,7 @@
           <mat-form-field class="w-100">
             <mat-label>Estado: </mat-label>
             <mat-select [(ngModel)]="dataSearch.idEstadoDocumento">
-              <mat-option>Todos</mat-option>
+              <mat-option [value]="0">Todos</mat-option>
               @for (item of estadosDoc; track $index) {
               <mat-option [value]="item.idEstadoPago">
                 {{ item.descripcion }}
@@ -120,15 +120,15 @@
     </div>
   </mat-card-content>
   <mat-card-actions class="d-flex gap-2">
-    <button mat-flat-button (click)="getReportPdf()">
+    <button mat-flat-button (click)="getReportPdf()" appActionReport>
       <mat-icon>download</mat-icon>
       PDF
     </button>
-    <button mat-flat-button (click)="getReportExcel()">
+    <button mat-flat-button (click)="getReportExcel()" appActionReport>
       <mat-icon>download</mat-icon>
       Excel
     </button>
-    <button mat-stroked-button (click)="askToSendMail()">
+    <button mat-stroked-button (click)="askToSendMail()" appActionEnviarCorreo>
       <mat-icon>email</mat-icon>
       Enviar por correo
     </button>

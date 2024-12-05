@@ -30,6 +30,8 @@ import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-u
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { AuthService } from '@modules/auth/services/auth.service';
+import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
+import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 
 const imports = [
   MatCardModule,
@@ -44,6 +46,10 @@ const imports = [
   CompanyCustomerSearchMatComponent,
   DateRangeSelectionComponent,
   MatUserSearchComponent,
+
+  //Directives
+  ActionEnviarCorreoDirective,
+  ActionReportDirective
 ]
 @Component({
     selector: 'app-sale-report-page',
@@ -60,7 +66,7 @@ export class SaleReportPageComponent {
     checkboxCompanyCustomer: false,
     idEstablecimiento: 0,
     idPuntoEmision: 0,
-    codEstado: null as string | null,
+    codEstado: 0 as string | null | number,
     codDoc: null as string | null,
     convertToDoc: false,
     fromDate: formatDateToString(new Date()),
@@ -136,8 +142,6 @@ export class SaleReportPageComponent {
         (tipoDoc) => tipoDoc.codigo === DOC_TYPE.CDV,
       );
       this.dataSearch.codDoc = dataTipoDoc.codigo;
-
-      console.log(this.provinciasAgrupadas)
     });
   }
 
@@ -172,7 +176,7 @@ export class SaleReportPageComponent {
     this.dataSearch.identificacion = null;
   }
 
-  onCustomerSelected({ data }: any) {
+  onCustomerSelected(data: any) {
     this.dataSearch.identificacion = data.numeroIdentificacion;
     this.dataSearch.companyCustomerId = data.idCliente;
   }
@@ -181,7 +185,7 @@ export class SaleReportPageComponent {
     this.dataSearch.userId = 0;
   }
 
-  onUserSelected({ data }: any) {
+  onUserSelected(data: any) {
     this.dataSearch.userId = data.idUsuario;
   }
 
@@ -235,29 +239,34 @@ export class SaleReportPageComponent {
 
   }
 
+  private isValidDataSearch(){
+    if (
+      this.dataSearch.checkBoxCustomer &&
+      !isValidField(this.dataSearch.identificacion)
+    ) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione el Cliente',
+      });
+      return;
+    }
+    if (
+      this.dataSearch.checkBoxUser &&
+      !isValidField(this.dataSearch.userId)
+    ) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione el Usuario',
+      });
+      return;
+    }
+    return true;
+  }
+
   getReport() {
     try {
-      if (
-        this.dataSearch.checkBoxCustomer &&
-        !isValidField(this.dataSearch.identificacion)
-      ) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione el Cliente',
-        });
-        return;
-      }
-      if (
-        this.dataSearch.checkBoxUser &&
-        !isValidField(this.dataSearch.userId)
-      ) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione el Usuario',
-        });
-        return;
-      }
 
+      if(!this.isValidDataSearch()) return
 
       let reportParams = JSON.stringify({
         hasParams: false,
@@ -291,6 +300,10 @@ export class SaleReportPageComponent {
 
 
   async askToSendMail(){
+
+    if(!this.isValidDataSearch()) return
+
+
     let {isConfirmed} = await Swal.fire({
       icon: 'warning',
       html: '¿Estás seguro de enviar el reporte por correo electrónico de la empresa?',

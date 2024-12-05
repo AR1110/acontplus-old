@@ -31,6 +31,8 @@ import { CompanyCustomerSearchMatComponent } from '@company-customer/components/
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { AuthService } from '@modules/auth/services/auth.service';
+import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
+import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 
 const imports = [
 
@@ -51,7 +53,11 @@ const imports = [
   DateRangeSelectionComponent,
   SupplierSearchComponent,
   MatUserSearchComponent,
-  CompanyCustomerSearchMatComponent
+  CompanyCustomerSearchMatComponent,
+
+  //Directives
+  ActionReportDirective,
+  ActionEnviarCorreoDirective
 ]
 
 @Component({
@@ -198,7 +204,7 @@ export class InventoryReportPageComponent {
   }
 
 
-  onUserSelected({ data }: any) {
+  onUserSelected(data: any) {
     this.dataSearch.idUsuario = data.idUsuario;
   }
 
@@ -234,7 +240,7 @@ export class InventoryReportPageComponent {
     //this.dataSearch.companyCustomerId = 0;
     this.dataSearch.numeroIdentificacion = null;
   }
-  onCustomerSelected({ data }: any) {
+  onCustomerSelected(data: any) {
     this.dataSearch.numeroIdentificacion = data.identificacionComprador;
 
   }
