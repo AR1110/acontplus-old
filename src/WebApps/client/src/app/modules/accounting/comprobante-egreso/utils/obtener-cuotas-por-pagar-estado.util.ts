@@ -19,7 +19,7 @@ type Props = {
  * @param {Array} param0.pagosDetalle - Detalles de los pagos realizados.
  * @returns {Array} - Lista con el estado de cada cuota por pagar.
  */
-export const obtenerEstadoCuotasPorPagarUtil = function ({ pagosDetalle, estadosPago }: Props) {
+export const obtenerCuotasPorPagarEstadoUtil = function ({ pagosDetalle, estadosPago }: Props) {
 
 
   let cuotasPorPagarAgrupado = pagosDetalle.reduce((acc, curr) => {
