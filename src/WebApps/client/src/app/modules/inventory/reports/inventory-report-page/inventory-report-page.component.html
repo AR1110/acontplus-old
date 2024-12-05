@@ -5,7 +5,7 @@
     <mat-tab-group
       mat-align-tabs="center"
       [selectedIndex]="selected.value"
-      (selectedIndexChange)="selected.setValue($event)"
+      (selectedIndexChange)="onNavChange($event)"
     >
       <mat-tab label="Consumo diario">
         <div class="d-flex flex-column gap-2">

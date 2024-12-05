@@ -72,8 +72,6 @@ export class InventoryReportPageComponent {
   appNotifiSvc = inject(NotificacionService)
   authSvc = inject(AuthService)
 
-  activeTab = 1;
-
   estabs: GroupedEstab[] = [];
   bodegas: GroupedEstabBodega[] = []
   subCategories: any[] = []
@@ -151,6 +149,7 @@ export class InventoryReportPageComponent {
   }
 
   onNavChange($event: any) {
+    this.selected.setValue($event)
     this.dataSearch.checkboxArticuloFiltro = false;
     this.dataSearch.checkboxUsuarioFiltro = false;
     this.dataSearch.chkProveedor = false;
@@ -250,7 +249,13 @@ export class InventoryReportPageComponent {
     return fecha + ' ' + hora;
   }
 
+  private getSelectedTab (){
+    return (this.selected.value || 0) + 1
+  }
+
   private isValidReport() {
+
+    let selectedTab = this.getSelectedTab()
     if (this.dataSearch.checkboxArticuloFiltro) {
       if (!(this.dataSearch.idArticulo > 0)) {
         this.tS.toastr({
@@ -321,7 +326,7 @@ export class InventoryReportPageComponent {
       }
     }
 
-    if (this.activeTab === 3) {
+    if (selectedTab === 3) {
       if (this.dataSearch.chkUbicacion) {
         if (!this.dataSearch.textUbicacion) {
           this.tS.toastr({
@@ -348,17 +353,18 @@ export class InventoryReportPageComponent {
   }
 
   getReport() {
+    let selectedTab = this.getSelectedTab()
 
     if (!this.isValidReport()) return
 
 
 
 
-    if (this.activeTab === 1) {
+    if (selectedTab === 1) {
       this.getReportConsumoDiario();
     }
 
-    if (this.activeTab === 2) {
+    if (selectedTab === 2) {
       if (this.dataSearch.checkboxObtenerRentabilidad) {
         if (!getValidId(this.dataSearch.idTarifa)) {
           this.tS.toastr({
@@ -372,13 +378,13 @@ export class InventoryReportPageComponent {
         this.getReportArticuloStock();
       }
     }
-    if (this.activeTab === 3) {
+    if (selectedTab === 3) {
       this.getReportArticuloPVP();
     }
-    if (this.activeTab === 4) {
+    if (selectedTab === 4) {
       this.getReportArticuloFraccionado();
     }
-    if (this.activeTab === 5) {
+    if (selectedTab === 5) {
       this.getReportCaducidad();
     }
 
@@ -439,6 +445,7 @@ export class InventoryReportPageComponent {
 
   getReportArticuloStock() {
     try {
+
       let filtroFecha = this.getFilterDate();
 
       let idSubFamilia = this.dataSearch.checkboxSubCategoryFilter ? isValidField(this.dataSearch.idSubFamilia) : null
