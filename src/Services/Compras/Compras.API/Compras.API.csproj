@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Infrastructure" />
+    <PackageReference Include="Acontplus.FactElect.Application" />
     <PackageReference Include="Acontplus.Services.Common" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
@@ -19,6 +20,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
-    <ProjectReference Include="..\..\Facturacion\FactElect.Application\FactElect.Application.csproj" />
   </ItemGroup>
 </Project>
