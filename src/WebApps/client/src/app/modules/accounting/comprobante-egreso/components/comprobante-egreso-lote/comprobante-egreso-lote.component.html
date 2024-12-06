@@ -104,7 +104,9 @@
               @for (item of comprobanteEgresoStore.formasPago(); track $index) {
               <div class="col">
                 <mat-card appearance="outlined">
-                  <mat-card-header class="d-flex justify-content-between">
+                  <mat-card-header
+                    class="d-flex align-items-center justify-content-between"
+                  >
                     <mat-card-subtitle class="small"
                       >{{ item.nombreFormaPago }}
                     </mat-card-subtitle>
@@ -190,7 +192,11 @@
 
           <mat-form-field class="w-100">
             <mat-label>Nota (Opcional)</mat-label>
-            <textarea matInput placeholder="..."></textarea>
+            <textarea
+              matInput
+              placeholder="..."
+              [(ngModel)]="comprobanteEgresoStore.nota"
+            ></textarea>
           </mat-form-field>
         </div>
       </div>
