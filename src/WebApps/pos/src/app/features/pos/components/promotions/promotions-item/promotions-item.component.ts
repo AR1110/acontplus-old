@@ -17,13 +17,12 @@ import { OrderItem } from '@/features/orders/models/order.interface';
 import { TarifaProducto } from '@/shared/models/inventory/tarifa.model';
 
 @Component({
-  selector: 'app-promotions-item',
-  standalone: true,
-  imports: [
-    ItemCardComponent
-  ],
-  templateUrl: './promotions-item.component.html',
-  styleUrl: './promotions-item.component.scss'
+    selector: 'app-promotions-item',
+    imports: [
+        ItemCardComponent
+    ],
+    templateUrl: './promotions-item.component.html',
+    styleUrl: './promotions-item.component.scss'
 })
 export class PromotionsItemComponent {
   promotionId = input(0);

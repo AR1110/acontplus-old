@@ -13,14 +13,13 @@ import { CartInfoComponent } from '../cart-info/cart-info.component';
 import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 
 @Component({
-  selector: 'app-cart-items',
-  standalone: true,
-  imports: [
-    OverlayscrollbarsModule,
-    CartComponent,
-  ],
-  templateUrl: './cart-items.component.html',
-  styleUrl: './cart-items.component.scss'
+    selector: 'app-cart-items',
+    imports: [
+        OverlayscrollbarsModule,
+        CartComponent,
+    ],
+    templateUrl: './cart-items.component.html',
+    styleUrl: './cart-items.component.scss'
 })
 export class CartItemsComponent {
   private dialogSvc = inject(DialogService)

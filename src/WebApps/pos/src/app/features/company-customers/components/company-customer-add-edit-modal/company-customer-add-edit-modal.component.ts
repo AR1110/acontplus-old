@@ -20,22 +20,21 @@ import { SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE } from "@/shared/enums/main
 import { isValidField } from "@/shared/utils/utils";
 
 @Component({
-  selector: 'app-company-customer-add-edit-modal',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatCheckboxModule,
-    MatSlideToggleModule,
-    MatTooltipModule,
-    M3InputChipComponent,
-    CustomContainerDialogComponent
-  ],
-  templateUrl: './company-customer-add-edit-modal.component.html',
+    selector: 'app-company-customer-add-edit-modal',
+    imports: [
+        ReactiveFormsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatSelectModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatCheckboxModule,
+        MatSlideToggleModule,
+        MatTooltipModule,
+        M3InputChipComponent,
+        CustomContainerDialogComponent
+    ],
+    templateUrl: './company-customer-add-edit-modal.component.html'
 })
 export class CompanyCustomerAddEditModalComponent {
 

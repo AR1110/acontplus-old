@@ -6,18 +6,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { WidgetOptionsComponent } from './widget-options.component';
 
 @Component({
-  selector: 'app-widget',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatButtonModule,
-    NgComponentOutlet,
-
-    NgStyle,
-    WidgetOptionsComponent
-  ],
-  template: `
+    selector: 'app-widget',
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatButtonModule,
+        NgComponentOutlet,
+        NgStyle,
+        WidgetOptionsComponent
+    ],
+    template: `
   <div class="w-container mat-elevation-z3"
   [ngStyle]="{
     'background-color': data().backgroundColor || 'inherit',
@@ -47,7 +45,7 @@ import { WidgetOptionsComponent } from './widget-options.component';
     }
   </div>
   `,
-  styles:  `
+    styles: `
     :host {
       display: block;
       border-radius: 16px;
@@ -69,9 +67,9 @@ import { WidgetOptionsComponent } from './widget-options.component';
       right:20px;
     }
   `,
-  host: {
-    '[style.grid-area]': '"span " + (data().rows ?? 1) + "/ span " + (data().columns ?? 1)'
-  }
+    host: {
+        '[style.grid-area]': '"span " + (data().rows ?? 1) + "/ span " + (data().columns ?? 1)'
+    }
 })
 export class WidgetComponent {
   data = input.required<Widget>()

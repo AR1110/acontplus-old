@@ -11,21 +11,20 @@ import { MatInputModule } from '@angular/material/input';
 import { PosStoreService } from '@/features/pos/store/pos-store.service';
 
 @Component({
-  selector: 'app-cart-popup',
-  standalone: true,
-  imports: [
-    MatIconModule,
-    OverlayscrollbarsModule,
-    MatCardModule,
-    MatSelectModule,
-    MatInputModule,
-    FormsModule,
-    CartHeaderComponent,
-    CartItemsComponent,
-    CartFooterComponent
-  ],
-  templateUrl: './cart-popup.component.html',
-  styleUrl: './cart-popup.component.scss'
+    selector: 'app-cart-popup',
+    imports: [
+        MatIconModule,
+        OverlayscrollbarsModule,
+        MatCardModule,
+        MatSelectModule,
+        MatInputModule,
+        FormsModule,
+        CartHeaderComponent,
+        CartItemsComponent,
+        CartFooterComponent
+    ],
+    templateUrl: './cart-popup.component.html',
+    styleUrl: './cart-popup.component.scss'
 })
 export class CartPopupComponent {
   private posStoreSvc = inject(PosStoreService);

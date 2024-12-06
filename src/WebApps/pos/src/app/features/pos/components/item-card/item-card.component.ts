@@ -5,15 +5,14 @@ import {CommonModule} from "@angular/common";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 @Component({
-  selector: 'app-item-card',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatProgressSpinnerModule
-  ],
-  templateUrl: './item-card.component.html',
-  styleUrl: './item-card.component.scss'
+    selector: 'app-item-card',
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatProgressSpinnerModule
+    ],
+    templateUrl: './item-card.component.html',
+    styleUrl: './item-card.component.scss'
 })
 export class ItemCardComponent {
   item = input.required<ItemRead>();

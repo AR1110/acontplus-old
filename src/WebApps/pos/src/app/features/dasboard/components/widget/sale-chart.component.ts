@@ -21,12 +21,11 @@ function generarColorAleatorio() {
 }
 
 @Component({
-  selector: 'app-sale-chart',
-  standalone: true,
-  imports: [
-    BaseChartDirective
-  ],
-  template: `
+    selector: 'app-sale-chart',
+    imports: [
+        BaseChartDirective
+    ],
+    template: `
   <div class="chart-container">
   <canvas
     baseChart
@@ -40,12 +39,12 @@ function generarColorAleatorio() {
 </div>
 
   `,
-   styles: `
+    styles: `
    .chart-container {
      height: calc(100% - 100px);
      width: 100%;
    }
-   `,
+   `
 })
 export class SaleChartComponent {
   dashStore = inject(DashboardStore)

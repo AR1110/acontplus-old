@@ -6,10 +6,9 @@ import { Widget } from '../../interfaces/widget.interface';
 import { DashboardStore } from '../../store/dashboard.store';
 
 @Component({
-  selector: 'app-widget-options',
-  standalone: true,
-  imports: [MatButtonModule, MatIcon, MatButtonToggleModule],
-  template: `
+    selector: 'app-widget-options',
+    imports: [MatButtonModule, MatIcon, MatButtonToggleModule],
+    template: `
   <button mat-icon-button class="close-button-w-options" (click)="showOptions.set(false)">
     <mat-icon>close</mat-icon>
   </button>
@@ -33,7 +32,7 @@ import { DashboardStore } from '../../store/dashboard.store';
     </mat-button-toggle-group>
   </div>
   `,
-  styles: `
+    styles: `
    :host {
     position:absolute;
     z-index: 2;

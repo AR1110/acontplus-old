@@ -7,15 +7,14 @@ import { MainStoreService } from '@/store/main-store.service';
 import { PosStoreService } from '@/features/pos/store/pos-store.service';
 
 @Component({
-  selector: 'app-promotions',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    PromotionsItemComponent
-  ],
-  templateUrl: './promotions.component.html',
-  styleUrl: './promotions.component.scss'
+    selector: 'app-promotions',
+    imports: [
+        MatButtonModule,
+        MatIconModule,
+        PromotionsItemComponent
+    ],
+    templateUrl: './promotions.component.html',
+    styleUrl: './promotions.component.scss'
 })
 export class PromotionsComponent {
 

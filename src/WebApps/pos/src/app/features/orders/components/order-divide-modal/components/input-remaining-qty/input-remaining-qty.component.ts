@@ -4,12 +4,11 @@ import {Component, input, output, signal} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 
 @Component({
-  selector: 'app-input-remaining-qty',
-  standalone: true,
-  imports: [
-    FormsModule
-  ],
-  templateUrl: './input-remaining-qty.component.html',
+    selector: 'app-input-remaining-qty',
+    imports: [
+        FormsModule
+    ],
+    templateUrl: './input-remaining-qty.component.html'
 })
 export class InputRemainingQtyComponent {
   row = input.required<OrderDivideItem>()

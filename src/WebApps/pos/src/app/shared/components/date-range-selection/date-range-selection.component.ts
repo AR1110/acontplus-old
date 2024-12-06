@@ -16,20 +16,19 @@ import { formatDateToString, zonaHorariaEcuador } from "@/shared/utils/date.util
 import { addDay, format, monthEnd, monthStart,   weekEnd, weekStart } from "@formkit/tempo";
 
 @Component({
-  selector: 'app-date-range-selection',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatInputModule
-  ],
-  template:`<mat-form-field appearance="outline" class="m3-input-full-width" [floatLabel]="'always'">
+    selector: 'app-date-range-selection',
+    imports: [
+        FormsModule,
+        MatInputModule
+    ],
+    template: `<mat-form-field appearance="outline" class="m3-input-full-width" [floatLabel]="'always'">
   <mat-label>Rango Fecha</mat-label>
   <input matInput placeholder="Placeholder" id="date-range-selection-input" #dateRangeInput>
 </mat-form-field>
 
 
 `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DateRangeSelectionComponent {
   @Input() from: string | null = null;

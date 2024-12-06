@@ -8,16 +8,15 @@ import { CustomTableContainerComponent } from '@/shared/components/custom-table-
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-cobros-agregado-modal',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatTableModule,
-    MatIconModule,
-    CustomContainerDialogComponent,
-    CustomTableContainerComponent
-  ],
-  templateUrl: './cobros-agregado-modal.component.html',
+    selector: 'app-cobros-agregado-modal',
+    imports: [
+        MatButtonModule,
+        MatTableModule,
+        MatIconModule,
+        CustomContainerDialogComponent,
+        CustomTableContainerComponent
+    ],
+    templateUrl: './cobros-agregado-modal.component.html'
 })
 export class CobrosAgregadoModalComponent {
   readonly dialogRef = inject(MatDialogRef<CobrosAgregadoModalComponent>);

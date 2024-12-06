@@ -10,18 +10,17 @@ import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-nav-user-info-toggle',
-  standalone: true,
-  imports: [
-    OverlayModule,
-    MatIconModule,
-    FormsModule,
-    MatButtonModule,
-    MatCardModule,
-    MatSelectModule
-  ],
-  templateUrl: './nav-user-info-toggle.component.html',
-  styleUrl: './nav-user-info-toggle.component.scss'
+    selector: 'app-nav-user-info-toggle',
+    imports: [
+        OverlayModule,
+        MatIconModule,
+        FormsModule,
+        MatButtonModule,
+        MatCardModule,
+        MatSelectModule
+    ],
+    templateUrl: './nav-user-info-toggle.component.html',
+    styleUrl: './nav-user-info-toggle.component.scss'
 })
 export class NavUserInfoToggleComponent {
   private mainStore = inject(MainStoreService)

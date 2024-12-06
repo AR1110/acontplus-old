@@ -26,25 +26,24 @@ import { ResponsiveService } from '@/shared/services/responsive.service';
 import {  MatMenuModule } from '@angular/material/menu';
 
 @Component({
-  selector: 'app-company-customer-search',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    MatInputModule,
-    MatIconModule,
-    MatFormFieldModule,
-    AsyncPipe,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-    MatSelectModule,
-    MatCardModule,
-    MatMenuModule,
-    OverlayModule,
-    ActionCompanyCustomerAddEditModalDirective,
-  ],
-  templateUrl: './company-customer-search.component.html',
-  styles:`
+    selector: 'app-company-customer-search',
+    imports: [
+        ReactiveFormsModule,
+        MatAutocompleteModule,
+        MatInputModule,
+        MatIconModule,
+        MatFormFieldModule,
+        AsyncPipe,
+        MatButtonModule,
+        MatProgressSpinnerModule,
+        MatSelectModule,
+        MatCardModule,
+        MatMenuModule,
+        OverlayModule,
+        ActionCompanyCustomerAddEditModalDirective,
+    ],
+    templateUrl: './company-customer-search.component.html',
+    styles: `
   .loading-option {
     display: flex;
     justify-content: center;

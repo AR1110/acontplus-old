@@ -14,18 +14,17 @@ import {MatTableModule} from '@angular/material/table';
 import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
-  selector: 'app-order-doc-list',
-  standalone: true,
-  imports: [
-    MatMenuModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTableModule,
-    ActionWhatsappSendDirective,
-    ActionEmailSendDirective,
-    MatTooltip
-  ],
-  templateUrl: './order-doc-list.component.html',
+    selector: 'app-order-doc-list',
+    imports: [
+        MatMenuModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTableModule,
+        ActionWhatsappSendDirective,
+        ActionEmailSendDirective,
+        MatTooltip
+    ],
+    templateUrl: './order-doc-list.component.html'
 })
 export class OrderDocListComponent {
   readonly data = input.required<{ id: 0 }>();
