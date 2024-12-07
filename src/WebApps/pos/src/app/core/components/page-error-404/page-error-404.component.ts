@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-page-error-404',
-  standalone: true,
-  imports: [],
-  template:` <section id="wrapper" class="error-page">
+    selector: 'app-page-error-404',
+    imports: [],
+    template: ` <section id="wrapper" class="error-page">
   <div class="error-box">
       <div class="error-body text-center">
           <h1>404</h1>
@@ -15,7 +14,7 @@ import { Component } from '@angular/core';
   </div>
 </section>
 `,
-  styles:`.error-box {
+    styles: `.error-box {
     height: 100%;
     position: fixed;
     background: url(/assets/images/background/error-bg.jpg) no-repeat center center #fff;

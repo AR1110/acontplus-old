@@ -35,20 +35,19 @@ type Props = {
 }
 
 @Component({
-  selector: 'app-order-custom-item',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    CustomContainerDialogComponent,
-    ProductSearchComponent,
-    ToUpperCaseDirective
-  ],
-  templateUrl: './order-custom-item.component.html',
-  styleUrl: './order-custom-item.component.scss'
+    selector: 'app-order-custom-item',
+    imports: [
+        FormsModule,
+        MatButtonModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        CustomContainerDialogComponent,
+        ProductSearchComponent,
+        ToUpperCaseDirective
+    ],
+    templateUrl: './order-custom-item.component.html',
+    styleUrl: './order-custom-item.component.scss'
 })
 export class OrderCustomItemComponent {
   readonly dialogRef = inject(MatDialogRef<OrderCustomItemComponent>);

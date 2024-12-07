@@ -5,15 +5,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-custom-container-dialog',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatIconModule
-  ],
-  template: `<div class="m3-dialog-header">
+    selector: 'app-custom-container-dialog',
+    imports: [
+        CommonModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatIconModule
+    ],
+    template: `<div class="m3-dialog-header">
   <h6 mat-dialog-title>{{matDialogTitle()}}
 
     <button mat-icon-button class="close-button" (click)="close.emit()">
@@ -29,7 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
   <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>
 </mat-dialog-actions>
 `,
-  styles: `.m3-dialog-header {
+    styles: `.m3-dialog-header {
   //  display: flex;
   //  justify-content: space-between;
   //  align-items: center;

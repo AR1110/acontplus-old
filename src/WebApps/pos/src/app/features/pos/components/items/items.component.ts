@@ -17,13 +17,12 @@ import { ItemCardComponent } from '../item-card/item-card.component';
 import { TarifaProducto } from '@/shared/models/inventory/tarifa.model';
 
 @Component({
-  selector: 'app-items',
-  standalone: true,
-  imports: [
-    ItemCardComponent
-  ],
-  templateUrl: './items.component.html',
-  styleUrl: './items.component.scss'
+    selector: 'app-items',
+    imports: [
+        ItemCardComponent
+    ],
+    templateUrl: './items.component.html',
+    styleUrl: './items.component.scss'
 })
 export class ItemsComponent {
   private tS = inject(ToasterService)

@@ -40,16 +40,15 @@ function createDataParamDoc({idDocumento, codDoc}:Props) {
 }
 
 @Component({
-  selector: 'app-email-send-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    CustomContainerDialogComponent
-  ],
-  templateUrl: './email-send-modal.component.html',
+    selector: 'app-email-send-modal',
+    imports: [
+        FormsModule,
+        MatButtonModule,
+        MatIconModule,
+        MatInputModule,
+        CustomContainerDialogComponent
+    ],
+    templateUrl: './email-send-modal.component.html'
 })
 
 export class EmailSendModalComponent {

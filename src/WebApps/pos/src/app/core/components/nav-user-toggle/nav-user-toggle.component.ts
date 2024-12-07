@@ -6,15 +6,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
-  selector: 'app-nav-user-toggle',
-  standalone: true,
-  imports: [
-    MatMenuModule,
-    MatIconModule,
-    MatButtonModule,
-  ],
-  templateUrl: './nav-user-toggle.component.html',
-  styleUrl: './nav-user-toggle.component.scss'
+    selector: 'app-nav-user-toggle',
+    imports: [
+        MatMenuModule,
+        MatIconModule,
+        MatButtonModule,
+    ],
+    templateUrl: './nav-user-toggle.component.html',
+    styleUrl: './nav-user-toggle.component.scss'
 })
 export class NavUserToggleComponent {
   mainStore = inject(MainStoreService)

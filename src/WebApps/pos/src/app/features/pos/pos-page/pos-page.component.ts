@@ -27,26 +27,24 @@ import {MatInputModule} from "@angular/material/input";
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'app-pos-page',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCard,
-    MatCardContent,
-    CategoriesTabComponent,
-    MatPaginator,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    MatButtonModule,
-    MatIcon,
-    PromotionsComponent,
-    MatProgressSpinner,
-    ItemsComponent
-
-  ],
-  templateUrl: './pos-page.component.html',
-  styleUrl: './pos-page.component.scss'
+    selector: 'app-pos-page',
+    imports: [
+        CommonModule,
+        MatCard,
+        MatCardContent,
+        CategoriesTabComponent,
+        MatPaginator,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatButtonModule,
+        MatIcon,
+        PromotionsComponent,
+        MatProgressSpinner,
+        ItemsComponent
+    ],
+    templateUrl: './pos-page.component.html',
+    styleUrl: './pos-page.component.scss'
 })
 export class PosPageComponent {
 

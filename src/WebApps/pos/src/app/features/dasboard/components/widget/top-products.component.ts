@@ -4,10 +4,9 @@ import { BaseChartDirective } from 'ng2-charts';
 import { DashboardStore } from '../../store/dashboard.store';
 
 @Component({
-  selector: 'app-top-products',
-  standalone: true,
-  imports: [MatIcon, BaseChartDirective],
-  template: `
+    selector: 'app-top-products',
+    imports: [MatIcon, BaseChartDirective],
+    template: `
    <!-- <div class="d-flex gap-2 align-items-center">
     <p class="stat">25.02</p>
     <mat-icon class="text-green">arrow_circle_up</mat-icon>
@@ -19,7 +18,7 @@ import { DashboardStore } from '../../store/dashboard.store';
    </div>
 
   `,
-  styles: `
+    styles: `
   .chart-container {
     height: calc(100% - 100px);
     width: 100%;

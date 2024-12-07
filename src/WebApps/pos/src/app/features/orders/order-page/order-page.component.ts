@@ -8,16 +8,15 @@ import { formatDateToString } from '@/shared/utils/date.util';
 import { STATUS_ORDER } from '@/shared/enums/main.enum';
 
 @Component({
-  selector: 'app-order-page',
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    OrderListComponent
-  ],
-  templateUrl: './order-page.component.html',
-  styleUrl: './order-page.component.scss'
+    selector: 'app-order-page',
+    imports: [
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        OrderListComponent
+    ],
+    templateUrl: './order-page.component.html',
+    styleUrl: './order-page.component.scss'
 })
 export class OrderPageComponent {
   private router = inject(Router)

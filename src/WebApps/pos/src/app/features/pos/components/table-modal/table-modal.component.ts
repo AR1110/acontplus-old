@@ -16,20 +16,19 @@ import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-table-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatExpansionModule,
-    OverlayscrollbarsModule,
-    CustomContainerDialogComponent,
-    ActionOrderDialogDirective
-  ],
-  templateUrl: './table-modal.component.html',
-  styleUrl: './table-modal.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-table-modal',
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatExpansionModule,
+        OverlayscrollbarsModule,
+        CustomContainerDialogComponent,
+        ActionOrderDialogDirective
+    ],
+    templateUrl: './table-modal.component.html',
+    styleUrl: './table-modal.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableModalComponent {
 

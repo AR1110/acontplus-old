@@ -15,25 +15,24 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { Router, RouterLinkActive, RouterOutlet } from "@angular/router";
 
 @Component({
-  selector: 'app-pos-layout',
-  standalone: true,
-  imports: [
-    RouterOutlet,
-    AsyncPipe,
-    MatSidenavModule,
-    MatToolbarModule,
-    RouterLinkActive,
-    MatBadgeModule,
-    MatTooltipModule,
-    MatButtonModule,
-    MatIconModule,
-    OverlayModule,
-    NavUserInfoToggleComponent,
-    CartPopupComponent,
-    ActionOrderDialogDirective
-  ],
-  templateUrl: './pos-layout.component.html',
-  styleUrl: './pos-layout.component.scss'
+    selector: 'app-pos-layout',
+    imports: [
+        RouterOutlet,
+        AsyncPipe,
+        MatSidenavModule,
+        MatToolbarModule,
+        RouterLinkActive,
+        MatBadgeModule,
+        MatTooltipModule,
+        MatButtonModule,
+        MatIconModule,
+        OverlayModule,
+        NavUserInfoToggleComponent,
+        CartPopupComponent,
+        ActionOrderDialogDirective
+    ],
+    templateUrl: './pos-layout.component.html',
+    styleUrl: './pos-layout.component.scss'
 })
 export class PosLayoutComponent {
   private posStoreSvc = inject(PosStoreService);
