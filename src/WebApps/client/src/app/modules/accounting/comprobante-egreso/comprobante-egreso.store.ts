@@ -49,7 +49,7 @@ interface ComprobanteEgresoStore {
   provinciaCiudades: ProvinciaCiudad[];
   estadosPago: EstadoPago[]
   documentos: any[]
-
+  nota?: string
 }
 
 

@@ -8,7 +8,7 @@ app.component("appCuentaPorCobrarComponent", {
         dismiss: '&',
         isNotModal: '='
     },
-    controller: ['$scope', '$injector', function ($scope, $injector) {
+    controller: ['$scope', '$injector', 'decodeToken', function ($scope, $injector, decodeToken) {
         let $ctrl = this;
 
         const cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
@@ -298,25 +298,27 @@ app.component("appCuentaPorCobrarComponent", {
         }
 
         $scope.getReport = async (item) => {
-
             const formatType = 'pdf';
             let dataParams = JSON.stringify({
                 codEstab: item.codEstab,
                 id: item.idCuentaPorCobrar,
                 tipo: 5,
+                userRoleId: decodeToken.userRoleId
             })
 
             const parameters = {
 
-                reportParams: JSON.stringify({
-                    hasParams: true,
+                reportParams: JSON.stringify({ 
+                    hasParams: false,
                     codEstab: item.codEstab,
                     codigo: "RETC",
                     format: formatType,
                     aditionalParams: []
                 }),
-                dataParams
+                dataParams,
+                hasService: true
             }
+
 
             commonSvc.getReport({
                 parameters,

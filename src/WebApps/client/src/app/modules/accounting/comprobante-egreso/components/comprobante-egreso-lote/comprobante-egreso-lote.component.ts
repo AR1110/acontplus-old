@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -29,10 +29,12 @@ import {
 } from "@accounting/comprobante-egreso/utils/obtener-cuotas-por-pagar-estado.util";
 import {ComprobanteEgresoService} from "@accounting/comprobante-egreso/data/comprobante-egreso.service";
 import {obtenerCuentasPorPagarEstado} from "@accounting/comprobante-egreso/utils/obtener-cuentas-por-pagar-estado.util";
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-comprobante-ingreso-lote',
   imports: [
+    FormsModule,
     MatIconModule,
     MatButtonModule,
     MatCardModule,
@@ -57,6 +59,8 @@ export class ComprobanteEgresoLoteComponent {
   private tS = inject(ToasterService);
   comprobanteEgresoStore = inject(ComprobanteEgresoStore);
   private comprobanteEgresoSvc = inject(ComprobanteEgresoService)
+
+
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
