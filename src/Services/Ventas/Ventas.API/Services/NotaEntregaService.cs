@@ -30,9 +30,9 @@ public class NotaEntregaService(IAdoSqlServer adoSqlServer) : INotaEntregaServic
         return await adoSqlServer.SpExecuteAsync<ApiResponse>(NameSchema + "Update", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> CancelAsync(Dictionary<string, object> parameters)
     {
-        return await adoSqlServer.SpExecuteAsync<ApiResponse>(NameSchema + "Delete", parameters);
+        return await adoSqlServer.SpExecuteAsync<ApiResponse>(NameSchema + "Cancel", parameters);
     }
 
     public async Task<ApiResponse> ConvertToDocAsync(Dictionary<string, object> parameters)
