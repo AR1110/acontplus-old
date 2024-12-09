@@ -349,7 +349,6 @@ BEGIN
     --> DataForm
     IF @tipo = 5
         BEGIN
-            
             DECLARE @idCliente INT
 
             SET @tableNames = 'entidadFinanciera,subEntidadFinanciera,banco,provincia,documentos,estadoPago,cuentaPorCobrar,config'
