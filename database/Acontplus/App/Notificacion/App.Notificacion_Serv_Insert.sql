@@ -11,104 +11,61 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	DECLARE @idUsuarioRol INT
-	DECLARE @idUsuario INT
-	DECLARE @idEntidad INT 
-	DECLARE @codDoc VARCHAR(5)
-	DECLARE @serieComprobante VARCHAR(50)
+	DECLARE @idUsuario INT ,@idEntidad INT
+	
+    --> Data Json
+    DECLARE @codDoc VARCHAR(5) ,@params NVARCHAR(MAX) ,@emailData VARCHAR(MAX) ,@receptor VARCHAR(200) ,@codigo VARCHAR(5) ,@id INT 
 
-	DECLARE @params NVARCHAR(MAX)
-	DECLARE @emailData VARCHAR(MAX)
-
-	DECLARE @receptor VARCHAR(200)
-	DECLARE @codigo VARCHAR(5)
-	DECLARE @jsonConfig AS VARCHAR(MAX)
-	DECLARE @id INT 
-
-	--Email 
-	DECLARE @body VARCHAR(MAX);
-	DECLARE @cliente VARCHAR(100)
-	DECLARE @documento VARCHAR(30)
-	DECLARE @template VARCHAR(50)
-	DECLARE @subject VARCHAR(100)
-	DECLARE @tlDecimal  AS TABLE (
-		  idEntidad INT
-		 ,nroPrecio INT 
-	     ,nroCantidad  INT 
-		 ,nroIva INT 
-		 ,nroDescuentoDetalle INT 
-		 ,nroTotalDetalle INT 
-		 ,nroTotalSubTotal INT 
-		 ,nroDescuento INT 
-		 ,nroIce INT
-	)
-
-    DECLARE  @enableSsl INT 
-    DECLARE @from  VARCHAR(100)
-    DECLARE @host  VARCHAR(100) 
-    DECLARE @password VARCHAR(50)
-    DECLARE @port INT 
-    DECLARE @cc VARCHAR(100)
-
-    DECLARE @code VARCHAR(1),
-        @message VARCHAR(300),
-        @rowsAffected INT
+	--> Email 
+	DECLARE @body VARCHAR(MAX)
+	       ,@template VARCHAR(50) = 'EmailTemplate.html'
+	       ,@subject VARCHAR(100)
+           ,@cc VARCHAR(100)
 
 	BEGIN TRY
 
-        SELECT TOP 1
-           @enableSsl = [enableSsl]
-          ,@from      = [from]
-          ,@host      = [host]
-          ,@password  = [password]
-          ,@port      = [port]
-        FROM [Config].[Email_Config] WITH (NOLOCK)
+		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 		
-		SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
-		
-		SELECT 
-			@codDoc				= js.codDoc,
-			@serieComprobante	= js.serieComprobante,			
-			@id					= js.id,
-			@codigo				= js.codigo,
-			@receptor			= js.receptor,
-			@params				= js.params,
-			@subject			= js.subjectJson
-		FROM OPENJSON(@json)		
-		WITH(			
-			codDoc				VARCHAR(6)		'$.codDoc',
-			serieComprobante	VARCHAR(50)		'$.serieComprobante',
-			codigo				VARCHAR(5)		'$.params.reportParams.codigo',
-			id					INT				'$.params.spParams.id',
-			receptor			VARCHAR(100)	'$.receptor',
-			params				NVARCHAR(MAX)	'$.params' AS JSON,
-			subjectJson			VARCHAR(500)	'$.subject' 
+		SELECT @codDoc	 = js.codDoc		
+			  ,@id		 = js.id
+			  ,@codigo	 = js.codigo
+			  ,@receptor = js.receptor
+			  ,@params	 = js.params
+			  ,@subject	 = js.subjectJson
+		FROM OPENJSON(@json)WITH
+        (			
+            codDoc				VARCHAR(6)		'$.codDoc',
+            serieComprobante	VARCHAR(50)		'$.serieComprobante',
+            codigo				VARCHAR(5)		'$.params.reportParams.codigo',
+            id					INT				'$.params.spParams.id',
+            receptor			VARCHAR(100)	'$.receptor',
+            params				NVARCHAR(MAX)	'$.params' AS JSON,
+            subjectJson			VARCHAR(500)	'$.subject' 
+
 		) AS js
 
 		SELECT top 1 @cc = email from Entidad where idEntidad = @idEntidad
-		SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig='CD'
-		
-		INSERT INTO @tlDecimal(idEntidad,nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce)
-					   SELECT @idEntidad,nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce              
-					   FROM OPENJSON(@jsonConfig)
-					   WITH 
-					     (codTransaccion VARCHAR(5) '$.codTransaccion'
-						 ,nroPrecio             INT '$.nroPrecio'
-						 ,nroCantidad           INT '$.nroCantidad'
-						 ,nroIva                INT '$.nroIva'
-						 ,nroDescuentoDetalle   INT '$.nroDescuentoDetalle'
-						 ,nroTotalDetalle       INT '$.nroTotalDetalle'
-						 ,nroTotalSubTotal      INT '$.nroTotalSubTotal'
-						 ,nroDescuento          INT '$.nroDescuento'
-						 ,nroIce                INT '$.nroIce') as dt
-						WHERE dt.codTransaccion = 'C'
 
-		SELECT  @template = 'EmailTemplate.html'
-		
-		BEGIN TRAN 
+        --> Tipo para reportes 
+		IF EXISTS (SELECT 1 FROM Config.Reporte WITH (NOLOCK) WHERE codigo = @codigo)
+			BEGIN 
+                
+                SELECT TOP 1 @receptor = email FROM dbo.Entidad WHERE idEntidad = @idEntidad
 
-			--Proforma 
-			IF @codigo = 'PR'
+                SET @template = 'ReporteGenerado.html'
+
+				SET @body = (
+								SELECT dbo.AFTConvertDate(dbo.ufnGetDateEcuador())+dbo.AFTConvertHora(dbo.ufnGetDateEcuador()) as fechaEmision
+									  ,ISNULL(en.telefono, '')                                                                 as telefono
+									  ,en.razonSocial                                                                          as razonSocial
+                                      ,@subject         as title                                                                          
+								FROM dbo.Entidad en WHERE idEntidad = @idEntidad
+								FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+							)
+			END 
+
+		--> Proforma 
+		IF @codigo = 'PR'
 			BEGIN 
 				IF @id IS NULL
 					BEGIN	
@@ -118,130 +75,106 @@ BEGIN
 
 				
 				SET @body = (
-								SELECT cliente      = cc.TradeName, 
-										documento    = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,pr.nroDocumento),
-										fechaEmision = dbo.AFTConvertDate(pr.fechaEmision)+dbo.AFTConvertHora(pr.fechaEmision),
-										importeTotal = Herramientas.Round_Out(pr.total, cd.nroTotalSubTotal),																   
-										telefono     = ISNULL(e.telefono, ''),
-										razonSocial  = e.razonSocial
-										
-								FROM dbo.Proforma pr 
-								INNER JOIN Cliente               cl ON cl.idCliente      = pr.idCliente 
-                                INNER JOIN Customer.Customer     cc ON cc.Id             = cl.CustomerId
-								INNER JOIN dbo.PuntoEmision      pe ON pe.idPuntoEmision = pr.idPuntoEmision
-								INNER JOIN Sri.Establecimiento    s ON s.idEstablecimiento  = pe.idEstablecimiento
-								INNER JOIN dbo.Entidad            e ON e.idEntidad       = pr.idEntidad
-								INNER JOIN @tlDecimal            cd ON cd.idEntidad      = pr.idEntidad
+								SELECT cu.BusinessName                                                         as cliente
+									  ,dbo.AFTGenerarNroDocumento(es.estab+pe.ptoEmi,pr.nroDocumento)          as documento
+									  ,dbo.AFTConvertDate(pr.fechaEmision)+dbo.AFTConvertHora(pr.fechaEmision) as fechaEmision
+									  ,CAST(pr.total as numeric(18,2))	                                       as importeTotal													   
+									  ,ISNULL(es.telefono, '')                                                 as telefono
+									  ,en.razonSocial                                                          as razonSocial
+								FROM dbo.Proforma              pr WITH (NOLOCK) 
+								INNER JOIN DBO.Cliente         cl WITH (NOLOCK) ON cl.idCliente         = pr.idCliente 
+								INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = pr.idPuntoEmision
+								INNER JOIN dbo.Entidad         en WITH (NOLOCK) ON en.idEntidad         = pr.idEntidad
+                                INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+								INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId 
 								WHERE pr.idProforma = @id
 								FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-							 )
+						    )
 								 
 			END 
 
-			--Nota Entrega --
-			IF @codigo ='RNE'
-				BEGIN
-					IF @id IS NULL
+		--> Nota Entrega
+		IF @codigo ='RNE'
+			BEGIN
+				IF @id IS NULL
 					BEGIN	
 						SELECT '0' code, 'Id No Valido' as 'message'
 						RETURN
 					END 
 
 				
-					SET @body = (
-									SELECT cliente      = cc.TradeName, 
-											documento    = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento),
-											fechaEmision = dbo.AFTConvertDate(ne.fechaEmision)+dbo.AFTConvertHora(ne.fechaEmision),
-											importeTotal = Herramientas.Round_Out(ne.total, cd.nroTotalSubTotal),																   
-											telefono     = ISNULL(e.telefono, ''),
-											razonSocial  = e.razonSocial
-										
-									FROM dbo.NotaEntrega ne 
-									INNER JOIN Cliente               cl ON cl.idCliente      = ne.idCliente 
-                                    INNER JOIN Customer.Customer     cc ON cc.Id             = cl.CustomerId
-									INNER JOIN dbo.PuntoEmision      pe ON pe.idPuntoEmision = ne.idPuntoEmision
-									INNER JOIN Sri.Establecimiento    s ON s.idEstablecimiento  = pe.idEstablecimiento
-									INNER JOIN dbo.Entidad            e ON e.idEntidad       = ne.idEntidad
-									INNER JOIN @tlDecimal            cd ON cd.idEntidad      = ne.idEntidad
-									WHERE ne.idNotaEntrega = @id
-									FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-								 )
-				END 
+				SET @body = (
+								SELECT cu.BusinessName                                                         as cliente
+									  ,dbo.AFTGenerarNroDocumento(es.estab+pe.ptoEmi,ne.nroDocumento)          as documento
+								      ,dbo.AFTConvertDate(ne.fechaEmision)+dbo.AFTConvertHora(ne.fechaEmision) as fechaEmision
+								      ,CAST(ne.total as numeric(18,2))	                                       as importeTotal													   
+								      ,ISNULL(es.telefono, '')                                                 as telefono
+								      ,en.razonSocial                                                          as razonSocial
+								FROM dbo.NotaEntrega           ne WITH (NOLOCK) 
+								INNER JOIN DBO.Cliente         cl WITH (NOLOCK) ON cl.idCliente         = ne.idCliente 
+								INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = ne.idPuntoEmision
+								INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+								INNER JOIN dbo.Entidad         en WITH (NOLOCK) ON en.idEntidad         = ne.idEntidad
+								INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId 
+								WHERE ne.idNotaEntrega = @id
+								FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+							)
+			END 
 
-			-- Reporte Control Caja
-			IF @codigo ='RCC'
-				BEGIN 
-					SET @body = (
-									SELECT 
-										fechaEmision = dbo.AFTConvertDate(dbo.ufnGetDateEcuador())+dbo.AFTConvertHora(dbo.ufnGetDateEcuador()),
-									    telefono     = ISNULL(e.telefono, ''),
-										razonSocial  = e.razonSocial
-									FROM dbo.Entidad e WHERE idEntidad = @idEntidad
-									FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-								)
-				END 
-			
+		--> Comprobante Ingreso
+		IF @codDoc='CI'
+			BEGIN
+				SET @template = 'EmailCompIngreso.html'
 
-			--Envio por correo de comprobante Ingreso
-			IF @codDoc='CI'
-				BEGIN
-					SET @template = 'EmailCompIngreso.html'
-					SET @body = (SELECT cliente     = cu.BusinessName, 
-						   documento    = @serieComprobante,
-					       fechaEmision = dbo.AFTConvertDate(ci.fechaRegistro)+''''+ dbo.AFTConvertHora(ci.fechaRegistro),
-						   importeTotal = ci.total,																   
-						   telefono     = ISNULL(estab.telefono, ''),
-						   razonSocial  = estab.nombreComercial
-					 FROM dbo.ComprobanteIngreso ci WITH(NOLOCK)
-					 INNER JOIN Sri.Establecimiento estab WITH (NOLOCK) ON estab.idEstablecimiento = ci.idEstablecimiento
-                     INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id = ci.CustomerId
-					 WHERE ci.idComprobanteIngreso = @id
-					 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-					 )
+				SET @body = (
+                                SELECT cu.BusinessName                                                                 as cliente
+					                  ,'CI' + '-' + es.estab + '-' +Helper.F_Auto_Sequential(ci.nroDocumento)          as documento
+                                      ,dbo.AFTConvertDate(ci.fechaRegistro)+''''+ dbo.AFTConvertHora(ci.fechaRegistro) as fechaEmision
+						              ,ci.total	                                                                       as importeTotal															   
+						              ,ISNULL(es.telefono, '')                                                         as telefono
+						              ,es.nombreComercial                                                              as razonSocial
+					            FROM dbo.ComprobanteIngreso    ci WITH(NOLOCK)
+					            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = ci.idEstablecimiento
+                                INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id                = ci.CustomerId
+					            WHERE ci.idComprobanteIngreso = @id
+					            FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+					         )
 
-				END
+			END
 
-
-			SET @emailData = (SELECT body = @body
-			                        ,ISNULL(@cc,'') as 'cc' 						  
-							         ,EnableSsl =@enableSsl
-									 ,'from' = @from
-                                     ,'username' = @from
-									 ,'host'= @host
-									 ,'logo'= 'logoAcontPlus.jpg'
-									 ,'password'= @password
-									 ,'port'= @port
-									 ,'subject'= @subject 
-									 ,'template'= @template FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-							   )
-         
-			--return
+		SET @emailData = (
+                            SELECT TOP 1 
+                                    [enableSsl]         as EnableSsl
+                                   ,[from]              as 'from'
+                                   ,[from]              as 'username'
+                                   ,[host]              as 'host'
+                                   ,[password]          as 'password'
+                                   ,[port]              as 'port'
+                                   ,@body               as body
+			                       ,ISNULL(@cc,'')      as 'cc'
+								   ,'logoAcontPlus.jpg' as 'logo'
+								   ,@subject            as 'subject'
+								   ,@template           as 'template' 
+                            FROM [Config].[Email_Config] WITH (NOLOCK)
+                            FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+						 )
+                  
+        BEGIN TRAN 
 			INSERT INTO App.Notificacion(params, emailData, receptor, estado, idUsuario)
             VALUES(@params, @emailData, REPLACE(@receptor,'|',','), 'NE', @idUsuario)
-            
-            SET @rowsAffected = @@ROWCOUNT
-
-            IF (@rowsAffected > 0)
-                BEGIN
-                    SET @code = '1'
-                    SET @message = 'Reenviado el Correo Correctamente'
-                END
-            ELSE
-                BEGIN
-                    SET @code = '0'
-                    SET @message = 'No se pudo enviar el correo' 
-                END
-		COMMIT TRAN 
-        SELECT @code code, @message as 'message'
+		COMMIT TRAN
+        
+        SELECT '1' code, 'Reenviado Correctamente' as 'message'
 	END TRY
 
 	BEGIN CATCH 
-		SELECT '0' code,'Info: Error en el procedimiento de Reenvío por Correo' as 'message'
 		IF @@TRANCOUNT > 0 
-		BEGIN
-			ROLLBACK TRAN; 
-		END
+		    BEGIN
+			    ROLLBACK TRAN; 
+		    END
         INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
-		VALUES (NEWID(), 'Notificacion/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+		VALUES (NEWID(), 'Notificacion/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+
+        SELECT '0' code,'Info: Error en el procedimiento de Reenvío por Correo' as 'message'
 	END CATCH
 END 
