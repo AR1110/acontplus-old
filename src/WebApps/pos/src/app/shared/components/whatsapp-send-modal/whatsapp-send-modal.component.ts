@@ -54,16 +54,15 @@ const phoneNumberFormatter = (number: string) => {
 }
 
 @Component({
-  selector: 'app-whatsapp-send-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    CustomContainerDialogComponent
-  ],
-  templateUrl: './whatsapp-send-modal.component.html',
+    selector: 'app-whatsapp-send-modal',
+    imports: [
+        FormsModule,
+        MatButtonModule,
+        MatIconModule,
+        MatInputModule,
+        CustomContainerDialogComponent
+    ],
+    templateUrl: './whatsapp-send-modal.component.html'
 })
 export class WhatsappSendModalComponent {
   readonly dialogRef = inject(MatDialogRef<WhatsappSendModalComponent>);

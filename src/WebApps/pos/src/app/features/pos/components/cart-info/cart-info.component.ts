@@ -19,22 +19,21 @@ import { OrderItem } from '@/features/orders/models/order.interface';
 import { DECIMALS } from '@/shared/enums/main.enum';
 
 @Component({
-  selector: 'app-cart-info',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatSelectModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-    CustomContainerDialogComponent,
-    ToUpperCaseDirective
-  ],
-  templateUrl: './cart-info.component.html',
-  styles: `
+    selector: 'app-cart-info',
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatCardModule,
+        MatSelectModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
+        MatButtonModule,
+        CustomContainerDialogComponent,
+        ToUpperCaseDirective
+    ],
+    templateUrl: './cart-info.component.html',
+    styles: `
   .img-cart {
   background: rgba(0, 0, 0, 0.2);
   width: 100%; /* Make image responsive to the container */

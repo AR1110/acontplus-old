@@ -12,18 +12,17 @@ import {ProductSearchDto} from "@/shared/models/inventory/product.model";
 import { isValidField } from '@/shared/utils/utils';
 
 @Component({
-  selector: 'app-product-search',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    MatInputModule,
-    MatFormFieldModule,
-    AsyncPipe,
-    MatProgressSpinnerModule,
-  ],
-  templateUrl: './product-search.component.html',
-  styleUrl: './product-search.component.scss'
+    selector: 'app-product-search',
+    imports: [
+        ReactiveFormsModule,
+        MatAutocompleteModule,
+        MatInputModule,
+        MatFormFieldModule,
+        AsyncPipe,
+        MatProgressSpinnerModule,
+    ],
+    templateUrl: './product-search.component.html',
+    styleUrl: './product-search.component.scss'
 })
 export class ProductSearchComponent {
 

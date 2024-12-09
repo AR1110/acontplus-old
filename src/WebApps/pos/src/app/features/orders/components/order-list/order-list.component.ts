@@ -36,38 +36,37 @@ import { OrderRead } from '@orders/models/order.interface';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
-  selector: 'app-order-list',
-  standalone: true,
-  imports: [
-    FormsModule,
-    CommonModule,
-    MatIconModule,
-    MatTableModule,
-    MatMenuModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatTabsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatCardModule,
-    CustomContainerDialogComponent,
-    CustomTableContainerComponent,
-    ActionWhatsappSendDirective,
-    DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent,
-    OrderDocListComponent
-  ],
-  templateUrl: './order-list.component.html',
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed,void', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
-  styleUrl: './order-list.component.scss',
-  encapsulation: ViewEncapsulation.None, // Desactiva el encapsulamiento de estilos
+    selector: 'app-order-list',
+    imports: [
+        FormsModule,
+        CommonModule,
+        MatIconModule,
+        MatTableModule,
+        MatMenuModule,
+        MatButtonModule,
+        MatTooltipModule,
+        MatTabsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatCardModule,
+        CustomContainerDialogComponent,
+        CustomTableContainerComponent,
+        ActionWhatsappSendDirective,
+        DateRangeSelectionComponent,
+        CompanyCustomerSearchComponent,
+        OrderDocListComponent
+    ],
+    templateUrl: './order-list.component.html',
+    animations: [
+        trigger('detailExpand', [
+            state('collapsed,void', style({ height: '0px', minHeight: '0' })),
+            state('expanded', style({ height: '*' })),
+            transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+        ]),
+    ],
+    styleUrl: './order-list.component.scss',
+    encapsulation: ViewEncapsulation.None
 })
 export class OrderListComponent {
 

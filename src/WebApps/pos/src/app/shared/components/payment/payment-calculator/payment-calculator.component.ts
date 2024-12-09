@@ -6,16 +6,15 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-payment-calculator',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule
-  ],
-  templateUrl: './payment-calculator.component.html',
-  styleUrl: './payment-calculator.component.scss'
+    selector: 'app-payment-calculator',
+    imports: [
+        FormsModule,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule
+    ],
+    templateUrl: './payment-calculator.component.html',
+    styleUrl: './payment-calculator.component.scss'
 })
 export class PaymentCalculatorComponent {
 

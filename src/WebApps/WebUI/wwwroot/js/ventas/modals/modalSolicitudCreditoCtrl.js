@@ -3,8 +3,8 @@ export {
     modalSolictudCreditoCtrl
 }
 
-modalSolictudCreditoCtrl.$inject = ['$scope', '$injector', '$uibModalInstance', 'params'];
-function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, params) {
+modalSolictudCreditoCtrl.$inject = ['$scope', '$injector', '$uibModalInstance', 'decodeToken', 'params'];
+function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, decodeToken, params) {
     let fS = $injector.get('formulario');
     let tS = $injector.get('toastService');
     let clienteSvc = $injector.get("clienteService");
@@ -63,8 +63,7 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, params) 
             return;
         }
 
-
-        showLoader();
+ 
         clienteSvc.findById(item.idCliente).then(response => { 
 
             let dataDeletedFinded = $scope.guarantorsDeleted.find(gd=>gd.idCliente===response.idCliente);
@@ -83,8 +82,7 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, params) 
         })
             .catch(error => {
                 console.log(error)
-            })
-            .finally(() => hideLoader())
+            }) 
 
 
 
@@ -186,7 +184,7 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, params) 
         let mergeGuarantors = [...guarantors, ...guarantorsDeleted]
 
         try {
-            showLoader();
+        
             let params = {
                 guarantors: mergeGuarantors, 
             }
@@ -209,9 +207,8 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, params) 
             })
                 .catch(error => {
                     console.log(error)
-                }).finally(() => hideLoader())
-        } catch (error) {
-            hideLoader();
+                }) 
+        } catch (error) { 
             console.log(error)
         }
     }
@@ -223,6 +220,8 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, params) 
             id: $scope.dataForm.idCuentaPorCobrar,
             tipo: 6,
             codEstab: $scope.dataForm.codEstab,
+            userRoleId: decodeToken.userRoleId
+
         }
 
         const parameters = { 
@@ -235,7 +234,9 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, params) 
 
                 ]
             }),
-            dataParams: JSON.stringify(dataParms)
+            dataParams: JSON.stringify(dataParms),
+            hasService: true
+
         }
 
         commonSvc.getReport({

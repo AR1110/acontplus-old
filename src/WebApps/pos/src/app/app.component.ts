@@ -3,11 +3,10 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {NavigationCancel, NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, MatSlideToggleModule],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+    selector: 'app-root',
+    imports: [RouterOutlet, MatSlideToggleModule],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent {
 

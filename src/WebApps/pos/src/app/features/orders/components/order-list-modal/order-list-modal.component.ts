@@ -9,15 +9,14 @@ import { OrderListComponent } from '../order-list/order-list.component';
 import { STATUS_ORDER } from '@/shared/enums/main.enum';
 
 @Component({
-  selector: 'app-order-list-modal',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    OrderListComponent,
-    CustomContainerDialogComponent
-  ],
-  templateUrl: './order-list-modal.component.html',
+    selector: 'app-order-list-modal',
+    imports: [
+        MatButtonModule,
+        MatIconModule,
+        OrderListComponent,
+        CustomContainerDialogComponent
+    ],
+    templateUrl: './order-list-modal.component.html'
 })
 export class OrderListModalComponent {
   readonly matDialogData = inject<{ tableId: 0 }>(MAT_DIALOG_DATA);

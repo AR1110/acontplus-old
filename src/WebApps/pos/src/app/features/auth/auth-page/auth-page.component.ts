@@ -11,17 +11,16 @@ import {DialogService} from '@/shared/services/dialog.service';
 import {MultipleEstabsComponent} from "@auth/components/multiple-estabs/multiple-estabs.component";
 
 @Component({
-  selector: 'app-auth-page',
-  standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    ReactiveFormsModule
-  ],
-  templateUrl: './auth-page.component.html',
-  styleUrl: './auth-page.component.scss'
+    selector: 'app-auth-page',
+    imports: [
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        ReactiveFormsModule
+    ],
+    templateUrl: './auth-page.component.html',
+    styleUrl: './auth-page.component.scss'
 })
 export class AuthPageComponent {
   authSvc = inject(AuthService)

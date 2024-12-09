@@ -6,16 +6,15 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 
 @Component({
-  selector: 'app-categories-tab',
-  standalone: true,
-  imports: [
-    NgClass,
-    MatTabsModule,
-    ScrollingModule,
-    OverlayscrollbarsModule,
-  ],
-  templateUrl: './categories-tab.component.html',
-  styleUrl: './categories-tab.component.scss'
+    selector: 'app-categories-tab',
+    imports: [
+        NgClass,
+        MatTabsModule,
+        ScrollingModule,
+        OverlayscrollbarsModule,
+    ],
+    templateUrl: './categories-tab.component.html',
+    styleUrl: './categories-tab.component.scss'
 })
 export class CategoriesTabComponent {
   @Input() currentIndex = 0;

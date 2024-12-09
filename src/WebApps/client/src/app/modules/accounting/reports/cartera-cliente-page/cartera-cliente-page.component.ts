@@ -11,6 +11,7 @@ import { SharedService } from "@core/services/shared.service";
 import { ToasterService } from "@core/services/toaster.service";
 import { formatDateToString } from "@core/utils/date.util";
 import { isValidField } from "@core/utils/utils";
+import { AuthService } from "@modules/auth/services/auth.service";
 
 @Component({
     selector: 'app-cartera-cliente-page',
@@ -27,6 +28,7 @@ export class CarteraClientePageComponent {
   private cuentaPorCobrarSvc = inject(CuentaPorCobrarService)
   private tS = inject(ToasterService)
   private sharedSvc = inject(SharedService)
+  private authSvc = inject(AuthService)
 
   isSelectedNotaEntrega = false;
   dataSearch = {
@@ -163,21 +165,23 @@ export class CarteraClientePageComponent {
       codDoc: isValidField(this.getTipoDoc()),
       idEmpresa,
       convertToDoc: this.dataSearch.convertToDoc,
-      dirViviendaCliente
+      dirViviendaCliente,
+      userRoleId: this.authSvc.getUserRoleId()
     };
 
 
     let  reportParams = JSON.stringify({
-      hasParams: false,
+     // hasParams: false,
       codigo: this.dataSearch.ckCuotas ? ACCOUNTING_CODE_REPORT.CCCR : ACCOUNTING_CODE_REPORT.CCR,
       format: this.format,
       aditionalParams: []
     })
 
     const parameters = {
-      hasIdUsuarioRol: true,
+     // hasIdUsuarioRol: true,
       reportParams,
-      dataParams: JSON.stringify(dataParams)
+      dataParams: JSON.stringify(dataParams),
+      hasService: true
     };
 
     this.sharedSvc.getReport({

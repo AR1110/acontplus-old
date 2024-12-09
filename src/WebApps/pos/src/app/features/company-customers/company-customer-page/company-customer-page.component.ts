@@ -14,18 +14,17 @@ import {ActionCompanyCustomerAddEditModalDirective} from "@/shared/directives/ac
 
 
 @Component({
-  selector: 'app-company-customer-page',
-  standalone: true,
-  imports: [
-    MatIconModule,
-    MatCardModule,
-    MatTableModule,
-    MatButtonModule,
-    CustomTableContainerComponent,
-    PrimaryStatusPipe,
-    ActionCompanyCustomerAddEditModalDirective
-  ],
-  templateUrl: './company-customer-page.component.html',
+    selector: 'app-company-customer-page',
+    imports: [
+        MatIconModule,
+        MatCardModule,
+        MatTableModule,
+        MatButtonModule,
+        CustomTableContainerComponent,
+        PrimaryStatusPipe,
+        ActionCompanyCustomerAddEditModalDirective
+    ],
+    templateUrl: './company-customer-page.component.html'
 })
 export class CompanyCustomerPageComponent {
   private companyCustomerSvc = inject(CompanyCustomerService)

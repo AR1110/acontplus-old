@@ -64,4 +64,13 @@ export class DocumentReceivedService {
       .get<ApiResponse>(`${this.#url}${id}`)
       .pipe(map((response) => response));
   }
+
+  uploadXml(parameters: any, file: any) {
+    return this.#http
+      .post<ApiResponse>(
+        `${this.#url}uploadxml/?json=${JSON.stringify(parameters)}`,
+        file,
+      )
+      .subscribe((response) => response);
+  }
 }

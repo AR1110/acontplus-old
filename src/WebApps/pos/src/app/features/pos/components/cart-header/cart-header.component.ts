@@ -14,15 +14,14 @@ import { DECIMALS } from '@/shared/enums/main.enum';
 import { roundNumber } from '@/shared/utils/round-number.util';
 
 @Component({
-  selector: 'app-cart-header',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatSelectModule,
-    MatButtonModule,
-    CompanyCustomerSearchComponent,
-  ],
-  templateUrl: './cart-header.component.html',
+    selector: 'app-cart-header',
+    imports: [
+        FormsModule,
+        MatSelectModule,
+        MatButtonModule,
+        CompanyCustomerSearchComponent,
+    ],
+    templateUrl: './cart-header.component.html'
 })
 export class CartHeaderComponent {
   private posStoreSvc = inject(PosStoreService);

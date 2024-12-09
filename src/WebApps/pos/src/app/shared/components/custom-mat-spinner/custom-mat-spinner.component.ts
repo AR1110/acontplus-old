@@ -2,12 +2,11 @@ import {Component, input} from '@angular/core';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 @Component({
-  selector: 'app-custom-mat-spinner',
-  standalone: true,
-  imports: [
-    MatProgressSpinnerModule
-  ],
-  template: `@if (isLoadingResults() || isRateLimitReached()) {
+    selector: 'app-custom-mat-spinner',
+    imports: [
+        MatProgressSpinnerModule
+    ],
+    template: `@if (isLoadingResults() || isRateLimitReached()) {
     <div class="loading-shade">
       @if (isLoadingResults()) {
         <mat-spinner [diameter]="50"></mat-spinner>
@@ -20,7 +19,7 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     </div>
   }
   `,
-  styles: `.loading-shade {
+    styles: `.loading-shade {
     position: absolute;
     top: 0;
     left: 0;

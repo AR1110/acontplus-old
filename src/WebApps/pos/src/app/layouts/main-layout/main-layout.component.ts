@@ -16,24 +16,23 @@ import { map, Observable, shareReplay } from 'rxjs';
 import { menusRoutes } from './menus-routes';
 
 @Component({
-  selector: 'app-main-layout',
-  standalone: true,
-  imports: [
-    MatToolbarModule,
-    MatButtonModule,
-    MatSidenavModule,
-    MatListModule,
-    MatIconModule,
-    MatMenuModule,
-    AsyncPipe,
-    RouterLink,
-    RouterLinkActive,
-    NavUserInfoToggleComponent,
-    NavUserToggleComponent,
-    RouterOutlet,
-  ],
-  templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.scss'
+    selector: 'app-main-layout',
+    imports: [
+        MatToolbarModule,
+        MatButtonModule,
+        MatSidenavModule,
+        MatListModule,
+        MatIconModule,
+        MatMenuModule,
+        AsyncPipe,
+        RouterLink,
+        RouterLinkActive,
+        NavUserInfoToggleComponent,
+        NavUserToggleComponent,
+        RouterOutlet,
+    ],
+    templateUrl: './main-layout.component.html',
+    styleUrl: './main-layout.component.scss'
 })
 export class MainLayoutComponent {
   private breakpointObserver = inject(BreakpointObserver);

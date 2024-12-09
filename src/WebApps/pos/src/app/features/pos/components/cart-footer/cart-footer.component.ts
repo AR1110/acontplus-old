@@ -31,15 +31,14 @@ const messageSave: { [key: string]: string } = {
 }
 
 @Component({
-  selector: 'app-cart-footer',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatInputModule,
-    ToUpperCaseDirective
-  ],
-  templateUrl: './cart-footer.component.html',
-  styleUrl: './cart-footer.component.scss'
+    selector: 'app-cart-footer',
+    imports: [
+        FormsModule,
+        MatInputModule,
+        ToUpperCaseDirective
+    ],
+    templateUrl: './cart-footer.component.html',
+    styleUrl: './cart-footer.component.scss'
 })
 export class CartFooterComponent {
   private posStore = inject(PosStoreService);

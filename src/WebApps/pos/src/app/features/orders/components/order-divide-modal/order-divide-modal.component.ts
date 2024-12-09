@@ -43,26 +43,25 @@ import { OrderData, OrderDivideItem } from '@orders/models/order.interface';
 
 
 @Component({
-  selector: 'app-order-divide-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatTableModule,
-    MatCheckboxModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    FormsModule,
-    MatMenuModule,
-    CustomTableContainerComponent,
-    CustomContainerDialogComponent,
-    InputRemainingQtyComponent,
-    CompanyCustomerSearchComponent
-  ],
-  templateUrl: './order-divide-modal.component.html',
+    selector: 'app-order-divide-modal',
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatTableModule,
+        MatCheckboxModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatButtonModule,
+        FormsModule,
+        MatMenuModule,
+        CustomTableContainerComponent,
+        CustomContainerDialogComponent,
+        InputRemainingQtyComponent,
+        CompanyCustomerSearchComponent
+    ],
+    templateUrl: './order-divide-modal.component.html'
 })
 export class OrderDivideModalComponent {
 

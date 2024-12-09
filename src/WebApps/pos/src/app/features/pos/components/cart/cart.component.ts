@@ -7,16 +7,15 @@ import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
-  selector: 'app-cart',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    InputNumberDirective
-  ],
-  templateUrl: './cart.component.html',
-  styleUrl: './cart.component.scss'
+    selector: 'app-cart',
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatCardModule,
+        InputNumberDirective
+    ],
+    templateUrl: './cart.component.html',
+    styleUrl: './cart.component.scss'
 })
 export class CartComponent {
   orderItem = input.required<OrderItem>();

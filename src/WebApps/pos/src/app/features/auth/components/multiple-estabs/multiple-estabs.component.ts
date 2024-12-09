@@ -8,15 +8,14 @@ import {ToasterService} from "@/shared/services/toaster.service";
 import {AuthService} from "@/features/auth/services/auth.service";
 import { CustomContainerDialogComponent } from '@/shared/components/custom-container-dialog/custom-container-dialog.component';
 @Component({
-  selector: 'app-multiple-estabs',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatExpansionModule,
-    CustomContainerDialogComponent
-  ],
-  templateUrl: './multiple-estabs.component.html',
+    selector: 'app-multiple-estabs',
+    imports: [
+        MatButtonModule,
+        MatIconModule,
+        MatExpansionModule,
+        CustomContainerDialogComponent
+    ],
+    templateUrl: './multiple-estabs.component.html'
 })
 export class MultipleEstabsComponent {
   readonly dialogRef = inject(MatDialogRef<MultipleEstabsComponent>);

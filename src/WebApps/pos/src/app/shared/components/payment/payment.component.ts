@@ -67,29 +67,28 @@ const _filterCiudadGroup = (opt: any[], value: string): string[] => {
 };
 
 @Component({
-  selector: 'app-payment',
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatDividerModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    AsyncPipe,
-    MatSlideToggleModule,
-    MatTabsModule,
-    MatIconModule,
-    MatBadgeModule,
-    CustomContainerDialogComponent,
-    PaymentCalculatorComponent,
-    InputNumberDirective
-  ],
-  templateUrl: './payment.component.html',
+    selector: 'app-payment',
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatCardModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatDividerModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        AsyncPipe,
+        MatSlideToggleModule,
+        MatTabsModule,
+        MatIconModule,
+        MatBadgeModule,
+        CustomContainerDialogComponent,
+        PaymentCalculatorComponent,
+        InputNumberDirective
+    ],
+    templateUrl: './payment.component.html'
 })
 export class PaymentComponent {
   private dialogSvc = inject(DialogService)

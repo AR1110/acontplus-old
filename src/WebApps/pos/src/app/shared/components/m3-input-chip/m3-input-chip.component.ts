@@ -5,14 +5,13 @@ import {COMMA, ENTER} from "@angular/cdk/keycodes";
 import {LiveAnnouncer} from "@angular/cdk/a11y";
 import { MatFormFieldModule } from '@angular/material/form-field';
 @Component({
-  selector: 'app-m3-input-chip',
-  standalone: true,
-  imports: [
-    MatChipsModule,
-    MatIconModule,
-    MatFormFieldModule
-  ],
-  templateUrl: './m3-input-chip.component.html', 
+    selector: 'app-m3-input-chip',
+    imports: [
+        MatChipsModule,
+        MatIconModule,
+        MatFormFieldModule
+    ],
+    templateUrl: './m3-input-chip.component.html'
 })
 export class M3InputChipComponent {
   chips = input.required<string[]>()
