@@ -12,8 +12,8 @@ CREATE OR ALTER VIEW Compra.v_Proveedor WITH SCHEMABINDING AS (
 		  ,pr.correo
 		  ,pr.estado
 		  ,cu.IDcard       as numeroIdentificacion
-		  ,cu.tradeName    as razonSocial     
-		  ,cu.BusinessName as nombreComercial     
+		  ,cu.tradeName    as nombreComercial     
+		  ,cu.BusinessName as razonSocial     
           ,ti.codigoSri    as codTipoIdentificacion
 		  ,ti.descripcion  as TipoIdentificacion 
 		  ,sc.descripcion  as subContribuyente  

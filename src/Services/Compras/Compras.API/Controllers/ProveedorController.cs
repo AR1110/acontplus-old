@@ -2,18 +2,9 @@
 
 namespace Compras.API.Controllers;
 
-public class ProveedorController : BaseApiController
+public class  ProveedorController( IProveedorService _proveedorService) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    private readonly ICustomLogger _log;
-    private readonly IProveedorService _proveedorService;
-
-    public ProveedorController(IConfiguration configuration, ICustomLogger log, IProveedorService proveedorService)
-    {
-        _configuration = configuration;
-        _log = log;
-        _proveedorService = proveedorService;
-    }
+    
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
@@ -29,8 +20,7 @@ public class ProveedorController : BaseApiController
             return Ok(new { code = "1", payload = response });
         }
         catch (Exception ex)
-        {
-            _log.LogActivity("Error al obtener el proveedor: " + ex);
+        { 
             return BadRequest(ex.Message);
         }
     }
@@ -45,8 +35,7 @@ public class ProveedorController : BaseApiController
             return Ok(response);
         }
         catch (Exception ex)
-        {
-            _log.LogActivity("Error al crear proveedor: " + ex);
+        { 
             return BadRequest(ex.Message);
         }
     }
@@ -62,7 +51,7 @@ public class ProveedorController : BaseApiController
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al actualizar proveedor: " + ex);
+           
             return BadRequest(ex.Message);
         }
     }
@@ -77,8 +66,7 @@ public class ProveedorController : BaseApiController
             return Ok(response);
         }
         catch (Exception ex)
-        {
-            _log.LogActivity("Error al eliminar: " + ex);
+        { 
             return BadRequest(ex.Message);
         }
     }
