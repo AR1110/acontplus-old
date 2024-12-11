@@ -183,22 +183,22 @@
 
             <md-table-container style=" max-height: 400px;">
                 <table resize master md-table>
-                    <thead md-trim-column-names fix-head md-head>
+                    <thead md-trim-column-names fix-head md-head md-order="dataSearch.order">
                         <tr md-row>
                             <th md-column></th>
                             <th md-column>Op.</th>
                             <th md-column>N°</th>
                             <th md-column>Imagen</th>
-                            <th md-column>Código</th>
-                            <th md-column>Descripción</th>
-                            <th md-column>Medida</th>
-                            <th md-column>Sub Familia</th>
-                            <th md-column>Stock</th>
+                            <th md-column md-order-by="codigo">Código</th>
+                            <th md-column md-order-by="descripcion">Descripción</th>
+                            <th md-column md-order-by="medida">Medida</th>
+                            <th md-column md-order-by="subFamilia">Sub Familia</th>
+                            <th md-column md-order-by="stock">Stock</th>
                             <th md-column>Estado</th>
                         </tr>
                     </thead>
                     <tbody md-body>
-                        <tr md-row ng-repeat-start="a in articulos">
+                        <tr md-row ng-repeat-start="a in articulos | orderBy: dataSearch.order track by $index">
                             <td md-cell ng-click="expandDetalle(a)">
                                 <span ng-if="a.expanded">
                                     <i class="fas fa-caret-square-down"></i>

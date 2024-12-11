@@ -1,16 +1,16 @@
 <div>
     <md-table-container style="max-height: 400px;">
-        <table resize master md-table   >
-            <thead md-head>
+        <table resize master md-table>
+            <thead md-head md-order="dataSearch.order">
                 <tr md-row>
                     <th md-column><span>Op.</span></th>
                     <th md-column><span>Img</span></th>
-                    <th md-column><span>Código</span></th>
-                    <th md-column><span>Descripción</span></th>
-                    <th md-column>Cod. Barra</th>
-                    <th md-column>Medida</th>
+                    <th md-column md-order-by="codigo"><span>Código</span></th>
+                    <th md-column md-order-by="descripcion"><span>Descripción</span></th>
+                    <th md-column md-order-by="codigoBarra">Cod. Barra</th>
+                    <th md-column md-order-by="medida">Medida</th>
                     <th md-column><span>Iva</span></th>
-                    <th md-column>Stock</th>
+                    <th md-column md-order-by="stock">Stock</th>
                     <th md-column ng-repeat="item in tarifas">
                         {{item.tarifa}}
                     </th>
@@ -20,26 +20,21 @@
                 </tr>
             </thead>
             <tbody md-body>
-                <tr md-row   ng-repeat="item in articulos track by $index">
-                    <td md-cell> 
-                        <div class="d-flex "> 
-                            <button 
-                                type="button" 
-                                class="btn btn-success btn-xs mr-2" 
-                                ng-if="options.multiSelect" 
+                <tr md-row ng-repeat="item in articulos | orderBy: dataSearch.order track by $index">
+                    <td md-cell>
+                        <div class="d-flex ">
+                            <button type="button" class="btn btn-success btn-xs mr-2" ng-if="options.multiSelect"
                                 ng-click="askToSelect(item)"
                                 placeholder="Hover over this for a tooltip until this is filled"
-                                uib-tooltip="Agregar artículo en el detalle del documento"
-                            
-                            >
+                                uib-tooltip="Agregar artículo en el detalle del documento">
                                 <i class="fas fa-cart-arrow-down"></i>
-                            </button> 
+                            </button>
                             <view-kardex params="item"></view-kardex>
                         </div>
                     </td>
-                     <td md-cell style="vertical-align: middle">
-                        <img class="img-fluid img-thumbnail" ng-click="previewImg(item)" 
-                                width="50" src="{{item.s3ObjectUrl}}" />
+                    <td md-cell style="vertical-align: middle">
+                        <img class="img-fluid img-thumbnail" ng-click="previewImg(item)" width="50"
+                            src="{{item.s3ObjectUrl}}" />
                     </td>
                     <td md-cell>{{item.codigo}}</td>
                     <td md-cell>
@@ -77,13 +72,13 @@
         </table>
     </md-table-container>
 </div>
-    <div class="row justify-content-between mt-1">
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
-                    ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
-                    class="pagination" boundary-links="true" rotate="false"></ul>
-        </div>
-        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-            <span class="text-dark">Total {{dataSearch.totalRecords}} Artículos</span>
-        </div>
+<div class="row justify-content-between mt-1">
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+            ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize" class="pagination"
+            boundary-links="true" rotate="false"></ul>
     </div>
+    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+        <span class="text-dark">Total {{dataSearch.totalRecords}} Artículos</span>
+    </div>
+</div>
