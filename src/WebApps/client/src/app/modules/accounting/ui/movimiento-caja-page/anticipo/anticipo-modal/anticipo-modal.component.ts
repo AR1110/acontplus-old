@@ -8,15 +8,14 @@ import {
   Validators
 } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AnticipoService } from '@accounting/services/anticipo.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SubEntidadFinanciera } from '@accounting/core/domain/subentidad-financiera.model';
 import { ToasterService } from '@core/services/toaster.service';
-import { isApiResponse } from '@core/models/api-response';
 import {
   CompanyCustomerSearchComponent
 } from "@company-customer/components/company-customer-search/company-customer-search.component";
 import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.interface";
+import {AnticipoUsecase} from "@accounting/core/usecases/anticipo.usecase";
 
 @Component({
     selector: 'app-anticipo-modal',
@@ -29,8 +28,8 @@ import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.inte
 })
 export class AnticipoModalComponent {
   private activeModal = inject(NgbActiveModal);
-  private anticipoSvc = inject(AnticipoService)
   private tS = inject(ToasterService)
+  private _anticipoUseCase = inject(AnticipoUsecase)
 
   textBtn = 'Guardar';
   iconBtn = 'save';
@@ -60,7 +59,7 @@ export class AnticipoModalComponent {
   }
 
   ngOnInit() {
-    this.anticipoSvc.getDataForm().subscribe( (response) => {
+    this._anticipoUseCase.getDataForm().subscribe( (response) => {
         let { establecimientos, entidadesFinanciera, subEntidadesFinanciera } = response;
 
         this.establecimientos = establecimientos;
@@ -109,9 +108,8 @@ export class AnticipoModalComponent {
       }
 
 
-      this.anticipoSvc.post(params).subscribe( (response) => {
+      this._anticipoUseCase.create(params).subscribe( (response) => {
 
-          if (isApiResponse(response)) {
             if (response.code === "0") {
               this.tS.toastr({
                 type: 'warning',
@@ -125,7 +123,6 @@ export class AnticipoModalComponent {
               })
               this.activeModal.close(response)
             }
-          }
       })
     } catch (error) {
       console.log(error)
