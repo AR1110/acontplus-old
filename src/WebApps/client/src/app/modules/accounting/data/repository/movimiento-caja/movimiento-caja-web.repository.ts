@@ -1,54 +1,50 @@
-import { Injectable, inject } from "@angular/core";
-import { PATHS_API } from "@core/constants/global.constants";
-import { ACCOUNTING_PATHS } from "@accounting/core/enums/accounting.constants";
-import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs";
-import { isApiResponse } from "@core/models/api-response";
+import {inject, Injectable} from "@angular/core";
+import {PATHS_API} from "@core/constants/global.constants";
+import {ACCOUNTING_PATHS} from "@accounting/core/enums/accounting.constants";
+import {HttpClient} from "@angular/common/http";
+import {map} from "rxjs";
+import {ApiResponse, isApiResponse} from "@core/models/api-response";
+import {MovimientoCajaRepository} from "@accounting/core/repositories/movimiento-caja.repository";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
+export class MovimientoCajaWebRepository extends MovimientoCajaRepository{
+ private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.MOVIMIENTO_CAJA}`;
+ private _http = inject(HttpClient);
 
-export class MovimientoCajaService {
-
-  private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.MOVIMIENTO_CAJA}`;
-  private http = inject(HttpClient)
+ constructor() {
+   super();
+ }
 
   getAll<T>(obj: T) {
-    let paramsStr = JSON.stringify({ ...obj, tipo: 1 })
-    return this.http.get(`${this.url}Get?json=${paramsStr}`)
+    let json = JSON.stringify({ ...obj, tipo: 1 })
+
+    return this._http.get<ApiResponse>(`${this._url}Get?json=${json}`)
       .pipe(
         map(response => {
-          if (isApiResponse(response)) {
-            if (response.code === "0") {
-              throw response;
-            }
             if (response.code === "1") {
               let { movimientos } = JSON.parse(response.payload as string)
               return movimientos;
             }
-          }
           return []
         })
       )
   }
 
+
+
   getDataFilter() {
-    let paramsStr = JSON.stringify({ tipo: 3 })
-    return this.http.get(`${this.url}Get?json=${paramsStr}`)
+    let json = JSON.stringify({ tipo: 3 })
+    return this._http.get<ApiResponse>(`${this._url}Get?json=${json}`)
       .pipe(
         map(response => {
-          if (isApiResponse(response)) {
-            if (response.code === "0") {
-              throw response;
-            }
             if (response.code === "1") {
               let { establecimiento } = JSON.parse(response.payload as string)
               return {
                 establecimientos: establecimiento
               };
             }
-          }
           return {
             establecimientos: []
           }
@@ -57,8 +53,8 @@ export class MovimientoCajaService {
   }
 
   getDataForm() {
-    let paramsStr = JSON.stringify({ tipo: 2 })
-    return this.http.get(`${this.url}Get?json=${paramsStr}`)
+    let json = JSON.stringify({ tipo: 2 })
+    return this._http.get<ApiResponse>(`${this._url}Get?json=${json}`)
       .pipe(
         map((response) => {
           let cajas = [],
@@ -66,7 +62,7 @@ export class MovimientoCajaService {
             establecimientos = [],
             subEntidadesFinanciera = [],
             tiposDocumento = []
-          if (isApiResponse(response)) {
+          if (response.code==="1") {
             let mainData = JSON.parse(response.payload as string);
             const { caja, entidadFinanciera, establecimiento, subEntidadFinanciera, tipoDocumento } = mainData;
 
@@ -92,16 +88,19 @@ export class MovimientoCajaService {
       )
   }
 
-  post<T>(data: T) {
-    return this.http.post(`${this.url}`, { data })
+
+  create<T>(data: T) {
+    return this._http.post<ApiResponse>(`${this._url}`, { data })
   }
 
-  put<T>(id: number, data: T) {
-    return this.http.put(`${this.url}${id}`, { data })
+  update<T>(id: number, data: T) {
+    return this._http.put<ApiResponse>(`${this._url}${id}`, { data })
   }
 
   delete(id: number) {
-    return this.http.delete(`${this.url}${id}`)
+    return this._http.delete<ApiResponse>(`${this._url}${id}`)
   }
+
+
 
 }

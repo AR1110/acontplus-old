@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { isApiResponse } from '@core/models/api-response';
+
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
@@ -9,7 +9,6 @@ import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MovimientoCajaRead } from '@accounting/core/domain/movimiento-caja.model';
-import { MovimientoCajaService } from '@accounting/services/movimiento-caja.service';
 import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 
@@ -21,6 +20,7 @@ import {ACCOUNTING_CODE_REPORT} from "@accounting/core/enums/accounting.constant
 import { ActionAnularDirective } from '@shared/directives/permission/action-anular.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import { formatDateToString } from '@core/utils/date.util';
+import {MovimientoCajaUsecase} from "@accounting/core/usecases/movimiento-caja.usecase";
 
 @Component({
     selector: 'app-egreso-ingreso-caja',
@@ -53,9 +53,9 @@ export class EgresoIngresoCajaComponent {
   establecimientos: Array<EstablecimientoSelectHtmlOnly> = [];
   movimientosCaja: Array<MovimientoCajaRead> = [];
   private modalSvc = inject(ModalService);
-  private movCajaSvc = inject(MovimientoCajaService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
+  private _movimientoCajaUseCase = inject(MovimientoCajaUsecase)
 
   getMovimientosCaja() {
     let params = {
@@ -69,15 +69,15 @@ export class EgresoIngresoCajaComponent {
       codEstado: isValidField(this.dataSearch.codEstado),
     };
     this.movimientosCaja = [];
-    this.movCajaSvc.getAll(params).subscribe( (response) => {
-        this.movimientosCaja = response || [];
-        this.totalRecords =
-          this.movimientosCaja.length > 0  ? this.movimientosCaja[0].totalRecords : 0;
-    });
+
+    this._movimientoCajaUseCase.getAll(params).subscribe(response=>{
+      this.movimientosCaja = response || [];
+      this.totalRecords =  this.movimientosCaja.length > 0  ? this.movimientosCaja[0].totalRecords : 0;
+    })
   }
 
   ngOnInit() {
-    this.movCajaSvc.getDataFilter().subscribe( (response) => {
+    this._movimientoCajaUseCase.getDataFilter().subscribe( (response) => {
         this.establecimientos = response.establecimientos;
         if (this.establecimientos.length > 0) {
           let dataEstab = this.establecimientos.find(
@@ -177,8 +177,8 @@ export class EgresoIngresoCajaComponent {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.movCajaSvc.delete(item.idMovimientoCaja).subscribe( (response) => {
-              if (isApiResponse(response)) {
+          this._movimientoCajaUseCase.delete(item.idMovimientoCaja).subscribe( (response) => {
+
                 if (response.code === '0') {
                   this.tS.toastr({
                     type: 'warning',
@@ -192,7 +192,6 @@ export class EgresoIngresoCajaComponent {
                   });
                   this.getMovimientosCaja();
                 }
-              }
           });
         }
       });

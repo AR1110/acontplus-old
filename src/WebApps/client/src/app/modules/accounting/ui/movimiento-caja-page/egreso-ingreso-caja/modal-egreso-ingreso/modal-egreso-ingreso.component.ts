@@ -3,7 +3,6 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { CashboxSelectHtmlOnly } from '@accounting/core/domain/cashbox.model';
 import { SubEntidadFinanciera } from '@accounting/core/domain/subentidad-financiera.model';
-import { MovimientoCajaService } from '@accounting/services/movimiento-caja.service';
 import { NgbActiveModal, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import {
   AbstractControl,
@@ -15,10 +14,10 @@ import {
 } from '@angular/forms';
 import { EmployeeService } from '@sale/services/employee.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { isApiResponse } from '@core/models/api-response';
 import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { EntidadFinanciera } from '@accounting/core/domain/entidad-financiera.interface';
+import {MovimientoCajaUsecase} from "@accounting/core/usecases/movimiento-caja.usecase";
 
 @Component({
   selector: 'app-modal-egreso-ingreso',
@@ -67,7 +66,8 @@ export class ModalEgresoIngresoComponent {
     customerName: new FormControl(''),
   });
   private activeModal = inject(NgbActiveModal);
-  private movimientoCajaSvc = inject(MovimientoCajaService);
+  private _movimientoCajaUseCase = inject(MovimientoCajaUsecase)
+
   private employeeSvc = inject(EmployeeService);
   private tS = inject(ToasterService);
   private tempSubEntidadesFinanciera: Array<SubEntidadFinanciera> = [];
@@ -83,7 +83,7 @@ export class ModalEgresoIngresoComponent {
   }
 
   ngOnInit() {
-    this.movimientoCajaSvc.getDataForm().subscribe((response) => {
+    this._movimientoCajaUseCase.getDataForm().subscribe((response) => {
       let {
         establecimientos,
         cajas,
@@ -181,8 +181,8 @@ export class ModalEgresoIngresoComponent {
         return;
       }
 
-      this.movimientoCajaSvc.post(params).subscribe((response) => {
-        if (isApiResponse(response)) {
+      this._movimientoCajaUseCase.create(params).subscribe((response) => {
+
           if (response.code === '0') {
             this.tS.toastr({
               type: 'warning',
@@ -196,7 +196,6 @@ export class ModalEgresoIngresoComponent {
             });
             this.activeModal.close(response);
           }
-        }
       });
     } catch (error) {
       console.log(error);
