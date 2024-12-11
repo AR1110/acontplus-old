@@ -29,8 +29,8 @@
       [displayColumnDefs]="columnsDefs"
       [displayedColumns]="columns"
       [templateOp]="templateOp"
-      [pagination]="pagination()"
-      [withPagination]="true"
+      [paginationConfig]="pagination()"
+      [enablePagination]="true"
       (onPageEvent)="handlePageEvent($event)"
     >
     </app-mat-dynamic-table>

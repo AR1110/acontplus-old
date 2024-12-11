@@ -34,6 +34,8 @@ import { MatButtonModule } from '@angular/material/button';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Pagination} from "@shared/models/pagination.model";
 import {MatPaginatorModule, PageEvent} from "@angular/material/paginator";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {CustomMatSpinnerComponent} from "@core/components/custom-mat-spinner/custom-mat-spinner.component";
 
 @Component({
     selector: 'app-mat-dynamic-table',
@@ -49,6 +51,7 @@ import {MatPaginatorModule, PageEvent} from "@angular/material/paginator";
         GetTotalPipe,
         DatePipe,
         DecimalPipe,
+      CustomMatSpinnerComponent
     ],
     animations: [
         trigger('detailExpand', [
@@ -98,13 +101,16 @@ export class MatDynamicTableComponent<T> {
 
   expandedElement!: T | null;
 
-  withPagination = input(false)
+  enablePagination = input(false)
   onPageEvent = output<PageEvent>();
-  pagination = input<Pagination>();
+  paginationConfig = input<Pagination>();
 
   handlePageEvent(e: PageEvent) {
     this.onPageEvent.emit(e);
   }
+
+  isLoadingData = input<boolean>(false);
+
   constructor() {}
 
   ngAfterContentInit(): void {
@@ -140,9 +146,10 @@ export class MatDynamicTableComponent<T> {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['dataList'].currentValue && changes['dataList']) {
+    if ( changes['dataList']?.currentValue && changes['dataList']) {
       this.dataSource = new MatTableDataSource<T>(this.dataList);
     }
+
   }
 
   moveNextRow(cell: TableCellIndex): void {

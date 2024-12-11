@@ -1,14 +1,52 @@
-import { roundNumber } from "@core/utils/round-number.utils";
-import { isValidField } from "@core/utils/utils";
+import {isValidField} from "@core/utils/utils";
+import {roundNumber} from "@core/utils/round-number.utils";
 
-type ToProps = {
+type ToApiCreateProps = {
   comprobante: any,
   cobros: any[],
   cobroDetalle:any[],
   historialCobros:any[],
 }
-class ComprobanteIngresoAdapter {
-  to(obj: ToProps){
+
+export class ComprobanteIngresoMapper {
+
+  static fromApiGetAll(response: any){
+    const comprobanteIngreso = response.comprobanteIngreso    || []
+
+    let data = comprobanteIngreso.map((item:any)=>{
+
+      return {
+        codDoc: 'CI',
+        idComprobanteIngreso: item.idComprobanteIngreso,
+        idDocumento: item.idDocumento,
+        codEstab: item.codEstab,
+        total: item.total,
+        fechaRegistro: item.fechaRegistro,
+        abono: item.abono,
+        cambio: item.cambio,
+        nroDoc: item.nroDoc,
+        nroIdentificacion: item.nroIdentificacion,
+        nomCliente: item.cliente,
+        nomCaja: item.caja,
+        style: item.style,
+        nomEstado: item.estado,
+        nomUsuario: item.usuario,
+        telefonoEstab: item.telefonoEstab,
+        correoEstab: item.correoEstab,
+        nombreEstab: item.nombreEstab
+      }
+
+    })
+
+
+    return {
+      data
+    }
+
+  }
+
+
+  static  toApiCreate(obj: ToApiCreateProps){
     const {
       comprobante,
       cobros,
@@ -77,6 +115,3 @@ class ComprobanteIngresoAdapter {
     return objComprobanteIngreso;
   }
 }
-
-
-export const comprobanteIngresoAdapter = new ComprobanteIngresoAdapter()

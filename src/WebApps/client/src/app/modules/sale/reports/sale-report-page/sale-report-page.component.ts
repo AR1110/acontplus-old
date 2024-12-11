@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
-import { CuentaPorCobrarService } from '@accounting/services/cuenta-por-cobrar.service';
 import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
@@ -32,6 +31,7 @@ import { NotificacionService } from '@shared/services/notificacion.service';
 import { AuthService } from '@modules/auth/services/auth.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
+import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobrar.usecase";
 
 const imports = [
   MatCardModule,
@@ -84,14 +84,15 @@ export class SaleReportPageComponent {
   empresas: any[] = [];
   format: any;
   provinciasAgrupadas: any[] = [];
-  private cuentaPorCobrarSvc = inject(CuentaPorCobrarService);
+  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUsecase)
+
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
   private appNotifiSvc = inject(NotificacionService)
   private authSvc = inject(AuthService)
 
   getDataFilter() {
-    this.cuentaPorCobrarSvc.getDataFilter().subscribe((response) => {
+    this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
       const { estabs, estadosDoc, tiposDoc, empresas, ciudades } = response;
 
       this.establecimientos = estabs;

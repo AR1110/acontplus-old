@@ -250,7 +250,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  ├── reports
 |  |  |  |  ├── cartera-cliente-page
 |  |  |  |  |  ├── cartera-cliente-page.component.html
-|  |  |  |  |  └── cartera-cliente-page.component.ts
 |  |  |  |  ├── movimiento-caja-report-page
 |  |  |  |  |  ├── movimiento-caja-report-page.component.html
 |  |  |  |  |  └── movimiento-caja-report-page.component.ts
@@ -263,11 +262,9 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  ├── services
 |  |  |  |  ├── accounting-movement.service.ts
 |  |  |  |  ├── anticipo.service.ts
-|  |  |  |  ├── bank.service.ts
 |  |  |  |  ├── cashbox.service.ts
 |  |  |  |  ├── category.service.ts
 |  |  |  |  ├── comprobante-ingreso-open-modal.service.ts
-|  |  |  |  ├── comprobante-ingreso.service.ts
 |  |  |  |  ├── control-caja.service.ts
 |  |  |  |  ├── cuenta-por-cobrar.service.ts
 |  |  |  |  ├── sub-entidad-financiera.service.ts

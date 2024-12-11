@@ -10,11 +10,11 @@ import { GroupedEstab } from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { CuentaPorCobrarService } from '@accounting/services/cuenta-por-cobrar.service';
 import { ComprobanteIngresoOpenModalService } from '@accounting/services/comprobante-ingreso-open-modal.service';
 import { Pagination } from '@shared/models/pagination.model';
 import { forkJoin } from 'rxjs';
 import { formatDateToString } from '@core/utils/date.util';
+import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobrar.usecase";
 
 
 
@@ -28,13 +28,13 @@ import { formatDateToString } from '@core/utils/date.util';
         BreadcrumbComponent,
         DateRangeSelectionComponent
     ],
-    templateUrl: './cuenta-por-cobrar-page.component.html',
+    templateUrl: './cuenta-por-cobrar.component.html',
     styles: ``
 })
-export class CuentaPorCobrarPageComponent {
+export class CuentaPorCobrarComponent {
 
+  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUsecase)
   tS = inject(ToasterService);
-  cuentaPorCobrarSvc = inject(CuentaPorCobrarService);
   comprobanteIngresoOpenModalSvc = inject(ComprobanteIngresoOpenModalService)
 
   displayedColumns: string[] = [
@@ -98,11 +98,8 @@ export class CuentaPorCobrarPageComponent {
       }
 
       this.selection = new SelectionModel<any>(true, []);
-      this.cuentaPorCobrarSvc.getAll(params).subscribe( (response) => {
-
-          let { cuentasPorCobrar } = response;
-          this.dataSource = new MatTableDataSource(cuentasPorCobrar);
-
+      this._cuentaPorCobrarUseCase.getAll(params).subscribe(response=>{
+        this.dataSource = new MatTableDataSource(response.data);
       })
     } catch (error) {
       console.log(error)
@@ -111,7 +108,7 @@ export class CuentaPorCobrarPageComponent {
 
   getDataFilter() {
     try {
-      this.cuentaPorCobrarSvc.getDataFilter().subscribe(  (response) => {
+      this._cuentaPorCobrarUseCase.getDataFilter().subscribe(  (response) => {
           this.establecimientos = response.estabs;
           this.estadosDoc = response.estadosDoc;
           this.tiposDoc = response.tiposDoc;
@@ -197,7 +194,7 @@ export class CuentaPorCobrarPageComponent {
     }
 
     // Crear un array de promesas para cada solicitud
-    const promises = selectedDocumentos.map(cxc => this.cuentaPorCobrarSvc.getCuotasById(cxc.idCuentaPorCobrar));
+    const promises = selectedDocumentos.map(cxc => this._cuentaPorCobrarUseCase.getCuotasById(cxc.idCuentaPorCobrar));
 
     // Utilizar Promise.all para ejecutar las promesas concurrentemente
 
