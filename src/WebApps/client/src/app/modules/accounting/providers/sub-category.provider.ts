@@ -1,9 +1,9 @@
 import {ClassProvider} from "@angular/core";
 import {SubCategoryRepository} from "@accounting/core/repositories/sub-category.repository";
-import {SubCategoryRepositoryImpl} from "@accounting/data/repository/sub-category/sub-category.repository.impl";
+import {SubCategoryWebRepository} from "@accounting/data/repository/sub-category/sub-category-web.repository";
 
 
 export const subCategoryProvider:ClassProvider = {
   provide: SubCategoryRepository,
-  useClass: SubCategoryRepositoryImpl
+  useClass: SubCategoryWebRepository
 }

@@ -4,13 +4,19 @@ import {ACCOUNTING_PATHS} from "@accounting/core/enums/accounting.constants";
 import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
 import {CajaMapper} from "@accounting/data/repository/caja/caja.mapper";
+import {CajaRepository} from "@accounting/core/repositories/caja.repository";
+import {ApiResponse} from "@core/models/api-response";
 
 @Injectable({
   providedIn: 'root',
 })
-export class CajaRepositoryImpl {
-  _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CASHBOX}`
-  _http = inject(HttpClient);
+export class CajaWebRepository extends CajaRepository{
+  private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CASHBOX}`
+  private _http = inject(HttpClient);
+
+  constructor() {
+    super();
+  }
 
   getAll<T>(params: T) {
     let json = JSON.stringify({ ...params, tipo: 1 })
@@ -51,15 +57,15 @@ export class CajaRepositoryImpl {
 
 
   create<T>(data: T) {
-    return this._http.post(`${this._url}`, { data });
+    return this._http.post<ApiResponse>(`${this._url}`, { data });
   }
 
   update<T>(id: number, data: T) {
-    return this._http.put(`${this._url}${id}`, { data });
+    return this._http.put<ApiResponse>(`${this._url}${id}`, { data });
   }
 
   delete(id: number) {
-    return this._http.delete(`${this._url}${id}`);
+    return this._http.delete<ApiResponse>(`${this._url}${id}`);
   }
 
 

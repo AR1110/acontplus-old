@@ -1,11 +1,11 @@
 import {ClassProvider} from "@angular/core";
 import {SubEntidadFinancieraRepository} from "@accounting/core/repositories/sub-entidad-financiera.repository";
 import {
-  SubEntidadFinancieraRepositoryImpl
-} from "@accounting/data/repository/sub-entidad-financiera/sub-entidad-financiera.repository.impl";
+  SubEntidadFinancieraWebRepository
+} from "@accounting/data/repository/sub-entidad-financiera/sub-entidad-financiera-web.repository";
 
 
 export const subEntidadFinancieraProvider:ClassProvider = {
   provide: SubEntidadFinancieraRepository,
-  useClass: SubEntidadFinancieraRepositoryImpl
+  useClass: SubEntidadFinancieraWebRepository
 }

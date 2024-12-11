@@ -18,7 +18,7 @@ import {ComprobanteEgresoMapper} from "@accounting/data/repository/comprobante-e
 @Injectable({
   providedIn: 'root'
 })
-export class ComprobanteEgresoRepositoryImpl extends ComprobanteEgresoRepository {
+export class ComprobanteEgresoWebRepository extends ComprobanteEgresoRepository {
   private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.COMPROBANTE_EGRESO}`
   constructor(private http:HttpClient) {
     super()

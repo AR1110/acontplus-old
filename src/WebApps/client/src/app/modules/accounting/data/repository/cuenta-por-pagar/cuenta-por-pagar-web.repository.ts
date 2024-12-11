@@ -14,13 +14,18 @@ import {
   CuentaPorPagarLista,
 } from '../../../core/domain/cuenta-por-pagar.model';
 import { TiempoCreditoSelectHtmlOnly } from '@accounting/core/domain/tiempo-credito.interface';
+import {CuentaPorPagarRepository} from "@accounting/core/repositories/cuenta-por-pagar.repository";
 
 @Injectable({
   providedIn: 'root',
 })
-export class CuentaPorPagarRepositoryImpl {
+export class CuentaPorPagarWebRepository extends CuentaPorPagarRepository{
   private http = inject(HttpClient);
   private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
+
+  constructor() {
+    super();
+  }
 
   getDataFilter() {
     let json = JSON.stringify({

@@ -10,7 +10,7 @@ import {SubCategoryMapper} from "@accounting/data/repository/sub-category/sub-ca
 @Injectable({
   providedIn: 'root'
 })
-export class SubCategoryRepositoryImpl {
+export class SubCategoryWebRepository {
 
   private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.SUBCATEGORY}`;
   private _http = inject(HttpClient);
