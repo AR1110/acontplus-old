@@ -1,7 +1,6 @@
 import { MatIconModule } from '@angular/material/icon';
 import { Component, inject, Input } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
-import { CuentaPorCobrarService } from '@accounting/services/cuenta-por-cobrar.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { FormaCobroModalComponent } from '@accounting/ui/comprobante-ingreso/components/form-cobro-modal/forma-cobro-modal.component';
@@ -15,6 +14,7 @@ import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { DatePipe } from '@angular/common';
 import {ComprobanteIngresoUsecase} from "@accounting/core/usecases/comprobante-ingreso.usecase";
+import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobrar.usecase";
 
 @Component({
     selector: 'app-comprobante-ingreso-lote-modal',
@@ -43,9 +43,9 @@ export class ComprobanteIngresoLoteModalComponent {
 
   modal = inject(NgbActiveModal);
   modalSvc = inject(ModalService);
-  cuentaPorCobrarSvc = inject(CuentaPorCobrarService)
   tS = inject(ToasterService)
   private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUsecase);
+  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUsecase)
 
 
 
@@ -110,7 +110,7 @@ export class ComprobanteIngresoLoteModalComponent {
       if (selectedDocumentos !== null && Array.isArray(selectedDocumentos)) {
         idCliente = selectedDocumentos[0].idCliente;
       }
-      this.cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar, idCliente).subscribe(  (response) => {
+      this._cuentaPorCobrarUseCase.getDataForm(idCuentaPorCobrar, idCliente).subscribe(  (response) => {
 
           this.dataFormaCobro = response;
 

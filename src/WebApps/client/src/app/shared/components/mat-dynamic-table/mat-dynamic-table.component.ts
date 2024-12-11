@@ -47,7 +47,6 @@ import {CustomMatSpinnerComponent} from "@core/components/custom-mat-spinner/cus
         MatIconModule,
         MatButtonModule,
       MatPaginatorModule,
-      MatProgressSpinner,
         NgClass,
         GetTotalPipe,
         DatePipe,

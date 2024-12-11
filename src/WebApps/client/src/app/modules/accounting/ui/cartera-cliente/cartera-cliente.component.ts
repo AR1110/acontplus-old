@@ -1,5 +1,4 @@
 import { ACCOUNTING_CODE_REPORT } from "@accounting/core/enums/accounting.constants";
-import { CuentaPorCobrarService } from "@accounting/services/cuenta-por-cobrar.service";
 import { Component, inject } from '@angular/core';
 import { FormsModule } from "@angular/forms";
 import { CompanyCustomerSearchComponent } from "@company-customer/components/company-customer-search/company-customer-search.component";
@@ -12,23 +11,25 @@ import { ToasterService } from "@core/services/toaster.service";
 import { formatDateToString } from "@core/utils/date.util";
 import { isValidField } from "@core/utils/utils";
 import { AuthService } from "@modules/auth/services/auth.service";
+import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobrar.usecase";
 
 @Component({
-    selector: 'app-cartera-cliente-page',
+    selector: 'app-cartera-cliente',
     imports: [
         FormsModule,
         BreadcrumbComponent,
         DateRangeSelectionComponent,
         CompanyCustomerSearchComponent
     ],
-    templateUrl: './cartera-cliente-page.component.html',
+    templateUrl: './cartera-cliente.component.html',
     styles: ``
 })
-export class CarteraClientePageComponent {
-  private cuentaPorCobrarSvc = inject(CuentaPorCobrarService)
+export class CarteraClienteComponent {
   private tS = inject(ToasterService)
   private sharedSvc = inject(SharedService)
   private authSvc = inject(AuthService)
+  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUsecase)
+
 
   isSelectedNotaEntrega = false;
   dataSearch = {
@@ -58,7 +59,7 @@ export class CarteraClientePageComponent {
   format:any;
 
   getDataFilter(){
-    this.cuentaPorCobrarSvc.getDataFilter().subscribe(response=>{
+    this._cuentaPorCobrarUseCase.getDataFilter().subscribe(response=>{
 
       const { estabs, estadosDoc, tiposDoc, empresas } = response;
 

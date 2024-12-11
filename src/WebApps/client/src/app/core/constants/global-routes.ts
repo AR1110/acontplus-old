@@ -72,7 +72,7 @@ export enum GlobalRoutes {
   //Contabilidad
   ContabilidadCuentaPorPagar='accounting/cuenta-por-pagar',
   Cobro = 'accounting/cobro-page',
-
+  ContabilidadCuentaPorCobrar='accounting/cuenta-por-cobrar',
   //COMPRAS
   ComprasFacturaCompra='purchase/factura-fisica'
 

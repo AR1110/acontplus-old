@@ -4,16 +4,17 @@ import { MovimientoCajaPageComponent } from '@accounting/ui/movimiento-caja-page
 
 import { SupplierAccountsComponent } from '@accounting/ui/supplier-accounts/supplier-accounts.component';
 import { SubEntidadFinancieraPageComponent } from '@accounting/ui/sub-entidad-financiera/sub-entidad-financiera-page.component';
-import { CuentaPorCobrarPageComponent } from '@accounting/ui/cuenta-por-cobrar-page/cuenta-por-cobrar-page.component';
+import { CuentaPorCobrarComponent } from '@accounting/ui/cuenta-por-cobrar/cuenta-por-cobrar.component';
 import { ReporteCobrosComponent } from '@accounting/ui/reporte-cobros/reporte-cobros.component';
 import { CategoryPageComponent } from '@accounting/ui/category-page/category-page.component';
 import { SubcategoryPageComponent } from '@accounting/ui/subcategory-page/subcategory-page.component';
 import { MovimientoCajaReportPageComponent } from '@accounting/ui/movimiento-caja-report-page/movimiento-caja-report-page.component';
-import { CarteraClientePageComponent } from '@accounting/ui/cartera-cliente-page/cartera-cliente-page.component';
+
  import { CuentaPorPagarComponent } from '@accounting/ui/cuenta-por-pagar/cuenta-por-pagar.component';
 import {
   AccountingMovementPageComponent
 } from "@accounting/ui/accounting-movement-page/accounting-movement-page.component";
+import {CarteraClienteComponent} from "@accounting/ui/cartera-cliente/cartera-cliente.component";
 
 export const routes: Routes = [
   {
@@ -58,9 +59,9 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'cuenta-por-cobrar-page',
+    path: 'cuenta-por-cobrar',
     title: 'Cuenta por cobrar',
-    component: CuentaPorCobrarPageComponent,
+    component: CuentaPorCobrarComponent,
     data: {
       breadcrumb: 'Cuenta por cobrar',
     },
@@ -100,7 +101,8 @@ export const routes: Routes = [
   {
     path: 'cartera-cliente',
     title: 'Cartera Cliente',
-    component: CarteraClientePageComponent,
+    loadComponent: ()=>import('@accounting/ui/cartera-cliente/cartera-cliente.component').then(c=>c.CarteraClienteComponent),
+
     data: {
       breadcrumb: 'Cartera Cliente',
     },
@@ -119,6 +121,15 @@ export const routes: Routes = [
     component: CuentaPorPagarComponent,
     data: {
       breadcrumb: 'Cuenta por pagar',
+    },
+  },
+  {
+    path: 'cuenta-por-cobrar',
+    title: 'Cuenta por cobrar',
+    loadComponent: ()=>import('@accounting/ui/cuenta-por-cobrar/cuenta-por-cobrar.component').then(c=>c.CuentaPorCobrarComponent),
+
+    data: {
+      breadcrumb: 'Cuenta por cobrar',
     },
   }
 ];
