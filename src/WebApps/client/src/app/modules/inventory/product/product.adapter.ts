@@ -104,7 +104,8 @@ export class ProductAdapter {
 
   static fromApiGetAll(response:ApiResponse){
 
-    let { products } = JSON.parse(response.payload as string);
+    //let { products } = JSON.parse(response.payload as string);
+    let [products]  = JSON.parse(response.payload as string);
 
     let data = products || [];
 
@@ -135,7 +136,8 @@ export class ProductAdapter {
 
   static fromApiDataReport(response:ApiResponse){
 
-    const {brands, documentTypes,fees,subcategories,warehouses} = JSON.parse(response.payload as string);
+    // const {brands, documentTypes,fees,subcategories,warehouses} = JSON.parse(response.payload as string);
+    const [warehouses, subcategories, brands, documentTypes, fees, ] = JSON.parse(response.payload as string)
 
     let estabs = groupEstabUtil({
       bodegas: warehouses,

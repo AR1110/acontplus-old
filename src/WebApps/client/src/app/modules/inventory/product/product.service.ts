@@ -23,7 +23,7 @@ export class ProductService {
 
   getDataFilter() {
     let params = JSON.stringify({ tipo: 11 })
-    return this.http.get<ApiResponse>(`${this.url}?json=${params}`, {
+    return this.http.get<ApiResponse>(`${this.url}Get?json=${params}`, {
       context: getNoLoader()
     }).pipe(
       map(response => {
@@ -46,7 +46,7 @@ export class ProductService {
     let params = {
       json: JSON.stringify({ tipo: 5 })
     }
-    return this.http.get<ApiResponse>(`${this.url}`, {
+    return this.http.get<ApiResponse>(`${this.url}Get`, {
       params
     }).pipe(
       map((response) => {
@@ -78,7 +78,7 @@ export class ProductService {
     let params = {
       json: JSON.stringify({ ...obj, tipo: 1 })
     }
-    return this.http.get<ApiResponse>(`${this.url}`, {
+    return this.http.get<ApiResponse>(`${this.url}Get`, {
       params,
       context: getNoLoader()
     }).pipe(map((response) => {
@@ -131,7 +131,7 @@ export class ProductService {
     let params = {
       json: JSON.stringify({ tipo: 13 })
     }
-    return this.http.get<ApiResponse>(`${this.url_old}`, {
+    return this.http.get<ApiResponse>(`${this.url_old}Get`, {
       params
     }).pipe(
       map(response => {

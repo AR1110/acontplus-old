@@ -9,7 +9,7 @@ export enum GlobalRoutes {
   ConfigUserCustomerRequest = 'config/user-customer-request-page',
   ContabilidadCaja = 'accounting/cashbox-page',
   ContabilidadCarteraProveedor = 'accounting/reports/supplier-accounts',
-  ContabilidadCobro = 'accounting/cobro-page',
+
   ContabilidadCategory = 'accounting/category-page',
   ContabilidadMovimientoCaja = 'accounting/movimiento-caja-page',
   ContabilidadReporteCobros = 'accounting/reports/reporte-cobros',
@@ -69,8 +69,9 @@ export enum GlobalRoutes {
   FactElectDocumentoElectronico='billing/doc-elect',
   Factura='billing/invoice',
 
-  //Cuenta por pagar
+  //Contabilidad
   ContabilidadCuentaPorPagar='accounting/cuenta-por-pagar',
+  Cobro = 'accounting/cobro-page',
 
   //COMPRAS
   ComprasFacturaCompra='purchase/factura-fisica'

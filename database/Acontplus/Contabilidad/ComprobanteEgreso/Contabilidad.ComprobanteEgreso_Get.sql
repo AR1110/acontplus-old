@@ -180,7 +180,7 @@ BEGIN
 
             SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP','PA')
 
-            SELECT cp.idCuentaPorPagar as idComprobante
+            SELECT   cp.idCuentaPorPagar as idComprobante
                   ,(SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento td (NOLOCK) WHERE td.codigoSri = cp.codDoc) as idTipoDocumento
                   ,cp.serieComprobante                                                                              as nroDocumento
                   ,IIF(cp.codDoc = '04','Nota Credito','Comprobante Retención')                                     as tipoDocumento
@@ -188,11 +188,12 @@ BEGIN
                   ,CASE cp.codDoc WHEN '04' THEN (SELECT TOP 1 d.numDocSustento FROM factelect.DocRelacionado d WITH (NOLOCK) WHERE d.idDocumentoRecibido = cp.idDocumento )
                                   WHEN '07' THEN (SELECT TOP 1 rs.numAutDocSustento FROM FactElect.RetAtsDocSustento rs WITH (NOLOCK) WHERE rs.idRetencionAts = cp.idDocumento)
                    END                                                                                              as numAutDocSustento
+                   ,Format(cp.fechaEmision, 'yyyy-MM-dd')     as fechaEmision
             FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK)
             INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cp.idEstadoPago
             WHERE cp.codDoc IN ('04','07')
               AND cp.importeTotal > 0
-              AND cp.idProveedor = @idProveedor
+             AND cp.idProveedor = @idProveedor
               AND ep.codigo = 'PE'
 
             RETURN 

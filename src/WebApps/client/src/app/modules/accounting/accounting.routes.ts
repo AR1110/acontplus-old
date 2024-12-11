@@ -1,23 +1,25 @@
 import { Routes } from '@angular/router';
-import { CashboxPageComponent } from './pages/cashbox-page/cashbox-page.component';
-import { MovimientoCajaPageComponent } from './pages/movimiento-caja-page/movimiento-caja-page.component';
-import { CobroPageComponent } from './pages/cobro-page/cobro-page.component';
-import { SupplierAccountsComponent } from './reports/supplier-accounts/supplier-accounts.component';
-import { SubEntidadFinancieraPageComponent } from './pages/sub-entidad-financiera-page/sub-entidad-financiera-page.component';
-import { CuentaPorCobrarPageComponent } from './pages/cuenta-por-cobrar-page/cuenta-por-cobrar-page.component';
-import { ReporteCobrosComponent } from './reports/reporte-cobros/reporte-cobros.component';
-import { CategoryPageComponent } from '@modules/accounting/pages/category-page/category-page.component';
-import { SubcategoryPageComponent } from '@modules/accounting/pages/subcategory-page/subcategory-page.component';
-import { MovimientoCajaReportPageComponent } from '@accounting/reports/movimiento-caja-report-page/movimiento-caja-report-page.component';
-import { CarteraClientePageComponent } from '@accounting/reports/cartera-cliente-page/cartera-cliente-page.component';
-import { AccountingMovementPageComponent } from '@accounting/pages/accounting-movement-page/accounting-movement-page.component';
-import { CuentaPorPagarPageComponent } from './cuenta-por-pagar/cuenta-por-pagar-page/cuenta-por-pagar-page.component';
+import { CajaComponent } from './ui/cashbox-page/caja.component';
+import { MovimientoCajaPageComponent } from '@accounting/ui/movimiento-caja-page/movimiento-caja-page.component';
+
+import { SupplierAccountsComponent } from '@accounting/ui/supplier-accounts/supplier-accounts.component';
+import { SubEntidadFinancieraPageComponent } from '@accounting/ui/sub-entidad-financiera/sub-entidad-financiera-page.component';
+import { CuentaPorCobrarPageComponent } from '@accounting/ui/cuenta-por-cobrar-page/cuenta-por-cobrar-page.component';
+import { ReporteCobrosComponent } from '@accounting/ui/reporte-cobros/reporte-cobros.component';
+import { CategoryPageComponent } from '@accounting/ui/category-page/category-page.component';
+import { SubcategoryPageComponent } from '@accounting/ui/subcategory-page/subcategory-page.component';
+import { MovimientoCajaReportPageComponent } from '@accounting/ui/movimiento-caja-report-page/movimiento-caja-report-page.component';
+import { CarteraClientePageComponent } from '@accounting/ui/cartera-cliente-page/cartera-cliente-page.component';
+ import { CuentaPorPagarComponent } from '@accounting/ui/cuenta-por-pagar/cuenta-por-pagar.component';
+import {
+  AccountingMovementPageComponent
+} from "@accounting/ui/accounting-movement-page/accounting-movement-page.component";
 
 export const routes: Routes = [
   {
     path: 'cashbox-page',
     title: 'Caja',
-    component: CashboxPageComponent,
+    component: CajaComponent,
     data: {
       breadcrumb: 'Gestión Caja',
     },
@@ -33,10 +35,10 @@ export const routes: Routes = [
 
   {
     path: 'cobro-page',
-    title: 'Cobros',
-    component: CobroPageComponent,
+    title: 'Comprobante Ingreso',
+    loadComponent: ()=>import('@accounting/ui/comprobante-ingreso/comprobante-ingreso.component').then(c=>c.ComprobanteIngresoComponent),
     data: {
-      breadcrumb: 'Cobros',
+      breadcrumb: 'Comprobante Ingreso',
     },
   },
   {
@@ -114,7 +116,7 @@ export const routes: Routes = [
   {
     path: 'cuenta-por-pagar',
     title: 'Cuenta por pagar',
-    component: CuentaPorPagarPageComponent,
+    component: CuentaPorPagarComponent,
     data: {
       breadcrumb: 'Cuenta por pagar',
     },
