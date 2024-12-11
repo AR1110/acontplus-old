@@ -47,7 +47,8 @@ BEGIN
 	SELECT @tipo = tipo, @userRoleId = userRoleId FROM OPENJSON(@json) WITH (tipo INT, userRoleId INT)
 	
 	SELECT TOP 1  @idEntidad = idEntidad, @usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
-	--> Fraccionados
+	
+    --> Fraccionados
 	IF @tipo = 1
 		BEGIN
 			
@@ -114,18 +115,19 @@ BEGIN
 	IF @tipo = 2
 		BEGIN
 			
-            SELECT @idSubFamilia  = bySubFamilia
-				  ,@rucClienteProveedor  = numeroIdentificacion
-                  ,@stockStatusCode = stockStatusCode
-                   ,@idMarca      = idMarca
-                     ,@idTarifa     = idTarifa 
+            SELECT @idSubFamilia        = bySubFamilia
+				  ,@rucClienteProveedor = numeroIdentificacion
+                  ,@stockStatusCode     = stockStatusCode
+                  ,@idMarca             = idMarca
+                  ,@idTarifa            = idTarifa 
 			FROM OPENJSON(@json) WITH 
             ( 
-              bySubFamilia                 INT  
-             ,numeroIdentificacion VARCHAR(25)
-             ,stockStatusCode VARCHAR(5)
-              ,idMarca              INT
+                bySubFamilia         INT  
+               ,numeroIdentificacion VARCHAR(25)
+               ,stockStatusCode      VARCHAR(5)
+               ,idMarca              INT
                ,idTarifa             INT 
+
 		    ) AS dt
 
 			SET @params = '@idEntidad    INT									
@@ -138,11 +140,12 @@ BEGIN
 							  ,ar.codigo
 							  ,ar.subfamilia
 							  ,ar.tarifa
-							  ,FORMAT(ar.fechaCaducidad, ''dd/MM/yyyy'') as fechaCaducidad 
+							  ,FORMAT(ar.fechaCaducidad, ''dd/MM/yyyy'')        as fechaCaducidad 
 							  ,ISNULL(CAST(ar.precioConIva as numeric(15,2)),0) as precioIva
                               ,ar.stock 
 						FROM Inventario.v_Articulo_Tarifa ar WITH (NOLOCK)
-						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '
+						WHERE ar.estado = 1 
+                          AND ar.idEntidad = @idEntidad '
 
 			IF @idSubFamilia > 0
 				BEGIN
@@ -160,21 +163,23 @@ BEGIN
                 END 
 
             IF @stockStatusCode IS NOT NULL
-                --con stock 
+                --> con stock 
                 IF @stockStatusCode='CS'
                     BEGIN
                         SET @sql = @sql + 'AND ar.stock > 0 '
                     END
-                --sin stock 
+
+                --> sin stock 
                  IF @stockStatusCode='SS'
                      BEGIN
                          SET @sql = @sql + 'AND ar.stock <= 0 '
                      END
-                --stock minimo 
+
+                --> stock minimo 
                 IF @stockStatusCode='SM'
-                 BEGIN
-                     SET @sql = @sql + ' AND ar.stock <= ar.stockMinimo '
-                 END
+                    BEGIN
+                        SET @sql = @sql + ' AND ar.stock <= ar.stockMinimo '
+                    END
 
 			SET @sql = @sql + ' ORDER BY ar.idArticulo '
 		
@@ -318,8 +323,6 @@ BEGIN
 	--> Consumo Diario
 	IF @tipo = 4
 		BEGIN 
-			
-            
 			SET @params =  '@idArticulo     INT
 	                       ,@idUsuario      INT
                            ,@codEstab       VARCHAR(100)
@@ -575,9 +578,6 @@ BEGIN
     IF @tipo = 6
         BEGIN 
           
-            
-            
-
              SELECT @idSubFamilia = bySubFamilia
 				  ,@rucClienteProveedor = numeroIdentificacion
                   ,@idBodega     = idBodega
