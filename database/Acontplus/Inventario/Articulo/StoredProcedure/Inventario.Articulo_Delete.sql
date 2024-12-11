@@ -25,7 +25,7 @@ BEGIN
 				RETURN
 			END 
 		BEGIN TRAN 
-			UPDATE  Articulo SET estado = 0 WHERE idArticulo = @id
+			UPDATE  Articulo SET estado = 0 , UpdateAt = GETDATE() WHERE idArticulo = @id
 		COMMIT TRAN
 		SELECT '1'code,'Eliminado Correctamente' as 'message', '' as payload
 		RETURN 

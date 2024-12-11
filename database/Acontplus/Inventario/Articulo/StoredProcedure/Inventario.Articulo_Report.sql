@@ -114,12 +114,16 @@ BEGIN
 	--> Lista de Precio
 	IF @tipo = 2
 		BEGIN
-			
-            SELECT @idSubFamilia        = bySubFamilia
-				  ,@rucClienteProveedor = numeroIdentificacion
-                  ,@stockStatusCode     = stockStatusCode
-                  ,@idMarca             = idMarca
-                  ,@idTarifa            = idTarifa 
+            DECLARE @ckFechaModificaccion BIT 
+
+            SELECT @idSubFamilia         = bySubFamilia
+				  ,@rucClienteProveedor  = numeroIdentificacion
+                  ,@stockStatusCode      = stockStatusCode
+                  ,@idMarca              = idMarca
+                  ,@idTarifa             = idTarifa 
+                  ,@ckFechaModificaccion = ckFechaModificaccion
+                  ,@fechaInicio          = fechaInicio
+                  ,@fechaFin             = fechaFin
 			FROM OPENJSON(@json) WITH 
             ( 
                 bySubFamilia         INT  
@@ -127,13 +131,18 @@ BEGIN
                ,stockStatusCode      VARCHAR(5)
                ,idMarca              INT
                ,idTarifa             INT 
+               ,ckFechaModificaccion BIT
+               ,fechaInicio          DATETIME2
+               ,fechaFin             DATETIME2
 
 		    ) AS dt
 
 			SET @params = '@idEntidad    INT									
 						  ,@idSubFamilia INT
                           ,@idMarca      INT 
-                          ,@idTarifa     INT'
+                          ,@idTarifa     INT
+                          ,@fechaInicio  DATETIME2
+						  ,@fechaFin     DATETIME2'
 
 			SET @sql = 'SELECT ar.idArticulo
 							  ,ar.descripcion
@@ -146,8 +155,13 @@ BEGIN
 						FROM Inventario.v_Articulo_Tarifa ar WITH (NOLOCK)
 						WHERE ar.estado = 1 
                           AND ar.idEntidad = @idEntidad '
+                          
+			IF @ckFechaModificaccion = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST(ar.UpdateAt as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date)'
+                END 
 
-			IF @idSubFamilia > 0
+            IF @idSubFamilia > 0
 				BEGIN
 					SET @sql = @sql + 'AND ar.idSubFamilia = @idSubFamilia '
 				END
@@ -186,10 +200,10 @@ BEGIN
 			SELECT e.ruc
 			      ,e.razonSocial 
 			      ,e.nombreComercial	
-			      ,ISNULL(e.telefono, '')telefonoEntidad
-			      ,ISNULL(e.direccion, '')direccionEntidad
-			      ,@filtroFecha as filtroFecha	
-				  ,@checkBoxFecha as caducidad
+			      ,ISNULL(e.telefono, '')  as telefonoEntidad
+			      ,ISNULL(e.direccion, '') as direccionEntidad
+			      ,@filtroFecha            as filtroFecha	
+				  ,@checkBoxFecha          as caducidad
 			FROM dbo.Entidad e	WITH(NOLOCK)	
 			WHERE e.idEntidad = @idEntidad
 
@@ -200,6 +214,8 @@ BEGIN
 							  ,@idSubFamilia = @idSubFamilia
                               ,@idMarca      = @idMarca 
                               ,@idTarifa     = @idTarifa 
+                              ,@fechaInicio  = @fechaInicio
+                              ,@fechaFin     = @fechaFin
 
 			RETURN 
 		END 
@@ -574,26 +590,27 @@ BEGIN
 			RETURN
 		END 
 
-
+    --> Rentabilidad (calculo de porcentaje utilidad, ganancia)
     IF @tipo = 6
         BEGIN 
           
-             SELECT @idSubFamilia = bySubFamilia
-				  ,@rucClienteProveedor = numeroIdentificacion
-                  ,@idBodega     = idBodega
-                  ,@codEstab     = codEstab
-                  ,@stockStatusCode = stockStatusCode
-                   ,@idMarca      = idMarca
-                  ,@idTarifa     = idTarifa 
+             SELECT @idSubFamilia        = bySubFamilia
+				   ,@rucClienteProveedor = numeroIdentificacion
+                   ,@idBodega            = idBodega
+                   ,@codEstab            = codEstab
+                   ,@stockStatusCode     = stockStatusCode
+                   ,@idMarca             = idMarca
+                   ,@idTarifa            = idTarifa 
 			FROM OPENJSON(@json) WITH 
             (      
-                 bySubFamilia                 INT 	
+                 bySubFamilia         INT 	
 			    ,numeroIdentificacion VARCHAR(25) 
-                ,idBodega                     INT
+                ,idBodega             INT
                 ,codEstab             VARCHAR(50)
-                ,stockStatusCode VARCHAR(5)
+                ,stockStatusCode      VARCHAR(5)
                 ,idMarca              INT
                 ,idTarifa             INT 
+
 			) AS dt
 
 			SET @params = '@idEntidad    INT									
@@ -679,40 +696,18 @@ BEGIN
 			FROM Entidad e WITH (NOLOCK)
 			WHERE e.idEntidad = @idEntidad 
 
-            --SELECT 
-            --    ar.descripcion
-            --    ,ar.precioCosto
-            --    ,tarifaNom = ta.descripcion
-            --    ,subfamilia = sf.descripcion
-            --    ,medida     = m.descripcion 
-            --    ,pv.precioVenta
-            --    ,valorRentab  =  CAST((pv.precioVenta - ar.precioCosto) as numeric(18,2))
-            --    ,valorPorcentajeRentab = CAST((((pv.precioVenta / ar.precioCosto) * 100) - 100) as numeric(18,2))
-            --FROM  dbo.ArticuloPvP pv     WITH (NOLOCK)
-            --INNER JOIN dbo.Articulo   ar WITH (NOLOCK) ON ar.idArticulo   = pv.idArticulo
-            --INNER JOIN dbo.SubFamilia sf WITH (NOLOCK) ON sf.idSubFamilia = ar.idSubFamilia
-            --INNER JOIN dbo.Medida      m WITH (NOLOCK) ON m.idMedida      = ar.idMedida 
-            --INNER JOIN dbo.Tarifa     ta WITH (NOLOCK) ON ta.idTarifa     = pv.idTarifa
-            --WHERE ar.idEntidad = 7
-            --  AND ar.estado = 1 
-            --ORDER BY ar.idArticulo,ta.codigo ASC
-
-
             EXEC sp_executesql @sql
 							  ,@params
-							  ,@idEntidad    = @idEntidad
-							  ,@idSubFamilia = @idSubFamilia 
+							  ,@idEntidad           = @idEntidad
+							  ,@idSubFamilia        = @idSubFamilia 
 							  ,@rucClienteProveedor = @rucClienteProveedor 
-                              ,@idTarifa     = @idTarifa 
-                              ,@idMarca      = @idMarca
-                              ,@idBodega     = @idBodega
-                              ,@codEstab     = @codEstab
-
-
-
-
-
+                              ,@idTarifa            = @idTarifa 
+                              ,@idMarca             = @idMarca
+                              ,@idBodega            = @idBodega
+                              ,@codEstab            = @codEstab
+            RETURN 
         END 
+
 	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
 	RETURN 
 END
