@@ -69,6 +69,27 @@ BEGIN
                     INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
                      LEFT JOIN dbo.Ciudad             ci WITH (NOLOCK) ON ci.idCiudad          = cl.idCiudad 
 	                WHERE av.idAprob_Document = @id
+
+                    SELECT ar.codigo
+		                  ,CASE WHEN ABS(ROUND(ad.cantidad, 2) - ad.cantidad) < 0.000001 THEN FORMAT(ad.cantidad, '0.00')
+                                                                         ELSE FORMAT(ad.cantidad, '0.##########')
+                           END AS cantidad
+		                  ,CASE WHEN ABS(ROUND(ad.precioUnitario, 2) - ad.precioUnitario) < 0.000001 THEN FORMAT(ad.precioUnitario, '0.00')
+                                                                                     ELSE FORMAT(ad.precioUnitario, '0.##########')
+                           END AS precioUnitario 
+		                  ,ad.descripcion
+                          ,CAST(0 as numeric(18,2))                      as subsidio 
+		                  ,CAST(0 as numeric(18,2))                      as precioSinSubsidio
+		                  ,CAST(ad.descuento as numeric(18,2))           as valorDescuento
+		                  ,CAST(precioTotalSinImpuesto as numeric(18,2)) as precioTotal
+		                  ,me.descripcion                                as medida
+                          ,ad.nota
+	                FROM Ventas.Aprob_Document_Detailt ad WITH (NOLOCK)
+	                INNER JOIN dbo.Medida              me WITH (NOLOCK) ON me.idMedida   = ad.idMedida
+	                INNER JOIN dbo.Articulo            ar WITH (NOLOCK) ON ar.idArticulo = ad.idArticulo 
+	                WHERE ad.idAprob_Document = @id 
+                      AND ad.estado = 1
+                    ORDER BY ad.idAprob_Document_Detailt ASC
                 END 
             ELSE 
                 BEGIN
@@ -104,24 +125,26 @@ BEGIN
                     INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
                      LEFT JOIN dbo.Ciudad             ci WITH (NOLOCK) ON ci.idCiudad          = cl.idCiudad 
 	                WHERE av.idAprob_Document = @id
+
+                    SELECT ar.codigo
+		                  ,CAST(ad.cantidad as numeric(18,2))            as cantidad 
+		                  ,ad.descripcion 
+		                  ,CAST(ad.precioUnitario as numeric(18,2))      as precioUnitario 
+                          ,CAST(0 as numeric(18,2))                      as subsidio 
+		                  ,CAST(0 as numeric(18,2))                      as precioSinSubsidio
+		                  ,CAST(ad.descuento as numeric(18,2))           as valorDescuento
+		                  ,CAST(precioTotalSinImpuesto as numeric(18,2)) as precioTotal
+		                  ,me.descripcion                                as medida
+                          ,ad.nota
+	                FROM Ventas.Aprob_Document_Detailt ad WITH (NOLOCK)
+	                INNER JOIN dbo.Medida              me WITH (NOLOCK) ON me.idMedida   = ad.idMedida
+	                INNER JOIN dbo.Articulo            ar WITH (NOLOCK) ON ar.idArticulo = ad.idArticulo 
+	                WHERE ad.idAprob_Document = @id 
+                      AND ad.estado = 1
+                    ORDER BY ad.idAprob_Document_Detailt ASC
                 END 
     
-            SELECT ar.codigo
-		          ,CAST(ad.cantidad as numeric(18,2))            as cantidad 
-		          ,ad.descripcion 
-		          ,CAST(ad.precioUnitario as numeric(18,2))      as precioUnitario 
-                  ,CAST(0 as numeric(18,2))                      as subsidio 
-		          ,CAST(0 as numeric(18,2))                      as precioSinSubsidio
-		          ,CAST(ad.descuento as numeric(18,2))           as valorDescuento
-		          ,CAST(precioTotalSinImpuesto as numeric(18,2)) as precioTotal
-		          ,me.descripcion                                as medida
-                  ,ad.nota
-	        FROM Ventas.Aprob_Document_Detailt ad WITH (NOLOCK)
-	        INNER JOIN dbo.Medida              me WITH (NOLOCK) ON me.idMedida   = ad.idMedida
-	        INNER JOIN dbo.Articulo            ar WITH (NOLOCK) ON ar.idArticulo = ad.idArticulo 
-	        WHERE ad.idAprob_Document = @id 
-              AND ad.estado = 1
-            ORDER BY ad.idAprob_Document_Detailt ASC
+            
 
             IF @codDoc = '01'
                 BEGIN
