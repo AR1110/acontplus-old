@@ -5,10 +5,11 @@
     proveedorCtrl.$inject = [
         '$scope',
         'proveedorService',
-        'toastService'
+        'toastService',
+        'commonService'
     ];
 
-    function proveedorCtrl($scope, proveedorSvc, tS) {
+    function proveedorCtrl($scope, proveedorSvc, tS,commonSvc) {
         $scope.proveedores = [];
         $scope.dataSearch = {
             textSearch: null,
@@ -87,6 +88,28 @@
                     }
                 })
             }
+        }
+
+        $scope.getReport = function (format) { 
+            let dataParms = {      
+                tipo: 1                       
+            }
+
+            const parameters = {
+                hasService: false,
+                reportParams: JSON.stringify({
+                    hasParams: false,
+                    codigo: 'RPR',
+                    format,
+                }),
+                dataParams: JSON.stringify(dataParms),
+            }
+
+            commonSvc.getReport({
+                v2: true,
+                parameters,
+                formatType: format
+            })
         }
     }
 })(window.angular)
