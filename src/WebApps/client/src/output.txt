@@ -270,7 +270,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  |  ├── comprobante-ingreso.service.ts
 |  |  |  |  ├── control-caja.service.ts
 |  |  |  |  ├── cuenta-por-cobrar.service.ts
-|  |  |  |  ├── movimiento-caja.service.ts
 |  |  |  |  ├── sub-entidad-financiera.service.ts
 |  |  |  |  └── subcategory.service.ts
 |  |  |  └── utils

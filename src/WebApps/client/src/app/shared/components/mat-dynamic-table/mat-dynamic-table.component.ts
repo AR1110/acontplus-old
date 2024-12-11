@@ -32,6 +32,8 @@ import { GetTotalPipe } from '@shared/pipes/get-total.pipe';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {Pagination} from "@shared/models/pagination.model";
+import {MatPaginatorModule, PageEvent} from "@angular/material/paginator";
 
 @Component({
     selector: 'app-mat-dynamic-table',
@@ -42,6 +44,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
         MatSortModule,
         MatIconModule,
         MatButtonModule,
+      MatPaginatorModule,
         NgClass,
         GetTotalPipe,
         DatePipe,
@@ -95,6 +98,13 @@ export class MatDynamicTableComponent<T> {
 
   expandedElement!: T | null;
 
+  withPagination = input(false)
+  onPageEvent = output<PageEvent>();
+  pagination = input<Pagination>();
+
+  handlePageEvent(e: PageEvent) {
+    this.onPageEvent.emit(e);
+  }
   constructor() {}
 
   ngAfterContentInit(): void {

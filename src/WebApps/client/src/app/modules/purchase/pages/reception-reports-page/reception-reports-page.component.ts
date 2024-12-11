@@ -14,7 +14,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { Subcategory } from '@modules/accounting/models/subcategory';
+import { Subcategory } from '@accounting/core/domain/subcategory';
 import { SupplierSearchComponent } from '@modules/customer/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 

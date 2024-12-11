@@ -76,9 +76,11 @@
 //  background-color: #e7cccc;
 //}
 .table-container {
-  position: relative;
+    position: relative;
+    min-height: 200px;
+    max-height: 400px;
+    overflow: auto;
 
-  overflow: auto;
 }
 
 table {

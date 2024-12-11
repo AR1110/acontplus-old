@@ -371,7 +371,7 @@
 
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
-                    cantidad: -dataItemMerge.cantidadStock,
+                    cantidad: dataItemMerge.cantidadStock,
                     idBodega: rowEntity.idBodega,
                     idMedida: rowEntity.idMedida
                 }).then(async responseApi => {

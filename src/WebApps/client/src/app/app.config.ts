@@ -15,7 +15,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { QuillModule } from 'ngx-quill';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
-
+import   accountingProvider from '@accounting/providers'
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -60,5 +60,6 @@ export const appConfig: ApplicationConfig = {
       //  useValue: {appearance: 'outline', subscriptSizing: 'dynamic'}
       useValue: { appearance: 'outline', subscriptSizing: 'dynamic' },
     },
+      ...accountingProvider
   ],
 };

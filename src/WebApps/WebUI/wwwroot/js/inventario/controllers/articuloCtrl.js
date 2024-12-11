@@ -20,6 +20,7 @@
 
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
+            order: "",
             tipo: 1,
             pageSize: 25,
             pageIndex: 1,
