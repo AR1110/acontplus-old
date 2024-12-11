@@ -5,15 +5,20 @@ import {HttpClient} from "@angular/common/http";
 import {ApiResponse} from "@core/models/api-response";
 import {map} from "rxjs";
 import {SubCategoryMapper} from "@accounting/data/repository/sub-category/sub-category.mapper";
+import {SubCategoryRepository} from "@accounting/core/repositories/sub-category.repository";
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class SubCategoryWebRepository {
+export class SubCategoryWebRepository extends SubCategoryRepository{
 
   private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.SUBCATEGORY}`;
   private _http = inject(HttpClient);
+
+  constructor() {
+    super();
+  }
 
   getAll<T>(obj: T) {
     let json = JSON.stringify({
@@ -77,7 +82,7 @@ export class SubCategoryWebRepository {
 
   update<T>(id: number, data: T) {
     return this._http
-      .put(`${this._url}${id}`, data)
+      .put<ApiResponse>(`${this._url}${id}`, data)
   }
 
 }

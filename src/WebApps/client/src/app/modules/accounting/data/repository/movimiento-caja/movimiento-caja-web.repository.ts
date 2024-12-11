@@ -3,7 +3,7 @@ import {PATHS_API} from "@core/constants/global.constants";
 import {ACCOUNTING_PATHS} from "@accounting/core/enums/accounting.constants";
 import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
-import {ApiResponse, isApiResponse} from "@core/models/api-response";
+import {ApiResponse } from "@core/models/api-response";
 import {MovimientoCajaRepository} from "@accounting/core/repositories/movimiento-caja.repository";
 
 @Injectable({

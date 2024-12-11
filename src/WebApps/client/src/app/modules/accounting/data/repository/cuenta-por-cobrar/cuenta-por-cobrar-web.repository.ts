@@ -4,7 +4,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { map } from 'rxjs';
 import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
 import {CuentaPorCobrarRepository} from "@accounting/core/repositories/cuenta-por-cobrar.repository";
-import {groupEstabUtil} from "@core/utils/group-estab.util";
+
 import {CuentaPorCobrarMapper} from "@accounting/data/repository/cuenta-por-cobrar/cuenta-por-cobrar.mapper";
 
 @Injectable({
