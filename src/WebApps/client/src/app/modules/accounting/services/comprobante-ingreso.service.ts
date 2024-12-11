@@ -55,36 +55,7 @@ export class ComprobanteIngresoService {
       )
   }
 
-  getDataFilter(){
-    let json = JSON.stringify({ tipo: 4 })
-    return this.http.get<ApiResponse>(`${this.url}?json=${json}`)
-      .pipe(
-        map(response => {
-          let result = {
-            establecimientos: [] as GroupedEstab[],
-            tiposDoc :[],
-            subEntidadesFinanciera:[],
-            bancos :[]
-          }
-          if(response.code==="0") {
-            return result;
-          }
 
-          const { ptoEmision, tipoDocumento, subEntidadFinanciera, banco } = JSON.parse(response.payload as string);
-
-          result.establecimientos = groupEstabUtil({
-            estabs: ptoEmision,
-            isGroupPuntoEmision: true,
-          });
-
-
-          result.tiposDoc = tipoDocumento;
-          result.subEntidadesFinanciera = subEntidadFinanciera;
-          result.bancos = banco;
-          return result;
-        })
-      )
-  }
 
   post<T>(data: T){
     return this.http.post(`${this.url}Insert`, {data})

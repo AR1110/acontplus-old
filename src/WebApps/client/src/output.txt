@@ -263,7 +263,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  ├── services
 |  |  |  |  ├── accounting-movement.service.ts
 |  |  |  |  ├── anticipo.service.ts
-|  |  |  |  ├── bank.service.ts
 |  |  |  |  ├── cashbox.service.ts
 |  |  |  |  ├── category.service.ts
 |  |  |  |  ├── comprobante-ingreso-open-modal.service.ts

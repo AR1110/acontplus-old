@@ -14,9 +14,7 @@ import { MultiplesPaymentType, PaymentData, PaymentDetail, PaymentHistory } from
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { DatePipe } from '@angular/common';
-import { comprobanteIngresoAdapter } from '@accounting/data/repository/comprobante-ingreso/comprobante-ingreso.adapter';
-import { ComprobanteIngresoService } from '@accounting/services/comprobante-ingreso.service';
-import { isApiResponse } from '@core/models/api-response';
+import {ComprobanteIngresoUsecase} from "@accounting/core/usecases/comprobante-ingreso.usecase";
 
 @Component({
     selector: 'app-comprobante-ingreso-lote-modal',
@@ -46,8 +44,9 @@ export class ComprobanteIngresoLoteModalComponent {
   modal = inject(NgbActiveModal);
   modalSvc = inject(ModalService);
   cuentaPorCobrarSvc = inject(CuentaPorCobrarService)
-  comprobanteIngresoSvc = inject(ComprobanteIngresoService)
   tS = inject(ToasterService)
+  private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUsecase);
+
 
 
   columnsToDisplay = ['expand', 'tipoDoc', 'serieComprobante', 'identificacionComprador', 'razonSocialComprador', 'total'];
@@ -444,12 +443,11 @@ export class ComprobanteIngresoLoteModalComponent {
           }
 
 
-          let params = comprobanteIngresoAdapter.to(data);
+          // let params = comprobanteIngresoAdapter.to(data);
 
 
-          this.comprobanteIngresoSvc.post(params).subscribe( (response) => {
+          this._comprobanteIngresoUseCase.create(data).subscribe( (response) => {
 
-              if (isApiResponse(response)) {
                 if (response.code === "0") {
                   this.tS.toastr({
                     type: 'warning',
@@ -463,7 +461,6 @@ export class ComprobanteIngresoLoteModalComponent {
                   })
                   this.modal.close(response)
                 }
-              }
           })
         }
       })
