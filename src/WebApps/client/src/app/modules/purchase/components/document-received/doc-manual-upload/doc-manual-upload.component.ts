@@ -10,13 +10,13 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { SubCategorySelectHtmlOnly } from '@accounting/models/subcategory';
+import { SubCategorySelectHtmlOnly } from '@accounting/core/domain/subcategory';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocumentReceivedService } from '@purchase/services/document-received.service';
-import { SubcategoryService } from '@accounting/services/subcategory.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import {SubCategoryUsecase} from "@accounting/core/usecases/sub-category.usecase";
 
 @Component({
   selector: 'app-doc-manual-upload',
@@ -55,7 +55,9 @@ export class DocManualUploadComponent {
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject(MatDialogRef<DocManualUploadComponent>);
   private readonly _docReceivedService = inject(DocumentReceivedService);
-  private readonly _subcategoryService = inject(SubcategoryService);
+
+  private _subCategoryUseCase = inject(SubCategoryUsecase)
+
   private readonly _tS = inject(ToasterService);
 
   get claveAccesoDocs() {
@@ -108,8 +110,8 @@ export class DocManualUploadComponent {
   }
 
   ngOnInit() {
-    this._subcategoryService.get({ tipo: 1 }).subscribe((response) => {
-      this.subcategories = response.subcategories;
+    this._subCategoryUseCase.getAll({  }).subscribe((response) => {
+      this.subcategories = response;
     });
   }
 

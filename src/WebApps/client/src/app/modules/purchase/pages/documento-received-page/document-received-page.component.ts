@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { Subcategory } from '@accounting/models/subcategory';
+import { Subcategory } from '@accounting/core/domain/subcategory';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
 import { MatIconButton } from '@angular/material/button';
 import { ToasterService } from '@core/services/toaster.service';
@@ -27,8 +27,9 @@ import { RetencionHtmlComponent } from '@billing/components/documents/retencion-
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { InvoiceHtmlComponent } from '@billing/components/documents/invoice-html/invoice-html.component';
 import { CreditNoteHtmlComponent } from '@billing/components/documents/credit-note-html/credit-note-html.component';
-import { SubcategoryService } from '@accounting/services/subcategory.service';
+
 import { DialogService } from '@core/services/dialog.service';
+import {SubCategoryUsecase} from "@accounting/core/usecases/sub-category.usecase";
 
 @Component({
   selector: 'app-documento-received-page',
@@ -88,7 +89,8 @@ export class DocumentReceivedPageComponent {
   private readonly _documentReceivedService = inject(DocumentReceivedService);
   private readonly _dialogService = inject(DialogService);
   private readonly _sharedService = inject(SharedService);
-  private readonly _subcategoryService = inject(SubcategoryService);
+  private _subCategoryUseCase = inject(SubCategoryUsecase)
+
   private readonly _tS = inject(ToasterService);
 
   async alertEstabSelected() {
@@ -186,8 +188,8 @@ export class DocumentReceivedPageComponent {
   async openModalManualUpload() {
     if (!(await this.alertEstabSelected())) return;
 
-    this._subcategoryService.get({ tipo: 1 }).subscribe((response) => {
-      this.subcategories = response.subcategories;
+    this._subCategoryUseCase.getAll({}).subscribe((response) => {
+      this.subcategories = response;
       if (this.subcategories.length > 0) {
         const dialogRef = this._dialogService.open(DocManualUploadComponent, {
           size: 'lg',

@@ -5,7 +5,7 @@ import {
   DOC_TYPE,
   PATHS_API,
 } from '@core/constants/global.constants';
-import { ACCOUNTING_PATHS } from '@modules/accounting/enums/accounting.constants';
+import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
 import { isApiResponse } from '@core/models/api-response';
 import {
   GroupedEstab,
@@ -19,7 +19,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { Subcategory } from '@modules/accounting/models/subcategory';
+import { Subcategory } from '@accounting/core/domain/subcategory';
 import { SupplierSearchComponent } from '@modules/customer/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 
@@ -62,10 +62,9 @@ export class ReportsPageComponent {
     this.initialed();
   }
 
-  onSupplierSelected<T extends { data: any }>($event: T) {
-    const { data } = $event;
-    this.dataSearch.supplierName = data.razonSocial;
-    this.dataSearch.idProveedor = data.idProveedor;
+  onSupplierSelected  ($event: any) {
+    this.dataSearch.supplierName = $event.name;
+    this.dataSearch.idProveedor = $event.idProveedor;
   }
 
   supplierResultEmptyInput($event: any) {

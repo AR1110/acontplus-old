@@ -20,7 +20,7 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 
 import Swal from 'sweetalert2';
 import { InvoiceAdapter } from '@modules/billing/adapters/invoice/invoice.adapter';
-import { TiempoCredito } from '@modules/accounting/interfaces/tiempo-credito.interface';
+import { TiempoCredito } from '@accounting/core/domain/tiempo-credito.interface';
 
 @Component({
     selector: 'app-convert-doc-modal',

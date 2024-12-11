@@ -1,3 +1,8 @@
+
+<div class="c-mat-table-container">
+
+
+
 <div class="table-container small-table">
   <table
     #sort="matSort"
@@ -146,4 +151,19 @@
     <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
     } }
   </table>
+</div>
+
+
+  @if(withPagination() && pagination() ){
+    <mat-paginator #paginator
+                   (page)="handlePageEvent($event)"
+                   [length]="pagination()?.totalRecords"
+                   [pageSize]="pagination()?.pageSize"
+                   [pageSizeOptions]="pagination()?.pageSizeOptions??[]"
+                   [showFirstLastButtons]="true"
+                   [pageIndex]="pagination()?.pageIndex"
+                   aria-label="Select page">
+    </mat-paginator>
+  }
+
 </div>

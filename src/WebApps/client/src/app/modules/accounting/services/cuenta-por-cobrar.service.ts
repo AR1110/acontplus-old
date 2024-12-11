@@ -4,7 +4,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { map } from 'rxjs';
 
-import { ACCOUNTING_PATHS } from '../enums/accounting.constants';
+import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
 
 @Injectable({
   providedIn: 'root',

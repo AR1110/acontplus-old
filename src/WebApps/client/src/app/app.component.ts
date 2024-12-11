@@ -62,7 +62,7 @@ export class AppComponent implements OnInit {
     });
 
     this.route.queryParams.subscribe((params) => {
-      console.log(params)
+
       let { token, route, permission: dataPermission, userRoleData } = params;
 
       console.log(route);
@@ -78,7 +78,6 @@ export class AppComponent implements OnInit {
 
           let permission = JSON.parse(dataPermission);
           let userRoleData = JSON.parse(getUserRoleData);
-          console.log(permission)
 
           let instancePermission = new UserPermission();
           this.userRoleState.setState({
@@ -109,7 +108,6 @@ export class AppComponent implements OnInit {
           localStorage.removeItem('access_token');
         }
         let route_page = getEnumValueByKey(GlobalRoutes, route);
-        console.log(route_page)
 
         localStorage.setItem('access_token', token);
         self.router.navigate(['/', ...route_page.split('/')]);
