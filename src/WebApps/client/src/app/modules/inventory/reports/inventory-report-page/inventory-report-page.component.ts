@@ -61,10 +61,10 @@ const imports = [
 ]
 
 @Component({
-    selector: 'app-inventory-report-page',
-    imports ,
-    templateUrl: './inventory-report-page.component.html',
-    styles: `
+  selector: 'app-inventory-report-page',
+  imports,
+  templateUrl: './inventory-report-page.component.html',
+  styles: `
 
     .mat-mdc-tab-body-content{
       overflow: hidden;
@@ -105,6 +105,7 @@ export class InventoryReportPageComponent {
     toDate: formatDateToString(new Date()),
     idMarca: 0,
     ckFechaCaducidad: false,
+    ckFechaModificaccion: true,
     byTipoReporte: 0,
     expiredStatusCode: 'VI',
     tipoReporteStock: INVENTORY_CODE_REPORT.STOCK_VALORACION,
@@ -255,7 +256,7 @@ export class InventoryReportPageComponent {
     return fecha + ' ' + hora;
   }
 
-  private getSelectedTab (){
+  private getSelectedTab() {
     return (this.selected.value || 0) + 1
   }
 
@@ -404,7 +405,7 @@ export class InventoryReportPageComponent {
     return null;
   }
 
-  private getDataParamsConsumoDiario(){
+  private getDataParamsConsumoDiario() {
     let idSubFamilia = this.dataSearch.checkboxSubCategoryFilter ? isValidField(this.dataSearch.idSubFamilia) : null;
     let numeroIdentificacion = this.dataSearch.checkboxCompanyCustomer ? isValidField(this.dataSearch.numeroIdentificacion) : null
 
@@ -544,7 +545,11 @@ export class InventoryReportPageComponent {
         stockStatusCode: isValidField(this.dataSearch.stockStatusCode),
         idTarifa: getValidId(this.dataSearch.idTarifa),
         idMarca: isValidField(this.dataSearch.idMarca),
-        userRoleId: this.authSvc.getUserRoleId()
+        userRoleId: this.authSvc.getUserRoleId(),
+        ckFechaModificaccion: this.dataSearch.ckFechaModificaccion,
+        fechaInicio: this.dataSearch.fromDate,
+        fechaFin: this.dataSearch.toDate,
+
       }
       const parameters = {
         reportParams: JSON.stringify({
@@ -656,8 +661,8 @@ export class InventoryReportPageComponent {
 
 
 
-  async askToSendMail(){
-    let {isConfirmed} = await Swal.fire({
+  async askToSendMail() {
+    let { isConfirmed } = await Swal.fire({
       icon: 'warning',
       html: '¿Estás seguro de enviar el reporte por correo electrónico de la empresa?',
       confirmButtonText: 'Si',
@@ -667,39 +672,39 @@ export class InventoryReportPageComponent {
     })
 
 
-    if(!isConfirmed) return
+    if (!isConfirmed) return
 
-     const params = {
-        subject: 'Reporte Consumo Diario',
-        params: {
-          hasFile: true,
-          isReport: "SI",
-          reportParams: {
-            hasParams: false,
-            codigo: this.dataSearch.checkboxAgruparArticulo ? INVENTORY_CODE_REPORT.CDAA : INVENTORY_CODE_REPORT.CDA,
-            format: FORMAT_REPORT.PDF
-          },
-          spParams:  this.getDataParamsConsumoDiario(),
-        //  withTableNames: true,
+    const params = {
+      subject: 'Reporte Consumo Diario',
+      params: {
+        hasFile: true,
+        isReport: "SI",
+        reportParams: {
+          hasParams: false,
+          codigo: this.dataSearch.checkboxAgruparArticulo ? INVENTORY_CODE_REPORT.CDAA : INVENTORY_CODE_REPORT.CDA,
+          format: FORMAT_REPORT.PDF
         },
+        spParams: this.getDataParamsConsumoDiario(),
+        //  withTableNames: true,
+      },
 
+    }
+
+
+    this.appNotifiSvc.post(params).subscribe((response) => {
+      if (response.code === "0") {
+        this.tS.toastr({
+          type: 'warning',
+          message: response.message
+        })
       }
-
-
-      this.appNotifiSvc.post(params).subscribe( (response) =>{
-        if(response.code==="0"){
-          this.tS.toastr({
-            type: 'warning',
-            message: response.message
-          })
-        }
-        if(response.code==="1"){
-          this.tS.toastr({
-            type: 'success',
-            message: response.message
-          })
-        }
-      })
+      if (response.code === "1") {
+        this.tS.toastr({
+          type: 'success',
+          message: response.message
+        })
+      }
+    })
 
   }
 
