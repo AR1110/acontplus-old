@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { ApiResponse } from '@core/models/api-response';
 
-import { INVENTORY_PATHS } from '../enums/inventory.enum';
+import { INVENTORY_PATHS } from '@inventory/core/enums/inventory.enum';
 
 @Injectable({
   providedIn: 'root'

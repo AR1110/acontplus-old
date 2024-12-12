@@ -8,9 +8,11 @@ import {movimientoCajaProvider} from "@accounting/providers/movimiento-caja.prov
 import {anticipoProvider} from "@accounting/providers/anticipo.provider";
 import {cuentaPorCobrarProvider} from "@accounting/providers/cuenta-por-cobrar.provider";
 import {controlCajaProvider} from "@accounting/providers/control-caja.provider";
+import {resumenContableProvider} from "@accounting/providers/resumen-contable.provider";
+import {categoryProvider} from "@accounting/providers/category.provider";
 
 
-export default  [
+export const accountingProvider = [
   comprobanteIngresoProvider,
   comprobanteEgresoProvider,
   cuentaPorPagarProvider,
@@ -20,5 +22,7 @@ export default  [
   movimientoCajaProvider,
   anticipoProvider,
   cuentaPorCobrarProvider,
-  controlCajaProvider
+  controlCajaProvider,
+  resumenContableProvider,
+  categoryProvider
 ]

@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
 import { groupEstabUtil } from "@core/utils/group-estab.util";
-import { INVENTORY_PATHS } from "@modules/inventory/enums/inventory.enum";
+import { INVENTORY_PATHS } from "@inventory/core/enums/inventory.enum";
 import { map } from "rxjs";
 
 @Injectable({

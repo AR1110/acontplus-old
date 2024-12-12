@@ -6,14 +6,14 @@ import { SupplierAccountsComponent } from '@accounting/ui/supplier-accounts/supp
 import { SubEntidadFinancieraPageComponent } from '@accounting/ui/sub-entidad-financiera/sub-entidad-financiera-page.component';
 import { CuentaPorCobrarComponent } from '@accounting/ui/cuenta-por-cobrar/cuenta-por-cobrar.component';
 import { ReporteCobrosComponent } from '@accounting/ui/reporte-cobros/reporte-cobros.component';
-import { CategoryPageComponent } from '@accounting/ui/category-page/category-page.component';
-import { SubcategoryPageComponent } from '@accounting/ui/subcategory-page/subcategory-page.component';
-import { MovimientoCajaReportPageComponent } from '@accounting/ui/movimiento-caja-report-page/movimiento-caja-report-page.component';
+import { CategoryComponent } from '@accounting/ui/category/category.component';
+import { SubcategoryComponent } from '@accounting/ui/subcategory/subcategory.component';
+import { MovimientoCajaReportComponent } from '@accounting/ui/movimiento-caja-report/movimiento-caja-report.component';
 
  import { CuentaPorPagarComponent } from '@accounting/ui/cuenta-por-pagar/cuenta-por-pagar.component';
 import {
-  AccountingMovementPageComponent
-} from "@accounting/ui/accounting-movement-page/accounting-movement-page.component";
+  ResumenContableComponent
+} from "@accounting/ui/resumen-contable/resumen-contable.component";
 import {CarteraClienteComponent} from "@accounting/ui/cartera-cliente/cartera-cliente.component";
 
 export const routes: Routes = [
@@ -75,17 +75,17 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'category-page',
+    path: 'category',
     title: 'Categorías',
-    component: CategoryPageComponent,
+    component: CategoryComponent,
     data: {
       breadcrumb: 'Categorías',
     },
   },
   {
-    path: 'subcategory-page',
+    path: 'subcategory',
     title: 'Subcategorías',
-    component: SubcategoryPageComponent,
+    component: SubcategoryComponent,
     data: {
       breadcrumb: 'Subcategorías',
     },
@@ -93,7 +93,7 @@ export const routes: Routes = [
   {
     path: 'movimiento-caja-report',
     title: 'Movimiento Caja Reporte',
-    component: MovimientoCajaReportPageComponent,
+    component: MovimientoCajaReportComponent,
     data: {
       breadcrumb: 'Movimiento Caja Reporte',
     },
@@ -108,9 +108,9 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'accounting-movement',
+    path: 'resumen-contable',
     title: 'Resumen Contable',
-    component: AccountingMovementPageComponent,
+    component: ResumenContableComponent,
     data: {
       breadcrumb: 'Resumen Contable',
     },
