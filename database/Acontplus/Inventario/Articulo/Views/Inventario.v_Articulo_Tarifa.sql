@@ -17,6 +17,7 @@ CREATE OR ALTER VIEW Inventario.v_Articulo_Tarifa WITH SCHEMABINDING AS (
 		  ,ar.estado
 		  ,ar.caducidad
 		  ,ar.fechaCaducidad
+          ,ar.UpdateAt
 		  ,CASE WHEN ar.caducidad = 1 THEN DATEDIFF(DAY,ar.fechaCaducidad,GETDATE()) ELSE 0 END as diasCaducidad
 		  ,sf.descripcion as subFamilia
 		  ,ta.descripcion as tarifa    

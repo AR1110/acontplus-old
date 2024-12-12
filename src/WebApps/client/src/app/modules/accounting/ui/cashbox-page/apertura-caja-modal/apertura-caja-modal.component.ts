@@ -1,11 +1,11 @@
 import { Component, Input, inject } from '@angular/core';
 import {FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { isApiResponse } from '@core/models/api-response';
+
 import { ToasterService } from '@core/services/toaster.service';
-import { ControlCajaService } from '@accounting/services/control-caja.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.interface";
+import {ControlCajaUsecase} from "@accounting/core/usecases/control-caja.usecase";
 
 @Component({
     selector: 'app-apertura-caja-modal',
@@ -18,7 +18,7 @@ import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.inte
 })
 export class AperturaCajaModalComponent {
   private activeModal = inject(NgbActiveModal);
-  private controlCajaSvc = inject(ControlCajaService)
+  private _controlCajaUseCase = inject(ControlCajaUsecase)
   private tS = inject(ToasterService);
 
   @Input() params = {
@@ -38,7 +38,7 @@ export class AperturaCajaModalComponent {
     this.dataForm.get('idCaja')?.setValue(this.params.idCaja)
 
 
-    this.controlCajaSvc.getDataForm().subscribe(  (response) => {
+    this._controlCajaUseCase.getDataForm().subscribe(  (response) => {
 
         let { formaPagos } = response as { formaPagos: any }
         this.entidadesFinanciera = formaPagos;
@@ -65,8 +65,8 @@ export class AperturaCajaModalComponent {
        }
 
       if (data.idCaja && data.idCaja > 0) {
-        this.controlCajaSvc.post(data).subscribe( (response) => {
-            if (isApiResponse(response)) {
+        this._controlCajaUseCase.post(data).subscribe( (response) => {
+
               if (response.code === "0") {
                 this.tS.toastr({
                   type: 'warning',
@@ -80,7 +80,6 @@ export class AperturaCajaModalComponent {
                 })
                 this.activeModal.close(response)
               }
-            }
         })
       }
     } catch (error) {

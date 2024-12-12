@@ -1,37 +1,220 @@
 import { Component, inject, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
- import { finalize, Observable, of } from 'rxjs';
-import {GetComprobanteIngresoUsecase} from "@accounting/core/usecases/get-comprobante-ingreso.usecase";
+ import { finalize  } from 'rxjs';
+import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
+import {MatCardModule} from "@angular/material/card";
+import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
+import {MatPagination} from "@shared/models/pagination.model";
+import {PageEvent} from "@angular/material/paginator";
+import {ComprobanteIngresoUsecase} from "@accounting/core/usecases/comprobante-ingreso.usecase";
+import {EstablecimientoSelectHtmlOnly} from "@core/models/estab.model";
+import {ComprobanteIngreso} from "@accounting/core/domain/comp-ingreso.model";
+import {formatDateToString} from "@core/utils/date.util";
+import {SharedService} from "@core/services/shared.service";
+import {ToasterService} from "@core/services/toaster.service";
+import {isValidField} from "@core/utils/utils";
 
 @Component({
   selector: 'app-comprobante-ingreso',
   imports: [
-    BreadcrumbComponent
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    BreadcrumbComponent,
+    MatDynamicTableComponent
   ],
   templateUrl: './comprobante-ingreso.component.html',
   styles: ``
 })
 export class ComprobanteIngresoComponent {
 
-  _getComprobanteIngresoUseCase = inject(GetComprobanteIngresoUsecase);
+  private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUsecase);
 
-  data$: Observable<any[]> = of([]);
   loading = signal(false)
-  ngOnInit(){
+  pagination = signal(new MatPagination());
+
+  columnsDefs: ColumnDefinition[] = [
+
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'nroDoc', label: 'Nro. Doc', type: 'string' },
+    { key: 'fechaRegistro', label: 'Fecha Registro', type: 'string' },
+    { key: 'nroIdentificacion', label: 'Nro. Identificación', type: 'string' },
+    { key: 'nomCliente', label: 'Cliente', type: 'string' },
+    { key: 'total', label: 'Total', type: 'string' },
+    { key: 'abono', label: 'Abono', type: 'string' },
+    { key: 'cambio', label: 'Cambio', type: 'string' },
+    { key: 'nomEstado', label: 'Estado', type: 'string' },
+    { key: 'nomUsuario', label: 'Usuario', type: 'string' },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+  establecimientos: Array<EstablecimientoSelectHtmlOnly> = [];
+  comprobantesIngreso: Array<ComprobanteIngreso> = [];
+  dataSearch = {
+    pageIndex: 1,
+    pageSize: 25,
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
+    codEstab: '',
+    totalRecords: 0,
+    maxSize: 5,
+    byTipoPersona: '',
+    identificacionComprador: null,
+    byEstado: '',
+  };
+  moreSearchOptions = false;
+  isCustomerSearchSimple = true;
+  companyCustomerSearchName = '';
+  recordsQuantity = [25, 50, 100];
+  tiposPersona = [
+    { codigo: 1, descripcion: 'Cliente' },
+    { codigo: 2, descripcion: 'Empleado' },
+  ];
+  disabledTempInputPersona = false;
+  showCliente = false;
+  showEmpleado = false;
+  isSearchEmployeeSimple = true;
+  private sharedSvc = inject(SharedService);
+  private tS = inject(ToasterService);
+
+
+  refresh(){
+    this.getComprobantesIngreso()
+  }
+  getComprobantesIngreso() {
+    if(this.loading()) return;
+
+    let checkBoxEstado = typeof this.dataSearch.byEstado === 'number';
+    let checkBoxPersona = typeof this.dataSearch.byTipoPersona === 'number';
+    const params = {
+      pageIndex: this.dataSearch.pageIndex,
+      pageSize: this.dataSearch.pageSize,
+      fechaInicio: this.dataSearch.fromDate,
+      fechaFin: this.dataSearch.toDate,
+      codEstab: isValidField(this.dataSearch.codEstab),
+      checkBoxEstado: checkBoxEstado,
+      byEstado: isValidField(this.dataSearch.byEstado),
+      checkBoxPersona,
+      nroIdentificacion: isValidField(this.dataSearch.identificacionComprador),
+    };
+    this.comprobantesIngreso = [];
 
     this.loading.set(true)
-    this.data$ = this._getComprobanteIngresoUseCase.getAll({estadoId: 0})
-
-    this.data$
-    .pipe(
-      finalize(()=>{
-        console.log('finalizando.....')
-        this.loading.set(false)
-      })
-    )
-    .subscribe(response=>{
-      console.log(response)
-    })
+    this._comprobanteIngresoUseCase.getAll(params)
+      .pipe(
+        finalize(()=>this.loading.set(false))
+      )
+      .subscribe((response) => {
+      this.comprobantesIngreso = response.data;
+    });
   }
+
+  ngOnInit() {
+    this.sharedSvc.getEstabAsign().subscribe((establecimientos) => {
+      this.establecimientos =
+        establecimientos as Array<EstablecimientoSelectHtmlOnly>;
+      if (this.establecimientos.length > 0) {
+        let dataEstab = this.establecimientos.find(
+          (estab) => estab.predeterminado,
+        );
+        this.dataSearch.codEstab = dataEstab?.codEstab || '';
+        this.getComprobantesIngreso();
+      }
+    });
+  }
+
+  onDateRangeSelection(range: { from: string; to: string }) {
+    this.dataSearch.fromDate = range.from;
+    this.dataSearch.toDate = range.to;
+    this.getComprobantesIngreso();
+  }
+
+  pageChanged(): void {
+    this.getComprobantesIngreso();
+  }
+
+  changePageSize(): void {
+    this.dataSearch.pageIndex = 1;
+    this.getComprobantesIngreso();
+  }
+
+  onClickBtnMore() {
+    this.moreSearchOptions = !this.moreSearchOptions;
+  }
+
+  onChangePersona() {
+    this.showCliente = false;
+    this.showEmpleado = false;
+    this.dataSearch.identificacionComprador = null;
+    this.companyCustomerSearchName = '';
+    if (
+      typeof this.dataSearch.byTipoPersona === 'number' &&
+      this.dataSearch.byTipoPersona === 1
+    ) {
+      this.showCliente = true;
+      this.showEmpleado = false;
+    }
+    if (
+      typeof this.dataSearch.byTipoPersona === 'number' &&
+      this.dataSearch.byTipoPersona === 2
+    ) {
+      this.showCliente = false;
+      this.showEmpleado = true;
+    }
+  }
+
+  onCustomerSelected<T extends { data: any }>($event: T) {
+    let { data } = $event;
+    this.dataSearch.identificacionComprador = data.identificacionComprador;
+    this.companyCustomerSearchName = data.razonSocialComprador;
+  }
+
+  resultCustomerEmptyInput($event: any) {
+    this.dataSearch.identificacionComprador = null;
+    this.companyCustomerSearchName = '';
+  }
+
+  filterValidation() {
+    if (typeof this.dataSearch.byTipoPersona === 'number') {
+      if (!isValidField(this.dataSearch.identificacionComprador)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Seleccione el cliente o el empleado',
+        });
+        return;
+      }
+    }
+
+    this.getComprobantesIngreso();
+  }
+
+  onEmployeeSelected<T extends { data: any }>($event: T) {
+    const { data } = $event;
+    this.dataSearch.identificacionComprador = data.nroIdentificacion;
+    this.companyCustomerSearchName = data.nombreCompleto;
+  }
+
+  employeeResultEmptyInput($event: any) {
+    this.dataSearch.identificacionComprador = null;
+    this.companyCustomerSearchName = '';
+  }
+
+  sendMail() {
+    this.sharedSvc.openModalSendMail({});
+  }
+
+  handlePageEvent(e: PageEvent) {
+    this.pagination.update((pag) => {
+      return {
+        ...pag,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
+      };
+    });
+    this.refresh();
+  }
+
 
 }
