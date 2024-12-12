@@ -5,7 +5,7 @@ import { map } from 'rxjs';
 import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
 import {CuentaPorCobrarRepository} from "@accounting/core/repositories/cuenta-por-cobrar.repository";
 
-import {CuentaPorCobrarMapper} from "@accounting/data/repository/cuenta-por-cobrar/cuenta-por-cobrar.mapper";
+import {CuentaPorCobrarMapper} from "@accounting/data/cuenta-por-cobrar/cuenta-por-cobrar.mapper";
 
 @Injectable({
   providedIn: 'root',

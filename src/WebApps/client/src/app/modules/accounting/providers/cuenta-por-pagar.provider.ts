@@ -2,7 +2,7 @@ import {ClassProvider} from "@angular/core";
 import {CuentaPorPagarRepository} from "@accounting/core/repositories/cuenta-por-pagar.repository";
 import {
   CuentaPorPagarWebRepository
-} from "@accounting/data/repository/cuenta-por-pagar/cuenta-por-pagar-web.repository";
+} from "@accounting/data/cuenta-por-pagar/cuenta-por-pagar-web.repository";
 
 
 export const cuentaPorPagarProvider:ClassProvider = {

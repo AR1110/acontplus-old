@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-  selector: 'app-filtro-control-caja-report-modal',
+  selector: 'app-filtro-control-caja-modal-report-modal',
   imports: [FormsModule, FontAwesomeModule, NgbTimepickerModule],
   templateUrl: './filtro-control-caja-report-modal.component.html',
 })

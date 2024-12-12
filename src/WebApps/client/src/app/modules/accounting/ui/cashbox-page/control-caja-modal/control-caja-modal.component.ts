@@ -12,7 +12,6 @@ import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
 import { ControlCaja } from '@accounting/core/domain/cashbox.model';
-import { ControlCajaService } from '@accounting/services/control-caja.service';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
 import {
   NgbActiveModal,
@@ -26,29 +25,30 @@ import {
 import Swal from 'sweetalert2';
 
 import { CierreCajaModalComponent } from '@accounting/ui/cashbox-page/cierre-caja-modal/cierre-caja-modal.component';
-import { FiltroControlCajaReportModal } from '@accounting/ui/cashbox-page/movimiento-caja-modal/components/filtro-control-caja-report-modal/filtro-control-caja-report-modal.component';
-import { FiltroDetalleCajaReportModal } from '@accounting/ui/cashbox-page/movimiento-caja-modal/components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal.component';
+import { FiltroControlCajaReportModal } from '@accounting/ui/cashbox-page/control-caja-modal/components/filtro-control-caja-report-modal/filtro-control-caja-report-modal.component';
+import { FiltroDetalleCajaReportModal } from '@accounting/ui/cashbox-page/control-caja-modal/components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { SendMailModalDirective } from '@shared/directives/send-mail-modal.directive';
-import { DetalleArqueoControlCajaModalComponent } from '@accounting/ui/cashbox-page/movimiento-caja-modal/components/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
+import { DetalleArqueoControlCajaModalComponent } from '@accounting/ui/cashbox-page/control-caja-modal/components/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { AuthService } from '@modules/auth/services/auth.service';
+import {ControlCajaUsecase} from "@accounting/core/usecases/control-caja.usecase";
 
 @Component({
-    selector: 'app-movimiento-caja-modal',
-    imports: [
-        FormsModule,
-        FontAwesomeModule,
-        NgbPagination,
-        NgbDropdownModule,
-        DateRangeSelectionComponent,
-        SendMailModalDirective,
-    ],
-    templateUrl: './movimiento-caja-modal.component.html',
-    encapsulation: ViewEncapsulation.None
+  selector: 'app-control-caja-modal',
+  imports: [
+    FormsModule,
+    FontAwesomeModule,
+    NgbPagination,
+    NgbDropdownModule,
+    DateRangeSelectionComponent,
+    SendMailModalDirective,
+  ],
+  templateUrl: './control-caja-modal.component.html',
+  encapsulation: ViewEncapsulation.None
 })
-export class MovimientoCajaModalComponent {
+export class ControlCajaModalComponent {
   @Input('params') params = {
     idCaja: 0,
     idUsuario: 0,
@@ -89,7 +89,7 @@ export class MovimientoCajaModalComponent {
   dataMovientoControCaja = {} as ControlCaja;
   BUTTON_TRANSACTION_PENDING = 'BUTTON_TRANSACTION_PENDING';
   private activeModal = inject(NgbActiveModal);
-  private controlCajaSvc = inject(ControlCajaService);
+  private _controlCajaUseCase = inject(ControlCajaUsecase)
   private modalSvc = inject(ModalService);
   private userPermissionSvc = inject(UserPermissionService);
   private sharedSvc = inject(SharedService);
@@ -110,7 +110,7 @@ export class MovimientoCajaModalComponent {
         ? null
         : this.dataSearch.statusMovement,
     };
-    this.controlCajaSvc.getAll(dataSearch).subscribe({
+    this._controlCajaUseCase.getAll(dataSearch).subscribe({
       next: (response) => {
         const { movimientos } = response as { movimientos: Array<ControlCaja> };
 
@@ -134,7 +134,7 @@ export class MovimientoCajaModalComponent {
         this.dataPermisosCaja = response.cashAccounting;
       });
 
-      this.controlCajaSvc.getDataFilter().subscribe({
+      this._controlCajaUseCase.getDataFilter().subscribe({
         next: (response) => {
           const estados = response.estados;
           const dataEstado = estados.find(

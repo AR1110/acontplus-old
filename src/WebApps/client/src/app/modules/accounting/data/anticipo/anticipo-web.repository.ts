@@ -5,7 +5,7 @@ import {HttpClient} from "@angular/common/http";
 import {ApiResponse } from "@core/models/api-response";
 import {map} from "rxjs";
 import {AnticipoRepository} from "@accounting/core/repositories/anticipo.repository";
-import {AnticipoMapper} from "@accounting/data/repository/anticipo/anticipo.mapper";
+import {AnticipoMapper} from "@accounting/data/anticipo/anticipo.mapper";
 
 
 @Injectable({

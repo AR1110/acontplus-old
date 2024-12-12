@@ -9,13 +9,13 @@ import { hideLoader } from '@core/utils/loader';
 import { stringToDate } from '@core/utils/string-to-date';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ControlCajaService } from '@accounting/services/control-caja.service';
 import {
   NgbActiveModal,
   NgbTimepickerModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.interface";
 import { formatDateToString } from '@core/utils/date.util';
+import {ControlCajaUsecase} from "@accounting/core/usecases/control-caja.usecase";
 
 @Component({
     selector: 'app-filtro-detalle-caja-report-modal',
@@ -47,7 +47,8 @@ export class FiltroDetalleCajaReportModal {
     timePicker: true,
     format: 'YYYY-MM-DD HH:mm',
   };
-  private controlCajaSvc = inject(ControlCajaService);
+  private _controlCajaUseCase = inject(ControlCajaUsecase)
+
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
 
@@ -65,7 +66,7 @@ export class FiltroDetalleCajaReportModal {
     this.dataSearch.toDate = toDate || new Date();
 
     try {
-      this.controlCajaSvc.getDataForm().subscribe({
+      this._controlCajaUseCase.getDataForm().subscribe({
         next: (response) => {
           hideLoader();
           let { formaPagos, tipoDocumento } = response as {

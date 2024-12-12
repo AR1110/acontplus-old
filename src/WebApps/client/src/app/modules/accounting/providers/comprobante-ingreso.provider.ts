@@ -3,7 +3,7 @@ import {ComprobanteIngresoRepository} from "@accounting/core/repositories/compro
 
 import {
   ComprobanteIngresoWebRepository
-} from "@accounting/data/repository/comprobante-ingreso/comprobante-ingreso-web.repository";
+} from "@accounting/data/comprobante-ingreso/comprobante-ingreso-web.repository";
 
 
 export const comprobanteIngresoProvider:ClassProvider = {

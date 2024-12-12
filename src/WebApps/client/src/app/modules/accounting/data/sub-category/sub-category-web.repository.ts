@@ -4,7 +4,7 @@ import {ACCOUNTING_PATHS} from "@accounting/core/enums/accounting.constants";
 import {HttpClient} from "@angular/common/http";
 import {ApiResponse} from "@core/models/api-response";
 import {map} from "rxjs";
-import {SubCategoryMapper} from "@accounting/data/repository/sub-category/sub-category.mapper";
+import {SubCategoryMapper} from "@accounting/data/sub-category/sub-category.mapper";
 import {SubCategoryRepository} from "@accounting/core/repositories/sub-category.repository";
 
 

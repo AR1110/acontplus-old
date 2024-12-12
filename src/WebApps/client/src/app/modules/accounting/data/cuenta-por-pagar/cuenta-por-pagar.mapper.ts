@@ -7,7 +7,7 @@ import { formatDate } from '@core/utils/date.util';
 import {
   CuentaPorPagarCuotaConfig,
   CuentaPorPagarLista,
-} from '../../../core/domain/cuenta-por-pagar.model';
+} from '../../core/domain/cuenta-por-pagar.model';
 
 export class CuentaPorPagarMapper {
   static fromApiDataFilter(response: ApiResponse) {

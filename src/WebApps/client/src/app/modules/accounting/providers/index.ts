@@ -7,6 +7,7 @@ import {subCategoryProvider} from "@accounting/providers/sub-category.provider";
 import {movimientoCajaProvider} from "@accounting/providers/movimiento-caja.provider";
 import {anticipoProvider} from "@accounting/providers/anticipo.provider";
 import {cuentaPorCobrarProvider} from "@accounting/providers/cuenta-por-cobrar.provider";
+import {controlCajaProvider} from "@accounting/providers/control-caja.provider";
 
 
 export default  [
@@ -18,5 +19,6 @@ export default  [
   subCategoryProvider,
   movimientoCajaProvider,
   anticipoProvider,
-  cuentaPorCobrarProvider
+  cuentaPorCobrarProvider,
+  controlCajaProvider
 ]

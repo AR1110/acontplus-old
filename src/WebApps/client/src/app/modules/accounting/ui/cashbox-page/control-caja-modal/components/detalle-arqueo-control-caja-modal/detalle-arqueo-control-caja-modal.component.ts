@@ -1,16 +1,15 @@
 import { Component, inject, Input } from '@angular/core';
-import { ControlCajaService } from '@accounting/services/control-caja.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import * as XLSX from 'xlsx';
 import {
   NgbActiveModal
 } from '@ng-bootstrap/ng-bootstrap';
+import {ControlCajaUsecase} from "@accounting/core/usecases/control-caja.usecase";
 
 @Component({
-    selector: 'app-detalle-arqueo-control-caja-modal',
+    selector: 'app-detalle-arqueo-control-caja-modal-modal',
     imports: [FontAwesomeModule],
     templateUrl: './detalle-arqueo-control-caja-modal.component.html',
-    styles: ``
 })
 export class DetalleArqueoControlCajaModalComponent {
   activeModal = inject(NgbActiveModal);
@@ -19,14 +18,15 @@ export class DetalleArqueoControlCajaModalComponent {
     sortOrder: 'ASC',
   };
   @Input() params = {} as any;
-  private controlCajaSvc = inject(ControlCajaService);
+  private _controlCajaUseCase = inject(ControlCajaUsecase)
+
 
   arqueoCajaDetalle: any[] = [];
   total = 0;
 
   getInfoAdicional() {
     this.arqueoCajaDetalle = []
-    this.controlCajaSvc.getArqueoCaja(this.params.id).subscribe(response => {
+    this._controlCajaUseCase.getArqueoCaja(this.params.id).subscribe(response => {
       this.arqueoCajaDetalle = response.arqueoCajaDetalle || [];
       this.total = this.arqueoCajaDetalle.reduce((acc, current) => acc + current.total, 0)
     })

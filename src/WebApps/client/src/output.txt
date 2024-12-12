@@ -265,7 +265,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  |  ├── cashbox.service.ts
 |  |  |  |  ├── category.service.ts
 |  |  |  |  ├── comprobante-ingreso-open-modal.service.ts
-|  |  |  |  ├── control-caja.service.ts
 |  |  |  |  ├── cuenta-por-cobrar.service.ts
 |  |  |  |  ├── sub-entidad-financiera.service.ts
 |  |  |  |  └── subcategory.service.ts

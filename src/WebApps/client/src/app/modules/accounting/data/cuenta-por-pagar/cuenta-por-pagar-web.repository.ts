@@ -12,7 +12,7 @@ import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
 import {
   CuentaPorPagarCuotaConfig,
   CuentaPorPagarLista,
-} from '../../../core/domain/cuenta-por-pagar.model';
+} from '../../core/domain/cuenta-por-pagar.model';
 import { TiempoCreditoSelectHtmlOnly } from '@accounting/core/domain/tiempo-credito.interface';
 import {CuentaPorPagarRepository} from "@accounting/core/repositories/cuenta-por-pagar.repository";
 

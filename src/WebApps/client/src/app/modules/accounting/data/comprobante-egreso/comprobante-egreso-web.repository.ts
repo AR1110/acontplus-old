@@ -13,7 +13,7 @@ import {BancoSelectOnly} from "@accounting/core/domain/banco.interface";
 import {EstadoPago} from "@accounting/core/domain/estado-pago.interface";
 import {ProvinciaCiudad} from "@shared/models/ciudad.interface";
 import {ApiResponse} from "@core/models/api-response";
-import {ComprobanteEgresoMapper} from "@accounting/data/repository/comprobante-egreso/comprobante-egreso.mapper";
+import {ComprobanteEgresoMapper} from "@accounting/data/comprobante-egreso/comprobante-egreso.mapper";
 
 @Injectable({
   providedIn: 'root'
