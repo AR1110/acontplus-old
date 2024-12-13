@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { DocumentReceivedService } from '@purchase/data/services/document-received.service';
+import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import {
@@ -65,7 +65,7 @@ export class ReceptionReportsComponent {
       descripcion: 'Con Retención',
     },
   ];
-  private docReceivedSvc = inject(DocumentReceivedService);
+  private docReceivedSvc = inject(DocumentReceivedWebRepository);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
 

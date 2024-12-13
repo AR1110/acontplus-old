@@ -18,6 +18,7 @@ import { provideEnvironmentNgxMask } from 'ngx-mask';
 import { accountingProvider } from '@accounting/providers';
 import { inventoryProviders } from '@inventory/providers';
 import {customerMainProviders} from "@customer/providers";
+import {purchaseProviders} from "@purchase/providers";
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -66,5 +67,6 @@ export const appConfig: ApplicationConfig = {
     ...customerMainProviders,
     ...accountingProvider,
     ...inventoryProviders,
+    ...purchaseProviders,
   ],
 };

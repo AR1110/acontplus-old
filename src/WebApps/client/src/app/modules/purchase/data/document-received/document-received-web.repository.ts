@@ -2,22 +2,25 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { PURCHASE_PATHS } from '../../core/enums/purchase.constants';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { map } from 'rxjs';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
-import { DocumentoReceived } from '@purchase/core/domain/document-received.model';
+import { DocumentReceived } from '@purchase/core/domain/document-received.model';
+import { DocumentReceivedRepository } from '@purchase/core/repositories/document-received.repository';
 
 @Injectable({
   providedIn: 'root',
 })
-export class DocumentReceivedService {
-  #url = `${PATHS_API.PURCHASE}${PURCHASE_PATHS.DOCUMENT_RECEIVED}`;
-  #http = inject(HttpClient);
-
+export class DocumentReceivedWebRepository extends DocumentReceivedRepository {
+  private readonly _url = `${PATHS_API.PURCHASE}${PURCHASE_PATHS.DOCUMENT_RECEIVED}`;
+  private readonly _http = inject(HttpClient);
+  constructor() {
+    super();
+  }
   getDataFilter() {
     let query = {
       tipo: 2,
     };
-    return this.#http.get(`${this.#url}?json=${JSON.stringify(query)}`).pipe(
+    return this._http.get(`${this._url}?json=${JSON.stringify(query)}`).pipe(
       map((response) => {
         if (isApiResponse(response)) {
           let mainData = JSON.parse(response.payload as string);
@@ -37,6 +40,7 @@ export class DocumentReceivedService {
         }
         return {
           establecimientos: [],
+          subcategories: [],
           documentTypes: [],
         };
       }),
@@ -44,38 +48,41 @@ export class DocumentReceivedService {
   }
 
   get<T>(params: T) {
-    return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`)
+    return this._http
+      .get<ApiResponse>(`${this._url}?json=${JSON.stringify(params)}`)
       .pipe(
         map((response) => {
           if (response.code !== '1') {
-            return { documents: [] as DocumentoReceived[] };
+            return { documents: [] as DocumentReceived[] };
           }
           const { documentos } = JSON.parse(response.payload as string);
           return {
-            documents: (documentos as DocumentoReceived[]) || [],
+            documents: (documentos as DocumentReceived[]) || [],
           };
         }),
       );
   }
 
   getById(id: number) {
-    return this.#http
-      .get<ApiResponse>(`${this.#url}${id}`)
-      .pipe(map((response) => response));
+    return this._http.get<ApiResponse>(`${this._url}${id}`);
   }
 
-  uploadXml(parameters: any, file: any): Observable<ApiResponse> {
-    return this.#http
-      .post<ApiResponse>(
-        `${this.#url}uploadxml/?json=${JSON.stringify(parameters)}`,
-        file,
-      )
-      .pipe(
-        catchError((error) => {
-          console.error('Error uploading XML:', error);
-          return throwError(() => error);
-        }),
-      );
+  create(data: any) {
+    return this._http.post<ApiResponse>(`${this._url}`, data);
+  }
+
+  delete(id: number) {
+    return this._http.delete<ApiResponse>(`${this._url}${id}`);
+  }
+
+  update(id: number, data: any) {
+    return this._http.put<ApiResponse>(`${this._url}${id}`, data);
+  }
+
+  uploadXml(parameters: any, file: any) {
+    return this._http.post<ApiResponse>(
+      `${this._url}uploadxml/?json=${JSON.stringify(parameters)}`,
+      file,
+    );
   }
 }
