@@ -1,11 +1,11 @@
 
 import { inject, Injectable } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
-import { PURCHASE_PATHS } from "../core/enums/purchase.constants";
+import { PURCHASE_PATHS } from "../enums/purchase.constants";
 import { HttpClient } from "@angular/common/http";
 import { ApiResponse } from "@core/models/api-response";
 import { map, throwError } from "rxjs";
-import { FacturaFisicaLista } from "./factura-fisica.interface";
+import { FacturaFisicaLista } from "../domain/factura-fisica.interface";
 import { FacturaFisicaRepositoryMapper } from "./factura-fisica.repository.mapper";
 import { getNoLoader } from "@core/interceptors/loader.interceptor";
 

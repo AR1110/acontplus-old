@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { ReportsComponent } from '@purchase/ui/reports/reports.component';
 import { ReceptionReportsComponent } from '@purchase/ui/reception-reports/reception-reports.component';
 import { DocumentReceivedComponent } from '@purchase/ui/documento-received/document-received.component';
-import { FacturaFisicaPageComponent } from './factura-fisica/factura-fisica-page.component';
+import { FacturaFisicaComponent } from '@purchase/ui/factura-fisica/factura-fisica.component';
 
 export const routes: Routes = [
   {
@@ -32,7 +32,7 @@ export const routes: Routes = [
   {
     path: 'factura-fisica',
     title: 'Factura Física',
-    component: FacturaFisicaPageComponent,
+    component: FacturaFisicaComponent,
     data: {
       breadcrumb: 'Factura Física',
     },
