@@ -73,11 +73,7 @@
               "node_modules/sweetalert2/src/sweetalert2.scss",
               "node_modules/icheck-bootstrap/icheck-bootstrap.css",
               "src/styles.scss",
-              "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.css",
-              "node_modules/ngx-toastr/toastr.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/assets/template/css/style.css",
-              "src/assets/css/forms.css"
+              "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.css"
             ],
             "scripts": [
               "src/assets/lib/vanilla-daterange/moment.min.js",
