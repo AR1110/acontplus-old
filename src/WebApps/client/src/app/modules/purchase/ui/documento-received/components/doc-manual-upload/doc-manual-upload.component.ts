@@ -14,7 +14,7 @@ import { SubCategorySelectHtmlOnly } from '@accounting/core/domain/subcategory';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { ToasterService } from '@core/services/toaster.service';
-import { DocumentReceivedService } from '@purchase/data/services/document-received.service';
+import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { SubCategoryUsecase } from '@accounting/core/usecases/sub-category.usecase';
 import { ApiResponse } from '@core/models/api-response';
@@ -56,7 +56,7 @@ export class DocManualUploadComponent {
 
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject(MatDialogRef<DocManualUploadComponent>);
-  private readonly _docReceivedService = inject(DocumentReceivedService);
+  private readonly _docReceivedService = inject(DocumentReceivedWebRepository);
 
   private readonly _subCategoryUseCase = inject(SubCategoryUsecase);
 
