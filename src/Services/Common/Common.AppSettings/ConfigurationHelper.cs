@@ -37,7 +37,7 @@ public static class ConfigurationHelper
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             // On macOS, use the user's Library/Application Support folder for dynamic path management
-            sharedFolder = Path.Combine("/Users/macbookpro/Desktop/Development/AcontPlus/AcontPlus/shared");
+            sharedFolder = Path.Combine("/Users/macbookpro/Projects/AcontPlusTeam/AcontPlus/shared");
         }
 
         // Add shared settings JSON file
