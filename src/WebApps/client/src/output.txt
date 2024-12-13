@@ -192,8 +192,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  |  └── turno.model.ts
 |  |  |  ├── pages
 |  |  |  |  ├── accounting-movement-page
-|  |  |  |  |  ├── accounting-movement-page.component.html
-|  |  |  |  |  └── accounting-movement-page.component.ts
+|  |  |  |  |  ├── resumen-contable.component.html
+|  |  |  |  |  └── resumen-contable.component.ts
 |  |  |  |  ├── cashbox-page
 |  |  |  |  |  ├── apertura-caja-modal
 |  |  |  |  |  |  ├── apertura-caja-modal.component.html
@@ -215,8 +215,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  |  |  ├── category-modal
 |  |  |  |  |  |  ├── category-modal.component.html
 |  |  |  |  |  |  └── category-modal.component.ts
-|  |  |  |  |  ├── category-page.component.html
-|  |  |  |  |  └── category-page.component.ts
+|  |  |  |  |  ├── category.component.html
+|  |  |  |  |  └── category.component.ts
 |  |  |  |  ├── cobro-page
 |  |  |  |  |  ├── cobro-page.component.html
 |  |  |  |  |  └── cobro-page.component.ts
@@ -245,14 +245,14 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  |     ├── subcategory-modal
 |  |  |  |     |  ├── subcategory-modal.component.html
 |  |  |  |     |  └── subcategory-modal.component.ts
-|  |  |  |     ├── subcategory-page.component.html
-|  |  |  |     └── subcategory-page.component.ts
+|  |  |  |     ├── subcategory.component.html
+|  |  |  |     └── subcategory.component.ts
 |  |  |  ├── reports
 |  |  |  |  ├── cartera-cliente-page
 |  |  |  |  |  ├── cartera-cliente-page.component.html
 |  |  |  |  ├── movimiento-caja-report-page
-|  |  |  |  |  ├── movimiento-caja-report-page.component.html
-|  |  |  |  |  └── movimiento-caja-report-page.component.ts
+|  |  |  |  |  ├── movimiento-caja-report.component.html
+|  |  |  |  |  └── movimiento-caja-report.component.ts
 |  |  |  |  ├── reporte-cobros
 |  |  |  |  |  ├── reporte-cobros.component.html
 |  |  |  |  |  └── reporte-cobros.component.ts
@@ -260,10 +260,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  |     ├── supplier-accounts.component.html
 |  |  |  |     └── supplier-accounts.component.ts
 |  |  |  ├── services
-|  |  |  |  ├── accounting-movement.service.ts
 |  |  |  |  ├── anticipo.service.ts
 |  |  |  |  ├── cashbox.service.ts
-|  |  |  |  ├── category.service.ts
 |  |  |  |  ├── comprobante-ingreso-open-modal.service.ts
 |  |  |  |  ├── cuenta-por-cobrar.service.ts
 |  |  |  |  ├── sub-entidad-financiera.service.ts
@@ -534,11 +532,11 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  |  |  ├── brand-page.component.html
 |  |  |  |  |  └── brand-page.component.ts
 |  |  |  |  ├── category-page
-|  |  |  |  |  ├── category-page.component.html
-|  |  |  |  |  └── category-page.component.ts
+|  |  |  |  |  ├── category.component.html
+|  |  |  |  |  └── category.component.ts
 |  |  |  |  ├── fracc-product-page
-|  |  |  |  |  ├── fracc-product-page.component.html
-|  |  |  |  |  └── fracc-product-page.component.ts
+|  |  |  |  |  ├── fracc-product.component.html
+|  |  |  |  |  └── fracc-product.component.ts
 |  |  |  |  ├── inv-model-page
 |  |  |  |  |  ├── inv-model-page.component.html
 |  |  |  |  |  └── inv-model-page.component.ts
@@ -552,8 +550,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  |  |  ├── measure-page.component.html
 |  |  |  |  |  └── measure-page.component.ts
 |  |  |  |  ├── sub-category-page
-|  |  |  |  |  ├── sub-category-page.component.html
-|  |  |  |  |  └── sub-category-page.component.ts
+|  |  |  |  |  ├── sub-category.component.html
+|  |  |  |  |  └── sub-category.component.ts
 |  |  |  |  ├── tags-page
 |  |  |  |  |  ├── tags-page.component.html
 |  |  |  |  |  └── tags-page.component.ts
@@ -605,20 +603,15 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  |  |  ├── product-list.directive.ts
 |  |  |  |  |  ├── product-search-popup.directive.ts
 |  |  |  |  |  └── product.directive.ts
-|  |  |  |  ├── open-modal-product.service.ts
 |  |  |  |  ├── product-page
-|  |  |  |  |  ├── product-page.component.html
-|  |  |  |  |  └── product-page.component.ts
-|  |  |  |  ├── product.adapter.ts
-|  |  |  |  ├── product.interface.ts
+|  |  |  |  |  ├── product.component.html
+|  |  |  |  |  └── product.component.ts
 |  |  |  |  ├── product.model.ts
-|  |  |  |  └── product.service.ts
 |  |  |  ├── reports
 |  |  |  |  └── inventory-report-page
-|  |  |  |     ├── inventory-report-page.component.html
-|  |  |  |     └── inventory-report-page.component.ts
+|  |  |  |     ├── inventory-report.component.html
+|  |  |  |     └── inventory-report.component.ts
 |  |  |  ├── services
-|  |  |  |  ├── category.service.ts
 |  |  |  |  ├── ibrand.service.ts
 |  |  |  |  ├── inv-model.service.ts
 |  |  |  |  ├── lot-price.service.ts
@@ -626,7 +619,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  |  ├── measure.service.ts
 |  |  |  |  ├── product-photo.service.ts
 |  |  |  |  ├── stock.service.ts
-|  |  |  |  ├── sub-category.service.ts
 |  |  |  |  ├── subcategory-photo.service.ts
 |  |  |  |  ├── tags.service.ts
 |  |  |  |  ├── tarifa.service.ts
@@ -937,8 +929,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  |  |  ├── category-modal
 |  |  |  |  |  |  ├── category-modal.component.html
 |  |  |  |  |  |  └── category-modal.component.ts
-|  |  |  |  |  ├── category-page.component.html
-|  |  |  |  |  └── category-page.component.ts
+|  |  |  |  |  ├── category.component.html
+|  |  |  |  |  └── category.component.ts
 |  |  |  |  ├── device-page
 |  |  |  |  |  ├── device-customer-modal
 |  |  |  |  |  |  ├── device-customer-modal.component.html
@@ -978,7 +970,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client\src
 |  |  |  |     └── technical-support-page.component.ts
 |  |  |  ├── services
 |  |  |  |  ├── brand.service.ts
-|  |  |  |  ├── category.service.ts
 |  |  |  |  ├── device-spec.service.ts
 |  |  |  |  ├── device.customer.service.ts
 |  |  |  |  ├── device.service.ts

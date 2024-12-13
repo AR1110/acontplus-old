@@ -1,6 +1,6 @@
-import { ConsolidacionBodega } from "@modules/inventory/models/consolidacion-bodega.model"
-import { MedidaProducto } from "@modules/inventory/models/measure.model"
-import { TarifaProducto } from "@modules/inventory/models/tarifa.model"
+import { ConsolidacionBodega } from "@inventory/core/domain/consolidacion-bodega.model"
+import { MedidaProducto } from "@inventory/core/domain/measure.model"
+import { TarifaProducto } from "@inventory/core/domain/tarifa.model"
 
 export interface OrderMaintenance {
   id: number

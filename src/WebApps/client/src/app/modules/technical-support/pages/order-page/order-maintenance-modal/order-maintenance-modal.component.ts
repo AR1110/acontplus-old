@@ -13,12 +13,11 @@ import {pricingCalculateUtil} from '@core/utils/pricing-calculate.util';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {icon} from '@fortawesome/fontawesome-svg-core';
 import {faListAlt, faTrashAlt,} from '@fortawesome/free-regular-svg-icons';
-import {ProductService} from '@inventory/product/product.service';
 import {
   ProductSearchOverlayComponent
-} from '@inventory/product/components/product-search-overlay/product-search-overlay.component';
-import {Tarifa} from '@modules/inventory/models/tarifa.model';
-import {OpenModalProductService} from '@inventory/product/open-modal-product.service';
+} from '@inventory/ui/product/components/product-search-overlay/product-search-overlay.component';
+import {Tarifa} from '@inventory/core/domain/tarifa.model';
+import {OpenModalProductService} from '@inventory/ui/product/services/open-modal-product.service';
 import {getCantidadStock, mergeProductStock,} from '@modules/inventory/utils/product-stock.util';
 import {DecimalSale} from '@modules/sale/shared/models/decimal-sale.model';
 import {orderMaintenanceAdapter} from '@modules/technical-support/adapters/order-maintenance.adapter';
@@ -32,6 +31,7 @@ import {Impuesto} from '@shared/models/impuesto.model';
 import {TarifaImpuesto} from '@shared/models/tarifa-impuesto.model';
 import {SalesDetailCalculationService} from '@shared/services/sales-detail-calculation.service';
 import Swal from 'sweetalert2';
+import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
 
 @Component({
     selector: 'app-order-maintenance-modal',
@@ -62,10 +62,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
     private orderSvc = inject(OrderService);
     private tS = inject(ToasterService);
 
-    private productSvc = inject(ProductService);
     private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
     private openModalProductSvc = inject(OpenModalProductService);
     private orderMaintenanceSvc = inject(OrderMaintenanceService);
+  private _productUseCase = inject(ProductUsecase)
 
     @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
@@ -1063,7 +1063,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
             });
 
             showLoader();
-            this.productSvc
+            this._productUseCase
                 .checkNotificationStock({
                     idArticulo: row.productId,
                     idBodega: this.order.bodegaId,

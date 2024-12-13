@@ -9,7 +9,7 @@ import { CategoryService } from '@modules/technical-support/services/category.se
 import { CategoryModalComponent } from './category-modal/category-modal.component';
 
 @Component({
-    selector: 'app-category-page',
+    selector: 'app-category',
     imports: [BreadcrumbComponent, FontAwesomeModule],
     templateUrl: './category-page.component.html',
     styles: ``

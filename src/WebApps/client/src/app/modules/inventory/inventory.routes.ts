@@ -1,22 +1,22 @@
 import { Route } from "@angular/router";
 
-import { CategoryPageComponent } from "./pages/category-page/category-page.component";
-import { LotPricePageComponent } from "./pages/lot-price-page/lot-price-page.component";
-import { MassiveTaxPageComponent } from "./pages/massive-tax-page/massive-tax-page.component";
-import { MeasurePageComponent } from "./pages/measure-page/measure-page.component";
-import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
-import {InventoryReportPageComponent} from "@inventory/reports/inventory-report-page/inventory-report-page.component";
-import { BrandPageComponent } from "./pages/brand-page/brand-page.component";
-import { InvModelPageComponent } from "./pages/inv-model-page/inv-model-page.component";
-import { TarifaPageComponent } from "./pages/tarifa-page/tarifa-page.component";
-import { TagsPageComponent } from "./pages/tags-page/tags-page.component";
-import { FraccProductPageComponent } from "./pages/fracc-product-page/fracc-product-page.component";
-import {ProductPageComponent} from "@inventory/product/product-page/product-page.component";
+import { CategoryPageComponent } from "@inventory/ui/category-page/category-page.component";
+import { LotPricePageComponent } from "@inventory/ui/lot-price-page/lot-price-page.component";
+import { MassiveTaxPageComponent } from "@inventory/ui/massive-tax-page/massive-tax-page.component";
+import { MeasurePageComponent } from "@inventory/ui/measure-page/measure-page.component";
+import { SubCategoryComponent } from "@inventory/ui/sub-category/sub-category.component";
+import {InventoryReportComponent} from "@inventory/ui/inventory-report/inventory-report.component";
+import { BrandPageComponent } from "@inventory/ui/brand-page/brand-page.component";
+import { InvModelPageComponent } from "@inventory/ui/inv-model-page/inv-model-page.component";
+import { TarifaPageComponent } from "@inventory/ui/tarifa-page/tarifa-page.component";
+import { TagsPageComponent } from "@inventory/ui/tags-page/tags-page.component";
+import { FraccProductPageComponent } from "@inventory/ui/fracc-product-page/fracc-product-page.component";
+import {ProductComponent} from "@inventory/ui/product/product.component";
 
 export const routes: Route[] = [
 
   {
-    path: 'category-page',
+    path: 'category',
     title: 'Categoria',
     component: CategoryPageComponent,
     data: {
@@ -26,7 +26,7 @@ export const routes: Route[] = [
   {
     path: 'subcategory',
     title: 'SubCategoria',
-    component: SubCategoryPageComponent,
+    component: SubCategoryComponent,
     data: {
       breadcrumb: 'Sub Categorias'
     }
@@ -35,7 +35,7 @@ export const routes: Route[] = [
   {
     path: 'product',
     title: 'Productos',
-    component: ProductPageComponent,
+    component: ProductComponent,
     data: {
       breadcrumb: 'Productos'
     },
@@ -108,7 +108,7 @@ export const routes: Route[] = [
   {
     path: 'report',
     title: 'Reporte Inventario',
-    component: InventoryReportPageComponent,
+    component: InventoryReportComponent,
     data: {
       breadcrumb:  'Reporte Inventario'
     }
