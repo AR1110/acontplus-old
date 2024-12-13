@@ -1,6 +1,6 @@
 import { Directive, HostListener, inject, input } from '@angular/core';
 import { DialogService } from '@core/services/dialog.service';
-import { FacturaFisicaDetalleModalComponent } from './components/factura-fisica-detalle-modal/factura-fisica-detalle-modal.component';
+import { FacturaFisicaDetalleModalComponent } from '@purchase/ui/factura-fisica/components/factura-fisica-detalle-modal/factura-fisica-detalle-modal.component';
 
 @Directive({
   selector: '[appFacturaFisicaDetalle]',

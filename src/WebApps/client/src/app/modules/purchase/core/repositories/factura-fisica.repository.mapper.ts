@@ -1,5 +1,5 @@
 import { roundNumber } from '@core/utils/round-number.utils';
-import { FacturaFisicaLista } from './factura-fisica.interface';
+import { FacturaFisicaLista } from '../domain/factura-fisica.interface';
 import { fechaString } from '@core/utils/date.util';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 

@@ -1,7 +1,7 @@
 import { Directive, HostListener, inject, input, output } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
 
-import { CompraHabitualHistorialModalComponent } from '../components/compra-habitual-historial-modal/compra-habitual-historial-modal.component';
+import { CompraHabitualHistorialModalComponent } from '@purchase/ui/shared/components/compra-habitual-historial-modal/compra-habitual-historial-modal.component';
 
 @Directive({
   selector: '[appCompraHabitualHistorial]',

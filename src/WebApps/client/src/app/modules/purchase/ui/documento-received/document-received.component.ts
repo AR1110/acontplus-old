@@ -17,10 +17,10 @@ import Swal from 'sweetalert2';
 import {EstablecimientoSelectHtmlOnly} from '@core/models/estab.model';
 import {
     DocManualUploadComponent
-} from '@purchase/components/document-received/doc-manual-upload/doc-manual-upload.component';
+} from '@purchase/ui/documento-received/components/doc-manual-upload/doc-manual-upload.component';
 import {SharedService} from '@core/services/shared.service';
-import {DocumentoReceived} from '@purchase/models/document-received.model';
-import {DocumentReceivedService} from '@purchase/services/document-received.service';
+import {DocumentoReceived} from '@purchase/core/domain/document-received.model';
+import {DocumentReceivedService} from '@purchase/data/services/document-received.service';
 import {MatPagination} from '@shared/models/pagination.model';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatIcon} from '@angular/material/icon';
@@ -34,7 +34,7 @@ import {DialogService} from '@core/services/dialog.service';
 import {SubCategoryUsecase} from "@accounting/core/usecases/sub-category.usecase";
 
 @Component({
-    selector: 'app-documento-received-page',
+    selector: 'app-documento-received',
     imports: [
         MatDynamicTableComponent,
         BreadcrumbComponent,
@@ -54,10 +54,10 @@ import {SubCategoryUsecase} from "@accounting/core/usecases/sub-category.usecase
         MatMenuTrigger,
         MatButton,
     ],
-    templateUrl: './document-received-page.component.html',
+    templateUrl: './document-received.component.html',
     styles: ``,
 })
-export class DocumentReceivedPageComponent {
+export class DocumentReceivedComponent {
     documents: DocumentoReceived[] = [];
     columnsDefs: ColumnDefinition[] = [
         {key: 'op', label: 'Op.', type: 'string'},

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { DocumentReceivedService } from '@modules/purchase/services/document-received.service';
+import { DocumentReceivedService } from '@purchase/data/services/document-received.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import {
@@ -15,11 +15,11 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { Subcategory } from '@accounting/core/domain/subcategory';
-import { SupplierSearchComponent } from '@modules/customer/supplier/components/supplier-search/supplier-search.component';
+import { SupplierSearchComponent } from '@customer/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-    selector: 'app-reception-reports-page',
+    selector: 'app-reception-reports',
     imports: [
         FormsModule,
         SupplierSearchComponent,
@@ -27,10 +27,10 @@ import { formatDateToString } from '@core/utils/date.util';
         UserSearchComponent,
         BreadcrumbComponent,
     ],
-    templateUrl: './reception-reports-page.component.html',
+    templateUrl: './reception-reports.component.html',
     styles: ``
 })
-export class ReceptionReportsPageComponent {
+export class ReceptionReportsComponent {
   establecimientos: Array<
     Omit<EstablecimientoSelectHtmlOnly, 'predeterminado'>
   > = [];

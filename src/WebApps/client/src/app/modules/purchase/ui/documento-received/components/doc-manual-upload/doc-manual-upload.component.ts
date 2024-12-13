@@ -14,7 +14,7 @@ import { SubCategorySelectHtmlOnly } from '@accounting/core/domain/subcategory';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { ToasterService } from '@core/services/toaster.service';
-import { DocumentReceivedService } from '@purchase/services/document-received.service';
+import { DocumentReceivedService } from '@purchase/data/services/document-received.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { SubCategoryUsecase } from '@accounting/core/usecases/sub-category.usecase';
 import { ApiResponse } from '@core/models/api-response';
@@ -58,7 +58,7 @@ export class DocManualUploadComponent {
   private readonly dialogRef = inject(MatDialogRef<DocManualUploadComponent>);
   private readonly _docReceivedService = inject(DocumentReceivedService);
 
-  private _subCategoryUseCase = inject(SubCategoryUsecase);
+  private readonly _subCategoryUseCase = inject(SubCategoryUsecase);
 
   private readonly _tS = inject(ToasterService);
 
@@ -146,11 +146,15 @@ export class DocManualUploadComponent {
           .uploadXml({ codEstab, subcategoryId }, formData)
           .pipe(
             tap((response) => {
+              this._tS.toastr({
+                type: response.code === '1' ? 'success' : 'warning',
+                message: response.message,
+              });
               if (response.code === '1') {
-                this._tS.toastr({ type: 'success', message: response.message });
-                this.xmlDocs.removeAt(index); // Remove uploaded file from form
-              } else {
-                this._tS.toastr({ type: 'warning', message: response.message });
+                if (index > 0) {
+                  index = index - 1;
+                }
+                this.removeXml(index); // Remove uploaded file from form
               }
             }),
             catchError((error) => {
@@ -165,11 +169,10 @@ export class DocManualUploadComponent {
     });
 
     if (uploadObservables.length === 0) {
-      this._tS.toastr({
+      return this._tS.toastr({
         type: 'warning',
         message: 'No files selected for upload',
       });
-      return;
     }
 
     debugger;
@@ -178,12 +181,15 @@ export class DocManualUploadComponent {
       complete: () => {
         this._tS.toastr({
           type: 'success',
-          message: 'All files uploaded successfully',
+          message: 'Archivos subidos exitosamente!',
         });
       },
       error: (error) => {
         console.error('Overall upload error:', error);
-        this._tS.toastr({ type: 'error', message: 'Error uploading files' });
+        this._tS.toastr({
+          type: 'error',
+          message: 'Error al subir los archivos',
+        });
       },
     });
   }
