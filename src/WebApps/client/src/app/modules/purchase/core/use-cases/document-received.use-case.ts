@@ -1,6 +1,8 @@
 import { DocumentReceivedRepository } from '@purchase/core/repositories/document-received.repository';
-import { inject } from '@angular/core';
-
+import { inject, Injectable } from '@angular/core';
+@Injectable({
+  providedIn: 'root',
+})
 export class DocumentReceivedUseCase {
   private readonly _documentReceivedRepository = inject(
     DocumentReceivedRepository,

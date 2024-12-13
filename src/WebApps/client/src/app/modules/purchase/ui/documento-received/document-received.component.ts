@@ -18,7 +18,6 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { DocManualUploadComponent } from '@purchase/ui/documento-received/components/doc-manual-upload/doc-manual-upload.component';
 import { SharedService } from '@core/services/shared.service';
 import { DocumentReceived } from '@purchase/core/domain/document-received.model';
-import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 import { MatPagination } from '@shared/models/pagination.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatIcon } from '@angular/material/icon';

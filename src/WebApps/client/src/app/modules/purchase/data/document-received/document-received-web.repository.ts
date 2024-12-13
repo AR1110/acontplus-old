@@ -13,7 +13,9 @@ import { DocumentReceivedRepository } from '@purchase/core/repositories/document
 export class DocumentReceivedWebRepository extends DocumentReceivedRepository {
   private readonly _url = `${PATHS_API.PURCHASE}${PURCHASE_PATHS.DOCUMENT_RECEIVED}`;
   private readonly _http = inject(HttpClient);
-
+  constructor() {
+    super();
+  }
   getDataFilter() {
     let query = {
       tipo: 2,
