@@ -20,21 +20,21 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { Subcategory } from '@accounting/core/domain/subcategory';
-import { SupplierSearchComponent } from '@modules/customer/supplier/components/supplier-search/supplier-search.component';
+import { SupplierSearchComponent } from '@customer/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-    selector: 'app-reports-page',
+    selector: 'app-reports',
     imports: [
         FormsModule,
         BreadcrumbComponent,
         SupplierSearchComponent,
         DateRangeSelectionComponent,
     ],
-    templateUrl: './reports-page.component.html',
+    templateUrl: './reports.component.html',
     styles: ``
 })
-export class ReportsPageComponent {
+export class ReportsComponent {
   http = inject(HttpClient);
   establecimientos: Array<GroupedEstab> = [];
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];

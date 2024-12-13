@@ -2,7 +2,7 @@ import { Component, inject, model, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { PageEvent } from '@angular/material/paginator';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { FacturaFisicaService } from '../factura-fisica.service';
+import { FacturaFisicaService } from './factura-fisica.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
@@ -11,7 +11,7 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
 import { finalize, switchMap, throwError } from 'rxjs';
-import { FacturaFisicaLista } from '../factura-fisica.interface';
+import { FacturaFisicaLista } from './factura-fisica.interface';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,9 +24,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { FacturaFisicaDetalleDirective } from '../factura-fisica-detalle.directive';
+import { FacturaFisicaDetalleDirective } from './factura-fisica-detalle.directive';
 import { DialogService } from '@core/services/dialog.service';
-import { FacturaFisicaAddEditModalComponent } from '../components/factura-fisica-add-edit-modal/factura-fisica-add-edit-modal.component';
+import { FacturaFisicaAddEditModalComponent } from './components/factura-fisica-add-edit-modal/factura-fisica-add-edit-modal.component';
 
 @Component({
     selector: 'app-factura-fisica-page',

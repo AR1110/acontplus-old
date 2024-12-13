@@ -1,30 +1,30 @@
 import { Routes } from '@angular/router';
-import { ReportsPageComponent } from './pages/reports-page/reports-page.component';
-import { ReceptionReportsPageComponent } from './pages/reception-reports-page/reception-reports-page.component';
-import { DocumentReceivedPageComponent } from '@purchase/pages/documento-received-page/document-received-page.component';
-import { FacturaFisicaPageComponent } from './factura-fisica/factura-fisica-page/factura-fisica-page.component';
+import { ReportsComponent } from '@purchase/ui/reports/reports.component';
+import { ReceptionReportsComponent } from '@purchase/ui/reception-reports/reception-reports.component';
+import { DocumentReceivedComponent } from '@purchase/ui/documento-received/document-received.component';
+import { FacturaFisicaPageComponent } from './factura-fisica/factura-fisica-page.component';
 
 export const routes: Routes = [
   {
     path: 'documento-recibido',
     title: 'Documento Recibido',
-    component: DocumentReceivedPageComponent,
+    component: DocumentReceivedComponent,
     data: {
       breadcrumb: 'Documento Recibido',
     },
   },
   {
-    path: 'reports-page',
+    path: 'reports',
     title: 'Reporte Compras',
-    component: ReportsPageComponent,
+    component: ReportsComponent,
     data: {
       breadcrumb: 'Reporte Compras',
     },
   },
   {
-    path: 'reception-reports-page',
+    path: 'reception-reports',
     title: 'Reportes Recepción',
-    component: ReceptionReportsPageComponent,
+    component: ReceptionReportsComponent,
     data: {
       breadcrumb: 'Reportes Recepción',
     },

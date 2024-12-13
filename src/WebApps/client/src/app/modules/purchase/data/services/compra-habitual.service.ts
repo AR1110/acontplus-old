@@ -3,8 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ApiResponse } from '@core/models/api-response';
-import { PURCHASE_PATHS } from '@purchase/constants/purchase.constants';
-import { CompraHabitual } from '@purchase/models/compra-habitual.model';
+import { PURCHASE_PATHS } from '@purchase/core/enums/purchase.constants';
+import { CompraHabitual } from '@purchase/core/domain/compra-habitual.model';
 import { map } from 'rxjs';
 
 @Injectable({

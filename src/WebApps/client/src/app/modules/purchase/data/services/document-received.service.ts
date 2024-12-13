@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { PURCHASE_PATHS } from '../constants/purchase.constants';
+import { PURCHASE_PATHS } from '../../core/enums/purchase.constants';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
-import { DocumentoReceived } from '@purchase/models/document-received.model';
+import { DocumentoReceived } from '@purchase/core/domain/document-received.model';
 
 @Injectable({
   providedIn: 'root',
