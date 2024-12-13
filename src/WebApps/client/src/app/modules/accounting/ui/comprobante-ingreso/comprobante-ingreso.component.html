@@ -173,8 +173,8 @@
       [isLoadingData]="loading()"
       [enablePagination]="true"
       [paginationConfig]="pagination()"
-      [dataList]="comprobantesIngreso" [displayColumnDefs]="columnsDefs"
-      [displayedColumns]="columns"
+      [tableData]="comprobantesIngreso" [columnDefinitions]="columnsDefs"
+      [visibleColumns]="columns"
       (onPageEvent)="handlePageEvent($event)"
     ></app-mat-dynamic-table>
 

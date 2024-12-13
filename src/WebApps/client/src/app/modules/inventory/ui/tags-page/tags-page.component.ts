@@ -32,7 +32,7 @@ import Swal from 'sweetalert2';
 export class TagsPageComponent {
   tagsSvc = inject(TagsService);
   pagination = signal(new MatPagination());
-  displayedColumns: string[] = [
+  visibleColumns: string[] = [
     'index',
     'op',
     'description',

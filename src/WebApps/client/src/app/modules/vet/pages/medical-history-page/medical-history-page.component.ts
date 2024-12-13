@@ -63,7 +63,7 @@ export class MedicalHistoryPageComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   colorToggle: ThemePalette = 'accent';
-  displayedColumns: string[] = [
+  visibleColumns: string[] = [
     'op',
     'position',
     'customer',

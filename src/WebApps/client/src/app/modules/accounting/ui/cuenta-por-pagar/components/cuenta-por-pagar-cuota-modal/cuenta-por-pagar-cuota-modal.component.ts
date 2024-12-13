@@ -53,7 +53,7 @@ export class CuentaPorPagarCuotaModalComponent {
   loading = signal(false);
   tiemposCredito = signal<TiempoCreditoSelectHtmlOnly[]>([]);
 
-  displayedColumns: string[] = ['position', 'cuota', 'fechaVencimiento'];
+  visibleColumns: string[] = ['position', 'cuota', 'fechaVencimiento'];
   dataSource = signal<CuentaPorPagarCuotaConfig[]>([]);
 
   dataForm = model({

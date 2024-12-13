@@ -11,9 +11,9 @@
         <div class="p-2">
           @if (subEntidadesFinanciera.data.length>0) {
           <app-mat-dynamic-table
-            [dataList]="subEntidadesFinanciera.data"
-            [displayColumnDefs]="columnsDefs"
-            [displayedColumns]="columns"
+            [tableData]="subEntidadesFinanciera.data"
+            [columnDefinitions]="columnsDefs"
+            [visibleColumns]="columns"
             [templateOp]="templateOp"
           >
           </app-mat-dynamic-table>

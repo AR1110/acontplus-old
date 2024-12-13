@@ -37,7 +37,7 @@ export class CuentaPorCobrarComponent {
   tS = inject(ToasterService);
   comprobanteIngresoOpenModalSvc = inject(ComprobanteIngresoOpenModalService)
 
-  displayedColumns: string[] = [
+  visibleColumns: string[] = [
     'select',
     'index',
     'tipoDoc',

@@ -67,7 +67,7 @@ export class ProductComponent {
   @ViewChildren('selectElement') selectElements!: QueryList<
     ElementRef<HTMLSelectElement>
   >;
-  displayedColumns: string[] = [
+  visibleColumns: string[] = [
     'index',
     'op',
     's3ObjectUrl',

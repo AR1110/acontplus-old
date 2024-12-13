@@ -52,7 +52,7 @@ export class OrderListComponent implements OnInit {
     endDate: formatDateToString(new Date()),
     startDate: formatDateToString(new Date()),
   };
-  displayedColumns: string[] = [
+  visibleColumns: string[] = [
     'position',
     'op',
     'fechaEmision',

@@ -33,7 +33,7 @@ import Swal from 'sweetalert2';
 export class InvModelPageComponent {
   invModelSvc = inject(InvModelService);
   pagination = signal(new MatPagination());
-  displayedColumns: string[] = [
+  visibleColumns: string[] = [
     'index',
     'op',
     'marca',

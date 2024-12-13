@@ -138,9 +138,9 @@
     >
       <app-mat-dynamic-table
         [templateOp]="templateOp"
-        [dataList]="dataSource.data"
-        [displayColumnDefs]="columnsDefs"
-        [displayedColumns]="columns"
+        [tableData]="dataSource.data"
+        [columnDefinitions]="columnsDefs"
+        [visibleColumns]="columns"
         [showSelectBox]="true"
       ></app-mat-dynamic-table>
     </app-custom-table-container>

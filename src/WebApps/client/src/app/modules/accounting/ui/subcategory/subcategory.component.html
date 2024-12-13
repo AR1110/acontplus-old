@@ -24,9 +24,9 @@
 
 
     <app-mat-dynamic-table
-      [dataList]="subcategories"
-      [displayColumnDefs]="columnsDefs"
-      [displayedColumns]="columns"
+      [tableData]="subcategories"
+      [columnDefinitions]="columnsDefs"
+      [visibleColumns]="columns"
       [templateOp]="templateOp"
       [paginationConfig]="pagination()"
       [enablePagination]="true"

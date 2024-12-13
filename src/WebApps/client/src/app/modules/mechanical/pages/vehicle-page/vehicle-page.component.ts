@@ -32,7 +32,7 @@ export class VehiclePageComponent {
   vehicleSvc = inject(VehicleService);
   tS = inject(ToasterService);
 
-  displayedColumns = ['position', 'op', 'tipoVehiculo', 'placa', 'identificacion', 'cliente-conductor', 'estado'];
+  visibleColumns = ['position', 'op', 'tipoVehiculo', 'placa', 'identificacion', 'cliente-conductor', 'estado'];
 
   pagination = new Pagination();
   dataSource: VehicleRead[] = [];

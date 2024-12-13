@@ -68,7 +68,7 @@ export class PetPageComponent {
   @ViewChild(MatSort) sort!: MatSort;
   colorToggle: ThemePalette = 'accent';
   data = {} as Pet;
-  displayedColumns: string[] = [
+  visibleColumns: string[] = [
     'op',
     'position',
     'name',

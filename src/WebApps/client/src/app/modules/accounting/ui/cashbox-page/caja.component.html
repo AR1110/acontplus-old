@@ -25,9 +25,9 @@
 
 
     <app-mat-dynamic-table
-      [dataList]="cashboxs"
-      [displayColumnDefs]="columnsDefs"
-      [displayedColumns]="columns"
+      [tableData]="cashboxs"
+      [columnDefinitions]="columnsDefs"
+      [visibleColumns]="columns"
       [templateOp]="templateOp"
       [paginationConfig]="pagination()"
       [enablePagination]="true"
