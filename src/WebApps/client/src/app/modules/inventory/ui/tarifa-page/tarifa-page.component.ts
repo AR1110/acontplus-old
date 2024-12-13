@@ -28,7 +28,7 @@ import { TarifaEditModalComponent } from '@inventory/ui/tarifa-page/tarifa-edit-
 })
 export class TarifaPageComponent {
   tarifaSvc = inject(TarifaService);
-  displayedColumns: string[] = [
+  visibleColumns: string[] = [
     'index',
     'op',
     'code',

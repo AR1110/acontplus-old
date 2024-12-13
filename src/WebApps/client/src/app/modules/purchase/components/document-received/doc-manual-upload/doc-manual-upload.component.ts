@@ -16,7 +16,9 @@ import { MatIcon } from '@angular/material/icon';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocumentReceivedService } from '@purchase/services/document-received.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import {SubCategoryUsecase} from "@accounting/core/usecases/sub-category.usecase";
+import { SubCategoryUsecase } from '@accounting/core/usecases/sub-category.usecase';
+import { ApiResponse } from '@core/models/api-response';
+import { catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-doc-manual-upload',
@@ -56,7 +58,7 @@ export class DocManualUploadComponent {
   private readonly dialogRef = inject(MatDialogRef<DocManualUploadComponent>);
   private readonly _docReceivedService = inject(DocumentReceivedService);
 
-  private _subCategoryUseCase = inject(SubCategoryUsecase)
+  private _subCategoryUseCase = inject(SubCategoryUsecase);
 
   private readonly _tS = inject(ToasterService);
 
@@ -110,9 +112,11 @@ export class DocManualUploadComponent {
   }
 
   ngOnInit() {
-    this._subCategoryUseCase.getAll({  }).subscribe((response) => {
+    this._subCategoryUseCase.getAll({}).subscribe((response) => {
       this.subcategories = response;
     });
+
+    this.docUploadForm.patchValue({ tipo: '2', codEstab: this.data.codEstab });
   }
 
   onSave() {}
@@ -123,33 +127,64 @@ export class DocManualUploadComponent {
 
   uploadXml() {
     const { codEstab, subcategoryId } = this.docUploadForm.value;
-    const uploadPromises = this.xmlDocs.controls.map((control) => {
-      const file = control.value.file;
+
+    if (!subcategoryId) {
+      return this._tS.toastr({
+        type: 'warning',
+        message: 'Please select a subcategory',
+      });
+    }
+
+    const uploadObservables: Observable<any>[] = [];
+    this.xmlDocs.controls.forEach((control, index) => {
+      const file = control.get('file')?.value;
       if (file) {
         const formData = new FormData();
-        // formData.append('codEstab', codEstab);
-        // formData.append('subcategoryId', subcategoryId);
         formData.append('file', file);
 
-        return this._docReceivedService.uploadXml(
-          { codEstab, subcategoryId },
-          formData,
-        );
+        const uploadObservable = this._docReceivedService
+          .uploadXml({ codEstab, subcategoryId }, formData)
+          .pipe(
+            tap((response) => {
+              if (response.code === '1') {
+                this._tS.toastr({ type: 'success', message: response.message });
+                this.xmlDocs.removeAt(index); // Remove uploaded file from form
+              } else {
+                this._tS.toastr({ type: 'warning', message: response.message });
+              }
+            }),
+            catchError((error) => {
+              console.error('Error uploading file:', error);
+              this._tS.toastr({ type: error, message: 'Error uploading file' });
+              return throwError(() => error); // Re-throw error to handle in forkJoin
+            }),
+          );
+
+        uploadObservables.push(uploadObservable);
       }
-      return;
     });
 
-    Promise.all(uploadPromises)
-      .then((responses: any[]) => {
-        responses.forEach((response) => {
-          console.log(response);
-          if (response.code === '1') {
-            this.xmlDocs.clear();
-          }
-        });
-      })
-      .catch((error) => {
-        console.log('Error uploading files: ' + error.message);
+    if (uploadObservables.length === 0) {
+      this._tS.toastr({
+        type: 'warning',
+        message: 'No files selected for upload',
       });
+      return;
+    }
+
+    debugger;
+
+    forkJoin(uploadObservables).subscribe({
+      complete: () => {
+        this._tS.toastr({
+          type: 'success',
+          message: 'All files uploaded successfully',
+        });
+      },
+      error: (error) => {
+        console.error('Overall upload error:', error);
+        this._tS.toastr({ type: 'error', message: 'Error uploading files' });
+      },
+    });
   }
 }

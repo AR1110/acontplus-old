@@ -41,7 +41,7 @@ export class ProductSearchPopupComponent {
     textSearch: ''
   }
 
-  displayedColumns: string[] = [];
+  visibleColumns: string[] = [];
   mainColumns = [
     { columnDef: 'position', header: 'No.', },
     { columnDef: 'codigo', header: 'Código', },
@@ -99,7 +99,7 @@ export class ProductSearchPopupComponent {
       this.productTarifas = dataPersist.productTarifas;
       this.columns = dataPersist.columns;
     }
-    this.displayedColumns = this.columns.map(x => x.columnDef);
+    this.visibleColumns = this.columns.map(x => x.columnDef);
   }
 
   applyFilter(value: string) {
@@ -140,7 +140,7 @@ export class ProductSearchPopupComponent {
           let results = structuredClone(response);
 
           this.columns = structuredClone(this.mainColumns)
-          this.displayedColumns = this.columns.map(x => x.columnDef);
+          this.visibleColumns = this.columns.map(x => x.columnDef);
           this.pagination.totalRecords = 0;
 
           if (results.length > 0) {
@@ -157,7 +157,7 @@ export class ProductSearchPopupComponent {
           }
 
 
-          this.displayedColumns = this.columns.map(x => x.columnDef);
+          this.visibleColumns = this.columns.map(x => x.columnDef);
           this.makeDynamicTarifa(results)
 
         },

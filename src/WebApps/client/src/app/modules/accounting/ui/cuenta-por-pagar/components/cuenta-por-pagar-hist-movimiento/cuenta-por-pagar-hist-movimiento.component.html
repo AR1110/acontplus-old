@@ -9,9 +9,9 @@
 <ng-template #containerTemplate>
     <app-mat-dynamic-table
 
-            [displayColumnDefs]="columnsDefs"
-            [displayedColumns]="columns"
-            [dataList]="comprobantesEgreso.data"
+            [columnDefinitions]="columnsDefs"
+            [visibleColumns]="columns"
+            [tableData]="comprobantesEgreso.data"
             [expandedDetail]="expandedDetail"
             [showExpand]="true"
             (onShowExpanded)="onShowExpanded($event)"

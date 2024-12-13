@@ -280,11 +280,11 @@
         </ng-container>
 
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-header-row *matHeaderRowDef="visibleColumns;sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: visibleColumns;"></tr>
 
         <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">Sin Registro</td>
+          <td class="mat-cell text-center" [attr.colspan]="visibleColumns.length">Sin Registro</td>
         </tr>
 
       </table>

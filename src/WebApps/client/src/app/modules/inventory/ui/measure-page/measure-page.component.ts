@@ -34,7 +34,7 @@ import Swal from 'sweetalert2';
 export class MeasurePageComponent {
   measureSvc = inject(MeasureService);
   pagination = signal(new MatPagination());
-  displayedColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
+  visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
   dataSource = signal<MeasureRead[]>([]);
   isLoadingResults = false;
   @ViewChild(MatPaginator) paginator!: MatPaginator;

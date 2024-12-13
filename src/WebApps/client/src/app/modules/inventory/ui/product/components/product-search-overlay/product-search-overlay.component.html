@@ -21,7 +21,7 @@ cdkConnectedOverlay
 
   <div class="overlay-content"  >
 
-    <app-product-search-list [dataList]="dataSource" [highlightRowIndex]="highlightRowIndex"
+    <app-product-search-list [tableData]="dataSource" [highlightRowIndex]="highlightRowIndex"
       [isLoadingResults]="isLoadingResults" [isRateLimitReached]="isRateLimitReached" [pagination]="pagination"
       (rowsEmitter)="handleRows($event)"
       (handlePageEvent)="handlePageEvent($event)"

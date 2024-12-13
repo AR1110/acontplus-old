@@ -31,7 +31,7 @@ import Swal from 'sweetalert2';
 })
 export class SubCategoryComponent {
   pagination = signal(new MatPagination());
-  displayedColumns: string[] = [
+  visibleColumns: string[] = [
     'index',
     'op',
     'nombreFamilia',

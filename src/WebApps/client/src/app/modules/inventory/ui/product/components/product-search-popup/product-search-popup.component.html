@@ -59,8 +59,8 @@
       </ng-container>
       } -->
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></tr>
+      <tr mat-header-row *matHeaderRowDef="visibleColumns;sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: visibleColumns;" (click)="selectRow(row)"></tr>
 
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell text-center" colspan="13">

@@ -32,7 +32,7 @@ import Swal from 'sweetalert2';
 export class BrandPageComponent {
   brandSvc = inject(IbrandService);
   pagination = signal(new MatPagination());
-  displayedColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
+  visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
   dataSource = signal<any[]>([]);
   isLoadingResults = false;
   @ViewChild(MatPaginator) paginator!: MatPaginator;

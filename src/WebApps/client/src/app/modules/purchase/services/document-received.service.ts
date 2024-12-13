@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { PURCHASE_PATHS } from '../constants/purchase.constants';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { DocumentoReceived } from '@purchase/models/document-received.model';
 
@@ -65,12 +65,17 @@ export class DocumentReceivedService {
       .pipe(map((response) => response));
   }
 
-  uploadXml(parameters: any, file: any) {
+  uploadXml(parameters: any, file: any): Observable<ApiResponse> {
     return this.#http
       .post<ApiResponse>(
         `${this.#url}uploadxml/?json=${JSON.stringify(parameters)}`,
         file,
       )
-      .subscribe((response) => response);
+      .pipe(
+        catchError((error) => {
+          console.error('Error uploading XML:', error);
+          return throwError(() => error);
+        }),
+      );
   }
 }

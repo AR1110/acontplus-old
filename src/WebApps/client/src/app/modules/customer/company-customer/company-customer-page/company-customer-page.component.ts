@@ -35,7 +35,7 @@ export class CompanyCustomerPageComponent {
   tS = inject(ToasterService);
   sharedSvc = inject(SharedService);
 
-  displayedColumns: string[] = [
+  visibleColumns: string[] = [
     'op',
     'position',
     'ruc',

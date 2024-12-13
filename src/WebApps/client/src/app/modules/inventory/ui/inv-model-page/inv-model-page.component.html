@@ -77,8 +77,8 @@
         </ng-container>
 
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-header-row *matHeaderRowDef="visibleColumns;sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: visibleColumns;"></tr>
 
         <tr class="mat-row" *matNoDataRow>
           <td class="mat-cell" colspan="4" class="text-center">No hay registros</td>

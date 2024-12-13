@@ -55,7 +55,7 @@ export class SupportPageComponent {
   tS = inject(ToasterService);
   sharedSvc = inject(SharedService);
 
-  displayedColumns: string[] = [];
+  visibleColumns: string[] = [];
   pagination = new Pagination();
 
   dataSource: any = [];
@@ -169,7 +169,7 @@ export class SupportPageComponent {
     // this.dataSearch.supportStatusId = this.supportStatusId;
 
     if (this.valueStatus === MECHANICAL_STATUS.DASHBOARD) {
-      this.displayedColumns = [
+      this.visibleColumns = [
         'position',
         'op',
         'estado',
@@ -183,7 +183,7 @@ export class SupportPageComponent {
         'entregar',
       ];
     } else {
-      this.displayedColumns = [
+      this.visibleColumns = [
         'position',
         'op',
         'secuencia',

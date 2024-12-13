@@ -106,8 +106,8 @@
           </td>
         </ng-container>
 
-        <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
-        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+        <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: visibleColumns;" mat-row></tr>
 
         <tr *matNoDataRow class="mat-row">
           <td class="mat-cell text-center m-3" colspan="7">Sin registro "{{ input.value }}"</td>

@@ -24,7 +24,7 @@ import { Pagination } from '@shared/models/pagination.model';
 })
 export class ProductSearchListComponent<T>   {
 
-  @Input() dataList: any[] = [];
+  @Input() tableData: any[] = [];
 
   @Input() highlightRowIndex!: number;
   @Input() isLoadingResults= false;
@@ -42,7 +42,7 @@ export class ProductSearchListComponent<T>   {
   dataSource = new MatTableDataSource([]);
 
 
-  displayedColumns: string[] = [];
+  visibleColumns: string[] = [];
   mainColumns = [
     { columnDef: 'position', header: 'No.', },
     { columnDef: 'codigo', header: 'Código', },
@@ -64,7 +64,7 @@ export class ProductSearchListComponent<T>   {
 
   ngOnInit(): void {
     this.pagination.pageIndex = 0;
-    this.displayedColumns = this.columns.map(x => x.columnDef);
+    this.visibleColumns = this.columns.map(x => x.columnDef);
   }
 
   ngAfterViewInit() {
@@ -75,13 +75,13 @@ export class ProductSearchListComponent<T>   {
 
   ngOnChanges(changes: SimpleChanges): void {
 
-    if (changes["dataList"] && changes["dataList"].currentValue) {
+    if (changes["tableData"] && changes["tableData"].currentValue) {
       this.columns = structuredClone(this.mainColumns)
-      this.displayedColumns = this.columns.map(x => x.columnDef);
+      this.visibleColumns = this.columns.map(x => x.columnDef);
       this.pagination.totalRecords = 0;
 
-      if (this.dataList.length > 0) {
-        let dataResult = this.dataList[0];
+      if (this.tableData.length > 0) {
+        let dataResult = this.tableData[0];
         this.productTarifas = dataResult.tarifas;
         this.pagination.totalRecords = dataResult.totalRecords;
       }
@@ -94,8 +94,8 @@ export class ProductSearchListComponent<T>   {
       }
 
 
-      this.displayedColumns = this.columns.map(x => x.columnDef);
-      this.makeDynamicTarifa(this.dataList)
+      this.visibleColumns = this.columns.map(x => x.columnDef);
+      this.makeDynamicTarifa(this.tableData)
     }
   }
 
