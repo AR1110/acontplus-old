@@ -1,120 +1,120 @@
 <form [formGroup]="docUploadForm" (ngSubmit)="onSave()">
-    <app-mat-custom-dialog
-            [containerTemplate]="contentTemplate"
-            [actionsTemplate]="actionsTemplate"
-            [icon]="dialogIcon()"
-            [title]="dialogTitle()"
-            (close)="onClose()"
-    />
-    <ng-template #contentTemplate>
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label>Establecimiento:</label>
-                    <h5 class="text-info">{{ data.nombreComercial }}</h5>
-                </div>
-            </div>
+  <app-mat-custom-dialog
+    [containerTemplate]="contentTemplate"
+    [actionsTemplate]="actionsTemplate"
+    [icon]="dialogIcon()"
+    [title]="dialogTitle()"
+    (close)="onClose()"
+  />
+  <ng-template #contentTemplate>
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="estab">Establecimiento:</label>
+          <h5 class="text-info" id="estab">{{ data.nombreComercial }}</h5>
         </div>
-        <div
-                class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2 gap-3"
+      </div>
+    </div>
+    <div
+      class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2"
+    >
+      <div class="col">
+        <mat-radio-group
+          aria-label="Seleccione una opcion"
+          formControlName="tipo"
         >
-            <div class="col">
-                <mat-radio-group
-                        aria-label="Seleccione una opcion"
-                        formControlName="tipo"
-                >
-                    <mat-radio-button value="1">Clave Acceso</mat-radio-button>
-                    <mat-radio-button value="2">Xml</mat-radio-button>
-                </mat-radio-group>
-            </div>
-            <div class="col">
-                <mat-form-field class="w-100">
-                    <mat-label>Subcategoría:</mat-label>
-                    <mat-select>
-                        @for (item of subcategories; track $index) {
-                            <mat-option [value]="item.id">{{ item.name }}</mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
+          <mat-radio-button value="1">Clave Acceso</mat-radio-button>
+          <mat-radio-button value="2">Xml</mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Subcategoría:</mat-label>
+          <mat-select formControlName="subcategoryId" required>
+            @for (item of subcategories; track $index) {
+              <mat-option [value]="item.id">{{ item.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
 
-        @if (docUploadForm.get("tipo")?.value === "1") {
-            <div class="row mt-3">
-                <div class="col">
-                    <label>Claves de Acceso:</label>
-                    <div formArrayName="claveAccesoDocs">
-                        @for (item of claveAccesoDocs.controls; let i = $index; track i) {
-                            <div [formGroupName]="i" class="mt-3">
-                                <input
-                                        class="form-control"
-                                        formControlName="claveAcceso"
-                                        id="item-{{ i }}"
-                                        type="text"
-                                        min="49"
-                                        maxlength="49"
-                                        placeholder="000"
-                                />
-                            </div>
-                        }
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-4">
-                            <div class="form-group">
-                                <button
-                                        (click)="addClaveAcceso()"
-                                        class="btn btn-primary btn-sm"
-                                        type="button"
-                                >
-                                    <fa-icon [icon]="'plus'"></fa-icon>
-                                    Añadir
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    @if (docUploadForm.get("tipo")?.value === "1") {
+      <div class="row mt-3">
+        <div class="col">
+          <label for="clavesAcceso">Claves de Acceso:</label>
+          <div id="clavesAcceso" formArrayName="claveAccesoDocs">
+            @for (item of claveAccesoDocs.controls; let i = $index; track i) {
+              <div [formGroupName]="i" class="mt-3">
+                <input
+                  class="form-control"
+                  formControlName="claveAcceso"
+                  id="item-{{ i }}"
+                  type="text"
+                  min="49"
+                  maxlength="49"
+                  placeholder="000"
+                />
+              </div>
+            }
+          </div>
+          <div class="row mt-3">
+            <div class="col-4">
+              <div class="form-group">
+                <button
+                  (click)="addClaveAcceso()"
+                  class="btn btn-primary btn-sm"
+                  type="button"
+                >
+                  <fa-icon [icon]="'plus'"></fa-icon>
+                  Añadir
+                </button>
+              </div>
             </div>
-        }
-        @if (docUploadForm.get("tipo")?.value === "2") {
-            <div class="row mt-3">
-                <div class="col">
-                    <div formArrayName="xmlDocs">
-                        @for (file of xmlDocs.controls; let i = $index; track i) {
-                            <div [formGroupName]="i">
-                                <label for="file-{{ i }}">Xml {{ i + 1 }}</label>
-                                <input
-                                        id="file-{{ i }}"
-                                        type="file"
-                                        (change)="addXmlDoc($event)"
-                                />
-                                <button type="button" mat-icon-button (click)="removeXml(i)">
-                                    <mat-icon>delete</mat-icon>
-                                </button>
-                            </div>
-                        }
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-4">
-                            <div class="form-group">
-                                <button (click)="uploadXml()" mat-raised-button type="button">
-                                    <mat-icon>upload</mat-icon>
-                                    Subir Xmls
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+          </div>
+        </div>
+      </div>
+    }
+    @if (docUploadForm.get("tipo")?.value === "2") {
+      <div class="row mt-3">
+        <div class="col">
+          <div formArrayName="xmlDocs">
+            @for (file of xmlDocs.controls; let i = $index; track i) {
+              <div [formGroupName]="i">
+                <label for="file-{{ i }}">Xml {{ i + 1 }}</label>
+                <input
+                  id="file-{{ i }}"
+                  type="file"
+                  (change)="addXmlDoc($event)"
+                />
+                <button type="button" mat-icon-button (click)="removeXml(i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+          <div class="row mt-3">
+            <div class="col-4">
+              <div class="form-group">
+                <button (click)="uploadXml()" mat-raised-button type="button">
+                  <mat-icon>upload</mat-icon>
+                  Subir Xmls
+                </button>
+              </div>
             </div>
-        }
-    </ng-template>
-    <ng-template #actionsTemplate>
-        <button mat-raised-button>
-            <mat-icon
-                    aria-hidden="false"
-                    aria-label="Save Icon"
-                    fontIcon="save"
-            ></mat-icon>
-            Guardar
-        </button>
-    </ng-template>
+          </div>
+        </div>
+      </div>
+    }
+  </ng-template>
+  <ng-template #actionsTemplate>
+<!--    <button mat-raised-button>-->
+<!--      <mat-icon-->
+<!--        aria-hidden="false"-->
+<!--        aria-label="Save Icon"-->
+<!--        fontIcon="save"-->
+<!--      ></mat-icon>-->
+<!--      Guardar-->
+<!--    </button>-->
+  </ng-template>
 </form>
