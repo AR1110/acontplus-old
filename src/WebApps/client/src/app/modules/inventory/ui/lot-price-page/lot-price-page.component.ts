@@ -11,7 +11,7 @@ import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { SupplierSearchComponent } from '@customer/supplier/components/supplier-search/supplier-search.component';
+import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import { SubCategorySelectMultipleComponent } from '@inventory/ui/sub-category/components/sub-category-select-multiple/sub-category-select-multiple.component';
 import { LotPrice, LotPriceTarifa } from '@inventory/core/domain/lot-price.model';

@@ -3,7 +3,7 @@ import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.compon
 import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
 import {
   CompanyCustomerSearchComponent
-} from "@company-customer/components/company-customer-search/company-customer-search.component";
+} from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
 import {SharedService} from "@core/services/shared.service";
 import {EstablecimientoSelectHtmlOnly} from "@core/models/estab.model";
 import {FormsModule} from "@angular/forms";

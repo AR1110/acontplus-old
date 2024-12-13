@@ -14,7 +14,7 @@ import {
 } from '@angular/forms';
 import { EmployeeService } from '@sale/services/employee.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { EntidadFinanciera } from '@accounting/core/domain/entidad-financiera.interface';
 import {MovimientoCajaUsecase} from "@accounting/core/usecases/movimiento-caja.usecase";

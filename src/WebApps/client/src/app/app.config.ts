@@ -17,6 +17,7 @@ import { QuillModule } from 'ngx-quill';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
 import { accountingProvider } from '@accounting/providers';
 import { inventoryProviders } from '@inventory/providers';
+import {customerMainProviders} from "@customer/providers";
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -62,6 +63,7 @@ export const appConfig: ApplicationConfig = {
       //  useValue: {appearance: 'outline', subscriptSizing: 'dynamic'}
       useValue: { appearance: 'outline', subscriptSizing: 'dynamic' },
     },
+    ...customerMainProviders,
     ...accountingProvider,
     ...inventoryProviders,
   ],

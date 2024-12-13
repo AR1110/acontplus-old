@@ -40,7 +40,7 @@ import {
 // Customer Module Components
 import {
   SupplierSearchMatComponent
-} from '@customer/supplier/components/supplier-search-mat/supplier-search-mat.component';
+} from '@customer/ui/supplier/components/supplier-search-mat/supplier-search-mat.component';
 
 // Shared Components, Models, and Pipes
 import {ColumnDefinition} from '@shared/models/mat-table-models/column-definition.model';

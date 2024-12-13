@@ -1,7 +1,7 @@
 import { ACCOUNTING_CODE_REPORT } from "@accounting/core/enums/accounting.constants";
 import { Component, inject } from '@angular/core';
 import { FormsModule } from "@angular/forms";
-import { CompanyCustomerSearchComponent } from "@company-customer/components/company-customer-search/company-customer-search.component";
+import { CompanyCustomerSearchComponent } from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
 import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
 import { CODE_ESTADO, DOC_TYPE, DOC_TYPE_SRI, FORMAT_REPORT } from "@core/constants/global.constants";

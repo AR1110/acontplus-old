@@ -8,7 +8,7 @@ import { FormsModule } from "@angular/forms";
 import { ToasterService } from "@core/services/toaster.service";
 import { isApiResponse } from "@core/models/api-response";
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
-import { CompanyCustomerSearchComponent } from "@modules/customer/company-customer/components/company-customer-search/company-customer-search.component";
+import { CompanyCustomerSearchComponent } from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
 import {isValidEmail, isValidField} from "@core/utils/utils";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {InputChipComponent} from "@shared/components/input-chip/input-chip.component";

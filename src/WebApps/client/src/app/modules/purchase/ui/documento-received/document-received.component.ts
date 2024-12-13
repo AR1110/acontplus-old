@@ -4,7 +4,7 @@ import {ColumnDefinition} from '@shared/models/mat-table-models/column-definitio
 import {BreadcrumbComponent} from '@core/components/breadcrumb/breadcrumb.component';
 import {MatCard, MatCardContent} from '@angular/material/card';
 import {DateRangeSelectionComponent} from '@core/components/date-range-selection/date-range-selection.component';
-import {SupplierSearchComponent} from '@customer/supplier/components/supplier-search/supplier-search.component';
+import {SupplierSearchComponent} from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import {FormsModule} from '@angular/forms';
 import {IconProp} from '@fortawesome/fontawesome-svg-core';
 import {MatTooltip} from '@angular/material/tooltip';

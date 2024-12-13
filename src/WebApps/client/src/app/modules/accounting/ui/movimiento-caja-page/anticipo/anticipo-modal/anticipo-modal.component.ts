@@ -13,7 +13,7 @@ import { SubEntidadFinanciera } from '@accounting/core/domain/subentidad-financi
 import { ToasterService } from '@core/services/toaster.service';
 import {
   CompanyCustomerSearchComponent
-} from "@company-customer/components/company-customer-search/company-customer-search.component";
+} from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
 import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.interface";
 import {AnticipoUsecase} from "@accounting/core/usecases/anticipo.usecase";
 

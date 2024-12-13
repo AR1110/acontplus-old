@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { SupplierSearchMatComponent } from '@customer/supplier/components/supplier-search-mat/supplier-search-mat.component';
+import { SupplierSearchMatComponent } from '@customer/ui/supplier/components/supplier-search-mat/supplier-search-mat.component';
 import { FacturaFisicaService } from '../../../../data/services/factura-fisica.service';
 import { finalize } from 'rxjs';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
