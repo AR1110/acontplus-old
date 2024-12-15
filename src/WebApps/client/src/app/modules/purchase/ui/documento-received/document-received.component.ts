@@ -1,18 +1,17 @@
-import { Component, inject, signal } from '@angular/core';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { SupplierSearchComponent } from '@customer/supplier/components/supplier-search/supplier-search.component';
-import { FormsModule } from '@angular/forms';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { MatTooltip } from '@angular/material/tooltip';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { Subcategory } from '@accounting/core/domain/subcategory';
-import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { ToasterService } from '@core/services/toaster.service';
+import {Component, inject, signal} from '@angular/core';
+import {MatDynamicTableComponent} from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import {ColumnDefinition} from '@shared/models/mat-table-models/column-definition.model';
+import {BreadcrumbComponent} from '@core/components/breadcrumb/breadcrumb.component';
+import {MatCard, MatCardContent} from '@angular/material/card';
+import {DateRangeSelectionComponent} from '@core/components/date-range-selection/date-range-selection.component';
+import {FormsModule} from '@angular/forms';
+import {IconProp} from '@fortawesome/fontawesome-svg-core';
+import {MatTooltip} from '@angular/material/tooltip';
+import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {Subcategory} from '@accounting/core/domain/subcategory';
+import {InputNumberDirective} from '@shared/directives/ui/input-number.directive';
+import {MatButton, MatIconButton} from '@angular/material/button';
+import {ToasterService} from '@core/services/toaster.service';
 import Swal from 'sweetalert2';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { DocManualUploadComponent } from '@purchase/ui/documento-received/components/doc-manual-upload/doc-manual-upload.component';
@@ -30,6 +29,7 @@ import { CreditNoteHtmlComponent } from '@billing/components/documents/credit-no
 import { DialogService } from '@core/services/dialog.service';
 import { SubCategoryUsecase } from '@accounting/core/usecases/sub-category.usecase';
 import { DocumentReceivedUseCase } from '@purchase/core/use-cases/document-received.use-case';
+import {SupplierSearchComponent} from "@customer/ui/supplier/components/supplier-search/supplier-search.component";
 
 @Component({
   selector: 'app-documento-received',

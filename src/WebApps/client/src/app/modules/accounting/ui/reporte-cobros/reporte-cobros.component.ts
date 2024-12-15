@@ -17,7 +17,7 @@ import {
 import { SharedService } from '@core/services/shared.service';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import {BancoSelectOnly} from "@accounting/core/domain/banco.interface";
 import { formatDateToString } from '@core/utils/date.util';

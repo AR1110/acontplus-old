@@ -77,6 +77,8 @@ export enum GlobalRoutes {
   ContabilidadMovimientoCajaReport = 'accounting/movimiento-caja',
 
   //COMPRAS
-  ComprasFacturaCompra='purchase/factura-fisica'
+  ComprasFacturaCompra='purchase/factura-fisica',
 
+  //Customer
+Cliente='customer/company-customer'
 }

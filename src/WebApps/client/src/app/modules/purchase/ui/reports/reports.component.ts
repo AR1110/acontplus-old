@@ -20,7 +20,7 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { Subcategory } from '@accounting/core/domain/subcategory';
-import { SupplierSearchComponent } from '@customer/supplier/components/supplier-search/supplier-search.component';
+import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
