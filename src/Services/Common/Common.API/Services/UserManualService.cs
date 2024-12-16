@@ -14,11 +14,9 @@ public class UserManualService(IAdoRepository adoRepository) : IUserManualServic
         {
             return new ApiResponse { Code = "0", Message = "Data not found!" };
         }
-        else
-        {
-            CompressionUtils.DecompressColumn(ds, "userManuals", "CompressedContent", "Content");
 
-            return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
-        }
+        CompressionUtils.DecompressColumn(ds, "userManuals", "CompressedContent", "Content");
+
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

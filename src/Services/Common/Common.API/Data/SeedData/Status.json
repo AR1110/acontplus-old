@@ -1,0 +1,18 @@
+﻿[
+  {
+    "Code": "Q",
+    "Name": "Queued"
+  },
+  {
+    "Code": "P",
+    "Name": "Processing"
+  },
+  {
+    "Code": "S",
+    "Name": "Sent"
+  },
+  {
+    "Code": "F",
+    "Name": "Failed"
+  }
+]

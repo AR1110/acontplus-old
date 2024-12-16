@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Common.API.Entities;
+using Common.Notifications.Entities;
 
 namespace Common.API.Data;
 
@@ -11,18 +12,38 @@ public class CommonContextSeed
 
         if (!context.MaritalStatuses.Any())
         {
-            var typesData = File.ReadAllText(path + @"/Data/SeedData/MaritalStatus.json");
-            var types = JsonConvert.DeserializeObject<List<MaritalStatus>>(typesData);
-            context.MaritalStatuses.AddRange(types);
+            var jsonData = await File.ReadAllTextAsync(path + @"/Data/SeedData/MaritalStatus.json");
+            var deserializedData = JsonConvert.DeserializeObject<List<MaritalStatus>>(jsonData);
+            context.MaritalStatuses.AddRange(deserializedData);
         }
 
         if (!context.HousingTypes.Any())
         {
-            var sexData = File.ReadAllText(path + @"/Data/SeedData/HousingType.json");
-            var sexes = JsonConvert.DeserializeObject<List<HousingType>>(sexData);
-            context.HousingTypes.AddRange(sexes);
+            var jsonData = await File.ReadAllTextAsync(path + @"/Data/SeedData/HousingType.json");
+            var deserializedData = JsonConvert.DeserializeObject<List<HousingType>>(jsonData);
+            context.HousingTypes.AddRange(deserializedData);
         }
 
+        if (!context.NotificationTypes.Any())
+        {
+            var jsonData = await File.ReadAllTextAsync(path + @"/Data/SeedData/NotificationTypes.json");
+            var deserializedData = JsonConvert.DeserializeObject<List<NotificationType>>(jsonData);
+            context.NotificationTypes.AddRange(deserializedData);
+        }
+
+        if (!context.Priorities.Any())
+        {
+            var jsonData = await File.ReadAllTextAsync(path + @"/Data/SeedData/Priorities.json");
+            var deserializedData = JsonConvert.DeserializeObject<List<Priority>>(jsonData);
+            context.Priorities.AddRange(deserializedData);
+        }
+
+        if (!context.Status.Any())
+        {
+            var jsonData = await File.ReadAllTextAsync(path + @"/Data/SeedData/Status.json");
+            var deserializedData = JsonConvert.DeserializeObject<List<Status>>(jsonData);
+            context.Status.AddRange(deserializedData);
+        }
 
 
         if (context.ChangeTracker.HasChanges())

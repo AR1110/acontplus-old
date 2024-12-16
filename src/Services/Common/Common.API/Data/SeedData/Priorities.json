@@ -1,0 +1,14 @@
+﻿[
+  {
+    "Code": "H",
+    "Name": "High"
+  },
+  {
+    "Code": "M",
+    "Name": "Medium"
+  },
+  {
+    "Code": "L",
+    "Name": "Low"
+  }
+]

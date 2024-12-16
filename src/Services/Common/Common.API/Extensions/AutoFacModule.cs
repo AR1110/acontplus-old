@@ -13,10 +13,7 @@ public class AutoFacModule : Module
         builder.RegisterType<CommonContext>().As<BaseContext>();
         builder.Register(ctx =>
         {
-            var allContext = new Dictionary<string, BaseContext>
-            {
-                { "CommonContext", ctx.Resolve<CommonContext>() }
-            };
+            var allContext = new Dictionary<string, BaseContext> { { "CommonContext", ctx.Resolve<CommonContext>() } };
             return new DbContextFactory(allContext);
         });
         builder.RegisterType<AdoRepository>().As<IAdoRepository>();

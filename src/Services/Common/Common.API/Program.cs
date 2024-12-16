@@ -1,8 +1,9 @@
 ﻿using System.Runtime.InteropServices;
 using Autofac;
+using Common.API.Data;
 using Common.AppSettings;
+using Microsoft.EntityFrameworkCore;
 using Services.Common.Middleware;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseMiddleware<MobileRequestMiddleware>();
 
 app.UseRouting();
 
@@ -60,4 +63,4 @@ app.MapControllers().RequireAuthorization();
 //    logger.LogError(ex, "An error occured during migration");
 //}
 
-app.Run();
+await app.RunAsync();
