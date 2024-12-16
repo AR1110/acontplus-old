@@ -377,6 +377,7 @@ export class CuentaPorPagarListaComponent {
 
       this.dialogSvc.open(ComprobanteEgresoLoteComponent, {
          size: 'xxl',
+        // isFullScreen: true,
         data: {
            dataCuentaPorPagar: selectedMergeCuotas[0],
            cuentasPorPagar: selectedMergeCuotas,

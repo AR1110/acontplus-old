@@ -9,7 +9,7 @@ import {InventoryReportComponent} from "@inventory/ui/inventory-report/inventory
 import { BrandPageComponent } from "@inventory/ui/brand-page/brand-page.component";
 import { InvModelPageComponent } from "@inventory/ui/inv-model-page/inv-model-page.component";
 import { TarifaPageComponent } from "@inventory/ui/tarifa-page/tarifa-page.component";
-import { TagsPageComponent } from "@inventory/ui/tags-page/tags-page.component";
+import { TagsComponent } from "@inventory/ui/tags/tags.component";
 import { FraccProductPageComponent } from "@inventory/ui/fracc-product-page/fracc-product-page.component";
 import {ProductComponent} from "@inventory/ui/product/product.component";
 
@@ -100,7 +100,7 @@ export const routes: Route[] = [
   {
     path: 'tags',
     title: 'Etiquetas',
-    component: TagsPageComponent,
+    component: TagsComponent,
     data: {
       breadcrumb: 'Etiquetas'
     },

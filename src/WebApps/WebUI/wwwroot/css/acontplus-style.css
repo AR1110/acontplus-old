@@ -924,3 +924,23 @@ sticky header table
     align-items: center;
     text-decoration: none;
 }
+
+/* Config Inframe  */
+.iframe-container {
+    position: relative;
+    width: 100%;
+    /* Asegura que ocupe el ancho completo del contenedor */
+    padding-top: 56.25%;
+    /* Relación de aspecto 16:9 (ajustable) */
+    overflow: hidden;
+}
+
+.iframe-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    /* Sin bordes */
+}

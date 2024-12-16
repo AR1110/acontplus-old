@@ -9,13 +9,13 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { ToasterService } from '@core/services/toaster.service';
 import { TagsAddEditModalDirective } from '@inventory/ui/directives/tags-add-edit-modal.directive';
-import { TagsService } from '@inventory/services/tags.service';
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
+import {TagUseCase} from "@inventory/core/usecases/tag.use-case";
 
 @Component({
-    selector: 'app-tags-page',
+    selector: 'app-tags',
     imports: [
         BreadcrumbComponent,
         PrimaryStatusPipe,
@@ -26,11 +26,11 @@ import Swal from 'sweetalert2';
         CustomTableContainerComponent,
         TagsAddEditModalDirective,
     ],
-    templateUrl: './tags-page.component.html',
+    templateUrl: './tags.component.html',
     styles: ``
 })
-export class TagsPageComponent {
-  tagsSvc = inject(TagsService);
+export class TagsComponent {
+  private _tagUseCase= inject(TagUseCase);
   pagination = signal(new MatPagination());
   visibleColumns: string[] = [
     'index',
@@ -52,7 +52,7 @@ export class TagsPageComponent {
       pageSize: this.pagination().pageSize,
     };
     this.isLoadingResults = true;
-    this.tagsSvc.getAll(params).subscribe({
+    this._tagUseCase.getAll(params).subscribe({
       next: (response) => {
         this.isLoadingResults = false;
         this.dataSource.set(response.tags);
@@ -102,7 +102,7 @@ export class TagsPageComponent {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.tagsSvc.updateStatus(data.idEtiqueta).subscribe((response) => {
+          this._tagUseCase.updateStatus(data.idEtiqueta).subscribe((response) => {
             if (response.code == '0') {
               this.tS.toastr({
                 type: 'warning',
