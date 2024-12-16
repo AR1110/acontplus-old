@@ -5,7 +5,7 @@ using Common.Core.Entities;
 namespace Common.API.Entities
 {
     [Table("MaritalStatus", Schema = "Common")]
-    public class MaritalStatus:BaseEntity
+    public class MaritalStatus : BaseEntity
     {
         [Required]
         [MaxLength(5)]

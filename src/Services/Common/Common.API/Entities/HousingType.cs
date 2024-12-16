@@ -5,7 +5,7 @@ using Common.Core.Entities;
 namespace Common.API.Entities
 {
     [Table("HousingType", Schema = "Common")]
-    public class HousingType:BaseEntity
+    public class HousingType : BaseEntity
     {
         [Required]
         [MaxLength(5)]

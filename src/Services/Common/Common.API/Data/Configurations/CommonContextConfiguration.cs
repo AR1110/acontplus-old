@@ -18,7 +18,7 @@ public class MaritalStatusConfiguration : BaseEntityTypeConfiguration<MaritalSta
     }
 }
 
-public class HousingTypeConfigurations: BaseEntityTypeConfiguration<HousingType>
+public class HousingTypeConfigurations : BaseEntityTypeConfiguration<HousingType>
 {
     public override void Configure(EntityTypeBuilder<HousingType> builder)
     {

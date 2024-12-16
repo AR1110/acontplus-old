@@ -1,5 +1,4 @@
-﻿using System.Reflection; 
-using Common.API.Data;
+﻿using System.Reflection;
 using Common.API.Entities;
 
 namespace Common.API.Data;
@@ -24,7 +23,7 @@ public class CommonContextSeed
             context.HousingTypes.AddRange(sexes);
         }
 
-         
+
 
         if (context.ChangeTracker.HasChanges())
         {

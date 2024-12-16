@@ -1,9 +1,7 @@
-﻿using Autofac;
-using Common.API.Data;
+﻿using System.Runtime.InteropServices;
+using Autofac;
 using Common.AppSettings;
-using Microsoft.EntityFrameworkCore;
 using Services.Common.Middleware;
-using System.Runtime.InteropServices;
 
 
 var builder = WebApplication.CreateBuilder(args);

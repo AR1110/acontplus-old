@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace Common.API.Services;
+﻿namespace Common.API.Services;
 
 public interface IUserManualService
 {

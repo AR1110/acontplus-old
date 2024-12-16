@@ -11,6 +11,7 @@ public class CommonContext : BaseContext
     public CommonContext(DbContextOptions<CommonContext> options) : base(options)
     {
     }
+    public DbSet<Notification> Notifications { get; set; }
     public DbSet<MaritalStatus> MaritalStatuses { get; set; }
     public DbSet<HousingType> HousingTypes { get; set; }
 
@@ -40,5 +41,8 @@ public class CommonContext : BaseContext
         {
             property.SetIsUnicode(false);
         }
+
+        SimpleEntityRegistration.RegisterEntities(modelBuilder, typeof(Notification));
+
     }
 }
