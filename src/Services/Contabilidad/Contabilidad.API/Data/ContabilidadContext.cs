@@ -12,6 +12,7 @@ public class ContabilidadContext : BaseContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<Tipo> Tipos { get; set; }
     public DbSet<Subcategory> Subcategories { get; set; }
+    public DbSet<Account> Accounts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -45,5 +46,16 @@ public class ContabilidadContext : BaseContext
         modelBuilder.Entity<Tipo>().HasIndex(x => x.Code)
             .HasDatabaseName("UI_Contabilidad_Tipo_Code")
             .IsUnique();
+
+        modelBuilder.Entity<Account>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+        modelBuilder.Entity<Account>().Property(p => p.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<Account>().HasIndex(p => p.Code)
+            .HasDatabaseName("UI_Contabilidad_Accont_Code")
+            .IsUnique();
+
+        modelBuilder.Entity<Account>().HasOne(a => a.ParentAccount).WithMany(a => a.ChildAccounts)
+            .HasForeignKey(a => a.ParentAccountId)
+            .OnDelete(DeleteBehavior.Restrict); 
+
     }
 }
