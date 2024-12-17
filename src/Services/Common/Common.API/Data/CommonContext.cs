@@ -1,18 +1,22 @@
 ﻿using System.Reflection;
 using Common.API.Entities;
-using Common.Core.Entities;
 using Common.Infrastructure.Data.Configurations;
+using Common.Notifications.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Common.API.Data;
 
-public class CommonContext : BaseContext
+public class CommonContext(DbContextOptions<CommonContext> options) : BaseContext(options)
 {
-    public CommonContext(DbContextOptions<CommonContext> options) : base(options)
-    {
-    }
-    public DbSet<MaritalStatus> MaritalStatuses { get; set; }
+    public DbSet<Attachment> Attachments { get; set; }
+    public DbSet<EmailQueue> EmailQueues { get; set; }
     public DbSet<HousingType> HousingTypes { get; set; }
+    public DbSet<NotificationType> NotificationTypes { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
+    public DbSet<MaritalStatus> MaritalStatuses { get; set; }
+    public DbSet<Priority> Priorities { get; set; }
+    public DbSet<Status> Status { get; set; }
+    public DbSet<WhatsAppMessage> WhatsAppMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,5 +44,10 @@ public class CommonContext : BaseContext
         {
             property.SetIsUnicode(false);
         }
+
+        SimpleEntityRegistration.RegisterEntities(modelBuilder,
+            typeof(Attachment),
+            typeof(EmailQueue),
+            typeof(WhatsAppMessage));
     }
 }

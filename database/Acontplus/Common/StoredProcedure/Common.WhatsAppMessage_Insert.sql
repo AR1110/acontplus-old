@@ -13,8 +13,9 @@ GO
 IF OBJECT_ID(N'Config.WhatsAppMessage_Insert', N'P') IS NOT NULL
 DROP PROCEDURE Config.WhatsAppMessage_Insert
 GO
-CREATE PROCEDURE Config.WhatsAppMessage_Insert @idUsuarioRol INT
+CREATE OR ALTER PROCEDURE Common.WhatsAppMessage_Insert @userRoleId INT
 ,@json VARCHAR(MAX)
+,@fromMobile BIT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -22,7 +23,7 @@ BEGIN
 	DECLARE @idUsuario INT
 	,@idSession INT
 
-	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
+	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
 	
 	DECLARE @tbl AS TABLE (
 	    browser VARCHAR(MAX),
@@ -61,15 +62,15 @@ BEGIN
 
 		BEGIN TRAN
 			INSERT INTO Config.WhatsappMessage(idUsuarioRol, browser, os, emisor, receptor, mensaje, totalMensajes, params)
-			SELECT @idUsuarioRol, @browserName, @osName, emisor, receptor, mensaje,totalMensajes, params FROM @tbl
+			SELECT @userRoleId, @browserName, @osName, emisor, receptor, mensaje,totalMensajes, params FROM @tbl
 			
-			UPDATE Config.WhatsappUsage SET used = used + (SELECT totalMensajes FROM @tbl) WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol AND ilimitado = 0)
+			UPDATE Config.WhatsappUsage SET used = used + (SELECT totalMensajes FROM @tbl) WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId AND ilimitado = 0)
 			declare @limite INT
 
-			SELECT @limite = limite FROM Config.WhatsappUsage  WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol)
-			IF EXISTS(SELECT 1 FROM Config.WhatsappUsage  WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol) AND used >= @limite AND ilimitado = 0)
+			SELECT @limite = limite FROM Config.WhatsappUsage  WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId)
+			IF EXISTS(SELECT 1 FROM Config.WhatsappUsage  WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId) AND used >= @limite AND ilimitado = 0)
 				BEGIN
-					UPDATE Config.WhatsappUsage SET fechaFin = dbo.ufnGetDateEcuador(), estado = 0 WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol)
+					UPDATE Config.WhatsappUsage SET fechaFin = dbo.ufnGetDateEcuador(), estado = 0 WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId)
 				END
 
 		COMMIT TRAN

@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace Common.API.Data;
@@ -7,8 +6,8 @@ namespace Common.API.Data;
 //to execute migrations from api
 public class DesignTimeDbContext : IDesignTimeDbContextFactory<CommonContext>
 {
-    private const string _databaseName = "DefaultConnection";
-    private const string _migrationAssembly = "Common.API";
+    private const string DatabaseName = "DefaultConnection";
+    private const string MigrationAssembly = "Common.API";
 
     public CommonContext CreateDbContext(string[] args)
     {
@@ -18,10 +17,10 @@ public class DesignTimeDbContext : IDesignTimeDbContextFactory<CommonContext>
             .AddJsonFile("sharedsettings.Development.json", true, true)
             .Build();
 
-        var connectionString = configuration.GetConnectionString(_databaseName);
+        var connectionString = configuration.GetConnectionString(DatabaseName);
 
         var dbContextOptionsBuilder = new DbContextOptionsBuilder<CommonContext>()
-            .UseSqlServer(connectionString, x => x.MigrationsAssembly(_migrationAssembly));
+            .UseSqlServer(connectionString, x => x.MigrationsAssembly(MigrationAssembly));
 
         return new CommonContext(dbContextOptionsBuilder.Options);
     }
