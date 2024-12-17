@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { CompanyCustomerSearchComponent } from '@modules/customer/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { VehicleTypeSelectHtmlOnly } from '@modules/mechanical/models/vehicle-type.model';
 import { VehicleService } from '@modules/mechanical/services/vehicle.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';

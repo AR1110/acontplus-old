@@ -26,7 +26,7 @@ import { InspectionModalComponent } from './components/inspection-modal/inspecti
 })
 export class InspectionPageComponent {
   sharedSvc = inject(SharedService);
-  displayedColumns = [
+  visibleColumns = [
     'position',
     'op',
     'cliente-conductor',

@@ -7,14 +7,9 @@ export enum GlobalRoutes {
   ConfigUserProfile = 'config/user-profile-page',
   ConfigUserCustomer = 'config/user-customer-page',
   ConfigUserCustomerRequest = 'config/user-customer-request-page',
-  ContabilidadCaja = 'accounting/cashbox-page',
-  ContabilidadCarteraProveedor = 'accounting/reports/supplier-accounts',
 
-  ContabilidadCategory = 'accounting/category-page',
-  ContabilidadMovimientoCaja = 'accounting/movimiento-caja-page',
-  ContabilidadReporteCobros = 'accounting/reports/reporte-cobros',
-  ContabilidadSubcategory = 'accounting/subcategory-page',
-  ContabilidadSubEntidadFinanciera = 'accounting/sub-entidad-financiera-page',
+
+
   FactElectAts = 'billing/ats-page',
   InventarioImpuestoMasivo = 'inventory/massive-tax-page',
   InventarioLotPrice = 'inventory/lot-price-page',
@@ -34,7 +29,6 @@ export enum GlobalRoutes {
   VetPet = 'vet/pet-page',
   VetMedicalHistory = 'vet/medical-history-page',
   VetStats = 'vet/stats-page',
-  ContabilidadMovimientoCajaReport = 'accounting/movimiento-caja-report',
   ConfigCompany = 'config/company',
   ConfigPrinter = 'config/printer',
   ConfigWizardConfig = 'config/wizard-config',
@@ -43,7 +37,6 @@ export enum GlobalRoutes {
   ContabilidadCarteraCliente = 'accounting/cartera-cliente',
   VentasReportVentaReporte = 'sale/reports/sale-report',
   FactElectReport = 'billing/fact-elect-report',
-  ContabilidadAccountingSummary = 'accounting/accounting-movement',
 
   //Inventarios
   Articulo = 'inventory/product',
@@ -72,8 +65,20 @@ export enum GlobalRoutes {
   //Contabilidad
   ContabilidadCuentaPorPagar='accounting/cuenta-por-pagar',
   Cobro = 'accounting/cobro-page',
+  ContabilidadCuentaPorCobrar='accounting/cuenta-por-cobrar',
+  ContabilidadCategory = 'accounting/category',
+  ContabilidadMovimientoCaja = 'accounting/movimiento-caja-page',
+  ContabilidadReporteCobros = 'accounting/reports/reporte-cobros',
+  ContabilidadSubcategory = 'accounting/subcategory',
+  ContabilidadSubEntidadFinanciera = 'accounting/sub-entidad-financiera-page',
+  ContabilidadCaja = 'accounting/cashbox-page',
+  ContabilidadCarteraProveedor = 'accounting/reports/supplier-accounts',
+  ContabilidadAccountingSummary = 'accounting/resumen-contable',
+  ContabilidadMovimientoCajaReport = 'accounting/movimiento-caja',
 
   //COMPRAS
-  ComprasFacturaCompra='purchase/factura-fisica'
+  ComprasFacturaCompra='purchase/factura-fisica',
 
+  //Customer
+Cliente='customer/company-customer'
 }

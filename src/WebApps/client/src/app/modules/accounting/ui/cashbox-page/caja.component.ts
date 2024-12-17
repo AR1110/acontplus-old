@@ -1,7 +1,6 @@
 import {Component, inject, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 
@@ -16,7 +15,6 @@ import Swal from 'sweetalert2';
 
 import { AperturaCajaModalComponent } from '@accounting/ui/cashbox-page/apertura-caja-modal/apertura-caja-modal.component';
 import { CajaModalComponent } from '@accounting/ui/cashbox-page/caja-modal/caja-modal.component';
-import { MovimientoCajaModalComponent } from '@accounting/ui/cashbox-page/movimiento-caja-modal/movimiento-caja-modal.component';
 import {CajaUsecase} from "@accounting/core/usecases/caja.usecase";
 import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
@@ -26,6 +24,7 @@ import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat
 import {MatPagination} from "@shared/models/pagination.model";
 import {PageEvent} from "@angular/material/paginator";
 import {MatMenuModule} from "@angular/material/menu";
+import {ControlCajaModalComponent} from "@accounting/ui/cashbox-page/control-caja-modal/control-caja-modal.component";
 
 @Component({
     selector: 'app-cashbox',
@@ -150,7 +149,7 @@ export class CajaComponent {
         if (result.isConfirmed) {
           this._cajaUseCase.delete(id).subscribe({
             next: (response) => {
-              if (isApiResponse(response)) {
+
                 if (response.code === "0") {
                   this.tS.toastr({
                     type: 'warning',
@@ -164,7 +163,6 @@ export class CajaComponent {
                   })
                   this.getCashboxs();
                 }
-              }
             }, error(err) {
               console.log(err)
             },
@@ -188,7 +186,7 @@ export class CajaComponent {
   }
 
   openModalMovimiento(params: Cashbox) {
-    const modalRef = this.modalSvc.openModalCustom(MovimientoCajaModalComponent, {
+    const modalRef = this.modalSvc.open(ControlCajaModalComponent, {
       size: 'xl',
       centered: true
     });

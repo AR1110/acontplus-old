@@ -1,6 +1,5 @@
 ﻿using Common.AppSettings;
 using Common.AppSettings.Extensions;
-using Compras.API.Helpers;
 
 namespace Compras.API.Controllers;
 
@@ -11,7 +10,8 @@ public class DocumentoRecibidoController(
     IDocumentoXmlToHtml documentoXmlToHtml,
     IFileTextService fileTextService,
     IDocumentoTempService documentoTemp,
-    IWebServiceSri webServiceSri)
+    IWebServiceSri webServiceSri,
+    IXmlSriFileService xmlSriFileService)
     : BaseApiController
 {
     [HttpGet]
@@ -136,9 +136,8 @@ public class DocumentoRecibidoController(
             return BadRequest("Formato de archivo no soportado");
         }
 
-        var dataComprobante = new DataComprobante();
-        await dataComprobante.Get(file);
-        if (dataComprobante.XmlTosave == null)
+        var dataComprobante = await xmlSriFileService.GetAsync(file);
+        if (dataComprobante.XmlSri == null)
         {
             return BadRequest("No se pudo obtener el xml");
         }
@@ -151,7 +150,7 @@ public class DocumentoRecibidoController(
             { "claveAcceso", dataComprobante.ClaveAcceso },
             { "versionComp", dataComprobante.VersionComp },
             { "fechaEmision", dataComprobante.FechaEmision },
-            { "XmlDoc", dataComprobante.XmlTosave.OuterXml },
+            { "XmlDoc", dataComprobante.XmlSri.OuterXml },
         };
         return Ok(await docRecibidoSvc.UploadXmlAsync(parameters));
     }

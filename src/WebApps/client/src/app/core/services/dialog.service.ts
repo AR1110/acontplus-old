@@ -7,7 +7,8 @@ type DialogOptions = {
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
   data?: any,
   disableClose?: boolean,
-  isFullScreen?: boolean
+  isFullScreen?: boolean,
+  isScrollable?: boolean
 }
 @Injectable({
   providedIn: 'root'
@@ -21,21 +22,31 @@ export class DialogService {
     const dialogConfig = new MatDialogConfig();
 
     if (options.isFullScreen) {
-      dialogConfig.width = '100vw';
-      dialogConfig.height = '100vh';
+      dialogConfig.width = '100%';
+      dialogConfig.height = '100%';
       dialogConfig.maxWidth = '100vw';
       dialogConfig.maxHeight = '100vh';
-      dialogConfig.panelClass = 'full-screen-dialog';
+      dialogConfig.panelClass = ['full-screen-dialog'];
+      dialogConfig.position = {
+        top: '0',
+        left: '0'
+      };
     } else {
       dialogConfig.width = this.getDialogWidth(options.size);
-      dialogConfig.maxWidth = '90vw'; // Set maximum width for xl size
-      dialogConfig.height = 'auto'
+      dialogConfig.maxWidth = '90vw';
+      dialogConfig.height = 'auto';
+      dialogConfig.maxHeight = options.isScrollable ? '90vh' : undefined;
     }
+
+    dialogConfig.panelClass = [
+      'custom-dialog',
+      options.isScrollable ? 'dialog-scrollable' : 'dialog-non-scrollable'
+    ];
 
     dialogConfig.data = options.data;
     dialogConfig.hasBackdrop = true;
-    dialogConfig.autoFocus = false
-    dialogConfig.scrollStrategy = this.overlay.scrollStrategies.reposition()
+    dialogConfig.autoFocus = false;
+    dialogConfig.scrollStrategy = this.overlay.scrollStrategies.block();
     dialogConfig.disableClose = options.disableClose ?? true;
 
     const dialogRef = this.dialog.open(component, dialogConfig);

@@ -1,7 +1,6 @@
 import { MatIconModule } from '@angular/material/icon';
 import { Component, inject, Input } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
-import { CuentaPorCobrarService } from '@accounting/services/cuenta-por-cobrar.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { FormaCobroModalComponent } from '@accounting/ui/comprobante-ingreso/components/form-cobro-modal/forma-cobro-modal.component';
@@ -14,9 +13,8 @@ import { MultiplesPaymentType, PaymentData, PaymentDetail, PaymentHistory } from
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { DatePipe } from '@angular/common';
-import { comprobanteIngresoAdapter } from '@accounting/data/repository/comprobante-ingreso/comprobante-ingreso.adapter';
-import { ComprobanteIngresoService } from '@accounting/services/comprobante-ingreso.service';
-import { isApiResponse } from '@core/models/api-response';
+import {ComprobanteIngresoUsecase} from "@accounting/core/usecases/comprobante-ingreso.usecase";
+import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobrar.usecase";
 
 @Component({
     selector: 'app-comprobante-ingreso-lote-modal',
@@ -45,9 +43,10 @@ export class ComprobanteIngresoLoteModalComponent {
 
   modal = inject(NgbActiveModal);
   modalSvc = inject(ModalService);
-  cuentaPorCobrarSvc = inject(CuentaPorCobrarService)
-  comprobanteIngresoSvc = inject(ComprobanteIngresoService)
   tS = inject(ToasterService)
+  private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUsecase);
+  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUsecase)
+
 
 
   columnsToDisplay = ['expand', 'tipoDoc', 'serieComprobante', 'identificacionComprador', 'razonSocialComprador', 'total'];
@@ -111,7 +110,7 @@ export class ComprobanteIngresoLoteModalComponent {
       if (selectedDocumentos !== null && Array.isArray(selectedDocumentos)) {
         idCliente = selectedDocumentos[0].idCliente;
       }
-      this.cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar, idCliente).subscribe(  (response) => {
+      this._cuentaPorCobrarUseCase.getDataForm(idCuentaPorCobrar, idCliente).subscribe(  (response) => {
 
           this.dataFormaCobro = response;
 
@@ -444,12 +443,11 @@ export class ComprobanteIngresoLoteModalComponent {
           }
 
 
-          let params = comprobanteIngresoAdapter.to(data);
+          // let params = comprobanteIngresoAdapter.to(data);
 
 
-          this.comprobanteIngresoSvc.post(params).subscribe( (response) => {
+          this._comprobanteIngresoUseCase.create(data).subscribe( (response) => {
 
-              if (isApiResponse(response)) {
                 if (response.code === "0") {
                   this.tS.toastr({
                     type: 'warning',
@@ -463,7 +461,6 @@ export class ComprobanteIngresoLoteModalComponent {
                   })
                   this.modal.close(response)
                 }
-              }
           })
         }
       })

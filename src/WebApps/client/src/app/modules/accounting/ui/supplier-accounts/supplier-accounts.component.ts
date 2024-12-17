@@ -19,7 +19,7 @@ import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { SupplierSearchComponent } from '@customer/supplier/components/supplier-search/supplier-search.component';
+import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 
 @Component({

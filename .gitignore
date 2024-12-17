@@ -94,3 +94,4 @@ bin-release/
 /src/WebApps/client/.fleet
 .DS_Store
 shared/sharedsettings.Development.json
+/src/WebApps/client/src/output.txt

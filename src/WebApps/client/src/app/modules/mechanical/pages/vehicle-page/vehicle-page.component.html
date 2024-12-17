@@ -90,8 +90,8 @@
         </tr>
 
 
-        <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
-        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+        <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: visibleColumns;" mat-row></tr>
       </table>
     </section>
 

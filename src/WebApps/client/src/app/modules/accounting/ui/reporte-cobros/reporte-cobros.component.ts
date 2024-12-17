@@ -17,11 +17,11 @@ import {
 import { SharedService } from '@core/services/shared.service';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ComprobanteIngresoService } from '@accounting/services/comprobante-ingreso.service';
 import {BancoSelectOnly} from "@accounting/core/domain/banco.interface";
 import { formatDateToString } from '@core/utils/date.util';
+import {ComprobanteIngresoUsecase} from "@accounting/core/usecases/comprobante-ingreso.usecase";
 
 @Component({
     selector: 'app-reporte-cobros',
@@ -65,7 +65,9 @@ export class ReporteCobrosComponent implements OnInit {
   // Services
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
-  private compIngresoSvc = inject(ComprobanteIngresoService)
+
+  private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUsecase);
+
 
   ngOnInit(): void {
     this.getInitialLoad();
@@ -73,7 +75,7 @@ export class ReporteCobrosComponent implements OnInit {
 
   getInitialLoad() {
 
-    this.compIngresoSvc.getDataFilter().subscribe(response => {
+    this._comprobanteIngresoUseCase.getDataFilter().subscribe(response => {
       const { establecimientos, tiposDoc, subEntidadesFinanciera, bancos } = response;
 
       this.establecimientos = establecimientos;

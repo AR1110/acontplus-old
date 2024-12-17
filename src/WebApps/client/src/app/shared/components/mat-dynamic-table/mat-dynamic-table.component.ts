@@ -2,8 +2,10 @@ import {
   Component,
   ContentChild,
   ContentChildren,
-  EventEmitter, input,
-  Input, output,
+  EventEmitter,
+  input,
+  Input,
+  output,
   Output,
   QueryList,
   SimpleChanges,
@@ -20,7 +22,6 @@ import {
   MatTable,
   MatTableDataSource,
   MatTableModule,
-
 } from '@angular/material/table';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -31,34 +32,46 @@ import { CommonModule, DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import { GetTotalPipe } from '@shared/pipes/get-total.pipe';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import {animate, state, style, transition, trigger} from "@angular/animations";
-import {Pagination} from "@shared/models/pagination.model";
-import {MatPaginatorModule, PageEvent} from "@angular/material/paginator";
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
+import { Pagination } from '@shared/models/pagination.model';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { CustomMatSpinnerComponent } from '@core/components/custom-mat-spinner/custom-mat-spinner.component';
 
 @Component({
-    selector: 'app-mat-dynamic-table',
-    imports: [
-        CommonModule,
-        MatTableModule,
-        MatCheckboxModule,
-        MatSortModule,
-        MatIconModule,
-        MatButtonModule,
-      MatPaginatorModule,
-        NgClass,
-        GetTotalPipe,
-        DatePipe,
-        DecimalPipe,
-    ],
-    animations: [
-        trigger('detailExpand', [
-            state('collapsed,void', style({ height: '0px', minHeight: '0' })),
-            state('expanded', style({ height: '*' })),
-            transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-        ]),
-    ],
-    templateUrl: './mat-dynamic-table.component.html',
-    styleUrl: `./mat-dynamic-table.component.scss`
+  selector: 'app-mat-dynamic-table',
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatSortModule,
+    MatIconModule,
+    MatButtonModule,
+    MatPaginatorModule,
+    NgClass,
+    GetTotalPipe,
+    DatePipe,
+    DecimalPipe,
+    CustomMatSpinnerComponent,
+  ],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed,void', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition(
+        'expanded <=> collapsed',
+        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'),
+      ),
+    ]),
+  ],
+  templateUrl: './mat-dynamic-table.component.html',
+  styleUrl: `./mat-dynamic-table.component.scss`,
 })
 export class MatDynamicTableComponent<T> {
   @Input() showExpand = false;
@@ -66,17 +79,17 @@ export class MatDynamicTableComponent<T> {
   @Input() locale: string = '';
   @Input() highlightRowIndex: number = 0;
 
-  @Input() displayedColumns: string[] = [];
-  @Input() displayColumnDefs: ColumnDefinition[] = [];
+  @Input() visibleColumns: string[] = [];
+  @Input() columnDefinitions: ColumnDefinition[] = [];
 
-  //  columnsToDisplayWithExpand = this.showExpand ? [...this.displayedColumns, 'expand'] : this.displayedColumns
+  //  columnsToDisplayWithExpand = this.showExpand ? [...this.visibleColumns, 'expand'] : this.visibleColumns
 
   @Input() showSelectBox: boolean = false;
-  @Input() dataList: T[] = [];
+  @Input() tableData: T[] = [];
   @Output() rowSelected = new EventEmitter<T>();
   @Output() copyRow = new EventEmitter<T>();
-  onShowExpanded = output<T>()
-  onHideExpanded = output<T>()
+  onShowExpanded = output<T>();
+  onHideExpanded = output<T>();
 
   dataSource = new MatTableDataSource<T>([]);
   selection: SelectionModel<T> = new SelectionModel<T>(true, []);
@@ -98,13 +111,16 @@ export class MatDynamicTableComponent<T> {
 
   expandedElement!: T | null;
 
-  withPagination = input(false)
+  enablePagination = input(false);
   onPageEvent = output<PageEvent>();
-  pagination = input<Pagination>();
+  paginationConfig = input<Pagination>();
 
   handlePageEvent(e: PageEvent) {
     this.onPageEvent.emit(e);
   }
+
+  isLoadingData = input<boolean>(false);
+
   constructor() {}
 
   ngAfterContentInit(): void {
@@ -129,19 +145,19 @@ export class MatDynamicTableComponent<T> {
   }
 
   ngOnInit(): void {
-    if (!this.displayedColumns) {
-      this.displayedColumns = this.displayColumnDefs.map((col) => col.key);
-      this.displayColumnDefs.forEach((col, index) => (col.index = index));
+    if (!this.visibleColumns) {
+      this.visibleColumns = this.columnDefinitions.map((col) => col.key);
+      this.columnDefinitions.forEach((col, index) => (col.index = index));
     }
 
-    if (this.showSelectBox && this.displayedColumns.indexOf('select') < 0) {
-      this.displayedColumns = ['select', ...this.displayedColumns];
+    if (this.showSelectBox && this.visibleColumns.indexOf('select') < 0) {
+      this.visibleColumns = ['select', ...this.visibleColumns];
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['dataList'].currentValue && changes['dataList']) {
-      this.dataSource = new MatTableDataSource<T>(this.dataList);
+    if (changes['tableData']?.currentValue && changes['tableData']) {
+      this.dataSource = new MatTableDataSource<T>(this.tableData);
     }
   }
 
@@ -218,17 +234,13 @@ export class MatDynamicTableComponent<T> {
     return element.colorRow ? element.colorRow : ''; // Return empty string if no color is defined
   }
 
-
-  onExpand($event:any, element:T){
-    $event.stopPropagation()
+  onExpand($event: any, element: T) {
+    $event.stopPropagation();
     this.expandedElement = this.expandedElement === element ? null : element;
-    if(this.expandedElement){
-    this.onShowExpanded.emit(element)
-    }else{
-      this.onHideExpanded.emit(element)
-
+    if (this.expandedElement) {
+      this.onShowExpanded.emit(element);
+    } else {
+      this.onHideExpanded.emit(element);
     }
   }
-
-
 }

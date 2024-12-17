@@ -3,7 +3,7 @@ import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
-import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
@@ -55,7 +55,7 @@ export class SupportPageComponent {
   tS = inject(ToasterService);
   sharedSvc = inject(SharedService);
 
-  displayedColumns: string[] = [];
+  visibleColumns: string[] = [];
   pagination = new Pagination();
 
   dataSource: any = [];
@@ -169,7 +169,7 @@ export class SupportPageComponent {
     // this.dataSearch.supportStatusId = this.supportStatusId;
 
     if (this.valueStatus === MECHANICAL_STATUS.DASHBOARD) {
-      this.displayedColumns = [
+      this.visibleColumns = [
         'position',
         'op',
         'estado',
@@ -183,7 +183,7 @@ export class SupportPageComponent {
         'entregar',
       ];
     } else {
-      this.displayedColumns = [
+      this.visibleColumns = [
         'position',
         'op',
         'secuencia',

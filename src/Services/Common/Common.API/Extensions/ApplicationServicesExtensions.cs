@@ -10,7 +10,7 @@ public static class ApplicationServicesExtensions
         IConfiguration configuration)
     {
         services.AddDbContextPool<CommonContext>(options =>
-           options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddControllers()
             .AddNewtonsoftJson(x =>
@@ -21,10 +21,10 @@ public static class ApplicationServicesExtensions
             });
 
         string[] nameSpaces =
-            [
-                "Common.Infrastructure.Repository.Implementations",
-                "Common.API.Services",
-            ];
+        [
+            "Common.Infrastructure.Repository.Implementations",
+            "Common.API.Services"
+        ];
 
         services.Scan(scan => scan
             .FromApplicationDependencies()
@@ -32,7 +32,7 @@ public static class ApplicationServicesExtensions
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithTransientLifetime()
-            );
+        );
 
         return services;
     }

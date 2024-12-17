@@ -1,15 +1,13 @@
 import { Component, Input, ViewEncapsulation, inject } from '@angular/core';
 import { CODE_REPORT } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
-import { SharedService } from '@core/services/shared.service';
 import { roundNumber } from '@core/utils/round-number.utils';
-import { ControlCajaService } from '@accounting/services/control-caja.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import {FormsModule} from "@angular/forms";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {CommonModule} from "@angular/common";
 import { NotificacionService } from '@shared/services/notificacion.service';
+import {ControlCajaUsecase} from "@accounting/core/usecases/control-caja.usecase";
 
 type Modeda = {
   idMoneda: number
@@ -34,8 +32,7 @@ export class CierreCajaModalComponent {
   }
 
   private activeModal = inject(NgbActiveModal);
-  private controlCajaSvc = inject(ControlCajaService);
-  private sharedSvc = inject(SharedService)
+  private _controlCajaUseCase = inject(ControlCajaUsecase)
   private appNotifiSvc = inject(NotificacionService)
 
   monedas: Array<Modeda> = [];
@@ -43,7 +40,7 @@ export class CierreCajaModalComponent {
 
   ngOnInit() {
 
-    this.controlCajaSvc.getDataFormCashboxClose().subscribe(  (response) => {
+    this._controlCajaUseCase.getDataFormCashboxClose().subscribe(  (response) => {
 
 
         const { monedas } = response as { monedas: Array<Modeda> }
@@ -93,9 +90,9 @@ export class CierreCajaModalComponent {
         }
 
 
-        this.controlCajaSvc.put(this.params.id, data).subscribe(  (response) => {
+        this._controlCajaUseCase.put(this.params.id, data).subscribe(  (response) => {
 
-            if (isApiResponse(response)) {
+
               if (response.code === "0") {
                 Swal.fire({
                   icon: 'warning',
@@ -115,7 +112,6 @@ export class CierreCajaModalComponent {
                 }
                 this.activeModal.close(response)
               }
-            }
         })
 
       }

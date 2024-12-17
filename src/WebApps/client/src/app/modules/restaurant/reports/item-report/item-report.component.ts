@@ -1,8 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab } from '@core/models/estab.model';
-import { ProductService } from '@inventory/product/product.service';
-import { GroupedSubFamilia } from '@modules/inventory/models/sub-category.model';
+import { GroupedSubFamilia } from '@inventory/core/domain/sub-category.model';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -21,6 +20,7 @@ import { AsyncPipe } from '@angular/common';
 import { ItemService } from '@modules/restaurant/services/item.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
+import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
 
 @Component({
     selector: 'app-item-report',
@@ -45,13 +45,13 @@ export class ItemReportComponent {
     codEstab: '',
     itemId: 0,
   };
-  private productSvc = inject(ProductService);
   private sharedSvc = inject(SharedService);
   private itemSvc = inject(ItemService);
+  private _productUseCase = inject(ProductUsecase)
 
   ngOnInit() {
     showLoader();
-    this.productSvc.getDataReport().subscribe({
+    this._productUseCase.getDataReport().subscribe({
       next: (response) => {
         hideLoader();
         const { estabs, subCategorias } = response;

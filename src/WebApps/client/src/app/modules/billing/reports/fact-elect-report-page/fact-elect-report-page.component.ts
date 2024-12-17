@@ -7,7 +7,7 @@ import {DocElectService} from "@billing/services/doc-elect.service";
 import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
 import {
   CompanyCustomerSearchComponent
-} from "@company-customer/components/company-customer-search/company-customer-search.component";
+} from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
 import {UserSearchComponent} from "@core/components/user-search/user-search.component";
 import {BILLING_CODE_REPORT} from "@billing/enums/billing.enum.ts";
 import {isValidField} from "@core/utils/utils";

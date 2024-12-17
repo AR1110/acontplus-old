@@ -1,8 +1,8 @@
 
 
 import { isDateValid } from "@core/utils/date.util"
-import { ConsolidacionBodega } from "../models/consolidacion-bodega.model"
-import { MedidaProducto } from "../models/measure.model"
+import { ConsolidacionBodega } from "../core/domain/consolidacion-bodega.model"
+import { MedidaProducto } from "../core/domain/measure.model"
 
 type Row = {
   productId: number

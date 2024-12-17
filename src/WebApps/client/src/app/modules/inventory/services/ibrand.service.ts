@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { INVENTORY_PATHS } from '../enums/inventory.enum';
+import { INVENTORY_PATHS } from '@inventory/core/enums/inventory.enum';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';

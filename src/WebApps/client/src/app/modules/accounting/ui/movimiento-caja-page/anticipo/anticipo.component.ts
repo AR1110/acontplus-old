@@ -1,23 +1,23 @@
 import { Component, inject } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
 import { AnticipoModalComponent } from '@accounting/ui/movimiento-caja-page/anticipo/anticipo-modal/anticipo-modal.component';
-import { AnticipoService } from '@accounting/services/anticipo.service';
+
 import { AnticipoRead } from '@accounting/core/domain/anticipo.model';
 import { SharedService } from '@core/services/shared.service';
 import { CODE_REPORT } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
-import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { isValidField } from '@core/utils/utils';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import {NgbDropdownModule, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import { ActionAnularDirective } from '@shared/directives/permission/action-anular.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import { formatDateToString } from '@core/utils/date.util';
+import {AnticipoUsecase} from "@accounting/core/usecases/anticipo.usecase";
 
 @Component({
     selector: 'app-anticipo',
@@ -49,9 +49,9 @@ export class AnticipoComponent {
   };
   totalRecords = 0;
   private modalSvc = inject(ModalService);
-  private anticipoSvc = inject(AnticipoService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
+  private _anticipoUseCase = inject(AnticipoUsecase)
 
   getAnticipos() {
     let params = {
@@ -64,7 +64,7 @@ export class AnticipoComponent {
     };
 
     this.anticipos = [];
-    this.anticipoSvc.getAll(params).subscribe((response) => {
+    this._anticipoUseCase.getAll(params).subscribe((response) => {
       this.anticipos = response;
       this.totalRecords =
         this.anticipos.length > 0 ? this.anticipos[0].totalRecords : 0;
@@ -72,7 +72,7 @@ export class AnticipoComponent {
   }
 
   ngOnInit() {
-    this.anticipoSvc.getDataFilter().subscribe((response) => {
+    this._anticipoUseCase.getDataFilter().subscribe((response) => {
       this.establecimientos = response.establecimientos;
       if (this.establecimientos.length > 0) {
         let dataEstab = this.establecimientos.find(
@@ -164,8 +164,8 @@ export class AnticipoComponent {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.anticipoSvc.delete(data.idAnticipo).subscribe((response) => {
-            if (isApiResponse(response)) {
+          this._anticipoUseCase.delete(data.idAnticipo).subscribe((response) => {
+
               if (response.code === '0') {
                 this.tS.toastr({
                   type: 'warning',
@@ -179,7 +179,6 @@ export class AnticipoComponent {
                 });
                 this.getAnticipos();
               }
-            }
           });
         }
       });

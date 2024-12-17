@@ -95,11 +95,15 @@
             }
             // Create a new iframe element
             let iframe = document.createElement('iframe');
+            // iframe.classList='iframe-container'
+           
             iframe.title = 'Angular App';
             iframe.style.width = '100%';
-            iframe.style.height = '600px';
+            iframe.style.height = '100%';
             iframe.style.border = 'none';
             iframe.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-popups-to-escape-sandbox'
+
+             iframe.loading = 'lazy'; // Precarga solo cuando sea visible 
             // Set the src attribute of the iframe
 
             let urlClient = `${frontend}?token=${token}&route=${route}&permission=${JSON.stringify({ ...permissions, acciones: $scope.accion || {} })}&userRoleData=${JSON.stringify(userRoleData)}`
@@ -122,7 +126,7 @@
 
             // Get the div element
             var div = document.getElementById('iframeApp');
-
+            div.classList.add('iframe-container');
             // Append the iframe to the div
             div.appendChild(iframe);
         }

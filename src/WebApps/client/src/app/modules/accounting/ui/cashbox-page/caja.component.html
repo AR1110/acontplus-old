@@ -25,12 +25,12 @@
 
 
     <app-mat-dynamic-table
-      [dataList]="cashboxs"
-      [displayColumnDefs]="columnsDefs"
-      [displayedColumns]="columns"
+      [tableData]="cashboxs"
+      [columnDefinitions]="columnsDefs"
+      [visibleColumns]="columns"
       [templateOp]="templateOp"
-      [pagination]="pagination()"
-      [withPagination]="true"
+      [paginationConfig]="pagination()"
+      [enablePagination]="true"
       (onPageEvent)="handlePageEvent($event)"
     >
     </app-mat-dynamic-table>

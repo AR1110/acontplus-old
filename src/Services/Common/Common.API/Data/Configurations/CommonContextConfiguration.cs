@@ -1,5 +1,6 @@
 ﻿using Common.API.Entities;
 using Common.Infrastructure.Data.Configurations;
+using Common.Notifications.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,7 +19,7 @@ public class MaritalStatusConfiguration : BaseEntityTypeConfiguration<MaritalSta
     }
 }
 
-public class HousingTypeConfigurations: BaseEntityTypeConfiguration<HousingType>
+public class HousingTypeConfiguration : BaseEntityTypeConfiguration<HousingType>
 {
     public override void Configure(EntityTypeBuilder<HousingType> builder)
     {
@@ -27,6 +28,58 @@ public class HousingTypeConfigurations: BaseEntityTypeConfiguration<HousingType>
         builder
             .HasIndex(x => x.Code)
             .HasDatabaseName("UX_HousingType_Code")
+            .IsUnique();
+    }
+}
+
+public class NotificationConfiguration : BaseEntityTypeConfiguration<Notification>
+{
+    public override void Configure(EntityTypeBuilder<Notification> builder)
+    {
+        base.Configure(builder);
+
+        builder
+            .HasMany(x => x.Attachments)
+            .WithOne(x => x.Notification)
+            .HasForeignKey(x => x.NotificationId);
+    }
+}
+
+public class NotificationTypeConfiguration : BaseEntityTypeConfiguration<NotificationType>
+{
+    public override void Configure(EntityTypeBuilder<NotificationType> builder)
+    {
+        base.Configure(builder);
+
+        builder
+            .HasIndex(x => x.Code)
+            .HasDatabaseName("UX_NotificationType_Code")
+            .IsUnique();
+    }
+}
+
+public class PriorityConfiguration : BaseEntityTypeConfiguration<Priority>
+{
+    public override void Configure(EntityTypeBuilder<Priority> builder)
+    {
+        base.Configure(builder);
+
+        builder
+            .HasIndex(x => x.Code)
+            .HasDatabaseName("UX_Priority_Code")
+            .IsUnique();
+    }
+}
+
+public class StatusConfiguration : BaseEntityTypeConfiguration<Status>
+{
+    public override void Configure(EntityTypeBuilder<Status> builder)
+    {
+        base.Configure(builder);
+
+        builder
+            .HasIndex(x => x.Code)
+            .HasDatabaseName("UX_Status_Code")
             .IsUnique();
     }
 }

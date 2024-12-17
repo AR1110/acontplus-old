@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
 import { ModalEgresoIngresoComponent } from '@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/modal-egreso-ingreso/modal-egreso-ingreso.component';
 import {
   CompanyCustomerSearchComponent
-} from "@company-customer/components/company-customer-search/company-customer-search.component";
+} from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
 import {ACCOUNTING_CODE_REPORT} from "@accounting/core/enums/accounting.constants";
 import { ActionAnularDirective } from '@shared/directives/permission/action-anular.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';

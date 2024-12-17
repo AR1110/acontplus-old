@@ -2,7 +2,7 @@ import { Directive, ElementRef, Input, OnInit, Renderer2, TemplateRef, ViewConta
 import { NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { SupplierService } from '../services/supplier.service';
+import { SupplierService } from '@purchase/data/services/supplier.service';
 
 @Directive({
   selector: '[appSupplierSearchDrtv]',

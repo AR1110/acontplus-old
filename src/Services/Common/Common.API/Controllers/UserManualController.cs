@@ -2,6 +2,7 @@
 using Common.AppSettings.Extensions;
 
 namespace Common.API.Controllers;
+
 public class UserManualController(IUserManualService userManualService) : BaseApiController
 {
     [HttpGet]
@@ -9,8 +10,7 @@ public class UserManualController(IUserManualService userManualService) : BaseAp
     {
         var parameters = new Dictionary<string, object>
         {
-            {"userRoleId", User.GetUserRoleId() },
-            {"json", SqlStringParam.Sanitize(json)}
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await userManualService.GetAsync(parameters));
     }

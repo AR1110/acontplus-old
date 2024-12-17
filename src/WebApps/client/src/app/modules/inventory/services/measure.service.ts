@@ -3,8 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { map } from 'rxjs';
 
-import { INVENTORY_PATHS } from '../enums/inventory.enum';
-import { MeasureRead } from '../models/measure.model';
+import { INVENTORY_PATHS } from '@inventory/core/enums/inventory.enum';
+import { MeasureRead } from '../core/domain/measure.model';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ApiResponse } from '@core/models/api-response';
 

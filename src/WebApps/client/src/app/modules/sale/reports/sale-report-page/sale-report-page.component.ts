@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
-import { CuentaPorCobrarService } from '@accounting/services/cuenta-por-cobrar.service';
 import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
@@ -23,7 +22,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
-import { CompanyCustomerSearchMatComponent } from '@company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
+import { CompanyCustomerSearchMatComponent } from '@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
@@ -32,6 +31,7 @@ import { NotificacionService } from '@shared/services/notificacion.service';
 import { AuthService } from '@modules/auth/services/auth.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
+import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobrar.usecase";
 
 const imports = [
   MatCardModule,
@@ -84,14 +84,15 @@ export class SaleReportPageComponent {
   empresas: any[] = [];
   format: any;
   provinciasAgrupadas: any[] = [];
-  private cuentaPorCobrarSvc = inject(CuentaPorCobrarService);
+  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUsecase)
+
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
   private appNotifiSvc = inject(NotificacionService)
   private authSvc = inject(AuthService)
 
   getDataFilter() {
-    this.cuentaPorCobrarSvc.getDataFilter().subscribe((response) => {
+    this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
       const { estabs, estadosDoc, tiposDoc, empresas, ciudades } = response;
 
       this.establecimientos = estabs;

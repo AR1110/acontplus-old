@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Infrastructure" />
+    <PackageReference Include="Acontplus.Common.Notifications" />
     <PackageReference Include="Acontplus.Common.S3Application" />
     <PackageReference Include="Acontplus.Services.Common" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
