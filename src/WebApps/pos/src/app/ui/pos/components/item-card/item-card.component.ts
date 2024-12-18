@@ -1,4 +1,4 @@
-import { ItemRead } from '@/features/pos/models/item.model';
+import { ItemRead } from '@domain/models/item.model';
 import { Component, input, output } from '@angular/core';
 import {MatCardModule} from "@angular/material/card";
 import {CommonModule} from "@angular/common";

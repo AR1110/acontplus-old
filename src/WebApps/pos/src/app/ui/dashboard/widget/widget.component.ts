@@ -1,5 +1,5 @@
 import { Component, Injector, input, signal } from '@angular/core';
-import { Widget } from '@domain/models/widget.interface';
+import { Widget } from '@domain/models/widget.model';
 import { CommonModule, NgComponentOutlet, NgStyle } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';

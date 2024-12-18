@@ -1,7 +1,7 @@
 import { Component, effect, ElementRef, inject, input, viewChild } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { BaseChartDirective } from 'ng2-charts';
-import { DashboardStore } from '../../store/dashboard.store';
+import { DashboardStore } from '@ui/store/dashboard.store';
 
 @Component({
     selector: 'app-top-products',

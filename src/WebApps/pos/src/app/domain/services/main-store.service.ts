@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {GenericStoreSignalService} from "@/shared/services/generic-store-signal.service";
+import {GenericStoreSignalService} from "@domain/services/generic-store-signal.service";
 import {GroupedEstab, GroupedEstabBodega, GroupedEstabPuntoEmision} from '@domain/models/estab.model';
 
 type MainStoreState = {

@@ -17,12 +17,12 @@ import { AsyncPipe } from '@angular/common';
 import Swal from 'sweetalert2';
 
 //utils
-import { formatDateToString } from '@domain/utils/utils/date.util';
-import { minus, plus } from '@domain/utils/utils/decimal.util';
-import { PaymentUtil } from '@domain/utils/utils/payment.util';
-import { roundNumber } from '@domain/utils/utils/round-number.util';
-import { playBeepSound, playClearSound } from '@domain/utils/utils/sound.util';
-import { isValidField, truncateNumber } from '@domain/utils/utils/utils';
+import { formatDateToString } from '@domain/utils/date.util';
+import { minus, plus } from '@domain/utils/decimal.util';
+import { PaymentUtil } from '@domain/utils/payment.util';
+import { roundNumber } from '@domain/utils/round-number.util';
+import { playBeepSound, playClearSound } from '@domain/utils/sound.util';
+import { isValidField, truncateNumber } from '@domain/utils/utils';
 
 import { InputNumberDirective } from '@ui/directives/input-number.directive';
 import { DECIMALS, PaymentTypeCode } from '@domain/enums/main.enum';
@@ -34,8 +34,8 @@ import { Cobro, CuentaPorCobrarCalculado, DataCuentaPorCobrar } from '@domain/mo
 
 //components
 import { CustomContainerDialogComponent } from '@ui/components/custom-container-dialog/custom-container-dialog.component';
-import { CobrosAgregadoModalComponent } from './cobros-agregado-modal/cobros-agregado-modal.component';
-import { PaymentCalculatorComponent } from './payment-calculator/payment-calculator.component';
+import { CobrosAgregadoModalComponent } from '@ui/components/payment/cobros-agregado-modal/cobros-agregado-modal.component';
+import { PaymentCalculatorComponent } from '@ui/components/payment/payment-calculator/payment-calculator.component';
 
 //services
 import { DialogService } from '@domain/services/dialog.service';

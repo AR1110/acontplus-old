@@ -1,20 +1,20 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
-import { PromotionMenuService } from '@/features/pos/services/promotion-menu.service';
-import { ItemRead } from '@/features/pos/models/item.model';
-import { PosStoreService } from '@/features/pos/store/pos-store.service';
-import { ItemCardComponent } from '../../item-card/item-card.component';
-import { ProductService } from '@/shared/services/product/product.service';
-import { MainStoreService } from '@/store/main-store.service';
+import { PromotionMenuService } from '@data/repositories/promotion-menu/promotion-menu.service';
+import { ItemRead } from '@domain/models/item.model';
+import { PosStoreService } from '@ui/store/pos-store.service';
+import { ItemCardComponent } from '@ui/pos/components/item-card/item-card.component';
+import { ProductService } from '@data/repositories/product/product.service';
+import { MainStoreService } from '@domain/services/main-store.service';
 import { map, of, switchMap } from 'rxjs';
-import { pricingCalculateUtil } from '@/shared/utils/princing-calculate.util';
-import { roundNumber } from '@/shared/utils/round-number.util';
-import { DECIMALS } from '@/shared/enums/main.enum';
-import { calculateCantidadStock, mergeStockQty } from '@/shared/utils/product.util';
-import { ToasterService } from '@/shared/services/toaster.service';
-import { playBeepSound } from '@/shared/utils/sound.util';
+import { pricingCalculateUtil } from '@domain/utils/princing-calculate.util';
+import { roundNumber } from '@domain/utils/round-number.util';
+import { DECIMALS } from '@domain/enums/main.enum';
+import { calculateCantidadStock, mergeStockQty } from '@domain/utils/product.util';
+import { ToasterService } from '@domain/services/toaster.service';
+import { playBeepSound } from '@domain/utils/sound.util';
 import Swal from 'sweetalert2';
 import { OrderItem } from '@domain/models/order.model';
-import { TarifaProducto } from '@/shared/models/inventory/tarifa.model';
+import { TarifaProducto } from '@domain/models/inventory/tarifa.model';
 
 @Component({
     selector: 'app-promotions-item',

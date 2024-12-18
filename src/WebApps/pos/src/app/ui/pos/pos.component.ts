@@ -1,33 +1,33 @@
 
 import { Component, computed,   inject, signal,   } from '@angular/core';
 import {MatIcon, MatIconModule} from "@angular/material/icon";
-import { ConfigService } from '@/shared/services/config.service';
+import { ConfigService } from '@data/repositories/config/config.service';
 import { forkJoin,   } from 'rxjs';
-import { ItemService } from '@/features/pos/services/item.service';
-import { Pagination } from "@/shared/models/pagination.model";
-import { ItemRead } from "@/features/pos/models/item.model";
+import { ItemService } from '@data/repositories/item/item.service';
+import { Pagination } from "@domain/models/pagination.model";
+import { ItemRead } from "@domain/models/item.model";
 import {MatPaginator,  PageEvent} from '@angular/material/paginator';
-import { SubCategory } from "@/shared/models/inventory/subcategory.model";
+import { SubCategory } from "@domain/models/inventory/subcategory.model";
 import {MatProgressSpinner,  } from '@angular/material/progress-spinner';
 import {MatCard, MatCardContent, } from "@angular/material/card";
-import { PosStoreService, posStoreStateInitial } from "@/features/pos/store/pos-store.service";
+import { PosStoreService, posStoreStateInitial } from "@ui/store/pos-store.service";
 import {  MatFormFieldModule} from "@angular/material/form-field";
-import { MainStoreService } from "@/store/main-store.service";
-import { SUB_CATEGORY_CODE } from '@/shared/enums/main.enum';
+import { MainStoreService } from "@domain/services/main-store.service";
+import { SUB_CATEGORY_CODE } from '@domain/enums/main.enum';
 import { Dialog } from '@angular/cdk/dialog';
 import { FormsModule } from '@angular/forms';
-import { isValidField } from '@/shared/utils/utils'; ;
+import { isValidField } from '@domain/utils/utils'; ;
 import { Order } from '@domain/models/order.model';
-import { CategoriesTabComponent } from '../components/categories-tab/categories-tab.component';
-import { PromotionsComponent } from '../components/promotions/promotions.component';
-import { ItemsComponent } from '../components/items/items.component';
-import { TableModalComponent } from '../components/table-modal/table-modal.component';
+import { CategoriesTabComponent } from '@ui/pos/components/categories-tab/categories-tab.component';
+import { PromotionsComponent } from '@ui/pos/components/promotions/promotions.component';
+import { ItemsComponent } from '@ui/pos/components/items/items.component';
+import { TableModalComponent } from '@ui/pos/components/table-modal/table-modal.component';
 import {CommonModule} from "@angular/common";
 import {MatInputModule} from "@angular/material/input";
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-    selector: 'app-pos-page',
+    selector: 'app-pos',
     imports: [
         CommonModule,
         MatCard,
@@ -43,10 +43,10 @@ import { MatButtonModule } from '@angular/material/button';
         MatProgressSpinner,
         ItemsComponent
     ],
-    templateUrl: './pos-page.component.html',
-    styleUrl: './pos-page.component.scss'
+    templateUrl: './pos.component.html',
+    styleUrl: './pos.component.scss'
 })
-export class PosPageComponent {
+export class PosComponent {
 
   private posStoreSvc = inject(PosStoreService)
   private mainStore = inject(MainStoreService)

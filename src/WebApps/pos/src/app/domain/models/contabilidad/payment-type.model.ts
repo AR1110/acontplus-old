@@ -1,4 +1,4 @@
-import { PaymentTypeCode } from "@/shared/enums/main.enum"
+import { PaymentTypeCode } from "@domain/enums/main.enum"
 
 type PaymentCode =
     PaymentTypeCode.EFE |

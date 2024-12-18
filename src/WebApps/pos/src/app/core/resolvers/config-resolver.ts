@@ -1,14 +1,15 @@
-import {AuthService} from "@/features/auth/services/auth.service"
-import {ConfigService} from "@/shared/services/config.service"
-import {MainStoreService} from "@/store/main-store.service"
+
+import {ConfigService} from "@data/repositories/config/config.service"
+import {MainStoreService} from "@domain/services/main-store.service"
 import {inject} from "@angular/core"
 import {ResolveFn} from "@angular/router"
+import {TokenUseCase} from "@domain/use-cases/token.use-case";
 
 
 export const configDataResolver: ResolveFn<any> = (route, state) => {
-  let authSvc = inject(AuthService)
+  let _tokenUseCase = inject(TokenUseCase)
   let posStoreSvc = inject(MainStoreService)
-  let dataEstab = authSvc.getDataEstab();
+  let dataEstab = _tokenUseCase.getDataEstab();
   let mainData = inject(ConfigService).getMainData();
 
   mainData.subscribe(response => {

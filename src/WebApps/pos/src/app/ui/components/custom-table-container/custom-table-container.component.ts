@@ -15,7 +15,7 @@ import {MatMenu, MatMenuItem} from "@angular/material/menu";
 import {MatPaginator, PageEvent} from "@angular/material/paginator";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {MatSort, MatSortHeader} from "@angular/material/sort";
-import {CustomMatSpinnerComponent} from "@/shared/components/custom-mat-spinner/custom-mat-spinner.component";
+import {CustomMatSpinnerComponent} from "@ui/components/custom-mat-spinner/custom-mat-spinner.component";
 import {Pagination} from "@domain/models/pagination.model";
 
 @Component({

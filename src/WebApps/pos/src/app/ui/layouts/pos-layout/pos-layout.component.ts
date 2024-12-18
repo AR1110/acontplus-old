@@ -1,8 +1,8 @@
-import { NavUserInfoToggleComponent } from "@/core/components/nav-user-info-toggle/nav-user-info-toggle.component";
-import { ActionOrderDialogDirective } from "@/shared/directives/action-order-dialog.directive";
-import { CartPopupComponent } from "@/features/pos/components/cart-popup/cart-popup.component";
+import { NavUserInfoToggleComponent } from "@ui/layouts/components/nav-user-info-toggle/nav-user-info-toggle.component";
+import { ActionOrderDialogDirective } from "@ui/directives/action-order-dialog.directive";
+import { CartPopupComponent } from "@ui/pos/components/cart-popup/cart-popup.component";
 
-import { PosStoreService } from "@/features/pos/store/pos-store.service";
+import { PosStoreService } from "@ui/store/pos-store.service";
 import {  FlexibleConnectedPositionStrategy, Overlay, OverlayModule } from "@angular/cdk/overlay";
 import { AsyncPipe } from "@angular/common";
 import { Component, computed, inject, signal  } from "@angular/core";
@@ -18,10 +18,8 @@ import { Router, RouterLinkActive, RouterOutlet } from "@angular/router";
     selector: 'app-pos-layout',
     imports: [
         RouterOutlet,
-        AsyncPipe,
         MatSidenavModule,
         MatToolbarModule,
-        RouterLinkActive,
         MatBadgeModule,
         MatTooltipModule,
         MatButtonModule,

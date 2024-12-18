@@ -1,20 +1,20 @@
-import { pricingCalculateUtil } from '@/shared/utils/princing-calculate.util';
-import { calculateCantidadStock, mergeStockQty } from '@/shared/utils/product.util';
-import { roundNumber } from '@/shared/utils/round-number.util';
-import { playBeepSound } from '@/shared/utils/sound.util';
-import { DECIMALS } from '@/shared/enums/main.enum';
+import { pricingCalculateUtil } from '@domain/utils/princing-calculate.util';
+import { calculateCantidadStock, mergeStockQty } from '@domain/utils/product.util';
+import { roundNumber } from '@domain/utils/round-number.util';
+import { playBeepSound } from '@domain/utils/sound.util';
+import { DECIMALS } from '@domain/enums/main.enum';
 import { OrderItem } from '@domain/models/order.model';
-import { ItemRead } from '@/features/pos/models/item.model';
-import { ProductService } from "@/shared/services/product/product.service";
-import { ToasterService } from "@/shared/services/toaster.service";
-import { MainStoreService } from "@/store/main-store.service";
-import { PosStoreService } from '@/features/pos/store/pos-store.service';
+import { ItemRead } from '@domain/models/item.model';
+import { ProductService } from "@data/repositories/product/product.service";
+import { ToasterService } from "@domain/services/toaster.service";
+import { MainStoreService } from "@domain/services/main-store.service";
+import { PosStoreService } from '@ui/store/pos-store.service';
 import { Component, computed, inject, input, signal } from '@angular/core';
-import { generateUuidv4 } from "@/shared/utils/generate-uuidv4";
+import { generateUuidv4 } from "@domain/utils/generate-uuidv4";
 import { map, of, switchMap } from "rxjs";
 import Swal from 'sweetalert2';
 import { ItemCardComponent } from '../item-card/item-card.component';
-import { TarifaProducto } from '@/shared/models/inventory/tarifa.model';
+import { TarifaProducto } from '@domain/models/inventory/tarifa.model';
 
 @Component({
     selector: 'app-items',

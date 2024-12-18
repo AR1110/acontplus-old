@@ -1,4 +1,4 @@
-import { TAX_RATE_CODE } from "@/shared/enums/main.enum"
+import { TAX_RATE_CODE } from "@domain/enums/main.enum"
 
 export interface Tax {
     idImpuesto: number,

@@ -1,7 +1,7 @@
 import {environment} from "@/env/environment";
-import {AuthService} from '@/features/auth/services/auth.service';
 import {HttpContext, HttpContextToken, HttpInterceptorFn} from '@angular/common/http';
 import {inject} from '@angular/core';
+import {TokenUseCase} from "@domain/use-cases/token.use-case";
 
 const CUSTOM_URL = new HttpContextToken<boolean>(() => false);
 
@@ -10,14 +10,14 @@ export function getCustomUrlContext() {
 }
 
 export const injectSessionInterceptor: HttpInterceptorFn = (req, next) => {
-  let authSvc = inject(AuthService)
+  let _tokenUseCase = inject(TokenUseCase)
 
   const baseUrl = environment.API_URL
   let url = `${baseUrl}/gateway/${req.url}`;
 
   let externalUrl = req.context.get(CUSTOM_URL);
 
-  const authToken = authSvc.getToken();
+  const authToken = _tokenUseCase.getToken();
 
   if (!externalUrl) {
     req = req.clone({

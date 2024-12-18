@@ -1,6 +1,6 @@
-import { generateUuidv4 } from '@/shared/utils/generate-uuidv4';
-import { SRI_IDENTIFICATION_CODE } from '@/shared/enums/main.enum';
-import { Tax, TaxRate } from '@/shared/models/tax.model';
+import { generateUuidv4 } from '@domain/utils/generate-uuidv4';
+import { SRI_IDENTIFICATION_CODE } from '@domain/enums/main.enum';
+import { Tax, TaxRate } from '@domain/models/tax.model';
 import { signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { Order, OrderItem } from '@domain/models/order.model';
 

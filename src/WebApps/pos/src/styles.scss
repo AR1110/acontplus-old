@@ -1,6 +1,6 @@
 @use "@angular/material" as mat;
 @use "./m3-theme";
-@use "./app/layouts/layout-component.theme";
+@use "app/ui/layouts/layout-component.theme";
 //@import "bootstrap/dist/css/bootstrap.css";
 //@import "bootstrap/scss/bootstrap-grid";
 @import "ngx-toastr/toastr";

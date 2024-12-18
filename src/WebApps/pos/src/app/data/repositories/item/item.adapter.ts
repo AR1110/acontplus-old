@@ -1,6 +1,6 @@
-import { generateUuidv4 } from '@/shared/utils/generate-uuidv4';
-import {ITEM_TYPE_CODE} from '@/shared/enums/main.enum';
-import {ItemPvp, ItemRead} from '@/features/pos/models/item.model';
+import { generateUuidv4 } from '@domain/utils/generate-uuidv4';
+import {ITEM_TYPE_CODE} from '@domain/enums/main.enum';
+import {ItemPvp, ItemRead} from '@domain/models/item.model';
 import {Injectable} from '@angular/core';
 
 

@@ -1,6 +1,6 @@
-import { isValidEmail } from '@domain/utils/utils/utils';
+import { isValidEmail } from '@domain/utils/utils';
 import { DOC_TYPE, DOC_TYPE_SRI, SEPARATOR_KEY_CODE } from '@domain/enums/main.enum';
-import { isApiResponse } from '@/domain/models/api-response';
+import { isApiResponse } from '@domain/models/api-response';
 import { EmailConfigService } from '@data/repositories/email-config/email-config.service';
 import { NotificacionTributariaService } from "@data/repositories/notificacion-tributaria/notificacion-tributaria.service";
 import { NotificacionService } from "@data/repositories/notificacion/notificacion.service";
@@ -11,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA , MatDialogRef  } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { CustomContainerDialogComponent } from '../custom-container-dialog/custom-container-dialog.component';
+import { CustomContainerDialogComponent } from '@ui/components/custom-container-dialog/custom-container-dialog.component';
 
 type Props = {
   idDocumento: number,

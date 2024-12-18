@@ -2,8 +2,8 @@ import { Component, inject, input, model, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
-import { Widget } from '@domain/models/widget.interface';
-import { DashboardStore } from '../../store/dashboard.store';
+import { Widget } from '@domain/models/widget.model';
+import { DashboardStore } from '@ui/store/dashboard.store';
 
 @Component({
     selector: 'app-widget-options',

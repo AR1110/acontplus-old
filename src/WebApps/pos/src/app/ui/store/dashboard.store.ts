@@ -1,12 +1,11 @@
 
 import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
-import { Widget } from '@domain/models/widget.interface';
-import { TopProductsComponent } from '../components/widget/top-products.component';
+import { Widget } from '@domain/models/widget.model';
+import { TopProductsComponent } from '@ui/dashboard/widget/top-products.component';
 import { computed, inject } from '@angular/core';
-import { OrderService } from '@/features/orders/services/order.service';
-import { TotalSummaryComponent } from '../components/widget/total-summary.component';
-import { SaleChartComponent } from '../components/widget/sale-chart.component';
-
+import { TotalSummaryComponent } from '@ui/dashboard/widget/total-summary.component';
+import { SaleChartComponent } from '@ui/dashboard/widget/sale-chart.component';
+import {OrderUseCase} from "@domain/use-cases/order.use-case";
 
 function getAnios() {
   const startYear = 2023;
@@ -104,7 +103,7 @@ export const DashboardStore = signalStore(
   })),
 
 
-  withMethods((store, orderSvc = inject(OrderService))=>({
+  withMethods((store, _orderUseCase = inject(OrderUseCase))=>({
 
     addWidget(w:Widget){
 
@@ -134,7 +133,7 @@ export const DashboardStore = signalStore(
         estabId ,
         anio: store.anio()
       }
-      orderSvc.getStats(params).subscribe(response => {
+      _orderUseCase.getStats(params).subscribe(response => {
         let documentCounts = response.documentCounts.map((item, index)=>{
           return {
             id: index+1,

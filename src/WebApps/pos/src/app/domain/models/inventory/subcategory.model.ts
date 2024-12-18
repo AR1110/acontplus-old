@@ -1,4 +1,4 @@
-import { SUB_CATEGORY_CODE } from "@/shared/enums/main.enum"
+import { SUB_CATEGORY_CODE } from "@domain/enums/main.enum"
 
 
 export interface SubCategory {

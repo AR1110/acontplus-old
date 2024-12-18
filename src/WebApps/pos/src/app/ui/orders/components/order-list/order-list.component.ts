@@ -1,7 +1,7 @@
 import { CustomContainerDialogComponent } from '@ui/components/custom-container-dialog/custom-container-dialog.component';
 import { CustomTableContainerComponent } from '@ui/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@ui/components/date-range-selection/date-range-selection.component';
-import { getValidId } from '@domain/utils/utils/utils';
+import { getValidId } from '@domain/utils/utils';
 import { ActionWhatsappSendDirective } from '@ui/directives/action-whatsapp-send.directive';
 import { CODE_REPORT, STATUS_ORDER } from '@domain/enums/main.enum';
 import { Pagination } from '@domain/models/pagination.model';
@@ -29,8 +29,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
-import { OrderDivideModalComponent } from '@ui/views/orders/order-divide-modal/order-divide-modal.component';
-import { OrderDocListComponent } from '@ui/views/order-doc-list/order-doc-list.component';
+import { OrderDivideModalComponent } from '@ui/orders/components/order-divide-modal/order-divide-modal.component';
+import { OrderDocListComponent } from '@ui/orders/components/order-doc-list/order-doc-list.component';
 import { OrderRead } from '@domain/models/order.model';
 import { MatCardModule } from '@angular/material/card';
 import {OrderUseCase} from "@domain/use-cases/order.use-case";

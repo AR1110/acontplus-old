@@ -1,15 +1,15 @@
-import { PosStoreService } from '@/features/pos/store/pos-store.service';
+import { PosStoreService } from '@ui/store/pos-store.service';
 import { Component, computed, inject } from '@angular/core';
-import { CartComponent } from '../cart/cart.component';
-import { DialogService } from "@/shared/services/dialog.service";
+import { CartComponent } from '@ui/pos/components/cart/cart.component';
+import { DialogService } from "@domain/services/dialog.service";
 import Swal from "sweetalert2";
-import { playBeepSound, playClearSound } from "@/shared/utils/sound.util";
-import { calculateCantidadStock, mergeStockQty } from '@/shared/utils/product.util';
-import { ProductService } from '@/shared/services/product/product.service';
-import { pricingCalculateUtil } from '@/shared/utils/princing-calculate.util';
-import { roundNumber } from '@/shared/utils/round-number.util';
+import { playBeepSound, playClearSound } from "@domain/utils/sound.util";
+import { calculateCantidadStock, mergeStockQty } from '@domain/utils/product.util';
+import { ProductService } from '@data/repositories/product/product.service';
+import { pricingCalculateUtil } from '@domain/utils/princing-calculate.util';
+import { roundNumber } from '@domain/utils/round-number.util';
 import { OrderItem } from '@domain/models/order.model';
-import { CartInfoComponent } from '../cart-info/cart-info.component';
+import { CartInfoComponent } from '@ui/pos/components/cart-info/cart-info.component';
 import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 
 @Component({

@@ -1,5 +1,5 @@
-import {DOC_TYPE, PATHS, PATHS_API, STRING_SPLIT_REGEX} from '@/shared/enums/main.enum';
-import {ApiResponse} from '@/domain/models/api-response';
+import {DOC_TYPE, PATHS, PATHS_API, STRING_SPLIT_REGEX} from '@domain/enums/main.enum';
+import {ApiResponse} from '@domain/models/api-response';
 import {HttpClient} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
 import FileSaver from 'file-saver';

@@ -1,9 +1,9 @@
-import { generateUuidv4 } from "@/shared/utils/generate-uuidv4";
-import { SRI_IDENTIFICATION_CODE } from "@/shared/enums/main.enum";
+import { generateUuidv4 } from "@domain/utils/generate-uuidv4";
+import { SRI_IDENTIFICATION_CODE } from "@domain/enums/main.enum";
 import { Order, OrderItem } from "@domain/models/order.model";
-import { Tax, TaxRate } from "@/shared/models/tax.model";
-import { GenericStoreSignalService } from "@/shared/services/generic-store-signal.service";
-import { PromotionService } from "@/features/pos/services/promotion.service";
+import { Tax, TaxRate } from "@domain/models/tax.model";
+import { GenericStoreSignalService } from "@domain/services/generic-store-signal.service";
+import { PromotionService } from "@data/repositories/promotion/promotion.service";
 import { inject, Injectable } from "@angular/core";
 
 type PosStoreState = {

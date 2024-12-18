@@ -1,4 +1,4 @@
-import { DashboardStore } from '@/features/dasboard/store/dashboard.store';
+import { DashboardStore } from '@ui/store/dashboard.store';
 import { Component, effect, inject } from '@angular/core';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';

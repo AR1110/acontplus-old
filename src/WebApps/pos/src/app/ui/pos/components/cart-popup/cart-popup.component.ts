@@ -1,14 +1,14 @@
 import { Component, computed, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { CartHeaderComponent } from '../cart-header/cart-header.component';
-import { CartFooterComponent } from '../cart-footer/cart-footer.component';
+import { CartHeaderComponent } from '@ui/pos/components/cart-header/cart-header.component';
+import { CartFooterComponent } from '@ui/pos/components/cart-footer/cart-footer.component';
 import { CartItemsComponent } from '../cart-items/cart-items.component';
 import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { PosStoreService } from '@/features/pos/store/pos-store.service';
+import { PosStoreService } from '@ui/store/pos-store.service';
 
 @Component({
     selector: 'app-cart-popup',

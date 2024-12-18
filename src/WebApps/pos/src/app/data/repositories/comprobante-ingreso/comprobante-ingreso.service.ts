@@ -1,12 +1,12 @@
 
 
-import { ComprobanteIngresoAdapter } from '@/shared/adapters/comprobante-ingreso.adapter';
-import { PATHS, PATHS_API } from '@/shared/enums/main.enum';
-import { ApiResponse } from '@/domain/models/api-response';
-import { BancoSelectHtmlOnly } from '@/shared/models/contabilidad/banco.model';
-import { PaymentType } from '@/shared/models/contabilidad/payment-type.model';
-import { CuentaPorCobrar, CuotaCobro, DataCuentaPorCobrar } from '@/shared/models/contabilidad/payment.model';
-import { agruparPorProvinciaUtil } from '@/shared/utils/utils';
+import { ComprobanteIngresoAdapter } from '@data/repositories/comprobante-ingreso/comprobante-ingreso.adapter';
+import { PATHS, PATHS_API } from '@domain/enums/main.enum';
+import { ApiResponse } from '@domain/models/api-response';
+import { BancoSelectHtmlOnly } from '@domain/models/contabilidad/banco.model';
+import { PaymentType } from '@domain/models/contabilidad/payment-type.model';
+import { CuentaPorCobrar, CuotaCobro, DataCuentaPorCobrar } from '@domain/models/contabilidad/payment.model';
+import { agruparPorProvinciaUtil } from '@domain/utils/utils';
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';

@@ -1,7 +1,7 @@
-import { roundNumber } from "@/shared/utils/round-number.util";
-import { isValidField } from "@/shared/utils/utils";
-import { DECIMALS } from "@/shared/enums/main.enum";
-import { Cobro, CobroDetalle, HistorialCuenta } from "@/shared/models/contabilidad/payment.model";
+import { roundNumber } from "@domain/utils/round-number.util";
+import { isValidField } from "@domain/utils/utils";
+import { DECIMALS } from "@domain/enums/main.enum";
+import { Cobro, CobroDetalle, HistorialCuenta } from "@domain/models/contabilidad/payment.model";
 import { Injectable } from "@angular/core";
 
 

@@ -1,20 +1,17 @@
 
-import { Injectable } from '@angular/core';
-import { formatDate } from '@/shared/utils/date.util';
-import { imgDefault, isValidField } from '@/shared/utils/utils';
-import { mergeMeasureFromAdapter } from "@/shared/adapters/medida.adapter";
-import { plus } from '@/shared/utils/decimal.util';
-import { DECIMALS, SRI_IDENTIFICATION_CODE } from '@/shared/enums/main.enum';
-import { Order, OrderItem } from '../models/order.interface';
-import { OrderApi, OrderItemApi } from '../models/order-api.interface';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class OrderAdapter {
+import { formatDate } from '@domain/utils/date.util';
+import { imgDefault, isValidField } from '@domain/utils/utils';
+import { mergeMeasureFromAdapter } from "@data/mappers/medida.adapter";
+import { plus } from '@domain/utils/decimal.util';
+import { DECIMALS, SRI_IDENTIFICATION_CODE } from '@domain/enums/main.enum';
+import { Order, OrderItem } from '@domain/models/order.model';
+import { OrderApi, OrderItemApi } from '@data/repositories/order/order.entity';
+
+export class OrderMapper {
 
   // Método para adaptar los ítems a enviar a la API
-  toApiItems(items: OrderItem[]) {
+  static toApiItems(items: OrderItem[]) {
     const results: OrderItemApi[] = items.map((item, index) => {
       let cantidadTransaccion = item.quantity * (item.conversion || 1)
       return {
@@ -52,7 +49,7 @@ export class OrderAdapter {
   }
 
   // Método para adaptar el pedido a enviar a la API
-  toApiOrder(order: Order): OrderApi {
+  static toApiOrder(order: Order): OrderApi {
     return {
       orderId: order.orderId,
       uuid: order.uuid,
@@ -80,7 +77,7 @@ export class OrderAdapter {
   }
 
   // Método para adaptar los impuestos de los ítems
-  toApiTaxes(orderItems: OrderItem[]): any[] {
+  static toApiTaxes(orderItems: OrderItem[]): any[] {
 
     return orderItems.map(item => {
       const obj = {
@@ -97,7 +94,7 @@ export class OrderAdapter {
   }
 
   // Método principal para preparar el pedido para enviar
-  formatOrderForApi(order: Order) {
+  static formatOrderForApi(order: Order) {
     const items = this.toApiItems(order.items);
     const data = {
       ...this.toApiOrder(order),
@@ -108,7 +105,7 @@ export class OrderAdapter {
   }
 
   //datos que recibe bd
-  toApiParams(obj:any){
+  static toApiParams(obj:any){
     // const {items, taxes, ...rest} = obj;
     // return {
     //   orderDocument: rest,
@@ -119,21 +116,21 @@ export class OrderAdapter {
   }
 
 
-  fromApiData(apiResponse: any): { order: Order } {
+  static fromApiData(apiResponse: any): { order: Order } {
     const { order: apiOrder, orderItems: apiOrderItems } = apiResponse;
 
     // Mapear items de la orden
-    const mappedOrderItems = apiOrderItems.map(this.mapOrderItemFromApi);
+    const mappedOrderItems = apiOrderItems.map(OrderMapper.mapOrderItemFromApi);
 
     // Crear objeto Order mapeado
-    const mappedOrder = this.mapOrderFromApi(apiOrder, mappedOrderItems);
+    const mappedOrder = OrderMapper.mapOrderFromApi(apiOrder, mappedOrderItems);
 
     return { order: mappedOrder };
   }
 
 
   // Función para mapear un item de la orden
-  private mapOrderItemFromApi(item: any): OrderItem {
+  private static mapOrderItemFromApi(item: any): OrderItem {
     const { medidasFraccionado, medidasPrincipal, ...restOrderItem } = item;
 
     const mergedMeasures = mergeMeasureFromAdapter(medidasPrincipal, medidasFraccionado);
@@ -183,7 +180,7 @@ export class OrderAdapter {
   }
 
   // Función para mapear la orden
-  private mapOrderFromApi(apiOrder: any, orderItems: OrderItem[]): Order {
+  private static mapOrderFromApi(apiOrder: any, orderItems: OrderItem[]): Order {
     return {
       customerName: apiOrder.customerName,
       tableDesc: apiOrder.tableName,

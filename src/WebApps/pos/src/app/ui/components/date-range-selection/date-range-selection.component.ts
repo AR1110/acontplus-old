@@ -12,7 +12,7 @@ import {
 declare var DateRangePicker: any;
 import { FormsModule } from "@angular/forms";
 import {MatInputModule} from "@angular/material/input";
-import { formatDateToString, zonaHorariaEcuador } from "@domain/utils/utils/date.util";
+import { formatDateToString, zonaHorariaEcuador } from "@domain/utils/date.util";
 import { addDay, format, monthEnd, monthStart,   weekEnd, weekStart } from "@formkit/tempo";
 
 @Component({

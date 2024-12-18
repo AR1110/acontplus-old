@@ -33,6 +33,15 @@
       "@core/*": [
         "src/app/core/*"
       ],
+      "@domain/*": [
+        "src/app/domain/*"
+      ],
+      "@data/*": [
+        "src/app/data/*"
+      ],
+      "@ui/*": [
+        "src/app/ui/*"
+      ],
       "@shared/*": [
         "src/app/core/*"
       ],

@@ -1,4 +1,4 @@
-import { MainStoreService } from '@/store/main-store.service';
+import { MainStoreService } from '@domain/services/main-store.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CdkOverlayOrigin, OverlayModule } from '@angular/cdk/overlay';
 import { Component, computed, inject, input, model, signal, ViewChild } from '@angular/core';

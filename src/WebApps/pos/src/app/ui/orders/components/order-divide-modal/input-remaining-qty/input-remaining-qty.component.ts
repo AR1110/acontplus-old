@@ -1,4 +1,4 @@
-import { isValidField } from '@domain/utils/utils/utils';
+import { isValidField } from '@domain/utils/utils';
 import { OrderDivideItem } from '@domain/models/order.model';
 import {Component, input, output, signal} from '@angular/core';
 import {FormsModule} from "@angular/forms";

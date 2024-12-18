@@ -1,8 +1,8 @@
-import { getNoLoader } from "@/core/interceptors/loader.interceptor";
-import { groupEstabUtil } from "@/shared/utils/group-estab.util";
-import { groupRoomTableUtil } from "@/shared/utils/group-room-table.util";
-import { indexById } from "@/shared/utils/utils";
-import { ApiResponse } from "@/domain/models/api-response";
+import { getNoLoader } from "@core/interceptors/loader.interceptor";
+import { groupEstabUtil } from "@domain/utils/group-estab.util";
+import { groupRoomTableUtil } from "@domain/utils/group-room-table.util";
+import { indexById } from "@domain/utils/utils";
+import { ApiResponse } from "@domain/models/api-response";
 import { CompanyCustomerDefault } from "@domain/models/company-customer.model";
 import { ConfigVenta } from "@domain/models/config-sistema.model";
 import { DecimalVenta } from "@domain/models/decimal.model";
@@ -12,7 +12,7 @@ import { Tax, TaxRate } from "@domain/models/tax.model";
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { map } from "rxjs";
-import { PATHS, PATHS_API } from "../enums/main.enum";
+import { PATHS, PATHS_API } from "@domain/enums/main.enum";
 
 @Injectable({
   providedIn: 'root'

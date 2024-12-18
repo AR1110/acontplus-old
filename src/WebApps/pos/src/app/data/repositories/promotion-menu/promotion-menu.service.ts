@@ -1,7 +1,7 @@
-import { ItemAdapter } from '@/features/pos/adapters/item.adapter';
-import { PATHS, PATHS_API } from '@/shared/enums/main.enum';
-import { ApiResponse } from '@/domain/models/api-response';
-import { ItemRead } from '@/features/pos/models/item.model';
+import { ItemAdapter } from '@data/repositories/item/item.adapter';
+import { PATHS, PATHS_API } from '@domain/enums/main.enum';
+import { ApiResponse } from '@domain/models/api-response';
+import { ItemRead } from '@domain/models/item.model';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';

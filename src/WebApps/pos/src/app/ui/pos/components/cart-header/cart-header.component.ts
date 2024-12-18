@@ -1,17 +1,17 @@
 
 import { Order } from '@domain/models/order.model';
-import { CompanyCustomerSearchComponent } from '@company-customers/components/company-customer-search/company-customer-search.component';
-import { PosStoreService } from '@/features/pos/store/pos-store.service';
+import { CompanyCustomerSearchComponent } from '@ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { PosStoreService } from '@ui/store/pos-store.service';
 import { Dialog } from '@angular/cdk/dialog';
 import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from "@angular/forms";
-import { TableModalComponent } from '../table-modal/table-modal.component';
+import { TableModalComponent } from '@ui/pos/components/table-modal/table-modal.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import Swal from 'sweetalert2';
-import { pricingCalculateUtil } from '@/shared/utils/princing-calculate.util';
-import { DECIMALS } from '@/shared/enums/main.enum';
-import { roundNumber } from '@/shared/utils/round-number.util';
+import { pricingCalculateUtil } from '@domain/utils/princing-calculate.util';
+import { DECIMALS } from '@domain/enums/main.enum';
+import { roundNumber } from '@domain/utils/round-number.util';
 
 @Component({
     selector: 'app-cart-header',

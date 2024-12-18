@@ -1,13 +1,13 @@
 
-import { PATHS_API, PATHS } from "@/shared/enums/main.enum";
+import { PATHS_API, PATHS } from "@domain/enums/main.enum";
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 
 import { map } from "rxjs";
-import { ItemRead } from "@/features/pos/models/item.model";
-import { ItemAdapter } from "@/features/pos/adapters/item.adapter";
-import { ApiResponse } from "@/domain/models/api-response";
-import { getNoLoader } from "@/core/interceptors/loader.interceptor";
+import { ItemRead } from "@domain/models/item.model";
+import { ItemAdapter } from "@data/repositories/item/item.adapter";
+import { ApiResponse } from "@domain/models/api-response";
+import { getNoLoader } from "@core/interceptors/loader.interceptor";
 @Injectable({
   providedIn: 'root'
 })

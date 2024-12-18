@@ -1,5 +1,5 @@
 import { DECIMALS } from "@domain/enums/main.enum";
-import { div, minus, mul, plus } from "@domain/utils/utils/decimal.util";
+import { div, minus, mul, plus } from "@domain/utils/decimal.util";
 
 
 export const pricingCalculateUtil = {

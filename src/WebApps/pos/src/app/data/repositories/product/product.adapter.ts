@@ -1,8 +1,8 @@
-import { ProductSearchDto } from '@/shared/models/inventory/product.model';
-import { Tarifa } from '@/shared/models/inventory/tarifa.model';
-import { MedidaProducto } from '@/shared/models/inventory/medida.model';
-import { mergeMeasureFromAdapter } from '../../adapters/medida.adapter';
-import { imgDefault } from '@/shared/utils/utils';
+import { ProductSearchDto } from '@domain/models/inventory/product.model';
+import { Tarifa } from '@domain/models/inventory/tarifa.model';
+import { MedidaProducto } from '@domain/models/inventory/medida.model';
+import { mergeMeasureFromAdapter } from '../../mappers/medida.adapter';
+import { imgDefault } from '@domain/utils/utils';
 
 export class ProductAdapter {
   static fromApiSearch(products: any[]): Array<ProductSearchDto> {

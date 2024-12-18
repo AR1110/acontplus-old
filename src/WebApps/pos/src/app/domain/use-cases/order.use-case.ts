@@ -1,28 +1,44 @@
 import { Injectable } from '@angular/core';
-import { tap } from "rxjs";
-import {AuthRepository} from "@domain/repositories/auth.repository";
+import {OrderRepository} from "@domain/repositories/order.repository";
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthUseCase {
+export class OrderUseCase {
   constructor(
-    private authRepository: AuthRepository,
+    private repo: OrderRepository,
   ) {}
 
-  login(credentials: { username: string, password: string }) {
-    return this.authRepository.login(credentials).pipe(
-      tap(response => {
-       /**  if (response.code === "1") {
-          const [mainData] = JSON.parse(response.payload as string);
-          this.tokenUseCase.setToken(mainData.token);
-        }*/
-      })
-    );
-  }
 
+   getDataFilter() {
+    return this.repo.getDataFilter();
+   }
 
-  createToken<T>(obj:T){
-    return this.authRepository.createToken(obj);
-  }
+   getAll<T>(obj: T){
+    return this.repo.getAll<T>(obj);
+   }
+
+   getOrderDocs(orderId: number) {
+    return this.repo.getOrderDocs(orderId);
+   }
+
+   setAnul(id: number) {
+    return this.repo.setAnul(id);
+   }
+
+   getId(id: number) {
+    return this.repo.getId(id);
+   }
+
+   getStats<T>(obj: T) {
+    return this.repo.getStats<T>(obj);
+   }
+
+   post<T>(obj: T) {
+    return this.repo.post<T>(obj);
+   }
+
+   put<T>(id: number, data: T) {
+    return this.repo.put(id, data);
+   }
 }

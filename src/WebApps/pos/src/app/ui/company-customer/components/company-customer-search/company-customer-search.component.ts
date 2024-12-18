@@ -1,9 +1,9 @@
-import { ActionCompanyCustomerAddEditModalDirective } from '@/shared/directives/action-company-customer-add-edit.directive';
-import { SRI_IDENTIFICATION_CODE } from '@/shared/enums/main.enum';
-import { CompanyCustomerSearch } from "@/features/company-customers/models/company-customer.model";
-import { CompanyCustomerService } from "@/features/company-customers/services/company-customer.service";
-import { DialogService } from '@/shared/services/dialog.service';
-import { ToasterService } from '@/shared/services/toaster.service';
+import { ActionCompanyCustomerAddEditModalDirective } from '@ui/directives/action-company-customer-add-edit.directive';
+import { SRI_IDENTIFICATION_CODE } from '@domain/enums/main.enum';
+import { CompanyCustomerSearch } from "@domain/models/company-customer.model";
+import { CompanyCustomerService } from "@data/repositories/company-customer/company-customer.service";
+import { DialogService } from '@domain/services/dialog.service';
+import { ToasterService } from '@domain/services/toaster.service';
 import { CdkOverlayOrigin, FlexibleConnectedPositionStrategy, Overlay, OverlayModule } from '@angular/cdk/overlay';
 import { AsyncPipe } from "@angular/common";
 import { computed, SimpleChanges, ViewChild } from '@angular/core';
@@ -17,12 +17,12 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { isValidField } from "@/shared/utils/utils";
+import { isValidField } from "@domain/utils/utils";
 import { debounceTime, distinctUntilChanged, Observable } from "rxjs";
 import { catchError, finalize, map,  switchMap } from "rxjs/operators";
 
 import { CompanyCustomerAddEditModalComponent } from '../company-customer-add-edit-modal/company-customer-add-edit-modal.component';
-import { ResponsiveService } from '@/shared/services/responsive.service';
+import { ResponsiveService } from '@domain/services/responsive.service';
 import {  MatMenuModule } from '@angular/material/menu';
 
 @Component({

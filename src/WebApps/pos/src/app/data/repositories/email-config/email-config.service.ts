@@ -1,4 +1,4 @@
-import { PATHS, PATHS_API } from "@/shared/enums/main.enum";
+import { PATHS, PATHS_API } from "@domain/enums/main.enum";
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { map } from "rxjs/operators";

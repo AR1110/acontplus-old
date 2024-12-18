@@ -1,12 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { PATHS, PATHS_API, STRING_SPLIT_REGEX } from "@/shared/enums/main.enum";
+import { PATHS, PATHS_API, STRING_SPLIT_REGEX } from "@domain/enums/main.enum";
 import { HttpClient, HttpContext } from "@angular/common/http";
 import { map } from "rxjs/operators";
-import { ApiResponse } from "@/domain/models/api-response";
-import { CompanyCustomerRead, CompanyCustomerSearch } from "@/features/company-customers/models/company-customer.model";
+import { ApiResponse } from "@domain/models/api-response";
+import { CompanyCustomerRead, CompanyCustomerSearch } from "@domain/models/company-customer.model";
 import { Observable } from "rxjs";
-import { getValidId, isValidField } from "@/shared/utils/utils";
-import { getNoLoader } from '@/core/interceptors/loader.interceptor';
+import { getValidId, isValidField } from "@domain/utils/utils";
+import { getNoLoader } from '@core/interceptors/loader.interceptor';
 
 @Injectable({
   providedIn: 'root'

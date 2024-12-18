@@ -1,10 +1,10 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { PromotionsItemComponent } from './promotions-item/promotions-item.component';
-import { PromotionService } from '@/features/pos/services/promotion.service';
-import { MainStoreService } from '@/store/main-store.service';
-import { PosStoreService } from '@/features/pos/store/pos-store.service';
+import { PromotionsItemComponent } from '@ui/pos/components/promotions/promotions-item/promotions-item.component';
+import { PromotionService } from '@data/repositories/promotion/promotion.service';
+import { MainStoreService } from '@domain/services/main-store.service';
+import { PosStoreService } from '@ui/store/pos-store.service';
 
 @Component({
     selector: 'app-promotions',

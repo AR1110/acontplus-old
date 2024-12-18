@@ -7,8 +7,9 @@ import { injectSessionInterceptor } from "@core/interceptors/inject-session.inte
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { provideToastr } from 'ngx-toastr';
 import { routes } from './app.routes';
-import { loaderInterceptor } from './core/interceptors/loader.interceptor';
+import { loaderInterceptor } from '@core/interceptors/loader.interceptor';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import {featureProviders} from "@/config/providers";
 
 
 export const appConfig: ApplicationConfig = {
@@ -31,6 +32,7 @@ export const appConfig: ApplicationConfig = {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
     //  useValue: {appearance: 'outline', subscriptSizing: 'dynamic'}
       useValue: {appearance: 'outline', subscriptSizing: 'dynamic'}
-    }
+    },
+    ...featureProviders
   ]
 };

@@ -1,4 +1,4 @@
-import { ITEM_TYPE_CODE } from "@/shared/enums/main.enum"
+import { ITEM_TYPE_CODE } from "@domain/enums/main.enum"
 
 export interface ItemPvp {
   feeId: number,

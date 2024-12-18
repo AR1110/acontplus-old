@@ -1,4 +1,4 @@
-import { CustomContainerDialogComponent } from '@/shared/components/custom-container-dialog/custom-container-dialog.component';
+import { CustomContainerDialogComponent } from '@ui/components/custom-container-dialog/custom-container-dialog.component';
 import { Component, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -7,16 +7,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { TarifaProducto } from '@/shared/models/inventory/tarifa.model';
-import { MedidaProducto } from '@/shared/models/inventory/medida.model';
+import { TarifaProducto } from '@domain/models/inventory/tarifa.model';
+import { MedidaProducto } from '@domain/models/inventory/medida.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { TaxRate } from '@/shared/models/tax.model';
-import { pricingCalculateUtil } from '@/shared/utils/princing-calculate.util';
-import { roundNumber } from '@/shared/utils/round-number.util';
-import { ToUpperCaseDirective } from '@/shared/directives/to-upper-case.directive';
+import { TaxRate } from '@domain/models/tax.model';
+import { pricingCalculateUtil } from '@domain/utils/princing-calculate.util';
+import { roundNumber } from '@domain/utils/round-number.util';
+import { ToUpperCaseDirective } from '@ui/directives/to-upper-case.directive';
 import { OrderItem } from '@domain/models/order.model';
-import { DECIMALS } from '@/shared/enums/main.enum';
+import { DECIMALS } from '@domain/enums/main.enum';
 
 @Component({
     selector: 'app-cart-info',

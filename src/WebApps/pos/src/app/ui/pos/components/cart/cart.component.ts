@@ -1,5 +1,5 @@
 
-import { InputNumberDirective } from '@/shared/directives/input-number.directive';
+import { InputNumberDirective } from '@ui/directives/input-number.directive';
 import { OrderItem } from '@domain/models/order.model';
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, input, model, output, signal, ViewChild } from '@angular/core';

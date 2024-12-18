@@ -1,4 +1,4 @@
-import { DialogService } from '@/shared/services/dialog.service';
+import { DialogService } from '@domain/services/dialog.service';
 import {Directive, HostListener, inject, input, Input, output} from '@angular/core';
 import {
   CompanyCustomerAddEditModalComponent

@@ -1,9 +1,9 @@
 import {ClassProvider} from "@angular/core";
-import {AuthRepository} from "@domain/repositories/auth.repository";
-import {AuthWebRepository} from "@data/repositories/auth/auth-web.repository";
+import {OrderRepository} from "@domain/repositories/order.repository";
+import {OrderWebRepository} from "@data/repositories/order/order-web.repository";
 
 
-export const authProvider:ClassProvider = {
-  provide: AuthRepository,
-  useClass: AuthWebRepository
+export const orderProvider:ClassProvider = {
+  provide: OrderRepository,
+  useClass: OrderWebRepository
 }

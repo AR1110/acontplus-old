@@ -1,6 +1,6 @@
-import { getCustomUrlContext } from '@/core/interceptors/inject-session.interceptor';
-import { PATHS, PATHS_API } from '@/shared/enums/main.enum';
-import { StateInstanceGreenApiResponse } from '@/shared/models/qr-whatsapp.model';
+import { getCustomUrlContext } from '@core/interceptors/inject-session.interceptor';
+import { PATHS, PATHS_API } from '@domain/enums/main.enum';
+import { StateInstanceGreenApiResponse } from '@domain/models/qr-whatsapp.model';
 import { HttpClient,  } from '@angular/common/http';
 import {    Injectable } from '@angular/core';
 

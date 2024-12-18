@@ -1,12 +1,12 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {PATHS, PATHS_API} from '@/shared/enums/main.enum';
-import {sanitizeAndEncodeURIComponent} from '@/shared/utils/utils';
+import {PATHS, PATHS_API} from '@domain/enums/main.enum';
+import {sanitizeAndEncodeURIComponent} from '@domain/utils/utils';
 import {map} from "rxjs/operators";
-import {ProductoConsolidacion, ProductSale, ProductSearchDto} from "@/shared/models/inventory/product.model";
-import {ApiResponse} from "@/domain/models/api-response";
-import {MedidaProducto} from "@/shared/models/inventory/medida.model";
-import { getNoLoader } from '@/core/interceptors/loader.interceptor';
+import {ProductoConsolidacion, ProductSale, ProductSearchDto} from "@domain/models/inventory/product.model";
+import {ApiResponse} from "@domain/models/api-response";
+import {MedidaProducto} from "@domain/models/inventory/medida.model";
+import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ProductAdapter } from './product.adapter';
 
 @Injectable({

@@ -10,9 +10,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CustomTableContainerComponent } from '@ui/components/custom-table-container/custom-table-container.component';
-import { InputRemainingQtyComponent } from '@ui/views/orders/order-divide-modal/input-remaining-qty/input-remaining-qty.component';
-import { pricingCalculateUtil } from '@domain/utils/utils/princing-calculate.util';
-import { roundNumber } from '@domain/utils/utils/round-number.util';
+import { InputRemainingQtyComponent } from '@ui/orders/components/order-divide-modal/input-remaining-qty/input-remaining-qty.component';
+import { pricingCalculateUtil } from '@domain/utils/princing-calculate.util';
+import { roundNumber } from '@domain/utils/round-number.util';
 import { DialogService } from '@domain/services/dialog.service';
 
 import {
@@ -21,21 +21,21 @@ import {
 import {
   CompanyCustomerSearchComponent
 } from '@ui/company-customer/components/company-customer-search/company-customer-search.component';
-import { consumirFinalSuperaElValorPermitido, messageSuperaElValorTotalPermitido } from "@domain/utils/utils/utils";
+import { consumirFinalSuperaElValorPermitido, messageSuperaElValorTotalPermitido } from "@domain/utils/utils";
 import { ToasterService } from '@domain/services/toaster.service';
 import Swal from 'sweetalert2';
 import { DECIMALS, DOC_TYPE } from "@domain/enums/main.enum";
 import { ConfigService } from "@data/repositories/config/config.service";
-import { plus } from "@domain/utils/utils/decimal.util";
+import { plus } from "@domain/utils/decimal.util";
 import { OrderMapper } from '@data/repositories/order/order.mapper';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { PaymentComponent } from '@/shared/components/payment/payment.component';
+import { PaymentComponent } from '@ui/components/payment/payment.component';
 import { SharedService } from '@domain/services/shared.service';
 import { orderInitialState } from '@ui/store/pos-store.service';
 import { ResponsiveService } from '@domain/services/responsive.service';
 import { MatMenuModule } from '@angular/material/menu';
-import { OrderCustomItemComponent } from '@ui/views/orders/order-divide-modal/order-custom-item/order-custom-item.component';
+import { OrderCustomItemComponent } from '@ui/orders/components/order-divide-modal/order-custom-item/order-custom-item.component';
 import { OrderData, OrderDivideItem } from '@domain/models/order.model';
 import {TokenUseCase} from "@domain/use-cases/token.use-case";
 import {OrderUseCase} from "@domain/use-cases/order.use-case";

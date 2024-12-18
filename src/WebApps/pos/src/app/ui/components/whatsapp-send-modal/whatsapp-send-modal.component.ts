@@ -1,4 +1,4 @@
-import { isValidField } from '@domain/utils/utils/utils';
+import { isValidField } from '@domain/utils/utils';
 import { CODE_REPORT, DOC_TYPE } from '@domain/enums/main.enum';
 import { EmailConfigService } from '@data/repositories/email-config/email-config.service';
 import { ApiGreenApiService } from '@data/repositories/api-green-api/api-green-api.service';
@@ -13,7 +13,7 @@ import { MatInputModule } from "@angular/material/input";
 import { concatMap } from 'rxjs';
 import Swal from 'sweetalert2';
 
-import { CustomContainerDialogComponent } from '../custom-container-dialog/custom-container-dialog.component';
+import { CustomContainerDialogComponent } from '@ui/components/custom-container-dialog/custom-container-dialog.component';
 
 type Props = {
   idDocumentoElectronico: number

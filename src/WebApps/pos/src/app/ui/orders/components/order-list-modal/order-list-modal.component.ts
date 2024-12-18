@@ -1,11 +1,11 @@
 import { CustomContainerDialogComponent } from '@ui/components/custom-container-dialog/custom-container-dialog.component';
-import { formatDateToString } from '@domain/utils/utils/date.util';
+import { formatDateToString } from '@domain/utils/date.util';
 import { Component, inject  } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
-import { OrderListComponent } from '@ui/views/order-list/order-list.component';
+import { OrderListComponent } from '@ui/orders/components/order-list/order-list.component';
 import { STATUS_ORDER } from '@domain/enums/main.enum';
 
 @Component({

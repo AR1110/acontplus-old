@@ -1,7 +1,7 @@
 import { Component, inject, model, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { MainStoreService } from '@/store/main-store.service';
+import { MainStoreService } from '@domain/services/main-store.service';
 import { WidgetComponent } from '@ui/dashboard/widget/widget.component';
 import { MatButtonModule } from '@angular/material/button';
 import { DashboardStore } from '@ui/store/dashboard.store';
@@ -26,10 +26,10 @@ function getAnios() {
         MatIconModule,
         WidgetComponent
     ],
-    templateUrl: './dashboard-page.component.html',
-    styleUrl: './dashboard-page.component.scss'
+    templateUrl: './dashboard.component.html',
+    styleUrl: './dashboard.component.scss'
 })
-export class DashboardPageComponent {
+export class DashboardComponent {
   private router = inject(Router)
   private mainStoreSvc = inject(MainStoreService)
     dashboardStore = inject(DashboardStore)

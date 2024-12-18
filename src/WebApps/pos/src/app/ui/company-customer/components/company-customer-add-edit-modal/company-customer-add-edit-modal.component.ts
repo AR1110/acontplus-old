@@ -1,7 +1,7 @@
 
-import { ApiResponse } from "@/domain/models/api-response";
-import { CompanyCustomerService } from "@/features/company-customers/services/company-customer.service";
-import { ToasterService } from '@/shared/services/toaster.service';
+import { ApiResponse } from "@domain/models/api-response";
+import { CompanyCustomerService } from "@data/repositories/company-customer/company-customer.service";
+import { ToasterService } from '@domain/services/toaster.service';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,10 +14,10 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { forkJoin, Observable } from 'rxjs';
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { M3InputChipComponent } from "@/shared/components/m3-input-chip/m3-input-chip.component";
-import { CustomContainerDialogComponent } from "@/shared/components/custom-container-dialog/custom-container-dialog.component";
-import { SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE } from "@/shared/enums/main.enum";
-import { isValidField } from "@/shared/utils/utils";
+import { M3InputChipComponent } from "@ui/components/m3-input-chip/m3-input-chip.component";
+import { CustomContainerDialogComponent } from "@ui/components/custom-container-dialog/custom-container-dialog.component";
+import { SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE } from "@domain/enums/main.enum";
+import { isValidField } from "@domain/utils/utils";
 
 @Component({
     selector: 'app-company-customer-add-edit-modal',

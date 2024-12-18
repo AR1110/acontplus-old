@@ -1,4 +1,4 @@
-import {PaymentComponent} from '@/shared/components/payment/payment.component';
+import {PaymentComponent} from '@ui/components/payment/payment.component';
 import {ActionEmailSendDirective} from '@ui/directives/action-email-send.directive';
 import {ActionWhatsappSendDirective} from '@ui/directives/action-whatsapp-send.directive';
 import {CODE_REPORT, DOC_TYPE} from '@domain/enums/main.enum';

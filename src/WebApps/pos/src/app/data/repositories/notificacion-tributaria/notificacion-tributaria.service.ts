@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import {PATHS, PATHS_API } from '@/shared/enums/main.enum';
+import {PATHS, PATHS_API } from '@domain/enums/main.enum';
 
 @Injectable({
   providedIn: 'root'

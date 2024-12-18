@@ -13,17 +13,17 @@ import { ProductService } from '@data/repositories/product/product.service';
 import { ToasterService } from "@domain/services/toaster.service";
 import { ToUpperCaseDirective } from '@ui/directives/to-upper-case.directive';
 
-import { getValidId, isValidField } from '@domain/utils/utils/utils';
-import { roundNumber } from '@domain/utils/utils/round-number.util';
-import { pricingCalculateUtil } from '@domain/utils/utils/princing-calculate.util';
-import { generateUuidv4 } from '@domain/utils/utils/generate-uuidv4';
+import { getValidId, isValidField } from '@domain/utils/utils';
+import { roundNumber } from '@domain/utils/round-number.util';
+import { pricingCalculateUtil } from '@domain/utils/princing-calculate.util';
+import { generateUuidv4 } from '@domain/utils/generate-uuidv4';
 
 import { DECIMALS, DOC_TYPE, ITEM_TYPE_CODE } from '@domain/enums/main.enum';
 import { FormsModule } from "@angular/forms";
 import Swal from "sweetalert2";
 import { OrderMapper } from "@data/repositories/order/order.mapper";
 import { DialogService } from '@domain/services/dialog.service';
-import { PaymentComponent } from '@/shared/components/payment/payment.component';
+import { PaymentComponent } from '@ui/components/payment/payment.component';
 import { OrderData, OrderDivideItem, OrderItem } from '@domain/models/order.model';
 import {OrderUseCase} from "@domain/use-cases/order.use-case";
 

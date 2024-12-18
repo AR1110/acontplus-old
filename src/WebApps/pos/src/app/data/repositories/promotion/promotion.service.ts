@@ -1,6 +1,6 @@
-import { getNoLoader } from '@/core/interceptors/loader.interceptor';
-import { PATHS, PATHS_API } from '@/shared/enums/main.enum';
-import { ApiResponse } from '@/domain/models/api-response';
+import { getNoLoader } from '@core/interceptors/loader.interceptor';
+import { PATHS, PATHS_API } from '@domain/enums/main.enum';
+import { ApiResponse } from '@domain/models/api-response';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';

@@ -1,20 +1,20 @@
 import {Component, inject, ViewChild} from '@angular/core';
 import {MatPaginator, PageEvent} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
-import {Pagination} from "@/shared/models/pagination.model";
+import {Pagination} from "@domain/models/pagination.model";
 import {MatIconModule} from "@angular/material/icon";
 import {MatCardModule} from "@angular/material/card";
-import {CustomTableContainerComponent} from "@/shared/components/custom-table-container/custom-table-container.component";
+import {CustomTableContainerComponent} from "@ui/components/custom-table-container/custom-table-container.component";
 import {MatTableModule} from "@angular/material/table";
-import {CompanyCustomerService} from "@/features/company-customers/services/company-customer.service";
+import {CompanyCustomerService} from "@data/repositories/company-customer/company-customer.service";
 import {MatButtonModule} from "@angular/material/button";
-import {CompanyCustomerRead} from "@/features/company-customers/models/company-customer.model";
+import {CompanyCustomerRead} from "@domain/models/company-customer.model";
 import {PrimaryStatusPipe} from "@core/pipes/primary-status.pipe";
-import {ActionCompanyCustomerAddEditModalDirective} from "@/shared/directives/action-company-customer-add-edit.directive";
+import {ActionCompanyCustomerAddEditModalDirective} from "@ui/directives/action-company-customer-add-edit.directive";
 
 
 @Component({
-    selector: 'app-company-customer-page',
+    selector: 'app-company-customer',
     imports: [
         MatIconModule,
         MatCardModule,

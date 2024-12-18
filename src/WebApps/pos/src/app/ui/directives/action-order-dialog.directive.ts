@@ -1,6 +1,6 @@
 
 import { OrderListModalComponent } from '@ui/orders/components/order-list-modal/order-list-modal.component';
-import { DialogService } from '@/shared/services/dialog.service';
+import { DialogService } from '@domain/services/dialog.service';
 import { Directive, HostListener, inject, input,   output } from '@angular/core';
 
 @Directive({

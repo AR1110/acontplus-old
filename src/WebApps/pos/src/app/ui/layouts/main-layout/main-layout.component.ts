@@ -1,6 +1,6 @@
-import { NavUserInfoToggleComponent } from '@/core/components/nav-user-info-toggle/nav-user-info-toggle.component';
-import { NavUserToggleComponent } from '@/core/components/nav-user-toggle/nav-user-toggle.component';
-import { MainStoreService } from '@/store/main-store.service';
+import { NavUserInfoToggleComponent } from '@ui/layouts/components/nav-user-info-toggle/nav-user-info-toggle.component';
+import { NavUserToggleComponent } from '@ui/layouts/components/nav-user-toggle/nav-user-toggle.component';
+import { MainStoreService } from '@domain/services/main-store.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe, DOCUMENT } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
@@ -12,8 +12,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { map, Observable, shareReplay } from 'rxjs';
-
-import { menusRoutes } from './menus-routes';
+import { menusRoutes } from '../menus-routes';
 
 @Component({
     selector: 'app-main-layout',

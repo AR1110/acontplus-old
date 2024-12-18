@@ -1,23 +1,23 @@
-import { PaymentComponent } from '@/shared/components/payment/payment.component';
+import { PaymentComponent } from '@ui/components/payment/payment.component';
 import { OrderMapper } from '@data/repositories/order/order.mapper';
-import { plus } from '@/shared/utils/decimal.util';
-import { roundNumber } from '@/shared/utils/round-number.util';
-import { playClearSound } from '@/shared/utils/sound.util';
-import { consumirFinalSuperaElValorPermitido, getValidId, messageSuperaElValorTotalPermitido } from '@/shared/utils/utils';
-import { DECIMALS, DOC_TYPE } from '@/shared/enums/main.enum';
-import { DialogService } from '@/shared/services/dialog.service';
-import { OrderService } from '@/features/orders/services/order.service';
-import { SharedService } from '@/shared/services/shared.service';
-import { ToasterService } from '@/shared/services/toaster.service';
-import { orderInitialState, PosStoreService } from '@/features/pos/store/pos-store.service';
+import { plus } from '@domain/utils/decimal.util';
+import { roundNumber } from '@domain/utils/round-number.util';
+import { playClearSound } from '@domain/utils/sound.util';
+import { consumirFinalSuperaElValorPermitido, getValidId, messageSuperaElValorTotalPermitido } from '@domain/utils/utils';
+import { DECIMALS, DOC_TYPE } from '@domain/enums/main.enum';
+import { DialogService } from '@domain/services/dialog.service';
+import { SharedService } from '@domain/services/shared.service';
+import { ToasterService } from '@domain/services/toaster.service';
+import { orderInitialState, PosStoreService } from '@ui/store/pos-store.service';
 import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { ToUpperCaseDirective } from '@/shared/directives/to-upper-case.directive';
-import { generateUuidv4 } from '@/shared/utils/generate-uuidv4';
-import { TableModalComponent } from '../table-modal/table-modal.component';
+import { ToUpperCaseDirective } from '@ui/directives/to-upper-case.directive';
+import { generateUuidv4 } from '@domain/utils/generate-uuidv4';
+import { TableModalComponent } from '@ui/pos/components/table-modal/table-modal.component';
 import { Dialog } from '@angular/cdk/dialog';
 import { MatInputModule } from '@angular/material/input';
+import {OrderUseCase} from "@domain/use-cases/order.use-case";
 
 const messageSave: { [key: string]: string } = {
   [DOC_TYPE.FV]: `
@@ -44,7 +44,7 @@ export class CartFooterComponent {
   private posStore = inject(PosStoreService);
   private tS = inject(ToasterService);
   private orderAdapter = inject(OrderMapper);
-  private orderSvc = inject(OrderService);
+  private _orderUseCase = inject(OrderUseCase);
   private sharedSvc = inject(SharedService);
   private dialogSvc = inject(DialogService)
   public dialog = inject(Dialog)
@@ -331,9 +331,9 @@ export class CartFooterComponent {
 
       if (!isConfirmed) return
 
-      const orderResult = this.orderAdapter.toApiOrder(order);
-      const itemsResult = this.orderAdapter.toApiItems(orderItems)
-      const taxesResult = this.orderAdapter.toApiTaxes(orderItems);
+      const orderResult = OrderMapper.toApiOrder(order);
+      const itemsResult = OrderMapper.toApiItems(orderItems)
+      const taxesResult = OrderMapper.toApiTaxes(orderItems);
 
 
       const data = {
@@ -345,10 +345,10 @@ export class CartFooterComponent {
         items: itemsResult,
         taxes: taxesResult
       }
-      let params = this.orderAdapter.toApiParams(data);
+      let params = OrderMapper.toApiParams(data);
 
       if (order.orderId > 0) {
-        this.orderSvc.fetchPutData(order.orderId, params).subscribe(  response => {
+        this._orderUseCase.put(order.orderId, params).subscribe(  response => {
             if (response.code === "0") {
               Swal.fire({
                 icon: 'warning',
@@ -366,7 +366,7 @@ export class CartFooterComponent {
             }
           } )
       } else {
-        this.orderSvc.fetchPostData(params).subscribe(  response => {
+        this._orderUseCase.post(params).subscribe(  response => {
             // Manejo de respuesta con código "0"
             if (response.code === "0") {
               Swal.fire({

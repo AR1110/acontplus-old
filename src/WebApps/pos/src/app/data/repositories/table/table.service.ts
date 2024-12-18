@@ -1,5 +1,5 @@
-import { PATHS, PATHS_API } from '@/shared/enums/main.enum';
-import { ApiResponse } from '@/domain/models/api-response';
+import { PATHS, PATHS_API } from '@domain/enums/main.enum';
+import { ApiResponse } from '@domain/models/api-response';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 

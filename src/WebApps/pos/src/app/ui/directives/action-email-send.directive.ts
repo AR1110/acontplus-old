@@ -1,7 +1,7 @@
-import {CODE_REPORT, DOC_TYPE} from '@/shared/enums/main.enum';
-import { DialogService } from '@/shared/services/dialog.service';
+import {CODE_REPORT, DOC_TYPE} from '@domain/enums/main.enum';
+import { DialogService } from '@domain/services/dialog.service';
 import {Directive, HostListener, inject, Input, input} from '@angular/core';
-import {EmailSendModalComponent} from "@/shared/components/email-send-modal/email-send-modal.component";
+import {EmailSendModalComponent} from "@ui/components/email-send-modal/email-send-modal.component";
 
 let paramToSendMail:any= {
       [DOC_TYPE.NE]: function(item:any) {

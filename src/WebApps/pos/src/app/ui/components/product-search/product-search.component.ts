@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Observable, catchError, debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'rxjs';
 import {ProductSearchDto} from "@domain/models/inventory/product.model";
-import { isValidField } from '@domain/utils/utils/utils';
+import { isValidField } from '@domain/utils/utils';
 
 @Component({
     selector: 'app-product-search',
