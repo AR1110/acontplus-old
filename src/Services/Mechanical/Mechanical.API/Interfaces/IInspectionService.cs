@@ -1,9 +1,11 @@
-﻿namespace Mechanical.API.Interfaces
+﻿using Common.Core.Models;
+
+namespace Mechanical.API.Interfaces
 {
     public interface IInspectionService
     {
-        Task<object> GetAsync(Dictionary<string, object> parameters);
-        Task<string> AddAsync(Dictionary<string, object> parameters);
-        Task<string> UpdateAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Common.AppSettings;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository.Interfaces;
 using Mechanical.API.Data;
@@ -7,58 +8,47 @@ using Mechanical.API.Interfaces;
 
 namespace Mechanical.API.Services
 {
-    public class VehicleService : IVehicleService
+    public class VehicleService(IAdoRepository _repository, MechanicalContext _context) : IVehicleService
     {
-        private readonly IAdoRepository _repository;
-        private readonly MechanicalContext _context;
-
-        public VehicleService(MechanicalContext context, IAdoRepository repository)
-        {
-            _context = context;
-            _repository = repository;
-        }
-
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
             var ds = await _repository.GetDataSetAsync("Mechanical.VehicleCompany_Get", parameters);
-
-            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-            {
-                if (ds.Tables.Count > 0)
-                {
-                    _ = new DataSet();
-                }
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJson(ds);
-            }
+            return DataValidation.DataSetIsNull(ds, true)
+            ? new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
         }
-        public async Task<string> AddAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SpExecuteDeprecatedAsync("Mechanical.VehicleCompany_Insert", parameters);
+            return await _repository.SpExecuteAsync<ApiResponse>("Mechanical.VehicleCompany_Insert", parameters);
         }
-        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SpExecuteDeprecatedAsync("Mechanical.VehicleCompany_Update", parameters);
+            return await _repository.SpExecuteAsync<ApiResponse>("Mechanical.VehicleCompany_Update", parameters);
         }
-        public async Task<LegacyApiResponse> DeleteAsync(int id)
+        public async Task<ApiResponse> DeleteAsync(int id)
         {
             var vehicle = await _context.VehicleCompanys.FindAsync(id);
+            if (vehicle == null)
+            {
+                return new ApiResponse { Code = "0", Message = "No se encontro el Vehículo para actualizar" };
+            }
             vehicle.Enabled = false;
             vehicle.Deleted = true;
             _context.Update(vehicle);
             await _context.SaveChangesAsync();
-            return new LegacyApiResponse { code = "1", message = "Eliminada Exitosamente" };
+            return new ApiResponse { Code = "1", Message = "Eliminada Exitosamente" };
         }
-        public async Task<LegacyApiResponse> UpdateStateAsync(int id, bool state)
+        public async Task<ApiResponse> UpdateStateAsync(int id, bool state)
         {
             var vehicle = await _context.VehicleCompanys.FindAsync(id);
+            if (vehicle == null)
+            {
+                return new ApiResponse { Code = "0", Message = "No se encontro el Vehículo para actualizar" };
+            }
             vehicle.Enabled = state;
             _context.Update(vehicle);
             await _context.SaveChangesAsync();
-            return new LegacyApiResponse { code = "1", message = "Actualizado Exitosamente" };
+            return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente" };
         }
     }
 }

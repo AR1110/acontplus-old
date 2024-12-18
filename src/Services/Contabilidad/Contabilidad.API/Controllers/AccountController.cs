@@ -1,7 +1,4 @@
 ﻿using Common.AppSettings.Extensions;
-using Contabilidad.API.Interfaces;
-using Contabilidad.API.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Contabilidad.API.Controllers
 {

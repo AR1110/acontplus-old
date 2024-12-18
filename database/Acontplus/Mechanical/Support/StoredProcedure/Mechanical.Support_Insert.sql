@@ -76,7 +76,7 @@ BEGIN
         SELECT TOP 1 @Sequence = ultimaSecuencia FROM dbo.ConfiguracionDocumento WITH (NOLOCK) WHERE idPuntoEmision = @PuntoEmisionId AND idTipoDocumento = @TipoDocumentoId 
             
         --> VALIDATION OF INFORMATION
-        IF (SELECT COUNT(*) FROM @tbSupport) = 0
+        IF NOT EXISTS(SELECT 1 FROM @tbSupport)
             BEGIN
                 SELECT [Common].[ufnSpResponse]('0', 'Error en la informacion del soporte', NULL)
                 RETURN

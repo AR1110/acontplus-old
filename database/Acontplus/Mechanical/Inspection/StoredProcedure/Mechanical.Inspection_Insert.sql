@@ -70,7 +70,7 @@ BEGIN
         SELECT TOP 1 @SupportStatusId = Id from Mechanical.SupportStatus WITH (NOLOCK) WHERE Code = 'PR'
 
         -- ======================= VALIDATION =============================== 
-        IF (SELECT COUNT(*) FROM @tbInspection) = 0 
+        IF NOT EXISTS(SELECT 1 FROM @tbInspection) 
             BEGIN
                  SELECT [Common].[ufnSpResponse]('0', 'Error en la información al registrar', NULL)
                  RETURN
