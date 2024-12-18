@@ -9,7 +9,9 @@ public class NotificacionController(INotificationService notificationService) : 
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(json) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
         return Ok(await notificationService.AddAsync(parameters));
     }
