@@ -28,10 +28,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
-import { AuthService } from '@modules/auth/services/auth.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobrar.usecase";
+import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 const imports = [
   MatCardModule,
@@ -89,7 +89,8 @@ export class SaleReportPageComponent {
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
   private appNotifiSvc = inject(NotificacionService)
-  private authSvc = inject(AuthService)
+  private _tokenUseCase= inject(TokenUseCase)
+
 
   getDataFilter() {
     this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
@@ -234,7 +235,7 @@ export class SaleReportPageComponent {
       convertToDoc: this.dataSearch.convertToDoc,
       idCiudad: this.dataSearch.idCiudad,
 
-      userRoleId: this.authSvc.getUserRoleId()
+      userRoleId: this._tokenUseCase.getUserRoleId()
     };
     return dataParams;
 

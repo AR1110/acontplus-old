@@ -32,7 +32,6 @@ import {
 } from '@angular/forms';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { AuthService, UserData } from '@modules/auth/services/auth.service';
 import { UserCustomerService } from '@modules/config/services/user-customer/user-customer.service';
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
@@ -51,6 +50,8 @@ import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semanti
 import { FirmaElectronicaService } from '@modules/config/services/firma-electronica.service';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faYoutube } from '@fortawesome/free-brands-svg-icons';
+import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import {UserData} from "@modules/auth/domain/models/user-data.model";
 
 @Component({
     selector: 'app-wizard-config',
@@ -149,11 +150,13 @@ export class WizardConfigComponent {
     ]),
   });
   demoSteps: DemoStep[] = [];
-  user: UserData = {} as UserData;
+  user = {} as UserData;
   userUpdated: boolean = false;
   estabRegistered: boolean = false;
   readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
-  #authSvc = inject(AuthService);
+
+  private _tokenUseCase = inject(TokenUseCase)
+
   #toasterService = inject(ToasterService);
   #userService = inject(UserCustomerService);
   #estabService = inject(EstablishmentService);
@@ -244,7 +247,7 @@ export class WizardConfigComponent {
   }
 
   ngOnInit(): void {
-    const decodedToken = this.#authSvc.getDecodedToken();
+    const decodedToken = this._tokenUseCase.getUserData();
     if (decodedToken) {
       this.user = decodedToken;
     }

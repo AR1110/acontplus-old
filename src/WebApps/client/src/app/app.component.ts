@@ -10,8 +10,9 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
-import { AuthService } from '@modules/auth/services/auth.service';
 import { UserPermission, UserRoleStateService } from '@shared/store/user-role-state.service';
+import {AuthUseCase} from "@modules/auth/domain/use-cases/auth.use-case";
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 
 @Component({
     selector: 'app-root',
@@ -29,13 +30,13 @@ export class AppComponent implements OnInit {
   #themeService = inject(ThemeService);
   #document = inject(DOCUMENT);
   #renderer = inject(Renderer2);
-
+  private _tokenUseCase = inject(TokenUseCase)
   //end temporalmente
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService,
+    private _authUseCase: AuthUseCase,
     library: FaIconLibrary,
   ) {
     library.addIconPacks(fab, fas, far);
@@ -104,7 +105,7 @@ export class AppComponent implements OnInit {
 
         //end temporalmente
 
-        if (!this.authService.isAuthenticated()) {
+        if (!this._tokenUseCase.isTokenExpired()) {
           localStorage.removeItem('access_token');
         }
         let route_page = getEnumValueByKey(GlobalRoutes, route);

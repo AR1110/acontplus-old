@@ -5,9 +5,10 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
-import {AuthUseCase} from "@modules/auth/core/use-cases/auth.use-case";
+import {AuthUseCase} from "@modules/auth/domain/use-cases/auth.use-case";
 import {ToasterService} from "@core/services/toaster.service";
 import {DialogService} from "@core/services/dialog.service";
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 @Component({
   selector: 'app-auth',
   imports: [
@@ -46,6 +47,7 @@ import {DialogService} from "@core/services/dialog.service";
 })
 export class AuthComponent {
   private _authUseCase= inject(AuthUseCase)
+  private _tokenUseCase = inject(TokenUseCase)
   private router = inject(Router)
   private tS = inject(ToasterService)
   private dialogSvc = inject(DialogService)
@@ -53,8 +55,8 @@ export class AuthComponent {
   hide = signal(true);
 
   form = new FormGroup({
-    username: new FormControl('', Validators.required),
-    password: new FormControl('', Validators.required),
+    username: new FormControl(''),
+    password: new FormControl(''),
   })
 
   clickEvent(event: MouseEvent) {
@@ -104,6 +106,7 @@ export class AuthComponent {
       }
 
       let dataPayload = JSON.parse(response.payload as string)
+      console.log(dataPayload)
       const establecimientos = dataPayload.flatMap((userRole: any) => userRole.establecimientos)
 
       if (establecimientos.length > 1) {
@@ -112,8 +115,9 @@ export class AuthComponent {
       } else {
 
         const dataLogin = dataPayload[0];
-        let dataEstab = establecimientos.find((e: any) => e.predeterminado);
-        this.setDataLogin(dataLogin, dataEstab)
+     //   let dataEstab = establecimientos.find((e: any) => e.predeterminado);
+     //   this.setDataLogin(dataLogin, dataEstab)
+     this.router.navigateByUrl('/')
 
       }
 

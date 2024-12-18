@@ -69,7 +69,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  ├── modal.service.ts
 |  |  |  |  ├── shared.service.ts
 |  |  |  |  ├── toaster.service.ts
-|  |  |  |  └── user.service.ts
 |  |  |  ├── theme
 |  |  |  |  ├── theme-options.ts
 |  |  |  |  ├── theme.service.ts
@@ -283,8 +282,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  ├── models
 |  |  |  |  |  └── user.model.ts
 |  |  |  |  └── services
-|  |  |  |     ├── auth.service.ts
-|  |  |  |     └── user.service.ts
 |  |  |  ├── billing
 |  |  |  |  ├── adapters
 |  |  |  |  |  ├── doc-elect.adapter.ts
