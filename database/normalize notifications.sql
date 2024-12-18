@@ -19,55 +19,6 @@ IF NOT EXISTS (SELECT 1 FROM AcontplusAdmin.Config.WhatsAppUsage)
     END
 GO
 
-IF NOT EXISTS (
-    SELECT 1 
-    FROM sys.objects 
-    WHERE name = 'df_cwasc_createdAt' AND type = 'D'
-)
-BEGIN
-    ALTER TABLE Config.WhatsAppSenderConfig 
-    ADD CONSTRAINT df_cwasc_createdAt 
-    DEFAULT GETDATE() FOR CreatedAt
-END
-GO
-
-IF NOT EXISTS (
-    SELECT 1 
-    FROM sys.objects 
-    WHERE name = 'df_cwasc_enabled' AND type = 'D'
-)
-BEGIN
-    ALTER TABLE Config.WhatsAppSenderConfig 
-    ADD CONSTRAINT df_cwasc_enabled
-    DEFAULT 1 FOR Enabled
-END
-GO
-
-IF NOT EXISTS (
-    SELECT 1 
-    FROM sys.objects 
-    WHERE name = 'df_cesc_enabled' AND type = 'D'
-)
-BEGIN
-    ALTER TABLE Config.EmailSenderConfig 
-    ADD CONSTRAINT df_cesc_enabled
-    DEFAULT 1 FOR Enabled
-END
-GO
-
-IF NOT EXISTS (
-    SELECT 1 
-    FROM sys.objects 
-    WHERE name = 'df_cesc_createdAt' AND type = 'D'
-)
-BEGIN
-    ALTER TABLE Config.EmailSenderConfig 
-    ADD CONSTRAINT df_cesc_createdAt 
-    DEFAULT GETDATE() FOR CreatedAt
-END
-GO
-
-
 IF NOT EXISTS (SELECT 1 FROM Config.WhatsAppSenderConfig)
     BEGIN
         INSERT INTO Config.WhatsAppSenderConfig([IsGlobal], [AccountId], [AuthToken], [UrlService], [UserId])

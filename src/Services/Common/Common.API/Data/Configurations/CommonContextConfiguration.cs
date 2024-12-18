@@ -6,16 +6,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Common.API.Data.Configurations;
 
-public class MaritalStatusConfiguration : BaseEntityTypeConfiguration<MaritalStatus>
+public class EmailSenderConfiguration : BaseEntityTypeConfiguration<EmailSenderConfig>
 {
-    public override void Configure(EntityTypeBuilder<MaritalStatus> builder)
+    public override void Configure(EntityTypeBuilder<EmailSenderConfig> builder)
     {
         base.Configure(builder);
-
+ 
         builder
-            .HasIndex(x => x.Code)
-            .HasDatabaseName("UX_MaritalStatus_Code")
-            .IsUnique();
+            .Property(x => x.IsGlobal)
+            .HasDefaultValue(false);
     }
 }
 
@@ -31,6 +30,18 @@ public class HousingTypeConfiguration : BaseEntityTypeConfiguration<HousingType>
             .IsUnique();
     }
 }
+public class MaritalStatusConfiguration : BaseEntityTypeConfiguration<MaritalStatus>
+{
+    public override void Configure(EntityTypeBuilder<MaritalStatus> builder)
+    {
+        base.Configure(builder);
+
+        builder
+            .HasIndex(x => x.Code)
+            .HasDatabaseName("UX_MaritalStatus_Code")
+            .IsUnique();
+    }
+}
 
 public class NotificationConfiguration : BaseEntityTypeConfiguration<Notification>
 {
@@ -42,6 +53,10 @@ public class NotificationConfiguration : BaseEntityTypeConfiguration<Notificatio
             .HasMany(x => x.Attachments)
             .WithOne(x => x.Notification)
             .HasForeignKey(x => x.NotificationId);
+
+        builder
+            .Property(x => x.IsRead)
+            .HasDefaultValue(false);
     }
 }
 
@@ -81,5 +96,17 @@ public class StatusConfiguration : BaseEntityTypeConfiguration<Status>
             .HasIndex(x => x.Code)
             .HasDatabaseName("UX_Status_Code")
             .IsUnique();
+    }
+}
+
+public class WhatsAppSenderConfiguration : BaseEntityTypeConfiguration<WhatsAppSenderConfig>
+{
+    public override void Configure(EntityTypeBuilder<WhatsAppSenderConfig> builder)
+    {
+        base.Configure(builder);
+
+        builder
+            .Property(x => x.IsGlobal)
+            .HasDefaultValue(false);
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Common.API.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class NotificationTbl : Migration
+    public partial class NotificationsTbls : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,7 +34,7 @@ namespace Common.API.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CompanyId = table.Column<int>(type: "int", nullable: true),
-                    IsGlobal = table.Column<bool>(type: "bit", nullable: false),
+                    IsGlobal = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     SenderEmail = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
                     SenderName = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
                     SmtpServer = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
@@ -42,10 +42,10 @@ namespace Common.API.Data.Migrations
                     UseSsl = table.Column<bool>(type: "bit", nullable: false),
                     Username = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
                     EncryptedPassword = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "varchar(max)", unicode: false, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PasswordHash = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
                     Deleted = table.Column<bool>(type: "bit", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true),
                     FromMobile = table.Column<bool>(type: "bit", nullable: true)
@@ -126,14 +126,14 @@ namespace Common.API.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CompanyId = table.Column<int>(type: "int", nullable: true),
-                    IsGlobal = table.Column<bool>(type: "bit", nullable: false),
+                    IsGlobal = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     AccountId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     AuthToken = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
                     PhoneNumber = table.Column<string>(type: "varchar(25)", unicode: false, maxLength: 25, nullable: true),
                     UrlService = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
                     Deleted = table.Column<bool>(type: "bit", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true),
                     FromMobile = table.Column<bool>(type: "bit", nullable: true)
@@ -155,7 +155,7 @@ namespace Common.API.Data.Migrations
                     Title = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     Subject = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
                     Message = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
-                    IsRead = table.Column<bool>(type: "bit", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
@@ -217,8 +217,9 @@ namespace Common.API.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NotificationId = table.Column<int>(type: "int", nullable: false),
                     EmailSenderConfigId = table.Column<int>(type: "int", nullable: false),
-                    RecipientEmail = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
+                    RecipientEmail = table.Column<string>(type: "varchar(254)", unicode: false, maxLength: 254, nullable: false),
                     Subject = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
+                    Cc = table.Column<string>(type: "varchar(1000)", unicode: false, maxLength: 1000, nullable: true),
                     IsHtml = table.Column<bool>(type: "bit", nullable: false),
                     CompressedBody = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     PriorityId = table.Column<int>(type: "int", nullable: false),
