@@ -32,8 +32,8 @@ import { FormsModule } from '@angular/forms';
 import { SendMailModalDirective } from '@shared/directives/send-mail-modal.directive';
 import { DetalleArqueoControlCajaModalComponent } from '@accounting/ui/cashbox-page/control-caja-modal/components/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { AuthService } from '@modules/auth/services/auth.service';
 import {ControlCajaUsecase} from "@accounting/core/usecases/control-caja.usecase";
+import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 @Component({
   selector: 'app-control-caja-modal',
@@ -95,7 +95,7 @@ export class ControlCajaModalComponent {
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
   private pS = inject(UserRoleStateService);
-  private authSvc = inject(AuthService)
+  private _tokenUseCase = inject(TokenUseCase)
   private format = FORMAT_REPORT.PDF;
 
   getMovimientosCaja() {
@@ -446,7 +446,7 @@ export class ControlCajaModalComponent {
         idUsuario: this.params.idUsuario,
         idCliente: null,
 
-        userRoleId: this.authSvc.getUserRoleId()
+        userRoleId: this._tokenUseCase.getUserRoleId()
 
       };
 

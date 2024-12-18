@@ -10,8 +10,8 @@ import { SharedService } from "@core/services/shared.service";
 import { ToasterService } from "@core/services/toaster.service";
 import { formatDateToString } from "@core/utils/date.util";
 import { isValidField } from "@core/utils/utils";
-import { AuthService } from "@modules/auth/services/auth.service";
 import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobrar.usecase";
+import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 @Component({
     selector: 'app-cartera-cliente',
@@ -27,7 +27,7 @@ import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobra
 export class CarteraClienteComponent {
   private tS = inject(ToasterService)
   private sharedSvc = inject(SharedService)
-  private authSvc = inject(AuthService)
+  private _tokenUseCase = inject(TokenUseCase)
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUsecase)
 
 
@@ -167,7 +167,7 @@ export class CarteraClienteComponent {
       idEmpresa,
       convertToDoc: this.dataSearch.convertToDoc,
       dirViviendaCliente,
-      userRoleId: this.authSvc.getUserRoleId()
+      userRoleId: this._tokenUseCase.getUserRoleId()
     };
 
 

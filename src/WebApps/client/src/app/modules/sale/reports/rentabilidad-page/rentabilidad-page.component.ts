@@ -19,8 +19,8 @@ import { GroupedSubFamilia } from '@inventory/core/domain/sub-category.model';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { formatDateToString } from '@core/utils/date.util';
-import { AuthService } from '@modules/auth/services/auth.service';
 import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
+import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 @Component({
     selector: 'app-rentabilidad-page',
@@ -77,8 +77,9 @@ export class RentabilidadPageComponent {
   };
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
-  private authSvc = inject(AuthService)
   private _productUseCase = inject(ProductUsecase)
+  private _tokenUseCase= inject(TokenUseCase)
+
 
   ngOnInit() {
     showLoader();
@@ -256,7 +257,7 @@ export class RentabilidadPageComponent {
         (this.dataSearch.subCategoriaChecked && subCategoriasChecked) || null,
       porcentajeRenta: this.dataSearch.porcentajeRenta,
       porcentajeComision: this.dataSearch.porcentajeComision,
-      userRoleId: this.authSvc.getUserRoleId()
+      userRoleId: this._tokenUseCase.getUserRoleId()
     };
 
     const parameters = {

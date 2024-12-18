@@ -15,7 +15,7 @@ import { UserCustomerService } from '@modules/config/services/user-customer/user
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { AuthService } from '@modules/auth/services/auth.service';
+import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 @Component({
     selector: 'app-user-customer-add-edit-modal',
@@ -41,7 +41,8 @@ export class UserCustomerAddEditModalComponent {
   protected modal = inject(NgbActiveModal);
   protected tS = inject(ToasterService);
   private userCustomerSvc = inject(UserCustomerService);
-  #authSvc = inject(AuthService);
+  private _tokenUseCase= inject(TokenUseCase)
+
 
   constructor(private fb: FormBuilder) {}
 
@@ -51,7 +52,7 @@ export class UserCustomerAddEditModalComponent {
         this.roles = response.roles;
       },
     });
-    const decodedToken = this.#authSvc.getDecodedToken();
+    const decodedToken = this._tokenUseCase.getUserData();
     // if (decodedToken) {
     //   this.user = decodedToken;
     // }

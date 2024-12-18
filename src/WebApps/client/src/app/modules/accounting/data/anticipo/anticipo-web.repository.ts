@@ -11,15 +11,11 @@ import {AnticipoMapper} from "@accounting/data/anticipo/anticipo.mapper";
 @Injectable({
   providedIn: 'root'
 })
-export class AnticipoWebRepository extends AnticipoRepository{
+export class AnticipoWebRepository implements AnticipoRepository{
 
   private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.ANTICIPO}`
   private _http = inject(HttpClient);
 
-
-  constructor() {
-    super();
-  }
 
   getAll<T>(obj: T) {
     let json = JSON.stringify({
