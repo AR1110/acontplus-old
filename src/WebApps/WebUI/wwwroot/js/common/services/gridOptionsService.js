@@ -669,36 +669,40 @@
                     let totalEsperado = calcularTotalProducto(subtotalEsperado, ivaEsperado);
 
                     // Redondear valores esperados con base en los decimales del producto
-                    subtotalEsperado = fS.roundNumber(subtotalEsperado, getMaxDecimal(producto.precioTotalSinImpuesto));
-                    ivaEsperado = fS.roundNumber(ivaEsperado, getMaxDecimal(producto.valorImpuesto));
-                    totalEsperado = fS.roundNumber(totalEsperado, getMaxDecimal(producto.total));
+                    subtotalEsperado = fS.roundNumber(subtotalEsperado, pricingUtils.max_dos);
+                    ivaEsperado = fS.roundNumber(ivaEsperado, pricingUtils.max_dos);
+                    totalEsperado = fS.roundNumber(totalEsperado, pricingUtils.max_dos);
+
+                    let subtotalCalculado = fS.roundNumber(producto.precioTotalSinImpuesto, pricingUtils.max_dos);
+                    let valorImpuestoCalculado = fS.roundNumber(producto.valorImpuesto, pricingUtils.max_dos);
+                    let totalCalculado = fS.roundNumber(producto.total, pricingUtils.max_dos);
 
                     // Validar Subtotal
-                    // if (subtotalEsperado !== producto.precioTotalSinImpuesto) {
-                    //     errores.push({
-                    //         uniqueRow,
-                    //         errorMensaje: `Error en Subtotal: Calculado ${producto.precioTotalSinImpuesto}, Esperado ${subtotalEsperado}`,
-                    //         productoNombre
-                    //     });
-                    // }
+                    if (subtotalEsperado !==subtotalCalculado ) {
+                        errores.push({
+                            uniqueRow,
+                            errorMensaje: `Error en Subtotal: Calculado ${subtotalCalculado}, Esperado ${subtotalEsperado}`,
+                            productoNombre
+                        });
+                    }
 
                     // Validar IVA
-                    // if (ivaEsperado !== producto.valorImpuesto) {
-                    //     errores.push({
-                    //         uniqueRow,
-                    //         errorMensaje: `Error en IVA: Calculado ${producto.valorImpuesto}, Esperado ${ivaEsperado}`,
-                    //         productoNombre
-                    //     });
-                    // }
+                    if (ivaEsperado !== valorImpuestoCalculado) {
+                        errores.push({
+                            uniqueRow,
+                            errorMensaje: `Error en IVA: Calculado ${valorImpuestoCalculado}, Esperado ${ivaEsperado}`,
+                            productoNombre
+                        });
+                    }
 
                     // Validar Total
-                    // if (totalEsperado !== producto.total) {
-                    //     errores.push({
-                    //         uniqueRow,
-                    //         errorMensaje: `Error en Total: Calculado <b>${producto.total}</b>, Esperado <b>${totalEsperado}</b>`,
-                    //         productoNombre
-                    //     });
-                    // }
+                    if (totalEsperado !== totalCalculado) {
+                        errores.push({
+                            uniqueRow,
+                            errorMensaje: `Error en Total: Calculado <b>${totalCalculado}</b>, Esperado <b>${totalEsperado}</b>`,
+                            productoNombre
+                        });
+                    }
 
                     // Validar cantidad de transacción
                     if (typeof cantidadTransaccion !== 'number') {

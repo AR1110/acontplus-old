@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { PATHS_AUTH } from '../constants/auth.constants';
+import { PATHS_AUTH } from '../core/constants/auth.constants';
 import { map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
