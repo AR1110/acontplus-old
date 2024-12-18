@@ -7,7 +7,7 @@ public class NotificationService(CommonContext context, IAdoRepository adoReposi
 {
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>("App.Notificacion_Serv_Insert", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>("Common.Notification_Insert", parameters);
     }
 
     public Task<ApiResponse> DeleteAsync(int id)

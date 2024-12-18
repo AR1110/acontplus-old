@@ -207,6 +207,11 @@ namespace Common.API.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Cc")
+                        .HasMaxLength(1000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(1000)");
+
                     b.Property<byte[]>("CompressedBody")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
@@ -241,9 +246,9 @@ namespace Common.API.Data.Migrations
 
                     b.Property<string>("RecipientEmail")
                         .IsRequired()
-                        .HasMaxLength(150)
+                        .HasMaxLength(254)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("varchar(254)");
 
                     b.Property<int?>("RetryCount")
                         .HasColumnType("int");
@@ -299,13 +304,17 @@ namespace Common.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<byte[]>("EncryptedPassword")
                         .IsRequired()
@@ -315,9 +324,12 @@ namespace Common.API.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsGlobal")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
 
@@ -391,7 +403,9 @@ namespace Common.API.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Message")
                         .HasMaxLength(300)
@@ -676,19 +690,25 @@ namespace Common.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool?>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsGlobal")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(25)
