@@ -39,7 +39,9 @@ public class AccountService(IAdoRepository repository) : IAccountService
         var response = await repository.OnlyExecuteAsync("Seguridad.AccessAuthorization_Insert",
             new Dictionary<string, object>
             {
-                { "uuid", accessAuthorization.Uuid }, { "userRoleId", accessAuthorization.UserRoleId }
+                { "uuid", accessAuthorization.Uuid }, 
+                { "userRoleId", accessAuthorization.UserRoleId },
+                { "fromMobile", accessAuthorization.FromMobile }
             });
         return response == 0
             ? new ApiResponse { Code = "0", Message = "Código no válido" }
