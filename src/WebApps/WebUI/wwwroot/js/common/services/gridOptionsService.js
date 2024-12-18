@@ -722,6 +722,7 @@
             }
 
             let dataValid = validarProducto(productos);
+            console.log(dataValid)
 
             if (!dataValid.esValido) {
                 service.mostrarErrorCalculosProducto(dataValid.errores)
