@@ -42,7 +42,7 @@ BEGIN
            ,@ckDate BIT ,@fromDate DATETIME2 ,@toDate DATETIME2 ,@TipoDocumentoId INT
 
     -->Variables
-    SELECT TOP 1 @CompanyId = idEntidad, @UserId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+    SELECT TOP 1 @CompanyId = idEntidad, @UserId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
@@ -251,18 +251,19 @@ BEGIN
                    vc.Id
                   ,LicensePlate
                   ,Brand
-                  ,cl.nombreFiscal as TradeName
+                  ,cu.TradeName
             FROM Mechanical.VehicleCompany vc WITH (NOLOCK) 
             INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente = vc.CustomerId
             INNER JOIN Mechanical.Vehicle  ve WITH (NOLOCK) ON ve.id        = vc.VehicleId
+            INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id        = cl.CustomerId
             WHERE CompanyId = @CompanyId
               AND (
-                   ve.LicensePlate          LIKE '%' + @textSearch + '%'
-                OR ve.Brand                 LIKE '%' + @textSearch + '%'
-                OR ve.Model                 LIKE '%' + @textSearch + '%'
-                OR cl.numeroIdentificacion  LIKE '%' + @textSearch + '%'
-                OR cl.nombreComercial       LIKE '%' + @textSearch + '%'
-                OR cl.nombreFiscal          LIKE '%' + @textSearch + '%'
+                   ve.LicensePlate  LIKE '%' + @textSearch + '%'
+                OR ve.Brand         LIKE '%' + @textSearch + '%'
+                OR ve.Model         LIKE '%' + @textSearch + '%'
+                OR cu.TradeName     LIKE '%' + @textSearch + '%'
+                OR cu.BusinessName  LIKE '%' + @textSearch + '%'
+                OR cu.IDCard        LIKE '%' + @textSearch + '%'
                   )   
 
             RETURN 
@@ -280,25 +281,27 @@ BEGIN
             SELECT st.Id              as SupportId
                   ,st.PuntoEmisionId  as idPuntoEmision
                   ,st.UserId          as idUsuario
-                  ,pe.codEstab
+                  ,es.codEstab
                   ,st.Total
-            FROM Mechanical.Support              st WITH (NOLOCK)
-            INNER JOIN dbo.PuntoEmision          pe WITH (NOLOCK) ON pe.idPuntoEmision = st.PuntoEmisionId
+            FROM Mechanical.Support        st WITH (NOLOCK)
+            INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = st.PuntoEmisionId
+            INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
             WHERE st.Id = @Id
 
             SELECT cl.idCliente
                   ,cl.idTiempoCredito
                   ,cl.FormaPagoSriId                           as idFormaPagoSri
                   ,cl.idTipoIdentificacion
-		          ,cl.nombreFiscal                             as razonSocialComprador
-		          ,cl.numeroIdentificacion                     as identificacionComprador
+		          ,cu.TradeName                                as razonSocialComprador
+		          ,cu.IDCard                                   as identificacionComprador
 		          ,ISNULL(cl.direccion, '')                    as direccionComprador
 		          ,ISNULL(cl.correo,'')                        as email
 		          ,ISNULL(cl.telefono, '')                     as telefono
 		          ,ISNULL(cl.placa+';'+ISNULL(cl.placa,''),'') as placa 
-            FROM Mechanical.Support     st WITH (NOLOCK)
-            INNER JOIN dbo.Cliente      cl WITH (NOLOCK) ON cl.idCliente = st.CustomerId
-            WHERE Id = @Id
+            FROM Mechanical.Support      st WITH (NOLOCK)
+            INNER JOIN dbo.Cliente       cl WITH (NOLOCK) ON cl.idCliente = st.CustomerId
+            INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id        = cl.CustomerId
+            WHERE st.Id = @Id
 
             SELECT md.Id
                   ,md.ArticuloId        

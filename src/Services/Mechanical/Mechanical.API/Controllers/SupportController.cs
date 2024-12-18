@@ -2,123 +2,56 @@
 using Common.Core.Models;
 using Common.Core.Utils;
 using Mechanical.API.Interfaces;
-using Mechanical.API.Services;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Mechanical.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SupportController : BaseApiController
+    public class SupportController(ISupportService _supportService) : BaseApiController
     {
-        public readonly ISupportService _supportService;
-        public readonly ICustomLogger _log;
-        public SupportController(ISupportService supportService, ICustomLogger log)
-        {
-            _supportService = supportService;
-            _log = log;
-        }
-
+        
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                    { "userRoleId", User.GetUserRoleId()},
-                    { "json", json}
-                };
-                var supports = await _supportService.GetAsync(parameters);
-                if (supports == null | string.IsNullOrEmpty((string)supports))
-                {
-                    return NoContent();
-                }
-                return Ok(supports);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Get: \n" + ex.ToString());
-                return BadRequest("Error on get");
-            }
+            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+            return Ok(await _supportService.GetAsync(parameters));
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object> {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _supportService.AddAsync(parameters);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Post: \n" + ex.ToString());
-                return BadRequest("Error On Save");
-            }
+            var parameters = new Dictionary<string, object> {
+                { "userRoleId", User.GetUserRoleId() },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+            };
+            return Ok(await _supportService.AddAsync(parameters));
+
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object> {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "id", id },
-                    { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _supportService.UpdateAsync(parameters);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo Editar"); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Put: \n" + ex.ToString());
-                return BadRequest("Error On Update");
-            }
+            var parameters = new Dictionary<string, object> {
+                { "userRoleId", User.GetUserRoleId() },
+                { "id", id },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+            };
+            return Ok(await _supportService.UpdateAsync(parameters));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object> {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "id", id },
-                };
-                var response = await _supportService.DeleteAsync(parameters);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo Eliminar"); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Delete: \n" + ex.ToString());
-                return BadRequest("Error On Delete");
-            }
+            var parameters = new Dictionary<string, object> {
+                { "userRoleId", User.GetUserRoleId() },
+                { "id", id },
+            };
+            return Ok(await _supportService.DeleteAsync(parameters));
         }
 
         [HttpPut("PutState/{id}/{SupportStatusId}")]
         public async Task<IActionResult> PutState(int id, int SupportStatusId)
         {
-            try
-            {
-                var response = await _supportService.UpdateStateAsync(id, SupportStatusId);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on PutState: \n" + ex.ToString());
-                return BadRequest("Error On PutState");
-            }
+            return Ok(await _supportService.UpdateStateAsync(id, SupportStatusId));
         }
     }
 }
