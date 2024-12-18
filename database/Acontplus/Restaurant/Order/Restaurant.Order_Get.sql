@@ -234,10 +234,10 @@ BEGIN
                   ,tipoIdentificacionSri= ti.codigoSri
                   ,ro.*
              FROM Restaurant.[Order]           ro WITH (NOLOCK)
-             INNER JOIN Cliente                cl WITH (NOLOCK) ON cl.idCliente            = ro.CustomerCompanyId
+             LEFT JOIN Cliente                cl WITH (NOLOCK) ON cl.idCliente            = ro.CustomerCompanyId
               LEFT JOIN Restaurant.[Table]     ta WITH (NOLOCK) ON ta.Id                   = ro.TableId
-             INNER JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion 
-             INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                   = cl.CustomerId
+             LEFT JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion 
+             LEFT JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                   = cl.CustomerId
               LEFT JOIN Restaurant.Room        rm WITH (NOLOCK) ON rm.Id                   = ta.RoomId
              WHERE ro.Id = @id 
             
