@@ -43,7 +43,6 @@ const messageSave: { [key: string]: string } = {
 export class CartFooterComponent {
   private posStore = inject(PosStoreService);
   private tS = inject(ToasterService);
-  private orderAdapter = inject(OrderMapper);
   private _orderUseCase = inject(OrderUseCase);
   private sharedSvc = inject(SharedService);
   private dialogSvc = inject(DialogService)

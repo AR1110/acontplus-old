@@ -1,7 +1,5 @@
 
 import { Component, computed,   inject, signal,   } from '@angular/core';
-import {MatIcon, MatIconModule} from "@angular/material/icon";
-import { ConfigService } from '@data/repositories/config/config.service';
 import { forkJoin,   } from 'rxjs';
 import { ItemService } from '@data/repositories/item/item.service';
 import { Pagination } from "@domain/models/pagination.model";
@@ -9,7 +7,7 @@ import { ItemRead } from "@domain/models/item.model";
 import {MatPaginator,  PageEvent} from '@angular/material/paginator';
 import { SubCategory } from "@domain/models/inventory/subcategory.model";
 import {MatProgressSpinner,  } from '@angular/material/progress-spinner';
-import {MatCard, MatCardContent, } from "@angular/material/card";
+import { MatCardModule,} from "@angular/material/card";
 import { PosStoreService, posStoreStateInitial } from "@ui/store/pos-store.service";
 import {  MatFormFieldModule} from "@angular/material/form-field";
 import { MainStoreService } from "@domain/services/main-store.service";
@@ -25,20 +23,20 @@ import { TableModalComponent } from '@ui/pos/components/table-modal/table-modal.
 import {CommonModule} from "@angular/common";
 import {MatInputModule} from "@angular/material/input";
 import { MatButtonModule } from '@angular/material/button';
+import {ConfigUseCase} from "@domain/use-cases/config.use-case";
+import {MatIconModule} from "@angular/material/icon";
 
 @Component({
     selector: 'app-pos',
     imports: [
-        CommonModule,
-        MatCard,
-        MatCardContent,
+        CommonModule,MatCardModule,
+      MatIconModule,
         CategoriesTabComponent,
         MatPaginator,
         MatFormFieldModule,
         MatInputModule,
         FormsModule,
         MatButtonModule,
-        MatIcon,
         PromotionsComponent,
         MatProgressSpinner,
         ItemsComponent
@@ -50,7 +48,7 @@ export class PosComponent {
 
   private posStoreSvc = inject(PosStoreService)
   private mainStore = inject(MainStoreService)
-  private configSvc = inject(ConfigService);
+  private _configUseCase = inject(ConfigUseCase);
   private itemSvc = inject(ItemService);
 
   public dialog = inject(Dialog)
@@ -131,7 +129,7 @@ export class PosComponent {
     }
 
     return forkJoin([
-      this.configSvc.getDataForm(params),
+      this._configUseCase.getDataForm(params),
       this.itemSvc.getAll(paramsItem)
     ])
   }

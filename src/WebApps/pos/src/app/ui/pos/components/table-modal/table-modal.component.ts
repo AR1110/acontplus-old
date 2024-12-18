@@ -1,8 +1,6 @@
 
-import { CustomContainerDialogComponent } from '@ui/components/custom-container-dialog/custom-container-dialog.component';
 import { playBeepSound } from '@domain/utils/sound.util';
 import { ActionOrderDialogDirective } from '@ui/directives/action-order-dialog.directive';
-import { ConfigService } from '@data/repositories/config/config.service';
 import { TableService } from '@data/repositories/table/table.service';
 import { MainStoreService } from '@domain/services/main-store.service';
 import { PosStoreService } from '@ui/store/pos-store.service';
@@ -14,6 +12,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 import { ToastrService } from 'ngx-toastr';
+import {ConfigUseCase} from "@domain/use-cases/config.use-case";
 
 @Component({
     selector: 'app-table-modal',
@@ -42,7 +41,7 @@ export class TableModalComponent {
 
 
  // readonly dialogRef = inject(MatDialogRef<TableModalComponent>);
-  private configSvc = inject(ConfigService)
+  private _configUseCase = inject(ConfigUseCase)
   private mainStore = inject(MainStoreService)
   private posStore = inject(PosStoreService)
   private tableSvc = inject(TableService)
@@ -74,7 +73,7 @@ export class TableModalComponent {
       idEstablecimiento: this.mainStore.state().dataEstab.idEstablecimiento,
       codEstab: this.mainStore.state().dataEstab.codEstab
     }
-    this.configSvc.getDataForm(params).subscribe(response => {
+    this._configUseCase.getDataForm(params).subscribe(response => {
       this.roomTables.set(response.roomTables.map(item=>{
         return {
           ...item,

@@ -1,31 +1,36 @@
-import { getNoLoader } from "@core/interceptors/loader.interceptor";
-import { groupEstabUtil } from "@domain/utils/group-estab.util";
-import { groupRoomTableUtil } from "@domain/utils/group-room-table.util";
-import { indexById } from "@domain/utils/utils";
-import { ApiResponse } from "@domain/models/api-response";
-import { CompanyCustomerDefault } from "@domain/models/company-customer.model";
-import { ConfigVenta } from "@domain/models/config-sistema.model";
-import { DecimalVenta } from "@domain/models/decimal.model";
-import { GroupedEstab } from "@domain/models/estab.model";
-import { SubCategory } from "@domain/models/inventory/subcategory.model";
-import { Tax, TaxRate } from "@domain/models/tax.model";
+import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { inject, Injectable } from "@angular/core";
-import { map } from "rxjs";
-import { PATHS, PATHS_API } from "@domain/enums/main.enum";
+import {map } from "rxjs";
+import {PATHS, PATHS_API} from "@domain/enums/main.enum";
+import {ApiResponse} from "@domain/models/api-response";
+import {ConfigRepository} from "@domain/repositories/config.repository";
+import {getNoLoader} from "@core/interceptors/loader.interceptor";
+import {GroupedEstab} from "@domain/models/estab.model";
+import {groupEstabUtil} from "@domain/utils/group-estab.util";
+import {SubCategory} from "@domain/models/inventory/subcategory.model";
+import {Tax, TaxRate} from "@domain/models/tax.model";
+import {CompanyCustomerDefault} from "@domain/models/company-customer.model";
+import {ConfigVenta} from "@domain/models/config-sistema.model";
+import {DecimalVenta} from "@domain/models/decimal.model";
+import {groupRoomTableUtil} from "@domain/utils/group-room-table.util";
+import {indexById} from "@domain/utils/utils";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ConfigService {
-  private http = inject(HttpClient);
-  private url = `${PATHS_API.RESTAURANT}${PATHS.CONFIG}`
+export class ConfigWebRepository implements ConfigRepository {
+  private _url = `${PATHS_API.RESTAURANT}${PATHS.CONFIG}`
 
-  getMainData() {
+  constructor(
+    private http: HttpClient,
+  ) {}
+
+
+   getEstabs()  {
     const json = JSON.stringify({
       tipo: 1
     })
-    return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
+    return this.http.get<ApiResponse>(`${this._url}?json=${json}`, {
       context: getNoLoader()
     }).pipe(
       map(response => {
@@ -46,13 +51,15 @@ export class ConfigService {
       })
     )
   }
+
+
   getDataForm<T extends { codEstab: string }>(obj: T) {
     const json = JSON.stringify({
       ...obj,
       tipo: 2
     })
 
-    return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
+    return this.http.get<ApiResponse>(`${this._url}?json=${json}`, {
       context: getNoLoader()
     }).pipe(
       map(response => {

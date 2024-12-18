@@ -25,7 +25,6 @@ import { consumirFinalSuperaElValorPermitido, messageSuperaElValorTotalPermitido
 import { ToasterService } from '@domain/services/toaster.service';
 import Swal from 'sweetalert2';
 import { DECIMALS, DOC_TYPE } from "@domain/enums/main.enum";
-import { ConfigService } from "@data/repositories/config/config.service";
 import { plus } from "@domain/utils/decimal.util";
 import { OrderMapper } from '@data/repositories/order/order.mapper';
 import { FormsModule } from '@angular/forms';
@@ -39,6 +38,7 @@ import { OrderCustomItemComponent } from '@ui/orders/components/order-divide-mod
 import { OrderData, OrderDivideItem } from '@domain/models/order.model';
 import {TokenUseCase} from "@domain/use-cases/token.use-case";
 import {OrderUseCase} from "@domain/use-cases/order.use-case";
+import {ConfigUseCase} from "@domain/use-cases/config.use-case";
 
 
 @Component({
@@ -69,7 +69,7 @@ export class OrderDivideModalComponent {
 
   private responsiveService = inject(ResponsiveService)
   private _tokenUseCase = inject(TokenUseCase)
-  private configSvc = inject(ConfigService);
+  private _configUseCase = inject(ConfigUseCase);
   private _orderUseCase = inject(OrderUseCase);
   private dialogSvc = inject(DialogService)
   private tS = inject(ToasterService);
@@ -159,7 +159,7 @@ export class OrderDivideModalComponent {
       codEstab: dataEstab.codEstab,
       idEstablecimiento: dataEstab.idEstablecimiento
     }
-    this.configSvc.getDataForm(params).subscribe(response => {
+    this._configUseCase.getDataForm(params).subscribe(response => {
       this.dataForm = response;
     })
   }
