@@ -29,10 +29,10 @@ import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-u
 import { CompanyCustomerSearchMatComponent } from '@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
-import { AuthService } from '@modules/auth/services/auth.service';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
+import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 const imports = [
 
@@ -75,7 +75,8 @@ export class InventoryReportComponent {
   tS = inject(ToasterService)
   sharedSvc = inject(SharedService)
   appNotifiSvc = inject(NotificacionService)
-  authSvc = inject(AuthService)
+  private _tokenUseCase= inject(TokenUseCase)
+
   private _productUseCase = inject(ProductUsecase)
 
 
@@ -423,7 +424,7 @@ export class InventoryReportComponent {
       idBodega: isValidField(this.dataSearch.idBodega),
       idSubFamilia,
       numeroIdentificacion,
-      userRoleId: this.authSvc.getUserRoleId()
+      userRoleId: this._tokenUseCase.getUserRoleId()
     }
 
   }
@@ -468,7 +469,7 @@ export class InventoryReportComponent {
         idMarca: isValidField(this.dataSearch.idMarca),
         filtroFecha,
         stockStatusCode: isValidField(this.dataSearch.stockStatusCode),
-        userRoleId: this.authSvc.getUserRoleId()
+        userRoleId: this._tokenUseCase.getUserRoleId()
       }
 
       const parameters = {
@@ -509,7 +510,7 @@ export class InventoryReportComponent {
         idTarifa: getValidId(this.dataSearch.idTarifa),
         filtroFecha,
         stockStatusCode: isValidField(this.dataSearch.stockStatusCode),
-        userRoleId: this.authSvc.getUserRoleId()
+        userRoleId: this._tokenUseCase.getUserRoleId()
       }
 
       const parameters = {
@@ -546,7 +547,7 @@ export class InventoryReportComponent {
         stockStatusCode: isValidField(this.dataSearch.stockStatusCode),
         idTarifa: getValidId(this.dataSearch.idTarifa),
         idMarca: isValidField(this.dataSearch.idMarca),
-        userRoleId: this.authSvc.getUserRoleId(),
+        userRoleId: this._tokenUseCase.getUserRoleId(),
         ckFechaModificaccion: this.dataSearch.ckFechaModificaccion,
         fechaInicio: this.dataSearch.fromDate,
         fechaFin: this.dataSearch.toDate,
@@ -588,7 +589,7 @@ export class InventoryReportComponent {
       numeroIdentificacion,
       checkboxSubFamiliaFiltro: this.dataSearch.checkboxSubFamiliaFiltro,
       bySubFamilia: idSubFamilia,
-      userRoleId: this.authSvc.getUserRoleId()
+      userRoleId: this._tokenUseCase.getUserRoleId()
     }
     const parameters = {
       reportParams: JSON.stringify({
@@ -627,7 +628,7 @@ export class InventoryReportComponent {
       byTipoFormato: this.format,
       byTipoReporte: this.dataSearch.byTipoReporte,
       filtroFecha,
-      userRoleId: this.authSvc.getUserRoleId()
+      userRoleId: this._tokenUseCase.getUserRoleId()
     }
 
     const parameters = {

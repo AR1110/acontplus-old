@@ -77,11 +77,11 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
 
     setTimeout(() => {
 
-        //buscador principal 
+        //buscador principal  
         let el = document.getElementById("custom-template-md-autocomplete-articulo")
-
+      
         if (el) {
-            el.on('keyup', e => {
+            el.addEventListener('keyup', e => {
                 let keyCode = e.keyCode || e.which;
                 if (!$scope.searchText && keyCode === 13) {
                     focusSearchCustomer()

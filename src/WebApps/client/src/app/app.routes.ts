@@ -10,7 +10,14 @@ export const routes: Routes = [
   //     breadcrumb: 'Home'
   //   }
   // },
-  
+
+  {
+    path: 'auth',
+    title: 'Login',
+    loadChildren: () =>
+      import(`./layouts/auth-layout/auth-layout.routes`).then((m) => m.routes),
+  },
+
   {
     path: '',
     canActivate: [sessionGuard],
