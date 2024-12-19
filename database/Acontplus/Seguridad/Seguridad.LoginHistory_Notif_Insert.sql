@@ -19,8 +19,10 @@ BEGIN
 
 	DECLARE @userId INT
 		,@userRoleId INT
+        ,@idEntidad INT
 		,@userAgentMain VARCHAR(MAX)
 		,@loginDate DATETIME2
+        ,@fromMobile BIT;
 
     DECLARE @userAgent VARCHAR(MAX)
 		,@ipAddress VARCHAR(100)
@@ -28,8 +30,14 @@ BEGIN
     DECLARE @browser VARCHAR(MAX)
         ,@os VARCHAR(MAX)
 
-            DECLARE @params NVARCHAR(MAX)
-	DECLARE @emailData VARCHAR(MAX)
+
+    DECLARE @params NVARCHAR(MAX)
+
+    DECLARE @notificationId INT;
+    DECLARE @notificationTypeId INT;
+    DECLARE @emailSenderConfigId INT;
+    DECLARE @priorityId INT;
+    DECLARE @statusId INT;
 
 	DECLARE @receptor VARCHAR(200)
 	DECLARE @codigo VARCHAR(5)
@@ -38,85 +46,103 @@ BEGIN
 
 	--Email 
 	DECLARE @body VARCHAR(MAX);
-	DECLARE @cliente VARCHAR(100)
-	DECLARE @documento VARCHAR(30)
-	DECLARE @template VARCHAR(50)
-	DECLARE @subject VARCHAR(100)
+	DECLARE @cliente VARCHAR(100);
+	DECLARE @documento VARCHAR(30);
+	DECLARE @template VARCHAR(50);
+	DECLARE @subject VARCHAR(100);
 
-        DECLARE  @enableSsl INT 
-    DECLARE @from  VARCHAR(100)
-    DECLARE @host  VARCHAR(100) 
-    DECLARE @passwordEmail VARCHAR(50)
-    DECLARE @port INT 
-    DECLARE @cc VARCHAR(100)
+    DECLARE @userToSendEmail AS TABLE (
+        body VARCHAR(MAX) NOT NULL,
+        params VARCHAR(500) NOT NULL,
+        receptor VARCHAR(100) NOT NULL
+    );
 
-    SELECT TOP 1
-           @enableSsl = [enableSsl]
-          ,@from      = [from]
-          ,@host      = [host]
-          ,@passwordEmail  = [password]
-          ,@port      = [port]
-  FROM [Config].[Email_Config] WITH (NOLOCK)
+    DECLARE @requesting_user VARCHAR(300)
+        ,@username VARCHAR(100)
+        ,@company VARCHAR(300)
+        ,@role VARCHAR(25);
 
-    SELECT @userAgentMain = userAgent
-        ,@loginDate = loginDate
-        ,@userRoleId = userRoleId
-        ,@userId = userId
-    FROM OPENJSON (@json) WITH (userAgent VARCHAR(MAX), loginDate DATETIME2, userRoleId INT, userId INT)
+    BEGIN TRY
+                      
+            -- Set values for reusable constants
+        SET @notificationTypeId = (SELECT TOP 1 Id FROM Common.NotificationType WHERE Code = 'E');
+        SET @priorityId = (SELECT Id FROM Common.[Priority] WHERE Code = 'H');
+        SET @statusId = (SELECT Id FROM Common.[Status] WHERE Code = 'Q');
 
-    --SELECT @userAgentMain
+        IF (@notificationTypeId IS NULL OR @notificationTypeId = 0)
+            BEGIN
+                PRINT 'No Notification Type'
+                RETURN
+            END
 
-    SELECT @userAgent = userAgent
-        ,@ipAddress = ipAddress
+        IF (@priorityId IS NULL OR @priorityId = 0)
+            BEGIN
+                PRINT 'Not Priority'
+                RETURN
+            END
 
-    FROM OPENJSON (@userAgentMain) WITH (userAgent VARCHAR(MAX), ipAddress VARCHAR(100))
+            IF (@statusId IS NULL OR @statusId = 0)
+            BEGIN
+                PRINT 'No Status'
+                RETURN
+            END
 
-    --SELECT @userAgent, @ipAddress
+        SELECT @userAgentMain = userAgent
+            ,@loginDate = loginDate
+            ,@userRoleId = userRoleId
+            ,@userId = userId
+            ,@fromMobile = fromMobile
+        FROM OPENJSON (@json) WITH (
+                userAgent VARCHAR(MAX),
+                loginDate DATETIME2,
+                userRoleId INT, 
+                userId INT,
+                fromMobile BIT);
 
-    --SELECT @userId, @userRoleId
+        SELECT @userAgent = userAgent
+            ,@ipAddress = ipAddress
+        FROM OPENJSON (@userAgentMain) WITH (userAgent VARCHAR(MAX), ipAddress VARCHAR(100))
 
-    SET @browser = (SELECT JSON_VALUE(@userAgent, '$.browser.name') + ' - version: ' + JSON_VALUE(@userAgent, '$.browser.version'))
-    SET @os = (JSON_VALUE(@userAgent, '$.os.name') + ' - version: ' + JSON_VALUE(@userAgent, '$.os.version'))
-    --SELECT JSON_VALUE(@userAgent, '$.browser.version') AS BrowserVersion
-    --SELECT JSON_VALUE(@userAgent, '$.cpu.architecture') AS CPUArchitecture
-    --SELECT JSON_VALUE(@userAgent, '$.engine.name') AS EngineName
-    --SELECT JSON_VALUE(@userAgent, '$.engine.version') AS EngineVersion
-    --SELECT JSON_VALUE(@userAgent, '$.os.name') AS OSName
-    --SELECT JSON_VALUE(@userAgent, '$.os.version') AS OSVersion
-    --SELECT JSON_VALUE(@userAgent, '$.ua') AS UserAgent
-
-    --SELECT @browser, @os, CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm'), 13)
- 
+        SET @browser = (SELECT JSON_VALUE(@userAgent, '$.browser.name') + ' - version: ' + JSON_VALUE(@userAgent, '$.browser.version'))
+        SET @os = (JSON_VALUE(@userAgent, '$.os.name') + ' - version: ' + JSON_VALUE(@userAgent, '$.os.version'))
     
-    SELECT @template = 'Login_History.html'
-                            SET @subject = 'ACCESO CON EXITO'
+        SELECT @template = 'Login_History.html';
+        SET @subject = 'ACCESO CON EXITO';
 
-                            DECLARE @userToSendEmail AS TABLE (
-                                emailData VARCHAR(MAX) NOT NULL,
-                                params VARCHAR(500) NOT NULL,
-                                receptor VARCHAR(100) NOT NULL
-                                )
+        SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-                            DECLARE @requesting_user VARCHAR(300)
-                                ,@username VARCHAR(100)
-                                ,@company VARCHAR(300)
-                                ,@role VARCHAR(25)
-                                 
-                            
-                                SELECT @company = IIF(en.nombreComercial IS NULL, en.razonSocial, en.nombreComercial)
-                                    ,@role = ro.[Name]
-                                    ,@username = us.nombreUsuario
-                                    ,@requesting_user = UPPER(cu.BusinessName)
-                                FROM Acontplus.App.UsuarioRol              ur WITH (NOLOCK) 
-                                INNER JOIN Acontplus.dbo.Entidad           en WITH (NOLOCK) ON en.idEntidad = ur.idEntidad
-                                INNER JOIN AcontplusAdmin.Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
-                                INNER JOIN Acontplus.dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
-                                INNER JOIN Customer.Customer               cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
-                                WHERE ur.idUsuarioRol = @userRoleId
+        IF NOT EXISTS (SELECT 1 FROM Config.EmailSenderConfig WHERE CompanyId = @idEntidad)
+            BEGIN
+                SET @emailSenderConfigId = (SELECT TOP 1 Id 
+                                               FROM Config.EmailSenderConfig 
+                                               WHERE IsGlobal = 1 AND Enabled = 1);
+            END
+            ELSE
+            BEGIN
+                SET @emailSenderConfigId = (SELECT Id 
+                                               FROM Config.EmailSenderConfig 
+                                               WHERE CompanyId = @idEntidad);
+            END
 
-                            INSERT INTO @userToSendEmail(emailData, params, receptor)
-							SELECT  
-                                (SELECT body = (SELECT @requesting_user requesting_user
+        IF (@emailSenderConfigId IS NULL OR @emailSenderConfigId = 0)
+            BEGIN
+                PRINT 'No Config'
+                RETURN
+            END
+
+        SELECT @company = IIF(en.nombreComercial IS NULL, en.razonSocial, en.nombreComercial)
+                                        ,@role = ro.[Name]
+                                        ,@username = us.nombreUsuario
+                                        ,@requesting_user = UPPER(cu.BusinessName)
+        FROM Acontplus.App.UsuarioRol              ur WITH (NOLOCK) 
+        INNER JOIN Acontplus.dbo.Entidad           en WITH (NOLOCK) ON en.idEntidad = ur.idEntidad
+        INNER JOIN AcontplusAdmin.Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
+        INNER JOIN Acontplus.dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
+        INNER JOIN Customer.Customer               cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
+        WHERE ur.idUsuarioRol = @userRoleId
+
+        INSERT INTO @userToSendEmail(body, params, receptor)
+		SELECT  (SELECT @requesting_user requesting_user
                                                 ,approving_user = UPPER(cu.BusinessName)
                                                 ,@browser browser
                                                 ,@os os
@@ -124,28 +150,51 @@ BEGIN
                                                 ,ISNULL(@ipAddress, '') ipAddress
                                                 ,@username username
                                                 ,@company company
-                                                ,@role AS 'role'
-                                                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
-			                        ,ISNULL(@cc,'') as 'cc' 						  
-							         ,EnableSsl =@enableSsl
-									 ,'from' = @from
-                                     ,'username' = @from
-									 ,'host'= @host
-									 ,'logo'= 'logoAcontPlus.jpg'
-									 ,'password'= @passwordEmail
-									 ,'port'= @port
-									 ,'subject'= @subject 
-									 ,'template'= @template FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+                                                ,@role AS 'role'  FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 							   ),
                                (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
                                        us.correo
-							   FROM Acontplus.dbo.Usuario us WITH (NOLOCK)
-                               INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = us.customerId
-                               WHERE us.idUsuario = @userId
-                                    
-                            
-			                    INSERT INTO App.Notificacion(params, emailData, receptor, estado, idUsuario)
-                                SELECT params, emailData, receptor,  'NE', @userId FROM @userToSendEmail
+						FROM Acontplus.dbo.Usuario us WITH (NOLOCK)
+                           INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = us.customerId
+                           WHERE us.idUsuario = @userId
+        BEGIN TRAN;
+           
+        DECLARE cursorUser CURSOR LOCAL FOR
+        SELECT body, params, receptor
+        FROM @userToSendEmail;
 
+        OPEN cursorUser;
+
+        FETCH NEXT FROM cursorUser INTO @body, @params, @receptor;
+
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            -- Insert into Notification table
+            INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [UserId], [FromMobile])
+            VALUES (@notificationTypeId, COMPRESS(ISNULL(@params, '{}')), 'Envio por correo', @subject, @userId, @fromMobile);
+
+            SET @notificationId = SCOPE_IDENTITY();
+
+            -- Insert into EmailQueue table
+            INSERT INTO Common.EmailQueue ([NotificationId], [EmailSenderConfigId], [RecipientEmail], [Subject], [IsHtml],
+            [CompressedBody], [PriorityId], [StatusId], [Template], [UserId], [FromMobile])
+            VALUES (@notificationId, @emailSenderConfigId, @receptor, @subject, CAST(0 AS BIT),
+            COMPRESS(@body), @priorityId, @statusId, @template, @userId, @fromMobile);
+
+            FETCH NEXT FROM cursorUser INTO @body, @params, @receptor;
+        END;
+
+        CLOSE cursorUser;
+        DEALLOCATE cursorUser;
+
+        -- Commit transaction if all goes well
+        COMMIT TRAN
+    END TRY
+    BEGIN CATCH
+         IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
+		VALUES (NEWID(), 'LoginHistory/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
+    END CATCH
 END
 GO

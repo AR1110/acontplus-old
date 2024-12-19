@@ -10,6 +10,13 @@ GO
 -- Create date: 2024-12-17
 -- Description:	sp for notification insert
 -- =============================================
+DROP PROC IF EXISTS App.Notificacion_Serv_Get
+GO
+DROP PROC IF EXISTS App.Notificacion_Serv_Insert
+GO
+DROP PROC IF EXISTS App.Notificacion_Serv_Update
+GO
+
 CREATE OR ALTER PROCEDURE Common.Notification_Insert @userRoleId INT,
 	@json VARCHAR(MAX),
     @fromMobile BIT
@@ -21,19 +28,17 @@ BEGIN
 	DECLARE @idUsuario INT ,@idEntidad INT
 	
     --> Data Json
-    DECLARE @codDoc VARCHAR(5) ,@params NVARCHAR(MAX),@receptor VARCHAR(200) ,@codigo VARCHAR(5) ,@id INT 
+    DECLARE @codDoc VARCHAR(5),
+        @params NVARCHAR(MAX),
+        @receptor VARCHAR(200),
+        @codigo VARCHAR(5),
+        @id INT; 
 
-    DECLARE @companyId INT;
     DECLARE @notificationId INT;
     DECLARE @notificationTypeId INT;
     DECLARE @emailSenderConfigId INT;
     DECLARE @priorityId INT;
-    DECLARE @statusId INT;
-
-    -- Set values for reusable constants
-    SET @notificationTypeId = (SELECT TOP 1 Id FROM Common.NotificationType WHERE Code = 'E');
-    SET @priorityId = (SELECT Id FROM Common.[Priority] WHERE Code = 'M');
-    SET @statusId = (SELECT Id FROM Common.[Status] WHERE Code = 'Q');
+    DECLARE @statusId INT; 
 
 	--> Email 
 	DECLARE @body VARCHAR(MAX)
@@ -42,10 +47,14 @@ BEGIN
            ,@cc VARCHAR(100)
 
 	BEGIN TRY
+            -- Set values for reusable constants
+        SET @notificationTypeId = (SELECT TOP 1 Id FROM Common.NotificationType WHERE Code = 'E');
+        SET @priorityId = (SELECT Id FROM Common.[Priority] WHERE Code = 'M');
+        SET @statusId = (SELECT Id FROM Common.[Status] WHERE Code = 'Q');
 
-    		SELECT top 1 @cc = email, @companyId = idEntidad from Entidad where idEntidad = @idEntidad
+        SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-         IF NOT EXISTS (SELECT 1 FROM Config.EmailSenderConfig WHERE CompanyId = @companyId)
+        IF NOT EXISTS (SELECT 1 FROM Config.EmailSenderConfig WHERE CompanyId = @idEntidad)
             BEGIN
                 SET @emailSenderConfigId = (SELECT TOP 1 Id 
                                                FROM Config.EmailSenderConfig 
@@ -55,7 +64,7 @@ BEGIN
             BEGIN
                 SET @emailSenderConfigId = (SELECT Id 
                                                FROM Config.EmailSenderConfig 
-                                               WHERE CompanyId = @companyId);
+                                               WHERE CompanyId = @idEntidad);
             END
 
         IF (@emailSenderConfigId IS NULL OR @emailSenderConfigId = 0)
@@ -64,7 +73,6 @@ BEGIN
                 RETURN
             END
 
-		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 		
 		SELECT @codDoc	 = js.codDoc		
 			  ,@id		 = js.id
@@ -80,7 +88,7 @@ BEGIN
             id					INT				'$.params.spParams.id',
             receptor			VARCHAR(100)	'$.receptor',
             params				NVARCHAR(MAX)	'$.params' AS JSON,
-            subjectJson			VARCHAR(500)	'$.subject' 
+            subjectJson			VARCHAR(500)	'$.subject'
 
 		) AS js
 
@@ -184,17 +192,16 @@ BEGIN
         BEGIN TRAN 
 			--INSERT INTO App.Notificacion(params, emailData, receptor, estado, idUsuario)
    --         VALUES(@params, @emailData, REPLACE(@receptor,'|',','), 'NE', @idUsuario)
-
+            
             -- Insert into Notification table
             INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [UserId], [FromMobile])
             VALUES (@notificationTypeId, COMPRESS(ISNULL(@params, '{}')), 'Envio por correo', @subject, @idUsuario, @fromMobile);
 
             SET @notificationId = SCOPE_IDENTITY();
 
-            -- Insert into WhatsAppMessage table
+            -- Insert into EmailQueue table
             INSERT INTO Common.EmailQueue ([NotificationId], [EmailSenderConfigId], [RecipientEmail], Cc, [Subject], [IsHtml],
             [CompressedBody], [PriorityId], [StatusId], [Template], [UserId], [FromMobile])
-            
             VALUES (@notificationId, @emailSenderConfigId, @receptor, @cc, @subject, CAST(0 AS BIT),
             COMPRESS(@body), @priorityId, @statusId, @template, @idUsuario, @fromMobile)
 		COMMIT TRAN
