@@ -1,13 +1,21 @@
-import { Directive, ElementRef, Input, OnInit, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  Input,
+  OnInit,
+  Renderer2,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core';
 import { NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { SupplierService } from '@purchase/data/services/supplier.service';
+import { SupplierUseCase } from '@customer/core/usecases/supplier.use-case';
 
 @Directive({
   selector: '[appSupplierSearchDrtv]',
   exportAs: 'appSupplierSearchDrtv',
-  standalone: true
+  standalone: true,
 })
 export class SupplierSearchDirective implements OnInit {
   @Input() onSelect: any;
@@ -21,35 +29,49 @@ export class SupplierSearchDirective implements OnInit {
 
   constructor(
     private renderer: Renderer2,
-    private supplierSvc: SupplierService,
+    private supplierSvc: SupplierUseCase,
     private config: NgbTypeaheadConfig,
     private viewContainer: ViewContainerRef,
-    private elementRef: ElementRef
-  ) { }
+    private elementRef: ElementRef,
+  ) {}
 
   ngOnInit(): void {
     this.config.showHint = true; // Ajusta NgbTypeaheadConfig según tus necesidades
 
-    this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap(term => this.search(term))
-    ).subscribe(results => {
-      console.log(results);
-      this.updateResults(results);
-    });
+    this.searchSubject
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((term) => this.search(term)),
+      )
+      .subscribe((results) => {
+        console.log(results);
+        this.updateResults(results);
+      });
 
     // Vincula el ngModel a la entrada
-    this.renderer.setProperty(this.elementRef.nativeElement, 'value', this.ngModel);
+    this.renderer.setProperty(
+      this.elementRef.nativeElement,
+      'value',
+      this.ngModel,
+    );
 
     // Wire up the typeahead events
-    this.renderer.listen(this.elementRef.nativeElement, 'input', (event: any) => {
-      this.searchSubject.next(event.target.value);
-    });
+    this.renderer.listen(
+      this.elementRef.nativeElement,
+      'input',
+      (event: any) => {
+        this.searchSubject.next(event.target.value);
+      },
+    );
 
-    this.renderer.listen(this.elementRef.nativeElement, 'selectItem', (event: any) => {
-      this.onSelectProveedor(event.detail);
-    });
+    this.renderer.listen(
+      this.elementRef.nativeElement,
+      'selectItem',
+      (event: any) => {
+        this.onSelectProveedor(event.detail);
+      },
+    );
   }
 
   search(textSearch: string): Observable<any[]> {
@@ -58,7 +80,7 @@ export class SupplierSearchDirective implements OnInit {
       return this.supplierSvc.search({ textSearch });
     }
 
-    return new Observable<any[]>(observer => {
+    return new Observable<any[]>((observer) => {
       observer.next([]);
     });
   }
@@ -82,7 +104,7 @@ export class SupplierSearchDirective implements OnInit {
 
   private updateResults(results: any[]): void {
     this.viewContainer.clear();
-    results.forEach(result => {
+    results.forEach((result) => {
       const context = { $implicit: result, term: this.ngModel };
       this.viewContainer.createEmbeddedView(this.resultTemplate, context);
     });
