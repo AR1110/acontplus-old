@@ -1,6 +1,6 @@
 import { Routes } from "@angular/router";
-import { VehiclePageComponent } from "./pages/vehicle-page/vehicle-page.component";
-import { MechanicalLayoutComponent } from "./layout/mechanical-layout/mechanical-layout.component";
+import { VehiclePageComponent } from "@mechanical/ui/pages/vehicle-page/vehicle-page.component";
+import { MechanicalLayoutComponent } from "@mechanical/ui/layout/mechanical-layout/mechanical-layout.component";
 
 export const routes: Routes = [
   {
