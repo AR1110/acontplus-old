@@ -15,7 +15,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import Swal from 'sweetalert2';
 import { SharedService } from '@core/services/shared.service';
-import { INVENTORY_CODE_REPORT } from '@inventory/core/enums/inventory.enum';
+import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
 import { formatDateToString } from '@core/utils/date.util';
 import { monthEnd, monthStart } from '@formkit/tempo';
 

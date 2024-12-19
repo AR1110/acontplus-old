@@ -12,7 +12,7 @@ import { TagsAddEditModalDirective } from '@inventory/ui/directives/tags-add-edi
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
-import {TagUseCase} from "@inventory/core/usecases/tag.use-case";
+import {TagUseCase} from "@inventory/domain/usecases/tag.use-case";
 
 @Component({
     selector: 'app-tags',

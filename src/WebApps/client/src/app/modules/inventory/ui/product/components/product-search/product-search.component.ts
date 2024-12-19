@@ -18,11 +18,11 @@ import {
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
-import { ProductSearch } from '@inventory/core/domain/product.model';
+import { ProductSearch } from '@inventory/domain/models/product.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
+import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 
 type ProductSearchProps = {
   isSearchSimple?: boolean;
@@ -63,7 +63,7 @@ export class ProductSearchComponent {
   @Output() onProductSelected = new EventEmitter<{ data: any }>();
   @Output() emptyInput = new EventEmitter();
 
-  private _productUseCase = inject(ProductUsecase)
+  private _productUseCase = inject(ProductUseCase)
 
   control = new FormControl('');
   filteredProducts!: Observable<any[]>;

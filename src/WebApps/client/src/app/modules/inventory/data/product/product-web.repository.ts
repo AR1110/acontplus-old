@@ -3,13 +3,13 @@ import {PATHS_API} from "@core/constants/global.constants";
 import {HttpClient} from "@angular/common/http";
 import {ApiResponse } from "@core/models/api-response";
 import {map, Observable} from "rxjs";
-import {INVENTORY_PATHS} from "@inventory/core/enums/inventory.enum";
+import {INVENTORY_PATHS} from "@inventory/domain/enums/inventory.enum";
 import {getNoLoader} from "@core/interceptors/loader.interceptor"; ;
-import {ProductRepository} from "@inventory/core/repositories/product.repository";
+import {ProductRepository} from "@inventory/domain/repositories/product.repository";
 import {GroupedEstab} from "@core/models/estab.model";
-import {GroupedSubFamilia} from "@inventory/core/domain/sub-category.model";
-import {ProductSale, ProductSearch} from "@inventory/core/domain/product.model";
-import {MedidaProducto} from "@inventory/core/domain/measure.model";
+import {GroupedSubFamilia} from "@inventory/domain/models/sub-category.model";
+import {ProductSale, ProductSearch} from "@inventory/domain/models/product.model";
+import {MedidaProducto} from "@inventory/domain/models/measure.model";
 import {ProductMapper} from "@inventory/data/product/product.mapper";
 
 

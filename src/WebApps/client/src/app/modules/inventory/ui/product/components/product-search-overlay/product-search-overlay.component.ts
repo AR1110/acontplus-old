@@ -9,7 +9,7 @@ import { Pagination } from "@shared/models/pagination.model";
 import { map, Subject } from "rxjs";
 
 import { ProductSearchListComponent } from "@inventory/ui/product/components/product-search-list/product-search-list.component";
-import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
+import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 
 @Component({
     selector: 'app-product-search-overlay',
@@ -45,7 +45,7 @@ export class ProductSearchOverlayComponent {
   isLoadingResults = false;
   isRateLimitReached = false;
 
-  private _productUseCase = inject(ProductUsecase)
+  private _productUseCase = inject(ProductUseCase)
 
   dataSearch = {
     textSearch: ''
