@@ -14,7 +14,7 @@ IF NOT EXISTS (SELECT 1 FROM AcontplusAdmin.Config.WhatsAppUsage)
         INSERT INTO AcontplusAdmin.Config.WhatsAppUsage(CompanyId, Used, Limit, Unlimited, StartDate, EndDate, Enabled, UserId, CreatedAt)
         SELECT c.Id, ISNULL(wau.used, 0), ISNULL(wau.limite, 0), wau.ilimitado, wau.fechaInicio, wau.fechaFin, wau.estado, wau.idUsuario, c.CreatedAt
         FROM Acontplus.Config.WhatsappUsage wau 
-        INNER JOIN Config.Company c ON wau.ruc = c.idcard
+        INNER JOIN AcontplusAdmin.Config.Company c ON wau.ruc = c.idcard
         ORDER BY c.Id
     END
 GO
