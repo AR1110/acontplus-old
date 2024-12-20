@@ -654,11 +654,14 @@
                             itemPrincipal.precioUnitario,
                             itemPrincipal.tarifa
                         );
-                        let total =
-                            fS.roundNumber(
-                                restItem.precioTotalSinImpuesto,
-                                pricingUtils.max_dos
-                            ) + fS.roundNumber(restItem.valorImpuesto, pricingUtils.max_dos);
+                        // let total =
+                        //     fS.roundNumber(
+                        //         restItem.precioTotalSinImpuesto,
+                        //         pricingUtils.max_dos
+                        //     ) + fS.roundNumber(restItem.valorImpuesto, pricingUtils.max_dos);
+
+                        let total = fS.roundNumber(restItem.precioTotalSinImpuesto + restItem.valorImpuesto, pricingUtils.max_cinco)
+
                         let obj = {
                             n: index + 1,
                             uniqueRowDetalle,

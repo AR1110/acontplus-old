@@ -11,11 +11,7 @@ import {ProductSale} from '@inventory/domain/models/product.model';
 import {
   ProductSearchOverlayComponent
 } from '@inventory/ui/product/components/product-search-overlay/product-search-overlay.component';
-import {ConsolidacionBodega} from '@inventory/core/domain/consolidacion-bodega.model';
-import {MedidaProducto} from '@inventory/core/domain/measure.model';
-import {Tarifa} from '@inventory/core/domain/tarifa.model';
 import {getCantidadStock, mergeProductStock} from '@modules/inventory/utils/product-stock.util';
-import {supportMaintenanceAdapter} from '@modules/mechanical/adapters/support-maintenance.adapter';
 import {
   ColSupportMaintenanceDetail,
   SupportMaintenanceDetail
@@ -29,6 +25,10 @@ import {TarifaImpuesto} from '@shared/models/tarifa-impuesto.model';
 import {SalesDetailCalculationService} from '@shared/services/sales-detail-calculation.service';
 import Swal from 'sweetalert2';
 import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
+import {MedidaProducto} from "@inventory/domain/models/measure.model";
+import {ConsolidacionBodega} from "@inventory/domain/models/consolidacion-bodega.model";
+import {Tarifa} from "@inventory/domain/models/tarifa.model";
+import {SupportMaintenanceAdapter} from "@mechanical/data/adapters/support-maintenance.adapter";
 
 @Component({
     selector: 'app-support-maintenance-modal',
@@ -989,7 +989,7 @@ export class SupportMaintenanceModalComponent {
                 details: this.details,
                 detailsDeleted: this.detailsDeleted
             }
-            let params = supportMaintenanceAdapter.to(obj);
+            let params = SupportMaintenanceAdapter.to(obj);
 
             this.supportDetailSvc.post(params).subscribe({
                 next: (response) => {
