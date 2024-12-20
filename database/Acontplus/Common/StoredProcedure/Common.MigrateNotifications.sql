@@ -20,7 +20,7 @@ BEGIN
     BEGIN
         -- Get the next batch of rows to process
         DECLARE @notificationId INT, @companyId INT;
-        DECLARE @params VARCHAR(1000),@emailData VARCHAR(MAX), @receptor VARCHAR(150),
+        DECLARE @params VARCHAR(MAX),@emailData VARCHAR(MAX), @receptor VARCHAR(150),
         @fechaRegistro DATETIME, @estado VARCHAR(5), @fechaEnvio DATETIME, @idUsuario INT;
 
         -- Check if there are rows to process

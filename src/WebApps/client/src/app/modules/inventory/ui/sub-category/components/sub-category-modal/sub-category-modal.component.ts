@@ -9,7 +9,7 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { UploadImageComponent } from "@shared/components/upload-image/upload-image.component";
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
 import { NgxFileDropEntry } from "ngx-file-drop";
-import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
+import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 
 @Component({
     selector: 'app-sub-category-modal',
@@ -23,7 +23,7 @@ import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
 
 export class SubCategoryModalComponent {
   private activeModal = inject(NgbActiveModal);
-  private _productUseCase = inject(ProductUsecase)
+  private _productUseCase = inject(ProductUseCase)
 
   private subCategorySvc = inject(SubCategoryService)
   private subCategoryPhotoSvc = inject(SubcategoryPhotoService)

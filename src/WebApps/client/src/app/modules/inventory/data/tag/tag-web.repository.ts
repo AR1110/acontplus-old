@@ -3,8 +3,8 @@ import {PATHS_API} from "@core/constants/global.constants";
 import {HttpClient} from "@angular/common/http";
 import {ApiResponse } from "@core/models/api-response";
 import {map, Observable} from "rxjs";
-import {INVENTORY_PATHS} from "@inventory/core/enums/inventory.enum";
-import {TagRepository} from "@inventory/core/repositories/tag.repository";
+import {INVENTORY_PATHS} from "@inventory/domain/enums/inventory.enum";
+import {TagRepository} from "@inventory/domain/repositories/tag.repository";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
 import {TagMapper} from "@inventory/data/tag/tag.mapper";
 

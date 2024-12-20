@@ -195,7 +195,7 @@ BEGIN
             
             -- Insert into Notification table
             INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [UserId], [FromMobile])
-            VALUES (@notificationTypeId, COMPRESS(ISNULL(@params, '{}')), 'Envio por correo', @subject, @idUsuario, @fromMobile);
+            VALUES (@notificationTypeId, COMPRESS(CONVERT(VARCHAR(MAX), ISNULL(@params, '{}'))), 'Envio por correo', @subject, @idUsuario, @fromMobile);
 
             SET @notificationId = SCOPE_IDENTITY();
 

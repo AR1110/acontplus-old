@@ -633,11 +633,14 @@
         service.validarCalculosPorProducto = function (productos) {
 
             function calcularSubtotalProducto(producto) {
-                //   const descuentoPorcentaje = (producto.valorDescuento || producto.descuento || 0) / 100;
                 const descuentoProducto = (producto.valorDescuento || producto.descuento || 0)
-                const subtotalProducto = producto.cantidad * producto.precioUnitario;
+
+                let subtotalSinImpuesto = pricingUtils.calcularSubtotalSinImpuesto(producto.precioUnitario, producto.cantidad, descuentoProducto);
+
+                //   const descuentoPorcentaje = (producto.valorDescuento || producto.descuento || 0) / 100;
+               // const subtotalProducto = producto.cantidad * producto.precioUnitario;
                 // const descuento = subtotalProducto * descuentoPorcentaje;
-                return subtotalProducto - descuentoProducto;
+                return subtotalSinImpuesto;
             }
 
             function calcularIVAProducto(subtotal, tasaIVA) {
@@ -646,7 +649,12 @@
             }
 
             function calcularTotalProducto(subtotal, iva) {
-                return fS.plus(subtotal, iva, 5)
+
+            let total = fS.roundNumber(subtotal,
+                    pricingUtils.max_dos
+                ) + fS.roundNumber(iva, pricingUtils.max_dos)
+
+                return total;
             }
             function getMaxDecimal(input) {
                 const partes = input.toString().split(".");
@@ -664,9 +672,13 @@
                     const cantidadTransaccion = producto.cantidad * producto.conversion;
 
                     // Calcular valores esperados
-                    let subtotalEsperado = calcularSubtotalProducto(producto);
-                    let ivaEsperado = calcularIVAProducto(subtotalEsperado, producto.tarifa);
-                    let totalEsperado = calcularTotalProducto(subtotalEsperado, ivaEsperado);
+                    let subtotalEsperado = calcularSubtotalProducto(producto); 
+                   
+
+                    let ivaEsperado = pricingUtils.calculateTaxValue(subtotalEsperado, producto.tarifa); 
+                    
+                     
+                    let totalEsperado = calcularTotalProducto(subtotalEsperado, ivaEsperado); 
 
                     // Redondear valores esperados con base en los decimales del producto
                     subtotalEsperado = fS.roundNumber(subtotalEsperado, pricingUtils.max_dos);
@@ -676,7 +688,7 @@
                     let subtotalCalculado = fS.roundNumber(producto.precioTotalSinImpuesto, pricingUtils.max_dos);
                     let valorImpuestoCalculado = fS.roundNumber(producto.valorImpuesto, pricingUtils.max_dos);
                     let totalCalculado = fS.roundNumber(producto.total, pricingUtils.max_dos);
-
+              
                     // Validar Subtotal
                     if (subtotalEsperado !==subtotalCalculado ) {
                         errores.push({
@@ -696,7 +708,7 @@
                     }
 
                     // Validar Total
-                    if (totalEsperado !== totalCalculado) {
+                    if (totalEsperado !== totalCalculado) { 
                         errores.push({
                             uniqueRow,
                             errorMensaje: `Error en Total: Calculado <b>${totalCalculado}</b>, Esperado <b>${totalEsperado}</b>`,
@@ -721,8 +733,7 @@
                 };
             }
 
-            let dataValid = validarProducto(productos);
-            console.log(dataValid)
+            let dataValid = validarProducto(productos); 
 
             if (!dataValid.esValido) {
                 service.mostrarErrorCalculosProducto(dataValid.errores)

@@ -10,7 +10,7 @@ import { CustomTableContainerComponent } from '@core/components/custom-table-con
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { MeasureAddEditDirective } from '@inventory/ui/directives/measure-add-edit.directive';
-import { MeasureRead } from '@inventory/core/domain/measure.model';
+import { MeasureRead } from '@inventory/domain/models/measure.model';
 import { MeasureService } from '@inventory/services/measure.service';
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';

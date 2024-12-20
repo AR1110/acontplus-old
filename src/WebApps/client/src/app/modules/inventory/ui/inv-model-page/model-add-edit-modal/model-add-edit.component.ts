@@ -4,10 +4,10 @@ import { ApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
 import { isValidField } from "@core/utils/utils";
 import { BrandAddEditDirective } from "@inventory/ui/directives/brand-add-edit.directive";
-import { InvModelService } from "@inventory/services/inv-model.service";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
-import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
+import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
+import {InventarioModeloUseCase} from "@inventory/domain/usecases/inventario-modelo.use-case";
 
 
 @Component({
@@ -28,9 +28,9 @@ export class ModelAddEditComponent {
   }
   modal = inject(NgbActiveModal);
   tS = inject(ToasterService);
-  private _productUseCase = inject(ProductUsecase)
+  private _productUseCase = inject(ProductUseCase)
 
-  invModelSvc = inject(InvModelService)
+  private  _modeloUseCase= inject(InventarioModeloUseCase)
 
   btnText = 'Guardar';
   titleModal = signal('Nuevo')
@@ -102,11 +102,11 @@ export class ModelAddEditComponent {
       }
 
       if (this.data.idModelo > 0) {
-        this.invModelSvc.put(this.data.idModelo, this.data).subscribe(this.successReponse)
+        this._modeloUseCase.put(this.data.idModelo, this.data).subscribe(this.successReponse)
       }
 
       if (!(this.data.idModelo > 0)) {
-        this.invModelSvc.post(this.data).subscribe(this.successReponse)
+        this._modeloUseCase.post(this.data).subscribe(this.successReponse)
       }
 
 

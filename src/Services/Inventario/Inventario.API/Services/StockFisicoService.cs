@@ -59,7 +59,7 @@ public class StockFisicoService : IStockFisicoService
         var dt = await _repository.GetDataTableAsync("Inventario.StockFisico_Delete", null);
         if (!DataValidation.DataTableIsNull(dt))
         {
-            _response.Create("1", payload: DataTableMapper.BindData<LegacyApiResponse>(dt));
+            _response.Create("1", payload: DataTableMapper.MapDataRowToModel<LegacyApiResponse>(dt.Rows[0]));
         }
         else
         {

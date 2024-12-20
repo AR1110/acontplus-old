@@ -3,7 +3,7 @@ import { NgbNavModule } from "@ng-bootstrap/ng-bootstrap";
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
 import { GroupedEstab, GroupedEstabBodega } from "@core/models/estab.model";
 import { FormControl, FormsModule } from "@angular/forms";
-import { Brand } from "@inventory/core/domain/brand.model";
+import { Brand } from "@inventory/domain/models/brand.model";
 import {
   SubCategoryGroupComponent
 } from "@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component";
@@ -12,7 +12,7 @@ import { DateRangeSelectionComponent } from "@core/components/date-range-selecti
 import { FORMAT_REPORT } from "@core/constants/global.constants";
 import { ToasterService } from "@core/services/toaster.service";
 import { getValidId, isValidField } from "@core/utils/utils";
-import { INVENTORY_CODE_REPORT } from "@inventory/core/enums/inventory.enum";
+import { INVENTORY_CODE_REPORT } from "@inventory/domain/enums/inventory.enum";
 import { SharedService } from "@core/services/shared.service";
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
@@ -31,7 +31,7 @@ import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
-import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
+import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 const imports = [
@@ -77,7 +77,7 @@ export class InventoryReportComponent {
   appNotifiSvc = inject(NotificacionService)
   private _tokenUseCase= inject(TokenUseCase)
 
-  private _productUseCase = inject(ProductUsecase)
+  private _productUseCase = inject(ProductUseCase)
 
 
   estabs: GroupedEstab[] = [];

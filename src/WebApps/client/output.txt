@@ -485,7 +485,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  |  ├── consolidacion-bodega.model.ts
 |  |  |  |  |  |  ├── lot-price.model.ts
 |  |  |  |  |  |  ├── measure.model.ts
-|  |  |  |  |  |  ├── model.model.ts
+|  |  |  |  |  |  ├── inventario-modelo.model.ts
 |  |  |  |  |  |  ├── product.model.ts
 |  |  |  |  |  |  ├── sub-category.model.ts
 |  |  |  |  |  |  ├── tarifa.model.ts
@@ -496,7 +496,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  |  ├── product.repository.ts
 |  |  |  |  |  |  └── tag.repository.ts
 |  |  |  |  |  └── usecases
-|  |  |  |  |     ├── product.usecase.ts
+|  |  |  |  |     ├── product.use-case.ts
 |  |  |  |  |     └── tag.use-case.ts
 |  |  |  |  ├── data
 |  |  |  |  |  ├── product
@@ -515,7 +515,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  ├── services
 |  |  |  |  |  ├── category.service.ts
 |  |  |  |  |  ├── ibrand.service.ts
-|  |  |  |  |  ├── inv-model.service.ts
 |  |  |  |  |  ├── lot-price.service.ts
 |  |  |  |  |  ├── massive-tax.service.ts
 |  |  |  |  |  ├── measure.service.ts

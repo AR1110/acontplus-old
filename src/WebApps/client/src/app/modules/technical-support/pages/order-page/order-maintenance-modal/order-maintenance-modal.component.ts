@@ -16,7 +16,7 @@ import {faListAlt, faTrashAlt,} from '@fortawesome/free-regular-svg-icons';
 import {
   ProductSearchOverlayComponent
 } from '@inventory/ui/product/components/product-search-overlay/product-search-overlay.component';
-import {Tarifa} from '@inventory/core/domain/tarifa.model';
+import {Tarifa} from '@inventory/domain/models/tarifa.model';
 import {OpenModalProductService} from '@inventory/ui/product/services/open-modal-product.service';
 import {getCantidadStock, mergeProductStock,} from '@modules/inventory/utils/product-stock.util';
 import {DecimalSale} from '@modules/sale/shared/models/decimal-sale.model';
@@ -31,7 +31,7 @@ import {Impuesto} from '@shared/models/impuesto.model';
 import {TarifaImpuesto} from '@shared/models/tarifa-impuesto.model';
 import {SalesDetailCalculationService} from '@shared/services/sales-detail-calculation.service';
 import Swal from 'sweetalert2';
-import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
+import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 
 @Component({
     selector: 'app-order-maintenance-modal',
@@ -65,7 +65,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
     private openModalProductSvc = inject(OpenModalProductService);
     private orderMaintenanceSvc = inject(OrderMaintenanceService);
-  private _productUseCase = inject(ProductUsecase)
+  private _productUseCase = inject(ProductUseCase)
 
     @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
