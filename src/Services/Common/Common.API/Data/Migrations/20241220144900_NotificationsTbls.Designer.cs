@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Common.API.Data.Migrations
 {
     [DbContext(typeof(CommonContext))]
-    [Migration("20241218053232_NotificationsTbls")]
+    [Migration("20241220144900_NotificationsTbls")]
     partial class NotificationsTbls
     {
         /// <inheritdoc />
@@ -320,7 +320,6 @@ namespace Common.API.Data.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<byte[]>("EncryptedPassword")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<bool?>("FromMobile")
@@ -331,8 +330,11 @@ namespace Common.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<string>("Password")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
 
