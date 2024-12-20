@@ -8,11 +8,12 @@ import { map } from 'rxjs';
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
 import { VehiclePartType } from '@mechanical/domain/models/vehicle-part-type';
+import {InspectionRepository} from "@mechanical/domain/repositories/inspection.repository";
 
 @Injectable({
   providedIn: 'root'
 })
-export class InspectionService {
+export class InspectionWebRepository implements InspectionRepository{
   #url = `${PATHS_API.MECHANICAL}${MECHANICAL_PATHS.INSPECTION}`;
   #http = inject(HttpClient);
 

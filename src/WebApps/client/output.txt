@@ -622,7 +622,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |     ├── vehicle-page.component.html
 |  |  |  |  |     └── vehicle-page.component.ts
 |  |  |  |  └── services
-|  |  |  |     ├── inspection.service.ts
+|  |  |  |     ├── inspection-web.repository.ts
 |  |  |  |     ├── support-detail.service.ts
 |  |  |  |     ├── support.service.ts
 |  |  |  |     └── vehicle.service.ts

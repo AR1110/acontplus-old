@@ -3,7 +3,7 @@ import { Component, inject, Input } from '@angular/core';
 import { VEHICLE_PART_TYPE_CODE } from '@mechanical/domain/enums/mechanical.enum';
 import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
 import { VehiclePartType } from '@mechanical/domain/models/vehicle-part-type';
-import { InspectionService } from '@mechanical/data/inspection/inspection.service';
+import { InspectionWebRepository } from '@mechanical/data/inspection/inspection-web.repository';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -44,7 +44,7 @@ export class InspectionModalComponent {
     inspectionId: 0
   }
   modal = inject(NgbActiveModal)
-  inspectionSvc = inject(InspectionService);
+  inspectionSvc = inject(InspectionWebRepository);
   tS = inject(ToasterService)
 
   titleModal = 'Registro Inspección'

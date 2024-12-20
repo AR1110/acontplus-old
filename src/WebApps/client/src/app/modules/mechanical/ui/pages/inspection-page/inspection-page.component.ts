@@ -6,7 +6,7 @@ import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MECHANICAL_CODE_REPORT } from '@mechanical/domain/enums/mechanical.enum';
-import { InspectionService } from '@mechanical/data/inspection/inspection.service';
+import { InspectionWebRepository } from '@mechanical/data/inspection/inspection-web.repository';
 import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
 
@@ -39,7 +39,7 @@ export class InspectionPageComponent {
   pagination = new Pagination();
   dataSource: any[] = [];
   dataSearch = {};
-  private inspectionSvc = inject(InspectionService);
+  private inspectionSvc = inject(InspectionWebRepository);
   private modalSvc = inject(ModalService);
 
   openModal(id: number, supportId: number) {
