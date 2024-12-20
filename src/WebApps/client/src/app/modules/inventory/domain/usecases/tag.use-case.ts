@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import {TagRepository} from "@inventory/core/repositories/tag.repository";
+import {TagRepository} from "@inventory/domain/repositories/tag.repository";
 
 
 @Injectable({

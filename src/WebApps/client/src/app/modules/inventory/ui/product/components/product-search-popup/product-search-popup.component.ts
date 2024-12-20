@@ -9,7 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { isValidField } from '@core/utils/utils';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { Pagination } from '@shared/models/pagination.model';
-import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
+import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 @Component({
   selector: 'app-product-search-popup',
   standalone: true,
@@ -34,7 +34,7 @@ export class ProductSearchPopupComponent {
   modal = inject(NgbActiveModal)
 
 
-  private _productUseCase = inject(ProductUsecase)
+  private _productUseCase = inject(ProductUseCase)
 
 
   dataSearch = {

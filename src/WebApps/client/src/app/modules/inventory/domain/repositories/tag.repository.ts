@@ -1,4 +1,4 @@
-import {Product} from "@inventory/core/domain/product.model";
+import {Product} from "@inventory/domain/models/product.model";
 import {Observable} from "rxjs";
 import {ApiResponse} from "@core/models/api-response";
 

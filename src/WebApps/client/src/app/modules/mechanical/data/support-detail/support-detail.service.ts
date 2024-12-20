@@ -9,7 +9,7 @@ import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 import { MedidaProducto } from '@inventory/core/domain/measure.model';
-import { mergeMeasureUtil } from '@inventory/utils/merge-measure.util';
+import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
 import { map } from 'rxjs';
 
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';

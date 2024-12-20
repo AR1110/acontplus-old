@@ -6,7 +6,7 @@ import { isValidField } from '@core/utils/utils';
 import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {TagUseCase} from "@inventory/core/usecases/tag.use-case";
+import {TagUseCase} from "@inventory/domain/usecases/tag.use-case";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";

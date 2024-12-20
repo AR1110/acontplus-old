@@ -7,7 +7,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import { UserSearchComponent } from '@core/components/user-search/user-search.component';
-import { TarifaSelectHtmlOnly } from '@inventory/core/domain/tarifa.model';
+import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 
 import { TipoDoc } from '@core/models/tipo-doc.model';
@@ -15,11 +15,11 @@ import { SharedService } from '@core/services/shared.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { SALE_CODE_REPORT } from '@modules/sale/enums/sale.enum';
-import { GroupedSubFamilia } from '@inventory/core/domain/sub-category.model';
+import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { formatDateToString } from '@core/utils/date.util';
-import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
+import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 @Component({
@@ -77,7 +77,7 @@ export class RentabilidadPageComponent {
   };
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
-  private _productUseCase = inject(ProductUsecase)
+  private _productUseCase = inject(ProductUseCase)
   private _tokenUseCase= inject(TokenUseCase)
 
 

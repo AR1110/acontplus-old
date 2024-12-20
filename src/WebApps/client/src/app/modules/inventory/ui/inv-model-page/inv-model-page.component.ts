@@ -4,44 +4,35 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { ModelAddEditDirective } from '@inventory/ui/directives/model-add-edit.directive';
-import { InvModelService } from '@inventory/services/inv-model.service';
 import { MatPagination } from '@shared/models/pagination.model';
-import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
+import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
+import {InventarioModeloUseCase} from "@inventory/domain/usecases/inventario-modelo.use-case";
+
 
 @Component({
     selector: 'app-inv-model-page',
     imports: [
         BreadcrumbComponent,
-        PrimaryStatusPipe,
         MatButtonModule,
         MatCardModule,
         MatIconModule,
         MatTableModule,
-        CustomTableContainerComponent,
+      MatDynamicTableComponent,
         ModelAddEditDirective,
     ],
     templateUrl: './inv-model-page.component.html',
     styles: ``
 })
 export class InvModelPageComponent {
-  invModelSvc = inject(InvModelService);
+  private _modeloUseCase= inject(InventarioModeloUseCase);
   pagination = signal(new MatPagination());
-  visibleColumns: string[] = [
-    'index',
-    'op',
-    'marca',
-    'code',
-    'description',
-    'estado',
-  ];
-  dataSource = signal<any[]>([]);
   isLoadingResults = false;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -49,21 +40,34 @@ export class InvModelPageComponent {
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
 
+  columnsDefs: ColumnDefinition[] = [
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'index', label: 'Nro.', type: 'string' },
+    { key: 'marca', label: 'Marca', type: 'string' },
+    { key: 'codigo', label: 'Código', type: 'string' },
+    { key: 'descripcion', label: 'Descripción', type: 'string' },
+    { key: 'nomEstado', label: 'Estado', type: 'string' },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+
+
+  dataSource = new MatTableDataSource<any>([]);
+
   getMeasures() {
     let params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
     this.isLoadingResults = true;
-    this.invModelSvc.getAll(params).subscribe({
+    this._modeloUseCase.getAll(params).subscribe({
       next: (response) => {
         this.isLoadingResults = false;
-        this.dataSource.set(response.modelos);
-        if (this.dataSource().length > 0) {
+        this.dataSource = new MatTableDataSource(response.data);
+        if (this.dataSource.data.length > 0) {
           this.pagination.update((e) => {
             return {
               ...e,
-              totalRecords: this.dataSource()[0].totalRecords,
+              totalRecords: this.dataSource.data[0].totalRecords,
             };
           });
         }
@@ -105,7 +109,7 @@ export class InvModelPageComponent {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.invModelSvc.updateStatus(data.idModelo).subscribe((response) => {
+          this._modeloUseCase.updateStatus(data.idModelo).subscribe((response) => {
             if (response.code == '0') {
               this.tS.toastr({
                 type: 'warning',
@@ -128,7 +132,7 @@ export class InvModelPageComponent {
   }
 
   exportToExcel() {
-    const results = this.dataSource().map((item: any) => {
+    const results = this.dataSource.data.map((item: any) => {
       return {
         marca: item.marca,
         descripcion: item.descripcion,
@@ -138,4 +142,5 @@ export class InvModelPageComponent {
 
     this.sharedSvc.exportToExcel(results, 'Listado de Modelos');
   }
+
 }

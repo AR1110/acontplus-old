@@ -1,7 +1,7 @@
 import {ApiResponse} from "@core/models/api-response";
 import {groupSubCategoryUtil} from "@inventory/utils/group-sub-category.util";
 import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {ProductSearch} from "@inventory/core/domain/product.model";
+import {ProductSearch} from "@inventory/domain/models/product.model";
 import {mergeMeasureUtil} from "@inventory/utils/merge-measure.util";
 
 

@@ -7,15 +7,15 @@ import {ToasterService} from '@core/services/toaster.service';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {icon} from '@fortawesome/fontawesome-svg-core';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
-import {ProductSale} from '@inventory/core/domain/product.model';
+import {ProductSale} from '@inventory/domain/models/product.model';
 import {
   ProductSearchOverlayComponent
 } from '@inventory/ui/product/components/product-search-overlay/product-search-overlay.component';
 import {ConsolidacionBodega} from '@inventory/core/domain/consolidacion-bodega.model';
 import {MedidaProducto} from '@inventory/core/domain/measure.model';
 import {Tarifa} from '@inventory/core/domain/tarifa.model';
-import {getCantidadStock, mergeProductStock} from '@inventory/utils/product-stock.util';
-import {supportMaintenanceAdapter} from '@mechanical/data/adapters/support-maintenance.adapter';
+import {getCantidadStock, mergeProductStock} from '@modules/inventory/utils/product-stock.util';
+import {supportMaintenanceAdapter} from '@modules/mechanical/adapters/support-maintenance.adapter';
 import {
   ColSupportMaintenanceDetail,
   SupportMaintenanceDetail
@@ -28,7 +28,7 @@ import {InputDateComponent} from '@shared/components/input-date/input-date.compo
 import {TarifaImpuesto} from '@shared/models/tarifa-impuesto.model';
 import {SalesDetailCalculationService} from '@shared/services/sales-detail-calculation.service';
 import Swal from 'sweetalert2';
-import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
+import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 
 @Component({
     selector: 'app-support-maintenance-modal',
@@ -50,7 +50,7 @@ export class SupportMaintenanceModalComponent {
     }
 
     modal = inject(NgbActiveModal)
-  private _productUseCase = inject(ProductUsecase)
+  private _productUseCase = inject(ProductUseCase)
 
     private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
 

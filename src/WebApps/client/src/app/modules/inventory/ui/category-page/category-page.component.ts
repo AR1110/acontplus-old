@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { CategoryRead } from '@inventory/core/domain/category.model';
+import { CategoryRead } from '@inventory/domain/models/category.model';
 import { CategoryService } from '@inventory/services/category.service';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';

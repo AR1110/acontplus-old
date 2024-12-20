@@ -13,15 +13,15 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SubCategoryModalDirective } from '@inventory/ui/directives/sub-category.directive'
 import { MeasureAddEditDirective } from '@inventory/ui/directives/measure-add-edit.directive';
 import { TagsAddEditModalDirective } from '@inventory/ui/directives/tags-add-edit-modal.directive';
-import { TarifaSelectHtmlOnly } from '@inventory/core/domain/tarifa.model';
-import { TipoIvaSelectHtmlOnly } from '@inventory/core/domain/tipo-iva.model';
+import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
+import { TipoIvaSelectHtmlOnly } from '@inventory/domain/models/tipo-iva.model';
 import { NgbActiveModal,  NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import Swal from 'sweetalert2';
 
 import { FraccProductListComponent } from '@inventory/ui/product/components/fracc-product-list/fracc-product-list.component';
-import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
+import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 
 interface ProductTarifa {
   tipoIva: string
@@ -59,7 +59,7 @@ export class ProductAddEditModalComponent {
   //Inject Services
   private activeModal = inject(NgbActiveModal);
 
-  private _productUseCase = inject(ProductUsecase)
+  private _productUseCase = inject(ProductUseCase)
 
   private tS = inject(ToasterService)
   private userRoleStateSvc = inject(UserRoleStateService)

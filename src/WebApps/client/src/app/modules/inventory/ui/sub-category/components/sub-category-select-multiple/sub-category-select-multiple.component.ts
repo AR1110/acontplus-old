@@ -2,7 +2,7 @@ import { Component, Input } from "@angular/core";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { GroupedSubFamilia } from "@inventory/core/domain/sub-category.model";
+import { GroupedSubFamilia } from "@inventory/domain/models/sub-category.model";
 
 
 @Component({

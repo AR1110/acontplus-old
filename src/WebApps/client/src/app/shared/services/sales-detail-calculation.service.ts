@@ -2,8 +2,8 @@ import { inject, Injectable } from "@angular/core";
 import { ToasterService } from "@core/services/toaster.service";
 import { pricingCalculateUtil } from "@core/utils/pricing-calculate.util";
 import { roundNumber } from "@core/utils/round-number.utils";
-import { MedidaProducto } from "@inventory/core/domain/measure.model";
-import { TarifaProducto } from "@inventory/core/domain/tarifa.model";
+import { MedidaProducto } from "@inventory/domain/models/measure.model";
+import { TarifaProducto } from "@inventory/domain/models/tarifa.model";
 import { TarifaImpuesto } from "@shared/models/tarifa-impuesto.model";
 
 type Data = {

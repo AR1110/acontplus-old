@@ -35,8 +35,8 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { finalize, forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
-import {ProductUsecase} from "@inventory/core/usecases/product.usecase";
-import {ProductList} from "@inventory/core/domain/product.model";
+import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
+import {ProductList} from "@inventory/domain/models/product.model";
 
 
 
@@ -102,7 +102,7 @@ export class ProductComponent {
   tiposIva = signal<any[]>([]);
   stocks = signal<any[]>([]);
   estados = signal<any[]>([]);
-  private _productUseCase = inject(ProductUsecase)
+  private _productUseCase = inject(ProductUseCase)
   private stockSvc = inject(StockService);
   private tS = inject(ToasterService);
   private modalSvc = inject(ModalService);

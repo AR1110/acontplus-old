@@ -4,7 +4,7 @@ import { PATHS_API } from "@core/constants/global.constants";
 import { ApiResponse, isApiResponse } from "@core/models/api-response";
 import { map } from "rxjs";
 
-import { INVENTORY_PATHS } from "@inventory/core/enums/inventory.enum";
+import { INVENTORY_PATHS } from "@inventory/domain/enums/inventory.enum";
 import { getNoLoader } from "@core/interceptors/loader.interceptor";
 
 @Injectable({

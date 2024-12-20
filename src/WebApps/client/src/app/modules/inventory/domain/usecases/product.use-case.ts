@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
 import {AnticipoRepository} from "@accounting/core/repositories/anticipo.repository";
-import {ProductRepository} from "@inventory/core/repositories/product.repository";
+import {ProductRepository} from "@inventory/domain/repositories/product.repository";
 
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class ProductUsecase {
+export class ProductUseCase {
   constructor(private repo: ProductRepository) { }
 
   getAll<T>(obj:T) {
