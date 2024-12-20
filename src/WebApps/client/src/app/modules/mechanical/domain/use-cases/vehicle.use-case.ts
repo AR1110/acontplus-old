@@ -28,7 +28,7 @@ export class VehicleUseCase {
     return this.repo.put(id, data);
   }
 
-  putState(id: number){
-    return this.repo.putState(id);
+  putState(id: number,state: boolean){
+    return this.repo.putState(id,state);
   }
 }

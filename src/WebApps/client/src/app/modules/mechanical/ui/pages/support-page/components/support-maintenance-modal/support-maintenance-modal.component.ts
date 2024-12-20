@@ -20,7 +20,7 @@ import {
   ColSupportMaintenanceDetail,
   SupportMaintenanceDetail
 } from '@mechanical/domain/models/support-maintenance.model';
-import {SupportDetailService} from '@mechanical/data/support-detail/support-detail.service';
+import {SupportDetailWebRepository} from '@mechanical/data/support-detail/support-detail-web.repository';
 import {DecimalSale} from '@sale/shared/models/decimal-sale.model';
 import {NgbActiveModal, NgbPopoverModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
 import {DrawTaxTotalComponent} from '@shared/components/draw-tax-total/draw-tax-total.component';
@@ -54,7 +54,7 @@ export class SupportMaintenanceModalComponent {
 
     private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
 
-    private supportDetailSvc = inject(SupportDetailService)
+    private supportDetailSvc = inject(SupportDetailWebRepository)
     private tS = inject(ToasterService)
 
     @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;

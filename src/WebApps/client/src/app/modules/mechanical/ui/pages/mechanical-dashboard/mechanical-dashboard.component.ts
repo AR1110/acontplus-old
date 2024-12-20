@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {  Component, inject, Input } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { SupportService } from '@mechanical/data/support/support.service';
+import { SupportWebRepository } from '@mechanical/data/support/support-web.repository';
 import { Chart, registerables } from 'chart.js';
 import { SupportPageComponent } from '../support-page/support-page.component';
 import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
@@ -25,7 +25,7 @@ export class MechanicalDashboardComponent   {
     quantityVehicleCompany: 0,
     quantityInspection: 0,
   };
-  supportSvc = inject(SupportService)
+  supportSvc = inject(SupportWebRepository)
   ngOnInit(): void {
     this.supportSvc.getDashboard().subscribe({
       next:(response) =>{

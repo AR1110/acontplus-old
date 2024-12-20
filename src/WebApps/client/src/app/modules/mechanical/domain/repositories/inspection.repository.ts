@@ -5,7 +5,7 @@ export abstract  class InspectionRepository{
 
   abstract getAll<T extends { pageIndex: number; pageSize: number }>(obj:T): Observable<any[]>;
 
-  abstract getDataForm():Observable<any>
+  abstract getDataForm(supportId: number):Observable<any>
 
   abstract getId(id: number, loader?: boolean):Observable<any>
 

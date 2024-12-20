@@ -12,8 +12,8 @@ export class InspectionUseCase {
     return this.repo.getAll(obj)
   }
 
-  getDataForm(){
-    return this.repo.getDataForm();
+  getDataForm(supportId: number){
+    return this.repo.getDataForm(supportId);
   }
 
   getId(id: number, loader?: boolean){

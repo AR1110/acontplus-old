@@ -10,14 +10,15 @@ import { isValidField } from '@core/utils/utils';
 import { MedidaProducto } from '@inventory/core/domain/measure.model';
 import { mergeMeasureUtil } from '@inventory/utils/merge-measure.util';
 import { map } from 'rxjs';
-
+import { ApiResponse } from "@core/models/api-response";
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { SupportDetail } from '@mechanical/domain/models/support.model';
+import {SupportRepository} from "@mechanical/domain/repositories/support.repository";
 
 @Injectable({
   providedIn: 'root'
 })
-export class SupportService {
+export class SupportWebRepository extends SupportRepository {
   #url = `${PATHS_API.MECHANICAL}${MECHANICAL_PATHS.SUPPORT}`
   #http = inject(HttpClient)
 
@@ -268,7 +269,7 @@ export class SupportService {
     )
   }
 
-  searchCustomerVehicle<T extends { textSearch: string }>(obj: T) {
+  search<T extends { textSearch: string }>(obj: T) {
     let json = JSON.stringify({
       tipo: 4,
       textSearch: obj.textSearch
@@ -287,19 +288,19 @@ export class SupportService {
   }
 
   post<T>(data: T) {
-    return this.#http.post(`${this.#url}`, { data })
+    return this.#http.post<ApiResponse>(`${this.#url}`, { data })
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put(`${this.#url}${id}`, { data })
+    return this.#http.put<ApiResponse>(`${this.#url}${id}`, { data })
   }
 
   remove(id:number){
-    return this.#http.delete(`${this.#url}${id}`)
+    return this.#http.delete<ApiResponse>(`${this.#url}${id}`)
   }
 
   putState(id: number, supportStatusId: number) {
-    return this.#http.put(`${this.#url}PutState/${id}/${supportStatusId}`, null)
+    return this.#http.put<ApiResponse>(`${this.#url}PutState/${id}/${supportStatusId}`, null)
   }
 
 

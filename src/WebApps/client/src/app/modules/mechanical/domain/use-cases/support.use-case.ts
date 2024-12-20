@@ -52,8 +52,8 @@ export class SupportUseCase{
     return this.repo.remove(id);
   }
 
-  putState(id: number){
-    return this.repo.putState(id);
+  putState(id: number, supportStatusId: number){
+    return this.repo.putState(id,supportStatusId);
   }
 
 

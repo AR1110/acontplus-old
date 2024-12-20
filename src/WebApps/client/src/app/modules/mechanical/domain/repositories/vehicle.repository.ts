@@ -14,5 +14,5 @@ export abstract class VehicleRepository {
 
   abstract remove(id: number): Observable<ApiResponse>
 
-  abstract putState(id: number): Observable<ApiResponse>
+  abstract putState(id: number,state: boolean): Observable<ApiResponse>
 }

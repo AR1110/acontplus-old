@@ -8,7 +8,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { VehicleRead } from '@mechanical/domain/models/vehicle.model';
-import { VehicleService } from '@mechanical/data/vehicle/vehicle.service';
+import { VehicleWebRepository } from '@mechanical/data/vehicle/vehicle-web.repository';
 import { VehicleAddEditDirective } from '@mechanical/ui/directives/vehicle-add-edit.directive';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
@@ -29,7 +29,7 @@ import Swal from 'sweetalert2';
     styles: ``
 })
 export class VehiclePageComponent {
-  vehicleSvc = inject(VehicleService);
+  vehicleSvc = inject(VehicleWebRepository);
   tS = inject(ToasterService);
 
   visibleColumns = ['position', 'op', 'tipoVehiculo', 'placa', 'identificacion', 'cliente-conductor', 'estado'];

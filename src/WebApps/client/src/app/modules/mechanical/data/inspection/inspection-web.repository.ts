@@ -4,7 +4,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { formatDate } from '@core/utils/date.util';
 import { isValidJSON } from '@core/utils/utils';
 import { map } from 'rxjs';
-
+import { ApiResponse } from "@core/models/api-response";
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
 import { VehiclePartType } from '@mechanical/domain/models/vehicle-part-type';
@@ -17,6 +17,22 @@ export class InspectionWebRepository implements InspectionRepository{
   #url = `${PATHS_API.MECHANICAL}${MECHANICAL_PATHS.INSPECTION}`;
   #http = inject(HttpClient);
 
+  getAll<T>(obj: T) {
+    let json = JSON.stringify({
+      ...obj,
+      tipo: 1
+    })
+    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+      map((response: any) => {
+        let results: any = [];
+        if (response !== null && typeof response === 'object') {
+          results = response.inspection
+
+        }
+        return results;
+      })
+    )
+  }
 
   getDataForm(supportId: number) {
     let json = JSON.stringify({
@@ -42,23 +58,6 @@ export class InspectionWebRepository implements InspectionRepository{
 
         }
         return result;
-      })
-    )
-  }
-
-  getAll<T>(obj: T) {
-    let json = JSON.stringify({
-      ...obj,
-      tipo: 1
-    })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) => {
-        let results: any = [];
-        if (response !== null && typeof response === 'object') {
-          results = response.inspection
-
-        }
-        return results;
       })
     )
   }
@@ -116,15 +115,15 @@ export class InspectionWebRepository implements InspectionRepository{
   }
 
   post<T>(data: T) {
-    return this.#http.post(`${this.#url}`, { data })
+    return this.#http.post<ApiResponse>(`${this.#url}`, { data })
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put(`${this.#url}${id}`, { data })
+    return this.#http.put<ApiResponse>(`${this.#url}${id}`, { data })
   }
 
   remove(id: number) {
-    return this.#http.delete(`${this.#url}${id}`)
+    return this.#http.delete<ApiResponse>(`${this.#url}${id}`)
   }
 
 }

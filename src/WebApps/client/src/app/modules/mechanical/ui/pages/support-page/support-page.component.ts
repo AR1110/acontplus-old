@@ -15,7 +15,7 @@ import {
   MECHANICAL_CODE_REPORT,
   MECHANICAL_STATUS,
 } from '@mechanical/domain/enums/mechanical.enum';
-import { SupportService } from '@mechanical/data/support/support.service';
+import { SupportWebRepository } from '@mechanical/data/support/support-web.repository';
 import {
   NgbDropdownModule,
   NgbPagination,
@@ -51,7 +51,7 @@ export class SupportPageComponent {
   @Input() supportStatus: any[] = [];
 
   modalSvc = inject(ModalService);
-  supportSvc = inject(SupportService);
+  supportSvc = inject(SupportWebRepository);
   tS = inject(ToasterService);
   sharedSvc = inject(SharedService);
 

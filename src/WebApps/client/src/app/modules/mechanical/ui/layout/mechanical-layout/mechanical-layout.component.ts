@@ -5,7 +5,7 @@ import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
 import { InspectionPageComponent } from '@mechanical/ui/pages/inspection-page/inspection-page.component';
 import { MechanicalDashboardComponent } from '@mechanical/ui/pages/mechanical-dashboard/mechanical-dashboard.component';
 import { SupportPageComponent } from '@mechanical/ui/pages/support-page/support-page.component';
-import { SupportService } from '@mechanical/data/support/support.service';
+import { SupportWebRepository } from '@mechanical/data/support/support-web.repository';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -29,7 +29,7 @@ export class MechanicalLayoutComponent implements OnInit {
 
   valueStatus  = this.statusTab.PENDIENTE
 
-  supportSvc = inject(SupportService);
+  supportSvc = inject(SupportWebRepository);
   supportStatus: any[] = [];
   supportStatusId = null;
   ngOnInit(): void {

@@ -4,11 +4,13 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
+import { ApiResponse } from "@core/models/api-response";
+import {VehicleRepository} from "@mechanical/domain/repositories/vehicle.repository";
 
 @Injectable({
   providedIn: 'root'
 })
-export class VehicleService {
+export class VehicleWebRepository extends VehicleRepository{
   #url = `${PATHS_API.MECHANICAL}${MECHANICAL_PATHS.VEHICLE}`
   #http = inject(HttpClient);
 
@@ -79,19 +81,19 @@ export class VehicleService {
 
 
   post<T>(data: T) {
-    return this.#http.post(`${this.#url}`, { data })
+    return this.#http.post<ApiResponse>(`${this.#url}`, { data })
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put(`${this.#url}${id}`, { data })
+    return this.#http.put<ApiResponse>(`${this.#url}${id}`, { data })
   }
 
   remove(id: number) {
-    return this.#http.delete(`${this.#url}${id}`)
+    return this.#http.delete<ApiResponse>(`${this.#url}${id}`)
   }
 
   putState(id: number, state: boolean) {
-    return this.#http.put(`${this.#url}PutState/${id}/${state}`, null)
+    return this.#http.put<ApiResponse>(`${this.#url}PutState/${id}/${state}`, null)
   }
 
 }

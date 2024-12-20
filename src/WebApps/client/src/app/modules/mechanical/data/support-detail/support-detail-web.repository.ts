@@ -11,14 +11,15 @@ import { isValidField } from '@core/utils/utils';
 import { MedidaProducto } from '@inventory/core/domain/measure.model';
 import { mergeMeasureUtil } from '@inventory/utils/merge-measure.util';
 import { map } from 'rxjs';
-
+import { ApiResponse } from "@core/models/api-response";
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { SupportMaintenanceDetail } from '@mechanical/domain/models/support-maintenance.model';
+import {SupportDetailRepository} from "@mechanical/domain/repositories/support-detail.repository";
 
 @Injectable({
   providedIn: 'root'
 })
-export class SupportDetailService {
+export class SupportDetailWebRepository extends SupportDetailRepository {
   #url = `${PATHS_API.MECHANICAL}${MECHANICAL_PATHS.SUPPORT_DETAIL}`
   #http = inject(HttpClient)
 
@@ -141,7 +142,7 @@ export class SupportDetailService {
 
 
   post<T>(data: T) {
-    return this.#http.post(`${this.#url}`, { data })
+    return this.#http.post<ApiResponse>(`${this.#url}`, { data })
   }
 
 

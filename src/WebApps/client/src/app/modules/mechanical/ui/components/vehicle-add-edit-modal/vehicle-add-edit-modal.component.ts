@@ -5,7 +5,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { VehicleTypeSelectHtmlOnly } from '@mechanical/domain/models/vehicle-type.model';
-import { VehicleService } from '@mechanical/data/vehicle/vehicle.service';
+import { VehicleWebRepository } from '@mechanical/data/vehicle/vehicle-web.repository';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -22,7 +22,7 @@ export class VehicleAddEditModalComponent {
     id: 0
   }
   modal = inject(NgbActiveModal)
-  vehicleSvc = inject(VehicleService);
+  vehicleSvc = inject(VehicleWebRepository);
   tS = inject(ToasterService)
 
   titleModal = 'Nuevo Vehículo';
