@@ -1,5 +1,6 @@
 ﻿using Common.AppSettings;
 using Common.AppSettings.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Compras.API.Controllers;
 
@@ -23,7 +24,7 @@ public class DocumentoRecibidoController(
         };
         return Ok(await docRecibidoSvc.GetAsync(parameters));
     }
-
+    [AllowAnonymous]
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetById(int id)
     {
