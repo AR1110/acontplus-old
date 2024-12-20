@@ -8,9 +8,9 @@ type ToProps = {
   details: SupportMaintenanceDetail[],
   detailsDeleted: SupportMaintenanceDetail[],
 }
-class SupportMaintenanceAdapter {
+export class SupportMaintenanceAdapter {
 
-  to(obj: ToProps) {
+  static to(obj: ToProps) {
     const { data, details, detailsDeleted } = obj;
 
 
@@ -34,7 +34,7 @@ class SupportMaintenanceAdapter {
 
 
 
-  private dataTo(data: any) {
+  private static dataTo(data: any) {
     let obj = {
       id: data.id,
       bodegaId: data.bodegaId,
@@ -53,7 +53,7 @@ class SupportMaintenanceAdapter {
     return obj;
   }
 
-  private detailTo(detalles: SupportMaintenanceDetail[]) {
+  private static detailTo(detalles: SupportMaintenanceDetail[]) {
     let results = detalles.map((item, index) => {
       return {
         id: item.id,
@@ -85,4 +85,3 @@ class SupportMaintenanceAdapter {
 }
 
 
-export const supportMaintenanceAdapter = new SupportMaintenanceAdapter()
