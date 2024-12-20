@@ -8,7 +8,7 @@ export const sessionGuard: CanActivateFn = (route, state) => {
   console.log(_tokenUseCase.isTokenExpired())
   if (_tokenUseCase.isTokenExpired()) {
     console.log('no auth');
-    router.navigate(['/', 'auth'])
+  //  router.navigate(['/', 'auth'])
   }
   return true;
 };
