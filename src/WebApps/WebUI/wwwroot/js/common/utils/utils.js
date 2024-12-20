@@ -253,7 +253,7 @@
                     let porcentajeDecimal = decDiv(Number(porcentajeImpuesto), 100, service.precisionMaxima)
 
                     // Paso 2: Calcular el valor del impuesto
-                    let valorImpuesto = decMul(Number(precio), porcentajeDecimal, service.precisionMaxima);
+                    let valorImpuesto = decMul(Number(precio), porcentajeDecimal, service.max_cinco);
 
                     return valorImpuesto;
                 } catch (error) {
