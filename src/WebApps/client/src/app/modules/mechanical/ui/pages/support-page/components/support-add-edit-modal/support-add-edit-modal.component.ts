@@ -7,8 +7,8 @@ import { ToasterService } from '@core/services/toaster.service';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate, formatDateToString, isDateValid } from '@core/utils/date.util';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { SupportService } from '@mechanical/data/support/support.service';
-import { VehicleService } from '@mechanical/data/vehicle/vehicle.service';
+import { SupportWebRepository } from '@mechanical/data/support/support-web.repository';
+import { VehicleWebRepository } from '@mechanical/data/vehicle/vehicle-web.repository';
 import { VehicleAddEditDirective } from '@mechanical/ui/directives/vehicle-add-edit.directive';
 import { NgbActiveModal, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
@@ -48,8 +48,8 @@ export class SupportAddEditModalComponent {
   }
 
   modal = inject(NgbActiveModal);
-  supportSvc = inject(SupportService)
-  vehicleSvc = inject(VehicleService)
+  supportSvc = inject(SupportWebRepository)
+  vehicleSvc = inject(VehicleWebRepository)
   tS = inject(ToasterService)
 
   titleModal = 'Nuevo Soporte';

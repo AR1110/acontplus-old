@@ -24,5 +24,5 @@ export abstract  class SupportRepository{
 
   abstract remove(id: number): Observable<ApiResponse>
 
-  abstract putState(id: number): Observable<ApiResponse>
+  abstract putState(id: number, supportStatusId: number): Observable<ApiResponse>
 }

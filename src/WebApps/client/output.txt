@@ -621,10 +621,10 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |     ├── vehicle-page.component.html
 |  |  |  |  |     └── vehicle-page.component.ts
 |  |  |  |  └── services
-|  |  |  |     ├── inspection.service.ts
-|  |  |  |     ├── support-detail.service.ts
-|  |  |  |     ├── support.service.ts
-|  |  |  |     └── vehicle.service.ts
+|  |  |  |     ├── inspection-web.repository.ts
+|  |  |  |     ├── support-detail-web.repository.ts
+|  |  |  |     ├── support-web.repository.ts
+|  |  |  |     └── vehicle-web.repository.ts
 |  |  |  ├── purchase
 |  |  |  |  ├── core
 |  |  |  |  |  ├── domain
@@ -870,7 +870,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── order.service.ts
 |  |  |  |  |  ├── serie.service.ts
 |  |  |  |  |  ├── stats.service.ts
-|  |  |  |  |  └── technical-support.service.ts
+|  |  |  |  |  └── technical-support-web.repository.ts
 |  |  |  |  ├── store
 |  |  |  |  |  ├── device.store.ts
 |  |  |  |  |  ├── order-maintenance
