@@ -31,7 +31,7 @@ BEGIN
         ,@os VARCHAR(MAX)
 
 
-    DECLARE @params NVARCHAR(MAX)
+    DECLARE @params VARCHAR(MAX)
 
     DECLARE @notificationId INT;
     DECLARE @notificationTypeId INT;
@@ -53,7 +53,7 @@ BEGIN
 
     DECLARE @userToSendEmail AS TABLE (
         body VARCHAR(MAX) NOT NULL,
-        params VARCHAR(500) NOT NULL,
+        params VARCHAR(MAX) NOT NULL,
         receptor VARCHAR(100) NOT NULL
     );
 

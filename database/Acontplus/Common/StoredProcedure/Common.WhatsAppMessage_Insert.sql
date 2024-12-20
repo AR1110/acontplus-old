@@ -37,7 +37,7 @@ BEGIN
 	    receptor VARCHAR(50) NOT NULL,
 	    mensaje VARCHAR(100) NOT NULL,
 	    totalMensajes INT NOT NULL,
-	    params VARCHAR(2000) NULL
+	    params VARCHAR(MAX) NULL
 	)
 	declare @browser VARCHAR(300)
 	declare @os VARCHAR(300)

@@ -21,8 +21,8 @@ BEGIN
         -- Get the next batch of rows to process
         DECLARE @notificationId INT, @userId INT, @companyId INT;
         DECLARE @userRoleId INT, @browser VARCHAR(300), @os VARCHAR(300),
-                @receptor VARCHAR(50), @mensaje VARCHAR(2000), 
-                @params VARCHAR(2000), @fechaRegistro DATETIME;
+                @receptor VARCHAR(50), @mensaje VARCHAR(MAX), 
+                @params VARCHAR(MAX), @fechaRegistro DATETIME;
 
         -- Check if there are rows to process
         IF NOT EXISTS (SELECT 1 FROM Config.WhatsappMessage)

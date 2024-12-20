@@ -11,7 +11,8 @@ GO
 -- Create date: 11/04/2023
 -- Description:	
 -- =============================================
-CREATE OR ALTER  PROCEDURE Config.UserCustomerRequest_SendMail @userRoleId INT, @userCustomerRequestId INT
+CREATE OR ALTER  PROCEDURE Config.UserCustomerRequest_SendMail @userRoleId INT,
+    @userCustomerRequestId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -26,21 +27,18 @@ BEGIN
 		userRoleId INT NOT NULL UNIQUE
 	)
 
-    ---START EMAL 
-    DECLARE  @enableSsl INT 
-    DECLARE @from  VARCHAR(100)
-    DECLARE @host  VARCHAR(100) 
-    DECLARE @passwordEmail VARCHAR(50)
-    DECLARE @port INT 
-    DECLARE @cc VARCHAR(100)
+        DECLARE @notificationId INT;
+    DECLARE @notificationTypeId INT;
+    DECLARE @emailSenderConfigId INT;
+    DECLARE @priorityId INT;
+    DECLARE @statusId INT; 
 
-    SELECT TOP 1
-           @enableSsl = [enableSsl]
-          ,@from      = [from]
-          ,@host      = [host]
-          ,@passwordEmail  = [password]
-          ,@port      = [port]
-    FROM [Config].[Email_Config] WITH (NOLOCK)
+
+    --> Email 
+	DECLARE @body VARCHAR(MAX) 
+           ,@cc VARCHAR(100)
+           ,@params NVARCHAR(MAX)
+           ,@receptor VARCHAR(200);
 
     DECLARE @template VARCHAR(50)= 'RequestPermission.html'
     DECLARE @subject VARCHAR(150)
@@ -49,12 +47,36 @@ BEGIN
 	-------------EMAIL BODY ----------------------- 
 
     DECLARE @userToSendEmail AS TABLE (
-        emailData VARCHAR(MAX) NOT NULL,
+        body VARCHAR(MAX) NOT NULL,
         params VARCHAR(500) NOT NULL,
         receptor VARCHAR(100) NOT NULL
     )
 		 
-	
+	     -- Set values for reusable constants
+        SET @notificationTypeId = (SELECT TOP 1 Id FROM Common.NotificationType WHERE Code = 'E');
+        SET @priorityId = (SELECT Id FROM Common.[Priority] WHERE Code = 'M');
+        SET @statusId = (SELECT Id FROM Common.[Status] WHERE Code = 'Q');
+
+        SELECT TOP 1 @idEntidad = idEntidad, @userId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+        IF NOT EXISTS (SELECT 1 FROM Config.EmailSenderConfig WHERE CompanyId = @idEntidad)
+            BEGIN
+                SET @emailSenderConfigId = (SELECT TOP 1 Id 
+                                               FROM Config.EmailSenderConfig 
+                                               WHERE IsGlobal = 1 AND Enabled = 1);
+            END
+            ELSE
+            BEGIN
+                SET @emailSenderConfigId = (SELECT Id 
+                                               FROM Config.EmailSenderConfig 
+                                               WHERE CompanyId = @idEntidad);
+            END
+
+        IF (@emailSenderConfigId IS NULL OR @emailSenderConfigId = 0)
+            BEGIN
+                SELECT '0' code, 'No existe una configuración para el envio de correo' as 'message' 
+                RETURN
+            END
 
 	---------------Body -------------
 	DECLARE @accionDescripcion VARCHAR(50) 
@@ -104,10 +126,10 @@ BEGIN
         END 
 
          
+    SET @subject = 'Solicitud de Permiso para ' +  @accionDescripcion  + ' Documento'
     --Enviar por correo la notificacion 
-    INSERT INTO @userToSendEmail(emailData, params, receptor)
-		SELECT  
-            (SELECT body = (SELECT 
+    INSERT INTO @userToSendEmail(body, params, receptor)
+		SELECT   (SELECT 
                                     approverUser = v_ur.usuarioAprobante
                                     ,requestDate   = CONVERT(NVARCHAR,FORMAT(dbo.ufnGetDateEcuador() , 'dd/MM/yyyy HH:mm')) 
                                     ,v_ur.razonSocial
@@ -116,18 +138,7 @@ BEGIN
 							FROM Config.v_User_Request  v_ur
 							WHERE v_ur.idSolicitud = @userCustomerRequestId 
                             FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-                            )
-			        ,ISNULL(@cc,'') as 'cc' 						  
-					,EnableSsl =@enableSsl
-					,'from' = @from
-                    ,'username' = @from
-					,'host'= @host
-					,'logo'= 'logoAcontPlus.jpg'
-					,'password'= @passwordEmail
-					,'port'= @port
-					,'subject'= 'Solicitud de Permiso para ' +  @accionDescripcion  + ' Documento'
-					,'template'= @template FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-			),
+                            ),
             (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
             LTRIM(RTRIM(u.correo))
         FROM @tbUserRole ua
@@ -135,8 +146,31 @@ BEGIN
         WITH(NOLOCK) ON u.idUsuario = (SELECT TOP 1 idUsuario FROM v_usuario v_ur WHERE v_ur.idUsuarioRol =ua.userRoleId )
         WHERE LEN(ISNULL(LTRIM(RTRIM(u.correo)), '')) > 1
 
-        INSERT INTO App.Notificacion(params, emailData, receptor, estado, idUsuario)
-                        SELECT params, emailData, receptor,  'NE', @userId FROM @userToSendEmail 
+        DECLARE cursorUser CURSOR LOCAL FOR
+        SELECT body, params, receptor
+        FROM @userToSendEmail;
 
+        OPEN cursorUser;
 
+        FETCH NEXT FROM cursorUser INTO @body, @params, @receptor;
+
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            -- Insert into Notification table
+            INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [UserId], [FromMobile])
+            VALUES (@notificationTypeId, COMPRESS(ISNULL(@params, '{}')), 'Envio por correo', @subject, @userId, 0);
+
+            SET @notificationId = SCOPE_IDENTITY();
+
+            -- Insert into EmailQueue table
+            INSERT INTO Common.EmailQueue ([NotificationId], [EmailSenderConfigId], [RecipientEmail], [Subject], [IsHtml],
+            [CompressedBody], [PriorityId], [StatusId], [Template], [UserId], [FromMobile])
+            VALUES (@notificationId, @emailSenderConfigId, @receptor, @subject, CAST(0 AS BIT),
+            COMPRESS(@body), @priorityId, @statusId, @template, @userId, 0);
+
+            FETCH NEXT FROM cursorUser INTO @body, @params, @receptor;
+        END;
+
+        CLOSE cursorUser;
+        DEALLOCATE cursorUser;
 END 
