@@ -7,7 +7,7 @@ import {ResumenContableRepository} from "@accounting/core/repositories/resumen-c
   providedIn: 'root'
 })
 
-export class ResumenContableUsecase {
+export class ResumenContableUseCase {
   constructor(private repo: ResumenContableRepository) { }
   getDataFilter(){
     return this.repo.getDataFilter()

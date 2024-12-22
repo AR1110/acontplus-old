@@ -10,7 +10,7 @@ import {ApiResponse} from "@core/models/api-response";
   providedIn: 'root'
 })
 
-export class CategoryUsecase {
+export class CategoryUseCase {
   constructor(private repo: CategoryRepository) { }
    get<T>(params: T) {
     return this.repo.get(params)

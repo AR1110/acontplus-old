@@ -6,7 +6,7 @@ import {AnticipoRepository} from "@accounting/core/repositories/anticipo.reposit
   providedIn: 'root'
 })
 
-export class AnticipoUsecase {
+export class AnticipoUseCase {
   constructor(private repo: AnticipoRepository) { }
 
   getAll<T>(obj:T) {

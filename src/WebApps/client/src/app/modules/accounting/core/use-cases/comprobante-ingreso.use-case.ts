@@ -7,7 +7,7 @@ import {ComprobanteIngresoRepository} from "@accounting/core/repositories/compro
   providedIn: 'root'
 })
 
-export class ComprobanteIngresoUsecase {
+export class ComprobanteIngresoUseCase {
   constructor(private repo: ComprobanteIngresoRepository) { }
 
   getDataFilter ( ) {

@@ -27,7 +27,7 @@ import { InvoiceHtmlComponent } from '@billing/components/documents/invoice-html
 import { CreditNoteHtmlComponent } from '@billing/components/documents/credit-note-html/credit-note-html.component';
 
 import { DialogService } from '@core/services/dialog.service';
-import { SubCategoryUsecase } from '@accounting/core/usecases/sub-category.usecase';
+import { SubCategoryUseCase } from '@accounting/core/use-cases/sub-category.use-case';
 import { DocumentReceivedUseCase } from '@purchase/core/use-cases/document-received.use-case';
 import {SupplierSearchComponent} from "@customer/ui/supplier/components/supplier-search/supplier-search.component";
 
@@ -90,7 +90,7 @@ export class DocumentReceivedComponent {
   private readonly _documentReceivedUseCase = inject(DocumentReceivedUseCase);
   private readonly _dialogService = inject(DialogService);
   private readonly _sharedService = inject(SharedService);
-  private readonly _subCategoryUseCase = inject(SubCategoryUsecase);
+  private readonly _subCategoryUseCase = inject(SubCategoryUseCase);
 
   private readonly _tS = inject(ToasterService);
 

@@ -18,7 +18,7 @@ import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat
 import {MatTableDataSource} from "@angular/material/table";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
-import {SubEntidadFinancieraUsecase} from "@accounting/core/usecases/sub-entidad-financiera.usecase";
+import {SubEntidadFinancieraUseCase} from "@accounting/core/use-cases/sub-entidad-financiera.use-case";
 
 
 
@@ -39,7 +39,7 @@ import {SubEntidadFinancieraUsecase} from "@accounting/core/usecases/sub-entidad
 export class SubEntidadFinancieraPageComponent {
   private readonly modalSvc = inject(ModalService);
   private readonly tS = inject(ToasterService)
-  private useCase = inject(SubEntidadFinancieraUsecase)
+  private useCase = inject(SubEntidadFinancieraUseCase)
 
   entidadesFinanciera: Array<EntidadFinanciera> = [];
   cloneSubEntidadesFinanciera: Array<SubEntidadFinancieraRead> = [];

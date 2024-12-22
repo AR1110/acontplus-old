@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx';
 import {
   NgbActiveModal
 } from '@ng-bootstrap/ng-bootstrap';
-import {ControlCajaUsecase} from "@accounting/core/usecases/control-caja.usecase";
+import {ControlCajaUseCase} from "@accounting/core/use-cases/control-caja.use-case";
 
 @Component({
     selector: 'app-detalle-arqueo-control-caja-modal-modal',
@@ -18,7 +18,7 @@ export class DetalleArqueoControlCajaModalComponent {
     sortOrder: 'ASC',
   };
   @Input() params = {} as any;
-  private _controlCajaUseCase = inject(ControlCajaUsecase)
+  private _controlCajaUseCase = inject(ControlCajaUseCase)
 
 
   arqueoCajaDetalle: any[] = [];

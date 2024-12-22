@@ -11,7 +11,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatPagination} from "@shared/models/pagination.model";
 import {PageEvent} from "@angular/material/paginator";
-import {SubCategoryUsecase} from "@accounting/core/usecases/sub-category.usecase";
+import {SubCategoryUseCase} from "@accounting/core/use-cases/sub-category.use-case";
 
 @Component({
   selector: 'app-subcategory',
@@ -30,7 +30,7 @@ export class SubcategoryComponent {
   subcategories: Subcategory[] = [];
   private readonly modalService = inject(ModalService);
 
-  private _subCategoryUseCase = inject(SubCategoryUsecase)
+  private _subCategoryUseCase = inject(SubCategoryUseCase)
 
 
   columnsDefs: ColumnDefinition[] = [

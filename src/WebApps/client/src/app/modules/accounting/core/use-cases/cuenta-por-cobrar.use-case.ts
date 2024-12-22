@@ -6,7 +6,7 @@ import {CuentaPorCobrarRepository} from "@accounting/core/repositories/cuenta-po
   providedIn: 'root'
 })
 
-export class CuentaPorCobrarUsecase {
+export class CuentaPorCobrarUseCase {
   constructor(private repo: CuentaPorCobrarRepository) { }
 
   getAll<T>(obj:T) {

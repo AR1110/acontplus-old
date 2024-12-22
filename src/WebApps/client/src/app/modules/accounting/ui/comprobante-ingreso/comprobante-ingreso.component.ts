@@ -8,7 +8,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatPagination} from "@shared/models/pagination.model";
 import {PageEvent} from "@angular/material/paginator";
-import {ComprobanteIngresoUsecase} from "@accounting/core/usecases/comprobante-ingreso.usecase";
+import {ComprobanteIngresoUseCase} from "@accounting/core/use-cases/comprobante-ingreso.use-case";
 import {EstablecimientoSelectHtmlOnly} from "@core/models/estab.model";
 import {ComprobanteIngreso} from "@accounting/core/domain/comp-ingreso.model";
 import {formatDateToString} from "@core/utils/date.util";
@@ -30,7 +30,7 @@ import {isValidField} from "@core/utils/utils";
 })
 export class ComprobanteIngresoComponent {
 
-  private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUsecase);
+  private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);
 
   loading = signal(false)
   pagination = signal(new MatPagination());

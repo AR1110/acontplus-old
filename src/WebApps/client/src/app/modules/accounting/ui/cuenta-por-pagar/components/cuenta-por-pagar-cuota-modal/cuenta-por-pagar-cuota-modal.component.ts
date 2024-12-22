@@ -22,7 +22,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { DECIMALS } from '@core/constants/global.constants';
-import {GetCuentaPorPagarUsecase} from "@accounting/core/usecases/get-cuenta-por-pagar.usecase";
+import {GetCuentaPorPagarUseCase} from "@accounting/core/use-cases/get-cuenta-por-pagar.use-case";
 
 @Component({
   selector: 'app-cuenta-por-pagar-cuota-modal',
@@ -47,7 +47,7 @@ import {GetCuentaPorPagarUsecase} from "@accounting/core/usecases/get-cuenta-por
 export class CuentaPorPagarCuotaModalComponent {
   readonly dialogRef = inject(MatDialogRef<CuentaPorPagarCuotaModalComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
-  private useCase = inject(GetCuentaPorPagarUsecase)
+  private useCase = inject(GetCuentaPorPagarUseCase)
   private tS = inject(ToasterService);
 
   loading = signal(false);

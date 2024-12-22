@@ -11,7 +11,7 @@ import { Category } from '@technical-support/models/category';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import {ApiResponse } from '@core/models/api-response';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import {CategoryUsecase} from "@accounting/core/usecases/category.usecase";
+import {CategoryUseCase} from "@accounting/core/use-cases/category.use-case";
 
 @Component({
     selector: 'app-category-modal',
@@ -39,7 +39,7 @@ export class CategoryModalComponent {
   modalIcon: IconProp = 'plus';
   modalTitle = 'Registrar Categoría';
   tipos: any[] = [];
-  private _categoryUseCase = inject(CategoryUsecase)
+  private _categoryUseCase = inject(CategoryUseCase)
 
   private modalRef = inject(NgbActiveModal);
   private tS = inject(ToasterService);

@@ -21,7 +21,7 @@ import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/co
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import {BancoSelectOnly} from "@accounting/core/domain/banco.interface";
 import { formatDateToString } from '@core/utils/date.util';
-import {ComprobanteIngresoUsecase} from "@accounting/core/usecases/comprobante-ingreso.usecase";
+import {ComprobanteIngresoUseCase} from "@accounting/core/use-cases/comprobante-ingreso.use-case";
 
 @Component({
     selector: 'app-reporte-cobros',
@@ -66,7 +66,7 @@ export class ReporteCobrosComponent implements OnInit {
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
 
-  private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUsecase);
+  private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);
 
 
   ngOnInit(): void {

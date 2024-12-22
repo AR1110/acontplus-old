@@ -6,7 +6,7 @@ import { SubEntidadFinancieraRepository } from "@accounting/core/repositories/su
   providedIn: 'root'
 })
 
-export class SubEntidadFinancieraUsecase {
+export class SubEntidadFinancieraUseCase {
   constructor(private repo: SubEntidadFinancieraRepository) { }
 
   getAll() {

@@ -7,7 +7,7 @@ import {FormsModule} from "@angular/forms";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {CommonModule} from "@angular/common";
 import { NotificacionService } from '@shared/services/notificacion.service';
-import {ControlCajaUsecase} from "@accounting/core/usecases/control-caja.usecase";
+import {ControlCajaUseCase} from "@accounting/core/use-cases/control-caja.use-case";
 
 type Modeda = {
   idMoneda: number
@@ -32,7 +32,7 @@ export class CierreCajaModalComponent {
   }
 
   private activeModal = inject(NgbActiveModal);
-  private _controlCajaUseCase = inject(ControlCajaUsecase)
+  private _controlCajaUseCase = inject(ControlCajaUseCase)
   private appNotifiSvc = inject(NotificacionService)
 
   monedas: Array<Modeda> = [];

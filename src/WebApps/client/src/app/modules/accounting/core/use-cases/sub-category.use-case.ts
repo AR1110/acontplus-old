@@ -6,7 +6,7 @@ import {SubCategoryRepository} from "@accounting/core/repositories/sub-category.
   providedIn: 'root'
 })
 
-export class SubCategoryUsecase {
+export class SubCategoryUseCase {
   constructor(private repo: SubCategoryRepository) { }
 
   getAll<T>(obj:T) {

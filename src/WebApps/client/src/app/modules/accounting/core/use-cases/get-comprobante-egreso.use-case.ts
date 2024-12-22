@@ -6,7 +6,7 @@ import {ComprobanteEgresoRepository} from "@accounting/core/repositories/comprob
   providedIn: 'root'
 })
 
-export class GetComprobanteEgresoUsecase {
+export class GetComprobanteEgresoUseCase {
   constructor(private repo: ComprobanteEgresoRepository) {}
 
    getCuotasByIdCuentaPorPagar(idCuentaPorPagar:number) {

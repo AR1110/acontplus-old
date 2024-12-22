@@ -8,7 +8,7 @@ import {FORMAT_REPORT, TIPO_TRANSACCION } from '@core/constants/global.constants
 import {SharedService} from "@core/services/shared.service";
 import {getValidId} from "@core/utils/utils";
 import {ACCOUNTING_CODE_REPORT} from "@accounting/core/enums/accounting.constants";
-import {ResumenContableUsecase} from "@accounting/core/usecases/resumen-contable.usecase";
+import {ResumenContableUseCase} from "@accounting/core/use-cases/resumen-contable.use-case";
 
 @Component({
     selector: 'app-resumen-contable',
@@ -21,7 +21,7 @@ import {ResumenContableUsecase} from "@accounting/core/usecases/resumen-contable
     styles: ``
 })
 export class ResumenContableComponent {
-  private _resumenContableCaseUse = inject(ResumenContableUsecase)
+  private _resumenContableCaseUse = inject(ResumenContableUseCase)
   private sharedSvc = inject(SharedService)
    subcategories: SubCategorySelectHtmlOnly[]=[]
    transactionTypes:any[]=[];

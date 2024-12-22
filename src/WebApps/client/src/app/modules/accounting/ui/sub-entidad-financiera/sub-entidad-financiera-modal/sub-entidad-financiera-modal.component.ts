@@ -5,7 +5,7 @@ import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { isApiResponse } from '@core/models/api-response';
-import {SubEntidadFinancieraUsecase} from "@accounting/core/usecases/sub-entidad-financiera.usecase";
+import {SubEntidadFinancieraUseCase} from "@accounting/core/use-cases/sub-entidad-financiera.use-case";
 
 
 @Component({
@@ -21,7 +21,7 @@ export class SubEntidadFinancieraModalComponent {
   modal = inject(NgbActiveModal);
 
   tS = inject(ToasterService);
-  private useCase = inject(SubEntidadFinancieraUsecase)
+  private useCase = inject(SubEntidadFinancieraUseCase)
 
   @Input() params = {
     idEntidadFinanciera: 0,

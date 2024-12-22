@@ -13,8 +13,8 @@ import { MultiplesPaymentType, PaymentData, PaymentDetail, PaymentHistory } from
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { DatePipe } from '@angular/common';
-import {ComprobanteIngresoUsecase} from "@accounting/core/usecases/comprobante-ingreso.usecase";
-import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobrar.usecase";
+import {ComprobanteIngresoUseCase} from "@accounting/core/use-cases/comprobante-ingreso.use-case";
+import {CuentaPorCobrarUseCase} from "@accounting/core/use-cases/cuenta-por-cobrar.use-case";
 
 @Component({
     selector: 'app-comprobante-ingreso-lote-modal',
@@ -44,8 +44,8 @@ export class ComprobanteIngresoLoteModalComponent {
   modal = inject(NgbActiveModal);
   modalSvc = inject(ModalService);
   tS = inject(ToasterService)
-  private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUsecase);
-  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUsecase)
+  private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);
+  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase)
 
 
 
