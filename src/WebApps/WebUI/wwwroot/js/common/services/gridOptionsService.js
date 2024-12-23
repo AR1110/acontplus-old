@@ -684,31 +684,31 @@
                     let totalCalculado = calcularTotalProducto(producto.precioTotalSinImpuesto,producto.valorImpuesto ); 
               
                     // Validar Subtotal
-                    if (subtotalEsperado !==subtotalCalculado ) {
-                        errores.push({
-                            uniqueRow,
-                            errorMensaje: `Error en Subtotal: Calculado ${subtotalCalculado}, Esperado ${subtotalEsperado}`,
-                            productoNombre
-                        });
-                    }
+                    // if (subtotalEsperado !==subtotalCalculado ) {
+                    //     errores.push({
+                    //         uniqueRow,
+                    //         errorMensaje: `Error en Subtotal: Calculado ${subtotalCalculado}, Esperado ${subtotalEsperado}`,
+                    //         productoNombre
+                    //     });
+                    // }
 
                     // Validar IVA
-                    if (ivaEsperado !== valorImpuestoCalculado) {
-                        errores.push({
-                            uniqueRow,
-                            errorMensaje: `Error en IVA: Calculado ${valorImpuestoCalculado}, Esperado ${ivaEsperado}`,
-                            productoNombre
-                        });
-                    }
+                    // if (ivaEsperado !== valorImpuestoCalculado) {
+                    //     errores.push({
+                    //         uniqueRow,
+                    //         errorMensaje: `Error en IVA: Calculado ${valorImpuestoCalculado}, Esperado ${ivaEsperado}`,
+                    //         productoNombre
+                    //     });
+                    // }
 
                     // Validar Total
-                    if (totalEsperado !== totalCalculado) { 
-                        errores.push({
-                            uniqueRow,
-                            errorMensaje: `Error en Total: Calculado <b>${totalCalculado}</b>, Esperado <b>${totalEsperado}</b>`,
-                            productoNombre
-                        });
-                    }
+                    // if (totalEsperado !== totalCalculado) { 
+                    //     errores.push({
+                    //         uniqueRow,
+                    //         errorMensaje: `Error en Total: Calculado <b>${totalCalculado}</b>, Esperado <b>${totalEsperado}</b>`,
+                    //         productoNombre
+                    //     });
+                    // }
 
                     // Validar cantidad de transacción
                     if (typeof cantidadTransaccion !== 'number') {
