@@ -4,7 +4,6 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { UserManualService } from '@modules/common/services/user-manual.service';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatCardModule } from '@angular/material/card';
@@ -21,17 +20,11 @@ import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { QuillModules, QuillViewComponent } from 'ngx-quill';
 import { FormsModule } from '@angular/forms';
-
-interface Manual {
-  id: number;
-  title: string;
-  content: string;
-  safeEmbedCode?: SafeHtml;
-  totalRecords?: number;
-}
+import { UserManualUseCase } from '@modules/common/core/use-cases/user-manual.use-case';
+import { UserManual } from '@modules/common/core/domain/user-manual.model';
 
 @Component({
-  selector: 'app-user-manual-page',
+  selector: 'app-user-manual',
   imports: [
     BreadcrumbComponent,
     MatCardModule,
@@ -62,15 +55,14 @@ export class UserManualPageComponent {
   panelOpenState = -1;
   quillModules: QuillModules = {}; // Will inherit from global config
   private readonly _sanitizer = inject(DomSanitizer);
-  private readonly _userManualService = inject(UserManualService);
+  private readonly _userManualUseCase = inject(UserManualUseCase);
 
   loadData() {
     this.data.pageIndex = this.pagination().pageIndex + 1;
     this.data.pageSize = this.pagination().pageSize;
-    this._userManualService.get(this.data).subscribe((response) => {
+    this._userManualUseCase.get(this.data).subscribe((response) => {
       this.modules = response.modules;
-      // console.log(response.userManuals);
-      this.manuals = response.userManuals.map((manual: Manual) => ({
+      this.manuals = response.userManuals.map((manual: UserManual) => ({
         ...manual,
         safeEmbedCode: this._sanitizer.bypassSecurityTrustHtml(
           manual.content
@@ -89,7 +81,6 @@ export class UserManualPageComponent {
           totalRecords: this.manuals[0]?.totalRecords || 0,
         };
       });
-      // console.log(this.manuals);
     });
   }
 

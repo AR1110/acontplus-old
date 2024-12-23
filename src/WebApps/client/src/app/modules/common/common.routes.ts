@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { UserManualPageComponent } from '@modules/common/pages/user-manual-page/user-manual-page.component';
+import { UserManualPageComponent } from '@modules/common/ui/user-manual/user-manual-page.component';
 
 export const routes: Route[] = [
   {
