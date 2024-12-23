@@ -7,7 +7,7 @@ import {ControlCajaRepository} from "@accounting/core/repositories/control-caja.
   providedIn: 'root'
 })
 
-export class ControlCajaUsecase {
+export class ControlCajaUseCase {
   constructor(private repo: ControlCajaRepository) { }
 
   getAll<T>(obj:T) {

@@ -5,7 +5,7 @@ import {CuentaPorPagarRepository} from "@accounting/core/repositories/cuenta-por
   providedIn: 'root'
 })
 
-export class GetCuentaPorPagarUsecase {
+export class GetCuentaPorPagarUseCase {
   constructor(private repo: CuentaPorPagarRepository) {}
 
   getDataFilter(){

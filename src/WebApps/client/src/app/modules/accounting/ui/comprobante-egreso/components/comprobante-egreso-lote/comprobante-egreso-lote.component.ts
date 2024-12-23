@@ -27,7 +27,7 @@ import {
 } from "@accounting/utils/comprobante-egreso/obtener-cuotas-por-pagar-estado.util";
 import {obtenerCuentasPorPagarEstado} from "@accounting/utils/comprobante-egreso/obtener-cuentas-por-pagar-estado.util";
 import { FormsModule } from '@angular/forms';
-import {GetComprobanteEgresoUsecase} from "@accounting/core/usecases/get-comprobante-egreso.usecase";
+import {GetComprobanteEgresoUseCase} from "@accounting/core/use-cases/get-comprobante-egreso.use-case";
 
 @Component({
   selector: 'app-comprobante-ingreso-lote',
@@ -56,7 +56,7 @@ export class ComprobanteEgresoLoteComponent {
   private dialogSvc = inject(DialogService);
   private tS = inject(ToasterService);
   comprobanteEgresoStore = inject(ComprobanteEgresoStore);
-  private useCase = inject(GetComprobanteEgresoUsecase)
+  private useCase = inject(GetComprobanteEgresoUseCase)
 
 
 

@@ -30,7 +30,7 @@ import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
-import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobrar.usecase";
+import {CuentaPorCobrarUseCase} from "@accounting/core/use-cases/cuenta-por-cobrar.use-case";
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 const imports = [
@@ -84,7 +84,7 @@ export class SaleReportPageComponent {
   empresas: any[] = [];
   format: any;
   provinciasAgrupadas: any[] = [];
-  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUsecase)
+  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase)
 
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);

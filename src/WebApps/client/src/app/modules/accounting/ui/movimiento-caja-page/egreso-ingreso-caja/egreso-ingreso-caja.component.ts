@@ -20,7 +20,7 @@ import {ACCOUNTING_CODE_REPORT} from "@accounting/core/enums/accounting.constant
 import { ActionAnularDirective } from '@shared/directives/permission/action-anular.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import { formatDateToString } from '@core/utils/date.util';
-import {MovimientoCajaUsecase} from "@accounting/core/usecases/movimiento-caja.usecase";
+import {MovimientoCajaUseCase} from "@accounting/core/use-cases/movimiento-caja.use-case";
 
 @Component({
     selector: 'app-egreso-ingreso-caja',
@@ -55,7 +55,7 @@ export class EgresoIngresoCajaComponent {
   private modalSvc = inject(ModalService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
-  private _movimientoCajaUseCase = inject(MovimientoCajaUsecase)
+  private _movimientoCajaUseCase = inject(MovimientoCajaUseCase)
 
   getMovimientosCaja() {
     let params = {

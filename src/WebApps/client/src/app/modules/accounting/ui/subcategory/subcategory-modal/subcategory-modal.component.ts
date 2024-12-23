@@ -12,7 +12,7 @@ import {
 } from '@angular/forms';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import {SubCategoryUsecase} from "@accounting/core/usecases/sub-category.usecase";
+import {SubCategoryUseCase} from "@accounting/core/use-cases/sub-category.use-case";
 
 @Component({
   selector: 'app-subcategory-modal',
@@ -44,7 +44,7 @@ export class SubcategoryModalComponent {
   private readonly modalRef = inject(NgbActiveModal);
   private readonly toastService = inject(ToasterService);
 
-  private _subCategoryUseCase = inject(SubCategoryUsecase)
+  private _subCategoryUseCase = inject(SubCategoryUseCase)
 
 
   get() {

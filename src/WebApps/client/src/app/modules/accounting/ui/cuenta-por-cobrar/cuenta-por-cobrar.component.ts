@@ -14,7 +14,7 @@ import { ComprobanteIngresoOpenModalService } from '@accounting/ui/comprobante-i
 import { Pagination } from '@shared/models/pagination.model';
 import { forkJoin } from 'rxjs';
 import { formatDateToString } from '@core/utils/date.util';
-import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobrar.usecase";
+import {CuentaPorCobrarUseCase} from "@accounting/core/use-cases/cuenta-por-cobrar.use-case";
 
 
 
@@ -33,7 +33,7 @@ import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobra
 })
 export class CuentaPorCobrarComponent {
 
-  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUsecase)
+  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase)
   tS = inject(ToasterService);
   comprobanteIngresoOpenModalSvc = inject(ComprobanteIngresoOpenModalService)
 

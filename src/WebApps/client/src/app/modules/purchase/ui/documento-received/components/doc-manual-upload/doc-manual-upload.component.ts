@@ -16,7 +16,7 @@ import { MatIcon } from '@angular/material/icon';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { SubCategoryUsecase } from '@accounting/core/usecases/sub-category.usecase';
+import { SubCategoryUseCase } from '@accounting/core/use-cases/sub-category.use-case';
 import { ApiResponse } from '@core/models/api-response';
 import { catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
 
@@ -58,7 +58,7 @@ export class DocManualUploadComponent {
   private readonly dialogRef = inject(MatDialogRef<DocManualUploadComponent>);
   private readonly _docReceivedService = inject(DocumentReceivedWebRepository);
 
-  private readonly _subCategoryUseCase = inject(SubCategoryUsecase);
+  private readonly _subCategoryUseCase = inject(SubCategoryUseCase);
 
   private readonly _tS = inject(ToasterService);
 

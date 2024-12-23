@@ -55,11 +55,11 @@ import {finalize, forkJoin, switchMap, throwError} from 'rxjs';
 import {ParameterReportUtil} from "@shared/utils/parameter-report.util";
 import {SharedService} from "@core/services/shared.service";
 import {SelectionModel} from '@angular/cdk/collections'; ;
-import {GetCuentaPorPagarUsecase} from "@accounting/core/usecases/get-cuenta-por-pagar.usecase";
+import {GetCuentaPorPagarUseCase} from "@accounting/core/use-cases/get-cuenta-por-pagar.use-case";
 import {
   ComprobanteEgresoLoteComponent
 } from "@accounting/ui/comprobante-egreso/components/comprobante-egreso-lote/comprobante-egreso-lote.component";
-import {GetComprobanteEgresoUsecase} from "@accounting/core/usecases/get-comprobante-egreso.usecase";
+import {GetComprobanteEgresoUseCase} from "@accounting/core/use-cases/get-comprobante-egreso.use-case";
 
 
 @Component({
@@ -90,8 +90,8 @@ export class CuentaPorPagarListaComponent {
   private tS = inject(ToasterService);
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService)
-  private useCase = inject(GetCuentaPorPagarUsecase)
-  private _comprobanteEgresoUseCase = inject(GetComprobanteEgresoUsecase)
+  private useCase = inject(GetCuentaPorPagarUseCase)
+  private _comprobanteEgresoUseCase = inject(GetComprobanteEgresoUseCase)
 
   estabs: GroupedEstab[] = [];
   estadosDoc = [] as any[];

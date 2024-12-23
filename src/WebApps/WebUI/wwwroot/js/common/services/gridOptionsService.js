@@ -650,15 +650,13 @@
 
             function calcularTotalProducto(subtotal, iva) {
 
-            let total = fS.roundNumber(subtotal,
-                    pricingUtils.max_dos
-                ) + fS.roundNumber(iva, pricingUtils.max_dos)
+            let total =  pricingUtils.calcularTotalConImpuesto(subtotal, iva) 
 
-                return total;
+                return fS.roundNumber(total, pricingUtils.max_dos);
             }
             function getMaxDecimal(input) {
                 const partes = input.toString().split(".");
-                return partes.length > 1 ? partes[1].length : 1;
+                return partes.length > 1 ? partes[1].length : pricingUtils.max_cinco;
             }
 
             function validarProducto(productos) {
@@ -672,12 +670,8 @@
                     const cantidadTransaccion = producto.cantidad * producto.conversion;
 
                     // Calcular valores esperados
-                    let subtotalEsperado = calcularSubtotalProducto(producto); 
-                   
-
-                    let ivaEsperado = pricingUtils.calculateTaxValue(subtotalEsperado, producto.tarifa); 
-                    
-                     
+                    let subtotalEsperado = calcularSubtotalProducto(producto);  
+                    let ivaEsperado = pricingUtils.calculateTaxValue(subtotalEsperado, producto.tarifa);  
                     let totalEsperado = calcularTotalProducto(subtotalEsperado, ivaEsperado); 
 
                     // Redondear valores esperados con base en los decimales del producto
@@ -687,7 +681,7 @@
 
                     let subtotalCalculado = fS.roundNumber(producto.precioTotalSinImpuesto, pricingUtils.max_dos);
                     let valorImpuestoCalculado = fS.roundNumber(producto.valorImpuesto, pricingUtils.max_dos);
-                    let totalCalculado = fS.roundNumber(producto.total, pricingUtils.max_dos);
+                    let totalCalculado = calcularTotalProducto(producto.precioTotalSinImpuesto,producto.valorImpuesto ); 
               
                     // Validar Subtotal
                     if (subtotalEsperado !==subtotalCalculado ) {

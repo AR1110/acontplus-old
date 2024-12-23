@@ -15,7 +15,7 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.interface";
 import { formatDateToString } from '@core/utils/date.util';
-import {ControlCajaUsecase} from "@accounting/core/usecases/control-caja.usecase";
+import {ControlCajaUseCase} from "@accounting/core/use-cases/control-caja.use-case";
 
 @Component({
     selector: 'app-filtro-detalle-caja-report-modal',
@@ -47,7 +47,7 @@ export class FiltroDetalleCajaReportModal {
     timePicker: true,
     format: 'YYYY-MM-DD HH:mm',
   };
-  private _controlCajaUseCase = inject(ControlCajaUsecase)
+  private _controlCajaUseCase = inject(ControlCajaUseCase)
 
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);

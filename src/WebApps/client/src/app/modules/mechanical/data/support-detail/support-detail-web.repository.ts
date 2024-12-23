@@ -8,13 +8,13 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
-import { MedidaProducto } from '@inventory/core/domain/measure.model';
 import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
 import { map } from 'rxjs';
 import { ApiResponse } from "@core/models/api-response";
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { SupportMaintenanceDetail } from '@mechanical/domain/models/support-maintenance.model';
 import {SupportDetailRepository} from "@mechanical/domain/repositories/support-detail.repository";
+import {MedidaProducto} from "@inventory/domain/models/measure.model";
 
 @Injectable({
   providedIn: 'root'

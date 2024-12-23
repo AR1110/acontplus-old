@@ -181,14 +181,15 @@ export class SupportAddEditModalComponent {
         if (!textSearch || textSearch.length < 2) {
           return of([]);
         }
-        return this.supportSvc.searchCustomerVehicle({ textSearch }).pipe(
-          tap(() => (this.dataSearchVehicle.searchFailed = false)),
-          catchError((error) => {
-            console.log(error);
-            this.dataSearchVehicle.searchFailed = true;
-            return of([]);
-          })
-        );
+        // return this.supportSvc.searchCustomerVehicle({ textSearch }).pipe(
+        //   tap(() => (this.dataSearchVehicle.searchFailed = false)),
+        //   catchError((error) => {
+        //     console.log(error);
+        //     this.dataSearchVehicle.searchFailed = true;
+        //     return of([]);
+        //   })
+        // );
+        return of([])
       }),
       tap(() => (this.dataSearchVehicle.searching = false))
     );
