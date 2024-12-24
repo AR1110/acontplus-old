@@ -1,13 +1,14 @@
 import { getCustomUrlContext } from '@core/interceptors/inject-session.interceptor';
 import { PATHS, PATHS_API } from '@domain/enums/main.enum';
-import { StateInstanceGreenApiResponse } from '@domain/models/qr-whatsapp.model';
+import { StateInstanceGreenApiResponse } from '@domain/models/api-green.model';
 import { HttpClient,  } from '@angular/common/http';
 import {    Injectable } from '@angular/core';
+import {ApiGreenRepository} from "@domain/repositories/api-green.repository";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ApiGreenApiService {
+export class ApiGreenWebRepository implements ApiGreenRepository{
 
   #idInstance = '7103845341';
   #apiTokenInstance = 'a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c';
@@ -20,9 +21,13 @@ export class ApiGreenApiService {
   ) {
   }
 
+  private pathString(method: string){
+    return `${this.#url}${this.#idInstance}/${method}/${this.#apiTokenInstance}`
+  }
+
   getStateInstance() {
     return this.http.get<StateInstanceGreenApiResponse>(
-      `${this.#url}${this.#idInstance}/getStateInstance/${this.#apiTokenInstance}`,
+      this.pathString('getStateInstance'),
     );
   }
 
@@ -34,7 +39,7 @@ export class ApiGreenApiService {
     }
 
     return this.http.post<StateInstanceGreenApiResponse>(
-      `${this.#url}${this.#idInstance}/sendMessage/${this.#apiTokenInstance}`, body,
+      this.pathString('sendMessage') , body,
       {
         context: getCustomUrlContext()
       }
@@ -51,7 +56,7 @@ export class ApiGreenApiService {
 
 
     return this.http.post<StateInstanceGreenApiResponse>(
-      `${this.#url}${this.#idInstance}/sendFileByUpload/${this.#apiTokenInstance}`, payload,
+      this.pathString('sendFileByUpload'), payload,
       {
         context: getCustomUrlContext()
       }
