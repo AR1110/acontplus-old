@@ -196,7 +196,7 @@ BEGIN
 			       ,byStock				INT 
 			       ,pageIndex			INT 
 			       ,pageSize            INT
-			       ,bycolumn     VARCHAR(5)
+			       ,byColumn     VARCHAR(5)
 			    )
 
 
