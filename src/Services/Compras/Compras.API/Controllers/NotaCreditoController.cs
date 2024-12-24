@@ -5,14 +5,13 @@ namespace Compras.API.Controllers;
 public class NotaCreditoController : BaseApiController
 {
     private IConfiguration _configuration;
-    private readonly ICustomLogger _log;
     private readonly INotaCreditoService _ncpSvc;
 
-    public NotaCreditoController(IConfiguration configuration, INotaCreditoService ncpSvc, ICustomLogger log)
+    public NotaCreditoController(IConfiguration configuration, INotaCreditoService ncpSvc)
     {
         _configuration = configuration;
         _ncpSvc = ncpSvc;
-        _log = log;
+        
     }
 
     [HttpGet("Get")]
@@ -31,7 +30,6 @@ public class NotaCreditoController : BaseApiController
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al listar nota credito proveedor: \n" + ex);
             return BadRequest("Error on get: " + ex.Message);
         }
     }
@@ -47,7 +45,6 @@ public class NotaCreditoController : BaseApiController
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al crear nota credito proveedor: " + ex);
             return BadRequest(ex.Message);
         }
     }
@@ -69,7 +66,6 @@ public class NotaCreditoController : BaseApiController
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al obtener datos de nota credito proveedor: \n" + ex);
             return BadRequest("Error on get by id: " + ex.Message);
         }
     }
@@ -85,7 +81,6 @@ public class NotaCreditoController : BaseApiController
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al actualizar nota credito proveedor: " + ex);
             return BadRequest(ex.Message);
         }
     }
@@ -102,7 +97,6 @@ public class NotaCreditoController : BaseApiController
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al eliminar doc. nota credito proveedor: " + ex);
             return BadRequest(ex.Message);
         }
     }

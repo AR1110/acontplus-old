@@ -24,11 +24,21 @@ public class RetencionAtsController(IRetencionAtsService retencionAtsService) : 
             { "infoCompRet", SqlStringParam.Sanitize(data.infoCompRet) },
             { "docsSust", SqlStringParam.Sanitize(data.docsSust) },
             { "impuestos", SqlStringParam.Sanitize(data.impuestos) },
-            { "retenciones", SqlStringParam.Sanitize(data.retenciones) },
-            { "reembolsos", SqlStringParam.Sanitize(data.reembolsos) },
-            { "payments", SqlStringParam.Sanitize(data.payments) },
-            { "infoAdicional", SqlStringParam.Sanitize(data.infoAdicional) },
+            { "retenciones", SqlStringParam.Sanitize(data.retenciones) }
         };
+
+        // Add optional parameters only if they are not null or empty
+        if (!string.IsNullOrEmpty(data.reembolsos))
+        {
+            parameters["reembolsos"] = SqlStringParam.Sanitize(data.reembolsos);
+        }
+
+        parameters["payments"] = SqlStringParam.Sanitize(data.payments);
+
+        if (!string.IsNullOrEmpty(data.infoAdicional))
+        {
+            parameters["infoAdicional"] = SqlStringParam.Sanitize(data.infoAdicional);
+        }
 
         return Ok(await retencionAtsService.AddAsync(parameters));
     }

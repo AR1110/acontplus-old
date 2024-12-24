@@ -8,14 +8,13 @@ public class FacturaCompraController : ControllerBase
 {
     private IConfiguration _configuration;
     private readonly IFacturaCompraService _facturaCompraSvc;
-    private readonly ICustomLogger _log;
 
-    public FacturaCompraController(IConfiguration configuration, IFacturaCompraService facturaCompraSvc,
-        ICustomLogger log)
+    public FacturaCompraController(IConfiguration configuration, IFacturaCompraService facturaCompraSvc
+        )
     {
         _configuration = configuration;
         _facturaCompraSvc = facturaCompraSvc;
-        _log = log;
+        
     }
 
     [HttpGet("Get")]
@@ -34,7 +33,6 @@ public class FacturaCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al listar Factura Compra: \n" + ex);
             return BadRequest("Error on get: " + ex.Message);
         }
     }
@@ -50,7 +48,6 @@ public class FacturaCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al crear factura compra: " + ex);
             return BadRequest(ex.Message);
         }
     }
@@ -72,7 +69,6 @@ public class FacturaCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al obtener datos de factuea Compra: \n" + ex);
             return BadRequest("Error on get by id: " + ex.Message);
         }
     }
@@ -88,7 +84,6 @@ public class FacturaCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al actualizar factura compra: " + ex);
             return BadRequest(ex.Message);
         }
     }
@@ -105,7 +100,6 @@ public class FacturaCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al anular doc. factura compra: " + ex);
             return BadRequest(ex.Message);
         }
     }
