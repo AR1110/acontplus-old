@@ -1016,16 +1016,25 @@
             })
         }
 
-        service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
-                if (response.code === "0") {
-                    return response;
-                }
-                if (response.code === "1") {
-                    return response
-                }
-            })
+        // service.delete = function (id) {
+        //     return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
+        //         if (response.code === "0") {
+        //             return response;
+        //         }
+        //         if (response.code === "1") {
+        //             return response
+        //         }
+        //     })
+        // }
+
+        service.anular = function(id, infoAdicional){
+            let data = {
+                infoAdicional
+            }
+            return mS.getData('put',  `${url}Cancel/${id}`, {data})
+
         }
+
 
         //Validaciones
         service.getTotales = function (notaEntregas) {

@@ -505,7 +505,9 @@
                     component: 'modalEliminarComponent',
                     size: 'md',
                     params: {
-                        id: item.idDocumento
+                        id: item.idDocumento,
+                        isFactElect: true,
+                        codDoc: 'FV'
                     }
                 })
                 modalRef.result.then(result => { 

@@ -3,7 +3,7 @@
 public class CuentaPorCobrarService(IAdoRepository adoRepository) : ICuentaPorCobrarService
 {
     private const string ModuleName = "Contabilidad.CuentaPorCobrar_";
-
+     
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters);
@@ -11,9 +11,10 @@ public class CuentaPorCobrarService(IAdoRepository adoRepository) : ICuentaPorCo
     }
 
 
+    //
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Insert", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"Contabilidad.CuotaPorCobrar_Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)

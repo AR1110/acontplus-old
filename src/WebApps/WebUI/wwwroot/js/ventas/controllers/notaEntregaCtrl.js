@@ -488,42 +488,60 @@
                     return
                 }
 
+                let modalRef = modalSvc.openWithComponent({
+                    component: 'modalEliminarComponent',
+                    size: 'md',
+                    params: {
+                        id: item.idDocumento, 
+                        codDoc: 'NE'
+                    }
+                })
+                modalRef.result.then(result => { 
+                    if (result && typeof result === 'object' && result.esAnulado) {
 
-                let { isConfirmed } = await Swal.fire({
-                    title: "<small>Anular Nota de Entrega?</small>",
-                    html: `<small>Esta Ud. seguro/a de anular este Documento <b>N° ${item.serieComprobante
-                        }</b></small>?`,
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    cancelButtonText: 'No, cancelar!',
-                    confirmButtonText: "Si, anular!"
+                        if (typeof $scope.permisoEditarDoc === "object" && $scope.permisoEditarDoc.requiereClave) {
+                            userCustomerPermissionSvc.updateRequestKey(paramsPermission);
+                        }
+                        getNotaEntregas();
+                    }
                 })
 
-                if (isConfirmed) {
-                    showLoader();
-                    notaEntregaSvc.delete(item.idDocumento).then(response => {
-                        hideLoader();
-                        if (response.code === "0") {
-                            fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {
-                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
-                            //Una vez actualizado el documento  
-                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
+                // let { isConfirmed } = await Swal.fire({
+                //     title: "<small>Anular Nota de Entrega?</small>",
+                //     html: `<small>Esta Ud. seguro/a de anular este Documento <b>N° ${item.serieComprobante
+                //         }</b></small>?`,
+                //     icon: "warning",
+                //     showCancelButton: true,
+                //     confirmButtonColor: "#3085d6",
+                //     cancelButtonColor: "#d33",
+                //     cancelButtonText: 'No, cancelar!',
+                //     confirmButtonText: "Si, anular!"
+                // })
 
-                            }
-                            getNotaEntregas();
-                        }
-                    }).catch(error => {
-                        hideLoader();
-                        console.log(error);
-                    }).finally(() => hideLoader());
+                // if (isConfirmed) {
+                //     showLoader();
+                //     notaEntregaSvc.delete(item.idDocumento).then(response => {
+                //         hideLoader();
+                //         if (response.code === "0") {
+                //             fS.sweetAlert('warning', response.message, response.titleSms);
+                //         }
+                //         if (response.code === "1") {
+                //             fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
-                }
+                           
+                //             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
+                //                 userCustomerPermissionSvc.updateRequestKey(paramsPermission)
+
+                //             }
+                //             getNotaEntregas();
+                //         }
+                //     }).catch(error => {
+                //         hideLoader();
+                //         console.log(error);
+                //     }).finally(() => hideLoader());
+
+                // }
             } catch (error) {
                 hideLoader();
                 console.log(error)

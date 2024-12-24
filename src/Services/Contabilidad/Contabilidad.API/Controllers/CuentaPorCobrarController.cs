@@ -1,4 +1,5 @@
-﻿using Common.AppSettings.Extensions;
+﻿using Autofac.Core;
+using Common.AppSettings.Extensions;
 
 namespace Contabilidad.API.Controllers;
 
@@ -18,6 +19,7 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
         return Ok(response);
     }
 
+   // este sp trasladar a Controlador CuotaPorCobrarController y el servicio respectivamente
     [HttpPost("Insert/Cuota")]
     public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
     {
