@@ -1,6 +1,6 @@
 export enum GlobalRoutes {
-  ComprasReportes = 'purchase/reports-page',
-  ComprasReportesRecepcion = 'purchase/reception-reports-page',
+  ComprasReportes = 'purchase/reports',
+  ComprasReportesRecepcion = 'purchase/reception-reports',
   ConfigDocConfig = 'config/doc-config-page',
   ConfigEstablishment = 'config/establishment',
   ConfigGeneralConfig = 'config/general-config-page',
@@ -72,7 +72,7 @@ export enum GlobalRoutes {
   ContabilidadCaja = 'accounting/cashbox-page',
   ContabilidadCarteraProveedor = 'accounting/reports/supplier-accounts',
   ContabilidadAccountingSummary = 'accounting/resumen-contable',
-  ContabilidadMovimientoCajaReport = 'accounting/movimiento-caja',
+  ContabilidadMovimientoCajaReport = 'accounting/movimiento-caja-report',
 
   //COMPRAS
   ComprasFacturaCompra = 'purchase/factura-fisica',

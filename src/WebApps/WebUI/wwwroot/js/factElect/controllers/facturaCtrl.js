@@ -1090,10 +1090,7 @@
             updateRefProductoVenta();
 
             // Muestra una notificación de éxito
-            tS.toastr({
-                type: 'success',
-                message: 'Fila actualizada correctamente'
-            });
+           
         }
 
 

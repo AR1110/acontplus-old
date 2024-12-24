@@ -426,7 +426,7 @@
                         fractionedMeasures,
                         tags
                     } = JSON.parse(response.payload)
-
+                    let dataArticulo = product[0];
                     let articulo = {
                         codImpuesto: dataArticulo.codigo, //Codigo Impuesto 
                         codigoArticulo: dataArticulo.codigoArticulo,
