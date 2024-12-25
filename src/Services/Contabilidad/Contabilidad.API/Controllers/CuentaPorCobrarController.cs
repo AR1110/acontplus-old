@@ -33,11 +33,12 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
     [HttpPut("Update/Cuota")]
     public async Task<IActionResult> Update([FromBody] ApiRequest paremeter)
     {
+
         var parameters = new Dictionary<string, object>
         {
             { "idUsuarioRol", User.GetUserRoleId() },
             { "json", DataConverters.SerializeDictionary(paremeter.Data) }
         };
-        return Ok(await cuentaPorCobrarService.AddAsync(parameters));
+        return Ok(await cuentaPorCobrarService.UpdateAsync(parameters));
     }
 }

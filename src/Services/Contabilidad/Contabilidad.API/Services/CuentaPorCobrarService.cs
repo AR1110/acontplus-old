@@ -19,7 +19,7 @@ public class CuentaPorCobrarService(IAdoRepository adoRepository) : ICuentaPorCo
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Update", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"Contabilidad.CuotaPorCobrar_Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
