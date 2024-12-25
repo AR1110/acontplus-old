@@ -740,6 +740,7 @@
                             bodega: bodega.bodega,
                             descripcion: bodega.bodega,
                             defaultBodega: bodega.defaultBodega,
+                            idEstablecimiento: bodega.idEstablecimiento,
                         }))
                 }))
                 return estabs;
@@ -759,6 +760,7 @@
                         codEstab: item.codEstab,
                         defaultEstab: item.defaultEstab,
                         bodegas: [{
+                            idEstablecimiento: item.idEstablecimiento,
                             idBodega: item.idBodega,
                             descripcion: item.bodega,
                             defaultBodega: item.defaultBodega
@@ -766,6 +768,7 @@
                     });
                 } else {
                     existingItem.bodegas.push({
+                        idEstablecimiento: item.idEstablecimiento,
                         idBodega: item.idBodega,
                         descripcion: item.bodega,
                         defaultBodega: item.defaultBodega
