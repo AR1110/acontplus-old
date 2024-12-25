@@ -933,6 +933,7 @@ sticky header table
     padding-top: 56.25%;
     /* Relación de aspecto 16:9 (ajustable) */
     overflow: hidden;
+    height: 100vh;
 }
 
 .iframe-container iframe {

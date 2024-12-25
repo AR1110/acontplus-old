@@ -1,63 +1,58 @@
-<form autocomplete="off" [formGroup]="dataForm" (ngSubmit)="save()">
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">{{titleModal}}</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss( )"></button>
-</div>
-<div class="modal-body">
-  <div class="row">
-    <div class="col-xl-12 col-lg-12 col-md-12 col-12">
-      <div class="form-group">
-        <label for="entidadFinanciera">Entidad Financiera: </label>
-        <input type="text" class="form-control" disabled [value]="params.nameEntidadFinanciera">
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xl-12 col-lg-12 col-md-12 col-12">
-      <div class="form-group">
-        <label for="descripcion">Descripción: <span class="text-danger">*</span> </label>
-        <input type="text" class="form-control" formControlName="descripcion" (change)="onChangeDescripcion()" >
-      </div>
-    </div>
-    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="entidadFinanciera">Código: <span class="text-danger">*</span> </label>
-        <input type="text" class="form-control" formControlName="codigo">
-      </div>
-    </div>
-    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 d-flex align-items-center">
-      <div class="icheck-primary ">
-        <input type="checkbox" formControlName="controlCaja"  name="controlCaja" id="controlCaja">
-        <label for="controlCaja">Registro cuadre de caja</label>
-      </div>
-    </div>
-  </div>
+<app-mat-custom-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [title]="titleModal"
+  (close)="dialogRef.close()"
+/>
 
-  @if (params.idSubEntidadFinanciera>0) {
+<ng-template #containerTemplate>
+  <form id="dataForm" autocomplete="off" [formGroup]="dataForm" (ngSubmit)="save()">
 
-    <div class="row justify-content-between"  >
-      <div class="col-lg-3">
-        <div class="icheck-primary">
-          <input type="radio" formControlName="estado" [value]="true" id="someRadioId1" name="estado" />
-          <label for="someRadioId1">Activo</label>
-        </div>
-      </div>
-      <div class="col-lg-3">
-        <div class="icheck-primary">
-          <input type="radio" formControlName="estado" [value]="false" id="someRadioId2" name="estado" />
-          <label for="someRadioId2">Inactivo</label>
-        </div>
-      </div>
-    </div>
-  }
 
-</div>
-<div class="modal-footer">
-  <button type="submit" class="btn btn-success">
+     <div class="d-grid gap-2">
+       <mat-form-field class="w-100">
+         <mat-label>Entidad Financiera</mat-label>
+         <input matInput disabled [value]="params.nameEntidadFinanciera">
+       </mat-form-field>
+
+
+       <mat-form-field class="w-100">
+         <mat-label>Descripción</mat-label>
+         <input matInput formControlName="descripcion" (change)="onChangeDescripcion()">
+       </mat-form-field>
+      <div
+        class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2 gx-1 gy-1"
+      >
+
+      <mat-form-field >
+        <mat-label>Código</mat-label>
+        <input matInput formControlName="codigo">
+      </mat-form-field>
+
+        <mat-slide-toggle formControlName="controlCaja">Registro cuadre de caja</mat-slide-toggle>
+
+
+      </div>
+
+
+       @if(params.idSubEntidadFinanciera>0){
+         <mat-radio-group aria-label="Estado" formControlName="estado">
+           <mat-radio-button [value]="true">Activo</mat-radio-button>
+           <mat-radio-button [value]="false">Inactivo</mat-radio-button>
+         </mat-radio-group>
+
+       }
+
+     </div>
+  </form>
+</ng-template>
+
+<ng-template #actionsTemplate>
+  <button type="submit" mat-flat-button (click)="save()" form="dataForm">
+    <mat-icon>save</mat-icon>
     {{btnText}}
   </button>
-  <button type="button" class="btn btn-dark" (click)="modal.dismiss( )">
-    &times; Cerrar
-  </button>
-</div>
-</form>
+</ng-template>
+
+
+

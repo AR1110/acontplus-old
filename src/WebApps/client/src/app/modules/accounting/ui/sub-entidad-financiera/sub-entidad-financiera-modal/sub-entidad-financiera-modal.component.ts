@@ -1,11 +1,17 @@
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { Component, inject, Input } from "@angular/core";
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { isApiResponse } from '@core/models/api-response';
 import {SubEntidadFinancieraUseCase} from "@accounting/core/use-cases/sub-entidad-financiera.use-case";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
+import {MatInputModule} from "@angular/material/input";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {MatRadioModule} from "@angular/material/radio";
 
 
 @Component({
@@ -13,17 +19,26 @@ import {SubEntidadFinancieraUseCase} from "@accounting/core/use-cases/sub-entida
     templateUrl: './sub-entidad-financiera-modal.component.html',
     imports: [
         ReactiveFormsModule,
-        FormsModule
+        FormsModule,
+      MatButtonModule,
+      MatIconModule,
+      MatInputModule,
+      MatFormFieldModule,
+      MatSlideToggleModule,
+      MatRadioModule,
+      MatCustomDialogComponent
     ]
 })
 export class SubEntidadFinancieraModalComponent {
 
-  modal = inject(NgbActiveModal);
+  readonly dialogRef = inject(MatDialogRef<SubEntidadFinancieraModalComponent>);
+  readonly data = inject<any>(MAT_DIALOG_DATA);
+
 
   tS = inject(ToasterService);
   private useCase = inject(SubEntidadFinancieraUseCase)
 
-  @Input() params = {
+  params = {
     idEntidadFinanciera: 0,
     nameEntidadFinanciera: '',
     idSubEntidadFinanciera: 0,
@@ -56,6 +71,7 @@ export class SubEntidadFinancieraModalComponent {
 
 
   ngOnInit() {
+    this.params = {...this.params, ...this.data}
     this.dataForm.get("idEntidadFinanciera")?.setValue(this.params.idEntidadFinanciera);
     if (this.params.idSubEntidadFinanciera > 0) {
       this.dataForm.get("idSubEntidadFinanciera")?.setValue(this.params.idSubEntidadFinanciera);
@@ -89,11 +105,7 @@ export class SubEntidadFinancieraModalComponent {
 
       if (!(this.params.idSubEntidadFinanciera > 0)) {
 
-        showLoader();
-        this.useCase.create(data).subscribe({
-          next: (response) => {
-            hideLoader();
-            if (isApiResponse(response)) {
+        this.useCase.create(data).subscribe(  (response) => {
               if (response.code === "0") {
                 this.tS.toastr({
                   type: 'warning',
@@ -105,23 +117,14 @@ export class SubEntidadFinancieraModalComponent {
                   type: 'success',
                   message: response.message
                 })
-                this.modal.close(response)
+                this.dialogRef.close(response)
               }
-            }
-          },
-          error(err) {
-            hideLoader();
-            console.log(err)
-          },
         })
       }
 
       if (this.params.idSubEntidadFinanciera > 0) {
-        showLoader();
-        this.useCase.update(this.params.idSubEntidadFinanciera, data).subscribe({
-          next: (response) => {
-            hideLoader();
-            if (isApiResponse(response)) {
+        this.useCase.update(this.params.idSubEntidadFinanciera, data).subscribe( (response) => {
+
               if (response.code === "0") {
                 this.tS.toastr({
                   type: 'warning',
@@ -133,18 +136,11 @@ export class SubEntidadFinancieraModalComponent {
                   type: 'success',
                   message: response.message
                 })
-                this.modal.close(response)
+                this.dialogRef.close(response)
               }
-            }
-          },
-          error(err) {
-            hideLoader();
-            console.log(err)
-          },
         })
       }
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
   }
