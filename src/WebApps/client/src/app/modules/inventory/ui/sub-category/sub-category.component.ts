@@ -60,7 +60,7 @@ export class SubCategoryComponent {
       pageSize: this.pagination().pageSize,
     };
     if(this.isLoadingResults) return
-    
+
     this.isLoadingResults = true;
 
     this.subCategorySvc.getAll(params).subscribe({

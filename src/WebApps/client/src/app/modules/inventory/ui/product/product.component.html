@@ -3,6 +3,9 @@
 
 <mat-card appearance="outlined">
   <mat-card-content>
+    <div class="d-grid gap-2">
+
+
     <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4">
 
       <div class="col">
@@ -28,10 +31,10 @@
           <button mat-icon-button appProductAddEdit (onResultModal)="refresh()" [disabled]="isLoadingResults">
             <mat-icon>add</mat-icon>
           </button>
-          <button mat-icon-button (click)="refresh()">
+          <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults">
             <mat-icon>refresh</mat-icon>
           </button>
-          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())">
+          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())" [disabled]="isLoadingResults">
             <mat-icon>filter_list</mat-icon>
           </button>
         </div>
@@ -44,56 +47,56 @@
       <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
 
         <div class="col">
-
-          <div class="form-group">
-            <label>SubFamilia</label>
-            <app-sub-category-group [subCategoryGroups]="subCategorias()" (onSelected)="onSelectedSubCategory($event)"
+            <app-sub-category-group
+              [isInputMat]="true"
+              [subCategoryGroups]="subCategorias()" (onSelected)="onSelectedSubCategory($event)"
                                     (onEmptyData)="onEmptyDataSubCategory()" />
-          </div>
         </div>
 
         <div class="col">
-          <div class="form-group">
-            <label>Medida</label>
-            <select #selectElement name="medida" id="medida" class="form-select" [(ngModel)]="dataSearch().idMedida"
-                    (change)="refresh()">
-              <option [ngValue]="0">Todos</option>
+
+          <mat-form-field class="w-100">
+            <mat-label>Medida</mat-label>
+            <mat-select [(ngModel)]="dataSearch().idMedida"
+                        (selectionChange)="refresh()">
+              <mat-option [value]="0">Todos</mat-option>
               @for (item of medidas(); track $index) {
-                <option [ngValue]="item.idMedida">
+                <mat-option [value]="item.idMedida">
                   {{item.descripcion}}
-                </option>
+                </mat-option>
               }
-            </select>
-          </div>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div class="col">
-          <div class="form-group">
-            <label>Marca</label>
-            <select #selectElement name="marca" id="marca" class="form-select" [(ngModel)]="dataSearch().idMarca"
-                    (change)="refresh()">
-              <option [ngValue]="0">Todos</option>
-              @for (item of marcas(); track $index) {
-                <option [ngValue]="item.idMarca" ng-repeat="item in marcas">
-                  {{item.descripcion}}
-                </option>
-              }
-            </select>
-          </div>
-        </div>
-        <div class="col">
-          <div class="form-group">
-            <label>Modelos</label>
-            <select #selectElement name="modelo" id="modelo" class="form-select" [(ngModel)]="dataSearch().idModelo"
-                    (change)="refresh()">
-              <option [ngValue]="0">Todos</option>
-              @for (item of modelos(); track $index) {
 
-                <option [ngValue]="item.idModelo" ng-repeat="item in modelos">
+          <mat-form-field class="w-100">
+            <mat-label>Marca</mat-label>
+            <mat-select [(ngModel)]="dataSearch().idMarca"
+                        (selectionChange)="refresh()">
+              <mat-option [value]="0">Todos</mat-option>
+              @for (item of marcas(); track $index) {
+                <mat-option [value]="item.idMarca">
                   {{item.descripcion}}
-                </option>
+                </mat-option>
               }
-            </select>
-          </div>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+
+          <mat-form-field class="w-100">
+            <mat-label>Modelo</mat-label>
+            <mat-select [(ngModel)]="dataSearch().idModelo"
+                        (selectionChange)="refresh()">
+              <mat-option [value]="0">Todos</mat-option>
+              @for (item of modelos(); track $index) {
+                <mat-option [value]="item.idModelo">
+                  {{item.descripcion}}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
         </div>
       </div>
 
@@ -101,51 +104,53 @@
       <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
 
         <div class="col">
-          <div class="form-group">
-            <label>Tipo Iva</label>
-            <select #selectElement name="tipoIva" id="tipoIva" class="form-select" [(ngModel)]="dataSearch().idTipoIva"
-                    (change)="refresh()">
-              <option [ngValue]="0">Todos</option>
+          <mat-form-field class="w-100">
+            <mat-label>Tipo Iva</mat-label>
+            <mat-select [(ngModel)]="dataSearch().idTipoIva"
+                        (selectionChange)="refresh()">
+              <mat-option [value]="0">Todos</mat-option>
               @for (item of tiposIva(); track $index) {
-
-                <option [ngValue]="item.idTipoIva" ng-repeat="item in tiposIva">
+                <mat-option [value]="item.idTipoIva">
                   {{item.descripcion}}
-                </option>
+                </mat-option>
               }
-            </select>
-          </div>
+            </mat-select>
+          </mat-form-field>
         </div>
 
 
         <div class="col">
-          <div class="form-group">
-            <label>Stock</label>
-            <select #selectElement class="form-select" [(ngModel)]="dataSearch().byStock" (change)="refresh()">
-              <option [ngValue]="null">Todos</option>
-              <option [ngValue]="1">Con Stock</option>
-              <option [ngValue]="2">Sin Stock</option>
-            </select>
-          </div>
+
+          <mat-form-field class="w-100">
+            <mat-label>Stock</mat-label>
+            <mat-select [(ngModel)]="dataSearch().byStock"
+                        (selectionChange)="refresh()">
+              <mat-option [value]="0">Todos</mat-option>
+                <mat-option [value]="1">Con Stock</mat-option>
+                <mat-option [value]="2">Sin Stock</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
 
         <div class="col">
-          <div class="form-group">
-            <label>Estado</label>
-            <select #selectElement name="" id="" class="form-select" [(ngModel)]="dataSearch().status"
-                    (change)="refresh()">
-              <option [ngValue]="null">Todos</option>
-              <option [ngValue]="1">Activo</option>
-              <option [ngValue]="0">Inactivo</option>
-            </select>
-          </div>
+
+          <mat-form-field class="w-100">
+            <mat-label>Estado</mat-label>
+            <mat-select [(ngModel)]="dataSearch().status"
+                        (selectionChange)="refresh()">
+              <mat-option [value]="null">Todos</mat-option>
+              <mat-option [value]="1">Activo</mat-option>
+              <mat-option [value]="0">Inactivo</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
 
         <div class="col d-flex gap-4">
 
           <div class="form-group d-flex flex-column">
-            <label for="fraccionado">Fraccionado</label>
+            <label  >Fraccionado</label>
             <mat-checkbox [(ngModel)]="dataSearch().checkBoxFraccionado" (change)="refresh()"
                           [disabled]="isLoadingResults">
               @if (dataSearch().checkBoxFraccionado) {
@@ -157,7 +162,7 @@
 
           </div>
           <div class="form-group d-flex flex-column">
-            <label for="fraccionado">Inventario</label>
+            <label  >Inventario</label>
             <mat-checkbox [(ngModel)]="dataSearch().checkBoxInventario" (change)="refresh()"
                           [disabled]="isLoadingResults">
               @if (dataSearch().checkBoxInventario) {
@@ -173,6 +178,7 @@
       </div>
 
     }
+    </div>
 
 
 

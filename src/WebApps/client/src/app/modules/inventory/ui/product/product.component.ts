@@ -39,6 +39,7 @@ import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 import {ProductList} from "@inventory/domain/models/product.model";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
 
 
 
@@ -57,6 +58,7 @@ import {MatInputModule} from "@angular/material/input";
         MatMenuModule,
         MatTooltipModule,
         MatCheckboxModule,
+      MatSelectModule,
         CustomTableContainerComponent,
         SubCategoryGroupComponent,
         ProductAddEditDirective,
@@ -91,7 +93,7 @@ export class ProductComponent {
     checkBoxFraccionado: false,
     checkBoxInventario: false,
     status: null,
-    byStock: null,
+    byStock: 0,
     bySubFamilia: 0,
     idMarca: 0,
     idMedida: 0,
