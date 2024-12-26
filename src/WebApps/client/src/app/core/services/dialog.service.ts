@@ -35,18 +35,18 @@ export class DialogService {
       dialogConfig.width = this.getDialogWidth(options.size);
       dialogConfig.maxWidth = '90vw';
       dialogConfig.height = 'auto';
-      dialogConfig.maxHeight = options.isScrollable ? '90vh' : undefined;
+    //  dialogConfig.maxHeight = options.isScrollable ? '90vh' : undefined;
     }
 
-    dialogConfig.panelClass = [
-      'custom-dialog',
-      options.isScrollable ? 'dialog-scrollable' : 'dialog-non-scrollable'
-    ];
+    // dialogConfig.panelClass = [
+    //   'custom-dialog',
+    //   options.isScrollable ? 'dialog-scrollable' : 'dialog-non-scrollable'
+    // ];
 
     dialogConfig.data = options.data;
     dialogConfig.hasBackdrop = true;
     dialogConfig.autoFocus = false;
-    dialogConfig.scrollStrategy = this.overlay.scrollStrategies.block();
+    dialogConfig.scrollStrategy = this.overlay.scrollStrategies.noop();
     dialogConfig.disableClose = options.disableClose ?? true;
 
     const dialogRef = this.dialog.open(component, dialogConfig);

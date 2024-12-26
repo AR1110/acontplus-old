@@ -2,12 +2,20 @@ import { Component, inject, Input, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
-import { isValidField } from "@core/utils/utils";
+import {getValidId, isValidField} from "@core/utils/utils";
 import { BrandAddEditDirective } from "@inventory/ui/directives/brand-add-edit.directive";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
 import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 import {InventarioModeloUseCase} from "@inventory/domain/usecases/inventario-modelo.use-case";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {finalize} from "rxjs/operators";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MatRadioModule} from "@angular/material/radio";
 
 
 @Component({
@@ -15,18 +23,22 @@ import {InventarioModeloUseCase} from "@inventory/domain/usecases/inventario-mod
     templateUrl: './model-add-edit.component.html',
     imports: [
         FormsModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatSelectModule,
+MatIconModule,
+      MatButtonModule,
+      MatRadioModule,
         BrandAddEditDirective,
-        ToUpperCaseDirective
+        ToUpperCaseDirective,
+      MatCustomDialogComponent
     ]
 })
 export class ModelAddEditComponent {
-  @Input() params = {
-    idModelo: 0,
-    idMarca: 0,
-    descripcion: null,
-    estado: true
-  }
-  modal = inject(NgbActiveModal);
+
+  readonly dialogRef = inject(MatDialogRef<ModelAddEditComponent>);
+  readonly params = inject<any>(MAT_DIALOG_DATA);
+
   tS = inject(ToasterService);
   private _productUseCase = inject(ProductUseCase)
 
@@ -43,6 +55,7 @@ export class ModelAddEditComponent {
   }
 
   marcas = signal<any[]>([])
+  loading = signal(false)
 
   successReponse = {
     next: (response: ApiResponse) => {
@@ -58,7 +71,7 @@ export class ModelAddEditComponent {
           type: 'success',
           message: response.message
         })
-        this.modal.close(response)
+        this.dialogRef.close(response)
       }
 
     },
@@ -70,12 +83,12 @@ export class ModelAddEditComponent {
   ngOnInit() {
     this.getDataForm()
 
+    this.data = {...this.data, ...this.params }
+      if(!getValidId(this.data.idMarca)){
+        this.data.idMarca = 0;
+      }
 
-    this.data = {
-      ...this.params
-    }
-
-    if (this.params.idModelo > 0) {
+    if (this.data.idModelo > 0) {
       this.btnText = 'Actualizar';
       this.titleModal.set('Editar ')
     }
@@ -102,11 +115,21 @@ export class ModelAddEditComponent {
       }
 
       if (this.data.idModelo > 0) {
-        this._modeloUseCase.put(this.data.idModelo, this.data).subscribe(this.successReponse)
+        this.loading.set(true)
+        this._modeloUseCase.put(this.data.idModelo, this.data)
+          .pipe(
+            finalize(()=>this.loading.set(false))
+          )
+          .subscribe(this.successReponse)
       }
 
       if (!(this.data.idModelo > 0)) {
-        this._modeloUseCase.post(this.data).subscribe(this.successReponse)
+        this.loading.set(true)
+        this._modeloUseCase.post(this.data)
+          .pipe(
+            finalize(()=>this.loading.set(false))
+          )
+          .subscribe(this.successReponse)
       }
 
 

@@ -25,7 +25,7 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN
-			IF EXISTS(SELECT 1 FROM Inventario.Etiqueta WHERE descripcion = LTRIM(TRIM(@descripcion)))
+			IF EXISTS(SELECT 1 FROM Inventario.Etiqueta WHERE idEntidad = @idEntidad AND descripcion = LTRIM(TRIM(@descripcion)))
 				BEGIN
 					SELECT '0'code, 'Etiqueta con este nombre ya se encuentra registrado' as 'message'
 					RETURN

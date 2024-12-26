@@ -10,10 +10,10 @@ import { CustomTableContainerComponent } from '@core/components/custom-table-con
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.directive';
-import { IbrandService } from '@inventory/services/ibrand.service';
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
+import {BrandUseCase} from "@inventory/domain/usecases/brand.use-case";
 
 @Component({
     selector: 'app-brand-page',
@@ -30,7 +30,7 @@ import Swal from 'sweetalert2';
     ]
 })
 export class BrandPageComponent {
-  brandSvc = inject(IbrandService);
+  private _brandUseCase= inject(BrandUseCase);
   pagination = signal(new MatPagination());
   visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
   dataSource = signal<any[]>([]);
@@ -47,7 +47,7 @@ export class BrandPageComponent {
       pageSize: this.pagination().pageSize,
     };
     this.isLoadingResults = true;
-    this.brandSvc.getAll(params).subscribe({
+    this._brandUseCase.getAll(params).subscribe({
       next: (response) => {
         this.isLoadingResults = false;
         this.dataSource.set(response.brands);
@@ -97,7 +97,7 @@ export class BrandPageComponent {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.brandSvc.updateStatus(data.idMarca).subscribe((response) => {
+          this._brandUseCase.updateStatus(data.idMarca).subscribe((response) => {
             if (response.code == '0') {
               this.tS.toastr({
                 type: 'warning',

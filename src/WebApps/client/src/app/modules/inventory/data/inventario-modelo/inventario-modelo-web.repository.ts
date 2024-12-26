@@ -39,11 +39,15 @@ export class InventarioModeloWebRepository implements InventarioModeloRepository
   }
 
   post<T>(data: T) {
-    return this._http.post<ApiResponse>(`${this._url}`, { data })
+    return this._http.post<ApiResponse>(`${this._url}`, { data }, {
+      context: getNoLoader()
+    })
   }
 
   put<T>(id: number, data: T) {
-    return this._http.put<ApiResponse>(`${this._url}${id}`, { data })
+    return this._http.put<ApiResponse>(`${this._url}${id}`, { data }, {
+      context: getNoLoader()
+    })
   }
 
 

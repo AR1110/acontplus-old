@@ -1,20 +1,23 @@
 import { Directive, HostListener, inject, input, Input, output } from "@angular/core";
-import { ModalService } from "@core/services/modal.service";
 import { BrandAddEditModalComponent } from "@inventory/ui/brand-page/brand-add-edit-modal/brand-add-edit-modal.component";
+import {DialogService} from "@core/services/dialog.service";
 
 @Directive({
   selector: '[appBrandAddEdit]',
   standalone: true
 })
 export class BrandAddEditDirective {
-  private modalSvc = inject(ModalService)
+  private _dialogSvc = inject(DialogService)
   onResult = output<any>();
   params = input({});
 
-  @HostListener('click') onClick() {
-    const modalRef = this.modalSvc.open(BrandAddEditModalComponent);
-    modalRef.componentInstance.params = this.params() || {};
-    modalRef.result.then((result: any) => {
+  @HostListener('click', ['$event'])
+  onClick($event: MouseEvent) {
+    $event.stopPropagation();
+    const modalRef = this._dialogSvc.open(BrandAddEditModalComponent, {
+      data: structuredClone(this.params()) || {}
+    });
+    modalRef.subscribe((result: any) => {
       if (result && typeof result === 'object') {
         this.onResult.emit(result);
       }
