@@ -32,7 +32,7 @@ import { FormsModule } from '@angular/forms';
 import { SendMailModalDirective } from '@shared/directives/send-mail-modal.directive';
 import { DetalleArqueoControlCajaModalComponent } from '@accounting/ui/cashbox-page/control-caja-modal/components/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
-import {ControlCajaUsecase} from "@accounting/core/usecases/control-caja.usecase";
+import {ControlCajaUseCase} from "@accounting/core/use-cases/control-caja.use-case";
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 @Component({
@@ -89,7 +89,7 @@ export class ControlCajaModalComponent {
   dataMovientoControCaja = {} as ControlCaja;
   BUTTON_TRANSACTION_PENDING = 'BUTTON_TRANSACTION_PENDING';
   private activeModal = inject(NgbActiveModal);
-  private _controlCajaUseCase = inject(ControlCajaUsecase)
+  private _controlCajaUseCase = inject(ControlCajaUseCase)
   private modalSvc = inject(ModalService);
   private userPermissionSvc = inject(UserPermissionService);
   private sharedSvc = inject(SharedService);

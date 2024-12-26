@@ -1,26 +1,32 @@
 <app-breadcrumb />
 
 
-<mat-card class="bg-white">
+<mat-card appearance="outlined">
   <mat-card-content>
     <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4">
 
       <div class="col">
-        <div class="form-group w-75">
-          <div class="input-group mb-3">
-            <input type="search"   class="form-control"
-                   (keyup)="onSearch($event)" (input)="onSearch($event)" placeholder="Ej: Clavo...">
-            <span class="input-group-text" id="basic-addon1">
-              <mat-icon>search</mat-icon>
-            </span>
-          </div>
-        </div>
+
+        <mat-form-field>
+          <mat-label>Buscar</mat-label>
+          <input matInput  (keyup)="onSearch($event)" (input)="onSearch($event)" placeholder="...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+<!--        <div class="form-group w-75">-->
+<!--          <div class="input-group mb-3">-->
+<!--            <input type="search"   class="form-control"-->
+<!--                   (keyup)="onSearch($event)" (input)="onSearch($event)" placeholder="Ej: Clavo...">-->
+<!--            <span class="input-group-text" id="basic-addon1">-->
+<!--              <mat-icon>search</mat-icon>-->
+<!--            </span>-->
+<!--          </div>-->
+<!--        </div>-->
       </div>
       <div class="col  ">
-        <div class="d-flex flex-row gap-2 justify-content-end">
-          <button mat-flat-button appProductAddEdit (onResultModal)="refresh()" [disabled]="isLoadingResults">
+        <div class="d-flex flex-row gap-1 justify-content-end">
+          <button mat-icon-button appProductAddEdit (onResultModal)="refresh()" [disabled]="isLoadingResults">
             <mat-icon>add</mat-icon>
-            Nuevo
           </button>
           <button mat-icon-button (click)="refresh()">
             <mat-icon>refresh</mat-icon>

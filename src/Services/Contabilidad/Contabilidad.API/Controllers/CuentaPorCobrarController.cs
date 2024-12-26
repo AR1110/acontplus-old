@@ -1,4 +1,5 @@
-﻿using Common.AppSettings.Extensions;
+﻿using Autofac.Core;
+using Common.AppSettings.Extensions;
 
 namespace Contabilidad.API.Controllers;
 
@@ -18,6 +19,7 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
         return Ok(response);
     }
 
+   // este sp trasladar a Controlador CuotaPorCobrarController y el servicio respectivamente
     [HttpPost("Insert/Cuota")]
     public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
     {
@@ -31,11 +33,12 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
     [HttpPut("Update/Cuota")]
     public async Task<IActionResult> Update([FromBody] ApiRequest paremeter)
     {
+
         var parameters = new Dictionary<string, object>
         {
             { "idUsuarioRol", User.GetUserRoleId() },
             { "json", DataConverters.SerializeDictionary(paremeter.Data) }
         };
-        return Ok(await cuentaPorCobrarService.AddAsync(parameters));
+        return Ok(await cuentaPorCobrarService.UpdateAsync(parameters));
     }
 }

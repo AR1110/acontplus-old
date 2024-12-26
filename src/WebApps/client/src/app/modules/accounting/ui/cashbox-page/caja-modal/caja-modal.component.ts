@@ -7,7 +7,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Turno } from '@accounting/core/domain/turno.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
-import {CajaUsecase} from "@accounting/core/usecases/caja.usecase";
+import {CajaUseCase} from "@accounting/core/use-cases/caja.use-case";
 
 
 @Component({
@@ -22,7 +22,7 @@ import {CajaUsecase} from "@accounting/core/usecases/caja.usecase";
 export class CajaModalComponent {
 
   private activeModal = inject(NgbActiveModal);
-  private _cajaUseCase = inject(CajaUsecase)
+  private _cajaUseCase = inject(CajaUseCase)
 
   private tS = inject(ToasterService);
 

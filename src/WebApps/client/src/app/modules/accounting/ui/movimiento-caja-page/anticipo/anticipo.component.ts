@@ -17,7 +17,7 @@ import {NgbDropdownModule, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import { ActionAnularDirective } from '@shared/directives/permission/action-anular.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import { formatDateToString } from '@core/utils/date.util';
-import {AnticipoUsecase} from "@accounting/core/usecases/anticipo.usecase";
+import {AnticipoUseCase} from "@accounting/core/use-cases/anticipo.use-case";
 
 @Component({
     selector: 'app-anticipo',
@@ -51,7 +51,7 @@ export class AnticipoComponent {
   private modalSvc = inject(ModalService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
-  private _anticipoUseCase = inject(AnticipoUsecase)
+  private _anticipoUseCase = inject(AnticipoUseCase)
 
   getAnticipos() {
     let params = {

@@ -11,7 +11,6 @@ import { purchaseProviders } from "@modules/purchase/providers";
 import { provideEnvironmentNgxMask } from "ngx-mask";
 import { provideToastr } from "ngx-toastr";
 import {authMainProvider} from "@modules/auth/providers";
-import {MechanicalProvider} from "@mechanical/providers";
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -25,24 +24,21 @@ export const infrastructureProviders = [
   provideEnvironmentNgxMask(),
 ];
 
-
 export const uiProviders = [
   provideToastr({
     preventDuplicates: true,
-    positionClass: 'toast-top-center'
+    positionClass: 'toast-top-center',
   }),
   {
     provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-    useValue: { appearance: 'outline', subscriptSizing: 'dynamic' }
-  }
+    useValue: { appearance: 'outline', subscriptSizing: 'dynamic' },
+  },
 ];
-
 
 export const featureProviders = [
   ...customerMainProviders,
   ...accountingProvider,
   ...inventoryProviders,
   ...purchaseProviders,
-  ...authMainProvider,
-  ...MechanicalProvider
+  ...authMainProvider
 ];

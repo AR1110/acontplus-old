@@ -70,7 +70,8 @@ app.component("modalEliminarComponent", {
                 <button type="button" class="close " data-dismiss="modal" aria-hidden="true"  ng-click="$ctrl.cancel()">&times;</button>
             </div>
             <div class="modal-body">
-                <p>Acceda a la página del SRI -> Facturación Electrónica -> Producción -> Anulación -> Solicitud de Anulación para anular el documento y evitar su validez tributaria. Esta acción es solo para control del sistema.</p>
+                 
+                <p ng-if="isFactElect">Acceda a la página del SRI -> Facturación Electrónica -> Producción -> Anulación -> Solicitud de Anulación para anular el documento y evitar su validez tributaria. Esta acción es solo para control del sistema.</p>
                 <tabla-info-adicional-component data="dataObservaciones"></tabla-info-adicional-component>
             </div>
             <div class="modal-footer justify-content-center">
@@ -85,14 +86,17 @@ app.component("modalEliminarComponent", {
         id: '=',
         resolve: '<',
         close: '&',
-        dismiss: '&'
+        dismiss: '&',
+        isFactElect: '=',
+        codDoc: '='
     },
     controller: [
         "$scope",
         "facturaService",
+        "notaEntregaService",
         'formulario',
         'toastService',
-        function ($scope, fSvc,fS, tS) {
+        function ($scope, fSvc,notaEntregaSvc, fS, tS) {
             $scope.dataObservaciones = [{
                 nombre: 'Motivo de anulación',
                 valor: null
@@ -100,9 +104,12 @@ app.component("modalEliminarComponent", {
 
             const $ctrl = this; 
             let id = 0;
+            let codDoc=null;
 
             $ctrl.$onInit = function () {
                 id = $ctrl.resolve.params.id;
+                $scope.isFactElect = $ctrl.resolve.params.codDoc==='FV';
+                codDoc = $ctrl.resolve.params.codDoc;
             };
 
 
@@ -131,25 +138,50 @@ app.component("modalEliminarComponent", {
                     return
                 }
 
+                if(codDoc==='FV'){
 
-                fSvc.anular(id, $scope.dataObservaciones).then(response => {
-                    if (response.code === "0") {
-                        fS.sweetAlert("warning", response.message);
-                    }
-                    if (response.code === "1") {
-                        fS.sweetAlert(
-                            "success",
-                            response.message, '', 1000
-                        );
-                        $ctrl.close({
-                           $value:{
-                            esAnulado: true
-                           }
-                        });
-                    }
+                    fSvc.anular(id, $scope.dataObservaciones).then(response => {
+                        if (response.code === "0") {
+                            fS.sweetAlert("warning", response.message);
+                        }
+                        if (response.code === "1") {
+                            fS.sweetAlert(
+                                "success",
+                                response.message, '', 1000
+                            );
+                            $ctrl.close({
+                               $value:{
+                                esAnulado: true
+                               }
+                            });
+                        }
+    
+                    })
 
+                }
+                
+                if(codDoc==='NE'){
+                    notaEntregaSvc.anular(id, $scope.dataObservaciones).then(response => {
+                        if (response.code === "0") {
+                            fS.sweetAlert("warning", response.message);
+                        }
+                        if (response.code === "1") {
+                            fS.sweetAlert(
+                                "success",
+                                response.message, '', 1000
+                            );
+                            $ctrl.close({
+                               $value:{
+                                esAnulado: true
+                               }
+                            });
+                        }
+    
+                    }).catch(error => { 
+                        console.log(error);
+                    }) 
+                }
 
-                })
 
             }
 

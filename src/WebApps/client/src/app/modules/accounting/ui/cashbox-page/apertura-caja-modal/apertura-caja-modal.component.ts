@@ -5,7 +5,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.interface";
-import {ControlCajaUsecase} from "@accounting/core/usecases/control-caja.usecase";
+import {ControlCajaUseCase} from "@accounting/core/use-cases/control-caja.use-case";
 
 @Component({
     selector: 'app-apertura-caja-modal',
@@ -18,7 +18,7 @@ import {ControlCajaUsecase} from "@accounting/core/usecases/control-caja.usecase
 })
 export class AperturaCajaModalComponent {
   private activeModal = inject(NgbActiveModal);
-  private _controlCajaUseCase = inject(ControlCajaUsecase)
+  private _controlCajaUseCase = inject(ControlCajaUseCase)
   private tS = inject(ToasterService);
 
   @Input() params = {

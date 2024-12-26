@@ -42,10 +42,6 @@ if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
     app.Urls.Add("http://*:5010"); // Linux Port
 }
-else
-{
-    app.UseHttpsRedirection();
-}
 
 app.UseAuthentication();
 

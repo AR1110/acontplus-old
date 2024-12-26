@@ -87,7 +87,7 @@ export class AnticipoWebRepository implements AnticipoRepository{
 
   create(data: any) {
     return this._http
-      .post<ApiResponse>(`${this._url}`, data)
+      .post<ApiResponse>(`${this._url}`, {data})
   }
 
   update<T>(id: number, data: T) {

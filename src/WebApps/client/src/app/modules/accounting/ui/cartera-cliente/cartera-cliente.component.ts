@@ -10,7 +10,7 @@ import { SharedService } from "@core/services/shared.service";
 import { ToasterService } from "@core/services/toaster.service";
 import { formatDateToString } from "@core/utils/date.util";
 import { isValidField } from "@core/utils/utils";
-import {CuentaPorCobrarUsecase} from "@accounting/core/usecases/cuenta-por-cobrar.usecase";
+import {CuentaPorCobrarUseCase} from "@accounting/core/use-cases/cuenta-por-cobrar.use-case";
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 @Component({
@@ -28,7 +28,7 @@ export class CarteraClienteComponent {
   private tS = inject(ToasterService)
   private sharedSvc = inject(SharedService)
   private _tokenUseCase = inject(TokenUseCase)
-  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUsecase)
+  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase)
 
 
   isSelectedNotaEntrega = false;

@@ -505,7 +505,9 @@
                     component: 'modalEliminarComponent',
                     size: 'md',
                     params: {
-                        id: item.idDocumento
+                        id: item.idDocumento,
+                        isFactElect: true,
+                        codDoc: 'FV'
                     }
                 })
                 modalRef.result.then(result => { 
@@ -1090,10 +1092,7 @@
             updateRefProductoVenta();
 
             // Muestra una notificación de éxito
-            tS.toastr({
-                type: 'success',
-                message: 'Fila actualizada correctamente'
-            });
+           
         }
 
 

@@ -97,7 +97,6 @@ BEGIN
             FROM AcontplusAdmin.Config.WhatsappUsage  wau
                 INNER JOIN AcontplusAdmin.Config.Company c ON wau.CompanyId  = c.Id
             WHERE c.Uuid = @companyUuid
-			AND wau.[Unlimited] = CAST(0 AS BIT)
 
             DECLARE @limit INT
 

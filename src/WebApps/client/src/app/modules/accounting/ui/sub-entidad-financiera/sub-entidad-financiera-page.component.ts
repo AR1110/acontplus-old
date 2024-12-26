@@ -2,13 +2,11 @@
 import {Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
-import { ModalService } from "@core/services/modal.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { SubEntidadFinancieraRead } from "@accounting/core/domain/subentidad-financiera.model";
 import { SubEntidadFinancieraModalComponent } from "@accounting/ui/sub-entidad-financiera/sub-entidad-financiera-modal/sub-entidad-financiera-modal.component";
-import { hideLoader, showLoader } from "@core/utils/loader";
+
 import Swal from "sweetalert2";
-import { isApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
 import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.interface";
 import {MatCardModule} from "@angular/material/card";
@@ -18,7 +16,8 @@ import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat
 import {MatTableDataSource} from "@angular/material/table";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
-import {SubEntidadFinancieraUsecase} from "@accounting/core/usecases/sub-entidad-financiera.usecase";
+import {SubEntidadFinancieraUseCase} from "@accounting/core/use-cases/sub-entidad-financiera.use-case";
+import {DialogService} from "@core/services/dialog.service";
 
 
 
@@ -37,9 +36,9 @@ import {SubEntidadFinancieraUsecase} from "@accounting/core/usecases/sub-entidad
     templateUrl: './sub-entidad-financiera-page.component.html'
 })
 export class SubEntidadFinancieraPageComponent {
-  private readonly modalSvc = inject(ModalService);
+  private readonly _dialogSvc = inject(DialogService);
   private readonly tS = inject(ToasterService)
-  private useCase = inject(SubEntidadFinancieraUsecase)
+  private useCase = inject(SubEntidadFinancieraUseCase)
 
   entidadesFinanciera: Array<EntidadFinanciera> = [];
   cloneSubEntidadesFinanciera: Array<SubEntidadFinancieraRead> = [];
@@ -84,9 +83,7 @@ export class SubEntidadFinancieraPageComponent {
   }
 
   openModal(data?: SubEntidadFinancieraRead) {
-    const modalRef = this.modalSvc.openModalCustom(
-      SubEntidadFinancieraModalComponent
-    )
+
     let params = {
       idEntidadFinanciera: this.dataEntidadFinanciera?.idEntidadFinanciera,
       nameEntidadFinanciera: this.dataEntidadFinanciera?.descripcion,
@@ -94,8 +91,12 @@ export class SubEntidadFinancieraPageComponent {
 
     params = data ? { ...params, ...data } : params
 
-    modalRef.componentInstance.params = params;
-    modalRef.result.then(result => {
+    const modalRef = this._dialogSvc.open(SubEntidadFinancieraModalComponent, {
+      size: 'md',
+      data: params
+    })
+
+    modalRef.subscribe(result => {
       if (result !== null && typeof result === 'object') {
         this.getData();
       }
@@ -113,11 +114,7 @@ export class SubEntidadFinancieraPageComponent {
         allowOutsideClick: false
       }).then(result => {
         if (result.isConfirmed) {
-          showLoader();
-          this.useCase.delete(data.idSubEntidadFinanciera).subscribe({
-            next: (value) => {
-              hideLoader();
-              if (isApiResponse(value)) {
+          this.useCase.delete(data.idSubEntidadFinanciera).subscribe((value) => {
                 if (value.code === "0") {
                   this.tS.toastr({
                     type: 'warning',
@@ -131,17 +128,10 @@ export class SubEntidadFinancieraPageComponent {
                   })
                   this.getData();
                 }
-              }
-            },
-            error(err) {
-              hideLoader();
-              console.log(err)
-            },
           })
         };
       });
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
   }

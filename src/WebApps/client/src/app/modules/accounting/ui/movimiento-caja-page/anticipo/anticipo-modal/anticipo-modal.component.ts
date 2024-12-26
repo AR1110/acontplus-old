@@ -15,7 +15,7 @@ import {
   CompanyCustomerSearchComponent
 } from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
 import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.interface";
-import {AnticipoUsecase} from "@accounting/core/usecases/anticipo.usecase";
+import {AnticipoUseCase} from "@accounting/core/use-cases/anticipo.use-case";
 
 @Component({
     selector: 'app-anticipo-modal',
@@ -29,7 +29,7 @@ import {AnticipoUsecase} from "@accounting/core/usecases/anticipo.usecase";
 export class AnticipoModalComponent {
   private activeModal = inject(NgbActiveModal);
   private tS = inject(ToasterService)
-  private _anticipoUseCase = inject(AnticipoUsecase)
+  private _anticipoUseCase = inject(AnticipoUseCase)
 
   textBtn = 'Guardar';
   iconBtn = 'save';

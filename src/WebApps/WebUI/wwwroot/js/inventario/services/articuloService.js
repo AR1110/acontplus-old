@@ -426,7 +426,7 @@
                         fractionedMeasures,
                         tags
                     } = JSON.parse(response.payload)
-
+                    let dataArticulo = product[0];
                     let articulo = {
                         codImpuesto: dataArticulo.codigo, //Codigo Impuesto 
                         codigoArticulo: dataArticulo.codigoArticulo,
@@ -469,6 +469,7 @@
         service.getForSale = function (obj) {
             let params = {
                 ...obj,
+                bySearch: obj.bySearch || obj.textSearch,
                 tipo: 6
             }
             if (!('idArticulo' in obj)) {
@@ -483,6 +484,10 @@
                     let {
                         product, fractionedMeasures, measures, inventoryAdjustment, additionalInfo
                     } = JSON.parse(response.payload)
+
+                    if(product.length===0 || measures.length===0){
+                        throw new Error("No se encontro los resultados")
+                    }
 
                     let articulo = product[0];
                     let infoAdicionalTemp = [];

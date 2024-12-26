@@ -298,6 +298,7 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
             if ($scope.searchText.length < 2) return
 
             validarGetDataArticulo(null,$scope.searchText )
+            $scope.searchText = null;
 
             /**
              * return object {idArticulo: 0}

@@ -37,6 +37,8 @@ import { finalize, forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 import {ProductList} from "@inventory/domain/models/product.model";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
 
 
 
@@ -44,6 +46,8 @@ import {ProductList} from "@inventory/domain/models/product.model";
     selector: 'inventory-product',
     imports: [
         FormsModule,
+      MatFormFieldModule,
+      MatInputModule,
         BreadcrumbComponent,
         PrimaryStatusPipe,
         MatButtonModule,

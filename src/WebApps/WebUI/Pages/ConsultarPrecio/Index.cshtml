@@ -5,81 +5,81 @@
     ViewData["title"] = "Consultar Precio";
 
 }
-@* <div ng-controller="consultarPrecioCtrl"> *@
-<div>
-    <div>
-        <div class="row page-titles">
-            <div class="col-md-5 align-self-center">
-                <h4 class="text-themecolor">Consultar Precio</h4>
+<div ng-controller="consultarPrecioCtrl">
+  
+        <div>
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h4 class="text-themecolor">Consultar Precio</h4>
+                </div>
+
             </div>
 
-        </div>
+            <div class="card">
+                <div class="card-body">
+                    @* <articulo-lista-precio-comp check-cart="false"></articulo-lista-precio-comp> *@
+                    <div class="row justify-content-between">
+                        <div class="col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center">
+                            <span class="form-group pull-left page-size form-inline">
+                                <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                                    ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                                </select>
+                            </span>
+                        </div>
 
-        <div class="card">
-            <div class="card-body">
-                @* <articulo-lista-precio-comp check-cart="false"></articulo-lista-precio-comp> *@
-                <div class="row justify-content-between">
-                    <div class="col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center">
-                        <span class="form-group pull-left page-size form-inline">
-                            <select class="form-control control-color" ng-model="dataSearch.pageSize"
-                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
-                            </select>
-                        </span>
-                    </div>
-
-                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-                        <div class="row">
-                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 r">
-                                <div class="form-group">
-                                    <label for="inputTextSearch">Buscar Artículo</label>
-                                    <div class="input-group">
-                                        <input type="text" id="inputTextSearch" class="form-control border-select"
-                                            ng-model="dataSearch.bySearch" ng-keypress="onEnter($event)"
-                                            placeholder="Ingrese la Descripcion o Código del Articulo" />
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-secondary btn-sm" ng-click="refresh()"
-                                                type="button" tabindex="-1">
-                                                &#8635;
-                                            </button>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 r">
+                                    <div class="form-group">
+                                        <label for="inputTextSearch">Buscar Artículo</label>
+                                        <div class="input-group">
+                                            <input type="text" id="inputTextSearch" class="form-control border-select"
+                                                ng-model="dataSearch.bySearch" ng-keypress="onEnter($event)"
+                                                placeholder="Ingrese la Descripcion o Código del Articulo" />
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary btn-sm" ng-click="refresh()"
+                                                    type="button" tabindex="-1">
+                                                    &#8635;
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label for="">Buscar por:</label>
-                                    <select class="form-control border-select" ng-model="dataSearch.byColumn"
-                                        ng-change="refresh()">
-                                        <option ng-value="item.codigo" ng-repeat="item in tipoBusquedas">
-                                            {{item.descripcion}}
-                                        </option>
-                                    </select>
+                                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                                    <div class="form-group">
+                                        <label for="">Buscar por:</label>
+                                        <select class="form-control border-select" ng-model="dataSearch.byColumn"
+                                            ng-change="refresh()">
+                                            <option ng-value="item.codigo" ng-repeat="item in tipoBusquedas">
+                                                {{item.descripcion}}
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label for="opcion">Opción</label>
-                                    <select class="form-control border-select" ng-model="dataSearch.byStock"
-                                        ng-change="refresh()">
-                                        <option ng-value="">Todos</option>
-                                        <option ng-value="1">Con Stock</option>
-                                        <option ng-value="2">Sin Stock</option>
-                                    </select>
+                                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                                    <div class="form-group">
+                                        <label for="opcion">Opción</label>
+                                        <select class="form-control border-select" ng-model="dataSearch.byStock"
+                                            ng-change="refresh()">
+                                            <option ng-value="">Todos</option>
+                                            <option ng-value="1">Con Stock</option>
+                                            <option ng-value="2">Sin Stock</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                @await Html.PartialAsync("~/Pages/ConsultarPrecio/_ListaArticulos.cshtml")
+                    @await Html.PartialAsync("~/Pages/ConsultarPrecio/_ListaArticulos.cshtml")
+                </div>
             </div>
+
         </div>
 
     </div>
-
-</div>
-@section Scripts {
-    <script src="~/js/ventas/controllers/consultarPrecioCtrl.min.js" asp-append-version="true"></script>
-}
+    @section Scripts {
+        <script src="~/js/ventas/controllers/consultarPrecioCtrl.min.js" asp-append-version="true"></script>
+    }

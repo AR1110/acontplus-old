@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
-import { UserManualPageComponent } from '@modules/common/pages/user-manual-page/user-manual-page.component';
+import { UserManualPageComponent } from '@modules/common/ui/user-manual/user-manual-page.component';
+import { EmailQueueComponent } from '@modules/common/ui/email-queue/email-queue.component';
 
 export const routes: Route[] = [
   {
@@ -8,6 +9,14 @@ export const routes: Route[] = [
     component: UserManualPageComponent,
     data: {
       breadcrumb: 'Manual de Usuario',
+    },
+  },
+  {
+    path: 'email-queue',
+    title: 'Envio de Correos',
+    component: EmailQueueComponent,
+    data: {
+      breadcrumb: 'Envio de Correos',
     },
   },
 ];

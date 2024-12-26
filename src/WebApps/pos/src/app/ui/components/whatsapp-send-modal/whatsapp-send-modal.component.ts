@@ -1,7 +1,6 @@
 import { isValidField } from '@domain/utils/utils';
 import { CODE_REPORT, DOC_TYPE } from '@domain/enums/main.enum';
 import { EmailConfigService } from '@data/repositories/email-config/email-config.service';
-import { ApiGreenApiService } from '@data/repositories/api-green-api/api-green-api.service';
 import { SharedService } from '@domain/services/shared.service';
 import { ToasterService } from '@domain/services/toaster.service';
 import { Component, inject, signal } from '@angular/core';
@@ -14,6 +13,7 @@ import { concatMap } from 'rxjs';
 import Swal from 'sweetalert2';
 
 import { CustomContainerDialogComponent } from '@ui/components/custom-container-dialog/custom-container-dialog.component';
+import {ApiGreenUseCase} from "@domain/use-cases/api-green.use-case";
 
 type Props = {
   idDocumentoElectronico: number
@@ -45,7 +45,7 @@ function createDataParamDoc(data: Props) {
 const phoneNumberFormatter = (number: string) => {
   let formatted = number.replace(/\D/g, '')
   if (formatted.startsWith('0')) {
-    formatted = '593' + formatted.substr(1)
+    formatted = `593${formatted.substr(1)}`
   }
   if (!formatted.endsWith('@c.us')) {
     formatted += '@c.us'
@@ -70,7 +70,7 @@ export class WhatsappSendModalComponent {
   private emailConfigSvc = inject(EmailConfigService)
   private tS = inject(ToasterService)
   private sharedSvc = inject(SharedService)
-  private apiGreenApiSvc = inject(ApiGreenApiService)
+  private _apiGreenUseCase = inject(ApiGreenUseCase)
 
   private totalMessages = 0;
 
@@ -187,28 +187,28 @@ export class WhatsappSendModalComponent {
 
       this.isFetching.set(true)
 
-      this.apiGreenApiSvc.sendSMS(chatId,
+      this._apiGreenUseCase.sendSMS(chatId,
         'ACONTPLUS adjunta el siguiente comprobante electrónico:'
       ).pipe(
         concatMap(response1 => {
-          return this.apiGreenApiSvc.sendFileByUpload({
+          return this._apiGreenUseCase.sendFileByUpload({
             chatId,
             caption,
             file
           })
         }),
         concatMap(response2 => {
-          return this.apiGreenApiSvc.sendSMS(chatId,
+          return this._apiGreenUseCase.sendSMS(chatId,
             messageEstab
           )
         }),
         concatMap(response3 => {
-          return this.apiGreenApiSvc.sendSMS(chatId,
+          return this._apiGreenUseCase.sendSMS(chatId,
             messageInfo
           )
         }),
         concatMap(response4 => {
-          return this.apiGreenApiSvc.sendSMS(chatId,
+          return this._apiGreenUseCase.sendSMS(chatId,
             messageFooter
           )
         })

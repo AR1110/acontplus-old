@@ -1,14 +1,12 @@
 export enum GlobalRoutes {
-  ComprasReportes = 'purchase/reports-page',
-  ComprasReportesRecepcion = 'purchase/reception-reports-page',
+  ComprasReportes = 'purchase/reports',
+  ComprasReportesRecepcion = 'purchase/reception-reports',
   ConfigDocConfig = 'config/doc-config-page',
   ConfigEstablishment = 'config/establishment',
   ConfigGeneralConfig = 'config/general-config-page',
   ConfigUserProfile = 'config/user-profile-page',
   ConfigUserCustomer = 'config/user-customer-page',
   ConfigUserCustomerRequest = 'config/user-customer-request-page',
-
-
 
   FactElectAts = 'billing/ats-page',
   InventarioImpuestoMasivo = 'inventory/massive-tax-page',
@@ -59,13 +57,13 @@ export enum GlobalRoutes {
   CommonUserManual = 'common/user-manual',
 
   //Facturación
-  FactElectDocumentoElectronico='billing/doc-elect',
-  Factura='billing/invoice',
+  FactElectDocumentoElectronico = 'billing/doc-elect',
+  Factura = 'billing/invoice',
 
   //Contabilidad
-  ContabilidadCuentaPorPagar='accounting/cuenta-por-pagar',
+  ContabilidadCuentaPorPagar = 'accounting/cuenta-por-pagar',
   Cobro = 'accounting/cobro-page',
-  ContabilidadCuentaPorCobrar='accounting/cuenta-por-cobrar',
+  ContabilidadCuentaPorCobrar = 'accounting/cuenta-por-cobrar',
   ContabilidadCategory = 'accounting/category',
   ContabilidadMovimientoCaja = 'accounting/movimiento-caja-page',
   ContabilidadReporteCobros = 'accounting/reports/reporte-cobros',
@@ -74,11 +72,12 @@ export enum GlobalRoutes {
   ContabilidadCaja = 'accounting/cashbox-page',
   ContabilidadCarteraProveedor = 'accounting/reports/supplier-accounts',
   ContabilidadAccountingSummary = 'accounting/resumen-contable',
-  ContabilidadMovimientoCajaReport = 'accounting/movimiento-caja',
+  ContabilidadMovimientoCajaReport = 'accounting/movimiento-caja-report',
 
   //COMPRAS
-  ComprasFacturaCompra='purchase/factura-fisica',
+  ComprasFacturaCompra = 'purchase/factura-fisica',
 
   //Customer
-Cliente='customer/company-customer'
+  Cliente = 'customer/company-customer',
+  CommonEmailQueue = 'common/email-queue',
 }

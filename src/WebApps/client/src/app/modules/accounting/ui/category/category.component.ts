@@ -6,7 +6,7 @@ import { CategoryModalComponent } from '@accounting/ui/category/category-modal/c
 import { Category } from '@accounting/core/domain/category';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
-import {CategoryUsecase} from "@accounting/core/usecases/category.usecase";
+import {CategoryUseCase} from "@accounting/core/use-cases/category.use-case";
 
 @Component({
     selector: 'app-category',
@@ -22,7 +22,7 @@ import {CategoryUsecase} from "@accounting/core/usecases/category.usecase";
 export class CategoryComponent {
   categories: Category[] = [];
   data: Category = {} as Category;
-  private _categoryUseCase = inject(CategoryUsecase)
+  private _categoryUseCase = inject(CategoryUseCase)
   private readonly modalService = inject(ModalService);
 
   edit(item: Category) {

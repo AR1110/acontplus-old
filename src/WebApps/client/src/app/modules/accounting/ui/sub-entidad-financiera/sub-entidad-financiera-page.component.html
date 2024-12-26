@@ -9,6 +9,10 @@
           <mat-panel-title> {{ item.descripcion }} </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="p-2">
+          <button type="button" mat-flat-button (click)="openModal()">
+            <mat-icon>add</mat-icon>
+            Nuevo
+          </button>
           @if (subEntidadesFinanciera.data.length>0) {
           <app-mat-dynamic-table
             [tableData]="subEntidadesFinanciera.data"

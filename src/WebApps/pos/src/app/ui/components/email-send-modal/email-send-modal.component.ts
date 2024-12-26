@@ -69,7 +69,8 @@ export class EmailSendModalComponent {
 
 
 dataParamGetDataForm:any = {
-    [DOC_TYPE_SRI.FV]: createDataParamDocSri(this.data),
+  [DOC_TYPE_SRI.FV]: createDataParamDocSri(this.data),
+  [DOC_TYPE.FV]: createDataParamDocSri(this.data),
     [DOC_TYPE.NE]: createDataParamDoc(this.data),
     [DOC_TYPE.OR]: createDataParamDoc(this.data)
 };

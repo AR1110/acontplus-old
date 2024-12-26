@@ -69,7 +69,7 @@ public class NotaEntregaController : BaseApiController
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
-        var response = await _svc.UpdateAsync(parameters);
+        var response = await _svc.CancelAsync(parameters);
         return Ok(response);
     }
 
