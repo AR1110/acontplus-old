@@ -51,6 +51,7 @@
     <PackageVersion Include="RabbitMQ.Client" Version="7.0.0" />
     <PackageVersion Include="ReportViewerCore.NETCore" Version="15.1.25" />
     <PackageVersion Include="Scrutor" Version="5.1.0" />
+    <PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="3.116.1" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
     <PackageVersion Include="ZXing.Net" Version="0.16.9" />
     <PackageVersion Include="ZXing.Net.Bindings.SkiaSharp" Version="0.16.20" />
