@@ -11,6 +11,7 @@ import { purchaseProviders } from "@modules/purchase/providers";
 import { provideEnvironmentNgxMask } from "ngx-mask";
 import { provideToastr } from "ngx-toastr";
 import {authMainProvider} from "@modules/auth/providers";
+import {MechanicalProvider} from "@mechanical/providers";
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -42,5 +43,6 @@ export const featureProviders = [
   ...accountingProvider,
   ...inventoryProviders,
   ...purchaseProviders,
-  ...authMainProvider
+  ...authMainProvider,
+  ...MechanicalProvider
 ];

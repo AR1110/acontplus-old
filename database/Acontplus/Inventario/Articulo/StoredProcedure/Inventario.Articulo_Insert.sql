@@ -90,45 +90,92 @@ BEGIN
         )
 
 		 INSERT INTO @tbArticle
-			   (idSubFamilia,idMarca,idModelo,idTipoIce,idTipoArticulo,idTipoIva,idMedida,precioCosto,precioSinSubsidio,codigo,codigoAuxiliar,valorIce,descripcion
-			   ,llevaInventario,datosAdicionales,productoFraccionable,datosLote,lote,fechaCreacion,fechaCaducidadLote,stockMinimo,stockMaximo,observaciones,caducidad
-			   ,fechaCaducidad,codigoBarra,idEtiqueta,cantMinimaVentaPorMayor)
-
-		 SELECT idSubFamilia,idMarca,idModelo,idTipoIce,idTipoArticulo,idTipoIva,idMedida,precioCosto,precioSinSubsidio,codigo,codigoAuxiliar,valorIce,descripcion
-			   ,llevaInventario,datosAdicionales,productoFraccionable,datosLote,lote,fechaCreacion,fechaCaducidadLote,stockMinimo,stockMaximo,observaciones,caducidad
-			   ,fechaCaducidad,codigoBarra,idEtiqueta,cantMinimaVentaPorMayor
-		 FROM OPENJSON(@jsonArticulo) WITH 
-         (
-             idSubFamilia            INT
-            ,idMarca                 INT
-            ,idModelo                INT 
-            ,idTipoIce               INT 
-            ,idTipoArticulo          INT 
-            ,idTipoIva               INT 
-            ,idMedida                INT 
-            ,precioCosto             NUMERIC(15,5)
-            ,precioSinSubsidio       NUMERIC(15,5)
-            ,codigo                  VARCHAR(100)
-            ,codigoAuxiliar          VARCHAR(100) 
-            ,valorIce                NUMERIC(15,5)
-            ,descripcion             VARCHAR(255)
-            ,llevaInventario         BIT
-            ,datosAdicionales        BIT
-            ,productoFraccionable    BIT
-            ,datosLote               BIT
-            ,lote                    VARCHAR(100)
-            ,fechaCreacion           DATETIME2
-            ,fechaCaducidadLote      DATETIME2
-            ,stockMinimo             INT
-            ,stockMaximo             INT
-            ,observaciones           VARCHAR(300)
-            ,caducidad               BIT 
-            ,fechaCaducidad          DATETIME2 
-            ,codigoBarra             VARCHAR(100) 
-            ,idEtiqueta              INT 
-            ,cantMinimaVentaPorMayor INT 
-
-         ) AS dt
+				(idSubFamilia
+				,idMarca
+				,idModelo
+				,idTipoIce
+				,idTipoArticulo
+				,idTipoIva
+				,idMedida
+				,precioCosto
+				,precioSinSubsidio
+				,codigo
+				,codigoAuxiliar
+				,valorIce
+				,descripcion
+				,llevaInventario
+				,datosAdicionales
+				,productoFraccionable
+				,datosLote
+				,lote
+				,fechaCreacion
+				,fechaCaducidadLote
+				,stockMinimo
+				,stockMaximo
+				,observaciones
+				,caducidad
+				,fechaCaducidad
+				,codigoBarra		
+				,idEtiqueta
+				,cantMinimaVentaPorMayor)
+			SELECT 
+				 CASE WHEN idSubFamilia   = 0 THEN NULL ELSE idSubFamilia   END
+				,CASE WHEN idMarca        = 0 THEN NULL ELSE idMarca        END 
+				,CASE WHEN idModelo       = 0 THEN NULL ELSE idModelo       END 
+				,CASE WHEN idTipoIce      = 0 THEN NULL ELSE idTipoIce      END 
+				,CASE WHEN idTipoArticulo = 0 THEN NULL ELSE idTipoArticulo END 
+				,idTipoIva
+				,idMedida
+				,precioCosto
+				,ISNULL(precioSinSubsidio,0)
+				,codigo
+				,codigoAuxiliar
+				,ISNULL(valorIce,0)
+				,descripcion
+				,ISNULL(llevaInventario,0)
+				,ISNULL(datosAdicionales,0)
+				,ISNULL(productoFraccionable,0)
+				,ISNULL(datosLote,0)
+				,lote
+				,fechaCreacion
+				,fechaCaducidadLote
+				,ISNULL(stockMinimo,0)
+				,ISNULL(stockMaximo,0)
+				,observaciones
+				,ISNULL(caducidad,0)
+				,fechaCaducidad
+				,codigoBarra	
+				,CASE WHEN datosAdicionales = 1 THEN idEtiqueta ELSE NULL END 
+				,ISNULL(cantMinimaVentaPorMayor, 0)
+		  FROM OPENJSON(@jsonArticulo) 
+		  WITH (idSubFamilia                 INT '$.idSubFamilia'
+				,idMarca                     INT '$.idMarca'
+				,idModelo                    INT '$.idModelo'
+				,idTipoIce                   INT '$.idTipoIce'
+				,idTipoArticulo              INT '$.idTipoArticulo'
+				,idTipoIva                   INT '$.idTipoIva'
+				,idMedida                    INT '$.idMedida'
+				,precioCosto       NUMERIC(15,5) '$.precioCosto'
+				,precioSinSubsidio NUMERIC(15,5) '$.precioSinSubsidio'
+				,codigo             VARCHAR(100) '$.codigo'
+				,codigoAuxiliar     VARCHAR(100) '$.codigoAuxiliar'
+				,valorIce          NUMERIC(15,5) '$.valorIce'
+				,descripcion        VARCHAR(255) '$.descripcion'
+				,llevaInventario             BIT '$.llevaInventario'
+				,datosAdicionales            BIT '$.datosAdicionales'
+				,productoFraccionable        BIT '$.productoFraccionable'
+				,datosLote                   BIT '$.datosLote'
+				,lote               VARCHAR(100) '$.lote'
+				,fechaCreacion          DATETIME '$.fechaCreacion'
+				,fechaCaducidadLote     DATETIME '$.fechaCaducidadLote'
+				,stockMinimo                 INT '$.stockMinimo'
+				,stockMaximo                 INT '$.stockMaximo'
+				,observaciones      VARCHAR(300) '$.observaciones'
+				,caducidad                   BIT '$.caducidad'
+				,fechaCaducidad         DATETIME '$.fechaCaducidad'
+				,codigoBarra        VARCHAR(100) '$.codigoBarra'
+				,idEtiqueta                  INT '$.idEtiqueta'
+				,cantMinimaVentaPorMayor     INT '$.cantMinimaVentaPorMayor') AS dt
 
 		 INSERT INTO @tbPrices
                (idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado)

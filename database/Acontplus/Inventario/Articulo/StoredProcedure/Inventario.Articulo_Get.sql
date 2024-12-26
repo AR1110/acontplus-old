@@ -8,7 +8,7 @@ GO
 -- =============================================
 -- Author:		Alexis Ramirez
 -- Create date: 2021-06-25
--- Description:	SP Para leer los datos e la tabla articulo
+-- Description:	SP Para leer los datos e la tabla articulo get mutiple
 -- =============================================
 CREATE OR ALTER PROCEDURE Inventario.Articulo_Get 
      @userRoleId INT
@@ -98,7 +98,7 @@ BEGIN
 							       ,descripcion   = ISNULL(a.descripcion, ''Ninguno'')
 							       ,precioCosto   
 							       ,estado       
-							       ,stock        
+							       ,ISNULL(stock,0) as stock         
 							       ,observaciones 
 							       ,subFamilia    
 							       ,medida        
@@ -666,6 +666,6 @@ BEGIN
         SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 		INSERT INTO ErroresSistema(token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		VALUES(NEWID(),'/Articulo/Get',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario)
+		VALUES(NEWID(),'/Articulo/Get',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE() + ' json : ' + ISNULL(@json,''),GETDATE(),@idUsuario)
 	END CATCH 
 END
