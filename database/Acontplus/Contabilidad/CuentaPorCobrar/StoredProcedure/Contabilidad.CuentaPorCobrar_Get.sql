@@ -265,6 +265,7 @@ BEGIN
             FROM v_CuentaPorCobrar WITH (NOLOCK) 
             WHERE idCliente = @idCliente
               AND codEstado IN ('PP','PE')
+              AND codDoc IN ('01','NE')
               AND convertToDoc = 0
             GROUP BY codDoc
 
