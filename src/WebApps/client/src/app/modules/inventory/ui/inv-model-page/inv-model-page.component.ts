@@ -58,6 +58,8 @@ export class InvModelPageComponent {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
+    if(this.isLoadingResults) return
+
     this.isLoadingResults = true;
     this._modeloUseCase.getAll(params).subscribe({
       next: (response) => {

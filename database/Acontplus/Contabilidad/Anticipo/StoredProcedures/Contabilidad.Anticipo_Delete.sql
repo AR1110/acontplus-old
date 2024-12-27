@@ -24,7 +24,7 @@ BEGIN
     BEGIN TRY 
         
         --> Recuperando Variables
-        SELECT TOP 1 @idComprobanteIngreso = idComprobanteIngreso FROM dbo.MovimientoCaja WITH (NOLOCK) WHERE idMovimientoCaja = @id 
+        SELECT TOP 1 @idComprobanteIngreso = idComprobanteIngreso FROM dbo.Anticipo WITH (NOLOCK) WHERE idAnticipo = @id 
 
         SELECT TOP 1 @idControlCaja = idControlCaja FROM dbo.ComprobanteIngreso WITH (NOLOCK) WHERE idComprobanteIngreso = @idComprobanteIngreso
 

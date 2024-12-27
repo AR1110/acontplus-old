@@ -59,6 +59,8 @@ export class SubCategoryComponent {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
+    if(this.isLoadingResults) return
+
     this.isLoadingResults = true;
 
     this.subCategorySvc.getAll(params).subscribe({

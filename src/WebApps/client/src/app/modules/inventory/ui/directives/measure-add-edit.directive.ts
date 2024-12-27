@@ -1,7 +1,7 @@
 import { Directive, EventEmitter, HostListener, Input, Output } from "@angular/core";
-import { ModalService } from "@core/services/modal.service";
 import { MeasureAddEditModalComponent } from "@inventory/ui/measure-page/measure-add-edit-modal/measure-add-edit-modal.component";
 import { MeasureRead } from "../../domain/models/measure.model";
+import {DialogService} from "@core/services/dialog.service";
 
 @Directive({
   selector: '[appMeasureAddEdit]',
@@ -14,17 +14,18 @@ export class MeasureAddEditDirective {
     @Input() params = {} as MeasureRead;
     @Input() id  = 0;
     @HostListener('click') onClick() {
-      const modalRef = this.modalSvc.openModalCustom(MeasureAddEditModalComponent);
-      modalRef.componentInstance.params = {
-        ...this.params,
-        id: this.params.idMedida
-      };
-      modalRef.result.then((result: unknown) => {
+      const modalRef = this._dialogSvc.open(MeasureAddEditModalComponent, {
+        data: {
+          ...this.params,
+          id: this.params.idMedida
+        }
+      });
+      modalRef.subscribe((result: unknown) => {
         if (this.onResultModal && typeof result === 'object') {
           this.onResultModal.emit(result);
         }
       })
     }
-    constructor(private modalSvc: ModalService) { }
+    constructor(private _dialogSvc: DialogService) { }
 
 }

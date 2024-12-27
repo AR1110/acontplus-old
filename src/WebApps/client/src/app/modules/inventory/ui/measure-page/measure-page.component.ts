@@ -11,10 +11,10 @@ import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { MeasureAddEditDirective } from '@inventory/ui/directives/measure-add-edit.directive';
 import { MeasureRead } from '@inventory/domain/models/measure.model';
-import { MeasureService } from '@inventory/services/measure.service';
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
+import {MeasureUseCase} from "@inventory/domain/usecases/measure.use-case";
 
 @Component({
     selector: 'app-measure-page',
@@ -32,7 +32,7 @@ import Swal from 'sweetalert2';
     styles: ``
 })
 export class MeasurePageComponent {
-  measureSvc = inject(MeasureService);
+  private _measureUseCase= inject(MeasureUseCase);
   pagination = signal(new MatPagination());
   visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
   dataSource = signal<MeasureRead[]>([]);
@@ -49,7 +49,7 @@ export class MeasurePageComponent {
       pageSize: this.pagination().pageSize,
     };
     this.isLoadingResults = true;
-    this.measureSvc.getAll(params).subscribe({
+    this._measureUseCase.getAll(params).subscribe({
       next: (response) => {
         this.isLoadingResults = false;
         this.dataSource.set(response);
@@ -99,7 +99,7 @@ export class MeasurePageComponent {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.measureSvc.updateStatus(data.idMedida).subscribe((response) => {
+          this._measureUseCase.updateStatus(data.idMedida).subscribe((response) => {
             if (response.code == '0') {
               this.tS.toastr({
                 type: 'warning',

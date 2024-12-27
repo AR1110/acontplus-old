@@ -514,10 +514,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  └── tag.provider.ts
 |  |  |  |  ├── services
 |  |  |  |  |  ├── category.service.ts
-|  |  |  |  |  ├── ibrand.service.ts
 |  |  |  |  |  ├── lot-price.service.ts
 |  |  |  |  |  ├── massive-tax.service.ts
-|  |  |  |  |  ├── measure.service.ts
 |  |  |  |  |  ├── product-photo.service.ts
 |  |  |  |  |  ├── stock.service.ts
 |  |  |  |  |  ├── sub-category.service.ts

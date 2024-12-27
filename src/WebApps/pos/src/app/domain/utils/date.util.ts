@@ -129,7 +129,7 @@ export const formatDateToString = function (date: Date) {
   }
   return format({
     date,
-    format: 'YYYY-MM-DD HH:mm:ss A',
+    format: 'YYYY-MM-DD HH:mm:ss',
     tz: zonaHorariaEcuador,
   })
 }

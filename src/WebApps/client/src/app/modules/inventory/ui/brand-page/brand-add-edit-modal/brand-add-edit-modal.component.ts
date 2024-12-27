@@ -1,12 +1,17 @@
-import { Component, inject, Input } from "@angular/core";
+import {Component, inject, Input, signal} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
 import { isValidField } from "@core/utils/utils";
-import { IbrandService } from "@inventory/services/ibrand.service";
-import { BrandService } from "@technical-support/services/brand.service";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
+import {finalize} from "rxjs/operators";
+import {BrandUseCase} from "@inventory/domain/usecases/brand.use-case";
 
 
 @Component({
@@ -14,25 +19,29 @@ import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.direct
     templateUrl: './brand-add-edit-modal.component.html',
     imports: [
         FormsModule,
-        ToUpperCaseDirective
+      MatFormFieldModule,
+      MatInputModule,
+      MatIconModule,
+      MatButtonModule,
+        ToUpperCaseDirective,
+      MatCustomDialogComponent
     ]
 })
 export class BrandAddEditModalComponent {
-  @Input() params = {
-    idMarca: 0,
-    descripcion: null
-  }
-  modal = inject(NgbActiveModal);
+  readonly dialogRef = inject(MatDialogRef<BrandAddEditModalComponent>);
+  readonly data = inject<{
+    idMarca: number;
+    descripcion: null | string
+  }>(MAT_DIALOG_DATA);
+
   tS = inject(ToasterService);
-  brandSvc = inject(IbrandService)
+  private _brandUseCase= inject(BrandUseCase)
 
   btnText = 'Guardar';
-  titleModal = 'Nueva Marca'
+  titleModal = 'Nueva Marca';
 
-  data = {
-    idMarca: 0,
-    descripcion: null
-  }
+  loading = signal(false)
+
 
   successReponse = {
     next: (response: ApiResponse) => {
@@ -48,7 +57,7 @@ export class BrandAddEditModalComponent {
           type: 'success',
           message: response.message
         })
-        this.modal.close(response)
+        this.dialogRef.close(response)
       }
 
     },
@@ -58,11 +67,8 @@ export class BrandAddEditModalComponent {
   }
 
   ngOnInit() {
-    this.data = {
-      ...this.params
-    }
 
-    if (this.params.idMarca > 0) {
+    if (this.data.idMarca > 0) {
       this.btnText = 'Actualizar';
       this.titleModal = 'Editar Marca'
     }
@@ -79,11 +85,22 @@ export class BrandAddEditModalComponent {
       }
 
       if (this.data.idMarca > 0) {
-        this.brandSvc.put(this.data.idMarca, this.data).subscribe(this.successReponse)
+        this.loading.set(true)
+        this._brandUseCase.put(this.data.idMarca, this.data)
+          .pipe(
+            finalize(()=>this.loading.set(false))
+          )
+          .subscribe(this.successReponse)
       }
 
       if (!(this.data.idMarca > 0)) {
-        this.brandSvc.post(this.data).subscribe(this.successReponse)
+        this.loading.set(true)
+
+        this._brandUseCase.post(this.data)
+          .pipe(
+            finalize(()=>this.loading.set(false))
+          )
+          .subscribe(this.successReponse)
       }
 
 
