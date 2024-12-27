@@ -1,7 +1,7 @@
 [
   {
     "Code": "VA",
-    "Name": "Vivienda Alquilada"    
+    "Name": "Vivienda Alquilada"
   },
   {
     "Code": "P",
@@ -10,6 +10,6 @@
   },
   {
     "Code": "O",
-    "Name": "Otros"    
+    "Name": "Otros"
   }
 ]

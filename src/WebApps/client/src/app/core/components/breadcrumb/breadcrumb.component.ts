@@ -4,11 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-  selector: 'app-breadcrumb',
-  standalone: true,
-  imports: [CommonModule, FontAwesomeModule],
-  templateUrl: './breadcrumb.component.html',
-  styles: ``,
+    selector: 'app-breadcrumb',
+    imports: [CommonModule, FontAwesomeModule],
+    templateUrl: './breadcrumb.component.html',
+    styles: ``
 })
 export class BreadcrumbComponent {
   parentData: any;

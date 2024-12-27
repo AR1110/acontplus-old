@@ -1,0 +1,142 @@
+<app-mat-custom-dialog
+        [containerTemplate]="containerTemplate"
+        [actionsTemplate]="actionsTemplate"
+        [title]="'Cuotas'"
+        [loading]="loading()"
+        (close)="closeDialog()"
+/>
+
+<ng-template #containerTemplate>
+    <div class="d-flex flex-column gap-2">
+        <div
+                class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+        >
+            <div class="col">
+                <mat-form-field class="w-100">
+                    <mat-label>Tiempo Credito</mat-label>
+                    <mat-select
+                            [(ngModel)]="dataForm().tiempoCreditoId"
+                            (selectionChange)="onChangeTiempoCredito()"
+                    >
+                        @for (item of tiemposCredito(); track $index) {
+                            <mat-option [value]="item.idTiempoCredito">{{
+                                    item.descripcion
+                                }}
+                            </mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="w-100">
+                    <mat-label>Configurar fecha:</mat-label>
+                    <input
+                            matInput
+                            [matDatepicker]="picker"
+                            (dateInput)="addConfigDate($event)"
+                            (dateChange)="addConfigDate($event)"
+                            placeholder="DD/MM/YYYY"
+                            mask="00/00/0000"
+                            [dropSpecialCharacters]="false"
+                            [showMaskTyped]="true"
+                    />
+                    <mat-hint>DD/MM/YYYY</mat-hint>
+
+                    <ng-container matSuffix>
+                        <mat-datepicker-toggle [for]="picker"></mat-datepicker-toggle>
+
+                        <mat-datepicker touchUi #picker></mat-datepicker>
+
+                        <button
+                                mat-icon-button
+                                [matMenuTriggerFor]="menu"
+                                aria-label="option"
+                        >
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                            <button
+                                    type="button"
+                                    mat-menu-item
+                                    (click)="configureEndOfMonthDate()"
+                            >
+                                <mat-icon>trending_flat</mat-icon>
+                                <span>Fin de Mes</span>
+                            </button>
+                            <button
+                                    type="button"
+                                    mat-menu-item
+                                    (click)="configureSameDayDate()"
+                            >
+                                <mat-icon>calendar_today</mat-icon>
+                                <span>Mismo día</span>
+                            </button>
+                        </mat-menu>
+                    </ng-container>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <table mat-table [dataSource]="dataSource()" class="border rounded mb-3">
+            <ng-container matColumnDef="position">
+                <th mat-header-cell *matHeaderCellDef>No.</th>
+                <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="cuota">
+                <th mat-header-cell *matHeaderCellDef>Cuota</th>
+                <td mat-cell *matCellDef="let element">
+                    <mat-form-field>
+                        <input
+                                matInput
+                                [(ngModel)]="element.cuota"
+                                placeholder="0.00"
+                                mask="separator.5 "
+                                thousandSeparator=","
+                                decimalMarker="."
+                                onclick="select();"
+                        />
+
+                        <button
+                                type="button"
+                                mat-icon-button
+                                matSuffix
+                                (click)="calcularValorCuota($event, element)"
+                        >
+                            <mat-icon matSuffix>refresh</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fechaVencimiento">
+                <th mat-header-cell *matHeaderCellDef>Fecha Vencimiento</th>
+                <td mat-cell *matCellDef="let element">
+                    <mat-form-field>
+                        <input
+                                matInput
+                                [matDatepicker]="picker"
+                                placeholder="DD/MM/YYYY"
+                                [value]="element.fechaVencimiento"
+                        />
+                        <mat-datepicker-toggle
+                                matSuffix
+                                [for]="picker"
+                        ></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="visibleColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: visibleColumns"></tr>
+        </table>
+    </div>
+</ng-template>
+
+<ng-template #actionsTemplate>
+    <button mat-flat-button>
+        <mat-icon>save</mat-icon>
+        Guardar
+    </button>
+</ng-template>

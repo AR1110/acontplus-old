@@ -6,14 +6,13 @@ import {FormsModule} from "@angular/forms";
 import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-  selector: 'app-user-search',
-  standalone: true,
-  imports: [
-    FormsModule,
-    NgbTypeaheadModule
-  ],
-  templateUrl: './user-search.component.html',
-  styles: ``
+    selector: 'app-user-search',
+    imports: [
+        FormsModule,
+        NgbTypeaheadModule
+    ],
+    templateUrl: './user-search.component.html',
+    styles: ``
 })
 export class UserSearchComponent {
   @Output() onUserSelected = new EventEmitter<{ data: any }>();

@@ -5,28 +5,27 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { isApiResponse } from "@core/models/api-response";
 import { GroupedEstab } from "@core/models/estab.model";
 import { ToasterService } from "@core/services/toaster.service";
-import { formatDateMoment } from '@core/utils/format-date-moment';
+import { formatDateToString } from "@core/utils/date.util";
 import { hideLoader, showLoader } from "@core/utils/loader";
 import { isValidField } from "@core/utils/utils";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerRequest } from "@modules/config/models/user-customer/user-customer-request.model";
 import { UserCustomerRole } from "@modules/config/models/user-customer/user-customer-role.model";
 import { UserCustomerRequestService } from "@modules/config/services/user-customer/user-customer-request.service";
-import { NgbTooltipModule } from "@ng-bootstrap/ng-bootstrap"; 
+import { NgbTooltipModule } from "@ng-bootstrap/ng-bootstrap";
 import { Pagination } from "@shared/models/pagination.model";
 import Swal from "sweetalert2";
 
 @Component({
-  selector: 'app-user-customer-request-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    NgbTooltipModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent
-  ],
-  templateUrl: './user-customer-request-page.component.html'
+    selector: 'app-user-customer-request-page',
+    imports: [
+        FormsModule,
+        FontAwesomeModule,
+        NgbTooltipModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent
+    ],
+    templateUrl: './user-customer-request-page.component.html'
 })
 export class UserCustomerRequestPageComponent {
   private readonly userCustomerRequestSvc = inject(UserCustomerRequestService);
@@ -56,8 +55,8 @@ export class UserCustomerRequestPageComponent {
     codEstado: '',
     usuarioSolicitanteId: 0,
     codEstab: '',
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
   }
 
   fetchDataFilter(){

@@ -261,7 +261,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
             modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
             modalCobroSvc.setUniqueIndex($scope.datosCobro.length + 1)
-            modalCobroSvc.setEsAbonoPosfechado(posfechado);
+         //   modalCobroSvc.setEsAbonoPosfechado(posfechado);
             modalCobroSvc.setValorAbono(valorAbono);
 
             //--------agregando abono ---
@@ -363,7 +363,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         modalCobroSvc.setUniqueIndex(uniqueIndex);
 
                         modalCobroSvc.setValorAbono(item.valorAbono);
-                        modalCobroSvc.setEsAbonoPosfechado(item.posfechado);
+                      //  modalCobroSvc.setEsAbonoPosfechado(item.posfechado);
 
                         //--------agregando abono ---
                         modalCobroSvc.aplicarAbono();
@@ -534,10 +534,14 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
                 let params = comprobanteIngresoSvc.mapperTo(data);
-                console.log(params)
-                showLoader();
-                comprobanteIngresoSvc.post(params).then((response) => {
-                    hideLoader();
+ 
+               
+                
+                const managedRegister = fS.fetchManager(comprobanteIngresoSvc.post);
+                
+                managedRegister(params).then((response) => {
+                    if(!response) return;
+                  
                     if (response.code === '0') {
                         fS.sweetAlert('warning', response.message)
                     }
@@ -546,8 +550,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         $uibModalInstance.close(response);
 
                     }
-                }).catch(error => {
-                    hideLoader();
+                }).catch(error => { 
                     console.log(error)
                 })
 

@@ -71,7 +71,7 @@
     angular.module('acontPlusApp')
         .factory('pricingUtils', function () {
             let service = {}
-             
+
             service.max_seis = 6;
             service.max_cinco = 5;
             service.max_dos = 2;
@@ -212,22 +212,22 @@
                 }
             }
 
-            
+
             /**
              *Función para calcular el valor total del descuento 
              * @param {*} cantidad 
              * @param {*} valorDescuento 
              * @returns 
              */
-            service.calcularValorTotalDescuento = function(cantidad, valorDescuento) {
+            service.calcularValorTotalDescuento = function (cantidad, valorDescuento) {
                 // Calcular el valor total del descuento
-                let valorTotalDescuento = decMul(cantidad , valorDescuento, service.precisionMaxima);
-                
+                let valorTotalDescuento = decMul(cantidad, valorDescuento, service.precisionMaxima);
+
                 return valorTotalDescuento;
             }
 
             // Función para calcular el total antes de aplicar descuentos
-            service.calcularTotalAntesDescuento = function(precioUnitario, cantidad) {
+            service.calcularTotalAntesDescuento = function (precioUnitario, cantidad) {
                 let valorTotal = decMul(precioUnitario, cantidad, service.precisionMaxima);
                 return valorTotal;
             }
@@ -253,7 +253,7 @@
                     let porcentajeDecimal = decDiv(Number(porcentajeImpuesto), 100, service.precisionMaxima)
 
                     // Paso 2: Calcular el valor del impuesto
-                    let valorImpuesto = decMul(Number(precio), porcentajeDecimal, service.precisionMaxima);
+                    let valorImpuesto = decMul(Number(precio), porcentajeDecimal, service.max_cinco);
 
                     return valorImpuesto;
                 } catch (error) {
@@ -269,14 +269,14 @@
              * @param {*} descuento 
              * @returns 
              */
-            service.calcularSubtotalSinImpuesto = function(precioUnitario, cantidad, descuento) {
+            service.calcularSubtotalSinImpuesto = function (precioUnitario, cantidad, descuento) {
                 let totalAntesDescuento = service.calcularTotalAntesDescuento(precioUnitario, cantidad);
                 let subtotalSinImpuesto = decMinus(totalAntesDescuento, descuento, service.precisionMaxima);
                 return subtotalSinImpuesto;
             }
 
             // Calcular el total con impuesto
-            service.calcularTotalConImpuesto = function(subtotalSinImpuesto, valorImpuesto) {
+            service.calcularTotalConImpuesto = function (subtotalSinImpuesto, valorImpuesto) {
                 try {
                     // Sumar el subtotal sin impuestos y el valor del impuesto
                     let totalConImpuesto = decPlus(subtotalSinImpuesto, valorImpuesto, service.precisionMaxima);
@@ -297,9 +297,9 @@
     angular.module('acontPlusApp')
         .factory('formulario', formulario);
 
-    formulario.$inject = ['pricingUtils', 'uuid2'];
+    formulario.$inject = ['pricingUtils', 'uuid2', '$q'];
 
-    function formulario(pricingUtils, uuid2) {
+    function formulario(pricingUtils, uuid2, $q) {
         let formSvc = {};
 
         formSvc.max_dos = DECIMAL_DOS;
@@ -373,7 +373,7 @@
         //     if (typeof max !== 'number' || isNaN(max)) {
         //         throw new TypeError('Máximo de dígitos inválido: ' + max);
         //     }
- 
+
 
         //     let factor = Math.pow(10, max);
         //     let tempNumber = number * factor;
@@ -381,7 +381,7 @@
         //     return roundedTempNumber / factor; 
 
         // }
-        formSvc.roundNumber = function(number, max = 2) {
+        formSvc.roundNumber = function (number, max = 2) {
             if (typeof number !== 'number' || isNaN(number)) {
                 throw new TypeError('Número inválido: ' + number);
             }
@@ -396,9 +396,9 @@
             return Math.round((number + Number.EPSILON) * factor) / factor;
         }
 
-        formSvc.truncateNumber = function(number, decimals) {
+        formSvc.truncateNumber = function (number, decimals) {
             const factor = Math.pow(10, decimals);
-            return Math.floor(number * factor) / factor;
+            return Math.round(number * factor) / factor;
         }
 
 
@@ -740,6 +740,7 @@
                             bodega: bodega.bodega,
                             descripcion: bodega.bodega,
                             defaultBodega: bodega.defaultBodega,
+                            idEstablecimiento: bodega.idEstablecimiento,
                         }))
                 }))
                 return estabs;
@@ -759,6 +760,7 @@
                         codEstab: item.codEstab,
                         defaultEstab: item.defaultEstab,
                         bodegas: [{
+                            idEstablecimiento: item.idEstablecimiento,
                             idBodega: item.idBodega,
                             descripcion: item.bodega,
                             defaultBodega: item.defaultBodega
@@ -766,6 +768,7 @@
                     });
                 } else {
                     existingItem.bodegas.push({
+                        idEstablecimiento: item.idEstablecimiento,
                         idBodega: item.idBodega,
                         descripcion: item.bodega,
                         defaultBodega: item.defaultBodega
@@ -1288,24 +1291,60 @@
         }
 
 
-        formSvc.cellTooltipGrid = function(entity, field){
+        formSvc.cellTooltipGrid = function (entity, field) {
             var originalValue = 0;
-            if(entity && typeof entity ==='object'){
+            if (entity && typeof entity === 'object') {
                 originalValue = entity[field];
-            }else{
+            } else {
                 originalValue = entity;
             }
             var roundedValue = formSvc.roundNumber(originalValue, DECIMAL_DOS);
             return 'Original: ' + originalValue + '\nRedondeado: ' + roundedValue;
         }
 
-        formSvc.cellFilterRoundToNumber = function(){
+        formSvc.cellFilterRoundToNumber = function () {
             return `roundTo:${DECIMAL_DOS}`;
         }
+
+
+
+        formSvc.fetchManager = function (fn) {
+            let executing = false;
+
+            return function (...args) {
+                const deferred = $q.defer();
+
+                if (executing) {
+                    console.log("Otra solicitud ya está en ejecución. Espera a que se complete.");
+                    deferred.reject("Solicitud en curso"); // Rechazar si ya hay una ejecución en curso
+                    return deferred.promise;
+                }
+
+                executing = true;
+
+                // Ejecutar la función con los argumentos y manejar la promesa
+                fn(...args).then(result => {
+                    deferred.resolve(result); // Resolver la promesa con el resultado
+                }).catch(error => {
+                    console.error('Error al ejecutar la función:', error);
+                    deferred.reject(error); // Rechazar la promesa con el error
+                }).finally(() => {
+                    executing = false; // Restablecer el estado después de la ejecución
+                });
+
+                return deferred.promise; // Retornar la promesa
+            };
+        };
+
+
 
 
         return formSvc;
 
     }
+
+
+
+    
 
 })(window.angular)

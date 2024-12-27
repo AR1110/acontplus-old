@@ -12,7 +12,7 @@ import {
   NgbDropdownModule,
   NgbPaginationModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import { PrimaryStatusPipe } from '@shared/pipe/primary-status.pipe';
+import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import swal from 'sweetalert2';
 
 import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';
@@ -21,39 +21,38 @@ import { MatTableModule } from '@angular/material/table';
 import { Pagination } from '@shared/models/pagination.model';
 import { OrderDocumentComponent } from '../order-document/order-document.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { formatDateMoment } from '@core/utils/format-date-moment';
 import { FormsModule } from '@angular/forms';
 import { OrderDeliveryModalComponent } from '../order-delivery-modal/order-delivery-modal.component';
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-order-list',
-  standalone: true,
-  imports: [
-    DateRangeSelectionComponent,
-    FontAwesomeModule,
-    FormsModule,
-    MatTableModule,
-    NgbDropdownModule,
-    NgbPaginationModule,
-    PrimaryStatusPipe,
-  ],
-  templateUrl: './order-list.component.html',
-  styles: `
+    selector: 'app-order-list',
+    imports: [
+        DateRangeSelectionComponent,
+        FontAwesomeModule,
+        FormsModule,
+        MatTableModule,
+        NgbDropdownModule,
+        NgbPaginationModule,
+        PrimaryStatusPipe,
+    ],
+    templateUrl: './order-list.component.html',
+    styles: `
     .row {
       display: flex;
       align-items: center;
     }
-  `,
+  `
 })
 export class OrderListComponent implements OnInit {
   @Input() orderStatusCode: any = '';
   dataSearch = {
     assignedUserId: 0,
     customer: '',
-    endDate: formatDateMoment(new Date()),
-    startDate: formatDateMoment(new Date()),
+    endDate: formatDateToString(new Date()),
+    startDate: formatDateToString(new Date()),
   };
-  displayedColumns: string[] = [
+  visibleColumns: string[] = [
     'position',
     'op',
     'fechaEmision',

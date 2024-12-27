@@ -15,7 +15,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'category-page',
+    path: 'category',
     title: 'Categorías',
     component: CategoryPageComponent,
     data: {

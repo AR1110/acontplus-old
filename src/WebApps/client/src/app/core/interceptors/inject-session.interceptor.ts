@@ -1,33 +1,24 @@
 import { HttpContext, HttpContextToken, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthService } from '@modules/auth/services/auth.service';
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import { environment } from 'src/environments/environment';
 
 const CUSTOM_URL = new HttpContextToken<boolean>(() => false);
 export function customUrl() {
   return new HttpContext().set(CUSTOM_URL, true);
 }
 export const injectSessionInterceptor: HttpInterceptorFn = (req, next) => {
-  let authSvc = inject(AuthService)
+  let _tokenUseCase = inject(TokenUseCase)
 
-  const authToken = authSvc.getToken();
-  const parseJwt = authSvc.parseJwt();
+  const authToken = _tokenUseCase.getToken();
+  const parseJwt = _tokenUseCase.parseJwt();
 
-  const baseUrl = parseJwt.urlGateway;
+  const baseUrl = parseJwt?.['urlGateway'];
 
-  // Define una expresión regular para verificar la presencia de 'rdlcProps', 'dataSources' y 'rdlcParams'
-  //const regex = /(?:rdlcProps|dataSources|rdlcParams)/;
+  let isCustomUrl = req.context.get(CUSTOM_URL) || false;
 
-  // Usa el método test para verificar si alguna de las subcadenas está presente
-  //const isUrlPrinter = regex.test(request.url);
-  let isCustomUrl = false;
-  if (req.context.get(CUSTOM_URL)) {
-    isCustomUrl = true;
-  }
-  // console.log(baseUrl)
-  // console.log(request.url)
-  const url = isCustomUrl ? req.url : `${baseUrl}/gateway/${req.url}`;
   req = req.clone({
-    url,
+    url: isCustomUrl ? req.url : `${baseUrl}/gateway/${req.url}`,
     setHeaders: {
       Authorization: 'Bearer ' + authToken,
     },

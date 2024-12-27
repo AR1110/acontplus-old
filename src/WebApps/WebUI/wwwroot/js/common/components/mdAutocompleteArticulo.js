@@ -620,7 +620,7 @@ app.component("mdAutocompleteArticuloSimple", {
                 md-item-text="item.descripcion"
                 md-min-length="3"
                 placeholder="Ej: Mouse..."
-                md-floating-label="Artículo"
+                md-floating-label="ArtÃ­culo"
                 input-aria-labelledby="Articulos">
             <md-item-template>
                 <span class="small" md-highlight-text="$ctrl.searchTextSimple" md-highlight-flags="^i">{{item.descripcion}}</span>

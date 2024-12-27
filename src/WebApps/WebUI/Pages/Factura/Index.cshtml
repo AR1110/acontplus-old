@@ -4,7 +4,7 @@
 
 @{
     ViewData["title"] = "Factura";
-    
+
 }
 
 <div ng-controller="facturaCtrl">
@@ -173,7 +173,7 @@
                 </div>
 
                 <div class="col-6 d-flex justify-content-end">
-                    
+
                 </div>
             </div>
 
@@ -271,7 +271,8 @@
                                                     </md-button>
                                                 </md-menu-item>
 
-                                                <md-menu-item ng-if="accion.historialFinanciero && item.enabledActionHC">
+                                                <md-menu-item
+                                                    ng-if="accion.historialFinanciero && item.enabledActionHC">
                                                     <md-button btn-historial-cobro params="item" on-result="refresh()">
                                                         <span md-menu-align-target>
                                                             <i class=" fas fa-tasks"></i>
@@ -279,19 +280,21 @@
                                                         </span>
                                                     </md-button>
                                                 </md-menu-item>
-                                                
-                                                
+
+
 
                                                 <md-menu-item>
-                                                    <md-button  tooltip-placement="top"  action-send-to-whats-app params="item"   >
+                                                    <md-button tooltip-placement="top" action-send-to-whats-app
+                                                        params="item">
                                                         <span md-menu-align-target>
                                                             <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
                                                         </span>
                                                     </md-button>
                                                 </md-menu-item>
 
-                                                 <md-menu-item ng-if="accion.cobroPago">
-                                                    <md-button uib-tooltip="Cuentas por cobrar" btn-cuenta-por-cobrar tooltip-placement="top" params="item">
+                                                <md-menu-item ng-if="accion.cobroPago">
+                                                    <md-button uib-tooltip="Cuentas por cobrar" btn-cuenta-por-cobrar
+                                                        tooltip-placement="top" params="item">
                                                         <span md-menu-align-target>
                                                             Cuenta por cobrar
                                                         </span>
@@ -300,11 +303,14 @@
 
                                             </md-menu-content>
                                         </md-menu>
-                                        <button type="button " class="btn btn-secondary btn-sm m-r-10 m-b-5 m-t-5" ng-click="print(item)">
+                                        <button type="button " class="btn btn-secondary btn-sm m-r-10 m-b-5 m-t-5"
+                                            ng-click="print(item)">
                                             <i class="fas fa-print"></i>
                                         </button>
-                                        <button type="button" ng-if="accion.reporte" class="btn btn-secondary btn-sm m-r-10 m-b-5 m-t-5" ng-click="getReport(item)">
-                                            <i class="fa fa-file-pdf fa-xs"></i> 
+                                        <button type="button" ng-if="accion.reporte"
+                                            class="btn btn-secondary btn-sm m-r-10 m-b-5 m-t-5"
+                                            ng-click="getReport(item)">
+                                            <i class="fa fa-file-pdf fa-xs"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -359,7 +365,9 @@
 
 </div>
 @section Scripts {
-    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script> 
+    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
     <script src="~/js/factElect/controllers/facturaCtrl.min.js" asp-append-version="true"></script>
     <script src="~/js/contabilidad/components/cuentaPorCobrarComponent.min.js" asp-append-version="true"></script>
+    <script src="~/js/common/components/tablaInfoAdicional.min.js" asp-append-version="true"></script>
+    <script src="~/js/common/components/modalEliminar.min.js" asp-append-version="true"></script>
 }

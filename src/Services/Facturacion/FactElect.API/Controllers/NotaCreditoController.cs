@@ -1,18 +1,9 @@
-﻿namespace FactElect.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-public class NotaCreditoController : BaseApiController
+namespace FactElect.API.Controllers;
+
+public class NotaCreditoController(INotaCreditoService notaCreditoService) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    private readonly DbAccess _db;
-    private readonly INotaCreditoService _notaCreditoService;
-
-    public NotaCreditoController(IConfiguration configuration, INotaCreditoService notaCreditoService)
-    {
-        _configuration = configuration;
-        _db = new DbAccess(_configuration);
-        _notaCreditoService = notaCreditoService;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -20,68 +11,37 @@ public class NotaCreditoController : BaseApiController
         {
             { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
-        return Ok(await _notaCreditoService.GetAsync(parameters));
+        return Ok(await notaCreditoService.GetAsync(parameters));
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Ventas.NotaCredito_Insert", true);
-            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        return Ok(await notaCreditoService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest parameters)
+    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Ventas.NotaCredito_Update", true);
-            _db.AddDynamicParam("userRoleId",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        return Ok(await notaCreditoService.UpdateAsync(parameters));
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SpExecuteAsync("Ventas.NotaCredito_Delete", true);
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, };
+        return Ok(await notaCreditoService.DeleteAsync(parameters));
     }
 }

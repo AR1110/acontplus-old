@@ -1,87 +1,42 @@
-﻿using Common.Core.Models;
+﻿using Common.AppSettings.Extensions;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-
 
 namespace Mechanical.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SupportDetailController : ControllerBase
+    public class SupportDetailController(ISupportDetailService _supportDetailService) : ControllerBase
     {
-        public readonly ISupportDetailService _supportDetailService;
-        public readonly ICustomLogger _log;
-
-        public SupportDetailController(ISupportDetailService supportDetailService, ICustomLogger log)
-        {
-            _supportDetailService = supportDetailService;
-            _log = log;
-        }
-
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                    { "userRoleId", User.GetUserRoleId()},
-                    { "json", json}
-                };
-                var supports = await _supportDetailService.GetAsync(parameters);
-                if (supports == null | string.IsNullOrEmpty((string)supports))
-                {
-                    return NoContent();
-                }
-                return Ok(supports);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Get: \n" + ex.ToString());
-                return BadRequest("Error on get");
-            }
+            var parameters = new Dictionary<string, object>{
+                { "userRoleId", User.GetUserRoleId()},
+                { "json", json}
+            };
+            return Ok(await _supportDetailService.GetAsync(parameters));
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object> {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _supportDetailService.AddAsync(parameters);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Post: \n" + ex.ToString());
-                return BadRequest("Error On Save");
-            }
+            var parameters = new Dictionary<string, object> {
+                { "userRoleId", User.GetUserRoleId() },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+            }; 
+            return Ok(await _supportDetailService.AddAsync(parameters));
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object> {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "id", id },
-                    { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _supportDetailService.UpdateAsync(parameters);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Post: \n" + ex.ToString());
-                return BadRequest("Error On Save");
-            }
+            var parameters = new Dictionary<string, object> {
+                { "userRoleId", User.GetUserRoleId() },
+                { "id", id },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+            };
+            return Ok(await _supportDetailService.UpdateAsync(parameters));
         }
     }
 }

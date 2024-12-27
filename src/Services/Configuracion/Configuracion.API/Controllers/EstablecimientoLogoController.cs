@@ -1,94 +1,62 @@
-﻿namespace Configuracion.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+
+namespace Configuracion.API.Controllers;
 
 public class EstablecimientoLogoController : BaseApiController
 {
     private readonly IEstablecimientoLogoService _establecimientoLogoService;
-    private readonly ICustomLogger _log;
     private readonly IMapper _mapper;
 
     public EstablecimientoLogoController(IEstablecimientoLogoService establecimientoLogoService,
-        IMapper mapper,
-        ICustomLogger logWriter)
+        IMapper mapper)
     {
         _establecimientoLogoService = establecimientoLogoService;
         _mapper = mapper;
-        _log = logWriter;
     }
 
     [HttpGet("{establecimientoId}")]
     public async Task<IActionResult> Get(int establecimientoId)
     {
-        try
-        {
-            var response = await _establecimientoLogoService.GetAsync(establecimientoId);
-            if (response == null) { return BadRequest($"No logo found: {establecimientoId}"); }
+        var response = await _establecimientoLogoService.GetAsync(establecimientoId);
+        if (response == null) { return BadRequest($"No logo found: {establecimientoId}"); }
 
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity($"Error on Get: \n {ex} \n id: {establecimientoId}");
-            return BadRequest(ex.Message);
-        }
+        return Ok(response);
     }
 
     [HttpPost("{establecimientoId}")]
     public async Task<IActionResult> Post(int establecimientoId, IFormFile file)
     {
-        try
-        {
-            var logo = new FileModel();
-            logo.CreateBytesCompressed(file);
-            var estabLogo = _mapper.Map<EstablecimientoLogo>(logo);
-            estabLogo.EstablecimientoId = establecimientoId;
-            estabLogo.UserId = User.GetUserId();
-            var response = await _establecimientoLogoService.AddAsync(estabLogo);
-            if (response == null) { return BadRequest($"No response: {establecimientoId}"); }
+        var logo = new FileModel();
+        logo.CreateBytesCompressedDeflated(file);
+        var estabLogo = _mapper.Map<EstablecimientoLogo>(logo);
+        estabLogo.EstablecimientoId = establecimientoId;
+        estabLogo.UserId = User.GetUserId();
+        var response = await _establecimientoLogoService.AddAsync(estabLogo);
+        if (response == null) { return BadRequest($"No response: {establecimientoId}"); }
 
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity($"Error on Post: \n {ex} \n EstablecimientoId: {establecimientoId} ");
-            return BadRequest(ex.Message);
-        }
+        return Ok(response);
     }
 
     [HttpPost("Put/{id}")]
     public async Task<IActionResult> Put(int id, IFormFile file)
     {
-        try
-        {
-            var logo = new FileModel();
-            logo.CreateBytesCompressed(file);
-            var estabLogo = _mapper.Map<EstablecimientoLogo>(logo);
-            estabLogo.UserId = User.GetUserId();
-            var response = await _establecimientoLogoService.UpdateAsync(id, estabLogo);
-            if (response == null) { return BadRequest($"No response {id}"); }
+        if (file == null) { return BadRequest("File not found"); }
+        var logo = new FileModel();
+        logo.CreateBytesCompressedDeflated(file);
+        var estabLogo = _mapper.Map<EstablecimientoLogo>(logo);
+        estabLogo.UserId = User.GetUserId();
+        var response = await _establecimientoLogoService.UpdateAsync(id, estabLogo);
+        if (response == null) { return BadRequest($"No response {id}"); }
 
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity($"Error on Put:  \n {ex} \n id: {id}");
-            return BadRequest(ex.Message);
-        }
+        return Ok(response);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var response = await _establecimientoLogoService.DeleteAsync(id);
-            if (response == null) { return BadRequest($"No response {id}"); }
+        var response = await _establecimientoLogoService.DeleteAsync(id);
+        if (response == null) { return BadRequest($"No response {id}"); }
 
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity($"Error on Delete:  \n {ex} \n id: {id}");
-            return BadRequest(ex.Message);
-        }
+        return Ok(response);
     }
 }

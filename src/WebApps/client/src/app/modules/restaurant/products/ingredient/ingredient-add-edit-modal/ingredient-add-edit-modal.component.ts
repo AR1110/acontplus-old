@@ -14,11 +14,10 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IngredientType } from '@restaurant/models/ingredient-type';
 
 @Component({
-  selector: 'app-ingredient-add-edit-modal',
-  standalone: true,
-  imports: [ReactiveFormsModule, FaIconComponent],
-  templateUrl: './ingredient-add-edit-modal.component.html',
-  styles: ``,
+    selector: 'app-ingredient-add-edit-modal',
+    imports: [ReactiveFormsModule, FaIconComponent],
+    templateUrl: './ingredient-add-edit-modal.component.html',
+    styles: ``
 })
 export class IngredientAddEditModalComponent {
   data = {} as Ingredient;

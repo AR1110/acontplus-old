@@ -633,11 +633,14 @@
         service.validarCalculosPorProducto = function (productos) {
 
             function calcularSubtotalProducto(producto) {
-                //   const descuentoPorcentaje = (producto.valorDescuento || producto.descuento || 0) / 100;
                 const descuentoProducto = (producto.valorDescuento || producto.descuento || 0)
-                const subtotalProducto = producto.cantidad * producto.precioUnitario;
+
+                let subtotalSinImpuesto = pricingUtils.calcularSubtotalSinImpuesto(producto.precioUnitario, producto.cantidad, descuentoProducto);
+
+                //   const descuentoPorcentaje = (producto.valorDescuento || producto.descuento || 0) / 100;
+               // const subtotalProducto = producto.cantidad * producto.precioUnitario;
                 // const descuento = subtotalProducto * descuentoPorcentaje;
-                return subtotalProducto - descuentoProducto;
+                return subtotalSinImpuesto;
             }
 
             function calcularIVAProducto(subtotal, tasaIVA) {
@@ -646,11 +649,14 @@
             }
 
             function calcularTotalProducto(subtotal, iva) {
-                return fS.plus(subtotal, iva, 5)
+
+            let total =  pricingUtils.calcularTotalConImpuesto(subtotal, iva) 
+
+                return fS.roundNumber(total, pricingUtils.max_dos);
             }
             function getMaxDecimal(input) {
                 const partes = input.toString().split(".");
-                return partes.length > 1 ? partes[1].length : 1;
+                return partes.length > 1 ? partes[1].length : pricingUtils.max_cinco;
             }
 
             function validarProducto(productos) {
@@ -664,41 +670,45 @@
                     const cantidadTransaccion = producto.cantidad * producto.conversion;
 
                     // Calcular valores esperados
-                    let subtotalEsperado = calcularSubtotalProducto(producto);
-                    let ivaEsperado = calcularIVAProducto(subtotalEsperado, producto.tarifa);
-                    let totalEsperado = calcularTotalProducto(subtotalEsperado, ivaEsperado);
+                    let subtotalEsperado = calcularSubtotalProducto(producto);  
+                    let ivaEsperado = pricingUtils.calculateTaxValue(subtotalEsperado, producto.tarifa);  
+                    let totalEsperado = calcularTotalProducto(subtotalEsperado, ivaEsperado); 
 
                     // Redondear valores esperados con base en los decimales del producto
-                    subtotalEsperado = fS.roundNumber(subtotalEsperado, getMaxDecimal(producto.precioTotalSinImpuesto));
-                    ivaEsperado = fS.roundNumber(ivaEsperado, getMaxDecimal(producto.valorImpuesto));
-                    totalEsperado = fS.roundNumber(totalEsperado, getMaxDecimal(producto.total));
+                    subtotalEsperado = fS.roundNumber(subtotalEsperado, pricingUtils.max_dos);
+                    ivaEsperado = fS.roundNumber(ivaEsperado, pricingUtils.max_dos);
+                    totalEsperado = fS.roundNumber(totalEsperado, pricingUtils.max_dos);
 
+                    let subtotalCalculado = fS.roundNumber(producto.precioTotalSinImpuesto, pricingUtils.max_dos);
+                    let valorImpuestoCalculado = fS.roundNumber(producto.valorImpuesto, pricingUtils.max_dos);
+                    let totalCalculado = calcularTotalProducto(producto.precioTotalSinImpuesto,producto.valorImpuesto ); 
+              
                     // Validar Subtotal
-                    // if (subtotalEsperado !== producto.precioTotalSinImpuesto) {
-                    //     errores.push({
-                    //         uniqueRow,
-                    //         errorMensaje: `Error en Subtotal: Calculado ${producto.precioTotalSinImpuesto}, Esperado ${subtotalEsperado}`,
-                    //         productoNombre
-                    //     });
-                    // }
+                    if (subtotalEsperado !==subtotalCalculado ) {
+                        errores.push({
+                            uniqueRow,
+                            errorMensaje: `Error en Subtotal: Calculado ${subtotalCalculado}, Esperado ${subtotalEsperado}`,
+                            productoNombre
+                        });
+                    }
 
                     // Validar IVA
-                    // if (ivaEsperado !== producto.valorImpuesto) {
-                    //     errores.push({
-                    //         uniqueRow,
-                    //         errorMensaje: `Error en IVA: Calculado ${producto.valorImpuesto}, Esperado ${ivaEsperado}`,
-                    //         productoNombre
-                    //     });
-                    // }
+                    if (ivaEsperado !== valorImpuestoCalculado) {
+                        errores.push({
+                            uniqueRow,
+                            errorMensaje: `Error en IVA: Calculado ${valorImpuestoCalculado}, Esperado ${ivaEsperado}`,
+                            productoNombre
+                        });
+                    }
 
                     // Validar Total
-                    // if (totalEsperado !== producto.total) {
-                    //     errores.push({
-                    //         uniqueRow,
-                    //         errorMensaje: `Error en Total: Calculado <b>${producto.total}</b>, Esperado <b>${totalEsperado}</b>`,
-                    //         productoNombre
-                    //     });
-                    // }
+                    if (totalEsperado !== totalCalculado) { 
+                        errores.push({
+                            uniqueRow,
+                            errorMensaje: `Error en Total: Calculado <b>${totalCalculado}</b>, Esperado <b>${totalEsperado}</b>`,
+                            productoNombre
+                        });
+                    }
 
                     // Validar cantidad de transacción
                     if (typeof cantidadTransaccion !== 'number') {
@@ -717,7 +727,7 @@
                 };
             }
 
-            let dataValid = validarProducto(productos);
+            let dataValid = validarProducto(productos); 
 
             if (!dataValid.esValido) {
                 service.mostrarErrorCalculosProducto(dataValid.errores)

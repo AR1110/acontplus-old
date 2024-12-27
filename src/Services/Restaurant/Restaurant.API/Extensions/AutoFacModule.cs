@@ -1,7 +1,8 @@
 ﻿using Autofac;
-using Common.Core.Interfaces;
 using Common.Infrastructure.Data;
-using Common.Infrastructure.Repository;
+using Common.Infrastructure.Data.Configurations;
+using Common.Infrastructure.Repository.Implementations;
+using Common.Infrastructure.Repository.Interfaces;
 using Restaurant.API.Data;
 
 namespace Restaurant.API.Extensions

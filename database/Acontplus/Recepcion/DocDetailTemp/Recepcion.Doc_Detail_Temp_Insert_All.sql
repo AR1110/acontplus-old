@@ -25,6 +25,7 @@ BEGIN
     DECLARE @idEntidad INT
     DECLARE @rucProv VARCHAR(20)
     DECLARE @idProveedor INT
+    DECLARE @CustomerId INT
 
     DECLARE @tmp TABLE(
         idDocumento INT NOT NULL
@@ -92,7 +93,9 @@ BEGIN
 
         SELECT @rucProv = rucEmisor FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento 
 
-        SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
+        SELECT TOP 1 @CustomerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @rucProv
+
+        SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @CustomerId
 
         BEGIN TRAN
 
@@ -129,7 +132,7 @@ BEGIN
                 dd.codigoPrincipal, 
                 dd.codigoAuxiliar,
                 dd.cantidad, 
-                a.descripcion, 
+                ISNULL(t.descripcion, a.descripcion) descripcion, 
                 dd.precioUnitario,
                 dd.precioTotalSinImpuesto,
                 CAST((CAST(dd.precioTotalSinImpuesto AS decimal(15,5)) / CAST(dd.cantidad AS decimal(18,5))) AS numeric(18,5)) costoNeto,
@@ -139,7 +142,8 @@ BEGIN
                 @idUsuario idUsuario
             INTO #TEMP
             FROM Recepcion.DocumentoDetalle dd WITH (NOLOCK)
-            INNER JOIN Articulo a WITH (NOLOCK) ON dd.idArticulo = a.idArticulo 
+            INNER JOIN Articulo a WITH (NOLOCK) ON dd.idArticulo = a.idArticulo
+            LEFT JOIN @tmp t ON a.codigo = t.codigoPrincipal
             WHERE dd.idDocumento = @idDocumento
 
             INSERT INTO #TEMP
@@ -152,7 +156,7 @@ BEGIN
                 t.codigoPrincipal, 
                 t.codigoAuxiliar,
                 cantidad, 
-                t.descripcion, 
+                ISNULL(t.descripcion, a.descripcion) descripcion, 
                 precioUnitario, 
                 precioTotalSinImpuesto,
                 CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)) costoNeto,

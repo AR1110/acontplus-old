@@ -17,10 +17,80 @@ namespace Contabilidad.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Contabilidad.API.Entities.Account", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool?>("FromMobile")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Hierarchy")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<bool>("Level")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<int?>("ParentAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TipoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_Contabilidad_Accont_Code");
+
+                    b.HasIndex("ParentAccountId");
+
+                    b.HasIndex("TipoId");
+
+                    b.ToTable("Account", "Contabilidad");
+                });
 
             modelBuilder.Entity("Contabilidad.API.Entities.Category", b =>
                 {
@@ -184,6 +254,22 @@ namespace Contabilidad.API.Data.Migrations
                     b.ToTable("Tipo", "Contabilidad");
                 });
 
+            modelBuilder.Entity("Contabilidad.API.Entities.Account", b =>
+                {
+                    b.HasOne("Contabilidad.API.Entities.Account", "ParentAccount")
+                        .WithMany("ChildAccounts")
+                        .HasForeignKey("ParentAccountId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Contabilidad.API.Entities.Tipo", "tipo")
+                        .WithMany()
+                        .HasForeignKey("TipoId");
+
+                    b.Navigation("ParentAccount");
+
+                    b.Navigation("tipo");
+                });
+
             modelBuilder.Entity("Contabilidad.API.Entities.Category", b =>
                 {
                     b.HasOne("Contabilidad.API.Entities.Tipo", "Tipo")
@@ -204,6 +290,11 @@ namespace Contabilidad.API.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Contabilidad.API.Entities.Account", b =>
+                {
+                    b.Navigation("ChildAccounts");
                 });
 
             modelBuilder.Entity("Contabilidad.API.Entities.Category", b =>

@@ -28,6 +28,6 @@ CREATE OR ALTER VIEW Mechanical.v_Vehicle WITH SCHEMABINDING AS (
 	INNER JOIN Mechanical.VehicleType    vt WITH (NOLOCK) ON vt.Id        = ve.VehicleTypeId
     INNER JOIN Common.Country            ct WITH (NOLOCK) ON ct.Id        = ve.CountryId
 	INNER JOIN dbo.Cliente               cl WITH (NOLOCK) ON cl.idCliente = vc.CustomerId
-	 LEFT JOIN Customer.Customer         cs WITH (NOLOCK) ON cs.Id        = cl.CustomerId 
+	INNER JOIN Customer.Customer         cs WITH (NOLOCK) ON cs.Id        = cl.CustomerId 
  )
 

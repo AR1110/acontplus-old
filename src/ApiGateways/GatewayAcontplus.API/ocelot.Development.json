@@ -22,12 +22,12 @@
           "Port": 7221
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Post"
       ],
-      "UpstreamPathTemplate": "/gateway/Seguridad{everything}"
+      "UpstreamPathTemplate": "/gateway/seguridad{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -60,7 +60,7 @@
           "Port": 7146
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Post"
@@ -96,7 +96,7 @@
           "Port": 7167
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -118,7 +118,7 @@
           "Port": 7149
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -140,7 +140,7 @@
           "Port": 7295
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -162,7 +162,7 @@
           "Port": 7132
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -184,7 +184,7 @@
           "Port": 7089
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -206,7 +206,7 @@
           "Port": 7111
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -229,7 +229,7 @@
           "Port": 7023
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -251,7 +251,7 @@
           "Port": 7194
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -273,7 +273,7 @@
           "Port": 7120
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -296,7 +296,7 @@
           "Port": 7001
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -319,7 +319,7 @@
           "Port": 7248
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",

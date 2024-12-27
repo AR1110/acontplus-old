@@ -28,10 +28,7 @@ import {
 } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { DatePipe } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
 import { ThemePalette } from '@angular/material/core';
-import { MatIconButton } from '@angular/material/button';
 import { MatInput } from '@angular/material/input';
 import { Pet } from '@modules/vet/models/pet.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -41,41 +38,37 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 Chart.register(...registerables);
 
 @Component({
-  selector: 'app-pet-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    FormsModule,
-    MatPaginator,
-    MatSlideToggle,
-    DatePipe,
-    MatTable,
-    MatHeaderCellDef,
-    MatCellDef,
-    MatIcon,
-    MatColumnDef,
-    MatHeaderCell,
-    MatCell,
-    MatRowDef,
-    MatNoDataRow,
-    MatRow,
-    MatIconButton,
-    MatHeaderRowDef,
-    MatHeaderRow,
-    MatInput,
-    MatSort,
-    FaIconComponent,
-    NgbDropdownModule,
-  ],
-  templateUrl: './pet-page.component.html',
-  styles: ``,
+    selector: 'app-pet-page',
+    imports: [
+        BreadcrumbComponent,
+        FormsModule,
+        MatPaginator,
+        MatSlideToggle,
+        MatTable,
+        MatHeaderCellDef,
+        MatCellDef,
+        MatColumnDef,
+        MatHeaderCell,
+        MatCell,
+        MatRowDef,
+        MatNoDataRow,
+        MatRow,
+        MatHeaderRowDef,
+        MatHeaderRow,
+        MatInput,
+        MatSort,
+        FaIconComponent,
+        NgbDropdownModule,
+    ],
+    templateUrl: './pet-page.component.html',
+    styles: ``
 })
 export class PetPageComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   colorToggle: ThemePalette = 'accent';
   data = {} as Pet;
-  displayedColumns: string[] = [
+  visibleColumns: string[] = [
     'op',
     'position',
     'name',

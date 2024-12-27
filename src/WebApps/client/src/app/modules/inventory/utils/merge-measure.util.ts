@@ -1,4 +1,4 @@
-import { MedidaProducto } from "../models/measure.model";
+import { MedidaProducto } from "../domain/models/measure.model";
 
 export const mergeMeasureUtil = function (principalMedidas: unknown, fraccionadoMedidas: unknown): MedidaProducto[] {
 

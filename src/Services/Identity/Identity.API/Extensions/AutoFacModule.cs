@@ -1,4 +1,7 @@
-﻿namespace Identity.API.Extensions;
+﻿using Common.Infrastructure.Data;
+using Common.Infrastructure.Repository.Implementations;
+
+namespace Identity.API.Extensions;
 
 public class AutoFacModule : Module
 {

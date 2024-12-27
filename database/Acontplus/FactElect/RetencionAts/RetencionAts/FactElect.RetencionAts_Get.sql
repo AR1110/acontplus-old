@@ -108,18 +108,20 @@ BEGIN
 			
 			--INFO RETENCION
 			SELECT ra.*
-                  ,s.descripcion subContribuyente 
+                  ,pe.idPuntoEmision
+                  ,sb.descripcion    as subContribuyente 
                   ,es.codEstab 
-                  ,p.numeroIdentificacion as identificacionSujetoRetenido
-                  ,p.nombreFiscal         as razonSocialSujetoRetenido
-                  ,ti.codigoSri           as tipoIdentificacionSujetoRetenido
+                  ,cu.IDCard         as identificacionSujetoRetenido
+                  ,cu.BusinessName   as razonSocialSujetoRetenido
+                  ,ti.codigoSri      as tipoIdentificacionSujetoRetenido
             FROM FactElect.RetencionAts         ra WITH (NOLOCK) 
             INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = ra.idDocumentoElectronico
+            INNER JOIN Proveedor                pr WITH (NOLOCK) ON pr.idProveedor            = ra.idProveedor
             INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
             INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
-			INNER JOIN Proveedor                 p WITH (NOLOCK) ON ra.idProveedor            = p.idProveedor
-			 LEFT JOIN SubContribuyente          s WITH (NOLOCK) ON p.idSubContribuyente      = s.idSubContribuyente
-             LEFT JOIN dbo.TipoIdentificacion   ti WITH (NOLOCK) ON ti.idTipoIdentificacion   = p.idTipoIdentificacion
+            INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = pr.CustomerId
+			 LEFT JOIN SubContribuyente         sb WITH (NOLOCK) ON sb.idSubContribuyente     = pr.idSubContribuyente
+             LEFT JOIN dbo.TipoIdentificacion   ti WITH (NOLOCK) ON ti.idTipoIdentificacion   = pr.idTipoIdentificacion
 			WHERE idRetencionAts = @idRetencionATS
 			
 			--DOCUMENTOS DE SUSTENTOS

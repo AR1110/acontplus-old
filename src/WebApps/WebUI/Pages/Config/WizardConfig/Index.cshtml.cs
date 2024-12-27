@@ -7,7 +7,7 @@ namespace WebUI.Pages.Config.WizardConfig
         public void OnGet()
         {
             var url = configuration["UrlApps:AngularApp"];
-            ViewData["FrontEnd"] = url;
+            
         }
     }
 }

@@ -1,9 +1,5 @@
-USE AcontPlus;
-
-IF OBJECT_ID('Config.Sistema_Get')IS NOT NULL
-	DROP PROCEDURE Config.Sistema_Get
-GO
-
+USE AcontPlus
+go
 
 -- =============================================
 -- Author:		Ramirez Alexis.
@@ -50,13 +46,14 @@ BEGIN
                   ,dt.idFormaPagoSri
                   ,dt.idArticulo
                   ,dt.idCliente 
-				  ,cl.nombreFiscal
-				  ,cl.numeroIdentificacion
+				  ,cu.TradeName as nombreFiscal
+                  ,cu.IDCard    as numeroIdentificacion
                   ,ar.descripcion
 				  ,ar.codigo
             FROM Config.v_Sistema_Ventas dt WITH (NOLOCK)  
             LEFT JOIN dbo.Cliente        cl WITH (NOLOCK) ON cl.idCliente  = dt.idCliente
 			LEFT JOIN dbo.Articulo       ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo
+            LEFT JOIN Customer.Customer  cu WITH (NOLOCK) ON cu.Id         = cl.CustomerId
             WHERE dt.idEntidad = @idEntidad
 
             SELECT idFormaPagoSri, descripcion, codigo FROM dbo.FormaPagoSri WHERE estado = 1

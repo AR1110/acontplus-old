@@ -108,12 +108,6 @@
     ]
   },
   {
-    "outputFileName": "wwwroot/js/services/almacen/articuloService.min.js",
-    "inputFiles": [
-      "wwwroot/js/services/almacen/articuloService.js"
-    ]
-  },
-  {
     "outputFileName": "wwwroot/dist/css/style.min.css",
     "inputFiles": [
       "wwwroot/dist/css/style.css"
@@ -747,6 +741,12 @@
     "outputFileName": "wwwroot/js/factElect/controllers/notaCreditoCtrl.min.js",
     "inputFiles": [
       "wwwroot/js/factElect/controllers/notaCreditoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ventas/controllers/clienteCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/ventas/controllers/clienteCtrl.js"
     ]
   }
 ]

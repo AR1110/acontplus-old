@@ -15,11 +15,12 @@ public static class ApplicationServicesExtensions
                 x.SerializerSettings.ContractResolver =
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
-      //  services.AddHostedService<TokenCleanupService>();
+        
+        services.AddHostedService<TokenCleanupService>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<ILoginFailedService, LoginFailedService>();
         services.AddScoped<ILoginHistoryService, LoginHistoryService>();
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IUserService, UserService>();
 
         return services;

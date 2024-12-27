@@ -1,9 +1,11 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
+import { ApiResponse, isApiResponse } from "@core/models/api-response";
 import { map } from "rxjs";
-import { isApiResponse } from "@core/models/api-response";
-import { INVENTORY_PATHS } from "../enums/inventory.enum";
+
+import { INVENTORY_PATHS } from "@inventory/domain/enums/inventory.enum";
+import { getNoLoader } from "@core/interceptors/loader.interceptor";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,9 @@ export class SubCategoryService {
 
   getAll<T>(data: T) {
     let params = JSON.stringify({ ...data, tipo: 1 })
-    return this.http.get(`${this.url}Get?json=${params}`)
+    return this.http.get(`${this.url}?json=${params}`, {
+      context: getNoLoader()
+    })
       .pipe(
         map(response => {
           if (isApiResponse(response)) {
@@ -49,6 +53,24 @@ export class SubCategoryService {
           return []
         })
       )
+  }
+
+
+  post<T>(obj: T, file: Blob | string) {
+    let json = JSON.stringify(obj)
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<ApiResponse>(`${this.url}?json=${json}`, formData)
+  }
+
+  put<T>(id: number, obj: T,) {
+    let json = JSON.stringify(obj)
+    return this.http.put<ApiResponse>(`${this.url}${id}?json=${json}`, null)
+  }
+
+
+  updateStatus(id: number){
+    return this.http.delete<ApiResponse>(`${this.url}${id}`)
   }
 
 }

@@ -1,0 +1,31 @@
+::ng-deep .mat-mdc-paginator-range-label {
+  display: none;
+}
+::ng-deep .mat-mdc-paginator-container {
+  display: flex;
+  justify-content: flex-start !important;
+}
+
+.pos-items-scroll {
+  height: calc(98vh - 100px - 100px);
+  overflow: auto;
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+.pos-items-container {
+  // padding: 15px;
+  //margin: 0.5rem;
+  // height: calc(100dvh - 50px - 15px);
+  // overflow: auto;
+  //max-height: 100%;
+  overflow-y: auto;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .pos-items-container {
+    margin-bottom: 30px;
+  }
+}

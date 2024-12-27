@@ -4,14 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { formatDate, setDateWithCurrentTime } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-input-date',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule
-  ],
-  templateUrl: './input-date.component.html',
-  styles: ``
+    selector: 'app-input-date',
+    imports: [
+        CommonModule,
+        FormsModule
+    ],
+    templateUrl: './input-date.component.html',
+    styles: ``
 })
 export class InputDateComponent {
   @Input() value = new Date()

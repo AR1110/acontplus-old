@@ -1,6 +1,6 @@
 import {Component, inject,  ViewChild, ViewEncapsulation} from '@angular/core';
 import {FormControl, FormGroup,  ReactiveFormsModule, Validators} from '@angular/forms';
-import { CompanyCustomerSearchComponent } from '@modules/customer/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import {
@@ -25,32 +25,31 @@ import {
   faTrashAlt,
 } from '@fortawesome/free-regular-svg-icons';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
-import { formatDateMoment, isDateValid } from '@core/utils/format-date-moment';
 import {
   ajustarFechaEmisionModificada,
   dateIsAfterCurrentDate,
   formatDate,
+  formatDateToString,
+  isDateValid,
 } from '@core/utils/date.util';
 import { CommonModule, DatePipe} from '@angular/common';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
-  selector: 'app-order-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FontAwesomeModule,
-    CompanyCustomerSearchComponent,
-    DeviceSearchComponent,
-    NgbAccordionModule,
-    TabulatorComponent,
-    InputDateComponent,
-  ],
-  templateUrl: './order-modal.component.html',
-  styles: ``,
-  encapsulation: ViewEncapsulation.None,
-  providers: [DatePipe],
+    selector: 'app-order-modal',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FontAwesomeModule,
+        CompanyCustomerSearchComponent,
+        DeviceSearchComponent,
+        NgbAccordionModule,
+        TabulatorComponent,
+    ],
+    templateUrl: './order-modal.component.html',
+    styles: ``,
+    encapsulation: ViewEncapsulation.None,
+    providers: [DatePipe]
 })
 export class OrderModalComponent {
   @ViewChild('inputNameSpec') inputNameSpec: any;
@@ -409,7 +408,7 @@ export class OrderModalComponent {
     const dataToSave = {
       ...this.orderForm.value,
       orderDetails: this.orderDetails,
-      fechaEmision: formatDateMoment(ajusteFechaEmision),
+      fechaEmision: formatDateToString(ajusteFechaEmision),
     };
     if (this.data.id > 0) {
 

@@ -167,6 +167,8 @@ app.component("appCuentaPorPagarComponent", {
                 }).catch(error => {
                     console.log(error)
                 }).finally(() => hideLoader());
+
+                comprobanteEgresoSvc.getPosfechadoPagosModal()
             } catch (error) {
                 console.log(error)
             }

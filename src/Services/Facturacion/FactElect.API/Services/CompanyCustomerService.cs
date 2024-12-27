@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Services;
+﻿using Common.AppSettings;
+
+namespace FactElect.API.Services;
 
 public class CompanyCustomerService(IAdoRepository repository) : ICompanyCustomerService
 {
@@ -12,37 +14,37 @@ public class CompanyCustomerService(IAdoRepository repository) : ICompanyCustome
         return await repository.SpExecuteDeprecatedAsync("Ventas.Cliente_Delete", data);
     }
 
-    public async Task<ApiResponseDeprecated> GetAsync(Dictionary<string, object> parameters)
+    public async Task<LegacyApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync("Ventas.Cliente_Get", parameters, true);
+        var ds = await repository.GetDataSetAsync("Ventas.Cliente_Get", parameters, false);
         if (DataValidation.DataSetIsNull(ds))
         {
-            return new ApiResponseDeprecated { code = "0", message = "No se encontraron clientes" };
+            return new LegacyApiResponse { code = "0", message = "No se encontraron clientes" };
         }
 
-        return new ApiResponseDeprecated { code = "1", payload = DataConverters.DataSetToJson(ds, true) };
+        return new LegacyApiResponse { code = "1", payload = DataConverters.DataSetToJson(ds, true) };
     }
 
-    public async Task<ApiResponseDeprecated> SearchAsync(Dictionary<string, object> parameters)
+    public async Task<LegacyApiResponse> SearchAsync(Dictionary<string, object> parameters)
     {
         var dt = await repository.GetDataTableAsync("Ventas.Cliente_Get_Search", parameters);
         if (DataValidation.DataTableIsNull(dt))
         {
-            return new ApiResponseDeprecated { code = "0", message = "No se encontraron clientes con estos datos" };
+            return new LegacyApiResponse { code = "0", message = "No se encontraron clientes con estos datos" };
         }
 
-        return new ApiResponseDeprecated { code = "1", payload = DataConverters.DataTableToJson(dt) };
+        return new LegacyApiResponse { code = "1", payload = DataConverters.DataTableToJson(dt) };
     }
 
-    public async Task<ApiResponseDeprecated> GetIdAsync(Dictionary<string, object> parameters)
+    public async Task<LegacyApiResponse> GetIdAsync(Dictionary<string, object> parameters)
     {
         var dt = await repository.GetDataTableAsync("Ventas.Cliente_Get_Id", parameters);
         if (DataValidation.DataTableIsNull(dt))
         {
-            return new ApiResponseDeprecated { code = "0", message = "No se encontró datos del cliente" };
+            return new LegacyApiResponse { code = "0", message = "No se encontró datos del cliente" };
         }
 
-        return new ApiResponseDeprecated { code = "1", payload = DataConverters.DataTableToJson(dt) };
+        return new LegacyApiResponse { code = "1", payload = DataConverters.DataTableToJson(dt) };
     }
 
     public async Task<string> UpdateAsync(Dictionary<string, object> data)

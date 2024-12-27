@@ -24,7 +24,6 @@ export const enum PATHS {
   PRINT = 'Print',
   USER = 'Usuario/',
   ESTAB_ASIGN = 'EstabAsig/',
-  NOTIFICACION = 'Notificacion/',
 }
 
 export const enum DOC_TYPE {
@@ -179,7 +178,10 @@ export enum IDENTIFICATION_CODE {
 export enum SEPARATOR_KEY_CODE {
   SLASH = '|',
   PUNTO_COMA = ';',
+  DOS_PUNTOS = ':',
 }
+export const SEPARADORES_REGEX = new RegExp(`[${Object.values(SEPARATOR_KEY_CODE).join('')}]`);
+
 
 export enum CODE_ROLE {
   ADM = 'ADM',
@@ -189,4 +191,11 @@ export enum CODE_ROLE {
 export enum TIPO_TRANSACCION {
   C='C',
   V='V'
+}
+
+
+export const DECIMALS = {
+  DOS: 2,
+  CINCO: 5,
+  GENERAL: 6
 }

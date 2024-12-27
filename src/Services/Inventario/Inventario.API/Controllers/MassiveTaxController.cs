@@ -1,16 +1,9 @@
-﻿namespace Inventario.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-public class MassiveTaxController : BaseApiController
+namespace Inventario.API.Controllers;
+
+public class MassiveTaxController(IMassiveTaxService massiveTaxService) : BaseApiController
 {
-
-    private readonly IMassiveTaxService _service;
-
-    public MassiveTaxController(IMassiveTaxService service)
-    {
-        _service = service;
-
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -18,10 +11,9 @@ public class MassiveTaxController : BaseApiController
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             };
-        var response = await _service.GetAsync(parameters);
+        var response = await massiveTaxService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
 
-            ;
         return Ok(response);
     }
 
@@ -33,10 +25,9 @@ public class MassiveTaxController : BaseApiController
                 { "userRoleId", User.GetUserRoleId() },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-        var response = await _service.UpdateAsync(parameters);
+        var response = await massiveTaxService.UpdateAsync(parameters);
         if (response == null) { return NoContent(); }
 
-            ;
         return Ok(response);
     }
 }

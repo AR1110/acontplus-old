@@ -12,8 +12,8 @@ CREATE OR ALTER VIEW Compra.v_DocumentoIngreso WITH SCHEMABINDING AS (
           ,es.estab + '-' + pe.ptoEmi + '-' +  RIGHT('000000000' + CAST(di.secuencial AS VARCHAR(9)), 9) as serieComprobante
           ,ep.descripcion                                                                                as estadoCuenta
           ,ep.codigo                                                                                     as codCuenta
-          ,pr.numeroIdentificacion                                                                       as identificacionProveedor
-          ,pr.nombreFiscal                                                                               as razonSocialProveedor
+          ,cu.IDCard                                                                                     as identificacionProveedor
+          ,cu.BusinessName                                                                               as razonSocialProveedor
           ,cp.abono
           ,cp.saldo
           ,us.nombreUsuario                                                                              as usuario
@@ -28,4 +28,5 @@ CREATE OR ALTER VIEW Compra.v_DocumentoIngreso WITH SCHEMABINDING AS (
     INNER JOIN Sri.Establecimiento         es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
      LEFT JOIN dbo.EstadoPago              ep WITH (NOLOCK) ON ep.idEstadoPago      = cp.idEstadoPago
      LEFT JOIN Contabilidad.Subcategory    sc WITH (NOLOCK) ON sc.Id                = cp.subcategoryId
+    INNER JOIN Customer.Customer           cu WITH (NOLOCK) ON cu.Id                = pr.CustomerId
 )

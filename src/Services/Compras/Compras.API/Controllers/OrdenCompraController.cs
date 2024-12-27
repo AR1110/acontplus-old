@@ -1,18 +1,17 @@
-﻿namespace Compras.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-[Route("api/[controller]")]
-[ApiController]
-public class OrdenCompraController : ControllerBase
+namespace Compras.API.Controllers;
+
+public class OrdenCompraController : BaseApiController
 {
     private IConfiguration _configuration;
-    private readonly ICustomLogger _log;
     private readonly IOrdenCompraService _ordeCompraSvc;
 
-    public OrdenCompraController(IConfiguration configuration, IOrdenCompraService ordeCompraSvc, ICustomLogger log)
+    public OrdenCompraController(IConfiguration configuration, IOrdenCompraService ordeCompraSvc)
     {
         _configuration = configuration;
         _ordeCompraSvc = ordeCompraSvc;
-        _log = log;
+        
     }
 
     [HttpGet("Get")]
@@ -31,7 +30,6 @@ public class OrdenCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al listar orden Compra: \n" + ex);
             return BadRequest("Error on get: " + ex.Message);
         }
     }
@@ -47,7 +45,6 @@ public class OrdenCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al crear orden compra: " + ex);
             return BadRequest(ex.Message);
         }
     }
@@ -69,7 +66,6 @@ public class OrdenCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al obtener datos de orden Compra: \n" + ex);
             return BadRequest("Error on get by id: " + ex.Message);
         }
     }
@@ -85,7 +81,6 @@ public class OrdenCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al actualizar orden compra: " + ex);
             return BadRequest(ex.Message);
         }
     }
@@ -102,7 +97,6 @@ public class OrdenCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al eliminar doc. orden compra: " + ex);
             return BadRequest(ex.Message);
         }
     }

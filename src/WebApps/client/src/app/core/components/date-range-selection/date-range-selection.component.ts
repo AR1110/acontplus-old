@@ -1,23 +1,37 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, input, Input, model, output, Output, ViewChild } from "@angular/core";
 
 declare var DateRangePicker: any;
-import moment from 'moment';
-import { formatDateMoment } from "@core/utils/format-date-moment";
 import { FormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatInputModule } from "@angular/material/input";
+import { addDay, format, monthEnd, monthStart, weekEnd, weekStart } from "@formkit/tempo";
+import { formatDateToString, zonaHorariaEcuador } from "@core/utils/date.util";
 
 @Component({
-  selector: 'app-date-range-selection',
-  standalone: true,
-  imports: [
-    FormsModule
-  ],
-  templateUrl: './date-range-selection.component.html',
+    selector: 'app-date-range-selection',
+    imports: [
+        FormsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatCheckboxModule
+    ],
+    templateUrl: './date-range-selection.component.html'
 })
 export class DateRangeSelectionComponent {
+  showInputMaterial  = input(false);
+  showMatSuffix = input(false)
+  showMatPrefix = input(false)
+  checkbox = model(false)
+
+  onCheckboxChange = output<void>()
+
+
+  @Input() requiredDate = false;
+
   @Input() from: string | null = null;
   @Input() to: string | null = null;
   @Input() inputGroupDateChecked = false;
-  @Input() requiredDate = false;
   @Output() valueChangeRequiredDate = new EventEmitter<boolean>()
   @Input() options = {
     timePicker: false,
@@ -28,8 +42,66 @@ export class DateRangeSelectionComponent {
 
   @ViewChild('dateRangeInput', { static: false }) dateRangeInput!: ElementRef;
 
+  private currentDate = new Date()
+  private formatCurrentDate = format({
+    date: this.currentDate,
+    format: "YYYY-MM-DD HH:mm:ss",
+    tz: zonaHorariaEcuador,
+  })
+
+  private getDateAddDay(day:number){
+    return  addDay(this.currentDate, day)
+  }
+
   ngAfterViewInit() {
+
     const self = this;
+    const rangos = {
+      'Hoy': [
+        self.formatCurrentDate,
+       self.formatCurrentDate,
+
+      ],
+      'Ayer': [
+        self.getDateAddDay(-1),
+        self.getDateAddDay(-1),
+      ],
+      'Últimos 5 días': [
+        self.getDateAddDay(-4),
+        self.formatCurrentDate,
+      ],
+      'Últimos 10 días': [
+        self.getDateAddDay(-9),
+        self.formatCurrentDate,
+      ],
+      'Últimos 15 días': [
+        self.getDateAddDay(-14),
+        self.formatCurrentDate,
+
+      ],
+      'Últimos 30 días': [
+        self.getDateAddDay(-29),
+        self.formatCurrentDate,
+      ],
+      'Esta semana': [
+        weekStart(self.currentDate ),
+        weekEnd(self.currentDate ),
+      ],
+      // 'Última semana': [
+      //   weekStart(weekStart(this.currentDate, -1)),
+      //   weekStart(this.currentDate, -1 ) ,
+      // ],
+      'Este mes': [
+        monthStart(self.currentDate),
+        monthEnd(self.currentDate),
+      ],
+      'El mes pasado': [
+        monthStart(addDay(monthStart(this.currentDate),-1)),
+        addDay(monthStart(this.currentDate),-1),
+
+      ]
+    };
+
     const valorInput = this.dateRangeInput.nativeElement;
     (function (DateRangePicker) {
       let drp = new DateRangePicker(valorInput,
@@ -62,16 +134,7 @@ export class DateRangeSelectionComponent {
           //    return "weekday-" + m.weekday();
           //},
           //autoUpdateInput: false,
-          ranges: {
-            'Hoy': [moment(), moment()],
-            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Últimos 5 días': [moment().subtract(4, 'days'), moment()],
-            'Últimos 10 días': [moment().subtract(9, 'days'), moment()],
-            'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
-            'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
-            'Este Mes': [moment().startOf('month'), moment().endOf('month')],
-            'El mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-          },
+          ranges: rangos,
           locale: {
             applyLabel: "Aplicar",
             cancelLabel: 'Cancelar',
@@ -81,26 +144,9 @@ export class DateRangeSelectionComponent {
           }
         },
         function (start: any, end: any) {
-          const currentDate = new Date();
-          // if (isDatesEqual(new Date(start), new Date())) {
-          //   start.setHours(
-          //     currentDate.getHours(),
-          //     currentDate.getMinutes(),
-          //     currentDate.getSeconds(),
-          //     currentDate.getMilliseconds()
-          //   );
-          // }
-          // if (isDatesEqual(end, new Date())) {
-          //   end.setHours(
-          //     currentDate.getHours(),
-          //     currentDate.getMinutes(),
-          //     currentDate.getSeconds(),
-          //     currentDate.getMilliseconds()
-          //   );
-          // }
           const dateRange = {
-            from: formatDateMoment(new Date(start)),
-            to: formatDateMoment(new Date(end))
+            from: formatDateToString(new Date(start)),
+            to: formatDateToString(new Date(end))
           };
           self.onChangeDateRange.emit(dateRange);
         })
@@ -113,6 +159,11 @@ export class DateRangeSelectionComponent {
       });
     })(DateRangePicker);
   }
+
+  onCheckboxClick(event: MouseEvent): void {
+    event.stopPropagation();  // Detener la propagación del evento de clic
+  }
+
 
   onChangeRequiredDate() {
     this.valueChangeRequiredDate.emit(this.requiredDate);

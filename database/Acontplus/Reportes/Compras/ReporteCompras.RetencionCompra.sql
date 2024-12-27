@@ -53,8 +53,8 @@ BEGIN
 						   ,es.dirEstablecimiento  
 						   ,ISNULL(es.contribuyenteRimpe,'')                                     as contribuyenteRimpe
 						   ,ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+es.agenteRetencion,'') as agenteRetencion
-						   ,pv.numeroIdentificacion                                              as nroIdentificacion
-						   ,pv.nombreFiscal                                                      as nombreFiscalProveedor
+						   ,cu.IDCard                                                            as nroIdentificacion
+						   ,cu.BusinessName                                                      as nombreFiscalProveedor
 						   ,ISNULL(pv.correo, 'S/N')                                             as correoProveedor
 						   ,ISNULL(pv.telefono, 'S/N')                                           as telefonoProveedor
 						   ,ISNULL(pv.direccion, 'S/N')                                          as direccionProveedor	
@@ -65,7 +65,8 @@ BEGIN
                     INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
                     INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
 					INNER JOIN Entidad                  en WITH (NOLOCK) ON en.idEntidad              = es.idEntidad
-                     LEFT JOIN dbo.TipoIdentificacion   ti WITH (NOLOCK) ON ti.idTipoIdentificacion   = pv.idTipoIdentificacion					
+                     LEFT JOIN dbo.TipoIdentificacion   ti WITH (NOLOCK) ON ti.idTipoIdentificacion   = pv.idTipoIdentificacion
+                    INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = pv.CustomerId
  					WHERE rc.idRetencionAts =  @id
 
                     SELECT ds.codDocSustento                                as comprobante

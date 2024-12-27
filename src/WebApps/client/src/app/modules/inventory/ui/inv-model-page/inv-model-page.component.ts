@@ -1,0 +1,148 @@
+import { Component, inject, signal, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { SharedService } from '@core/services/shared.service';
+import { ToasterService } from '@core/services/toaster.service';
+import { ModelAddEditDirective } from '@inventory/ui/directives/model-add-edit.directive';
+import { MatPagination } from '@shared/models/pagination.model';
+import Swal from 'sweetalert2';
+import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
+import {InventarioModeloUseCase} from "@inventory/domain/usecases/inventario-modelo.use-case";
+
+
+@Component({
+    selector: 'app-inv-model-page',
+    imports: [
+        BreadcrumbComponent,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatTableModule,
+      MatDynamicTableComponent,
+        ModelAddEditDirective,
+    ],
+    templateUrl: './inv-model-page.component.html',
+    styles: ``
+})
+export class InvModelPageComponent {
+  private _modeloUseCase= inject(InventarioModeloUseCase);
+  pagination = signal(new MatPagination());
+  isLoadingResults = false;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  pageEvent!: PageEvent;
+  private tS = inject(ToasterService);
+  private sharedSvc = inject(SharedService);
+
+  columnsDefs: ColumnDefinition[] = [
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'index', label: 'Nro.', type: 'string' },
+    { key: 'marca', label: 'Marca', type: 'string' },
+    { key: 'codigo', label: 'Código', type: 'string' },
+    { key: 'descripcion', label: 'Descripción', type: 'string' },
+    { key: 'nomEstado', label: 'Estado', type: 'string' },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+
+
+  dataSource = new MatTableDataSource<any>([]);
+
+  getMeasures() {
+    let params = {
+      pageIndex: this.pagination().pageIndex + 1,
+      pageSize: this.pagination().pageSize,
+    };
+    if(this.isLoadingResults) return
+
+    this.isLoadingResults = true;
+    this._modeloUseCase.getAll(params).subscribe({
+      next: (response) => {
+        this.isLoadingResults = false;
+        this.dataSource = new MatTableDataSource(response.data);
+        if (this.dataSource.data.length > 0) {
+          this.pagination.update((e) => {
+            return {
+              ...e,
+              totalRecords: this.dataSource.data[0].totalRecords,
+            };
+          });
+        }
+      },
+      error: () => (this.isLoadingResults = false),
+    });
+  }
+
+  ngOnInit() {
+    this.getMeasures();
+  }
+
+  refresh() {
+    this.getMeasures();
+  }
+
+  handlePageEvent(e: PageEvent) {
+    this.pageEvent = e;
+    this.pagination.update((pag) => {
+      return {
+        ...pag,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
+      };
+    });
+    this.getMeasures();
+  }
+
+  askToDelete(data: any) {
+    try {
+      Swal.fire({
+        icon: 'warning',
+        html: `<small>Esta seguro/a de eliminar esta Modelo ahora?</small>`,
+        showConfirmButton: true,
+        confirmButtonText: 'Si, eliminar',
+        showCancelButton: true,
+        cancelButtonText: 'No, cancelar',
+        allowOutsideClick: false,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this._modeloUseCase.updateStatus(data.idModelo).subscribe((response) => {
+            if (response.code == '0') {
+              this.tS.toastr({
+                type: 'warning',
+                message: response.message,
+              });
+            }
+            if (response.code == '1') {
+              this.tS.toastr({
+                type: 'success',
+                message: response.message,
+              });
+              this.refresh();
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  exportToExcel() {
+    const results = this.dataSource.data.map((item: any) => {
+      return {
+        marca: item.marca,
+        descripcion: item.descripcion,
+        codigo: item.codigo,
+      };
+    });
+
+    this.sharedSvc.exportToExcel(results, 'Listado de Modelos');
+  }
+
+}

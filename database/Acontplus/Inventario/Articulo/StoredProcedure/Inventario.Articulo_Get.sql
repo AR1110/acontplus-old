@@ -8,675 +8,665 @@ GO
 -- =============================================
 -- Author:		Alexis Ramirez
 -- Create date: 2021-06-25
--- Description:	SP Para leer los datos e la tabla articulo
+-- Description:	SP Para leer los datos e la tabla articulo get mutiple
 -- =============================================
-CREATE OR ALTER PROCEDURE Inventario.Articulo_Get @idRol INT ,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Inventario.Articulo_Get 
+     @userRoleId INT
+    ,@json VARCHAR(MAX)
+    ,@tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
     
     --> Global
-	DECLARE @tipo INT ,@idEntidad INT ,@pageIndex INT ,@pageSize INT
+	DECLARE @tipo INT ,@idEntidad INT 
 
     --> Sql
-	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX)
+	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
 
 	--> Filters
-	DECLARE @idSubFamilia INT ,@idMedida  INT ,@idMarca INT ,@idModelo INT
-	       ,@checkBoxFraccionado BIT ,@idTipoIva INT ,@estado BIT ,@byStock INT ,@checkBoxInventario  BIT 
-	       ,@idArticulo INT ,@idBodega INT ,@bySearch NVARCHAR(300) ,@byColumn VARCHAR(10)
+	DECLARE @byStock INT ,@idArticulo INT ,@bySearch NVARCHAR(300) 
 
-    --> Inventario 
-	DECLARE @ventaStockMinimo BIT ,@stockCantidad BIT ,@ventaStockCero BIT ,@stock NUMERIC(18,5) ,@stockMinimo NUMERIC(18,5) ,@cantidad NUMERIC(18,5)
+    BEGIN TRY 
+        --> Recuperando Datos
+	    SELECT TOP 1  @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-    --> Recuperando Datos
-	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
-
-	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
+	    SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 	
-	--> Get
-	IF @tipo = 1
-		BEGIN
+	    --> Get
+	    IF @tipo = 1
+		    BEGIN
+			    SET @tableNames = 'products'
+
+			    DECLARE @filterMode             INT 
+                       ,@dynamicFilterCondition VARCHAR(500)
+                       ,@checkBoxInventario     BIT 
+                       ,@estado                 BIT
+                       ,@idTipoIva              INT
+                       ,@idModelo               INT
+                       ,@checkBoxFraccionado    BIT
+                       ,@idMarca                INT
+                       ,@idMedida               INT 
+                       ,@idSubFamilia           INT
 			
-			SELECT @bySearch            = REPLACE(bySearch,SPACE(1),'%')
-				  ,@idSubFamilia        = bySubFamilia
-				  ,@idMedida            = byMedida
-				  ,@idMarca             = byMarca
-				  ,@idModelo            = byModelo
-				  ,@idTipoIva           = byTipoIva
-				  ,@estado              = estado
-				  ,@byStock             = byStock
-				  ,@checkBoxFraccionado = checkBoxFraccionado
-				  ,@checkBoxInventario  = checkBoxInventario
-				  ,@pageIndex           = pageIndex
-				  ,@pageSize            = pageSize
-			FROM OPENJSON(@json) WITH 
-			(   bySearch   VARCHAR(500) '$.bySearch'
-			   ,bySubFamilia        INT '$.bySubFamilia'
-			   ,byMedida            INT '$.byMedida'
-			   ,byMarca             INT '$.byMarca'
-			   ,byModelo            INT '$.byModelo'
-			   ,byTipoIva	        INT '$.byTipoIva'
-			   ,estado	            BIT '$.status'
-			   ,byStock	            INT '$.byStock'
-			   ,checkBoxFraccionado BIT '$.checkBoxFraccionado'
-			   ,checkBoxInventario  BIT '$.checkBoxInventario'
-			   ,pageIndex			INT '$.pageIndex'
-			   ,pageSize            INT '$.pageSize'
-			)
+			    SELECT @bySearch            = REPLACE(bySearch,SPACE(1),'%')
+				      ,@idSubFamilia        = bySubFamilia
+				      ,@idMedida            = byMedida
+				      ,@idMarca             = byMarca
+				      ,@idModelo            = byModelo
+				      ,@idTipoIva           = byTipoIva
+				      ,@estado              = estado
+				      ,@byStock             = byStock
+				      ,@checkBoxFraccionado = checkBoxFraccionado
+				      ,@checkBoxInventario  = checkBoxInventario
+				      ,@pageIndex           = pageIndex
+				      ,@pageSize            = pageSize
+				      ,@filterMode          = filterMode
+			    FROM OPENJSON(@json) WITH 
+			    (   
+                    bySearch            VARCHAR(500) 
+			       ,bySubFamilia        INT 
+			       ,byMedida            INT 
+			       ,byMarca             INT 
+			       ,byModelo            INT 
+			       ,byTipoIva	        INT 
+			       ,estado	            BIT '$.status'
+			       ,byStock	            INT 
+			       ,checkBoxFraccionado BIT
+			       ,checkBoxInventario  BIT 
+			       ,pageIndex			INT 
+			       ,pageSize            INT
+			       ,filterMode          INT 
+			    )
 
-			SET @params  = '@idEntidad INT
-						   ,@bySearch VARCHAR(250)
-						   ,@idSubFamilia INT
-						   ,@idMedida INT
-						   ,@idMarca INT
-						   ,@idModelo INT
-						   ,@idTipoIva INT
-						   ,@estado BIT
-						   ,@pageIndex INT
-						   ,@pageSize INT '
+			    SET @params  = '@idEntidad    INT
+						       ,@bySearch     VARCHAR(250)
+						       ,@idSubFamilia INT
+						       ,@idMedida     INT
+						       ,@idMarca      INT
+						       ,@idModelo     INT
+						       ,@idTipoIva    INT
+						       ,@estado       BIT
+						       ,@pageIndex    INT
+						       ,@pageSize     INT '
 
-			SET @sql  = 'SELECT a.idArticulo
-							   ,a.idMedida
-							   ,a.code_unique
-							   ,codigo        = ISNULL(a.codigo,''Ninguno'')
-							   ,descripcion   = ISNULL(a.descripcion, ''Ninguno'')
-							   ,precioCosto   
-							   ,estado       
-							   ,stock        
-							   ,observaciones 
-							   ,subFamilia    
-							   ,medida        
-							   ,marca        
-							   ,modelo       
-							   ,tipoIva           = CAST(CAST(a.porcentaje as decimal(15,0)) AS VARCHAR)+''%''
-							   ,tipoArticulo      = ISNULL(a.tipoArticulo,''Ninguna'')
-							   ,style             = a.colorRow 
-							   ,precioSinSubsidio = ISNULL(precioSinSubsidio, 0)
-							   ,a.stockMinimo
-							   ,totalRecords = COUNT(*) OVER()
-							   ,a.s3ObjectKey
-							   ,a.s3ObjectUrl
-						   FROM Inventario.v_Articulo a
-						   WHERE a.idEntidad = @idEntidad  '
+			    SET @sql  = 'SELECT a.idArticulo
+							       ,a.idMedida
+							       ,a.code_unique
+							       ,codigo        = ISNULL(a.codigo,''Ninguno'')
+							       ,descripcion   = ISNULL(a.descripcion, ''Ninguno'')
+							       ,precioCosto   
+							       ,estado       
+							       ,ISNULL(stock,0) as stock         
+							       ,observaciones 
+							       ,subFamilia    
+							       ,medida        
+							       ,marca        
+							       ,modelo       
+							       ,tipoIva           = CAST(CAST(a.porcentaje as decimal(15,0)) AS VARCHAR)+''%''
+							       ,tipoArticulo      = ISNULL(a.tipoArticulo,''Ninguna'')
+							       ,style             = a.colorRow 
+							       ,precioSinSubsidio = ISNULL(precioSinSubsidio, 0)
+							       ,a.stockMinimo
+							       ,totalRecords = COUNT(*) OVER()
+							       ,a.s3ObjectKey
+							       ,a.s3ObjectUrl
+						       FROM Inventario.v_Articulo a WITH (NOLOCK)
+						       WHERE a.idEntidad = @idEntidad  '
+						    
+			    SET @dynamicFilterCondition = CHOOSE(
+				    ISNULL(@filterMode, 1),
+				    ' AND (a.descripcion LIKE ''%'' + @bySearch + ''%'' OR a.codigo LIKE ''%'' + @bySearch + ''%'' OR a.codigoBarra LIKE ''%'' + @bySearch + ''%'') ',
+				    ' AND a.codigo       = @bySearch  ',
+				    ' AND a.codigoBarra  = @bySearch  ',
+				    ' AND a.descripcion  LIKE ''%'' + @bySearch + ''%'' ',
+				    ' AND a.codigoAuxiliar  = @bySearch  '
+			    );
+			 
+			    IF @idSubFamilia > 0 
+				    SET @sql += ' AND a.idSubFamilia = @idSubFamilia ';
 
-			IF @idSubFamilia > 0
-				BEGIN 
-					SET @sql = @sql + 'AND a.idSubFamilia = @idSubFamilia '
-				END 
+			    IF @idMedida > 0 
+				    SET @sql += ' AND a.idMedida = @idMedida ';
 
-			IF @idMedida > 0
-				BEGIN
-					SET @sql = @sql + 'AND a.idMedida = @idMedida '
-				END
+			    IF @idMarca > 0 
+				    SET @sql += ' AND a.idMarca = @idMarca ';
 
-			IF @idMarca > 0
-				BEGIN
-					SET @sql = @sql + 'AND a.idMarca = @idMarca '
-				END
+			    IF @idModelo > 0 
+				    SET @sql += ' AND a.idModelo = @idModelo ';
 
-			IF @idModelo > 0 
-				BEGIN
-					SET @sql = @sql + 'AND a.idModelo = @idModelo '
-				END 
+			    IF @idTipoIva > 0 
+				    SET @sql += ' AND a.idTipoIva = @idTipoIva ';
 
-			IF @idTipoIva > 0
-				BEGIN
-					SET @sql = @sql + 'AND a.idTipoIva = @idTipoIva '
-				END 
+			    IF @estado IN (1, 0) 
+				    SET @sql += ' AND a.estado = @estado ';
 
-			IF @estado IN (1,0)
-				BEGIN
-					SET @sql = @sql + 'AND a.estado  = @estado '
-				END
+			    IF @checkBoxFraccionado = 1 
+				    SET @sql += ' AND a.fraccionado = 1 ';
 
-			IF @checkBoxFraccionado = 1 
-				BEGIN
-					SET @sql = @sql + 'AND a.fraccionado = 1 '
-				END 
+			    IF @checkBoxInventario = 1 
+				    SET @sql += ' AND a.llevaInventario = 1 ';
 
-			IF @checkBoxInventario = 1
-				BEGIN
-					SET @sql = @sql + 'AND a.llevaInventario = 1 '
-				END 
+			    -- Condiciones adicionales basadas en el stock
+			    IF @byStock = 1
+				    SET @sql += ' AND a.stock > 0 AND a.llevaInventario = 1 ';
+
+			    ELSE IF @byStock = 2
+				    SET @sql += ' AND a.stock <= 0 AND a.llevaInventario = 1 ';
+
+			    -- Filtro adicional de búsqueda dinámica
+			    IF @bySearch IS NOT NULL 
+				    SET @sql += ' ' + @dynamicFilterCondition;
+     
+			    SET @sql = @sql+ 'ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY ' 
+      
+       
+			    EXEC sp_executesql  @sql
+						           ,@params 
+						           ,@idEntidad    = @idEntidad
+						           ,@bySearch     = @bySearch
+						           ,@idSubFamilia = @idSubFamilia
+							       ,@idMedida     = @idMedida
+							       ,@idMarca      = @idMarca
+							       ,@idModelo     = @idModelo
+							       ,@idTipoIva    = @idTipoIva
+						           ,@estado       = @estado
+							       ,@pageIndex    = @pageIndex
+							       ,@pageSize     = @pageSize
+			    RETURN
+		    END 
+
+	    --> Lista de Precio
+	    IF @tipo = 3
+		    BEGIN 
+			
+                SET @tableNames = 'products'
+
+                DECLARE @bycolumn VARCHAR(10)
+
+			    SELECT @bySearch  = REPLACE(bySearch,SPACE(1),'%')
+				      ,@byStock   = byStock
+				      ,@pageIndex = pageIndex
+				      ,@pageSize  = pageSize
+				      ,@byColumn  = byColumn
+			    FROM OPENJSON(@json) WITH 
+			    (   
+                     bySearch   VARCHAR(500) 
+			       ,byStock				INT 
+			       ,pageIndex			INT 
+			       ,pageSize            INT
+			       ,byColumn     VARCHAR(5)
+			    )
+
+
+			    SET @params  = '@idEntidad INT
+						       ,@bySearch VARCHAR(250)
+						       ,@pageIndex INT
+						       ,@pageSize INT'
+
+			    SET @sql  = 'SELECT a.idArticulo
+							       ,a.idMedida
+							       ,a.code_unique
+							       ,codigo            = ISNULL(a.codigo,''Ninguno'')
+							       ,descripcion       = ISNULL(a.descripcion, ''Ninguno'')
+							       ,a.codigoBarra
+							       ,precioCosto   
+							       ,estado       
+							       ,stock        
+							       ,observaciones 
+							       ,subFamilia    
+							       ,medida       
+							       ,modelo 
+							       ,marca             = ISNULL(a.marca,''Ninguno'')
+							       ,modelo            = ISNULL(a.modelo, ''Ninguno'')
+							       ,tipoIva           = CAST(CAST(a.porcentaje as decimal(15,0)) AS VARCHAR)+''%''
+							       ,tipoArticulo      = ISNULL(a.tipoArticulo,''Ninguna'')
+							       ,style             = a.colorRow 
+							       ,precioSinSubsidio = ISNULL(precioSinSubsidio, 0)
+							       ,a.stockMinimo
+							       ,tarifa            = (SELECT precioConIva = ISNULL(ap.precioConIva, 0.00000)
+													           ,tarifa       = Helper.IsNullOrEmpty(ta.descripcion)
+											            FROM dbo.ArticuloPvP ap WITH (NOLOCK)
+											            LEFT JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa =  ap.idTarifa
+											            WHERE ap.idArticulo = a.idArticulo FOR JSON PATH)
+							       ,totalRecords = COUNT(*) OVER()
+                                   ,a.s3ObjectKey
+							       ,a.s3ObjectUrl
+						    FROM Inventario.v_Articulo a
+						    WHERE a.idEntidad = @idEntidad AND a.estado = 1  '
 
 			
-			IF @byStock = 1
-				BEGIN 
-					SET @sql = @sql + 'AND a.stock > 0 AND a.llevaInventario = 1 '
-				END
+			
+			    IF @byStock = 1
+				    BEGIN 
+					    SET @sql = @sql+' AND a.stock > 0 AND a.llevaInventario = 1 '
+				    END
 					
-			IF @byStock = 2
-				BEGIN 
-					SET @sql = @sql + 'AND a.stock <= 0 AND a.llevaInventario = 1 '
-				END 
-				
-			IF @bySearch IS NOT NULL
-				BEGIN
-					SET @sql = @sql + 'AND (a.descripcion LIKE''%''+ @bySearch +''%'' OR a.codigo LIKE''%'' + @bySearch +''%'' OR a.codigoBarra LIKE''%'' + @bySearch +''%'') '	
-				END 
-			
-			SET @sql = @sql+ 'ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY ' 
+			    IF @byStock = 2
+				    BEGIN 
+					    SET @sql = @sql+' AND a.stock <= 0 AND a.llevaInventario = 1 '
+				    END 
 
-			
-			EXEC sp_executesql  @sql
-						       ,@params 
-						       ,@idEntidad    = @idEntidad
-						       ,@bySearch     = @bySearch
-						       ,@idSubFamilia = @idSubFamilia
-							   ,@idMedida     = @idMedida
-							   ,@idMarca      = @idMarca
-							   ,@idModelo     = @idModelo
-							   ,@idTipoIva    = @idTipoIva
-						       ,@estado       = @estado
-							   ,@pageIndex    = @pageIndex
-							   ,@pageSize     = @pageSize
-			RETURN
-		END 
-
-	--> Codigo de barra 
-	IF @tipo = 2
-		BEGIN
-
-			SELECT @bySearch = bySearch FROM OPENJSON(@json) WITH (bySearch VARCHAR(500) '$.bySearch')
-
-			IF EXISTS (SELECT 1 FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigo = @bySearch )	
-				BEGIN
-					SELECT idArticulo,llevaInventario FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigo = @bySearch
-					RETURN
-				END 
-
-			IF EXISTS (SELECT 1 FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigoBarra = @bySearch)	
-				BEGIN
-					SELECT idArticulo,llevaInventario FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigoBarra = @bySearch
-					RETURN
-				END 
-			
-			IF EXISTS (SELECT 1  FROM dbo.ArticuloCodigoBarra ac  WITH (NOLOCK) INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = ac.idArticulo WHERE a.idEntidad  = @idEntidad AND ac.codigoBarra = @bySearch AND a.estado = 1)
-				BEGIN
-					SELECT ac.idArticulo,llevaInventario FROM dbo.ArticuloCodigoBarra ac WITH (NOLOCK) INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = ac.idArticulo WHERE a.idEntidad  = @idEntidad AND ac.codigoBarra = @bySearch AND a.estado = 1
-					RETURN 
-				END 
-			RETURN 
-		END 
-
-	--> Lista de Precio
-	IF @tipo = 3
-		BEGIN 
-			
-			SELECT
-				 @bySearch            = REPLACE(bySearch,SPACE(1),'%')
-				,@byStock             = byStock
-				,@pageIndex           = pageIndex
-				,@pageSize            = pageSize
-				,@byColumn            = byColumn
-			FROM OPENJSON(@json) WITH 
-			(   bySearch   VARCHAR(500) '$.bySearch'
-			   ,byStock				INT '$.byStock'
-			   ,pageIndex			INT '$.pageIndex'
-			   ,pageSize            INT '$.pageSize'
-			   ,bycolumn     VARCHAR(5) '$.byColumn'
-			)
-
-
-			SET @params  = '@idEntidad INT
-						   ,@bySearch VARCHAR(250)
-						   ,@pageIndex INT
-						   ,@pageSize INT'
-
-			SET @sql  = 'SELECT a.idArticulo
-							   ,a.idMedida
-							   ,a.code_unique
-							   ,codigo            = ISNULL(a.codigo,''Ninguno'')
-							   ,descripcion       = ISNULL(a.descripcion, ''Ninguno'')
-							   ,a.codigoBarra
-							   ,precioCosto   
-							   ,estado       
-							   ,stock        
-							   ,observaciones 
-							   ,subFamilia    
-							   ,medida       
-							   ,modelo 
-							   ,marca             = ISNULL(a.marca,''Ninguno'')
-							   ,modelo            = ISNULL(a.modelo, ''Ninguno'')
-							   ,tipoIva           = CAST(CAST(a.porcentaje as decimal(15,0)) AS VARCHAR)+''%''
-							   ,tipoArticulo      = ISNULL(a.tipoArticulo,''Ninguna'')
-							   ,style             = a.colorRow 
-							   ,precioSinSubsidio = ISNULL(precioSinSubsidio, 0)
-							   ,a.stockMinimo
-							   ,tarifa            = (SELECT precioConIva = ISNULL(ap.precioConIva, 0.00000)
-													       ,tarifa       = Helper.IsNullOrEmpty(ta.descripcion)
-											        FROM dbo.ArticuloPvP ap WITH (NOLOCK)
-											        LEFT JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa =  ap.idTarifa
-											        WHERE ap.idArticulo = a.idArticulo FOR JSON PATH)
-							   ,totalRecords = COUNT(*) OVER()
-                               ,a.s3ObjectKey
-							   ,a.s3ObjectUrl
-						FROM Inventario.v_Articulo a
-						WHERE a.idEntidad = @idEntidad AND a.estado = 1  '
-
-			
-			
-			IF @byStock = 1
-				BEGIN 
-					SET @sql = @sql+' AND a.stock > 0 AND a.llevaInventario = 1 '
-				END
+			    IF @bySearch IS NOT NULL
+				    BEGIN
 					
-			IF @byStock = 2
-				BEGIN 
-					SET @sql = @sql+' AND a.stock <= 0 AND a.llevaInventario = 1 '
-				END 
+					    IF @byColumn = 'DESC'
+						    BEGIN
+							    SET @sql = @sql+ 'AND a.descripcion LIKE ''%'' + @bySearch + ''%'' '
+						    END 
 
-			IF @bySearch IS NOT NULL
-				BEGIN
-					
-					IF @byColumn = 'DESC'
-						BEGIN
-							SET @sql = @sql+ 'AND a.descripcion LIKE ''%'' + @bySearch + ''%'' '
-						END 
+					    IF @byColumn = 'COD'
+						    BEGIN
+							    SET @sql = @sql+ 'AND a.codigo LIKE ''%'' + @bySearch + ''%'' '
+						    END 
 
-					IF @byColumn = 'COD'
-						BEGIN
-							SET @sql = @sql+ 'AND a.codigo LIKE ''%'' + @bySearch + ''%'' '
-						END 
+					    IF @byColumn = 'AUX'
+						    BEGIN
+							    SET @sql = @sql+ 'AND a.codigoAuxiliar LIKE ''%'' + @bySearch +''%'' '
+						    END 
 
-					IF @byColumn = 'AUX'
-						BEGIN
-							SET @sql = @sql+ 'AND a.codigoAuxiliar LIKE ''%'' + @bySearch +''%'' '
-						END 
-
-					IF @byColumn = 'BAR'
-						BEGIN
-							SET @sql = @sql+ 'AND a.codigoBarra LIKE ''%'' + @bySearch + ''%'' '
-						END
-				END 
+					    IF @byColumn = 'BAR'
+						    BEGIN
+							    SET @sql = @sql+ 'AND a.codigoBarra LIKE ''%'' + @bySearch + ''%'' '
+						    END
+				    END 
 			
-			SET @sql = @sql+ ' ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY' 
+			    SET @sql = @sql+ ' ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY' 
 
-			EXEC sp_executesql  @sql
-						       ,@params 
-						       ,@idEntidad    = @idEntidad
-						       ,@bySearch     = @bySearch
-							   ,@pageIndex    = @pageIndex
-							   ,@pageSize     = @pageSize
-			RETURN 
-		END
+			    EXEC sp_executesql  @sql
+						           ,@params 
+						           ,@idEntidad    = @idEntidad
+						           ,@bySearch     = @bySearch
+							       ,@pageIndex    = @pageIndex
+							       ,@pageSize     = @pageSize
+			    RETURN 
+		    END
 
-	--> Articulos Fraccionados 
-	IF @tipo = 4
-		BEGIN
+	    --> Articulos Fraccionados 
+	    IF @tipo = 4
+		    BEGIN
 			
-			SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT '$.idArticulo')
+                SET @tableNames = 'fractionedProduct'
 
-			SELECT av.idArticuloFraccionado
-				  ,medida = av.medidaFraccionada
-				  ,stock  = av.catidadFraccionado
-				  ,tarifas = (SELECT precioVenta = pv.precioConIva
-								    ,tarifa      = ta.descripcion
-						      FROM dbo.ArticuloFraccionadoPvP pv WITH (NOLOCK) 
-							  INNER JOIN dbo.Tarifa           ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
-				              WHERE pv.idArticuloFraccionado = av.idArticuloFraccionado FOR JSON PATH)
-			FROM v_Articulo_Fraccionado av WITH (NOLOCK)
-			WHERE av.idArticulo = @idArticulo
+			    SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT )
 
-			RETURN
-		END
+			    SELECT av.idArticuloFraccionado
+				      ,medida = av.medidaFraccionada
+				      ,stock  = av.catidadFraccionado
+				      ,tarifas = (SELECT precioVenta = pv.precioConIva
+								        ,tarifa      = ta.descripcion
+						          FROM dbo.ArticuloFraccionadoPvP pv WITH (NOLOCK) 
+							      INNER JOIN dbo.Tarifa           ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
+				                  WHERE pv.idArticuloFraccionado = av.idArticuloFraccionado FOR JSON PATH)
+			    FROM v_Articulo_Fraccionado av WITH (NOLOCK)
+			    WHERE av.idArticulo = @idArticulo
+
+			    RETURN
+		    END
 		
-	--> DataForm 
-	IF @tipo = 5
-		BEGIN
-			SELECT idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultEstab DESC
+	    --> DataForm 
+	    IF @tipo = 5
+		    BEGIN
+                SET @tableNames  = 'warehouses,decimal,subcategories,categories,measures,models,brands,productTypes,taxes,ice,fees,tags'
 
-            SELECT nroPrecio FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL'
+			    SELECT idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 
-			SELECT idFamilia    = f.idFamilia
-				  ,idSubFamilia = sf.idSubFamilia
-				  ,familia      = ISNULL(f.descripcion,'Ninguna')
-				  ,subFamilia   = sf.descripcion
-				  ,sf.siglas
-				  ,sf.ultimoSecuencial
-                  ,sf.siglas + CAST(sf.ultimoSecuencial as varchar) as codigo
-			FROM dbo.SubFamilia sf  WITH (NOLOCK)
-			 LEFT JOIN Familia   f  WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
-			WHERE sf.idEntidad = @idEntidad AND sf.estado = 1
-            ORDER BY sf.descripcion ASC
+                SELECT nroPrecio FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL'
 
-			SELECT idFamilia, descripcion      
-            FROM dbo.Familia WITH (NOLOCK) 
-            WHERE ActividadEconomicaId IN (SELECT ea.ActividadEconomicaId FROM v_Estab_Asign ea WITH (NOLOCK) WHERE ea.idUsuarioRol = @idRol)    
-            AND estado = 1
+			    SELECT idFamilia    = f.idFamilia
+				      ,idSubFamilia = sf.idSubFamilia
+				      ,familia      = ISNULL(f.descripcion,'Ninguna')
+				      ,subFamilia   = sf.descripcion
+				      ,sf.siglas
+				      ,sf.ultimoSecuencial
+                      ,sf.siglas + CAST(sf.ultimoSecuencial as varchar) as codigo
+			    FROM dbo.SubFamilia sf  WITH (NOLOCK)
+			     LEFT JOIN Familia   f  WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
+			    WHERE sf.idEntidad = @idEntidad AND sf.estado = 1
+                ORDER BY sf.descripcion ASC
+
+			    SELECT idFamilia, descripcion      
+                FROM dbo.Familia WITH (NOLOCK) 
+                WHERE ActividadEconomicaId IN (SELECT ea.ActividadEconomicaId FROM v_Estab_Asign ea WITH (NOLOCK) WHERE ea.idUsuarioRol = @userRoleId)    
+                AND estado = 1
 	
-			SELECT idMedida,codigo,descripcion FROM dbo.Medida  WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+			    SELECT idMedida,codigo,descripcion FROM dbo.Medida  WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
 
-			SELECT idModelo,codigo,descripcion FROM dbo.Modelo  WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+			    SELECT idModelo,codigo,descripcion FROM dbo.Modelo  WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
 
-			SELECT idMarca,codigo,descripcion  FROM dbo.Marca   WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+			    SELECT idMarca,codigo,descripcion  FROM dbo.Marca   WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
 
-            SELECT idTipoArticulo,descripcion FROM dbo.TipoArticulo WHERE estado = 1 
+                SELECT idTipoArticulo,descripcion FROM dbo.TipoArticulo WHERE estado = 1 
 
-            SELECT * FROM dbo.TipoIva WHERE estado = 1
+                SELECT * FROM dbo.TipoIva WHERE estado = 1
 
-            SELECT * FROM dbo.TipoIce WHERE estado = 1
+                SELECT * FROM dbo.TipoIce WHERE estado = 1
 	        
-            SELECT idTarifa,descripcion,codigo,predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY codigo ASC
+                SELECT idTarifa,descripcion,codigo,predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY codigo ASC
 
-            SELECT * FROM Inventario.Etiqueta WHERE idEntidad = @idEntidad AND estado = 1
+                SELECT * FROM Inventario.Etiqueta WHERE idEntidad = @idEntidad AND estado = 1
 			
-            RETURN
-		END 
+                RETURN
+		    END 
 
-	--> Datos Articulo Venta Web
-	IF @tipo = 6
-		BEGIN
-		    SELECT @idArticulo = idArticulo ,@idBodega = idBodega FROM OPENJSON(@json) WITH (idArticulo INT ,idBodega INT)
+	    --> Datos Articulo Venta Web
+	    IF @tipo = 6
+		    BEGIN
+                SET @tableNames = 'product,fractionedMeasures,measures,inventoryAdjustment,additionalInfo'
 
-			SELECT ar.idArticulo
-				  ,ar.idMedida
-                  ,ar.idTipoIva
-                  ,ar.codigoAuxiliar
-				  ,ar.descripcion
-                  ,IIF(ti.porcentaje > 0,'*','') + ar.codigo as codigoArticulo
-				  ,ar.stock
-				  ,ar.cantMinimaVentaPorMayor
-				  ,ISNULL(ar.valorIce,0)                     as valorIce
-				  ,ar.llevaInventario
-				  ,ISNULL(ar.datosAdicionales, 0)            as datosAdicionales 
-				  ,ar.productoFraccionable
-				  ,ar.precioCosto
-				  ,ISNULL(ar.precioSinSubsidio,0)            as precioSinSubsidio
-				  ,ti.descripcion                            as nombreTipoIva
-				  ,ti.porcentaje                             as tarifa
-				  ,CAST(ti.codigoPorcentaje as varchar)      as codigoPorcentaje
-			FROM dbo.Articulo      ar WITH (NOLOCK) 
-			INNER JOIN dbo.TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = ar.idTipoIva
-			 LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = ar.idMedida
-			WHERE ar.idArticulo = @idArticulo
+		        SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT)
 
-			SELECT af.idMedida
-                  ,IIF(af.gestionVenta = 1,1,3) as orden
-                  ,af.conversion
-                  ,af.precioCostoFraccionado
-                  ,ar.precioCosto
-			      ,me.descripcion               as descripcion
-			      ,(
-                        SELECT pv.idTarifa
-                              ,pv.precioVenta
-                              ,pv.precioConIva
-                              ,UPPER(ta.descripcion) as tarifa
-                              ,ta.ventaPorMayor
-                              ,ta.predeterminada
-					    FROM dbo.ArticuloFraccionadoPvP  pv WITH (NOLOCK)
-					    INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
-					    WHERE pv.idArticuloFraccionado = af.idArticuloFraccionado
-					    ORDER BY ta.predeterminada DESC 
-                        FOR JSON PATH
+                IF @idArticulo IS NULL
+                    BEGIN 
+                        SELECT @bySearch = bySearch FROM OPENJSON(@json) WITH (bySearch VARCHAR(500))
 
-                  ) as tarifas
-			FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
-			INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida
-            INNER JOIN dbo.Articulo      ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
-			WHERE af.idArticulo = @idArticulo 
+                        SELECT TOP 1 @idArticulo = ar.idArticulo
+                        FROM dbo.Articulo                 ar WITH (NOLOCK)
+                        LEFT JOIN dbo.ArticuloCodigoBarra cb WITH (NOLOCK) ON cb.idArticulo = ar.idArticulo
+                        WHERE ar.idEntidad = @idEntidad
+                          AND ar.estado = 1
+                          AND (
+                                    ar.codigo      = @bySearch
+                                 OR ar.codigoBarra = @bySearch
+                                 OR cb.codigoBarra = @bySearch
+                              )    
+                    END 
 
-			SELECT ar.idMedida
-                  ,2 as orden
-                  ,1 as conversion
-                  ,ar.precioCosto as precioCostoFraccionado
-                  ,ar.precioCosto
-			      ,me.descripcion
-			      ,(
-                        SELECT ap.idTarifa
-                              ,ap.precioVenta
-                              ,ap.precioConIva
-                              ,UPPER(ta.descripcion) as tarifa
-                              ,ta.ventaPorMayor 
-                              ,ta.predeterminada
-					    FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
-					    INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
-					    WHERE ap.idArticulo = ar.idArticulo
-					    ORDER BY ta.predeterminada DESC 
-                        FOR JSON PATH
+			    SELECT ar.idArticulo
+				      ,ar.idMedida
+                      ,ar.idTipoIva
+                      ,ar.codigoAuxiliar
+				      ,ar.descripcion
+                      ,IIF(ti.porcentaje > 0,'*','') + ar.codigo as codigoArticulo
+				      ,ar.stock
+				      ,ar.cantMinimaVentaPorMayor
+				      ,ISNULL(ar.valorIce,0)                     as valorIce
+				      ,ar.llevaInventario
+				      ,ISNULL(ar.datosAdicionales, 0)            as datosAdicionales 
+				      ,ar.productoFraccionable
+				      ,ar.precioCosto
+				      ,ISNULL(ar.precioSinSubsidio,0)            as precioSinSubsidio
+				      ,ti.descripcion                            as nombreTipoIva
+				      ,ti.porcentaje                             as tarifa
+				      ,CAST(ti.codigoPorcentaje as varchar)      as codigoPorcentaje
+			    FROM dbo.Articulo      ar WITH (NOLOCK) 
+			    INNER JOIN dbo.TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = ar.idTipoIva
+			     LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = ar.idMedida
+			    WHERE ar.idArticulo = @idArticulo
 
-                   ) as tarifas
-			FROM dbo.Articulo     ar WITH (NOLOCK)
-			INNER JOIN dbo.Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida
-			WHERE ar.idArticulo = @idArticulo 
+			    SELECT af.idMedida
+                      ,IIF(af.gestionVenta = 1,1,3) as orden
+                      ,af.conversion
+                      ,af.precioCostoFraccionado
+                      ,ar.precioCosto
+			          ,me.descripcion               as descripcion
+			          ,(
+                            SELECT pv.idTarifa
+                                  ,pv.precioVenta
+                                  ,pv.precioConIva
+                                  ,UPPER(ta.descripcion) as tarifa
+                                  ,ta.ventaPorMayor
+                                  ,ta.predeterminada
+					        FROM dbo.ArticuloFraccionadoPvP  pv WITH (NOLOCK)
+					        INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
+					        WHERE pv.idArticuloFraccionado = af.idArticuloFraccionado
+					        ORDER BY ta.predeterminada DESC 
+                            FOR JSON PATH
+
+                      ) as tarifas
+			    FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			    INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida
+                INNER JOIN dbo.Articulo      ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+			    WHERE af.idArticulo = @idArticulo 
+
+			    SELECT ar.idMedida
+                      ,2 as orden
+                      ,1 as conversion
+                      ,ar.precioCosto as precioCostoFraccionado
+                      ,ar.precioCosto
+			          ,me.descripcion
+			          ,(
+                            SELECT ap.idTarifa
+                                  ,ap.precioVenta
+                                  ,ap.precioConIva
+                                  ,UPPER(ta.descripcion) as tarifa
+                                  ,ta.ventaPorMayor 
+                                  ,ta.predeterminada
+					        FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+					        INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+					        WHERE ap.idArticulo = ar.idArticulo
+					        ORDER BY ta.predeterminada DESC 
+                            FOR JSON PATH
+
+                       ) as tarifas
+			    FROM dbo.Articulo     ar WITH (NOLOCK)
+			    INNER JOIN dbo.Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida
+			    WHERE ar.idArticulo = @idArticulo 
                 
-            SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock WHERE idArticulo = @idArticulo 
+                SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock WHERE idArticulo = @idArticulo 
 
-			SELECT * FROM Compra.InfoAdicional WITH (NOLOCK) WHERE idArticulo = @idArticulo AND estado = 1
+			    SELECT * FROM Compra.InfoAdicional WITH (NOLOCK) WHERE idArticulo = @idArticulo AND estado = 1
 
-			RETURN 
-		END
+			    RETURN 
+		    END
 
-	--> Configuracion Stock
-	IF @tipo = 7
-		BEGIN
-			
-			SELECT @idArticulo = idArticulo
-                  ,@idBodega   = idBodega 
-                  ,@cantidad   = cantidad * -1
-            FROM OPENJSON(@json) WITH
-            (
-                idArticulo INT          
-               ,idBodega   INT          
-               ,cantidad   NUMERIC(18,5)
-            )
+	    --> Configuracion Stock
+	    IF @tipo = 7
+		    BEGIN
+                SET @tableNames = 'stockCheckResponse'
 
-           
-			SELECT TOP 1 @stock = cantidad - @cantidad FROM Inventario.Stock WITH (NOLOCK) WHERE idBodega = @idBodega AND idArticulo = @idArticulo
+	            DECLARE @stock       NUMERIC(18,5) 
+                       ,@stockMinimo NUMERIC(18,5) 
+                       ,@cantidad    NUMERIC(18,5) 
+                       ,@idBodega    INT 
+                       ,@descripcion VARCHAR(300)
+                       ,@bodega      VARCHAR(300)
+                       ,@notifNPS    BIT
+                       ,@notifMNS    BIT
+                       ,@notifMNM    BIT
 
-            --> No permitir la venta de artículos sin stock
-			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'NPS' AND idEntidad = @idEntidad AND estado = 1)
-				BEGIN
-					IF @stock < 0
-						BEGIN
-							SELECT '0' code
-							      ,descripcion + ' <b>(' + codigo + ')</b> stock de : ' + CAST(cantidad as varchar) + ' cantidad a vender es de: ' + CAST(@cantidad as varchar) as 'message'
-								  ,'ARTICULO SIN STOCK EN LA BODEGA ' + bodega as 'titleSms'
-							FROM Inventario.v_Articulo_Stock WITH (NOLOCK) 
-							WHERE idArticulo = @idArticulo 
-							  AND idBodega = @idBodega
+			    SELECT @idArticulo = idArticulo
+                      ,@idBodega   = idBodega 
+                      ,@cantidad   = cantidad
+                FROM OPENJSON(@json) WITH
+                (
+                    idArticulo INT          
+                   ,idBodega   INT          
+                   ,cantidad   NUMERIC(18,5)
+                )
 
-							RETURN 
-						END 
-				END 
-	        
-            --> Mostrar notificacion de artículos sin stock 
-			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'MNS' AND idEntidad = @idEntidad AND estado = 1)
-				BEGIN
-					IF @stock <= 0
-						BEGIN
-							SELECT '2' as 'code'
-							      ,'EL ARTICULO: '+'<b>'+descripcion+'</b>'+' TIENE UN STOCK DE '+CAST(CAST(stock as numeric(18,2)) as varchar) as 'message'
-								  ,'ARTICULO CON STOCK CERO' as 'titleSms'
-							FROM dbo.Articulo WITH (NOLOCK) 
-							WHERE idArticulo = @idArticulo
-							RETURN 
-						END
-				END 
+			    SELECT TOP 1 @stock       = sb.cantidad - @cantidad
+                            ,@stockMinimo = ar.stockMinimo
+                            ,@descripcion = ar.descripcion
+                            ,@bodega      = bo.descripcion
+                FROM Inventario.Stock   sb WITH (NOLOCK)
+                INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = sb.idArticulo
+                INNER JOIN dbo.Bodega   bo WITH (NOLOCK) ON bo.idBodega   = sb.idBodega
+                WHERE sb.idBodega = @idBodega 
+                  AND sb.idArticulo = @idArticulo
 
-            --> Mostrar notificacion de artículos con stock mínimo
-			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'MNM' AND idEntidad = @idEntidad AND estado = 1)
-				BEGIN
-                    
-                    SELECT TOP 1 @stockMinimo = stockMinimo FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
 
-					IF @stock <= @stockMinimo 
-						BEGIN
-							SELECT '2' as 'code'
-							      ,'EL ARTICULO: '+'<b>'+descripcion+'</b>'+' TIENE UN STOCK DE '+CAST(stock AS nvarchar) as 'message'
-								  ,'ARTICULO BAJO STOCK MÍMINO' as 'titleSms'
-							FROM dbo.Articulo WITH (NOLOCK) 
-							WHERE idArticulo = @idArticulo
-							RETURN 
-						END 
-				END 
-			SELECT '1'code,'Correct!' as 'message'
-			RETURN
-		END 
+                SELECT @notifNPS = CASE WHEN EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WHERE codigo = 'NPS' AND idEntidad = @idEntidad AND estado = 1) THEN 1 ELSE 0 END
+                      ,@notifMNS = CASE WHEN EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WHERE codigo = 'MNS' AND idEntidad = @idEntidad AND estado = 1) THEN 1 ELSE 0 END
+                      ,@notifMNM = CASE WHEN EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WHERE codigo = 'MNM' AND idEntidad = @idEntidad AND estado = 1) THEN 1 ELSE 0 END
 
-	--> Resturante 
-	IF @tipo = 8
-		BEGIN
+                
+                --> Verificación y notificación de stock negativo (NPS)
+                IF @notifNPS = 1 AND @stock < 0
+                    BEGIN
+                        SELECT '0' as code
+                               ,@descripcion + ' <b>(NPS)</b> stock de: ' + CAST(@stock AS varchar) + ', cantidad a vender: ' + CAST(@cantidad AS varchar) AS message
+                               ,'ARTICULO SIN STOCK EN LA BODEGA ' + @bodega as titleSms
+                        RETURN
+                    END
 
-			SELECT nroPrecio FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'CD'
+                --> Verificación y notificación de stock cero (MNS)
+                IF @notifMNS = 1 AND @stock <= 0
+                    BEGIN
+                        SELECT '2' AS code
+                              ,'EL ARTICULO: <b>' + @descripcion + '</b> TIENE UN STOCK DE ' + CAST(@stock AS nvarchar) AS message
+                              ,'ARTICULO CON STOCK CERO' AS titleSms;
+                        RETURN
+                    END
 
-			SELECT idFamilia
-                  ,descripcion 
-            FROM dbo.Familia WITH (NOLOCK) 
-            WHERE ActividadEconomicaId IN (SELECT ea.ActividadEconomicaId FROM v_Estab_Asign ea WITH (NOLOCK) WHERE ea.idUsuarioRol = @idRol)
-            AND estado = 1
-			
-			SELECT
-				 idFamilia    = f.idFamilia
-				,idSubFamilia = sf.idSubFamilia
-				,familia      = f.descripcion
-				,subFamilia   = sf.descripcion
-				,sf.siglas
-				,sf.ultimoSecuencial
-			FROM dbo.SubFamilia sf  WITH (NOLOCK)
-			INNER JOIN Familia f    WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
-			WHERE sf.idEntidad = @idEntidad AND sf.estado = 1
+                --> Verificación y notificación de stock mínimo (MNM)
+                IF @notifMNM = 1 AND @stock <= @stockMinimo
+                    BEGIN
+                        SELECT '2' AS code
+                              ,'EL ARTICULO: <b>' + @descripcion + '</b> TIENE UN STOCK DE ' + CAST(@stock AS nvarchar) AS message
+                              ,'ARTICULO BAJO STOCK MÍNIMO' AS titleSms;
+                        RETURN
+                    END
 
-			SELECT idMedida,codigo,descripcion FROM dbo.Medida  WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+			    SELECT '1'code,'Correct!' as 'message'
+			    RETURN
+		    END 
 
-			SELECT idTipoIva, descripcion, codigo, porcentaje FROM TipoIva WHERE estado = 1
+        --> Data Compra
+        IF @tipo = 9
+            BEGIN
+                SET @tableNames = 'product,measures,fractionedMeasures,tags'
 
-			SELECT idTarifa,descripcion,codigo,predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY codigo ASC
+                SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT)
 
-			RETURN 
-		END 
+                SELECT ar.idArticulo
+                      ,ar.idTipoIva
+                      ,ar.codigoAuxiliar
+				      ,ar.descripcion
+                      ,IIF(ti.porcentaje > 0,'*','') + ar.codigo as codigoArticulo
+				      ,ar.stock
+				      ,ar.cantMinimaVentaPorMayor
+				      ,ISNULL(ar.valorIce,0)                     as valorIce
+				      ,ar.llevaInventario
+				      ,ISNULL(ar.datosAdicionales, 0)            as datosAdicionales 
+				      ,ar.productoFraccionable
+				      ,ar.precioCosto
+				      ,ISNULL(ar.precioSinSubsidio,0)            as precioSinSubsidio
+				      ,ti.descripcion                            as nombreTipoIva
+				      ,ti.porcentaje                             as tarifa
+				      ,CAST(ti.codigoPorcentaje as varchar)      as codigoPorcentaje
+			    FROM dbo.Articulo      ar WITH (NOLOCK) 
+			    INNER JOIN dbo.TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = ar.idTipoIva
+			     LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = ar.idMedida
+			    WHERE ar.idArticulo = @idArticulo
 
-    --> Data Compra
-    IF @tipo = 9
-        BEGIN
-            
-            SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT)
+                SELECT ar.idMedida 
+                      ,1              as conversion
+                      ,1              as orden
+                      ,ar.precioCosto as precioUnitario
+                      ,ar.precioCosto as precioCosto
+                      ,ar.precioCosto as precioCostoFraccionado
+                      ,me.descripcion as medida
+                FROM Articulo     ar WITH (NOLOCK) 
+                INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida 
+                WHERE ar.idArticulo = @idArticulo
 
-            SELECT ar.idArticulo
-                  ,ar.idTipoIva
-                  ,ar.codigoAuxiliar
-				  ,ar.descripcion
-                  ,IIF(ti.porcentaje > 0,'*','') + ar.codigo as codigoArticulo
-				  ,ar.stock
-				  ,ar.cantMinimaVentaPorMayor
-				  ,ISNULL(ar.valorIce,0)                     as valorIce
-				  ,ar.llevaInventario
-				  ,ISNULL(ar.datosAdicionales, 0)            as datosAdicionales 
-				  ,ar.productoFraccionable
-				  ,ar.precioCosto
-				  ,ISNULL(ar.precioSinSubsidio,0)            as precioSinSubsidio
-				  ,ti.descripcion                            as nombreTipoIva
-				  ,ti.porcentaje                             as tarifa
-				  ,CAST(ti.codigoPorcentaje as varchar)      as codigoPorcentaje
-			FROM dbo.Articulo      ar WITH (NOLOCK) 
-			INNER JOIN dbo.TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = ar.idTipoIva
-			 LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = ar.idMedida
-			WHERE ar.idArticulo = @idArticulo
+                SELECT af.idMedida
+                      ,af.conversion
+                      ,2                         as orden
+                      ,af.precioCostoFraccionado as precioUnitario
+                      ,ar.precioCosto            as precioCosto
+                      ,af.precioCostoFraccionado as precioCostoFraccionado
+                      ,me.descripcion            as medida
+                FROM ArticuloFraccionado af WITH (NOLOCK) 
+                INNER JOIN dbo.Medida    me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
+                INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+                WHERE af.idArticulo = @idArticulo 
+                  and af.estado = 1
 
-            SELECT ar.idMedida 
-                  ,1              as conversion
-                  ,1              as orden
-                  ,ar.precioCosto as precioUnitario
-                  ,ar.precioCosto as precioCosto
-                  ,ar.precioCosto as precioCostoFraccionado
-                  ,me.descripcion as medida
-            FROM Articulo     ar WITH (NOLOCK) 
-            INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida 
-            WHERE ar.idArticulo = @idArticulo
+                SELECT et.idEtiqueta
+                      ,et.descripcion
+                      ,et.etiquetas
+                FROM Inventario.Etiqueta et WITH (NOLOCK)
+                INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idEtiqueta = et.idEtiqueta
+                WHERE ar.idArticulo = @idArticulo
 
-            SELECT af.idMedida
-                  ,af.conversion
-                  ,2                         as orden
-                  ,af.precioCostoFraccionado as precioUnitario
-                  ,ar.precioCosto            as precioCosto
-                  ,af.precioCostoFraccionado as precioCostoFraccionado
-                  ,me.descripcion            as medida
-            FROM ArticuloFraccionado af WITH (NOLOCK) 
-            INNER JOIN dbo.Medida    me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
-            INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
-            WHERE af.idArticulo = @idArticulo 
-              and af.estado = 1
-
-            SELECT et.idEtiqueta
-                  ,et.descripcion
-                  ,et.etiquetas
-            FROM Inventario.Etiqueta et WITH (NOLOCK)
-            INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idEtiqueta = et.idEtiqueta
-            WHERE ar.idArticulo = @idArticulo
-
-            RETURN 
-        END
+                RETURN 
+            END
     
-    --> Get de StockBodega 
-    IF @tipo = 10
-        BEGIN
-            SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT)
+        --> Get de StockBodega 
+        IF @tipo = 10
+            BEGIN
+                SET @tableNames = 'establishments'
 
-            SELECT es.nombreComercial as branchOffice
-                  ,ISNULL
-                  ((
+                SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT)
+
+                SELECT es.nombreComercial as branchOffice
+                      ,ISNULL
+                      ((
                     
-                    SELECT bo.descripcion as bodega
-		                  ,ISNULL((SELECT ubicacion FROM dbo.ArticuloUbicacion au WITH (NOLOCK) WHERE au.idBodega = bo.idBodega AND au.idArticulo = @idArticulo),'SN') as ubicacion
-		                  ,st.cantidad as stock
-	                FROM Inventario.Stock st WITH (NOLOCK)
-	                INNER JOIN dbo.Bodega bo WITH (NOLOCK) ON bo.idBodega = st.idBodega 
-	                WHERE st.idArticulo = @idArticulo 
-                      AND bo.codEstab = es.codEstab
-                      AND bo.estado = 1
-                    FOR JSON PATH
+                        SELECT bo.descripcion as bodega
+		                      ,ISNULL((SELECT ubicacion FROM dbo.ArticuloUbicacion au WITH (NOLOCK) WHERE au.idBodega = bo.idBodega AND au.idArticulo = @idArticulo),'SN') as ubicacion
+		                      ,st.cantidad as stock
+	                    FROM Inventario.Stock st WITH (NOLOCK)
+	                    INNER JOIN dbo.Bodega bo WITH (NOLOCK) ON bo.idBodega = st.idBodega 
+	                    WHERE st.idArticulo = @idArticulo 
+                          AND bo.codEstab = es.codEstab
+                          AND bo.estado = 1
+                        FOR JSON PATH
 
-                  ),'[]') as warehouses
-	        FROM Sri.Establecimiento es WITH (NOLOCK) 
-	        WHERE es.idEntidad = @idEntidad
+                      ),'[]') as warehouses
+	            FROM Sri.Establecimiento es WITH (NOLOCK) 
+	            WHERE es.idEntidad = @idEntidad
 
-            RETURN 
-        END 
+                RETURN 
+            END 
 
-    --> Filters
-    IF @tipo = 11
-        BEGIN
-            SELECT idSubFamilia,descripcion FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY descripcion ASC
+        --> Filters
+        IF @tipo = 11
+            BEGIN
+                SET @tableNames = 'subcategories,measures,brands,models,taxes'
 
-			SELECT idMedida,descripcion,codigo FROM Medida WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+                SELECT idSubFamilia,descripcion FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY descripcion ASC
 
-			SELECT idMarca,descripcion FROM Marca WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+			    SELECT idMedida,descripcion,codigo FROM Medida WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
 
-			SELECT idModelo,descripcion FROM Modelo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+			    SELECT idMarca,descripcion FROM Marca WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+
+			    SELECT idModelo,descripcion FROM Modelo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
 			
-			SELECT idTipoIva,descripcion,codigoPorcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
+			    SELECT idTipoIva,descripcion,codigoPorcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
 
-            RETURN 
-        END 
+                RETURN 
+            END 
 
-    --> Filter Report
-    IF @tipo = 13
-        BEGIN
+        --> Filter Report
+        IF @tipo = 13
+            BEGIN
+                SET @tableNames = 'warehouses,subcategories,brands,documentTypes,fees'
 
-           SELECT codEstab,idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultEstab DESC
+                SELECT codEstab,idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
            
-           SELECT sf.idSubFamilia
-                 ,sf.descripcion as subFamilia
-                 ,sf.codigo 
-                   ,familia = ISNULL(fa.descripcion, 'Ninguna')
-                 ,fa.idFamilia
-           FROM dbo.SubFamilia    sf WITH (NOLOCK) 
-           LEFT JOIN dbo.Familia fa WITH (NOLOCK) ON fa.idFamilia = sf.idFamilia
-           WHERE idEntidad = @idEntidad
-           ORDER BY sf.descripcion ASC
+                SELECT sf.idSubFamilia
+                      ,sf.descripcion                    as subFamilia
+                      ,sf.codigo 
+                      ,ISNULL(fa.descripcion, 'Ninguna') as familia
+                      ,fa.idFamilia
+                FROM dbo.SubFamilia   sf WITH (NOLOCK) 
+                LEFT JOIN dbo.Familia fa WITH (NOLOCK) ON fa.idFamilia = sf.idFamilia
+                WHERE idEntidad = @idEntidad
+                ORDER BY sf.descripcion ASC
 
-           SELECT idMarca, descripcion FROM dbo.Marca WHERE idEntidad = @idEntidad
+                SELECT idMarca, descripcion FROM dbo.Marca WHERE idEntidad = @idEntidad
 
-           SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
+                SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
 
-           SELECT idTarifa, descripcion, predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad
+                SELECT idTarifa, descripcion, predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad
 
-           SELECT idMarca,descripcion FROM dbo.Marca WHERE idEntidad = @idEntidad AND estado = 1 
-           RETURN 
-        END 
+                RETURN 
+            END 
 
-    SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
-	RETURN 
+        SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
+	    RETURN 
+    END TRY 
+
+    BEGIN CATCH 
+        DECLARE @idUsuario INT
+
+        SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+		INSERT INTO ErroresSistema(token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		VALUES(NEWID(),'/Articulo/Get',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE() + ' json : ' + ISNULL(@json,''),GETDATE(),@idUsuario)
+	END CATCH 
 END

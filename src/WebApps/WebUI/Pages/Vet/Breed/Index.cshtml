@@ -1,11 +1,7 @@
 ﻿@page
 @model WebUI.Pages.Vet.Breed.IndexModel
 @{
-    ViewData["Title"] = "Razas";
-    
+    ViewData["Title"] = "Razas";    
 }
-<input type="text" id="frontend" value="@ViewData["FrontEnd"]" hidden />
+
 <div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
-@section Scripts {
-    <script src="~/js/controllers/iframeAngularCtrl.js" asp-append-version="true"></script>
-}

@@ -21,7 +21,7 @@ CREATE OR ALTER VIEW Compra.v_Liquidacion WITH SCHEMABINDING AS (
         ,de.fechaEmision
         ,de.claveAcceso
         ,de.fechaAutorizacion
-        ,de.nroDocumento         as secuencial
+        ,de.nroDocumento      as secuencial
         ,de.serieComprobante
         ,cp.subcategoryId
         ,pt.ptoEmi
@@ -30,14 +30,14 @@ CREATE OR ALTER VIEW Compra.v_Liquidacion WITH SCHEMABINDING AS (
         ,es.codEstab
         ,es.nombreComercial
         ,es.estab
-        ,pr.nombreFiscal         as razonSocialProveedor
-        ,pr.numeroIdentificacion as identificacionProveedor
-        ,se.codigo               as codEstado
+        ,cu.BusinessName      as razonSocialProveedor
+        ,cu.IDCard            as identificacionProveedor
+        ,se.codigo            as codEstado
         ,cp.abono
         ,cp.saldo
-        ,ep.descripcion          as estadoCuenta
-        ,ep.codigo               as codCuenta
-        ,us.nombreUsuario        as usuario
+        ,ep.descripcion       as estadoCuenta
+        ,ep.codigo            as codCuenta
+        ,us.nombreUsuario     as usuario
 	FROM dbo.LiquidacionCompra             lc WITH (NOLOCK)
     INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = lc.idDocumentoElectronico
     INNER JOIN dbo.Proveedor               pr WITH (NOLOCK) ON pr.idProveedor            = lc.idProveedor
@@ -47,4 +47,5 @@ CREATE OR ALTER VIEW Compra.v_Liquidacion WITH SCHEMABINDING AS (
     INNER JOIN Sri.Establecimiento         es WITH (NOLOCK) ON es.idEstablecimiento      = pt.idEstablecimiento
     INNER JOIN FactElect.EstadoServicio    se WITH (NOLOCK) ON se.idEstadoServicio       = de.idEstadoServicio
      LEFT JOIN dbo.EstadoPago              ep WITH (NOLOCK) ON ep.idEstadopago           = cp.idEstadoPago
+    INNER JOIN Customer.Customer           cu WITH (NOLOCK) ON cu.Id                     = pr.CustomerId
 )

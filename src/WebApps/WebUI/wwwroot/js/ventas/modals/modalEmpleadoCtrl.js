@@ -33,7 +33,7 @@ function ModalEmpleadoCtrl($scope, mS, empleadoSvc, $uibModalInstance, tS, param
         .finally(()=>hideLoader()) 
         
         if (params && params.idEmpleado > 0) {
-            $scope.tipoRegistro = 2;
+            $scope.tipoRegistro = 2; 
             $scope.data = Object.assign({}, params);
         }
     }

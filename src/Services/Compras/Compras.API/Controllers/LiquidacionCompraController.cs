@@ -1,19 +1,18 @@
-﻿namespace Compras.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-[Route("api/[controller]")]
-[ApiController]
-public class LiquidacionCompraController : ControllerBase
+namespace Compras.API.Controllers;
+
+public class LiquidacionCompraController : BaseApiController
 {
     private IConfiguration _configuration;
     private readonly ILiquidacionCompraService _liquidacionCompraSvc;
-    private readonly ICustomLogger _log;
 
-    public LiquidacionCompraController(IConfiguration configuration, ILiquidacionCompraService liquidacionCompraSvc,
-        ICustomLogger log)
+    public LiquidacionCompraController(IConfiguration configuration, ILiquidacionCompraService liquidacionCompraSvc
+        )
     {
         _configuration = configuration;
         _liquidacionCompraSvc = liquidacionCompraSvc;
-        _log = log;
+        
     }
 
     [HttpGet("Get")]
@@ -32,7 +31,6 @@ public class LiquidacionCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al listar Liquidacion Compra: \n" + ex);
             return BadRequest("Error on get: " + ex.Message);
         }
     }
@@ -48,7 +46,6 @@ public class LiquidacionCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al crear liquidacion compra: " + ex);
             return BadRequest(ex.Message);
         }
     }
@@ -68,7 +65,6 @@ public class LiquidacionCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al obtener datos de Liquidacion Compra: \n" + ex);
             return BadRequest("Error on get by id: " + ex.Message);
         }
     }
@@ -84,7 +80,6 @@ public class LiquidacionCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al actualizar liquidacion compra: " + ex);
             return BadRequest(ex.Message);
         }
     }
@@ -101,7 +96,6 @@ public class LiquidacionCompraController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al eliminar doc. liquidacion compra: " + ex);
             return BadRequest(ex.Message);
         }
     }

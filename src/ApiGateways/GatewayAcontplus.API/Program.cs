@@ -3,8 +3,8 @@ using Autofac.Extensions.DependencyInjection;
 using Common.AppSettings;
 using GatewayAcontplus.API.Data;
 using GatewayAcontplus.API.Delegates;
-using GatewayAcontplus.API.Middleware;
-using GatewayAcontplus.API.Services;
+//using GatewayAcontplus.API.Middleware;
+//using GatewayAcontplus.API.Services;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -15,6 +15,8 @@ using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Services.Common.Extensions;
 using Services.Common.Middleware;
+using System.Runtime.InteropServices;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,8 +27,8 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Limits.MaxRequestLineSize = 1048576;
 });
 
-builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
-ConfigHelper.AddJsonFiles(builder.Configuration);
+builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
+ConfigurationHelper.AddJsonFiles(builder.Configuration);
 
 // Secure Environment Variable Retrieval (consider secret management for sensitive data)
 var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().Split(",")
@@ -101,7 +103,7 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseRouting();
 
 // Handle Port Configuration for Different Environments (consider a configuration or environment variable)
-if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
     app.Urls.Add("http://*:5001"); // Linux Port
 }

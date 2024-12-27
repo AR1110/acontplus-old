@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Serialization;
+﻿using Scrutor;
 
 namespace Ventas.API.Extensions;
 
@@ -8,20 +8,28 @@ public static class ApplicationServicesExtensions
         IConfiguration configuration)
     {
         services.AddControllers()
-                .AddNewtonsoftJson(x =>
-                {
-                    x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    x.SerializerSettings.ContractResolver =
-                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-                });
-        services.AddScoped<IAdoSqlServer, AdoSqlServer>();
-        services.AddScoped<IAprobacionDocService, AprobacionDocService>();
-        services.AddScoped<IClienteService, ClienteService>();
-        services.AddScoped<INotaEntregaService, NotaEntregaService>();
-        services.AddScoped<IProformaService, ProformaService>();
-        services.AddScoped<IEmpresaService, EmpresaService>();
-        services.AddScoped<ICreditoGaranteService, CreditoGaranteService>();
-       
+            .AddNewtonsoftJson(x =>
+            {
+                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                x.SerializerSettings.ContractResolver =
+                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+            });
+
+        string[] nameSpaces =
+        [
+            "Common.Infrastructure.Repository.Implementations",
+            "Ventas.API.Services"
+        ];
+
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(nameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithTransientLifetime()
+        );
+
+
         return services;
     }
 }

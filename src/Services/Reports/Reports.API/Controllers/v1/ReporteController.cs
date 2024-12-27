@@ -1,4 +1,5 @@
-﻿using Reports.API.Services;
+﻿using Common.AppSettings.Extensions;
+using Reports.API.Services;
 using Reports.Application.Interfaces;
 
 namespace Reports.API.Controllers.v1
@@ -12,7 +13,7 @@ namespace Reports.API.Controllers.v1
         [HttpPost]
         public async Task<IActionResult> Download(ApiReportParamsDto data)
         {
-            string connectionString = HttpContext.Items["ConnectionString"].ToString();
+         //   string connectionString = HttpContext.Items["ConnectionString"].ToString();
 
             // Validate input parameters
             if (data == null || string.IsNullOrWhiteSpace(data.reportParams) || string.IsNullOrWhiteSpace(data.dataParams))
@@ -24,7 +25,7 @@ namespace Reports.API.Controllers.v1
             string sanitizedReportParams = SqlStringParam.Sanitize(data.reportParams);
             string sanitizedDataParams = SqlStringParam.Sanitize(data.dataParams);
 
-            var dsParams = await reportService.GetParamsAsync(new Dictionary<string, object> { { "json", sanitizedReportParams } }, connectionString);
+            var dsParams = await reportService.GetParamsAsync(new Dictionary<string, object> { { "json", sanitizedReportParams } } );
 
             if (dsParams.Tables["ReportProps"]!.Rows.Count == 0)
             {
@@ -45,7 +46,7 @@ namespace Reports.API.Controllers.v1
 
             dataParams["json"] = sanitizedDataParams;
 
-            var ds = await reportService.GetDataAsync(storedProcedure, dataParams, connectionString);
+            var ds = await reportService.GetDataAsync(storedProcedure, dataParams );
 
             if (ds.Tables[0].Rows.Count == 0)
             {

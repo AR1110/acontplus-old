@@ -1,4 +1,4 @@
-﻿using Identity.API.Helpers;
+﻿using Common.AppSettings;
 
 namespace Identity.API.Controllers.v3;
 
@@ -7,7 +7,7 @@ namespace Identity.API.Controllers.v3;
 [ApiVersion("3.0")]
 public class AccountController(
     IConfiguration config,
-    ITokenService tokenService,
+    IJwtTokenService tokenService,
     ILoginFailedService loginFailedService,
     ILoginHistoryService loginHistoryService,
     IAccountService accountService)
@@ -17,6 +17,8 @@ public class AccountController(
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] AuthRequestDto authRequest)
     {
+        var fromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
+
         if (string.IsNullOrEmpty(authRequest.Username))
         {
             return BadRequest("Usuario no puede estar vacio");
@@ -28,7 +30,7 @@ public class AccountController(
         }
 
         var response =
-            JsonConvert.DeserializeObject<ApiResponseDeprecated>(
+            JsonConvert.DeserializeObject<LegacyApiResponse>(
                 await accountService.LoginRestaurantAsync(authRequest.Username, authRequest.Password));
 
         if (response.code == "1")
@@ -38,53 +40,55 @@ public class AccountController(
             switch (userData.Count)
             {
                 case 1:
-                {
-                    userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
-
-                    var token = tokenService.CreateToken(userData.FirstOrDefault());
-
-                    if (token == null || string.IsNullOrEmpty(token.Token))
                     {
-                        return BadRequest("Error al iniciar session");
+                        userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
+
+                        var token = tokenService.CreateToken(userData.FirstOrDefault());
+
+                        if (token == null || string.IsNullOrEmpty(token.Token))
+                        {
+                            return BadRequest("Error al iniciar session");
+                        }
+
+                        userData.ForEach(x => x.Token = token.Token);
+
+                        var logingHistory = new LoginHistory
+                        {
+                            UserId = userData[0].UserId,
+                            Username = userData[0].Username,
+                            UserRoleId = userData[0].UserRoleId,
+                            UserAgent = authRequest.UserAgent,
+                            Token = token.Token,
+                            TokenExpiration = token.Expires,
+                            FromMobile = fromMobile
+                        };
+
+                        await loginHistoryService.AddAsync(logingHistory);
+
+                        return Ok(new
+                        {
+                            code = "1",
+                            message = "Login correcto",
+                            payload = JsonConvert.SerializeObject(userData,
+                                new JsonSerializerSettings
+                                {
+                                    ContractResolver =
+                                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                    Formatting = Formatting.Indented
+                                })
+                        });
                     }
-
-                    userData.ForEach(x => x.Token = token.Token);
-
-                    var logingHistory = new LoginHistory
-                    {
-                        UserId = userData[0].UserId,
-                        Username = userData[0].Username,
-                        UserRoleId = userData[0].UserRoleId,
-                        UserAgent = authRequest.UserAgent,
-                        Token = token.Token,
-                        TokenExpiration = token.Expires
-                    };
-
-                    await loginHistoryService.AddAsync(logingHistory);
-
-                    return Ok(new
-                    {
-                        code = "1",
-                        message = "Login correcto",
-                        payload = JsonConvert.SerializeObject(userData,
-                            new JsonSerializerSettings
-                            {
-                                ContractResolver =
-                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                Formatting = Formatting.Indented
-                            })
-                    });
-                }
             }
         }
         else
-        { 
+        {
 
             var loginFailed = new LoginFailed
             {
-                UserAgent = authRequest.UserAgent, 
+                UserAgent = authRequest.UserAgent,
                 Username = authRequest.Username,
-                Password = authRequest.Password
+                Password = authRequest.Password,
+                FromMobile = fromMobile,
             };
             await loginFailedService.AddAsync(loginFailed);
         }
@@ -96,6 +100,7 @@ public class AccountController(
     [HttpPost("createToken")]
     public async Task<IActionResult> CreateToken([FromBody] UserData userData)
     {
+        var fromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
         userData.UrlGateway = config["ApiGateways:Acontplus"];
         var token = tokenService.CreateToken(userData);
         if (token == null || string.IsNullOrEmpty(token.Token))
@@ -110,7 +115,8 @@ public class AccountController(
             UserRoleId = userData.UserRoleId,
             UserAgent = userData.UserAgent,
             Token = token.Token,
-            TokenExpiration = token.Expires
+            TokenExpiration = token.Expires,
+            FromMobile = fromMobile
         };
         await loginHistoryService.AddAsync(logingHistory);
 

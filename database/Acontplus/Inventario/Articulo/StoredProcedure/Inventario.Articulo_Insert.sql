@@ -21,37 +21,19 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
+    --> GLOBAL
+	DECLARE @idUsuario INT,@idEntidad INT ,@idArticulo INT
+
+    --> Data Json
 	DECLARE @jsonArticulo NVARCHAR(MAX) ,@jsonPvp VARCHAR(MAX) ,@idBodega INT ,@ubicacion VARCHAR(90) 
 
-	DECLARE @idArticulo INT
-	DECLARE @idEntidad INT 
-	DECLARE @idUsuario INT 
-	DECLARE @idSubFamilia INT
-	DECLARE @llevaInventario BIT 
-	DECLARE @ruc VARCHAR(13)
-	DECLARE @codigo VARCHAR(50)
-	DECLARE @codigoBarra VARCHAR(50)
-	DECLARE @codigoAuxiliar VARCHAR(50)
-	DECLARE @code UNIQUEIDENTIFIER
-	DECLARE @payload VARCHAR(MAX)
-	DECLARE @inventory VARCHAR(5)
+	--> Artculo
+	DECLARE @idSubFamilia INT ,@llevaInventario BIT ,@codigo VARCHAR(50) ,@codigoBarra VARCHAR(50) ,@code UNIQUEIDENTIFIER = NEWID() ,@payload VARCHAR(MAX) ,@inventory VARCHAR(5)
 
-	---- Add ----
+	--> Restaurante
 	DECLARE @siglaFamilia VARCHAR(5)
 	   
-
-	SELECT @jsonArticulo = jsonArticulo
-		  ,@jsonPvp = jsonPvp
-		  ,@idBodega = idBodega
-		  ,@ubicacion = ubicacion
-	FROM OPENJSON (@json) WITH
-    (
-	    jsonArticulo VARCHAR(MAX) '$.jsonArticulo',
-	    jsonPvp      VARCHAR(MAX) '$.jsonPvp',
-	    idBodega     INT          '$.idBodega',
-	    ubicacion    VARCHAR(90)  '$.ubicacion'
-    )
-
+    --> Tb Temp
 	DECLARE @tbArticle AS TABLE (
 		idSubFamilia INT NOT NULL
 	   ,idMarca INT NULL
@@ -90,15 +72,23 @@ BEGIN
 	   ,porcentajeUtilidad NUMERIC(18,5) NOT NULL 
 	   ,precioPredeterminado BIT NOT NULL
 	)
+	BEGIN TRY
+        --> Variables Globales
+        SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-	IF(LEN(LTRIM(RTRIM(@s3ObjectKey))) = 0)
-		BEGIN
-			SET @s3ObjectKey = NULL
-			SET @s3ObjectUrl = NULL
-		END
+        --> Data Json
+        SELECT @jsonArticulo = jsonArticulo
+		      ,@jsonPvp      = jsonPvp
+		      ,@idBodega     = idBodega
+		      ,@ubicacion    = ubicacion
+	    FROM OPENJSON (@json) WITH
+        (
+	        jsonArticulo VARCHAR(MAX) 
+	       ,jsonPvp      VARCHAR(MAX) 
+	       ,idBodega     INT          
+	       ,ubicacion    VARCHAR(90) 
+        )
 
-	BEGIN TRY 
-		
 		 INSERT INTO @tbArticle
 				(idSubFamilia
 				,idMarca
@@ -156,9 +146,9 @@ BEGIN
 				,fechaCaducidad
 				,codigoBarra	
 				,CASE WHEN datosAdicionales = 1 THEN idEtiqueta ELSE NULL END 
-				,ISNULL(cantMinimaVentaPorMayor,0)
-		 FROM OPENJSON(@jsonArticulo) 
-		 WITH (idSubFamilia                  INT '$.idSubFamilia'
+				,ISNULL(cantMinimaVentaPorMayor, 0)
+		  FROM OPENJSON(@jsonArticulo) 
+		  WITH (idSubFamilia                 INT '$.idSubFamilia'
 				,idMarca                     INT '$.idMarca'
 				,idModelo                    INT '$.idModelo'
 				,idTipoIce                   INT '$.idTipoIce'
@@ -187,55 +177,49 @@ BEGIN
 				,idEtiqueta                  INT '$.idEtiqueta'
 				,cantMinimaVentaPorMayor     INT '$.cantMinimaVentaPorMayor') AS dt
 
-		 INSERT INTO @tbPrices(idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado)
-					    SELECT idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado
-					    FROM OPENJSON(@jsonPvp) 
-					    WITH (idArticuloPvP                INT '$.idArticuloPvP'
-							 ,idTarifa                     INT '$.idTarifa' 
-							 ,precioVenta        NUMERIC(20,6) '$.precioVenta'
-							 ,precioConIva       NUMERIC(20,6) '$.precioConIva' 
-							 ,porcentajeUtilidad NUMERIC(20,5) '$.porcentajeUtilidad'
-							 ,precioPredeterminado         BIT '$.precioPredeterminado') as dt 
+		 INSERT INTO @tbPrices
+               (idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado)
+		 SELECT idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado
+		 FROM OPENJSON(@jsonPvp) WITH 
+         (
+             idArticuloPvP        INT
+            ,idTarifa             INT 
+            ,precioVenta          NUMERIC(20,6) 
+            ,precioConIva         NUMERIC(20,6)
+            ,porcentajeUtilidad   NUMERIC(20,5)
+            ,precioPredeterminado BIT
 
-		--============================================== Capturar Variables ===============================================================
+         ) as dt 
 
-		SET @code = (SELECT NEWID())
+		--> Capturar Variables
+        IF(LEN(LTRIM(RTRIM(@s3ObjectKey))) = 0)
+		    BEGIN
+			    SET @s3ObjectKey = NULL
+			    SET @s3ObjectUrl = NULL
+		    END
 
-		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
-
-		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
-		
 		SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 		
-		SELECT @codigo = codigo,@codigoBarra = codigoBarra,@codigoAuxiliar = codigoAuxiliar,@llevaInventario = llevaInventario,@idSubFamilia = idSubFamilia FROM @tbArticle
+		SELECT @codigo          = t1.codigo
+              ,@codigoBarra     = t1.codigoBarra
+              ,@llevaInventario = t1.llevaInventario
+              ,@idSubFamilia    = t1.idSubFamilia
+              ,@siglaFamilia    = t3.siglas
+        FROM @tbArticle           t1
+        INNER JOIN dbo.SubFamilia t2 ON t2.idSubFamilia = t1.idSubFamilia
+        INNER JOIN dbo.Familia    t3 ON t3.idFamilia    = t2.idFamilia
 
-		--=============================================== Validaciones ======================================================================
-		
-		IF (SELECT COUNT(*) FROM @tbArticle) = 0 
+		--> Validaciones
+		IF NOT EXISTS(SELECT 1 FROM @tbArticle)
 			BEGIN
 				SELECT '0'code,'Error en la informacion del Articulo' as 'message'
 				RETURN
 			END 
 
-		
-		IF NOT EXISTS (SELECT 1 FROM @tbArticle a
-								INNER JOIN Inventario.v_Subfamilia s ON a.idSubFamilia = s.idSubfamilia WHERE s.siglas = 'ING' AND applicationId = 1)
-			BEGIN
-				IF (SELECT COUNT(*) FROM @tbPrices) = 0 
-					BEGIN
-						SELECT '0'code,'Error en la informacion de las tarifas de precios' as 'message'
-						RETURN
-					END
-			END
-
-		IF NOT EXISTS (SELECT 1 FROM @tbArticle a
-								INNER JOIN Inventario.v_Subfamilia s ON a.idSubFamilia = s.idSubfamilia WHERE s.siglas = 'ING' AND applicationId = 1)
-			BEGIN
-				IF (SELECT COUNT(*) FROM @tbPrices) != 5 
-					BEGIN
-						SELECT '0'code,'Error en la informacion, tarifas incompletas' as 'message'
-						RETURN
-					END 
+        IF NOT EXISTS(SELECT 1 FROM @tbPrices)
+            BEGIN
+				SELECT '0'code,'Error en la informacion de las tarifas' as 'message'
+				RETURN
 			END
 
 		IF EXISTS (SELECT 1 FROM Articulo WITH (NOLOCK) WHERE codigo = @codigo AND idEntidad = @idEntidad)
@@ -250,7 +234,6 @@ BEGIN
 				RETURN 
 			END 
 
-
 		IF @llevaInventario = 1 AND @inventory = 'NO'
 			BEGIN
 				SELECT '0'code,'No se ha establecido una configuración de control de inventario en la sección general de la configuración esto indica que no es posible establecer que este artículo requiere llevar un registro de inventario.' as 'message'
@@ -258,33 +241,35 @@ BEGIN
 			END
 
 		BEGIN TRAN 
-			--REGISTRAR LOS DATOS GENERALES DEL ARTICULO 
+            --> Articulo
 			INSERT INTO Articulo 
 				(code_unique,idSubFamilia,idMarca,idModelo,idTipoIce,idTipoArticulo,idTipoIva,idMedida
 				,idEtiqueta,precioCosto,precioSinSubsidio,codigo,codigoAuxiliar,codigoBarra,valorIce,descripcion,llevaInventario
 				,datosAdicionales,productoFraccionable,datosLote,Lote,fechaCreacion,fechaCaducidadLote,stockMinimo
 				,stockMaximo,observaciones,caducidad,fechaCaducidad,idEntidad,idUsuario,fechaRegistro,cantMinimaVentaPorMayor)
-			SELECT 
-				 @code,idSubFamilia,idMarca,idModelo,idTipoIce,idTipoArticulo,idTipoIva,idMedida
+
+			SELECT @code,idSubFamilia,idMarca,idModelo,idTipoIce,idTipoArticulo,idTipoIva,idMedida
 				,idEtiqueta,precioCosto,precioSinSubsidio,codigo,codigoAuxiliar,codigoBarra,valorIce,descripcion,llevaInventario
 				,datosAdicionales,productoFraccionable,datosLote,lote,fechaCreacion,fechaCaducidadlote,stockMinimo
 				,stockMaximo,observaciones,caducidad,fechaCaducidad,@idEntidad,@idUsuario,dbo.ufnGetDateEcuador(),cantMinimaVentaPorMayor
 			FROM @tbArticle
 
-			SET @idArticulo = @@IDENTITY
+			SET @idArticulo = SCOPE_IDENTITY()
 
-			INSERT INTO ArticuloPvP (idArticulo,idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado)
-					         SELECT @idArticulo,idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado
-					         FROM @tbPrices
+            --> Tarifas de precio
+			INSERT INTO ArticuloPvP 
+                   (idArticulo,idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado)
+			SELECT @idArticulo,idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado
+			FROM @tbPrices
             
+            --> Photo Product
             IF @s3ObjectKey IS NOT NULL AND @s3ObjectUrl IS NOT NULL
                 BEGIN 
-                    --> Photo Product
                     INSERT INTO [Inventario].[ProductPhoto]( [ProductId], [S3ObjectKey], [S3ObjectUrl], [IsDefault], [UserId] ) 
                     SELECT @idArticulo,@s3ObjectKey,@s3ObjectUrl,1,@idUsuario
                 END 
 			
-			--Registrmos la ubicacion del articulo en las bodegas 
+			--> ubicacion  
 			INSERT INTO ArticuloUbicacion 
 				(idArticulo
 				,idBodega
@@ -294,35 +279,18 @@ BEGIN
 				,CASE WHEN @idBodega  = 0  THEN NULL ELSE @idBodega  END 
 				,CASE WHEN @ubicacion = '' THEN NULL ELSE @ubicacion END )
 			
-
+            --> Stock Historial
 			IF @llevaInventario = 1 
 				BEGIN
 					INSERT INTO Inventario.Stock
 					       (idArticulo,idBodega,cantidad,lastUpdate,idUsuario)
-					SELECT @idArticulo,bo.idBodega,0,GETDATE(),@idUsuario FROM dbo.Bodega bo WITH (NOLOCK) INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = bo.codEstab WHERE es.idEntidad = @idEntidad
+					SELECT @idArticulo,bo.idBodega,0,GETDATE(),@idUsuario 
+                    FROM dbo.Bodega bo WITH (NOLOCK) 
+                    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = bo.codEstab
+                    WHERE es.idEntidad = @idEntidad
 				END 
-
-			 UPDATE SubFamilia SET ultimoSecuencial = ultimoSecuencial+1 WHERE idSubFamilia = @idSubFamilia
-		
-			 SET @payload = (SELECT 
-								 idArticulo
-								,idMedida
-								,codigo
-								,codigoAuxiliar
-								,codigoBarra
-								,gestion = 'A'
-	 							,'data'  = 0
-								,etiquetas = ISNULL((SELECT e.idEtiqueta , e.descripcion, e.etiquetas FROM Inventario.Etiqueta e WHERE e.idEtiqueta = art.idEtiqueta FOR JSON PATH), '[]')
-							 FROM Articulo art 
-							 WHERE art.idArticulo = @idArticulo FOR JSON PATH 
-							 )
-
-			----- INSERT INTO  -------
-			SELECT @siglaFamilia = f.siglas
-			FROM SubFamilia sf
-			INNER JOIN Familia f ON f.idFamilia = sf.idFamilia
-			WHERE sf.idSubFamilia = @idSubFamilia
-
+            
+            --> Restaurant
 			IF(@siglaFamilia IN ('RES', 'POR'))
 				BEGIN
 					INSERT INTO Restaurant.Item
@@ -344,18 +312,37 @@ BEGIN
 					(ProductId, Title,Summary, Content, CreatedAt, UpdatedAt, [Enabled], Deleted, UserId)
 					VALUES(@idArticulo,(SELECT descripcion FROM @tbArticle),(SELECT descripcion FROM @tbArticle), NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
 				END
+
+            UPDATE SubFamilia SET ultimoSecuencial = ultimoSecuencial+1 WHERE idSubFamilia = @idSubFamilia
+
+            SET @payload = (
+
+                                SELECT idArticulo
+								      ,idMedida
+								      ,codigo
+								      ,codigoAuxiliar
+								      ,codigoBarra
+								      ,gestion = 'A'
+	 							      ,'data'  = 0
+								      ,etiquetas = ISNULL((SELECT e.idEtiqueta , e.descripcion, e.etiquetas FROM Inventario.Etiqueta e WHERE e.idEtiqueta = art.idEtiqueta FOR JSON PATH), '[]')
+							    FROM Articulo art 
+							    WHERE art.idArticulo = @idArticulo FOR JSON PATH 
+
+							)
+
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' as 'message', @payload as payload
-		RETURN;
 	END TRY
 
 	BEGIN CATCH 
 		IF @@TRANCOUNT > 0 
-		BEGIN
-			ROLLBACK TRAN; 
-		END
-		SELECT '0'code,'Info: Error en el procedimiento ' as 'message'
+		    BEGIN
+			    ROLLBACK TRAN; 
+		    END
+		
 		INSERT INTO ErroresSistema(token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		VALUES(NEWID(),'/Articulo/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario)
+
+        SELECT '0'code,'Info: Error en el procedimiento ' as 'message'
 	END CATCH  
 END

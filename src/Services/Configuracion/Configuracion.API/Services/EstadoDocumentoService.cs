@@ -1,4 +1,7 @@
-﻿namespace Configuracion.API.Services;
+﻿using Common.AppSettings;
+using Configuracion.API.Models;
+
+namespace Configuracion.API.Services;
 
 public class EstadoDocumentoService : IEstadoDocumentoService
 {
@@ -9,9 +12,9 @@ public class EstadoDocumentoService : IEstadoDocumentoService
         _repository = repository;
     }
 
-    public async Task<ApiResponseDeprecated> GetAsync(string json)
+    public async Task<LegacyApiResponse> GetAsync(string json)
     {
-        var data = new ApiResponseDeprecated();
+        var data = new LegacyApiResponse();
         var estados = await _repository.DynamicListAsync<EstadoPago>("Gestion.EstadoDocumento_Get",
             new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(json) } });
         if (estados.Count > 0)

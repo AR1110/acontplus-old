@@ -53,6 +53,9 @@ BEGIN
 			WHERE secuencial = 1
               AND idTipoDocumento NOT IN  (SELECT idTipoDocumento FROM ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision)
 			
+
+            ORDER BY idConfiguracionDocumento ASC
+
             RETURN 
 		END 
 

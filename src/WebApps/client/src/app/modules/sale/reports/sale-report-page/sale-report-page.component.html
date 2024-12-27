@@ -1,145 +1,136 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
-<div class="card">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-        <div class="icheck-primary">
-          <input [(ngModel)]="dataSearch.checkBoxCustomer" id="checkBoxCustomer" name="checkBoxCustomerName"
-                 type="checkbox"/>
-          <label for="checkBoxCustomer">Cliente</label>
-        </div>
-      </div>
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-        <div class="icheck-primary">
-          <input [(ngModel)]="dataSearch.checkBoxUser" id="checkBoxUser" name="checkBoxUserName"
-                 type="checkbox"/>
-          <label for="checkBoxUser">Usuario</label>
-        </div>
-      </div>
-    </div>
-    <hr>
-    <div class="row">
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-        <div class="form-group">
-          <label>Tipo Documento: </label>
-          <select (change)="onChangeTipoDoc()" [(ngModel)]="dataSearch.codDoc"
-                  class="form-select">
-            @for (item of tiposDoc; track $index) {
-              <option [ngValue]="item.codigo">
-                {{ item.descripcion }}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
-      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-        <div class="form-group">
-          <label>Establecimiento:</label>
-          <select (change)="onChangeEstab()" [(ngModel)]="dataSearch.idEstablecimiento"
-                  class="form-select">
-            <option [ngValue]="0">Todos</option>
-            @for (item of establecimientos; track $index) {
-              <option [ngValue]="item.idEstablecimiento">
-                {{ item.nombreComercial }}
-              </option>
-            }
-
-          </select>
-        </div>
-      </div>
-      <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
-        <div class="form-group">
-          <label>Punto Emisión</label>
-          <select [(ngModel)]="dataSearch.idPuntoEmision" class="form-select">
-            <option [ngValue]="0">Todos</option>
-            @for (item of puntosEmision; track $index) {
-              <option [ngValue]="item.idPuntoEmision">
-                {{ item.ptoEmi }}
-              </option>
-            }
-
-          </select>
-        </div>
-      </div>
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-2 col-sm-6 col-12">
-        <div class="form-group">
-          <label>Ciudad</label>
-          <select [(ngModel)]="dataSearch.idCiudad" class="form-select">
-            <ng-container *ngFor="let provincia of provinciasAgrupadas">
-              <optgroup [label]="provincia.nombre">
-                <option *ngFor="let ciudad of provincia.ciudades" [ngValue]="ciudad.idCiudad">
-                  {{ ciudad.ciudad }}
-                </option>
-              </optgroup>
-            </ng-container>
-          </select>
-
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-        <label>Rango Fechas: </label>
-        <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)"/>
-      </div>
-      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-        <div class="form-group">
-          <label>Cliente</label>
-          <app-company-customer-search
-            (onCustomerSelected)="onCustomerSelected($event)"
-            (resultEmptyInput)="resultEmptyInputCustomer()"
-            [isSearchSimple]="true"
-          />
-        </div>
-      </div>
-      <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
-        <div class="form-group">
-          <label>Estado</label>
-          <select [(ngModel)]="dataSearch.idEstadoDocumento" class="form-select">
-            <option [ngValue]="0">Todos</option>
-            @for (item of estadosDoc; track $index) {
-              <option [ngValue]="item.idEstadoPago">
-                {{ item.descripcion }}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-        <div class="form-group">
-          <label>Usuario: </label>
-          <app-user-search
-            (emptyInput)="emptyInputUser()"
-            (onUserSelected)="onUserSelected($event)"
-            [isSearchSimple]="true"
-          />
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xl-3 col-lg-3 col-md-12 col-sm-6 col-12 d-flex align-items-center">
+<mat-card appearance="outlined">
+  <mat-card-content>
+    <div class="d-flex flex-column gap-2 justify-content-center">
+      <div class="d-flex gap-3 flex-row">
+        <mat-checkbox [(ngModel)]="dataSearch.checkBoxCustomer"
+          >Cliente</mat-checkbox
+        >
+        <mat-checkbox [(ngModel)]="dataSearch.checkBoxUser"
+          >Usuario</mat-checkbox
+        >
         @if (isSelectedNotaEntrega) {
-          <div class="icheck-primary icheck-inline">
-            <input type="checkbox" id="docTransferidas" [(ngModel)]="dataSearch.convertToDoc"/>
-            <label for="docTransferidas">Docs. Transferidas</label>
-          </div>
+        <mat-checkbox [(ngModel)]="dataSearch.convertToDoc"
+          >Docs. Transferidas</mat-checkbox
+        >
         }
       </div>
-    </div>
 
-  </div>
-  <div class="card-footer bg-transparent">
-    <div class="d-flex flex-row gap-1">
-      <button (click)="getReportPdf()" class="btn btn-outline-danger" type="button">
-        <fa-icon [icon]="'file-pdf'"></fa-icon>
-        PDF
-      </button>
-      <button (click)="getReportExcel()" class="btn btn-outline-success" type="button">
-        <fa-icon [icon]="'file-excel'"></fa-icon>
-        EXCEL
-      </button>
-    </div>
+      <mat-divider></mat-divider>
+      <div
+        class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
+      >
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Tipo Documento</mat-label>
+            <mat-select
+              (selectionChange)="onChangeTipoDoc()"
+              [(ngModel)]="dataSearch.codDoc"
+            >
+              @for (item of tiposDoc; track $index) {
+              <mat-option [value]="item.codigo">
+                {{ item.descripcion }}
+              </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Establecimiento: </mat-label>
+            <mat-select
+              (selectionChange)="onChangeEstab()"
+              [(ngModel)]="dataSearch.idEstablecimiento"
+            >
+              @for (item of establecimientos; track $index) {
+              <mat-option [value]="item.idEstablecimiento">
+                {{ item.nombreComercial }}
+              </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Punto Emisión: </mat-label>
+            <mat-select [(ngModel)]="dataSearch.idPuntoEmision">
+              @for (item of puntosEmision; track $index) {
+              <mat-option [value]="item.idPuntoEmision">
+                {{ item.ptoEmi }}
+              </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Ciudad</mat-label>
+            <mat-select [(ngModel)]="dataSearch.idCiudad">
+              <mat-option [value]="0">-- Ninguna --</mat-option>
+              @for (group of provinciasAgrupadas; track $index) {
+              <mat-optgroup [label]="group.nombre">
+                @for (sg of group.ciudades; track sg.idCiudad) {
+                <mat-option [value]="sg.idCiudad">{{ sg.ciudad }}</mat-option>
+                }
+              </mat-optgroup>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
 
-  </div>
-</div>
+      <div
+        class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
+      >
+        <div class="col">
+          <app-date-range-selection
+            [showInputMaterial]="true"
+            (onChangeDateRange)="onDateRangeSelection($event)"
+          />
+        </div>
+        <div class="col">
+          <app-company-customer-search-mat
+            [isSimpleMode]="true"
+            (onSelect)="onCustomerSelected($event)"
+            (clearInput)="resultEmptyInputCustomer()"
+          ></app-company-customer-search-mat>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Estado: </mat-label>
+            <mat-select [(ngModel)]="dataSearch.idEstadoDocumento">
+              <mat-option [value]="0">Todos</mat-option>
+              @for (item of estadosDoc; track $index) {
+              <mat-option [value]="item.idEstadoPago">
+                {{ item.descripcion }}
+              </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col">
+          <app-mat-user-search
+            (onSelect)="onUserSelected($event)"
+            (clearInput)="emptyInputUser()"
+          />
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions class="d-flex gap-2">
+    <button mat-flat-button (click)="getReportPdf()" appActionReport>
+      <mat-icon>download</mat-icon>
+      PDF
+    </button>
+    <button mat-flat-button (click)="getReportExcel()" appActionReport>
+      <mat-icon>download</mat-icon>
+      Excel
+    </button>
+    <button mat-stroked-button (click)="askToSendMail()" appActionEnviarCorreo>
+      <mat-icon>email</mat-icon>
+      Enviar por correo
+    </button>
+  </mat-card-actions>
+</mat-card>

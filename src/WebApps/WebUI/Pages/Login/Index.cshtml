@@ -1,10 +1,20 @@
 ﻿@page
 @model WebUI.Pages.Login.IndexModel
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration 
+
 @{
     ViewData["Title"] = "Index";
     Layout = "";
     @RouteData.Values["returnUrl"]
     @RouteData.Values["UrlGateway"]
+    var facebook = Configuration["SocialNetworks:Facebook"];
+    var demoUrl = Configuration["SocialNetworks:DemoUrl"];
+    var googlePlay = Configuration["SocialNetworks:GooglePlay"];
+    var instagram = Configuration["SocialNetworks:Instagram"];
+    var businessUrl = Configuration["SocialNetworks:BusinessUrl"];
+    var whatsapp = Configuration["SocialNetworks:Whatsapp"];
+    var youtube = Configuration["SocialNetworks:Youtube"];
 }
 <!DOCTYPE html>
 <html lang="es-ec">
@@ -15,7 +25,7 @@
     <meta name="keywords" content="AcontPlus, Contabilidad, Sistema Contable" />
     <meta name="author" content="AcontPlus">
 
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="application-name" content="AcontPlus" />
     <meta name="apple-mobile-web-app-title" content="AcontPlus" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -48,6 +58,7 @@
                 color: #fff;
                 border-color: #be1a5e;
             }
+
         .btn-playstore {
             background-color: #3ddc84; /* Google Play Store green */
             color: white;
@@ -108,15 +119,12 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 m-t-10 text-center">
                             <div class="social">
-                                <a href="https://www.facebook.com/acontplus.ec" target="_blank" class="btn btn-facebook" data-bs-toggle="tooltip" title="Visita nuestra página en Facebook"> <i aria-hidden="true" class="fab fa-facebook-f"></i> </a>
-                                @{
-                                    var youtubeUrl = "https://www.youtube.com/@acontplusweb";
-                                }
-
-                                <a href="@youtubeUrl" target="_blank" class="btn btn-youtube" data-bs-toggle="tooltip" title="Visita nuestro canal en Youtube">
+                                <a href="@facebook" target="_blank" class="btn btn-facebook" data-bs-toggle="tooltip" title="Visita nuestra página en Facebook"> <i aria-hidden="true" class="fab fa-facebook-f"></i> </a>
+                                <a href="@instagram" target="_blank" class="btn btn-danger" data-bs-toggle="tooltip" title="Visita nuestra página en Instagram"> <i aria-hidden="true" class="fab fa-instagram"></i> </a>
+                                <a href="@youtube" target="_blank" class="btn btn-youtube" data-bs-toggle="tooltip" title="Visita nuestro canal en Youtube">
                                     <i aria-hidden="true" class="fab fa-youtube"></i>
                                 </a>
-                                <a href="https://play.google.com/store/apps/details?id=com.acontplus_facturacion&hl=es_EC" target="_blank" class="btn btn-playstore" data-bs-toggle="tooltip" title="Descargar desde Google Play">
+                                <a href="@googlePlay" target="_blank" class="btn btn-playstore" data-bs-toggle="tooltip" title="Descargar desde Google Play">
                                     <i aria-hidden="true" class="fab fa-google-play"></i>
                                 </a>
                             </div>
@@ -124,7 +132,7 @@
                     </div>
                     <div class="form-group m-b-0">
                         <div class="col-sm-12 text-center">
-                            Eres nuevo? <a href="https://demo.acontplus.com" target="_blank" class="text-info m-l-5"><b>Solicita una demo <i class="fa fa-upload"></i></b></a>
+                            Eres nuevo? <a href="@demoUrl" target="_blank" class="text-info m-l-5"><b>Solicita una demo <i class="fa fa-upload"></i></b></a>
                         </div>
                     </div>
 

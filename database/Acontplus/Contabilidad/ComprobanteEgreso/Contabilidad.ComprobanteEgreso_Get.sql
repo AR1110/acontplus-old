@@ -175,11 +175,12 @@ BEGIN
 				
             SELECT * FROM Banco WHERE estado = 1
 				
-            SELECT * FROM Ciudad WHERE estado = 1
+         --   SELECT * FROM Ciudad WHERE estado = 1
+            SELECT cd.idCiudad,provincia = pr.descripcion ,cd.descripcion,pr.codigo FROM dbo.Provincia pr WITH (NOLOCK) INNER JOIN dbo.Ciudad cd WITH (NOLOCK) ON cd.idProvincia = pr.idProvincia WHERE cd.estado = 1
 
-            SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP','PA','PFC')
+            SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP','PA')
 
-            SELECT cp.idCuentaPorPagar as idComprobante
+            SELECT   cp.idCuentaPorPagar as idComprobante
                   ,(SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento td (NOLOCK) WHERE td.codigoSri = cp.codDoc) as idTipoDocumento
                   ,cp.serieComprobante                                                                              as nroDocumento
                   ,IIF(cp.codDoc = '04','Nota Credito','Comprobante Retención')                                     as tipoDocumento
@@ -187,11 +188,12 @@ BEGIN
                   ,CASE cp.codDoc WHEN '04' THEN (SELECT TOP 1 d.numDocSustento FROM factelect.DocRelacionado d WITH (NOLOCK) WHERE d.idDocumentoRecibido = cp.idDocumento )
                                   WHEN '07' THEN (SELECT TOP 1 rs.numAutDocSustento FROM FactElect.RetAtsDocSustento rs WITH (NOLOCK) WHERE rs.idRetencionAts = cp.idDocumento)
                    END                                                                                              as numAutDocSustento
+                   ,Format(cp.fechaEmision, 'yyyy-MM-dd')     as fechaEmision
             FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK)
             INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cp.idEstadoPago
             WHERE cp.codDoc IN ('04','07')
               AND cp.importeTotal > 0
-              AND cp.idProveedor = @idProveedor
+             AND cp.idProveedor = @idProveedor
               AND ep.codigo = 'PE'
 
             RETURN 
@@ -248,6 +250,34 @@ BEGIN
             WHERE pa.idComprobanteEgreso = @id
 
             SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP')
+
+            RETURN 
+        END 
+
+    --> Cheques Posfechados
+    IF @tipo = 6
+        BEGIN
+            
+            SET @tableNames = 'cheques'
+
+            SELECT pa.idPago                                                                               as id
+		          ,pa.idComprobanteEgreso                                                                  as idComprobante
+                  ,es.idEstablecimiento                                                                    as codDoc
+		          ,'CE' + '-' + es.estab + '-' + RIGHT('000000000' + CONVERT(VARCHAR, ce.nroDocumento), 9) as nroDocumento
+		          ,cu.BusinessName                                                                         as persona
+		          ,cu.IDCard                                                                               as nroIdentificacion
+		          ,pa.valor
+		          ,pa.nro                                 
+		          ,FORMAT(pa.fechaEmision, 'dd/MM/yyyy HH:mm')                                             as fechaEmision
+            FROM dbo.Pago pa WITH (NOLOCK)
+            INNER JOIN dbo.ComprobanteEgreso ce WITH (NOLOCK) ON ce.idComprobanteEgreso = pa.idComprobanteEgreso
+            INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = pa.idEntidadFinanciera
+            INNER JOIN Customer.Customer     cu WITH (NOLOCK) ON cu.Id                  = ce.CustomerId
+            INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento   = ce.idEstablecimiento
+            WHERE ef.codigo = 'CHE'
+              AND ce.estado = 1
+              AND ce.idEntidad = @idEntidad
+              AND pa.posfechado = 1
 
             RETURN 
         END 

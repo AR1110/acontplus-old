@@ -234,11 +234,11 @@
                         }))
                     })
                 } else {
-                    return proveedorSvc.search(textSearch).then(response => {
+                    return proveedorSvc.search(textSearch).then(response => { 
                         return response.map(item => ({
-                            idClienteProveedor: item.proveedor.idProveedor,
-                            nameCustomerProvider: item.proveedor.nombreFiscal,
-                            identificacionReceptor: item.proveedor.numeroIdentificacion
+                            idClienteProveedor: item.idProveedor,
+                            nameCustomerProvider: item.nombreFiscal,
+                            identificacionReceptor: item.numeroIdentificacion
                         }))
                     })
                 }

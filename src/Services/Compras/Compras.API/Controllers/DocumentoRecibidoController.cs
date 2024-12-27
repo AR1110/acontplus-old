@@ -1,4 +1,6 @@
-﻿using Compras.API.Helpers;
+﻿using Common.AppSettings;
+using Common.AppSettings.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Compras.API.Controllers;
 
@@ -7,25 +9,26 @@ public class DocumentoRecibidoController(
     IConfiguration configuration,
     IDocumentoRecibidoService docRecibidoSvc,
     IDocumentoXmlToHtml documentoXmlToHtml,
-    FileTxt txtComp,
+    IFileTextService fileTextService,
     IDocumentoTempService documentoTemp,
-    IWebServiceSri webServiceSri)
+    IWebServiceSri webServiceSri,
+    IXmlSriFileService xmlSriFileService)
     : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        return Ok(await docRecibidoSvc.GetAsync(new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
-            }))
-            ;
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await docRecibidoSvc.GetAsync(parameters));
     }
-
+    [AllowAnonymous]
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var response = new ApiResponseDeprecated();
+        var response = new LegacyApiResponse();
         var ceXml = new ComprobanteElectronico();
         var sms = string.Empty;
         var getXmlSriData = new DataXmlComprobante();
@@ -58,7 +61,7 @@ public class DocumentoRecibidoController(
     [HttpPost("Read")]
     public async Task<IActionResult> Post(IFormFile file)
     {
-        var response = new ApiResponseDeprecated();
+        var response = new LegacyApiResponse();
 
         if (file.ContentType != "text/plain")
         {
@@ -69,7 +72,7 @@ public class DocumentoRecibidoController(
 
         var path = configuration.GetSection("ImportacionTxt").Value;
         FileData.SaveFile(path, file);
-        var dt = await txtComp.GetDocs(FileData.GetFileByte(file));
+        var dt = await fileTextService.GetDocsAsync(FileData.GetFileByte(file));
         if (!DataValidation.DataTableIsNull(dt))
         {
             var dtExistent = await adoRepository.GetDataTableAsync("Recepcion.Documento_Check_Existence",
@@ -89,13 +92,13 @@ public class DocumentoRecibidoController(
                 else
                 {
                     var diff = (from row1 in dt.AsEnumerable()
-                                join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
-                                {
-                                    Column1 = row2["claveAcceso"]
-                                } into gj
-                                from subRow2 in gj.DefaultIfEmpty()
-                                where subRow2 == null
-                                select row1).ToList();
+                        join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
+                        {
+                            Column1 = row2["claveAcceso"]
+                        } into gj
+                        from subRow2 in gj.DefaultIfEmpty()
+                        where subRow2 == null
+                        select row1).ToList();
                     var filteredDataTable = diff.CopyToDataTable();
                     response.Create("1", payload: DataConverters.DataTableToJson(filteredDataTable));
                 }
@@ -134,9 +137,8 @@ public class DocumentoRecibidoController(
             return BadRequest("Formato de archivo no soportado");
         }
 
-        var dataComprobante = new DataComprobante();
-        await dataComprobante.Get(file);
-        if (dataComprobante.XmlTosave == null)
+        var dataComprobante = await xmlSriFileService.GetAsync(file);
+        if (dataComprobante.XmlSri == null)
         {
             return BadRequest("No se pudo obtener el xml");
         }
@@ -149,7 +151,7 @@ public class DocumentoRecibidoController(
             { "claveAcceso", dataComprobante.ClaveAcceso },
             { "versionComp", dataComprobante.VersionComp },
             { "fechaEmision", dataComprobante.FechaEmision },
-            { "XmlDoc", dataComprobante.XmlTosave.OuterXml },
+            { "XmlDoc", dataComprobante.XmlSri.OuterXml },
         };
         return Ok(await docRecibidoSvc.UploadXmlAsync(parameters));
     }

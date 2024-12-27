@@ -16,24 +16,21 @@
 		$scope, 
 		artSvc,
         productPhotoSvc, 
-	) {
-		console.log("init");
+	) { 
 		$scope.articulos = [];
 		$scope.selectedArticulos = [];
 		//Filtro
-		$scope.recordsQuantity = [10, 25, 50, 100];
+		$scope.recordsQuantity = [10,15, 25, 50, 100];
 		$scope.dataSearch = {
-			pageSize: 50,
+			pageSize: 10,
 			pageIndex: 1,
 			maxSize: 5,
 			totalRecords: 0,
-			busqueda: "",
+			bySearch: "",
 
 			byColumn: "DESC",
 		};
-
-		$scope.activated = false;
-
+  
 		$scope.tipoBusquedas = [
 			{
 				codigo: "DESC",
@@ -53,11 +50,7 @@
 			},
 		];
 
-		$scope.dynamicPopover = {
-			content: "Hello, World!",
-			templateUrl: "myPopoverTemplate.html",
-			title: "Title",
-		};
+	 
 
 		$scope.options = {
 			rowSelection: false,
@@ -70,21 +63,17 @@
 			pageSelect: false,
 		};
 
-		$scope.consultarPrecioSearchText = function () {
-			$scope.articulos = [];
-			if ($scope.dataSearch.bySearch && $scope.dataSearch.bySearch.length < 2) return;
-			$scope.querySearchArticulo();
-		};
+        $scope.refresh = refresh;
+        $scope.getArticulos = getArticulos;
+        $scope.onEnter = onEnter;
 
-		$scope.querySearchArticulo = function () {
-			try {
-				$scope.articulos = [];
-				if ($scope.dataSearch.bySearch.length < 2) {
-					$scope.dataSearch.totalRecords = 0;
-					return;
-				}
-				$scope.activated = true;
+        function refresh(){ 
+            getArticulos()
+        }
 
+        function getArticulos(){
+            try {
+				$scope.articulos = []; 
 				const dataSearch = {
 					tipo: 3,
 					bySearch: $scope.dataSearch.bySearch,
@@ -98,51 +87,40 @@
 				artSvc
 					.getAllWithPrices(dataSearch)
 					.then((response) => {
-						let { articulos, totalRecords } = response;
-						$scope.activated = false;
+						let { articulos, totalRecords } = response; 
 
 						$scope.articulos = articulos;
 						$scope.dataSearch.totalRecords = totalRecords;
 						$scope.tarifas =
 							$scope.articulos.length > 0 ? $scope.articulos[0].tarifas : [];
 					})
-					.catch((err) => {
-						$scope.activated = false;
+					.catch((err) => { 
 						console.log(err);
 					});
 			} catch (error) {
 				$scope.activated = false;
 				console.log(error);
 			}
-		};
+        } 
+ 
 
 		$scope.pagechanged = function () {
-			$scope.querySearchArticulo();
+			refresh()
 		};
 
 		$scope.changePageSize = function () {
 			$scope.dataSearch.pageIndex = 1;
-			$scope.querySearchArticulo();
-		};
-
-		$scope.consultarPrecioEnter = function ($event) {
-			if ($scope.dataSearch.bySearch && $event.key === "Enter") {
-				$scope.querySearchArticulo();
-				$scope.dataSearch.bySearch = "";
-			}
-		};
-
-
-		$scope.onChangeCheckBoxItem = (item) => {
-			const data = {
-				idArticulo: item.idArticulo,
-				idPresentacion: item.idPresentacion,
-				presentacion: item.presentacion,
-				tipoRegistro: 1,
-			};
-			$uibModalInstance.close(data);
+			refresh()
 		};
  
+
+        function onEnter($event) {
+            $scope.articulos = [];
+            if ($scope.dataSearch.bySearch && $event.key === "Enter") {
+                refresh()
+              //  $scope.dataSearch.bySearch = null;
+            }
+        }; 
         $scope.previewImg = function (item) {
             productPhotoSvc.previewImg(item.idArticulo)
         }

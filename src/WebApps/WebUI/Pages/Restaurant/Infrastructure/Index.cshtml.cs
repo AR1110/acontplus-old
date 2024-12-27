@@ -7,7 +7,7 @@ namespace WebUI.Pages.Restaurant.Infrastructure
         public void OnGet()
         {
             var url = configuration["UrlApps:AngularApp"];
-            ViewData["FrontEnd"] = url;
+            
         }
     }
 }

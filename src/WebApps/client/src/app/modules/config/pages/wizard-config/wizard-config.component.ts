@@ -9,7 +9,6 @@ import {
   MatStepperPrevious,
 } from '@angular/material/stepper';
 import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import {
   MatChipEditedEvent,
   MatChipGrid,
@@ -33,14 +32,12 @@ import {
 } from '@angular/forms';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { AuthService, UserData } from '@modules/auth/services/auth.service';
 import { UserCustomerService } from '@modules/config/services/user-customer/user-customer.service';
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
 import { DemoStep } from '@modules/config/models/wizard-config/demo-step.model';
 import { romanToInt } from '@modules/config/models/wizard-config/roman-to-index';
-import { EstabAddEditModalComponent } from '../establishment-page/components/estab-add-edit-modal/estab-add-edit-modal.component';
-import { EstablishmentPageComponent } from '../establishment-page/establishment-page.component';
+
 import Swal from 'sweetalert2';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { DocConfigService } from '@modules/config/services/doc-config.service';
@@ -53,35 +50,32 @@ import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semanti
 import { FirmaElectronicaService } from '@modules/config/services/firma-electronica.service';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faYoutube } from '@fortawesome/free-brands-svg-icons';
+import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import {UserData} from "@modules/auth/domain/models/user-data.model";
 
 @Component({
-  selector: 'app-wizard-config',
-  standalone: true,
-  imports: [
-    MatStepper,
-    MatStep,
-    BreadcrumbComponent,
-    ReactiveFormsModule,
-    MatStepLabel,
-    MatButton,
-    MatStepperNext,
-    MatStepperPrevious,
-    MatCard,
-    MatCardContent,
-    EstabAddEditModalComponent,
-    EstablishmentPageComponent,
-    FaIconComponent,
-    MatRadioButton,
-    NgbTooltip,
-    MatChipGrid,
-    MatChipRow,
-    MatChipInput,
-    MatRadioGroup,
-    ToUpperCaseDirective,
-    TabulatorSemanticUiComponent,
-  ],
-  templateUrl: './wizard-config.component.html',
-  styles: [],
+    selector: 'app-wizard-config',
+    imports: [
+        MatStepper,
+        MatStep,
+        BreadcrumbComponent,
+        ReactiveFormsModule,
+        MatStepLabel,
+        MatButton,
+        MatStepperNext,
+        MatStepperPrevious,
+        FaIconComponent,
+        MatRadioButton,
+        NgbTooltip,
+        MatChipGrid,
+        MatChipRow,
+        MatChipInput,
+        MatRadioGroup,
+        ToUpperCaseDirective,
+        TabulatorSemanticUiComponent,
+    ],
+    templateUrl: './wizard-config.component.html',
+    styles: []
 })
 export class WizardConfigComponent {
   @ViewChild('stepper') stepper!: MatStepper;
@@ -156,11 +150,13 @@ export class WizardConfigComponent {
     ]),
   });
   demoSteps: DemoStep[] = [];
-  user: UserData = {} as UserData;
+  user = {} as UserData;
   userUpdated: boolean = false;
   estabRegistered: boolean = false;
   readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
-  #authSvc = inject(AuthService);
+
+  private _tokenUseCase = inject(TokenUseCase)
+
   #toasterService = inject(ToasterService);
   #userService = inject(UserCustomerService);
   #estabService = inject(EstablishmentService);
@@ -251,7 +247,7 @@ export class WizardConfigComponent {
   }
 
   ngOnInit(): void {
-    const decodedToken = this.#authSvc.getDecodedToken();
+    const decodedToken = this._tokenUseCase.getUserData();
     if (decodedToken) {
       this.user = decodedToken;
     }

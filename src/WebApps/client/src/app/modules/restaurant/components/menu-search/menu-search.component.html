@@ -9,7 +9,7 @@
 
     <div class="overlay-content">
 
-        <app-menu-search-list [dataList]="dataSource" [highlightRowIndex]="highlightRowIndex"
+        <app-menu-search-list [tableData]="dataSource" [highlightRowIndex]="highlightRowIndex"
             [isLoadingResults]="isLoadingResults" [isRateLimitReached]="isRateLimitReached" [pagination]="pagination"
             (rowsEmitter)="handleRows($event)" (handlePageEvent)="handlePageEvent($event)"
             (rowSelected)="selectRow($event)" (onClickPaginator)="onClickPaginator()" />

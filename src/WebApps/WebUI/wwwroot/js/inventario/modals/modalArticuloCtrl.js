@@ -1,3 +1,4 @@
+//@ts-check
 export {
     modalArticuloCtrl,
     modalArticuloFraccionadoCtrl,
@@ -349,8 +350,7 @@ function modalArticuloCtrl(
                 if ($scope.establecimientos.length > 0) {
                     let dataEstab = $scope.establecimientos.find(
                         (estab) => estab.defaultEstab === true
-                    );
-                    console.log($scope.establecimientos)
+                    ); 
                     $scope.bodegas = dataEstab.bodegas;
                     $scope.dataUbicacion.idEstablecimiento = dataEstab.idEstablecimiento;
                     if ($scope.bodegas.length > 0) {
@@ -1818,8 +1818,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         }
     }
 
-    function successReponse(response) {
-        console.log(response)
+    function successReponse(response) { 
         if (response.code == "0") {
             tS.toastr('warning', response.message, response.titleSms);
         }
@@ -1849,6 +1848,7 @@ ModalArticuloGeneralCtrl.$inject = [
     "productPhotoService",
     "modalService",
     "nombreModal",
+    "params"
 ];
 
 function ModalArticuloGeneralCtrl(
@@ -1857,9 +1857,10 @@ function ModalArticuloGeneralCtrl(
     artSvc,
     productPhotoSvc,
     modalSvc,
-    nombreModal
+    nombreModal,
+    params
 ) {
-    console.log("init");
+
     $scope.articulos = [];
     $scope.selectedArticulos = [];
     //Filtro
@@ -1869,12 +1870,11 @@ function ModalArticuloGeneralCtrl(
         pageIndex: 1,
         maxSize: 5,
         totalRecords: 0,
-        busqueda: "",
-
+        bySearch: null,
         byColumn: "DESC",
     };
 
-    $scope.activated = false;
+
 
     $scope.tipoBusquedas = [
         {
@@ -1895,81 +1895,82 @@ function ModalArticuloGeneralCtrl(
         },
     ];
 
-    $scope.dynamicPopover = {
-        content: "Hello, World!",
-        templateUrl: "myPopoverTemplate.html",
-        title: "Title",
-    };
 
     $scope.options = {
         rowSelection: true,
-        multiSelect: false,
+        multiSelect: true,
         autoSelect: false,
         decapitate: false,
-        largeEditDialog: false,
         boundaryLinks: false,
         limitSelect: true,
         pageSelect: true,
+
     };
 
     $uibModalInstance.rendered.then(() => {
         $("#inputTextSearch").focus();
     });
 
-    $scope.consultarPrecioSearchText = function () {
-        $scope.articulos = []; //Vaciar el array (Lista de Articulos);
-        if ($scope.dataSearch.busqueda && $scope.dataSearch.busqueda.length < 2)
-            return;
-        $scope.querySearchArticulo();
+    $scope.onSearchText = onSearchText;
+    $scope.pageChanged = pageChanged;
+    $scope.changePageSize = changePageSize;
+    $scope.onEnter = onEnter;
+    $scope.refresh = refresh;
+    $scope.askToSelect = askToSelect;
+
+
+
+
+    function pageChanged() {
+        refresh();
+    }
+
+    function changePageSize() {
+        $scope.dataSearch.pageIndex = 1;
+        refresh();
+    }
+
+    function onEnter($event) {
+        if ($scope.dataSearch.bySearch && $event.key === "Enter") {
+            refresh()
+            $scope.dataSearch.bySearch = null;
+        }
     };
 
-    $scope.querySearchArticulo = function () {
+    function onSearchText() {
+        $scope.articulos = [];
+        if ($scope.dataSearch.bySearch && $scope.dataSearch.bySearch.length > 2) {
+            getArticulos()
+        }
+
+    }
+
+    function getArticulos() {
         try {
             $scope.articulos = [];
-            if ($scope.dataSearch.bySearch.length < 2) {
-                $scope.dataSearch.totalRecords = 0;
-                return;
-            }
-            $scope.activated = true;
-            $scope.dataSearch.checkBoxStock = [1, 2].includes(
-                $scope.dataSearch.byStock
-            );
-            artSvc
-                .getAllWithPrices($scope.dataSearch)
-                .then((response) => {
-                    let { articulos, totalRecords } = response;
-                    $scope.activated = false;
 
-                    $scope.articulos = articulos;
-                    $scope.dataSearch.totalRecords = totalRecords;
-                    $scope.tarifas =
-                        $scope.articulos.length > 0 ? $scope.articulos[0].tarifas : [];
-                })
-                .catch((err) => {
-                    $scope.activated = false;
-                    console.log(err);
-                });
+            $scope.dataSearch.totalRecords = 0;
+            $scope.dataSearch.checkBoxStock = [1, 2].includes($scope.dataSearch.byStock);
+            artSvc.getAllWithPrices($scope.dataSearch).then((response) => {
+                let { articulos, totalRecords } = response;
+
+                $scope.articulos = articulos;
+                $scope.dataSearch.totalRecords = totalRecords;
+                $scope.tarifas = $scope.articulos.length > 0 ? $scope.articulos[0].tarifas : [];
+            }).catch((err) => {
+                console.log(err);
+            });
         } catch (error) {
-            $scope.activated = false;
             console.log(error);
         }
-    };
 
-    $scope.pagechanged = function () {
-        $scope.querySearchArticulo();
-    };
+    }
 
-    $scope.changePageSize = function () {
-        $scope.dataSearch.pageIndex = 1;
-        $scope.querySearchArticulo();
-    };
+    function refresh() {
+        getArticulos();
+    }
 
-    $scope.consultarPrecioEnter = function ($event) {
-        if ($scope.dataSearch.bySearch && $event.key === "Enter") {
-            $scope.querySearchArticulo();
-            $scope.dataSearch.bySearch = "";
-        }
-    };
+
 
     $scope.onChangeCheckBoxItem = (item) => {
         const data = {
@@ -1980,6 +1981,117 @@ function ModalArticuloGeneralCtrl(
         };
         $uibModalInstance.close(data);
     };
+
+    // $scope.onChangeCheckBoxItem =  (item)=>{
+    //     console.log(item)
+    // }
+
+    // const dataMergeStockQty = mergeStockQty(cloneOrderItems, {
+    //     idArticulo: $event.productId,
+    //     idBodega: $event.bodegaId
+    // });
+
+    // const cantidad = calculateCantidadStock({
+    //     cantidadStock: dataMergeStockQty.cantidadStock,
+    //     idBodega: $event.bodegaId,
+    //     fechaEmision: this.posStoreSvc.state().order.createdAt,
+    //     productoConsolidaciones: $event.consolidacionesFecha
+    // });
+
+    // const paramsStock = {
+    //     idArticulo: $event.productId,
+    //     idBodega: $event.bodegaId,
+    //     cantidad
+    // };
+
+    function askToSelect(item) {
+
+        if (params && typeof params === 'object' && params.esVenta) {
+            askToAdd(item);
+            return 
+        } 
+
+        const data = {
+            idArticulo: item.idArticulo,  
+        };
+        $uibModalInstance.close(data);
+
+
+    }
+
+    function getElementQty(){
+        return document.getElementById('cantidadInput');
+    }
+
+    /**
+     * 
+     * @param {*} item 
+     */
+    function askToAdd(item) { 
+        Swal.fire({
+            title: '¿Qué deseas hacer?',
+            html: `
+                <label for="cantidadInput" style="display: block; margin-bottom: 5px;">Ingresa una cantidad:</label>
+                <input id="cantidadInput" type="number" class="swal2-input" placeholder="Escribe un número" min="1" value="1" autofocus>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: 'Añadir y continuar',
+            denyButtonText: 'Añadir y cerrar',
+            cancelButtonText: 'Cancelar',
+            preConfirm: () => {
+                const cantidadInput = getElementQty().value;
+        
+                // Validar si el valor es un número y mayor que 0
+                if (isNaN(cantidadInput) || cantidadInput <= 0) {
+                    Swal.showValidationMessage('La cantidad debe ser un número mayor a 0.');
+                    return false; // Retorna false para no permitir el cierre
+                }
+        
+                return cantidadInput; // Retorna el valor si es válido
+            },
+            preDeny: () => {
+                const cantidadInput = getElementQty().value;
+        
+                // Validar si el valor es un número y mayor que 0
+                if (isNaN(cantidadInput) || cantidadInput <= 0) {
+                    Swal.showValidationMessage('La cantidad debe ser un número mayor a 0.');
+                    return false; // Retorna false para no permitir el cierre
+                }
+        
+                return cantidadInput; // Retorna el valor si es válido
+            },
+            didOpen: () => {
+                // Detectar la tecla Enter
+                const cantidadInputElement = getElementQty();
+                 cantidadInputElement.select() 
+                cantidadInputElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        Swal.clickConfirm(); // Simula el clic en "Añadir y continuar"
+                    }
+                });
+            }
+        }).then((result) => {
+            let cantidadInput = getElementQty().value; // Obtener el valor del input
+            cantidadInput = Number(cantidadInput);
+        
+            if (result.isConfirmed) {
+                params.refProductoVenta.onInventario({
+                   idArticulo: item.idArticulo,
+                   cantidad: cantidadInput
+                });
+        
+            } else if (result.isDenied) {
+                params.refProductoVenta.onInventario({
+                   idArticulo: item.idArticulo,
+                   cantidad: cantidadInput
+                });
+                $uibModalInstance.close();
+            }
+        });
+        
+    }
 
     $scope.previewImg = function (item) {
         productPhotoSvc.previewImg(item.idArticulo)
@@ -2002,8 +2114,7 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
 
     initialLoad();
     function initialLoad() {
-        try {
-            showLoader();
+        try { 
             //$scope.articleName = item.descripcion
             mS.getData('get', `${URL}Get?json=${JSON.stringify({
                 tipo: 3,
@@ -2018,7 +2129,7 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
                         $scope.articleName = $scope.historyComprasArticle[0].articulo;
                     }
                 }
-            ).finally(() => hideLoader())
+            ) 
         } catch (error) {
             console.log(error)
         }

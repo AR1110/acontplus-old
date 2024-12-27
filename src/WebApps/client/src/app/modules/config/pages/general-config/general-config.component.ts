@@ -7,28 +7,27 @@ import { GeneralConfigService } from "@modules/config/services/general-config.se
 import { FormsModule } from "@angular/forms";
 import { ToasterService } from "@core/services/toaster.service";
 import { isApiResponse } from "@core/models/api-response";
-import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
-import { CompanyCustomerSearchComponent } from "@modules/customer/company-customer/components/company-customer-search/company-customer-search.component";
+import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
+import { CompanyCustomerSearchComponent } from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
 import {isValidEmail, isValidField} from "@core/utils/utils";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {InputChipComponent} from "@shared/components/input-chip/input-chip.component";
 import {SEPARATOR_KEY_CODE} from "@core/constants/global.constants";
 
 @Component({
-  selector: 'app-general-config',
-  standalone: true,
-  imports: [
-    FormsModule,
-    NgbAccordionModule,
-    NgbTooltipModule,
-    BreadcrumbComponent,
-    DecimalSelectComponent,
-    FontAwesomeModule,
-    ProductSearchComponent,
-    CompanyCustomerSearchComponent,
-    InputChipComponent,
-  ],
-  templateUrl: './general-config.component.html'
+    selector: 'app-general-config',
+    imports: [
+        FormsModule,
+        NgbAccordionModule,
+        NgbTooltipModule,
+        BreadcrumbComponent,
+        DecimalSelectComponent,
+        FontAwesomeModule,
+        ProductSearchComponent,
+        CompanyCustomerSearchComponent,
+        InputChipComponent,
+    ],
+    templateUrl: './general-config.component.html'
 })
 
 export class GeneralConfigComponent {

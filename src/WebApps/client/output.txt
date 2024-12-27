@@ -1,0 +1,1036 @@
+C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
+├── angular.json
+├── client.esproj
+├── nuget.config
+├── output.txt
+├── package-lock.json
+├── package.json
+├── README.md
+├── src
+|  ├── app
+|  |  ├── app.component.html
+|  |  ├── app.component.scss
+|  |  ├── app.component.ts
+|  |  ├── app.config.ts
+|  |  ├── app.routes.ts
+|  |  ├── core
+|  |  |  ├── components
+|  |  |  |  ├── breadcrumb
+|  |  |  |  |  ├── breadcrumb.component.html
+|  |  |  |  |  └── breadcrumb.component.ts
+|  |  |  |  ├── custom-mat-spinner
+|  |  |  |  |  └── custom-mat-spinner.component.ts
+|  |  |  |  ├── custom-table-container
+|  |  |  |  |  ├── custom-table-container.component.html
+|  |  |  |  |  ├── custom-table-container.component.scss
+|  |  |  |  |  └── custom-table-container.component.ts
+|  |  |  |  ├── date-range-selection
+|  |  |  |  |  ├── date-range-selection.component.html
+|  |  |  |  |  └── date-range-selection.component.ts
+|  |  |  |  ├── mat-custom-dialog
+|  |  |  |  |  ├── mat-custom-dialog.component.html
+|  |  |  |  |  ├── mat-custom-dialog.component.scss
+|  |  |  |  |  └── mat-custom-dialog.component.ts
+|  |  |  |  ├── tabulator
+|  |  |  |  |  ├── tabulator.component.html
+|  |  |  |  |  ├── tabulator.component.scss
+|  |  |  |  |  └── tabulator.component.ts
+|  |  |  |  ├── tabulator-semantic-ui
+|  |  |  |  |  ├── tabulator-semantic-ui.component.html
+|  |  |  |  |  ├── tabulator-semantic-ui.component.scss
+|  |  |  |  |  └── tabulator-semantic-ui.component.ts
+|  |  |  |  ├── tabulator-table
+|  |  |  |  |  ├── tabulator-table.component.html
+|  |  |  |  |  └── tabulator-table.component.ts
+|  |  |  |  └── user-search
+|  |  |  |     ├── user-search.component.html
+|  |  |  |     └── user-search.component.ts
+|  |  |  ├── constants
+|  |  |  |  ├── global-routes.ts
+|  |  |  |  └── global.constants.ts
+|  |  |  ├── guards
+|  |  |  |  └── session.guard.ts
+|  |  |  ├── interceptors
+|  |  |  |  ├── error.interceptor.ts
+|  |  |  |  ├── inject-session.interceptor.ts
+|  |  |  |  └── loader.interceptor.ts
+|  |  |  ├── models
+|  |  |  |  ├── api-response.ts
+|  |  |  |  ├── base-entity.ts
+|  |  |  |  ├── bodega.model.ts
+|  |  |  |  ├── estab.model.ts
+|  |  |  |  ├── form-types.ts
+|  |  |  |  ├── menu.model.ts
+|  |  |  |  ├── punto-emision.model.ts
+|  |  |  |  ├── tipo-doc.model.ts
+|  |  |  |  └── user.model.ts
+|  |  |  ├── services
+|  |  |  |  ├── dialog.service.ts
+|  |  |  |  ├── modal.service.ts
+|  |  |  |  ├── shared.service.ts
+|  |  |  |  ├── toaster.service.ts
+|  |  |  ├── theme
+|  |  |  |  ├── theme-options.ts
+|  |  |  |  ├── theme.service.ts
+|  |  |  |  └── types.ts
+|  |  |  └── utils
+|  |  |     ├── constant-value.ts
+|  |  |     ├── date.util.ts
+|  |  |     ├── decimal.util.ts
+|  |  |     ├── generate-uuidv4.ts
+|  |  |     ├── group-estab.util.ts
+|  |  |     ├── loader.ts
+|  |  |     ├── pricing-calculate.util.ts
+|  |  |     ├── round-number.utils.ts
+|  |  |     ├── string-to-date.ts
+|  |  |     ├── totalizador.util.ts
+|  |  |     └── utils.ts
+|  |  ├── layouts
+|  |  |  ├── auth-layout
+|  |  |  |  ├── auth-layout.component.html
+|  |  |  |  ├── auth-layout.component.scss
+|  |  |  |  └── auth-layout.component.ts
+|  |  |  └── main-layout
+|  |  |     ├── main-layout.component.html
+|  |  |     ├── main-layout.component.scss
+|  |  |     ├── main-layout.component.ts
+|  |  |     └── main-layout.routes.ts
+|  |  ├── modules
+|  |  |  ├── accounting
+|  |  |  |  ├── accounting.routes.ts
+|  |  |  |  ├── core
+|  |  |  |  |  ├── domain
+|  |  |  |  |  |  ├── anticipo.model.ts
+|  |  |  |  |  |  ├── banco.interface.ts
+|  |  |  |  |  |  ├── cashbox.model.ts
+|  |  |  |  |  |  ├── category.ts
+|  |  |  |  |  |  ├── comp-ingreso.model.ts
+|  |  |  |  |  |  ├── comprobante-egreso.interface.ts
+|  |  |  |  |  |  ├── comprobante-ingreso.model.ts
+|  |  |  |  |  |  ├── comprobante-ingreso.ts
+|  |  |  |  |  |  ├── cuenta-por-cobrar.model.ts
+|  |  |  |  |  |  ├── cuenta-por-pagar.model.ts
+|  |  |  |  |  |  ├── cuota-por-pagar.interface.ts
+|  |  |  |  |  |  ├── entidad-financiera.interface.ts
+|  |  |  |  |  |  ├── estado-pago.interface.ts
+|  |  |  |  |  |  ├── historial-pago.model.ts
+|  |  |  |  |  |  ├── movimiento-caja.model.ts
+|  |  |  |  |  |  ├── pago-detalle.model.ts
+|  |  |  |  |  |  ├── payment-type.model.ts
+|  |  |  |  |  |  ├── subcategory.ts
+|  |  |  |  |  |  ├── subentidad-financiera.interface.ts
+|  |  |  |  |  |  ├── subentidad-financiera.model.ts
+|  |  |  |  |  |  ├── tiempo-credito.interface.ts
+|  |  |  |  |  |  └── turno.model.ts
+|  |  |  |  |  ├── enums
+|  |  |  |  |  |  ├── accounting.constants.ts
+|  |  |  |  |  |  └── codigo-estado-pago.enum.ts
+|  |  |  |  |  ├── repositories
+|  |  |  |  |  |  ├── anticipo.repository.ts
+|  |  |  |  |  |  ├── caja.repository.ts
+|  |  |  |  |  |  ├── category.repository.ts
+|  |  |  |  |  |  ├── comprobante-egreso.repository.ts
+|  |  |  |  |  |  ├── comprobante-ingreso.repository.ts
+|  |  |  |  |  |  ├── control-caja.repository.ts
+|  |  |  |  |  |  ├── cuenta-por-cobrar.repository.ts
+|  |  |  |  |  |  ├── cuenta-por-pagar.repository.ts
+|  |  |  |  |  |  ├── movimiento-caja.repository.ts
+|  |  |  |  |  |  ├── resumen-contable.repository.ts
+|  |  |  |  |  |  ├── sub-category.repository.ts
+|  |  |  |  |  |  └── sub-entidad-financiera.repository.ts
+|  |  |  |  |  └── usecases
+|  |  |  |  |     ├── anticipo.use-case.ts
+|  |  |  |  |     ├── caja.use-case.ts
+|  |  |  |  |     ├── category.use-case.ts
+|  |  |  |  |     ├── comprobante-ingreso.use-case.ts
+|  |  |  |  |     ├── control-caja.use-case.ts
+|  |  |  |  |     ├── cuenta-por-cobrar.use-case.ts
+|  |  |  |  |     ├── get-comprobante-egreso.use-case.ts
+|  |  |  |  |     ├── get-cuenta-por-pagar.use-case.ts
+|  |  |  |  |     ├── movimiento-caja.use-case.ts
+|  |  |  |  |     ├── resumen-contable.use-case.ts
+|  |  |  |  |     ├── sub-category.use-case.ts
+|  |  |  |  |     └── sub-entidad-financiera.use-case.ts
+|  |  |  |  ├── data
+|  |  |  |  |  ├── anticipo
+|  |  |  |  |  |  ├── auth-web.repository.ts
+|  |  |  |  |  |  └── auth.mapper.ts
+|  |  |  |  |  ├── caja
+|  |  |  |  |  |  ├── caja-web.repository.ts
+|  |  |  |  |  |  ├── caja.entity.ts
+|  |  |  |  |  |  └── caja.mapper.ts
+|  |  |  |  |  ├── category
+|  |  |  |  |  |  ├── category-web.repository.ts
+|  |  |  |  |  |  └── category.mapper.ts
+|  |  |  |  |  ├── comprobante-egreso
+|  |  |  |  |  |  ├── comprobante-egreso-web.repository.ts
+|  |  |  |  |  |  └── comprobante-egreso.mapper.ts
+|  |  |  |  |  ├── comprobante-ingreso
+|  |  |  |  |  |  ├── comprobante-ingreso-web.repository.ts
+|  |  |  |  |  |  └── comprobante-ingreso.mapper.ts
+|  |  |  |  |  ├── control-caja
+|  |  |  |  |  |  ├── control-caja-web.repository.ts
+|  |  |  |  |  |  └── control-caja.mapper.ts
+|  |  |  |  |  ├── cuenta-por-cobrar
+|  |  |  |  |  |  ├── cuenta-por-cobrar-web.repository.ts
+|  |  |  |  |  |  └── cuenta-por-cobrar.mapper.ts
+|  |  |  |  |  ├── cuenta-por-pagar
+|  |  |  |  |  |  ├── cuenta-por-pagar-web.repository.ts
+|  |  |  |  |  |  ├── cuenta-por-pagar.entity.ts
+|  |  |  |  |  |  └── cuenta-por-pagar.mapper.ts
+|  |  |  |  |  ├── movimiento-caja
+|  |  |  |  |  |  ├── movimiento-caja-web.repository.ts
+|  |  |  |  |  |  └── movimiento-caja.mapper.ts
+|  |  |  |  |  ├── resumen-contable
+|  |  |  |  |  |  ├── resumen-contable-web.repository.ts
+|  |  |  |  |  |  └── resumen-contable.mapper.ts
+|  |  |  |  |  ├── sub-category
+|  |  |  |  |  |  ├── sub-category-web.repository.ts
+|  |  |  |  |  |  └── sub-category.mapper.ts
+|  |  |  |  |  └── sub-entidad-financiera
+|  |  |  |  |     └── sub-entidad-financiera-web.repository.ts
+|  |  |  |  ├── providers
+|  |  |  |  |  ├── auth.provider.ts
+|  |  |  |  |  ├── caja.provider.ts
+|  |  |  |  |  ├── category.provider.ts
+|  |  |  |  |  ├── comprobante-egreso.provider.ts
+|  |  |  |  |  ├── comprobante-ingreso.provider.ts
+|  |  |  |  |  ├── control-caja.provider.ts
+|  |  |  |  |  ├── cuenta-por-cobrar.provider.ts
+|  |  |  |  |  ├── cuenta-por-pagar.provider.ts
+|  |  |  |  |  ├── index.ts
+|  |  |  |  |  ├── movimiento-caja.provider.ts
+|  |  |  |  |  ├── resumen-contable.provider.ts
+|  |  |  |  |  ├── sub-category.provider.ts
+|  |  |  |  |  └── sub-entidad-financiera.provider.ts
+|  |  |  |  ├── store
+|  |  |  |  |  └── comprobante-egreso.store.ts
+|  |  |  |  ├── ui
+|  |  |  |  |  ├── cartera-cliente
+|  |  |  |  |  |  ├── cartera-cliente.component.html
+|  |  |  |  |  |  └── cartera-cliente.component.ts
+|  |  |  |  |  ├── cashbox-page
+|  |  |  |  |  |  ├── apertura-caja-modal
+|  |  |  |  |  |  ├── caja-modal
+|  |  |  |  |  |  ├── caja.component.html
+|  |  |  |  |  |  ├── caja.component.ts
+|  |  |  |  |  |  ├── cierre-caja-modal
+|  |  |  |  |  |  └── control-caja-modal
+|  |  |  |  |  ├── category
+|  |  |  |  |  |  ├── category-modal
+|  |  |  |  |  |  ├── category.component.html
+|  |  |  |  |  |  └── category.component.ts
+|  |  |  |  |  ├── comprobante-egreso
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── comprobante-egreso.component.html
+|  |  |  |  |  |  └── comprobante-egreso.component.ts
+|  |  |  |  |  ├── comprobante-ingreso
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── comprobante-ingreso.component.html
+|  |  |  |  |  |  ├── comprobante-ingreso.component.ts
+|  |  |  |  |  |  └── services
+|  |  |  |  |  ├── cuenta-por-cobrar
+|  |  |  |  |  |  ├── cuenta-por-cobrar.component.html
+|  |  |  |  |  |  └── cuenta-por-cobrar.component.ts
+|  |  |  |  |  ├── cuenta-por-pagar
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── cuenta-por-pagar.component.html
+|  |  |  |  |  |  └── cuenta-por-pagar.component.ts
+|  |  |  |  |  ├── movimiento-caja-page
+|  |  |  |  |  |  ├── anticipo
+|  |  |  |  |  |  ├── egreso-ingreso-caja
+|  |  |  |  |  |  ├── movimiento-caja-page.component.html
+|  |  |  |  |  |  ├── movimiento-caja-page.component.scss
+|  |  |  |  |  |  └── movimiento-caja-page.component.ts
+|  |  |  |  |  ├── movimiento-caja-report
+|  |  |  |  |  |  ├── movimiento-caja-report.component.html
+|  |  |  |  |  |  └── movimiento-caja-report.component.ts
+|  |  |  |  |  ├── reporte-cobros
+|  |  |  |  |  |  ├── reporte-cobros.component.html
+|  |  |  |  |  |  └── reporte-cobros.component.ts
+|  |  |  |  |  ├── resumen-contable
+|  |  |  |  |  |  ├── resumen-contable.component.html
+|  |  |  |  |  |  └── resumen-contable.component.ts
+|  |  |  |  |  ├── sub-entidad-financiera
+|  |  |  |  |  |  ├── sub-entidad-financiera-modal
+|  |  |  |  |  |  ├── sub-entidad-financiera-page.component.html
+|  |  |  |  |  |  └── sub-entidad-financiera-page.component.ts
+|  |  |  |  |  ├── subcategory
+|  |  |  |  |  |  ├── subcategory-modal
+|  |  |  |  |  |  ├── subcategory.component.html
+|  |  |  |  |  |  └── subcategory.component.ts
+|  |  |  |  |  └── supplier-accounts
+|  |  |  |  |     ├── supplier-accounts.component.html
+|  |  |  |  |     └── supplier-accounts.component.ts
+|  |  |  |  ├── utils
+|  |  |  |  |  ├── calculate-quota.util.ts
+|  |  |  |  |  ├── comprobante-egreso
+|  |  |  |  |  |  ├── agregar-cuentas-por-pagar-historial.util.ts
+|  |  |  |  |  |  ├── comprobante-egreso.util.ts
+|  |  |  |  |  |  ├── determinado-estado-pago-cuota.util.ts
+|  |  |  |  |  |  ├── obtener-cuentas-por-pagar-estado.util.ts
+|  |  |  |  |  |  ├── obtener-cuotas-por-pagar-estado.util.ts
+|  |  |  |  |  |  ├── pago-cuota-con-abono.util.ts
+|  |  |  |  |  |  └── pago-cuota-sin-abono.util.ts
+|  |  |  |  |  └── comprobante-ingreso.util.ts
+|  |  |  |  └── validators
+|  |  |  |     ├── comprobante-egreso.validator.ts
+|  |  |  |     └── cuenta-por-pagar.validator.ts
+|  |  |  ├── auth
+|  |  |  |  ├── constants
+|  |  |  |  |  └── auth.constants.ts
+|  |  |  |  ├── models
+|  |  |  |  |  └── user.model.ts
+|  |  |  |  └── services
+|  |  |  ├── billing
+|  |  |  |  ├── adapters
+|  |  |  |  |  ├── doc-elect.adapter.ts
+|  |  |  |  |  └── invoice
+|  |  |  |  |     ├── invoice-api.model.ts
+|  |  |  |  |     └── invoice.adapter.ts
+|  |  |  |  ├── billing.routes.ts
+|  |  |  |  ├── components
+|  |  |  |  |  └── documents
+|  |  |  |  |     ├── credit-note-html
+|  |  |  |  |     ├── invoice-html
+|  |  |  |  |     └── retencion-html
+|  |  |  |  ├── enums
+|  |  |  |  |  └── billing.enum.ts.ts
+|  |  |  |  ├── models
+|  |  |  |  |  └── invoice.model.ts
+|  |  |  |  ├── pages
+|  |  |  |  |  ├── ats-page
+|  |  |  |  |  |  ├── ats-page.component.html
+|  |  |  |  |  |  └── ats-page.component.ts
+|  |  |  |  |  ├── credit-note-page
+|  |  |  |  |  |  ├── credit-note-page.component.html
+|  |  |  |  |  |  └── credit-note-page.component.ts
+|  |  |  |  |  ├── doc-elect-page
+|  |  |  |  |  |  ├── doc-elect-page.component.html
+|  |  |  |  |  |  └── doc-elect-page.component.ts
+|  |  |  |  |  └── invoice-page
+|  |  |  |  |     ├── invoice-page.component.html
+|  |  |  |  |     └── invoice-page.component.ts
+|  |  |  |  ├── reports
+|  |  |  |  |  └── fact-elect-report-page
+|  |  |  |  |     ├── fact-elect-report-page.component.html
+|  |  |  |  |     └── fact-elect-report-page.component.ts
+|  |  |  |  └── services
+|  |  |  |     ├── ats.service.ts
+|  |  |  |     ├── credit-note.service.ts
+|  |  |  |     ├── doc-elect.service.ts
+|  |  |  |     ├── invoice.service.ts
+|  |  |  |     └── notificacion-tributaria.service.ts
+|  |  |  ├── common
+|  |  |  |  ├── common.routes.ts
+|  |  |  |  ├── constants
+|  |  |  |  |  └── common.constants.ts
+|  |  |  |  ├── models
+|  |  |  |  |  └── user-manual.model.ts
+|  |  |  |  ├── pages
+|  |  |  |  |  └── user-manual-page
+|  |  |  |  |     ├── user-manual-page.component.html
+|  |  |  |  |     └── user-manual-page.component.ts
+|  |  |  |  └── services
+|  |  |  |     └── user-manual.service.ts
+|  |  |  ├── config
+|  |  |  |  ├── config.routes.ts
+|  |  |  |  ├── enums
+|  |  |  |  |  └── config.enums.ts
+|  |  |  |  ├── models
+|  |  |  |  |  ├── doc-config.model.ts
+|  |  |  |  |  ├── menu.model.ts
+|  |  |  |  |  ├── printer.model.ts
+|  |  |  |  |  ├── role.model.ts
+|  |  |  |  |  ├── sri
+|  |  |  |  |  |  └── establishment.model.ts
+|  |  |  |  |  ├── sub-menu.model.ts
+|  |  |  |  |  ├── tiempo-credito.model.ts
+|  |  |  |  |  ├── user-customer
+|  |  |  |  |  |  ├── user-customer-request.model.ts
+|  |  |  |  |  |  ├── user-customer-role-bodega.model.ts
+|  |  |  |  |  |  ├── user-customer-role-estab.model.ts
+|  |  |  |  |  |  ├── user-customer-role-punto-emision.model.ts
+|  |  |  |  |  |  ├── user-customer-role.model.ts
+|  |  |  |  |  |  └── user-customer.model.ts
+|  |  |  |  |  └── wizard-config
+|  |  |  |  |     ├── demo-step.model.ts
+|  |  |  |  |     └── roman-to-index.ts
+|  |  |  |  ├── pages
+|  |  |  |  |  ├── company-page
+|  |  |  |  |  |  ├── company-page.component.html
+|  |  |  |  |  |  ├── company-page.component.ts
+|  |  |  |  |  |  └── components
+|  |  |  |  |  ├── doc-config
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── doc-config.component.html
+|  |  |  |  |  |  └── doc-config.component.ts
+|  |  |  |  |  ├── establishment-page
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── establishment-page.component.html
+|  |  |  |  |  |  ├── establishment-page.component.scss
+|  |  |  |  |  |  └── establishment-page.component.ts
+|  |  |  |  |  ├── general-config
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── general-config.component.html
+|  |  |  |  |  |  └── general-config.component.ts
+|  |  |  |  |  ├── printer-page
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── printer-page.component.html
+|  |  |  |  |  |  └── printer-page.component.ts
+|  |  |  |  |  ├── tiempo-credito-page
+|  |  |  |  |  |  ├── tiempo-credito-add-edit-modal
+|  |  |  |  |  |  ├── tiempo-credito-page.component.html
+|  |  |  |  |  |  └── tiempo-credito-page.component.ts
+|  |  |  |  |  ├── user-customer-page
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── user-customer-page.component.html
+|  |  |  |  |  |  └── user-customer-page.component.ts
+|  |  |  |  |  ├── user-customer-request-page
+|  |  |  |  |  |  ├── user-customer-request-page.component.html
+|  |  |  |  |  |  └── user-customer-request-page.component.ts
+|  |  |  |  |  ├── user-profile-page
+|  |  |  |  |  |  ├── user-profile-page.component.html
+|  |  |  |  |  |  └── user-profile-page.component.ts
+|  |  |  |  |  └── wizard-config
+|  |  |  |  |     ├── wizard-config.component.html
+|  |  |  |  |     └── wizard-config.component.ts
+|  |  |  |  ├── services
+|  |  |  |  |  ├── company.service.ts
+|  |  |  |  |  ├── doc-config.service.ts
+|  |  |  |  |  ├── firma-electronica.service.ts
+|  |  |  |  |  ├── general-config.service.ts
+|  |  |  |  |  ├── printer-doc.service.ts
+|  |  |  |  |  ├── printer.service.ts
+|  |  |  |  |  ├── sri
+|  |  |  |  |  |  ├── establishment-logo.service.ts
+|  |  |  |  |  |  ├── establishment.service.ts
+|  |  |  |  |  |  └── punto-emision.service.ts
+|  |  |  |  |  ├── tiempo-credito.service.ts
+|  |  |  |  |  ├── user-customer
+|  |  |  |  |  |  ├── user-customer-permission.service.ts
+|  |  |  |  |  |  ├── user-customer-request.service.ts
+|  |  |  |  |  |  ├── user-customer-role-bodega.service.ts
+|  |  |  |  |  |  ├── user-customer-role-estab.service.ts
+|  |  |  |  |  |  ├── user-customer-role-punto-emision.service.ts
+|  |  |  |  |  |  ├── user-customer-role.service.ts
+|  |  |  |  |  |  ├── user-customer.service.ts
+|  |  |  |  |  |  └── user-permission.service.ts
+|  |  |  |  |  ├── user-profile.service.ts
+|  |  |  |  |  └── wizard-config
+|  |  |  |  |     └── company-demo-step.service.ts
+|  |  |  |  └── store
+|  |  |  |     └── user-customer
+|  |  |  |        └── user-customer-role-state.service.ts
+|  |  |  ├── customer
+|  |  |  |  ├── core
+|  |  |  |  |  ├── domain
+|  |  |  |  |  |  ├── company-customer.ts
+|  |  |  |  |  |  └── supplier.interface.ts
+|  |  |  |  |  ├── enums
+|  |  |  |  |  |  └── customer.enum.ts
+|  |  |  |  |  ├── repositories
+|  |  |  |  |  |  ├── company-customer.repository.ts
+|  |  |  |  |  |  ├── customer.repository.ts
+|  |  |  |  |  |  └── supplier.repository.ts
+|  |  |  |  |  └── usecases
+|  |  |  |  |     ├── company-customer.use-case.ts
+|  |  |  |  |     ├── customer.use-case.ts
+|  |  |  |  |     └── supplier.use-case.ts
+|  |  |  |  ├── customer.routes.ts
+|  |  |  |  ├── data
+|  |  |  |  |  ├── company-customer
+|  |  |  |  |  |  ├── company-customer-web.repository.ts
+|  |  |  |  |  |  └── company-customer.mapper.ts
+|  |  |  |  |  ├── customer
+|  |  |  |  |  |  ├── customer-web.repository.ts
+|  |  |  |  |  |  ├── customer.mapper.ts
+|  |  |  |  |  |  └── customer.service.ts
+|  |  |  |  |  ├── sri-customer
+|  |  |  |  |  |  └── sri-customer.service.ts
+|  |  |  |  |  └── supplier
+|  |  |  |  |     ├── supplier-web.repository.ts
+|  |  |  |  |     └── supplier.mapper.ts
+|  |  |  |  ├── providers
+|  |  |  |  |  ├── company-customer.provider.ts
+|  |  |  |  |  ├── customer.provider.ts
+|  |  |  |  |  ├── index.ts
+|  |  |  |  |  ├── sri-customer.provider.ts
+|  |  |  |  |  └── supplier.provider.ts
+|  |  |  |  └── ui
+|  |  |  |     ├── company-customer
+|  |  |  |     |  ├── company-customer-add-edit.directive.ts
+|  |  |  |     |  ├── company-customer.component.html
+|  |  |  |     |  ├── company-customer.component.ts
+|  |  |  |     |  └── components
+|  |  |  |     └── supplier
+|  |  |  |        ├── components
+|  |  |  |        ├── supplier.component.html
+|  |  |  |        └── supplier.component.ts
+|  |  |  ├── dashboard
+|  |  |  |  └── dashboard-page
+|  |  |  |     ├── dashboard-page.component.html
+|  |  |  |     └── dashboard-page.component.ts
+|  |  |  ├── home
+|  |  |  |  ├── dashboard
+|  |  |  |  |  ├── dashboard.component.html
+|  |  |  |  |  ├── dashboard.component.scss
+|  |  |  |  |  └── dashboard.component.ts
+|  |  |  |  └── home.routes.ts
+|  |  |  ├── inventory
+|  |  |  |  ├── core
+|  |  |  |  |  ├── domain
+|  |  |  |  |  |  ├── brand.model.ts
+|  |  |  |  |  |  ├── category.model.ts
+|  |  |  |  |  |  ├── consolidacion-bodega.model.ts
+|  |  |  |  |  |  ├── lot-price.model.ts
+|  |  |  |  |  |  ├── measure.model.ts
+|  |  |  |  |  |  ├── inventario-modelo.model.ts
+|  |  |  |  |  |  ├── product.model.ts
+|  |  |  |  |  |  ├── sub-category.model.ts
+|  |  |  |  |  |  ├── tarifa.model.ts
+|  |  |  |  |  |  └── tipo-iva.model.ts
+|  |  |  |  |  ├── enums
+|  |  |  |  |  |  └── inventory.enum.ts
+|  |  |  |  |  ├── repositories
+|  |  |  |  |  |  ├── product.repository.ts
+|  |  |  |  |  |  └── tag.repository.ts
+|  |  |  |  |  └── usecases
+|  |  |  |  |     ├── product.use-case.ts
+|  |  |  |  |     └── tag.use-case.ts
+|  |  |  |  ├── data
+|  |  |  |  |  ├── product
+|  |  |  |  |  |  ├── product-deprecated.mapper.ts
+|  |  |  |  |  |  ├── product-deprecated.repository.ts
+|  |  |  |  |  |  ├── product-web.repository.ts
+|  |  |  |  |  |  └── product.mapper.ts
+|  |  |  |  |  └── tag
+|  |  |  |  |     ├── tag-web.repository.ts
+|  |  |  |  |     └── tag.mapper.ts
+|  |  |  |  ├── inventory.routes.ts
+|  |  |  |  ├── providers
+|  |  |  |  |  ├── index.ts
+|  |  |  |  |  ├── product.provider.ts
+|  |  |  |  |  └── tag.provider.ts
+|  |  |  |  ├── services
+|  |  |  |  |  ├── category.service.ts
+|  |  |  |  |  ├── lot-price.service.ts
+|  |  |  |  |  ├── massive-tax.service.ts
+|  |  |  |  |  ├── product-photo.service.ts
+|  |  |  |  |  ├── stock.service.ts
+|  |  |  |  |  ├── sub-category.service.ts
+|  |  |  |  |  ├── subcategory-photo.service.ts
+|  |  |  |  |  ├── tarifa.service.ts
+|  |  |  |  |  └── transaction.service.ts
+|  |  |  |  ├── ui
+|  |  |  |  |  ├── brand-page
+|  |  |  |  |  |  ├── brand-add-edit-modal
+|  |  |  |  |  |  ├── brand-page.component.html
+|  |  |  |  |  |  └── brand-page.component.ts
+|  |  |  |  |  ├── category-page
+|  |  |  |  |  |  ├── category-page.component.html
+|  |  |  |  |  |  └── category-page.component.ts
+|  |  |  |  |  ├── directives
+|  |  |  |  |  |  ├── brand-add-edit.directive.ts
+|  |  |  |  |  |  ├── measure-add-edit.directive.ts
+|  |  |  |  |  |  ├── model-add-edit.directive.ts
+|  |  |  |  |  |  ├── sub-category.directive.ts
+|  |  |  |  |  |  └── tags-add-edit-modal.directive.ts
+|  |  |  |  |  ├── fracc-product-page
+|  |  |  |  |  |  ├── fracc-product-page.component.html
+|  |  |  |  |  |  └── fracc-product-page.component.ts
+|  |  |  |  |  ├── inv-model-page
+|  |  |  |  |  |  ├── inv-model-page.component.html
+|  |  |  |  |  |  ├── inv-model-page.component.ts
+|  |  |  |  |  |  └── model-add-edit-modal
+|  |  |  |  |  ├── inventory-report
+|  |  |  |  |  |  ├── inventory-report.component.html
+|  |  |  |  |  |  └── inventory-report.component.ts
+|  |  |  |  |  ├── lot-price-page
+|  |  |  |  |  |  ├── lot-price-page.component.html
+|  |  |  |  |  |  └── lot-price-page.component.ts
+|  |  |  |  |  ├── massive-tax-page
+|  |  |  |  |  |  ├── massive-tax-page.component.html
+|  |  |  |  |  |  └── massive-tax-page.component.ts
+|  |  |  |  |  ├── measure-page
+|  |  |  |  |  |  ├── measure-add-edit-modal
+|  |  |  |  |  |  ├── measure-page.component.html
+|  |  |  |  |  |  └── measure-page.component.ts
+|  |  |  |  |  ├── product
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── directives
+|  |  |  |  |  |  ├── product.component.html
+|  |  |  |  |  |  ├── product.component.ts
+|  |  |  |  |  |  └── services
+|  |  |  |  |  ├── sub-category
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── sub-category.component.html
+|  |  |  |  |  |  └── sub-category.component.ts
+|  |  |  |  |  ├── tags
+|  |  |  |  |  |  ├── tags-add-edit-modal
+|  |  |  |  |  |  ├── tags.component.html
+|  |  |  |  |  |  └── tags.component.ts
+|  |  |  |  |  └── tarifa-page
+|  |  |  |  |     ├── tarifa-edit-modal
+|  |  |  |  |     ├── tarifa-page.component.html
+|  |  |  |  |     └── tarifa-page.component.ts
+|  |  |  |  └── utils
+|  |  |  |     ├── group-sub-category.util.ts
+|  |  |  |     ├── merge-measure.util.ts
+|  |  |  |     └── product-stock.util.ts
+|  |  |  ├── mechanical
+|  |  |  |  ├── adapters
+|  |  |  |  |  ├── support-maintenance.adapter.ts
+|  |  |  |  |  └── support.adapter.ts
+|  |  |  |  ├── components
+|  |  |  |  |  └── vehicle-add-edit-modal
+|  |  |  |  |     ├── vehicle-add-edit-modal.component.html
+|  |  |  |  |     └── vehicle-add-edit-modal.component.ts
+|  |  |  |  ├── directives
+|  |  |  |  |  └── vehicle-add-edit.directive.ts
+|  |  |  |  ├── enums
+|  |  |  |  |  └── mechanical.enum.ts
+|  |  |  |  ├── layout
+|  |  |  |  |  └── mechanical-layout
+|  |  |  |  |     ├── mechanical-layout.component.html
+|  |  |  |  |     ├── mechanical-layout.component.scss
+|  |  |  |  |     └── mechanical-layout.component.ts
+|  |  |  |  ├── mechanical.routes.ts
+|  |  |  |  ├── models
+|  |  |  |  |  ├── support-maintenance.model.ts
+|  |  |  |  |  ├── support.model.ts
+|  |  |  |  |  ├── vehicle-part-type.ts
+|  |  |  |  |  ├── vehicle-part.ts
+|  |  |  |  |  ├── vehicle-type.model.ts
+|  |  |  |  |  └── vehicle.model.ts
+|  |  |  |  ├── pages
+|  |  |  |  |  ├── inspection-page
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── inspection-page.component.html
+|  |  |  |  |  |  └── inspection-page.component.ts
+|  |  |  |  |  ├── mechanical-dashboard
+|  |  |  |  |  |  ├── mechanical-dashboard.component.html
+|  |  |  |  |  |  └── mechanical-dashboard.component.ts
+|  |  |  |  |  ├── support-page
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── support-page.component.html
+|  |  |  |  |  |  └── support-page.component.ts
+|  |  |  |  |  └── vehicle-page
+|  |  |  |  |     ├── vehicle-page.component.html
+|  |  |  |  |     └── vehicle-page.component.ts
+|  |  |  |  └── services
+|  |  |  |     ├── inspection-web.repository.ts
+|  |  |  |     ├── support-detail-web.repository.ts
+|  |  |  |     ├── support-web.repository.ts
+|  |  |  |     └── vehicle-web.repository.ts
+|  |  |  ├── purchase
+|  |  |  |  ├── core
+|  |  |  |  |  ├── domain
+|  |  |  |  |  |  ├── compra-habitual.model.ts
+|  |  |  |  |  |  ├── document-received.model.ts
+|  |  |  |  |  |  └── factura-fisica.interface.ts
+|  |  |  |  |  ├── enums
+|  |  |  |  |  |  └── purchase.constants.ts
+|  |  |  |  |  ├── repositories
+|  |  |  |  |  |  ├── document-received.repository.ts
+|  |  |  |  |  |  ├── factura-fisica.repository.mapper.ts
+|  |  |  |  |  |  └── factura-fisica.repository.ts
+|  |  |  |  |  └── use-cases
+|  |  |  |  |     └── document-received.use-case.ts
+|  |  |  |  ├── data
+|  |  |  |  |  ├── document-received
+|  |  |  |  |  |  ├── document-received-web.repository.ts
+|  |  |  |  |  |  └── document-received.mapper.ts
+|  |  |  |  |  └── services
+|  |  |  |  |     ├── compra-habitual.service.ts
+|  |  |  |  |     ├── factura-fisica.service.ts
+|  |  |  |  |     └── reception-report.service.ts
+|  |  |  |  ├── directives
+|  |  |  |  |  ├── compra-habitual-historial.directive.ts
+|  |  |  |  |  ├── factura-fisica-detalle.directive.ts
+|  |  |  |  |  └── purchase.directive.ts
+|  |  |  |  ├── providers
+|  |  |  |  |  ├── document-received.provider.ts
+|  |  |  |  |  └── index.ts
+|  |  |  |  ├── purchase.routes.ts
+|  |  |  |  ├── ui
+|  |  |  |  |  ├── compra-no-habitual
+|  |  |  |  |  |  ├── compra-no-habitual.component.html
+|  |  |  |  |  |  └── compra-no-habitual.component.ts
+|  |  |  |  |  ├── documento-received
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── document-received.component.html
+|  |  |  |  |  |  └── document-received.component.ts
+|  |  |  |  |  ├── factura-fisica
+|  |  |  |  |  |  ├── components
+|  |  |  |  |  |  ├── factura-fisica.component.html
+|  |  |  |  |  |  └── factura-fisica.component.ts
+|  |  |  |  |  ├── reception-reports
+|  |  |  |  |  |  ├── reception-reports.component.html
+|  |  |  |  |  |  └── reception-reports.component.ts
+|  |  |  |  |  ├── reports
+|  |  |  |  |  |  ├── reports.component.html
+|  |  |  |  |  |  └── reports.component.ts
+|  |  |  |  |  └── shared
+|  |  |  |  |     └── components
+|  |  |  |  └── validators
+|  |  |  |     └── factura-fisica.validator.ts
+|  |  |  ├── restaurant
+|  |  |  |  ├── adapters
+|  |  |  |  |  └── item.adapter.ts
+|  |  |  |  ├── components
+|  |  |  |  |  ├── menu-search
+|  |  |  |  |  |  ├── menu-search.component.html
+|  |  |  |  |  |  ├── menu-search.component.scss
+|  |  |  |  |  |  └── menu-search.component.ts
+|  |  |  |  |  └── menu-search-list
+|  |  |  |  |     ├── menu-search-list.component.html
+|  |  |  |  |     ├── menu-search-list.component.scss
+|  |  |  |  |     └── menu-search-list.component.ts
+|  |  |  |  ├── enums
+|  |  |  |  |  └── restaurant.enum.ts
+|  |  |  |  ├── infrastructure
+|  |  |  |  |  ├── floor
+|  |  |  |  |  |  ├── floor-add-edit-modal
+|  |  |  |  |  |  └── floor-list
+|  |  |  |  |  ├── production-area
+|  |  |  |  |  |  ├── production-area-add-edit-modal
+|  |  |  |  |  |  └── production-area-list
+|  |  |  |  |  ├── room
+|  |  |  |  |  |  ├── room-add-edit-modal
+|  |  |  |  |  |  └── room-list
+|  |  |  |  |  └── table
+|  |  |  |  |     ├── table-add-edit-modal
+|  |  |  |  |     └── table-list
+|  |  |  |  ├── models
+|  |  |  |  |  ├── floor.model.ts
+|  |  |  |  |  ├── ingredient-type.ts
+|  |  |  |  |  ├── ingredient.model.ts
+|  |  |  |  |  ├── item.model.ts
+|  |  |  |  |  ├── menu.model.ts
+|  |  |  |  |  ├── production-area.ts
+|  |  |  |  |  ├── recipe.model.ts
+|  |  |  |  |  ├── room.model.ts
+|  |  |  |  |  └── table.model.ts
+|  |  |  |  ├── pages
+|  |  |  |  |  ├── infrastructure-page
+|  |  |  |  |  |  ├── infrastructure-page.component.html
+|  |  |  |  |  |  └── infrastructure-page.component.ts
+|  |  |  |  |  └── products-page
+|  |  |  |  |     ├── products-page.component.html
+|  |  |  |  |     └── products-page.component.ts
+|  |  |  |  ├── products
+|  |  |  |  |  ├── ingredient
+|  |  |  |  |  |  ├── ingredient-add-edit-modal
+|  |  |  |  |  |  ├── ingredient-list
+|  |  |  |  |  |  └── ingredient-search
+|  |  |  |  |  ├── item
+|  |  |  |  |  |  ├── item-add-edit-modal
+|  |  |  |  |  |  ├── item-list
+|  |  |  |  |  |  └── item-search
+|  |  |  |  |  ├── menu
+|  |  |  |  |  |  ├── menu-add-edit-modal
+|  |  |  |  |  |  └── menu-list
+|  |  |  |  |  └── promotion
+|  |  |  |  |     ├── promotion-add-edit-modal
+|  |  |  |  |     └── promotion-list
+|  |  |  |  ├── reports
+|  |  |  |  |  └── item-report
+|  |  |  |  |     ├── item-report.component.html
+|  |  |  |  |     └── item-report.component.ts
+|  |  |  |  ├── resolvers
+|  |  |  |  |  └── restaurant-config.resolver.ts
+|  |  |  |  ├── restaurant.routes.ts
+|  |  |  |  ├── services
+|  |  |  |  |  ├── floor.service.ts
+|  |  |  |  |  ├── ingredient.service.ts
+|  |  |  |  |  ├── item.service.ts
+|  |  |  |  |  ├── menu-item.service.ts
+|  |  |  |  |  ├── menu.service.ts
+|  |  |  |  |  ├── production-area.service.ts
+|  |  |  |  |  ├── promotion-menu.service.ts
+|  |  |  |  |  ├── promotion.service.ts
+|  |  |  |  |  ├── recipe.service.ts
+|  |  |  |  |  ├── restaurant-config.service.ts
+|  |  |  |  |  ├── room.service.ts
+|  |  |  |  |  └── table.service.ts
+|  |  |  |  └── store
+|  |  |  |     └── restaurant-store.service.ts
+|  |  |  ├── sale
+|  |  |  |  ├── adapters
+|  |  |  |  |  ├── aprobacion-doc.adapter.ts
+|  |  |  |  |  ├── nota-entrega
+|  |  |  |  |  |  ├── nota-entrega-api.model.ts
+|  |  |  |  |  |  └── nota-entrega.adapter.ts
+|  |  |  |  |  └── nota-entrega.adapter.ts
+|  |  |  |  ├── components
+|  |  |  |  |  ├── employee-search
+|  |  |  |  |  |  ├── employee-search.component.html
+|  |  |  |  |  |  └── employee-search.component.ts
+|  |  |  |  |  └── nota-entrega-detalle-dialog
+|  |  |  |  |     ├── nota-entrega-detalle-dialog.component.html
+|  |  |  |  |     └── nota-entrega-detalle-dialog.component.ts
+|  |  |  |  ├── directives
+|  |  |  |  |  └── nota-entrega-detalle-dialog.directive.ts
+|  |  |  |  ├── enums
+|  |  |  |  |  └── sale.enum.ts
+|  |  |  |  ├── models
+|  |  |  |  |  ├── employee.model.ts
+|  |  |  |  |  └── nota-entrega.model.ts
+|  |  |  |  ├── pages
+|  |  |  |  |  ├── empresa-page
+|  |  |  |  |  |  ├── empresa-page.component.html
+|  |  |  |  |  |  └── empresa-page.component.ts
+|  |  |  |  |  ├── nota-entrega-page
+|  |  |  |  |  |  ├── nota-entrega-page.component.html
+|  |  |  |  |  |  └── nota-entrega-page.component.ts
+|  |  |  |  |  └── proforma-page
+|  |  |  |  |     ├── proforma-page.component.html
+|  |  |  |  |     └── proforma-page.component.ts
+|  |  |  |  ├── reports
+|  |  |  |  |  ├── rentabilidad-page
+|  |  |  |  |  |  ├── rentabilidad-page.component.html
+|  |  |  |  |  |  └── rentabilidad-page.component.ts
+|  |  |  |  |  └── sale-report-page
+|  |  |  |  |     ├── sale-report-page.component.html
+|  |  |  |  |     └── sale-report-page.component.ts
+|  |  |  |  ├── sale.routes.ts
+|  |  |  |  ├── services
+|  |  |  |  |  ├── aprobacion-doc.service.ts
+|  |  |  |  |  ├── employee.service.ts
+|  |  |  |  |  ├── nota-entrega.service.ts
+|  |  |  |  |  └── proforma.service.ts
+|  |  |  |  └── shared
+|  |  |  |     └── models
+|  |  |  |        └── decimal-sale.model.ts
+|  |  |  ├── technical-support
+|  |  |  |  ├── adapters
+|  |  |  |  |  └── order-maintenance.adapter.ts
+|  |  |  |  ├── components
+|  |  |  |  |  ├── dashboard
+|  |  |  |  |  |  ├── dashboard.component.html
+|  |  |  |  |  |  └── dashboard.component.ts
+|  |  |  |  |  ├── device-list-modal
+|  |  |  |  |  |  ├── device-list-modal.component.html
+|  |  |  |  |  |  └── device-list-modal.component.ts
+|  |  |  |  |  └── device-search
+|  |  |  |  |     ├── device-search.component.html
+|  |  |  |  |     └── device-search.component.ts
+|  |  |  |  ├── constants
+|  |  |  |  |  └── tech-support.constants.ts
+|  |  |  |  ├── models
+|  |  |  |  |  ├── brand.ts
+|  |  |  |  |  ├── category.ts
+|  |  |  |  |  ├── device.model.ts
+|  |  |  |  |  ├── modelo.ts
+|  |  |  |  |  ├── order-detail.ts
+|  |  |  |  |  ├── order-maintenance.model.ts
+|  |  |  |  |  ├── order-status.ts
+|  |  |  |  |  ├── order.model.ts
+|  |  |  |  |  └── serie.ts
+|  |  |  |  ├── pages
+|  |  |  |  |  ├── brand-page
+|  |  |  |  |  |  ├── brand-modal
+|  |  |  |  |  |  ├── brand-page.component.html
+|  |  |  |  |  |  └── brand-page.component.ts
+|  |  |  |  |  ├── category-page
+|  |  |  |  |  |  ├── category-modal
+|  |  |  |  |  |  ├── category-page.component.html
+|  |  |  |  |  |  └── category-page.component.ts
+|  |  |  |  |  ├── device-page
+|  |  |  |  |  |  ├── device-customer-modal
+|  |  |  |  |  |  ├── device-list
+|  |  |  |  |  |  ├── device-modal
+|  |  |  |  |  |  ├── device-page.component.html
+|  |  |  |  |  |  └── device-page.component.ts
+|  |  |  |  |  ├── modelo-page
+|  |  |  |  |  |  ├── modelo-modal
+|  |  |  |  |  |  ├── modelo-page.component.html
+|  |  |  |  |  |  └── modelo-page.component.ts
+|  |  |  |  |  ├── order-page
+|  |  |  |  |  |  ├── order-delivery-modal
+|  |  |  |  |  |  ├── order-document
+|  |  |  |  |  |  ├── order-list
+|  |  |  |  |  |  ├── order-maintenance-modal
+|  |  |  |  |  |  └── order-modal
+|  |  |  |  |  └── technical-support-page
+|  |  |  |  |     ├── technical-support-page.component.html
+|  |  |  |  |     └── technical-support-page.component.ts
+|  |  |  |  ├── services
+|  |  |  |  |  ├── brand.service.ts
+|  |  |  |  |  ├── category.service.ts
+|  |  |  |  |  ├── device-spec.service.ts
+|  |  |  |  |  ├── device.customer.service.ts
+|  |  |  |  |  ├── device.service.ts
+|  |  |  |  |  ├── modelo.service.ts
+|  |  |  |  |  ├── order-detail.service.ts
+|  |  |  |  |  ├── order-maintenance.service.ts
+|  |  |  |  |  ├── order.service.ts
+|  |  |  |  |  ├── serie.service.ts
+|  |  |  |  |  ├── stats.service.ts
+|  |  |  |  |  └── technical-support-web.repository.ts
+|  |  |  |  ├── store
+|  |  |  |  |  ├── device.store.ts
+|  |  |  |  |  ├── order-maintenance
+|  |  |  |  |  |  └── order-maintenance-state.service.ts
+|  |  |  |  |  └── tech-spec.store.ts
+|  |  |  |  └── technical-support.routes.ts
+|  |  |  └── vet
+|  |  |     ├── components
+|  |  |     |  ├── breed-modal
+|  |  |     |  |  ├── breed-modal.component.html
+|  |  |     |  |  └── breed-modal.component.ts
+|  |  |     |  ├── pet-modal
+|  |  |     |  |  ├── pet-modal.component.html
+|  |  |     |  |  └── pet-modal.component.ts
+|  |  |     |  ├── pet-search
+|  |  |     |  |  ├── pet-search.component.html
+|  |  |     |  |  └── pet-search.component.ts
+|  |  |     |  └── pet-type-modal
+|  |  |     |     ├── pet-type-modal.component.html
+|  |  |     |     └── pet-type-modal.component.ts
+|  |  |     ├── constants
+|  |  |     |  └── vet.constants.ts
+|  |  |     ├── models
+|  |  |     |  ├── breed.model.ts
+|  |  |     |  ├── gender.model.ts
+|  |  |     |  ├── medical-history.model.ts
+|  |  |     |  ├── pet-type.model.ts
+|  |  |     |  └── pet.model.ts
+|  |  |     ├── pages
+|  |  |     |  ├── breed-page
+|  |  |     |  |  ├── breed-page.component.html
+|  |  |     |  |  └── breed-page.component.ts
+|  |  |     |  ├── medical-history-page
+|  |  |     |  |  ├── medical-history-modal
+|  |  |     |  |  ├── medical-history-page.component.html
+|  |  |     |  |  └── medical-history-page.component.ts
+|  |  |     |  ├── pet-page
+|  |  |     |  |  ├── pet-page.component.html
+|  |  |     |  |  └── pet-page.component.ts
+|  |  |     |  ├── pet-type-page
+|  |  |     |  |  ├── pet-type-page.component.html
+|  |  |     |  |  └── pet-type-page.component.ts
+|  |  |     |  └── stats-page
+|  |  |     |     ├── stats-page.component.html
+|  |  |     |     └── stats-page.component.ts
+|  |  |     ├── services
+|  |  |     |  ├── behavior-test.service.ts
+|  |  |     |  ├── breed.service.ts
+|  |  |     |  ├── health-check.service.ts
+|  |  |     |  ├── medical-history.service.ts
+|  |  |     |  ├── pet-type.service.ts
+|  |  |     |  ├── pet.service.ts
+|  |  |     |  └── stats.service.ts
+|  |  |     └── vet.routes.ts
+|  |  └── shared
+|  |     ├── adapters
+|  |     |  └── impuesto-detail.adapter.ts
+|  |     ├── components
+|  |     |  ├── draw-tax-total
+|  |     |  |  ├── draw-tax-total.component.html
+|  |     |  |  └── draw-tax-total.component.ts
+|  |     |  ├── input-chip
+|  |     |  |  ├── input-chip.component.html
+|  |     |  |  └── input-chip.component.ts
+|  |     |  ├── input-date
+|  |     |  |  ├── input-date.component.html
+|  |     |  |  └── input-date.component.ts
+|  |     |  ├── m3-input-chip
+|  |     |  |  ├── m3-input-chip.component.html
+|  |     |  |  └── m3-input-chip.component.ts
+|  |     |  ├── mat-dynamic-table
+|  |     |  |  ├── mat-dynamic-table.component.html
+|  |     |  |  ├── mat-dynamic-table.component.scss
+|  |     |  |  └── mat-dynamic-table.component.ts
+|  |     |  ├── mat-user-search
+|  |     |  |  ├── mat-user-search.component.html
+|  |     |  |  └── mat-user-search.component.ts
+|  |     |  ├── pdf-viewer
+|  |     |  |  ├── pdf-viewer.component.html
+|  |     |  |  └── pdf-viewer.component.ts
+|  |     |  ├── send-mail-modal
+|  |     |  |  ├── send-mail-modal.component.html
+|  |     |  |  └── send-mail-modal.component.ts
+|  |     |  ├── tabla-resumen-totales
+|  |     |  |  ├── tabla-resumen-totales.component.html
+|  |     |  |  └── tabla-resumen-totales.component.ts
+|  |     |  └── upload-image
+|  |     |     ├── upload-image.component.html
+|  |     |     ├── upload-image.component.scss
+|  |     |     └── upload-image.component.ts
+|  |     ├── directives
+|  |     |  ├── click-outside.directive.ts
+|  |     |  ├── permission
+|  |     |  |  ├── action-add.directive.ts
+|  |     |  |  ├── action-anular.directive.ts
+|  |     |  |  ├── action-apertura-caja.directive.ts
+|  |     |  |  ├── action-delete.directive.ts
+|  |     |  |  ├── action-edit.directive.ts
+|  |     |  |  ├── action-enviar-correo.directive.ts
+|  |     |  |  ├── action-mov-caja.directive.ts
+|  |     |  |  ├── action-report.directive.ts
+|  |     |  |  └── is-admin.directive.ts
+|  |     |  ├── send-mail-modal.directive.ts
+|  |     |  ├── time-input-format-directive.directive.ts
+|  |     |  └── ui
+|  |     |     ├── input-number.directive.ts
+|  |     |     └── to-upper-case.directive.ts
+|  |     ├── models
+|  |     |  ├── ambiente-sri.ts
+|  |     |  ├── ciudad.interface.ts
+|  |     |  ├── field-definition-detail-sale.model.ts
+|  |     |  ├── forma-pago-sri.ts
+|  |     |  ├── impuesto.model.ts
+|  |     |  ├── mat-table-models
+|  |     |  |  ├── column-definition.model.ts
+|  |     |  |  ├── field-definition.model.ts
+|  |     |  |  ├── option-search-config.model.ts
+|  |     |  |  └── table-cell-index.model.ts
+|  |     |  ├── model-adapter.ts
+|  |     |  ├── pagination.model.ts
+|  |     |  ├── send-mail.model.ts
+|  |     |  ├── tarifa-impuesto.model.ts
+|  |     |  └── tipo-transaccion.model.ts
+|  |     ├── pipes
+|  |     |  ├── ambiente-sri.pipe.ts
+|  |     |  ├── get-total.pipe.ts
+|  |     |  ├── primary-status.pipe.ts
+|  |     |  ├── safe-html.pipe.ts
+|  |     |  ├── safe-url.pipe.ts
+|  |     |  └── secondary-status.pipe.ts
+|  |     ├── services
+|  |     |  ├── estab-asignacion.service.ts
+|  |     |  ├── generic-store-behaviorSubject.service.ts
+|  |     |  ├── generic-store-signal.service.ts
+|  |     |  ├── notificacion.service.ts
+|  |     |  ├── responsive.service.ts
+|  |     |  └── sales-detail-calculation.service.ts
+|  |     ├── store
+|  |     |  └── user-role-state.service.ts
+|  |     └── utils
+|  |        ├── fetch-limit.util.ts
+|  |        ├── group-cities-by-province.util.ts
+|  |        └── parameter-report.util.ts
+|  ├── environments
+|  |  ├── environment.prod.ts
+|  |  ├── environment.staging.ts
+|  |  └── environment.ts
+|  ├── favicon.ico
+|  ├── index.html
+|  ├── main.ts
+|  ├── styles.scss
+|  └── theme.scss
+├── ssl
+|  ├── generate.sh
+|  ├── Instructions.txt
+|  ├── openssl-custom.cnf
+|  ├── server.crt
+|  └── server.key
+├── tsconfig.app.json
+├── tsconfig.json
+└── tsconfig.spec.json
+
+directory: 4302 file: 41408
+
+ignored: directory (304)

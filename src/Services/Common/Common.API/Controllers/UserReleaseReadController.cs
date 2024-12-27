@@ -1,4 +1,6 @@
-﻿namespace Common.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+
+namespace Common.API.Controllers;
 
 public class UserReleaseReadController(IUserReleaseReadService userReleaseReadService) : BaseApiController
 {
@@ -7,6 +9,5 @@ public class UserReleaseReadController(IUserReleaseReadService userReleaseReadSe
     {
         apiRequest.UserRoleId = User.GetUserRoleId();
         return Ok(await userReleaseReadService.AddAsync(apiRequest));
-        ;
     }
 }

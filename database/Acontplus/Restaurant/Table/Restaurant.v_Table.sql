@@ -13,13 +13,14 @@ SELECT  rt.Id
     ,rt.[Enabled]
     ,rt.[Deleted]
     ,rt.[UserId]
-    ,rt.RoomId	
+    ,rt.RoomId
     ,roomDescription = rr.[Description]
     ,rt.Assigned
     ,rr.FloorId
     ,f.[Description] as 'Floor'
     ,f.CodEstab
     ,en.ruc
+    ,e.idEntidad
 FROM Restaurant.[Table] rt WITH (NOLOCK)
 INNER JOIN Restaurant.Room rr WITH (NOLOCK) ON rr.Id = rt.RoomId
 INNER JOIN Restaurant.[Floor] f WITH (NOLOCK) ON rr.FloorId = f.Id

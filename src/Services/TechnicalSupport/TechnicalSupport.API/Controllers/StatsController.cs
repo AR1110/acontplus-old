@@ -1,4 +1,6 @@
-﻿namespace TechnicalSupport.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+
+namespace TechnicalSupport.API.Controllers;
 
 public class StatsController : BaseApiController
 {

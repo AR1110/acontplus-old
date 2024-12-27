@@ -1,0 +1,137 @@
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+  background-color: var(--expanded-row-bg-color);
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+  background: var(--mat-table-row-item-outline-active);
+}
+
+.example-element-row td {
+  border-bottom-width: 0;
+}
+
+.element-detail {
+  overflow: hidden;
+}
+
+table {
+  // width: 100%;
+
+  // .mat-header-cell,
+  // .mat-cell {
+  //   text-align: left;
+  //   padding: 12px 16px;
+  // }
+
+  // .mat-header-row {
+  //   background-color: #3f51b5;
+  //   color: white;
+  //   font-weight: bold;
+  //   font-size: 14px;
+
+  //   .mat-header-cell {
+  //     padding: 16px;
+  //     border-right: 1px solid rgba(255, 255, 255, 0.12);
+  //   }
+  // }
+
+  // .mat-row {
+  //   transition: background-color 0.3s ease;
+
+  //   &:hover {
+  //     background-color: #f1f1f1;
+  //   }
+  // }
+
+  /* Fila expandida */
+  .example-expanded-row {
+    background-color: var(--expanded-row-bg-color);
+
+    .element-detail {
+      padding: 16px;
+      border: 1px solid var(--element-detail-border-color);
+      border-left: 4px solid var(--element-detail-border-left-color);
+      margin-top: 4px;
+
+      .card-border-doc {
+        border-color: var(--card-border-color);
+      }
+    }
+  }
+
+  /* Botones de acciones */
+  // .hstack {
+  //   display: flex;
+  //   align-items: center;
+  //   gap: 8px;
+
+  //   button.mat-icon-button {
+  //     background-color: #f5f5f5;
+  //     border-radius: 50%;
+
+  //     &:hover {
+  //       background-color: #eeeeee;
+  //     }
+
+  //     img.icon-img {
+  //       width: 24px;
+  //       height: 24px;
+  //     }
+  //   }
+
+  //   .text-success {
+  //     color: #4caf50;
+  //   }
+  // }
+
+  /* Estilos para el menu de acciones */
+  // mat-menu {
+  //   button.mat-menu-item {
+  //     display: flex;
+  //     align-items: center;
+  //     gap: 8px;
+
+  //     mat-icon {
+  //       color: #757575;
+  //     }
+
+  //     &:hover {
+  //       mat-icon {
+  //         color: #3f51b5;
+  //       }
+  //     }
+  //   }
+  // }
+
+  /* Estilo para la fila sin datos */
+  // .mat-no-data-row {
+  //   text-align: center;
+
+  //   td {
+  //     padding: 16px;
+  //     font-size: 14px;
+  //     color: #757575;
+  //   }
+  // }
+
+  /* Estilos para animaciones de expansión */
+  .element-detail {
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+
+    &.collapsed {
+      max-height: 0;
+      padding: 0;
+    }
+
+    &.expanded {
+      max-height: 500px;
+      /* O un valor acorde a la altura del contenido */
+      padding: 16px;
+    }
+  }
+}

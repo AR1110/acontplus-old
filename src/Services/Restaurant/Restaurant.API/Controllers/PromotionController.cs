@@ -1,9 +1,10 @@
-﻿using Common.Core.Interfaces;
+﻿using Common.S3Application.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Services;
 using Services.Common.Extensions;
+using Common.AppSettings.Extensions;
 
 namespace Restaurant.API.Controllers;
 

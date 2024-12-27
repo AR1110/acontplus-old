@@ -1,0 +1,124 @@
+<app-breadcrumb/>
+
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-2 col-12">
+        <button (onResult)="onResultModal()" appCompanyCustomerAddEdit class="btn btn-info" type="button">
+          <fa-icon [icon]="'plus'"></fa-icon>
+          Nuevo
+        </button>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="d-flex justify-content-start">
+
+          <span class="form-group pull-left page-size form-inline">
+            <button (click)="getReport('excel')" class="btn btn-success m-l-5" type="button">
+              <i class="far fa-file-excel"></i> Excel
+            </button>
+          </span>
+
+          <span class="form-group pull-left page-size form-inline">
+            <button (click)="getReport('pdf')" class="btn btn-danger m-l-5" type="button">
+              <i class="far fa-file-pdf"></i> PDF
+            </button>
+          </span>
+
+        </div>
+      </div>
+
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="d-flex justify-content-end">
+          <div class="input-group">
+            <input #input (input)="search(input.value)" [(ngModel)]="dataSearch.textSearch" class="form-control"
+                   ng-model="dataSearch.textSearch" placeholder="Buscar"
+                   type="text"/>
+            <button (click)="refresh()" class="btn btn-secondary btn-sm" type="button">
+              <fa-icon [icon]="'redo'"></fa-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <section class="section-container-table">
+      <table [dataSource]="dataSource" class="mat-elevation-z0" mat-table>
+
+        <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="op">
+          <th *matHeaderCellDef mat-header-cell> Op.</th>
+          <td *matCellDef="let element" mat-cell>
+            <div class="d-flex align-items-center">
+              <button (onResult)="onResultModal()" [id]="element.idCliente"
+                      appCompanyCustomerAddEdit
+                      class="btn btn-info btn-sm"
+                      type="button"
+              >
+                <i class="fas fa-pencil-alt"></i>
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+              </button>
+              @if (!element.esConsumidorFinal) {
+                <button type="button" class="btn btn-danger btn-sm ms-2">
+                  <fa-icon [icon]="'user-times'"></fa-icon>
+                </button>
+              }
+            </div>
+
+          </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="position">
+          <th *matHeaderCellDef mat-header-cell> No.</th>
+          <td *matCellDef="let i=index" mat-cell> {{ i + 1 }}</td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="ruc">
+          <th *matHeaderCellDef mat-header-cell> R.U.C/Cédula</th>
+          <td *matCellDef="let element" mat-cell> {{ element.identificacionComprador }}</td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="razonSocial">
+          <th *matHeaderCellDef mat-header-cell> Razon Social</th>
+          <td *matCellDef="let element" mat-cell> {{ element.razonSocialComprador }}</td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="direccion">
+          <th *matHeaderCellDef mat-header-cell> Dirección</th>
+          <td *matCellDef="let element" mat-cell> {{ element.direccion }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="telefono">
+          <th *matHeaderCellDef mat-header-cell> Teléfono</th>
+          <td *matCellDef="let element" mat-cell> {{ element.telefono }}</td>
+        </ng-container>
+        <ng-container matColumnDef="estado">
+          <th *matHeaderCellDef mat-header-cell> Estado</th>
+          <td *matCellDef="let element" mat-cell>
+            <div [innerHTML]="element.estado| primaryStatus"></div>
+          </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: visibleColumns;" mat-row></tr>
+
+        <tr *matNoDataRow class="mat-row">
+          <td class="mat-cell text-center m-3" colspan="7">Sin registro "{{ input.value }}"</td>
+        </tr>
+      </table>
+    </section>
+    <mat-paginator #paginator (page)="onPageEvent($event)"
+                   [length]="pagination.totalRecords" [pageIndex]="pagination.pageIndex" [pageSizeOptions]="pagination.pageSizeOptions"
+                   [pageSize]="pagination.pageSize"
+                   [showFirstLastButtons]="true" aria-label="Select page">
+    </mat-paginator>
+
+  </div>
+</div>

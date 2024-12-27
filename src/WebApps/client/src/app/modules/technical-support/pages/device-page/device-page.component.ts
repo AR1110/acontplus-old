@@ -6,11 +6,10 @@ import { ModalService } from '@core/services/modal.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-  selector: 'app-device-page',
-  standalone: true,
-  imports: [BreadcrumbComponent, DeviceListComponent, FontAwesomeModule],
-  templateUrl: './device-page.component.html',
-  styles: ``,
+    selector: 'app-device-page',
+    imports: [BreadcrumbComponent, DeviceListComponent, FontAwesomeModule],
+    templateUrl: './device-page.component.html',
+    styles: ``
 })
 export class DevicePageComponent {
   @ViewChild(DeviceListComponent) child!: DeviceListComponent;

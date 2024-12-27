@@ -1,11 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
+@use "@angular/material" as mat;
+@use "sass:map";
 @import "ngx-toastr/toastr";
-@import "bootstrap/dist/css/bootstrap.css";
+@import "bootstrap/dist/css/bootstrap.min.css";
 @import "assets/template/css/style.css";
 @import "assets/css/forms.css";
-@import "perfect-scrollbar";
-// @import "theme";
 @import "@angular/material/prebuilt-themes/azure-blue.css";
+
+$compact-theme: mat.define-theme(
+  (
+    density: (
+      scale: -4,
+    ),
+  )
+);
+:root {
+  @include mat.form-field-density($compact-theme);
+}
 
 html,
 body {
@@ -103,4 +114,11 @@ table {
 
 .swal2-container {
   z-index: 999999;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+.toast-container {
+  z-index: 9999999
 }

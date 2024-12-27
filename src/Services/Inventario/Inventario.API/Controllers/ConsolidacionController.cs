@@ -1,16 +1,9 @@
-﻿namespace Inventario.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-public class ConsolidacionController : BaseApiController
+namespace Inventario.API.Controllers;
+
+public class ConsolidacionController(IConsolidacionService consolidacionService) : BaseApiController
 {
-
-    private readonly IConsolidacionService _service;
-
-    public ConsolidacionController(IConsolidacionService service)
-    {
-        _service = service;
-
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -18,7 +11,7 @@ public class ConsolidacionController : BaseApiController
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             };
-        var response = await _service.GetAsync(parameters);
+        var response = await consolidacionService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -29,7 +22,7 @@ public class ConsolidacionController : BaseApiController
     public async Task<IActionResult> GetId(int id)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await _service.GetIdAsync(parameters);
+        var response = await consolidacionService.GetIdAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -45,7 +38,7 @@ public class ConsolidacionController : BaseApiController
                 { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(data.Data) }
             };
 
-        var response = await _service.AddAsync(parameters);
+        var response = await consolidacionService.AddAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -61,7 +54,7 @@ public class ConsolidacionController : BaseApiController
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-        var response = await _service.UpdateAsync(parameters);
+        var response = await consolidacionService.UpdateAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -72,7 +65,7 @@ public class ConsolidacionController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await _service.DeleteAsync(parameters);
+        var response = await consolidacionService.DeleteAsync(parameters);
         if (response == null) { return NoContent(); }
 
             ;
@@ -89,7 +82,7 @@ public class ConsolidacionController : BaseApiController
                 { "json", DataConverters.SerializeDictionary(data.Data) }
             };
 
-        var response = await _service.GetAsync(parameters); 
+        var response = await consolidacionService.GetAsync(parameters); 
         return Ok(response);
     }
 

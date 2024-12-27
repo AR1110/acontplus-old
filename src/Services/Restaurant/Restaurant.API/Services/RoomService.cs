@@ -14,7 +14,7 @@ public class RoomService(RestaurantContext context) : IRoomService
         if (roomExists) return new ApiResponse { Code = "0", Message = "El código ya está en uso" };
         context.Rooms.Add(room);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Registrado correctamente!" };
+        return new ApiResponse { Code = "1", Message = "Registrado correctamente!", Payload = room };
     }
 
     public async Task<ApiResponse> DeleteAsync(int userId, int id)

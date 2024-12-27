@@ -53,8 +53,8 @@
         word-break: break-all !important;
     }
 
-    .rtable .suggestion-codigo { 
-         width: 100px;
+    .rtable .suggestion-codigo {
+        width: 100px;
         min-width: 100px;
         max-width: 100px;
         overflow: hidden;
@@ -64,35 +64,28 @@
     }
 
     .zindex {
-        z-index: 999999 !important;        
+        z-index: 999999 !important;
     }
+
     .contentArticlePopover {
         z-index: 999999 !important;
         max-width: 400px !important;
     }
 </style>
- 
- 
+
+
 @* <div ng-submit="$event.preventDefault()"> *@
-        <!-- md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"  -->
+<!-- md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"  -->
 <div class="mb-1" id="">
-    <md-autocomplete id="mainContentMdAutocomplete" 
-    input-focus md-input-id="custom-template-md-autocomplete-articulo"
-        uib-tooltip="Buscar Artículo por descripción o Código " 
-        tooltip-placement="top" 
-        tooltip-trigger="'mouseenter'"
-        ng-enter="$ctrl.getDataArticuloByEnterCode();" 
-        md-no-cache="false"
-        md-selected-item="$ctrl.selectedItem"
-        md-search-text="$ctrl.searchText"
-        md-selected-item-change="$ctrl.selectArticleSearch(item)" 
-        md-items="item in $ctrl.searchTextChange($ctrl.searchText)"
-        md-item-text="item.descripcion"
-        ng-focus="$ctrl.focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')" 
-        md-escape-options="clear"
+    <md-autocomplete id="mainContentMdAutocomplete" input-focus md-input-id="custom-template-md-autocomplete-articulo"
+        uib-tooltip="Buscar ArtÃ­culo por descripciÃ³n o CÃ³digo " tooltip-placement="top"
+        tooltip-trigger="'mouseenter'" ng-enter="$ctrl.getDataArticuloByEnterCode();" md-no-cache="false"
+        md-selected-item="$ctrl.selectedItem" md-search-text="$ctrl.searchText"
+        md-selected-item-change="$ctrl.selectArticleSearch(item)"
+        md-items="item in $ctrl.searchTextChange($ctrl.searchText)" md-item-text="item.descripcion"
+        ng-focus="$ctrl.focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')" md-escape-options="clear"
         input-aria-label="Buscador Articulo" placeholder="{{$ctrl.placeholder}}"
-        md-menu-class="autocomplete-standard-template" 
-        md-menu-container-class="standard-container" md-mode="standard"
+        md-menu-class="autocomplete-standard-template" md-menu-container-class="standard-container" md-mode="standard"
         md-clear-button="false">
         <md-item-template>
             <div class="table-responsive">
@@ -121,7 +114,8 @@
                             </td>
                             <td class="column-articulo-descripcion text-left" uib-tooltip="{{item.descripcion}}"
                                 tooltip-placement="bottom" tooltip-trigger="focus">
-                                <img ng-if="item.s3ObjectUrl" ng-click="$ctrl.previewImg($event, item)" src="{{item.s3ObjectUrl}}" class="img-thumbnail" width="30">
+                                <img ng-if="item.s3ObjectUrl" ng-click="$ctrl.previewImg($event, item)"
+                                    src="{{item.s3ObjectUrl}}" class="img-thumbnail" width="30">
                                 <span class="item-desc font-weight-bold">
                                     {{item.descripcion}}
                                 </span>
@@ -137,9 +131,9 @@
                             </td>
                             <td class="suggestion-column text-center">
                                 <span article-fraccionado-info-drtv article="item" class="{{item.fraccionado}}">
-                                     {{ item.medida}}
-                                 </span> 
-                                
+                                    {{ item.medida}}
+                                </span>
+
                             </td>
                             <td class="suggestion-column text-center">
                                 {{ item.marca}}
@@ -147,12 +141,13 @@
                             <td class="suggestion-column text-center" ng-repeat="pvp in item.priceSale">
                                 <span class="font-weight-bold">${{pvp.precio}}</span>
                             </td>
-                            <td class="suggestion-column text-center" ng-if="item.warehouses.length >0" ng-repeat="ub in item.warehouses">
+                            <td class="suggestion-column text-center" ng-if="item.warehouses.length >0"
+                                ng-repeat="ub in item.warehouses">
                                 {{ub.ubicacion}}
                             </td>
-                             <td class="suggestion-column text-center" ng-if="item.warehouses.length ===0">
+                            <td class="suggestion-column text-center" ng-if="item.warehouses.length ===0">
 
-                             </td>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -164,7 +159,7 @@
         @* <md-not-found>
         No hay estados coincidentes con "{{searchText}}"
         </md-not-found> *@
-    </md-autocomplete> 
+    </md-autocomplete>
     <a href="javascript:void(0)" class="btn btn-success btn-xs mt-1" ng-if="$parent.articlePermission.crear"
         tabindex="-1" ng-click="$ctrl.openModalArticulo()">
         <i class="fas fa-plus"></i> Nuevo
@@ -174,7 +169,4 @@
         <i class="fas fa-search"></i> Lista
     </a>
 </div>
-
-
-
 @* </div> *@

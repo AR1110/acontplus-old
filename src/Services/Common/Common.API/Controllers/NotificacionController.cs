@@ -1,15 +1,18 @@
-﻿namespace Common.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-public class NotificacionController(INotificacionService notificacion) : BaseApiController
+namespace Common.API.Controllers;
+
+public class NotificacionController(INotificationService notificationService) : BaseApiController
 {
     [HttpPost]
-    public async Task<IActionResult> Post(string json)
+    public async Task<IActionResult> Post([FromQuery] string json)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetUserRoleId() },
-            { "json", SqlStringParam.Sanitize(json) }
+            { "json", SqlStringParam.Sanitize(json) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
-        return Ok(await notificacion.AddAsync(parameters));
+        return Ok(await notificationService.AddAsync(parameters));
     }
 }

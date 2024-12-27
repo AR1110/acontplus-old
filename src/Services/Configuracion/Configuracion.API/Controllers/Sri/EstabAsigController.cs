@@ -1,4 +1,6 @@
-﻿namespace Configuracion.API.Controllers.Sri;
+﻿using Common.AppSettings.Extensions;
+
+namespace Configuracion.API.Controllers.Sri;
 
 public class EstabAsigController(IEstablecimientoAsignacionService establecimientoAsignacionService)
     : BaseApiController

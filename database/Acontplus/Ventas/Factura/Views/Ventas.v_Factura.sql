@@ -14,7 +14,7 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
 		  ,fa.recargo
 		  ,fa.transporte
 		  ,fa.total
-		  ,ISNULL(fa.observacion, '') as observacion
+		  ,ISNULL(fa.observacion,'') as observacion
           ,fa.notaCredito
           ,fa.guiaRemision
           ,fa.estado 
@@ -25,8 +25,8 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
           ,de.nroDocumento		       as secuencial
           ,de.serieComprobante
           ,de.fechaAutorizacion
-          ,cl.nombreFiscal             as razonSocialComprador
-          ,cl.numeroIdentificacion     as identificacionComprador
+          ,cu.BusinessName             as razonSocialComprador
+          ,cu.IDCard                   as identificacionComprador
           ,cl.correo                        
           ,cl.telefono
           ,es.idEntidad
@@ -58,7 +58,8 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
     INNER JOIN FactElect.EstadoServicio     sf WITH (NOLOCK) ON sf.idEstadoServicio       = de.idEstadoServicio
     INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
      LEFT JOIN dbo.EstadoPago               ep WITH (NOLOCK) ON ep.idEstadoPago           = cc.idEstadoPago 
-     LEFT JOIN dbo.TiempoCredito            tc WITH (NOLOCK) ON tc.idTiempoCredito        = cc.idTiempoCredito                  
+     LEFT JOIN dbo.TiempoCredito            tc WITH (NOLOCK) ON tc.idTiempoCredito        = cc.idTiempoCredito
+    INNER JOIN Customer.Customer            cu WITH (NOLOCK) ON cu.Id                     = cl.CustomerId
      
     
 

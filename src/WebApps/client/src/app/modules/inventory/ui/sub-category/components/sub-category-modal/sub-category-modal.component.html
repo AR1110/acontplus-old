@@ -1,0 +1,83 @@
+
+  <div class="modal-header">
+    <h4 class="modal-title">{{ titleModal }}</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="category">Categoria: </label>
+      <select name="category" id="category" class="form-select" [(ngModel)]="data.idFamilia">
+        <option [value]="0">Ninguno</option>
+        @for (item of categorias; track $index) {
+          <option [value]="item.idFamilia">{{item.descripcion}}</option>
+        }
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="description"
+        >Descripción: <span class="text-danger">*</span>
+      </label>
+      <input name="description" id="description" class="form-control" appToUpperCase [(ngModel)]="data.descripcion"
+      (blur)="generateSigla()" />
+    </div>
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="siglas"
+            >Siglas: <span class="text-danger">*</span>
+          </label>
+          <input name="siglas" id="siglas" class="form-control" appToUpperCase [(ngModel)]="data.siglas" />
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="montoObjetivo"
+            >Monto objetivo: <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            name="montoObjetivo"
+            id="montoObjetivo"
+            class="form-control"
+            [(ngModel)]="data.montoObjetivo"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="sequential"
+            >Secuencia: <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            name="sequential"
+            id="sequential"
+            class="form-control"
+            [(ngModel)]="data.ultimoSecuencial"
+          />
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="imagen">Imagen</label>
+          <app-upload-image
+           [imageUrl]="imageUrl()"
+           (onSelected)="onSelected($event)"
+           />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="save()">Guardar</button>
+    <button type="button" class="btn btn-dark" (click)="closeModal()">
+      Cerrar
+    </button>
+  </div>

@@ -1,18 +1,13 @@
-﻿namespace Contabilidad.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-public class MovimientoCajaController : BaseApiController
+namespace Contabilidad.API.Controllers;
+
+public class MovimientoCajaController(IMovimientoCajaService movimientoCajaService) : BaseApiController
 {
-    private readonly IMovimientoCajaService _movSvc;
-
-    public MovimientoCajaController(IMovimientoCajaService movSvc)
-    {
-        _movSvc = movSvc;
-    }
-
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var response = await _movSvc.GetAsync(new Dictionary<string, object>
+        var response = await movimientoCajaService.GetAsync(new Dictionary<string, object>
         {
             { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         });
@@ -30,7 +25,7 @@ public class MovimientoCajaController : BaseApiController
             { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
 
-        var response = await _movSvc.AddAsync(parameters);
+        var response = await movimientoCajaService.AddAsync(parameters);
         return Ok(response);
     }
 
@@ -39,7 +34,7 @@ public class MovimientoCajaController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await _movSvc.DeleteAsync(parameters);
+        var response = await movimientoCajaService.DeleteAsync(parameters);
         return Ok(response);
     }
 }

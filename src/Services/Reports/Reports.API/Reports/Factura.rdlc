@@ -146,6 +146,10 @@
           <DataField>telefonoComprador</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="configValorBruto">
+          <DataField>configValorBruto</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>ComprobantesElectronicosVentas</rd:DataSetName>
@@ -403,7 +407,7 @@
                   <Width>1.40385cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.75702cm</Width>
+                  <Width>1.77133cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1403,7 +1407,7 @@
             <Top>10.28325cm</Top>
             <Left>0.01032cm</Left>
             <Height>0.90896cm</Height>
-            <Width>20.10423cm</Width>
+            <Width>20.11855cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -2628,7 +2632,7 @@
             <KeepTogether>true</KeepTogether>
             <Top>8.07401cm</Top>
             <Height>2.10341cm</Height>
-            <Width>20.11457cm</Width>
+            <Width>20.12887cm</Width>
             <ZIndex>11</ZIndex>
             <Style>
               <Border>
@@ -2714,10 +2718,10 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>4.52716cm</Width>
+                  <Width>4.50662cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.82035cm</Width>
+                  <Width>1.79981cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -2936,10 +2940,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>headerDs</DataSetName>
-            <Top>15.41901cm</Top>
-            <Left>13.76706cm</Left>
+            <Top>16.05401cm</Top>
+            <Left>13.82244cm</Left>
             <Height>1.3cm</Height>
-            <Width>6.34751cm</Width>
+            <Width>6.30643cm</Width>
             <ZIndex>14</ZIndex>
             <Style>
               <Border>
@@ -3466,7 +3470,7 @@
             <Top>0.40091cm</Top>
             <Left>11.20054cm</Left>
             <Height>7.25213cm</Height>
-            <Width>8.89875cm</Width>
+            <Width>8.92811cm</Width>
             <ZIndex>15</ZIndex>
             <Style>
               <Border>
@@ -3478,13 +3482,104 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>4.50652cm</Width>
+                  <Width>4.53511cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.84099cm</Width>
+                  <Width>1.77111cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox27">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Subtotal</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox27</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox28">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=First(Fields!subtotalSinImpuestos.Value, "headerDs") + First(Fields!totalDescuento.Value, "headerDs")</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox28</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                            </TopBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                            </LeftBorder>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
                 <TablixRow>
                   <Height>0.5cm</Height>
                   <TablixCells>
@@ -3867,6 +3962,12 @@
             <TablixRowHierarchy>
               <TablixMembers>
                 <TablixMember>
+                  <Visibility>
+                    <Hidden>=Not(First(Fields!configValorBruto.Value, "headerDs"))</Hidden>
+                  </Visibility>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
                   <Group Name="Details5" />
                   <TablixMembers>
                     <TablixMember />
@@ -3885,9 +3986,9 @@
             </TablixRowHierarchy>
             <DataSetName>impuestoTotalDs</DataSetName>
             <Top>11.24262cm</Top>
-            <Left>13.76706cm</Left>
-            <Height>2cm</Height>
-            <Width>6.34751cm</Width>
+            <Left>13.82244cm</Left>
+            <Height>2.6cm</Height>
+            <Width>6.30621cm</Width>
             <ZIndex>16</ZIndex>
             <Style>
               <Border>
@@ -3919,10 +4020,10 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>4.50652cm</Width>
+                  <Width>4.53511cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.84099cm</Width>
+                  <Width>1.77133cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -4401,10 +4502,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>impuestoIvaTotalDs</DataSetName>
-            <Top>13.24262cm</Top>
-            <Left>13.76706cm</Left>
+            <Top>13.87762cm</Top>
+            <Left>13.82244cm</Left>
             <Height>2cm</Height>
-            <Width>6.34751cm</Width>
+            <Width>6.30643cm</Width>
             <ZIndex>17</ZIndex>
             <Style>
               <Border>
@@ -4622,17 +4723,17 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>6.63784in</Height>
+        <Height>6.86354in</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>7.91912in</Width>
+      <Width>7.92475in</Width>
       <Page>
         <PageFooter>
-          <Height>0.5cm</Height>
+          <Height>1.42604cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>

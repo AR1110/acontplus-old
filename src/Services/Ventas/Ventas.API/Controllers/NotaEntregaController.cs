@@ -1,24 +1,26 @@
-﻿namespace Ventas.API.Controllers;
+﻿using Azure.Core;
+using Common.AppSettings.Extensions;
+
+namespace Ventas.API.Controllers;
 
 public class NotaEntregaController : BaseApiController
 {
-
     private readonly INotaEntregaService _svc;
 
     public NotaEntregaController(INotaEntregaService svc)
     {
         _svc = svc;
-
     }
 
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
         var response = await _svc.GetAsync(new Dictionary<string, object>
-            {
-                { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
-            });
+        {
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        });
         if (response == null) { return NoContent(); }
+
         return Ok(new { code = "1", payload = response });
     }
 
@@ -26,11 +28,9 @@ public class NotaEntregaController : BaseApiController
     public async Task<IActionResult> GetId(int id)
     {
         var response =
-            await _svc.GetByIdAsync(new Dictionary<string, object>
-            {
-                    { "idRol", User.GetUserRoleId() }, { "id", id }
-            });
+            await _svc.GetByIdAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } });
         if (response == null) { return NoContent(); }
+
         return Ok(new { code = "1", payload = response });
     }
 
@@ -60,11 +60,16 @@ public class NotaEntregaController : BaseApiController
     }
 
 
-    [HttpDelete("Delete/{id}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpPut("Cancel/{id}")]
+    public async Task<IActionResult> Delete(int id, ApiRequest request)
     {
-        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } };
-        var response = await _svc.DeleteAsync(parameters);
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
+        var response = await _svc.CancelAsync(parameters);
         return Ok(response);
     }
 

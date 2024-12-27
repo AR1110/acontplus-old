@@ -9,11 +9,10 @@ import { isApiResponse } from '@core/models/api-response';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-  selector: 'app-device-list',
-  standalone: true,
-  imports: [FontAwesomeModule],
-  templateUrl: './device-list.component.html',
-  styles: ``,
+    selector: 'app-device-list',
+    imports: [FontAwesomeModule],
+    templateUrl: './device-list.component.html',
+    styles: ``
 })
 export class DeviceListComponent implements OnInit {
   private modalSvc = inject(ModalService);

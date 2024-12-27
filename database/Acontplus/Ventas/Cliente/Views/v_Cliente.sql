@@ -2,54 +2,51 @@ USE AcontPlus
 GO
 CREATE OR ALTER VIEW v_Cliente WITH SCHEMABINDING AS (
 
-SELECT c.[idCliente]
-    ,c.[idTipoClienteProveedor]
-    ,c.[idTipoEntidad]
-    ,c.[idSubContribuyente]
-    ,c.[idTiempoCredito]
-    ,c.[idTipoIdentificacion]
-    ,c.[idCiudad]
-    ,c.[numeroIdentificacion]
-    ,c.[nombreFiscal]
-    ,c.[montoCredito]
-    ,c.[nombreComercial]
-    ,c.[direccion]
-    ,c.[telefono]
-    ,c.[correo]
-    ,c.[estado]
-    ,c.[consumidorFinal]
-    ,c.[fechaRegistro]
-    ,c.[idUsuario]
-    ,c.[idEntidad]
-    ,c.[idEmpleado]
-    ,c.[idEmpresa]
-    ,c.[idCargo]
-    ,c.[placa]
-    ,c.[nota]
-    ,c.[importacion]
-    ,cs.SriValidation as validationSri
-    ,c.[CustomerId]
-    ,e.ruc rucEntidad
-    ,e.razonSocial   as entidad
-    ,ce.BusinessName as empresa
-    ,ti.descripcion  as tipoIdentificacion
-    ,ti.codigo       as codTipoIdentificacion
-    ,ti.codigoSri    as codIdentSri
-    ,IIF(cs.IDType IS NULL,ti.codigoSri,cs.IDType)                as IDType
-    ,IIF(cs.IDCard IS NULL,c.numeroIdentificacion,cs.IDCard)      as IDCard
-    ,IIF(cs.BusinessName IS NULL, c.nombreFiscal,cs.BusinessName) as BusinessName
-    ,IIF(cs.TradeName IS NULL, c.nombreComercial,cs.TradeName)    as TradeName
-    ,c.correo as Email
-    ,c.telefono as Telephone
-    ,c.direccion as [Address]
-    ,c.infoCrediticia
-    ,ciudadNom = c2.descripcion
-FROM dbo.Cliente                    c WITH (NOLOCK)
-INNER JOIN dbo.Entidad              e WITH (NOLOCK) ON e.idEntidad             = c.idEntidad
-INNER JOIN dbo.TipoIdentificacion  ti WITH (NOLOCK) ON ti.idTipoIdentificacion = c.idTipoIdentificacion 
- LEFT JOIN Customer.Customer       cs WITH (NOLOCK) ON cs.Id                   = c.CustomerId
- LEFT JOIN dbo.Ciudad              c2 WITH (NOLOCK) ON c2.idCiudad             = c.idCiudad
- LEFT JOIN Administrador.Empresa  emp WITH (NOLOCK) ON emp.idEmpresa           = c.idEmpresa
- LEFT JOIN Customer.Customer       ce WITH (NOLOCK) ON ce.Id                   = emp.CustomerId
+SELECT cl.[idCliente]
+      ,cl.[idTipoClienteProveedor]
+      ,cl.[idTipoEntidad]
+      ,cl.[idSubContribuyente]
+      ,cl.[idTiempoCredito]
+      ,cl.[idTipoIdentificacion]
+      ,cl.[idCiudad]
+      ,cl.[montoCredito]
+      ,cl.[direccion]
+      ,cl.[telefono]
+      ,cl.[correo]
+      ,cl.[estado]
+      ,cl.[consumidorFinal]
+      ,cl.[fechaRegistro]
+      ,cl.[idUsuario]
+      ,cl.[idEntidad]
+      ,cl.[idEmpleado]
+      ,cl.[idEmpresa]
+      ,cl.[idCargo]
+      ,cl.[placa]
+      ,cl.[nota]
+      ,cl.[importacion]
+      --,cl.[CustomerId]
+      ,cl.correo                                                    as Email
+      ,cl.telefono                                                  as Telephone
+      ,cl.direccion                                                 as [Address]
+      ,cl.infoCrediticia
+      ,en.ruc                                                       as rucEntidad
+      ,en.razonSocial                                               as entidad
+      ,ce.BusinessName                                              as empresa
+      ,ti.descripcion                                               as tipoIdentificacion
+      ,ti.codigo                                                    as codTipoIdentificacion
+      ,ti.codigoSri                                                 as codIdentSri
+      ,cs.SriValidation                                             as validationSri
+      ,cs.IDType
+      ,cs.IDCard                                                    
+      ,cs.BusinessName                                              
+      ,cs.TradeName                                                 
+      ,c2.descripcion                                               as ciudadNom
+FROM dbo.Cliente                   cl WITH (NOLOCK)
+INNER JOIN dbo.Entidad             en WITH (NOLOCK) ON en.idEntidad            = cl.idEntidad
+INNER JOIN dbo.TipoIdentificacion  ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion 
+INNER JOIN Customer.Customer       cs WITH (NOLOCK) ON cs.Id                   = cl.CustomerId
+ LEFT JOIN dbo.Ciudad              c2 WITH (NOLOCK) ON c2.idCiudad             = cl.idCiudad
+ LEFT JOIN Administrador.Empresa   em WITH (NOLOCK) ON em.idEmpresa            = cl.idEmpresa
+ LEFT JOIN Customer.Customer       ce WITH (NOLOCK) ON ce.Id                   = em.CustomerId
  
 )

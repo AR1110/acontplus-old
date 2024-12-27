@@ -5,7 +5,7 @@
       <div class="col-md-2 col-12">
         <button
           (click)="onModalOpen()"
-          class="btn btn-info d-block d-lg-inline-block m-l-15"
+          class="btn btn-primary"
           type="button"
         >
           <fa-icon [icon]="'plus-circle'"></fa-icon>
@@ -112,10 +112,10 @@
           </ng-container>
 
           <tr
-            *matHeaderRowDef="displayedColumns; sticky: true"
+            *matHeaderRowDef="visibleColumns; sticky: true"
             mat-header-row
           ></tr>
-          <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
+          <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
 
           <!-- Row shown when there is no matching data. -->
           <tr *matNoDataRow class="mat-row">

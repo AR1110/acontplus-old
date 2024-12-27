@@ -1,4 +1,7 @@
-﻿namespace Configuracion.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+using Configuracion.API.Models;
+
+namespace Configuracion.API.Controllers;
 
 public class FirmaElectronicaController(
     IFirmaElectronicaService firmaElectronicaService) : BaseApiController

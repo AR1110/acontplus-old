@@ -44,12 +44,13 @@ BEGIN
 					RETURN
 				END
 			SELECT ch.*
-			,p.nombreFiscal proveedor
+			,cu.BusinessName  as proveedor
 			,a.codigo codArticuloAcontplus
 			,'(' + a.codigo + ') -> ' + a.descripcion articulo
 			FROM Recepcion.CompraHabitual ch WITH (NOLOCK)
 			INNER JOIN Proveedor p WITH (NOLOCK) ON ch.idProveedor = p.idProveedor
 			INNER JOIN Articulo a WITH (NOLOCK) ON ch.idArticulo = a.idArticulo
+            INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = p.CustomerId
 			WHERE ch.idArticulo = (SELECT idArticulo FROM #tmp)
 		END
 	DROP TABLE #tmp

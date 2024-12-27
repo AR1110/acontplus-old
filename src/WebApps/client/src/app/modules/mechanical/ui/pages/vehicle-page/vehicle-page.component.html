@@ -1,0 +1,103 @@
+<app-breadcrumb/>
+
+<div class="card">
+  <div class="card-body">
+
+    <div class="row">
+      <div class="col-md-2 col-12">
+        <button (resultModalHandler)="resultModal($event)" appVehicleAddEdit class="btn btn-info" type="button">
+          <fa-icon [icon]="'add'"></fa-icon>
+          Nuevo
+        </button>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="d-flex justify-content-start">
+          <span class="form-group pull-left page-size form-inline">
+            <select (change)="changePageSize()" [(ngModel)]="pagination.pageSize" class="form-select control-color">
+              @for (item of pagination.pageSizeOptions; track $index) {
+                <option [ngValue]="item">{{ item }}</option>
+              }
+            </select>
+          </span>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="d-flex justify-content-end">
+          <div class="form-group">
+            <input class="form-control" placeholder="Buscar vehiculo" type="text">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="section-container-table">
+      <table [dataSource]="dataSource" mat-table>
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="position">
+          <th *matHeaderCellDef mat-header-cell> No.</th>
+          <td *matCellDef="let element" mat-cell> {{ element.position }}</td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="op">
+          <th *matHeaderCellDef mat-header-cell> Op.</th>
+          <td *matCellDef="let element" mat-cell>
+            <button (resultModalHandler)="resultModal($event)" [params]="{id: element.id}" appVehicleAddEdit
+                    class="btn btn-outline-warning btn-sm">
+              <fa-icon [icon]="'pencil'"></fa-icon>
+            </button>
+            <button (click)="askToDelete(element.id)" class="btn btn-outline-danger btn-sm">
+              <fa-icon [icon]="'trash'"></fa-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tipoVehiculo">
+          <th *matHeaderCellDef mat-header-cell> T. Vehiculo</th>
+          <td *matCellDef="let element" mat-cell> {{ element.vehicleType }}</td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="placa">
+          <th *matHeaderCellDef mat-header-cell> Placa</th>
+          <td *matCellDef="let element" mat-cell> {{ element.licensePlate }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="identificacion">
+          <th *matHeaderCellDef mat-header-cell> Identificación</th>
+          <td *matCellDef="let element" mat-cell> {{ element.idCard }}</td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="cliente-conductor">
+          <th *matHeaderCellDef mat-header-cell> Cliente/Conductor</th>
+          <td *matCellDef="let element" mat-cell> {{ element.tradeName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th *matHeaderCellDef mat-header-cell> Estado</th>
+          <td *matCellDef="let element" mat-cell>
+            <mat-slide-toggle (change)="putState(element.id, element.enabled)"
+                              [(ngModel)]="element.enabled"></mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <tr *matNoDataRow class="mat-row">
+          <td class="mat-cell text-center" colspan="8">
+            Sin registro
+          </td>
+        </tr>
+
+
+        <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: visibleColumns;" mat-row></tr>
+      </table>
+    </section>
+
+    <ngb-pagination (pageChange)="pageChanged()" [(page)]="pagination.pageIndex"
+                    [boundaryLinks]="true"
+                    [collectionSize]="pagination.totalRecords" [maxSize]="pagination.maxSize" [pageSize]="pagination.pageSize"
+                    [rotate]="true"/>
+  </div>
+</div>

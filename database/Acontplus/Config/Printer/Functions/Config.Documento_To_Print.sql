@@ -108,8 +108,8 @@ BEGIN
 						        ,labelObligadoContabilidad = 'Obligado Contabilidad: ' + s.obligadoContabilidad
 						        ,labelAgenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'') 
 						        ,s.agenteRetencion 
-						        ,razonSocialComprador = REPLACE(cl.nombreFiscal  , '&', '%26')  
-						        ,nroIdentificacion = cl.numeroIdentificacion
+						        ,razonSocialComprador = REPLACE(cu.BusinessName  , '&', '%26')  
+						        ,nroIdentificacion = cu.IDCard
 						        ,direccionComprador = REPLACE(cl.direccion  , '&', '%26')  
 						        ,propina = CAST(f.propina as numeric(15,2))  
 						        ,importeTotal = CAST(f.total as numeric(15,2)) 
@@ -130,6 +130,7 @@ BEGIN
                             INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision 
                             INNER JOIN Sri.Establecimiento       s WITH (NOLOCK) ON s.idEstablecimiento       = pe.idEstablecimiento
 					        INNER JOIN dbo.Entidad               e WITH (NOLOCK) ON e.idEntidad               = s.idEntidad
+                            INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = cl.CustomerId
 					        WHERE f.idFactura = @idDocument 
 					        FOR JSON PATH
 				        )
@@ -153,30 +154,33 @@ BEGIN
 
             INSERT INTO @tbTaxes (descripcion,subTotal)
             SELECT 'Subtotal' + ' ' + ti.descripcion as descripcion
-                    ,ISNULL
-                    ((
-                    SELECT CAST(SUM(fi.TaxBase) as numeric(18,2)) 
-                    FROM Ventas.v_FacturaImpuesto fi 
-                    where FacturaId = @idDocument AND fi.TaxPercentId = ti.idTipoIva
-                    and fi.[Enabled] = 1
+                   ,ISNULL
+                   ((
+                    SELECT SUM(CAST(fi.TaxBase as numeric(18,2)))
+                    FROM Ventas.FacturaImpuesto fi WITH (NOLOCK)
+                    where fi.FacturaId = @idDocument 
+                      AND fi.TaxPercentId = ti.idTipoIva
+                      AND fi.[Enabled] = 1
 
-                    ),0) as subTotal
+                   ),0) as subTotal
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
 
             UNION ALL
 
-            SELECT ti.descripcion 
-                    ,ISNULL
-                    ((
-                    SELECT CAST(SUM(fi.TaxValue) as numeric(18,2)) 
-                    FROM Ventas.v_FacturaImpuesto fi 
-                    where FacturaId = @idDocument AND fi.TaxPercentId = ti.idTipoIva
-                    and fi.[Enabled] = 1
-                    ),0) 
+             SELECT ti.descripcion as descripcion
+                  ,CAST(ISNULL
+                  ((
+                       SELECT SUM(CAST(fi.TaxBase as numeric(18,2)))
+                       FROM Ventas.FacturaImpuesto fi WITH (NOLOCK)
+                       where fi.FacturaId = @idDocument 
+                         AND fi.TaxPercentId = ti.idTipoIva
+                         AND fi.[Enabled] = 1
+
+                  ),0) * porcentaje / 100 as numeric(18,2))
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE ti.porcentaje > 0 
-                AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
+              AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
 
             SET @taxesValue = (SELECT * FROM @tbTaxes FOR JSON PATH)
 
@@ -206,8 +210,8 @@ BEGIN
 							,s.dirEstablecimiento  
 							,s.contribuyenteEspecial
 						    ,s.obligadoContabilidad
-							,cliente = REPLACE(cl.nombreFiscal   , '&', '%26')  
-							,nroIdentificacion = cl.numeroIdentificacion
+							,cliente = REPLACE(cu.BusinessName   , '&', '%26')  
+							,nroIdentificacion = cu.IDCard
 							,direccionCliente = REPLACE(cl.direccion   , '&', '%26')  
 							,correoCliente = REPLACE(ISNULL(cl.correo , 'S/N'),';',',')
 							,telefonoCliente = REPLACE(ISNULL(cl.telefono, 'S/N'),';',',')
@@ -228,6 +232,7 @@ BEGIN
 						LEFT  JOIN dbo.Ciudad           c WITH (NOLOCK) ON c.idCiudad        = cl.idCiudad 
 						INNER JOIN dbo.Entidad          e WITH (NOLOCK) ON e.idEntidad       = ne.idEntidad
 						INNER JOIN dbo.Usuario          u WITH (NOLOCK) ON u.idUsuario	     = ne.idUsuario
+                        INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id             = cl.CustomerId
 						WHERE ne.idNotaEntrega = @idDocument FOR JSON PATH )
 
 			SET @detail = (SELECT 
@@ -248,33 +253,32 @@ BEGIN
             
             INSERT INTO @tbTaxes (descripcion,subTotal)
             SELECT 'Subtotal' + ' ' + ti.descripcion as descripcion
-                    ,ISNULL
-                    ((
-                    SELECT  CAST(SUM(ni.TaxBase) as numeric(18,2)) 
+                  ,ISNULL
+                  ((
+                    SELECT SUM(CAST(ni.TaxBase as numeric(18,2)))
                     FROM Ventas.NotaEntregaImpuesto ni WITH (NOLOCK) 
                     WHERE ni.NotaEntregaId = @idDocument 
                       AND ni.TaxPercentId = ti.idTipoIva
                       AND ni.[Enabled] = 1
 
-                    ),0) as subTotal
+                  ),0) as subTotal
             FROM dbo.TipoIva ti WITH (NOLOCK)
-            WHERE CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
+            WHERE CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date) 
 
-            UNION ALL 
-
-            SELECT ti.descripcion 
-                  ,ISNULL
+            INSERT INTO @tbTaxes (descripcion,subTotal)
+            SELECT ti.descripcion as descripcion
+                  ,CAST(ISNULL
                   ((
-                    SELECT  CAST(SUM(ni.TaxValue) as numeric(18,2)) 
+                    SELECT SUM(CAST(ni.TaxBase as numeric(18,2)))
                     FROM Ventas.NotaEntregaImpuesto ni WITH (NOLOCK) 
                     WHERE ni.NotaEntregaId = @idDocument 
-                    AND ni.TaxPercentId = ti.idTipoIva
-                    AND ni.[Enabled] = 1
+                      AND ni.TaxPercentId = ti.idTipoIva
+                      AND ni.[Enabled] = 1
 
-                  ),0) 
+                  ),0) * porcentaje / 100 as numeric(18,2)) as iva
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE ti.porcentaje > 0
-              AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date) 
+              AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
 
             SET @taxesValue = (SELECT * FROM @tbTaxes FOR JSON PATH)
 
@@ -299,8 +303,8 @@ BEGIN
                                 ,dirMatriz = REPLACE(ISNULL(s.dirEstablecimiento, 'S/N'), '&', '%26') 
 								,telefonoEntidad = ISNULL(s.telefono, 'S/N')  
 								,emailEntidad = s.correo 	
-								,razonSocialCliente = REPLACE(cl.nombreFiscal   , '&', '%26')   
-								,nroIdentificacion = cl.numeroIdentificacion 
+								,razonSocialCliente = REPLACE(cu.BusinessName   , '&', '%26')   
+								,nroIdentificacion = cu.IDCard 
 								,direccionCliente = REPLACE(ISNULL(cl.direccion, ''), '&', '%26')   
 								,correoCliente = ISNULL(cl.correo, '')
 								,s.dirEstablecimiento
@@ -327,6 +331,7 @@ BEGIN
 							INNER JOIN dbo.TipoIdentificacion ti  ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
 							 LEFT JOIN dbo.Ciudad             c   ON c.idCiudad              = cl.idCiudad
 							INNER JOIN dbo.Entidad            e   ON e.idEntidad             = pr.idEntidad
+                            INNER JOIN Customer.Customer     cu WITH (NOLOCK) ON cu.Id             = cl.CustomerId
 							WHERE pr.idProforma = @idDocument FOR JSON PATH  
 						)
 

@@ -1,0 +1,146 @@
+<app-breadcrumb />
+
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="icheck-primary">
+          <input
+            [(ngModel)]="dataSearch.supplierChecked"
+            id="supplierChecked"
+            name="supplierChecked"
+            type="checkbox"
+          />
+          <label for="supplierChecked">Proveedor</label>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="icheck-primary">
+          <input
+            [(ngModel)]="dataSearch.userChecked"
+            id="userChecked"
+            name="userChecked"
+            type="checkbox"
+          />
+          <label for="userChecked">Usuario</label>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+    </div>
+    <hr />
+    <div class="row">
+      <div class="col-xl-3 col-lg-3 col-md-12 col-12">
+        <div class="form-group">
+          <label for="tipoComprobante">Tipo comprobante</label>
+          <select
+            (change)="onChangeDocType()"
+            [(ngModel)]="dataSearch.codDoc"
+            class="form-select"
+            id="tipoComprobante"
+            name="tipoComprobante"
+          >
+            @for (item of documentTypes; track $index) {
+            <option [ngValue]="item.codigoSri">{{ item.descripcion }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-12 col-12">
+        <div class="form-group">
+          <label for="establecimiento">Establecimiento: </label>
+          <select
+            [(ngModel)]="dataSearch.codEstab"
+            class="form-select"
+            id="establecimiento"
+            name="establecimiento"
+          >
+            <option value="">Todos</option>
+            @for (item of establecimientos; track $index) {
+            <option [ngValue]="item.codEstab">
+              {{ item.nombreComercial }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+        <div class="form-group">
+          <label>Rango Fechas</label>
+          <app-date-range-selection
+            (onChangeDateRange)="onDateRangeSelection($event)"
+          />
+        </div>
+      </div>
+      @if (dataSearch.codDoc === "01") {
+      <div class="col-lg-2 col-md-2 col-sm-6 col-12" ng-if="showField">
+        <div class="form-group">
+          <label for="retencion">Retencion</label>
+          <select
+            id="retencion"
+            class="form-select"
+            [(ngModel)]="dataSearch.ckRetencion"
+          >
+            @for (item of estadosRetencion; track $index) {
+            <option [ngValue]="item.estado">
+              {{ item.descripcion }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      }
+    </div>
+    <div class="row">
+      @if (dataSearch.supplierChecked) {
+      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+        <div class="form-group">
+          <label>Proveedor</label>
+          <app-supplier-search
+            [isSearchSimple]="isSearchSupplierSimple"
+            (onSelected)="onSupplierSelected($event)"
+            [textSearch]="dataSearch.supplierName"
+            (onInputEmpty)="supplierResultEmptyInput($event)"
+          ></app-supplier-search>
+        </div>
+      </div>
+      } @if (dataSearch.userChecked) {
+      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+        <div class="form-group">
+          <label>Usuario: </label>
+          <app-user-search
+            (onUserSelected)="onUserSelected($event)"
+            [textSearch]="dataSearch.userName"
+            (emptyInput)="userResultEmptyInput($event)"
+          ></app-user-search>
+        </div>
+      </div>
+      }
+      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="subcategoryId">Subcategoría:</label>
+          <select
+            [(ngModel)]="dataSearch.subcategoryId"
+            class="form-select border-select"
+            id="subcategoryId"
+          >
+            <option [ngValue]="0">Todas</option>
+            @for (item of subcategories; track $index) {
+            <option [ngValue]="item.id">
+              {{ item.name }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+      <button (click)="pdf()" class="btn btn-danger" type="button">PDF</button>
+      <button (click)="excel()" class="btn btn-success" type="button">
+        EXCEL
+      </button>
+    </div>
+  </div>
+</div>

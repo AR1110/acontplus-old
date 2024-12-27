@@ -1,56 +1,27 @@
-﻿namespace Configuracion.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-[Route("api/[controller]")]
-[ApiController]
-public class UserProfileController : ControllerBase
+namespace Configuracion.API.Controllers;
+
+public class UserProfileController(IUserProfileService userProfileService) : BaseApiController
 {
-    private readonly ICustomLogger _log;
-    private readonly IUserProfileService _service;
-
-    public UserProfileController(IUserProfileService service, ICustomLogger log)
-    {
-        _service = service;
-        _log = log;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() } };
-            var response = await _service.GetAsync(parameters);
-            if (response == null) { return NoContent(); }
-
-            ;
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en get " + ex.Message);
-            return BadRequest("Error en get " + ex.Message);
-        }
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() } };
+        var response = await userProfileService.GetAsync(parameters);
+        if (response == null) { return NoContent(); }
+        return Ok(response);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
             {
                 { "id", id }, { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-            var response = await _service.UpdateAsync(parameters);
-            if (response == null) { return NoContent(); }
-
-            ;
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error en put " + ex.Message);
-            return BadRequest("Error en put " + ex.Message);
-        }
+        var response = await userProfileService.UpdateAsync(parameters);
+        if (response == null) { return NoContent(); }
+        return Ok(response);
     }
 }

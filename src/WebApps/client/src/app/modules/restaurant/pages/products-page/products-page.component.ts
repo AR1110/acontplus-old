@@ -5,21 +5,22 @@ import { ItemListComponent } from '@restaurant/products/item/item-list/item-list
 import { MenuListComponent } from '@restaurant/products/menu/menu-list/menu-list.component';
 import { PromotionListComponent } from '@restaurant/products/promotion/promotion-list/promotion-list.component';
 import { IngredientListComponent } from '@restaurant/products/ingredient/ingredient-list/ingredient-list.component';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
-  selector: 'app-products-page',
-  standalone: true,
-  imports: [
-    BreadcrumbComponent,
-    MatTab,
-    MatTabGroup,
-    ItemListComponent,
-    MenuListComponent,
-    PromotionListComponent,
-    IngredientListComponent,
-  ],
-  templateUrl: './products-page.component.html',
-  styles: ``,
+    selector: 'app-products-page',
+    imports: [
+        MatCardModule,
+        BreadcrumbComponent,
+        MatTab,
+        MatTabGroup,
+        ItemListComponent,
+        MenuListComponent,
+        PromotionListComponent,
+        IngredientListComponent,
+    ],
+    templateUrl: './products-page.component.html',
+    styles: ``
 })
 export class ProductsPageComponent {
   isMenuTabActive: boolean = false;

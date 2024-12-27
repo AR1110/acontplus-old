@@ -59,7 +59,7 @@ BEGIN
 							  ,de.usuario
 							  ,ISNULL(de.codEstab, '''')                 as codEstab
                               ,COUNT(*) OVER()                           as totalRecords
-						FROM FactElect.v_DocElectronico de WITH (NOLOCK)
+						FROM FactElect.v_DocElectronico de
 						WHERE de.idEntidad = @idEntidad '
 
 	        SELECT @codDoc                   = codDoc
@@ -131,16 +131,11 @@ BEGIN
 			        SET @sql = @sql + 'AND de.rucReceptor = @identificacionReceptor '
 		        END 
 
-	        IF (@tipo = '3')
-		        BEGIN
-			        SET @sql = @sql +  'AND codEstado NOT IN (4,6) '
-		        END
-	
 	        IF @codEstado >= 0
 		        BEGIN
                     IF @codEstado = 8 
                         BEGIN
-                            SET @sql = @sql +  'AND codEstado NOT IN (4,6) '
+                            SET @sql = @sql +  'AND de.codEstado <> 4 AND de.codEstado <> 6 '
                         END 
                     ELSE 
                         BEGIN
@@ -154,7 +149,7 @@ BEGIN
 		        END 
 
 
-            SET @sql = @sql + 'ORDER BY de.idDocumentoElectronico DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
+            SET @sql = @sql + 'ORDER BY de.fechaEmision DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
 	 
 	        EXEC sp_executesql @sql,@params
 				                   ,@idEntidad              = @idEntidad
@@ -178,7 +173,7 @@ BEGIN
                       ,nombreComercial
                       ,codEstab
                       ,idPuntoEmision
-                      ,ptoEmi + '-' + estab as ptoEmi
+                      ,estab + '-' + ptoEmi as ptoEmi
                       ,defaultEstab
                       ,defaultPtoEmi 
             FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultEstab DESC

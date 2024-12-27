@@ -14,11 +14,10 @@ import {
 import { Ingredient } from '@restaurant/models/ingredient.model';
 
 @Component({
-  selector: 'app-ingredient-search',
-  standalone: true,
-  imports: [FormsModule, NgbHighlight, NgbTypeahead],
-  templateUrl: './ingredient-search.component.html',
-  styles: ``,
+    selector: 'app-ingredient-search',
+    imports: [FormsModule, NgbHighlight, NgbTypeahead],
+    templateUrl: './ingredient-search.component.html',
+    styles: ``
 })
 export class IngredientSearchComponent {
   searching = false;

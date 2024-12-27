@@ -1,11 +1,11 @@
 import { Route, Routes } from "@angular/router";
-import { CompanyCustomerPageComponent } from "@company-customer/pages/company-customer-page/company-customer-page.component";
+import { CompanyCustomerComponent } from "@customer/ui/company-customer/company-customer.component";
 
 export const routes: Routes = [
   {
     path: 'company-customer',
     title: 'Cliente',
-    component: CompanyCustomerPageComponent,
+    component: CompanyCustomerComponent,
     data: {
       breadcrumb: 'Cliente',
     },

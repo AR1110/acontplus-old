@@ -1,27 +1,20 @@
-﻿namespace Inventario.API.Controllers;
+﻿using Common.AppSettings;
+using Common.AppSettings.Extensions;
 
-public class LotPriceController : BaseApiController
+namespace Inventario.API.Controllers;
+
+public class LotPriceController(ILotPriceService lotPriceService) : BaseApiController
 {
-
-    private readonly ILotPriceService _service;
-
-    public LotPriceController(ILotPriceService service)
-    {
-        _service = service;
-
-    }
-
     [HttpGet]
-    public async Task<ActionResult<ApiResponseDeprecated>> Get(string json)
+    public async Task<ActionResult<LegacyApiResponse>> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
-            };
-        var response = await _service.GetAsync(parameters);
+        {
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await lotPriceService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
 
-            ;
         return Ok(response);
     }
 
@@ -29,14 +22,13 @@ public class LotPriceController : BaseApiController
     public async Task<ActionResult> Put(ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
-            };
-        var response = await _service.UpdateAsync(parameters);
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
+        var response = await lotPriceService.UpdateAsync(parameters);
         if (response == null) { return NoContent(); }
 
-            ;
         return Ok(response);
     }
 }

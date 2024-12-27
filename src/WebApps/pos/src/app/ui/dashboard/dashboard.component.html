@@ -1,0 +1,61 @@
+<div class="header-widget">
+  <h2>Dashboard</h2>
+  <button mat-raised-button [mat-menu-trigger-for]="widgetMenu">
+    <mat-icon>add_circle</mat-icon>
+    Añadir widget
+  </button>
+  <mat-menu #widgetMenu="matMenu">
+    @for (item of dashboardStore.widgetsToAdd(); track $index) {
+    <button mat-menu-item (click)="dashboardStore.addWidget(item)">
+      {{ item.label }}
+    </button>
+    }@empty {
+    <button mat-menu-item>No hay widget para agregar</button>
+    }
+  </mat-menu>
+</div>
+<div class="d-flex flex-column gap-4">
+  <div class="dashboard-widgets">
+    @for (item of dashboardStore.documentCounts(); track $index) {
+    <app-widget [data]="item"></app-widget>
+    }
+  </div>
+  <div class="dashboard-widgets">
+    @for (item of dashboardStore.addedWidgets(); track $index) {
+    <app-widget [data]="item"></app-widget>
+    }
+  </div>
+</div>
+<!-- <div class="hstack gap-3 my-2">
+  <mat-form-field>
+    <mat-label>Año</mat-label>
+    <mat-select [(ngModel)]="dataSearch().anio" (selectionChange)="refresh()">
+      @for(item of anios();track $index){
+      <mat-option [value]="item">{{ item }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div> -->
+
+<!-- <div class="row gy-2">
+  <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+    <app-sale-stats [sales]="sales()" />
+  </div>
+  <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+    <app-best-selling-product-stats
+      [bestSellingProduct]="bestSellingProduct()"
+    />
+  </div>
+</div> -->
+
+<button
+  class="float-button-custom-pink d-flex align-content-center"
+  (click)="navigateToPos()"
+>
+  <mat-icon
+    aria-hidden="false"
+    aria-label="Example home icon"
+    fontIcon="add"
+  ></mat-icon>
+  Crear Orden
+</button>

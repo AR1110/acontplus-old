@@ -6,7 +6,7 @@ public class NotaEntregaService(IAdoSqlServer adoSqlServer) : INotaEntregaServic
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync(NameSchema + "Get", parameters, true, false);
+        var ds = await adoSqlServer.GetDataSetAsync(NameSchema + "Get", parameters, false, false);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
         return DataConverters.DataSetToJson(ds, true);
@@ -14,7 +14,7 @@ public class NotaEntregaService(IAdoSqlServer adoSqlServer) : INotaEntregaServic
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoSqlServer.GetDataSetAsync(NameSchema + "GetId", parameters, true);
+        var ds = await adoSqlServer.GetDataSetAsync(NameSchema + "GetId", parameters, false);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
         return DataConverters.DataSetToJson(ds, true);
@@ -30,9 +30,9 @@ public class NotaEntregaService(IAdoSqlServer adoSqlServer) : INotaEntregaServic
         return await adoSqlServer.SpExecuteAsync<ApiResponse>(NameSchema + "Update", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> CancelAsync(Dictionary<string, object> parameters)
     {
-        return await adoSqlServer.SpExecuteAsync<ApiResponse>(NameSchema + "Delete", parameters);
+        return await adoSqlServer.SpExecuteAsync<ApiResponse>(NameSchema + "Cancel", parameters);
     }
 
     public async Task<ApiResponse> ConvertToDocAsync(Dictionary<string, object> parameters)

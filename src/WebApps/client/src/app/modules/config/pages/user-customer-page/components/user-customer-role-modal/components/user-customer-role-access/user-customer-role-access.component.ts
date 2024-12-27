@@ -44,20 +44,19 @@ interface MenuFlatNode {
 
 
 @Component({
-  selector: 'app-user-customer-role-access',
-  standalone: true,
-  imports: [
-    MatTreeModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCheckboxModule,
-    FormsModule,
-    FontAwesomeModule,
-    NgbPopoverModule,
-    MatSlideToggleModule
-  ],
-  templateUrl: './user-customer-role-access.component.html',
-  styles: ``
+    selector: 'app-user-customer-role-access',
+    imports: [
+        MatTreeModule,
+        MatButtonModule,
+        MatIconModule,
+        MatCheckboxModule,
+        FormsModule,
+        FontAwesomeModule,
+        NgbPopoverModule,
+        MatSlideToggleModule
+    ],
+    templateUrl: './user-customer-role-access.component.html',
+    styles: ``
 })
 export class UserCustomerRoleAccessComponent {
 

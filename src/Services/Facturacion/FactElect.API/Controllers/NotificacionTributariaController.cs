@@ -1,52 +1,24 @@
-﻿namespace FactElect.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-public class NotificacionTributariaController : BaseApiController
+namespace FactElect.API.Controllers;
+
+public class NotificacionTributariaController(INotificacionTributariaService notificacionTributariaService)
+    : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-
-
-    public NotificacionTributariaController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
-        {
-            await _db.SpExecuteAsync("FactElect.Notificacion_Tributaria_Get");
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object> { { "id", id } };
+        return Ok(await notificacionTributariaService.GetAsync(parameters));
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
+    public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("FactElect.Notificacion_Tributaria_Insert");
-            _db.AddDynamicParam("idRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "idRol", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(data.Data) }
+        };
+        return Ok(await notificacionTributariaService.AddAsync(parameters));
     }
 }

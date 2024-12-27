@@ -1,16 +1,22 @@
 import { Route } from "@angular/router";
 
-import { CategoryPageComponent } from "./pages/category-page/category-page.component";
-import { LotPricePageComponent } from "./pages/lot-price-page/lot-price-page.component";
-import { MassiveTaxPageComponent } from "./pages/massive-tax-page/massive-tax-page.component";
-import { MeasurePageComponent } from "./pages/measure-page/measure-page.component";
-import { ProductPageComponent } from "./pages/product-page/product-page.component";
-import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
-import {InventoryReportPageComponent} from "@inventory/reports/inventory-report-page/inventory-report-page.component";
+import { CategoryPageComponent } from "@inventory/ui/category-page/category-page.component";
+import { LotPricePageComponent } from "@inventory/ui/lot-price-page/lot-price-page.component";
+import { MassiveTaxPageComponent } from "@inventory/ui/massive-tax-page/massive-tax-page.component";
+import { MeasurePageComponent } from "@inventory/ui/measure-page/measure-page.component";
+import { SubCategoryComponent } from "@inventory/ui/sub-category/sub-category.component";
+import {InventoryReportComponent} from "@inventory/ui/inventory-report/inventory-report.component";
+import { BrandPageComponent } from "@inventory/ui/brand-page/brand-page.component";
+import { InvModelPageComponent } from "@inventory/ui/inv-model-page/inv-model-page.component";
+import { TarifaPageComponent } from "@inventory/ui/tarifa-page/tarifa-page.component";
+import { TagsComponent } from "@inventory/ui/tags/tags.component";
+import { FraccProductPageComponent } from "@inventory/ui/fracc-product-page/fracc-product-page.component";
+import {ProductComponent} from "@inventory/ui/product/product.component";
 
 export const routes: Route[] = [
+
   {
-    path: 'category-page',
+    path: 'category',
     title: 'Categoria',
     component: CategoryPageComponent,
     data: {
@@ -18,20 +24,28 @@ export const routes: Route[] = [
     }
   },
   {
-    path: 'subcategory-page',
+    path: 'subcategory',
     title: 'SubCategoria',
-    component: SubCategoryPageComponent,
+    component: SubCategoryComponent,
     data: {
-      breadcrumb: 'Reporte Compras'
+      breadcrumb: 'Sub Categorias'
     }
   },
 
   {
-    path: 'product-page',
+    path: 'product',
     title: 'Productos',
-    component: ProductPageComponent,
+    component: ProductComponent,
     data: {
       breadcrumb: 'Productos'
+    },
+  },
+  {
+    path: 'fracc-product',
+    title: 'Productos Fraccionados',
+    component: FraccProductPageComponent,
+    data: {
+      breadcrumb: 'Productos Fraccionados'
     },
   },
   {
@@ -60,9 +74,41 @@ export const routes: Route[] = [
     },
   },
   {
+    path: 'brand',
+    title: 'Marca',
+    component: BrandPageComponent,
+    data: {
+      breadcrumb: 'Marca'
+    },
+  },
+  {
+    path: 'model',
+    title: 'Modelo',
+    component: InvModelPageComponent,
+    data: {
+      breadcrumb: 'Modelo'
+    },
+  },
+  {
+    path: 'tarifa',
+    title: 'Tarifa',
+    component: TarifaPageComponent,
+    data: {
+      breadcrumb: 'Tarifa'
+    },
+  },
+  {
+    path: 'tags',
+    title: 'Etiquetas',
+    component: TagsComponent,
+    data: {
+      breadcrumb: 'Etiquetas'
+    },
+  },
+  {
     path: 'report',
     title: 'Reporte Inventario',
-    component: InventoryReportPageComponent,
+    component: InventoryReportComponent,
     data: {
       breadcrumb:  'Reporte Inventario'
     }

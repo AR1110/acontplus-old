@@ -1,4 +1,5 @@
-﻿(function(){
+﻿//@ts-check
+(function () {
 
     'use strict';
 
@@ -123,14 +124,12 @@
                     hasParams: false,
                     codigo: 'RCL',
                     format,
-                    aditionalParams: [
-
-                    ]
                 }),
-                dataParams: JSON.stringify(dataParms)
+                dataParams: JSON.stringify(dataParms),
             }
 
             commonSvc.getReport({
+                v2: true,
                 parameters,
                 formatType: format
             })

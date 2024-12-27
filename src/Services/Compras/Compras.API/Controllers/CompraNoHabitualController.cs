@@ -1,19 +1,17 @@
-﻿namespace Compras.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-[Route("api/[controller]")]
-[ApiController]
-public class CompraNoHabitualController : ControllerBase
+namespace Compras.API.Controllers;
+
+public class CompraNoHabitualController : BaseApiController
 {
     private readonly ICompraNoHabitualService _compraNoHabSvc;
     private IConfiguration _configuration;
-    private readonly ICustomLogger _log;
 
-    public CompraNoHabitualController(IConfiguration configuration, ICompraNoHabitualService compraNoHabSvc,
-        ICustomLogger log)
+    public CompraNoHabitualController(IConfiguration configuration, ICompraNoHabitualService compraNoHabSvc
+        )
     {
         _configuration = configuration;
         _compraNoHabSvc = compraNoHabSvc;
-        _log = log;
     }
 
     [HttpGet("Get")]
@@ -32,7 +30,6 @@ public class CompraNoHabitualController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al listar Compra No Habitual: \n" + ex);
             return BadRequest("Error on get: " + ex.Message);
         }
     }
@@ -48,7 +45,6 @@ public class CompraNoHabitualController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al crear compra no habitual: " + ex);
             return BadRequest(ex.Message);
         }
     }
@@ -64,7 +60,6 @@ public class CompraNoHabitualController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al actualizar compra no habitual: " + ex);
             return BadRequest(ex.Message);
         }
     }
@@ -81,7 +76,6 @@ public class CompraNoHabitualController : ControllerBase
         }
         catch (Exception ex)
         {
-            _log.LogActivity("Error al eliminar doc. compra no habitual: " + ex);
             return BadRequest(ex.Message);
         }
     }

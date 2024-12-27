@@ -8,16 +8,15 @@ import { TabulatorComponent } from "../../../../../core/components/tabulator/tab
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-order-document',
-  standalone: true,
-  templateUrl: './order-document.component.html',
-  styles: ``,
-  imports: [
-    CommonModule,
-    FontAwesomeModule,
-    TabulatorComponent,
-    FormsModule,
-  ]
+    selector: 'app-order-document',
+    templateUrl: './order-document.component.html',
+    styles: ``,
+    imports: [
+        CommonModule,
+        FontAwesomeModule,
+        TabulatorComponent,
+        FormsModule,
+    ]
 })
 export class OrderDocumentComponent implements OnInit {
 

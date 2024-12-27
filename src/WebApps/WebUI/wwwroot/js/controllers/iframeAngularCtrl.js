@@ -54,16 +54,15 @@
                 }
             } catch (error) {
                 console.error("Error decoding token:", error);
-               return alertEndSession();
+                return alertEndSession();
             }
         } else {
-           return alertEndSession();
+            return alertEndSession();
         }
 
         const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
         mS.detectDevice();
-
-        let frontend = document.getElementById('frontend').value
+        let frontend = window.angularAppUrl;
         let div = document.querySelector('.container-fluid'); // Select the div by class
         div.classList.remove('container-fluid'); // Remove the div
         // Get the current URL
@@ -82,6 +81,7 @@
         }
         else {
             route = pathname.split('/')[1]
+            //route = pathname
         }
         async function getSrc() {
             if (!frontend) { return; }
@@ -95,11 +95,15 @@
             }
             // Create a new iframe element
             let iframe = document.createElement('iframe');
+            // iframe.classList='iframe-container'
+           
             iframe.title = 'Angular App';
             iframe.style.width = '100%';
-            iframe.style.height = '600px';
+            iframe.style.height = '100%';
             iframe.style.border = 'none';
             iframe.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-popups-to-escape-sandbox'
+
+             iframe.loading = 'lazy'; // Precarga solo cuando sea visible 
             // Set the src attribute of the iframe
 
             let urlClient = `${frontend}?token=${token}&route=${route}&permission=${JSON.stringify({ ...permissions, acciones: $scope.accion || {} })}&userRoleData=${JSON.stringify(userRoleData)}`
@@ -122,7 +126,7 @@
 
             // Get the div element
             var div = document.getElementById('iframeApp');
-
+            div.classList.add('iframe-container');
             // Append the iframe to the div
             div.appendChild(iframe);
         }

@@ -10,144 +10,160 @@ GO
 -- =============================================
 -- Restaurant.Order_Get 139, '{"tipo":1,"pageIndex":1,"pageSize":25,"startDate":"2023-09-05T17:18:46.886Z","endDate":"2023-09-05T17:18:46.886Z","customerCompanyId":0}', ''
 -- Restaurant.Order_Get 25, '{"id":102,"tipo":2}', ''
-CREATE OR ALTER PROCEDURE Restaurant.Order_Get @userRoleId INT
-,@json NVARCHAR(MAX)
-,@tableNames VARCHAR(500) OUT
+CREATE OR ALTER PROCEDURE Restaurant.Order_Get @userRoleId INT ,@json NVARCHAR(MAX) ,@tableNames VARCHAR(500) OUT
 AS
 BEGIN
 	SET NOCOUNT ON; 
     SET LANGUAGE SPANISH;
-    DECLARE @tipo INT
-    ,@id          INT
-    ,@customerCompanyId INT
-    ,@pageIndex   INT
-    ,@pageSize    INT
-    ,@startDate   DATETIME2
-    ,@endDate     DATETIME2
-    ,@tableId     INT
-    ,@sql         NVARCHAR(MAX)
-    
-    ,@idEntidad INT 
-    ,@userId INT
-    ,@finished BIT
-    ,@rucEmpresa VARCHAR(13)
-    ,@estabId INT 
-    ,@anio INT 
-    ,@deleted BIT
-    ,@isEnabled BIT
 
-    DECLARE @params    NVARCHAR(MAX) = N'@pageIndex INT
-                                         ,@pageSize INT
-                                         ,@startDate DATETIME2
-                                         ,@endDate DATETIME2
-                                         ,@customerCompanyId INT
-                                         ,@tableId INT
-                                         ,@userId INT
-                                         ,@finished BIT 
-                                         ,@estabId INT
-                                         ,@deleted BIT 
-                                         ,@isEnabled BIT'
-    SET @sql = N'SELECT Id		    = o.Id	
-	                    ,EstablecimientoId	= o.EstablecimientoId
-                        ,sri_e.codEstab    
-                        ,telefonoEstablecimiento = sri_e.telefono
-                        ,nombreComercialEstab    = sri_e.nombreComercial
-	                    ,PuntoEmisionId		= o.PuntoEmisionId
-	                    ,AppTableId			= ISNULL(o.AppTableId, 0)
-	                    ,TableId			= ISNULL(o.TableId, 0)
-	                    ,[Sequence]			= o.[Sequence]
-	                    ,Serie				= o.Serie
-	                    ,CustomerCompanyId	= o.CustomerCompanyId
-                        ,telefonoCliente    = ISNULL(c.telefono, '''')
-	                    ,Tax				= o.Tax
-	                    ,Discount			= o.Discount
-	                    ,Tip				= o.Tip
-	                    ,Total				= o.Total
-	                    ,Obs				= o.Obs
-	                    ,CreatedAt			= CONVERT(VARCHAR,FORMAT(o.CreatedAt, ''dd-MM-yyyy HH:mm''))
-	                    ,UpdatedAt			= CONVERT(VARCHAR,FORMAT(o.UpdatedAt, ''dd-MM-yyyy HH:mm''))
-	                    ,[Enabled]			= o.[Enabled]
-	                    ,Deleted			= o.Deleted
-	                    ,UserId				= o.UserId
-	                    ,Uuid				= o.Uuid 
-                        ,nameFiscal 	    = CASE WHEN o.CustomerCompanyId = 0 THEN ''CONSUMIDOR FINAL'' ELSE c.nombreFiscal END
-	                    ,userName           = u.nombreUsuario
-                        ,totalRecords       = COUNT(*) OVER()
-                        ,o.Divided
-                        ,o.Finished
-                        ,ISNULL(vt.roomDescription,'''') + '' - '' + CONVERT(VARCHAR, ISNULL(vt.[NumberTable],0)) + '' '' + ISNULL(vt.[Description], '''') tableName
-                    FROM Restaurant.[Order] o WITH(NOLOCK)
-                    INNER JOIN Sri.Establecimiento sri_e WITH(NOLOCK) ON sri_e.idEstablecimiento = o.establecimientoId 
-                    LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId
-                    LEFT JOIN Usuario u ON u.idUsuario = o.UserId
-                    LEFT JOIN Restaurant.v_Table vt WITH(NOLOCK) ON o.tableId = vt.Id
-                    WHERE o.establecimientoId = @estabId
-                      AND CAST(o.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE)
-                      AND CAST(@endDate AS DATE) '
+    --> Sql 
+    DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX)
 
-            
-    SELECT @tipo                 = tipo
-            ,@id                = id
-            ,@customerCompanyId = customerCompanyId
-            ,@pageIndex         = pageIndex
-            ,@pageSize          = pageSize
-            ,@startDate         = startDate
-            ,@endDate           = endDate
-            ,@tableId           = tableId
-            ,@userId            = userId
-            ,@finished          = finished
-            ,@estabId           = estabId
-            ,@anio              = anio 
-            ,@deleted           = deleted
-            ,@isEnabled         = isEnabled
-    FROM OPENJSON(@json) 
-    WITH ( tipo      INT         '$.tipo',
-            id        INT         '$.id',
-            customerCompanyId INT '$.customerCompanyId',
-            startDate DATETIME2  '$.startDate',
-            endDate DATETIME2     '$.endDate',
-            pageIndex INT         '$.pageIndex',
-            pageSize  INT         '$.pageSize',
-            tableId     INT       '$.tableId',
-            userId INT '$.userId',
-            finished BIT,
-            estabId INT,
-            anio INT,
-            deleted BIT,
-            isEnabled BIT
-    )
+    DECLARE @tipo               INT
+           ,@id                 INT
+           ,@customerCompanyId  INT
+           ,@pageIndex          INT
+           ,@pageSize           INT
+           ,@startDate          DATETIME2
+           ,@endDate            DATETIME2
+           ,@tableId            INT
+           ,@idEntidad          INT 
+           ,@userId             INT
+           ,@finished           BIT
+           ,@rucEmpresa         VARCHAR(13)
+           ,@estabId            INT 
+           ,@deleted            BIT
+           ,@isEnabled          BIT
+           ,@typeSearchCustomer CHAR(5)
+           ,@puntoEmisionId     INT 
+           ,@isSearchDate       BIT 
+
+    SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
     SELECT @idEntidad = idEntidad, @rucEmpresa = rucEmpresa FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
-    IF (@tipo = 1)
+    --> Get
+    IF @tipo = 1
         BEGIN
-            IF (@customerCompanyId > 0)
-                BEGIN
-                    SET @sql = @sql + ' AND o.CustomerCompanyId = @customerCompanyId '
-                END
-            IF (@tableId > 0)
-                SET @sql = @sql + ' AND o.TableId = @tableId'
+            SET @tableNames = 'orders'
 
-            IF (@userId > 0)
-                SET @sql = @sql + ' AND o.userId = @userId'
- 
-            SET @sql = @sql + ' AND o.Enabled = @isEnabled' 
+            SELECT @customerCompanyId  = customerCompanyId
+                  ,@pageIndex          = pageIndex
+                  ,@pageSize           = pageSize
+                  ,@startDate          = startDate
+                  ,@endDate            = endDate
+                  ,@tableId            = tableId
+                  ,@userId             = userId
+                  ,@finished           = finished
+                  ,@estabId            = estabId
+                  ,@deleted            = deleted
+                  ,@isEnabled          = isEnabled
+                  ,@typeSearchCustomer = typeSearchCustomer
+                  ,@puntoEmisionId     = puntoEmisionId
+                  ,@isSearchDate       = isSearchDate
+            FROM OPENJSON(@json) WITH 
+            ( 
+                 customerCompanyId  INT 
+                ,startDate          DATETIME2  
+                ,endDate            DATETIME2    
+                ,pageIndex          INT        
+                ,pageSize           INT         
+                ,tableId            INT       
+                ,userId             INT 
+                ,finished           BIT
+                ,estabId            INT
+                ,deleted            BIT
+                ,isEnabled          BIT
+                ,isSearchDate       BIT
+                ,typeSearchCustomer CHAR(5)
+                ,puntoEmisionId     INT
+            )
+
+            SET @params= N'@pageIndex         INT
+                          ,@pageSize          INT
+                          ,@startDate         DATETIME2
+                          ,@endDate           DATETIME2
+                          ,@customerCompanyId INT
+                          ,@tableId           INT
+                          ,@userId            INT
+                          ,@finished          BIT 
+                          ,@estabId           INT
+                          ,@deleted           BIT 
+                          ,@isEnabled         BIT
+                          ,@puntoEmisionId    INT
+                          ,@CompanyId         INT'
+
+            SET @sql = N'SELECT ro.Id
+                               ,es.codEstab
+                               ,ro.Serie
+                               ,ro.Total
+                               ,ro.Obs
+                               ,FORMAT(ro.CreatedAt, ''dd-MM-yyyy HH:mm'') as CreatedAt
+                               ,ro.Divided
+                               ,ro.Finished
+                               ,ro.[Enabled]
+                               ,ro.[Deleted]
+                               ,us.nombreUsuario                           as UserName
+                               ,ISNULL(cu.TradeName,''CONSUMIDOR FINAL'')                  as nameFiscal
+                               ,ta.[Description]                           as tableName
+                               ,COUNT(*) OVER()                            as totalRecords
+                         FROM Restaurant.[Order]         ro WITH (NOLOCK)
+                         LEFT JOIN dbo.Cliente          cl WITH (NOLOCK) ON cl.idCliente         = ro.CustomerCompanyId
+                         INNER JOIN dbo.PuntoEmision     pe WITH (NOLOCK) ON pe.idPuntoEmision    = ro.PuntoEmisionId
+                         INNER JOIN dbo.usuario          us WITH (NOLOCK) ON us.idUsuario         = ro.UserId
+                          LEFT JOIN [Restaurant].[Table] ta WITH (NOLOCK) ON ta.Id                = ro.TableId
+                         INNER JOIN Sri.Establecimiento  es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+                         LEFT JOIN Customer.Customer    cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
+                         WHERE es.idEntidad = @CompanyId '
+
+
+            IF @puntoEmisionId > 0
+                BEGIN
+                    SET @sql = @sql + 'AND ro.PuntoEmisionId = @puntoEmisionId '
+                END 
+
+            IF @isSearchDate = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST(ro.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
+                END 
+                 
+            IF @tableId > 0
+                BEGIN 
+                    SET @sql = @sql + 'AND ro.TableId = @tableId '
+                END 
+
+            IF @userId > 0
+                BEGIN 
+                    SET @sql = @sql + 'AND ro.userId = @userId '
+                END 
+
+            SET @sql = @sql + 'AND ro.Enabled = @isEnabled ' 
 
             IF @isEnabled = 1
                 BEGIN
-                    SET @sql = @sql + ' AND o.Finished = @finished' 
-                    
+                    SET @sql = @sql + 'AND ro.Finished = @finished ' 
                 END
 
 
-        --    SET @sql = @sql + ' AND o.Deleted = @deleted' 
+            IF (@typeSearchCustomer = 'OR' AND @customerCompanyId > 0)
+                BEGIN
+                    SET @sql = @sql + 'AND ro.CustomerCompanyId = @customerCompanyId '
+                END
+
+            IF (@typeSearchCustomer = 'DOC' AND @customerCompanyId > 0)
+                BEGIN 
+                    SET @sql = @sql + 'AND EXISTS (
+                                                    SELECT 1 
+                                                    FROM Restaurant.OrderDocument od WITH(NOLOCK)
+                                                    INNER JOIN v_CuentaPorCobrar v_cpc WITH(NOLOCK) ON v_cpc.idDocumento = od.DocumentoId 
+                                                    WHERE od.orderId = ro.Id AND v_cpc.idCliente = @customerCompanyId
+                                                ) '
+                END 
 
 
 
-            SET @sql = @sql + ' ORDER BY o.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
-                                 
-            SET @tableNames = 'orders'
-
+            SET @sql = @sql + 'ORDER BY ro.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
+                        
             EXEC sp_executesql @sql
                                 ,@params
                                 ,@pageIndex
@@ -156,17 +172,24 @@ BEGIN
                                 ,@endDate
                                 ,@customerCompanyId
                                 ,@tableId
-                                ,@userId 
-                                
-                                ,@estabId = @estabId
-                                ,@deleted = @deleted
-                                ,@isEnabled = @isEnabled
-                                ,@finished = @finished
+                                ,@userId         = @userId
+                                ,@estabId        = @estabId
+                                ,@deleted        = @deleted
+                                ,@isEnabled      = @isEnabled
+                                ,@finished       = @finished
+                                ,@puntoEmisionId = @puntoEmisionId
+                                ,@CompanyId      = @idEntidad
+
+            RETURN 
         END
     
-    --Editar Orden
+    --> Editar Orden
     IF (@tipo = 2)
         BEGIN
+            SET @tableNames = 'order,orderItems'
+
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
             DECLARE @tblOrderItems AS TABLE(
                 uuid     UNIQUEIDENTIFIER NOT NULL,
                 id INT NOT NULL UNIQUE,
@@ -204,20 +227,19 @@ BEGIN
                 medida VARCHAR(100) NOT NULL
             )
 
-            SET @tableNames = 'order,orderItems'
             
-            SELECT 
-                customerName = CASE WHEN o.CustomerCompanyId = 0 THEN 'CONSUMIDOR FINAL' ELSE c.nombreFiscal END
-                ,tableName = r.[description] + ' - ' + ISNULL(t.[Description], '') 
-                ,numberTable = numberTable
-                ,tipoIdentificacionSri= ti.codigoSri
-                ,o.*
-             FROM Restaurant.[Order] o WITH(NOLOCK)
-             LEFT JOIN Cliente c WITH(NOLOCK) ON c.idCliente = o.CustomerCompanyId
-             LEFT JOIN dbo.TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = c.idTipoIdentificacion 
-             LEFT JOIN Restaurant.[Table] t WITH(NOLOCK) ON t.iD = o.TableId
-             LEFT JOIN Restaurant.[v_room] r ON r.Id = t.RoomId
-             WHERE o.Id = @id 
+            SELECT cu.TradeName as customerName
+                  ,tableName = rm.[description] + ' - ' + ISNULL(ta.[Description], '') 
+                  ,numberTable = numberTable
+                  ,tipoIdentificacionSri= ti.codigoSri
+                  ,ro.*
+             FROM Restaurant.[Order]           ro WITH (NOLOCK)
+             LEFT JOIN Cliente                cl WITH (NOLOCK) ON cl.idCliente            = ro.CustomerCompanyId
+              LEFT JOIN Restaurant.[Table]     ta WITH (NOLOCK) ON ta.Id                   = ro.TableId
+             LEFT JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion 
+             LEFT JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                   = cl.CustomerId
+              LEFT JOIN Restaurant.Room        rm WITH (NOLOCK) ON rm.Id                   = ta.RoomId
+             WHERE ro.Id = @id 
             
             --ARTICULO- ITEMS 
             INSERT INTO @tblOrderItems(uuid, id, orderId, itemId, taxId, taxPercentId, taxPercent, feeId,  idArticulo, medidaId, codigoArticulo, descripcion, s3ObjectUrl,
@@ -265,7 +287,7 @@ BEGIN
                              ) as medidasPrincipal,
                              va.medida
 
-            FROM Restaurant.[OrderItem] o_i with(nolock)
+            FROM Restaurant.[OrderItem] o_i WITH (NOLOCK)
             INNER JOIN Restaurant.Item it               ON it.Id = o_i.ItemId
             INNER JOIN Restaurant.ItemType i_t         ON i_t.Id = o_i.ItemTypeId
             INNER JOIN Inventario.v_Articulo va ON va.idArticulo = it.ProductId
@@ -321,76 +343,113 @@ BEGIN
 
 
             SELECT * FROM @tblOrderItems
+
+            RETURN 
         END
 
-    --Order Document [Nota Entrega, Factura Venta]
-    IF (@tipo=3)
-        BEGIN  
+    --> Order Document [Nota Entrega, Factura Venta]
+    IF @tipo = 3
+        BEGIN
+            
             SET @tableNames = 'orderDocuments'
-          
-            SELECT
-                v_cpc.codEstab
-                ,v_cpc.idCuentaPorCobrar 
-                ,od.DocumentoId
-                ,od.orderId
-                ,docType = IIF(v_cpc.codDoc='01', 'FV', v_cpc.codDoc)
-                ,serie = v_cpc.serieComprobante
-                ,serieComprobante = v_cpc.serieComprobante
-                ,createAt = FORMAT(v_cpc.fechaEmision, 'dd/MM/yyyy HH:mm')
-                ,customerName = v_cpc.razonSocialComprador
-                ,userName = v_cpc.usuario
-                ,v_cpc.tiempoCredito
-                ,v_cpc.importeTotal
-                ,v_cpc.abono
-                ,v_cpc.saldo
-                ,v_cpc.estado
-                ,telefono = ISNULL(v_cpc.telefono, '')
-                ,v_cpc.telefonoEstablecimiento
-                ,v_cpc.nombreComercial
-                ,v_cpc.codEstado
-            FROM Restaurant.OrderDocument od WITH(NOLOCK)
-            INNER JOIN v_CuentaPorCobrar v_cpc WITH(NOLOCK) ON v_cpc.idDocumento = od.DocumentoId
-            WHERE v_cpc.idEntidad = @idEntidad AND od.orderId = @id AND v_cpc.codDoc IN('01', 'NE') 
+
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+            SELECT cc.codEstab
+                  ,cc.idCuentaPorCobrar 
+                  ,cc.idDocumento as DocumentoId
+                  ,IIF(cc.codDoc='01', 'FV', cc.codDoc)        as docType
+                  ,cc.serieComprobante                         as serie
+                  ,cc.serieComprobante                         as serieComprobante
+                  ,FORMAT(cc.fechaEmision, 'dd/MM/yyyy HH:mm') as createAt
+                  ,cc.razonSocialComprador                     as customerName
+                  ,cc.usuario                                  as userName
+                  ,cc.tiempoCredito
+                  ,cc.importeTotal
+                  ,cc.abono
+                  ,cc.saldo
+                  ,cc.estado
+                  ,ISNULL(cc.telefono, '')                     as telefono
+            FROM v_CuentaPorCobrar cc WITH (NOLOCK)
+            WHERE idEntidad = @idEntidad 
+                AND cc.idDocumento IN (SELECT DocumentoId FROM Restaurant.OrderDocument od WITH(NOLOCK) 
+                                                            INNER JOIN dbo.TipoDocumento td WITH(NOLOCK)  ON od.TipoDocumentoId = td.idTipoDocumento
+                                                            WHERE od.orderId = @id  AND td.codigo = cc.codDoc)
+
+            UNION ALL
+
+            SELECT cc.codEstab
+                  ,cc.idCuentaPorCobrar 
+                  ,cc.idDocumento as DocumentoId
+                  ,IIF(cc.codDoc='01', 'FV', cc.codDoc)        as docType
+                  ,cc.serieComprobante                         as serie
+                  ,cc.serieComprobante                         as serieComprobante
+                  ,FORMAT(cc.fechaEmision, 'dd/MM/yyyy HH:mm') as createAt
+                  ,cc.razonSocialComprador                     as customerName
+                  ,cc.usuario                                  as userName
+                  ,cc.tiempoCredito
+                  ,cc.importeTotal
+                  ,cc.abono
+                  ,cc.saldo
+                  ,cc.estado
+                  ,ISNULL(cc.telefono, '')                     as telefono
+            FROM v_CuentaPorCobrar cc WITH (NOLOCK)
+            WHERE idEntidad = @idEntidad 
+                AND cc.idDocumento IN (SELECT DocumentoId FROM Restaurant.OrderDocument od WITH(NOLOCK) 
+                                                            INNER JOIN dbo.TipoDocumento td WITH(NOLOCK)  ON od.TipoDocumentoId = td.idTipoDocumento
+                                                            WHERE od.orderId = @id  AND td.codigoSri = cc.codDoc)
+
+            RETURN
         END
 
-    --Order Filters 
+    --> Order Filters 
     IF (@tipo = 4)
         BEGIN
-            SET @tableNames = 'establecimientos,tables,usuarios'
+            
+            SET @tableNames = 'tables,usuarios'
 
-            SELECT idEstablecimiento
-                ,nombreComercial
-                ,codEstab
-                ,idPuntoEmision
-                ,ptoEmi + '-' + estab as ptoEmi
-                ,defaultEstab
-                ,defaultPtoEmi 
-        FROM v_PtoEmi_Asign WITH(NOLOCK) 
-        WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
-         
+            SELECT Id
+                  ,[NumberTable]
+                  ,[Description]
+                  ,[Floor]
+                  ,roomDescription 
+            FROM Restaurant.v_Table vt 
+            WHERE vt.idEntidad = @idEntidad
 
-            SELECT Id, [NumberTable], [Description], [Floor], roomDescription FROM Restaurant.v_Table vt INNER JOIN Entidad e WITH(NOLOCK) ON vt.ruc = e.ruc where e.idEntidad = @idEntidad
-            SELECT 
-				u.idUsuario, 
-				u.nombreUsuario, 
-				u.nombreCompleto				 
+            SELECT u.idUsuario 
+				  ,u.nombreUsuario 
+				  ,u.nombreCompleto				 
 			 FROM v_usuario u WITH(NOLOCK) 
-			 WHERE u.idEntidad = @idEntidad AND u.estadoUsuario = 1
+			 WHERE u.idEntidad = @idEntidad 
+               AND u.estadoUsuario = 1
+
+            RETURN 
         END
 
-    --Estadisticas 
+    --> Estadisticas 
     IF @tipo = 5
         BEGIN 
-            SET @tableNames = 'order,docs,productsTop'
-            SELECT 'Orden' AS docNom, 
-                    SUM(ro.Total) AS totalVendido,
-                    YEAR(ro.CreatedAt) AS anio,
-                    MONTH(ro.CreatedAt) AS mes
-            FROM Restaurant.[Order] ro
-            --WHERE ro.Id NOT IN (SELECT orderId FROM Restaurant.OrderDocument)
-            WHERE ro.establecimientoId = @estabId AND YEAR(ro.CreatedAt) = @anio 
+              SET @tableNames = 'order,docs,productsTop,documentCounts'
+
+			DECLARE @tbTotalSummary AS TABLE(
+				descripcion VARCHAR(100) NOT NULL
+				,cantidad INT NOT NULL
+			)
+            
+            DECLARE @anio INT
+
+            SELECT @anio = anio ,@estabId = estabId FROM OPENJSON(@json) WITH (anio INT ,estabId INT)
+
+            SELECT  'Orden'              as docNom 
+                    ,SUM(ro.Total)       as totalVendido
+                    ,YEAR(ro.CreatedAt)  as anio
+                    ,MONTH(ro.CreatedAt) as mes
+            FROM Restaurant.[Order]     ro WITH (NOLOCK)
+            INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON pe.idPuntoEmision = ro.PuntoEmisionId
+            WHERE pe.idEstablecimiento = @estabId 
+              AND YEAR(ro.CreatedAt)   = @anio 
             GROUP BY YEAR(ro.CreatedAt), MONTH(ro.CreatedAt)
-            ORDER BY YEAR(ro.CreatedAt), MONTH(ro.CreatedAt);
+            ORDER BY anio, mes
 
 
           SELECT 
@@ -402,7 +461,6 @@ BEGIN
                 SUM(v_cpc.importeTotal) AS totalVendido,
                 YEAR(od.CreatedAt) AS anio,
                 MONTH(od.CreatedAt) AS mes
-             --   ,v_cpc.idEstablecimiento
             FROM 
                 Restaurant.OrderDocument od WITH(NOLOCK)
             INNER JOIN 
@@ -428,6 +486,48 @@ BEGIN
             WHERE ro.EstablecimientoId = @estabId AND   YEAR(ro.CreatedAt) = @anio
             group by ri.Id, ar.descripcion, roi.ItemId
             order by count(ri.Id) desc; 
+
+
+            
+			INSERT INTO @tbTotalSummary (descripcion, cantidad)
+			SELECT 
+				'Ordenes' AS descripcion, 
+				COUNT(*) AS cantidad  -- Contar el número de órdenes
+			FROM 
+				Restaurant.[Order] ro
+			WHERE 
+				ro.establecimientoId = @estabId 
+				AND YEAR(ro.CreatedAt) = @anio;
+
+			INSERT INTO @tbTotalSummary (descripcion, cantidad)
+			SELECT 
+               'Facturas' AS descripcion, 
+                COUNT(*) AS cantidad   
+            FROM 
+                Restaurant.OrderDocument od WITH(NOLOCK)
+            INNER JOIN 
+                v_CuentaPorCobrar v_cpc WITH(NOLOCK) 
+                ON v_cpc.idDocumento = od.DocumentoId
+            WHERE  
+                v_cpc.idEstablecimiento = @estabId AND
+                YEAR(od.CreatedAt) = @anio AND
+                v_cpc.codDoc =  '01' 
+
+			INSERT INTO @tbTotalSummary (descripcion, cantidad)
+			SELECT 
+               'Notas de Entrega' AS descripcion, 
+                COUNT(*) AS cantidad   
+            FROM 
+                Restaurant.OrderDocument od WITH(NOLOCK)
+            INNER JOIN 
+                v_CuentaPorCobrar v_cpc WITH(NOLOCK) 
+                ON v_cpc.idDocumento = od.DocumentoId
+            WHERE  
+                v_cpc.idEstablecimiento = @estabId AND
+                YEAR(od.CreatedAt) = @anio AND
+                v_cpc.codDoc =  'NE' 
+
+			SELECT * FROM @tbTotalSummary
         END
 
 

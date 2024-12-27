@@ -1,4 +1,6 @@
-﻿namespace Inventario.API.Data;
+﻿using System.Reflection;
+
+namespace Inventario.API.Data;
 
 public class InventarioContext : BaseContext
 {
@@ -15,6 +17,9 @@ public class InventarioContext : BaseContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
         foreach (var property in modelBuilder.Model.GetEntityTypes()
                      .SelectMany(t => t.GetProperties())
                      .Where(
@@ -40,53 +45,5 @@ public class InventarioContext : BaseContext
 
         modelBuilder.Entity<SubcategoryPhoto>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
         modelBuilder.Entity<SubcategoryPhoto>().Property(x => x.Enabled).HasDefaultValue(true);
-    }
-
-    public override int SaveChanges()
-    {
-        var entries = ChangeTracker
-            .Entries()
-            .Where(e => e.Entity is BaseEntity && (
-                e.State == EntityState.Added
-                || e.State == EntityState.Modified));
-
-        foreach (var entityEntry in entries)
-        {
-            if (entityEntry.State == EntityState.Modified)
-            {
-                ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
-            }
-
-            //if (entityEntry.State == EntityState.Added)
-            //{
-            //    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.Now;
-            //}
-        }
-
-        return base.SaveChanges();
-    }
-
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        var entries = ChangeTracker
-            .Entries()
-            .Where(e => e.Entity is BaseEntity && (
-                e.State == EntityState.Added
-                || e.State == EntityState.Modified));
-
-        foreach (var entityEntry in entries)
-        {
-            if (entityEntry.State == EntityState.Modified)
-            {
-                ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
-            }
-            //if (entityEntry.State == EntityState.Added)
-            //{
-            //    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.Now;
-            //}
-        }
-
-        var result = await base.SaveChangesAsync(cancellationToken);
-        return result;
     }
 }

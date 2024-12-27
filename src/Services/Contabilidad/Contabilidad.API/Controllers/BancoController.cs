@@ -1,94 +1,44 @@
-﻿namespace Contabilidad.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+using Contabilidad.API.Services;
 
-public class BancoController : BaseApiController
+namespace Contabilidad.API.Controllers;
+
+public class BancoController(IBancoService bancoService) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    private readonly DbAccess _db;
-
-    public BancoController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-        _db = new DbAccess(_configuration);
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            var idUsuarioRol = User.GetUserRoleId();
-            await _db.SpExecuteAsync("Contabilidad.Banco_Get");
-            _db.AddDynamicParam("userRoleId", idUsuarioRol);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await bancoService.GetAsync(parameters));
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Contabilidad.Banco_Insert");
-            _db.AddDynamicParam("userRoleId",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await bancoService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Contabilidad.Banco_Update");
-            _db.AddDynamicParam("userRoleId",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await bancoService.GetAsync(parameters));
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        try
-        {
-            await _db.SpExecuteAsync("Contabilidad.Banco_Delete");
-            _db.AddDynamicParam("userRoleId",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        return Ok(await bancoService.GetAsync(parameters));
     }
 }

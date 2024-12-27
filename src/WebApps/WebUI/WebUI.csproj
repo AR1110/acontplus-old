@@ -1,45 +1,37 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RazorCompileOnPublish>false</RazorCompileOnPublish>
     <SpaRoot>..\client</SpaRoot>
     <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\client\client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
-
   <Target Name="PublishDemoDev" BeforeTargets="PrepareForBuild" AfterTargets="ComputeFilesToPublish" Condition="'$(EnvironmentName)' == 'Development'">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run development" />
   </Target>
-
   <Target Name="PublishDemoStaging" BeforeTargets="PrepareForBuild" AfterTargets="ComputeFilesToPublish" Condition="'$(EnvironmentName)' == 'Staging'">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run staging" />
   </Target>
-
   <Target Name="PublishDemoPrd" BeforeTargets="PrepareForBuild" AfterTargets="ComputeFilesToPublish" Condition="'$(EnvironmentName)' == 'Production'">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run prod" />
   </Target>
-
   <!--<ItemGroup>
     <Content Update="wwwroot\**\*.css" CopyToPublishDirectory="never" />
     <Content Update="wwwroot\**\*.min.css" CopyToPublishDirectory="always" />
     <Content Update="wwwroot\**\*.js" CopyToPublishDirectory="never" />
     <Content Update="wwwroot\**\*.min.js" CopyToPublishDirectory="always" />
   </ItemGroup>-->
-
 </Project>

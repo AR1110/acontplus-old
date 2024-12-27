@@ -1,0 +1,32 @@
+<div class="overlay-content" overlay-scrollbars>
+  <mat-card appearance="outlined" class="pos-cart-card custom-mat-card">
+    <!-- Header del carrito POS -->
+    <mat-card-header class="pos-cart-header">
+      <div class="pos-header-row">
+        <app-cart-header />
+      </div>
+    </mat-card-header>
+
+    <!-- Cuerpo del carrito (productos) -->
+    <mat-card-content class="pos-cart-body">
+      <app-cart-items />
+      @if (orderItems().length===0) {
+      <div class="empty-cart">
+        <mat-icon>shopping_basket</mat-icon>
+        <p>Tu carrito está vacío</p>
+      </div>
+      }
+    </mat-card-content>
+
+    <mat-card-footer class="pos-cart-footer">
+      <app-cart-footer />
+      <!-- <div class="pos-cart-summary">
+      <p>Total de Items: {{ getTotalItems() }}</p>
+      <h4>Total: {{ getTotalPrice() }}</h4>
+    </div>
+    <button mat-raised-button color="primary" (click)="checkout()">
+      Finalizar Venta
+    </button> -->
+    </mat-card-footer>
+  </mat-card>
+</div>

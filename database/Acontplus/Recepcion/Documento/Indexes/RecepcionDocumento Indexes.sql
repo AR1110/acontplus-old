@@ -8,13 +8,13 @@ GO
 IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Compra_Habitual')   
     DROP INDEX IX_Compra_Habitual ON Recepcion.CompraHabitual;  
 GO  
-CREATE NONCLUSTERED INDEX IX_Compra_Habitual ON Recepcion.CompraHabitual(idProveedor, codEstab, idArticulo, codArticulo) INCLUDE (ruc)
+CREATE NONCLUSTERED INDEX IX_Compra_Habitual ON Recepcion.CompraHabitual(idProveedor, idArticulo) INCLUDE (ruc, codArticulo)
 GO
 
 IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Compra_DocumentoRecibido')   
     DROP INDEX IX_Compra_DocumentoRecibido ON Recepcion.DocumentoRecibido;  
 GO  
-CREATE NONCLUSTERED INDEX IX_Compra_DocumentoRecibido ON Recepcion.DocumentoRecibido(idDocumento, idEstablecimiento, codEstab, codDoc, rucEmisor, fechaEmision) INCLUDE (claveAcceso)
+CREATE NONCLUSTERED INDEX IX_Compra_DocumentoRecibido ON Recepcion.DocumentoRecibido(idDocumento, idEstablecimiento) INCLUDE (claveAcceso, codDoc, fechaEmision)
 GO
 
 IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Compra_Documento_Detalle')   

@@ -5,28 +5,27 @@ import {GroupedEstab, GroupedEstabPuntoEmision} from "@core/models/estab.model";
 import {DOC_TYPE_SRI, FORMAT_REPORT} from "@core/constants/global.constants";
 import {DocElectService} from "@billing/services/doc-elect.service";
 import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
-import {formatDateMoment} from "@core/utils/format-date-moment";
 import {
   CompanyCustomerSearchComponent
-} from "@company-customer/components/company-customer-search/company-customer-search.component";
+} from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
 import {UserSearchComponent} from "@core/components/user-search/user-search.component";
 import {BILLING_CODE_REPORT} from "@billing/enums/billing.enum.ts";
 import {isValidField} from "@core/utils/utils";
 import {ToasterService} from "@core/services/toaster.service";
 import {SharedService} from "@core/services/shared.service";
+import { formatDateToString } from '@core/utils/date.util';
 
 @Component({
-  selector: 'app-fact-elect-report-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent,
-    UserSearchComponent
-  ],
-  templateUrl: './fact-elect-report-page.component.html',
-  styles: ``
+    selector: 'app-fact-elect-report-page',
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent,
+        CompanyCustomerSearchComponent,
+        UserSearchComponent
+    ],
+    templateUrl: './fact-elect-report-page.component.html',
+    styles: ``
 })
 export class FactElectReportPageComponent {
   private docElectSvc = inject(DocElectService)
@@ -38,8 +37,8 @@ export class FactElectReportPageComponent {
     idTipoDocumento: 0,
     idEstablecimiento: 0,
     idPuntoEmision: 0,
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     codEstado: 0,
     codeRetencion: 'ALL',
     codeDevolucion: 'ALL',

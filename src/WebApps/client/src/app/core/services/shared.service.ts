@@ -11,6 +11,16 @@ import Swal from 'sweetalert2';
 
 import { ModalService } from './modal.service';
 import { ToasterService } from './toaster.service';
+import * as XLSX from 'xlsx';
+import {PdfViewerComponent} from "@shared/components/pdf-viewer/pdf-viewer.component";
+
+interface ReportParams<T> {
+  data: T;
+  format?: string;
+  isOldVersion?: boolean;
+  downloadOnly?: boolean;
+  openInModal?: boolean;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -53,36 +63,48 @@ export class SharedService {
 
   /**
    *
-   * @param data
-   * @param format pdf | excel
-   * @param isOldVersion
+   * @param obj
    */
-  getReport<T>({
-    data,
-    format = 'pdf',
-    isOldVersion = false,
-    downloadOnly = false,
-  }: {
-    data: T;
-    format?: string;
-    isOldVersion?: boolean;
-    downloadOnly?: boolean;
-  }) {
+  getReport<T>(obj: ReportParams<T>) {
+    const {
+      data,
+      format = 'pdf',
+      isOldVersion = false,
+      downloadOnly = false,
+      openInModal
+    } = obj;
+
     const path = isOldVersion ? PATHS.DOWNLOAD_V1 : PATHS.DOWNLOAD;
+
     this.http
       .post(`${PATHS_API.REPORT}${path}`, data, {
         observe: 'response',
         responseType: 'blob',
       })
       .subscribe((response) => {
-        this.saveFile(response, format, downloadOnly);
+
+        if (format === 'pdf' && openInModal && response.body) {
+          // this.openPdfInModal(response.body)
+        } else {
+          this.saveFile(response, format, downloadOnly);
+        }
       });
   }
 
-  appNotificacionInsert<T>(data: T) {
-    const url = `${PATHS_API.COMMON}${PATHS.APP_NOTIFICATION}`;
-    return this.http.post(`${url}?json=${JSON.stringify(data)}`, '');
+  private openPdfInModal(blob: Blob) {
+
+
+    var blobURL = URL.createObjectURL(blob);
+
+
+    let modalRef = this.modalSvc.open(PdfViewerComponent, {
+        size: 'xl'
+      });
+
+    modalRef.componentInstance.params =   { pdfSrc: blobURL };
+
   }
+
 
   async askToPrint<T extends { parameters: string }>(obj: T) {
     const { parameters } = obj;
@@ -233,4 +255,13 @@ export class SharedService {
     const modalRef = this.modalSvc.openModalCustom(SendMailModalComponent);
     modalRef.componentInstance.params = params || {};
   }
+
+
+  exportToExcel(data: any[], fileName: string): void {
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, `${fileName}.xlsx`);
+  }
+
 }

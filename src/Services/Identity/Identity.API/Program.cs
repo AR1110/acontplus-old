@@ -1,9 +1,10 @@
 ﻿using Common.AppSettings;
+using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
-ConfigHelper.AddJsonFiles(builder.Configuration);
+builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
+ConfigurationHelper.AddJsonFiles(builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
@@ -12,22 +13,28 @@ builder.Services.AddIdentityService(builder.Configuration);
 
 builder.Services.AddSwaggerDocumentation();
 
-builder.Services.AddApiVersioningConfig();
+builder.Services.AddVersioningAndSwagger();
+
+builder.Services.AddOpenApi();
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwaggerAndVersioning();
+    app.MapOpenApi();
+}
+
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseMiddleware<MobileRequestMiddleware>();
 
-app.UseSwaggerVersionedDocumentation();
-
 app.UseRouting();
 
-if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
     app.Urls.Add("http://*:5007"); // Linux Port
 }
@@ -39,15 +46,6 @@ else
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseEndpoints(endpoints =>
-{
-    _ = endpoints.MapGet("/", context =>
-    {
-        context.Response.Redirect("swagger");
-        return Task.CompletedTask;
-    });
-});
 
 app.MapControllers();
 

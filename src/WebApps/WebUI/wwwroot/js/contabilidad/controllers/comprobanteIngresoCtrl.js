@@ -49,7 +49,7 @@
         function resultRangeFilter(item) {
             $scope.dataSearch.fechaInicio = item.startDate;
             $scope.dataSearch.fechaFin = item.endDate;
-            $scope.filterValidation();
+            refresh()
         }
 
         function onKeyupUser() {
@@ -59,7 +59,7 @@
         }
         function onSelectUser(item) {
             $scope.dataSearch.byUsuario = item.idUsuario;
-            $scope.filterValidation();
+            refresh()
         }
 
 
@@ -136,9 +136,7 @@
                     isSearchDate,
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize
-                }
-
-                showLoader();
+                } 
                 compIngresoSvc.getAll(dataSearch).then(response => {
                     $scope.cobros = response;
                     $scope.cloneCobros = structuredClone(response)
@@ -151,9 +149,8 @@
 
                 }).catch(error => {
                     console.log(error)
-                }).finally(() => hideLoader())
-            } catch (error) {
-                hideLoader();
+                }) 
+            } catch (error) { 
                 console.log(error)
             }
         }
@@ -169,6 +166,8 @@
                 }
                 getCobros();
             })
+
+            compIngresoSvc.getPosfechadoCobrosModal()
         }
 
         $scope.pagechanged = function () {
@@ -201,12 +200,7 @@
                 }
             }
         }
-
-
-
-
-
-
+ 
 
     }
 

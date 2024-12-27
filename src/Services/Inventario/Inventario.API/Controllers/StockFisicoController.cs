@@ -1,16 +1,9 @@
-﻿namespace Inventario.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-public class StockFisicoController : BaseApiController
+namespace Inventario.API.Controllers;
+
+public class StockFisicoController(InventarioContext context, IStockFisicoService stockFisico) : BaseApiController
 {
-    private readonly InventarioContext _context;
-    private readonly IStockFisicoService _stockFisico;
-
-    public StockFisicoController(InventarioContext context, IStockFisicoService stockFisico)
-    {
-        _context = context;
-        _stockFisico = stockFisico;
-    }
-
     // GET: api/StockFisico
     [HttpGet]
     public async Task<IActionResult> GetStockFisicos(string json)
@@ -26,7 +19,7 @@ public class StockFisicoController : BaseApiController
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", json }
             };
-            var response = await _stockFisico.GetAsync(parameters);
+            var response = await stockFisico.GetAsync(parameters);
             if (response == null) { return NoContent(); }
 
             return Ok(response);
@@ -41,12 +34,12 @@ public class StockFisicoController : BaseApiController
     [HttpGet("{id}")]
     public async Task<ActionResult<StockFisico>> GetStockFisico(int id)
     {
-        if (_context.StockFisicos == null)
+        if (context.StockFisicos == null)
         {
             return NotFound();
         }
 
-        var stockFisico = await _context.StockFisicos.FindAsync(id);
+        var stockFisico = await context.StockFisicos.FindAsync(id);
 
         if (stockFisico == null)
         {
@@ -66,11 +59,11 @@ public class StockFisicoController : BaseApiController
             return BadRequest();
         }
 
-        _context.Entry(stockFisico).State = EntityState.Modified;
+        context.Entry(stockFisico).State = EntityState.Modified;
 
         try
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -93,7 +86,7 @@ public class StockFisicoController : BaseApiController
         request.UserRoleId = User.GetUserRoleId();
         try
         {
-            var response = await _stockFisico.AddAsync(request);
+            var response = await stockFisico.AddAsync(request);
             return Ok(response);
         }
         catch (Exception ex)
@@ -106,25 +99,25 @@ public class StockFisicoController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteStockFisico(int id)
     {
-        if (_context.StockFisicos == null)
+        if (context.StockFisicos == null)
         {
             return NotFound();
         }
 
-        var stockFisico = await _context.StockFisicos.FindAsync(id);
+        var stockFisico = await context.StockFisicos.FindAsync(id);
         if (stockFisico == null)
         {
             return NotFound();
         }
 
-        _context.StockFisicos.Remove(stockFisico);
-        await _context.SaveChangesAsync();
+        context.StockFisicos.Remove(stockFisico);
+        await context.SaveChangesAsync();
 
         return NoContent();
     }
 
     private bool StockFisicoExists(int id)
     {
-        return (_context.StockFisicos?.Any(e => e.Id == id)).GetValueOrDefault();
+        return (context.StockFisicos?.Any(e => e.Id == id)).GetValueOrDefault();
     }
 }

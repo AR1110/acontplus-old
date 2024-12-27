@@ -1,6 +1,8 @@
-﻿namespace Identity.API.Interfaces;
+﻿using Common.AppSettings;
+
+namespace Identity.API.Interfaces;
 
 public interface IUserService
 {
-    Task<ApiResponseDeprecated> GetAsync(Dictionary<string, object> parameters);
+    Task<LegacyApiResponse> GetAsync(Dictionary<string, object> parameters);
 }

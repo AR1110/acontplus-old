@@ -1,0 +1,58 @@
+<app-mat-custom-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [title]="titleModal"
+  (close)="dialogRef.close()"
+/>
+
+<ng-template #containerTemplate>
+  <form id="dataForm" autocomplete="off" [formGroup]="dataForm" (ngSubmit)="save()">
+
+
+     <div class="d-grid gap-2">
+       <mat-form-field class="w-100">
+         <mat-label>Entidad Financiera</mat-label>
+         <input matInput disabled [value]="params.nameEntidadFinanciera">
+       </mat-form-field>
+
+
+       <mat-form-field class="w-100">
+         <mat-label>Descripción</mat-label>
+         <input matInput formControlName="descripcion" (change)="onChangeDescripcion()">
+       </mat-form-field>
+      <div
+        class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2 gx-1 gy-1"
+      >
+
+      <mat-form-field >
+        <mat-label>Código</mat-label>
+        <input matInput formControlName="codigo">
+      </mat-form-field>
+
+        <mat-slide-toggle formControlName="controlCaja">Registro cuadre de caja</mat-slide-toggle>
+
+
+      </div>
+
+
+       @if(params.idSubEntidadFinanciera>0){
+         <mat-radio-group aria-label="Estado" formControlName="estado">
+           <mat-radio-button [value]="true">Activo</mat-radio-button>
+           <mat-radio-button [value]="false">Inactivo</mat-radio-button>
+         </mat-radio-group>
+
+       }
+
+     </div>
+  </form>
+</ng-template>
+
+<ng-template #actionsTemplate>
+  <button mat-flat-button   form="dataForm">
+    <mat-icon>save</mat-icon>
+    {{btnText}}
+  </button>
+</ng-template>
+
+
+

@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { MatButton } from '@angular/material/button';
 import { Room } from '@restaurant/models/room.model';
-import { NgClass } from '@angular/common';
 import { ModalService } from '@core/services/modal.service';
 import { RoomAddEditModalComponent } from '@restaurant/infrastructure/room/room-add-edit-modal/room-add-edit-modal.component';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
@@ -19,17 +18,15 @@ import { ToasterService } from '@core/services/toaster.service';
 import { ApiResponse } from '@core/models/api-response';
 
 @Component({
-  selector: 'app-room-list',
-  standalone: true,
-  imports: [
-    FaIconComponent,
-    MatButton,
-    NgClass,
-    FormsModule,
-    TabulatorSemanticUiComponent,
-  ],
-  templateUrl: './room-list.component.html',
-  styles: ``,
+    selector: 'app-room-list',
+    imports: [
+        FaIconComponent,
+        MatButton,
+        FormsModule,
+        TabulatorSemanticUiComponent,
+    ],
+    templateUrl: './room-list.component.html',
+    styles: ``
 })
 export class RoomListComponent {
   establecimientoId: number = 0;

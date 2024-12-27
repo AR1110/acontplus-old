@@ -23,7 +23,6 @@ BEGIN
     ,@pageIndex INT
     ,@pageSize INT
     ,@tipo INT
-    ,@rucEmpresa VARCHAR(13)
     ,@startDate DATETIME2
     ,@endDate DATETIME2
     ,@customer VARCHAR(100)
@@ -51,7 +50,7 @@ BEGIN
         assignedUserId INT
     )
 	
-    SELECT TOP 1 @rucEmpresa = rucEmpresa,  @companyId = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
+    SELECT TOP 1  @companyId = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
 	IF @tipo = 1
 		BEGIN
@@ -135,7 +134,7 @@ BEGIN
         INNER JOIN TechnicalSupport.OrderStatus sc WITH (NOLOCK) ON sc.Id = tor.OrderStatusId
         INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON tor.EstablecimientoId = e.idEstablecimiento
         LEFT JOIN dbo.Usuario u WITH(NOLOCK) ON u.idUsuario = tor.AssignedUserId
-        WHERE e.ruc = @rucEmpresa
+        WHERE e.idEntidad = @companyId
             AND CAST(tor.fechaEmision AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE)
             AND tor.Deleted IS NULL '
 
@@ -158,14 +157,14 @@ BEGIN
             END
         
         SET @sqlQuery = @sqlQuery + 'ORDER BY tor.Id DESC OFFSET @pageSize * (@pageIndex - 1) ROWS FETCH NEXT @pageSize ROWS ONLY'
-        EXEC sp_executesql @sqlQuery, N'@rucEmpresa NVARCHAR(100)
+        EXEC sp_executesql @sqlQuery, N'@companyId NVARCHAR(100)
                                     ,@orderStatusCode NVARCHAR(100)
                                     ,@pageSize INT
                                     ,@pageIndex INT
                                     ,@startDate DATETIME2
                                     ,@endDate DATETIME2
                                     ,@customer VARCHAR(100)
-                                    ,@assignedUserId INT', @rucEmpresa, @orderStatusCode, @pageSize, @pageIndex, @startDate, @endDate,@customer, @assignedUserId 
+                                    ,@assignedUserId INT', @companyId, @orderStatusCode, @pageSize, @pageIndex, @startDate, @endDate,@customer, @assignedUserId 
 
         RETURN
     END

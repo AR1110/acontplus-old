@@ -1,0 +1,22 @@
+﻿namespace Common.API.Services;
+
+public interface IUserManualService
+{
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+}
+
+public class UserManualService(IAdoRepository adoRepository) : IUserManualService
+{
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await adoRepository.GetDataSetAsync("Common.UserManual_Get", parameters);
+        if (DataValidation.DataSetIsNull(ds))
+        {
+            return new ApiResponse { Code = "0", Message = "Data not found!" };
+        }
+
+        CompressionUtils.DecompressColumn(ds, "userManuals", "CompressedContent", "Content");
+
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+    }
+}

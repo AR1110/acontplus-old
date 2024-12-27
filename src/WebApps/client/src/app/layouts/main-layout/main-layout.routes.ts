@@ -8,6 +8,11 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     children: [
       {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('@modules/dashboard/dashboard-page/dashboard-page.component').then((x) => x.DashboardPageComponent),
+      },
+      {
         path: 'purchase',
         title: 'App - Compras',
         loadChildren: () =>
@@ -105,6 +110,15 @@ export const routes: Routes = [
           import('@modules/vet/vet.routes').then((r) => r.routes),
         data: {
           breadcrumb: 'Vet',
+        },
+      },
+      {
+        path: 'common',
+        title: 'App - Common',
+        loadChildren: () =>
+          import('@modules/common/common.routes').then((r) => r.routes),
+        data: {
+          breadcrumb: 'General',
         },
       },
     ],

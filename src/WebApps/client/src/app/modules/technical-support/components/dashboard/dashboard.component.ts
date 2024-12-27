@@ -9,11 +9,10 @@ import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
 @Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [FontAwesomeModule, OrderListComponent],
-  templateUrl: './dashboard.component.html',
-  styles: ``,
+    selector: 'app-dashboard',
+    imports: [FontAwesomeModule, OrderListComponent],
+    templateUrl: './dashboard.component.html',
+    styles: ``
 })
 export class DashboardComponent implements OnInit {
   orders: any = [];

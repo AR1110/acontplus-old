@@ -1,0 +1,46 @@
+<div class="modal-header">
+    <h4 class="modal-title">Pagos Posfechados</h4>
+    <button type="button" class="close" ng-click="closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+
+<md-table-container style="max-height: 400px;">
+    <table resize md-table>
+        <thead   md-head md-trim-column-names  >
+        <tr md-row>
+            <th md-column></th>
+            <th md-column>N°</th>
+            <th md-column  >Nro. Doc</th>
+            <th md-column  >Fecha Emisión</th>
+            <th md-column  >Cliente</th>
+            <th md-column  >Nro.</th>
+            <th md-column>Valor</th> 
+        </tr>
+        </thead>
+
+        <tbody md-body>
+        <tr md-row ng-repeat="item in cheques">
+            <td md-cell>
+                
+            </td>
+            <td md-cell>{{$index+1}}</td>
+            <td md-cell>{{item.nroDocumento}}</td>
+            <td md-cell>{{item.fechaEmision}}</td>
+            <td md-cell>
+                {{item.persona}}
+            </td>
+            <td md-cell>{{item.nro}}</td>
+            <td md-cell>${{item.valor}}</td> 
+        </tr>
+        <tr class="text-center" ng-show="cheques.length==0">
+            <td colspan="7">No hay registros en esta tabla</td>
+        </tr>
+        </tbody>
+        
+    </table>
+</md-table-container>
+
+</div>
+<div class="modal-footer"> 
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>  
+</div>

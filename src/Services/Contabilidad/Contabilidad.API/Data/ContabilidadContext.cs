@@ -1,4 +1,7 @@
-﻿namespace Contabilidad.API.Data;
+﻿using System.Reflection;
+using Common.Infrastructure.Data.Configurations;
+
+namespace Contabilidad.API.Data;
 
 public class ContabilidadContext : BaseContext
 {
@@ -9,10 +12,14 @@ public class ContabilidadContext : BaseContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<Tipo> Tipos { get; set; }
     public DbSet<Subcategory> Subcategories { get; set; }
+    public DbSet<Account> Accounts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
         foreach (var property in modelBuilder.Model.GetEntityTypes()
                      .SelectMany(t => t.GetProperties())
                      .Where(
@@ -39,44 +46,16 @@ public class ContabilidadContext : BaseContext
         modelBuilder.Entity<Tipo>().HasIndex(x => x.Code)
             .HasDatabaseName("UI_Contabilidad_Tipo_Code")
             .IsUnique();
-    }
 
-    public override int SaveChanges()
-    {
-        var entries = ChangeTracker
-            .Entries()
-            .Where(e => e.Entity is BaseEntity && (
-                e.State == EntityState.Added
-                || e.State == EntityState.Modified));
+        modelBuilder.Entity<Account>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+        modelBuilder.Entity<Account>().Property(p => p.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<Account>().HasIndex(p => p.Code)
+            .HasDatabaseName("UI_Contabilidad_Accont_Code")
+            .IsUnique();
 
-        foreach (var entityEntry in entries)
-        {
-            if (entityEntry.State == EntityState.Modified)
-            {
-                ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
-            }
-        }
+        modelBuilder.Entity<Account>().HasOne(a => a.ParentAccount).WithMany(a => a.ChildAccounts)
+            .HasForeignKey(a => a.ParentAccountId)
+            .OnDelete(DeleteBehavior.Restrict); 
 
-        return base.SaveChanges();
-    }
-
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        var entries = ChangeTracker
-            .Entries()
-            .Where(e => e.Entity is BaseEntity && (
-                e.State == EntityState.Added
-                || e.State == EntityState.Modified));
-
-        foreach (var entityEntry in entries)
-        {
-            if (entityEntry.State == EntityState.Modified)
-            {
-                ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
-            }
-        }
-
-        var result = await base.SaveChangesAsync(cancellationToken);
-        return result;
     }
 }

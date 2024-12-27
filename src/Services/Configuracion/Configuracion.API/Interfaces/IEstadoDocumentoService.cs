@@ -1,6 +1,8 @@
-﻿namespace Configuracion.API.Interfaces;
+﻿using Common.AppSettings;
+
+namespace Configuracion.API.Interfaces;
 
 public interface IEstadoDocumentoService
 {
-    Task<ApiResponseDeprecated> GetAsync(string json);
+    Task<LegacyApiResponse> GetAsync(string json);
 }

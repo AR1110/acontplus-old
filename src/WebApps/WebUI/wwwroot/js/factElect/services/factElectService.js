@@ -180,6 +180,8 @@
             "userCustomerPermissionService"
         );
 
+        const tS = $injector.get("toastService");
+
         let service = {
             data: {},
         };
@@ -413,7 +415,7 @@
                 throw "";
             }
             if (!("codEstab" in query)) {
-                fDs.sweetAlert("warning", "No se ha proporcionado el codEstab");
+                fS.sweetAlert("warning", "No se ha proporcionado el codEstab");
                 throw "";
             }
             query.tipo = 2;
@@ -431,6 +433,9 @@
                             return {
                                 idDocumento: item.idFactura,
                                 serieComprobante: item.serieComprobante,
+                                fechaEmision: item.fechaEmision,
+                                usuario: item.usuario,
+                                totalRecords: item.totalRecords
                             };
                         });
                         return {
@@ -533,11 +538,22 @@
                 .then((response) => {
                     if (response.code === "0") {
                         console.warn(response);
+                        tS.toastr({
+                            type: 'warning',
+                            message: response.message
+                        })
                         throw null;
                     }
                     if (response.code === "1") {
                         let mainData = JSON.parse(response.payload);
                         let data = mainData[0][0];
+                        if (!data) {
+                            tS.toastr({
+                                type: 'warning',
+                                message: "No se ha configurado secuencial doc."
+                            })
+                            throw null;
+                        }
                         return data.serieComprobante;
                     }
                 });
@@ -638,11 +654,14 @@
                             itemPrincipal.precioUnitario,
                             itemPrincipal.tarifa
                         );
-                        let total =
-                            fS.roundNumber(
-                                restItem.precioTotalSinImpuesto,
-                                pricingUtils.max_dos
-                            ) + fS.roundNumber(restItem.valorImpuesto, pricingUtils.max_dos);
+                        // let total =
+                        //     fS.roundNumber(
+                        //         restItem.precioTotalSinImpuesto,
+                        //         pricingUtils.max_dos
+                        //     ) + fS.roundNumber(restItem.valorImpuesto, pricingUtils.max_dos);
+
+                        let total = fS.roundNumber(restItem.precioTotalSinImpuesto + restItem.valorImpuesto, pricingUtils.max_cinco)
+
                         let obj = {
                             n: index + 1,
                             uniqueRowDetalle,
@@ -754,7 +773,7 @@
                         throw response;
                     }
                     if (response.code === "1") {
-                        let [itemsApi] = JSON.parse(response.payload);
+                        let [itemsApi] = JSON.parse(response.payload); 
 
                         let items = itemsApi.map((itemPrincipal, index) => {
                             const { fraccionado, principal, consolidacion, ...restItem } =
@@ -796,17 +815,8 @@
                                 itemPrincipal.precioUnitario,
                                 itemPrincipal.tarifa
                             );
-
-                            let precioTotalSinImpuesto =
-                                itemPrincipal.precioUnitario * itemPrincipal.cantidad -
-                                itemPrincipal.valorDescuento;
-                            let total = pricingUtils.decPlus(
-                                fS.roundNumber(precioTotalSinImpuesto, pricingUtils.max_dos),
-                                fS.roundNumber(
-                                    itemPrincipal.valorImpuesto,
-                                    pricingUtils.max_dos
-                                )
-                            );
+ 
+                            let total = pricingUtils.decPlus(restItem.precioTotalSinImpuesto,  itemPrincipal.valorImpuesto, pricingUtils.precisionMaxima,);
 
                             let obj = {
                                 n: index + 1,
@@ -841,10 +851,7 @@
                                 datosAdicionalesArticulo:
                                     restItem.datosAdicionalesArticulo || [],
                                 precioConIva: fS.roundNumber(precioConIva, 3),
-                                precioTotalSinImpuesto: fS.roundNumber(
-                                    precioTotalSinImpuesto,
-                                    5
-                                ),
+                                precioTotalSinImpuesto: restItem.precioTotalSinImpuesto,
                                 total,
                             };
 
@@ -903,9 +910,17 @@
                 });
         };
 
-        service.delete = function (id) {
-            return mS.getData("delete", `${url}${id}`, null, true);
-        };
+        // service.delete = function (id) {
+        //     return mS.getData("delete", `${url}${id}`, null, true);
+        // };
+
+        service.anular = function(id, infoAdicional){
+            let data = {
+                infoAdicional
+            }
+            return mS.getData('put',  `${url}Cancel/${id}`, {data})
+
+        }
 
         service.queryMapper = function (params) {
             let {
@@ -1097,6 +1112,8 @@
         const userCustomerPermissionSvc = $injector.get(
             "userCustomerPermissionService"
         );
+        const tS = $injector.get("toastService");
+
 
         const URL = "FactElect/NotaCredito/";
         const service = {};
@@ -1253,11 +1270,24 @@
                 .then((response) => {
                     if (response.code === "0") {
                         console.warn(response);
+                        tS.toastr({
+                            type:'warning',
+                            message: response.message
+                        })
                         throw null;
                     }
                     if (response.code === "1") {
                         let mainData = JSON.parse(response.payload);
                         let data = mainData[0][0];
+
+                        if(!data){
+                            tS.toastr({
+                                type: 'warning',
+                                message: "No se ha configurado secuencial doc."
+                            })
+                            throw null;
+                        }
+
                         return data.serieComprobante;
                     }
                 });
@@ -1282,11 +1312,13 @@
                             mainDataCliente,
                             mainDetalle,
                             mainInfoAdicional,
+                           tarifasImpuesto  
                         ] = JSON.parse(response.payload);
 
-                        let { fechaEmision, ...restData } = mainData[0];
+                        let { fechaEmision,nombreComercial, ...restData } = mainData[0];
                         let comprobante = {
                             ...restData,
+                            establecimiento: nombreComercial,
                             fechaEmision: fS.formatDate(fechaEmision),
                             fechaEmisionEscrita: fS.getFechaEscrita(
                                 fS.formatDate(fechaEmision)
@@ -1310,6 +1342,7 @@
                             cliente: mainDataCliente[0],
                             items: resultsItems,
                             infoAdicionalDocumento: mainInfoAdicional,
+                            tarifasImpuesto
                         };
                     }
                 });

@@ -12,17 +12,16 @@ GO
 -- =============================================
 CREATE OR ALTER PROCEDURE Common.Dashboard_Get 
     @userRoleId INT,
-    @json VARCHAR(MAX) = NULL
+    @json VARCHAR(MAX) = NULL,
+    @tableNames VARCHAR(500) OUT
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET LANGUAGE SPANISH;
 
     DECLARE @idEntidad INT, 
         @uuid UNIQUEIDENTIFIER,
         @expired BIT = 0,
-        @licenses VARCHAR(MAX) = '[]',
-        @releases VARCHAR(MAX) = '[]',
-        @stepsConfig VARCHAR(MAX) = '[]',
         @userId INT;
 
     -- Use a temporary table to store intermediate results
@@ -30,48 +29,31 @@ BEGIN
         cantidadArticulo INT,
         cantidadCliente INT,
         cantidadProveedor INT,
-        cantidadUsuario INT,
-        cantidadFacturaVenta INT,
-        cantidadNotaEntrega INT,
-        cantidadProforma INT,
-        cantidadFacturaCompra INT
+        cantidadUsuario INT
+    );
+
+    DECLARE @ReceivedDocsTbl TABLE (
+        document VARCHAR(100),
+        total INT
+    );
+
+    DECLARE @SalesDocs TABLE (
+        document VARCHAR(100),
+        total INT
     );
 
     BEGIN TRY
         -- Get the company ID and user ID associated with the user's role
         SELECT 
-            @idEntidad = idEntidad, 
+            @idEntidad = idEntidad,
             @userId = idUsuario
         FROM v_usuario 
         WHERE idUsuarioRol = @userRoleId;
 
         SET @uuid = (SELECT TOP 1 uuid FROM dbo.Entidad WITH(NOLOCK) WHERE idEntidad = @idEntidad)
 
-        -- Populate temporary table with counts
-        INSERT INTO @TempResults
-        SELECT
-            (SELECT COUNT(*) FROM dbo.Articulo    WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM dbo.Cliente     WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM dbo.Proveedor   WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM dbo.Usuario     WITH (NOLOCK) WHERE idUsuario IN (SELECT idUsuario FROM App.UsuarioRol WHERE idEntidad = @idEntidad)),
-            (
-                SELECT COUNT(*) FROM dbo.Factura    fe
-                INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = fe.idDocumentoElectronico
-                INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
-                INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
-                WHERE es.idEntidad = @idEntidad
-                  AND fe.estado = 1
-            ),
-            (SELECT COUNT(*) FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            (SELECT COUNT(*) FROM dbo.Proforma    WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
-            ((SELECT COUNT(*) 
-        FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK) 
-        INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON dr.idEstablecimiento = e.idEstablecimiento
-        WHERE e.idEntidad = @idEntidad 
-          AND dr.complete = 1) + ISNULL((SELECT COUNT(*) FROM dbo.FacturaCompra WHERE idEntidad = @idEntidad AND estado = 1), 0));
-
         -- Check subscription status
-        DECLARE @subscriptionCount INT, @maxPaymentDateCount INT;
+        DECLARE @subscriptionCount INT, @freeSuscriptions INT, @maxPaymentDateCount INT;
         SET @subscriptionCount = (
             SELECT COUNT(*)
             FROM App.UsuarioRol ur WITH (NOLOCK)
@@ -84,6 +66,21 @@ BEGIN
               AND s.Deleted IS NULL
               AND ur.estado = 1
         );
+
+        SET @freeSuscriptions = (
+            SELECT COUNT(*)
+            FROM App.UsuarioRol ur WITH (NOLOCK)
+            INNER JOIN Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
+            INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
+            INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
+            INNER JOIN AcontplusAdmin.Config.SubscriptionType st WITH(NOLOCK) ON s.SubscriptionTypeId = st.Id
+            WHERE ur.idUsuarioRol = @userRoleId 
+              AND s.[Enabled] = 1 
+              AND s.Deleted IS NULL
+              AND ur.estado = 1
+              AND st.Code = 'G'
+        );
+
 
         SET @maxPaymentDateCount = (
             SELECT COUNT(*)
@@ -99,33 +96,73 @@ BEGIN
               AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate
         );
 
-        IF @maxPaymentDateCount = 0 AND @subscriptionCount > 0
-        BEGIN
-            SET @expired = 1;
-            SET @licenses = (
-                SELECT 
-                    CAST(@expired AS BIT) AS expired, 
-                    'Su licencia ha expirado, por favor comuníquese con el departamento de ventas' AS warningMessage 
-                FOR JSON PATH
-            );
-        END
-        ELSE IF @maxPaymentDateCount > 0
-        BEGIN
-            SET @licenses = (
-                SELECT 
-                    CONVERT(VARCHAR, FORMAT(s.MaxPaymentDate, 'yyyy-MM-dd')) AS maxPaymentDate,
-                    REPLACE(
-                        REPLACE(
-                            REPLACE(s.warningMessage, '$Costo', CONVERT(VARCHAR, CAST(s.total AS NUMERIC(18, 2)))), 
-                            '$FechaMaximaPago', CONVERT(VARCHAR, FORMAT(s.MaxPaymentDate, 'dd/MM/yyyy'))
-                        ), 
-                        '$Tipo', lt.[Name]
-                    ) AS warningMessage,
-                    lt.[Name] + ' - ' + a.[Name] AS licenseType,
-                    l.code AS licenseCode,
-                    sd.total,
-                    st.[Name] AS subscriptionType,
-                    s.total AS totalGlobal
+        SET @tableNames = 'statistics,licenses,stepsConfig,expiredSignatures,emittedDocuments,receivedDocuments,anotherSalesDocs'
+
+        -- Populate temporary table with counts
+        INSERT INTO @TempResults
+        SELECT
+            (SELECT COUNT(*) FROM dbo.Articulo    WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            (SELECT COUNT(*) FROM dbo.Cliente     WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            (SELECT COUNT(*) FROM dbo.Proveedor   WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1),
+            (SELECT COUNT(*) FROM dbo.Usuario     WITH (NOLOCK) WHERE idUsuario IN (SELECT idUsuario FROM App.UsuarioRol WHERE idEntidad = @idEntidad));
+        
+        IF (@maxPaymentDateCount = 0 AND @subscriptionCount > 0) AND @freeSuscriptions = 0
+            BEGIN
+                SET @expired = 1;
+            END
+        --ELSE IF @maxPaymentDateCount > 0
+            --BEGIN
+
+            --END
+    
+
+         INSERT INTO @SalesDocs
+          VALUES('Nota de Entrega',  (SELECT COUNT(*) FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1)),
+          ('Proforma',  (SELECT COUNT(*) FROM dbo.Proforma WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1));
+
+        INSERT INTO @ReceivedDocsTbl
+             SELECT td.descripcion document
+                    ,count(*) total
+                FROM Recepcion.DocumentoRecibido dr WITH(NOLOCK)
+                INNER JOIN Sri.Establecimiento e WITH(NOLOCK) On dr.idEstablecimiento = e.idEstablecimiento
+                INNER JOIN dbo.TipoDocumento td WITH(NOLOCK) On dr.codDoc = td.codigoSri
+                WHERE 
+                    e.idEntidad = @idEntidad
+                    AND dr.codDoc IS NOT NULL
+                GROUP BY td.descripcion
+
+        INSERT INTO @ReceivedDocsTbl
+        VALUES('Factura Física',  (SELECT COUNT(*) FROM dbo.FacturaCompra WITH(NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1));
+         
+        INSERT INTO @ReceivedDocsTbl
+        SELECT td.descripcion document
+                 ,count(*) total
+        FROM Compra.Documento_Ingreso di WITH(NOLOCK)
+            INNER JOIN
+                Acontplus.dbo.TipoDocumento td WITH(NOLOCK) ON di.codDoc = td.codigo
+        WHERE
+             di.idEntidad = @idEntidad
+        GROUP BY td.codigo
+            ,td.descripcion
+
+        SELECT * FROM @TempResults
+
+        SELECT 
+            CONVERT(VARCHAR, FORMAT(s.MaxPaymentDate, 'yyyy-MM-dd')) AS maxPaymentDate,
+            REPLACE(
+                REPLACE(
+                    REPLACE(s.warningMessage, '$Costo', CONVERT(VARCHAR, CAST(s.total AS NUMERIC(18, 2)))), 
+                    '$FechaMaximaPago', CONVERT(VARCHAR, FORMAT(s.MaxPaymentDate, 'dd/MM/yyyy'))
+                ), 
+                '$Tipo', lt.[Name]
+            ) AS warningMessage,
+            lt.[Name] + ' - ' + a.[Name] AS licenseType,
+            l.code AS licenseCode,
+            sd.total,
+            st.[Name] AS subscriptionType,
+            s.total AS totalGlobal,
+               CAST(@expired AS BIT) AS expired, 
+            'Su licencia ha expirado, por favor comuníquese con el departamento de ventas' AS warningMessage 
                 FROM App.UsuarioRol ur WITH (NOLOCK)
                 INNER JOIN Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
                 INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
@@ -141,58 +178,61 @@ BEGIN
                 INNER JOIN AcontplusAdmin.Config.Aplicacion a ON ld.AplicacionId = a.Id
                 WHERE ur.idUsuarioRol = @userRoleId
                   AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate
-                  AND ur.estado = 1 
-                FOR JSON PATH
-            );
-        END
+                  AND ur.estado = 1
 
-        IF EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH(NOLOCK) WHERE uuid = @uuid)
-            BEGIN
-            print @uuid
-                SET @stepsConfig = (
-                    SELECT ds.Id, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
-                    FROM  AcontplusAdmin.Config.DemoStep ds 
-                    WHERE ds.Id NOT IN (SELECT DemoStepId FROM AcontplusAdmin.Config.CompanyDemoStep WITH(NOLOCK) WHERE Uuid = @uuid)
-                    FOR JSON PATH
-                )
-            END
+      SELECT ds.Id, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
+                    FROM  AcontplusAdmin.Config.DemoStep ds
+                    INNER JOIN AcontplusAdmin.Config.CompanyDemoStep cds ON ds.Id = cds.DemoStepId
+                    INNER JOIN AcontplusAdmin.Config.Company c ON cds.CompanyId = c.Id
+                    WHERE ds.Id NOT IN (SELECT DemoStepId 
+                    FROM AcontplusAdmin.Config.CompanyDemoStep WITH(NOLOCK) WHERE Uuid = @uuid)
+                    AND c.Uuid = @uuid
 
-        -- Check for new releases
-        IF (SELECT COUNT(*) FROM AcontplusAdmin.Common.Release WITH (NOLOCK)) <> 
-           (SELECT COUNT(*) FROM AcontplusAdmin.Common.UserReleaseRead WITH (NOLOCK) WHERE userId = @userId)
-        BEGIN
-            SET @releases = (
-                SELECT 
-                    id, 
-                    description, 
-                    logoutRequired, 
-                    version, 
-                    CONVERT(VARCHAR, FORMAT(ReleaseDate, 'dd/MM/yyyy')) AS releaseDate
-                FROM AcontplusAdmin.Common.Release r WITH (NOLOCK)
-                WHERE r.Id NOT IN (SELECT Id FROM AcontplusAdmin.Common.UserReleaseRead WHERE UserId = @userId) 
-                FOR JSON PATH
-            );
-        END
+       SELECT nombreArchivo,
+                CASE 
+                    WHEN DATEDIFF(DAY, GETDATE(), fechaCaducidad) < 0 THEN 
+                        'Su firma electrónica ha caducado, por favor renuevela de inmediato, para poder seguir firmando los documentos electrónicos'
+                    WHEN DATEDIFF(DAY, GETDATE(), fechaCaducidad) <= 5 THEN 
+                        'Su firma electrónica está a ' + CAST(DATEDIFF(DAY, GETDATE(), fechaCaducidad) AS VARCHAR) + ' día(s) de expirar, por favor renuevela de inmediato'
+                END AS message
+            FROM dbo.FirmaElectronica WITH(NOLOCK)
+            WHERE idEntidad = @idEntidad
+            AND DATEDIFF(DAY, GETDATE(), fechaCaducidad) <= 5
 
-        -- Construct the JSON response
-        SELECT '1' AS code, 
-               payload = (
-                   SELECT
-                       (SELECT cantidadUsuario,
-                              cantidadArticulo,
-                              cantidadCliente,
-                              cantidadProveedor,
-                             cantidadFacturaVenta as cantidadFacturaV,
-                                cantidadFacturaCompra As  cantidadFacturaC,
-                              cantidadProforma,
-                              cantidadNotaEntrega 
-                        FROM @TempResults
-                        FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) AS 'statistics',
-                       ISNULL(@licenses, '[]') AS licenses,
-                       ISNULL(@releases, '[]') AS releases,
-                       ISNULL(@stepsConfig, '[]') AS stepsConfig
-                   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-               );
+        
+        ;WITH DocumentStats AS (
+            SELECT 
+                de.idTipoDocumento, 
+                td.descripcion, 
+                td.codigoSri
+            FROM 
+                Acontplus.dbo.DocumentoElectronico de WITH(NOLOCK)
+            INNER JOIN 
+                Acontplus.dbo.TipoDocumento td WITH(NOLOCK) ON de.idTipoDocumento = td.idTipoDocumento
+            INNER JOIN 
+                Acontplus.dbo.PuntoEmision pe WITH(NOLOCK) ON de.idPuntoEmision = pe.idPuntoEmision
+            INNER JOIN 
+                Acontplus.Sri.Establecimiento e ON pe.idEstablecimiento = e.idEstablecimiento
+            INNER JOIN 
+                Acontplus.FactElect.EstadoServicio es WITH(NOLOCK) ON de.idEstadoServicio = es.idEstadoServicio
+            WHERE 
+                es.codigo = 4
+                AND e.idEntidad = @idEntidad
+        )
+
+        SELECT 
+            COUNT(*) AS total, 
+            ds.descripcion AS document
+        FROM 
+            DocumentStats ds
+        GROUP BY 
+            ds.idTipoDocumento, ds.descripcion, ds.codigoSri
+        ORDER BY 
+            ds.codigoSri;
+
+        SELECT * FROM  @ReceivedDocsTbl
+     
+        SELECT * FROM @SalesDocs
 
     END TRY
     BEGIN CATCH

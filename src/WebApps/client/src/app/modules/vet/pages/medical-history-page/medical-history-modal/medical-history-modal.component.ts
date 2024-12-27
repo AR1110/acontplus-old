@@ -3,8 +3,6 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import {
   NgbActiveModal,
-  NgbHighlight,
-  NgbTypeahead,
 } from '@ng-bootstrap/ng-bootstrap';
 import {
   FormControl,
@@ -27,27 +25,19 @@ import { isApiResponse } from '@core/models/api-response';
 import { PetSearchComponent } from '@modules/vet/components/pet-search/pet-search.component';
 import { ToasterService } from '@core/services/toaster.service';
 import { GroupedEstab } from '@core/models/estab.model';
-import { MatInput } from '@angular/material/input';
-import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { BehaviorTestService } from '@modules/vet/services/behavior-test.service';
 import { HealthCheckService } from '@modules/vet/services/health-check.service';
 
 @Component({
-  selector: 'app-medical-history-modal',
-  standalone: true,
-  imports: [
-    FaIconComponent,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbTypeahead,
-    NgbHighlight,
-    PetSearchComponent,
-    MatInput,
-    MatRadioGroup,
-    MatRadioButton,
-  ],
-  templateUrl: './medical-history-modal.component.html',
-  styles: ``,
+    selector: 'app-medical-history-modal',
+    imports: [
+        FaIconComponent,
+        FormsModule,
+        ReactiveFormsModule,
+        PetSearchComponent,
+    ],
+    templateUrl: './medical-history-modal.component.html',
+    styles: ``
 })
 export class MedicalHistoryModalComponent {
   behaviors: Behavior[] = [];

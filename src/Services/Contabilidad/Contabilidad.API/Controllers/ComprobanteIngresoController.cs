@@ -1,8 +1,8 @@
-﻿namespace Contabilidad.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : ControllerBase
+namespace Contabilidad.API.Controllers;
+
+public class ComprobanteIngresoController(IComprobanteIngresoService comprobanteIngresoService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
@@ -11,7 +11,7 @@ public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : Con
         {
             { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
-        return Ok(await _svc.GetAsync(parameters));
+        return Ok(await comprobanteIngresoService.GetAsync(parameters));
     }
 
     [HttpPost("Insert")]
@@ -22,7 +22,7 @@ public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : Con
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
-        return Ok(await _svc.AddAsync(parameters));
+        return Ok(await comprobanteIngresoService.AddAsync(parameters));
     }
 
     [HttpPut("Cancel")]
@@ -32,7 +32,7 @@ public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : Con
         {
             { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(paremeter.Data) }
         };
-        return Ok(await _svc.CancelAsync(parameters));
+        return Ok(await comprobanteIngresoService.CancelAsync(parameters));
     }
 
 
@@ -45,6 +45,6 @@ public class ComprobanteIngresoController(IComprobanteIngresoService _svc) : Con
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return Ok(await _svc.UpdateAsync(parameters));
+        return Ok(await comprobanteIngresoService.UpdateAsync(parameters));
     }
 }

@@ -21,6 +21,14 @@
         $scope.alertIsOpened = false;
         $scope.releases = [];
         $scope.stepsConfig = [];
+        $scope.expiredSignatures = [];
+        $scope.emittedDocuments = [];
+        $scope.receivedDocuments = [];
+        $scope.anotherSalesDocs = [];
+
+        let chartEmittedDocs = null,
+            chartReceivedDocs = null,
+            chartAnoterSalesDocuments;
 
         $scope.openAlert = () => {
             $scope.alertIsOpened = true;
@@ -97,52 +105,68 @@
                 for (const rel of releases) {
                     release += `<tr class="small">
                                                 <td style="vertical-align: middle;">${rel.version}</td>
-                                                <td>${rel.description}</td>
+                                                <td>${rel.content}</td>
                                             </tr>`;
                 }
             }
 
             release += `</tbody></table>`;
 
-            swal
-                .fire({
-                    icon: "info",
-                    title: `Nuevas Actualizaciones Disponibles</b>`,
-                    html: release,
-                    width: "800px",
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    showConfirmButton: true,
-                    confirmButtonText: "Confirmar Lectura",
-                })
-                .then((result) => {
-                    if (result.isConfirmed) {
-                        const dataToSave = {
-                            releases: JSON.stringify(
-                                $scope.releases.map((release) => ({ id: release.id })),
-                            ),
-                        };
-                        mS.getData("post", "Common/UserReleaseRead", {
-                            data: dataToSave,
-                        }).then((response) => {
-                            if (response.code == "1") {
-                                swal.fire({
-                                    icon: "info",
-                                    text: response.message,
-                                    allowOutsideClick: false,
-                                });
+            modalService.openModalCustom({
+                controller: [
+                    "$uibModalInstance",
+                    "$scope",
+                    "$timeout",
+                    "$sce",
+                    "mainService",
+                    "params",
+                    ($uibModalInstance, $scope, $timeout, $sce, mS, params) => {
+                        const { release, releases } = params;
 
-                                const hasLogoutRequired = $scope.releases.some(
-                                    (release) => release.logoutRequired === true,
-                                );
+                        $scope.releases = releases || [];
+                        $scope.releaseTable = $sce.trustAsHtml(release);
 
-                                if (hasLogoutRequired) {
-                                    $scope.logout();
+                        $scope.confirmRead = () => {
+                            const dataToSave = {
+                                releases: JSON.stringify(
+                                    $scope.releases.map((release) => ({ id: release.id })),
+                                ),
+                            };
+                            mS.getData("post", "Common/UserReleaseRead", {
+                                data: dataToSave,
+                            }).then((response) => {
+                                if (response.code == "1") {
+                                    swal.fire({
+                                        icon: "info",
+                                        text: response.message,
+                                        allowOutsideClick: false,
+                                    });
+
+                                    const hasLogoutRequired = $scope.releases.some(
+                                        (release) => release.logoutRequired === true,
+                                    );
+
+                                    if (hasLogoutRequired) {
+                                        $scope.logout();
+                                    } else {
+                                        $scope.onClose();
+                                    }
                                 }
-                            }
-                        });
-                    }
-                });
+                            });
+                        }
+
+                        $scope.onClose = () => {
+                            $uibModalInstance.close();
+                        };
+                    },
+                ],
+                params: {
+                    release,
+                    releases: $scope.releases
+                },
+                size: "lg",
+                template: "~/Pages/Shared/_ReleasesModal.cshtml",
+            });
         };
 
         $scope.timer = null;
@@ -192,6 +216,7 @@
                 }
             }, 1000);
         };
+
         function getDashboard() {
             return mS.getData(
                 "get",
@@ -208,6 +233,13 @@
             return docElectSvc.getAll(dataSearch);
         }
 
+        function getReleases() {
+            return mS.getData(
+                "get",
+                `Common/Release`
+            );
+        }
+
         function init() {
             const dashboardPromises = getDashboard().catch((error) => {
                 console.log(error);
@@ -215,10 +247,19 @@
             const documentsPromises = getDocs().catch((error) => {
                 console.log(error);
             });
-            $q.all([dashboardPromises, documentsPromises]).then((response) => {
-                const [responseDashboard, comprobantesElectronicos] = response;
-                let dashboardData = JSON.parse(responseDashboard.payload);
-                if (comprobantesElectronicos.length > 0) {
+            const releasesPromise = getReleases().catch((error) => {
+                console.log(error);
+            });
+            $q.all([dashboardPromises, documentsPromises, releasesPromise]).then((response) => {
+                const [responseDashboard, comprobantesElectronicos, releases] = response;
+
+                $scope.releases = releases.payload || [];
+
+                if ($scope.releases.length > 0) {
+                    $scope.openReleases();
+                }
+
+                if (comprobantesElectronicos && comprobantesElectronicos.length > 0) {
                     modalService.openModalCustom({
                         controller: [
                             "$uibModalInstance",
@@ -281,19 +322,76 @@
                         template: "~/Pages/Shared/_ComprobantesErroneos.cshtml",
                     });
                 }
+
+                let dashboardData = JSON.parse(responseDashboard.payload);
                 if (dashboardData) {
-                    const { statistics, licenses, releases, stepsConfig } = dashboardData;
-                    $scope.cantidad = angular.fromJson(statistics);
-                    $scope.licenses = angular.fromJson(licenses) || [];
-                    $scope.releases = angular.fromJson(releases) || [];
-                    $scope.stepsConfig = angular.fromJson(stepsConfig) || [];
+                    const { statistics, licenses, stepsConfig, expiredSignatures, emittedDocuments, receivedDocuments, anotherSalesDocs } = dashboardData;
+                    $scope.cantidad = statistics[0] || [];
+                    $scope.licenses = licenses || [];
+                    $scope.stepsConfig = stepsConfig || [];
+                    $scope.expiredSignatures = expiredSignatures || [];
+                    $scope.emittedDocuments = emittedDocuments || [];
+                    $scope.receivedDocuments = receivedDocuments || [];
+                    $scope.anotherSalesDocs = anotherSalesDocs || [];
+
+                    if ($scope.emittedDocuments.length > 0) {
+                        // Prepare the data for the chart
+                        let labels = [];
+                        let totals = [];
+                        let backgroundColors = [];
+                        let borderColors = [];
+
+                        // Loop through the documents and extract the type and total for each
+                        $scope.emittedDocuments.forEach(function (doc) {
+                            labels.push(doc.document);          // Document type (e.g., "Invoices", "Credit Notes")
+                            totals.push(doc.total);          // Total for the document type
+                            backgroundColors.push(getRandomColor(0.2)); // Random background color with 0.2 opacity
+                            borderColors.push(getRandomColor(1));       // Random border color with full opacity
+                        });
+
+                        // Call the function to render the chart with the updated data
+                        $scope.renderChart(labels, totals, backgroundColors, borderColors);
+                    }
+
+                    if ($scope.receivedDocuments.length > 0) {
+                        // Prepare the data for the chart
+                        let labels = [];
+                        let totals = [];
+                        let backgroundColors = [];
+                        let borderColors = [];
+
+                        // Loop through the documents and extract the type and total for each
+                        $scope.receivedDocuments.forEach(function (doc) {
+                            labels.push(doc.document);          // Document type (e.g., "Invoices", "Credit Notes")
+                            totals.push(doc.total);          // Total for the document type
+                            backgroundColors.push(getRandomColor(0.2)); // Random background color with 0.2 opacity
+                            borderColors.push(getRandomColor(1));       // Random border color with full opacity
+                        });
+
+                        // Call the function to render the chart with the updated data
+                        $scope.renderChartReceived(labels, totals, backgroundColors, borderColors);
+                    }
+                    if ($scope.anotherSalesDocs.length > 0) {
+                        // Prepare the data for the chart
+                        let labels = [];
+                        let totals = [];
+                        let backgroundColors = [];
+                        let borderColors = [];
+
+                        // Loop through the documents and extract the type and total for each
+                        $scope.anotherSalesDocs.forEach(function (doc) {
+                            labels.push(doc.document);          // Document type (e.g., "Invoices", "Credit Notes")
+                            totals.push(doc.total);          // Total for the document type
+                            backgroundColors.push(getRandomColor(0.2)); // Random background color with 0.2 opacity
+                            borderColors.push(getRandomColor(1));       // Random border color with full opacity
+                        });
+
+                        // Call the function to render the chart with the updated data
+                        $scope.renderAnotherSalesDocsChart(labels, totals, backgroundColors, borderColors);
+                    }
 
                     if ($scope.stepsConfig.length > 0) {
                         location.href = '/Config/WizardConfig/Index'
-                    }
-
-                    if ($scope.releases.length > 0) {
-                        $scope.openReleases();
                     }
 
                     if ($scope.licenses.length > 0) {
@@ -349,9 +447,217 @@
                             });
                         }
                     }
+
+                    if ($scope.expiredSignatures.length > 0) {
+                        modalService.openModalCustom({
+                            controller: [
+                                "$uibModalInstance",
+                                "$scope",
+                                "params",
+                                ($uibModalInstance, $scope, params) => {
+
+                                    const { message } = params;
+
+                                    $scope.message = message;
+
+                                    $scope.onClose = () => {
+                                        $uibModalInstance.close();
+                                    };
+
+                                    $scope.onSupport = () => {
+                                        window.open('https://api.whatsapp.com/send?phone=593986669930', '_blank');
+                                    }
+                                },
+                            ],
+                            scope: $scope,
+                            params: {
+                                message: $scope.expiredSignatures[0].message
+                            },
+                            size: "sm",
+                            template: "~/Pages/Shared/_SignatureModal.cshtml",
+                        });
+                    }
                 }
             });
         }
         init();
+
+        // Function to render the chart
+        $scope.renderChart = function (labels, totals, backgroundColors, borderColors) {
+            let ctx = document.getElementById('documentChart').getContext('2d');
+
+            // If the chart instance already exists, destroy it before creating a new one
+            if (chartEmittedDocs && chartEmittedDocs !== null) {
+                chartEmittedDocs.destroy();
+            }
+
+            // Create the new chart instance
+
+            chartEmittedDocs = new Chart(ctx, {
+                type: 'bar', // You can change the chart type (e.g., 'line', 'pie', etc.)
+                data: {
+                    labels: labels, // X-axis labels (document types)
+                    datasets: [{
+                        label: 'Documentos Emitidos',
+                        data: totals, // Data values (totals for each document type)
+                        backgroundColor: backgroundColors, // Dynamic background colors
+                        borderColor: borderColors, // Dynamic border colors
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    //plugins: {
+                    //    // Enable the Data Labels plugin to show labels on bars
+                    //    datalabels: {
+                    //        anchor: 'end',
+                    //        align: 'top',
+                    //        offset: -5,
+                    //        formatter: function (value, context) {
+                    //            return value; // Display the value of each bar
+                    //        },
+                    //        font: {
+                    //            weight: 'bold',
+                    //            size: 12
+                    //        },
+                    //        color: 'black'
+                    //    }
+                    //},
+                    scales: {
+                        x: {
+                            ticks: {
+                                autoSkip: false,
+                            },
+                        },
+                        y: {
+                            beginAtZero: true, // Ensures the Y-axis starts from 0
+                            ticks: {
+                                stepSize: 1,
+                            }
+                        },
+                    }
+                },
+                //plugins: [ChartDataLabels] // Register the Data Labels plugin
+            });
+        };
+        $scope.renderChartReceived = function (labels, totals, backgroundColors, borderColors) {
+            let ctx = document.getElementById('documentReceivedChart').getContext('2d');
+
+            // If the chart instance already exists, destroy it before creating a new one
+            if (chartReceivedDocs && chartReceivedDocs !== null) {
+                chartReceivedDocs.destroy();
+            }
+
+            // Create the new chart instance
+
+            chartReceivedDocs = new Chart(ctx, {
+                type: 'line', // You can change the chart type (e.g., 'line', 'pie', etc.)
+                data: {
+                    labels: labels, // X-axis labels (document types)
+                    datasets: [{
+                        label: 'Documentos Recibidos',
+                        data: totals, // Data values (totals for each document type)
+                        backgroundColor: backgroundColors, // Dynamic background colors
+                        borderColor: borderColors, // Dynamic border colors
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    //plugins: {
+                    //    // Enable the Data Labels plugin to show labels on bars
+                    //    datalabels: {
+                    //        anchor: 'end',
+                    //        align: 'top',
+                    //        offset: -5,
+                    //        formatter: function (value, context) {
+                    //            return value; // Display the value of each bar
+                    //        },
+                    //        font: {
+                    //            weight: 'bold',
+                    //            size: 12
+                    //        },
+                    //        color: 'black'
+                    //    }
+                    //},
+                    scales: {
+                        x: {
+                            ticks: {
+                                autoSkip: false,
+                            },
+                        },
+                        y: {
+                            beginAtZero: true, // Ensures the Y-axis starts from 0
+                            ticks: {
+                                stepSize: 1,
+                            }
+                        },
+                    }
+                },
+                //plugins: [ChartDataLabels] // Register the Data Labels plugin
+            });
+        };
+        $scope.renderAnotherSalesDocsChart = function (labels, totals, backgroundColors, borderColors) {
+            let ctx = document.getElementById('anotherSalesDocsChart').getContext('2d');
+
+            // If the chart instance already exists, destroy it before creating a new one
+            if (chartAnoterSalesDocuments && chartAnoterSalesDocuments !== null) {
+                chartAnoterSalesDocuments.destroy();
+            }
+
+            // Create the new chart instance
+
+            chartAnoterSalesDocuments = new Chart(ctx, {
+                type: 'line', // You can change the chart type (e.g., 'line', 'pie', etc.)
+                data: {
+                    labels: labels, // X-axis labels (document types)
+                    datasets: [{
+                        label: 'Documentos No Tributarios',
+                        data: totals, // Data values (totals for each document type)
+                        backgroundColor: backgroundColors, // Dynamic background colors
+                        borderColor: borderColors, // Dynamic border colors
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    //plugins: {
+                    //    // Enable the Data Labels plugin to show labels on bars
+                    //    datalabels: {
+                    //        anchor: 'end',
+                    //        align: 'top',
+                    //        offset: -5,
+                    //        formatter: function (value, context) {
+                    //            return value; // Display the value of each bar
+                    //        },
+                    //        font: {
+                    //            weight: 'bold',
+                    //            size: 12
+                    //        },
+                    //        color: 'black'
+                    //    }
+                    //},
+                    scales: {
+                        x: {
+                            ticks: {
+                                autoSkip: false,
+                            },
+                        },
+                        y: {
+                            beginAtZero: true, // Ensures the Y-axis starts from 0
+                            ticks: {
+                                stepSize: 1,
+                            }
+                        },
+                    }
+                },
+                //plugins: [ChartDataLabels] // Register the Data Labels plugin
+            });
+        };
+
+        // Helper function to generate random colors for the chart
+        function getRandomColor(opacity) {
+            var r = Math.floor(Math.random() * 255);
+            var g = Math.floor(Math.random() * 255);
+            var b = Math.floor(Math.random() * 255);
+            return 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
+        }
     }
 })(window.angular);

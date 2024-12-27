@@ -1,14 +1,9 @@
-﻿namespace Inventario.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-public class ArticuloFraccionadoController : BaseApiController
+namespace Inventario.API.Controllers;
+
+public class ArticuloFraccionadoController(IArticuloFraccionadoService articuloFraccionadoService) : BaseApiController
 {
-    private readonly IArticuloFraccionadoService _artSvc;
-
-    public ArticuloFraccionadoController(IArticuloFraccionadoService artSvc)
-    {
-        _artSvc = artSvc;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -18,7 +13,7 @@ public class ArticuloFraccionadoController : BaseApiController
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             };
-            var response = await _artSvc.GetAsync(parameters);
+            var response = await articuloFraccionadoService.GetAsync(parameters);
             if (response == null) { return NoContent(); }
 
             return Ok(response);
@@ -36,7 +31,7 @@ public class ArticuloFraccionadoController : BaseApiController
         request.UserRoleId = User.GetUserRoleId();
         try
         {
-            var response = await _artSvc.AddAsync(request);
+            var response = await articuloFraccionadoService.AddAsync(request);
             return Ok(response);
         }
         catch (Exception ex)
@@ -51,7 +46,7 @@ public class ArticuloFraccionadoController : BaseApiController
         try
         {
             request.UserRoleId = User.GetUserRoleId();
-            var response = await _artSvc.UpdateAsync(id, request);
+            var response = await articuloFraccionadoService.UpdateAsync(id, request);
             return Ok(response);
         }
         catch (Exception ex)
@@ -66,7 +61,7 @@ public class ArticuloFraccionadoController : BaseApiController
         try
         {
             var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-            var response = await _artSvc.DeleteAsync(parameters);
+            var response = await articuloFraccionadoService.DeleteAsync(parameters);
             return Ok(response);
         }
         catch (Exception ex)

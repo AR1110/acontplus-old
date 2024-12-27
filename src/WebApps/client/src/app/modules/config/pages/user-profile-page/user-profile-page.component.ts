@@ -9,15 +9,13 @@ import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.compon
 
 @Component({
     selector: 'app-user-profile-page',
-    standalone: true,
     templateUrl: './user-profile-page.component.html',
     styles: ``,
     imports: [
-
         MatTabsModule,
         ReactiveFormsModule,
         MatCheckboxModule,
-      BreadcrumbComponent
+        BreadcrumbComponent
     ]
 })
 export class UserProfilePageComponent {

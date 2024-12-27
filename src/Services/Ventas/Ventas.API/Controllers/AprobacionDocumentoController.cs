@@ -1,13 +1,15 @@
-﻿namespace Ventas.API.Controllers;
+﻿using Common.AppSettings.Extensions;
+
+namespace Ventas.API.Controllers;
 
 public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiController
 {
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var parameters = new Dictionary<string, object>{
-            {"idUsuarioRol", User.GetUserRoleId()},
-            {"json", SqlStringParam.Sanitize(json)},
+        var parameters = new Dictionary<string, object>
+        {
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await svc.GetAsync(parameters));
     }
@@ -49,9 +51,7 @@ public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiC
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var parameters = new Dictionary<string, object>{
-            {"id", id},
-        };
+        var parameters = new Dictionary<string, object> { { "id", id } };
         return Ok(await svc.GetByIdAsync(parameters));
     }
 

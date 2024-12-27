@@ -1,21 +1,40 @@
-import { Routes } from "@angular/router";
-import { ReportsPageComponent } from "./pages/reports-page/reports-page.component";
-import { ReceptionReportsPageComponent } from "./pages/reception-reports-page/reception-reports-page.component";
+import { Routes } from '@angular/router';
+import { ReportsComponent } from '@purchase/ui/reports/reports.component';
+import { ReceptionReportsComponent } from '@purchase/ui/reception-reports/reception-reports.component';
+import { DocumentReceivedComponent } from '@purchase/ui/documento-received/document-received.component';
+import { FacturaFisicaComponent } from '@purchase/ui/factura-fisica/factura-fisica.component';
+
 export const routes: Routes = [
   {
-    path: 'reports-page',
-    title: 'Reporte Compras',
-    component: ReportsPageComponent,
+    path: 'documento-recibido',
+    title: 'Documento Recibido',
+    component: DocumentReceivedComponent,
     data: {
-      breadcrumb: 'Reporte Compras'
-    }
+      breadcrumb: 'Documento Recibido',
+    },
   },
   {
-    path: 'reception-reports-page',
-    title: 'Reportes Recepción',
-    component: ReceptionReportsPageComponent,
+    path: 'reports',
+    title: 'Reporte Compras',
+    component: ReportsComponent,
     data: {
-      breadcrumb: 'Reportes Recepción'
-    }
+      breadcrumb: 'Reporte Compras',
+    },
   },
-]
+  {
+    path: 'reception-reports',
+    title: 'Reportes Recepción',
+    component: ReceptionReportsComponent,
+    data: {
+      breadcrumb: 'Reportes Recepción',
+    },
+  },
+  {
+    path: 'factura-fisica',
+    title: 'Factura Física',
+    component: FacturaFisicaComponent,
+    data: {
+      breadcrumb: 'Factura Física',
+    },
+  },
+];

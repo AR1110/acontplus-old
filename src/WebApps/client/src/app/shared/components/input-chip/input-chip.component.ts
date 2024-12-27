@@ -5,14 +5,13 @@ import {COMMA, ENTER} from "@angular/cdk/keycodes";
 import {LiveAnnouncer} from "@angular/cdk/a11y";
 
 @Component({
-  selector: 'app-input-chip',
-  standalone: true,
-  imports: [
-    MatChipsModule,
-    MatIconModule
-  ],
-  templateUrl: './input-chip.component.html',
-  styles: ``
+    selector: 'app-input-chip',
+    imports: [
+        MatChipsModule,
+        MatIconModule
+    ],
+    templateUrl: './input-chip.component.html',
+    styles: ``
 })
 export class InputChipComponent {
   chips = input.required<string[]>()

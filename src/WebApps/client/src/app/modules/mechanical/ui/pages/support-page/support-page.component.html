@@ -1,0 +1,269 @@
+
+@if (valueStatus===statusTab.DASHBOARD) {
+<div class="row">
+  <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 col-12">
+    <div class="form-group">
+      <label for="dateRange">Rango Fecha:</label>
+      <app-date-range-selection [inputGroupDateChecked]="true" [requiredDate]="dataSearch.ckDate"
+        (valueChangeRequiredDate)="onChangeRequiredDate($event)" (onChangeDateRange)="onDateRangeSelection($event)" />
+    </div>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+    <div class="form-group">
+      <label for="company-customer">Cliente: </label>
+      <app-company-customer-search (resultEmptyInput)="searchEmptyCompanyCustomer()"
+        (onCustomerSelected)="onCustomerSelected($event)" [isSearchSimple]="true" />
+    </div>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+    <div class="form-group">
+      <label for="licensePlate">Placa:</label>
+      <div class="input-group">
+        <input type="text" name="licensePlate" autocomplete="off" id="licensePlate" class="form-control" [(ngModel)]="dataSearch.licensePlate">
+<button type="button" class="btn btn-secondary m-l-5" (click)="getSupports()">
+  <fa-icon [icon]="'redo'"></fa-icon>
+</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+}@else {
+  <div class="row">
+    <!-- <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="establishment">Establecimiento: </label>
+        <select name="establishment" id="establishment" class="form-select">
+          <option value=""></option>
+        </select>
+      </div>
+    </div> -->
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="dateRange">Rango Fecha:</label>
+        <app-date-range-selection [inputGroupDateChecked]="true" [requiredDate]="dataSearch.ckDate"
+          (valueChangeRequiredDate)="onChangeRequiredDate($event)" (onChangeDateRange)="onDateRangeSelection($event)" />
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="company-customer">Cliente: </label>
+        <app-company-customer-search (resultEmptyInput)="searchEmptyCompanyCustomer()"
+          (onCustomerSelected)="onCustomerSelected($event)" [isSearchSimple]="true" />
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="licensePlate">Placa:</label>
+        <div class="input-group">
+          <input type="text" name="licensePlate" autocomplete="off" id="licensePlate" class="form-control"
+            [(ngModel)]="dataSearch.licensePlate">
+          <button type="button" class="btn btn-secondary m-l-5" (click)="getSupports()">
+            <fa-icon [icon]="'redo'"></fa-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<div class="row">
+  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+    <div class="d-flex justify-content-start">
+      <span class="form-group pull-left page-size form-inline">
+        <select class="form-select control-color" [(ngModel)]="pagination.pageSize" (change)="changePageSize()">
+          @for(item of pagination.pageSizeOptions; track $index){
+          <option [ngValue]="item">{{ item }}</option>
+          }
+        </select>
+      </span>
+      <span class="form-group pull-left page-size form-inline">
+        <button type="button" class="btn btn-info m-l-5" (click)="openModal()">
+          <fa-icon [icon]="'plus'"></fa-icon> Nuevo
+        </button>
+
+      </span>
+        <span class="form-group pull-left page-size form-inline">
+
+
+        </span>
+    </div>
+  </div>
+  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+
+    <!-- <div class="d-flex justify-content-end">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Buscar vehiculo">
+      </div>
+    </div> -->
+    @if (valueStatus===statusTab.DASHBOARD) {
+      <div class="d-flex justify-content-end">
+        <div class="form-group">
+          <select name="status" id="status" [(ngModel)]="dataSearch.supportStatusId" class="form-select" (change)="getSupports()">
+            @for (item of supportStatus; track $index) {
+              <option [ngValue]="item.id">{{item.name}}</option>
+            }
+          </select>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+
+<section class="section-container-table">
+  <table mat-table [dataSource]="dataSource">
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef> No. </th>
+      <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="op">
+      <th mat-header-cell *matHeaderCellDef> Op. </th>
+      <td mat-cell *matCellDef="let element">
+        <div ngbDropdown container="body">
+          <button type="button" class="btn btn-outline-success btn-sm" ngbDropdownToggle>
+            <fa-icon [icon]="'cog'"></fa-icon>
+          </button>
+          <div ngbDropdownMenu style="max-width: 50px;">
+
+            <button ngbDropdownItem title="Reporte" class="btn-sm" (click)="getReport(element)">
+              <fa-icon [icon]="'file-arrow-down'"></fa-icon> Reporte
+            </button>
+
+            @if (valueStatus===statusTab.PENDIENTE){
+            <button ngbDropdownItem title="Editar" class="btn-sm" (click)="openModal(element.id)">
+              <fa-icon [icon]="'edit'"></fa-icon> Editar
+            </button>
+            }
+
+            @if (valueStatus===statusTab.PENDIENTE || valueStatus===statusTab.INSPECCION) {
+            <button ngbDropdownItem title="Anular" class="btn-sm" (click)="askToDelete(element.id)">
+              <fa-icon [icon]="'trash-can'"></fa-icon> Anular
+            </button>
+            }
+
+            @if (valueStatus===statusTab.PENDIENTE || valueStatus===statusTab.EN_PROCESO) {
+            <button ngbDropdownItem title="Editar" class="btn-sm" (click)="openMaintenance(element.id)">
+              <fa-icon [icon]="'tools'"></fa-icon> Mantenimiento
+            </button>
+
+            }
+
+            @if ((valueStatus===statusTab.PENDIENTE || valueStatus===statusTab.EN_PROCESO ) && !element.existsInsp) {
+            <button ngbDropdownItem title="Inspección" class="btn-sm" (click)="openModalInspection(element.id)">
+              <fa-icon [icon]="'tools'"></fa-icon> Inspección
+            </button>
+            }
+
+            @if (valueStatus===statusTab.POR_ENTREGAR) {
+            <button ngbDropdownItem title="Convertir a Doc. Aprobación" class="btn-sm"
+              (click)="askToConvertToDoc(element.id)">
+              <fa-icon [icon]="'file-arrow-down'"></fa-icon>
+              Convertir a Aprobación
+            </button>
+
+            }
+
+            @if (valueStatus===statusTab.APROBADO) {
+            <button ngbDropdownItem title="Doc. Aprobado" class="btn-sm" (click)="getDocView(element.id)">
+              <fa-icon [icon]="'file'"></fa-icon>
+              Doc. Aprobado
+            </button>
+
+            }
+
+
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+
+
+    <ng-container matColumnDef="secuencia">
+      <th mat-header-cell *matHeaderCellDef> Secuencia </th>
+      <td mat-cell *matCellDef="let element"> {{element.sequence}} </td>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="fechaEmision">
+      <th mat-header-cell *matHeaderCellDef> Fecha Emisión </th>
+      <td mat-cell *matCellDef="let element"> {{element.fechaEmision}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="identificacion">
+      <th mat-header-cell *matHeaderCellDef> Identificación </th>
+      <td mat-cell *matCellDef="let element"> {{element.idCard}} </td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="cliente-conductor">
+      <th mat-header-cell *matHeaderCellDef> Cliente/Conductor </th>
+      <td mat-cell *matCellDef="let element"> {{element.tradeName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="placa">
+      <th mat-header-cell *matHeaderCellDef> Placa </th>
+      <td mat-cell *matCellDef="let element"> {{element.licensePlate
+        }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="encargado">
+      <th mat-header-cell *matHeaderCellDef> Encargado </th>
+      <td mat-cell *matCellDef="let element"> {{element.userAssigned}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="obs">
+      <th mat-header-cell *matHeaderCellDef> Obs. </th>
+      <td mat-cell *matCellDef="let element">
+        <button type="button" class="btn btn-warning btn-xs" [ngbPopover]="element.obs"
+          triggers="mouseenter:mouseleave" popoverTitle="Observación">
+          <fa-icon [icon]="'eye'"></fa-icon>
+        </button>
+
+    </td>
+    </ng-container>
+
+
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+      </ng-container>
+
+
+
+
+    <ng-container matColumnDef="entregar">
+      <th mat-header-cell *matHeaderCellDef> Entregar </th>
+      <td mat-cell *matCellDef="let element">
+        @if (valueStatus===statusTab.EN_PROCESO){
+        <mat-checkbox (change)="putState(element.id)">
+        </mat-checkbox>
+        }
+      </td>
+    </ng-container>
+
+
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center" colspan="10">
+        Sin registro
+      </td>
+    </tr>
+
+
+    <tr mat-header-row *matHeaderRowDef="visibleColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: visibleColumns;"></tr>
+  </table>
+</section>
+
+<div class="card-body">
+
+  <ngb-pagination [collectionSize]="pagination.totalRecords" [(page)]="pagination.pageIndex"
+    [maxSize]="pagination.maxSize" [pageSize]="pagination.pageSize" [rotate]="true" (pageChange)="pageChanged()"
+    [boundaryLinks]="true" />
+</div>

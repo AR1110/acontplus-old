@@ -1,117 +1,48 @@
-﻿namespace Compras.API.Controllers;
+﻿using Common.AppSettings.Extensions;
 
-[Route("api/[controller]")]
-[ApiController]
-public class CategoriaCompraController : ControllerBase
+namespace Compras.API.Controllers;
+
+public class CategoriaCompraController(ICategoriaCompraService categoriaCompraService) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    private readonly DbAccess _db;
-    private readonly ICustomLogger _log;
-
-    public CategoriaCompraController(IConfiguration configuration, ICustomLogger log)
-    {
-        _configuration = configuration;
-        _log = log;
-        _db = new DbAccess(_configuration);
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Compra.Categoria_Get");
-            _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDataTableAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al obtener las categorias compras: " + ex);
-            _response.Create("0", "Error al obtener las categorias compras");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await categoriaCompraService.GetAsync(parameters));
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Compra.Categoria_Insert");
-            _db.AddDynamicParam("userRoleId",
-               User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDefaultAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error on Post Category Buy: \n" + ex);
-            _response.Create("0", "Error al guardar Categoria compra");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await categoriaCompraService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Compra.Categoria_Update");
-            _db.AddDynamicParam("userRoleId",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDefaultAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error on Put Category buy: \n" + ex);
-            _response.Create("0", "Error al actualizar la categoria compra");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(json) }
+        };
+        return Ok(await categoriaCompraService.UpdateAsync(parameters));
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Compra.Categoria_Delete");
-            _db.AddDynamicParam("userRoleId",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDefaultAsync();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error on Delete Category buy: \n" + ex);
-            _response.Create("0", "Error al elimianr la categoria compra");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+            { "userRoleId", User.GetUserRoleId() }, { "id", User.GetUserRoleId() }
+        };
+        return Ok(await categoriaCompraService.DeleteAsync(parameters));
     }
 }

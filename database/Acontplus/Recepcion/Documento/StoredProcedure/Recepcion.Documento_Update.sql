@@ -1,6 +1,6 @@
 USE AcontPlus
 GO
-/****** Object:  StoredProcedure [Recepcion].[ASPComprobanteImportacionInsert]    Script Date: 8/4/2022 9:30:34 PM ******/
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11,11 +11,10 @@ GO
 -- Description:	SP PARA ACTUALIZAR LOS COMPROBANTES ELECTRONICOS DEL SRI
 -- =============================================
 
-CREATE OR ALTER PROCEDURE [Recepcion].Documento_Update @idRol INT
+CREATE OR ALTER PROCEDURE [Recepcion].Documento_Update @userRoleId INT
 ,@idDocumento INT
 ,@tipo INT
 ,@xmlDoc XML
-,@backendInfo VARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,7 +23,7 @@ BEGIN
 	,@xmlComp as XML
 	,@codDoc VARCHAR(2)
 
-	SELECT @idUsuario = idUsuario FROM AFTDataRol(@idRol)
+	SELECT @idUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 	
 
 	IF EXISTS(SELECT * FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND xmlCompressed IS NOT NULL)
@@ -57,12 +56,10 @@ BEGIN
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
-		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
+		SELECT '0' code, 'Error al actualizar' as 'message'
 		IF (@@TRANCOUNT > 0)
-			ROLLBACK TRAN
-		DECLARE @method VARCHAR(200)
-		SET @method = (SELECT method FROM OPENJSON(@backendInfo) WITH(method VARCHAR(200) '$.methodName'))
-		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
-		VALUES (NEWID(), @method, ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+			ROLLBACK TRAN 
+		INSERT INTO ErroresSistema([method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
+		VALUES ('DocumentoRecibido/Put', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	END CATCH 
 END

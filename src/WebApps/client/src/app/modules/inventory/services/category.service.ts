@@ -3,7 +3,7 @@ import { Injectable, inject } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
 import { map } from "rxjs";
 import { isApiResponse } from "@core/models/api-response";
-import { INVENTORY_PATHS } from "../enums/inventory.enum";
+import { INVENTORY_PATHS } from "@inventory/domain/enums/inventory.enum";
 
 @Injectable({
   providedIn: 'root'

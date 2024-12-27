@@ -1,4 +1,5 @@
-﻿using Common.Core.Models;
+﻿using Common.AppSettings.Extensions;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -7,80 +8,40 @@ using Services.Common.Extensions;
 
 namespace Mechanical.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class InspectionController : BaseApiController
+    public class InspectionController(IInspectionService _inspectionService) : BaseApiController
     {
-        public readonly IInspectionService _inspectionService;
-        public readonly ICustomLogger _log;
-        public InspectionController(IInspectionService inspectionService, ICustomLogger log)
-        {
-            _inspectionService = inspectionService;
-            _log = log;
-        }
-
-        [HttpGet]
+       [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                    { "userRoleId", User.GetUserRoleId()},
-                    { "json", json}
-                };
-                var inspections = await _inspectionService.GetAsync(parameters);
-                if (inspections == null | string.IsNullOrEmpty((string)inspections))
-                {
-                    return NoContent();
-                }
-                return Ok(inspections);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Get: \n" + ex.ToString());
-                return BadRequest("Error on get");
-            }
+            var parameters = new Dictionary<string, object>{
+                { "userRoleId", User.GetUserRoleId()},
+                { "json", json}
+            };
+            return Ok(await _inspectionService.GetAsync(parameters));
+           
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object> {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _inspectionService.AddAsync(parameters);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Post: \n" + ex.ToString());
-                return BadRequest("Error On Save");
-            }
+            var parameters = new Dictionary<string, object> {
+                { "userRoleId", User.GetUserRoleId() },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+            };
+            return Ok(await _inspectionService.AddAsync(parameters));
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object> {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "id", id },
-                    { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _inspectionService.UpdateAsync(parameters);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Post: \n" + ex.ToString());
-                return BadRequest("Error On Save");
-            }
+            
+            var parameters = new Dictionary<string, object> {
+                { "userRoleId", User.GetUserRoleId() },
+                { "id", id },
+                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+            };
+            return Ok(await _inspectionService.UpdateAsync(parameters));
+            
         }
     }
 }

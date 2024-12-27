@@ -1,9 +1,11 @@
-﻿namespace Contabilidad.API.Interfaces;
+﻿using Common.AppSettings;
+
+namespace Contabilidad.API.Interfaces;
 
 public interface ICategoryService
 {
-    Task<ApiResponseDeprecated> AddAsync(Category category);
-    Task<ApiResponseDeprecated> DeleteAsync(int userId, int id);
-    Task<ApiResponseDeprecated> GetAsync(Dictionary<string, object> parameters);
-    Task<ApiResponseDeprecated> UpdateAsync(int id, Category category);
+    Task<LegacyApiResponse> AddAsync(Category category);
+    Task<LegacyApiResponse> DeleteAsync(int userId, int id);
+    Task<LegacyApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<LegacyApiResponse> UpdateAsync(int id, Category category);
 }

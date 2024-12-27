@@ -5,36 +5,36 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { ProductService } from '@modules/inventory/services/product.service';
-import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
+import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import { UserSearchComponent } from '@core/components/user-search/user-search.component';
-import { TarifaSelectHtmlOnly } from '@inventory/models/tarifa.model';
+import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
-import { isValidField } from '@core/utils/utils';
+import { getValidId, isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { SALE_CODE_REPORT } from '@modules/sale/enums/sale.enum';
-import { GroupedSubFamilia } from '@modules/inventory/models/sub-category.model';
-import { formatDateMoment } from '@core/utils/format-date-moment';
+import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { hideLoader, showLoader } from '@core/utils/loader';
+import { formatDateToString } from '@core/utils/date.util';
+import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
+import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 @Component({
-  selector: 'app-rentabilidad-page',
-  standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatSelectModule,
-    FormsModule,
-    ReactiveFormsModule,
-    BreadcrumbComponent,
-    ProductSearchComponent,
-    UserSearchComponent,
-    DateRangeSelectionComponent,
-  ],
-  templateUrl: './rentabilidad-page.component.html',
+    selector: 'app-rentabilidad-page',
+    imports: [
+        MatFormFieldModule,
+        MatSelectModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BreadcrumbComponent,
+        ProductSearchComponent,
+        UserSearchComponent,
+        DateRangeSelectionComponent,
+    ],
+    templateUrl: './rentabilidad-page.component.html'
 })
 export class RentabilidadPageComponent {
   estalecimientos: Array<GroupedEstab> = [];
@@ -59,8 +59,8 @@ export class RentabilidadPageComponent {
     idTarifa: 0,
     idArticulo: 0,
     userName: '',
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
     codDoc: '',
     idUsuario: 0,
     productChecked: false,
@@ -75,13 +75,15 @@ export class RentabilidadPageComponent {
   productSearchProps = {
     isSearchSimple: true,
   };
-  private productSvc = inject(ProductService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
+  private _productUseCase = inject(ProductUseCase)
+  private _tokenUseCase= inject(TokenUseCase)
+
 
   ngOnInit() {
     showLoader();
-    this.productSvc.getDataReport().subscribe({
+    this._productUseCase.getDataReport().subscribe({
       next: (response) => {
         hideLoader();
         let { estabs, tarifas, tiposDoc, subCategorias } = response;
@@ -248,17 +250,18 @@ export class RentabilidadPageComponent {
         (this.dataSearch.productChecked &&
           isValidField(this.dataSearch.idArticulo)) ||
         null,
-      idTarifa: isValidField(this.dataSearch.idTarifa),
+      idTarifa: getValidId(this.dataSearch.idTarifa),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       subFamiliasChecked:
         (this.dataSearch.subCategoriaChecked && subCategoriasChecked) || null,
       porcentajeRenta: this.dataSearch.porcentajeRenta,
       porcentajeComision: this.dataSearch.porcentajeComision,
+      userRoleId: this._tokenUseCase.getUserRoleId()
     };
 
     const parameters = {
-      hasIdUsuarioRol: true,
+      hasService: true,
       reportParams: JSON.stringify({
         codigo: this.dataSearch.checkboxRentabCustom
           ? SALE_CODE_REPORT.SRRC

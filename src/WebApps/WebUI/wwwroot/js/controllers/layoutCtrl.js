@@ -24,7 +24,8 @@
                 </a>
                 <ul aria-expanded="false" class="collapse">
                     <li><a href="/Config/UserProfile/Index"><i class="ti-user"></i> Mi Perfil</a></li>
-                    <a href="https://api.whatsapp.com/send?phone=593986669930" target="_blank" class="dropdown-item text-success" data-bs-toggle="tooltip" title="Si requiere ayuda personalizada comuniquese al siguiente número!"> <i aria-hidden="true" class="fab fa-whatsapp"></i> Soporte </a>
+                    <li><a href="/Common/UserManual/Index"><i class="fa fa-book-reader"></i> Manual de Usuario</a></li>
+                    <li><a href="https://api.whatsapp.com/send?phone=593986669930" target="_blank" class="dropdown-item text-success" data-bs-toggle="tooltip" title="Si requiere ayuda personalizada comuniquese al siguiente número!"> <i aria-hidden="true" class="fab fa-whatsapp"></i> Soporte </a></li>
                     <li><a href="#" onclick="logout()" id="logoutII"><i class="fa fa-power-off"></i> Salir</a></li>
                 </ul>
             </li>`;
@@ -105,18 +106,61 @@
 
 
         const pathname = $window.location.pathname;
+
         if (/\/Config\/UserProfile\/Index/.test(pathname)) return;
+        if (/\/Common\/UserManual\/Index/.test(pathname)) return;
+
+        if(pathname==='/Index')return 
 
         if (pathname) {
             if (pathname === "/") {
-                location.href = "/Index";
+                location.href = "/Index"; 
             }
             if (pathname.indexOf("/Home") == -1) {
                 let lengthPath = pathname.split("/").splice(1).length;
 
-                if ([1, 2, 3].includes(lengthPath)) {
+                if ([1, 2, 3, 4].includes(lengthPath)) {
                     let dataMenu = $scope.submenus.find((item) => item.url === pathname);
                     if (dataMenu) {
+                        const { newUrl, newUrlExpiration } = dataMenu;
+                        if (newUrl && newUrl.length > 0) {
+                            let timerInterval;
+                            swal.fire({
+                                icon: 'info',
+                                //title: 'Nueva Versión Disponible',
+                                text: 'Existe una nueva versión disponible, ¿desea acceder?',
+                                showCancelButton: true,
+                                confirmButtonText: 'Sí, acceder',
+                                cancelButtonText: 'Cancelar',
+                                timer: 5000,
+                                timerProgressBar: true,
+                                didOpen: () => {
+                                    //const progressBar = swal.getTimerProgressBar();
+                                    //if (progressBar) {
+                                    //    progressBar.style.background = '#4caf50';
+                                    //    progressBar.style.height = '6px';
+                                    //}
+                                    Swal.showLoading()
+                                    timerInterval = setInterval(() => {
+                                        const content = Swal.getHtmlContainer()
+                                        if (content) {
+                                            const b = content.querySelector('b')
+                                            if (b) {
+                                                b.textContent = Swal.getTimerLeft()
+                                            }
+                                        }
+                                    }, 100)
+                                },
+                                willClose: () => {
+                                    clearInterval(timerInterval)
+                                },
+                            }).then(result => {
+                                if (result.isConfirmed) {
+                                    location.href = newUrl;
+                                };
+                            });
+
+                        }
                         const dataAccionesSubMenu = userCustomerPermissionSvc.accionesSubMenu()
                         $rootScope.usuarioPermiso = userCustomerPermissionSvc.userPermissionAdapter();
                         let tempArray = JSON.parse(dataMenu.actions) || []
@@ -129,7 +173,7 @@
                         $rootScope.accion = structuredClone(namesObject)
                         $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
                     } else {
-                        //location.href = "/";
+                     //  location.href = "/Index";
                     }
                 }
             }

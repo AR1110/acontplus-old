@@ -1,4 +1,4 @@
-﻿using Common.Infrastructure.Repository;
+﻿using Common.Infrastructure.Repository.Interfaces;
 
 public class CategoryService : ICategoryService
 {

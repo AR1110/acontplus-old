@@ -1,6 +1,9 @@
-﻿namespace Contabilidad.API.Controllers;
+﻿using Autofac.Core;
+using Common.AppSettings.Extensions;
 
-public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarService, IConfiguration configuration)
+namespace Contabilidad.API.Controllers;
+
+public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarService)
     : BaseApiController
 {
     [HttpGet]
@@ -16,45 +19,26 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
         return Ok(response);
     }
 
+   // este sp trasladar a Controlador CuotaPorCobrarController y el servicio respectivamente
     [HttpPost("Insert/Cuota")]
     public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
     {
-        var dbAccess = new DbAccess(configuration);
-        var response = new ApiResponseDeprecated();
-        try
+        var parameters = new Dictionary<string, object>
         {
-            var idUsuarioRol = User.GetUserRoleId();
-            await dbAccess.SpExecuteAsync("Contabilidad.CuotaPorCobrar_Insert");
-            dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-            dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
-            response = await dbAccess.GetDefaultAsync();
-        }
-        finally
-        {
-            dbAccess.Close();
-        }
-
-        return Ok(response);
+            { "idUsuarioRol", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(paremeter.Data) }
+        };
+        return Ok(await cuentaPorCobrarService.AddAsync(parameters));
     }
 
     [HttpPut("Update/Cuota")]
     public async Task<IActionResult> Update([FromBody] ApiRequest paremeter)
     {
-        var dbAccess = new DbAccess(configuration);
-        var response = new ApiResponseDeprecated();
-        try
-        {
-            var idUsuarioRol = User.GetUserRoleId();
-            await dbAccess.SpExecuteAsync("Contabilidad.CuotaPorCobrar_Update");
-            dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-            dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
-            response = await dbAccess.GetDefaultAsync();
-        }
-        finally
-        {
-            dbAccess.Close();
-        }
 
-        return Ok(response);
+        var parameters = new Dictionary<string, object>
+        {
+            { "idUsuarioRol", User.GetUserRoleId() },
+            { "json", DataConverters.SerializeDictionary(paremeter.Data) }
+        };
+        return Ok(await cuentaPorCobrarService.UpdateAsync(parameters));
     }
 }

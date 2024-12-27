@@ -1,122 +1,57 @@
-﻿using Common.Core.Models.Almacen;
+﻿using Common.AppSettings.Extensions;
 
 namespace Inventario.API.Controllers;
 
-public class MarcaController : BaseApiController
+public class MarcaController(IMarcaService marcaService) : BaseApiController
 {
-    private readonly IConfiguration _configuration;
-    
-
-    public MarcaController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-        
-    }
-
-    [HttpGet("Get")]
+    [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Almacen.Marca_Get");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
 
-        return Ok(_response);
+        var response = await marcaService.GetAsync(parameters);
+        return Ok(response);
     }
 
-    [HttpPost("Insert")]
-    public async Task<IActionResult> Insert([FromBody] Marca data)
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Almacen.Marca_Insert");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("descripcion", data.descripcion);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+        };
 
-        return Ok(_response);
+        var response = await marcaService.AddAsync(parameters);
+
+        return Ok(response);
     }
 
-    [HttpPut("Update/{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] Marca data)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
+        var parameters = new Dictionary<string, object>
         {
-            await _db.SpExecuteAsync("Almacen.Marca_Update");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("descripcion", data.descripcion);
-            _db.AddDynamicParam("estado", data.estado);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+        };
 
-        return Ok(_response);
+        var response = await marcaService.UpdateAsync(parameters);
+        return Ok(response);
     }
 
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
-        {
-            await _db.SpExecuteAsync("Almacen.Marca_Delete");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("id", id);
-            _response = await _db.GetDefaultAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id }, };
 
-        return Ok(_response);
-    }
-
-    [HttpGet("ListForSelect")]
-    public async Task<IActionResult> ListForSelect(string json)
-    {
-        var _response = new ApiResponseDeprecated();
-        var _db = new DbAccess(_configuration);
-        try
-        {
-            await _db.SpExecuteAsync("Almacen.Marca_For_Select");
-            _db.AddDynamicParam("idUsuarioRol",
-                User.GetUserRoleId());
-            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-            _response = await _db.GetDataTableAsync();
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        var response = await marcaService.DeleteAsync(parameters);
+        return Ok(response);
     }
 }

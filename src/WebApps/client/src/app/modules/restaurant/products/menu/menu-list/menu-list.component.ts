@@ -4,16 +4,14 @@ import { MenuService } from '@restaurant/services/menu.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { Pagination } from '@shared/models/pagination.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { NgOptimizedImage } from '@angular/common';
 import { ModalService } from '@core/services/modal.service';
 import { MenuAddEditModalComponent } from '@restaurant/products/menu/menu-add-edit-modal/menu-add-edit-modal.component';
 
 @Component({
-  selector: 'app-menu-list',
-  standalone: true,
-  imports: [FaIconComponent, NgOptimizedImage],
-  templateUrl: './menu-list.component.html',
-  styles: ``,
+    selector: 'app-menu-list',
+    imports: [FaIconComponent ],
+    templateUrl: './menu-list.component.html',
+    styles: ``
 })
 export class MenuListComponent {
   menus: Menu[] = [];

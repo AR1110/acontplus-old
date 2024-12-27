@@ -1,6 +1,7 @@
-﻿using Common.Core.ViewModels;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Data;
+using Configuracion.API.Models;
+using Common.AppSettings;
 
 namespace Configuracion.API.Services;
 
@@ -8,7 +9,7 @@ public class TurnoService : ITurnoService
 {
     private readonly IAdoRepository _repository;
     private readonly IConfiguration _configuration;
-    private ApiResponseDeprecated _gr = new ApiResponseDeprecated();
+    private LegacyApiResponse _gr = new LegacyApiResponse();
     private readonly string _connectionStrings = string.Empty;
 
     public TurnoService(IAdoRepository respository, IConfiguration configuration)
@@ -28,7 +29,7 @@ public class TurnoService : ITurnoService
 
         return null;
     }
-    public async Task<ApiResponseDeprecated> CreateTurnoAsync(int idRol, Turno data)
+    public async Task<LegacyApiResponse> CreateTurnoAsync(int idRol, Turno data)
     {
         using (var con = new SqlConnection(_connectionStrings))
         {
@@ -56,7 +57,7 @@ public class TurnoService : ITurnoService
         }
         return _gr;
     }
-    public async Task<ApiResponseDeprecated> UpdateTurnoAsync(int idRol, Turno data)
+    public async Task<LegacyApiResponse> UpdateTurnoAsync(int idRol, Turno data)
     {
         try
         {
@@ -96,7 +97,7 @@ public class TurnoService : ITurnoService
         return _gr;
 
     }
-    public async Task<ApiResponseDeprecated> ReadTurnoAsync(int idRol, int pageIndex, int pageSize)
+    public async Task<LegacyApiResponse> ReadTurnoAsync(int idRol, int pageIndex, int pageSize)
     {
         var listar = new List<TurnoViewModel>();
         using (var con = new SqlConnection(_connectionStrings))
@@ -136,7 +137,7 @@ public class TurnoService : ITurnoService
         _gr.data = listar;
         return _gr;
     }
-    public async Task<ApiResponseDeprecated> DeleteTurnoAsync(int idRol, int idTurno)
+    public async Task<LegacyApiResponse> DeleteTurnoAsync(int idRol, int idTurno)
     {
         using (var con = new SqlConnection(_connectionStrings))
         {

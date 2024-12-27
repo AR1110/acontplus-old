@@ -22,16 +22,13 @@ public class FactElectContext : BaseContext
 
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-        if (Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
+        foreach (var entityType in builder.Model.GetEntityTypes())
         {
-            foreach (var entityType in builder.Model.GetEntityTypes())
-            {
-                var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
+            var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
 
-                foreach (var property in properties)
-                {
-                    builder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
-                }
+            foreach (var property in properties)
+            {
+                builder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
             }
         }
 
@@ -48,54 +45,6 @@ public class FactElectContext : BaseContext
 
         builder.ApplyConfiguration(new CustomerConfiguration());
         builder.ApplyUtcDateTimeConverter();
-    }
-
-    public override int SaveChanges()
-    {
-        var entries = ChangeTracker
-            .Entries()
-            .Where(e => e.Entity is BaseEntity && (
-                e.State == EntityState.Added
-                || e.State == EntityState.Modified));
-
-        foreach (var entityEntry in entries)
-        {
-            if (entityEntry.State == EntityState.Modified)
-            {
-                ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
-            }
-
-            //if (entityEntry.State == EntityState.Added)
-            //{
-            //    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.Now;
-            //}
-        }
-
-        return base.SaveChanges();
-    }
-
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        var entries = ChangeTracker
-            .Entries()
-            .Where(e => e.Entity is BaseEntity && (
-                e.State == EntityState.Added
-                || e.State == EntityState.Modified));
-
-        foreach (var entityEntry in entries)
-        {
-            if (entityEntry.State == EntityState.Modified)
-            {
-                ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
-            }
-            //if (entityEntry.State == EntityState.Added)
-            //{
-            //    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.Now;
-            //}
-        }
-
-        var result = await base.SaveChangesAsync(cancellationToken);
-        return result;
     }
 }
 

@@ -1,4 +1,4 @@
-
+//@ts-check
 (function () {
 
     'use strict';
@@ -14,19 +14,26 @@
         let service = {};
 
         service.getDataFilter = function () {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 11 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 11 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
 
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload);
+                    let {
+                        brands,
+                        measures,
+                        models,
+                        subcategories,
+                        taxes
+
+                    } = JSON.parse(response.payload);
                     return {
-                        subFamilias: mainData[0],
-                        medidas: mainData[1],
-                        marcas: mainData[2],
-                        modelos: mainData[3],
-                        tiposIva: mainData[4]
+                        subFamilias: subcategories || [],
+                        medidas: measures || [],
+                        marcas: brands || [],
+                        modelos: models || [],
+                        tiposIva: taxes
                     }
 
                 }
@@ -40,7 +47,7 @@
          * @returns 
          */
         service.get = (params) => {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(params), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -97,16 +104,25 @@
         }
 
         service.getAll = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            let json = {
+                tipo: 1,
+                ...query
+            }
+            return mS.getData('get', url + '?json=' + JSON.stringify(json), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
 
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload);
+                    let { products } = JSON.parse(response.payload);
+                    let articulos = products || [];
+                    let totalRecords = 0;
 
-                    let articulos = mainData[0];
-                    let totalRecords = mainData[0][0].totalRecords;
+                    if (articulos.length > 0) {
+                        totalRecords = articulos[0].totalRecords;
+                    }
+
+
 
                     //Listado de articulos 
                     return {
@@ -144,48 +160,38 @@
          * @returns 
          */
         service.getDataForForm = function () {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 5 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 5 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload);
-                    let tempEstabs = mainData[0];
-                    let decimal = mainData[1][0];
-                    let familias = mainData[3];
-                    let subFamilias = mainData[2];
-                    let medidas = mainData[4];
-                    let modelos = mainData[5];
-                    let marcas = mainData[6];
-                    let tiposArticulo = mainData[7];
-                    let tarifasImpuesto = mainData[8];
-                    let tiposICE = mainData[9];
-                    let tarifas = mainData[10];
-                    let etiquetas = mainData[11];
- 
+                    let { brands, categories, decimal, fees, ice, measures, models, productTypes, subcategories, tags, taxes, warehouses
+
+                    } = JSON.parse(response.payload);
+
                     const dataPermission = userCustomerPermissionSvc.userPermissionAdapter();
-                    
+
                     let permission = {
                         isUpdatePrice: dataPermission.product.precio,
                         gestionUbicacion: dataPermission.product.gestionUbicacion
-                    }  
-                    const establecimientos = fS.groupEstabBodega(tempEstabs);
-                      
+                    }
+                    const establecimientos = fS.groupEstabBodega(warehouses);
+
                     return {
                         establecimientos,
-                        decimal,
-                        familias,
-                        subFamilias,
-                        medidas,
-                        modelos,
-                        marcas,
-                        tiposArticulo,
-                        tarifasImpuesto,
-                        tiposICE,
-                        tarifas,
-                        etiquetas,
+                        decimal: decimal[0],
+                        familias: categories,
+                        subFamilias: subcategories,
+                        medidas: measures,
+                        modelos: models,
+                        marcas: brands,
+                        tiposArticulo: productTypes,
+                        tarifasImpuesto: taxes,
+                        tiposICE: ice,
+                        tarifas: fees,
+                        etiquetas: tags,
                         permission
-                    } 
+                    }
                 }
             })
         }
@@ -197,15 +203,17 @@
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 return
             }
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true, null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true, null, true).then(response => {
+                let results = []
                 if (response.code === "0") {
                     throw response;
                 }
 
                 if (response.code === "1") {
-                 
-                    let dataRepository = JSON.parse(response.payload)[0];
-                    return dataRepository.map(item => {
+
+                    let { products } = JSON.parse(response.payload);
+                    let data = products || []
+                    results = data.map(item => {
                         let tarifas = item.tarifas && JSON.parse(item.tarifas)
                         return {
                             ...item,
@@ -214,6 +222,7 @@
                     })
 
                 }
+                return results;
             })
         }
 
@@ -229,16 +238,16 @@
                 checkBoxStock: dataSearch.checkBoxStock,
             };
 
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
 
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload);
+                    let { products } = JSON.parse(response.payload);
 
-                    let articulos = mainData[0];
-                    let totalRecords = mainData[0][0].totalRecords;
+                    let articulos = products || [];
+                    let totalRecords = articulos.length > 0 ? articulos[0].totalRecords : 0;
 
                     return {
                         totalRecords,
@@ -284,14 +293,14 @@
             query.tipo = 1;
             query.pageIndex = 1;
             query.pageSize = 50
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
 
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload);
-                    let articulos = mainData[0];
+                    let { products } = JSON.parse(response.payload);
+                    let articulos = products || []
                     //Listado de articulos 
                     return articulos.map(item => {
                         return {
@@ -319,7 +328,7 @@
 
         //Se usa en modulo de consolidacion 
         service.getForImportation = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -329,65 +338,19 @@
             })
         }
 
-        //eliminar mas adelante
-        service.getDataForm = function (query) {
-            return mS.getData('get', url + 'GetDataForm?json=' + JSON.stringify(query), null, true).then(response => {
-                if (response.code === "0") {
-                    throw response;
-                }
-                if (response.code === "1") {
-                    let mainDataRepository = JSON.parse(response.payload);
-                    let subFamiliaRepository = mainDataRepository[0];
-                    let familiaRepository = mainDataRepository[1];
-                    let medidaRepository = mainDataRepository[2];
-                    let modeloRepository = mainDataRepository[3];
-                    let marcaRepository = mainDataRepository[4];
-                    let metodoValoracionRepository = mainDataRepository[5]; //"Ultimos en entrar, primeros en salir";                                        
-                    let tipoArticuloRepository = mainDataRepository[6];
-                    let tarifaRepository = mainDataRepository[7];
-                    let etiquetaRepository = mainDataRepository[8];
-                    let movimientoRepository = mainDataRepository[9]; //[Entrdas, salidas]
-                    let permisoAlmacenRepository = mainDataRepository[10];
-                    let decimalAlmacenRepository = mainDataRepository[11][0];
-
-                    let tipoIvaRepository = mainDataRepository[12];
-                    let tipoIceRepository = mainDataRepository[13];
-
-                    return {
-                        subFamilias: subFamiliaRepository,
-                        familias: familiaRepository,
-                        medidas: medidaRepository,
-                        modelos: modeloRepository,
-                        marcas: marcaRepository,
-                        valoracionMetodos: metodoValoracionRepository,
-                        tipoArticulos: tipoArticuloRepository,
-                        tarifas: tarifaRepository,
-                        etiquetaActividades: etiquetaRepository,
-                        movimientosStocks: movimientoRepository,
-                        jsonPersmission: permisoAlmacenRepository,
-                        decimal: decimalAlmacenRepository,
-                        tipoIvas: tipoIvaRepository,
-                        tipoIces: tipoIceRepository,
-                    }
-                }
-            })
-        }
 
         service.save = function (file, data) {
-            return mS.uploadFile({ url: url + "Post/?json=" + encodeURIComponent(JSON.stringify({ data })), file, forApi: true });
-            //    return mainService.getData('post', url + 'Post', { data: data }, true)
+            let json = encodeURIComponent(JSON.stringify({ data }))
+            return mS.uploadFile({ url: `${url}?json=${json}`, file, forApi: true });
         }
 
 
         service.update = function (id, data) {
-            return mS.getData('PUT', url + `Put/${id}?json=${encodeURIComponent(JSON.stringify({ data }))}`, null, true);
+            let json = encodeURIComponent(JSON.stringify({ data }))
+            return mS.getData('PUT', `${url}${id}?json=${json}`, null, true);
         }
 
-        /**
-         * 
-         * @param {json} query  { busqueda: "com", condicion: false, fraccionado: false}
-         * @returns 
-         */
+
         service.search = function (query) {
             return mS.getData('get', url + 'Search?json=' + encodeURIComponent(JSON.stringify(query)), null, true).then(response => {
                 if (response.code === "0") {
@@ -433,14 +396,15 @@
                 code: objSearch.isSearchByCode,
                 tipo: 2
             }
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
 
                 if (response.code === "1") {
-                    const dataRepository = JSON.parse(response.payload)[0][0]
-                    return dataRepository;
+                    let { product } = JSON.parse(response.payload)
+                    product = product || {}
+                    return product[0];
                 }
             })
         }
@@ -451,14 +415,18 @@
          * ✅
          */
         service.getForPurchase = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, tipo: 9 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...query, tipo: 9 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
                 if (response.code === "1") {
-                    let [articuloApi, medidaPrincipal, medidaFraccionado, etiquetas] = JSON.parse(response.payload);
-                    let dataArticulo = articuloApi[0];
-
+                    let {
+                        product,
+                        measures,
+                        fractionedMeasures,
+                        tags
+                    } = JSON.parse(response.payload)
+                    let dataArticulo = product[0];
                     let articulo = {
                         codImpuesto: dataArticulo.codigo, //Codigo Impuesto 
                         codigoArticulo: dataArticulo.codigoArticulo,
@@ -473,11 +441,11 @@
                         tarifa: dataArticulo.tarifa,
                         valorIce: dataArticulo.valorIce,
                     }
- 
 
-                    let medidas = fS.processAndSortMeasures(medidaPrincipal, medidaFraccionado);
 
-                    let etiquetasMapper = etiquetas.map(item => ({
+                    let medidas = fS.processAndSortMeasures(measures, fractionedMeasures);
+
+                    let etiquetasMapper = tags.map(item => ({
                         idEtiqueta: item.idEtiqueta,
                         descripcion: item.descripcion,
                         etiquetas: item.etiquetas.split(';'),
@@ -493,159 +461,7 @@
             })
         }
 
-        /**
-         * Eliminar mas adelante
-         * 📛☺☺❌❓
-         * @param {} query 
-         * @returns 
-         */
-        service.findForPurchase = function (query) {
-            return mS.getData('get', url + 'FindForPurchase?json=' + JSON.stringify(query), null, true).then(response => {
-                if (response.code === '0') {
-                    throw response;
-                }
 
-                if (response.code === '1') {
-                    let dataRepository = JSON.parse(response.payload);
-                    let dataArticulo = dataRepository[0][0];
-                    let medidas = dataRepository[1] || [];
-                    let etiquetas = dataRepository[2] || [];
-                    let articuloMapper = {
-                        codIce: dataArticulo.codIce,
-                        codImpuesto: dataArticulo.codImpuesto,
-                        codigoArticulo: dataArticulo.codigoArticulo,
-                        codigoAuxiliar: dataArticulo.codigoAuxiliar,
-                        codigoPorcentaje: dataArticulo.codigoPorcentaje,
-                        codigoPrincipal: dataArticulo.codigoPrincipal,
-                        costoNeto: dataArticulo.costoNeto,
-                        datosAdicionales: dataArticulo.datosAdicionales,
-                        descripcion: dataArticulo.descripcion,
-                        idArticulo: dataArticulo.idArticulo,
-                        idTipoIva: dataArticulo.idTipoIva,
-                        llevaInventario: dataArticulo.llevaInventario,
-                        precioSinSubsidio: dataArticulo.precioSinSubsidio,
-                        nombreTipoIva: dataArticulo.nombreTipoIva,
-                        productoFraccionable: dataArticulo.productoFraccionable,
-                        stock: dataArticulo.stock,
-                        tarifa: dataArticulo.tarifa,
-                        valorIce: dataArticulo.valorIce,
-                    }
-
-                    let medidasMapper = medidas.map(item => ({
-                        idMedida: item.idMedida,
-                        descripcion: item.descripcion,
-                        precioCosto: item.precioCosto,
-                        // tarifas: JSON.parse(item.tarifas)
-                    }))
-
-
-                    let etiquetasMapper = etiquetas.map(item => ({
-                        idEtiqueta: item.idEtiqueta,
-                        descripcion: item.descripcion,
-                        etiquetas: item.etiquetas.split(';'),
-                    }))
-
-                    return {
-                        articulo: articuloMapper,
-                        medidas: medidasMapper,
-                        etiquetas: etiquetasMapper
-                    }
-                }
-            })
-        }
-
-        /**
-         * 
-         * @param {*} query {tipo: 6, idArticulo: 17, idBodega: 2}
-         * @returns object
-         */
-        //👁‍🗨👁‍🗨📛📛❌📛
-        service.findForSale = function (query) {
-            if (!("tipo" in query)) {
-                query.tipo = 6;
-            }
-            if (!('idArticulo' in query)) {
-                fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
-                throw ''
-            }
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
-                if (response.code === '0') {
-                    throw response;
-                }
-
-                if (response.code === '1') {
-
-
-                    let dataRepository = JSON.parse(response.payload);
-                    let dataMedida = []
-                    let dataInfoAdicionales = []
-
-                    let medidaMapper = [];
-                    let infoAdicionalMapper = [];
-
-                    // let responseMsg = results[0][0];
-                    // let sharedData = {
-                    //     articulo: results[0][0],
-                    //     medidas: results[1],
-                    //     datosAdicionales: results[2]
-                    // }
-
-                    let dataArticulo = dataRepository[0][0];
-                    if (dataRepository[1]) {
-                        dataMedida = dataRepository[1];
-                    }
-                    if (dataRepository[2]) {
-                        dataInfoAdicionales = dataRepository[2]
-                    }
-
-                    let articuloMapper = {
-                        idArticulo: dataArticulo.idArticulo,
-                        idTipoIva: dataArticulo.idTipoIva,
-                        idMedida: dataArticulo.idMedida,
-                        descripcion: dataArticulo.descripcion,
-                        valorIce: dataArticulo.valorIce,
-                        llevaInventario: dataArticulo.llevaInventario,
-                        datosAdicionales: dataArticulo.datosAdicionales,
-                        productoFraccionable: dataArticulo.productoFraccionable,
-                        nombreTipoIva: dataArticulo.nombreTipoIva,
-                        codigoArticulo: dataArticulo.codigoArticulo,
-                        stock: dataArticulo.stock,
-                        codIce: dataArticulo.codIce,
-                        costoNeto: dataArticulo.costoNeto,
-                        precioSinSubsidio: dataArticulo.precioSinSubsidio,
-                        codigoPrincipal: dataArticulo.codigoPrincipal,
-                        codigoAuxiliar: dataArticulo.codigoAuxiliar,
-                        codImpuesto: dataArticulo.codImpuesto,
-                        codigoPorcentaje: dataArticulo.codigoPorcentaje,
-                        tarifa: dataArticulo.tarifa,
-                        precioCosto: dataArticulo.precioCosto,
-                        cantMinimaVentaPorMayor: dataArticulo.cantMinimaVentaPorMayor
-                    }
-
-                    medidaMapper = dataMedida.map(item => ({
-                        idMedida: item.idMedida,
-                        descripcion: item.descripcion,
-                        precioCosto: item.precioCosto,
-                        tarifas: item.tarifas
-                    }))
-
-                    infoAdicionalMapper = dataInfoAdicionales.map(item => ({
-                        idArticulo: item.idArticulo,
-                        idEtiqueta: item.idEtiqueta,
-                        idInfoAdicional: item.idInfoAdicional,
-                        jsonAdicional: JSON.parse(item.jsonAdicional),
-                        uniqueId: item.uniqueId,
-                        estado: item.estado
-                    }))
-
-                    return {
-                        articulo: articuloMapper,
-                        medidas: medidaMapper,
-                        datosAdicionalesArticulo: infoAdicionalMapper
-                    }
-                }
-            })
-        }
 
         /**
          * Nueva depuracion ✅✅✅✅
@@ -653,36 +469,43 @@
         service.getForSale = function (obj) {
             let params = {
                 ...obj,
+                bySearch: obj.bySearch || obj.textSearch,
                 tipo: 6
             }
             if (!('idArticulo' in obj)) {
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 throw ''
             }
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(params), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload);
-                    let articulo = mainData[0][0];
+                    let {
+                        product, fractionedMeasures, measures, inventoryAdjustment, additionalInfo
+                    } = JSON.parse(response.payload)
+
+                    if(product.length===0 || measures.length===0){
+                        throw new Error("No se encontro los resultados")
+                    }
+
+                    let articulo = product[0];
                     let infoAdicionalTemp = [];
                     let datosAdicionalesArticulo = [];
 
                     // Medidas del artículo fraccionado del principal
-                    let medidasFraccionadoTemp = mainData[1];
+                    let medidasFraccionadoTemp = fractionedMeasures || []
 
                     // Medida principal con las tarifas
-                    let medidasPrincipalTemp = mainData[2];
+                    let medidasPrincipalTemp = measures || []
 
-                    let medidas = fS.processAndSortMeasures(medidasPrincipalTemp,medidasFraccionadoTemp);
-            
+                    let medidas = fS.processAndSortMeasures(medidasPrincipalTemp, medidasFraccionadoTemp);
 
-                    let consolidacionesFecha = mainData[3] || [];
 
-                    if (mainData[4]) {
-                        infoAdicionalTemp = mainData[4] || []
-                    }
+                    let consolidacionesFecha = inventoryAdjustment || [];
+
+                    infoAdicionalTemp = additionalInfo || []
+
 
 
                     datosAdicionalesArticulo = infoAdicionalTemp.map(item => ({
@@ -714,13 +537,14 @@
                 throw ''
             }
             query.tipo = 7;
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
                 if (response.code === '1') {
+                    const { stockCheckResponse } = JSON.parse(response.payload)
 
-                    const responseApi = JSON.parse(response.payload)[0][0];
+                    const responseApi = stockCheckResponse[0];
                     return responseApi;
 
                 }
@@ -730,17 +554,23 @@
 
 
         service.findById = function (id) {
-            return mS.getData("get", url + "GetId/" + id, null, true).then(response => {
+            return mS.getData("get", `${url}${id}`, null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload);
+                    let { products, productPvps,
+                        productMeasures,
+                        productBarcodes,
+                        productLocations
+
+                    } = JSON.parse(response.payload);
                     return {
-                        data: mainData[0][0],
-                        articuloTarifas: mainData[1],
-                        articuloCodigoBarras: mainData[2],
-                        articuloUbicaciones: mainData[3]
+                        data: products[0],
+                        articuloTarifas: productPvps,
+                        articuloCodigoBarras: productBarcodes,
+                        articuloUbicaciones: productLocations
+
                     }
                 }
             })
@@ -766,19 +596,22 @@
 
         //Reports 
         service.getDataFormReport = function () {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 13 }), null, true).then(
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 13 }), null, true).then(
                 response => {
                     if (response.code === "0") {
                         throw response
                     }
                     if (response.code === "1") {
-                        let [estabsTemp, subFamilias, marcas] = JSON.parse(response.payload);
+                        let {
+                            warehouses, subcategories, brands, documentTypes, fees
+                        }
+                            = JSON.parse(response.payload);
 
-                        const estabs = fS.groupEstabBodega(estabsTemp)
+                        const estabs = fS.groupEstabBodega(warehouses)
                         return {
                             estabs,
-                            subFamilias,
-                            marcas
+                            subFamilias: subcategories,
+                            marcas: brands
                         }
                     }
                 }
@@ -787,21 +620,20 @@
 
 
 
-        service.getDataStock = function(id){
-             let json = JSON.stringify({
+        service.getDataStock = function (id) {
+            let json = JSON.stringify({
                 idArticulo: id,
                 tipo: 10,
-             })
-            return mS.getData('get', url + 'Get?json=' + json, null,true,null,true).then(response=>{
+            })
+            return mS.getData('get', url + '?json=' + json, null, true, null, true).then(response => {
                 let estabsStock = [];
-                if(response.code==="1"){
-                    let [estabs] = JSON.parse(response.payload); 
-
-                    estabsStock = estabs.map(val => {
+                if (response.code === "1") {
+                    let { establishments } = JSON.parse(response.payload);
+                    estabsStock = establishments.map(val => {
                         val.warehouses = JSON.parse(val.warehouses);
                         return val;
                     });
-                    
+
                 }
                 return estabsStock;
             })

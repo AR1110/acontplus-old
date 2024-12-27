@@ -1,87 +1,56 @@
 <div class="card">
   <div class="card-body">
     <div class="row">
-      <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-4 col-12">
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
         <div class="form-group">
-          <select (change)="loadData()" [(ngModel)]="pagination.pageSize" class="form-select">
-            @for (page of pagination.pageSizeOptions; track $index) {
-              <option value="{{page}}">{{ page }}</option>
-            }
-          </select>
-        </div>
-      </div>
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-8 col-12 align-items-end align-content-end">
-        <div class="input-group mb-3">
-          <input
-            aria-describedby="basic-addon1"
-            aria-label=""
-            class="form-control search-input"
-            placeholder="Buscar..."
-            type="text"
-          />
-          <div class="input-group-append">
-            <button
-              class="btn btn-outline-primary"
-              type="button">
-              <fa-icon [icon]="'sync'"></fa-icon>
-            </button
-            >
+          <div class="input-group mb-3">
+            <input
+              aria-describedby="basic-addon1"
+              aria-label=""
+              class="form-control search-input w-25"
+              placeholder="Buscar..."
+              [(ngModel)]="dataSearch.textSearch"
+              type="text"
+            />
+            <div class="input-group-append">
+              <button
+                class="btn btn-outline-primary"
+                type="button"
+                (click)="refresh()"
+              >
+                <fa-icon [icon]="'sync'"></fa-icon>
+              </button>
+            </div>
           </div>
         </div>
       </div>
+      <div
+        class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-8 col-12 align-items-end align-content-end"
+      ></div>
     </div>
-    <div class="table-responsive">
-      <table class="table table-bordered">
-        <thead>
-        <tr>
-          <th class="text-center" scope="col">Op.</th>
-          <th class="text-center" scope="col">N°</th>
-          <th scope="col">Categoría</th>
-          <th scope="col">Item</th>
-          <th scope="col">Resumen</th>
-        </tr>
-        </thead>
-        <tbody>
-          @if (items.length > 0) {
-            @for (item of items; track $index) {
-              <tr>
-                <td class="text-center">
-                  <button (click)="onEdit(item)" class="btn btn-outline-warning btn-rounded btn-sm" type="button"
-                          title="Editar">
-                    <fa-icon [icon]="'edit'"></fa-icon>
-                  </button>
-                </td>
-                <td class="text-center">{{ $index + 1 }}</td>
-                <td>{{ item.categoria }}</td>
-                <td>
-                  <img
-                    [ngSrc]="item.s3ObjectUrl || '../assets/images/blank.png'"
-                    width="75"
-                    height="75"
-                    class="img-fluid img-responsive m-r-5"
-                    alt="Image Description"
-                  />
-                  {{ item.descripcion }}
-                </td>
-                <td>{{ item.summary }}</td>
-              </tr>
-            }
-          } @else {
-            <tr>
-              <td><h5>No existen registros</h5></td>
-            </tr>
-          }
-        </tbody>
-      </table>
-      <ngb-pagination
-        (pageChange)="loadData()"
-        [(page)]="pagination.pageIndex"
-        [boundaryLinks]="true"
-        [collectionSize]="pagination.totalRecords"
-        [maxSize]="pagination.maxSize"
-        [pageSize]="pagination.pageSize"
-        [rotate]="true"
-      />
-    </div>
+
+    <app-custom-table-container
+      [pagination]="pagination()"
+      [isLoadingResults]="isLoadingResults()"
+      (onPageEvent)="handlePageEvent($event)"
+    >
+      <app-mat-dynamic-table
+        [templateOp]="templateOp"
+        [tableData]="dataSource.data"
+        [columnDefinitions]="columnsDefs"
+        [visibleColumns]="columns"
+      ></app-mat-dynamic-table>
+    </app-custom-table-container>
+
+    <ng-template #templateOp let-item="item">
+      <button
+        (click)="onEdit(item)"
+        class="btn btn-outline-warning btn-rounded btn-sm"
+        type="button"
+        title="Editar"
+      >
+        <fa-icon [icon]="'edit'"></fa-icon>
+      </button>
+    </ng-template>
   </div>
 </div>

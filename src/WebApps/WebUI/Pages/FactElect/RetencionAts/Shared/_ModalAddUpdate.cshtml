@@ -12,7 +12,7 @@
                     <div class="form-group">
                         <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
                         <select name="establecimiento" id="establecimiento" class="form-control border-select"
-                                ng-model="infoCompRet.codEstab" ng-change="onChangeEstablecimiento()">
+                                ng-model="infoCompRet.codEstab" ng-change="onChangeEstablecimiento()" ng-disabled="idDocumentoElectronico>0">
                             <option ng-value="item.codEstab" ng-repeat="item in estabs">
                                 {{item.nombreComercial}}
                             </option>
@@ -23,7 +23,7 @@
                     <div class="form-group">
                         <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
                         <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
-                                ng-model="infoCompRet.idPuntoEmision" ng-change="onChangePtoEmi()" >
+                                ng-model="infoCompRet.idPuntoEmision" ng-change="onChangePtoEmi()" ng-disabled="idDocumentoElectronico>0" >
                             <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">{{item.ptoEmi}}</option>
                         </select>
                     </div>
@@ -34,7 +34,7 @@
             <div class="row">
                 <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
                     <div class="form-group">
-                        <label for="fechaEmision">Fecha Emision:</label>
+                        <label for="fechaEmision">Fecha Emision Retención:</label>
                         <input type="date" id="fechaEmision" class="form-control" ng-blur="getPeriod(this)"
                                ng-model="infoCompRet.fechaEmision" required />
                     </div>

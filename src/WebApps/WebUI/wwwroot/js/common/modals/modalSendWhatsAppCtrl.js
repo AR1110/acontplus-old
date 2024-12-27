@@ -82,6 +82,8 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
         [DOC_TYPE.R_SRI]: createDataParamDocSri(),
         [DOC_TYPE.NC_SRI]: createDataParamDocSri(),
         [DOC_TYPE.NE]: createDataParamDoc(),
+        [DOC_TYPE.PR]: createDataParamDoc(),
+        ["09"]: createDataParamDoc(),
 
 
     };
@@ -108,12 +110,13 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
         [DOC_TYPE.NC_SRI]: createDataParamSenFile(CODE_REPORT.RNC),
         [DOC_TYPE.NE]: createDataParamSenFile(CODE_REPORT.RNE),
         [DOC_TYPE.PR]: createDataParamSenFile(CODE_REPORT.PR),
+        ["09"]: createDataParamSenFile(CODE_REPORT.PR),
         [DOC_TYPE.CI]: createDataParamSenFile(CODE_REPORT.RCINGR), 
     };
 
 
     getDataForm();
-    function getDataForm() {
+    function getDataForm() { 
 
         let params = dataParamGetDataForm[data.codDoc];
         if (!params) {
@@ -421,7 +424,7 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
             totalMensajes: totalMessages,
             params: JSON.stringify(params)
         }
-        mS.getData('post', 'Config/WhatsappMessage/Post', { data: data }, true).then(response => {
+        mS.getData('post', 'Common/WhatsappMessage', { data: data }, true).then(response => {
             if (response.code == '1') {
                 tS.toastr("info", response.message)
             } else {

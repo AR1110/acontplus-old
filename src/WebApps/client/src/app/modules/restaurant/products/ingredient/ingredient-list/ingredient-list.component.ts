@@ -10,17 +10,16 @@ import { NgOptimizedImage } from '@angular/common';
 import { IngredientAddEditModalComponent } from '@restaurant/products/ingredient/ingredient-add-edit-modal/ingredient-add-edit-modal.component';
 
 @Component({
-  selector: 'app-ingredient-list',
-  standalone: true,
-  imports: [
-    NgbPagination,
-    ReactiveFormsModule,
-    FormsModule,
-    FaIconComponent,
-    NgOptimizedImage,
-  ],
-  templateUrl: './ingredient-list.component.html',
-  styles: ``,
+    selector: 'app-ingredient-list',
+    imports: [
+        NgbPagination,
+        ReactiveFormsModule,
+        FormsModule,
+        FaIconComponent,
+        NgOptimizedImage,
+    ],
+    templateUrl: './ingredient-list.component.html',
+    styles: ``
 })
 export class IngredientListComponent {
   ingredients: Ingredient[] = [];

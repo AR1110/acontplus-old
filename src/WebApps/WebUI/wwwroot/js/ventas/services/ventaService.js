@@ -1016,16 +1016,25 @@
             })
         }
 
-        service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
-                if (response.code === "0") {
-                    return response;
-                }
-                if (response.code === "1") {
-                    return response
-                }
-            })
+        // service.delete = function (id) {
+        //     return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
+        //         if (response.code === "0") {
+        //             return response;
+        //         }
+        //         if (response.code === "1") {
+        //             return response
+        //         }
+        //     })
+        // }
+
+        service.anular = function(id, infoAdicional){
+            let data = {
+                infoAdicional
+            }
+            return mS.getData('put',  `${url}Cancel/${id}`, {data})
+
         }
+
 
         //Validaciones
         service.getTotales = function (notaEntregas) {
@@ -1906,7 +1915,8 @@
                 validationSri: data.validationSri,
                 idFormaPagoSri: fS.isValidField(data.idFormaPagoSri),
                 estado: data.estado || true,
-                infoCrediticia: data.dataInfoCred && JSON.stringify(data.dataInfoCred)
+                infoCrediticia: data.dataInfoCred && JSON.stringify(data.dataInfoCred),
+                configValorBruto : data.configValorBruto || null
             }
 
         }
@@ -1967,7 +1977,8 @@
                         placas,
                         idFormaPagoSri: data.idFormaPagoSri,
                         dataInfoCred: JSON.parse(infoCrediticia) || {},
-                        nota: data.nota
+                        nota: data.nota,
+                        configValorBruto : data.configValorBruto || false
                     }
                 }
             })
@@ -2338,8 +2349,7 @@
                 if (response.code === "1") {
                     let { empresa } = JSON.parse(response.payload);
                     data = empresa[0];
-                }
-                console.log(data)
+                } 
                 return data;
             })
         }
@@ -2356,7 +2366,8 @@
                 email,
                 telephone,
                 address: fS.isValidField(data.direccion),
-                sriValidation: data.sriValidation
+                sriValidation: data.sriValidation,
+                estado: true
             }
         }
 

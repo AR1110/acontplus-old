@@ -1,7 +1,6 @@
 import { HttpContext, HttpContextToken, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
-
 import { finalize } from 'rxjs/operators';
-import { hideLoader, showLoader } from '../utils/loader';
+import { hideLoader, showLoader } from '@domain/utils/loader';
 
 const isLoader = new HttpContextToken<boolean>(() => true);
 export function getNoLoader() {

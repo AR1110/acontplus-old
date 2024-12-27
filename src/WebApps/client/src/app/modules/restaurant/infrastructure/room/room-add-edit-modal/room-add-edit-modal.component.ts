@@ -7,8 +7,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
@@ -18,17 +16,14 @@ import { Floor } from '@restaurant/models/floor.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-room-add-edit-modal',
-  standalone: true,
-  imports: [
-    FontAwesomeModule,
-    FormsModule,
-    MatButton,
-    MatSlideToggle,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './room-add-edit-modal.component.html',
-  styles: ``,
+    selector: 'app-room-add-edit-modal',
+    imports: [
+        FontAwesomeModule,
+        FormsModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './room-add-edit-modal.component.html',
+    styles: ``
 })
 export class RoomAddEditModalComponent {
   establecimientoId: number = 0;
