@@ -7,11 +7,11 @@ namespace FactElect.API.Entities;
 [Table("Customer", Schema = "Customer")]
 public class AppCustomer : BaseEntity
 {
-    [Required] [MaxLength(2)] public string IdType { get; set; }
+    [Required][MaxLength(2)] public string IdType { get; set; }
 
-    [Required] [MaxLength(15)] public string IdCard { get; set; }
+    [Required][MaxLength(15)] public string IdCard { get; set; }
 
-    [Required] [MaxLength(300)] public string BusinessName { get; set; }
+    [Required][MaxLength(300)] public string BusinessName { get; set; }
 
     [MaxLength(300)] public string TradeName { get; set; }
 

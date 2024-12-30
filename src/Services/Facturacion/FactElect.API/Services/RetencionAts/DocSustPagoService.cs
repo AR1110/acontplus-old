@@ -1,13 +1,8 @@
-﻿namespace FactElect.API.Services.RetencionAts;
+﻿using FactElect.API.Interfaces.RetencionAts;
 
-public interface IDocSustPagoService
-{
-    Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
-}
+namespace FactElect.API.Services.RetencionAts;
 
-public class DocSustPagoService (IAdoRepository adoRepository)
+public class DocSustPagoService(IAdoRepository adoRepository) : IDocSustPagoService
 {
     private const string ModuleName = "FactElect.RetAts_Doc_Sust_Pago_";
 

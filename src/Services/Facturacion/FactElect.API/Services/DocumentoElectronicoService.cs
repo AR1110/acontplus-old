@@ -36,7 +36,8 @@ public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocume
             var xmlSri = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlSri"));
             var response = new FileModel
             {
-                Content = Encoding.UTF8.GetBytes(xmlSri), FileName = dt.Rows[0].Field<string>("filename") + ".xml"
+                Content = Encoding.UTF8.GetBytes(xmlSri),
+                FileName = dt.Rows[0].Field<string>("filename") + ".xml"
             };
             return response;
         }

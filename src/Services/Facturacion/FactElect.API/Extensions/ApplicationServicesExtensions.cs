@@ -16,7 +16,7 @@ public static class ApplicationServicesExtensions
                 x.SerializerSettings.ContractResolver =
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
-        
+
         services.AddDbContextPool<FactElectContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 

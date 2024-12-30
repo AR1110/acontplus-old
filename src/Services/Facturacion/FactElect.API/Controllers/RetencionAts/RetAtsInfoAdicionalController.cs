@@ -1,9 +1,9 @@
 ﻿using Common.AppSettings.Extensions;
-using FactElect.API.Services.RetencionAts;
+using FactElect.API.Interfaces.RetencionAts;
 
 namespace FactElect.API.Controllers.RetencionAts;
 
-public class RetAtsInfoAdicionalController (IRetAtsInfoAdicionalService retAtsInfoAdicionalService): BaseApiController
+public class RetAtsInfoAdicionalController(IRetAtsInfoAdicionalService retAtsInfoAdicionalService) : BaseApiController
 {
     [HttpPost]
     public async Task<IActionResult> Post(string json)
@@ -15,7 +15,7 @@ public class RetAtsInfoAdicionalController (IRetAtsInfoAdicionalService retAtsIn
         };
         return Ok(await retAtsInfoAdicionalService.AddAsync(parameters));
     }
-    
+
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
@@ -27,7 +27,7 @@ public class RetAtsInfoAdicionalController (IRetAtsInfoAdicionalService retAtsIn
         };
         return Ok(await retAtsInfoAdicionalService.UpdateAsync(parameters));
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

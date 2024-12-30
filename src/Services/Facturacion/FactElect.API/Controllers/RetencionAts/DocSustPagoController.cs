@@ -1,9 +1,9 @@
 ﻿using Common.AppSettings.Extensions;
-using FactElect.API.Services.RetencionAts;
+using FactElect.API.Interfaces.RetencionAts;
 
 namespace FactElect.API.Controllers.RetencionAts;
 
-public class DocSustPagoController (IDocSustPagoService docSustPagoService): BaseApiController
+public class DocSustPagoController(IDocSustPagoService docSustPagoService) : BaseApiController
 {
     [HttpPost("{idDocSust}")]
     public async Task<IActionResult> Post(int idDocSust, string json)
@@ -16,7 +16,7 @@ public class DocSustPagoController (IDocSustPagoService docSustPagoService): Bas
         };
         return Ok(await docSustPagoService.AddAsync(parameters));
     }
-    
+
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
@@ -26,7 +26,7 @@ public class DocSustPagoController (IDocSustPagoService docSustPagoService): Bas
         };
         return Ok(await docSustPagoService.UpdateAsync(parameters));
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

@@ -1,5 +1,5 @@
 ﻿using Common.AppSettings.Extensions;
-using FactElect.API.Services.RetencionAts;
+using FactElect.API.Interfaces.RetencionAts;
 
 namespace FactElect.API.Controllers.RetencionAts;
 
@@ -48,7 +48,7 @@ public class RetencionAtsController(IRetencionAtsService retencionAtsService) : 
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(data.infoCompRet) }
+            { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(data.infoCompRet) }
         };
         return Ok(await retencionAtsService.UpdateAsync(parameters));
     }

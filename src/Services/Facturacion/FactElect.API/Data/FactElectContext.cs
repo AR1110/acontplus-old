@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Common.Core.Entities;
 using FactElect.API.Data.Config;
 using FactElect.API.Entities;
 using Microsoft.EntityFrameworkCore.Metadata;

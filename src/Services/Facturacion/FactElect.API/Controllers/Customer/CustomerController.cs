@@ -1,5 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-using FactElect.API.Entities;
+﻿using FactElect.API.Entities;
 
 namespace FactElect.API.Controllers.Customer;
 
