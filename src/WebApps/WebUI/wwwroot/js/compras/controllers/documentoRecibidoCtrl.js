@@ -312,7 +312,7 @@
                         size: "xl",
                         params: {
                             comprobantesFiltered: $scope.comprobantes.filter(
-                                (item) => !item.complete,
+                                (item) => !item.complete || ['03', '06', '07'].includes(item.codDoc)
                             ),
                             establecimientosFiltered: $scope.establecimientos.filter(
                                 (estab) => estab.codEstab !== $scope.dataSearch.codEstab,
