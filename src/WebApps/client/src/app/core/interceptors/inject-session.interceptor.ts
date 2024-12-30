@@ -1,14 +1,17 @@
-import { HttpContext, HttpContextToken, HttpInterceptorFn } from '@angular/common/http';
+import {
+  HttpContext,
+  HttpContextToken,
+  HttpInterceptorFn,
+} from '@angular/common/http';
 import { inject } from '@angular/core';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { environment } from 'src/environments/environment';
 
 const CUSTOM_URL = new HttpContextToken<boolean>(() => false);
 export function customUrl() {
   return new HttpContext().set(CUSTOM_URL, true);
 }
 export const injectSessionInterceptor: HttpInterceptorFn = (req, next) => {
-  let _tokenUseCase = inject(TokenUseCase)
+  let _tokenUseCase = inject(TokenUseCase);
 
   const authToken = _tokenUseCase.getToken();
   const parseJwt = _tokenUseCase.parseJwt();
@@ -21,6 +24,7 @@ export const injectSessionInterceptor: HttpInterceptorFn = (req, next) => {
     url: isCustomUrl ? req.url : `${baseUrl}/gateway/${req.url}`,
     setHeaders: {
       Authorization: 'Bearer ' + authToken,
+      'X-Client-Id': 'acontplus-angular',
     },
   });
 
