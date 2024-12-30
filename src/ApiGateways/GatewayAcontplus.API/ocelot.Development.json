@@ -3,7 +3,15 @@
     "BaseUrl": "https://localhost:7060/",
     "RateLimitOptions": {
       "ClientIdHeader": "X-Client-Id",
-      "ClientWhitelist": [ "acontplus-angular", "acontplus-app", "acontplus-demo", "acontplus-print", "acontplus-restaurant" ],
+      "ClientWhitelist": [
+        "acontplus-admin",
+        "acontplus-app",
+        "acontplus-demo",
+        "acontplus-erp",
+        "acontplus-invoice",
+        "acontplus-print",
+        "acontplus-restaurant"
+      ],
       "EnableRateLimiting": true,
       "DisableRateLimitHeaders": false,
       "HttpStatusCode": 429,

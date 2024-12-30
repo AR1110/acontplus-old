@@ -24,7 +24,7 @@ export const injectSessionInterceptor: HttpInterceptorFn = (req, next) => {
     url: isCustomUrl ? req.url : `${baseUrl}/gateway/${req.url}`,
     setHeaders: {
       Authorization: 'Bearer ' + authToken,
-      'X-Client-Id': 'acontplus-angular',
+      'X-Client-Id': 'acontplus-erp',
     },
   });
 

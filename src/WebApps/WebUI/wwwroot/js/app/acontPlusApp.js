@@ -125,7 +125,7 @@ app.factory("authInterceptorService", function ($q, $localStorage, jwtHelper) {
                 if (expiration < currentTime) {
                     return alertEndSession();
                 }
-                config.headers["X-Client-Id"] = "acontplus-angular";
+                config.headers["X-Client-Id"] = "acontplus-erp";
                 config.headers.Authorization = "Bearer " + authData.token;
             } catch (error) {
                 console.error("Error decoding token:", error);
