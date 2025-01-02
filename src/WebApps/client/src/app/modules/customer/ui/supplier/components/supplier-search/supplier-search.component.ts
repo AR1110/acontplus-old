@@ -1,29 +1,34 @@
-import {Component, inject, Input, input, output} from '@angular/core';
-import {FormsModule} from "@angular/forms";
-import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
-import {catchError, distinctUntilChanged, Observable, of, OperatorFunction, switchMap, tap} from "rxjs";
+import { Component, inject, Input, input, output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  catchError,
+  distinctUntilChanged,
+  Observable,
+  of,
+  OperatorFunction,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
-import {SupplierUseCase} from "@customer/core/usecases/supplier.use-case";
+import { SupplierUseCase } from '@customer/core/usecases/supplier.use-case';
 
 @Component({
-    selector: 'app-supplier-search',
-    imports: [
-        FormsModule,
-        NgbTypeaheadModule
-    ],
-    templateUrl: './supplier-search.component.html',
-    styles: ``
+  selector: 'app-supplier-search',
+  imports: [FormsModule, NgbTypeaheadModule],
+  templateUrl: './supplier-search.component.html',
+  styles: ``,
 })
 export class SupplierSearchComponent {
-  onSelected = output<any>()
+  onSelected = output<any>();
   onInputEmpty = output();
-  isSearchSimple = input(true)
-  @Input() textSearch ='';
+  isSearchSimple = input(true);
+  @Input() textSearch = '';
   searching = false;
 
   //textSearch = ''
   searchFailed = false;
-  private _supplierUseCase = inject(SupplierUseCase);
+  private readonly _supplierUseCase = inject(SupplierUseCase);
 
   search: OperatorFunction<string, Array<SupplierSearch>> = (
     text$: Observable<string>,
@@ -47,21 +52,20 @@ export class SupplierSearchComponent {
       tap(() => (this.searching = false)),
     );
 
-  formatter = (x: { razonSocial: string }) => {
-    if(x && typeof x==='object'){
-      return x.razonSocial
+  formatter = (x: { razonSocialComprador: string }) => {
+    if (x && typeof x === 'object') {
+      return x.razonSocialComprador;
     }
     return x;
-  }
+  };
 
   onSelect($event: any) {
     let customer: SupplierSearch = $event.item;
     this.onSelected.emit({
-        ...customer,
-        razonSocialComprador: customer.razonSocialComprador,
-        identificacionComprador: customer.identificacionComprador,
-      });
-
+      ...customer,
+      razonSocialComprador: customer.razonSocialComprador,
+      identificacionComprador: customer.identificacionComprador,
+    });
   }
 
   onKeyupSearch() {
