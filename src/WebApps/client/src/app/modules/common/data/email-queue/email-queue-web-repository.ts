@@ -5,9 +5,6 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { API_ENDPOINTS } from '@modules/common/core/enums/common.constants';
 import { ApiResponse } from '@core/models/api-response';
 
-@Injectable({
-  providedIn: 'root',
-})
 export class EmailQueueWebRepository extends EmailQueueRepository {
   private readonly _http = inject(HttpClient);
   private readonly _url = `${PATHS_API.COMMON}${API_ENDPOINTS.EMAIL_QUEUE}`;
