@@ -48,7 +48,7 @@ BEGIN
            ,@convertToDoc       BIT
            ,@id                 INT
            ,@idCiudad           INT 
-           ,@dirViviendaCliente VARCHAR(150)
+           ,@dirViviendaCliente VARCHAR(150);
 
     --> Variables
     --> Variables
@@ -63,6 +63,8 @@ BEGIN
             
             SET @tableNames = 'headerDs,detalleDs'
 
+            SET @nombreReporte = 'Cartera de Cliente'
+
             SELECT @idCliente    = idCliente  
                   ,@ckFecha      = ckFecha
                   ,@fechaInicio  = fechaInicio
@@ -74,6 +76,7 @@ BEGIN
                   ,@codDoc       = codDoc
                   ,@idEmpresa    = idEmpresa
                   ,@dirViviendaCliente = dirViviendaCliente
+                  ,@idCiudad = idCiudad
             FROM OPENJSON(@json) WITH 
             (
                 idCliente    INT         '$.idCliente'
@@ -87,6 +90,7 @@ BEGIN
                ,codDoc       VARCHAR(10) '$.codDoc'
                ,idEmpresa    INT         '$.idEmpresa'
                ,dirViviendaCliente VARCHAR(150) 
+               ,idCiudad    INT
             )
 
             SET @sql = 'SELECT IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)  as codDoc
@@ -186,6 +190,12 @@ BEGIN
                     SET @sql = @sql + 'AND cc.idEmpresa = @idEmpresa '
                 END
 
+            IF @idCiudad > 0
+                BEGIN
+                    SET @nombreReporte = @nombreReporte + ' - ' + (SELECT descripcion FROM dbo.Ciudad WITH(NOLOCK) WHERE idCiudad = @idCiudad)
+                    SET @sql = @sql + 'AND idCiudad = @idCiudad '
+                END
+
             IF @codEstado IS NOT NULL
                 BEGIN
                     IF @codEstado = 'NCBR'
@@ -211,7 +221,7 @@ BEGIN
                   ,es.dirEstablecimiento
                   ,@usuario             as usuario 
                   ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT(@fechaFin, 'dd/MM/yyyy') as filtroFechas
-                  ,'Cartera de Cliente' as nombreReporte
+                  ,@nombreReporte as nombreReporte
             FROM Sri.Establecimiento es WITH (NOLOCK)
             INNER JOIN dbo.Entidad   en WITH (NOLOCK) ON en.idEntidad = es.idEntidad
             WHERE codEstab = @codEstab
