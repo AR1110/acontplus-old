@@ -112,7 +112,8 @@ BEGIN
                           ,@codEstado VARCHAR(15)
                           ,@codDoc    VARCHAR(10)
                           ,@idEmpresa        INT
-                          ,@idEntidad        INT'
+                          ,@idEntidad        INT
+                          ,@idCiudad INT '
                           
 
 
@@ -236,6 +237,7 @@ BEGIN
                               ,@codDoc      = @codDoc
                               ,@idEmpresa   = @idEmpresa
                               ,@idEntidad   = @idEntidad
+                              ,@idCiudad    = @idCiudad
 
             RETURN 
 
