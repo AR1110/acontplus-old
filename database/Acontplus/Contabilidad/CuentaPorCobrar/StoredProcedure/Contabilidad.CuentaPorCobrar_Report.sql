@@ -77,6 +77,7 @@ BEGIN
                   ,@idEmpresa    = idEmpresa
                   ,@dirViviendaCliente = dirViviendaCliente
                   ,@idCiudad = idCiudad
+                  ,@idUsuario = userId
             FROM OPENJSON(@json) WITH 
             (
                 idCliente    INT         '$.idCliente'
@@ -91,6 +92,7 @@ BEGIN
                ,idEmpresa    INT         '$.idEmpresa'
                ,dirViviendaCliente VARCHAR(150) 
                ,idCiudad    INT
+               ,userId      INT
             )
 
             SET @sql = 'SELECT IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)  as codDoc
@@ -113,7 +115,8 @@ BEGIN
                           ,@codDoc    VARCHAR(10)
                           ,@idEmpresa        INT
                           ,@idEntidad        INT
-                          ,@idCiudad INT '
+                          ,@idCiudad INT 
+                          ,@idUsuario INT '
                           
 
 
@@ -197,6 +200,11 @@ BEGIN
                     SET @sql = @sql + 'AND idCiudad = @idCiudad '
                 END
 
+            IF @idUsuario > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND idUsuario = @idUsuario '
+                END 
+
             IF @codEstado IS NOT NULL
                 BEGIN
                     IF @codEstado = 'NCBR'
@@ -238,6 +246,7 @@ BEGIN
                               ,@idEmpresa   = @idEmpresa
                               ,@idEntidad   = @idEntidad
                               ,@idCiudad    = @idCiudad
+                              ,@idUsuario   = @idUsuario
 
             RETURN 
 

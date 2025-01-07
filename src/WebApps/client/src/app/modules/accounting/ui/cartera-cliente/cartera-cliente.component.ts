@@ -23,6 +23,15 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOptgroup, MatOption } from '@angular/material/autocomplete';
 import { MatSelect } from '@angular/material/select';
+import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
+import { MatButton } from '@angular/material/button';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import {
+  MatCard,
+  MatCardActions,
+  MatCardContent,
+} from '@angular/material/card';
+import { FileButtonsComponent } from '@shared/components/file-buttons/file-buttons.component';
 
 @Component({
   selector: 'app-cartera-cliente',
@@ -36,6 +45,11 @@ import { MatSelect } from '@angular/material/select';
     MatOptgroup,
     MatOption,
     MatSelect,
+    MatUserSearchComponent,
+    MatCard,
+    MatCardContent,
+    MatCardActions,
+    FileButtonsComponent,
   ],
   templateUrl: './cartera-cliente.component.html',
   styles: ``,
@@ -64,6 +78,7 @@ export class CarteraClienteComponent {
     dirViviendaCliente: '',
     checkBoxDirViviendaCliente: false,
     idCiudad: 0,
+    userId: 0,
   };
 
   establecimientos: GroupedEstab[] = [];
@@ -155,6 +170,13 @@ export class CarteraClienteComponent {
   onChangeTipoDoc() {
     this.isSelectedNotaEntrega = this.dataSearch.codDoc === DOC_TYPE.NE;
   }
+  emptyInputUser() {
+    this.dataSearch.userId = 0;
+  }
+
+  onUserSelected(data: any) {
+    this.dataSearch.userId = data.idUsuario;
+  }
 
   getReportPdf() {
     this.format = FORMAT_REPORT.PDF;
@@ -210,6 +232,7 @@ export class CarteraClienteComponent {
       dirViviendaCliente,
       userRoleId: this._tokenUseCase.getUserRoleId(),
       idCiudad: this.dataSearch.idCiudad,
+      userId: this.dataSearch.userId,
     };
 
     let reportParams = JSON.stringify({
@@ -232,5 +255,14 @@ export class CarteraClienteComponent {
       data: parameters,
       format: this.format,
     });
+  }
+
+  handleFileDownload($event: { type: 'pdf' | 'excel' }) {
+    if ($event.type === 'pdf') {
+      this.getReportPdf();
+    }
+    if ($event.type === 'excel') {
+      this.getReportExcel();
+    }
   }
 }
