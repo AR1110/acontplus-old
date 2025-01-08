@@ -182,7 +182,8 @@ export class ProductWebRepository extends ProductRepository{
           subCategorias: [],
           marcas: [],
           tiposDoc: [],
-          tarifas: []
+          tarifas: [],
+          taxes: []
         }
         if (response && response.code==="1") {
           data = ProductMapper.fromApiDataReport(response)

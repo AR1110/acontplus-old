@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
@@ -31,6 +31,8 @@ import { ActionReportDirective } from '@shared/directives/permission/action-repo
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import {FileButtonsComponent} from "@shared/components/file-buttons/file-buttons.component";
+import {UserRoleStateService} from "@shared/store/user-role-state.service";
 
 const imports = [
   NgbNavModule,
@@ -51,7 +53,7 @@ const imports = [
   SupplierSearchComponent,
   MatUserSearchComponent,
   CompanyCustomerSearchMatComponent,
-
+  FileButtonsComponent,
   //Directives
   ActionReportDirective,
   ActionEnviarCorreoDirective,
@@ -62,23 +64,25 @@ const imports = [
   imports,
   templateUrl: './inventory-report.component.html',
   styles: `
-    .mat-mdc-tab-body-content {
-      overflow: hidden;
-    }
   `,
 })
 export class InventoryReportComponent {
-  tS = inject(ToasterService);
+  private pS = inject(UserRoleStateService)
+  private tS = inject(ToasterService);
   sharedSvc = inject(SharedService);
   appNotifiSvc = inject(NotificacionService);
   private readonly _tokenUseCase = inject(TokenUseCase);
 
   private readonly _productUseCase = inject(ProductUseCase);
 
+  isReporting = false;
+  isSendingEmail = false;
+
   estabs: GroupedEstab[] = [];
   bodegas: GroupedEstabBodega[] = [];
   subCategories: any[] = [];
   marcas: Brand[] = [];
+  taxes = signal<any[]>([])
 
   dataSearch = {
     idEstablecimiento: 0,
@@ -106,10 +110,11 @@ export class InventoryReportComponent {
     byTipoReporte: 0,
     expiredStatusCode: 'VI',
     tipoReporteStock: INVENTORY_CODE_REPORT.STOCK_VALORACION,
-    stockStatusCode: null,
+    stockStatusCode: 0,
     checkboxCompanyCustomer: false,
     checkboxObtenerRentabilidad: false,
     idTarifa: 0,
+    idTipoIva: 0
   };
 
   expirationStates = [
@@ -119,7 +124,7 @@ export class InventoryReportComponent {
   ];
 
   stockStatus = [
-    { code: null, description: 'Todos' },
+    { code: 0, description: 'Todos' },
     { code: 'CS', description: 'Con stock' },
     { code: 'SS', description: 'Sin stock' },
     { code: 'SM', description: 'Stock mínimo' },
@@ -138,6 +143,7 @@ export class InventoryReportComponent {
       this.subCategories = subCategorias;
       this.marcas = marcas;
       this.tarifas = response.tarifas;
+      this.taxes.set(response.taxes)
       let dataEstab = this.estabs.find((e) => e.defaultEstab);
       if (dataEstab) {
         this.dataSearch.idEstablecimiento = dataEstab.idEstablecimiento;
@@ -150,6 +156,11 @@ export class InventoryReportComponent {
 
   ngOnInit() {
     this.getDatFormReport();
+    this.pS.getAction().subscribe(res=>{
+     this.isReporting = res?.reporte;
+     this.isSendingEmail = res?.enviarCorreo;
+
+   })
   }
 
   onNavChange($event: any) {
@@ -462,7 +473,7 @@ export class InventoryReportComponent {
         idBodega: isValidField(this.dataSearch.idBodega),
         idMarca: isValidField(this.dataSearch.idMarca),
         filtroFecha,
-        stockStatusCode: isValidField(this.dataSearch.stockStatusCode),
+        stockStatusCode: this.dataSearch.stockStatusCode ===0? null : isValidField(this.dataSearch.stockStatusCode),
         userRoleId: this._tokenUseCase.getUserRoleId(),
       };
 
@@ -506,7 +517,7 @@ export class InventoryReportComponent {
         idMarca: isValidField(this.dataSearch.idMarca),
         idTarifa: getValidId(this.dataSearch.idTarifa),
         filtroFecha,
-        stockStatusCode: isValidField(this.dataSearch.stockStatusCode),
+        stockStatusCode:this.dataSearch.stockStatusCode===0? null: isValidField(this.dataSearch.stockStatusCode),
         userRoleId: this._tokenUseCase.getUserRoleId(),
       };
 
@@ -539,13 +550,14 @@ export class InventoryReportComponent {
       let dataSearch = {
         tipo: 2,
         bySubFamilia,
-        stockStatusCode: isValidField(this.dataSearch.stockStatusCode),
+        stockStatusCode: this.dataSearch.stockStatusCode===0?null: isValidField(this.dataSearch.stockStatusCode),
         idTarifa: getValidId(this.dataSearch.idTarifa),
         idMarca: isValidField(this.dataSearch.idMarca),
         userRoleId: this._tokenUseCase.getUserRoleId(),
         ckFechaModificaccion: this.dataSearch.ckFechaModificaccion,
         fechaInicio: this.dataSearch.fromDate,
         fechaFin: this.dataSearch.toDate,
+        idTipoIva: getValidId(this.dataSearch.idTipoIva)
       };
       const parameters = {
         reportParams: JSON.stringify({

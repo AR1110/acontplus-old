@@ -634,7 +634,7 @@ BEGIN
         --> Filter Report
         IF @tipo = 13
             BEGIN
-                SET @tableNames = 'warehouses,subcategories,brands,documentTypes,fees'
+                SET @tableNames = 'warehouses,subcategories,brands,documentTypes,fees,taxes'
 
                 SELECT codEstab,idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
            
@@ -653,7 +653,7 @@ BEGIN
                 SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
 
                 SELECT idTarifa, descripcion, predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad
-
+                  SELECT idTipoIva,descripcion,codigoPorcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
                 RETURN 
             END 
 

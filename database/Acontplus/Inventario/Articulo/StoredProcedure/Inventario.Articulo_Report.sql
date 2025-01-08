@@ -115,6 +115,8 @@ BEGIN
 	IF @tipo = 2
 		BEGIN
             DECLARE @ckFechaModificaccion BIT 
+			DECLARE @idTipoIva INT
+
 
             SELECT @idSubFamilia         = bySubFamilia
 				  ,@rucClienteProveedor  = numeroIdentificacion
@@ -124,6 +126,7 @@ BEGIN
                   ,@ckFechaModificaccion = ckFechaModificaccion
                   ,@fechaInicio          = fechaInicio
                   ,@fechaFin             = fechaFin
+		          ,@idTipoIva           = idTipoIva
 			FROM OPENJSON(@json) WITH 
             ( 
                 bySubFamilia         INT  
@@ -134,13 +137,14 @@ BEGIN
                ,ckFechaModificaccion BIT
                ,fechaInicio          DATETIME2
                ,fechaFin             DATETIME2
-
+			   ,idTipoIva            INT
 		    ) AS dt
 
 			SET @params = '@idEntidad    INT									
 						  ,@idSubFamilia INT
                           ,@idMarca      INT 
                           ,@idTarifa     INT
+						  ,@idTipoIva    INT
                           ,@fechaInicio  DATETIME2
 						  ,@fechaFin     DATETIME2'
 
@@ -175,6 +179,9 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND ar.idTarifa  = @idTarifa '
                 END 
+
+			IF @idTipoIva > 0 
+				SET @sql = @sql + ' ar.idTipoIva = @idTipoIva '
 
             IF @stockStatusCode IS NOT NULL
                 --> con stock 
@@ -216,6 +223,7 @@ BEGIN
                               ,@idTarifa     = @idTarifa 
                               ,@fechaInicio  = @fechaInicio
                               ,@fechaFin     = @fechaFin
+							  ,@idTipoIva    = @idTipoIva
 
 			RETURN 
 		END 

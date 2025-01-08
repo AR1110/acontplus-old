@@ -82,4 +82,8 @@ export class UserRoleStateService extends GenericStoreBehaviorSubjectService<Use
   constructor() {
     super();
   }
+
+  getAction(){
+    return this.select("accion")
+  }
 }

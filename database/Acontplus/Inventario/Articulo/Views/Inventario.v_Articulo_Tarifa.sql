@@ -8,6 +8,7 @@ CREATE OR ALTER VIEW Inventario.v_Articulo_Tarifa WITH SCHEMABINDING AS (
 		  ,pv.precioVenta
 		  ,pv.precioPredeterminado
 	      ,ar.idEntidad
+          ,ar.idTipoIva
 		  ,ar.idSubFamilia
           ,ar.idMarca 
 		  ,ar.descripcion
