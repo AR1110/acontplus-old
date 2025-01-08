@@ -33,6 +33,9 @@ import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import {FileButtonsComponent} from "@shared/components/file-buttons/file-buttons.component";
 import {UserRoleStateService} from "@shared/store/user-role-state.service";
+import {
+  SupplierSearchMatComponent
+} from "@customer/ui/supplier/components/supplier-search-mat/supplier-search-mat.component";
 
 const imports = [
   NgbNavModule,
@@ -54,6 +57,7 @@ const imports = [
   MatUserSearchComponent,
   CompanyCustomerSearchMatComponent,
   FileButtonsComponent,
+  SupplierSearchMatComponent,
   //Directives
   ActionReportDirective,
   ActionEnviarCorreoDirective,
@@ -114,7 +118,9 @@ export class InventoryReportComponent {
     checkboxCompanyCustomer: false,
     checkboxObtenerRentabilidad: false,
     idTarifa: 0,
-    idTipoIva: 0
+    idTipoIva: 0,
+    checkboxSupplier: false,
+    nameSupplier: ''
   };
 
   expirationStates = [
@@ -196,6 +202,10 @@ export class InventoryReportComponent {
     }
   }
 
+  onChangeTipoTransaccion(){
+    this.dataSearch.checkboxSupplier = false;
+    this.dataSearch.checkboxCompanyCustomer = false;
+  }
   onSelectedSubCategory(id: number) {
     this.dataSearch.idSubFamilia = id;
   }
@@ -228,10 +238,12 @@ export class InventoryReportComponent {
   onSupplierSelected(data: any) {
     // this.dataSearch.idProveedor = data.idProveedor;
     this.dataSearch.numeroIdentificacion = data.identificacionComprador;
+    this.dataSearch.nameSupplier = data.name;
   }
 
   supplierResultEmptyInput($event: any) {
     this.dataSearch.numeroIdentificacion = null;
+
   }
 
   onChangeCheckProveedor() {
@@ -328,13 +340,23 @@ export class InventoryReportComponent {
       }
     }
 
-    if (this.dataSearch.checkboxCompanyCustomer) {
+    if (this.dataSearch.checkboxCompanyCustomer && this.dataSearch.codTransaccion==='S') {
       if (!isValidField(this.dataSearch.numeroIdentificacion)) {
         this.tS.toastr({
           type: 'warning',
           message: 'Seleccione el cliente',
         });
         return;
+      }
+    }
+
+    if(selectedTab===1){
+      if(this.dataSearch.codTransaccion==='E' && this.dataSearch.checkboxSupplier && !isValidField(this.dataSearch.numeroIdentificacion)){
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Seleccione el proveedor'
+        })
+        return
       }
     }
 
@@ -410,9 +432,15 @@ export class InventoryReportComponent {
     let idSubFamilia = this.dataSearch.checkboxSubCategoryFilter
       ? isValidField(this.dataSearch.idSubFamilia)
       : null;
-    let numeroIdentificacion = this.dataSearch.checkboxCompanyCustomer
-      ? isValidField(this.dataSearch.numeroIdentificacion)
-      : null;
+
+    let numeroIdentificacion = null as string | null;
+    if(this.dataSearch.codTransaccion==='S' && this.dataSearch.checkboxCompanyCustomer ){
+      numeroIdentificacion = isValidField(this.dataSearch.numeroIdentificacion);
+    }
+
+    if(this.dataSearch.codTransaccion==='E' && this.dataSearch.checkboxSupplier){
+      numeroIdentificacion = isValidField(this.dataSearch.numeroIdentificacion);
+    }
 
     return {
       tipo: 4,
