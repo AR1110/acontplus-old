@@ -1,5 +1,5 @@
-import { Component, inject, model, signal } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {Component, computed, inject, model, signal} from '@angular/core';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,7 +22,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { DECIMALS } from '@core/constants/global.constants';
-import {GetCuentaPorPagarUseCase} from "@accounting/core/use-cases/get-cuenta-por-pagar.use-case";
+import {CuentaPorPagarUseCase} from "@accounting/core/use-cases/cuenta-por-pagar.use-case";
+import {NumberUtil} from "@shared/utils/number.util";
+import {formatDate} from "@core/utils/date.util";
+import {isValidField} from "@core/utils/utils";
 
 @Component({
   selector: 'app-cuenta-por-pagar-cuota-modal',
@@ -42,31 +45,53 @@ import {GetCuentaPorPagarUseCase} from "@accounting/core/use-cases/get-cuenta-po
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './cuenta-por-pagar-cuota-modal.component.html',
-  styles: ``,
+  styles: `
+    tr.mat-mdc-footer-row td {
+      font-weight: bold;
+    }
+  `,
 })
 export class CuentaPorPagarCuotaModalComponent {
   readonly dialogRef = inject(MatDialogRef<CuentaPorPagarCuotaModalComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
-  private useCase = inject(GetCuentaPorPagarUseCase)
+  private useCase = inject(CuentaPorPagarUseCase)
   private tS = inject(ToasterService);
 
   loading = signal(false);
   tiemposCredito = signal<TiempoCreditoSelectHtmlOnly[]>([]);
 
-  visibleColumns: string[] = ['position', 'cuota', 'fechaVencimiento'];
+  visibleColumns: string[] = ['position','nroCuota', 'cuota', 'fechaVencimiento'];
   dataSource = signal<CuentaPorPagarCuotaConfig[]>([]);
 
   dataForm = model({
     tiempoCreditoId: 0,
-    configDate: null as null | Date,
   });
+  configDate = new FormControl<null | Date>(null)
+  configDateOptions = {
+    END_MONTH: 'END_MONTH',
+    SAME_DAY: 'SAME_DAY',
+  } as const
   dataFormClone = model(structuredClone(this.dataForm()));
 
+  nuevoTotal = computed(()=>{
+
+    let valorCalculado = this.dataSource()
+      .reduce((prev, curr) => prev + Number(curr.cuota), 0);
+    console.log(valorCalculado)
+    console.log(this.dataSource())
+    return roundNumber(valorCalculado, DECIMALS.DOS)
+  })
+
+  valorDiferencia = computed(()=>{
+    let valorResiduo =  this.data.total - this.nuevoTotal();
+    return roundNumber(valorResiduo, DECIMALS.DOS)
+  })
+
   private initLoad() {
+    console.log(this.data)
     return forkJoin({
       responseCuotaData$: this.useCase.getCuotasData(),
-      responseCuotaConfig$:
-        this.useCase.getCuotasConfigByIdCuentaPorPagar(
+      responseCuotaConfig$:  this.useCase.getCuotasConfigByIdCuentaPorPagar(
           this.data.idCuentaPorPagar,
         ),
     });
@@ -74,15 +99,17 @@ export class CuentaPorPagarCuotaModalComponent {
 
   ngOnInit() {
     this.loading.set(true);
+    this.setDataForm("tiempoCreditoId", this.data.idTiempoCredito)
+    this.configDate.setValue(formatDate(this.data.fechaEmision))
+    this.dataFormClone.set(structuredClone(this.dataForm()))
 
     this.initLoad()
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe((result) => {
         console.log(result);
-        // const [responseCuotaData, responseCuotaConfig] = result;
-        // this.tiemposCredito.set(responseCuotaData.tiemposCredito)
-        // this.dataSource.set(responseCuotaConfig.data)
-        // console.log(this.dataSource())
+         const {responseCuotaData$, responseCuotaConfig$} = result;
+         this.tiemposCredito.set(responseCuotaData$.tiemposCredito)
+         this.dataSource.set(responseCuotaConfig$.data)
       });
   }
 
@@ -103,9 +130,9 @@ export class CuentaPorPagarCuotaModalComponent {
       (item) => item.idTiempoCredito === this.dataForm().tiempoCreditoId,
     );
     if (!dataTiempoCredito) return;
-    const { numeroCuota } = dataTiempoCredito;
+    const {numeroCuota} = dataTiempoCredito;
 
-    let { isConfirmed } = await Swal.fire({
+    let {isConfirmed} = await Swal.fire({
       icon: 'warning',
       html: `Está seguro/a de generar <b>${numeroCuota} </b>  ${numeroCuota > 1 ? 'cuotas' : 'cuota'}`,
       showDenyButton: true,
@@ -120,65 +147,135 @@ export class CuentaPorPagarCuotaModalComponent {
       return;
     }
 
-    // this.cuentaPorPagarSvc.generarCuota({
-    //   idCuentaPorPagar: this.data.idCuentaPorPagar,
-    //   tiempoCreditoId: this.dataForm().tiempoCreditoId,
-    //   codigoEstado: this.data.codigoEstado
-    // }).subscribe(response => {
-    //   if (response.code === "0") {
-    //     this.tS.toastr({
-    //       type: 'warning',
-    //       message: response.message
-    //     })
-    //   }
-    //   if (response.code === "1") {
-    //     this.tS.toastr({
-    //       type: 'success',
-    //       message: response.message
-    //     })
-    //     this.getDataConfigCuotas()
+    this.loading.set(true)
+    this.useCase.generarCuotas({
+        idCuentaPorPagar: this.data.idCuentaPorPagar,
+        tiempoCreditoId: this.dataForm().tiempoCreditoId,
+        codigoEstado: this.data.codigoEstado
+    })
+      .pipe(
+        finalize(()=>this.loading.set(false))
+      )
+      .subscribe(response => {
+      if (response.code === "0") {
+        this.tS.toastr({
+          type: 'warning',
+          message: response.message
+        })
+      }
+      if (response.code === "1") {
+        this.tS.toastr({
+          type: 'success',
+          message: response.message
+        })
+        this.getDataConfigCuotas()
 
-    //   }
-    // })
+      }
+    })
   }
 
   private getDataConfigCuotas() {
-    // this.loading.set(true)
-    // this.cuentaPorPagarSvc.getCuotasConfigByIdCuentaPorPagar(this.data.idCuentaPorPagar)
-    //   .pipe(finalize(() => this.loading.set(false)))
-    //   .subscribe(response => {
-    //     this.dataSource.set(response.data)
-    //   })
+     this.loading.set(true)
+     this.useCase.getCuotasConfigByIdCuentaPorPagar(this.data.idCuentaPorPagar)
+       .pipe(finalize(() => this.loading.set(false)))
+       .subscribe(response => {
+         this.dataSource.set(response.data)
+       })
   }
 
-  addConfigDate(event: MatDatepickerInputEvent<Date>) {
-    this.setDataForm('configDate', event.value);
+  private isConfigDateValid(sameDay?: keyof typeof this.configDateOptions){
+    if (!isValidField(this.configDate.value)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: "Configuración fecha inválida"
+      })
+      return
+    }
+    if (this.configDate.value?.getFullYear().toString().length !== 4) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'El Formato del Año es incorrecto'
+      })
+      return
+    }
+
+    if (this.configDateOptions.SAME_DAY===sameDay && this.configDate.value?.getDate() >= 28) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Para la opción  "Mismo Día", el día tiene que ser menor a 28 días!'
+      })
+      return
+    }
+    return true;
   }
+
 
   configureEndOfMonthDate() {
-    console.log(this.dataForm());
+    if(!this.isConfigDateValid(this.configDateOptions.SAME_DAY)) return;
+
+    let configDate = structuredClone( this.configDate.value);
+
+    if(!configDate) return
+
+
+    let resultCuotas = this.dataSource().map(item=>{
+      // Obtener el último día del mes actual
+      const lastDayOfMonth = new Date(configDate.getFullYear(), configDate.getMonth() + 1, 0).getDate();
+
+      // Establecer la fecha actual en el último día del mes actual
+      configDate.setDate(lastDayOfMonth);
+
+      // Agregar la fecha vecimiento
+      item.fechaVencimiento = new Date(configDate)
+
+      // Establecer la fecha actual en el primer día del mes siguiente
+      configDate.setDate(1);
+      configDate.setMonth(configDate.getMonth() + 1);
+      return item;
+    })
+    this.dataSource.set(resultCuotas);
   }
 
-  configureSameDayDate() {}
+  configureSameDayDate() {
+
+    if(!this.isConfigDateValid()) return;
+
+    let configDate = structuredClone( this.configDate.value);
+
+    if(!configDate) return
+
+
+      const daysInMonth = new Date(configDate.getFullYear(), configDate.getMonth() + 1, 0).getDate();
+      const dayOfMonth = configDate.getDate() <= daysInMonth ? configDate.getDate() : daysInMonth;
+
+      let resultCuotas = this.dataSource().map((item, index)=>{
+
+        const newDate = new Date(configDate);
+        newDate.setMonth(configDate.getMonth() + index++);
+        newDate.setDate(dayOfMonth);
+        item.fechaVencimiento = newDate;
+        return item;
+      })
+    this.dataSource.set(resultCuotas);
+
+  }
 
   calcularValorCuota($event: any, row: CuentaPorPagarCuotaConfig) {
     $event.stopPropagation();
 
-    let cuotasIndexMenor = this.dataSource().filter((_, index) => {
-      const nroCuotaNumber = Number(row.nroCuota);
+    let rowIndex = this.dataSource().indexOf(row);
 
-      return !isNaN(nroCuotaNumber) && index <= nroCuotaNumber;
-    });
+    let cuotasIndexMenor = this.dataSource().filter((_, index) => index <= rowIndex);
+    let cuotasIndexMayor = this.dataSource().filter((_, index) => index > rowIndex);
 
-    let cuotasIndexMayor = this.dataSource().filter((_, index) => {
-      const nroCuotaNumber = Number(row.nroCuota);
-
-      return !isNaN(nroCuotaNumber) && index > nroCuotaNumber;
-    });
+    console.log(cuotasIndexMenor);
+    console.log(cuotasIndexMayor);
 
     let totalCuotaIndexMenor = cuotasIndexMenor
       .map((val) => Number(val.cuota))
       .reduce((prev, curr) => prev + curr, 0);
+
+    totalCuotaIndexMenor = roundNumber(totalCuotaIndexMenor, DECIMALS.CINCO)
 
     if (totalCuotaIndexMenor > this.data.total) {
       this.tS.toastr({
@@ -200,7 +297,7 @@ export class CuentaPorPagarCuotaModalComponent {
         let { cuota, ...restItem } = item;
 
         // Asignar `cuota` solo si `index` es mayor que `nroCuotaIndex`
-        if (!isNaN(nroCuotaIndex) && index > nroCuotaIndex) {
+        if (!isNaN(nroCuotaIndex) && index > rowIndex) {
           cuota = roundNumber(valorCuota, DECIMALS.CINCO);
         }
 
@@ -209,9 +306,43 @@ export class CuentaPorPagarCuotaModalComponent {
           cuota,
         };
       });
-
       this.dataSource.set(resultsCuotas);
     }
+  }
+
+  calcularValorEntrada($event:any, valorEntrada: any){
+      try {
+        $event.stopPropagation();
+        // Valida si el valor de entrada es nulo, indefinido o vacío
+        if (!NumberUtil.esNumeroValido(valorEntrada) ) {
+          valorEntrada = 0;
+        }
+
+        // Calcular el total y la cuota
+        let numeroCuota = this.tiemposCredito().find(item => item.idTiempoCredito === this.dataForm().tiempoCreditoId)?.numeroCuota || 0;
+        let total = this.data.total - parseFloat(valorEntrada);
+        total = roundNumber(total, DECIMALS.DOS);
+
+        let valorCuota = total / numeroCuota;
+        valorCuota = roundNumber(valorCuota, DECIMALS.CINCO);
+
+        // Actualizar cuotas de forma más eficiente con map
+        const cuotasAfectadas = this.dataSource().map(item => {
+          if (item.nroCuota === 0) {
+            item.cuota = valorCuota === 0 ? this.data.total : valorEntrada;
+          } else {
+            item.cuota = valorCuota;
+          }
+          return item;
+        });
+
+        this.dataSource.set(cuotasAfectadas)
+      } catch (error) {
+        console.error("Error al calcular el valor de entrada:", error);
+      }
+
+
+
   }
 
   save() {

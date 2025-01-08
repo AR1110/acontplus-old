@@ -23,7 +23,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { PagoDetalleModalComponent } from '@accounting/ui/cuenta-por-pagar/components/pago-detalle-modal/pago-detalle-modal.component';
 import { ComprobanteEgresoLista } from '@accounting/core/domain/comprobante-egreso.interface';
 import { MatTooltip } from '@angular/material/tooltip';
-import {GetCuentaPorPagarUseCase} from "@accounting/core/use-cases/get-cuenta-por-pagar.use-case";
+import {CuentaPorPagarUseCase} from "@accounting/core/use-cases/cuenta-por-pagar.use-case";
 
 @Component({
   selector: 'app-cuenta-por-pagar-hist-movimiento',
@@ -53,7 +53,7 @@ export class CuentaPorPagarHistMovimientoComponent {
   );
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private dialogSvc = inject(DialogService);
-  private useCase = inject(GetCuentaPorPagarUseCase)
+  private useCase = inject(CuentaPorPagarUseCase)
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },

@@ -7,6 +7,6 @@ export abstract class CuentaPorPagarRepository {
   abstract getCuotasData(): Observable<any>;
   abstract getCuotasConfigByIdCuentaPorPagar(idCuentaPorPagar: number): Observable<any>;
   abstract getHistorialMovimientoByIdCuentaPorPagar(idCuentaPorPagar: number): Observable<any>;
-  abstract generarCuota<T>(obj:T): Observable<ApiResponse>;
+  abstract generarCuotas<T>(obj:T): Observable<ApiResponse>;
   abstract actualizarCuotas<T>(id: number, obj: T): Observable<ApiResponse>;
 }
