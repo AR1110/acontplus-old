@@ -19,6 +19,7 @@ SELECT tr.idTransaccion
 	  ,dt.precioUnitario
 	  ,dt.precioCosto
       ,dt.precioCostoFraccionado
+      ,dt.valorImpuesto
       ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN dt.cantidad END, 0) as cantidadEntrada
 	  ,ISNULL(CASE WHEN tt.codigo = 'S' THEN dt.cantidad END, 0)                    as cantidadSalida
       ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN dt.total END, 0)    as totalEntrada
