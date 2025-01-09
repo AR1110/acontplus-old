@@ -145,7 +145,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |     ├── comprobante-ingreso.use-case.ts
 |  |  |  |  |     ├── control-caja.use-case.ts
 |  |  |  |  |     ├── cuenta-por-cobrar.use-case.ts
-|  |  |  |  |     ├── get-comprobante-egreso.use-case.ts
+|  |  |  |  |     ├── comprobante-egreso.use-case.ts
 |  |  |  |  |     ├── cuenta-por-pagar.use-case.ts
 |  |  |  |  |     ├── movimiento-caja.use-case.ts
 |  |  |  |  |     ├── resumen-contable.use-case.ts
