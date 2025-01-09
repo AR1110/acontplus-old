@@ -11,7 +11,7 @@ GO
 -- Description:	SP para eliminar los datos de los articulos 
 -- =============================================
 CREATE OR ALTER PROC Inventario.Articulo_Delete
-@idRol INT
+@userRoleId INT
 ,@id INT
 AS
 BEGIN
