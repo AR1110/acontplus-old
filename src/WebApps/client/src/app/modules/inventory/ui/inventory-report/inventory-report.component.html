@@ -8,13 +8,14 @@
         <div class="d-flex flex-column gap-2  p-1">
           <div class="d-flex justify-content-center gap-4">
             <mat-checkbox  [(ngModel)]="dataSearch.checkboxArticuloFiltro">Articulo</mat-checkbox>
+           <mat-checkbox  [(ngModel)]="dataSearch.checkboxCompanyCustomer">Cliente</mat-checkbox>
 
-            @if (dataSearch.codTransaccion==='S'){
-            <mat-checkbox  [(ngModel)]="dataSearch.checkboxCompanyCustomer">Cliente</mat-checkbox>
-            }
-            @if(dataSearch.codTransaccion==='E'){
-            <mat-checkbox  [(ngModel)]="dataSearch.checkboxSupplier">Proveedor</mat-checkbox>
-            }
+<!--            @if (dataSearch.codTransaccion==='S'){-->
+<!--            <mat-checkbox  [(ngModel)]="dataSearch.checkboxCompanyCustomer">Cliente</mat-checkbox>-->
+<!--            }-->
+<!--            @if(dataSearch.codTransaccion==='E'){-->
+<!--            <mat-checkbox  [(ngModel)]="dataSearch.checkboxSupplier">Proveedor</mat-checkbox>-->
+<!--            }-->
             <mat-checkbox  [(ngModel)]="dataSearch.checkboxUsuarioFiltro">Usuario</mat-checkbox>
             <mat-checkbox  [(ngModel)]="dataSearch.checkboxSubCategoryFilter">Subfamilia</mat-checkbox>
             <mat-checkbox  [(ngModel)]="dataSearch.checkboxAgruparArticulo">Agrupar Artículos</mat-checkbox>
@@ -73,32 +74,38 @@
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Tipo Transacción:</mat-label>
-                <mat-select [(ngModel)]="dataSearch.codTransaccion" (selectionChange)="onChangeTipoTransaccion()">
+<!--                <mat-select [(ngModel)]="dataSearch.codTransaccion" (selectionChange)="onChangeTipoTransaccion()">-->
+                <mat-select [(ngModel)]="dataSearch.codTransaccion"  >
                   <mat-option value="S">Salida</mat-option>
                   <mat-option value="E">Entrada</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
 
-            @if (dataSearch.checkboxCompanyCustomer && dataSearch.codTransaccion==='S'){
-              <div class="col">
-                <app-company-customer-search-mat (onSelect)="onCustomerSelected($event)"
-                                                 (clearInput)="resultEmptyInputCustomer()" [isSimpleMode]="true"></app-company-customer-search-mat>
-              </div>
-            }
+            <div class="col">-->
+                      <app-company-customer-search-mat (onSelect)="onCustomerSelected($event)"-->
+                                                             (clearInput)="resultEmptyInputCustomer()" [isSimpleMode]="true"></app-company-customer-search-mat>-->
+           </div>
 
-            @if (dataSearch.checkboxSupplier && dataSearch.codTransaccion==='E'){
-              <div class="col">
-                <app-supplier-search-mat
-                  [isSimpleMode]="true"
-                  [(textName)]="dataSearch.nameSupplier"
+<!--            @if (dataSearch.checkboxCompanyCustomer && dataSearch.codTransaccion==='S'){-->
+<!--              <div class="col">-->
+<!--                <app-company-customer-search-mat (onSelect)="onCustomerSelected($event)"-->
+<!--                                                 (clearInput)="resultEmptyInputCustomer()" [isSimpleMode]="true"></app-company-customer-search-mat>-->
+<!--              </div>-->
+<!--            }-->
 
-                  (onSelect)="onSupplierSelected($event)"
-                  (clearInput)="supplierResultEmptyInput($event)"
+<!--            @if (dataSearch.checkboxSupplier && dataSearch.codTransaccion==='E'){-->
+<!--              <div class="col">-->
+<!--                <app-supplier-search-mat-->
+<!--                  [isSimpleMode]="true"-->
+<!--                  [(textName)]="dataSearch.nameSupplier"-->
 
-                />
-              </div>
-            }
+<!--                  (onSelect)="onSupplierSelected($event)"-->
+<!--                  (clearInput)="supplierResultEmptyInput($event)"-->
+
+<!--                />-->
+<!--              </div>-->
+<!--            }-->
 
           </div>
         </div>
