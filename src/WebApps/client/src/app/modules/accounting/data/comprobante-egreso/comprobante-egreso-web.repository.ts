@@ -14,6 +14,8 @@ import {EstadoPago} from "@accounting/core/domain/estado-pago.interface";
 import {ProvinciaCiudad} from "@shared/models/ciudad.interface";
 import {ApiResponse} from "@core/models/api-response";
 import {ComprobanteEgresoMapper} from "@accounting/data/comprobante-egreso/comprobante-egreso.mapper";
+import {GroupedEstab} from "@core/models/estab.model";
+import {groupEstabUtil} from "@core/utils/group-estab.util";
 
 @Injectable({
   providedIn: 'root'
@@ -70,8 +72,35 @@ export class ComprobanteEgresoWebRepository extends ComprobanteEgresoRepository 
       })
 
     )
+  }
 
+  getDataFilter() {
+    const PARAMS = JSON.stringify({tipo: 2})
 
+    return this.http.get<ApiResponse>(`${this._url}?json=${PARAMS}`, {context: getNoLoader()}).pipe(
+      map(response => {
+        let result = {
+          establecimientos: [] as GroupedEstab[],
+          tiposDoc :[],
+          subEntidadesFinanciera:[],
+          bancos :[]
+        }
+
+        if (response.code === "0") return result;
+
+        const { ptoEmision, tipoDocumento, subEntidadFinanciera, banco } = JSON.parse(response.payload as string);
+
+        result.establecimientos = groupEstabUtil({
+          estabs: ptoEmision,
+          isGroupPuntoEmision: true,
+        });
+
+        result.tiposDoc = tipoDocumento;
+        result.subEntidadesFinanciera = subEntidadFinanciera;
+        result.bancos = banco;
+        return result;
+      })
+    )
   }
 
   post(obj:any){

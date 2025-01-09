@@ -25,7 +25,7 @@ import { DECIMALS } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { minus } from '@core/utils/decimal.util';
-import {GetComprobanteEgresoUseCase} from "@accounting/core/use-cases/get-comprobante-egreso.use-case";
+import {ComprobanteEgresoUseCase} from "@accounting/core/use-cases/comprobante-egreso.use-case";
 
 interface ComprobanteEgresoStore {
   isLoading: boolean;
@@ -149,7 +149,7 @@ export const ComprobanteEgresoStore = signalStore(
 
 
   withMethods(
-    (store, useCase = inject(GetComprobanteEgresoUseCase), tS = inject(ToasterService)) => ({
+    (store, useCase = inject(ComprobanteEgresoUseCase), tS = inject(ToasterService)) => ({
 
 
 

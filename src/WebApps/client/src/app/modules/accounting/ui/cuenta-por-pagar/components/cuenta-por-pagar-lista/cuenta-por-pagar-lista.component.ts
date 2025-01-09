@@ -59,7 +59,7 @@ import {CuentaPorPagarUseCase} from "@accounting/core/use-cases/cuenta-por-pagar
 import {
   ComprobanteEgresoLoteComponent
 } from "@accounting/ui/comprobante-egreso/components/comprobante-egreso-lote/comprobante-egreso-lote.component";
-import {GetComprobanteEgresoUseCase} from "@accounting/core/use-cases/get-comprobante-egreso.use-case";
+import {ComprobanteEgresoUseCase} from "@accounting/core/use-cases/comprobante-egreso.use-case";
 
 
 @Component({
@@ -91,7 +91,7 @@ export class CuentaPorPagarListaComponent {
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService)
   private useCase = inject(CuentaPorPagarUseCase)
-  private _comprobanteEgresoUseCase = inject(GetComprobanteEgresoUseCase)
+  private _comprobanteEgresoUseCase = inject(ComprobanteEgresoUseCase)
 
   estabs: GroupedEstab[] = [];
   estadosDoc = [] as any[];

@@ -83,6 +83,7 @@ export enum CODE_REPORT {
   RTS = 'RTS', // Technical Support Report
   RCXC = 'RCXC', // Contabilidad Cobros por Cuotas.
   RCXD = 'RCXD', // Contabilidad Cobros por Documentos
+  RCXP = 'RCXP', // Contabilidad Cobros por Pagos
 }
 
 export enum CODE_ESTADO {
