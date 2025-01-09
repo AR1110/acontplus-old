@@ -11,24 +11,28 @@ GO
 -- Description:	SP para eliminar los datos de los articulos 
 -- =============================================
 CREATE OR ALTER PROC Inventario.Articulo_Delete
-@userRoleId INT
+@idRol INT
 ,@id INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-	
+
+	DECLARE @idUsuario INT
+
 	BEGIN TRY
+
+        SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
 		IF EXISTS(SELECT 1 FROM Articulo WHERE idArticulo = @id AND estado = 0)
 			BEGIN
 				SELECT '0'code,'El Articulo esta activo en uso para el sistema no se puede eliminar' as 'message', '' as payload
 				RETURN
 			END 
 		BEGIN TRAN 
-			UPDATE  Articulo SET estado = 0 , UpdateAt = GETDATE() WHERE idArticulo = @id
+			UPDATE  Articulo SET estado = 0 , UpdateAt = GETDATE(), UserUpdateId = @idUsuario WHERE idArticulo = @id
 		COMMIT TRAN
 		SELECT '1'code,'Eliminado Correctamente' as 'message', '' as payload
-		RETURN 
 	END TRY  
 
 	BEGIN CATCH
