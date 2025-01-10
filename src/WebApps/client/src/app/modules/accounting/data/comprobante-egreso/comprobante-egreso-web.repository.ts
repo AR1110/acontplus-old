@@ -77,7 +77,7 @@ export class ComprobanteEgresoWebRepository extends ComprobanteEgresoRepository 
   getDataFilter() {
     const PARAMS = JSON.stringify({tipo: 2})
 
-    return this.http.get<ApiResponse>(`${this._url}?json=${PARAMS}`, {context: getNoLoader()}).pipe(
+    return this.http.get<ApiResponse>(`${this._url}?json=${PARAMS}`).pipe(
       map(response => {
         let result = {
           establecimientos: [] as GroupedEstab[],
