@@ -95,65 +95,65 @@
         $scope.askToOpenModalOption = async function () {
             try {
 
-                let modalRef = modalSvc.openWithComponent({
-                    component:'modalAprobacionSeleccionarDoc',  
-                    size: 'xl',
-                    windowClass: 'uibModalFullScreen',
-                    params: {
-                        mainDataForm
-                    }
+                // let modalRef = modalSvc.openWithComponent({
+                //     component:'modalAprobacionSeleccionarDoc',  
+                //     size: 'xl',
+                //     windowClass: 'uibModalFullScreen',
+                //     params: {
+                //         mainDataForm
+                //     }
+                // })
+
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger m-l-5'
+                    },
+                    buttonsStyling: false
                 })
 
-                // const swalWithBootstrapButtons = Swal.mixin({
-                //     customClass: {
-                //         confirmButton: 'btn btn-success',
-                //         cancelButton: 'btn btn-danger m-l-5'
-                //     },
-                //     buttonsStyling: false
-                // })
+                swalWithBootstrapButtons.fire({
+                    title: 'Opción Aprobación Documento',
+                    input: 'select',
+                    inputOptions: {
+                        0: 'NOTA DE ENTREGA A FACTURA',
+                        1: 'PROFORMA A FACTURA',
+                        2: 'PROFORMA A NOTA DE ENTREGA'
+                    },
+                    inputPlaceholder: 'Seleccionar...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Continuar <i class="fa fa-arrow-right"></i>',
+                    cancelButtonText: '<small>&times; Cerrar</small>',
+                    reverseButtons: false,
+                    allowOutsideClick: false,
+                    focusConfirm: true,
+                    inputValidator: (value) => {
+                        return !value && 'Seleccione la opción de aprobación'
+                    }
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        showLoader();
+                        let modalRef = modalSvc.openModalCustom({
+                            controller: 'ModalSelectDocCtrl',
+                            template: URL_TEMPLATE + '_ModalSelectDocumento.cshtml',
+                            size: 'xl',
+                            windowClass: 'uibModalFullScreen',
+                            params: OPTION_APROBACION[result.value],
+                            isRenderRazorPartial: true
+                        })
 
-                // swalWithBootstrapButtons.fire({
-                //     title: 'Opción Aprobación Documento',
-                //     input: 'select',
-                //     inputOptions: {
-                //         0: 'NOTA DE ENTREGA A FACTURA',
-                //         1: 'PROFORMA A FACTURA',
-                //         2: 'PROFORMA A NOTA DE ENTREGA'
-                //     },
-                //     inputPlaceholder: 'Seleccionar...',
-                //     showCancelButton: true,
-                //     confirmButtonText: 'Continuar <i class="fa fa-arrow-right"></i>',
-                //     cancelButtonText: '<small>&times; Cerrar</small>',
-                //     reverseButtons: false,
-                //     allowOutsideClick: false,
-                //     focusConfirm: true,
-                //     inputValidator: (value) => {
-                //         return !value && 'Seleccione la opción de aprobación'
-                //     }
-                // }).then(result => {
-                //     if (result.isConfirmed) {
-                //         showLoader();
-                //         let modalRef = modalSvc.openModalCustom({
-                //             controller: 'ModalSelectDocCtrl',
-                //             template: URL_TEMPLATE + '_ModalSelectDocumento.cshtml',
-                //             size: 'xl',
-                //             windowClass: 'uibModalFullScreen',
-                //             params: OPTION_APROBACION[result.value],
-                //             isRenderRazorPartial: true
-                //         })
+                        modalRef.rendered.then(() => {
+                            hideLoader();
+                        })
 
-                //         modalRef.rendered.then(() => {
-                //             hideLoader();
-                //         })
+                        modalRef.result.then(result => {
+                            if (typeof result === 'object') {
+                                $scope.getAprobComprobantes();
+                            }
+                        })
 
-                //         modalRef.result.then(result => {
-                //             if (typeof result === 'object') {
-                //                 $scope.getAprobComprobantes();
-                //             }
-                //         })
-
-                //     }
-                // })
+                    }
+                })
 
             } catch (error) {
                 console.log(error);
