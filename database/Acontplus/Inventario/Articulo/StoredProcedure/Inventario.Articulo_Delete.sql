@@ -10,7 +10,9 @@ GO
 -- Create date: 2021-07-09
 -- Description:	SP para eliminar los datos de los articulos 
 -- =============================================
-CREATE OR ALTER PROC Inventario.Articulo_Delete @userRoleId INT ,@id INT
+CREATE OR ALTER PROC Inventario.Articulo_Delete
+@idRol INT
+,@id INT
 AS
 BEGIN
 	SET NOCOUNT ON;

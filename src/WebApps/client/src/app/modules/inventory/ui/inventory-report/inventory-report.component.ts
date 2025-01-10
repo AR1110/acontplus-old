@@ -59,7 +59,6 @@ const imports = [
   FileButtonsComponent,
   SupplierSearchMatComponent,
   //Directives
-  ActionReportDirective,
   ActionEnviarCorreoDirective,
 ];
 
@@ -202,10 +201,10 @@ export class InventoryReportComponent {
     }
   }
 
-  onChangeTipoTransaccion(){
-    this.dataSearch.checkboxSupplier = false;
-    this.dataSearch.checkboxCompanyCustomer = false;
-  }
+  // onChangeTipoTransaccion(){
+  //   this.dataSearch.checkboxSupplier = false;
+  //   this.dataSearch.checkboxCompanyCustomer = false;
+  // }
   onSelectedSubCategory(id: number) {
     this.dataSearch.idSubFamilia = id;
   }

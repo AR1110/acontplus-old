@@ -95,6 +95,15 @@
         $scope.askToOpenModalOption = async function () {
             try {
 
+                // let modalRef = modalSvc.openWithComponent({
+                //     component:'modalAprobacionSeleccionarDoc',  
+                //     size: 'xl',
+                //     windowClass: 'uibModalFullScreen',
+                //     params: {
+                //         mainDataForm
+                //     }
+                // })
+
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: 'btn btn-success',

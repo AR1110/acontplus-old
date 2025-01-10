@@ -6,7 +6,7 @@ export abstract class ComprobanteEgresoRepository {
 
   abstract getDataFormPago(idProveedor: number): Observable<any>;
 
-  abstract getDataFilter(): Observable<ApiResponse>;
+  abstract getDataFilter(): Observable<any>;
 
   abstract post<T>(obj: T): Observable<ApiResponse>;
 }
