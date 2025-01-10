@@ -716,7 +716,7 @@ BEGIN
 
                     INSERT INTO Inventario.TransaccionDetalle
                            (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,conversion,precioCostoFraccionado)
-			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto 
+			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto
                            ,ISNULL((SELECT TOP 1 af.conversion
                              FROM dbo.ArticuloFraccionado af WITH (NOLOCK)
                              WHERE af.idArticulo = tb.idArticulo

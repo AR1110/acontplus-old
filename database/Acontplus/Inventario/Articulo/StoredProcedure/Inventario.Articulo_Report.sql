@@ -11,14 +11,14 @@ GO
 -- Description:	SP Para leer los datos de los tipos de reportes relacionado con artiuculos
 -- =============================================
 --Inventario.Articulo_Report 28, '{"tipo":10,"idArticulo":5}'
-CREATE OR ALTER PROCEDURE Inventario.Articulo_Report  @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Inventario.Articulo_Report @json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 	--> Global
     DECLARE @tipo INT ,@idEntidad INT 
-      DECLARE @stockStatusCode VARCHAR(5)
+    DECLARE @stockStatusCode VARCHAR(5)
 	
     --> Sql
     DECLARE @params NVARCHAR(MAX),@sql NVARCHAR(MAX)
@@ -115,8 +115,6 @@ BEGIN
 	IF @tipo = 2
 		BEGIN
             DECLARE @ckFechaModificaccion BIT 
-			DECLARE @idTipoIva INT
-
 
             SELECT @idSubFamilia         = bySubFamilia
 				  ,@rucClienteProveedor  = numeroIdentificacion
@@ -126,7 +124,6 @@ BEGIN
                   ,@ckFechaModificaccion = ckFechaModificaccion
                   ,@fechaInicio          = fechaInicio
                   ,@fechaFin             = fechaFin
-		          ,@idTipoIva           = idTipoIva
 			FROM OPENJSON(@json) WITH 
             ( 
                 bySubFamilia         INT  
@@ -137,14 +134,13 @@ BEGIN
                ,ckFechaModificaccion BIT
                ,fechaInicio          DATETIME2
                ,fechaFin             DATETIME2
-			   ,idTipoIva            INT
+
 		    ) AS dt
 
 			SET @params = '@idEntidad    INT									
 						  ,@idSubFamilia INT
                           ,@idMarca      INT 
                           ,@idTarifa     INT
-						  ,@idTipoIva    INT
                           ,@fechaInicio  DATETIME2
 						  ,@fechaFin     DATETIME2'
 
@@ -179,9 +175,6 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND ar.idTarifa  = @idTarifa '
                 END 
-
-			IF @idTipoIva > 0 
-				SET @sql = @sql + ' ar.idTipoIva = @idTipoIva '
 
             IF @stockStatusCode IS NOT NULL
                 --> con stock 
@@ -223,7 +216,6 @@ BEGIN
                               ,@idTarifa     = @idTarifa 
                               ,@fechaInicio  = @fechaInicio
                               ,@fechaFin     = @fechaFin
-							  ,@idTipoIva    = @idTipoIva
 
 			RETURN 
 		END 
@@ -347,21 +339,23 @@ BEGIN
 	--> Consumo Diario
 	IF @tipo = 4
 		BEGIN 
-			SET @params =  '@idArticulo     INT
-	                       ,@idUsuario      INT
-                           ,@codEstab       VARCHAR(100)
-                           ,@idBodega       INT
-                           ,@idSubFamilia   INT
-						   ,@fechaInicio    DATETIME2
-						   ,@fechaFin       DATETIME2
-						   ,@idEntidad      INT
-						   ,@codTransaccion VARCHAR(5)
+			SET @params =  '@idArticulo          INT
+	                       ,@idUsuario           INT
+                           ,@codEstab            VARCHAR(100)
+                           ,@idBodega            INT
+                           ,@idSubFamilia        INT
+						   ,@fechaInicio         DATETIME2
+						   ,@fechaFin            DATETIME2
+						   ,@idEntidad           INT
+						   ,@codTransaccion      VARCHAR(5)
                            ,@rucClienteProveedor VARCHAR(20)'
 
 			SET @sql = 'SELECT tt.articulo
 							  ,tt.codArticulo
 							  ,cantidad                = CAST(tt.cantidad as numeric(18,2))
 							  ,precioUnitario          = CAST(tt.precioUnitario as numeric(18,2))
+							  ,precioCosto             = CAST(tt.precioCostoFraccionado as numeric(18,2))
+                              ,valorImpuesto           = CAST(ISNULL(tt.valorImpuesto,0) as numeric(18,2))
 							  ,precioTotalSinImpuestos = CASE WHEN tt.codTransaccion = ''S'' THEN CAST(tt.totalSalida as numeric(18,2)) 
 															  WHEN tt.codTransaccion = ''E'' THEN CAST(tt.totalEntrada as numeric(18,2)) 
 															  ELSE 0
@@ -381,42 +375,42 @@ BEGIN
                               ,tt.subFamilia
 						FROM v_InventarioTransaccion tt WITH (NOLOCK)
 						WHERE tt.idEntidad = @idEntidad 
-                          AND tt.estado = 1 '
+                          AND tt.estado = 1  '
 
-			SELECT @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+			SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-			SELECT @checkBoxFecha  = checkBoxFecha
-				  ,@idArticulo     = idArticulo
-				  ,@idUsuario      = idUsuario
-                  ,@idSubFamilia   = idSubFamilia
-				  ,@codTransaccion = codTransaccion
-				  ,@fechaFin       = fechaFin
-				  ,@fechaInicio    = fechaInicio
-                  ,@idBodega       = idBodega
-                  ,@codEstab       = codEstab 
+			SELECT @checkBoxFecha       = checkBoxFecha
+				  ,@idArticulo          = idArticulo
+				  ,@idUsuario           = idUsuario
+                  ,@idSubFamilia        = idSubFamilia
+				  ,@codTransaccion      = codTransaccion
+				  ,@fechaFin            = fechaFin
+				  ,@fechaInicio         = fechaInicio
+                  ,@idBodega            = idBodega
+                  ,@codEstab            = codEstab 
                   ,@rucClienteProveedor = numeroIdentificacion
 			FROM OPENJSON(@json) WITH 
 			(
-				checkBoxArticulo BIT 
-		       ,checkBoxFecha    BIT 
-		       ,idArticulo       INT 
-		       ,idUsuario        INT
-               ,idSubFamilia     INT
-		       ,codTransaccion   VARCHAR(5) 
-		       ,fechaInicio      DATETIME2
-		       ,fechaFin         DATETIME2 
-               ,idBodega         INT  
-               ,codEstab         VARCHAR(100)
-               ,idCliente        INT
+				checkBoxArticulo     BIT 
+		       ,checkBoxFecha        BIT 
+		       ,idArticulo           INT 
+		       ,idUsuario            INT
+               ,idSubFamilia         INT
+		       ,codTransaccion       VARCHAR(5) 
+		       ,fechaInicio          DATETIME2
+		       ,fechaFin             DATETIME2 
+               ,idBodega             INT  
+               ,codEstab             VARCHAR(100)
+               ,idCliente            INT
                ,numeroIdentificacion VARCHAR(25)
 			)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
 
-			IF @checkBoxFecha = 1
-				BEGIN
-					SET @sql = @sql + 'AND CAST(tt.fechaRegistro as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
-				END
+            IF @checkBoxFecha = 1
+	            BEGIN
+		            SET @sql = @sql + 'AND CAST(tt.fechaRegistro as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+	            END
 
 			IF @idArticulo > 0
 				BEGIN
@@ -459,25 +453,25 @@ BEGIN
 			SELECT e.ruc
 				  ,e.razonSocial 
 				  ,e.nombreComercial	
-				  ,ISNULL(e.telefono, '')telefonoEntidad
-				  ,ISNULL(e.direccion, '')direccionEntidad			
-				  ,tituloReporte = 'CONSUMO POR ARTICULOS'
-				  ,usuario       = @usuario
-				  ,CONVERT(NVARCHAR,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy')) as filtroFecha			
+				  ,ISNULL(e.telefono, '')                                                        as telefonoEntidad
+				  ,ISNULL(e.direccion, '')                                                       as direccionEntidad			
+				  ,'CONSUMO POR ARTICULOS'                                                       as nombreReporte
+				  ,@usuario                                                                      as usuario
+				  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy') as filtroFecha			
 			FROM Entidad e WITH (NOLOCK)
 			WHERE e.idEntidad = @idEntidad 
 			
 			EXEC sp_executesql @sql
 							  ,@params
-							  ,@idArticulo     = @idArticulo
-                              ,@codEstab       = @codEstab
-                              ,@idBodega       = @idBodega
-							  ,@idEntidad      = @idEntidad
-							  ,@idUsuario      = @idUsuario
-                              ,@idSubFamilia   = @idSubFamilia
-							  ,@codTransaccion = @codTransaccion
-							  ,@fechaInicio    = @fechaInicio
-							  ,@fechaFin       = @fechaFin
+							  ,@idArticulo          = @idArticulo
+                              ,@codEstab            = @codEstab
+                              ,@idBodega            = @idBodega
+							  ,@idEntidad           = @idEntidad
+							  ,@idUsuario           = @idUsuario
+                              ,@idSubFamilia        = @idSubFamilia
+							  ,@codTransaccion      = @codTransaccion
+							  ,@fechaInicio         = @fechaInicio
+							  ,@fechaFin            = @fechaFin
                               ,@rucClienteProveedor = @rucClienteProveedor
 
 			RETURN 
