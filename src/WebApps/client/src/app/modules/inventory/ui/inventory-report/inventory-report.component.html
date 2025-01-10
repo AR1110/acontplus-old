@@ -74,7 +74,6 @@
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Tipo Transacción:</mat-label>
-<!--                <mat-select [(ngModel)]="dataSearch.codTransaccion" (selectionChange)="onChangeTipoTransaccion()">-->
                 <mat-select [(ngModel)]="dataSearch.codTransaccion"  >
                   <mat-option value="S">Salida</mat-option>
                   <mat-option value="E">Entrada</mat-option>
@@ -82,9 +81,11 @@
               </mat-form-field>
             </div>
 
-            <div class="col">-->
-                      <app-company-customer-search-mat (onSelect)="onCustomerSelected($event)"-->
-                                                             (clearInput)="resultEmptyInputCustomer()" [isSimpleMode]="true"></app-company-customer-search-mat>-->
+            <div class="col">
+                      <app-company-customer-search-mat (onSelect)="onCustomerSelected($event)"
+                                                             (clearInput)="resultEmptyInputCustomer()" [isSimpleMode]="true">
+
+                      </app-company-customer-search-mat>
            </div>
 
 <!--            @if (dataSearch.checkboxCompanyCustomer && dataSearch.codTransaccion==='S'){-->
