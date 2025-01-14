@@ -398,7 +398,8 @@
                             enabledHistorialCobro: item.codEstado === 'CBR' || item.codEstado === 'PP',
                             convertToDoc: item.convertToDoc,
                             esAnulado: item.codEstado === 'A',
-                            enabledPayment: item.codEstado === 'PP' || item.codEstado === 'PE'
+                            enabledPayment: item.codEstado === 'PP' || item.codEstado === 'PE',
+                            totalRecords: item.totalRecords
 
                         }
                     })
@@ -955,9 +956,12 @@
 
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
+                        let precioConIva = restItem.precioUnitario + restItem.valorImpuesto;
+                        let total = restItem.precioTotalSinImpuesto + restItem.valorImpuesto;
+
                         let obj = {
                             n: index + 1,
-                            idProformaDetalle: itemPrincipal.idProformaDetalle,
+                            idNotaEntregaDetalle: itemPrincipal.idNotaEntregaDetalle,
                             cantidad: itemPrincipal.cantidad,
                             cantidadOriginal: itemPrincipal.cantidad,
                             codigo: itemPrincipal.codigo,
@@ -986,7 +990,9 @@
                             estado: 1,
                             datosAdicionalesArticulo: [],
                             precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
-                            fechaEmision: fS.formatDate(itemPrincipal.fechaEmision)
+                            fechaEmision: fS.formatDate(itemPrincipal.fechaEmision),
+                            precioConIva,
+                            total: fS.roundNumber(total, 5)
                         }
 
                         return obj;
@@ -1346,7 +1352,8 @@
                             rowColor: item.rowColor,
                             codEstado: item.codEstado,
                             disabledUpdate: item.codEstado === 'TRA' || item.codEstado === 'CR' || item.anulada,
-                            isApplied: item.codEstado === "APL"
+                            isApplied: item.codEstado === "APL",
+                            totalRecords: item.totalRecords
                         }
                     })
 

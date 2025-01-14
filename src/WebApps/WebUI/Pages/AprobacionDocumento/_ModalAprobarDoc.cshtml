@@ -1,0 +1,207 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{title}}</h5>
+    <button type="button" class="close" ng-click="close()">&times;</button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <div class="form-group">
+                <label for="establecimiento">Establecimiento: <span class="text-danger">*</span></label>
+                <select class="form-control" ng-model="data.codEstab" ng-disabled="dataDisabled.isDisabledSucursal">
+                    <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+            <div class="form-group">
+                <label>Punto Emisión: <span class="text-danger">*</span></label>
+                <select class="form-control" ng-model="data.idPuntoEmision"
+                    ng-disabled="dataDisabled.isDisabledPuntoEmision">
+                    <option ng-value="item.idPuntoEmision" ng-repeat="item in ptosEmision">{{item.ptoEmi}}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+            <div class="form-group">
+                <label>Fecha Emisión: <span class="text-danger">*</span> </label>
+                <input type="date" name="fechaEmision" class="form-control" ng-model="data.fechaEmision">
+                <small class="text-info">{{fechaEmisionEscrita}}</small>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" ng-if="config.multipleVendedor">
+            <div class="form-group">
+                <label for="vendedor">Vendedor: <span class="text-danger">*</span></label>
+                <select name="vendedor" id="vendedor" class="form-control border-select" ng-model="data.idUsuario">
+                    <option ng-value="item.idUsuario" ng-repeat="item in vendedores">
+                        {{item.nombreCompleto}}
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <div class="form-group">
+                <label for="cliente">Cliente: <span class="text-danger">*</span></label>
+                <input type="text" name="cliente" id="cliente" class="form-control" ng-model="cliente.nombreFiscal"
+                    disabled>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <div class="form-group">
+                <label for="numeroIdentificacion">Nro. Identificación:</label>
+                <input type="text" id="numeroIdentificacion" class="form-control" disabled
+                    ng-value="cliente.numeroIdentificacion" placeholder="...">
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <div class="form-group">
+                <label for="address" class="">Dirección:</label>
+                <input type="text" id="address" class="form-control" disabled ng-model="cliente.direccion">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
+            <div class="row" ng-if="esEditar()">
+                <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
+                    <label for="">Buscar Articulo</label>
+                    <md-autocomplete-articulo-component tipo-doc="tipoDoc" id-bodega="data.idBodega"
+                        set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)">
+                    </md-autocomplete-articulo-component>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="">Tarifa:
+                            <span tooltip-placement="top"
+                                uib-tooltip="Asignación Rápida de listas de precios seleccionada a todos los productos del documento.">
+                                <i class="fas fa-info-circle fa-xs"></i>
+                            </span>
+                        </label>
+                        <select id="idTarifa" class="form-control border-select" ng-model="data.idTarifa"
+                            ng-change="onChangeTarifaGeneral()">
+                            <option ng-value="item.idTarifa" ng-repeat="item in tarifas">{{item.descripcion}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+            <div class="row mt-4">
+                <div class="col-12 d-flex justify-content-end">
+                    <div class="ml-auto">
+                        <button type="button" ng-if="esEditar()" class="btn btn-success" ng-click="askToSave()">
+                            <i class="ti-pencil"></i> Actualizar
+                        </button>
+
+                        <button class="btn btn-success" ng-if="!esEditar()" ng-click="askToSave()">
+                            <i class="ti-save"></i>
+                            Guardar
+                        </button>
+
+                        @* <button type="button" class="btn btn-dark" ng-click="close()">
+                            &times; Cerrar
+                        </button> *@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <section class="m-2">
+        <div ui-grid="gridOptionsDetalle" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
+            ui-grid-validate ui-grid-save-state class="grid ">
+        </div>
+
+    </section>
+
+
+    <div class="row mt-1">
+        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+            <div class="card border border-secondary-1">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label>% Descuento</label>
+                                <div class="input-group">
+                                    <input ng-model="data.porcentajeDescuento" disabled class="form-control" />
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-secondary btn-sm" disabled><i
+                                                class="fa fa-calculator fa-xs"></i></button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label>Descuento</label>
+                                <div class="input-group">
+                                    <input ng-model="data.totalDescuento" disabled placeholder="0.00"
+                                        class="form-control" />
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-secondary btn-sm" disabled><i
+                                                class="fa fa-calculator fa-xs"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label>Transporte</label>
+                                <input type="text" ng-model="data.transporte" disabled class="form-control"
+                                    placeholder="0.00" />
+                            </div>
+                        </div>
+
+                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label>Rercargo</label>
+                                <input type="text" decimal disabled ng-model="data.recargo" class="form-control"
+                                    placeholder="0.00" />
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label>Observacion</label>
+                                <textarea class="form-control border-select" ng-model="data.observacion"
+                                    placeholder="..." rows="4" cols="50"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12 ml-auto">
+            <div class="card border p-2">
+
+                <div id="drawImpuestoTotales"></div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark" ng-click="close()">
+        &times; Cerrar
+    </button>
+</div>
