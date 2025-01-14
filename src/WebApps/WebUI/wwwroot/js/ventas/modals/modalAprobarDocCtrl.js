@@ -16,6 +16,7 @@ app.component('modalAprobarDoc', {
         const gridOptionsSvc = $injector.get('gridOptionsService');
         const aprobacionDocSvc = $injector.get('aprobacionDocService');
         const tS = $injector.get('toastService');
+        const DOC_TYPE = $injector.get('DOC_TYPE')
 
         $scope.title = null;
 
@@ -63,7 +64,7 @@ app.component('modalAprobarDoc', {
         };
 
         $scope.gridOptionsDetalle = {
-            enableColumnMenus: false, 
+            enableColumnMenus: false,
         }
 
         $scope.dataDisabled = {
@@ -77,7 +78,7 @@ app.component('modalAprobarDoc', {
             return idAprobacionDocumento > 0
         }
 
-        $scope.esGuardar = function(){
+        $scope.esGuardar = function () {
             return !(idAprobacionDocumento > 0)
         }
 
@@ -101,7 +102,7 @@ app.component('modalAprobarDoc', {
                 mainDataForm,
                 data,
                 codEstab,
-                idPuntoEmision, 
+                idPuntoEmision,
             } = $ctrl.resolve.params;
 
             let {
@@ -114,9 +115,8 @@ app.component('modalAprobarDoc', {
                 vendedores,
                 config
             } = mainDataForm;
-            console.log(mainDataForm)
 
-             docsSelected = $ctrl.resolve.params.docsSelected;
+            docsSelected = $ctrl.resolve.params.docsSelected;
             $scope.docOrigen = docOrigen;
             $scope.docDestino = docDestino;
 
@@ -170,8 +170,6 @@ app.component('modalAprobarDoc', {
             if (dataUsuario) {
                 $scope.data.idUsuario = dataUsuario.idUsuario;
             }
-
-            console.log(data)
 
             $scope.gridOptionsDetalle.data = calculateTotalItems(detalles);
 
@@ -422,7 +420,7 @@ app.component('modalAprobarDoc', {
         }
 
 
-        
+
         function drawImpuestoTotales() {
             try {
                 const getTotals = gridOptionsSvc.getImpuestoTotales({
@@ -455,7 +453,7 @@ app.component('modalAprobarDoc', {
             }
         }
 
-        function drawElementHTMLTotals(htmlTemplate) { 
+        function drawElementHTMLTotals(htmlTemplate) {
 
             const element = document.getElementById('drawImpuestoTotales');
             if (element) {
@@ -470,9 +468,9 @@ app.component('modalAprobarDoc', {
                 tarifasImpuesto: $scope.tarifasImpuesto.slice(),
             });
             let {
-                subTotalSinImpuestos, 
+                subTotalSinImpuestos,
                 importeTotal,
-                totalDescuento, 
+                totalDescuento,
             } = getTotals;
 
 
@@ -480,8 +478,8 @@ app.component('modalAprobarDoc', {
             if ($scope.data.subTotalSinImpuestos !== subTotalSinImpuestos) {
                 tS.toastr({
                     type: 'warning',
-                    message:  `El valor del Subtotal sin impuestos: ${$scope.data.subTotalSinImpuestos} difiere del valor del Subtotal sin impuestos en el detalle: ${subTotalSinImpuestos}`
-                } )
+                    message: `El valor del Subtotal sin impuestos: ${$scope.data.subTotalSinImpuestos} difiere del valor del Subtotal sin impuestos en el detalle: ${subTotalSinImpuestos}`
+                })
                 return;
             }
 
@@ -501,7 +499,7 @@ app.component('modalAprobarDoc', {
 
         $scope.askToSave = async function () {
             try {
-                if (!isValidTotals()) return; 
+                if (!isValidTotals()) return;
 
                 if (!fS.isValidField($scope.data.codEstab)) {
                     tS.taostr('warning', 'Seleccione el establecimiento')
@@ -532,9 +530,23 @@ app.component('modalAprobarDoc', {
                 }
 
 
+                if ($scope.cliente.tipoIdentificacion === 'CF' && $scope.docDestino.codDoc === DOC_TYPE.FV_SRI && $scope.data.total > 50) {
+                    Swal.fire({
+                        icon: 'warning',
+                        html: `<small>El importe total de los documentos seleccionados supera los 50 USD por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b></small>`,
+                        confirmButtonText: 'Aceptar'
+                    })
+                    return
+                }
+                if ($scope.data.total <= 0) {
+                    tS.toastr('warning', 'No se puede generar el documento con valor total 0');
+                    return
+                }
+
+
                 let { isConfirmed } = await Swal.fire({
                     //title: 'Are you sure?',
-                    text: `¿Estás seguro de ${$scope.esGuardar()? 'Guardar': 'Actualizar'} el Documento de Aprobación Documento?`,
+                    text: `¿Estás seguro de ${$scope.esGuardar() ? 'Guardar' : 'Actualizar'} el Documento de Aprobación Documento?`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -583,7 +595,7 @@ app.component('modalAprobarDoc', {
                         detallesDeleted: []
                     }
 
-                    let dataParams = aprobacionDocSvc.queryMapper(data) 
+                    let dataParams = aprobacionDocSvc.queryMapper(data)
                     aprobacionDocSvc.save(dataParams).then(response => {
                         if (response.code === "0") {
                             fS.sweetAlert('warning', response.message);
