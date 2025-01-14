@@ -1317,7 +1317,9 @@
                 //Articulo Predeterminado
                 if (articuloDefault.idArticulo > 0) {
                     updateRefProductoVenta();
-                    $scope.refProductoVenta.onInventario(articuloDefault.idArticulo)
+                    $scope.refProductoVenta.onInventario({
+                        idArticulo: articuloDefault.idArticulo
+                    })
                     // articuloSvc
                     //     .getForSale({
                     //         idArticulo: articuloDefault.idArticulo,
