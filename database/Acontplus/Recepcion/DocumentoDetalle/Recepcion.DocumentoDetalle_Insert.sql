@@ -103,7 +103,7 @@ BEGIN
 					, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, costoNeto, detallesAdicionales, impuestos, idUsuario)
 
 					SELECT idDocumento, t.idBodega, t.idArticulo, t.idMedida, t.codigoPrincipal, t.codigoAuxiliar
-					,cantidad, t.descripcion, precioUnitario, descuento, precioTotalSinImpuesto, CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)), detallesAdicionales, impuestos, @idUsuario
+					,cantidad, t.descripcion, precioUnitario, CASE  WHEN descuento IS NULL OR descuento = '' THEN 0  ELSE descuento END, precioTotalSinImpuesto, CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)), detallesAdicionales, impuestos, @idUsuario
 					FROM Recepcion.Doc_Detalle_Temp t 
 					WHERE t.idDocumento = @idDocumento
 					  AND t.idArticulo > 0
