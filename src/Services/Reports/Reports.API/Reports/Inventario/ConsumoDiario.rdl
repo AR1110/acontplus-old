@@ -52,6 +52,10 @@
           <DataField>usuario</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="checkboxPrecioCostoFiltro">
+          <DataField>checkboxPrecioCostoFiltro</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="detailDs">
@@ -1167,7 +1171,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Precio</Value>
+                                  <Value>Costo</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1225,7 +1229,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Costo</Value>
+                                  <Value>Precio U.</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1283,7 +1287,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Iva</Value>
+                                  <Value>Impuesto</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2154,14 +2158,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="precioUnitario">
+                        <Textbox Name="precioCosto2">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!precioUnitario.Value</Value>
+                                  <Value>=Fields!precioCosto.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2173,7 +2177,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>precioUnitario</rd:DefaultName>
+                          <rd:DefaultName>precioCosto2</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2208,14 +2212,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="precioCosto">
+                        <Textbox Name="precioUnitario">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!precioCosto.Value</Value>
+                                  <Value>=Fields!precioUnitario.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2227,7 +2231,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>precioCosto</rd:DefaultName>
+                          <rd:DefaultName>precioUnitario</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2554,14 +2558,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="precioUnitario1">
+                        <Textbox Name="precioCosto3">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!precioUnitario.Value)</Value>
+                                  <Value>=Sum(Fields!precioCosto.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2574,7 +2578,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>precioUnitario1</rd:DefaultName>
+                          <rd:DefaultName>precioCosto3</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2610,14 +2614,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="precioCosto1">
+                        <Textbox Name="precioUnitario1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!precioCosto.Value)</Value>
+                                  <Value>=Sum(Fields!precioUnitario.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2630,7 +2634,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>precioCosto1</rd:DefaultName>
+                          <rd:DefaultName>precioUnitario1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2850,7 +2854,11 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(Parameters!checkboxPrecioCostoFiltro.Value = 0, True, False)</Hidden>
+                  </Visibility>
+                </TablixMember>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />

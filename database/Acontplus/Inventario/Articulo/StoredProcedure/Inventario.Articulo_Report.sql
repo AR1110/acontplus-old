@@ -339,6 +339,9 @@ BEGIN
 	--> Consumo Diario
 	IF @tipo = 4
 		BEGIN 
+            DECLARE @viewCostPrice BIT 
+                   ,@checkboxPrecioCostoFiltro BIT
+
 			SET @params =  '@idArticulo          INT
 	                       ,@idUsuario           INT
                            ,@codEstab            VARCHAR(100)
@@ -348,13 +351,14 @@ BEGIN
 						   ,@fechaFin            DATETIME2
 						   ,@idEntidad           INT
 						   ,@codTransaccion      VARCHAR(5)
-                           ,@rucClienteProveedor VARCHAR(20)'
+                           ,@rucClienteProveedor VARCHAR(20)
+                           ,@viewCostPrice       BIT'
 
 			SET @sql = 'SELECT tt.articulo
 							  ,tt.codArticulo
 							  ,cantidad                = CAST(tt.cantidad as numeric(18,2))
 							  ,precioUnitario          = CAST(tt.precioUnitario as numeric(18,2))
-							  ,precioCosto             = CAST(tt.precioCostoFraccionado as numeric(18,2))
+							  ,precioCosto             = CAST(IIF(@viewCostPrice = 0,0,tt.precioCostoFraccionado) as numeric(18,2))
                               ,valorImpuesto           = CAST(ISNULL(tt.valorImpuesto,0) as numeric(18,2))
 							  ,precioTotalSinImpuestos = CASE WHEN tt.codTransaccion = ''S'' THEN CAST(tt.totalSalida as numeric(18,2)) 
 															  WHEN tt.codTransaccion = ''E'' THEN CAST(tt.totalEntrada as numeric(18,2)) 
@@ -375,34 +379,39 @@ BEGIN
                               ,tt.subFamilia
 						FROM v_InventarioTransaccion tt WITH (NOLOCK)
 						WHERE tt.idEntidad = @idEntidad 
+                          AND tt.codTransaccion = ''S''
                           AND tt.estado = 1  '
 
-			SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+			SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-			SELECT @checkBoxFecha       = checkBoxFecha
-				  ,@idArticulo          = idArticulo
-				  ,@idUsuario           = idUsuario
-                  ,@idSubFamilia        = idSubFamilia
-				  ,@codTransaccion      = codTransaccion
-				  ,@fechaFin            = fechaFin
-				  ,@fechaInicio         = fechaInicio
-                  ,@idBodega            = idBodega
-                  ,@codEstab            = codEstab 
-                  ,@rucClienteProveedor = numeroIdentificacion
+            SELECT TOP 1 @viewCostPrice = precio FROM Config.v_User_Permission_Product WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+			SELECT @checkBoxFecha             = checkBoxFecha
+				  ,@checkboxPrecioCostoFiltro = checkboxPrecioCostoFiltro
+                  ,@idArticulo                = idArticulo
+				  ,@idUsuario                 = idUsuario
+                  ,@idSubFamilia              = idSubFamilia
+				  ,@codTransaccion            = codTransaccion
+				  ,@fechaFin                  = fechaFin
+				  ,@fechaInicio               = fechaInicio
+                  ,@idBodega                  = idBodega
+                  ,@codEstab                  = codEstab 
+                  ,@rucClienteProveedor       = numeroIdentificacion
 			FROM OPENJSON(@json) WITH 
 			(
-				checkBoxArticulo     BIT 
-		       ,checkBoxFecha        BIT 
-		       ,idArticulo           INT 
-		       ,idUsuario            INT
-               ,idSubFamilia         INT
-		       ,codTransaccion       VARCHAR(5) 
-		       ,fechaInicio          DATETIME2
-		       ,fechaFin             DATETIME2 
-               ,idBodega             INT  
-               ,codEstab             VARCHAR(100)
-               ,idCliente            INT
-               ,numeroIdentificacion VARCHAR(25)
+				checkBoxArticulo          BIT 
+		       ,checkboxPrecioCostoFiltro BIT
+               ,checkBoxFecha             BIT 
+		       ,idArticulo                INT 
+		       ,idUsuario                 INT
+               ,idSubFamilia              INT
+		       ,codTransaccion            VARCHAR(5) 
+		       ,fechaInicio               DATETIME2
+		       ,fechaFin                  DATETIME2 
+               ,idBodega                  INT  
+               ,codEstab                  VARCHAR(100)
+               ,idCliente                 INT
+               ,numeroIdentificacion      VARCHAR(25)
 			)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
@@ -417,15 +426,11 @@ BEGIN
 					SET @sql = @sql + 'AND tt.idArticulo = @idArticulo '
 				END 
 
+
             IF @idSubFamilia > 0
                 BEGIN
                     SET @sql = @sql + 'AND tt.idSubFamilia = @idSubFamilia '
                 END 
-
-			IF @codTransaccion IS NOT NULL
-				BEGIN
-					SET @sql = @sql + 'AND tt.codTransaccion = @codTransaccion '
-				END 
 
 			IF @idUsuario > 0 
 				BEGIN
@@ -457,7 +462,8 @@ BEGIN
 				  ,ISNULL(e.direccion, '')                                                       as direccionEntidad			
 				  ,'CONSUMO POR ARTICULOS'                                                       as nombreReporte
 				  ,@usuario                                                                      as usuario
-				  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy') as filtroFecha			
+				  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy') as filtroFecha
+                  ,@checkboxPrecioCostoFiltro                                                    as checkboxPrecioCostoFiltro
 			FROM Entidad e WITH (NOLOCK)
 			WHERE e.idEntidad = @idEntidad 
 			
@@ -473,6 +479,7 @@ BEGIN
 							  ,@fechaInicio         = @fechaInicio
 							  ,@fechaFin            = @fechaFin
                               ,@rucClienteProveedor = @rucClienteProveedor
+                              ,@viewCostPrice       = @viewCostPrice
 
 			RETURN 
 

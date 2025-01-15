@@ -33,9 +33,7 @@ import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import {FileButtonsComponent} from "@shared/components/file-buttons/file-buttons.component";
 import {UserRoleStateService} from "@shared/store/user-role-state.service";
-import {
-  SupplierSearchMatComponent
-} from "@customer/ui/supplier/components/supplier-search-mat/supplier-search-mat.component";
+
 
 const imports = [
   NgbNavModule,
@@ -57,7 +55,6 @@ const imports = [
   MatUserSearchComponent,
   CompanyCustomerSearchMatComponent,
   FileButtonsComponent,
-  SupplierSearchMatComponent,
   //Directives
   ActionEnviarCorreoDirective,
 ];
@@ -92,12 +89,12 @@ export class InventoryReportComponent {
     idBodega: 0,
     idSubFamilia: 0,
     checkboxArticuloFiltro: false,
+    checkboxPrecioCostoFiltro: false,
     checkboxUsuarioFiltro: false,
     checkboxAgruparArticulo: false,
     checkboxSubCategoryFilter: false,
     idArticulo: 0,
     idUsuario: 0,
-    codTransaccion: 'S',
     chkProveedor: false,
     numeroIdentificacion: null as null | string,
     checkboxSubFamiliaFiltro: false,
@@ -339,26 +336,7 @@ export class InventoryReportComponent {
       }
     }
 
-    if (this.dataSearch.checkboxCompanyCustomer && this.dataSearch.codTransaccion==='S') {
-      if (!isValidField(this.dataSearch.numeroIdentificacion)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione el cliente',
-        });
-        return;
-      }
-    }
-
-    if(selectedTab===1){
-      if(this.dataSearch.codTransaccion==='E' && this.dataSearch.checkboxSupplier && !isValidField(this.dataSearch.numeroIdentificacion)){
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione el proveedor'
-        })
-        return
-      }
-    }
-
+    
     if (selectedTab === 3) {
       if (this.dataSearch.chkUbicacion) {
         if (!this.dataSearch.textUbicacion) {
@@ -433,24 +411,24 @@ export class InventoryReportComponent {
       : null;
 
     let numeroIdentificacion = null as string | null;
-    if(this.dataSearch.codTransaccion==='S' && this.dataSearch.checkboxCompanyCustomer ){
+    if(this.dataSearch.checkboxCompanyCustomer ){
       numeroIdentificacion = isValidField(this.dataSearch.numeroIdentificacion);
     }
 
-    if(this.dataSearch.codTransaccion==='E' && this.dataSearch.checkboxSupplier){
+    if(this.dataSearch.checkboxSupplier){
       numeroIdentificacion = isValidField(this.dataSearch.numeroIdentificacion);
     }
 
     return {
       tipo: 4,
       checkBoxFecha: true,
+      checkboxPrecioCostoFiltro : this.dataSearch.checkboxPrecioCostoFiltro,
       idUsuario: this.dataSearch.checkboxUsuarioFiltro
         ? isValidField(this.dataSearch.idUsuario)
         : null,
       idArticulo: this.dataSearch.checkboxArticuloFiltro
         ? isValidField(this.dataSearch.idArticulo)
         : null,
-      codTransaccion: this.dataSearch.codTransaccion,
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       codEstab: this.getCodEstab(),
