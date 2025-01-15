@@ -132,7 +132,7 @@
         let service = {};
 
         service.getAll = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -151,15 +151,15 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true);
+            return mS.getData('post', url  , {data}, true);
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true);
+            return mS.getData('put', url   + id, {data}, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true);
+            return mS.getData('delete', url  + id, null, true);
         }
 
         service.listForSelect = function (query) {
@@ -192,7 +192,7 @@
         let service = {};
 
         service.getAll = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -213,15 +213,15 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true);
+            return mS.getData('post', url  , {data}, true);
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true);
+            return mS.getData('put', url   + id, {data}, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true);
+            return mS.getData('delete', url   + id, null, true);
         }
 
 
@@ -241,7 +241,7 @@
         let service = {};
 
         service.getAll = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -260,15 +260,15 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true);
+            return mS.getData('post', url  , {data}, true);
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true);
+            return mS.getData('put', url  + id, {data}, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true);
+            return mS.getData('delete', url   + id, null, true);
         }
 
 
@@ -286,7 +286,7 @@
         let service = {};
 
         service.getAll = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -311,7 +311,7 @@
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id + '?json=' + JSON.stringify(data), null, true);
+            return mS.getData('put', url   + id + '?json=' + JSON.stringify(data), null, true);
         }
 
         service.delete = function (id) {
