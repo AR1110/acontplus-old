@@ -9,8 +9,7 @@
                 <div class="form-group">
                     <label class="form-control-label">Buscar Articulo</label><br>
                     <span class="text-muted" ng-if="tipoRegistro==2">{{data.articulo}}</span>
- 
-                    <input type="text" id="articuloAutocomplete" ng-if="tipoRegistro==1"  autocomplete="off"
+                    <input type="text" id="articuloAutocomplete" ng-if="tipoRegistro==1" autocomplete="off"
                         name="articuloAutocomplete" class="form-control  border-select"
                         placeholder="Ingrese Descripción del Articulo" ng-model="data.selectedArticulo"
                         ng-keyup="onKeyupSearchArticulo()"
@@ -54,8 +53,8 @@
             <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label class="form-control-label">Conversión: <span class="text-danger">*</span></label>
-                    <input type="text" id="conversion" class="form-control border-select"
-                        ng-model="data.conversion" valid-number placeholder="0.00">
+                    <input type="text" id="conversion" class="form-control border-select" ng-model="data.conversion"
+                        valid-number placeholder="0.00">
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-12 col-12">

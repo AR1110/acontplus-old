@@ -236,7 +236,7 @@
      */
     app.factory('medidaService', function ($injector) {
 
-        let url = 'Inventario/Medida/';
+        let url = 'Inventario/Measure/';
         let mS = $injector.get('mainService');
         let service = {};
 

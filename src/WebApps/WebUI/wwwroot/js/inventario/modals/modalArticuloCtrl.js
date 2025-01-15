@@ -1600,8 +1600,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
 
     initialLoad();
     function initialLoad() {
-        try {
-            showLoader();
+        try { 
 
             articuloSvc.getDataForForm().then(response => {
                 const { medidas, tarifas, decimal } = response;
@@ -1616,11 +1615,17 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
                     $scope.tipoRegistro = 2;
                     getDataArticuloFraccionado();
                 }
-            }).finally(() => hideLoader())
+
+
+                if(params.hasDataArticle && params.idArticulo>0){
+                   
+                    $scope.selectedArticuloChange(params);
+                }
+
+            }) 
 
         } catch (error) {
             console.error(error);
-            hideLoader();
         }
 
         $uibModalInstance.rendered.then(() => {
@@ -1637,6 +1642,10 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
                 ...params,
                 ...data,
             };
+
+          
+            
+
             $scope.gridOptions.data = pvps.map((val) => {
                 let ganancia = val.precioVenta - $scope.data.precioCostoFraccionado;
                 val.ganancia = fS.roundNumber(ganancia, pricingUtils.precisionMaxima);
@@ -1657,7 +1666,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
     }
 
     $scope.onKeyupSearchArticulo = function () {
-        console.log($scope.data.selectedArticulo)
+       
         // if ([null, undefined, ""].includes($scope.data.selectedArticulo)) {
         //     $scope.data.selectedArticulo = null;
         //     $scope.articulo = {};
@@ -1665,13 +1674,11 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
     }
 
     $scope.selectedArticuloChange = function (item) {
-        try {
-            showLoader();
-            articuloSvc.findById(item.idArticulo).then((response) => {
-                hideLoader();
+        try { 
+            articuloSvc.findById(item.idArticulo).then((response) => { 
                 let { data, articuloTarifas } = response;
                 $scope.data = data;
-                $scope.data.selectedArticulo = item;
+                $scope.data.selectedArticulo = data.descripcion;
 
                 $scope.gridOptions.data = articuloTarifas.map((item) => {
                     item.precioVenta = 0;
@@ -1683,9 +1690,8 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
             })
                 .catch((error) => {
                     console.log(error)
-                }).finally(() => hideLoader())
-        } catch (error) {
-            hideLoader();
+                }) 
+        } catch (error) { 
             console.log(error);
         }
     }
@@ -1758,6 +1764,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
 
     $scope.resultModalMedida = async function (result) {
         try {
+            console.log(result)
             if (typeof result !== "object") return;
             const { medidas } = await articuloSvc.getDataForForm();
             $scope.medidas = medidas;
@@ -1805,16 +1812,13 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
             pvps: $scope.gridOptions.data,
         }
 
-        if (!($scope.data.idArticuloFraccionado > 0)) {
-            showLoader();
+        if (!($scope.data.idArticuloFraccionado > 0)) { 
             articuloFraccionadoSvc.post(data).then(successReponse)
-                .finally(() => hideLoader())
+                 
         }
 
-        if ($scope.data.idArticuloFraccionado > 0) {
-            showLoader();
-            articuloFraccionadoSvc.put($scope.data.idArticuloFraccionado, data).then(successReponse)
-                .finally(() => hideLoader())
+        if ($scope.data.idArticuloFraccionado > 0) { 
+            articuloFraccionadoSvc.put($scope.data.idArticuloFraccionado, data).then(successReponse) 
         }
     }
 
