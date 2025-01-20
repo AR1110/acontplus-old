@@ -2146,51 +2146,89 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
     }
 
 
-    $scope.askToDeleteCH = function (item) {
-        Swal.fire({
-            title: '¿Está seguro/a de desvincular este articulo de compras habituales?',
-            text: "¡No podrás revertir esto!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Si!',
-            cancelButtonText: 'No',
-            allowOutsideClick: false
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $scope.deleteCH(item);
+    $scope.askToDeleteCH = async (item) => {
+        try {
+            const confirmation = await Swal.fire({
+                title: '¿Está seguro/a de desvincular este artículo de compras habituales?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No',
+                allowOutsideClick: false,
+            });
+
+            if (confirmation.isConfirmed) {
+                await $scope.deletePurchaseRecord(item);
             }
-        })
-    }
+        } catch (error) {
+            console.error('Error during confirmation or deletion:', error);
+        }
+    };
 
-    let isRefresh = false;
 
-    $scope.deleteCH = (item) => {
+    let shouldRefresh = false;
+
+    $scope.deletePurchaseRecord = async (record) => {
         try {
             showLoader();
-            const { idDocumento, idCompraHabitual } = Object.assign(item, { idDocumento: params.idDocumento });
-            mS.getData('delete', `${URL}Delete?json=${JSON.stringify({ idDocumento, id: idCompraHabitual })}`).then(response => {
-                if (response.code == '0') {
-                    tS.toastr('warning', response.message)
-                    return
+
+            const { idDocumento, idCompraHabitual } = { ...record, idDocumento: params.idDocumento };
+
+            const initialResponse = await mS.getData(
+                'delete',
+                `${URL}Delete?json=${JSON.stringify({ idDocumento, id: idCompraHabitual, tipo: 1 })}`
+            );
+
+            if (initialResponse.code === '0') {
+                const userConfirmation = await Swal.fire({
+                    icon: 'warning',
+                    title: 'Advertencia',
+                    html: `${initialResponse.message} </br> ¿Desea proceder de todas maneras? Este proceso es irreversible.`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Proceder',
+                    cancelButtonText: 'Cancelar',
+                    allowOutsideClick: false,
+                });
+
+                if (userConfirmation.isConfirmed) {
+                    const finalResponse = await mS.getData(
+                        'delete',
+                        `${URL}Delete?json=${JSON.stringify({ idDocumento, id: idCompraHabitual, tipo: 2 })}`
+                    );
+
+                    handleResponse(finalResponse, record);
                 }
-                if (response.code == '1') {
-                    let index = $scope.historyComprasArticle.indexOf(item)
-                    $scope.historyComprasArticle.splice(index, 1)
-                    tS.toastr('success', response.message)
-                    isRefresh = true;
-                    $uibModalInstance.close({ isRefresh });
-                }
-            }).finally(() => hideLoader())
+            } else {
+                handleResponse(initialResponse, record);
+            }
         } catch (error) {
-            console.log(error)
+            console.error('Error deleting purchase record:', error);
+        } finally {
+            hideLoader();
+        }
+    };
+
+    function handleResponse(response, record) {
+        if (response.code === '0') {
+            tS.toastr('warning', response.message);
+        } else if (response.code === '1') {
+            const recordIndex = $scope.historyComprasArticle.indexOf(record);
+            if (recordIndex > -1) {
+                $scope.historyComprasArticle.splice(recordIndex, 1);
+            }
+            tS.toastr('success', response.message);
+            shouldRefresh = true;
+            $scope.closeModal();
         }
     }
 
-    $scope.closeModal = function () {
-        $uibModalInstance.close({ isRefresh });
-    }
+    $scope.closeModal = () => {
+        $uibModalInstance.close({ shouldRefresh });
+    };
+
 }
 
 /*******PRODUCT PHOTO****************/

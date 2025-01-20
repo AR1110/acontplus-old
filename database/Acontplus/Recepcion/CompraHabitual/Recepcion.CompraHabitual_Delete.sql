@@ -18,19 +18,20 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 	DECLARE @idUsuario INT 
-	,@idArticulo INT
-    ,@companyId INT
-    ,@productNewCode VARCHAR(25)
-    ,@codEstab VARCHAR(50)
-    ,@productNewId INT
-    ,@existsProductJoined BIT = 0
-    ,@existsNewProductJoined BIT = 0
-    ,@id INT
-    ,@idDocumento INT;
+	    ,@idArticulo INT
+        ,@companyId INT
+        ,@productNewCode VARCHAR(25)
+        ,@codEstab VARCHAR(50)
+        ,@productNewId INT
+        ,@existsProductJoined BIT = 0
+        ,@existsNewProductJoined BIT = 0
+        ,@id INT
+        ,@idDocumento INT
+        ,@tipo INT;
 	
 	BEGIN TRY
 
-        SElECT @id = id, @idDocumento = idDocumento FROM OPENJSON(@json) WITH (id INT, idDocumento INT)
+        SElECT @id = id, @idDocumento = idDocumento, @tipo = tipo FROM OPENJSON(@json) WITH (id INT, idDocumento INT, tipo INT)
 
         SELECT @idArticulo = idArticulo, @productNewCode = codArticulo, @codEstab = codEstab 
         FROM Recepcion.CompraHabitual WITH (NOLOCK)
@@ -58,18 +59,41 @@ BEGIN
 		            END
             END
 
-	    IF (@existsProductJoined = 1 AND @existsNewProductJoined = 1)
-		    BEGIN
-			    DECLARE @articleInDocs AS VARCHAR(MAX) = (SELECT dr.serieComprobante FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
-                INNER JOIN Recepcion.DocumentoDetalle dd  WITH (NOLOCK) ON dr.idDocumento = dd.idDocumento 
-                WHERE dd.idArticulo IN (@idArticulo, @productNewId) for json path)
-			    SELECT '0' code, 'Imposible desvincular, el articulo esta contabilizado en el stock, primero debe eliminarlo del stock de los siguientes comprobantes --> ' + @articleInDocs as 'message'
-			    RETURN
-		    END
+        IF (@existsProductJoined = 1 AND @existsNewProductJoined = 1 AND @tipo = 1)
+        BEGIN
+            DECLARE @articleInDocs AS VARCHAR(MAX) = (
+                SELECT 
+                    '<table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="padding: 8px; background-color: #f2f2f2;">Serie Comprobante</th>
+                        </tr>
+                    </thead>
+                    <tbody>' +
+                    STRING_AGG(
+                        '<tr><td style="padding: 8px;">' + dr.serieComprobante + '</td></tr>', 
+                        ''
+                    ) +
+                    '</tbody></table>'
+                FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
+                INNER JOIN Recepcion.DocumentoDetalle dd WITH (NOLOCK) 
+                    ON dr.idDocumento = dd.idDocumento 
+                WHERE dd.idArticulo IN (@idArticulo, @productNewId)
+            )
+
+            SELECT '0' code, 
+                   'Imposible desvincular, el articulo esta contabilizado en el stock, primero debe eliminarlo del stock de los siguientes comprobantes: ' + @articleInDocs as 'message'
+            RETURN
+        END
+
 	    SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId)
 
 		BEGIN TRAN
-			 DELETE FROM Recepcion.CompraHabitual WITH (ROWLOCK) WHERE idCompraHabitual = @id
+            --SI NO ES CASO ESPECIAL TIPO 2
+            IF (@tipo = 1)
+                BEGIN
+			        DELETE FROM Recepcion.CompraHabitual WITH (ROWLOCK) WHERE idCompraHabitual = @id
+                END
 
              IF EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento AND idArticulo = @idArticulo)
                 BEGIN
