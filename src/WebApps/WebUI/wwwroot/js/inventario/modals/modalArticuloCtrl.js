@@ -86,6 +86,8 @@ function modalArticuloCtrl(
         ubicacion: "",
     };
 
+    $scope.showEstado = false;
+
     function checkPrecioCosto() {
         return !([null, undefined, "", 0].includes($scope.data.precioCosto));
     }
@@ -326,8 +328,7 @@ function modalArticuloCtrl(
     ];
 
     initiload();
-    function initiload() {
-        showLoader();
+    function initiload() { 
         articuloSvc
             .getDataForForm()
             .then((response) => {
@@ -436,8 +437,7 @@ function modalArticuloCtrl(
                         }
                     }
                 }
-            })
-            .finally(() => hideLoader());
+            }) 
     }
     $scope.getArticuloCodigo = () => {
         if ($scope.data.idArticulo > 0 || (params.isImport && $scope.data.codigo && $scope.data.codigoAuxiliar && $scope.data.codigoBarra)) {
@@ -504,8 +504,7 @@ function modalArticuloCtrl(
     }
 
     function getDataArticulo() {
-        try {
-            showLoader();
+        try { 
             articuloSvc
                 .findById(params.idArticulo)
                 .then((response) => {
@@ -534,10 +533,14 @@ function modalArticuloCtrl(
                         $scope.data.fechaCaducidadLote = null;
                     }
                     $scope.data.cloneIdSubFamilia = $scope.data.idSubFamilia;
+
+
+                    $scope.showEstado = $scope.data.estado;
+
                 })
                 .catch((error) => {
                     console.log(error);
-                }).finally(() => hideLoader())
+                }) 
         } catch (error) {
             console.log(error);
         }
@@ -1598,6 +1601,9 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         },
     ];
 
+    //verificar si datos de articulo proviene de modal articulo ctrl
+    $scope.hasDataArticle = false;
+
     initialLoad();
     function initialLoad() {
         try { 
@@ -1618,7 +1624,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
 
 
                 if(params.hasDataArticle && params.idArticulo>0){
-                   
+                   $scope.hasDataArticle = params.hasDataArticle
                     $scope.selectedArticuloChange(params);
                 }
 

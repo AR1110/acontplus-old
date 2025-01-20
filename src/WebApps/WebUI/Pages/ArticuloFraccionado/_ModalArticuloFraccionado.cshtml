@@ -6,7 +6,7 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                <div class="form-group">
+                <div class="form-group" ng-if="!hasDataArticle">
                     <label class="form-control-label">Buscar Articulo</label><br>
                     <span class="text-muted" ng-if="tipoRegistro==2">{{data.articulo}}</span>
                     <input type="text" id="articuloAutocomplete" ng-if="tipoRegistro==1" autocomplete="off"
@@ -27,6 +27,11 @@
                         </div>
                     </script>
 
+                </div>
+
+                <div class="form-group" ng-if="hasDataArticle">
+                    <label class="form-control-label">Articulo</label><br>
+                    <span class="text-muted">{{data.descripcion}}</span>
                 </div>
             </div>
             <div class="col-lg-2 col-md-2 col-sm-4 col-12" ng-if="data.idArticulo>0">

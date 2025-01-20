@@ -1,4 +1,6 @@
-var mainPath = `/Home/Index?name=~/Pages/AprobacionDocumento/`;
+(function(){
+
+    var mainPath = `/Home/Index?name=~/Pages/AprobacionDocumento/`;
 
 app.component("modalAprobacionSeleccionarDoc", {
     templateUrl: `${mainPath}_ModalSeleccionarDoc.cshtml`,
@@ -748,3 +750,8 @@ app.component('modalItems', {
 
     }]
 })
+
+
+
+
+})()
