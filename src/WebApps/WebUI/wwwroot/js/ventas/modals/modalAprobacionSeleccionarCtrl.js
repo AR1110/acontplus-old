@@ -421,11 +421,11 @@ app.component("modalAprobacionSeleccionarDoc", {
 
             obtenerDetallesDoc().then(detalles => {
 
-                if (detalles.length > 100) {
+                if (detalles.length > 300) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Advertencia', // Si quieres agregar un título (opcional)
-                        text: 'El número máximo de items permitidos es 100.',
+                        text: 'El número máximo de items permitidos es 300.',
                         confirmButtonText: 'Aceptar' // Botón para cerrar la alerta
                     });
                     return; // Detener la ejecución del código si la condición es verdadera
