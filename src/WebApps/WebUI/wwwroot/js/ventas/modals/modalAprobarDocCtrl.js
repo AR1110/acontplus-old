@@ -1,4 +1,5 @@
-//@ts-check
+(function(){
+    //@ts-check
 var mainPath = `/Home/Index?name=~/Pages/AprobacionDocumento/`;
 
 app.component('modalAprobarDoc', {
@@ -631,3 +632,4 @@ app.component('modalAprobarDoc', {
 
     }]
 })
+})()
