@@ -1,103 +1,71 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
-<div class="card">
-  <div class="card-body">
-
-    <div class="row">
-      <div class="col-md-2 col-12">
-        <button (resultModalHandler)="resultModal($event)" appVehicleAddEdit class="btn btn-info" type="button">
-          <fa-icon [icon]="'add'"></fa-icon>
-          Nuevo
-        </button>
-      </div>
-      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-        <div class="d-flex justify-content-start">
-          <span class="form-group pull-left page-size form-inline">
-            <select (change)="changePageSize()" [(ngModel)]="pagination.pageSize" class="form-select control-color">
-              @for (item of pagination.pageSizeOptions; track $index) {
-                <option [ngValue]="item">{{ item }}</option>
-              }
-            </select>
-          </span>
-        </div>
-      </div>
-      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-        <div class="d-flex justify-content-end">
-          <div class="form-group">
-            <input class="form-control" placeholder="Buscar vehiculo" type="text">
-          </div>
+<app-mat-dynamic-card
+  title="Producto Destacado"
+  subtitle="¡El mejor producto del año!"
+  [primaryActionLabel]="'Comprar'"
+  [secondaryActionLabel]="'Ver más'"
+>
+  <ng-container>
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
+    >
+      <div class="col"></div>
+      <div class="col">
+        <div class="d-flex flex-row gap-1 justify-content-end">
+          <button
+            mat-icon-button
+            aria-label="Editar"
+            (resultModalHandler)="resultModal($event)"
+            appVehicleAddEdit
+            [disabled]="isLoading"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+          <button mat-icon-button (click)="refresh()" [disabled]="isLoading">
+            <mat-icon>refresh</mat-icon>
+          </button>
         </div>
       </div>
     </div>
 
-    <section class="section-container-table">
-      <table [dataSource]="dataSource" mat-table>
+    <app-mat-dynamic-table
+      [tableData]="dataSource"
+      [isLoadingData]="isLoading"
+      [columnDefinitions]="columnsDefs"
+      [visibleColumns]="columns"
+      [templateOp]="templateOp"
+      [paginationConfig]="pagination()"
+      [enablePagination]="true"
+      (onPageEvent)="handlePageEvent($event)"
+    >
+    </app-mat-dynamic-table>
 
-        <!-- Position Column -->
-        <ng-container matColumnDef="position">
-          <th *matHeaderCellDef mat-header-cell> No.</th>
-          <td *matCellDef="let element" mat-cell> {{ element.position }}</td>
-        </ng-container>
+    <ng-template #templateOp let-item="item">
+      <button
+        mat-icon-button
+        aria-label="Editar"
+        (resultModalHandler)="resultModal($event)"
+        [params]="{ id: item.id }"
+        appVehicleAddEdit
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
 
-        <!-- Name Column -->
-        <ng-container matColumnDef="op">
-          <th *matHeaderCellDef mat-header-cell> Op.</th>
-          <td *matCellDef="let element" mat-cell>
-            <button (resultModalHandler)="resultModal($event)" [params]="{id: element.id}" appVehicleAddEdit
-                    class="btn btn-outline-warning btn-sm">
-              <fa-icon [icon]="'pencil'"></fa-icon>
-            </button>
-            <button (click)="askToDelete(element.id)" class="btn btn-outline-danger btn-sm">
-              <fa-icon [icon]="'trash'"></fa-icon>
-            </button>
-          </td>
-        </ng-container>
+      <button
+        mat-icon-button
+        aria-label="Delete"
+        (click)="askToDelete(item.id)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    </ng-template>
 
-        <ng-container matColumnDef="tipoVehiculo">
-          <th *matHeaderCellDef mat-header-cell> T. Vehiculo</th>
-          <td *matCellDef="let element" mat-cell> {{ element.vehicleType }}</td>
-        </ng-container>
-
-        <!-- Weight Column -->
-        <ng-container matColumnDef="placa">
-          <th *matHeaderCellDef mat-header-cell> Placa</th>
-          <td *matCellDef="let element" mat-cell> {{ element.licensePlate }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="identificacion">
-          <th *matHeaderCellDef mat-header-cell> Identificación</th>
-          <td *matCellDef="let element" mat-cell> {{ element.idCard }}</td>
-        </ng-container>
-
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="cliente-conductor">
-          <th *matHeaderCellDef mat-header-cell> Cliente/Conductor</th>
-          <td *matCellDef="let element" mat-cell> {{ element.tradeName }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="estado">
-          <th *matHeaderCellDef mat-header-cell> Estado</th>
-          <td *matCellDef="let element" mat-cell>
-            <mat-slide-toggle (change)="putState(element.id, element.enabled)"
-                              [(ngModel)]="element.enabled"></mat-slide-toggle>
-          </td>
-        </ng-container>
-
-        <tr *matNoDataRow class="mat-row">
-          <td class="mat-cell text-center" colspan="8">
-            Sin registro
-          </td>
-        </tr>
-
-
-        <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
-        <tr *matRowDef="let row; columns: visibleColumns;" mat-row></tr>
-      </table>
-    </section>
-
-    <ngb-pagination (pageChange)="pageChanged()" [(page)]="pagination.pageIndex"
-                    [boundaryLinks]="true"
-                    [collectionSize]="pagination.totalRecords" [maxSize]="pagination.maxSize" [pageSize]="pagination.pageSize"
-                    [rotate]="true"/>
-  </div>
-</div>
+    <ng-template #statusTemplate let-item>
+      <mat-slide-toggle
+        (change)="putState(item.id, item.enabled)"
+        [(ngModel)]="item.enabled"
+      ></mat-slide-toggle>
+    </ng-template>
+  </ng-container>
+</app-mat-dynamic-card>

@@ -1,135 +1,195 @@
-<div class="modal-header">
-  <h5 class="modal-title" id="modal-basic-title">{{titleModal}}</h5>
-  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-</div>
-<div class="modal-body">
-  <div class="card border border-info rounded">
-    <div class="card-header">
-      <span class="card-title">Cliente/Conductor</span>
-    </div>
-    <div class="card-body ">
-      <div class="row">
-        <div class="col-12">
+<app-mat-custom-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [title]="titleModal"
+  [loading]="loading"
+  (close)="close()"
+/>
 
-          <div class="form-group">
-            <label for="company-customer-search">Buscar Cliente/Conductor</label>
-                <app-company-customer-search [isGetId]="true" [textSearch]="customer.businessName" [id]="data.customerId" (onCustomerSelected)="onCustomerSelected($event)" />
+<ng-template #containerTemplate>
+  <div class="d-grid gap-2 mt-2">
+    <app-mat-dynamic-card [showHeader]="true" [title]="'Cliente/Conductor'">
+      <div class="d-grid gap-2">
+        <app-company-customer-search-mat
+          [isAdvancedMode]="true"
+        ></app-company-customer-search-mat>
 
+        <div
+          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+        >
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Identificación:</mat-label>
+              <input
+                matInput
+                placeholder="..."
+                disabled
+                [value]="customer.idCard"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Razon Social:</mat-label>
+              <input
+                matInput
+                placeholder="..."
+                disabled
+                [value]="customer.businessName"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Correo:</mat-label>
+              <input
+                matInput
+                placeholder="..."
+                disabled
+                [value]="customer.email"
+              />
+            </mat-form-field>
           </div>
         </div>
       </div>
+    </app-mat-dynamic-card>
 
-      <div class="row">
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-          <div class="form-group">
-            <label for="identificacion">Identificación:</label>
-            <input type="text" class="form-control" readonly [value]="customer.idCard">
+    <app-mat-dynamic-card [showHeader]="true" [title]="'Vehículo'">
+      <div class="d-grid gap-2">
+        <div
+          class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+        >
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>País: <span class="text-danger">*</span></mat-label>
+              <mat-select [(ngModel)]="dataForm.countryId">
+                @for (item of countries; track $index) {
+                <mat-option [value]="item.countryId">{{
+                  item.description
+                }}</mat-option>
+
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label
+                >Tipo de Vehículo <span class="text-danger"> *</span></mat-label
+              >
+              <mat-select [(ngModel)]="dataForm.vehicleTypeId">
+                @for (item of vehicleTypes; track $index) {
+                <mat-option [value]="item.vehicleTypeId">{{
+                  item.description
+                }}</mat-option>
+
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Placa <span class="text-danger"> *</span></mat-label>
+              <input
+                matInput
+                placeholder="..."
+                [(ngModel)]="dataForm.licensePlate"
+              />
+            </mat-form-field>
+          </div>
+
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Marca <span class="text-danger"> *</span></mat-label>
+              <input matInput placeholder="..." [(ngModel)]="dataForm.brand" />
+            </mat-form-field>
           </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-          <div class="form-group">
-            <label for="razonSocial">Razon Social: </label>
-            <input type="text" class="form-control" readonly [value]="customer.businessName">
 
+        <div
+          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+        >
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Modelo </mat-label>
+              <input matInput placeholder="..." [(ngModel)]="dataForm.model" />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label
+                >Año de Fabricación
+                <span class="text-danger"> *</span></mat-label
+              >
+              <input
+                type="number"
+                matInput
+                placeholder="..."
+                [(ngModel)]="dataForm.year"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Color <span class="text-danger"> *</span></mat-label>
+              <input
+                type="text"
+                matInput
+                placeholder="..."
+                [(ngModel)]="dataForm.color"
+              />
+            </mat-form-field>
           </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-          <label for="email">Correo: </label>
-            <input type="text" class="form-control" readonly [value]="customer.email">
 
+        <div
+          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+        >
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Motor <span class="text-danger"> *</span></mat-label>
+              <input
+                type="text"
+                matInput
+                placeholder="..."
+                [(ngModel)]="dataForm.engine"
+              />
+            </mat-form-field>
+          </div>
+
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Chasis <span class="text-danger"> *</span></mat-label>
+              <input
+                type="text"
+                matInput
+                placeholder="..."
+                [(ngModel)]="dataForm.chassis"
+              />
+            </mat-form-field>
+          </div>
+
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label
+                >Cilindraje <span class="text-danger"> *</span></mat-label
+              >
+              <input
+                type="text"
+                matInput
+                placeholder="..."
+                [(ngModel)]="dataForm.cylindraje"
+              />
+            </mat-form-field>
+          </div>
         </div>
       </div>
-    </div>
+    </app-mat-dynamic-card>
   </div>
+</ng-template>
 
-  <div class="card border border-info rounded">
-    <div class="card-header">
-      <span class="card-title">Vehículo:</span>
-    </div>
-    <div class="card-body ">
-      <div class="row">
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-2 col-6">
-          <div class="form-group">
-            <label for="country">País <span class="text-danger"> *</span></label>
-            <select name="country" id="country" class="form-select" [(ngModel)]="data.countryId">
-              @for (item of countries; track $index) {
-                <option [ngValue]="item.countryId">{{item.description}}
-                </option>
-              }
-
-
-            </select>
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-2 col-6">
-          <div class="form-group">
-            <label for="">Tipo de Vehículo <span class="text-danger"> *</span></label>
-            <select name="vehicleType" id="vehicleType" class="form-select" [(ngModel)]="data.vehicleTypeId">
-              @for (item of vehicleTypes; track $index) {
-                <option [ngValue]="item.vehicleTypeId">
-                  {{item.description}}
-                </option>
-              }
-            </select>
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-          <div class="form-group">
-            <label for="">Placa <span class="text-danger"> *</span></label>
-            <input type="text" class="form-control" [(ngModel)]="data.licensePlate"   />
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-2 col-6">
-          <div class="form-group">
-            <label for="">Marca <span class="text-danger"> *</span></label>
-            <input type="text" class="form-control" [(ngModel)]="data.brand"  />
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-          <div class="form-group">
-            <label for="">Modelo</label>
-            <input type="text" class="form-control" [(ngModel)]="data.model"  />
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-          <div class="form-group">
-            <label for="">Año de Fabricación <span class="text-danger"> *</span></label>
-            <input type="number" class="form-control" [(ngModel)]="data.year"  />
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-          <div class="form-group">
-            <label for="">Color <span class="text-danger"> *</span></label>
-            <input type="text" class="form-control"  [(ngModel)]="data.color" />
-          </div>
-        </div>
-
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-          <div class="form-group">
-            <label for="">Motor <span class="text-danger"> *</span></label>
-            <input type="text" class="form-control" [(ngModel)]="data.engine"  />
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-          <div class="form-group">
-            <label for="">Chasis <span class="text-danger"> *</span></label>
-            <input type="text" class="form-control" [(ngModel)]="data.chassis" />
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-          <div class="form-group">
-            <label for="">Cilindraje <span class="text-danger"> *</span></label>
-            <input type="text" class="form-control" [(ngModel)]="data.cylindraje"   />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-success" (click)="onSubmit()">
-    {{btnText}}
+<ng-template #actionsTemplate>
+  <button type="button" mat-flat-button (click)="onSubmit()">
+    {{ btnText }}
   </button>
-  <button type="button" class="btn btn-dark" (click)="modal.close()">
-  &times; Cerrar</button>
-</div>
+</ng-template>

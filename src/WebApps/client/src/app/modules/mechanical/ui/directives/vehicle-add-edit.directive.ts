@@ -1,6 +1,7 @@
-import { Directive, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Directive, EventEmitter, HostListener, inject, input, Input, output, Output } from '@angular/core';
 import { VehicleAddEditModalComponent } from '@mechanical/ui/components/vehicle-add-edit-modal/vehicle-add-edit-modal.component';
 import { ModalService } from '@core/services/modal.service';
+import { DialogService } from '@core/services/dialog.service';
 
 @Directive({
   selector: '[appVehicleAddEdit]',
@@ -8,20 +9,22 @@ import { ModalService } from '@core/services/modal.service';
 })
 export class VehicleAddEditDirective {
 
-  //@Input() resultModalHandler!: <T>(obj: T) => void;
-  @Output() resultModalHandler: EventEmitter<any> = new EventEmitter<any>();
-  @Input() params = {};
+  dialogSvc = inject(DialogService)
+   resultModalHandler  = output<any>();
+    params  =input({});
   @HostListener('click') onClick() {
-    const modalRef = this.modalSvc.openModalCustom(VehicleAddEditModalComponent, {
-      size: 'lg'
+    const modalRef = this.dialogSvc.open(VehicleAddEditModalComponent, {
+      size: 'xl',
+      data: this.params() || {}
     });
-    modalRef.componentInstance.params = this.params || {};
-    modalRef.result.then((result: unknown) => {
-      if (this.resultModalHandler && typeof result === 'object') {
+
+
+    modalRef.subscribe(result=>{
+      if(result && typeof result==='object'){
         this.resultModalHandler.emit(result);
+
       }
     })
   }
-  constructor(private modalSvc: ModalService) { }
 
 }
