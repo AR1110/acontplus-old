@@ -77,6 +77,8 @@ export class VehiclePageComponent {
         pageIndex: this.pagination().pageIndex,
         pageSize: this.pagination().pageSize,
       }
+      if(this.isLoading) return;
+
       // showLoader();
       this.isLoading = true;
       this.vehicleUseCase.getAll(params)

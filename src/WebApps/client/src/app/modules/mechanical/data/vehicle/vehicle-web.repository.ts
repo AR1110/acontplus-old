@@ -44,7 +44,9 @@ export class VehicleWebRepository extends VehicleRepository{
       id,
       tipo: 3
     })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+    return this.#http.get(`${this.#url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
       map((response: any) => {
         let data = {
           customer: {

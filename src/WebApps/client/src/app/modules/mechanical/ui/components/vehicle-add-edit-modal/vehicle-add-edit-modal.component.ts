@@ -1,6 +1,6 @@
 import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { isApiResponse } from '@core/models/api-response';
+import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
 import { VehicleTypeSelectHtmlOnly } from '@mechanical/domain/models/vehicle-type.model';
@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { VehicleUseCase } from '@modules/mechanical/domain/use-cases/vehicle.use-case';
 
 @Component({
     selector: 'app-vehicle-add-edit-modal',
@@ -37,8 +38,7 @@ export class VehicleAddEditModalComponent {
       descripcion: null | string
     }>(MAT_DIALOG_DATA);
 
-
-  vehicleSvc = inject(VehicleWebRepository);
+  vehicleUseCase = inject(VehicleUseCase)
   tS = inject(ToasterService)
 
   titleModal = 'Nuevo Vehículo';
@@ -74,9 +74,7 @@ export class VehicleAddEditModalComponent {
   }
 
   successResponse = {
-    next: (response: any) => {
-      // hideLoader()
-      if (isApiResponse(response)) {
+    next: (response: ApiResponse) => {
         if (response.code === "0") {
           this.tS.toastr({
             type: 'warning',
@@ -99,7 +97,6 @@ export class VehicleAddEditModalComponent {
           }
           this.dialogRef.close({ id })
         }
-      }
     },
     error(err: any) {
       // hideLoader()
@@ -114,12 +111,11 @@ export class VehicleAddEditModalComponent {
     }
 
     this.loading=true;
-    this.vehicleSvc.getDataForm()
+    this.vehicleUseCase.getDataForm()
     .pipe(
       finalize(()=>this.loading=false)
     )
-    .subscribe({
-      next: (response) => {
+    .subscribe(  (response) => {
         const {
           countries,
           vehicleTypes
@@ -130,27 +126,21 @@ export class VehicleAddEditModalComponent {
         if (this.data.id > 0) {
           this.titleModal = 'Editar Vehículo';
           this.btnText = 'Actualizar';
-          this.vehicleSvc.getId(this.data.id).subscribe({
-            next: (response) => {
+          this.loading = true;
+          this.vehicleUseCase.getId(this.data.id)
+          .pipe(
+            finalize(()=>this.loading=false)
+          )
+          .subscribe(  (response) => {
               // hideLoader()
               this.customer = response.customer as any
               this.dataForm = {
                 ...this.dataForm,
                 ...response.vehicle
               };
-            },
-            error(err) {
-              console.log(err)
-              // hideLoader()
-            }
-          })
+            } )
         }
-      },
-      error(err) {
-        console.log(err)
-        // hideLoader()
-      }
-    })
+      })
   }
 
 
@@ -232,11 +222,11 @@ export class VehicleAddEditModalComponent {
         vehicle: this.dataForm
       }
       if (!(this.data.id > 0)) {
-        this.vehicleSvc.post(dataParams).subscribe(this.successResponse)
+        this.vehicleUseCase.post(dataParams).subscribe(this.successResponse)
       }
 
       if (this.data.id > 0) {
-        this.vehicleSvc.put(this.data.id, dataParams).subscribe(this.successResponse)
+        this.vehicleUseCase.put(this.data.id, dataParams).subscribe(this.successResponse)
       }
     } catch (error) {
       console.log(error)
