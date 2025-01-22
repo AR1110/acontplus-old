@@ -24,6 +24,7 @@ export class FieldDefinition {
   width?: string;
   valueChangeCallback?: Function;
 
+
   constructor(
     options: {
       value?: any; // T
@@ -111,4 +112,5 @@ export declare type FieldType =
   | 'url'
   | 'week'
   | 'search'
-  | 'reset';
+  | 'reset'
+  | 'template';

@@ -39,12 +39,17 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item appActionCompanyCustomerAddEditModal>
+      <button mat-menu-item appCompanyCustomerAddEdit [openDialog]="true">
         <mat-icon>add</mat-icon>
         <span>Nuevo</span>
       </button>
       @if (id()) {
-      <button mat-menu-item appActionCompanyCustomerAddEditModal [id]="id()">
+      <button
+        mat-menu-item
+        appCompanyCustomerAddEdit
+        [id]="id()"
+        [openDialog]="true"
+      >
         <mat-icon>edit</mat-icon>
         <span>Editar</span>
       </button>
@@ -61,12 +66,17 @@
     </mat-menu>
 
     }@else {
-    <button mat-icon-button appActionCompanyCustomerAddEditModal>
+    <button mat-icon-button appCompanyCustomerAddEdit [openDialog]="true">
       <mat-icon>add</mat-icon>
     </button>
 
     @if(id()>0){
-    <button mat-icon-button appActionCompanyCustomerAddEditModal [id]="id()">
+    <button
+      mat-icon-button
+      appCompanyCustomerAddEdit
+      [id]="id()"
+      [openDialog]="true"
+    >
       <mat-icon>edit</mat-icon>
     </button>
     } @if(id()>0){

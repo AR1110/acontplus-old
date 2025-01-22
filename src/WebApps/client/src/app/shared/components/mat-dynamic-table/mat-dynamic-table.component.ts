@@ -28,7 +28,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { TableCellIndex } from '@shared/models/mat-table-models/table-cell-index.model';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSortModule } from '@angular/material/sort';
-import { CommonModule, DatePipe, DecimalPipe, NgClass } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe,  NgClass } from '@angular/common';
 import { GetTotalPipe } from '@shared/pipes/get-total.pipe';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -41,7 +41,6 @@ import {
 } from '@angular/animations';
 import { Pagination } from '@shared/models/pagination.model';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { CustomMatSpinnerComponent } from '@core/components/custom-mat-spinner/custom-mat-spinner.component';
 
 @Component({

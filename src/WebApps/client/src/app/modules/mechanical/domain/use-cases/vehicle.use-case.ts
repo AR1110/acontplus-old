@@ -20,6 +20,10 @@ export class VehicleUseCase {
     return this.repo.getId(id, loader);
   }
 
+  remove(id: number){
+    return this.repo.remove(id)
+  }
+
   post<T>( data: T){
     return this.repo.post(data);
   }
