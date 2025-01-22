@@ -2856,7 +2856,7 @@
                 <TablixMember />
                 <TablixMember>
                   <Visibility>
-                    <Hidden>=IIF(Parameters!checkboxPrecioCostoFiltro.Value = 0, True, False)</Hidden>
+                    <Hidden>=IIF(First(Fields!checkboxPrecioCostoFiltro.Value, "headerDs") = 0, True, False)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember />
