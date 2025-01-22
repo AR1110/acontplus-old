@@ -5,12 +5,14 @@ import { SupportWebRepository } from '@mechanical/data/support/support-web.repos
 import { Chart, registerables } from 'chart.js';
 import { SupportPageComponent } from '../support-page/support-page.component';
 import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 Chart.register(...registerables);
 @Component({
     selector: 'app-mechanical-dashboard',
     imports: [
         CommonModule,
         FontAwesomeModule,
+        MatDynamicCardComponent,
         SupportPageComponent
     ],
     templateUrl: './mechanical-dashboard.component.html'

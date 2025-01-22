@@ -1,9 +1,9 @@
+import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, signal, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
@@ -15,13 +15,11 @@ import {
   MECHANICAL_CODE_REPORT,
   MECHANICAL_STATUS,
 } from '@mechanical/domain/enums/mechanical.enum';
-import { SupportWebRepository } from '@mechanical/data/support/support-web.repository';
 import {
   NgbDropdownModule,
-  NgbPagination,
   NgbPopoverModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import { Pagination } from '@shared/models/pagination.model';
+import { MatPagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 
 import { InspectionModalComponent } from '../inspection-page/components/inspection-modal/inspection-modal.component';
@@ -29,34 +27,57 @@ import { ConvertDocModalComponent } from './components/convert-doc-modal/convert
 import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
 import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { PageEvent } from '@angular/material/paginator';
+import { SupportUseCase } from '@modules/mechanical/domain/use-cases/support.use-case';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { CompanyCustomerSearchMatComponent } from "../../../../customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component";
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { finalize } from 'rxjs';
+import { DialogService } from '@core/services/dialog.service';
 
 @Component({
     selector: 'app-support-page',
     imports: [
-        CommonModule,
-        FormsModule,
-        FontAwesomeModule,
-        NgbDropdownModule,
-        NgbPagination,
-        MatTableModule,
-        MatCheckboxModule,
-        NgbPopoverModule,
-        DateRangeSelectionComponent,
-        CompanyCustomerSearchComponent,
-    ],
+    CommonModule,
+    FormsModule,
+    FontAwesomeModule,
+    NgbDropdownModule,
+    MatTableModule,
+    MatCheckboxModule,
+    NgbPopoverModule,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule,
+    MatSlideToggleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    DateRangeSelectionComponent,
+    MatDynamicTableComponent,
+    CompanyCustomerSearchMatComponent
+],
     templateUrl: './support-page.component.html'
 })
 export class SupportPageComponent {
+
+    @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
+
   @Input() valueStatus: MECHANICAL_STATUS | null = null;
   @Input() supportStatus: any[] = [];
 
   modalSvc = inject(ModalService);
-  supportSvc = inject(SupportWebRepository);
+  dialogSvc = inject(DialogService)
+  supportUseCase = inject(SupportUseCase);
   tS = inject(ToasterService);
   sharedSvc = inject(SharedService);
 
   visibleColumns: string[] = [];
-  pagination = new Pagination();
 
   dataSource: any = [];
 
@@ -79,14 +100,34 @@ export class SupportPageComponent {
     supportStatusId: null as number | null,
   };
 
+
+   columnsDefs: ColumnDefinition[] = [
+
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'status', label: 'Estado', type: 'string' },
+    { key: 'sequence', label: 'Nro. Doc', type: 'string' },
+    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
+    { key: 'idCard', label: 'Identificación', type: 'string' },
+    { key: 'tradeName', label: 'Cliente/Conductor', type: 'string' },
+    { key: 'licensePlate', label: 'Placa', type: 'string' },
+    { key: 'userAssigned', label: 'Encargado', type: 'string' },
+    { key: 'obs', label: 'Obs.', type: 'string' },
+    { key: 'entregar', label: 'Entregar', type: 'template', templateOutlet: null },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+
+  pagination = signal(new MatPagination());
+
+  isLoadingResults = false;
+
   openModal(id?: number) {
-    const modalRef = this.modalSvc.open(SupportAddEditModalComponent, {
-      size: 'lg',
+    const modalRef = this.dialogSvc.open(SupportAddEditModalComponent, {
+      size: 'xl',
+      data: {
+        id
+      }
     });
-    modalRef.componentInstance.params = {
-      id: id,
-    };
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') {
         this.getSupports();
       }
@@ -110,9 +151,13 @@ export class SupportPageComponent {
     this.getSupports();
   }
 
-  onCustomerSelected({ data }: any) {
+  onCustomerSelected(data: any) {
     this.dataSearch.customerId = data.idCliente;
     this.getSupports();
+  }
+
+  refresh(){
+    this.getSupports()
   }
 
   getSupports() {
@@ -123,8 +168,8 @@ export class SupportPageComponent {
 
       let params = {
         ckDate: this.dataSearch.ckDate,
-        pageIndex: this.pagination.pageIndex,
-        pageSize: this.pagination.pageSize,
+        pageIndex: this.pagination().pageIndex + 1,
+        pageSize: this.pagination().pageSize,
         supportStatusId: this.dataSearch.supportStatusId,
         fromDate: this.dataSearch.fromDate,
         toDate: this.dataSearch.toDate,
@@ -132,17 +177,17 @@ export class SupportPageComponent {
         licensePlate: isValidField(this.dataSearch.licensePlate),
       };
       this.dataSource = [];
-      this.supportSvc.getAll(params).subscribe({
-        next: (response) => {
+      this.isLoadingResults = true;
+      this.supportUseCase.getAll(params)
+      .pipe(
+        finalize(()=>this.isLoadingResults=false)
+      )
+      .subscribe(  (response) => {
           this.dataSource = response;
           if (this.dataSource.length > 0) {
-            this.pagination.totalRecords = this.dataSource[0].totalRecords;
+            this.pagination().totalRecords = this.dataSource[0].totalRecords;
           }
-        },
-        error(err) {
-          console.log(err);
-        },
-      });
+        } );
     } catch (error) {
       console.log(error);
     }
@@ -201,12 +246,22 @@ export class SupportPageComponent {
     this.getSupports();
   }
 
+  ngAfterViewInit(): void {
+    // Asignar el template después de que la vista se haya inicializado
+    this.columnsDefs.forEach((col) => {
+      if (col.type === 'template') {
+        col.templateOutlet = this.statusTemplate;
+      }
+    });
+
+  }
+
   pageChanged(): void {
     this.getSupports();
   }
 
   changePageSize(): void {
-    this.pagination.pageIndex = 1;
+    this.pagination().pageIndex = 1;
     this.getSupports();
   }
 
@@ -223,7 +278,7 @@ export class SupportPageComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          this.supportSvc.remove(id).subscribe({
+          this.supportUseCase.remove(id).subscribe({
             next: (response) => {
               if (isApiResponse(response)) {
                 if (response.code === '0') {
@@ -278,7 +333,7 @@ export class SupportPageComponent {
   }
 
   askToConvertToDoc(id: number) {
-    this.supportSvc.getConvertToAprobDoc(id).subscribe({
+    this.supportUseCase.getConvertToAprobDoc(id).subscribe({
       next: (response) => {
         let modalRef = this.modalSvc.open(ConvertDocModalComponent);
         modalRef.componentInstance.params = response;
@@ -336,7 +391,7 @@ export class SupportPageComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          this.supportSvc.putState(id, supportStatusId).subscribe({
+          this.supportUseCase.putState(id, supportStatusId).subscribe({
             next: (response) => {
               if (isApiResponse(response)) {
                 if (response.code === '0') {
@@ -369,7 +424,7 @@ export class SupportPageComponent {
 
   getDocView(id: number) {
     try {
-      this.supportSvc.getDocView(id).subscribe((response) => {
+      this.supportUseCase.getDocView(id).subscribe((response) => {
         Swal.fire({
           icon: 'info',
           html: `<div class="d-flex flex-column bd-highlight mb-3">
@@ -386,4 +441,19 @@ export class SupportPageComponent {
       console.log(error);
     }
   }
+
+
+
+  handlePageEvent(e: PageEvent) {
+    this.pagination.update((pag) => {
+      return {
+        ...pag,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
+      };
+    });
+    this.refresh();
+  }
+
 }

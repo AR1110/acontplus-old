@@ -144,7 +144,7 @@ export class VehicleAddEditModalComponent {
   }
 
 
-  onCustomerSelected({ dataForm }: any) {
+  onCustomerSelected( dataForm  : any) {
     this.dataForm.customerId = dataForm.idCliente;
     this.customer.idType = dataForm.codigoSri;
     this.customer.idCard = dataForm.numeroIdentificacion;

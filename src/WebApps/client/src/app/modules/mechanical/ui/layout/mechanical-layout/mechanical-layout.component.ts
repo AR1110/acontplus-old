@@ -7,6 +7,7 @@ import { MechanicalDashboardComponent } from '@mechanical/ui/pages/mechanical-da
 import { SupportPageComponent } from '@mechanical/ui/pages/support-page/support-page.component';
 import { SupportWebRepository } from '@mechanical/data/support/support-web.repository';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import {SupportUseCase} from "@mechanical/domain/use-cases/support.use-case";
 
 @Component({
     selector: 'app-mechanical-layout',
@@ -29,12 +30,12 @@ export class MechanicalLayoutComponent implements OnInit {
 
   valueStatus  = this.statusTab.PENDIENTE
 
-  supportSvc = inject(SupportWebRepository);
+  supportUseCase = inject(SupportUseCase);
   supportStatus: any[] = [];
   supportStatusId = null;
   ngOnInit(): void {
-    this.supportSvc.getDataFilter().subscribe(response => {
-      this.supportStatus = response;
+    this.supportUseCase.getDataFilter().subscribe(response => {
+      this.supportStatus = response.supportStatus;
     })
 
   }

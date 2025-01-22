@@ -47,21 +47,7 @@ export class VehicleWebRepository extends VehicleRepository{
     return this.#http.get(`${this.#url}?json=${json}`, {
       context: getNoLoader()
     }).pipe(
-      map((response: any) => {
-        let data = {
-          customer: {
-
-            businessName: null,
-            id: 0
-          },
-          vehicle: {}
-        }
-        if (response !== null && typeof response === 'object') {
-          data.customer = response.customer[0];
-          data.vehicle = response.vehicle[0]
-        }
-        return data;
-      })
+      map((response: any) => VehicleMapper.fromApiGetId(response) )
     )
   }
 

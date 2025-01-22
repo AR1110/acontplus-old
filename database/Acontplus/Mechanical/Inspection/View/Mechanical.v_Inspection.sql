@@ -20,7 +20,7 @@ CREATE OR ALTER VIEW Mechanical.v_Inspection WITH SCHEMABINDING AS (
           ,it.Steering
           ,it.Suspension
           ,it.Obs
-		  --,cu.BusinessName
+		  ,cu.BusinessName
 		  ,ve.LicensePlate
 		  ,ve.Brand 
 		  ,ve.Model
@@ -34,6 +34,6 @@ CREATE OR ALTER VIEW Mechanical.v_Inspection WITH SCHEMABINDING AS (
 	INNER JOIN dbo.Cliente               cl WITH (NOLOCK) ON cl.idCliente         = sp.CustomerId
     INNER JOIN dbo.PuntoEmision         pto WITH (NOLOCK) ON pto.idPuntoEmision   = sp.PuntoEmisionId 
     INNER JOIN Sri.Establecimiento       es WITH (NOLOCK) ON es.idEstablecimiento = pto.idEstablecimiento
-	--INNER JOIN Customer.Customer         cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId 
+    INNER JOIN Customer.Customer         cu WITH (NOLOCK) ON cu.Id                = sp.CustomerId 
     
 )

@@ -1,61 +1,129 @@
-<div class="modal-header">
+<app-mat-custom-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [title]="titleModal"
+  [loading]="loading"
+  (close)="close()"
+/>
+
+<ng-template #containerTemplate>
+  <div
+    class="row row-cols-4 row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-3"
+  >
+    <div class="col">
+      @if (params.id>0) {
+
+      <mat-form-field class="w-100">
+        <mat-label>Establecimiento</mat-label>
+        <mat-select
+          name="establecimientoEdit"
+          id="establecimientoEdit"
+          [(ngModel)]="data.establecimientoId"
+          disabled
+        >
+          @for (item of establishments; track $index) {
+          <mat-option [value]="item.establecimientoId">{{
+            item.nombreComercial
+          }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      }@else {
+
+      <mat-form-field class="w-100">
+        <mat-label>Establecimiento</mat-label>
+        <mat-select
+          name="establecimientoAdd"
+          id="establecimientoAdd"
+          [(ngModel)]="data.establecimientoId"
+          (selectionchange)="onChangeEstab()"
+        >
+          @for (item of establishments; track $index) {
+          <mat-option [value]="item.establecimientoId">{{
+            item.nombreComercial
+          }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      }
+    </div>
+    <div class="col">
+      @if (params.id>0) {
+
+      <mat-form-field class="w-100">
+        <mat-label>Punto Emisión</mat-label>
+        <mat-select
+          name="puntoEmision"
+          [(ngModel)]="data.puntoEmisionId"
+          disabled
+        >
+          @for (item of emissionPoints; track $index) {
+          <mat-option [value]="item.puntoEmisionId">{{
+            item.ptoEmi
+          }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      }@else {
+
+      <mat-form-field class="w-100">
+        <mat-label>Punto Emisión</mat-label>
+        <mat-select
+          name="puntoEmision"
+          [(ngModel)]="data.puntoEmisionId"
+          (selectionChange)="generateSequence()"
+        >
+          @for (item of emissionPoints; track $index) {
+          <mat-option [value]="item.puntoEmisionId">{{
+            item.ptoEmi
+          }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      }
+    </div>
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>Fecha Emisión</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker1"
+          [(ngModel)]="data.fechaEmision"
+        />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker1"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>Secuencia</mat-label>
+        <input matInput [value]="data.sequence" disabled />
+      </mat-form-field>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #actionsTemplate>
+  <button type="button" mat-flat-button>
+    {{ btnText }}
+  </button>
+</ng-template>
+
+<!-- <div class="modal-header">
   <h4 class="modal-title" id="modal-basic-title">
     {{titleModal}}
   </h4>
   <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body">
-  <div class="row">
-    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="establecimiento">Establecimiento: <span class="text-danger">*</span></label>
-        @if (params.id>0) {
-            <select name="establecimiento" id="establecimiento" class="form-select" [(ngModel)]="data.establecimientoId" disabled="">
-              @for (item of establishments; track $index) {
-              <option [ngValue]="item.establecimientoId">{{item.nombreComercial}}</option>
-              }
-            </select>
-        }@else {
-          <select name="establecimiento" id="establecimiento" class="form-select" [(ngModel)]="data.establecimientoId" (change)="onChangeEstab()">
-            @for (item of establishments; track $index) {
-              <option [ngValue]="item.establecimientoId">{{item.nombreComercial}}</option>
-            }
-          </select>
 
-        }
-      </div>
-    </div>
-    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
-        @if (params.id>0) {
-          <select name="puntoEmision" id="puntoEmision" class="form-select" [(ngModel)]="data.puntoEmisionId" disabled>
-            @for (item of emissionPoints; track $index) {
-              <option [ngValue]="item.puntoEmisionId">{{item.ptoEmi}}</option>
-            }
-          </select>
-        }@else {
-          <select name="puntoEmision" id="puntoEmision" class="form-select" [(ngModel)]="data.puntoEmisionId" (change)="generateSequence()">
-            @for (item of emissionPoints; track $index) {
-            <option [ngValue]="item.puntoEmisionId">{{item.ptoEmi}}</option>
-            }
-          </select>
-        }
-      </div>
-    </div>
-    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
-         <app-input-date [(value)]="data.fechaEmision" />
-      </div>
-    </div>
-    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="secuencia">Secuencia: <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" name="secuencia" id="secuencia" [value]="data.sequence" readonly>
-      </div>
-    </div>
-  </div>
 
   <div class="row">
     <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
@@ -155,4 +223,4 @@
   <button type="button" class="btn btn-dark" (click)="modal.close()">
     &times; Cerrar
   </button>
-</div>
+</div> -->

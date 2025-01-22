@@ -14,6 +14,7 @@ import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { SupportDetail } from '@mechanical/domain/models/support.model';
 import {SupportRepository} from "@mechanical/domain/repositories/support.repository";
 import {MedidaProducto} from "@inventory/domain/models/measure.model";
+import {SupportMapper} from "@mechanical/data/support/support.mapper";
 
 @Injectable({
   providedIn: 'root'
@@ -28,35 +29,10 @@ export class SupportWebRepository extends SupportRepository {
       ...obj,
       tipo: 1
     })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) => {
-        let results = [];
-        if (response !== null && typeof response === 'object') {
-          let mainData = response.supports;
-
-          results = mainData.map((item: any, index: number) => {
-            return {
-              position: index + 1,
-              id: item.id,
-              sequence: item.sequence,
-              fechaEmision: item.date,
-              idCard: item.idCard,
-              tradeName: item.tradeName,
-              licensePlate: item.licensePlate,
-              status: item.status,
-              colorRow: item.colorRow,
-              userAssigned: item.userAssigned,
-              totalRecords: item.totalRecords,
-              obs: item.obs,
-              codEstab: item.codEstab,
-              typeStatus: item.typeStatus,
-              existsInsp : item.existsInsp
-
-            }
-          })
-        }
-        return results;
-      })
+    return this.#http.get(`${this.#url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
+      map((response: any) =>  SupportMapper.fromApiGetAll(response))
     )
   }
 
@@ -65,9 +41,7 @@ export class SupportWebRepository extends SupportRepository {
       tipo: 8
     })
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) => {
-        return response.supportStatus;
-      })
+      map((response: any) => SupportMapper.fromApiFilter(response))
     )
   }
 
@@ -75,14 +49,10 @@ export class SupportWebRepository extends SupportRepository {
     let json = JSON.stringify({
       tipo: 2
     })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) => {
-        return {
-          establishments: response.establishments,
-          emissionPoints: response.emissionPoints,
-          users: response.users
-        }
-      })
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
+      map((response) => SupportMapper.fromApiDataForm(response))
     )
   }
 
@@ -92,37 +62,7 @@ export class SupportWebRepository extends SupportRepository {
       tipo: 3
     })
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) => {
-        let result = {
-          data: {},
-          vehicle: {},
-          customer: {
-            tradeName: ''
-          }
-        };
-        if (response !== null && typeof response === 'object') {
-          let mainData = response.support[0];
-          let paramaters = response.paramaters[0]
-
-          result.data = {
-            id: mainData.id,
-            establecimientoId: paramaters.establecimientoId,
-            puntoEmisionId: mainData.puntoEmisionId,
-            vehicleCompanyId: mainData.vehicleCompanyId,
-            customerId: mainData.customerId,
-            userAssignedId: mainData.userAssignedId,
-            fechaEmision: formatDate(mainData.date),
-            fechaEmisionDocCreado: formatDate(mainData.date),
-            obs: mainData.obs,
-            status: mainData.status,
-            sequence: paramaters.sequence
-          }
-
-          result.vehicle = response.vehicle[0];
-          result.customer = response.customer[0]
-        }
-        return result;
-      })
+      map((response: any) => SupportMapper.fromApiGetId(response))
     )
   }
 
@@ -131,28 +71,7 @@ export class SupportWebRepository extends SupportRepository {
       tipo: 6
     })
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) => {
-
-        let result = {
-          data: {
-            quantitySupport: 0,
-            quantityVehicleCompany: 0,
-            quantityInspection:0,
-          },
-          barchart: [] as any
-        }
-        if(response!==null && typeof response==='object'){
-
-          let quantity = response.quantity[0];
-          result.data = {
-            quantitySupport: quantity.quantitySupport,
-            quantityVehicleCompany: quantity.quantityVehicleCompany,
-            quantityInspection: quantity.quantityInspection,
-          }
-          result.barchart = response.barchart;
-        }
-        return result;
-      })
+      map((response: any) =>SupportMapper.fromApiDashboard(response))
     )
   }
 

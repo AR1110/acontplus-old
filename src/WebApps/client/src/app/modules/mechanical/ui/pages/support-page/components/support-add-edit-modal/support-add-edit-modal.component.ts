@@ -2,7 +2,15 @@
 import { CommonModule, JsonPipe } from '@angular/common';
 import { Component, inject, Input, } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { isApiResponse } from '@core/models/api-response';
+import { MatButtonModule } from '@angular/material/button';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate, formatDateToString, isDateValid } from '@core/utils/date.util';
 import { isValidField } from '@core/utils/utils';
@@ -10,9 +18,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SupportWebRepository } from '@mechanical/data/support/support-web.repository';
 import { VehicleWebRepository } from '@mechanical/data/vehicle/vehicle-web.repository';
 import { VehicleAddEditDirective } from '@mechanical/ui/directives/vehicle-add-edit.directive';
+import { SupportUseCase } from '@modules/mechanical/domain/use-cases/support.use-case';
 import { NgbActiveModal, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
-import { catchError, distinctUntilChanged, Observable, of, OperatorFunction, switchMap, tap } from 'rxjs';
+import { catchError, distinctUntilChanged, finalize, Observable, of, OperatorFunction, switchMap, tap } from 'rxjs';
 import Swal from 'sweetalert2';
 
 interface PuntoEmision {
@@ -36,21 +45,32 @@ interface UserAssigned {
         CommonModule,
         FontAwesomeModule,
         FormsModule,
+        MatButtonModule,
         NgbTypeaheadModule,
+        MatSelectModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatDatepickerModule,
         InputDateComponent,
+        MatCustomDialogComponent,
         VehicleAddEditDirective
     ],
-    templateUrl: './support-add-edit-modal.component.html'
+    templateUrl: './support-add-edit-modal.component.html',
+    providers: [provideNativeDateAdapter()],
 })
 export class SupportAddEditModalComponent {
-  @Input() params = {
-    id: 0
-  }
 
-  modal = inject(NgbActiveModal);
-  supportSvc = inject(SupportWebRepository)
+  readonly dialogRef = inject(MatDialogRef<SupportAddEditModalComponent>);
+        readonly params = inject<{
+          id: number;
+          descripcion: null | string
+        }>(MAT_DIALOG_DATA);
+
+  supportUseCase = inject(SupportUseCase)
   vehicleSvc = inject(VehicleWebRepository)
   tS = inject(ToasterService)
+
+  loading = false;
 
   titleModal = 'Nuevo Soporte';
   btnText = 'Guardar';
@@ -87,9 +107,9 @@ export class SupportAddEditModalComponent {
   }
 
   successResponse = {
-    next: (response: any) => {
+    next: (response: ApiResponse) => {
 
-      if (isApiResponse(response)) {
+
         if (response.code === "0") {
           this.tS.toastr({
             type: 'warning',
@@ -102,9 +122,8 @@ export class SupportAddEditModalComponent {
             message: response.message
           })
 
-          this.modal.close(response)
+          this.dialogRef.close(response)
         }
-      }
     },
     error(err: any) {
 
@@ -114,8 +133,12 @@ export class SupportAddEditModalComponent {
 
   ngOnInit(): void {
 
-    this.supportSvc.getDataForm().subscribe({
-      next: (response) => {
+    this.loading=true;
+    this.supportUseCase.getDataForm()
+    .pipe(
+      finalize(()=>this.loading=false)
+    )
+    .subscribe(  (response) => {
 
         this.establishments = response.establishments;
         this.cloneEmissionPoints = response.emissionPoints;
@@ -126,7 +149,7 @@ export class SupportAddEditModalComponent {
           this.btnText = 'Actualizar';
 
 
-          this.supportSvc.getId(this.params.id).subscribe({
+          this.supportUseCase.getId(this.params.id).subscribe({
             next: (value) => {
               this.data = value.data as any;
 
@@ -147,12 +170,7 @@ export class SupportAddEditModalComponent {
 
 
 
-      },
-      error(err) {
-
-        console.log(err)
-      },
-    })
+      } )
   }
 
   onChangeEstab() {
@@ -348,13 +366,13 @@ export class SupportAddEditModalComponent {
           }
 
           if (!(this.params.id > 0)) {
-            this.supportSvc.post(data).subscribe(this.successResponse)
+            this.supportUseCase.post(data).subscribe(this.successResponse)
 
           }
 
           if (this.params.id > 0) {
 
-            this.supportSvc.put(this.params.id, data).subscribe(this.successResponse)
+            this.supportUseCase.put(this.params.id, data).subscribe(this.successResponse)
 
           }
         } catch (error) {
@@ -364,6 +382,10 @@ export class SupportAddEditModalComponent {
       }
     });
 
+  }
+
+  close(){
+this.dialogRef.close()
   }
 
 }
