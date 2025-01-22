@@ -107,14 +107,13 @@ BEGIN
         SELECT TOP 1 @supportId = Id FROM @tbSupport
 
         --> VALIDATION 
-        IF (SELECT COUNT(*) FROM @tbSupportDetail) = 0
+        IF NOT EXISTS(SELECT 1 FROM @tbSupportDetail)
             BEGIN
                 SELECT [Common].[ufnSpResponse]('0', 'Error en el detalle del soporte', NULL)
                 RETURN
             END
 
-        --> VALIDATION 
-        IF (SELECT COUNT(*) FROM @tbSupport) = 0
+        IF NOT EXISTS(SELECT 1 FROM @tbSupport)
             BEGIN
                 SELECT [Common].[ufnSpResponse]('0', 'Error en el soporte', NULL)
                 RETURN

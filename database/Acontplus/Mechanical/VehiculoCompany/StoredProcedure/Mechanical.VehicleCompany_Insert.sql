@@ -37,7 +37,7 @@ BEGIN
 	DECLARE @LicensePlate VARCHAR(15),@userId INT
 
     --> Customer
-	DECLARE @CustomerId INT, @CustomerIdAdmin INT ,@IDCard VARCHAR(15) ,@CardTypeId INT ,@IDType VARCHAR(5)
+	DECLARE @CustomerId INT, @CustomerCompanyId INT ,@IDCard VARCHAR(15) ,@CardTypeId INT ,@IDType VARCHAR(5)
 
 
 	DECLARE @tbVehicle AS TABLE (
@@ -163,7 +163,7 @@ BEGIN
             -->EXISTENCE OF THE CUSTOMER OR DRIVER
             IF EXISTS (SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @IDCard)
                 BEGIN
-                    SELECT TOP 1 @CustomerIdAdmin = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @IDCard
+                    SELECT TOP 1 @CustomerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @IDCard
                 END 
             ELSE
                 BEGIN 
@@ -172,21 +172,21 @@ BEGIN
                     SELECT IDType,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation 
                     FROM @tbCustomer 
 
-                    SELECT @CustomerIdAdmin = SCOPE_IDENTITY()
+                    SELECT @CustomerId = SCOPE_IDENTITY()
                 END 
                 
-            IF NOT EXISTS (SELECT 1 FROM dbo.Cliente WITH (NOLOCK) WHERE numeroIdentificacion = @IDCard AND idEntidad = @CompanyId)
+            IF NOT EXISTS (SELECT 1 FROM dbo.Cliente WITH (NOLOCK) WHERE CustomerId = @CustomerId AND idEntidad = @CompanyId)
                 BEGIN
                     INSERT INTO dbo.Cliente
-                           (idEntidad,idTipoIdentificacion,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,correo,telefono,validationSri,customerId)
-                    SELECT @CompanyId,@CardTypeId,IDCard,TradeName,BusinessName,[Address],Email,telephone,SriValidation,@CustomerIdAdmin
+                           (idEntidad,idTipoIdentificacion,direccion,correo,telefono,customerId)
+                    SELECT @CompanyId,@CardTypeId,[Address],Email,telephone,@CustomerId
                     FROM @tbCustomer
 
-                    SELECT @CustomerId = SCOPE_IDENTITY()
+                    SELECT @CustomerCompanyId = SCOPE_IDENTITY()
                 END 
             ELSE 
                 BEGIN
-                    SELECT TOP 1 @CustomerId = idCliente FROM dbo.Cliente WITH (NOLOCK) WHERE numeroIdentificacion = @IDCard AND idEntidad = @CompanyId
+                    SELECT TOP 1 @CustomerCompanyId = idCliente FROM dbo.Cliente WITH (NOLOCK) WHERE CustomerId = @CustomerId AND idEntidad = @CompanyId
                 END 
 
             -- CUSTOMER RECORD -- 
