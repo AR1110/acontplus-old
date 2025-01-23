@@ -12,6 +12,10 @@
       <div class="d-grid gap-2">
         <app-company-customer-search-mat
           [isAdvancedMode]="true"
+          [(textName)]="customer.tradeName"
+          [id]="dataForm.customerId"
+          (onSelect)="onCustomerSelected($event)"
+          [isGetId]="true"
         ></app-company-customer-search-mat>
 
         <div

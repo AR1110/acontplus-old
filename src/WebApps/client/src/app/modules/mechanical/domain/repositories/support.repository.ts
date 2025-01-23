@@ -4,7 +4,7 @@ import {ApiResponse} from "@core/models/api-response";
 export abstract  class SupportRepository{
   abstract getAll<T extends { pageIndex: number; pageSize: number }>(obj:T): Observable<any[]>;
 
-  abstract getDataFilter():Observable<any>
+  abstract getDataFilter():Observable<{ supportStatus: any[]  }>
 
   abstract getDataForm():Observable<any>
 

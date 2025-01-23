@@ -32,4 +32,25 @@ export class VehicleMapper {
     }
     return data;
   }
+
+  static fromApiGetId(response:ApiResponse){
+    let data = {
+      customer: {
+        businessName: null,
+        id: 0
+      },
+      vehicle: {}
+    }
+    if (response.code==="1") {
+      const {customer, vehicle}=JSON.parse(response.payload as string);
+      data.customer = customer[0];
+      data.vehicle = vehicle[0]
+    }
+    return data;
+  }
+
+
+
+
+
 }

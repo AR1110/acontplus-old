@@ -7,6 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { InputChipComponent } from '@shared/components/input-chip/input-chip.component';
+import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
 
 @Component({
   selector: 'app-company-customer-add-edit-dialog',
@@ -15,7 +17,8 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
     ReactiveFormsModule,
     MatTabsModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatCustomDialogComponent,
+    MatCustomDialogComponent ,
+    M3InputChipComponent
   ],
   templateUrl: './company-customer-add-edit-dialog.component.html',
   styles: ``
@@ -29,9 +32,11 @@ export class CompanyCustomerAddEditDialogComponent {
       }>(MAT_DIALOG_DATA);
 
 
-  title = ''
+  title = 'Nuevo Cliente'
 
   loading = false;
+
+  emails: string[] = [];
 
   telephones: string[] = [];
   tiemposCredito: any[] = [];
@@ -71,6 +76,6 @@ export class CompanyCustomerAddEditDialogComponent {
   }
 
   close(){
-
+    this.dialogRef.close()
   }
 }
