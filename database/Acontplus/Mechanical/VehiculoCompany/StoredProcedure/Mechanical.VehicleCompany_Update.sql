@@ -123,7 +123,7 @@ BEGIN
 
 
         --> VALIDATION OF INFORMATION 
-        IF (SELECT COUNT(*) FROM @tbVehicle) = 0   
+        IF EXISTS(SELECT 1 FROM @tbVehicle)  
             BEGIN
                 SELECT [Common].[ufnSpResponse]('0', 'Error en la informacion del vehiculo', NULL)
                 RETURN

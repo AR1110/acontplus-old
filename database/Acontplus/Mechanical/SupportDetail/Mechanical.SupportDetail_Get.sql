@@ -23,186 +23,201 @@ BEGIN
     
     DECLARE @Id INT ,@tipo INT ,@CompanyId INT
 
-    SELECT TOP 1 @CompanyId = idEntidad FROM dbo.v_usuario WHERE idUsuarioRol = @userRoleId
+    SELECT TOP 1 @CompanyId = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-    -- GET FOT EDIT 
-    IF @tipo = 1
-        BEGIN
-            SELECT @Id = id FROM OPENJSON(@json) WITH (id INT)
+    BEGIN TRY
+        --> GET FOT EDIT 
+        IF @tipo = 1
+            BEGIN
+                SELECT @Id = id FROM OPENJSON(@json) WITH (id INT)
 
-            SET @tableNames = 'support,vehicleDs,supportDetail,bodega,tipoIva,decimal,tarifas'
+                SET @tableNames = 'support,vehicleDs,supportDetail,bodega,tipoIva,decimal,tarifas'
 
-            SELECT v_s.Id
-                  ,v_s.PuntoEmisionId
-                  ,v_s.EstablecimientoId
-                  ,v_s.VehicleCompanyId
-                  ,v_s.CustomerId                  
-                  ,v_s.[Date]
-                  ,v_s.Obs
-                  ,v_s.UserAssignedId                  
-                  ,v_s.BusinessName
-                  ,v_s.idCard
-                  ,v_s.Address
-                  ,v_s.Telephone
-                  ,v_s.Email
-                  ,v_s.codEstab
-                  ,v_s.status
-                  ,v_s.ptoEmi
-                  ,v_s.estab
-                  ,v_s.[Sequence]
-                  ,v_s.nombreComercial
-	        FROM Mechanical.v_Support v_s WITH (NOLOCK)
-            WHERE Id = @Id
+                SELECT v_s.Id
+                      ,v_s.PuntoEmisionId
+                      ,v_s.EstablecimientoId
+                      ,v_s.VehicleCompanyId
+                      ,v_s.CustomerId                  
+                      ,v_s.[Date]
+                      ,v_s.Obs
+                      ,v_s.UserAssignedId                  
+                      ,v_s.BusinessName
+                      ,v_s.idCard
+                      ,v_s.Address
+                      ,v_s.Telephone
+                      ,v_s.Email
+                      ,v_s.codEstab
+                      ,v_s.status
+                      ,v_s.ptoEmi
+                      ,v_s.estab
+                      ,v_s.[Sequence]
+                      ,v_s.nombreComercial
+	            FROM Mechanical.v_Support v_s WITH (NOLOCK)
+                WHERE Id = @Id
 
-            SELECT ve.licensePlate as LicensePlate
-                  ,ve.brand        as Brand
-                  ,ve.model        as Model
-                  ,ve.[year]       as [Year]
-                  ,ve.color        as Color
-                  ,ve.engine       as Engine
-                  ,ve.chassis      as Chassis
-                  ,ve.cylindraje   as Cylindraje
-            FROM Mechanical.Support sp WITH (NOLOCK)
-            INNER JOIN Mechanical.VehicleCompany vc WITH (NOLOCK) ON vc.Id = sp.VehicleCompanyId
-            INNER JOIN Mechanical.Vehicle        ve WITH (NOLOCK) ON ve.Id = vc.VehicleId
-            WHERE sp.Id = @Id
+                SELECT ve.licensePlate as LicensePlate
+                      ,ve.brand        as Brand
+                      ,ve.model        as Model
+                      ,ve.[year]       as [Year]
+                      ,ve.color        as Color
+                      ,ve.engine       as Engine
+                      ,ve.chassis      as Chassis
+                      ,ve.cylindraje   as Cylindraje
+                FROM Mechanical.Support sp WITH (NOLOCK)
+                INNER JOIN Mechanical.VehicleCompany vc WITH (NOLOCK) ON vc.Id = sp.VehicleCompanyId
+                INNER JOIN Mechanical.Vehicle        ve WITH (NOLOCK) ON ve.Id = vc.VehicleId
+                WHERE sp.Id = @Id
                         
-            SELECT md.Id
-                  ,md.ArticuloId        
-                  ,md.BodegaId         
-                  ,md.TarifaId          
-                  ,md.MedidaId         
-                  ,md.[Description]                       
-                  ,md.Quantity          
-                  ,md.Price              
-                  ,md.Cost              
-                  ,md.TaxId
-                  ,md.TaxPercentId   
-                  ,md.Total 
-                  ,md.Discount
-                  ,md.TaxValue
-                  ,bo.codEstab    
-                  ,ar.llevaInventario
-                  ,ar.codigo            as codigoArticulo
-                  ,md.[Enabled] 
-                  ,md.Deleted
-                  ,ti.porcentaje        as [percentage]
-                  ,ISNULL
-                   ((
-                        SELECT af.idMedida
-                              ,IIF(af.gestionVenta = 1,1,3) as orden
-                              ,af.conversion
-                              ,af.precioCostoFraccionado
-                              ,ar.precioCosto
-			                  ,me.descripcion               as descripcion
-			                  ,(
-                                    SELECT pv.idTarifa
-                                          ,pv.precioVenta
-                                          ,pv.precioConIva
-                                          ,UPPER(ta.descripcion) as tarifa
-                                          ,ta.ventaPorMayor
-					                FROM dbo.ArticuloFraccionadoPvP  pv WITH (NOLOCK)
-					                INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
-					                WHERE pv.idArticuloFraccionado = af.idArticuloFraccionado
-					                ORDER BY ta.predeterminada DESC 
-                                    FOR JSON PATH
+                SELECT md.Id
+                      ,md.ArticuloId        
+                      ,md.BodegaId         
+                      ,md.TarifaId          
+                      ,md.MedidaId         
+                      ,md.[Description]                       
+                      ,md.Quantity          
+                      ,md.Price              
+                      ,md.Cost              
+                      ,md.TaxId
+                      ,md.TaxPercentId   
+                      ,md.Total 
+                      ,md.Discount
+                      ,md.TaxValue
+                      ,bo.codEstab    
+                      ,ar.llevaInventario
+                      ,ar.codigo            as codigoArticulo
+                      ,md.[Enabled] 
+                      ,md.Deleted
+                      ,ti.porcentaje        as [percentage]
+                      ,ISNULL
+                       ((
+                            SELECT af.idMedida
+                                  ,IIF(af.gestionVenta = 1,1,3) as orden
+                                  ,af.conversion
+                                  ,af.precioCostoFraccionado
+                                  ,ar.precioCosto
+			                      ,me.descripcion               as descripcion
+			                      ,(
+                                        SELECT pv.idTarifa
+                                              ,pv.precioVenta
+                                              ,pv.precioConIva
+                                              ,UPPER(ta.descripcion) as tarifa
+                                              ,ta.ventaPorMayor
+					                    FROM dbo.ArticuloFraccionadoPvP  pv WITH (NOLOCK)
+					                    INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
+					                    WHERE pv.idArticuloFraccionado = af.idArticuloFraccionado
+					                    ORDER BY ta.predeterminada DESC 
+                                        FOR JSON PATH
 
-                              ) as tarifas
-			            FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
-			            INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida
-                        INNER JOIN dbo.Articulo      ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
-			            WHERE af.idArticulo = md.ArticuloId  
-                        FOR JSON PATH
+                                  ) as tarifas
+			                FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			                INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida
+                            INNER JOIN dbo.Articulo      ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+			                WHERE af.idArticulo = md.ArticuloId  
+                            FOR JSON PATH
                 
-                    ),'[]') as fraccionado
+                        ),'[]') as fraccionado
 
-                   ,ISNULL
-                    ((
-                        SELECT sc.idMedida
-                              ,2              as orden
-                              ,1              as conversion
-			                  ,sc.precioCosto as precioCostoFraccionado
-                              ,sc.precioCosto
-                              ,me.descripcion
-			                  ,(
-                                    SELECT ap.idTarifa
-                                          ,ap.precioVenta
-                                          ,ap.precioConIva
-                                          ,UPPER(ta.descripcion) as tarifa
-                                          ,ta.ventaPorMayor 
-					                FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
-					                INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
-					                WHERE ap.idArticulo = sc.idArticulo
-					                ORDER BY ta.predeterminada DESC 
-                                    FOR JSON PATH
+                       ,ISNULL
+                        ((
+                            SELECT sc.idMedida
+                                  ,2              as orden
+                                  ,1              as conversion
+			                      ,sc.precioCosto as precioCostoFraccionado
+                                  ,sc.precioCosto
+                                  ,me.descripcion
+			                      ,(
+                                        SELECT ap.idTarifa
+                                              ,ap.precioVenta
+                                              ,ap.precioConIva
+                                              ,UPPER(ta.descripcion) as tarifa
+                                              ,ta.ventaPorMayor 
+					                    FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+					                    INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+					                    WHERE ap.idArticulo = sc.idArticulo
+					                    ORDER BY ta.predeterminada DESC 
+                                        FOR JSON PATH
 
-                               ) as tarifas
-			            FROM dbo.Articulo     sc WITH (NOLOCK)
-			            INNER JOIN dbo.Medida me WITH (NOLOCK) ON me.idMedida = sc.idMedida
-			            WHERE sc.idArticulo = md.ArticuloId 
-                        FOR JSON PATH
+                                   ) as tarifas
+			                FROM dbo.Articulo     sc WITH (NOLOCK)
+			                INNER JOIN dbo.Medida me WITH (NOLOCK) ON me.idMedida = sc.idMedida
+			                WHERE sc.idArticulo = md.ArticuloId 
+                            FOR JSON PATH
 
-                    ),'[]') as principal
+                        ),'[]') as principal
 
-                   ,(
-                    SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = md.ArticuloId AND st.idBodega = md.BodegaId FOR JSON PATH
-                    ) as consolidacion
-                   ,md.Obs
-            FROM Mechanical.SupportDetail md WITH (NOLOCK)
-            INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega         = md.BodegaId
-            INNER JOIN dbo.Articulo       ar WITH (NOLOCK) ON ar.idArticulo       = md.ArticuloId
-            INNER JOIN Sri.TarifaImpuesto ti WITH (NOLOCK) ON ti.idTarifaImpuesto = md.TaxPercentId
-            WHERE SupportId = @Id
-              AND md.[Enabled] = 1
-              AND md.Deleted IS NULL
-            ORDER BY md.Id ASC
+                       ,(
+                        SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = md.ArticuloId AND st.idBodega = md.BodegaId FOR JSON PATH
+                        ) as consolidacion
+                       ,md.Obs
+                FROM Mechanical.SupportDetail md WITH (NOLOCK)
+                INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega         = md.BodegaId
+                INNER JOIN dbo.Articulo       ar WITH (NOLOCK) ON ar.idArticulo       = md.ArticuloId
+                INNER JOIN Sri.TarifaImpuesto ti WITH (NOLOCK) ON ti.idTarifaImpuesto = md.TaxPercentId
+                WHERE SupportId = @Id
+                  AND md.[Enabled] = 1
+                  AND md.Deleted IS NULL
+                ORDER BY md.Id ASC
             
-            SELECT idBodega
-                  ,idEstablecimiento
-                  ,bodega
-                  ,codEstab
-                  ,nombreComercial
-                  ,defaultBodega
-            FROM v_Bodega_Asign WITH (NOLOCK)
-            WHERE idUsuarioRol = @userRoleId 
-            ORDER BY defaultBodega DESC
+                SELECT idBodega
+                      ,idEstablecimiento
+                      ,bodega
+                      ,codEstab
+                      ,nombreComercial
+                      ,defaultBodega
+                FROM v_Bodega_Asign WITH (NOLOCK)
+                WHERE idUsuarioRol = @userRoleId 
+                ORDER BY defaultBodega DESC
 
-            SELECT i.idImpuesto 
-                  ,ti.idTarifaImpuesto
-                  ,ti.codigo
-                  ,ti.codImpuesto
-                  ,ti.descripcion
-                  ,ti.porcentaje
-                  ,ti.estado 
-            FROM Sri.TarifaImpuesto ti WITH (NOLOCK)
-            INNER JOIN Sri.Impuesto  i WITH (NOLOCK)  ON i.codigo = ti.codImpuesto 
-            WHERE i.codigo = '2'
-              AND ti.estado = 1 
+                SELECT i.idImpuesto 
+                      ,ti.idTarifaImpuesto
+                      ,ti.codigo
+                      ,ti.codImpuesto
+                      ,ti.descripcion
+                      ,ti.porcentaje
+                      ,ti.estado 
+                FROM Sri.TarifaImpuesto ti WITH (NOLOCK)
+                INNER JOIN Sri.Impuesto  i WITH (NOLOCK)  ON i.codigo = ti.codImpuesto 
+                WHERE i.codigo = '2'
+                  AND ti.estado = 1 
             
-            SELECT nroPrecio
-	              ,nroCantidad
-	              ,nroIva
-	              ,nroDescuentoDetalle
-	              ,nroTotalDetalle
-	              ,nroTotalSubTotal
-	              ,nroDescuento
-	              ,nroIce
-	              ,importeTotal
-	        FROM Config.v_Sistema_Decimal WITH (NOLOCK)
-            WHERE codTrasaccion = 'V' 
-              AND idEntidad = @CompanyId
+                SELECT nroPrecio
+	                  ,nroCantidad
+	                  ,nroIva
+	                  ,nroDescuentoDetalle
+	                  ,nroTotalDetalle
+	                  ,nroTotalSubTotal
+	                  ,nroDescuento
+	                  ,nroIce
+	                  ,importeTotal
+	            FROM Config.v_Sistema_Decimal WITH (NOLOCK)
+                WHERE codTrasaccion = 'V' 
+                  AND idEntidad = @CompanyId
 
-            SELECT idTarifa
-	              ,descripcion
-	              ,predeterminada
-	              ,codigo 
-	        FROM Tarifa WITH (NOLOCK) 
-	        WHERE idEntidad = @CompanyId AND estado = 1
+                SELECT idTarifa
+	                  ,descripcion
+	                  ,predeterminada
+	                  ,codigo 
+	            FROM Tarifa WITH (NOLOCK) 
+	            WHERE idEntidad = @CompanyId AND estado = 1
 
-            RETURN
-        END
+                RETURN
+            END
+    END TRY
+
+    BEGIN CATCH
+        DECLARE @userId INT
+
+        SELECT TOP 1 @userId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+        INSERT INTO ErroresSistema
+            (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'SupportDetail/Get',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
+	         
+        SELECT [Common].[ufnSpResponse]('0', 'Error en el procedimiento', NULL)
+    END CATCH
+
 END
 
    
