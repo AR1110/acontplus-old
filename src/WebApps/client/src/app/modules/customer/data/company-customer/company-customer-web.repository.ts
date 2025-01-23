@@ -115,6 +115,7 @@ export class CompanyCustomerWebRepository extends CompanyCustomerRepository{
               idCargo: dataRepository.idCargo,
               placa: dataRepository.placa,
               validationSri: dataRepository.validationSri,
+              codigoSri: dataRepository.codigoSri,
               correos: dataRepository.correo
                 ? dataRepository.correo.split('|')
                 : [],

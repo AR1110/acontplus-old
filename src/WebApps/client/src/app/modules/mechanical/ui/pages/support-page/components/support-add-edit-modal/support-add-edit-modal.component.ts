@@ -1,7 +1,7 @@
 
-import { CommonModule, JsonPipe } from '@angular/common';
-import { Component, inject, Input, } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {AsyncPipe, CommonModule } from '@angular/common';
+import { Component, inject,  } from '@angular/core';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -9,20 +9,19 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { ApiResponse, isApiResponse } from '@core/models/api-response';
+import { ApiResponse  } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate, formatDateToString, isDateValid } from '@core/utils/date.util';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { SupportWebRepository } from '@mechanical/data/support/support-web.repository';
 import { VehicleWebRepository } from '@mechanical/data/vehicle/vehicle-web.repository';
 import { VehicleAddEditDirective } from '@mechanical/ui/directives/vehicle-add-edit.directive';
 import { SupportUseCase } from '@modules/mechanical/domain/use-cases/support.use-case';
-import { NgbActiveModal, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
-import { InputDateComponent } from '@shared/components/input-date/input-date.component';
-import { catchError, distinctUntilChanged, finalize, Observable, of, OperatorFunction, switchMap, tap } from 'rxjs';
+import { distinctUntilChanged, finalize, Observable,  switchMap,  } from 'rxjs';
 import Swal from 'sweetalert2';
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 
 interface PuntoEmision {
   establecimientoId: number
@@ -46,13 +45,15 @@ interface UserAssigned {
         FontAwesomeModule,
         FormsModule,
         MatButtonModule,
-        NgbTypeaheadModule,
         MatSelectModule,
         MatFormFieldModule,
         MatInputModule,
         MatDatepickerModule,
-        InputDateComponent,
-        MatCustomDialogComponent,
+      MatAutocompleteModule,
+      ReactiveFormsModule,
+      MatProgressSpinnerModule,
+      AsyncPipe,
+      MatCustomDialogComponent,
         VehicleAddEditDirective
     ],
     templateUrl: './support-add-edit-modal.component.html',
@@ -93,21 +94,17 @@ export class SupportAddEditModalComponent {
     customerId: 0
   }
 
-
-  dataSearchVehicle = {
-    searching: false,
-    searchFailed: false,
-    model: '' as string | null
-  }
-
   vehicle = {
     brand: '',
     model: '',
     licensePlate: ''
   }
 
-  successResponse = {
-    next: (response: ApiResponse) => {
+  filteredCustomerVehicleLoading = false;
+  filteredCustomerVehicleFormControl = new FormControl<null | string>(null);
+  filteredCustomerVehicles!: Observable<any[]>;
+
+  successResponse = (response: ApiResponse) => {
 
 
         if (response.code === "0") {
@@ -124,11 +121,6 @@ export class SupportAddEditModalComponent {
 
           this.dialogRef.close(response)
         }
-    },
-    error(err: any) {
-
-      console.log(err)
-    }
   }
 
   ngOnInit(): void {
@@ -149,20 +141,20 @@ export class SupportAddEditModalComponent {
           this.btnText = 'Actualizar';
 
 
-          this.supportUseCase.getId(this.params.id).subscribe({
-            next: (value) => {
+          this.loading=true;
+          this.supportUseCase.getId(this.params.id)
+            .pipe(
+              finalize(()=>this.loading=false)
+            )
+            .subscribe( (value) => {
               this.data = value.data as any;
 
               this.vehicle = value.vehicle as any;
               this.emissionPoints = this.cloneEmissionPoints.filter(e => e.establecimientoId === this.data.establecimientoId);
-              this.dataSearchVehicle.model = value.customer.tradeName;
 
-            },
-            error(err) {
-              console.log(err)
+              this.filteredCustomerVehicleFormControl.setValue(value.customer.tradeName);
 
-            },
-          })
+            } )
           return
         }
         this.data.establecimientoId = this.establishments.length > 0 ? this.establishments[0].establecimientoId : 0
@@ -171,11 +163,33 @@ export class SupportAddEditModalComponent {
 
 
       } )
+
+    this.filteredCustomerVehicles = this.filteredCustomerVehicleFormControl.valueChanges.pipe(
+      distinctUntilChanged(),
+      switchMap((val) => {
+        this.filteredCustomerVehicleLoading = false;
+        if (val && val.length > 2) {
+          return this._filterCustomerVehicle(val);
+        }
+        return [];
+      }),
+
+    );
+  }
+
+  private _filterCustomerVehicle(value: string) {
+    this.filteredCustomerVehicleLoading = true;
+    return this.supportUseCase.search({ textSearch: value }).pipe(
+      finalize(() => {
+        this.filteredCustomerVehicleLoading = false;
+      })
+    );
   }
 
   onChangeEstab() {
     this.emissionPoints = this.cloneEmissionPoints.filter(e => e.establecimientoId === this.data.establecimientoId);
 
+    console.log('change estab')
     if (this.emissionPoints.length > 0) {
       this.data.puntoEmisionId = this.emissionPoints[0].puntoEmisionId;
       this.generateSequence()
@@ -189,46 +203,7 @@ export class SupportAddEditModalComponent {
     }
   }
 
-  //search client-vehicle
-
-  search: OperatorFunction<string, Array<any>> = (text$: Observable<string>) =>
-    text$.pipe(
-      distinctUntilChanged(),
-      tap(() => (this.dataSearchVehicle.searching = true)),
-      switchMap((textSearch) => {
-        if (!textSearch || textSearch.length < 2) {
-          return of([]);
-        }
-        // return this.supportSvc.searchCustomerVehicle({ textSearch }).pipe(
-        //   tap(() => (this.dataSearchVehicle.searchFailed = false)),
-        //   catchError((error) => {
-        //     console.log(error);
-        //     this.dataSearchVehicle.searchFailed = true;
-        //     return of([]);
-        //   })
-        // );
-        return of([])
-      }),
-      tap(() => (this.dataSearchVehicle.searching = false))
-    );
-
-  formatter(x: { tradeName: string }) {
-    if (typeof x === 'string') {
-      return x;
-    }
-    return x.tradeName
-  };
-
-  onKeyupSearchCustomerVehicle() {
-    if (!isValidField(this.dataSearchVehicle.model)) {
-      this.data.vehicleCompanyId = 0
-      this.data.customerId = 0
-      this.vehicle = {} as any
-    }
-
-  }
-
-  onSelectCustomerVehicle({ item }: any) {
+  onSelectCustomerVehicle(  item : any) {
     this.getDataVehicleById(item.id)
   }
 
@@ -237,10 +212,13 @@ export class SupportAddEditModalComponent {
 
       this.vehicleSvc.getId(id).subscribe({
         next: (response) => {
+          const {customer, vehicle} = response;
           this.data.vehicleCompanyId = id;
-          this.data.customerId = response.customer.id;
-          this.dataSearchVehicle.model = response.customer.businessName;
-          this.vehicle = response.vehicle as any;
+          this.data.customerId = customer.id;
+          this.vehicle = vehicle as any;
+
+          this.filteredCustomerVehicleFormControl.setValue(customer.businessName)
+
         },
         error(err) {
           console.log(err)

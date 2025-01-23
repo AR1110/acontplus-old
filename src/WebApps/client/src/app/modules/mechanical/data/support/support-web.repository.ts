@@ -61,7 +61,9 @@ export class SupportWebRepository extends SupportRepository {
       id,
       tipo: 3
     })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+    return this.#http.get(`${this.#url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
       map((response: any) => SupportMapper.fromApiGetId(response))
     )
   }
@@ -70,8 +72,8 @@ export class SupportWebRepository extends SupportRepository {
     let json = JSON.stringify({
       tipo: 6
     })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) =>SupportMapper.fromApiDashboard(response))
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`).pipe(
+      map((response) =>SupportMapper.fromApiDashboard(response))
     )
   }
 
@@ -193,16 +195,10 @@ export class SupportWebRepository extends SupportRepository {
       tipo: 4,
       textSearch: obj.textSearch
     })
-    return this.#http.get(`${this.#url}?json=${json}`,{
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`,{
       context: getNoLoader()
     }).pipe(
-      map((response: any) => {
-        let results = [];
-        if (response !== null && typeof response === 'object') {
-          results = response.dataSearch;
-        }
-        return results;
-      })
+      map((response) => SupportMapper.fromApiSearch(response) )
     )
   }
 

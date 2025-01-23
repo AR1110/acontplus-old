@@ -16,7 +16,7 @@ export abstract  class SupportRepository{
 
   abstract getDocView(id: number, loader?: boolean):Observable<any>
 
-  abstract search<T extends { textSearch: string }>(obj: T): Observable<ApiResponse>
+  abstract search<T extends { textSearch: string }>(obj: T): Observable<any>
 
   abstract  post<T>(data: T): Observable<ApiResponse>
 

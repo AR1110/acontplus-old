@@ -16,7 +16,6 @@ import {
   ColSupportMaintenanceDetail,
   SupportMaintenanceDetail
 } from '@mechanical/domain/models/support-maintenance.model';
-import {SupportDetailWebRepository} from '@mechanical/data/support-detail/support-detail-web.repository';
 import {DecimalSale} from '@sale/shared/models/decimal-sale.model';
 import {NgbActiveModal, NgbPopoverModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
 import {DrawTaxTotalComponent} from '@shared/components/draw-tax-total/draw-tax-total.component';
@@ -29,6 +28,7 @@ import {MedidaProducto} from "@inventory/domain/models/measure.model";
 import {ConsolidacionBodega} from "@inventory/domain/models/consolidacion-bodega.model";
 import {Tarifa} from "@inventory/domain/models/tarifa.model";
 import {SupportMaintenanceAdapter} from "@mechanical/data/adapters/support-maintenance.adapter";
+import { SupportDetailUseCase } from '@modules/mechanical/domain/use-cases/support-detail.use-case';
 
 @Component({
     selector: 'app-support-maintenance-modal',
@@ -54,7 +54,7 @@ export class SupportMaintenanceModalComponent {
 
     private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
 
-    private supportDetailSvc = inject(SupportDetailWebRepository)
+    private supportDetailUseCase = inject(SupportDetailUseCase)
     private tS = inject(ToasterService)
 
     @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
@@ -506,8 +506,7 @@ export class SupportMaintenanceModalComponent {
     }
 
     ngOnInit(): void {
-        this.supportDetailSvc.getId(this.params.id).subscribe({
-            next: (response) => {
+        this.supportDetailUseCase.getId(this.params.id).subscribe(  (response) => {
                 this.data = {
                     ...this.data,
                     ...response.data
@@ -539,11 +538,7 @@ export class SupportMaintenanceModalComponent {
                 }
 
                 this.drawImpuestoTotales()
-            },
-            error(err) {
-                console.log(err)
-            },
-        });
+            } );
     }
 
     getDataRowEmpty() {
@@ -991,8 +986,7 @@ export class SupportMaintenanceModalComponent {
             }
             let params = SupportMaintenanceAdapter.to(obj);
 
-            this.supportDetailSvc.post(params).subscribe({
-                next: (response) => {
+            this.supportDetailUseCase.post(params).subscribe(  (response) => {
                     if (isApiResponse(response)) {
                         if (response.code === "0") {
                             this.tS.toastr({
@@ -1009,11 +1003,7 @@ export class SupportMaintenanceModalComponent {
                         }
                     }
 
-                },
-                error(err) {
-                    console.log(err)
-                },
-            })
+                } )
 
         } catch (error) {
             console.log(error)
