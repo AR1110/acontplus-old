@@ -1,5 +1,5 @@
 import {inject, Injectable} from "@angular/core";
-import {PATHS_API} from "@core/constants/global.constants";
+import {PATHS_API, SEPARADORES_REGEX} from "@core/constants/global.constants";
 import {HttpClient, HttpContext} from "@angular/common/http";
 import {ApiResponse, isApiResponse} from "@core/models/api-response";
 import {map, Observable} from "rxjs";
@@ -115,15 +115,16 @@ export class CompanyCustomerWebRepository extends CompanyCustomerRepository{
               idCargo: dataRepository.idCargo,
               placa: dataRepository.placa,
               validationSri: dataRepository.validationSri,
+              codigoSri: dataRepository.codigoSri,
               correos: dataRepository.correo
-                ? dataRepository.correo.split('|')
+                ? dataRepository.correo.split(SEPARADORES_REGEX)
                 : [],
               telefonos: dataRepository.telefono
-                ? dataRepository.telefono.split('|')
+                ? dataRepository.telefono.split(SEPARADORES_REGEX)
                 : [],
               placas:
                 dataRepository.placa !== ''
-                  ? dataRepository.placa.split('|')
+                  ? dataRepository.placa.split(SEPARADORES_REGEX)
                   : [],
               idFormaPagoSri: dataRepository.idFormaPagoSri,
             };
@@ -172,7 +173,7 @@ export class CompanyCustomerWebRepository extends CompanyCustomerRepository{
     return this._http.post<ApiResponse>(this._url, { data }).pipe(
       map((response) => {
         let result = {} as ApiResponse;
-        if (isApiResponse(response)) {
+        if (response.code==="1") {
           let payload = JSON.parse(response.payload as string)[0];
           result = response;
           result.payload = {

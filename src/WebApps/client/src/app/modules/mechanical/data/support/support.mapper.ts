@@ -73,7 +73,7 @@ export class SupportMapper {
         quantityVehicleCompany: quantity.quantityVehicleCompany,
         quantityInspection: quantity.quantityInspection,
       }
-      result.barchart = mainData.barchart;
+      result.barchart = mainData.barchart || [];
     }
     return result;
 
@@ -131,4 +131,22 @@ export class SupportMapper {
     return  result;
   }
 
+
+  static fromApiSearch(response:ApiResponse){
+
+    let results = [];
+    if (response.code==="1") {
+      const {dataSearch} = JSON.parse(response.payload as string);
+      results = dataSearch.map((item:any)=>{
+        return {
+         id: item.id,
+          licensePlate: item.licensePlate,
+          brand: item.brand,
+          tradeName: item.tradeName
+        }
+      })
+      console.log(results);
+    }
+    return results;
+  }
 }

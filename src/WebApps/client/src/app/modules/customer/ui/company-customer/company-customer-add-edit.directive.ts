@@ -24,7 +24,7 @@ export class CompanyCustomerAddEditDirective {
     if(this.openDialog()){
       this.dialogSvc.open(CompanyCustomerAddEditDialogComponent, {
         data: {
-          id: this.id
+          id: this.id()
         },
         size: 'xl'
       }).subscribe(result=>{
@@ -41,7 +41,7 @@ export class CompanyCustomerAddEditDirective {
     })
 
     modalRef.componentInstance.params = {
-      id: this.id
+      id: this.id()
     }
 
     modalRef.result.then((result) => {

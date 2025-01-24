@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mechanical.API.Controllers
 {
-    public class SupportDetailController(ISupportDetailService _supportDetailService) : ControllerBase
+    public class SupportDetailController(ISupportDetailService _supportDetailService) : BaseApiController
     {
         [HttpGet]
         public async Task<IActionResult> Get(string json)

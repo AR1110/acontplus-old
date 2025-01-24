@@ -7,111 +7,211 @@
 />
 
 <ng-template #containerTemplate>
-  <div
-    class="row row-cols-4 row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-3"
-  >
-    <div class="col">
-      @if (params.id>0) {
+  <div class="d-grid gap-2">
+    <div
+      class="row row-cols-3 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-3"
+    >
+      <div class="col">
+        @if (params.id>0) {
 
-      <mat-form-field class="w-100">
-        <mat-label>Establecimiento</mat-label>
-        <mat-select
-          name="establecimientoEdit"
-          id="establecimientoEdit"
-          [(ngModel)]="data.establecimientoId"
-          disabled
-        >
-          @for (item of establishments; track $index) {
-          <mat-option [value]="item.establecimientoId">{{
-            item.nombreComercial
-          }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+          <mat-form-field class="w-100">
+            <mat-label>Establecimiento</mat-label>
+            <mat-select
+              name="establecimientoEdit"
+              id="establecimientoEdit"
+              [(ngModel)]="data.establecimientoId"
+              disabled
+            >
+              @for (item of establishments; track $index) {
+                <mat-option [value]="item.establecimientoId">{{
+                    item.nombreComercial
+                  }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
 
-      }@else {
+        }@else {
 
-      <mat-form-field class="w-100">
-        <mat-label>Establecimiento</mat-label>
-        <mat-select
-          name="establecimientoAdd"
-          id="establecimientoAdd"
-          [(ngModel)]="data.establecimientoId"
-          (selectionchange)="onChangeEstab()"
-        >
-          @for (item of establishments; track $index) {
-          <mat-option [value]="item.establecimientoId">{{
-            item.nombreComercial
-          }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+          <mat-form-field class="w-100">
+            <mat-label>Establecimiento</mat-label>
+            <mat-select
+              name="establecimientoAdd"
+              id="establecimientoAdd"
+              [(ngModel)]="data.establecimientoId"
+              (selectionChange)="onChangeEstab()"
+            >
+              @for (item of establishments; track $index) {
+                <mat-option [value]="item.establecimientoId">{{
+                    item.nombreComercial
+                  }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
 
-      }
+        }
+      </div>
+      <div class="col">
+        @if (params.id>0) {
+
+          <mat-form-field class="w-100">
+            <mat-label>Punto Emisión</mat-label>
+            <mat-select
+              name="puntoEmision"
+              [(ngModel)]="data.puntoEmisionId"
+              disabled
+            >
+              @for (item of emissionPoints; track $index) {
+                <mat-option [value]="item.puntoEmisionId">{{
+                    item.ptoEmi
+                  }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+        }@else {
+
+          <mat-form-field class="w-100">
+            <mat-label>Punto Emisión</mat-label>
+            <mat-select
+              name="puntoEmision"
+              [(ngModel)]="data.puntoEmisionId"
+              (selectionChange)="generateSequence()"
+            >
+              @for (item of emissionPoints; track $index) {
+                <mat-option [value]="item.puntoEmisionId">{{
+                    item.ptoEmi
+                  }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Fecha Emisión</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker1"
+            [(ngModel)]="data.fechaEmision"
+          />
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker1"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+      </div>
+<!--      <div class="col">-->
+<!--        <mat-form-field class="w-100">-->
+<!--          <mat-label>Secuencia</mat-label>-->
+<!--          <input matInput [value]="data.sequence" disabled />-->
+<!--        </mat-form-field>-->
+<!--      </div>-->
     </div>
-    <div class="col">
-      @if (params.id>0) {
 
-      <mat-form-field class="w-100">
-        <mat-label>Punto Emisión</mat-label>
-        <mat-select
-          name="puntoEmision"
-          [(ngModel)]="data.puntoEmisionId"
-          disabled
-        >
-          @for (item of emissionPoints; track $index) {
-          <mat-option [value]="item.puntoEmisionId">{{
-            item.ptoEmi
-          }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+    <div class="row row-col-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-col-sm-1 row-cols-1">
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Cliente/Vehiculo: <span class="text-danger">*</span></mat-label>
+          <input matInput
+                 aria-label="State"
+                 [matAutocomplete]="auto"
 
-      }@else {
+                 [formControl]="filteredCustomerVehicleFormControl">
 
-      <mat-form-field class="w-100">
-        <mat-label>Punto Emisión</mat-label>
-        <mat-select
-          name="puntoEmision"
-          [(ngModel)]="data.puntoEmisionId"
-          (selectionChange)="generateSequence()"
-        >
-          @for (item of emissionPoints; track $index) {
-          <mat-option [value]="item.puntoEmisionId">{{
-            item.ptoEmi
-          }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      }
+          <ng-container matSuffix>
+
+            <button mat-icon-button aria-label="Add Customer Vehicle" appVehicleAddEdit (resultModalHandler)="resultModalVehicle($event)">
+              <mat-icon>add</mat-icon>
+            </button>
+            @if (data.vehicleCompanyId>0) {
+            <button mat-icon-button
+
+                     aria-label="Edit Customer Vehicle"
+                    appVehicleAddEdit [params]="{id: data.vehicleCompanyId}" (resultModalHandler)="resultModalVehicle($event)"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+
+            }
+
+          </ng-container>
+          <mat-autocomplete #auto="matAutocomplete">
+            @if(filteredCustomerVehicleLoading){
+              <mat-option
+                disabled
+                style="display: flex; justify-content: center; align-items: center"
+              >
+                <mat-spinner diameter="35"></mat-spinner>
+              </mat-option>
+            }
+            @for (state of filteredCustomerVehicles | async; track $index) {
+              <mat-option [value]="state.tradeName" (onSelectionChange)="onSelectCustomerVehicle(state)">
+                <span>{{state.tradeName}}</span> |
+                <small>Marca: {{state.brand}}</small> |
+                <small>Placa: {{state.licensePlate}}</small>
+              </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Técnico Encargado: <span class="text-danger">*</span></mat-label>
+          <mat-select
+            name="tecnicoEncargado"
+            [(ngModel)]="data.userAssignedId"
+          >
+            @for (item of users; track $index) {
+              <mat-option [value]="item.userAssignedId">{{item.userName}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
     </div>
-    <div class="col">
-      <mat-form-field class="w-100">
-        <mat-label>Fecha Emisión</mat-label>
-        <input
-          matInput
-          [matDatepicker]="picker1"
-          [(ngModel)]="data.fechaEmision"
-        />
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle
-          matIconSuffix
-          [for]="picker1"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #picker1></mat-datepicker>
-      </mat-form-field>
+
+
+    @if (data.vehicleCompanyId>0) {
+
+    <div class="row row-col-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-col-sm-1 row-cols-1">
+      <div class="col">
+
+        <mat-form-field class="w-100">
+          <mat-label>Marca</mat-label>
+          <input matInput [value]="vehicle.brand" disabled />
+        </mat-form-field>
+
+      </div>
+      <div class="col">
+
+        <mat-form-field class="w-100">
+          <mat-label>Modelo</mat-label>
+          <input matInput [value]="vehicle.model" disabled />
+        </mat-form-field>
+
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Placa</mat-label>
+          <input matInput [value]="vehicle.licensePlate" disabled />
+        </mat-form-field>
+      </div>
     </div>
-    <div class="col">
-      <mat-form-field class="w-100">
-        <mat-label>Secuencia</mat-label>
-        <input matInput [value]="data.sequence" disabled />
-      </mat-form-field>
-    </div>
+    }
+
+
+    <mat-form-field class="w-100">
+      <mat-label>Soporte a realizar: <span class="text-danger">*</span></mat-label>
+      <textarea matInput [(ngModel)]="data.obs"></textarea>
+    </mat-form-field>
+
   </div>
 </ng-template>
 
 <ng-template #actionsTemplate>
-  <button type="button" mat-flat-button>
+  <button type="button" mat-flat-button (click)="save()">
     {{ btnText }}
   </button>
 </ng-template>
@@ -190,23 +290,9 @@
 
   @if (data.vehicleCompanyId>0) {
     <div class="row">
+
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="marca">Marca: </label>
-          <input type="text" class="form-control" [value]="vehicle.brand" disabled>
-        </div>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="marca">Modelo: </label>
-          <input type="text" class="form-control" [value]="vehicle.model" disabled>
-        </div>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="marca">Placa: </label>
-          <input type="text" class="form-control" [value]="vehicle.licensePlate" disabled>
-        </div>
+
       </div>
     </div>
   }

@@ -154,6 +154,7 @@ export class VehicleAddEditModalComponent {
     this.customer.email = dataForm.correo;
     this.customer.telephone = dataForm.telefono;
     this.customer.address = dataForm.direccion;
+    console.log(dataForm)
   }
 
   isValidForm() {
