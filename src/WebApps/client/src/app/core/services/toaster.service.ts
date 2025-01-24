@@ -26,7 +26,7 @@ export class ToasterService {
       closeButton: true,
       newestOnTop: true,
       progressBar: true,
-      positionClass: positionClass ? positionClass : 'toast-bottom-center',
+  //    positionClass: positionClass ? positionClass : 'toast-bottom-center',
       timeOut: 5000,
       extendedTimeOut: 1500,
     };

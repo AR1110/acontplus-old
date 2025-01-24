@@ -8,7 +8,7 @@ import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
-import { map } from 'rxjs';
+import {map, Observable} from 'rxjs';
 import { ApiResponse } from "@core/models/api-response";
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { SupportDetail } from '@mechanical/domain/models/support.model';
@@ -186,6 +186,25 @@ export class SupportWebRepository extends SupportRepository {
           result = mainData;
         }
         return result;
+      })
+    )
+  }
+
+
+  override generateSequential(idPuntoEmision: number): Observable<string> {
+    let params = {
+      tipo: 9,
+      idPuntoEmision
+    }
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`).pipe(
+      map(res=>{
+        let secuencual = "" as string;
+        if(res.code==="1"){
+          let {sequence}=JSON.parse(res.payload as string);
+
+          secuencual = sequence[0].serieComprobante;
+        }
+        return secuencual;
       })
     )
   }

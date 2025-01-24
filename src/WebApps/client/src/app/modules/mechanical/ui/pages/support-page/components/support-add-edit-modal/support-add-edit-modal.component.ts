@@ -189,7 +189,6 @@ export class SupportAddEditModalComponent {
   onChangeEstab() {
     this.emissionPoints = this.cloneEmissionPoints.filter(e => e.establecimientoId === this.data.establecimientoId);
 
-    console.log('change estab')
     if (this.emissionPoints.length > 0) {
       this.data.puntoEmisionId = this.emissionPoints[0].puntoEmisionId;
       this.generateSequence()
@@ -314,51 +313,68 @@ export class SupportAddEditModalComponent {
 
   }
 
-  save() {
+
+
+  private executeSave(secuencial?: string){
     if (!this.isValidForm()) return
 
     let textAction = this.params.id > 0 ? 'actualizar' : 'guardar'
 
-    Swal.fire({
-      // title: "Are you sure?",
-      text: `¿Estás seguro de ${textAction} este documento?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí!",
-      cancelButtonText: 'No!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        try {
-          let data = {
+     let txtSecuencial = secuencial ? ` Nro. Documento: ${secuencial}`: this.data.sequence;
 
-            puntoEmisionId: this.data.puntoEmisionId,
-            vehicleCompanyId: this.data.vehicleCompanyId,
-            customerId: this.data.customerId,
-            supportTypeId: 0,
-            userAssignedId: this.data.userAssignedId,
-            obs: this.data.obs,
-            date: formatDateToString(this.data.fechaEmision),
+      Swal.fire({
+        // title: "Are you sure?",
+        text: `¿Estás seguro de ${textAction} este documento ${txtSecuencial}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí!",
+        cancelButtonText: 'No!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            let data = {
 
+              puntoEmisionId: this.data.puntoEmisionId,
+              vehicleCompanyId: this.data.vehicleCompanyId,
+              customerId: this.data.customerId,
+              supportTypeId: 0,
+              userAssignedId: this.data.userAssignedId,
+              obs: this.data.obs,
+              date: formatDateToString(this.data.fechaEmision),
+
+            }
+
+            if (!(this.params.id > 0)) {
+              this.supportUseCase.post(data).subscribe(this.successResponse)
+
+            }
+
+            if (this.params.id > 0) {
+
+              this.supportUseCase.put(this.params.id, data).subscribe(this.successResponse)
+
+            }
+          } catch (error) {
+
+            console.log(error)
           }
-
-          if (!(this.params.id > 0)) {
-            this.supportUseCase.post(data).subscribe(this.successResponse)
-
-          }
-
-          if (this.params.id > 0) {
-
-            this.supportUseCase.put(this.params.id, data).subscribe(this.successResponse)
-
-          }
-        } catch (error) {
-
-          console.log(error)
         }
-      }
-    });
+      });
+
+  }
+
+  async save() {
+
+    if(!(this.params.id>0)){
+      this.supportUseCase.generateSequential(this.data.puntoEmisionId).subscribe(res=>{
+        this.executeSave(res)
+      })
+    }else{
+      this.executeSave();
+    }
+
 
   }
 

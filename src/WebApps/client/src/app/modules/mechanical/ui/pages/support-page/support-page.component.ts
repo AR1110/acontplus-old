@@ -278,9 +278,8 @@ export class SupportPageComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          this.supportUseCase.remove(id).subscribe({
-            next: (response) => {
-              if (isApiResponse(response)) {
+          this.supportUseCase.remove(id).subscribe(  (response) => {
+
                 if (response.code === '0') {
                   this.tS.toastr({
                     type: 'warning',
@@ -294,12 +293,7 @@ export class SupportPageComponent {
                   });
                   this.getSupports();
                 }
-              }
-            },
-            error(err) {
-              console.log(err);
-            },
-          });
+            } );
         }
       });
     } catch (error) {
@@ -317,7 +311,7 @@ export class SupportPageComponent {
       id,
     };
     modalRef.result.then((result) => {
-      if (result !== null && typeof result === 'object') {
+      if (result   && typeof result === 'object') {
         this.getSupports();
       }
     });
@@ -330,6 +324,12 @@ export class SupportPageComponent {
     modalRef.componentInstance.params = {
       supportId: id,
     };
+
+    modalRef.result.then(result=>{
+      if(result && typeof result==='object'){
+        this.getSupports()
+      }
+    })
   }
 
   askToConvertToDoc(id: number) {
@@ -339,7 +339,7 @@ export class SupportPageComponent {
         modalRef.componentInstance.params = response;
 
         modalRef.result.then((result) => {
-          if (result !== null && typeof result === 'object') {
+          if (result  && typeof result === 'object') {
             this.getSupports();
           }
         });
@@ -391,9 +391,8 @@ export class SupportPageComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          this.supportUseCase.putState(id, supportStatusId).subscribe({
-            next: (response) => {
-              if (isApiResponse(response)) {
+          this.supportUseCase.putState(id, supportStatusId).subscribe(  (response) => {
+
                 if (response.code === '0') {
                   this.tS.toastr({
                     type: 'warning',
@@ -408,11 +407,7 @@ export class SupportPageComponent {
                   this.getSupports();
                 }
               }
-            },
-            error(err) {
-              console.log(err);
-            },
-          });
+           );
         } else {
           this.getSupports();
         }

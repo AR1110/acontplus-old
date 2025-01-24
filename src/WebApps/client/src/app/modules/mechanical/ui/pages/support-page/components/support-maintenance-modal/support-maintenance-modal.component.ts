@@ -512,9 +512,6 @@ export class SupportMaintenanceModalComponent {
                     ...response.data
                 };
 
-                console.log("response")
-                console.log(response)
-
                 this.estabs = response.estabs;
                 this.taxPercents = response.tarifasImpuesto;
                 this.feeds = response.feeds;
@@ -630,9 +627,6 @@ export class SupportMaintenanceModalComponent {
                 row: structuredClone(row)
             });
 
-            console.log(dataProductMerge)
-
-
             let cantidadStock = getCantidadStock({
                 fechaEmision: this.data.fechaEmision,
                 bodegaId: this.data.bodegaId,
@@ -651,7 +645,6 @@ export class SupportMaintenanceModalComponent {
                         let {code, message, titleSms} = response;
 
                         if (code === "1") {
-                            console.log(row)
                             this.setCalculoTotales("quantity", row, oldValue)
                             return
                         }
@@ -810,7 +803,6 @@ export class SupportMaintenanceModalComponent {
         let row = this.tabulatorComponent.refTabulator.getRows().find(function (row) {
             return row.getData()['rowguid'] === data.rowguid;
         });
-        console.log(obj)
 
         if (row) {
             row.update({
@@ -841,8 +833,6 @@ export class SupportMaintenanceModalComponent {
                 decimal: this.decimal,
                 tarifasImpuesto: this.taxPercents,
             })
-
-            console.log(this.decimal)
 
             this.data.subTotalSinImpuesto = subTotalSinImpuesto;
             this.data.total = importeTotal;

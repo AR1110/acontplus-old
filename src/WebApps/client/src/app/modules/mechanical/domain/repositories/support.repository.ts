@@ -16,6 +16,8 @@ export abstract  class SupportRepository{
 
   abstract getDocView(id: number, loader?: boolean):Observable<any>
 
+  abstract generateSequential(idPuntoEmision: number): Observable<string>
+
   abstract search<T extends { textSearch: string }>(obj: T): Observable<any>
 
   abstract  post<T>(data: T): Observable<ApiResponse>
