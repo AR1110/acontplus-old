@@ -124,21 +124,21 @@ BEGIN
         SELECT TOP 1 @CardTypeId = idTipoIdentificacion FROM dbo.TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = @IDType
 
         --> VALIDATION OF INFORMATION 
-        IF (SELECT COUNT(*) FROM @tbVehicle) = 0   
+        IF NOT EXISTS(SELECT 1 FROM @tbVehicle)   
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'Error en la informacion del vehiculo', NULL)
+                SELECT '0' as code, 'Error en la informacion del vehiculo' as 'message'
                 RETURN
             END 
 
-        IF (SELECT COUNT(*) FROM @tbCustomer) = 0   
+        IF NOT EXISTS(SELECT 1 FROM @tbCustomer)   
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'Error en la informacion del Cliente', NULL)
+                SELECT '0' as code, 'Error en la informacion del Cliente' as 'message'
                 RETURN
             END
 
         IF EXISTS (SELECT 1 FROM Mechanical.v_Vehicle WITH (NOLOCK) WHERE LicensePlate = @LicensePlate AND CompanyId = @CompanyId AND [Deleted] IS NULL)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'Ya se encuentra registrado', NULL)
+                SELECT '0' as code, 'Ya se encuentra registrado' as 'message'
                 RETURN
             END 
             
@@ -209,7 +209,7 @@ BEGIN
             SET @payload = (SELECT @Id as id FOR JSON PATH)
 
 		COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1', 'Guadado Correctamente', @payload)
+        SELECT '1' as code, 'Guadado Correctamente' as 'message', @payload as payload
 	END TRY 
 
 	BEGIN CATCH
@@ -222,7 +222,7 @@ BEGIN
             (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'Vehicle/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
 	         
-        SELECT [Common].[ufnSpResponse]('0', 'Error en el procedimiento', NULL)
+        SELECT '0' as code, 'Error en el procedimiento' as 'message'
     END CATCH 
 END
 GO

@@ -78,19 +78,19 @@ BEGIN
         --> VALIDATION OF INFORMATION
         IF NOT EXISTS(SELECT 1 FROM @tbSupport)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'Error en la informacion del soporte', NULL)
+                SELECT '0' as code, 'Error en la informacion del soporte' as 'message'
                 RETURN
             END 
 
         IF @Sequence IS NULL
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'No tiene una configarion de secuencial', NULL)
+                SELECT '0' as code, 'No tiene una configarion de secuencial' as 'message'
                 RETURN
             END 
 
         IF EXISTS (SELECT 1 FROM Mechanical.Support WITH (NOLOCK) WHERE PuntoEmisionId = @PuntoEmisionId AND [Sequence] = @Sequence)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'Secuencial Registrado', NULL)
+                SELECT '0' as code, 'Secuencial Registrado' as 'message'
                 RETURN
             END 
             
@@ -107,7 +107,7 @@ BEGIN
             UPDATE dbo.ConfiguracionDocumento WITH (ROWLOCK) SET ultimaSecuencia = ultimaSecuencia + 1 WHERE idPuntoEmision = @PuntoEmisionId AND idTipoDocumento = @TipoDocumentoId 
 
 		COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1', 'Éxitos al guardar', NULL)
+        SELECT '1' as code, 'Éxitos al guardar' as 'message'
 	END TRY 
 
 	BEGIN CATCH
@@ -120,7 +120,7 @@ BEGIN
               (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'Support/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
 	         
-        SELECT [Common].[ufnSpResponse]('0', 'Error en el procedimiento', NULL)
+        SELECT '0' as code, 'Error en el procedimiento' as 'message'
     END CATCH 
 END
 GO
