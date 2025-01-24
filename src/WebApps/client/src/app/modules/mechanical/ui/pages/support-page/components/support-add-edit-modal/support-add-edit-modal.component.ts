@@ -22,6 +22,7 @@ import Swal from 'sweetalert2';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MatIconModule} from "@angular/material/icon";
 
 interface PuntoEmision {
   establecimientoId: number
@@ -52,6 +53,7 @@ interface UserAssigned {
       MatAutocompleteModule,
       ReactiveFormsModule,
       MatProgressSpinnerModule,
+      MatIconModule,
       AsyncPipe,
       MatCustomDialogComponent,
         VehicleAddEditDirective

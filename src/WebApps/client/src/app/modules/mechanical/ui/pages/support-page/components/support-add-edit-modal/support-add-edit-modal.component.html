@@ -119,6 +119,24 @@
                  [matAutocomplete]="auto"
 
                  [formControl]="filteredCustomerVehicleFormControl">
+
+          <ng-container matSuffix>
+
+            <button mat-icon-button aria-label="Add Customer Vehicle" appVehicleAddEdit (resultModalHandler)="resultModalVehicle($event)">
+              <mat-icon>add</mat-icon>
+            </button>
+            @if (data.vehicleCompanyId>0) {
+            <button mat-icon-button
+
+                     aria-label="Edit Customer Vehicle"
+                    appVehicleAddEdit [params]="{id: data.vehicleCompanyId}" (resultModalHandler)="resultModalVehicle($event)"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+
+            }
+
+          </ng-container>
           <mat-autocomplete #auto="matAutocomplete">
             @if(filteredCustomerVehicleLoading){
               <mat-option

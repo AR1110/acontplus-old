@@ -11,7 +11,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate, formatDateToString, isDateValid } from '@core/utils/date.util';
-import { isValidField } from '@core/utils/utils'; 
+import { isValidField } from '@core/utils/utils';
 import { MatChipsModule } from '@angular/material/chips';
 import {InspectionUseCase} from "@mechanical/domain/use-cases/inspection.use-case";
 

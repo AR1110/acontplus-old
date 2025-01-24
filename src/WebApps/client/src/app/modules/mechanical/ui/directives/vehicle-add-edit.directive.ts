@@ -12,7 +12,8 @@ export class VehicleAddEditDirective {
   dialogSvc = inject(DialogService)
    resultModalHandler  = output<any>();
     params  =input({});
-  @HostListener('click') onClick() {
+  @HostListener('click', ['$event']) onClick($event: Event) {
+    $event.stopPropagation()
     const modalRef = this.dialogSvc.open(VehicleAddEditModalComponent, {
       size: 'xl',
       data: this.params() || {}
