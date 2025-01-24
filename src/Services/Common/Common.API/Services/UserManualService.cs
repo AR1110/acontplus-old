@@ -1,10 +1,5 @@
 ﻿namespace Common.API.Services;
 
-public interface IUserManualService
-{
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-}
-
 public class UserManualService(IAdoRepository adoRepository) : IUserManualService
 {
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)

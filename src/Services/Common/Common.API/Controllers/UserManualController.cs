@@ -1,5 +1,4 @@
-﻿using Common.API.Services;
-using Common.AppSettings.Extensions;
+﻿using Common.AppSettings.Extensions;
 
 namespace Common.API.Controllers;
 

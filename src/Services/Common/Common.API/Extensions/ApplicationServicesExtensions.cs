@@ -23,6 +23,7 @@ public static class ApplicationServicesExtensions
         string[] nameSpaces =
         [
             "Common.Infrastructure.Repository.Implementations",
+            "Common.API.Endpoints.Implementations",
             "Common.API.Services"
         ];
 

@@ -11,7 +11,7 @@ public class EmailSenderConfiguration : BaseEntityTypeConfiguration<EmailSenderC
     public override void Configure(EntityTypeBuilder<EmailSenderConfig> builder)
     {
         base.Configure(builder);
- 
+
         builder
             .Property(x => x.IsGlobal)
             .HasDefaultValue(false);
