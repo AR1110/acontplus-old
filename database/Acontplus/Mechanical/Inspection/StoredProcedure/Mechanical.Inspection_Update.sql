@@ -88,9 +88,9 @@ BEGIN
          FROM @tbInspection
 
         -- ======================= VALIDATION =============================== 
-        IF (SELECT COUNT(*) FROM @tbInspection) = 0 
+        IF NOT EXISTS(SELECT 1 FROM @tbInspection)
             BEGIN
-                 SELECT [Common].[ufnSpResponse]('0', 'Error en la información al registrar', NULL)
+                 SELECT '0' as code, 'Error en la información al registrar' as 'message'
                  RETURN
             END 
 
@@ -114,9 +114,7 @@ BEGIN
 
 
         COMMIT TRAN 
-
-        SELECT [Common].[ufnSpResponse]('1', 'Éxitos al Actualizar', NULL)
-
+        SELECT '1' as code, 'Éxitos al Actualizar' as 'message'
     END TRY 
 
     BEGIN CATCH 
@@ -130,7 +128,7 @@ BEGIN
 		VALUES
         (NEWID(), 'Inspection/Put', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
 	         
-        SELECT [Common].[ufnSpResponse]('0', 'Error al editar La Inspección', NULL)
+        SELECT '0' as code, 'Error al editar La Inspección' as 'mesage'
     END CATCH 
 END
 

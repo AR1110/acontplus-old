@@ -63,13 +63,13 @@ BEGIN
         --> VALIDATION OF INFORMATION 
         IF (SELECT COUNT(*) FROM @tbSupport) = 0
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'Error en la informacion del soporte', NULL)
+                SELECT '0' as code, 'Error en la informacion del soporte' as 'message'
                 RETURN
             END 
 
         IF EXISTS (SELECT 1 FROM Mechanical.v_Support WHERE Id = @id AND codeStatus NOT IN ('PE'))
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'El soporte no puede ser editado', NULL)
+                SELECT '0' as code, 'El soporte no puede ser editado' as 'message'
                 RETURN 
             END
 
@@ -87,7 +87,7 @@ BEGIN
             INNER JOIN @tbSupport       ts ON ts.Id = sp.Id
 
 		COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1', 'Éxitos al Editar', NULL)
+        SELECT '1' as code, 'Éxitos al Editar' as 'message'
 	END TRY 
 
 	BEGIN CATCH
@@ -100,7 +100,7 @@ BEGIN
               (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'Support/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
 	         
-        SELECT [Common].[ufnSpResponse]('0', 'Error en el procedimiento', NULL)
+        SELECT '0' as code, 'Error en el procedimiento' as 'message'
     END CATCH  
 END
 GO

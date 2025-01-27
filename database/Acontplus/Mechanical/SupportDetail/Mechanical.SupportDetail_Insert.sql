@@ -109,13 +109,13 @@ BEGIN
         --> VALIDATION 
         IF NOT EXISTS(SELECT 1 FROM @tbSupportDetail)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'Error en el detalle del soporte', NULL)
+                SELECT '0' as code, 'Error en el detalle del soporte' as 'message'
                 RETURN
             END
 
         IF NOT EXISTS(SELECT 1 FROM @tbSupport)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'Error en el soporte', NULL)
+                SELECT '0' as code, 'Error en el soporte' as 'message'
                 RETURN
             END
 
@@ -155,7 +155,7 @@ BEGIN
             ORDER BY orderIndex ASC
 
         COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1', 'Éxitos al guardar', NULL)
+        SELECT '1' as code, 'Éxitos al guardar' as 'message'
     END TRY
 
     BEGIN CATCH 
@@ -168,6 +168,6 @@ BEGIN
               (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'SupportDetail/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
 	         
-        SELECT [Common].[ufnSpResponse]('0', 'Error en el procedimiento', NULL)
+        SELECT '0' as code, 'Error en el procedimiento' as 'message'
     END CATCH 
 END

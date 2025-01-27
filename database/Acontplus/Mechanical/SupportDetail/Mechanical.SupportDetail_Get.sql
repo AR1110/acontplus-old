@@ -215,7 +215,7 @@ BEGIN
             (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'SupportDetail/Get',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
 	         
-        SELECT [Common].[ufnSpResponse]('0', 'Error en el procedimiento', NULL)
+        SELECT '0' as code,'Error en el procedimiento' as 'message'
     END CATCH
 
 END
