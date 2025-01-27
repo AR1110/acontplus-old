@@ -1,15 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { RESTAURANT_PATHS } from '../enums/restaurant.enum';
+import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class FloorService {
-  #url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.FLOOR}`;
+export class RoomService {
+  #url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.ROOM}`;
   #http = inject(HttpClient);
 
   get<T>(params: T) {

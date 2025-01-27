@@ -1,21 +1,25 @@
 import { Component, inject } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { MatButton } from '@angular/material/button';
-import { Room } from '@restaurant/models/room.model';
+import {MatButton, MatButtonModule} from '@angular/material/button';
+import { Room } from '@restaurant/domain/models/room.model';
 import { ModalService } from '@core/services/modal.service';
 import { RoomAddEditModalComponent } from '@restaurant/infrastructure/room/room-add-edit-modal/room-add-edit-modal.component';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
-import { RoomService } from '@restaurant/services/room.service';
+import { RoomService } from '@restaurant/data/services/room.service';
 import { FormsModule } from '@angular/forms';
-import { FloorService } from '@restaurant/services/floor.service';
-import { Floor } from '@restaurant/models/floor.model';
+import { FloorService } from '@restaurant/data/services/floor.service';
+import { Floor } from '@restaurant/domain/models/floor.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { ApiResponse } from '@core/models/api-response';
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {MatIconModule} from "@angular/material/icon";
 
 @Component({
     selector: 'app-room-list',
@@ -23,6 +27,11 @@ import { ApiResponse } from '@core/models/api-response';
         FaIconComponent,
         MatButton,
         FormsModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatSelectModule,
+      MatIconModule,
+      MatButtonModule,
         TabulatorSemanticUiComponent,
     ],
     templateUrl: './room-list.component.html',
@@ -145,8 +154,10 @@ export class RoomListComponent {
   getEstabs() {
     this.#sharedService.getEstabAsign().subscribe((response) => {
       this.establecimientos = response;
-      if (this.establecimientos.length > 0) {
-        this.establecimientoId = this.establecimientos[0].idEstablecimiento;
+
+      let dataEstab = this.establecimientos.find(item=>item.predeterminado);
+      if(dataEstab){
+        this.establecimientoId = dataEstab.idEstablecimiento;
         setTimeout(() => {
           this.loadData(this.establecimientoId);
         });
@@ -166,6 +177,10 @@ export class RoomListComponent {
       }));
       this.rooms = combinedData as [];
     });
+  }
+
+  refresh(){
+    this.loadData(this.establecimientoId)
   }
 
   ngOnInit() {
@@ -188,7 +203,7 @@ export class RoomListComponent {
   }
 
   onEstabChange($event: any) {
-    this.establecimientoId = $event.target.value;
+    this.establecimientoId = $event.value;
     if (!this.establecimientoId) return;
     this.loadData(this.establecimientoId);
   }

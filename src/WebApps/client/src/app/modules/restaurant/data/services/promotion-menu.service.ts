@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { RESTAURANT_PATHS } from '../enums/restaurant.enum';
+import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
@@ -35,5 +35,5 @@ export class PromotionMenuService {
     )
 
   }
-  
+
 }

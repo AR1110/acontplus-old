@@ -1,29 +1,37 @@
 import { Component, inject } from '@angular/core';
-import { Floor } from '@restaurant/models/floor.model';
-import { Room } from '@restaurant/models/room.model';
+import { Floor } from '@restaurant/domain/models/floor.model';
+import { Room } from '@restaurant/domain/models/room.model';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { TableService } from '@restaurant/services/table.service';
-import { RoomService } from '@restaurant/services/room.service';
-import { Table } from '@restaurant/models/table.model';
+import { TableService } from '@restaurant/data/services/table.service';
+import { RoomService } from '@restaurant/data/services/room.service';
+import { Table } from '@restaurant/domain/models/table.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
+import {MatButton, MatButtonModule} from '@angular/material/button';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { ApiResponse } from '@core/models/api-response';
 import swal from 'sweetalert2';
 import { TableAddEditModalComponent } from '@restaurant/infrastructure/table/table-add-edit-modal/table-add-edit-modal.component';
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {MatIconModule} from "@angular/material/icon";
 
 @Component({
     selector: 'app-table-list',
     imports: [
         FaIconComponent,
         FormsModule,
-        MatButton,
+        MatButtonModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatSelectModule,
+      MatIconModule,
         TabulatorSemanticUiComponent,
     ],
     templateUrl: './table-list.component.html',
@@ -148,11 +156,18 @@ export class TableListComponent {
   #sharedService = inject(SharedService);
   #tS = inject(ToasterService);
 
+
+  refresh(){
+    this.loadData(this.establecimientoId)
+  }
+
   getEstabs() {
     this.#sharedService.getEstabAsign().subscribe((response) => {
       this.establecimientos = response;
-      if (this.establecimientos.length > 0) {
-        this.establecimientoId = this.establecimientos[0].idEstablecimiento;
+
+      let dataEstab = this.establecimientos.find(item=>item.predeterminado);
+      if(dataEstab){
+        this.establecimientoId = dataEstab.idEstablecimiento;
         setTimeout(() => {
           this.loadData(this.establecimientoId);
         });
@@ -194,7 +209,7 @@ export class TableListComponent {
   }
 
   onEstabChange($event: any) {
-    this.establecimientoId = $event.target.value;
+    this.establecimientoId = $event.value;
     if (!this.establecimientoId) return;
     this.loadData(this.establecimientoId);
   }
@@ -229,6 +244,7 @@ export class TableListComponent {
         }
       });
   }
+
 
   private onEdit(table: Table) {
     this.#tableService

@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { Menu, MenuType } from '@restaurant/models/menu.model';
-import { MenuService } from '@restaurant/services/menu.service';
-import { MenuItemService } from '@restaurant/services/menu-item.service';
+import { Menu, MenuType } from '@restaurant/domain/models/menu.model';
+import { MenuService } from '@restaurant/data/services/menu.service';
+import { MenuItemService } from '@restaurant/data/services/menu-item.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ItemSearchComponent } from '@restaurant/products/item/item-search/item-search.component';
-import { Item } from '@restaurant/models/item.model';
+import { Item } from '@restaurant/domain/models/item.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';

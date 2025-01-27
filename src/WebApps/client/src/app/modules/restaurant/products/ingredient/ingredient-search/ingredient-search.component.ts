@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbHighlight, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
-import { IngredientService } from '@restaurant/services/ingredient.service';
+import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import {
   catchError,
   distinctUntilChanged,
@@ -11,7 +11,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { Ingredient } from '@restaurant/models/ingredient.model';
+import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 
 @Component({
     selector: 'app-ingredient-search',

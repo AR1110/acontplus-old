@@ -1,58 +1,98 @@
-import { Component, inject, ViewChild } from '@angular/core';
-import { Floor } from '@restaurant/models/floor.model';
+import {Component, inject, signal, TemplateRef, ViewChild} from '@angular/core';
+import { Floor } from '@restaurant/domain/models/floor.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ModalService } from '@core/services/modal.service';
 import { FloorAddEditModalComponent } from '@restaurant/infrastructure/floor/floor-add-edit-modal/floor-add-edit-modal.component';
-import { FloorService } from '@restaurant/services/floor.service';
+ ;
 import { SharedService } from '@core/services/shared.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatButton } from '@angular/material/button';
+import {MatButton, MatButtonModule} from '@angular/material/button';
 import { NgClass } from '@angular/common';
-import {
-  NgbAccordionItem,
-  NgbAccordionModule,
-} from '@ng-bootstrap/ng-bootstrap';
+
 import swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
+import {FloorUseCase} from "@restaurant/domain/use-cases/floor.use-case";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {MatPagination} from "@shared/models/pagination.model";
+import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
+import {MatIconModule} from "@angular/material/icon";
+import {FormsModule} from "@angular/forms";
+import {finalize} from "rxjs/operators";
 
 @Component({
     selector: 'app-floor-list',
     imports: [
         FaIconComponent,
-        NgbAccordionModule,
-        MatExpansionModule,
         MatButton,
         NgClass,
+      MatFormFieldModule, MatInputModule, MatSelectModule,
+      MatIconModule,
+      MatButtonModule,
+      FormsModule,
+      MatDynamicTableComponent
     ],
     templateUrl: './floor-list.component.html',
     styles: ``
 })
 export class FloorListComponent {
-  @ViewChild('accordionItem') accordionItem: NgbAccordionItem | undefined;
+  @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
   establecimientoId: number = 0;
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
-  data = {} as Floor;
   floors: Floor[] = [];
-  #floorService = inject(FloorService);
+
+  private _floorUseCase = inject(FloorUseCase);
   #modalService = inject(ModalService);
   #sharedService = inject(SharedService);
   #tS = inject(ToasterService);
 
-  loadData(establecimientoId: number) {
+  isLoadingResults = false;
+
+  columnsDefs: ColumnDefinition[] = [
+
+    { key: 'index', label: 'Nro.', type: 'string' },
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'code', label: 'Código', type: 'string' },
+    { key: 'description', label: 'Descripción', type: 'string' },
+    { key: 'capacity', label: 'Capacidad', type: 'string' },
+    { key: 'estado', label: 'Estado', type: 'template' },
+
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+
+  pagination = signal(new MatPagination());
+
+
+  refresh(){
+    this.loadData()
+  }
+
+  loadData( ) {
     // if (!this.panelOpenState()) {
     //   return;
     // }
-    this.establecimientoId = establecimientoId;
-    this.#floorService.getByEstab(establecimientoId).subscribe((response) => {
-      this.floors = (response.payload as Floor[]) || [];
-    });
+    this.isLoadingResults = true;
+    this._floorUseCase.getByEstab(this.establecimientoId)
+      .pipe(
+        finalize(()=>this.isLoadingResults=false)
+      )
+      .subscribe(res=>{
+      this.floors = res;
+    })
+
   }
 
   getEstabs() {
     this.#sharedService.getEstabAsign().subscribe((response) => {
       this.establecimientos = response;
+      let dataEstab = this.establecimientos.find(item=>item.predeterminado);
+      if(dataEstab){
+        this.establecimientoId = dataEstab.idEstablecimiento;
+        this.loadData();
+      }
     });
   }
 
@@ -60,10 +100,16 @@ export class FloorListComponent {
     this.getEstabs();
   }
 
-  onEdit(item: Floor) {
-    this.data = item;
-    this.onModalOpen();
+  ngAfterViewInit(): void {
+    // Asignar el template después de que la vista se haya inicializado
+    this.columnsDefs.forEach((col) => {
+      if (col.type === 'template') {
+        col.templateOutlet = this.statusTemplate;
+      }
+    });
+
   }
+
 
   onDelete(item: Floor) {
     swal
@@ -79,20 +125,20 @@ export class FloorListComponent {
       })
       .then((response) => {
         if (response.isConfirmed) {
-          this.#floorService.delete(item.id).subscribe((result) => {
+          this._floorUseCase.remove(item.id).subscribe((result) => {
             this.#tS.toastr({
               type: result.code == '1' ? 'success' : 'warning',
               message: result.message,
             });
             if (result.code == '1') {
-              this.loadData(this.establecimientoId);
+              this.refresh( );
             }
           });
         }
       });
   }
 
-  onModalOpen() {
+  onModalOpen(data?: Floor) {
     const modalRef = this.#modalService.openModalCustom(
       FloorAddEditModalComponent,
       {
@@ -100,28 +146,19 @@ export class FloorListComponent {
         centered: true,
       },
     );
-    const modalData = Object.assign(this.data, {
+    modalRef.componentInstance.data = {
       establecimientoId: this.establecimientoId,
-    });
-    modalRef.componentInstance.data = modalData;
-    if (this.data.id > 0) {
-      modalRef.componentInstance.data = modalData;
+    };
+    if (data && data.id > 0) {
+      modalRef.componentInstance.data = Object.assign(data, {
+        establecimientoId: this.establecimientoId,
+      });
     }
     modalRef.result.then((response) => {
-      if (typeof response == 'object') {
-        if (response.code == '1') {
-          this.loadData(this.establecimientoId);
-        }
-      }
-      this.data = {} as Floor;
-    });
-  }
+      if (response && typeof response == 'object') {
 
-  onPanelToggle(item: EstablecimientoSelectHtmlOnly) {
-    if (!this.accordionItem) return;
-    const isOpen = !this.accordionItem.collapsed;
-    if (isOpen) {
-      this.loadData(item.idEstablecimiento);
-    }
+          this.refresh( );
+      }
+    });
   }
 }

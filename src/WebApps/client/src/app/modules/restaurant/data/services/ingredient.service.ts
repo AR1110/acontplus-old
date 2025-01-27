@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { RESTAURANT_PATHS } from '@restaurant/enums/restaurant.enum';
+import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 import { map, Observable } from 'rxjs';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { Ingredient } from '@restaurant/models/ingredient.model';
+import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 
 @Injectable({
   providedIn: 'root',

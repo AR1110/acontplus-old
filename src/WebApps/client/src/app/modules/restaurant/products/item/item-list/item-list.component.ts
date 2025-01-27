@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
-import { Item } from '@restaurant/models/item.model';
-import { ItemService } from '@restaurant/services/item.service';
+import { Item } from '@restaurant/domain/models/item.model';
+import { ItemService } from '@restaurant/data/services/item.service';
 import { MatPagination,  } from '@shared/models/pagination.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';

@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { IngredientService } from '@restaurant/services/ingredient.service';
-import { Ingredient } from '@restaurant/models/ingredient.model';
+import { IngredientService } from '@restaurant/data/services/ingredient.service';
+import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import {
   FormControl,
@@ -11,7 +11,7 @@ import {
 } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { IngredientType } from '@restaurant/models/ingredient-type';
+import { IngredientType } from '@restaurant/domain/models/ingredient-type';
 
 @Component({
     selector: 'app-ingredient-add-edit-modal',

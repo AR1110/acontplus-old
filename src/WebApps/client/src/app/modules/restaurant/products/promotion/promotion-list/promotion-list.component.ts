@@ -2,7 +2,7 @@ import { Component, inject, model, signal } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
 import { RestaurantStoreService } from '@modules/restaurant/store/restaurant-store.service';
 import { PromotionAddEditModalComponent } from '../promotion-add-edit-modal/promotion-add-edit-modal.component';
-import { PromotionService } from '@modules/restaurant/services/promotion.service';
+import { PromotionService } from '@restaurant/data/services/promotion.service';
 import { Pagination } from '@shared/models/pagination.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
@@ -32,7 +32,7 @@ export class PromotionListComponent {
   pagination = signal(new Pagination())
   days = signal<any[]>([])
 
-  openModalAddEdit<T>(data?: T) { 
+  openModalAddEdit<T>(data?: T) {
     let modalRef = this.modalSvc.open(PromotionAddEditModalComponent,
       {
         size: 'lg',
@@ -65,7 +65,7 @@ export class PromotionListComponent {
         this.pagination.update(e => {
           return {
             ...e,
-            
+
             totalRecords: this.promotions()[0].totalRecords
           }
         })

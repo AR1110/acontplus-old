@@ -10,9 +10,9 @@ import {
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { RoomService } from '@restaurant/services/room.service';
-import { FloorService } from '@restaurant/services/floor.service';
-import { Floor } from '@restaurant/models/floor.model';
+import { RoomService } from '@restaurant/data/services/room.service';
+import { FloorService } from '@restaurant/data/services/floor.service';
+import { Floor } from '@restaurant/domain/models/floor.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({

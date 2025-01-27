@@ -7,18 +7,18 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Item } from '@restaurant/models/item.model';
-import { Recipe } from '@restaurant/models/recipe.model';
+import { Item } from '@restaurant/domain/models/item.model';
+import { Recipe } from '@restaurant/domain/models/recipe.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import {
   NgbActiveModal,
 } from '@ng-bootstrap/ng-bootstrap';
 import { IngredientSearchComponent } from '@restaurant/products/ingredient/ingredient-search/ingredient-search.component';
-import { Ingredient } from '@restaurant/models/ingredient.model';
-import { ItemService } from '@restaurant/services/item.service';
+import { Ingredient } from '@restaurant/domain/models/ingredient.model';
+import { ItemService } from '@restaurant/data/services/item.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { IngredientService } from '@restaurant/services/ingredient.service';
-import { RecipeService } from '@restaurant/services/recipe.service';
+import { IngredientService } from '@restaurant/data/services/ingredient.service';
+import { RecipeService } from '@restaurant/data/services/recipe.service';
 
 @Component({
     selector: 'app-item-add-edit-modal',

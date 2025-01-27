@@ -4,7 +4,7 @@ import { Component, HostListener, inject, Input, output, QueryList, ViewContaine
 import { ReactiveFormsModule } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { isValidField } from '@core/utils/utils';
-import { MenuService } from '@modules/restaurant/services/menu.service';
+import { MenuService } from '@restaurant/data/services/menu.service';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
 import { map, Subject } from 'rxjs';

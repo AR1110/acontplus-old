@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { Ingredient } from '@restaurant/models/ingredient.model';
-import { IngredientService } from '@restaurant/services/ingredient.service';
+import { Ingredient } from '@restaurant/domain/models/ingredient.model';
+import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { ModalService } from '@core/services/modal.service';
 import { Pagination } from '@shared/models/pagination.model';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';

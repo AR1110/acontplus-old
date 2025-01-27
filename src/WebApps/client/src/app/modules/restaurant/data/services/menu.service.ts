@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { RESTAURANT_PATHS } from '@restaurant/enums/restaurant.enum';
+import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 import { map } from 'rxjs';
@@ -51,7 +51,7 @@ export class MenuService {
           menus: [] as any[]
         }
         if(response.code==="1"){
-          let mainData = JSON.parse(response.payload as string); 
+          let mainData = JSON.parse(response.payload as string);
           result.menus = mainData["menus"] || [];
         }
         return result;

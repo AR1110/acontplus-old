@@ -8,12 +8,12 @@ import {
 } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { RoomService } from '@restaurant/services/room.service';
+import { RoomService } from '@restaurant/data/services/room.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { ApiResponse } from '@core/models/api-response';
-import { Room } from '@restaurant/models/room.model';
+import { Room } from '@restaurant/domain/models/room.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { TableService } from '@restaurant/services/table.service';
+import { TableService } from '@restaurant/data/services/table.service';
 
 @Component({
     selector: 'app-table-add-edit-modal',
