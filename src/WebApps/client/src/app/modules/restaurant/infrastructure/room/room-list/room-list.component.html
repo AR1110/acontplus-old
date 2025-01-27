@@ -1,25 +1,28 @@
 <div class="card w-100">
   <div class="card-body">
-    <div class="row mt-2 mb-2">
-      <div class="col-6">
-        <button (click)="onModalOpen()" mat-raised-button title="Registrar nueva sala" type="button">
-          <fa-icon [icon]="'plus'"></fa-icon>
-          Registrar
-        </button>
-      </div>
-      <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-        <div class="form-group">
-          <select (change)="onEstabChange($event)" class="form-select" id="idEstablecimiento" name="idEstablecimiento">
-            <option value="">Seleccione un establecimiento</option>
-            @for (item of establecimientos; track $index) {
-              <option [value]="item.idEstablecimiento" [selected]="establecimientoId">{{ item.nombreComercial }}
-              </option>
+
+    <div class="row cols-xxl-6 cols-xl-6 cols-lg-6 cols-md-6 cols-sm-12 cols-12">
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select [(ngModel)]="establecimientoId" (selectionChange)="onEstabChange($event)">
+            @for(item of  establecimientos; track $index){
+              <mat-option [value]="item.idEstablecimiento">{{item.estab}}-{{item.nombreComercial}}</mat-option>
             }
-          </select>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <div class="d-flex gap-2 align-items-center justify-content-end">
+          <button mat-icon-button aria-label="Nuevo" (click)="onModalOpen()">
+            <mat-icon>add</mat-icon>
+          </button>
+          <button mat-icon-button aria-label="Refresh" (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+          </button>
         </div>
       </div>
     </div>
-
     <div class="row">
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <app-tabulator-semantic-ui

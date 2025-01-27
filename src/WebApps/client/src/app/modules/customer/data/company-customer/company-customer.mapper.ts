@@ -1,3 +1,4 @@
+import {getValidId, isValidField} from "@core/utils/utils";
 
 
 export class CompanyCustomerMapper {
@@ -56,4 +57,35 @@ export class CompanyCustomerMapper {
     })
 
   }
+
+
+  static toSave(param:any){
+     return {
+           idCliente:  isValidField(param.idCliente) ,
+          idEmpleado: getValidId(param.idEmpleado),
+          idTipoIdentificacion: param.idTipoIdentificacion,
+          idTipoClienteProveedor: getValidId(param.idTipoClienteProveedor),
+          idTipoEntidad:getValidId(param.idTipoEntidad),
+          idCiudad: getValidId(param.idCiudad),
+          idSubContribuyente: getValidId(param.idSubContribuyente),
+          idTiempoCredito: param.idTiempoCredito,
+          idEmpresa: getValidId(param.idEmpresa),
+          idCargo: getValidId(param.idCargo),
+          numeroIdentificacion: param.numeroIdentificacion,
+          nombreFiscal: param.nombreFiscal,
+          nombreComercial: param.nombreComercial,
+          direccion:isValidField(param.direccion),
+          telefono:isValidField(param.telefono),
+          correo:isValidField(param.correo),
+          placa:isValidField(param.placa),
+          montoCredito:isValidField(param.montoCredito),
+          nota:isValidField(param.nota),
+          validationSri: param.validationSri,
+          idFormaPagoSri: getValidId(param.idFormaPagoSri),
+          estado: param.estado || true,
+          infoCrediticia: param.dataInfoCred && JSON.stringify(param.dataInfoCred),
+          configValorBruto : param.configValorBruto || null
+     }
+  }
+
 }

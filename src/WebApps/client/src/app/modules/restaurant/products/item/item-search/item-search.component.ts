@@ -10,8 +10,8 @@ import {
 } from 'rxjs';
 import { NgbHighlight, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
-import { Item } from '@restaurant/models/item.model';
-import { ItemService } from '@restaurant/services/item.service';
+import { Item } from '@restaurant/domain/models/item.model';
+import { ItemService } from '@restaurant/data/services/item.service';
 
 @Component({
     selector: 'app-item-search',

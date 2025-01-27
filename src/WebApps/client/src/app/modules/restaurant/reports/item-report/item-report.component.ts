@@ -6,7 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedService } from '@core/services/shared.service';
-import { RESTAURANT_CODE_REPORT } from '@modules/restaurant/enums/restaurant.enum';
+import { RESTAURANT_CODE_REPORT } from '@restaurant/domain/enums/restaurant.enum';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -17,7 +17,7 @@ import {
 } from 'rxjs';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AsyncPipe } from '@angular/common';
-import { ItemService } from '@modules/restaurant/services/item.service';
+import { ItemService } from '@restaurant/data/services/item.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
 import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";

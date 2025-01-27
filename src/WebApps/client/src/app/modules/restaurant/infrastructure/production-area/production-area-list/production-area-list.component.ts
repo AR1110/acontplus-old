@@ -4,7 +4,7 @@ import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import swal from 'sweetalert2';
-import { ProductionAreaService } from '@restaurant/services/production-area.service';
+import { ProductionAreaService } from '@restaurant/data/services/production-area.service';
 import { ProductionAreaAddEditModalComponent } from '@restaurant/infrastructure/production-area/production-area-add-edit-modal/production-area-add-edit-modal.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +13,7 @@ import {
   NgbAccordionItem,
   NgbAccordionModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import { ProductionArea } from '@restaurant/models/production-area';
+import { ProductionArea } from '@restaurant/domain/models/production-area';
 import { NgClass } from '@angular/common';
 
 @Component({

@@ -1,25 +1,26 @@
 import { Component, inject } from '@angular/core';
-import { Floor } from '@restaurant/models/floor.model';
+import { Floor } from '@restaurant/domain/models/floor.model';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { FloorService } from '@restaurant/services/floor.service';
+import { FloorService } from '@restaurant/data/services/floor.service';
 import { SharedService } from '@core/services/shared.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from '@core/services/toaster.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
-import { Room } from '@restaurant/models/room.model';
+import { Room } from '@restaurant/domain/models/room.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import { MatButton } from '@angular/material/button';
 import { ApiResponse } from '@core/models/api-response';
 import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { RoomService } from '@restaurant/services/room.service';
+import { RoomService } from '@restaurant/data/services/room.service';
+import {FloorUseCase} from "@restaurant/domain/use-cases/floor.use-case";
 
 @Component({
     selector: 'app-floor-add-edit-modal',
@@ -119,7 +120,8 @@ export class FloorAddEditModalComponent {
   modalIcon: IconProp = 'plus';
   modalTitle: string = 'Registrar Piso';
   rooms: Room[] = [];
-  _floorService = inject(FloorService);
+
+  private _floorUseCase = inject(FloorUseCase)
   _modalRef = inject(NgbActiveModal);
   _roomService = inject(RoomService);
   _sharedService = inject(SharedService);
@@ -183,11 +185,11 @@ export class FloorAddEditModalComponent {
     };
 
     if (this.data.id > 0) {
-      this._floorService.put(this.data.id, dataToSave).subscribe((response) => {
+      this._floorUseCase.put(this.data.id, dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     } else {
-      this._floorService.post(dataToSave).subscribe((response) => {
+      this._floorUseCase.post(dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     }

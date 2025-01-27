@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { RESTAURANT_PATHS } from '@restaurant/enums/restaurant.enum';
+import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
@@ -22,13 +22,13 @@ export class RestaurantConfigService {
         return this.http.get<ApiResponse>(`${this.url}?json=${json}`, {
             context: getNoLoader()
         }).pipe(
-            map(response => { 
+            map(response => {
                 let result = {
                     estabs: [] as GroupedEstab[]
                 }
                 if (response.code === "1") {
                     let { puntosEmision, bodegas } = JSON.parse(response.payload as string)
-              
+
                     let obj = {
                         estabs: puntosEmision,
                         bodegas: bodegas,
@@ -36,7 +36,7 @@ export class RestaurantConfigService {
                         isGroupPuntoEmision: true,
                     };
                     result.estabs = groupEstabUtil(obj)
-                } 
+                }
                 return result;
             })
         )

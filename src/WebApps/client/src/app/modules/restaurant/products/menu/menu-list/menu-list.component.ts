@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
-import { Menu } from '@restaurant/models/menu.model';
-import { MenuService } from '@restaurant/services/menu.service';
+import { Menu } from '@restaurant/domain/models/menu.model';
+import { MenuService } from '@restaurant/data/services/menu.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { Pagination } from '@shared/models/pagination.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';

@@ -13,6 +13,7 @@ import { provideToastr } from 'ngx-toastr';
 import { authMainProvider } from '@modules/auth/providers';
 import { commonProviders } from '@modules/common/providers';
 import { mechanicalProvider } from '@mechanical/providers';
+import {restaurantProvider} from "@restaurant/providers";
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -45,4 +46,5 @@ export const featureProviders = [
   ...authMainProvider,
   ...commonProviders,
   ...mechanicalProvider,
+  ...restaurantProvider
 ];

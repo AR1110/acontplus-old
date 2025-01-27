@@ -169,7 +169,9 @@ export class CompanyCustomerWebRepository extends CompanyCustomerRepository{
     return this._http.delete<ApiResponse>(`${this._url}${idCliente}`);
   }
 
-  post<T>(data: T) {
+  post<T>(obj: T) {
+    let data = CompanyCustomerMapper.toSave(obj);
+
     return this._http.post<ApiResponse>(this._url, { data }).pipe(
       map((response) => {
         let result = {} as ApiResponse;
@@ -185,7 +187,8 @@ export class CompanyCustomerWebRepository extends CompanyCustomerRepository{
     );
   }
 
-  put<T>(id: number, data: T) {
+  put<T>(id: number, obj: T) {
+    let data = CompanyCustomerMapper.toSave(obj);
     return this._http
       .put<ApiResponse>(`${this._url}${id}`, { data })
   }
