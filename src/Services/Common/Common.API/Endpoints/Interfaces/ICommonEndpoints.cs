@@ -2,6 +2,6 @@
 
 public interface ICommonEndpoints
 {
-    Task<IResult> GetDashboardAsync(HttpContext context);
-    Task<IResult> GetReleaseAsync(HttpContext context);
+    Task<IResult> GetDashboardAsync(string json);
+    Task<IResult> GetReleaseAsync();
 }
