@@ -25,11 +25,11 @@ public class ReleaseDto
             switch (_decompressedContent)
             {
                 case null when CompressedContent != null:
-                {
-                    var decompressedBytes = CompressionUtils.DecompressGZip(CompressedContent);
-                    _decompressedContent = Encoding.UTF8.GetString(decompressedBytes);
-                    break;
-                }
+                    {
+                        var decompressedBytes = CompressionUtils.DecompressGZip(CompressedContent);
+                        _decompressedContent = Encoding.UTF8.GetString(decompressedBytes);
+                        break;
+                    }
             }
 
             return _decompressedContent;

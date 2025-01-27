@@ -1,7 +1,7 @@
 ﻿using Common.AppSettings.Extensions;
 
 namespace Common.API.Controllers;
-public class EmailQueueController (IEmailQueueService emailQueueService): ControllerBase
+public class EmailQueueController(IEmailQueueService emailQueueService) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest apiRequest)
