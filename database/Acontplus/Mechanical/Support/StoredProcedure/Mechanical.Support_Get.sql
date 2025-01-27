@@ -162,14 +162,6 @@ BEGIN
                     SELECT ap.idEstablecimiento       as establecimientoId
                           ,ap.idPuntoEmision          as puntoEmisionId
                           ,ap.estab + '-' + ap.ptoEmi as ptoEmi
-                          ,ISNULL
-                          ((
-                                SELECT TOP 1 (REPLICATE('0',(9-LEN(cd.ultimaSecuencia)))+CONVERT(NVARCHAR(10),cd.ultimaSecuencia)) 
-                                FROM dbo.ConfiguracionDocumento cd WITH (NOLOCK) 
-                                WHERE cd.idPuntoEmision = ap.idPuntoEmision 
-                                  AND cd.idTipoDocumento = @TipoDocumentoId
-
-                          ),'0') as [sequence]
                     FROM v_PtoEmi_Asign ap WITH (NOLOCK) 
                     WHERE idUsuarioRol = @userRoleId 
                     ORDER BY defaultPtoEmi DESC
@@ -536,6 +528,23 @@ BEGIN
 
                     RETURN 
                 END
+            
+            --> SerieComprobante
+            IF @tipo = 9 
+                BEGIN
+                    DECLARE @idPuntoEmision INT
+
+                    SET @tableNames = 'sequence'
+
+                    SELECT @idPuntoEmision = idPuntoEmision FROM OPENJSON(@json) WITH (idPuntoEmision INT)
+                    
+                    SELECT serieComprobante = [Common].[ufnGetSerieDocument](cd.estab,cd.ptoEmi,secuencial,0) 
+                    FROM Config.v_ConfigDocumento cd WITH (NOLOCK) 
+			        WHERE cd.idPuntoEmision = @idPuntoEmision
+			          AND cd.codDoc = 'SM'
+
+                    RETURN 
+                END 
      END TRY 
 
      BEGIN CATCH 

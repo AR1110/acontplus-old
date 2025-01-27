@@ -192,7 +192,7 @@ BEGIN
             -- CUSTOMER RECORD -- 
 			INSERT INTO [Mechanical].[VehicleCompany]
 				   (VehicleId ,CompanyId ,UserId ,CustomerId,Observation)
-			SELECT @VehicleId,@CompanyId,@userId,@CustomerId,Observation
+			SELECT @VehicleId,@CompanyId,@userId,@CustomerCompanyId,Observation
             FROM @tbVehicle
 
             SELECT TOP 1 @LicensePlate = STRING_AGG(ve.LicensePlate,'|')
