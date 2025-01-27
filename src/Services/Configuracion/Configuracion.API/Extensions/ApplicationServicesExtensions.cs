@@ -27,9 +27,12 @@ public static class ApplicationServicesExtensions
         [
             "Common.Application.Services",
             "Common.Infrastructure.Repository.Implementations",
+            "Configuracion.API.Endpoints.Implementations",
             "Configuracion.API.Services",
+            "Configuracion.API.Services.Printing",
             "Configuracion.API.Services.Sri",
-            "Configuracion.API.Services.WizardConfig"
+            "Configuracion.API.Services.WizardConfig",
+            "Services.Common.Extensions",
         ];
 
         services.Scan(scan => scan

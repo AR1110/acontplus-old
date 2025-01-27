@@ -1,4 +1,4 @@
-﻿namespace Configuracion.API.Interfaces;
+﻿namespace Configuracion.API.Interfaces.Printing;
 
 public interface IPrinterService
 {

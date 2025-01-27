@@ -12,6 +12,7 @@ global using Configuracion.API.Entities;
 global using Configuracion.API.Extensions;
 global using Configuracion.API.Helpers;
 global using Configuracion.API.Interfaces;
+global using Configuracion.API.Interfaces.Printing;
 global using Configuracion.API.Interfaces.Sri;
 global using Configuracion.API.Services;
 global using Microsoft.AspNetCore.Mvc;

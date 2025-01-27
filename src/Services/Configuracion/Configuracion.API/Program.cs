@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Common.AppSettings;
+using Configuracion.API.Extensions.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,8 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseMiddleware<MobileRequestMiddleware>();
+
+app.MapPrinterEndpoints();
 
 app.UseRouting();
 

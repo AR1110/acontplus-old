@@ -17,7 +17,7 @@ namespace Configuracion.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -79,7 +79,7 @@ namespace Configuracion.API.Data.Migrations
 
                     b.HasIndex("EstablecimientoId")
                         .IsUnique()
-                        .HasDatabaseName("UI_EstabLogo_EstablecimientoId");
+                        .HasDatabaseName("UX_EstabLogo_EstablecimientoId");
 
                     b.ToTable("EstablecimientoLogo", "Config");
                 });
@@ -99,6 +99,11 @@ namespace Configuracion.API.Data.Migrations
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Domain")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<bool?>("Enabled")
                         .ValueGeneratedOnAdd()
@@ -265,7 +270,7 @@ namespace Configuracion.API.Data.Migrations
 
                     b.HasIndex("Code")
                         .IsUnique()
-                        .HasDatabaseName("UI_PrinterType");
+                        .HasDatabaseName("UX_PrinterType_Code");
 
                     b.ToTable("PrinterType", "Config");
                 });

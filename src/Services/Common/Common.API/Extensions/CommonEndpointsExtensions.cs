@@ -6,7 +6,7 @@ public static class CommonEndpointsExtensions
 {
     public static WebApplication MapCommonEndpoints(this WebApplication app)
     {
-        var apiGroup = app.MapGroup("/api");
+        var apiGroup = app.MapGroup("/api").RequireAuthorization();
 
         //dashboard data
         apiGroup.MapGet("/dashboard", async ([FromServices] ICommonEndpoints endpoints, HttpContext context) =>

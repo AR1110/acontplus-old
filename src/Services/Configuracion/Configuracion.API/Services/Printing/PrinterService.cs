@@ -1,19 +1,10 @@
-﻿namespace Configuracion.API.Services;
+﻿namespace Configuracion.API.Services.Printing;
 
-public class PrinterService : IPrinterService
+public class PrinterService(ConfigContext context, IAdoRepository repository) : IPrinterService
 {
-    private readonly ConfigContext _context;
-    private readonly IAdoRepository _repository;
-
-    public PrinterService(ConfigContext context, IAdoRepository repository)
-    {
-        _context = context;
-        _repository = repository;
-    }
-
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("Config.Printer_Get", parameters);
+        var ds = await repository.GetDataSetAsync("Config.Printer_Get", parameters);
         if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0) { return null; }
 
         return DataConverters.DataSetToJson(ds);
@@ -21,13 +12,13 @@ public class PrinterService : IPrinterService
 
     public async Task<Printer> GetByIdAsync(int id)
     {
-        return await _context.Printers.Include(x => x.Documents).FirstOrDefaultAsync(x => x.Id == id);
+        return await context.Printers.Include(x => x.Documents).FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<object> AddAsync(Printer printer)
     {
-        await _context.AddAsync(printer);
-        await _context.SaveChangesAsync();
+        await context.AddAsync(printer);
+        await context.SaveChangesAsync();
         return new { code = "1", message = "Guardada Exitosamente" };
     }
 
@@ -38,7 +29,7 @@ public class PrinterService : IPrinterService
             return new { code = "0", message = "Id Incorrecto" };
         }
 
-        var printerFound = await _context.Printers.FindAsync(id);
+        var printerFound = await context.Printers.FindAsync(id);
         if (printerFound == null)
         {
             return null;
@@ -53,15 +44,16 @@ public class PrinterService : IPrinterService
         printerFound.IsDefault = printer.IsDefault;
         printerFound.Enabled = printer.Enabled;
         printerFound.UserId = printer.UserId;
-        _context.Update(printerFound);
-        await _context.SaveChangesAsync();
+        printerFound.Domain = printer.Domain;
+        context.Update(printerFound);
+        await context.SaveChangesAsync();
 
         return new { code = "1", message = "Actualizada exitosamente" };
     }
 
     public async Task<object> DeleteAsync(int id, int userId)
     {
-        var printerFound = await _context.Printers.FindAsync(id);
+        var printerFound = await context.Printers.FindAsync(id);
         if (printerFound == null)
         {
             return null;
@@ -70,8 +62,8 @@ public class PrinterService : IPrinterService
         printerFound.Enabled = false;
         printerFound.Deleted = true;
         printerFound.UserId = userId;
-        _context.Update(printerFound);
-        await _context.SaveChangesAsync();
+        context.Update(printerFound);
+        await context.SaveChangesAsync();
         return new { code = "1", message = "Eliminada exitosamente" };
     }
 }
