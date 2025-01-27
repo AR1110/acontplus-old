@@ -2,11 +2,6 @@
 
 namespace Common.API.Services;
 
-public interface IReleaseService
-{
-    Task<ApiResponse> GetAsync(int userRoleId);
-}
-
 public class ReleaseService(IAdoRepository adoRepository) : IReleaseService
 {
     public async Task<ApiResponse> GetAsync(int userRoleId)

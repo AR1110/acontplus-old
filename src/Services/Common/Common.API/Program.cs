@@ -28,6 +28,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+// Add endpoints to the web application with minimal API's.
+app.MapCommonEndpoints();
+
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseMiddleware<MobileRequestMiddleware>();
