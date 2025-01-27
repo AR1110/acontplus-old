@@ -23,7 +23,7 @@ public static class ApplicationServicesExtensions
             "Common.S3Application.Services",
             "Inventario.API.Services",
         ];
-        
+
         services.Scan(scan => scan
             .FromApplicationDependencies()
             .AddClasses(classes => classes.InNamespaces(nameSpaces))
@@ -31,7 +31,7 @@ public static class ApplicationServicesExtensions
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
-        
+
         services.AddSingleton<S3ObjectCustom>();
         return services;
     }

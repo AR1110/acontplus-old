@@ -39,7 +39,7 @@ namespace Mechanical.API.Entities
         [Required]
         [Column(TypeName = "numeric(18,5), null")]
         public decimal Discount { get; set; }
-        
+
         [Required]
         [Column(TypeName = "numeric(18,5), null")]
         public decimal Total { get; set; }

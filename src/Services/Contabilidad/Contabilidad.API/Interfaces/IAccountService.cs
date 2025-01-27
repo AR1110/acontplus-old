@@ -9,6 +9,6 @@ namespace Contabilidad.API.Interfaces
 
         Task<LegacyApiResponse> UpdateAsync(int id, Account account);
         Task<LegacyApiResponse> DeleteAsync(int userId, int id);
-        
+
     }
 }

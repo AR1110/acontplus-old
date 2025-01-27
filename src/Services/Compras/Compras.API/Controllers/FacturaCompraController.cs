@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Compras.API.Controllers;
+﻿namespace Compras.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -14,7 +12,7 @@ public class FacturaCompraController : ControllerBase
     {
         _configuration = configuration;
         _facturaCompraSvc = facturaCompraSvc;
-        
+
     }
 
     [HttpGet("Get")]

@@ -1,5 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-using FactElect.API.Models;
+﻿using FactElect.API.Models;
 using FactElect.API.Services.Sri;
 
 namespace FactElect.API.Controllers.Sri;

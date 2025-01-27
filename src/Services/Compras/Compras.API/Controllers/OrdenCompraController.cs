@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Compras.API.Controllers;
+﻿namespace Compras.API.Controllers;
 
 public class OrdenCompraController : BaseApiController
 {
@@ -11,7 +9,7 @@ public class OrdenCompraController : BaseApiController
     {
         _configuration = configuration;
         _ordeCompraSvc = ordeCompraSvc;
-        
+
     }
 
     [HttpGet("Get")]

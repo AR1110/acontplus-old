@@ -39,7 +39,7 @@ public class RoomService(RestaurantContext context) : IRoomService
         {
             return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
         }
-        
+
         context.Remove(room);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminadoa correctamente!" };

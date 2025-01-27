@@ -4,6 +4,6 @@ namespace WebUI.Pages.ConfigEmail
 {
     public class IndexModel : PageModel
     {
-        
+
     }
 }

@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Compras.API.Controllers;
+﻿namespace Compras.API.Controllers;
 
 public class NotaCreditoController : BaseApiController
 {
@@ -11,7 +9,7 @@ public class NotaCreditoController : BaseApiController
     {
         _configuration = configuration;
         _ncpSvc = ncpSvc;
-        
+
     }
 
     [HttpGet("Get")]

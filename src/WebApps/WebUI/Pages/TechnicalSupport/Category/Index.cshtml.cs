@@ -4,6 +4,6 @@ namespace WebUI.Pages.TechnicalSupport.Category
 {
     public class IndexModel : PageModel
     {
-        
+
     }
 }

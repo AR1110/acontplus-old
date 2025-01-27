@@ -1,5 +1,5 @@
-﻿using Common.AppSettings;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
+using Common.AppSettings;
 
 var builder = WebApplication.CreateBuilder(args);
 

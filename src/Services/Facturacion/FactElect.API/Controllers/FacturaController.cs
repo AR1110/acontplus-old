@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace FactElect.API.Controllers;
+﻿namespace FactElect.API.Controllers;
 
 public class FacturaController(IFacturaService service) : BaseApiController
 {

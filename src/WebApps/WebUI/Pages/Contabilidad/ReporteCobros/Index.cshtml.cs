@@ -4,6 +4,6 @@ namespace WebUI.Pages.Contabilidad.ReporteCobros
 {
     public class Index : PageModel
     {
-        
+
     }
 }

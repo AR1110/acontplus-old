@@ -1,10 +1,8 @@
-﻿using Common.AppSettings.Extensions;
+﻿namespace Compras.API.Controllers;
 
-namespace Compras.API.Controllers;
-
-public class  ProveedorController( IProveedorService _proveedorService) : BaseApiController
+public class ProveedorController(IProveedorService _proveedorService) : BaseApiController
 {
-    
+
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
@@ -20,7 +18,7 @@ public class  ProveedorController( IProveedorService _proveedorService) : BaseAp
             return Ok(new { code = "1", payload = response });
         }
         catch (Exception ex)
-        { 
+        {
             return BadRequest(ex.Message);
         }
     }
@@ -35,7 +33,7 @@ public class  ProveedorController( IProveedorService _proveedorService) : BaseAp
             return Ok(response);
         }
         catch (Exception ex)
-        { 
+        {
             return BadRequest(ex.Message);
         }
     }
@@ -51,7 +49,7 @@ public class  ProveedorController( IProveedorService _proveedorService) : BaseAp
         }
         catch (Exception ex)
         {
-           
+
             return BadRequest(ex.Message);
         }
     }
@@ -66,7 +64,7 @@ public class  ProveedorController( IProveedorService _proveedorService) : BaseAp
             return Ok(response);
         }
         catch (Exception ex)
-        { 
+        {
             return BadRequest(ex.Message);
         }
     }

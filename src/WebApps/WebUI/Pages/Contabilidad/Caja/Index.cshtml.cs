@@ -4,6 +4,6 @@ namespace WebUI.Pages.Contabilidad.Caja
 {
     public class IndexModel : PageModel
     {
-        
+
     }
 }

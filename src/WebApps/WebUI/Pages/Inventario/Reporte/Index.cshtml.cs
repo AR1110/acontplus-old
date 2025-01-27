@@ -6,5 +6,5 @@ namespace WebUI.Pages.Inventario.Reporte
     {
 
     }
-    
+
 }

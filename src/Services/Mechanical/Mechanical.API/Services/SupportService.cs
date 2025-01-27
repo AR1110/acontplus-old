@@ -1,6 +1,4 @@
-﻿using System.Data;
-using Common.AppSettings;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository.Interfaces;
 using Mechanical.API.Data;
@@ -19,7 +17,7 @@ namespace Mechanical.API.Services
         }
         public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SpExecuteAsync<ApiResponse>("Mechanical.Support_Insert", parameters); 
+            return await _repository.SpExecuteAsync<ApiResponse>("Mechanical.Support_Insert", parameters);
         }
         public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
         {

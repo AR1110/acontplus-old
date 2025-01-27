@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class ConsolidacionController(IConsolidacionService consolidacionService) : BaseApiController
 {
@@ -78,11 +76,11 @@ public class ConsolidacionController(IConsolidacionService consolidacionService)
     {
         var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, 
+                { "userRoleId", User.GetUserRoleId() },
                 { "json", DataConverters.SerializeDictionary(data.Data) }
             };
 
-        var response = await consolidacionService.GetAsync(parameters); 
+        var response = await consolidacionService.GetAsync(parameters);
         return Ok(response);
     }
 

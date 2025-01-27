@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Common.Core.Entities;
 using Common.Infrastructure.Data.Configurations;
 using Mechanical.API.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +21,7 @@ namespace Mechanical.API.Data
         public DbSet<VehiclePartType> VehiclePartTypes { get; set; }
         public DbSet<VehiclePart> VehicleParts { get; set; }
         public DbSet<Inspection> Inspections { get; set; }
-       
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

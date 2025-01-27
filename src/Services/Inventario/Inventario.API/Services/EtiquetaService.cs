@@ -1,6 +1,6 @@
 ﻿namespace Inventario.API.Services
 {
-    public class EtiquetaService: IEtiquetaService
+    public class EtiquetaService : IEtiquetaService
     {
         private readonly IAdoRepository _repository;
         private readonly string nameSchema = "Inventario.Etiqueta";

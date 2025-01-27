@@ -1,5 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-using FactElect.API.Services.Logistica;
+﻿using FactElect.API.Services.Logistica;
 
 namespace FactElect.API.Controllers.Logistica;
 

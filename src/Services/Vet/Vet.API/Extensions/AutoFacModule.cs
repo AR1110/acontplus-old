@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Common.Infrastructure.Data;
-using Common.Infrastructure.Data.Configurations;
 using Common.Infrastructure.Repository.Implementations;
 
 namespace Vet.API.Extensions;

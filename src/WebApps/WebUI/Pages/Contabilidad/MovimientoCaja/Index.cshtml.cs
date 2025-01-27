@@ -4,6 +4,6 @@ namespace WebUI.Pages.Contabilidad.MovimientoCaja
 {
     public class Index : PageModel
     {
-        
+
     }
 }

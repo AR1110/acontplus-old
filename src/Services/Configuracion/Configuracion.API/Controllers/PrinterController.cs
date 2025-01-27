@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class PrinterController(IPrinterService printerService) : BaseApiController
 {
@@ -8,9 +6,9 @@ public class PrinterController(IPrinterService printerService) : BaseApiControll
     public async Task<IActionResult> Get(string json)
     {
         var response = await printerService.GetAsync(new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
-            });
+        {
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        });
         if (response == null) { return NotFound(); }
 
         return Ok(response);

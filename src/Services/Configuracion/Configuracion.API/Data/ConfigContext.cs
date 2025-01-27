@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Common.Notifications.Entities;
 
 namespace Configuracion.API.Data;
 

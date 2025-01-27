@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Common.Infrastructure.Data.Configurations;
 
 namespace Identity.API.Data;
 

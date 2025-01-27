@@ -16,8 +16,8 @@ public static class ApplicationServicesExtensions
             });
         services.AddDbContextPool<ComprasContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-        
-        string[] nameSpaces = 
+
+        string[] nameSpaces =
         [
             "Common.Infrastructure.Repository.Implementations",
             "Compras.API.Services",
@@ -31,7 +31,7 @@ public static class ApplicationServicesExtensions
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
-        
+
         return services;
     }
 }

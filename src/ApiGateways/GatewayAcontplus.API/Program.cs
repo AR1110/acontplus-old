@@ -1,21 +1,18 @@
-﻿using Autofac;
+﻿using System.Runtime.InteropServices;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.AppSettings;
-using GatewayAcontplus.API.Data;
 using GatewayAcontplus.API.Delegates;
 //using GatewayAcontplus.API.Middleware;
 //using GatewayAcontplus.API.Services;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Services.Common.Extensions;
 using Services.Common.Middleware;
-using System.Runtime.InteropServices;
 
 
 var builder = WebApplication.CreateBuilder(args);

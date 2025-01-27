@@ -4,6 +4,6 @@ namespace WebUI.Pages.Compras.Reportes
 {
     public class IndexModel : PageModel
     {
-        
+
     }
 }

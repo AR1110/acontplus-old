@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Ventas.API.Controllers;
+﻿namespace Ventas.API.Controllers;
 
 public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiController
 {

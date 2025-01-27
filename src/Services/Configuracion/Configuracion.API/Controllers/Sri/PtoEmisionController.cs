@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Configuracion.API.Controllers.Sri;
+﻿namespace Configuracion.API.Controllers.Sri;
 
 [Route("api/[controller]")]
 [ApiController]

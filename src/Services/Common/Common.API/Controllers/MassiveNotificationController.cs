@@ -1,5 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-using Common.Notifications.Entities;
+﻿using Common.Notifications.Entities;
 
 namespace Common.API.Controllers;
 

@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Compras.API.Controllers;
+﻿namespace Compras.API.Controllers;
 
 public class LiquidacionCompraController : BaseApiController
 {
@@ -12,7 +10,7 @@ public class LiquidacionCompraController : BaseApiController
     {
         _configuration = configuration;
         _liquidacionCompraSvc = liquidacionCompraSvc;
-        
+
     }
 
     [HttpGet("Get")]

@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
+using Microsoft.Extensions.Configuration;
 
 namespace Common.AppSettings;
 

@@ -1,5 +1,4 @@
 ﻿using Common.API.Endpoints.Interfaces;
-using Common.AppSettings.Extensions;
 
 namespace Common.API.Endpoints.Implementations;
 

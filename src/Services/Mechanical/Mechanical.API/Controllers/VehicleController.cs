@@ -1,5 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +25,7 @@ namespace Mechanical.API.Controllers
             var parameters = new Dictionary<string, object> {
                 { "userRoleId", User.GetUserRoleId() },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-            }; 
+            };
             return Ok(await _vehicleService.AddAsync(parameters));
         }
 

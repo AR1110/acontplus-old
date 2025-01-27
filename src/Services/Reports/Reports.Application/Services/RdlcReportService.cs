@@ -1,13 +1,13 @@
-﻿using System.Data;
+﻿using System.Collections.Concurrent;
+using System.Data;
 using System.Text;
 using System.Web;
-using System.Collections.Concurrent;
+using Common.Core.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 using Reports.Application.Enums;
 using Reports.Application.Interfaces;
 using Reports.Application.Models;
-using Common.Core.Utils;
 using static System.Enum;
 
 namespace Reports.Application.Services

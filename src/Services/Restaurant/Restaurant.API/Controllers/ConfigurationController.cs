@@ -1,5 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Services;
 using Services.Common.Extensions;
 

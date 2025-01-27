@@ -1,5 +1,4 @@
 ﻿using Common.AppSettings;
-using Common.AppSettings.Extensions;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Compras.API.Controllers;
@@ -92,13 +91,13 @@ public class DocumentoRecibidoController(
                 else
                 {
                     var diff = (from row1 in dt.AsEnumerable()
-                        join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
-                        {
-                            Column1 = row2["claveAcceso"]
-                        } into gj
-                        from subRow2 in gj.DefaultIfEmpty()
-                        where subRow2 == null
-                        select row1).ToList();
+                                join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
+                                {
+                                    Column1 = row2["claveAcceso"]
+                                } into gj
+                                from subRow2 in gj.DefaultIfEmpty()
+                                where subRow2 == null
+                                select row1).ToList();
                     var filteredDataTable = diff.CopyToDataTable();
                     response.Create("1", payload: DataConverters.DataTableToJson(filteredDataTable));
                 }

@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Common.Infrastructure.Data.Configurations;
 
 namespace Contabilidad.API.Data;
 
@@ -55,7 +54,7 @@ public class ContabilidadContext : BaseContext
 
         modelBuilder.Entity<Account>().HasOne(a => a.ParentAccount).WithMany(a => a.ChildAccounts)
             .HasForeignKey(a => a.ParentAccountId)
-            .OnDelete(DeleteBehavior.Restrict); 
+            .OnDelete(DeleteBehavior.Restrict);
 
     }
 }

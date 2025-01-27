@@ -14,7 +14,7 @@ public class Order : BaseEntity
     public int PuntoEmisionId { get; set; }
     public int Sequence { get; set; }
 
-    [Required] [MaxLength(18)] public string Serie { get; set; }
+    [Required][MaxLength(18)] public string Serie { get; set; }
 
     public int CustomerCompanyId { get; set; }
 

@@ -22,7 +22,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Scrutor" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" VersionOverride="9.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.AppSettings\Common.AppSettings.csproj" />

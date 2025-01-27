@@ -1,7 +1,6 @@
 ﻿global using System.Data;
 global using System.Text;
 global using System.Xml;
-global using System.Xml.Linq;
 global using Autofac;
 global using Autofac.Extensions.DependencyInjection;
 global using Common.Core.Models;
