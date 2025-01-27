@@ -8,7 +8,7 @@ import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
-import { map } from 'rxjs';
+import {map, Observable} from 'rxjs';
 import { ApiResponse } from "@core/models/api-response";
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { SupportDetail } from '@mechanical/domain/models/support.model';
@@ -61,7 +61,9 @@ export class SupportWebRepository extends SupportRepository {
       id,
       tipo: 3
     })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+    return this.#http.get(`${this.#url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
       map((response: any) => SupportMapper.fromApiGetId(response))
     )
   }
@@ -70,8 +72,8 @@ export class SupportWebRepository extends SupportRepository {
     let json = JSON.stringify({
       tipo: 6
     })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) =>SupportMapper.fromApiDashboard(response))
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`).pipe(
+      map((response) =>SupportMapper.fromApiDashboard(response))
     )
   }
 
@@ -188,21 +190,34 @@ export class SupportWebRepository extends SupportRepository {
     )
   }
 
+
+  override generateSequential(idPuntoEmision: number): Observable<string> {
+    let params = {
+      tipo: 9,
+      idPuntoEmision
+    }
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`).pipe(
+      map(res=>{
+        let secuencual = "" as string;
+        if(res.code==="1"){
+          let {sequence}=JSON.parse(res.payload as string);
+
+          secuencual = sequence[0].serieComprobante;
+        }
+        return secuencual;
+      })
+    )
+  }
+
   search<T extends { textSearch: string }>(obj: T) {
     let json = JSON.stringify({
       tipo: 4,
       textSearch: obj.textSearch
     })
-    return this.#http.get(`${this.#url}?json=${json}`,{
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`,{
       context: getNoLoader()
     }).pipe(
-      map((response: any) => {
-        let results = [];
-        if (response !== null && typeof response === 'object') {
-          results = response.dataSearch;
-        }
-        return results;
-      })
+      map((response) => SupportMapper.fromApiSearch(response) )
     )
   }
 

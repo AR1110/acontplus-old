@@ -36,6 +36,10 @@ export class SupportUseCase{
     return this.repo.getDocView(id, loader);
   }
 
+  generateSequential(idPuntoEmision:number){
+    return this.repo.generateSequential(idPuntoEmision);
+  }
+
   search<T extends { textSearch: string }>(obj:T) {
     return this.repo.search(obj)
   }

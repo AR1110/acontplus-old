@@ -12,7 +12,7 @@ export class SriCustomerService {
 
   constructor(private http: HttpClient) {}
 
-  async get(codigo: string, id: string) {
+    get(codigo: string, id: string) {
     let path;
     if (codigo == SRI_IDENTIFICATION_CODE.RUC) {
       path = 'GetRucSRI/';
@@ -21,6 +21,8 @@ export class SriCustomerService {
     }
     return this.http
       .get(`${this.url}${path}?Ruc=${id}`)
-      .pipe(map((response) => response));
   }
+
+
+
 }
