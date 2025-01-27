@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebUI.Pages.Articulo;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WebUI.Pages.Contabilidad.AccountingSummary
 {

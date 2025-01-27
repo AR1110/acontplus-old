@@ -6,14 +6,14 @@
     <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Acontplus.Common.Infrastructure" />
-    <PackageReference Include="Acontplus.Common.Notifications" />
-    <PackageReference Include="Acontplus.Common.S3Application" />
-    <PackageReference Include="Acontplus.Services.Common" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
-    <PackageReference Include="AutoMapper" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Acontplus.Common.Infrastructure"/>
+    <PackageReference Include="Acontplus.Common.Notifications"/>
+    <PackageReference Include="Acontplus.Common.S3Application"/>
+    <PackageReference Include="Acontplus.Services.Common"/>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection"/>
+    <PackageReference Include="AutoMapper"/>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson"/>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -22,12 +22,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Scrutor" />
+    <PackageReference Include="Scrutor"/>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
+    <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj"/>
   </ItemGroup>
 </Project>

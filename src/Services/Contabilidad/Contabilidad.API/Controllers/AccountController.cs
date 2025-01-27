@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Contabilidad.API.Controllers
+﻿namespace Contabilidad.API.Controllers
 {
     public class AccountController(IAccountService accountService) : BaseApiController
     {

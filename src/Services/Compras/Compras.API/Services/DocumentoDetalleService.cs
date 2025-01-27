@@ -1,6 +1,6 @@
 ﻿namespace Compras.API.Services;
 
-public class DocumentoDetalleService (IAdoRepository adoRepository): IDocumentoDetalleService
+public class DocumentoDetalleService(IAdoRepository adoRepository) : IDocumentoDetalleService
 {
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {

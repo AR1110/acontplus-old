@@ -1,16 +1,16 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Data;
-using Configuracion.API.Models;
+﻿using System.Data;
 using Common.AppSettings;
+using Configuracion.API.Models;
+using Microsoft.Data.SqlClient;
 
 namespace Configuracion.API.Services;
 
 public class TurnoService : ITurnoService
 {
-    private readonly IAdoRepository _repository;
     private readonly IConfiguration _configuration;
-    private LegacyApiResponse _gr = new LegacyApiResponse();
     private readonly string _connectionStrings = string.Empty;
+    private readonly LegacyApiResponse _gr = new();
+    private readonly IAdoRepository _repository;
 
     public TurnoService(IAdoRepository respository, IConfiguration configuration)
     {
@@ -29,6 +29,7 @@ public class TurnoService : ITurnoService
 
         return null;
     }
+
     public async Task<LegacyApiResponse> CreateTurnoAsync(int idRol, Turno data)
     {
         using (var con = new SqlConnection(_connectionStrings))
@@ -52,11 +53,12 @@ public class TurnoService : ITurnoService
                         _gr.titleSms = reader.GetString(3);
                     }
                 }
-
             }
         }
+
         return _gr;
     }
+
     public async Task<LegacyApiResponse> UpdateTurnoAsync(int idRol, Turno data)
     {
         try
@@ -83,7 +85,6 @@ public class TurnoService : ITurnoService
                             _gr.titleSms = reader.GetString(3);
                         }
                     }
-
                 }
             }
         }
@@ -91,12 +92,13 @@ public class TurnoService : ITurnoService
         {
             _gr.id = "0";
             _gr.typeNotify = "warning";
-            _gr.message = ex.Message.ToString();
+            _gr.message = ex.Message;
             _gr.titleSms = "Actualizar Turno";
         }
-        return _gr;
 
+        return _gr;
     }
+
     public async Task<LegacyApiResponse> ReadTurnoAsync(int idRol, int pageIndex, int pageSize)
     {
         var listar = new List<TurnoViewModel>();
@@ -120,7 +122,7 @@ public class TurnoService : ITurnoService
                         if (_gr.id == "1")
                         {
                             var item = new TurnoViewModel();
-                            item.turno = new Turno()
+                            item.turno = new Turno
                             {
                                 idTurno = reader.GetInt32(4),
                                 descripcion = reader.GetString(5),
@@ -131,12 +133,13 @@ public class TurnoService : ITurnoService
                         }
                     }
                 }
-
             }
         }
+
         _gr.data = listar;
         return _gr;
     }
+
     public async Task<LegacyApiResponse> DeleteTurnoAsync(int idRol, int idTurno)
     {
         using (var con = new SqlConnection(_connectionStrings))
@@ -157,11 +160,10 @@ public class TurnoService : ITurnoService
                         _gr.titleSms = reader.GetString(3);
                     }
                 }
-
             }
         }
+
         _gr.titleSms = "Eliminar Turno";
         return _gr;
-
     }
 }

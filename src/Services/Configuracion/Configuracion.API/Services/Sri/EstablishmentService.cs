@@ -39,9 +39,8 @@ public class EstablishmentService : IEstablishmentService
         {
             return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente!" };
         }
-        
-            return new ApiResponse { Code = "0", Message = "No se pudo actualizar!" };
-        
+
+        return new ApiResponse { Code = "0", Message = "No se pudo actualizar!" };
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)

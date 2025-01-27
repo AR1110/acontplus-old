@@ -4,6 +4,6 @@ namespace WebUI.Pages.Vet.Pet
 {
     public class IndexModel : PageModel
     {
-        
+
     }
 }

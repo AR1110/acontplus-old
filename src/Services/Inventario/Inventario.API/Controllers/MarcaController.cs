@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class MarcaController(IMarcaService marcaService) : BaseApiController
 {

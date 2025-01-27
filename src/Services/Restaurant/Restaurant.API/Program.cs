@@ -1,13 +1,12 @@
-﻿using Autofac;
+﻿using System.Runtime.InteropServices;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.AppSettings;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Serialization;
 using Restaurant.API.Data;
 using Restaurant.API.Extensions;
 using Services.Common.Extensions;
-using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 

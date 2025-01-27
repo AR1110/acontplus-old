@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Contabilidad.API.Controllers;
+﻿namespace Contabilidad.API.Controllers;
 
 public class CajaController(ICajaService cajaService) : BaseApiController
 {

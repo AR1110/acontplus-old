@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class TiempoCreditoController(ITiempoCreditoService tiempoCreditoService) : BaseApiController
 {
@@ -21,7 +19,9 @@ public class TiempoCreditoController(ITiempoCreditoService tiempoCreditoService)
 
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }, {"fromMobile", fromMobile}
+            { "idUsuarioRol", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(json) },
+            { "fromMobile", fromMobile }
         };
         return Ok(await tiempoCreditoService.AddAsync(parameters));
     }

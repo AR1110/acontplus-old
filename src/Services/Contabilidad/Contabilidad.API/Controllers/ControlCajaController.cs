@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Contabilidad.API.Controllers;
+﻿namespace Contabilidad.API.Controllers;
 
 public class ControlCajaController(IControlCajaService controlCajaService) : BaseApiController
 {
@@ -16,7 +14,7 @@ public class ControlCajaController(IControlCajaService controlCajaService) : Bas
         if (response == null)
         {
             return NoContent();
-        } 
+        }
 
         return Ok(response);
     }

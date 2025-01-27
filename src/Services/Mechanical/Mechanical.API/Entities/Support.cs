@@ -29,6 +29,6 @@ namespace Mechanical.API.Entities
 
         [MaxLength(500)]
         public string Obs { get; set; }
-        
+
     }
 }

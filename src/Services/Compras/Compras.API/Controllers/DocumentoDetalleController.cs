@@ -1,12 +1,10 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Compras.API.Controllers;
+﻿namespace Compras.API.Controllers;
 
 public class DocumentoDetalleController(IDocumentoDetalleService documentoDetalleService) : BaseApiController
 {
     [HttpPost("{idDocumento}/{idArticulo}")]
     public async Task<IActionResult> Post(int idDocumento, int idArticulo)
-    { 
+    {
         var parameters = new Dictionary<string, object>
         {
             {"idUsuarioRol",  User.GetUserRoleId()},

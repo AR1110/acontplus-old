@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class TipoDocumentoController(ITipoDocumentoService tipoDocumentoService) : BaseApiController
 {

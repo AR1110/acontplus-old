@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class EstablecimientoLogoController : BaseApiController
 {
@@ -41,6 +39,7 @@ public class EstablecimientoLogoController : BaseApiController
     public async Task<IActionResult> Put(int id, IFormFile file)
     {
         if (file == null) { return BadRequest("File not found"); }
+
         var logo = new FileModel();
         logo.CreateBytesCompressedDeflated(file);
         var estabLogo = _mapper.Map<EstablecimientoLogo>(logo);

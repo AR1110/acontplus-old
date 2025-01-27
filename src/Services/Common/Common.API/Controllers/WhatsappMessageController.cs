@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Common.API.Controllers;
+﻿namespace Common.API.Controllers;
 
 public class WhatsappMessageController(IWhatsappMessageService whatsappMessageService) : BaseApiController
 {

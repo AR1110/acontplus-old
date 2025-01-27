@@ -4,6 +4,6 @@ namespace WebUI.Pages.Inventario.Medida
 {
     public class IndexModel : PageModel
     {
-        
+
     }
 }

@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace FactElect.API.Controllers;
+﻿namespace FactElect.API.Controllers;
 
 public class NotaCreditoController(INotaCreditoService notaCreditoService) : BaseApiController
 {

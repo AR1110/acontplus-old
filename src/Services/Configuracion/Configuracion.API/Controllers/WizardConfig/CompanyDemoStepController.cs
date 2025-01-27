@@ -1,5 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-using Configuracion.API.Interfaces.WizardConfig;
+﻿using Configuracion.API.Interfaces.WizardConfig;
 
 namespace Configuracion.API.Controllers.WizardConfig;
 
@@ -15,7 +14,8 @@ public class CompanyDemoStepController(ICompanyDemoStepService companyDemoStepSe
     [HttpPost("{demoStepId}")]
     public async Task<IActionResult> Post(int demoStepId)
     {
-        var parameters = new Dictionary<string, object> {
+        var parameters = new Dictionary<string, object>
+        {
             { "userRoleId", User.GetUserRoleId() },
             { "demoStepId", demoStepId },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }

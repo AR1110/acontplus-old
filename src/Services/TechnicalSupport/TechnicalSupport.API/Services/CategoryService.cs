@@ -1,6 +1,4 @@
-﻿using Common.Infrastructure.Repository.Interfaces;
-
-public class CategoryService : ICategoryService
+﻿public class CategoryService : ICategoryService
 {
     private readonly TechnicalSupportContext _context;
     private readonly IAdoRepository _adoRepository;

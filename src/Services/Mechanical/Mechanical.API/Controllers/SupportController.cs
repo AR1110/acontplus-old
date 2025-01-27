@@ -1,14 +1,14 @@
-﻿using Common.AppSettings.Extensions;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Extensions;
 
 namespace Mechanical.API.Controllers
 {
     public class SupportController(ISupportService _supportService) : BaseApiController
     {
-        
+
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {

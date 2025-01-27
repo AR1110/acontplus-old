@@ -9,7 +9,7 @@ public class FloorConfiguration : BaseEntityTypeConfiguration<Floor>
     public override void Configure(EntityTypeBuilder<Floor> builder)
     {
         base.Configure(builder);
-        
+
         builder
             .HasMany(x => x.Rooms)
             .WithOne(x => x.Floor)

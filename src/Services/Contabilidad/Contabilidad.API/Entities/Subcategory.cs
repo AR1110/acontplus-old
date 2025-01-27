@@ -7,7 +7,7 @@ public class Subcategory : BaseEntity
     public int CategoryId { get; set; }
     public int CompanyId { get; set; }
 
-    [Required] [MaxLength(10)] public string Code { get; set; }
+    [Required][MaxLength(10)] public string Code { get; set; }
 
-    [Required] [MaxLength(300)] public string Name { get; set; }
+    [Required][MaxLength(300)] public string Name { get; set; }
 }

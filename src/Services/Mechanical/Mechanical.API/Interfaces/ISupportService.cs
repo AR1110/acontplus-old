@@ -1,5 +1,4 @@
-﻿using Common.AppSettings;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 
 namespace Mechanical.API.Interfaces
 {

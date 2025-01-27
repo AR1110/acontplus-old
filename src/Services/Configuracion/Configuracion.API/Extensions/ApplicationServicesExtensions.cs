@@ -7,6 +7,9 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+
+        services.AddHttpContextAccessor();
+
         services.AddDbContextPool<ConfigContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
@@ -20,14 +23,14 @@ public static class ApplicationServicesExtensions
 
         services.AddAutoMapper(typeof(MappingProfiles));
 
-        string[] nameSpaces = 
-            [
-                "Common.Application.Services",
-                "Common.Infrastructure.Repository.Implementations",
-                "Configuracion.API.Services",
-                "Configuracion.API.Services.Sri",
-                "Configuracion.API.Services.WizardConfig",
-            ];
+        string[] nameSpaces =
+        [
+            "Common.Application.Services",
+            "Common.Infrastructure.Repository.Implementations",
+            "Configuracion.API.Services",
+            "Configuracion.API.Services.Sri",
+            "Configuracion.API.Services.WizardConfig"
+        ];
 
         services.Scan(scan => scan
             .FromApplicationDependencies()
@@ -35,7 +38,7 @@ public static class ApplicationServicesExtensions
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithTransientLifetime()
-            );
+        );
 
         return services;
     }

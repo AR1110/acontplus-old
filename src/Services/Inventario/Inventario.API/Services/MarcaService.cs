@@ -1,6 +1,6 @@
 ﻿namespace Inventario.API.Services
 {
-    public class MarcaService:IMarcaService
+    public class MarcaService : IMarcaService
     {
         private readonly IAdoRepository _repository;
         private readonly string nameSchema = "Inventario.Marca";
@@ -12,12 +12,12 @@
 
         public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);  
+            var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-            { 
+            {
                 return new ApiResponse { Code = "0", Message = "Sin registros", Payload = null };
             }
-             
+
 
             return new ApiResponse
             {

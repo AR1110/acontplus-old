@@ -1,5 +1,4 @@
 ﻿using Identity.API.Helpers;
-using Identity.API.Models;
 
 namespace Identity.API.Controllers.v1;
 
@@ -116,7 +115,7 @@ public class AccountController(
                 string.IsNullOrEmpty(authRequest.Password))
             {
                 return Ok(response);
-            } 
+            }
 
             var loginFailed = new LoginFailed
             {

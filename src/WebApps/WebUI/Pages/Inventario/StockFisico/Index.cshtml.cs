@@ -4,6 +4,6 @@ namespace WebUI.Pages.Inventario.StockFisico
 {
     public class IndexModel : PageModel
     {
-        
+
     }
 }

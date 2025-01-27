@@ -7,7 +7,7 @@ public interface IStatsService
 {
     Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
 }
-public class StatsService (IAdoRepository adoRepository): IStatsService
+public class StatsService(IAdoRepository adoRepository) : IStatsService
 {
     private const string ModuleName = "Restaurant.Stats_";
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)

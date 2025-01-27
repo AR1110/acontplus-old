@@ -49,7 +49,8 @@ public class TipoService : ITipoService
 
         return new LegacyApiResponse
         {
-            code = "1", payload = DataConverters.SerializeObjectCustom<List<Tipo>>(tipos)
+            code = "1",
+            payload = DataConverters.SerializeObjectCustom<List<Tipo>>(tipos)
         };
     }
 

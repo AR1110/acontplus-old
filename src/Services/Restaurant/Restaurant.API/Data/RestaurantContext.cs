@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Common.Core.Entities;
 using Common.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;

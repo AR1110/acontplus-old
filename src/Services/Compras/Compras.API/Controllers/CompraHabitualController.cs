@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Compras.API.Controllers;
+﻿namespace Compras.API.Controllers;
 
 public class CompraHabitualController(
     ICompraHabitualService compraHabitualService) : BaseApiController

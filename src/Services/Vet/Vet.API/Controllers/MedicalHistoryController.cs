@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Vet.API.Controllers;
+﻿namespace Vet.API.Controllers;
 
 public class MedicalHistoryController(IMedicalHistoryService historyService) : BaseApiController
 {

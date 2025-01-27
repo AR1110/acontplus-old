@@ -6,6 +6,6 @@ public class NotFound : PageModel
 {
     public void OnGet()
     {
-        
+
     }
 }

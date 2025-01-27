@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class ArticuloController(
     S3ObjectCustom s3ObjectCustom,
@@ -52,16 +50,16 @@ public class ArticuloController(
         switch (response.Code)
         {
             case "1" when file != null:
-            {
-                var s3Response = await storageService.UploadAsync(s3ObjectCustom);
-                s3ObjectCustom.Dispose();
-                break;
-            }
+                {
+                    var s3Response = await storageService.UploadAsync(s3ObjectCustom);
+                    s3ObjectCustom.Dispose();
+                    break;
+                }
         }
 
         return Ok(response);
     }
-    
+
     /**
      * Se agrega este metódo porque ocurre un montón de problemas
      * con métodos que aceptan argumentos de tipo archivo

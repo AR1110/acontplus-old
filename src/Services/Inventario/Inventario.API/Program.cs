@@ -1,8 +1,8 @@
-﻿using Autofac.Extensions.DependencyInjection;
+﻿using System.Runtime.InteropServices;
+using Autofac.Extensions.DependencyInjection;
 using Common.AppSettings;
 using Inventario.API.Extensions;
 using Services.Common.Middleware;
-using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -13,9 +13,4 @@ public static class CustomClaimsPrincipalExtensions
     {
         return user.FindFirst("idCardCompany")?.Value;
     }
-
-    public static int GetUserRoleId(this ClaimsPrincipal user)
-    {
-        return Convert.ToInt32(user.FindFirst("userRoleId")?.Value);
-    }
 }
