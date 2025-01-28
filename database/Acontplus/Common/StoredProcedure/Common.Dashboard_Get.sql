@@ -149,20 +149,19 @@ BEGIN
 
         SELECT 
             CONVERT(VARCHAR, FORMAT(s.MaxPaymentDate, 'yyyy-MM-dd')) AS maxPaymentDate,
-            REPLACE(
+            IIF(@expired = 1, 'Su licencia ha expirado, por favor comuníquese con el departamento de ventas', REPLACE(
                 REPLACE(
                     REPLACE(s.warningMessage, '$Costo', CONVERT(VARCHAR, CAST(s.total AS NUMERIC(18, 2)))), 
                     '$FechaMaximaPago', CONVERT(VARCHAR, FORMAT(s.MaxPaymentDate, 'dd/MM/yyyy'))
                 ), 
                 '$Tipo', lt.[Name]
-            ) AS warningMessage,
+            )) AS warningMessage,
             lt.[Name] + ' - ' + a.[Name] AS licenseType,
             l.code AS licenseCode,
             sd.total,
             st.[Name] AS subscriptionType,
             s.total AS totalGlobal,
-               CAST(@expired AS BIT) AS expired, 
-            'Su licencia ha expirado, por favor comuníquese con el departamento de ventas' AS warningMessage 
+               CAST(@expired AS BIT) AS expired
                 FROM App.UsuarioRol ur WITH (NOLOCK)
                 INNER JOIN Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
                 INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
@@ -177,7 +176,7 @@ BEGIN
                 INNER JOIN AcontplusAdmin.Config.SubscriptionType st WITH (NOLOCK) ON s.SubscriptionTypeId = st.Id
                 INNER JOIN AcontplusAdmin.Config.Aplicacion a ON ld.AplicacionId = a.Id
                 WHERE ur.idUsuarioRol = @userRoleId
-                  AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate
+                  --AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate
                   AND ur.estado = 1
 
       SELECT ds.Id, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
