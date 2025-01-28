@@ -13,6 +13,7 @@ GO
 
 CREATE OR ALTER PROCEDURE Config.Print_Get @userRoleId INT
 	,@json VARCHAR(MAX)
+    ,@isMobileUserAgent BIT = 0
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -61,18 +62,18 @@ BEGIN
             SELECT @logoName = @codEstab + '-' + CONVERT(VARCHAR, LatestVersion), @logoMimeType = ContentType FROM Config.EstablecimientoLogo WHERE EstablecimientoId = @establecimientoId
         END
 
-	SELECT TOP 1 @urlPrinter = IpAddress
+	SELECT TOP 1 @urlPrinter = IIF(@isMobileUserAgent = 1, IpAddress, p.Domain)
 	FROM Config.PrinterDocument     cd WITH (NOLOCK)
-	INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId AND i.[Enabled] = 1
-	INNER JOIN Config.PrinterType ti WITH (NOLOCK) ON ti.Id = i.PrinterTypeId
+	INNER JOIN Config.Printer      p WITH (NOLOCK) ON p.Id      = cd.PrinterId AND p.[Enabled] = 1
+	INNER JOIN Config.PrinterType ti WITH (NOLOCK) ON ti.Id = p.PrinterTypeId
 	WHERE cd.codDoc  = @codDoc
-	  AND i.EstablecimientoId = @establecimientoId 
+	  AND p.EstablecimientoId = @establecimientoId 
 	  AND cd.[Enabled]  = 1
-	    AND (i.Machine IS NOT NULL AND LEN(LTRIM(RTRIM(i.Machine))) > 0)
+	  AND (p.Machine IS NOT NULL AND LEN(LTRIM(RTRIM(p.Machine))) > 0)
 
     IF @tipo = 2
         BEGIN
-            SELECT '1' code, payload = IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://acontplusprint.com') FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+            SELECT '1' code, payload = IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://' + @urlPrinter) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
             RETURN
         END
 
