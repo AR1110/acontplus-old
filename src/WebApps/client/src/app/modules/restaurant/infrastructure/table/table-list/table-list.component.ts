@@ -5,12 +5,10 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { TableService } from '@restaurant/data/services/table.service';
-import { RoomService } from '@restaurant/data/services/room.service';
 import { Table } from '@restaurant/domain/models/table.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
-import {MatButton, MatButtonModule} from '@angular/material/button';
+import {  MatButtonModule} from '@angular/material/button';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
@@ -21,6 +19,33 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {MatIconModule} from "@angular/material/icon";
+import {TableUseCase} from "@restaurant/domain/use-cases/table.use-case";
+import {RoomUseCase} from "@restaurant/domain/use-cases/room.use-case";
+import {faCircleMinus} from "@fortawesome/free-solid-svg-icons";
+import {MatTableModule} from "@angular/material/table";
+import {FlatTreeControl} from "@angular/cdk/tree";
+import {MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule} from "@angular/material/tree";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+
+
+interface TableNode {
+  index?: string;
+  description?: string;
+  capacity?: number;
+  hasOp?: boolean
+  hasStatus?: boolean
+  enabled?: boolean
+  children?: TableNode[];
+}
+
+interface ExampleFlatNode {
+  expandable: boolean;
+  name: string;
+  count: number;
+  level: number;
+}
+
+
 
 @Component({
     selector: 'app-table-list',
@@ -31,7 +56,10 @@ import {MatIconModule} from "@angular/material/icon";
       MatFormFieldModule,
       MatInputModule,
       MatSelectModule,
+      MatTableModule,
+      MatTreeModule,
       MatIconModule,
+      MatSlideToggleModule,
         TabulatorSemanticUiComponent,
     ],
     templateUrl: './table-list.component.html',
@@ -127,7 +155,7 @@ export class TableListComponent {
           //create delete button
           let delBtn = document.createElement('button');
           delBtn.type = 'button';
-          delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
+          delBtn.innerHTML = `${icon(faCircleMinus).html.join('')}`;
           delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
           delBtn.title = 'Eliminar Mesa';
           delBtn.addEventListener('click', () => {
@@ -151,8 +179,9 @@ export class TableListComponent {
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   tables: any[] = [];
   #modalService = inject(ModalService);
-  #roomService = inject(RoomService);
-  #tableService = inject(TableService);
+
+  private _roomUseCase = inject(RoomUseCase)
+  private _tableUseCase = inject(TableUseCase)
   #sharedService = inject(SharedService);
   #tS = inject(ToasterService);
 
@@ -176,16 +205,21 @@ export class TableListComponent {
   }
 
   loadData(establecimientoId: number) {
-    this.#roomService.getByEstab(establecimientoId).subscribe((response) => {
+    this._roomUseCase.getByEstab(establecimientoId).subscribe((response) => {
       const tempRooms = (response.payload as Floor[]) || [];
-      const combinedData = tempRooms.map((room: Room) => ({
-        ...room,
-        _children: room.tables?.map((table: Table) => ({
+      const combinedData = tempRooms.map((room: Room, index: number) => ({
+        index: index +1,
+        description: room.description,
+        children: room.tables?.map((table: Table) => ({
           ...table,
           parentId: room.id,
+          hasOp: true,
+          hasStatus: true,
         })),
       }));
-      this.tables = combinedData as [];
+     // this.tables = combinedData as [];
+      this.dataSource.data = structuredClone(combinedData as any)
+      console.log(this.dataSource.data)
     });
   }
 
@@ -238,7 +272,7 @@ export class TableListComponent {
       })
       .then((response) => {
         if (response.isConfirmed) {
-          this.#tableService.delete(table.id).subscribe((response) => {
+          this._tableUseCase.remove(table.id).subscribe((response) => {
             this.successResponse(response);
           });
         }
@@ -247,8 +281,39 @@ export class TableListComponent {
 
 
   private onEdit(table: Table) {
-    this.#tableService
-      .put(table.id, table)
+    this._tableUseCase.put(table.id, table)
       .subscribe((response) => this.successResponse(response));
   }
+
+
+
+  displayedColumns: string[] = ['index', 'description', 'capacity','status', 'op'];
+
+  private transformer = (node: TableNode, level: number) => {
+    return {
+      expandable: !!node.children && node.children.length > 0,
+      index: node.index,
+      description: node.description,
+      capacity: node.capacity,
+      hasOp: node.hasOp,
+      hasStatus: node.hasStatus,
+      enabled: node.enabled,
+      level,
+    };
+  }
+
+  treeControl = new FlatTreeControl<any>(
+    node => node.level, node => node.expandable);
+
+  treeFlattener = new MatTreeFlattener(
+    this.transformer, node => node.level,
+    node => node.expandable, node => node.children);
+
+  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+
+
+  hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
+
+
 }

@@ -4,11 +4,12 @@ import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 import { map } from 'rxjs';
+import {RoomRepository} from "@restaurant/domain/repositories/room.repository";
 
 @Injectable({
   providedIn: 'root',
 })
-export class RoomService {
+export class RoomWebService implements RoomRepository{
   #url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.ROOM}`;
   #http = inject(HttpClient);
 
@@ -36,7 +37,7 @@ export class RoomService {
       .pipe(map((response) => response));
   }
 
-  delete(id: number) {
+  remove(id: number) {
     return this.#http
       .delete<ApiResponse>(`${this.#url}${id}`)
       .pipe(map((response) => response));
