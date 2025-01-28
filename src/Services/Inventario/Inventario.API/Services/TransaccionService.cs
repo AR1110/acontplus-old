@@ -23,6 +23,6 @@ public class TransaccionService : ITransaccionService
 
     public void Process(Dictionary<string, object> parameters)
     {
-        _repository.OnlyExecuteAsync("dbo.Transaccion_Handler_Init", parameters);
+        _repository.ExecuteNonQueryAsync("dbo.Transaccion_Handler_Init", parameters);
     }
 }
