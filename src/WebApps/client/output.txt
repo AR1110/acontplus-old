@@ -377,7 +377,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── printer-page
 |  |  |  |  |  |  ├── components
 |  |  |  |  |  |  ├── printer-page.component.html
-|  |  |  |  |  |  └── printer-page.component.ts
+|  |  |  |  |  |  └── printer.component.ts
 |  |  |  |  |  ├── tiempo-credito-page
 |  |  |  |  |  |  ├── tiempo-credito-add-edit-modal
 |  |  |  |  |  |  ├── tiempo-credito-page.component.html
@@ -401,7 +401,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── firma-electronica.service.ts
 |  |  |  |  |  ├── general-config.service.ts
 |  |  |  |  |  ├── printer-doc.service.ts
-|  |  |  |  |  ├── printer.service.ts
 |  |  |  |  |  ├── sri
 |  |  |  |  |  |  ├── establishment-logo.service.ts
 |  |  |  |  |  |  ├── establishment.service.ts

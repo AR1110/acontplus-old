@@ -5,7 +5,7 @@ import { PuntoEmisionRead } from '@core/models/punto-emision.model';
 import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { EstablishmentRead } from '@modules/config/models/sri/establishment.model';
+import { EstablishmentRead } from '@modules/config/domain/models/sri/establishment.model';
 import { PuntoEmisionAddEditModalComponent } from '@modules/config/pages/establishment-page/components/punto-emision-add-edit-modal/punto-emision-add-edit-modal.component';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
 import {

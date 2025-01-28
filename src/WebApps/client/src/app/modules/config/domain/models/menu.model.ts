@@ -1,4 +1,4 @@
-import {AccesoSubMenu, } from "@modules/config/models/sub-menu.model";
+import {AccesoSubMenu, } from "@modules/config/domain/models/sub-menu.model";
 
 
 export  interface  AccesoMenu {

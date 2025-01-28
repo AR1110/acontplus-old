@@ -13,7 +13,8 @@ import { provideToastr } from 'ngx-toastr';
 import { authMainProvider } from '@modules/auth/providers';
 import { commonProviders } from '@modules/common/providers';
 import { mechanicalProvider } from '@mechanical/providers';
-import {restaurantProvider} from "@restaurant/providers";
+import { restaurantProvider } from '@restaurant/providers';
+import { configProvider } from '@modules/config/providers';
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -30,7 +31,8 @@ export const infrastructureProviders = [
 export const uiProviders = [
   provideToastr({
     preventDuplicates: true,
-    positionClass: 'toast-top-center',
+    positionClass: 'toast-bottom-center',
+    progressBar: true,
   }),
   {
     provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
@@ -46,5 +48,6 @@ export const featureProviders = [
   ...authMainProvider,
   ...commonProviders,
   ...mechanicalProvider,
-  ...restaurantProvider
+  ...restaurantProvider,
+  ...configProvider,
 ];

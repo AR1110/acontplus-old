@@ -6,7 +6,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { isApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { UserCustomerRole } from "@modules/config/models/user-customer/user-customer-role.model";
+import { UserCustomerRole } from "@modules/config/domain/models/user-customer/user-customer-role.model";
 import { UserCustomerPermissionService } from "@modules/config/services/user-customer/user-customer-permission.service";
 import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/user-customer-role-state.service";
 

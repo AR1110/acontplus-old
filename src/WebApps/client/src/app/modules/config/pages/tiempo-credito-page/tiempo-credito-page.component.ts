@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { TiempoCredito } from '@modules/config/models/tiempo-credito.model';
+import { TiempoCredito } from '@modules/config/domain/models/tiempo-credito.model';
 
 @Component({
     selector: 'app-tiempo-credito-page',

@@ -2,12 +2,15 @@
 
 public class PrinterService(ConfigContext context, IAdoRepository repository) : IPrinterService
 {
-    public async Task<object> GetAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync("Config.Printer_Get", parameters);
-        if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0) { return null; }
+        if (DataValidation.DataSetIsNull(ds, true))
+        {
+            return new ApiResponse { Code = "0", Message = "Data not found!" };
+        }
 
-        return DataConverters.DataSetToJson(ds);
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<Printer> GetByIdAsync(int id)
@@ -15,18 +18,18 @@ public class PrinterService(ConfigContext context, IAdoRepository repository) : 
         return await context.Printers.Include(x => x.Documents).FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<object> AddAsync(Printer printer)
+    public async Task<ApiResponse> AddAsync(Printer printer)
     {
         await context.AddAsync(printer);
         await context.SaveChangesAsync();
-        return new { code = "1", message = "Guardada Exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Guardada Exitosamente" };
     }
 
-    public async Task<object> UpdateAsync(int id, Printer printer)
+    public async Task<ApiResponse> UpdateAsync(int id, Printer printer)
     {
         if (id != printer.Id)
         {
-            return new { code = "0", message = "Id Incorrecto" };
+            return new ApiResponse { Code = "0", Message = "Id Incorrecto" };
         }
 
         var printerFound = await context.Printers.FindAsync(id);
@@ -48,10 +51,10 @@ public class PrinterService(ConfigContext context, IAdoRepository repository) : 
         context.Update(printerFound);
         await context.SaveChangesAsync();
 
-        return new { code = "1", message = "Actualizada exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Actualizada exitosamente" };
     }
 
-    public async Task<object> DeleteAsync(int id, int userId)
+    public async Task<ApiResponse> DeleteAsync(int id, int userId)
     {
         var printerFound = await context.Printers.FindAsync(id);
         if (printerFound == null)
@@ -59,11 +62,8 @@ public class PrinterService(ConfigContext context, IAdoRepository repository) : 
             return null;
         }
 
-        printerFound.Enabled = false;
-        printerFound.Deleted = true;
-        printerFound.UserId = userId;
-        context.Update(printerFound);
+        context.Remove(printerFound);
         await context.SaveChangesAsync();
-        return new { code = "1", message = "Eliminada exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
     }
 }

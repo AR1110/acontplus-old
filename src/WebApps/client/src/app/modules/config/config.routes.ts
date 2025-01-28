@@ -6,7 +6,7 @@ import { UserCustomerRequestPageComponent } from './pages/user-customer-request-
 import { UserProfilePageComponent } from './pages/user-profile-page/user-profile-page.component';
 import { EstablishmentPageComponent } from './pages/establishment-page/establishment-page.component';
 import { CompanyPageComponent } from '@modules/config/pages/company-page/company-page.component';
-import { PrinterPageComponent } from '@modules/config/pages/printer-page/printer-page.component';
+import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
 import { WizardConfigComponent } from '@modules/config/pages/wizard-config/wizard-config.component';
 import { TiempoCreditoPageComponent } from './pages/tiempo-credito-page/tiempo-credito-page.component';
 
@@ -70,7 +70,7 @@ export const routes: Routes = [
   {
     path: 'printer',
     title: 'Configuración Impresora',
-    component: PrinterPageComponent,
+    component: PrinterComponent,
     data: {
       breadcrumb: 'Configuración Impresora',
     },

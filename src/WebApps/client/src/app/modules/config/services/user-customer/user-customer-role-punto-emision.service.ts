@@ -3,8 +3,8 @@ import { PATHS_API } from "@core/constants/global.constants";
 import { CONFIG_PATHS } from "../../enums/config.enums";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
-import { UserCustomerCustomerRoleEstab } from "../../models/user-customer/user-customer-role-estab.model";
-import { UserCustomerCustomerRolePtoEmision } from "../../models/user-customer/user-customer-role-punto-emision.model";
+import { UserCustomerCustomerRoleEstab } from "@modules/config/domain/models/user-customer/user-customer-role-estab.model";
+import { UserCustomerCustomerRolePtoEmision } from "@modules/config/domain/models/user-customer/user-customer-role-punto-emision.model";
 
 
 @Injectable({
