@@ -9,7 +9,7 @@ import {SriCustomerRepository} from "@customer/core/repositories/sri-customer.re
 })
 export class SriCustomerWebRepository implements SriCustomerRepository{
   //FROM REGISTRO CIVIL DATA
-  url = `${PATHS_API.CUSTOMER}Consultas/`;
+  url = `${PATHS_API.FACT_ELECT}Consultas/`;
 
   constructor(private http: HttpClient) {}
 

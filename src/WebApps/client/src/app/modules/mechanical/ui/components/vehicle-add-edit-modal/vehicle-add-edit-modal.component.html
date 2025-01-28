@@ -66,15 +66,31 @@
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>País: <span class="text-danger">*</span></mat-label>
-              <mat-select [(ngModel)]="dataForm.countryId">
-                @for (item of countries; track $index) {
-                <mat-option [value]="item.countryId">{{
-                  item.description
-                }}</mat-option>
-
+              <input #input
+                     type="text"
+                     placeholder="..."
+                     matInput
+                     [formControl]="myControlCountry"
+                     [matAutocomplete]="auto"
+                     (input)="filterCountry()"
+                     (focus)="filterCountry()">
+              <mat-autocomplete requireSelection #auto="matAutocomplete"  [displayWith]="getCountryTitle.bind(this)">
+                @for (option of filteredCountryOptions; track $index) {
+                  <mat-option [value]="option.countryId">{{option.description}}</mat-option>
                 }
-              </mat-select>
+              </mat-autocomplete>
             </mat-form-field>
+<!--            <mat-form-field class="w-100">-->
+<!--              <mat-label>País: <span class="text-danger">*</span></mat-label>-->
+<!--              <mat-select [(ngModel)]="dataForm.countryId">-->
+<!--                @for (item of countries; track $index) {-->
+<!--                <mat-option [value]="item.countryId">{{-->
+<!--                  item.description-->
+<!--                }}</mat-option>-->
+
+<!--                }-->
+<!--              </mat-select>-->
+<!--            </mat-form-field>-->
           </div>
           <div class="col">
             <mat-form-field class="w-100">

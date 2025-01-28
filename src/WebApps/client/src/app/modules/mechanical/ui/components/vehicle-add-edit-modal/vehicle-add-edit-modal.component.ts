@@ -1,10 +1,9 @@
-import { Component, inject, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {Component, ElementRef, inject, Input, ViewChild} from '@angular/core';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
 import { VehicleTypeSelectHtmlOnly } from '@mechanical/domain/models/vehicle-type.model';
-import { VehicleWebRepository } from '@mechanical/data/vehicle/vehicle-web.repository';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs';
@@ -15,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { VehicleUseCase } from '@modules/mechanical/domain/use-cases/vehicle.use-case';
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
 
 @Component({
     selector: 'app-vehicle-add-edit-modal',
@@ -23,6 +23,8 @@ import { VehicleUseCase } from '@modules/mechanical/domain/use-cases/vehicle.use
         MatFormFieldModule, MatInputModule,
         MatSelectModule,
         MatButtonModule,
+      ReactiveFormsModule,
+      MatAutocompleteModule,
         MatCustomDialogComponent,
         MatDynamicCardComponent,
         CompanyCustomerSearchMatComponent
@@ -73,6 +75,11 @@ export class VehicleAddEditModalComponent {
     cylindraje: null
   }
 
+  @ViewChild('input') input!: ElementRef<HTMLInputElement>;
+  myControlCountry = new FormControl('');
+  optionsCountry: any[] = [ ];
+  filteredCountryOptions!: any[];
+
   successResponse = {
     next: (response: ApiResponse) => {
         if (response.code === "0") {
@@ -91,7 +98,7 @@ export class VehicleAddEditModalComponent {
             id = this.data.id;
           }else{
             let data = JSON.parse(response.payload as string)
-            if(Array.isArray(data)){
+            if(Array.isArray(data) && data.length>0){
               id = data[0].id;
             }
           }
@@ -123,6 +130,9 @@ export class VehicleAddEditModalComponent {
         this.countries = countries;
         this.vehicleTypes = vehicleTypes;
 
+        this.optionsCountry = countries;
+      this.filteredCountryOptions = countries.slice();
+
         if (this.data.id > 0) {
           this.titleModal = 'Editar Vehículo';
           this.btnText = 'Actualizar';
@@ -138,10 +148,14 @@ export class VehicleAddEditModalComponent {
                 ...this.dataForm,
                 ...response.vehicle
               };
+
+              this.myControlCountry.setValue(this.dataForm.countryId as any)
+
             } )
         }
       })
   }
+
 
 
   onCustomerSelected( dataForm  : any) {
@@ -154,8 +168,17 @@ export class VehicleAddEditModalComponent {
     this.customer.email = dataForm.correo;
     this.customer.telephone = dataForm.telefono;
     this.customer.address = dataForm.direccion;
-    console.log(dataForm)
   }
+
+  getCountryTitle(countryId: number) {
+    return this.countries.find((item:any) => item.countryId === countryId)?.description;
+  }
+
+  filterCountry(): void {
+    const filterValue = this.input.nativeElement.value.toLowerCase();
+    this.filteredCountryOptions = this.optionsCountry.filter(o => o.description.toLowerCase().includes(filterValue));
+  }
+
 
   isValidForm() {
 
@@ -218,9 +241,11 @@ export class VehicleAddEditModalComponent {
     try {
       if (!this.isValidForm()) return;
 
+      this.dataForm.countryId = this.myControlCountry.value as any;
       let dataParams = {
         customer: this.customer,
-        vehicle: this.dataForm
+        vehicle: this.dataForm,
+
       }
       if (!(this.data.id > 0)) {
         this.vehicleUseCase.post(dataParams).subscribe(this.successResponse)

@@ -1,4 +1,4 @@
-import { CdkOverlayOrigin, FlexibleConnectedPositionStrategy, Overlay } from '@angular/cdk/overlay';
+import {CdkOverlayOrigin, FlexibleConnectedPositionStrategy, Overlay, OverlayModule} from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
 import { Component, computed, inject, input, model, output, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -32,6 +32,7 @@ import { CompanyCustomerAddEditDirective } from '../../company-customer-add-edit
     MatProgressSpinnerModule,
     MatMenuModule,
     MatCardModule,
+    OverlayModule,
     CompanyCustomerAddEditDirective
   ],
   templateUrl: './company-customer-search-mat.component.html',
@@ -108,7 +109,7 @@ export class CompanyCustomerSearchMatComponent {
 
   onSelectionChange(item: any) {
     if (this.isGetId()) {
-      this._companyCustomerUseCase.getId(item.idCliente).subscribe(response => {
+      this._companyCustomerUseCase.getId(item.idCliente || item.id).subscribe(response => {
         this.onSelect.emit(response);
       })
     } else {
