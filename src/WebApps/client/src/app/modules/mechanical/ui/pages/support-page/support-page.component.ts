@@ -152,7 +152,7 @@ export class SupportPageComponent {
   }
 
   onCustomerSelected(data: any) {
-    this.dataSearch.customerId = data.idCliente;
+    this.dataSearch.customerId = data.customerId;
     this.getSupports();
   }
 

@@ -27,6 +27,7 @@ export class CompanyCustomerMapper {
     }
 
   static fromApiSearch(response:any[]){
+
     return response.map(item=>{
 
       return {

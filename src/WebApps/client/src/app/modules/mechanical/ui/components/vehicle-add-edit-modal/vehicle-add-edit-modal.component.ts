@@ -76,7 +76,7 @@ export class VehicleAddEditModalComponent {
   }
 
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
-  myControlCountry = new FormControl('');
+  myControlCountry = new FormControl<any>('');
   optionsCountry: any[] = [ ];
   filteredCountryOptions!: any[];
 
@@ -196,7 +196,7 @@ export class VehicleAddEditModalComponent {
       return;
     }
 
-    if (!(this.dataForm.countryId > 0)) {
+    if (!(this.dataForm.countryId > 0 || this.myControlCountry.value>0)) {
       this.tS.toastr({ type: 'warning', message: 'Selecccion el país' });
       return;
     }
