@@ -174,7 +174,7 @@ export class CompanyCustomerWebRepository extends CompanyCustomerRepository{
 
     return this._http.post<ApiResponse>(this._url, { data }).pipe(
       map((response) => {
-        let result = {} as ApiResponse;
+        let result = response;
         if (response.code==="1") {
           let payload = JSON.parse(response.payload as string)[0];
           result = response;

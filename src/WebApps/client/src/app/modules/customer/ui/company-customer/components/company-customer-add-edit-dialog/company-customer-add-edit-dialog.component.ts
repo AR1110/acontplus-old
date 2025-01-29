@@ -208,7 +208,9 @@ export class CompanyCustomerAddEditDialogComponent {
 
   copyTradeName() {}
 
-  async onKeyDownGovernmentId() {
+  async onKeyDownGovernmentId($event:Event) {
+    $event.stopPropagation();
+
     const dataForm = {
       ...this.customerForm.value,
     };
@@ -283,6 +285,7 @@ export class CompanyCustomerAddEditDialogComponent {
         });
     } else if (!(this.params.id > 0)) {
       this._companyCustomerUseCase.post(dataForm).subscribe((response) => {
+
         this.tS.toastr({
           type: response.code == '1' ? 'success' : 'warning',
           message: response.message,

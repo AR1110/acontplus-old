@@ -29,7 +29,7 @@
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Número de Identificación</mat-label>
-                <input matInput  (keydown.enter)="onKeyDownGovernmentId()"   formControlName="numeroIdentificacion"
+                <input matInput  (keydown.enter)="onKeyDownGovernmentId($event)"   formControlName="numeroIdentificacion"
                        id="numeroIdentificacion"
                        maxlength="15"/>
               </mat-form-field>

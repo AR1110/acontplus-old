@@ -114,6 +114,7 @@
                 matInput
                 placeholder="..."
                 [(ngModel)]="dataForm.licensePlate"
+                appToUpperCase
               />
             </mat-form-field>
           </div>
@@ -121,7 +122,9 @@
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>Marca <span class="text-danger"> *</span></mat-label>
-              <input matInput placeholder="..." [(ngModel)]="dataForm.brand" />
+              <input matInput placeholder="..." [(ngModel)]="dataForm.brand"
+              appToUpperCase
+              />
             </mat-form-field>
           </div>
         </div>
@@ -132,7 +135,9 @@
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>Modelo </mat-label>
-              <input matInput placeholder="..." [(ngModel)]="dataForm.model" />
+              <input matInput placeholder="..." [(ngModel)]="dataForm.model"
+              appToUpperCase
+              />
             </mat-form-field>
           </div>
           <div class="col">
@@ -157,6 +162,7 @@
                 matInput
                 placeholder="..."
                 [(ngModel)]="dataForm.color"
+                appToUpperCase
               />
             </mat-form-field>
           </div>
@@ -173,6 +179,7 @@
                 matInput
                 placeholder="..."
                 [(ngModel)]="dataForm.engine"
+                appToUpperCase
               />
             </mat-form-field>
           </div>
@@ -185,6 +192,7 @@
                 matInput
                 placeholder="..."
                 [(ngModel)]="dataForm.chassis"
+                appToUpperCase
               />
             </mat-form-field>
           </div>
@@ -199,6 +207,7 @@
                 matInput
                 placeholder="..."
                 [(ngModel)]="dataForm.cylindraje"
+                appToUpperCase
               />
             </mat-form-field>
           </div>
