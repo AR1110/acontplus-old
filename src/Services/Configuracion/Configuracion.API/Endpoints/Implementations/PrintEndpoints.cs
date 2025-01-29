@@ -15,9 +15,7 @@ public class PrintEndpoints(
             { "json", SqlStringParam.Sanitize(json) },
             { "isMobileUserAgent", httpContextAccessor.HttpContext!.Items["IsMobileUserAgent"] ?? "false" }
         };
-        var response = await printService.GetAsync(parameters);
-        if (response == null || string.IsNullOrEmpty(response)) { return Results.BadRequest(); }
 
-        return Results.Ok(response);
+        return Results.Ok(await printService.GetAsync(parameters));
     }
 }

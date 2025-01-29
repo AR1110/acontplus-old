@@ -2,5 +2,5 @@
 
 public interface IPrintService
 {
-    Task<string> GetAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
 }

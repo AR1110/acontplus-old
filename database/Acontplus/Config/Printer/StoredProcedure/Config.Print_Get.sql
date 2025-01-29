@@ -53,7 +53,7 @@ BEGIN
     
 	IF NOT EXISTS (SELECT 1 FROM Config.Printer WITH (NOLOCK) WHERE EstablecimientoId = @establecimientoId AND [Enabled] = 1)
 		BEGIN
-			SELECT Common.ufnSpResponse ('0','No tienes ninguna impresora configurada', DEFAULT)
+			SELECT '0','No tienes ninguna impresora configurada' as 'message'
 			RETURN 
 		END
 
@@ -73,7 +73,7 @@ BEGIN
 
     IF @tipo = 2
         BEGIN
-            SELECT '1' code, payload = IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://' + @urlPrinter) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+            SELECT '1' code, payload = IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://' + @urlPrinter)
             RETURN
         END
 
@@ -151,17 +151,9 @@ BEGIN
 	
 	SELECT  @dataSources = dataSources FROM Config.Documento_To_Print(@idDocument,@codDoc)
 
-	--SELECT Common.ufnSpResponse ('1', 'Successful',
- --   (SELECT IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://acontplusprint.com') as urlPrinter 
- --       ,@rdlcProps rdlcProps
- --       ,@dataSources dataSources
- --       ,@rdlcParams rdlcParams 
-	--FOR JSON PATH))
-
-SELECT payload = (SELECT @rdlcProps rdlcProps
+    SELECT '1' code, payload = (SELECT @rdlcProps rdlcProps
         ,@dataSources dataSources
-        ,@rdlcParams rdlcParams 
-	FOR JSON PATH, WITHOUT_aRRAY_WRAPPER)
+        ,@rdlcParams rdlcParams FOR JSON PATH, WITHOUT_aRRAY_WRAPPER)
 
 END
 GO

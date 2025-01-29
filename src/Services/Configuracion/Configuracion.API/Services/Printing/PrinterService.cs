@@ -5,12 +5,9 @@ public class PrinterService(ConfigContext context, IAdoRepository repository) : 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync("Config.Printer_Get", parameters);
-        if (DataValidation.DataSetIsNull(ds, true))
-        {
-            return new ApiResponse { Code = "0", Message = "Data not found!" };
-        }
-
-        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new ApiResponse { Code = "0", Message = "Data not found!" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<Printer> GetByIdAsync(int id)
@@ -35,7 +32,7 @@ public class PrinterService(ConfigContext context, IAdoRepository repository) : 
         var printerFound = await context.Printers.FindAsync(id);
         if (printerFound == null)
         {
-            return null;
+            return new ApiResponse { Code = "0", Message = "Item not found!" };
         }
 
         printerFound.PrinterTypeId = printer.PrinterTypeId;
