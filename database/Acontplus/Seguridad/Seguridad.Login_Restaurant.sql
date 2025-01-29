@@ -40,12 +40,12 @@ BEGIN
 
             IF @count = 0
 			    BEGIN
-				    SELECT Common.ufnSpResponse('0', 'No se ha encontrado RESTAURANTE', default)
+				    SELECT '0' code, 'No se ha encontrado RESTAURANTE' as 'message'
 				    RETURN
 			    END
 
-          SELECT Common.ufnSpResponse('1'
-                ,'Login correcto'  
+          SELECT'1' code
+                ,'Login correcto' as 'message'
                 ,(SELECT         userId           = r.idUsuario
                                 ,userRoleId       = r.idUsuarioRol
                                 ,codeRole         = ro.Code
@@ -77,11 +77,11 @@ BEGIN
 				                WHERE r.estado    = 1
                                   AND r.idUsuario = @userId
                                   AND @count > 0
-                FOR JSON PATH))
+                FOR JSON PATH) as payload
 		END
 	ELSE 
 		BEGIN
-			SELECT Common.ufnSpResponse('0','Usuario o Contraseña incorrectos.',DEFAULT)
+			SELECT'0' code,'Usuario o Contraseña incorrectos.' as 'message'
 			RETURN 
 		END
 END
