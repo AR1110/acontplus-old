@@ -2,6 +2,8 @@
 using System.Data;
 using System.Text;
 using System.Web;
+using Common.Barcode.Models;
+using Common.Barcode.Utils;
 using Common.Core.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
