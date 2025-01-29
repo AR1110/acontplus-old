@@ -45,7 +45,7 @@ BEGIN
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-     BEGIN TRY
+    BEGIN TRY
             --> Get
 	        IF @tipo = 1
 		        BEGIN
@@ -141,7 +141,7 @@ BEGIN
                                       ,@LicensePlate    = @LicensePlate
                                       ,@fromDate        = @fromDate
                                       ,@toDate          = @toDate
-                    RETURN
+                    --RETURN
 		        END
 
             --> DataForm 
@@ -548,9 +548,9 @@ BEGIN
      END TRY 
 
      BEGIN CATCH 
-        INSERT INTO ErroresSistema
-            (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		SELECT NEWID(),'Support/Get',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
+        INSERT INTO ErroresSistema 
+              (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'/Support/Get',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),'Mechanical.Support_Get',ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@UserId
 	         
         SELECT '0' as code, 'Error en el procedimiento' as 'message'
      END CATCH 
