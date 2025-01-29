@@ -9,11 +9,7 @@ public class GeneralConfigController(IGeneralConfigService generalConfigService)
         {
             { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
         };
-        var response = await generalConfigService.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
-
-        ;
-        return Ok(response);
+        return Ok(await generalConfigService.GetAsync(parameters));
     }
 
     [HttpPut]
@@ -24,9 +20,7 @@ public class GeneralConfigController(IGeneralConfigService generalConfigService)
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await generalConfigService.UpdateAsync(parameters);
-        if (response == null) { return NoContent(); }
 
-        return Ok(response);
+        return Ok(await generalConfigService.UpdateAsync(parameters));
     }
 }

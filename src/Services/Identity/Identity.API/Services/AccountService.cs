@@ -55,9 +55,9 @@ public class AccountService(IAdoRepository repository) : IAccountService
         );
     }
 
-    public async Task<string> LoginRestaurantAsync(string username, string password)
+    public async Task<ApiResponse> LoginRestaurantAsync(string username, string password)
     {
-        return await repository.SpExecuteDeprecatedAsync("Seguridad.Login_Restaurant",
+        return await repository.SpExecuteAsync<ApiResponse>("Seguridad.Login_Restaurant",
             new Dictionary<string, object> { { "username", username }, { "password", password } });
     }
 }

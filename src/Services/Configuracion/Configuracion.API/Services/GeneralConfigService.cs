@@ -1,29 +1,20 @@
 ﻿namespace Configuracion.API.Services;
 
-public class GeneralConfigService : IGeneralConfigService
+public class GeneralConfigService(IAdoRepository repository) : IGeneralConfigService
 {
-    private readonly IAdoRepository _repository;
-    private readonly string nameSchema = "Config.Sistema";
+    private const string NameSchema = "Config.Sistema_";
 
-    public GeneralConfigService(IAdoRepository repository)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        _repository = repository;
-    }
-
-    public async Task<object> GetAsync(Dictionary<string, object> parameters)
-    {
-        var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
-        if (ds.Tables.Count == 0)
-        {
-            return null;
-        }
-
-        return DataConverters.DataSetToJson(ds);
+        var ds = await repository.GetDataSetAsync($"{NameSchema}Get", parameters);
+        return DataValidation.DataSetIsNull(ds)
+            ? new ApiResponse { Code = "0", Message = "Data not found!" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
 
-    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
+        return await repository.SpExecuteAsync<ApiResponse>($"{NameSchema}Update", parameters);
     }
 }
